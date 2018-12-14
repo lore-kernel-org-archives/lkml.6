@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8915C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6F2C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806D52148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6449721479
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789793;
-	bh=/uZsgQNW9hmBX6r1/lJ81JBZdLY3Ctssma43YpH1rWw=;
+	s=default; t=1544789805;
+	bh=KW8unDsOXjmywQ70y831Ybz6mgGM+mtywOrpENG4guo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lP4g1fStrEWYGcHfxXZFwgV6znYiWxWv4VPtruIs5bJsNAYe/WzrGNX7UL1I7tViv
-	 dHq2l3bg2HM140C3eCUnvjj+gCb0ok1nxszUf/ezeSvh5dH9y7bkvz8pxERY+3IpxD
-	 1bKGtHOAhMDFaXW9uPL0T6YI9Txq/0p1kUSsLLt8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806D52148E
+	b=uD0U0OrWVFrBE1z87kDa0QddwVBAzn+eaPifJwRaLtERVakaXbNPqHeZyLYnPaY0y
+	 jRvPDi68zpYgoDO40uC3J2P1FbubHsbBTzo0A1BoCvmoH7peTciiJklPtFy8RLsO7l
+	 bmSUFuAlp67WarN0OJbXtWm7Wcldc1+Qr9k1S4sc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6449721479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732773AbeLNMQc (ORCPT
+        id S1732809AbeLNMQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:16:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36682 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:16:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732757AbeLNMQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:16:29 -0500
+        id S1732780AbeLNMQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:16:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B6062133F;
-        Fri, 14 Dec 2018 12:16:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD7CE21479;
+        Fri, 14 Dec 2018 12:16:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789788;
-        bh=/uZsgQNW9hmBX6r1/lJ81JBZdLY3Ctssma43YpH1rWw=;
+        s=default; t=1544789796;
+        bh=KW8unDsOXjmywQ70y831Ybz6mgGM+mtywOrpENG4guo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SJzmHqe0UMq0Kf2aHbgr7hXMOlTjcDO1Vz38PMTH6uoWIIt6edkD+F0bUnLyp2lcr
-         +gYavQpip/d+Kf6Qok74NgGMzSChyAJw/JhCgDyaxJr4fSThBxdLEalS9gkqqy7G3Z
-         xung0YjerTYtTxxDIvnWdUpTiNFV4dxCpjeBIe2E=
+        b=RpV2beNtoWNcHWXt4d4JqiAmuh3aR1DL22yPAdQmHwt2vb2hDn3NaQH2OQF+AAlxr
+         eUIIydHtSnjKYJNbIvSD2tJoBkCYeOANxlyGUn9hI+E5vqZrc5AJrUbiI+ee/fpcOn
+         3P1h3maiDsvOm9IUfGY3DxE2VSjtLM1Hx1F/51rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 77/88] mm: replace get_user_pages_locked() write/force parameters with gup_flags
-Date:   Fri, 14 Dec 2018 13:00:51 +0100
-Message-Id: <20181214115708.508349431@linuxfoundation.org>
+Subject: [PATCH 4.4 59/88] x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
+Date:   Fri, 14 Dec 2018 13:00:33 +0100
+Message-Id: <20181214115707.313009206@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,108 +70,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Stoakes <lstoakes@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 3b913179c3fa89dd0e304193fa0c746fc0481447 upstream.
+commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24 upstream.
 
-This removes the 'write' and 'force' use from get_user_pages_locked()
-and replaces them with 'gup_flags' to make the use of FOLL_FORCE
-explicit in callers as use of this flag can result in surprising
-behaviour (and hence bugs) within the mm subsystem.
+AMD is proposing a VIRT_SPEC_CTRL MSR to handle the Speculative Store
+Bypass Disable via MSR_AMD64_LS_CFG so that guests do not have to care
+about the bit position of the SSBD bit and thus facilitate migration.
+Also, the sibling coordination on Family 17H CPUs can only be done on
+the host.
 
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 4.4: adjust context]
+Extend x86_spec_ctrl_set_guest() and x86_spec_ctrl_restore_host() with an
+extra argument for the VIRT_SPEC_CTRL MSR.
+
+Hand in 0 from VMX and in SVM add a new virt_spec_ctrl member to the CPU
+data structure which is going to be used in later patches for the actual
+implementation.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 4.4: This was partly applied before; apply just the
+ missing bits]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/mm.h |    3 +--
- mm/frame_vector.c  |    8 +++++++-
- mm/gup.c           |   12 +++---------
- mm/nommu.c         |    5 ++++-
- 4 files changed, 15 insertions(+), 13 deletions(-)
+ arch/x86/kvm/svm.c |   11 +++++++++--
+ arch/x86/kvm/vmx.c |    5 +++--
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1203,8 +1203,7 @@ long get_user_pages(struct task_struct *
- 		    struct vm_area_struct **vmas);
- long get_user_pages_locked(struct task_struct *tsk, struct mm_struct *mm,
- 		    unsigned long start, unsigned long nr_pages,
--		    int write, int force, struct page **pages,
--		    int *locked);
-+		    unsigned int gup_flags, struct page **pages, int *locked);
- long __get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
- 			       unsigned long start, unsigned long nr_pages,
- 			       struct page **pages, unsigned int gup_flags);
---- a/mm/frame_vector.c
-+++ b/mm/frame_vector.c
-@@ -41,10 +41,16 @@ int get_vaddr_frames(unsigned long start
- 	int ret = 0;
- 	int err;
- 	int locked;
-+	unsigned int gup_flags = 0;
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -149,6 +149,12 @@ struct vcpu_svm {
+ 	} host;
  
- 	if (nr_frames == 0)
- 		return 0;
+ 	u64 spec_ctrl;
++	/*
++	 * Contains guest-controlled bits of VIRT_SPEC_CTRL, which will be
++	 * translated into the appropriate L2_CFG bits on the host to
++	 * perform speculative control.
++	 */
++	u64 virt_spec_ctrl;
  
-+	if (write)
-+		gup_flags |= FOLL_WRITE;
-+	if (force)
-+		gup_flags |= FOLL_FORCE;
+ 	u32 *msrpm;
+ 
+@@ -1146,6 +1152,7 @@ static void svm_vcpu_reset(struct kvm_vc
+ 	u32 eax = 1;
+ 
+ 	svm->spec_ctrl = 0;
++	svm->virt_spec_ctrl = 0;
+ 
+ 	if (!init_event) {
+ 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
+@@ -3904,7 +3911,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	x86_spec_ctrl_set_guest(svm->spec_ctrl);
++	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+@@ -4028,7 +4035,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+-	x86_spec_ctrl_restore_host(svm->spec_ctrl);
++	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
+ 	reload_tss(vcpu);
+ 
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8658,9 +8658,10 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
++	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
+ 
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
 +
- 	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
- 		nr_frames = vec->nr_allocated;
+ 	asm(
+ 		/* Store host registers */
+ 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
+@@ -8796,7 +8797,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+ 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
  
-@@ -59,7 +65,7 @@ int get_vaddr_frames(unsigned long start
- 		vec->got_ref = true;
- 		vec->is_pfns = false;
- 		ret = get_user_pages_locked(current, mm, start, nr_frames,
--			write, force, (struct page **)(vec->ptrs), &locked);
-+			gup_flags, (struct page **)(vec->ptrs), &locked);
- 		goto out;
- 	}
+-	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
++	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
  
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -737,18 +737,12 @@ static __always_inline long __get_user_p
-  */
- long get_user_pages_locked(struct task_struct *tsk, struct mm_struct *mm,
- 			   unsigned long start, unsigned long nr_pages,
--			   int write, int force, struct page **pages,
-+			   unsigned int gup_flags, struct page **pages,
- 			   int *locked)
- {
--	unsigned int flags = FOLL_TOUCH;
--
--	if (write)
--		flags |= FOLL_WRITE;
--	if (force)
--		flags |= FOLL_FORCE;
--
- 	return __get_user_pages_locked(tsk, mm, start, nr_pages,
--				       pages, NULL, locked, true, flags);
-+				       pages, NULL, locked, true,
-+				       gup_flags | FOLL_TOUCH);
- }
- EXPORT_SYMBOL(get_user_pages_locked);
- 
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -201,9 +201,12 @@ EXPORT_SYMBOL(get_user_pages);
- 
- long get_user_pages_locked(struct task_struct *tsk, struct mm_struct *mm,
- 			   unsigned long start, unsigned long nr_pages,
--			   int write, int force, struct page **pages,
-+			   unsigned int gup_flags, struct page **pages,
- 			   int *locked)
- {
-+	int write = gup_flags & FOLL_WRITE;
-+	int force = gup_flags & FOLL_FORCE;
-+
- 	return get_user_pages(tsk, mm, start, nr_pages, write, force,
- 			      pages, NULL);
- }
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
 
 
