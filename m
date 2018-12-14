@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 787A9C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5B6C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E99721486
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D412147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789179;
-	bh=qa2OK8WHl5JBj5ekm5Q+tZWnMc0rxet70iQ5c3n37f4=;
+	s=default; t=1544789183;
+	bh=86byxqzQxm6xrR1o2XIG24tT8A1yC0XgMGhzna46jjY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TxO4NEEZoBCAevF0xOtL0myq2dc+rkRxjKLstvi9YwMzeMRGbRqwU4htdhc+FwjTU
-	 n4gNUjL336KsuT3oCL6xRzMKXjSVyOr3Xru4Wg0pHJlRgjI9y5YMpVA3BnTTvHTey9
-	 1vA1VbfsmWlbXGR3j5G41HMPOr6eVvdR51l7paq0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E99721486
+	b=qgYpmvEyUlwATdD5FDmpTAMOhg1RymK7QnOhTfQrrGzcjW55HJO234VtO8KDclIOf
+	 S7CdWcQLEj2tG3BmunGy0OAFuXRuTlQO0E+iB9XFyPuvGZKWNrfFWIJLXpDazPuGGx
+	 ne6PvZFpeqx3DBsRk6y/9cZzR1NaV7EvabDvIzCU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D412147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730889AbeLNMGS (ORCPT
+        id S1730903AbeLNMGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:06:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51144 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:06:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730858AbeLNMGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:09 -0500
+        id S1730884AbeLNMGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF94A21479;
-        Fri, 14 Dec 2018 12:06:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62D0521479;
+        Fri, 14 Dec 2018 12:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789169;
-        bh=qa2OK8WHl5JBj5ekm5Q+tZWnMc0rxet70iQ5c3n37f4=;
+        s=default; t=1544789176;
+        bh=86byxqzQxm6xrR1o2XIG24tT8A1yC0XgMGhzna46jjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z4KMlBIvkldDjg9946LGA2TuNDraTGVHqGdpYsCF6Eyst8GJzM/b6CtUQtIBvPLta
-         ejUEA/RpCX2nJOwoaXKHEXd+a/BA6yUPjnlCwgdU0v3qIkZ6J5gnJlljxWUKzjAIeG
-         tRVE26qU8JhLP5qyN9YakfuV1Zfl/UHFEN1gNdW4=
+        b=Dt5Vtw0O1knZMi+q1TCThdkLAlHfnhXMD4bpPWfW0ZtTQgBiOGeiSbrs62uX8Sb9v
+         6REMZmZSt675JFai+thXMKYPpji0vPQ5AB49IIDM6HvRQkT4lmIIHmpE3/7yLzyMYQ
+         n5vUCaks+VfVh/zkvlJ1PSbhRMlA+4iOTELDbINQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 098/142] KVM: x86: fix empty-body warnings
-Date:   Fri, 14 Dec 2018 12:59:43 +0100
-Message-Id: <20181214115750.974208477@linuxfoundation.org>
+Subject: [PATCH 4.19 101/142] usb: gadget: u_ether: fix unsafe list iteration
+Date:   Fri, 14 Dec 2018 12:59:46 +0100
+Message-Id: <20181214115751.097067904@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,38 +70,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 354cb410d87314e2eda344feea84809e4261570a ]
+[ Upstream commit c9287fa657b3328b4549c0ab39ea7f197a3d6a50 ]
 
-We get the following warnings about empty statements when building
-with 'W=1':
+list_for_each_entry_safe() is not safe for deleting entries from the
+list if the spin lock, which protects it, is released and reacquired during
+the list iteration. Fix this issue by replacing this construction with
+a simple check if list is empty and removing the first entry in each
+iteration. This is almost equivalent to a revert of the commit mentioned in
+the Fixes: tag.
 
-arch/x86/kvm/lapic.c:632:53: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1907:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1936:65: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1975:44: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+This patch fixes following issue:
+--->8---
+Unable to handle kernel NULL pointer dereference at virtual address 00000104
+pgd = (ptrval)
+[00000104] *pgd=00000000
+Internal error: Oops: 817 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 1 PID: 84 Comm: kworker/1:1 Not tainted 4.20.0-rc2-next-20181114-00009-g8266b35ec404 #1061
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+Workqueue: events eth_work
+PC is at rx_fill+0x60/0xac
+LR is at _raw_spin_lock_irqsave+0x50/0x5c
+pc : [<c065fee0>]    lr : [<c0a056b8>]    psr: 80000093
+sp : ee7fbee8  ip : 00000100  fp : 00000000
+r10: 006000c0  r9 : c10b0ab0  r8 : ee7eb5c0
+r7 : ee7eb614  r6 : ee7eb5ec  r5 : 000000dc  r4 : ee12ac00
+r3 : ee12ac24  r2 : 00000200  r1 : 60000013  r0 : ee7eb5ec
+Flags: Nzcv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 6d5dc04a  DAC: 00000051
+Process kworker/1:1 (pid: 84, stack limit = 0x(ptrval))
+Stack: (0xee7fbee8 to 0xee7fc000)
+...
+[<c065fee0>] (rx_fill) from [<c0143b7c>] (process_one_work+0x200/0x738)
+[<c0143b7c>] (process_one_work) from [<c0144118>] (worker_thread+0x2c/0x4c8)
+[<c0144118>] (worker_thread) from [<c014a8a4>] (kthread+0x128/0x164)
+[<c014a8a4>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xee7fbfb0 to 0xee7fbff8)
+...
+---[ end trace 64480bc835eba7d6 ]---
 
-Rework the debug helper macro to get rid of these warnings.
+Fixes: fea14e68ff5e ("usb: gadget: u_ether: use better list accessors")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/lapic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/function/u_ether.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 2216d21e955d..3692de84c420 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -55,7 +55,7 @@
- #define PRIo64 "o"
+diff --git a/drivers/usb/gadget/function/u_ether.c b/drivers/usb/gadget/function/u_ether.c
+index 1000d864929c..0f026d445e31 100644
+--- a/drivers/usb/gadget/function/u_ether.c
++++ b/drivers/usb/gadget/function/u_ether.c
+@@ -401,12 +401,12 @@ static int alloc_requests(struct eth_dev *dev, struct gether *link, unsigned n)
+ static void rx_fill(struct eth_dev *dev, gfp_t gfp_flags)
+ {
+ 	struct usb_request	*req;
+-	struct usb_request	*tmp;
+ 	unsigned long		flags;
  
- /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
--#define apic_debug(fmt, arg...)
-+#define apic_debug(fmt, arg...) do {} while (0)
+ 	/* fill unused rxq slots with some skb */
+ 	spin_lock_irqsave(&dev->req_lock, flags);
+-	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
++	while (!list_empty(&dev->rx_reqs)) {
++		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
+ 		list_del_init(&req->list);
+ 		spin_unlock_irqrestore(&dev->req_lock, flags);
  
- /* 14 is the version for Xeon and Pentium 8.4.8*/
- #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
+@@ -1125,7 +1125,6 @@ void gether_disconnect(struct gether *link)
+ {
+ 	struct eth_dev		*dev = link->ioport;
+ 	struct usb_request	*req;
+-	struct usb_request	*tmp;
+ 
+ 	WARN_ON(!dev);
+ 	if (!dev)
+@@ -1142,7 +1141,8 @@ void gether_disconnect(struct gether *link)
+ 	 */
+ 	usb_ep_disable(link->in_ep);
+ 	spin_lock(&dev->req_lock);
+-	list_for_each_entry_safe(req, tmp, &dev->tx_reqs, list) {
++	while (!list_empty(&dev->tx_reqs)) {
++		req = list_first_entry(&dev->tx_reqs, struct usb_request, list);
+ 		list_del(&req->list);
+ 
+ 		spin_unlock(&dev->req_lock);
+@@ -1154,7 +1154,8 @@ void gether_disconnect(struct gether *link)
+ 
+ 	usb_ep_disable(link->out_ep);
+ 	spin_lock(&dev->req_lock);
+-	list_for_each_entry_safe(req, tmp, &dev->rx_reqs, list) {
++	while (!list_empty(&dev->rx_reqs)) {
++		req = list_first_entry(&dev->rx_reqs, struct usb_request, list);
+ 		list_del(&req->list);
+ 
+ 		spin_unlock(&dev->req_lock);
 -- 
 2.19.1
 
