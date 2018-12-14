@@ -2,229 +2,178 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB73BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01B2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAED42080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE5FB208C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="DrwMNVOC";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="NNRRo8KO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbeLNV6G (ORCPT
+        id S1731414AbeLNV6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:58:06 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:50908 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731381AbeLNV6F (ORCPT
+        Fri, 14 Dec 2018 16:58:30 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56788 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730987AbeLNV6a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:58:05 -0500
-Received: by mail-it1-f200.google.com with SMTP id p66so7140239itc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:58:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ozKzKYDUKryHyGpOD7wf8akGmQDmQkP7h/Z5T+xO9o4=;
-        b=Pn7NMfIT6pnsc+3p64zXneMti9sGf+ncV6p30TqnK5e08GbqrrSFKmnGEkAEK6Ucc3
-         gRzJa109zwTqwgtUc1rbH08EOrT0rJ4SzTapsWCn8zQylQsY1Iwe8CU6i6lp6A3haZoY
-         b0YU4Wkc8+yokPAoNtz8GzhkqeYssyOEp2CxXzDMJxy2o9Jch7AG1qmrdniIwn15y2xO
-         qClWrtXsoyH4Jk//ALpjK52KdTtFOV8mxPY5Cn/DcnrkX6yI8PpoboOL707tf8fjc7JW
-         VCXgFnHq5mqFRkp5TouXKdukc612JY2nnnxuracQqoBHR1bdCXcuERFqXVlQK30IjGj9
-         tDGg==
-X-Gm-Message-State: AA+aEWZUbcXT+JkFheVdqG2udiry3PHztl7E6gvo+GtMS1sUh3G79IAA
-        ubsP7NRzLgjBapQMX6GqMF9JrvjswuONp4RR4fVpokE+DCGJ
-X-Google-Smtp-Source: AFSGD/V1sJ2eGVHUjonfUc/vPaYZP2JLU7+RQsrm/wAitqA0l/O5yYNjS8ZaMrKPNSdodl6q3eVkzz8mVNNIljZELcpd0aTFAw3/
+        Fri, 14 Dec 2018 16:58:30 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wBELvSus008224;
+        Fri, 14 Dec 2018 13:57:38 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=h/DScmKHnQ0tHXnmkOFx+tNgVsHO7n8i6Yxpl7bM0+U=;
+ b=DrwMNVOCZlyfAhvKzHF73NkJ2bkIdUGa9Xz3JEzzKIy+Ls6qy1c2RnPFjMj2ZyUy8dSa
+ PPE4mAwhPyPI/P9dCbbbVlmpRtZIrmDJjgdYTxbVzPr4nK97NL8daQmSJeWdIl8pbAa2
+ fS/afRgfQlBWPL92EDLSBup5e4V2eOB4cdU= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0001303.ppops.net with ESMTP id 2pckmwr79h-8
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 14 Dec 2018 13:57:38 -0800
+Received: from frc-mbx05.TheFacebook.com (2620:10d:c0a1:f82::29) by
+ frc-hub03.TheFacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 14 Dec 2018 13:57:21 -0800
+Received: from frc-hub06.TheFacebook.com (2620:10d:c021:18::176) by
+ frc-mbx05.TheFacebook.com (2620:10d:c0a1:f82::29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 14 Dec 2018 13:57:21 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Fri, 14 Dec 2018 13:57:21 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h/DScmKHnQ0tHXnmkOFx+tNgVsHO7n8i6Yxpl7bM0+U=;
+ b=NNRRo8KO1KfOs8pPTr1Fsv3eU1lIQ4C0R9GpgjkJ5bpM49p7VDpHoWC7BdMKlmlYpIB7QJvLHULSrgeSkp0ZpRiHyLlH0EGqihVAv0+1bv2U7a1NOnfDzsflvmYNsq3iMTxkWLaVT7AsHRswp2PRXWMdSdg03H0Q70b38fYluHI=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB3512.namprd15.prod.outlook.com (20.179.60.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.18; Fri, 14 Dec 2018 21:57:19 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::990:c2e0:2a8a:25c5]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::990:c2e0:2a8a:25c5%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
+ 21:57:19 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Joe Perches <joe@perches.com>, Roman Gushchin <guroan@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [RFC 2/4] mm: separate memory allocation and actual work in
+ alloc_vmap_area()
+Thread-Topic: [RFC 2/4] mm: separate memory allocation and actual work in
+ alloc_vmap_area()
+Thread-Index: AQHUk9fzDSxUUU4eTEmN2i0i66X5W6V+ibUAgAAYaoCAAAEwAIAAJPOA
+Date:   Fri, 14 Dec 2018 21:57:19 +0000
+Message-ID: <20181214215713.GA27488@tower.DHCP.thefacebook.com>
+References: <20181214180720.32040-1-guro@fb.com>
+ <20181214180720.32040-3-guro@fb.com>
+ <20181214181322.GC10600@bombadil.infradead.org>
+ <0192c1984f42ad0a33e4c9aca04df90c97ebf412.camel@perches.com>
+ <20181214194500.GF10600@bombadil.infradead.org>
+In-Reply-To: <20181214194500.GF10600@bombadil.infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR02CA0017.namprd02.prod.outlook.com
+ (2603:10b6:300:4b::27) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::4:3282]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB3512;20:wEJdKAKMcDJl0jTYXXN1q3tKld09zaUmHxtEKjafQpy5HpoUgfEZ2QhfJ8GcvBiT+4KsxT1uQj5gQ+tNJN4gwU2ziACbNaiteyPjCf0HhMboO5dN4teqDuDcs/ihB0KXrhPpWipqmI3wp8U7nLqFj8LPmaGBBT7xBurLSsR8Wyc=
+x-ms-office365-filtering-correlation-id: 92219e0a-7e0c-46a1-cbab-08d6620f1e52
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB3512;
+x-ms-traffictypediagnostic: BYAPR15MB3512:
+x-microsoft-antispam-prvs: <BYAPR15MB35129190624CD8D5E0BEFEC2BEA10@BYAPR15MB3512.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(5005006)(8121501046)(823302103)(10201501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB3512;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB3512;
+x-forefront-prvs: 08864C38AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(39860400002)(396003)(136003)(189003)(199004)(305945005)(105586002)(7736002)(6916009)(478600001)(2906002)(6116002)(6486002)(14454004)(229853002)(256004)(6436002)(1076002)(11346002)(6506007)(46003)(186003)(33896004)(4326008)(386003)(102836004)(486006)(6246003)(53936002)(68736007)(25786009)(446003)(9686003)(6512007)(86362001)(5660300001)(52116002)(99286004)(39060400002)(76176011)(8936002)(54906003)(316002)(8676002)(33656002)(93886005)(81166006)(71190400001)(71200400001)(81156014)(106356001)(4001150100001)(476003)(97736004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3512;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0Z1G/hhkmdLM5n/CIpMtQ0ZFuxpfSNrguTk76gwtq6mHeonW11QG6O+uWYwMv4I4Z2c2PLApxlgCSxSDVZQm79G+l1ITfsQw2sfYhPWkwNyFwfvqiFEXZktkZFNDwH//XaAsvZCCcLclawn/EEDtsUlwQMmTWkaYfLzKDon/OpajWffsFei8rz8rSdbOSKcUbrr23BDzPOYH3JGxVyfrqwoCrmtZjUKT33hqNJiMgHmzeSfE0P6sx6/bOGjuffEKVvxYFiZbJ1fPgaoh3o55CVod0+U9Hq8DHyZRCNayfywqvIeBudnTrBvmj8G8nigV
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B16C1316E2CD244C86578D5E121C40FD@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a24:4d82:: with SMTP id l124mr4322144itb.9.1544824683666;
- Fri, 14 Dec 2018 13:58:03 -0800 (PST)
-Date:   Fri, 14 Dec 2018 13:58:03 -0800
-In-Reply-To: <000000000000de3c7705746dcbb7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000082aab3057d028616@google.com>
-Subject: Re: KASAN: use-after-free Read in ccid_hc_tx_delete
-From:   syzbot <syzbot+3967c1caf256f4d5aefe@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92219e0a-7e0c-46a1-cbab-08d6620f1e52
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 21:57:19.4899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3512
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Fri, Dec 14, 2018 at 11:45:00AM -0800, Matthew Wilcox wrote:
+> On Fri, Dec 14, 2018 at 11:40:45AM -0800, Joe Perches wrote:
+> > On Fri, 2018-12-14 at 10:13 -0800, Matthew Wilcox wrote:
+> > > On Fri, Dec 14, 2018 at 10:07:18AM -0800, Roman Gushchin wrote:
+> > > > +/*
+> > > > + * Allocate a region of KVA of the specified size and alignment, w=
+ithin the
+> > > > + * vstart and vend.
+> > > > + */
+> > > > +static struct vmap_area *alloc_vmap_area(unsigned long size,
+> > > > +					 unsigned long align,
+> > > > +					 unsigned long vstart,
+> > > > +					 unsigned long vend,
+> > > > +					 int node, gfp_t gfp_mask)
+> > > > +{
+> > > > +	struct vmap_area *va;
+> > > > +	int ret;
+> > > > +
+> > > > +	va =3D kmalloc_node(sizeof(struct vmap_area),
+> > > > +			gfp_mask & GFP_RECLAIM_MASK, node);
+> > > > +	if (unlikely(!va))
+> > > > +		return ERR_PTR(-ENOMEM);
+> > > > +
+> > > > +	ret =3D init_vmap_area(va, size, align, vstart, vend, node, gfp_m=
+ask);
+> > > > +	if (ret) {
+> > > > +		kfree(va);
+> > > > +		return ERR_PTR(ret);
+> > > > +	}
+> > > > +
+> > > > +	return va;
+> > > >  }
+> > > > =20
+> > > > +
+> > >=20
+> > > Another spurious blank line?
+> >=20
+> > I don't think so.
+> >=20
+> > I think it is the better style to separate
+> > the error return from the normal return.
+>=20
+> Umm ... this blank line changed the file from having one blank line
+> after the function to having two blank lines after the function.
+>=20
 
-HEAD commit:    eb6cf9f8cb9d Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a09b6d400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-dashboard link: https://syzkaller.appspot.com/bug?extid=3967c1caf256f4d5aefe
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a4895d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1271cf05400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3967c1caf256f4d5aefe@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in ccid_hc_tx_delete+0xe0/0x100  
-net/dccp/ccid.c:188
-Read of size 8 at addr ffff8881bdce7980 by task syz-executor384/6286
-
-CPU: 1 PID: 6286 Comm: syz-executor384 Not tainted 4.20.0-rc6+ #276
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  ccid_hc_tx_delete+0xe0/0x100 net/dccp/ccid.c:188
-  dccp_hdlr_ccid+0x7d/0x150 net/dccp/feat.c:53
-  __dccp_feat_activate+0x188/0x280 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3c1/0x80a net/dccp/feat.c:1538
-  dccp_create_openreq_child+0x47a/0x630 net/dccp/minisocks.c:127
-  dccp_v6_request_recv_sock+0x278/0x2020 net/dccp/ipv6.c:466
-  dccp_check_req+0x47d/0x6d0 net/dccp/minisocks.c:196
-  dccp_v6_rcv+0x874/0x1ce9 net/dccp/ipv6.c:744
-  ip6_input_finish+0x3fc/0x1aa0 net/ipv6/ip6_input.c:384
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:427
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
-  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4946
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5056
-  process_backlog+0x24e/0x7a0 net/core/dev.c:5864
-  napi_poll net/core/dev.c:6287 [inline]
-  net_rx_action+0x7fa/0x19b0 net/core/dev.c:6353
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1027
-  </IRQ>
-  do_softirq.part.14+0x126/0x160 kernel/softirq.c:337
-  do_softirq kernel/softirq.c:329 [inline]
-  __local_bh_enable_ip+0x21d/0x260 kernel/softirq.c:189
-  local_bh_enable include/linux/bottom_half.h:32 [inline]
-  rcu_read_unlock_bh include/linux/rcupdate.h:696 [inline]
-  ip6_finish_output2+0xcef/0x2940 net/ipv6/ip6_output.c:121
-  ip6_finish_output+0x58c/0xc60 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip6_xmit+0xf1c/0x2510 net/ipv6/ip6_output.c:275
-  inet6_csk_xmit+0x375/0x630 net/ipv6/inet6_connection_sock.c:139
-  dccp_transmit_skb+0x98c/0x12e0 net/dccp/output.c:142
-  dccp_send_ack+0x1d9/0x360 net/dccp/output.c:595
-  dccp_rcv_request_sent_state_process net/dccp/input.c:501 [inline]
-  dccp_rcv_state_process+0x152e/0x1b7e net/dccp/input.c:680
-  dccp_v6_do_rcv+0x271/0xbf0 net/dccp/ipv6.c:638
-  sk_backlog_rcv include/net/sock.h:932 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2276
-  release_sock+0xad/0x2c0 net/core/sock.c:2789
-  inet_wait_for_connect net/ipv4/af_inet.c:588 [inline]
-  __inet_stream_connect+0x641/0x1150 net/ipv4/af_inet.c:680
-  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:719
-  __sys_connect+0x37d/0x4c0 net/socket.c:1664
-  __do_sys_connect net/socket.c:1675 [inline]
-  __se_sys_connect net/socket.c:1672 [inline]
-  __ia32_sys_connect+0x72/0xb0 net/socket.c:1672
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f22a29
-Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
-90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f7edc1fc EFLAGS: 00000293 ORIG_RAX: 000000000000016a
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020419000
-RDX: 000000000000001c RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000003d0f00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 6269:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
-  ccid_new+0x25b/0x3e0 net/dccp/ccid.c:151
-  dccp_hdlr_ccid+0x27/0x150 net/dccp/feat.c:44
-  __dccp_feat_activate+0x188/0x280 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3c1/0x80a net/dccp/feat.c:1538
-  dccp_rcv_request_sent_state_process net/dccp/input.c:472 [inline]
-  dccp_rcv_state_process+0x1320/0x1b7e net/dccp/input.c:680
-  dccp_v6_do_rcv+0x271/0xbf0 net/dccp/ipv6.c:638
-  sk_backlog_rcv include/net/sock.h:932 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2276
-  release_sock+0xad/0x2c0 net/core/sock.c:2789
-  inet_wait_for_connect net/ipv4/af_inet.c:588 [inline]
-  __inet_stream_connect+0x641/0x1150 net/ipv4/af_inet.c:680
-  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:719
-  __sys_connect+0x37d/0x4c0 net/socket.c:1664
-  __do_sys_connect net/socket.c:1675 [inline]
-  __se_sys_connect net/socket.c:1672 [inline]
-  __ia32_sys_connect+0x72/0xb0 net/socket.c:1672
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-Freed by task 6283:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3760
-  ccid_hc_tx_delete+0xc3/0x100 net/dccp/ccid.c:190
-  dccp_hdlr_ccid+0x7d/0x150 net/dccp/feat.c:53
-  __dccp_feat_activate+0x188/0x280 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3c1/0x80a net/dccp/feat.c:1538
-  dccp_create_openreq_child+0x47a/0x630 net/dccp/minisocks.c:127
-  dccp_v6_request_recv_sock+0x278/0x2020 net/dccp/ipv6.c:466
-  dccp_check_req+0x47d/0x6d0 net/dccp/minisocks.c:196
-  dccp_v6_rcv+0x874/0x1ce9 net/dccp/ipv6.c:744
-  ip6_input_finish+0x3fc/0x1aa0 net/ipv6/ip6_input.c:384
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:427
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
-  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4946
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5056
-  process_backlog+0x24e/0x7a0 net/core/dev.c:5864
-  napi_poll net/core/dev.c:6287 [inline]
-  net_rx_action+0x7fa/0x19b0 net/core/dev.c:6353
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff8881bdce7980
-  which belongs to the cache ccid2_hc_tx_sock of size 1240
-The buggy address is located 0 bytes inside of
-  1240-byte region [ffff8881bdce7980, ffff8881bdce7e58)
-The buggy address belongs to the page:
-page:ffffea0006f73980 count:1 mapcount:0 mapping:ffff8881c5c76680 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 ffffea0006f71108 ffffea0006f73908 ffff8881c5c76680
-raw: 0000000000000000 ffff8881bdce6380 0000000100000005 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881bdce7880: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
-  ffff8881bdce7900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8881bdce7980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff8881bdce7a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881bdce7a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
+Yes, it's an odd free line (here and above), will remove them in v2.
+Thanks!
