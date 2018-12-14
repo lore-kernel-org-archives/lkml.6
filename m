@@ -2,84 +2,97 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD303C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2361C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0508F208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544824406;
-	bh=mqO3YP3eHsgRkD/KZQMsIg8V+7AaFLxrKnPCGddnhbc=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=dTP+OpQRGCKASJQ8g4GY8MS7HRsOEEPLk1yUV2INgZKMnIncvzYb/FBuKq/pqhGCc
-	 ggVUfek81INDQJYVrRkwNTGv001vemX7tjl+qNI+SS/yDGJkmFoKkeojr0YH4+S4N+
-	 I+hUN7F4ozkQB0tABwufOTbCCTXaLPvhtCCRifHI=
+	by mail.kernel.org (Postfix) with ESMTP id 427F0208C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731331AbeLNVxY (ORCPT
+        id S1731352AbeLNVx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:53:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49800 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 16:53:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47266 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731209AbeLNVxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:53:22 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731209AbeLNVxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:53:25 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA609208C3;
-        Fri, 14 Dec 2018 21:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544824401;
-        bh=mqO3YP3eHsgRkD/KZQMsIg8V+7AaFLxrKnPCGddnhbc=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=ipkZ8D/xEXJU6RQvm07gthzb73fYC+vXJx4N70i+C0I76369MVx+2LL9y+baclhkz
-         AQtv/Lv5p1MsDHvIPOuLVoynof99rXnCdNVqUEGdX6BuWe41tI0DkgAstMBqfFcfX6
-         89Yc6C1x6x9TUKSEMR/J/7EwItZd5dHIkeChV484=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
-Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181205195050.4759-5-robh@kernel.org>
-Message-ID: <154482440058.19322.10903668758246014018@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date:   Fri, 14 Dec 2018 13:53:20 -0800
+        by mx1.redhat.com (Postfix) with ESMTPS id 630D4420B3;
+        Fri, 14 Dec 2018 21:53:25 +0000 (UTC)
+Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2339060C54;
+        Fri, 14 Dec 2018 21:53:20 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [RESEND PATCH v4 2/3] fs: Don't need to put list_lru into its own cacheline
+Date:   Fri, 14 Dec 2018 16:53:03 -0500
+Message-Id: <1544824384-17668-3-git-send-email-longman@redhat.com>
+In-Reply-To: <1544824384-17668-1-git-send-email-longman@redhat.com>
+References: <1544824384-17668-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 14 Dec 2018 21:53:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2018-12-05 11:50:21)
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
->=20
-> For instances using of_node_cmp, this has the side effect of now using
-> case sensitive comparisons. This should not matter for any FDT based
-> system which all of these are.
->=20
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+The list_lru structure is essentially just a pointer to a table of
+per-node LRU lists. Even if CONFIG_MEMCG_KMEM is defined, the list
+field is just used for LRU list registration and shrinker_id is set
+at initialization. Those fields won't need to be touched that often.
 
-Applied to clk-next
+So there is no point to make the list_lru structures to sit in their
+own cachelines.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+---
+ include/linux/fs.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c95c080..7707c4a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1474,11 +1474,12 @@ struct super_block {
+ 	struct user_namespace *s_user_ns;
+ 
+ 	/*
+-	 * Keep the lru lists last in the structure so they always sit on their
+-	 * own individual cachelines.
++	 * The list_lru structure is essentially just a pointer to a table
++	 * of per-node lru lists, each of which has its own spinlock.
++	 * There is no need to put them into separate cachelines.
+ 	 */
+-	struct list_lru		s_dentry_lru ____cacheline_aligned_in_smp;
+-	struct list_lru		s_inode_lru ____cacheline_aligned_in_smp;
++	struct list_lru		s_dentry_lru;
++	struct list_lru		s_inode_lru;
+ 	struct rcu_head		rcu;
+ 	struct work_struct	destroy_work;
+ 
+-- 
+1.8.3.1
 
