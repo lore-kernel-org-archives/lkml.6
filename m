@@ -2,150 +2,133 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6C3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD80CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01B420656
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02F0020656
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbeLNO0a (ORCPT
+        id S1730204AbeLNO0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:26:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:36167 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729758AbeLNO0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:26:30 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43GXss1xrMz9sB5;
-        Sat, 15 Dec 2018 01:26:25 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     benh@kernel.crashing.org, lineprinter@altlinux.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        oohall@gmail.com, paulus@ozlabs.org, radu.rendec@gmail.com,
-        sandipan@linux.ibm.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.20-4 tag
-Date:   Sat, 15 Dec 2018 01:26:19 +1100
-Message-ID: <87ftv0uqus.fsf@concordia.ellerman.id.au>
+        Fri, 14 Dec 2018 09:26:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49553 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729758AbeLNO0o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 09:26:44 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXoQB-00047i-3n; Fri, 14 Dec 2018 15:26:31 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXoQ8-0005E4-4I; Fri, 14 Dec 2018 15:26:28 +0100
+Date:   Fri, 14 Dec 2018 15:26:28 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
+        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
+Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+Message-ID: <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+ <20181212220922.18759-16-paul@crapouillou.net>
+ <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
+ <1544709795.18952.1@crapouillou.net>
+ <20181213204219.onem3q6dcmakusl2@pengutronix.de>
+ <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hello,
 
-Hi Linus,
+On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
+> On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+> > [Adding Linus Walleij to Cc:]
+> > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
+> > > Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
+> > > <u.kleine-koenig@pengutronix.de> a écrit :
+> > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
+> > > > >  The PWM in the JZ4725B works the same as in the JZ4740, except that
+> > > > > it
+> > > > >  only has 6 channels available instead of 8.
+> > > >
+> > > > this driver is probed only from device tree? If yes, it might be
+> > > > sensible to specify the number of PWMs there and get it from there.
+> > > > There doesn't seem to be a generic binding for that, but there are
+> > > > several drivers that could benefit from it. (This is a bigger project
+> > > > though and shouldn't stop your patch. Still more as it already got
+> > > > Thierry's ack.)
+> > >
+> > > I think there needs to be a proper guideline, as there doesn't seem to be
+> > > a consensus about this. I learned from emails with Rob and Linus (Walleij)
+> > > that I should not have in devicetree what I can deduce from the compatible
+> > > string.
+> >
+> > I understood them a bit differently. It is ok to deduce things from the
+> > compatible string. But if you define a generic property (say) "num-pwms"
+> > that is used uniformly in most bindings this is ok, too. (And then the
+> > two different devices could use the same compatible.)
+> >
+> > An upside of the generic "num-pwms" property is that the pwm core could
+> > sanity check pwm phandles before passing them to the hardware drivers.
+> 
+> I don't know if this helps, but in GPIO we have "ngpios" which is
+> used to augment an existing block as to the number of lines actually
+> used with it.
+> 
+> The typical case is that an ASIC engineer synthesize a block for
+> 32 GPIOs but only 12 of them are routed to external pads. So
+> we augment the behaviour of that driver to only use 12 of the
+> 32 lines.
+> 
+> I guess using the remaining 20 lines "works" in a sense but they
+> have no practical use and will just bias electrons in the silicon
+> for no use.
 
-Please pull some more powerpc fixes for 4.20:
+This looks very similar to the case under discussion.
+ 
+> So if the PWM case is something similar, then by all means add
+> num-pwms.
 
-The following changes since commit b2fed34a628df6118b5d4e13f49a33e15f704fa9:
+.. or "npwms" to use the same nomenclature as the gpio binding?
 
-  selftests/powerpc: Adjust wild_bctr to build with old binutils (2018-11-15 23:05:17 +1100)
+Best regards
+Uwe
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.20-4
-
-for you to fetch changes up to a225f1567405558fb5410e9b2b90805819df1c67:
-
-  powerpc/ptrace: replace ptrace_report_syscall() with a tracehook call (2018-12-10 15:19:58 +1100)
-
-- ------------------------------------------------------------------
-powerpc fixes for 4.20 #4
-
-One notable fix for our change to split pt_regs between user/kernel, we forgot
-to update BPF to use the user-visible type which was an ABI break for BPF
-programs.
-
-A slightly ugly but minimal fix to do_syscall_trace_enter() so that we use
-tracehook_report_syscall_entry() properly. We'll rework the code in next to
-avoid the empty if body.
-
-Seven commits fixing bugs in the new papr_scm (Storage Class Memory) driver.
-The driver was finally able to be tested on the other hypervisor which exposed
-several bugs. The fixes are all fairly minimal at least.
-
-Fix a crash in our MSI code if an MSI-capable device is plugged into a non-MSI
-capable PHB, only seen on older hardware (MPC8378).
-
-Fix our legacy serial code to look for "stdout-path" since the device trees were
-updated to use that instead of "linux,stdout-path".
-
-A change to the COFF zImage code to fix booting old powermacs.
-
-A couple of minor build fixes.
-
-Thanks to:
-  Benjamin Herrenschmidt, Daniel Axtens, Dmitry V. Levin, Elvira Khabirova,
-  Oliver O'Halloran, Paul Mackerras, Radu Rendec, Rob Herring, Sandipan Das.
-
-- ------------------------------------------------------------------
-Benjamin Herrenschmidt (1):
-      powerpc: Look for "stdout-path" when setting up legacy consoles
-
-Elvira Khabirova (1):
-      powerpc/ptrace: replace ptrace_report_syscall() with a tracehook call
-
-Michael Ellerman (2):
-      powerpc/mm: Fix linux page tables build with some configs
-      powerpc/boot: Fix build failures with -j 1
-
-Oliver O'Halloran (7):
-      powerpc/papr_scm: Use depend instead of select
-      powerpc/papr_scm: Fix resource end address
-      powerpc/papr_scm: Update DT properties
-      powerpc/papr_scm: Remove endian conversions
-      powerpc/papr_scm: Fix DIMM device registration race
-      powerpc/papr_scm: Use ibm,unit-guid as the iset cookie
-      powerpc/mm: Fallback to RAM if the altmap is unusable
-
-Paul Mackerras (1):
-      powerpc: Fix COFF zImage booting on old powermacs
-
-Radu Rendec (1):
-      powerpc/msi: Fix NULL pointer access in teardown code
-
-Sandipan Das (1):
-      powerpc/bpf: Fix broken uapi for BPF_PROG_TYPE_PERF_EVENT
-
-
- arch/powerpc/boot/Makefile                     |  2 +-
- arch/powerpc/boot/crt0.S                       |  4 ++-
- arch/powerpc/include/asm/perf_event.h          |  2 ++
- arch/powerpc/include/uapi/asm/Kbuild           |  1 -
- arch/powerpc/include/uapi/asm/bpf_perf_event.h |  9 ++++++
- arch/powerpc/kernel/legacy_serial.c            |  6 +++-
- arch/powerpc/kernel/msi.c                      |  7 ++++-
- arch/powerpc/kernel/ptrace.c                   |  7 ++++-
- arch/powerpc/mm/dump_linuxpagetables.c         |  1 +
- arch/powerpc/mm/init_64.c                      | 19 +++++++++++--
- arch/powerpc/platforms/pseries/Kconfig         |  3 +-
- arch/powerpc/platforms/pseries/papr_scm.c      | 39 ++++++++++++++++++++------
- 12 files changed, 80 insertions(+), 20 deletions(-)
- create mode 100644 arch/powerpc/include/uapi/asm/bpf_perf_event.h
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJcE71eAAoJEFHr6jzI4aWAQUkP/0Z1YlNpl2Zf9GG1J1QsBCtj
-H2KS/a01GciH6TO16ULovjFhJppcwPGOCYKU/elnge4cqC+c7sZDDLeXrB6byzfP
-9jYbuC3QZ0ct1d34x7vzg/kplutMu1HClxUBU5g7QF9l2b70rB6UWf1WSJnCLgCg
-MEwQscEPymJJpLO5r0B1/pCijLN2Rpy0vMbZbOoQW4/G/6qQ3d4ygDdWrh4lJNFf
-LwWYLXi5SZ/1jFIb6/wYuomT4WIfD+JCaGsH3THAm7sfC7qx+nUOCGtA81vHGUaK
-nW14snebk0viL8STJ4MO1IFJ9x3MsQAylpyyfcdzQ3Q3+rRkaPWwHrvOcnNavwfw
-+PKDyqV+Ot9+2Es79ZDGeF68q7L7Q4qtZIIL9ARh5pokvMiycsYPOcMQW3IIbkZQ
-aFS3SAQalGaSAlNp5NDnNoZ4rhb+tlR3k6fCbHkuPehj3IAvVzzc6XY3w2rr0wFy
-ZAgnv+54aI7CNcasRiu+KStLYflr2xorjrRHWigli9KtyB+uZbx6IzDDGgQpPHAd
-rUoJujp7G/GUclFJ42LF6MBDKTGU2XJP0rogEkNhmCY8RwbDPsvw52CYosEJmrMo
-rMgVbO35eRmCmF+cbaRvRzsVXYVuPFZfTt8wF2SYwDzSx49b2tW696Xr5+mkUGw6
-vu2XQ1BG1C/0mbIjgjKm
-=ABj8
------END PGP SIGNATURE-----
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
