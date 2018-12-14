@@ -2,149 +2,136 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD2CC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E31C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA8B220643
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 114B320643
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:41:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OGR0J6Qn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d88BVR1H"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="deijFDvX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbeLNNlP (ORCPT
+        id S1729987AbeLNNlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:41:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47692 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNNlO (ORCPT
+        Fri, 14 Dec 2018 08:41:19 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42018 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbeLNNlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:41:14 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 82AA260734; Fri, 14 Dec 2018 13:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544794873;
-        bh=K3r5RFGlpa6obUW0b3/Ju40YiduwaHkpPsh/DsOQdf8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OGR0J6Qn8SozdcF5P6GxhNOMFkuhULlIYVh9peglI/SNwXJhjpURfqpewDdYbTZfC
-         fE0SExAtqsTF7tIcnBTn/P7v4whBu780lQ1LNkdM5AcAj0ah68oeiki97cXvA3NshG
-         9xAvJRHknYbShPWRZI2n1LTI4yTRxCI/OJjHOBko=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 9B3C6601D3;
-        Fri, 14 Dec 2018 13:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544794872;
-        bh=K3r5RFGlpa6obUW0b3/Ju40YiduwaHkpPsh/DsOQdf8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=d88BVR1H9PKXuGsnZM+ddH2PApJ+d+Ux7yawqS2Hqfgleb7XOzvstXruIBP4a+9m4
-         VCE65WoxmGFuU1pVcd8G8aEKp4/A4jVvJWQHB2FcA3dXc0cwREZJC1nrj9GqMEJH4p
-         ZhWCP/7UCJyFLyqjmoPgsYTTWmIMAOjLv9jX9JKA=
+        Fri, 14 Dec 2018 08:41:16 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l15-v6so4915593lja.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:41:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lGniGw3P2/sCM8N8VJi0tTlI78rVCQFmJacEPvmK3gs=;
+        b=deijFDvXo16pLRCJ1VaUqYSeiB0pH8Ad5P6qkSz6qmDx6VUYIqFPvNBoMwikmkMUT0
+         rU7ikTeVeKMDKCI8SGzIqCmfBOANXncpmIxRxibvm51IYilI2n928oMl1F8Wqzh7Tobz
+         FYo9xBH+DSxQ/dmXoGyCthEPzvFx1h7Ke3zKo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lGniGw3P2/sCM8N8VJi0tTlI78rVCQFmJacEPvmK3gs=;
+        b=T7pGvwvfIpskUpeP7qaEdHfASPBzth5V66Mzfke4GvlTJkxeFiH7bEcBatObUvhLkP
+         awNen19VL0ZD8Ru+AkPARPqmchlwtFLlAqw9A7UlOrvAae5ZXgKV4DMHgP5keTYQvoFY
+         1nvzZlad/QswdhNbLzlVrIDSR6lH6xzACyw7YV+1u8ePCe+opLfl/973jxCfRItaqoz+
+         3xPCX0FRCBGttgUetMQeIalCtbUTGwnVrKCfz8IDJXN/lmxLRKDVedzcN9vtsF8P3gio
+         q+scf3zPQT4xFDSbhMuhCG0pLhtzrd7ieRBG3N0chvHD1IRq/GQ9tAC/SG4WmQep6tH8
+         12qA==
+X-Gm-Message-State: AA+aEWZpWpkJSTnIwltamBq6gs2nxkNTz967Pu4JTlvobqVIClf05Avh
+        wgN50EJ0/s7+Da3o8Af7WkuYdeQtrcXpMFCv60eu2A==
+X-Google-Smtp-Source: AFSGD/Wam2UW2bwgAr3gEFdaWk4d//hWRe2gBmvI8OqyI6RERkCPo+14MsmYl6ZHIsbTQs/awbLS/p+q2rFOU+UEJfM=
+X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr1895351ljp.12.1544794873921;
+ Fri, 14 Dec 2018 05:41:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 14 Dec 2018 19:11:12 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v3 1/4] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-In-Reply-To: <20181214131619.GD20658@localhost>
-References: <20181130150247.26294-1-bgodavar@codeaurora.org>
- <20181130150247.26294-2-bgodavar@codeaurora.org>
- <20181205062503.GG18087@localhost>
- <c9bcbaed89a18499fe42463b20367499@codeaurora.org>
- <20181212164251.GI3500@localhost>
- <53775e90cb3803cee9cfff2325cb7429@codeaurora.org>
- <20181214131619.GD20658@localhost>
-Message-ID: <908712e67aae78acfc2dcf619aedf075@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-2-thierry.reding@gmail.com>
+In-Reply-To: <20181129170312.23625-2-thierry.reding@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 14 Dec 2018 14:41:01 +0100
+Message-ID: <CACRpkdYhgCsr2w-MgwdLDvcZXDhkvn2_sgvGW8VskK1=3kVASw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] gpio: Add support for hierarchical IRQ domains
+To:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Brian Masney <masneyb@onstation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+Hi Thierry!
 
-On 2018-12-14 18:46, Johan Hovold wrote:
-> On Fri, Dec 14, 2018 at 06:02:40PM +0530, Balakrishna Godavarthi wrote:
->> Hi Johan,
->> 
->> On 2018-12-12 22:12, Johan Hovold wrote:
->> > On Thu, Dec 06, 2018 at 04:10:07PM +0530, Balakrishna Godavarthi wrote:
-> 
->> >> uart_write_wakeup()->ttyport_write_wakeup()->serdev_controller_write_wakeup()->hci_uart_write_wakeup()->hci_uart_tx_wakeup()
->> >>
->> >>          the above is flow when serdev_device_write() is called, it is
->> >> indirectly calling serdev_write_wakeup().
->> >
->> > No, serdev_device_write_wakeup() is currently not called in this path,
->> > which means you cannot use serdev_device_write().
->> >
->> >>          Why actual we need to call an serdev_write_wakeup() is this
->> >> wakeup related to the UART port or for the BT chip.
->> >
->> > serdev_device_write_wakeup() is where a writer blocked on a full write
->> > buffer in serdev_device_write() is woken up.
->> >
->> > Johan
->> 
->> Is it preferred to use and serdev_device_write_buf() followed by
->> serdev_device_wait_until_sent()
-> 
-> That's up to the driver author and depends on what you want to achieve.
-> 
+thanks a lot for the patch! This is really in the right direction
+of how I want things to go with hierarchical IRQs.
 
-[Bala]: During the BT on & of, we need to send the commands to the 
-controller
-at a specific baudrate. as the data is getting queued in the buffer we 
-see some times
-the data is transmitting on the newer baudrate instead of the actual 
-baudrate.
-we want to achieve an synchronous data transfer for some commands to 
-over come byte corruptions.
+Some comments:
 
-> If you want to do something synchronously, you always have to call
-> serdev_device_wait_until_sent() after, as both 
-> serdev_device_write_buf()
-> and serdev_device_write() only buffer the data.
-> 
-> If you use serdev_device_write_buf() you also have to make sure that 
-> you
-> can handle incomplete buffering yourself (e.g. when the underlying tty
-> driver buffer is getting full).
-> 
-> serdev_device_write() was added as a convenience helper for this, but
-> depends on serdev_device_write_wakeup() being called in the 
-> write_wakeup
-> path to make forward progress.
-> 
+On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
 
-[Bala]: Thanks for the info, now i understood the usage of the both 
-write() and write_buf().
+>  config GPIOLIB_IRQCHIP
+> -       select IRQ_DOMAIN
+> +       select IRQ_DOMAIN_HIERARCHY
 
->> or do we required an write_wakeup() called before writing into
->> serdev_device_write_buf()
-> 
-> No, that doesn't make any sense. serdev_device_write_wakeup() needs to
-> be called in the write-wakeup path, but only if you use
-> serdev_device_write().
-> 
-> Please see the documentation of these function that I added to
-> linux-next (and that I linked to earlier).
-> 
+I understand that IRQ_DOMAIN_HIERARCHY implies
+IRQ_DOMAIN but I kind of like if we anyway select both
+(unless Kconfig dislikes it).
 
-> Johan
+Otherwise it looks like we're just using hierarchies.
 
-Thanks Johan for the detailed info.
+>  static int gpiochip_to_irq(struct gpio_chip *chip, unsigned offset)
+>  {
+> +       struct irq_domain *domain = chip->irq.domain;
+> +
+>         if (!gpiochip_irqchip_irq_valid(chip, offset))
+>                 return -ENXIO;
+>
+> +       if (irq_domain_is_hierarchy(domain)) {
+> +               struct irq_fwspec spec;
+> +
+> +               spec.fwnode = domain->fwnode;
+> +               spec.param_count = 2;
+> +               spec.param[0] = offset;
+> +               spec.param[1] = 0;
+> +
+> +               return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
+> +       }
+> +
+>         return irq_create_mapping(chip->irq.domain, offset);
+>  }
 
--- 
-Regards
-Balakrishna.
+This is really nice.
+
+> -       gpiochip->to_irq = gpiochip_to_irq;
+> +       /*
+> +        * Allow GPIO chips to override the ->to_irq() if they really need to.
+> +        * This should only be very rarely needed, the majority should be fine
+> +        * with gpiochip_to_irq().
+> +        */
+> +       if (!gpiochip->to_irq)
+> +               gpiochip->to_irq = gpiochip_to_irq;
+
+And I see this is what your driver does, which leaves the default
+domain hierarchy callback path unused.
+
+It's better if you indirect the pointer like we do with some other
+irqchip stuff (see Hans Verkuils patches), i.e. if ->to_irq
+is defined, we save that function pointer and call that at the
+end of the gpiochip_to_irq() pointer, then we override it
+with our own.
+
+Since the Tegra186 clearly .to_irq() clearly is mostly the
+same plus some extra, this should work fine and give
+lesser lines of code in that driver.
+
+Apart from that I am a big fan of this patch!
+
+Yours,
+Linus Walleij
