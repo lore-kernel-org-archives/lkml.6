@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8068C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 268B2C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C1A20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF18220892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790908;
-	bh=be9+f80dcx+0ujA/w8eYa4xb1it4+sMqUmY3hGEiA40=;
+	s=default; t=1544790923;
+	bh=D7kF05SA+l2ORZBKjOnwTttg+4FvkNqDRfz7unZxIuc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LDJQHv2lqZuxf3V0hfs50UG1TqvnFWkS2tlJBg68Jb47/v294VCRjHHsZLqdHRLg3
-	 FzWg08FWH7KOxRhUKfybRKwvEdHTpC7YIB/UNFd7ZoPiRi8GKN+N3oNIV497dd6Tr7
-	 dZQq+FN4U9dvsPYGsrVw4eq2qKXfft9DR6QVsH3g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C1A20892
+	b=X7mFNS7TKFB8u/2x2JjSDVMhUeWQMmNotNIRgwFpqB21AH6ROx2860EyzKmbSQ3eD
+	 g1YYhKXFFI6P1NiY+yWZ9TYLunfhRp6xPFWayFgXUZeEuDBoNLnHfGTwCnUdOJUdcO
+	 dly8G/gDfbjA2Bv6t1UIzcQpKKMukYuLStOyasOs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF18220892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731118AbeLNMfH (ORCPT
+        id S1731236AbeLNMfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:35:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52960 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:35:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731148AbeLNMHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:38 -0500
+        id S1731104AbeLNMH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 721832147D;
-        Fri, 14 Dec 2018 12:07:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4883321479;
+        Fri, 14 Dec 2018 12:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789257;
-        bh=be9+f80dcx+0ujA/w8eYa4xb1it4+sMqUmY3hGEiA40=;
+        s=default; t=1544789247;
+        bh=D7kF05SA+l2ORZBKjOnwTttg+4FvkNqDRfz7unZxIuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ANMYoUdDzTRjSDC9W7LGl8wYDH9RV7DYFuMPB9HRGMzLu6ALF+fs/4+1k6Y/L1fC0
-         HKVWTZBzsIgT3LtrMYDiVgDdMPRouTz5x4FwV4LBRgOOXeFyjam5JY1fjnSMy6devj
-         eC91SSA3dJj9GFvk/bdxOfx3ymtcIW2tGx3t2FsE=
+        b=ghXWzIeeRp9OjO+6K+HyvYIBEX/2e+/AvhaNiA5gytiLT9Z2+uMuyr7ljOFveNvNL
+         VeBDRqZXBtozSDc6S4+v2Eie5VBKg13JnZFibo+bwzsAp7bVvWa98lJVDGHs2rIjVz
+         ALxqDHJB7cI18kylN6xyF6aVL4367FRDfw6ct5EU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rafael Tinoco <rafael.tinoco@linaro.org>,
-        Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Jiri Wiesner <jwiesner@suse.com>,
+        Per Sundstrom <per.sundstrom@redqube.se>,
+        Peter Oskolkov <posk@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 13/89] tcp: fix NULL ref in tail loss probe
-Date:   Fri, 14 Dec 2018 12:59:26 +0100
-Message-Id: <20181214115730.332438078@linuxfoundation.org>
+Subject: [PATCH 4.14 01/89] ipv4: ipv6: netfilter: Adjust the frag mem limit when truesize changes
+Date:   Fri, 14 Dec 2018 12:59:14 +0100
+Message-Id: <20181214115729.731269763@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -70,52 +70,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Jiri Wiesner <jwiesner@suse.com>
 
-[ Upstream commit b2b7af861122a0c0f6260155c29a1b2e594cd5b5 ]
+[ Upstream commit ebaf39e6032faf77218220707fc3fa22487784e0 ]
 
-TCP loss probe timer may fire when the retranmission queue is empty but
-has a non-zero tp->packets_out counter. tcp_send_loss_probe will call
-tcp_rearm_rto which triggers NULL pointer reference by fetching the
-retranmission queue head in its sub-routines.
+The *_frag_reasm() functions are susceptible to miscalculating the byte
+count of packet fragments in case the truesize of a head buffer changes.
+The truesize member may be changed by the call to skb_unclone(), leaving
+the fragment memory limit counter unbalanced even if all fragments are
+processed. This miscalculation goes unnoticed as long as the network
+namespace which holds the counter is not destroyed.
 
-Add a more detailed warning to help catch the root cause of the inflight
-accounting inconsistency.
+Should an attempt be made to destroy a network namespace that holds an
+unbalanced fragment memory limit counter the cleanup of the namespace
+never finishes. The thread handling the cleanup gets stuck in
+inet_frags_exit_net() waiting for the percpu counter to reach zero. The
+thread is usually in running state with a stacktrace similar to:
 
-Reported-by: Rafael Tinoco <rafael.tinoco@linaro.org>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
+ PID: 1073   TASK: ffff880626711440  CPU: 1   COMMAND: "kworker/u48:4"
+  #5 [ffff880621563d48] _raw_spin_lock at ffffffff815f5480
+  #6 [ffff880621563d48] inet_evict_bucket at ffffffff8158020b
+  #7 [ffff880621563d80] inet_frags_exit_net at ffffffff8158051c
+  #8 [ffff880621563db0] ops_exit_list at ffffffff814f5856
+  #9 [ffff880621563dd8] cleanup_net at ffffffff814f67c0
+ #10 [ffff880621563e38] process_one_work at ffffffff81096f14
+
+It is not possible to create new network namespaces, and processes
+that call unshare() end up being stuck in uninterruptible sleep state
+waiting to acquire the net_mutex.
+
+The bug was observed in the IPv6 netfilter code by Per Sundstrom.
+I thank him for his analysis of the problem. The parts of this patch
+that apply to IPv4 and IPv6 fragment reassembly are preemptive measures.
+
+Signed-off-by: Jiri Wiesner <jwiesner@suse.com>
+Reported-by: Per Sundstrom <per.sundstrom@redqube.se>
+Acked-by: Peter Oskolkov <posk@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/ipv4/ip_fragment.c                  |    7 +++++++
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    8 +++++++-
+ net/ipv6/reassembly.c                   |    8 +++++++-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2476,14 +2476,18 @@ void tcp_send_loss_probe(struct sock *sk
- 		skb = tcp_write_queue_tail(sk);
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -513,6 +513,7 @@ static int ip_frag_reasm(struct ipq *qp,
+ 	struct rb_node *rbn;
+ 	int len;
+ 	int ihlen;
++	int delta;
+ 	int err;
+ 	u8 ecn;
+ 
+@@ -554,10 +555,16 @@ static int ip_frag_reasm(struct ipq *qp,
+ 	if (len > 65535)
+ 		goto out_oversize;
+ 
++	delta = - head->truesize;
++
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+ 		goto out_nomem;
+ 
++	delta += head->truesize;
++	if (delta)
++		add_frag_mem_limit(qp->q.net, delta);
++
+ 	/* If the first fragment is fragmented itself, we split
+ 	 * it to two chunks: the first with data and paged part
+ 	 * and the second, holding only fragments. */
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -349,7 +349,7 @@ static bool
+ nf_ct_frag6_reasm(struct frag_queue *fq, struct sk_buff *prev,  struct net_device *dev)
+ {
+ 	struct sk_buff *fp, *head = fq->q.fragments;
+-	int    payload_len;
++	int    payload_len, delta;
+ 	u8 ecn;
+ 
+ 	inet_frag_kill(&fq->q);
+@@ -371,10 +371,16 @@ nf_ct_frag6_reasm(struct frag_queue *fq,
+ 		return false;
  	}
  
-+	if (unlikely(!skb)) {
-+		WARN_ONCE(tp->packets_out,
-+			  "invalid inflight: %u state %u cwnd %u mss %d\n",
-+			  tp->packets_out, sk->sk_state, tp->snd_cwnd, mss);
-+		inet_csk(sk)->icsk_pending = 0;
-+		return;
-+	}
++	delta = - head->truesize;
 +
- 	/* At most one outstanding TLP retransmission. */
- 	if (tp->tlp_high_seq)
- 		goto rearm_timer;
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+ 		return false;
  
--	/* Retransmit last segment. */
--	if (WARN_ON(!skb))
--		goto rearm_timer;
--
- 	if (skb_still_in_host_queue(sk, skb))
- 		goto rearm_timer;
++	delta += head->truesize;
++	if (delta)
++		add_frag_mem_limit(fq->q.net, delta);
++
+ 	/* If the first fragment is fragmented itself, we split
+ 	 * it to two chunks: the first with data and paged part
+ 	 * and the second, holding only fragments. */
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -348,7 +348,7 @@ static int ip6_frag_reasm(struct frag_qu
+ {
+ 	struct net *net = container_of(fq->q.net, struct net, ipv6.frags);
+ 	struct sk_buff *fp, *head = fq->q.fragments;
+-	int    payload_len;
++	int    payload_len, delta;
+ 	unsigned int nhoff;
+ 	int sum_truesize;
+ 	u8 ecn;
+@@ -389,10 +389,16 @@ static int ip6_frag_reasm(struct frag_qu
+ 	if (payload_len > IPV6_MAXPLEN)
+ 		goto out_oversize;
  
++	delta = - head->truesize;
++
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+ 		goto out_oom;
+ 
++	delta += head->truesize;
++	if (delta)
++		add_frag_mem_limit(fq->q.net, delta);
++
+ 	/* If the first fragment is fragmented itself, we split
+ 	 * it to two chunks: the first with data and paged part
+ 	 * and the second, holding only fragments. */
 
 
