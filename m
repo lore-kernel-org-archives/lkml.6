@@ -2,129 +2,225 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D22CC67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861D2C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73C020866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vz6aX/pJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73C020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E3D820645
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3D820645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbeLNG12 (ORCPT
+        id S1727212AbeLNG1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:27:28 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33694 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeLNG11 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:27:27 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBE6IhNN191044;
-        Fri, 14 Dec 2018 06:26:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=N8Wwln5G6PBij62TYCeXG69bvcwF+NBe6v9H8nmBl4o=;
- b=vz6aX/pJRasMlJrZChKUmBR4hT/VK+e7IcPXNndFIXe/O4to1NrtDzisGBOSPJifLpn4
- CdP3sSoNDXkjiBbhf/ZRGaCvPyZpI48ornJ0Jh9AlUoh1X83XIvTF37xjcBt8zPmoVbN
- hhjqS7TEHXw2nFa9fnyTmNKGB5VUBW+AfD8TSK4OFa5MtZbE/3c2ItzQNmZ1HNxWjYrn
- ZUKcDK0/jeBtf9HbboViag2G9OHv0OCVjzKknfHGSrr5szN2+IutAAVlRO4ZaUPeopSY
- a59UM47DpE0RIXajvTpzWhsR0H4w0N4ZRloDAllPY+kKijv5RjzcP5X0ZQAmGRJ7mY2H hg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2pb3n79k9y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Dec 2018 06:26:59 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBE6QrlO005359
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Dec 2018 06:26:53 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBE6QquI009213;
-        Fri, 14 Dec 2018 06:26:52 GMT
-Received: from kadam (/197.157.0.36)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Dec 2018 22:26:52 -0800
-Date:   Fri, 14 Dec 2018 09:26:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 04/11] staging: iio: adt7316: fix handling of dac high
- resolution option
-Message-ID: <20181214062618.GW3116@kadam>
-References: <20181212005503.28054-1-jeremyfertic@gmail.com>
- <20181212005503.28054-5-jeremyfertic@gmail.com>
- <20181212082315.GI3116@kadam>
- <20181213220146.GA2496@r2700x.localdomain>
+        Fri, 14 Dec 2018 01:27:42 -0500
+Received: from mga07.intel.com ([134.134.136.100]:52223 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbeLNG1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 01:27:41 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 22:27:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,351,1539673200"; 
+   d="scan'208";a="125840790"
+Received: from yhuang-mobile.sh.intel.com ([10.239.197.226])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2018 22:27:37 -0800
+From:   Huang Ying <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -V9 00/21] swap: Swapout/swapin THP in one piece
+Date:   Fri, 14 Dec 2018 14:27:33 +0800
+Message-Id: <20181214062754.13723-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.18.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213220146.GA2496@r2700x.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9106 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=878
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812140058
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 03:01:46PM -0700, Jeremy Fertic wrote:
-> On Wed, Dec 12, 2018 at 11:23:16AM +0300, Dan Carpenter wrote:
-> > On Tue, Dec 11, 2018 at 05:54:56PM -0700, Jeremy Fertic wrote:
-> > > @@ -651,10 +649,12 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
-> > >  	u8 config3;
-> > >  	int ret;
-> > >  
-> > > +	if (chip->id == ID_ADT7318 || chip->id == ID_ADT7519)
-> > > +		return -EPERM;
-> > 
-> > return -EINVAL is more appropriate than -EPERM.
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> 
-> I chose -EPERM because the driver uses it quite a few times in similar
-> circumstances.
+Hi, Andrew, could you help me to check whether the overall design is
+reasonable?
 
-Yeah.  I saw that when I reviewed the later patches in this series.
+Hi, Hugh, Shaohua, Minchan and Rik, could you help me to review the
+swap part of the patchset?  Especially [02/21], [03/21], [04/21],
+[05/21], [06/21], [07/21], [08/21], [09/21], [10/21], [11/21],
+[12/21], [20/21], [21/21].
 
-It's really not doing it right.  -EPERM means permission checks like
-access_ok() failed so it's not appropriate.  -EINVAL is sort of general
-purpose for invalid commands so it's probably the correct thing.
+Hi, Andrea and Kirill, could you help me to review the THP part of the
+patchset?  Especially [01/21], [07/21], [09/21], [11/21], [13/21],
+[15/21], [16/21], [17/21], [18/21], [19/21], [20/21].
 
-> At least with this driver, -EINVAL is used when the user
-> attempts to write data that would never be valid. -EPERM is used when
-> either the current device settings prevent some functionality from being
-> used, or the device never supports that functionality. This patch is the
-> latter, that these two chip ids never support this function.
-> 
-> I'll change to -EINVAL in a v2 series, but I wonder if I should hold off
-> on a separate patch for other instances in this driver since it will be
-> undergoing a substantial refactoring.
+Hi, Johannes and Michal, could you help me to review the cgroup part
+of the patchset?  Especially [14/21].
 
-Generally, you should prefer kernel standards over driver standards and
-especially for staging.  But it doesn't matter.  When I reviewed this
-patch, I hadn't seen that the driver was doing it like this but now I
-know so it's fine.  We can clean it all at once later if you want.
+And for all, Any comment is welcome!
 
-regards,
-dan carpenter
+This patchset is based on the 2018-12-10 head of mmotm/master.
 
+This is the final step of THP (Transparent Huge Page) swap
+optimization.  After the first and second step, the splitting huge
+page is delayed from almost the first step of swapout to after swapout
+has been finished.  In this step, we avoid splitting THP for swapout
+and swapout/swapin the THP in one piece.
+
+We tested the patchset with vm-scalability benchmark swap-w-seq test
+case, with 16 processes.  The test case forks 16 processes.  Each
+process allocates large anonymous memory range, and writes it from
+begin to end for 8 rounds.  The first round will swapout, while the
+remaining rounds will swapin and swapout.  The test is done on a Xeon
+E5 v3 system, the swap device used is a RAM simulated PMEM (persistent
+memory) device.  The test result is as follow,
+
+            base                  optimized
+---------------- -------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+   1417897 ±  2%    +992.8%   15494673        vm-scalability.throughput
+   1020489 ±  4%   +1091.2%   12156349        vmstat.swap.si
+   1255093 ±  3%    +940.3%   13056114        vmstat.swap.so
+   1259769 ±  7%   +1818.3%   24166779        meminfo.AnonHugePages
+  28021761           -10.7%   25018848 ±  2%  meminfo.AnonPages
+  64080064 ±  4%     -95.6%    2787565 ± 33%  interrupts.CAL:Function_call_interrupts
+     13.91 ±  5%     -13.8        0.10 ± 27%  perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
+
+Where, the score of benchmark (bytes written per second) improved
+992.8%.  The swapout/swapin throughput improved 1008% (from about
+2.17GB/s to 24.04GB/s).  The performance difference is huge.  In base
+kernel, for the first round of writing, the THP is swapout and split,
+so in the remaining rounds, there is only normal page swapin and
+swapout.  While in optimized kernel, the THP is kept after first
+swapout, so THP swapin and swapout is used in the remaining rounds.
+This shows the key benefit to swapout/swapin THP in one piece, the THP
+will be kept instead of being split.  meminfo information verified
+this, in base kernel only 4.5% of anonymous page are THP during the
+test, while in optimized kernel, that is 96.6%.  The TLB flushing IPI
+(represented as interrupts.CAL:Function_call_interrupts) reduced
+95.6%, while cycles for spinlock reduced from 13.9% to 0.1%.  These
+are performance benefit of THP swapout/swapin too.
+
+Below is the description for all steps of THP swap optimization.
+
+Recently, the performance of the storage devices improved so fast that
+we cannot saturate the disk bandwidth with single logical CPU when do
+page swapping even on a high-end server machine.  Because the
+performance of the storage device improved faster than that of single
+logical CPU.  And it seems that the trend will not change in the near
+future.  On the other hand, the THP becomes more and more popular
+because of increased memory size.  So it becomes necessary to optimize
+THP swap performance.
+
+The advantages to swapout/swapin a THP in one piece include:
+
+- Batch various swap operations for the THP.  Many operations need to
+  be done once per THP instead of per normal page, for example,
+  allocating/freeing the swap space, writing/reading the swap space,
+  flushing TLB, page fault, etc.  This will improve the performance of
+  the THP swap greatly.
+
+- The THP swap space read/write will be large sequential IO (2M on
+  x86_64).  It is particularly helpful for the swapin, which are
+  usually 4k random IO.  This will improve the performance of the THP
+  swap too.
+
+- It will help the memory fragmentation, especially when the THP is
+  heavily used by the applications.  The THP order pages will be free
+  up after THP swapout.
+
+- It will improve the THP utilization on the system with the swap
+  turned on.  Because the speed for khugepaged to collapse the normal
+  pages into the THP is quite slow.  After the THP is split during the
+  swapout, it will take quite long time for the normal pages to
+  collapse back into the THP after being swapin.  The high THP
+  utilization helps the efficiency of the page based memory management
+  too.
+
+There are some concerns regarding THP swapin, mainly because possible
+enlarged read/write IO size (for swapout/swapin) may put more overhead
+on the storage device.  To deal with that, the THP swapin is turned on
+only when necessary.  A new sysfs interface:
+/sys/kernel/mm/transparent_hugepage/swapin_enabled is added to
+configure it.  It uses "always/never/madvise" logic, to be turned on
+globally, turned off globally, or turned on only for VMA with
+MADV_HUGEPAGE, etc.
+GE, etc.
+
+Changelog
+---------
+
+V9:
+
+- Rebased on 12/10 HEAD of mmotm/master
+
+- Revise the thp swapoff support because of general swapoff changes
+
+V8:
+
+- Rebased on 11/29 HEAD of mmotm/master
+
+- Fixed one swapoff bug reported by Daniel, Thanks!
+
+V7:
+
+- Rebased on 11/16 HEAD of mmotm/master
+
+- Fix some address alignment bugs reported by Daniel, Thanks!
+
+V6:
+
+- Rebased on 10/3 HEAD of mmotm/master
+
+- Added return value checking in swap_duplicate() per Daniel's comments
+
+v5:
+
+- Rebased on 9/20 HEAD of mmotm/master
+
+- Merged the swap operations implementation for the huge and the
+  normal swap entries when possible
+
+- Added more code comments to improve code readability
+
+- Changed function parameter style to avoid to use Boolean parameter
+  as much as possible
+
+- Fixed a deadlock issue in do_huge_pmd_swap_page(), thanks 0-Day and sparse
+
+v4:
+
+- Rebased on 6/14 HEAD of mmotm/master
+
+- Fixed one build bug and several coding style issues, Thanks Daniel Jordon
+
+v3:
+
+- Rebased on 5/18 HEAD of mmotm/master
+
+- Fixed a build bug, Thanks 0-Day!
+
+v2:
+
+- Fixed several build bugs, Thanks 0-Day!
+
+- Improved documentation as suggested by Randy Dunlap.
+
+- Fixed several bugs in reading huge swap cluster
