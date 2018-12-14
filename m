@@ -2,116 +2,97 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5956AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13223C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA012054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:59:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ww7eik0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA012054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C2E3E20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:02:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544749325;
+	bh=HJ0ED45XoTcHsaXKzDy/1nHCihraOcFc6jN+JVeybfc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZEXg4mOKOC8t7aYpq9SU9r9CtigeaLJPHao6DwohqxQICQoLPNIyvRlq1j+CW+6h4
+	 NMF3JAvZEMH8KawihNutrHyS5qQ3UbqGv5Fpm6KHe2nPPMNk+56UxERDPFOEN7twlJ
+	 KK60QCeb2//zIq8qTQgk8DHM43hqGhorXLCQ8g7c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E3E20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbeLNA70 (ORCPT
+        id S1728833AbeLNBCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 19:59:26 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:39075 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727638AbeLNA7Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 19:59:25 -0500
-Received: by mail-vs1-f68.google.com with SMTP id h78so2391577vsi.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 16:59:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OgsD9ciJgYkwLnc5LxoTiPqRPu3UU+7P/7miboedbXk=;
-        b=Ww7eik0yCVL5JFp4NtYOx2Aq2VI4rj89hzTtAboCxccPjNz6pn7Y17/eJAng6yM529
-         ngP0P73QK8L294XgxAxZ5xtPCr+ZVAv7JoB6SL5LKDl4hWfJN9Dg8KjB4q0sQoPfaLD/
-         k3RvxIy2ksh5UNbQ/pDbmDchYC3guUpTT8/wk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OgsD9ciJgYkwLnc5LxoTiPqRPu3UU+7P/7miboedbXk=;
-        b=lvVSAzVRVTkEp9TMTFkmJAU8UmYkzVkNiqCOcWOeaj22WzYn8qMxscb/0unwEDqRnA
-         lW+ozFA4UkpVDP1+0SI0eu05XuHyNkpSsDoaX+8KqZwoZJPRinYeN/M3ZLohCfPNPyVT
-         UVBvBGfMmepi8DxqE3j3ImZfp6de69yvIab4u3v8NfKQZi/LolMeC+ILQUipa+8GqioP
-         aqcnuaaAmkv+3RWJRbT2mpSp2s37eAhdizYofz7JoqgKLKF5OXZ2rgUWupnJi/Q9nu/T
-         mpuT5MqleNGQIdy02D2X1r/DJ/jiOlmYtKqAgl4hdWYue7xRof7XBEdHrrgZ7LIxWh9I
-         Lc7g==
-X-Gm-Message-State: AA+aEWYKhnOpiVEv3yzKAA8QXl8f0uhTFDntqdaHHOocYk+z0U4UxS0G
-        ctBvb02K6I/h6XFezzJBXNkaTbLWvbA=
-X-Google-Smtp-Source: AFSGD/WhMz/whJqvB9pc2grE7/t54Yo3M6RlEU8YsGJjNr8Z5TBNEujcvQnE51IgZ/Ks6LXNtK4vIw==
-X-Received: by 2002:a67:4541:: with SMTP id s62mr455568vsa.25.1544749163898;
-        Thu, 13 Dec 2018 16:59:23 -0800 (PST)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id n206sm1503097vkn.36.2018.12.13.16.59.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 16:59:23 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id e16so1413915uam.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 16:59:23 -0800 (PST)
-X-Received: by 2002:a9f:3ba6:: with SMTP id r38mr477595uah.52.1544749162723;
- Thu, 13 Dec 2018 16:59:22 -0800 (PST)
+        Thu, 13 Dec 2018 20:02:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727638AbeLNBCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 20:02:04 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 802842080F;
+        Fri, 14 Dec 2018 01:02:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544749323;
+        bh=HJ0ED45XoTcHsaXKzDy/1nHCihraOcFc6jN+JVeybfc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nsHNEtN4p/h1tSq93wsvH9bKEVANwwB38JlXRp6xGYnk5IvQ1vqgb8auRq0PdEGar
+         Bz6d6gfK2u0E8AMdCLjRICAon8lBSdGj/i/xkmJy1/CECOyXEMkjZXgbkwcn/mtpp/
+         dLAlVYW/FtXUQEyoyY4b6WVdy7MXQI7Cl/qo88vA=
+Date:   Fri, 14 Dec 2018 09:01:02 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     Daniel Baluta <daniel.baluta@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Subject: Re: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
+ dependant
+Message-ID: <20181214010101.GA13243@dragon>
+References: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com>
+ <CAEnQRZC+frwbcdA657v5SB_u1z=FaOFOFrQxuNXsWNrDgnPzGA@mail.gmail.com>
+ <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20181213194321.240148-1-ryandcase@chromium.org>
-In-Reply-To: <20181213194321.240148-1-ryandcase@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 13 Dec 2018 16:59:09 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XoZKLppEzh+MSK7wMTCNvzE174aLYTtjvbgY00dDTLCQ@mail.gmail.com>
-Message-ID: <CAD=FV=XoZKLppEzh+MSK7wMTCNvzE174aLYTtjvbgY00dDTLCQ@mail.gmail.com>
-Subject: Re: [PATCH v2] tty: serial: qcom_geni_serial: Remove interrupt storm
-To:     Ryan Case <ryandcase@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Dec 13, 2018 at 04:51:18PM +0000, Aisheng Dong wrote:
+> [...]
+> 
+> > > --- a/drivers/clk/imx/Makefile
+> > > +++ b/drivers/clk/imx/Makefile
+> > > @@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
+> > >  obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
+> > >  obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
+> > >  obj-$(CONFIG_SOC_IMX7ULP) += clk-imx7ulp.o
+> > > -obj-$(CONFIG_SOC_IMX8MQ) += clk-imx8mq.o
+> > >  obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
+> > > +
+> > > +obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
+> > 
+> > Nit: Do we want to keep CONFIG_ sorted?
+> 
+> IMHO It might be okay to make MX8 (ARM64) a new group to start
+> To get a clear separation. (Slightly not sorted due to VF610)
+> Anyway, it leaves to Stephen to make the judge.
 
-On Thu, Dec 13, 2018 at 11:43 AM Ryan Case <ryandcase@chromium.org> wrote:
->
-> Disable M_TX_FIFO_WATERMARK_EN after we've sent all data for a given
-> transaction so we don't continue to receive a flurry of free space
-> interrupts while waiting for the M_CMD_DONE notification. Re-enable the
-> watermark when establishing the next transaction.
->
-> Also clear the watermark interrupt after filling the FIFO so we do not
-> receive notification again prior to actually having free space.
->
-> Signed-off-by: Ryan Case <ryandcase@chromium.org>
-> ---
->
-> Changes in v2:
-> Addressed Doug's comments
->  - Avoid M_TX_WATERMARK_EN writes when values already match
->  - Added note about M_TX_WATERMARK_EN triggering and latching
->
->  drivers/tty/serial/qcom_geni_serial.c | 25 +++++++++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
+I think Daniel is suggesting that we put CONFIG_CLK_IMX8MQ prior to
+CONFIG_SOC_IMX1, so that all CONFIG_CLK_xxx options go before
+CONFIG_SOC_xxx and the list is still naturally alphabetically sorted.
 
-Thanks!
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-If I echo something out the serial port I now see 2 interrupts fire.
-That seems about right compared to before where we'd get boatloads.
-Thus:
-
-Tested-by: Douglas Anderson <dianders@chromium.org>
-
-
--Doug
+Shawn
