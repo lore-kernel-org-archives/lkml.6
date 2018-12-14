@@ -2,125 +2,192 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B5CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C82C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85616206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D911F2070C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544806388;
+	bh=VCbsPU3xIkQ7zqLDTviSp2pSx0jSjyVEWUyDdu2e1wo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xAcKV4wGuWijMpZoJ2Ur6nc2mjLuii5Cms4aq9/rzqIgv4w8ihw4AUM+GhTk+jKQc
+	 BwYrURhgxtpN/m/uqcTZmAFh2NKvtdo2XOFB+r2tAGj1wH15XK1za1D2XyRcb3FEUC
+	 M8YqaAW3OXqg6xPDhK29nOwaB0Q4piBxUMxKkxh4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbeLNQrx (ORCPT
+        id S1729968AbeLNQxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:47:53 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.252]:34141 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729612AbeLNQrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:47:53 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 2CD94E8D4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:47:52 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id XqcygtFpk2qH7Xqcygczgz; Fri, 14 Dec 2018 10:47:52 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.131.212] (port=48852 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gXqcd-002K7q-8o; Fri, 14 Dec 2018 10:47:51 -0600
-Date:   Fri, 14 Dec 2018 10:47:29 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani 
-        <suganath-prabu.subramani@broadcom.com>
-Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: mptfusion: Fix potential Spectre v1 vulnerabilities
-Message-ID: <20181214164729.GA23188@embeddedor>
+        Fri, 14 Dec 2018 11:53:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54504 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729409AbeLNQxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:53:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22CA5ADD8;
+        Fri, 14 Dec 2018 16:53:02 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 17:52:58 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        David Miller <davem@davemloft.net>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        rafael.j.wysocki@intel.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        vkuznets@redhat.com, Linux-MM <linux-mm@kvack.org>
+Subject: Re: general protection fault in watchdog
+Message-ID: <20181214165258.GI5343@dhcp22.suse.cz>
+References: <0000000000004ea80b057cfae21e@google.com>
+ <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
+ <20181214132836.GE5343@dhcp22.suse.cz>
+ <CACT4Y+aXFXnObgC-7NVe87-1bbqs2oNBBXe2mrfshLKnFqkTGA@mail.gmail.com>
+ <20181214135419.GG5343@dhcp22.suse.cz>
+ <CACT4Y+b1Qc069LO25JhJh51zTAMBL6t_E7LRZiSPi8FP0v+zUQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.131.212
-X-Source-L: No
-X-Exim-ID: 1gXqcd-002K7q-8o
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.131.212]:48852
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CACT4Y+b1Qc069LO25JhJh51zTAMBL6t_E7LRZiSPi8FP0v+zUQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-karg.hdr.id and port are indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+On Fri 14-12-18 15:31:44, Dmitry Vyukov wrote:
+> On Fri, Dec 14, 2018 at 2:54 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Fri 14-12-18 14:42:33, Dmitry Vyukov wrote:
+> > > On Fri, Dec 14, 2018 at 2:28 PM Michal Hocko <mhocko@kernel.org> wrote:
+> > > >
+> > > > On Fri 14-12-18 14:11:05, Dmitry Vyukov wrote:
+> > > > > On Fri, Dec 14, 2018 at 1:51 PM syzbot
+> > > > > <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com> wrote:
+> > > > > >
+> > > > > > Hello,
+> > > > > >
+> > > > > > syzbot found the following crash on:
+> > > > > >
+> > > > > > HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
+> > > > > > git tree:       upstream
+> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
+> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
+> > > > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
+> > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
+> > > > > >
+> > > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > > > Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+> > > > >
+> > > > > +linux-mm for memcg question
+> > > > >
+> > > > > What the repro does is effectively just
+> > > > > setsockopt(EBT_SO_SET_ENTRIES). This eats all machine memory and
+> > > > > causes OOMs. Somehow it also caused the GPF in watchdog when it
+> > > > > iterates over task list, perhaps some scheduler code leaves a dangling
+> > > > > pointer on OOM failures.
+> > > > >
+> > > > > But what bothers me is a different thing. syzkaller test processes are
+> > > > > sandboxed with a restrictive memcg which should prevent them from
+> > > > > eating all memory. do_replace_finish calls vmalloc, which uses
+> > > > > GFP_KERNEL, which does not include GFP_ACCOUNT (GFP_KERNEL_ACCOUNT
+> > > > > does). And page alloc seems to change memory against memcg iff
+> > > > > GFP_ACCOUNT is provided.
+> > > > > Am I missing something or vmalloc is indeed not accounted (DoS)? I see
+> > > > > some explicit uses of GFP_KERNEL_ACCOUNT, e.g. the one below, but they
+> > > > > seem to be very sparse.
+> > > > >
+> > > > > static void *seq_buf_alloc(unsigned long size)
+> > > > > {
+> > > > >      return kvmalloc(size, GFP_KERNEL_ACCOUNT);
+> > > > > }
+> > > > >
+> > > > > Now looking at the code I also don't see how kmalloc(GFP_KERNEL) is
+> > > > > accounted... Which makes me think I am still missing something.
+> > > >
+> > > > You are not missing anything. We do not account all allocations and you
+> > > > have to explicitly opt-in by __GFP_ACCOUNT. This is a deliberate
+> > > > decision. If the allocation is directly controlable by an untrusted user
+> > > > and the memory is associated with a process life time then this looks
+> > > > like a good usecase for __GFP_ACCOUNT. If an allocation outlives a
+> > > > process then there the flag should be considered with a great care
+> > > > because oom killer is not able to resolve the memcg pressure and so the
+> > > > limit enforcement is not effective.
+> > >
+> > > Interesting.
+> > > I understand that namespaces, memcg's and processes (maybe even
+> > > threads) can have arbitrary overlapping. But I naively thought that in
+> > > canonical hierarchical cases it should all somehow work.
+> > > Question 1: is there some other, stricter sandboxing mechanism?
+> >
+> > I do not think so
+> >
+> > > We try
+> > > to sandbox syzkaller processes with everything available , because
+> > > these OOMs usually leads either to dead machines or hang/stall false
+> > > positives, which are nasty.
+> >
+> > Which is a useful test on its own. If you are able to trigger the global
+> > OOM from a restricted environment then you have a good candidate to
+> > consider a new __GFP_ACCOUNT user.
+> >
+> > > Question 2: this is a simple DoS vector, right? If I put a container
+> > > into a 1MB memcg, it can still eat arbitrary amount of non-pagable
+> > > kernel memory?
+> >
+> > As I've said. If there is a direct vector to allocated an unbounded
+> > amount of memory from the userspace (trusted users aside) then yes this
+> > sounds like a DoS to me.
+> 
+> +netfilter maintainers for this easy DoS vector
+> short story: vmalloc in do_replace_finish allows unbounded memory
+> allocation not accounted to memcg
 
-This issue was detected with the help of Smatch:
+Haven't we discussed that recently?
 
-drivers/message/fusion/mptctl.c:1360 mptctl_getiocinfo() warn: potential spectre issue 'ioc->pfacts' [r]
-drivers/message/fusion/mptctl.c:2788 mptctl_hp_targetinfo() warn: potential spectre issue 'hd->sel_timeout' [r] (local cap)
+> Looks pretty unbounded:
+> 
+> [  763.451796] syz-executor681: vmalloc: allocation failure, allocated
+> 1027440640 of 1879052288 bytes, mode:0x6000c0(GFP_KERNEL),
+> nodemask=(null)
+> 
+> But how does this play with what you said about memory outliving
+> process? Netfilter tables can definitely outlive the process, they are
+> attached to net ns.
 
-Fix this by sanitizing  both karg.hdr.id and port before using them to
-index ioc->pfacts and hd->sel_timeout.
+Not very well, but it is not hopeless either. The charged memory
+wouldn't go away with oom victims so it will stay there until somebody
+destroys those objects. On the other hand any process within that memcg
+would be killed so a DoS should be somehow contained.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+> Also, am I reading this correctly that potentially thousands of kernel
+> memory allocations need to be converted to ACCOUNT? I mean for small
+> ones we maybe care less, but they _should_ be accounted. They can also
+> build up, or just simply allow small repeated allocations.
+> 
+> GFP_KERNEL Referenced in 11070 files:
+> https://elixir.bootlin.com/linux/latest/ident/GFP_KERNEL
+> 
+> GFP_KERNEL_ACCOUNT Referenced in 19 files:
+> https://elixir.bootlin.com/linux/latest/ident/GFP_KERNEL_ACCOUNT
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+Yes, we do not care about all kernel objects. Most of them are contained
+by some high-level objects already. The purpose of the kmem accounting
+is to limit those objects that can grow really large and are reclaimable
+in some way.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/message/fusion/mptctl.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
-index 8d22d6134a89..f6c1311ae86f 100644
---- a/drivers/message/fusion/mptctl.c
-+++ b/drivers/message/fusion/mptctl.c
-@@ -66,6 +66,8 @@
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_tcq.h>
- 
-+#include <linux/nospec.h>
-+
- #define COPYRIGHT	"Copyright (c) 1999-2008 LSI Corporation"
- #define MODULEAUTHOR	"LSI Corporation"
- #include "mptbase.h"
-@@ -1306,7 +1308,7 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
- 		kfree(karg);
- 		return -EINVAL;
- 	}
--	port = karg->hdr.port;
-+	port = array_index_nospec(karg->hdr.port, 2);
- 
- 	karg->port = port;
- 	pdev = (struct pci_dev *) ioc->pcidev;
-@@ -2689,6 +2691,7 @@ mptctl_hp_targetinfo(unsigned long arg)
- 	}
- 	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
- 		return -EINVAL;
-+	karg.hdr.id = array_index_nospec(karg.hdr.id, MPT_MAX_FC_DEVICES);
- 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
- 	    ioc->name));
- 
 -- 
-2.19.2
-
+Michal Hocko
+SUSE Labs
