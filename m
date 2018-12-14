@@ -2,221 +2,158 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B45DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB6CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC21206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:42:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZr4J5vZ"
+	by mail.kernel.org (Postfix) with ESMTP id 666CC2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:43:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbeLNPmF (ORCPT
+        id S1728952AbeLNPn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:42:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38294 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbeLNPmF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:42:05 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m22so6246447wml.3;
-        Fri, 14 Dec 2018 07:42:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p5DG1U0R8ZAeLOUe010Px1/4Z8kfZ9Kpb8KKW++AKXY=;
-        b=LZr4J5vZWLpcJel+tq8E1/UXEDJoRjFu5wUoXFwDooLGv9XtqQjK93pi2fxt7/Jzgp
-         A5y7FxfXsIGsvXJPkCueXnQfCp5Pqk6Ih3PI6IK9bpvCOHo4SF7SBrJdFnhnNUAqmIFP
-         QrfOxy3SMknLgGVaY4xDxnSHT+QO/TOcnFVoPmtosRIKCxjz0rIT0YWWQ8ZXUmbHqTm/
-         gb9Ctm/7JsgkKwimG0iQWJPkF0MXvrw88QrvrxaUrNMkE49pZlGIQbpxS8yRyyN0GZYe
-         7zQXKbDtRyfU10Ua+SPUFB3SqhTAhQHfL1ykgAhLNnDHpIURTV5BYagAxySPQmLmk5Mi
-         FdaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p5DG1U0R8ZAeLOUe010Px1/4Z8kfZ9Kpb8KKW++AKXY=;
-        b=GuUu3xrQMZUVt0fLnNF+P49B/gtD49w+gxBOg5Z41YuJkn0qRM2gnIPlvKFkEaI2m2
-         obV2drPZSZXlEdHZM2zL70HwXoe6sds9FqusFXbTW8tRePlYm17txf8OO52gF8WsdIGf
-         GNJFH4IkUkiIpDmxDYpp1fSdN+W5BKCx7NX0i/ceOZCAm+agJfLWWolNQJiQHC6SPdwB
-         SFc00QMTsGXVDo8yIZ07KxrzqxS0b19CkU13JDiEkOvoaNCppxHNbAw7d3fzj3VIH9Gi
-         FCbcL4ZbyPGXs7N0PrRZzK99MBVkZoc2BngBcdhkPrnQ3ZaZyMkycGdbFZC7QmJmr4mx
-         ebzA==
-X-Gm-Message-State: AA+aEWYNd/Q8LiTeQiZTaj7WhosHPIHah2Y3mPR5mtzOHS9Rweo2T7J5
-        JW1EtahhAeYlBrrigGPhqLw=
-X-Google-Smtp-Source: AFSGD/X+SY8HZ/XTFv4UDm/oeksuREI6QDgioE9Zs5Fa4F2gRSMAo3pE4KKZXERSnwiZE/DTJL0jxg==
-X-Received: by 2002:a1c:66c5:: with SMTP id a188mr3530167wmc.129.1544802122700;
-        Fri, 14 Dec 2018 07:42:02 -0800 (PST)
-Received: from rocks ([84.88.51.80])
-        by smtp.gmail.com with ESMTPSA id g16sm6089494wru.41.2018.12.14.07.42.01
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Fri, 14 Dec 2018 07:42:02 -0800 (PST)
-Date:   Fri, 14 Dec 2018 16:41:58 +0100
-From:   Aleix Roca Nonell <kernelrocks@gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, mbrugger@suse.com
-Subject: Re: [PATCH] HID: asus: Add support for the ASUS T101HA keyboard dock
-Message-ID: <20181214154158.GC4189@rocks>
-References: <20181201190153.GB4995@arks.localdomain>
- <20181214080700.GA4189@rocks>
- <CAO-hwJJRuBbHKCmW4vcmjdDkNEF0==wuLC5ymSkw8mOHnkdwwQ@mail.gmail.com>
- <20181214133409.GB4189@rocks>
- <CAO-hwJJsE0eFqYb8A9qFqohy6vXj4EB9qJ3myB_PPzbDa=Jo3Q@mail.gmail.com>
+        Fri, 14 Dec 2018 10:43:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45132 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726298AbeLNPn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:43:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8C57FAF70;
+        Fri, 14 Dec 2018 15:43:25 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 39BCB1E1430; Fri, 14 Dec 2018 16:43:21 +0100 (CET)
+Date:   Fri, 14 Dec 2018 16:43:21 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181214154321.GF8896@quack2.suse.cz>
+References: <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO-hwJJsE0eFqYb8A9qFqohy6vXj4EB9qJ3myB_PPzbDa=Jo3Q@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181212214641.GB29416@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 02:37:52PM +0100, Benjamin Tissoires wrote:
-> On Fri, Dec 14, 2018 at 2:34 PM Aleix Roca Nonell <kernelrocks@gmail.com> wrote:
-> >
-> > Hi Benjamin! :D
-> >
-> > On Fri, Dec 14, 2018 at 09:25:20AM +0100, Benjamin Tissoires wrote:
-> > > Hi Aleix,
-> > >
-> > > On Fri, Dec 14, 2018 at 9:07 AM Aleix Roca Nonell <kernelrocks@gmail.com> wrote:
-> > > >
-> > > > Kind remminder ping :)
-> > >
-> > > Hehe, I have seen the patch floating by and realized I would need more
-> > > than 2 minutes to answer it so it fell a little bit behind in my TODO
-> > > list.
-> > >
-> > > Let's try to work on this now.
-> > >
-> > > >
-> > > > I'm also adding my fellow Matthias in CC
-> > > >
-> > > > On Sat, Dec 01, 2018 at 08:01:53PM +0100, Aleix Roca Nonell wrote:
-> > > > > The ASUS T101HA keyboard dock generates HID events using the ASUS vendor
-> > > > > specific UsagePage 0xff31. In consequence, some multimedia keys such as
-> > > > > brightness up and down are not working with hid-generic.
-> > > > >
-> > > > > This commit adds the T101HA dock into the supported device list of the
-> > > > > hid-asus driver. It also prevents the dock's integrated touchpad to be
-> > > > > bound with hid-asus given that it is already working fine with
-> > > > > hid-multitouch.
-> > > > >
-> > > > > Signed-off-by: Aleix Roca Nonell <kernelrocks@gmail.com>
-> > > > > ---
-> > > > >
-> > > > > This is my very first kernel patch done in my free time (be aware of the
-> > > > > newbie!!) so please, let me know if I can improve anything and I will
-> > > > > happily do it :)
-> > > > >
-> > > > >  drivers/hid/hid-asus.c | 12 ++++++++++++
-> > > > >  drivers/hid/hid-ids.h  |  1 +
-> > > > >  2 files changed, 13 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > > > > index ab8bd40a77ed..d8b55dca97c6 100644
-> > > > > --- a/drivers/hid/hid-asus.c
-> > > > > +++ b/drivers/hid/hid-asus.c
-> > > > > @@ -42,6 +42,7 @@ MODULE_AUTHOR("Frederik Wenigwieser <frederik.wenigwieser@gmail.com>");
-> > > > >  MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> > > > >
-> > > > >  #define T100_TPAD_INTF 2
-> > > > > +#define T101HA_TPAD_INTF 2
-> > > > >
-> > > > >  #define T100CHI_MOUSE_REPORT_ID 0x06
-> > > > >  #define FEATURE_REPORT_ID 0x0d
-> > > > > @@ -70,6 +71,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> > > > >  #define QUIRK_T100_KEYBOARD          BIT(6)
-> > > > >  #define QUIRK_T100CHI                        BIT(7)
-> > > > >  #define QUIRK_G752_KEYBOARD          BIT(8)
-> > > > > +#define QUIRK_T101HA_DOCK            BIT(9)
-> > > > >
-> > > > >  #define I2C_KEYBOARD_QUIRKS                  (QUIRK_FIX_NOTEBOOK_REPORT | \
-> > > > >                                                QUIRK_NO_INIT_REPORTS | \
-> > > > > @@ -649,6 +651,14 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> > > > >       int ret;
-> > > > >       struct asus_drvdata *drvdata;
-> > > > >
-> > > > > +     if (id->driver_data & QUIRK_T101HA_DOCK) {
-> > > > > +             struct usb_interface *intf = to_usb_interface(hdev->dev.parent);
-> > >
-> > > I know the hid-asus driver already does this for the other devices,
-> > > but it would be nice not to. USB is part of the low level transport
-> > > and HID drivers should have no reasons to assume the USB driver is
-> > > used and that it will stay forever.
-> > >
-> > > What I ask when we have such a case is to check on the report
-> > > descriptor to see if there is anything we could use in it (usually the
-> > > application) to skip this HID interface.
-> > >
-> > > Besides that, there is not much more to say.
-> >
-> > Great I will do that!
-> >
-> > > For having a look at the report descriptor, you can either use printk
-> > > in the kernel, or use hid-recorder as root in
-> > > https://gitlab.freedesktop.org/libevdev/hid-tools.
-> >
-> > Regarding the descriptor, shouldn't be ok to check
-> > /sys/kernel/debug/hid/<dev>/rdesc ?
-> 
-> Yep, that works too. I knew there was an other way from the kernel but
-> couldn't remember it :)
-> 
-> I am more used to hid-recorder as it agregates everything in a more
-> compact way and you can then replay the traces with hid-replay.
+Hi!
 
-Oh right! I recall now from your slides! Thank you Benjamin! :)
-
-> Cheers,
-> Benjamin
+On Thu 13-12-18 08:46:41, Dave Chinner wrote:
+> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
+> > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+> > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+> > > So this approach doesn't look like a win to me over using counter in struct
+> > > page and I'd rather try looking into squeezing HMM public page usage of
+> > > struct page so that we can fit that gup counter there as well. I know that
+> > > it may be easier said than done...
+> > 
+> > So i want back to the drawing board and first i would like to ascertain
+> > that we all agree on what the objectives are:
+> > 
+> >     [O1] Avoid write back from a page still being written by either a
+> >          device or some direct I/O or any other existing user of GUP.
+> >          This would avoid possible file system corruption.
+> > 
+> >     [O2] Avoid crash when set_page_dirty() is call on a page that is
+> >          considered clean by core mm (buffer head have been remove and
+> >          with some file system this turns into an ugly mess).
 > 
-> >
-> > Thank you!
-> >
-> > >
-> > > Cheers,
-> > > Benjamin
-> > >
-> > > > > +
-> > > > > +             /* use hid-multitouch for T101HA touchpad */
-> > > > > +             if (intf->altsetting->desc.bInterfaceNumber == T101HA_TPAD_INTF)
-> > > > > +                     return -ENODEV;
-> > > > > +     }
-> > > > > +
-> > > > >       drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> > > > >       if (drvdata == NULL) {
-> > > > >               hid_err(hdev, "Can't alloc Asus descriptor\n");
-> > > > > @@ -830,6 +840,8 @@ static const struct hid_device_id asus_devices[] = {
-> > > > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> > > > >               USB_DEVICE_ID_ASUSTEK_T100TAF_KEYBOARD),
-> > > > >         QUIRK_T100_KEYBOARD | QUIRK_NO_CONSUMER_USAGES },
-> > > > > +     { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
-> > > > > +             USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD), QUIRK_T101HA_DOCK },
-> > > > >       { HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_ASUS_AK1D) },
-> > > > >       { HID_USB_DEVICE(USB_VENDOR_ID_TURBOX, USB_DEVICE_ID_ASUS_MD_5110) },
-> > > > >       { HID_USB_DEVICE(USB_VENDOR_ID_JESS, USB_DEVICE_ID_ASUS_MD_5112) },
-> > > > > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> > > > > index 4206428c0ba2..f1eee2778b70 100644
-> > > > > --- a/drivers/hid/hid-ids.h
-> > > > > +++ b/drivers/hid/hid-ids.h
-> > > > > @@ -184,6 +184,7 @@
-> > > > >  #define USB_DEVICE_ID_ASUSTEK_T100TA_KEYBOARD        0x17e0
-> > > > >  #define USB_DEVICE_ID_ASUSTEK_T100TAF_KEYBOARD       0x1807
-> > > > >  #define USB_DEVICE_ID_ASUSTEK_T100CHI_KEYBOARD       0x8502
-> > > > > +#define USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD        0x183d
-> > > > >  #define USB_DEVICE_ID_ASUSTEK_T304_KEYBOARD  0x184a
-> > > > >  #define USB_DEVICE_ID_ASUSTEK_I2C_KEYBOARD   0x8585
-> > > > >  #define USB_DEVICE_ID_ASUSTEK_I2C_TOUCHPAD   0x0101
-> > > > > --
-> > > > > 2.19.2
-> > > > >
+> I think that's wrong. This isn't an "avoid a crash" case, this is a
+> "prevent data and/or filesystem corruption" case. The primary goal
+> we have here is removing our exposure to potential corruption, which
+> has the secondary effect of avoiding the crash/panics that currently
+> occur as a result of inconsistent page/filesystem state.
+> 
+> i.e. The goal is to have ->page_mkwrite() called on the clean page
+> /before/ the file-backed page is marked dirty, and hence we don't
+> expose ourselves to potential corruption or crashes that are a
+> result of inappropriately calling set_page_dirty() on clean
+> file-backed pages.
+
+I agree that [O1] - i.e., avoid corrupting fs data - is more important and
+[O2] is just one consequence of [O1].
+
+> > For [O1] and [O2] i believe a solution with mapcount would work. So
+> > no new struct, no fake vma, nothing like that. In GUP for file back
+> > pages we increment both refcount and mapcount (we also need a special
+> > put_user_page to decrement mapcount when GUP user are done with the
+> > page).
+> 
+> I don't see how a mapcount can prevent anyone from calling
+> set_page_dirty() inappropriately.
+> 
+> > Now for [O1] the write back have to call page_mkclean() to go through
+> > all reverse mapping of the page and map read only. This means that
+> > we can count the number of real mapping and see if the mapcount is
+> > bigger than that. If mapcount is bigger than page is pin and we need
+> > to use a bounce page to do the writeback.
+> 
+> Doesn't work. Generally filesystems have already mapped the page
+> into bios before they call clear_page_dirty_for_io(), so it's too
+> late for the filesystem to bounce the page at that point.
+
+Yes, for filesystem it is too late. But the plan we figured back in October
+was to do the bouncing in the block layer. I.e., mark the bio (or just the
+particular page) as needing bouncing and then use the existing page
+bouncing mechanism in the block layer to do the bouncing for us. Ext3 (when
+it was still a separate fs driver) has been using a mechanism like this to
+make DIF/DIX work with its metadata.
+
+> > For [O2] i believe we can handle that case in the put_user_page()
+> > function to properly dirty the page without causing filesystem
+> > freak out.
+> 
+> I'm pretty sure you can't call ->page_mkwrite() from
+> put_user_page(), so I don't think this is workable at all.
+
+Yes, calling ->page_mkwrite() in put_user_page() is not only technically
+complicated but also too late - DMA has already modified page contents.
+What we planned to do (again discussed back in October) was to never allow
+the pinned page to become clean. I.e., clear_page_dirty_for_io() would
+leave pinned pages dirty. Also we would skip pinned pages for WB_SYNC_NONE
+writeback as there's no point in that really. That way MM and filesystems
+would be aware of the real page state - i.e., what's in memory is not in
+sync (potentially) with what's on disk. I was thinking whether this
+permanently-dirty state couldn't confuse filesystem in some way but I
+didn't find anything serious - the worst I could think of are places that
+do filemap_write_and_wait() and then invalidate page cache e.g. before hole
+punching or extent shifting. But these should work fine as is (page cache
+invalidation will just happily truncate dirty pages). DIO might get
+confused by the inability to invalidate dirty pages but then user combining
+RDMA with DIO on the same file at one moment gets what he deserves...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
