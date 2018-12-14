@@ -2,170 +2,112 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4557AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1A8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EAA1206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BA97206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:12:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2Yeas6Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbeLNPMG (ORCPT
+        id S1730421AbeLNPMm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:12:06 -0500
-Received: from mga02.intel.com ([134.134.136.20]:20686 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730324AbeLNPMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:12:06 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 07:12:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,353,1539673200"; 
-   d="scan'208";a="109538652"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga008.fm.intel.com with ESMTP; 14 Dec 2018 07:12:04 -0800
-Date:   Fri, 14 Dec 2018 07:12:04 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v4 5/5] x86/vdso: Add __vdso_sgx_enter_enclave() to
- wrap SGX enclave transitions
-Message-ID: <20181214151204.GA22063@linux.intel.com>
-References: <20181213213135.12913-1-sean.j.christopherson@intel.com>
- <20181213213135.12913-6-sean.j.christopherson@intel.com>
- <cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com>
+        Fri, 14 Dec 2018 10:12:42 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35303 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730324AbeLNPMl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:12:41 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x85-v6so5209841ljb.2;
+        Fri, 14 Dec 2018 07:12:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OPHoOoeJrXFhGW2NBg+BqikfLbQmuY9aUqs4/W1ky7c=;
+        b=W2Yeas6ZXnzwszhlrs0ZnACmpcAZ9cbC3GBmbyIXz4dpJz1UR8r8UQkptMVFfw9zG/
+         LQgCKTHvkCozMA+GdaA1YUOuwZyarbwEap0SnZepjk2hxeVp3TUJacwX9v/FdDjjR3XP
+         qbUcNjROXPKo26zMxTP3/U8GZPRtSVFd8/NFqcn2xGglj3MALW0Xu029bDOt0kmR5O9I
+         puXi1MYcH5q2O08MuF8OzTQ1NstIa8Z+SH6NaxXrFVTzinp4SUGsnnFWcAqyAEUZbtlg
+         6E8gbOnKeXUHqZe4l8E7mPQDGBQDM6uRk91C0EPqCreOX3rJUjQu5QMGrrZvVM9mm8Ju
+         maxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OPHoOoeJrXFhGW2NBg+BqikfLbQmuY9aUqs4/W1ky7c=;
+        b=s9S9QHkfuv6xxQZWhluCQ3xD19PIMTYXcBPyryYA/hBMWwufmvGjkl4QQt8pOnquPy
+         pCWwggOGbesHZkbv2+5urpIjSk5ipS40h3zyWBf35mB2CcqtAYXSs9uzEyYlxVoYew2K
+         E7h4FgV6l65ruGbzDi7QbmXg5CogkNrxzhkSYaSYVQAPY9vjmZ33XnQ60ea2+J9UVsMR
+         a2OoHYEm3qF4+2gZpShFS0pNdZYH+MVlijQrlR24jrg42Q34RsF8D92rxym8su/PIly0
+         fJtlny2mUhbbBwPWcail0Yor6sO4phqvoQGePTZqYzN84/oqERDqk4aW0otjKSWxoJFV
+         DnPg==
+X-Gm-Message-State: AA+aEWY6bHUTcQfYwFyhSaMPjvZUKWYGhaC5skEi5oma519ATBkJ9E7q
+        NN0eOPkv4fRKJwjr5dgXuhQ=
+X-Google-Smtp-Source: AFSGD/U+9KaXGsGqwuBABPN/lwCpvYF8mj5iSDHz0VERNJNL16gje4tgrlv3GuDznjavpqJHE9Mg5g==
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr2256449lji.133.1544800358706;
+        Fri, 14 Dec 2018 07:12:38 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:976:99fb:a7e3:627c])
+        by smtp.googlemail.com with ESMTPSA id o17sm951975lff.77.2018.12.14.07.12.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 07:12:37 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     nick@shmanahar.org
+Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v5 0/3] Input: atmel_mxt_ts: Add support for optional regulators
+Date:   Fri, 14 Dec 2018 16:12:11 +0100
+Message-Id: <20181214151214.5391-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:55:49AM +0000, Jethro Beekman wrote:
-> On 2018-12-14 03:01, Sean Christopherson wrote:
-> >+struct sgx_enclave_regs {
-> >+	__u64 rdi;
-> >+	__u64 rsi;
-> >+	__u64 rdx;
-> >+	__u64 r8;
-> >+	__u64 r9;
-> >+	__u64 r10;
-> >+};
-> 
-> This is fine, but why not just cover all 13 normal registers that are not
-> used by SGX?
+This patch series adds optional regulator support to atmel_mxt_ts.
+First patch adds regulators to driver.
+Second patch ensures that device is ready for communication.
+Third patch updates documentation.
 
-Trying to balance flexibility/usability with unecessary overhead.  And I
-think this ABI meshes well with the idea of requiring the enclave to be
-compliant with the x86-64 ABI (see below).
+Changes from v4:
+  - Add missing regulator_disable for vdd in case of error,
+    when enabling avdd regulator
 
-> Minor comments below.
-> 
-> >+/**
-> >+ * struct sgx_enclave_exception - structure to pass register in/out of enclave
-> 
-> Typo in struct name.
+Changes from v3:
+  - Checkpatch fixes
+  - Drop punctuation from subject of one of patches
 
-Doh, thanks.
- 
-> >+ *				  by way of __vdso_sgx_enter_enclave
-> >+ *
-> >+ * @rdi:	value of %rdi, loaded/saved on enter/exit
-> >+ * @rsi:	value of %rsi, loaded/saved on enter/exit
-> >+ * @rdx:	value of %rdx, loaded/saved on enter/exit
-> >+ * @r8:		value of %r8, loaded/saved on enter/exit
-> >+ * @r9:		value of %r9, loaded/saved on enter/exit
-> >+ * @r10:	value of %r10, loaded/saved on enter/exit
-> >+ */
-> 
-> >+	/* load leaf, TCS and AEP for ENCLU */
-> >+	mov	%edi,      %eax
-> >+	mov	%rsi,      %rbx
-> >+	lea	1f(%rip),  %rcx
-> 
-> If you move this below the jump, you can use %rcx for @regs
+Changes from v2:
+  - Add reviewed-by to one patch
+  - Move code for enabling regulators into separate method,
+    to make code more readable.
+  - Add wait code, to ensure that device is ready for communication.
 
-EDI needs to be moved to EAX before it is potentially overwritten
-below and I wanted the loading of the three registers used by hardware
-grouped together.  And IMO using the same register for accessing the
-structs in all flows improves readability.
+Changes from v1:
+  - Enable regulators only if reset_gpio is present.
+  - Switch from devm_regulator_get_optional to devm_regulator_get.
 
-> >+
-> >+	/* optionally copy @regs to registers */
-> >+	test	%rdx, %rdx
-> >+	je	1f
-> >+
-> >+	mov	%rdx, %r11
-> >+	mov	RDI(%r11), %rdi
-> >+	mov	RSI(%r11), %rsi
-> >+	mov	RDX(%r11), %rdx
-> >+	mov	R8(%r11),  %r8
-> >+	mov	R9(%r11),  %r9
-> >+	mov	R10(%r11), %r10
-> >+
-> >+1:      enclu
-> >+
-> >+	/* ret = 0 */
-> >+	xor	%eax, %eax
-> >+
-> >+	/* optionally copy registers to @regs */
-> >+	mov	-0x8(%rsp), %r11
-> >+	test	%r11, %r11
-> >+	je	2f
-> >+
-> >+	mov	%rdi, RDI(%r11)
-> >+	mov	%rsi, RSI(%r11)
-> >+	mov	%rdx, RDX(%r11)
-> >+	mov	%r8,  R8(%r11)
-> >+	mov	%r9,  R9(%r11)
-> >+	mov	%r10, R10(%r11)
-> 
-> Here you can use %rax for @regs and clear it at the end.
+Paweł Chmiel (3):
+  Input: atmel_mxt_ts: Add support for  optional regulators
+  Input: atmel_mxt_ts: Wait for device be ready for communication
+  Input: atmel_mxt_ts: Document optional voltage regulators
 
-Clearing RAX early avoids the use of another label, though obviously
-that's not exactly critical.  The comment about using the same register
-for accessing structs applies here as well.
+ .../bindings/input/atmel,maxtouch.txt         |  8 ++
+ drivers/input/touchscreen/atmel_mxt_ts.c      | 78 +++++++++++++++++--
+ 2 files changed, 80 insertions(+), 6 deletions(-)
 
-> >+2:	pop	%rbx
-> >+	pop	%r12
-> >+	pop	%r13
-> >+	pop	%r14
-> >+	pop	%r15
-> >+	pop	%rbp
-> >+	ret
-> 
-> x86-64 ABI requires that you call CLD here (enclave may set it).
-
-Ugh.  Technically MXCSR and the x87 CW also need to be preserved.
-
-What if rather than treating the enclave as hostile we require it to be
-compliant with the x86-64 ABI like any other function?  That would solve
-the EFLAGS.DF, MXCSR and x87 issues without adding unnecessary overhead.
-And we wouldn't have to save/restore R12-R15.  It'd mean we couldn't use
-the stack's red zone to hold @regs and @e, but that's poor form anyways.
-
-> 
-> --
-> Jethro Beekman | Fortanix
-> 
+-- 
+2.17.1
 
