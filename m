@@ -4,54 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6EDC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6030C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51D620879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621B820879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790195;
-	bh=KVwqDUkCFSZUTlxGO3GRk/BYCNP3kop8fLpWQYh3+Zs=;
+	s=default; t=1544790209;
+	bh=FK6aKdmJAOJ2sHJKZ0bSTTMVuhj42ytiRt3JhwDRIjk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AUc6b4T+SpwFOViaE2SzfB7ViQTg3py7sLfPsBSXlwjstzE6OCZXHx6zTwDDZ6V/b
-	 XkAKsDbHHMreGNd7AlyTwdbxO+vMukogMdUNI8fjblVkQaI/gMbIllmwAPxtyZ6qvc
-	 cjuyANjp6UrXQTvvFiFIPb70PVgOg7XsUUtW8W44=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51D620879
+	b=R0LqfmJbBRErBX3OrVytq0xzN2z082CjysH1PeKiuHXFn1XfRR+T/HHbFnDVnoL7D
+	 iGPFR2R/23zjjXvEs7P/CNY+liC1IR9RFUEcbkg0dieawMfDCitFUzehBIcvsZEirU
+	 MhyWtcAajVHzqOI+C2Usoi2vJGo3VGvlKNGeld78=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 621B820879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbeLNMXP (ORCPT
+        id S1732169AbeLNMNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:23:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33252 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731746AbeLNMNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:46 -0500
+        id S1732148AbeLNMNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5144C20892;
-        Fri, 14 Dec 2018 12:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E5CF20892;
+        Fri, 14 Dec 2018 12:13:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789625;
-        bh=KVwqDUkCFSZUTlxGO3GRk/BYCNP3kop8fLpWQYh3+Zs=;
+        s=default; t=1544789615;
+        bh=FK6aKdmJAOJ2sHJKZ0bSTTMVuhj42ytiRt3JhwDRIjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MbyaezEWu7/L5LNVz5fGVfzO5tEOwJyHPYybSIiIieL6A9JcC3u1hUdA4+S6Xo5bo
-         JQlJQj+HkaLN7w/aB8L0sfIemCABQqr5CnzKjeYmLNRlbWUOvElfqgNA3flf/pvFhG
-         haZuI2f2l/YOBh1qZ9cSkqSA7NmamSCDYlWqknYE=
+        b=lBSQ3nmySyWJRphf51kQdpRsETnsA6tMULytXBovpRVzWEE6GFqqKYJG8qMF6Yj58
+         KExr+L5TiASA4RMyms3blh9ZRNBX9zlZ4mGpKR4URWdepIND2dfid+F0wkA7BECWis
+         C+XeAlcXJk+IIPQ9wB3AeUZOTHw3ZOILFTYF8PBI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rafael Tinoco <rafael.tinoco@linaro.org>,
-        Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Su Yanjun <suyj.fnst@cn.fujitsu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 06/88] tcp: fix NULL ref in tail loss probe
-Date:   Fri, 14 Dec 2018 12:59:40 +0100
-Message-Id: <20181214115702.590857089@linuxfoundation.org>
+Subject: [PATCH 4.4 02/88] net: 8139cp: fix a BUG triggered by changing mtu with network traffic
+Date:   Fri, 14 Dec 2018 12:59:36 +0100
+Message-Id: <20181214115702.266515306@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,52 +68,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
 
-[ Upstream commit b2b7af861122a0c0f6260155c29a1b2e594cd5b5 ]
+[ Upstream commit a5d4a89245ead1f37ed135213653c5beebea4237 ]
 
-TCP loss probe timer may fire when the retranmission queue is empty but
-has a non-zero tp->packets_out counter. tcp_send_loss_probe will call
-tcp_rearm_rto which triggers NULL pointer reference by fetching the
-retranmission queue head in its sub-routines.
+When changing mtu many times with traffic, a bug is triggered:
 
-Add a more detailed warning to help catch the root cause of the inflight
-accounting inconsistency.
+[ 1035.684037] kernel BUG at lib/dynamic_queue_limits.c:26!
+[ 1035.684042] invalid opcode: 0000 [#1] SMP
+[ 1035.684049] Modules linked in: loop binfmt_misc 8139cp(OE) macsec
+tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag tcp_lp
+fuse uinput xt_CHECKSUM iptable_mangle ipt_MASQUERADE
+nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
+nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun
+bridge stp llc ebtable_filter ebtables ip6table_filter devlink
+ip6_tables iptable_filter sunrpc snd_hda_codec_generic snd_hda_intel
+snd_hda_codec snd_hda_core snd_hwdep ppdev snd_seq iosf_mbi crc32_pclmul
+parport_pc snd_seq_device ghash_clmulni_intel parport snd_pcm
+aesni_intel joydev lrw snd_timer virtio_balloon sg gf128mul glue_helper
+ablk_helper cryptd snd soundcore i2c_piix4 pcspkr ip_tables xfs
+libcrc32c sr_mod sd_mod cdrom crc_t10dif crct10dif_generic ata_generic
+[ 1035.684102]  pata_acpi virtio_console qxl drm_kms_helper syscopyarea
+sysfillrect sysimgblt floppy fb_sys_fops crct10dif_pclmul
+crct10dif_common ttm crc32c_intel serio_raw ata_piix drm libata 8139too
+virtio_pci drm_panel_orientation_quirks virtio_ring virtio mii dm_mirror
+dm_region_hash dm_log dm_mod [last unloaded: 8139cp]
+[ 1035.684132] CPU: 9 PID: 25140 Comm: if-mtu-change Kdump: loaded
+Tainted: G           OE  ------------ T 3.10.0-957.el7.x86_64 #1
+[ 1035.684134] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[ 1035.684136] task: ffff8f59b1f5a080 ti: ffff8f5a2e32c000 task.ti:
+ffff8f5a2e32c000
+[ 1035.684149] RIP: 0010:[<ffffffffba3a40d0>]  [<ffffffffba3a40d0>]
+dql_completed+0x180/0x190
+[ 1035.684162] RSP: 0000:ffff8f5a75483e50  EFLAGS: 00010093
+[ 1035.684162] RAX: 00000000000000c2 RBX: ffff8f5a6f91c000 RCX:
+0000000000000000
+[ 1035.684162] RDX: 0000000000000000 RSI: 0000000000000184 RDI:
+ffff8f599fea3ec0
+[ 1035.684162] RBP: ffff8f5a75483ea8 R08: 00000000000000c2 R09:
+0000000000000000
+[ 1035.684162] R10: 00000000000616ef R11: ffff8f5a75483b56 R12:
+ffff8f599fea3e00
+[ 1035.684162] R13: 0000000000000001 R14: 0000000000000000 R15:
+0000000000000184
+[ 1035.684162] FS:  00007fa8434de740(0000) GS:ffff8f5a75480000(0000)
+knlGS:0000000000000000
+[ 1035.684162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1035.684162] CR2: 00000000004305d0 CR3: 000000024eb66000 CR4:
+00000000001406e0
+[ 1035.684162] Call Trace:
+[ 1035.684162]  <IRQ>
+[ 1035.684162]  [<ffffffffc08cbaf8>] ? cp_interrupt+0x478/0x580 [8139cp]
+[ 1035.684162]  [<ffffffffba14a294>]
+__handle_irq_event_percpu+0x44/0x1c0
+[ 1035.684162]  [<ffffffffba14a442>] handle_irq_event_percpu+0x32/0x80
+[ 1035.684162]  [<ffffffffba14a4cc>] handle_irq_event+0x3c/0x60
+[ 1035.684162]  [<ffffffffba14db29>] handle_fasteoi_irq+0x59/0x110
+[ 1035.684162]  [<ffffffffba02e554>] handle_irq+0xe4/0x1a0
+[ 1035.684162]  [<ffffffffba7795dd>] do_IRQ+0x4d/0xf0
+[ 1035.684162]  [<ffffffffba76b362>] common_interrupt+0x162/0x162
+[ 1035.684162]  <EOI>
+[ 1035.684162]  [<ffffffffba0c2ae4>] ? __wake_up_bit+0x24/0x70
+[ 1035.684162]  [<ffffffffba1e46f5>] ? do_set_pte+0xd5/0x120
+[ 1035.684162]  [<ffffffffba1b64fb>] unlock_page+0x2b/0x30
+[ 1035.684162]  [<ffffffffba1e4879>] do_read_fault.isra.61+0x139/0x1b0
+[ 1035.684162]  [<ffffffffba1e9134>] handle_pte_fault+0x2f4/0xd10
+[ 1035.684162]  [<ffffffffba1ebc6d>] handle_mm_fault+0x39d/0x9b0
+[ 1035.684162]  [<ffffffffba76f5e3>] __do_page_fault+0x203/0x500
+[ 1035.684162]  [<ffffffffba76f9c6>] trace_do_page_fault+0x56/0x150
+[ 1035.684162]  [<ffffffffba76ef42>] do_async_page_fault+0x22/0xf0
+[ 1035.684162]  [<ffffffffba76b788>] async_page_fault+0x28/0x30
+[ 1035.684162] Code: 54 c7 47 54 ff ff ff ff 44 0f 49 ce 48 8b 35 48 2f
+9c 00 48 89 77 58 e9 fe fe ff ff 0f 1f 80 00 00 00 00 41 89 d1 e9 ef fe
+ff ff <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 55 8d 42 ff 48
+[ 1035.684162] RIP  [<ffffffffba3a40d0>] dql_completed+0x180/0x190
+[ 1035.684162]  RSP <ffff8f5a75483e50>
 
-Reported-by: Rafael Tinoco <rafael.tinoco@linaro.org>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
+It's not the same as in 7fe0ee09 patch described.
+As 8139cp uses shared irq mode, other device irq will trigger
+cp_interrupt to execute.
+
+cp_change_mtu
+ -> cp_close
+ -> cp_open
+
+In cp_close routine  just before free_irq(), some interrupt may occur.
+In my environment, cp_interrupt exectutes and IntrStatus is 0x4,
+exactly TxOk. That will cause cp_tx to wake device queue.
+
+As device queue is started, cp_start_xmit and cp_open will run at same
+time which will cause kernel BUG.
+
+For example:
+[#] for tx descriptor
+
+At start:
+
+[#][#][#]
+num_queued=3
+
+After cp_init_hw->cp_start_hw->netdev_reset_queue:
+
+[#][#][#]
+num_queued=0
+
+When 8139cp starts to work then cp_tx will check
+num_queued mismatchs the complete_bytes.
+
+The patch will check IntrMask before check IntrStatus in cp_interrupt.
+When 8139cp interrupt is disabled, just return.
+
+Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/realtek/8139cp.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2263,14 +2263,18 @@ void tcp_send_loss_probe(struct sock *sk
- 		skb = tcp_write_queue_tail(sk);
- 	}
+--- a/drivers/net/ethernet/realtek/8139cp.c
++++ b/drivers/net/ethernet/realtek/8139cp.c
+@@ -578,6 +578,7 @@ static irqreturn_t cp_interrupt (int irq
+ 	struct cp_private *cp;
+ 	int handled = 0;
+ 	u16 status;
++	u16 mask;
  
-+	if (unlikely(!skb)) {
-+		WARN_ONCE(tp->packets_out,
-+			  "invalid inflight: %u state %u cwnd %u mss %d\n",
-+			  tp->packets_out, sk->sk_state, tp->snd_cwnd, mss);
-+		inet_csk(sk)->icsk_pending = 0;
-+		return;
-+	}
+ 	if (unlikely(dev == NULL))
+ 		return IRQ_NONE;
+@@ -585,6 +586,10 @@ static irqreturn_t cp_interrupt (int irq
+ 
+ 	spin_lock(&cp->lock);
+ 
++	mask = cpr16(IntrMask);
++	if (!mask)
++		goto out_unlock;
 +
- 	/* At most one outstanding TLP retransmission. */
- 	if (tp->tlp_high_seq)
- 		goto rearm_timer;
- 
--	/* Retransmit last segment. */
--	if (WARN_ON(!skb))
--		goto rearm_timer;
--
- 	if (skb_still_in_host_queue(sk, skb))
- 		goto rearm_timer;
- 
+ 	status = cpr16(IntrStatus);
+ 	if (!status || (status == 0xFFFF))
+ 		goto out_unlock;
 
 
