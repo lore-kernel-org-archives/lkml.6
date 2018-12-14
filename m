@@ -2,112 +2,104 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103ABC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DA1C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC3562086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:58:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="XgFcD58U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3562086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 8CDF72086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CDF72086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeLND6j (ORCPT
+        id S1727148AbeLNEAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 22:58:39 -0500
-Received: from imap.thunk.org ([74.207.234.97]:35382 "EHLO imap.thunk.org"
+        Thu, 13 Dec 2018 23:00:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55864 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbeLND6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 22:58:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=qWkjphSaSgiwDQOKrxPvsoWFad7dRJ28gWpwIYi3Kbo=; b=XgFcD58UnUvHygDDMWOKa0vVKi
-        Nw8SntBuFof1LJq997PBB5vOWC7QsT6w930D3XFdH9JPsUEf/oqk3e3G35Yo+8kH3X/tzpMfvHcYN
-        wsmnwgc76G7BmvqNRHj78VVespvdYfxZdHzyZHdlK72xY4Z+ooFPQOl5+ZddOP1HuCW8=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gXecI-0005Xz-F9; Fri, 14 Dec 2018 03:58:22 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id C687F7A4FE6; Thu, 13 Dec 2018 22:58:21 -0500 (EST)
-Date:   Thu, 13 Dec 2018 22:58:21 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     louiscollard@chromium.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, mpm@selenic.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        gary.hook@amd.com, m@bues.ch,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        apronin@chromium.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux@mniewoehner.de, david.bild@xaptum.com
-Subject: Re: [PATCH v2] Allow hwrng to initialize crng.
-Message-ID: <20181214035821.GD20880@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        louiscollard@chromium.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>,
-        mpm@selenic.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, gary.hook@amd.com,
-        m@bues.ch, PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        apronin@chromium.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux@mniewoehner.de, david.bild@xaptum.com
-References: <20181213091848.81327-1-louiscollard@chromium.org>
- <CAKv+Gu9sWw=VHjYivokAkhGP+p1P15bs3ThfRghARNesW5kyOA@mail.gmail.com>
+        id S1726437AbeLNEAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 23:00:13 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7756DC049D7F;
+        Fri, 14 Dec 2018 04:00:13 +0000 (UTC)
+Received: from [10.72.12.142] (ovpn-12-142.pek2.redhat.com [10.72.12.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F1F45D6A9;
+        Fri, 14 Dec 2018 04:00:05 +0000 (UTC)
+Subject: Re: [PATCH net-next 1/3] vhost: generalize adding used elem
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181213101022.12475-1-jasowang@redhat.com>
+ <20181213101022.12475-2-jasowang@redhat.com>
+ <20181213144027-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <bca9a3a1-0d42-e028-8145-aa2153432571@redhat.com>
+Date:   Fri, 14 Dec 2018 12:00:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9sWw=VHjYivokAkhGP+p1P15bs3ThfRghARNesW5kyOA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20181213144027-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 14 Dec 2018 04:00:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 10:48:07AM +0100, Ard Biesheuvel wrote:
-> > @@ -64,13 +65,19 @@ static size_t rng_buffer_size(void)
-> >  static void add_early_randomness(struct hwrng *rng)
-> >  {
-> >         int bytes_read;
-> > -       size_t size = min_t(size_t, 16, rng_buffer_size());
-> > +       /* Read enough to initialize crng. */
-> > +       size_t size = min_t(size_t,
-> > +                           2*CHACHA20_KEY_SIZE,
-> 
-> This should be as symbolic constant that retains its meaning even if
-> we move away from ChaCha20 or modify the current implementation
 
-Also, rng_buffer_size() could be less than 2*hCHACHA20_KEY_SIZE, at
-which point your goal wouldn't be realized.  What I'd recommend is to
-keep the line:
+On 2018/12/14 上午3:41, Michael S. Tsirkin wrote:
+> On Thu, Dec 13, 2018 at 06:10:20PM +0800, Jason Wang wrote:
+>> Use one generic vhost_copy_to_user() instead of two dedicated
+>> accessor. This will simplify the conversion to fine grain accessors.
+>>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+>
+> The reason we did it like this is because it was faster.
+> Want to try benchmarking before we change it?
 
-	size_t size = min_t(size_t, 16, rng_buffer_size());
 
-But to loop until rng_is_initialized() returns true or bytes_read is
-0.  If you want to be paranoid, you could also break out of the loop
-it isn't initialized after, say, 8 times through the loop.
+Faster is a good side effect of such conversion. Otherwise we need two 
+new fine grain memory accessor.
 
-Cheers,
+But, anyway, I can test its impact.
 
-					- Ted
+Thanks
+
+
+>
+>> ---
+>>   drivers/vhost/vhost.c | 11 +----------
+>>   1 file changed, 1 insertion(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>> index 3a5f81a66d34..1c54ec1b82f8 100644
+>> --- a/drivers/vhost/vhost.c
+>> +++ b/drivers/vhost/vhost.c
+>> @@ -2164,16 +2164,7 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
+>>   
+>>   	start = vq->last_used_idx & (vq->num - 1);
+>>   	used = vq->used->ring + start;
+>> -	if (count == 1) {
+>> -		if (vhost_put_user(vq, heads[0].id, &used->id)) {
+>> -			vq_err(vq, "Failed to write used id");
+>> -			return -EFAULT;
+>> -		}
+>> -		if (vhost_put_user(vq, heads[0].len, &used->len)) {
+>> -			vq_err(vq, "Failed to write used len");
+>> -			return -EFAULT;
+>> -		}
+>> -	} else if (vhost_copy_to_user(vq, used, heads, count * sizeof *used)) {
+>> +	if (vhost_copy_to_user(vq, used, heads, count * sizeof *used)) {
+>>   		vq_err(vq, "Failed to write used");
+>>   		return -EFAULT;
+>>   	}
+>> -- 
+>> 2.17.1
