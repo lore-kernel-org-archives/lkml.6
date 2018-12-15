@@ -2,167 +2,177 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A03C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 20:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0BFC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 20:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 840532084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 20:38:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHy3eRm/"
+	by mail.kernel.org (Postfix) with ESMTP id 971DD2171F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 20:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544906502;
+	bh=10EafHhJD9kymZjXwJbYKMVVaAFCFClnMbHrnsbhPMU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=o/ViZgExNkkFEFX1yeMZHUQpaSt1ynH3d7TVquaFWLuqXTbTpTUpMuLpkQVbyU5m8
+	 flFU6bbepI7RrPZDXMZ5Jh27vZT7qVz1c+KT5YkGGbvcJit6+fkIy36a2s4uBqjlid
+	 SZQ6MK/RLtTzkZACSwfH0HpgXhmnIHeTV2P+Cbu0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbeLOUit (ORCPT
+        id S1729631AbeLOUll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 15:38:49 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42413 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbeLOUis (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 15:38:48 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 64so4452222pfr.9;
-        Sat, 15 Dec 2018 12:38:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=TV5Z7dS31yC8KHUyvIdoMonSwifCUv+H8Jds2lC/VTU=;
-        b=HHy3eRm/OxdfJ6OYjjyBHV8fMNtSJ6eGVg45r+Z3PA8U7y8JBsgoYX1aw105G3PFcb
-         mIkr/VRyr5cKXUTtuq24/WURLA1ysD4hy+3wcJQQNV4d66B7uP6Yg5lnJ03WB3Fc51PZ
-         2jXn0Wlmfliw2l/xCQSpPw0K4gu8mWud7NNy8QSU5LBRTfaqCL0uASXT7bgp94xpPZB0
-         j66Gp6MNY/0mVll78ccqvMQjB+dZzYFXDU6PD7XB9COtpP/J18IGvdA1wGUBoEAPZo1w
-         4v0w/dJ49icXAGSUSMb73t7PtsK26ZynbpHg3zyDzIN0yMssysxtqtTmzi5f9mfEQ1rJ
-         ZxZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=TV5Z7dS31yC8KHUyvIdoMonSwifCUv+H8Jds2lC/VTU=;
-        b=CsHR0xe94QWcmpJZtPQgHIEZ2t/6q1UhMKAp8v+3PrMKbbQg4nETPqhHge+GmexSSF
-         +VLHFHdgoJvLCiq551v84qENRWVK5QpS7GpfG/ALhG8biISUhQMCSpz8EwPSiWeqKT/S
-         H9N0DyAtoBq9wvJhtbn6Ls5zklSDaLnAwVlFrgVjQSah5LxVpGaTfsCY0XVeRrkmc3lW
-         OOjoXhXfVjyPXKCEqs6zHPkdv7LsISKArgEugO5JkFbvuQkRaen69CzvbQCfLtq4I5ge
-         o8aLl4rhpqErPpVMslXikCmKnMnMrXUi9YDIIYvS357EmgQ3Qc8WFiRafA1sEbu9nA0B
-         wl2A==
-X-Gm-Message-State: AA+aEWasmot6AGFNUugU5CNOkNwzPzQj6PGhfIi/i4x9qEbRFKocysQI
-        0M1i+11EtlyXdQqNhudxbbLSGTDyXQ0=
-X-Google-Smtp-Source: AFSGD/VmsCHbC65NUwGhdo5z79JPQ6H+K1CVNYvC5MtKfx7IsZznBR0etznn8QOuxkxiyh92AZmuQw==
-X-Received: by 2002:a62:68c5:: with SMTP id d188mr7858124pfc.194.1544906327059;
-        Sat, 15 Dec 2018 12:38:47 -0800 (PST)
-Received: from [0.0.0.0] (104.194.84.186.16clouds.com. [104.194.84.186])
-        by smtp.gmail.com with ESMTPSA id w136sm12720191pfd.169.2018.12.15.12.38.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 12:38:46 -0800 (PST)
-Subject: Re: [PATCH] ubifs: Get/put page when changing PG_private
-To:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hsiangkao@mail.ru, kirill.shutemov@linux.intel.com,
-        stable@vger.kernel.org
-References: <20181215150130.19381-1-richard@nod.at>
-From:   zhangjun <openzhangj@gmail.com>
-Message-ID: <9d539def-2042-9a2e-1251-c3f03d3d616c@gmail.com>
-Date:   Sun, 16 Dec 2018 04:38:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 15 Dec 2018 15:41:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727229AbeLOUll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 15:41:41 -0500
+Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FA292084D;
+        Sat, 15 Dec 2018 20:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544906499;
+        bh=10EafHhJD9kymZjXwJbYKMVVaAFCFClnMbHrnsbhPMU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZyU6+tYy3kGVcrwYdHnvXtM8XFsSb1oFBpjNSsNt6IAnL1TwF1YlE8Q5yI30nhbde
+         nYpzU/tAv59gt1+fekjDZjioqT9iBMutEx/eBSe3Xd2Z11A8AqPrRVhk0CSu8I/roT
+         5IB1pgtQGfhQtYEejpU4cdMyDw4nRayl53g1xzB4=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     syzkaller-bugs@googlegroups.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: x86/chacha - avoid sleeping under kernel_fpu_begin()
+Date:   Sat, 15 Dec 2018 12:40:17 -0800
+Message-Id: <20181215204017.7880-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <000000000000fb268d057d13ea55@google.com>
+References: <000000000000fb268d057d13ea55@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181215150130.19381-1-richard@nod.at>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/15 下午11:01, Richard Weinberger wrote:
-> The page migration code assumes that a page with PG_private
-> set has its page count elevated by 1.
-> UBIFS never did this and therefore the migration code was unable
-> to migrate some pages owned by UBIFS.
-> The lead to situations where the CMA memory allocator failed to
-> allocate memory.
->
-> Fix this by using get/put_page when changing PG_private.
->
-> Cc: <stable@vger.kernel.org>
-> Cc: zhangjun <openzhangj@gmail.com>
-> Fixes: 4ac1c17b2044 ("UBIFS: Implement ->migratepage()")
-> Reported-by: zhangjun <openzhangj@gmail.com>
-> Signed-off-by: Richard Weinberger <richard@nod.at>
-> ---
-> zhangjun,
->
-> Please give this patch a try!
->
-> Thanks,
-> //richard
-> ---
->   fs/ubifs/file.c | 7 +++++++
->   1 file changed, 7 insertions(+)
->
-> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> index 1b78f2e09218..abe940d0767c 100644
-> --- a/fs/ubifs/file.c
-> +++ b/fs/ubifs/file.c
-> @@ -582,6 +582,7 @@ static int ubifs_write_end(struct file *file, struct address_space *mapping,
->   	}
->   
->   	if (!PagePrivate(page)) {
-> +		get_page(page);
->   		SetPagePrivate(page);
->   		atomic_long_inc(&c->dirty_pg_cnt);
->   		__set_page_dirty_nobuffers(page);
-> @@ -959,6 +960,7 @@ static int do_writepage(struct page *page, int len)
->   	atomic_long_dec(&c->dirty_pg_cnt);
->   	ClearPagePrivate(page);
->   	ClearPageChecked(page);
-> +	put_page(page);
->   
->   	kunmap(page);
->   	unlock_page(page);
-> @@ -1318,6 +1320,7 @@ static void ubifs_invalidatepage(struct page *page, unsigned int offset,
->   	atomic_long_dec(&c->dirty_pg_cnt);
->   	ClearPagePrivate(page);
->   	ClearPageChecked(page);
-> +	put_page(page);
->   }
->   
->   int ubifs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
-> @@ -1487,6 +1490,8 @@ static int ubifs_migrate_page(struct address_space *mapping,
->   
->   	if (PagePrivate(page)) {
->   		ClearPagePrivate(page);
-> +		put_page(page);
-> +		get_page(newpage);
->   		SetPagePrivate(newpage);
->   	}
->   
-> @@ -1513,6 +1518,7 @@ static int ubifs_releasepage(struct page *page, gfp_t unused_gfp_flags)
->   	ubifs_assert(c, 0);
->   	ClearPagePrivate(page);
->   	ClearPageChecked(page);
-> +	put_page(page);
->   	return 1;
->   }
->   
-> @@ -1582,6 +1588,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
->   	else {
->   		if (!PageChecked(page))
->   			ubifs_convert_page_budget(c);
-> +		get_page(page);
->   		SetPagePrivate(page);
->   		atomic_long_inc(&c->dirty_pg_cnt);
->   		__set_page_dirty_nobuffers(page);
+From: Eric Biggers <ebiggers@google.com>
 
-Hello Richard
+Passing atomic=true to skcipher_walk_virt() only makes the later
+skcipher_walk_done() calls use atomic memory allocations, not
+skcipher_walk_virt() itself.  Thus, we have to move it outside of the
+preemption-disabled region (kernel_fpu_begin()/kernel_fpu_end()).
 
-After adding your patch,my test did not go wrong.
-I think it is ok now.
+(skcipher_walk_virt() only allocates memory for certain layouts of the
+input scatterlist, hence why I didn't notice this earlier...)
 
-thanks
-//zhangjun
+Reported-by: syzbot+9bf843c33f782d73ae7d@syzkaller.appspotmail.com
+Fixes: 4af78261870a ("crypto: x86/chacha20 - add XChaCha20 support")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ arch/x86/crypto/chacha_glue.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/crypto/chacha_glue.c b/arch/x86/crypto/chacha_glue.c
+index 9b1d3fac49433..45c1c41431766 100644
+--- a/arch/x86/crypto/chacha_glue.c
++++ b/arch/x86/crypto/chacha_glue.c
+@@ -127,30 +127,27 @@ static void chacha_dosimd(u32 *state, u8 *dst, const u8 *src,
+ 	}
+ }
+ 
+-static int chacha_simd_stream_xor(struct skcipher_request *req,
++static int chacha_simd_stream_xor(struct skcipher_walk *walk,
+ 				  struct chacha_ctx *ctx, u8 *iv)
+ {
+ 	u32 *state, state_buf[16 + 2] __aligned(8);
+-	struct skcipher_walk walk;
+ 	int next_yield = 4096; /* bytes until next FPU yield */
+-	int err;
++	int err = 0;
+ 
+ 	BUILD_BUG_ON(CHACHA_STATE_ALIGN != 16);
+ 	state = PTR_ALIGN(state_buf + 0, CHACHA_STATE_ALIGN);
+ 
+-	err = skcipher_walk_virt(&walk, req, true);
+-
+ 	crypto_chacha_init(state, ctx, iv);
+ 
+-	while (walk.nbytes > 0) {
+-		unsigned int nbytes = walk.nbytes;
++	while (walk->nbytes > 0) {
++		unsigned int nbytes = walk->nbytes;
+ 
+-		if (nbytes < walk.total) {
+-			nbytes = round_down(nbytes, walk.stride);
++		if (nbytes < walk->total) {
++			nbytes = round_down(nbytes, walk->stride);
+ 			next_yield -= nbytes;
+ 		}
+ 
+-		chacha_dosimd(state, walk.dst.virt.addr, walk.src.virt.addr,
++		chacha_dosimd(state, walk->dst.virt.addr, walk->src.virt.addr,
+ 			      nbytes, ctx->nrounds);
+ 
+ 		if (next_yield <= 0) {
+@@ -160,7 +157,7 @@ static int chacha_simd_stream_xor(struct skcipher_request *req,
+ 			next_yield = 4096;
+ 		}
+ 
+-		err = skcipher_walk_done(&walk, walk.nbytes - nbytes);
++		err = skcipher_walk_done(walk, walk->nbytes - nbytes);
+ 	}
+ 
+ 	return err;
+@@ -170,13 +167,18 @@ static int chacha_simd(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct skcipher_walk walk;
+ 	int err;
+ 
+ 	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !irq_fpu_usable())
+ 		return crypto_chacha_crypt(req);
+ 
++	err = skcipher_walk_virt(&walk, req, true);
++	if (err)
++		return err;
++
+ 	kernel_fpu_begin();
+-	err = chacha_simd_stream_xor(req, ctx, req->iv);
++	err = chacha_simd_stream_xor(&walk, ctx, req->iv);
+ 	kernel_fpu_end();
+ 	return err;
+ }
+@@ -185,6 +187,7 @@ static int xchacha_simd(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct chacha_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct skcipher_walk walk;
+ 	struct chacha_ctx subctx;
+ 	u32 *state, state_buf[16 + 2] __aligned(8);
+ 	u8 real_iv[16];
+@@ -193,6 +196,10 @@ static int xchacha_simd(struct skcipher_request *req)
+ 	if (req->cryptlen <= CHACHA_BLOCK_SIZE || !irq_fpu_usable())
+ 		return crypto_xchacha_crypt(req);
+ 
++	err = skcipher_walk_virt(&walk, req, true);
++	if (err)
++		return err;
++
+ 	BUILD_BUG_ON(CHACHA_STATE_ALIGN != 16);
+ 	state = PTR_ALIGN(state_buf + 0, CHACHA_STATE_ALIGN);
+ 	crypto_chacha_init(state, ctx, req->iv);
+@@ -204,7 +211,7 @@ static int xchacha_simd(struct skcipher_request *req)
+ 
+ 	memcpy(&real_iv[0], req->iv + 24, 8);
+ 	memcpy(&real_iv[8], req->iv + 16, 8);
+-	err = chacha_simd_stream_xor(req, &subctx, real_iv);
++	err = chacha_simd_stream_xor(&walk, &subctx, real_iv);
+ 
+ 	kernel_fpu_end();
+ 
+-- 
+2.19.2
 
