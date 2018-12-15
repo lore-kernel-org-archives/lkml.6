@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFBBC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2597C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06662080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A02F42080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:46:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vGMMpNSN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICGDzmxw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729629AbeLOQql (ORCPT
+        id S1729825AbeLOQqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 11:46:41 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33431 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbeLOQqi (ORCPT
+        Sat, 15 Dec 2018 11:46:53 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45769 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728033AbeLOQqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 11:46:38 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so8304967wrr.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 08:46:36 -0800 (PST)
+        Sat, 15 Dec 2018 11:46:34 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t6so8106941wrr.12
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 08:46:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vTtca2h9i8942BNTWafc3NHm7w0CvP0pinhwkVqgBm4=;
-        b=vGMMpNSNuEminC927iFRafrFgf9pplfOUhU5NWUwFP3Km1dr6KddE3brSTice8D1Gx
-         4XT7+9fuzPuaU1CHHMFwi5adD2+ACfWPT8qFiLywysTi8J4w9wQJg8z5icqrlqxvh9k4
-         mYIfcO2N0s5XfOjyMQt45B0MRXPqBNUAMhG+ShTrBxUc7Il2YlgxhOKeMudvLuKUyCQ9
-         gIewA7bFSXUp/EBfVqW8p9cVEOT7ig6jicqWPNRk0A8GqhgUni1B122165e7up+OZKhQ
-         FzU86XjrKqeic5GzCypdQXTJUImVI3GOQUbRw1lnRPi26aDzts6BtLNA3wDSAPGF309n
-         OafQ==
+        bh=DcyOSZ26DyHNiYs8TZnhJAN7t6Pvik/6V+HgFXLXULI=;
+        b=ICGDzmxw7Ao7d/ZmQerJX+YYp3eM/beaJAB0UShPZS5RNbEuxKdo+NbN7R6FPb3ePn
+         xDfC0tVkPv2NJOP2szyFpBnoP4Qtv0WANu/OKm2I0QxemE6PBHXdhgqNokY41CNCMjMU
+         gOXY/gxoGOqVG1W1QUDXzp1gO53h7SWtbtREY7A7xn03Os0xRDwnwlg/B0NXwaMOs3qs
+         UPYhdcve85XeNDa+tL+vcIO/id7KHZg0PhspjgAWsL9GbBwvOojB0zpte3/yUNdPcJLg
+         pUugPNgF8zFnzOwXmZ7CM+O3khmLm0NS9JYKM/z1FrRMSLP7SD9ui2plu+3+ReKTP+Vu
+         zVXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vTtca2h9i8942BNTWafc3NHm7w0CvP0pinhwkVqgBm4=;
-        b=JD3Szo5dViWQSzostMxj1wXVp2MEAa1kQ/ic6FvjyFJT5e8VA1iFaDUvLnN8Qyuar5
-         UlbG2kgHrVfZBUncItEORD+ho9IN4Dv5WIn5w6m1FLWzXdeDi34ibi6Bz2CvC3GfbJKi
-         AlosJ1KJQ4uRtQaC2/ijYbxY59eV/OTD39r55f+AKKLX6WcDSfViExQ0tJlM4djQRh01
-         JbrJmh9xfXPc7ztVPyaAu14KIONiQLsEg8HSqYp1pWESMjK61O0V3Xvw/mMJ9Zm6TJQr
-         WdJbf+f+poU8wv2NItdfn8sm9/ZkdfhUn/O90iSu2bSAT1Qn8lonpXAHOpSBPMQ7Abck
-         h5LA==
-X-Gm-Message-State: AA+aEWZoY1TKhF2q8UwoVUg1TSE85BisnP30DFRxVsObn3gIKExyJEj9
-        lXVd66GE1eE/oGVTcIfFwSY=
-X-Google-Smtp-Source: AFSGD/XFjxiSDmsOpHePvnux0T81prCfqbToOnZ2ucwZ2vIX5jyHj4NkEsj/q+gQ/B2SoqQ5j4Y5UA==
-X-Received: by 2002:a5d:40c1:: with SMTP id b1mr6223639wrq.133.1544892395133;
-        Sat, 15 Dec 2018 08:46:35 -0800 (PST)
+        bh=DcyOSZ26DyHNiYs8TZnhJAN7t6Pvik/6V+HgFXLXULI=;
+        b=CAIUy/lifgHaIJG8TH7FujpKF8iZKkOD9GElcHYIcyeIudJJcfg2Xup7b9RCcz6q9R
+         hP2Pph8AWh4TJqbEBH+Sl5OtEpdeWrDFCsEg96IseLfnkvcRKyDMkkT1+BQCFYTLQtC7
+         eQgHTNiuTM/5BbzIcV3SFqruYy6k4xOJ/1mswvyhmG0KJ5QT3UoLmCy//ngdIiIiSO/X
+         4Upn+ERvxv90C98xNEpTb9U4tiygXOK0iRCs+TkG+NdPZ7noZnuFT75dPbqDGF8VN2Ev
+         0svZzwD0UG7vwLHpdg8FiwY/PSAt6SSZCs9mRtb0/gu0njHzYihtb7VlG7KJTrVRnaZA
+         bOWg==
+X-Gm-Message-State: AA+aEWYHmqnl0BZdIpUsyQFaszmx9f2DOmmFdk1oqUmeLd9pbQsu3PIC
+        OGU5S3/PvfrvBP4CS2F4DFw=
+X-Google-Smtp-Source: AFSGD/UUnKaSEunpksBL1j82smS6aXMeAT2TbCbhFcZ5/p1PRfVViWmDzRNnv/ktjt5WY1M8+KSIHA==
+X-Received: by 2002:adf:ea11:: with SMTP id q17mr5583529wrm.328.1544892392903;
+        Sat, 15 Dec 2018 08:46:32 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id i186sm8820935wmd.19.2018.12.15.08.46.34
+        by smtp.gmail.com with ESMTPSA id i186sm8820935wmd.19.2018.12.15.08.46.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 08:46:34 -0800 (PST)
+        Sat, 15 Dec 2018 08:46:32 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 8/9] staging: rtl8188eu: add spaces aroubd '&' in rtw_mlme_ext.c
-Date:   Sat, 15 Dec 2018 17:46:15 +0100
-Message-Id: <20181215164616.2643-8-straube.linux@gmail.com>
+Subject: [PATCH 6/9] staging: rtl8188eu: simplify null array initializations
+Date:   Sat, 15 Dec 2018 17:46:13 +0100
+Message-Id: <20181215164616.2643-6-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181215164616.2643-1-straube.linux@gmail.com>
 References: <20181215164616.2643-1-straube.linux@gmail.com>
@@ -73,357 +73,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add spaces around '&' to follow kernel coding style.
-Reported by ceckpatch.
+Simplfy initialization of null arrays to improve readability
+and save some lines.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 92 ++++++++++---------
- 1 file changed, 47 insertions(+), 45 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 4 ++--
+ drivers/staging/rtl8188eu/core/rtw_xmit.c     | 6 ++----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index a7d85070281a..1b6d9e770de1 100644
+index b5cd9f6c4e30..a7d85070281a 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -355,7 +355,7 @@ static void issue_beacon(struct adapter *padapter, int timeout_ms)
- 	pframe += sizeof(struct ieee80211_hdr_3addr);
- 	pattrib->pktlen = sizeof(struct ieee80211_hdr_3addr);
+@@ -17,7 +17,7 @@
+ #include <mlme_osdep.h>
+ #include <recv_osdep.h>
  
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE) {
- 		int len_diff;
- 		u8 *wps_ie;
- 		uint wps_ielen;
-@@ -503,7 +503,7 @@ static void issue_probersp(struct adapter *padapter, unsigned char *da)
- 		return;
+-static u8 null_addr[ETH_ALEN] = {0, 0, 0, 0, 0, 0};
++static u8 null_addr[ETH_ALEN] = {};
  
- #if defined(CONFIG_88EU_AP_MODE)
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE) {
- 		pwps_ie = rtw_get_wps_ie(cur_network->ies+_FIXED_IE_LENGTH_, cur_network->ie_length-_FIXED_IE_LENGTH_, NULL, &wps_ielen);
- 
- 		/* inerset & update wps_probe_resp_ie */
-@@ -571,7 +571,7 @@ static void issue_probersp(struct adapter *padapter, unsigned char *da)
- 		/*  DS parameter set */
- 		pframe = rtw_set_ie(pframe, _DSSET_IE_, 1, (unsigned char *)&cur_network->Configuration.DSConfig, &pattrib->pktlen);
- 
--		if ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) {
-+		if ((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE) {
- 			u8 erpinfo = 0;
- 			u32 ATIMWindow;
- 			/*  IBSS Parameter Set... */
-@@ -1218,9 +1218,9 @@ static int _issue_nulldata(struct adapter *padapter, unsigned char *da,
- 	fctrl = &pwlanhdr->frame_control;
- 	*(fctrl) = 0;
- 
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE)
- 		SetFrDs(fctrl);
--	else if ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE)
-+	else if ((pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE)
- 		SetToDs(fctrl);
- 
- 	if (power_mode)
-@@ -1339,9 +1339,9 @@ static int _issue_qos_nulldata(struct adapter *padapter, unsigned char *da,
- 	fctrl = &pwlanhdr->frame_control;
- 	*(fctrl) = 0;
- 
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE)
- 		SetFrDs(fctrl);
--	else if ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE)
-+	else if ((pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE)
- 		SetToDs(fctrl);
- 
- 	if (pattrib->mdata)
-@@ -1612,7 +1612,7 @@ static void issue_action_BA(struct adapter *padapter, unsigned char *raddr,
- 
- 			psta = rtw_get_stainfo(pstapriv, raddr);
- 			if (psta) {
--				start_seq = (psta->sta_xmitpriv.txseq_tid[status & 0x07]&0xfff) + 1;
-+				start_seq = (psta->sta_xmitpriv.txseq_tid[status & 0x07] & 0xfff) + 1;
- 
- 				DBG_88E("BA_starting_seqctrl=%d for TID=%d\n", start_seq, status & 0x07);
- 
-@@ -1828,7 +1828,7 @@ unsigned int send_delba(struct adapter *padapter, u8 initiator, u8 *addr)
+ /**************************************************
+ OUI definitions for the vendor specific IE
+@@ -5208,7 +5208,7 @@ u8 setkey_hdl(struct adapter *padapter, u8 *pbuf)
+ 	struct setkey_parm *pparm = (struct setkey_parm *)pbuf;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
  	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
- 	u16 tid;
+-	u8 null_sta[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++	u8 null_sta[ETH_ALEN] = {};
  
--	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
-+	if ((pmlmeinfo->state & 0x03) != WIFI_FW_AP_STATE)
- 		if (!(pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS))
- 			return _SUCCESS;
+ 	/* main tx key for wep. */
+ 	if (pparm->set_tx)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 14e3f59b9009..3b1ccd138c3f 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -592,7 +592,7 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 	struct	pkt_attrib *pattrib = &pxmitframe->attrib;
+ 	struct	security_priv	*psecuritypriv = &padapter->securitypriv;
+ 	struct	xmit_priv *pxmitpriv = &padapter->xmitpriv;
+-	u8 priority[4] = {0x0, 0x0, 0x0, 0x0};
++	u8 priority[4] = {};
+ 	u8 hw_hdr_offset = 0;
  
-@@ -1840,7 +1840,7 @@ unsigned int send_delba(struct adapter *padapter, u8 initiator, u8 *addr)
- 		for (tid = 0; tid < MAXTID; tid++) {
- 			if (psta->recvreorder_ctrl[tid].enable) {
- 				DBG_88E("rx agg disable tid(%d)\n", tid);
--				issue_action_BA(padapter, addr, RTW_WLAN_ACTION_DELBA, (((tid << 1) | initiator)&0x1F));
-+				issue_action_BA(padapter, addr, RTW_WLAN_ACTION_DELBA, (((tid << 1) | initiator) & 0x1F));
- 				psta->recvreorder_ctrl[tid].enable = false;
- 				psta->recvreorder_ctrl[tid].indicate_seq = 0xffff;
- 			}
-@@ -1849,7 +1849,7 @@ unsigned int send_delba(struct adapter *padapter, u8 initiator, u8 *addr)
- 		for (tid = 0; tid < MAXTID; tid++) {
- 			if (psta->htpriv.agg_enable_bitmap & BIT(tid)) {
- 				DBG_88E("tx agg disable tid(%d)\n", tid);
--				issue_action_BA(padapter, addr, RTW_WLAN_ACTION_DELBA, (((tid << 1) | initiator)&0x1F));
-+				issue_action_BA(padapter, addr, RTW_WLAN_ACTION_DELBA, (((tid << 1) | initiator) & 0x1F));
- 				psta->htpriv.agg_enable_bitmap &= ~BIT(tid);
- 				psta->htpriv.candidate_tid_bitmap &= ~BIT(tid);
- 			}
-@@ -2194,7 +2194,7 @@ static void start_create_ibss(struct adapter *padapter)
- 	/* update capability */
- 	caps = rtw_get_capability((struct wlan_bssid_ex *)pnetwork);
- 	update_capinfo(padapter, caps);
--	if (caps&cap_IBSS) {/* adhoc master */
-+	if (caps & cap_IBSS) {/* adhoc master */
- 		val8 = 0xcf;
- 		rtw_hal_set_hwreg(padapter, HW_VAR_SEC_CFG, (u8 *)(&val8));
+ 	if (pattrib->psta)
+@@ -605,9 +605,7 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 	if (pattrib->encrypt == _TKIP_) {
+ 		/* encode mic code */
+ 		if (stainfo) {
+-			u8 null_key[16] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+-					   0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+-					   0x0, 0x0};
++			u8 null_key[16] = {};
  
-@@ -2246,7 +2246,7 @@ static void start_clnt_join(struct adapter *padapter)
- 	/* update capability */
- 	caps = rtw_get_capability((struct wlan_bssid_ex *)pnetwork);
- 	update_capinfo(padapter, caps);
--	if (caps&cap_ESS) {
-+	if (caps & cap_ESS) {
- 		Set_MSR(padapter, WIFI_FW_STATION_STATE);
- 
- 		val8 = (pmlmeinfo->auth_algo == dot11AuthAlgrthm_8021X) ? 0xcc : 0xcf;
-@@ -2264,7 +2264,7 @@ static void start_clnt_join(struct adapter *padapter)
- 			  msecs_to_jiffies((REAUTH_TO * REAUTH_LIMIT) + (REASSOC_TO * REASSOC_LIMIT) + beacon_timeout));
- 
- 		pmlmeinfo->state = WIFI_FW_AUTH_NULL | WIFI_FW_STATION_STATE;
--	} else if (caps&cap_IBSS) { /* adhoc client */
-+	} else if (caps & cap_IBSS) { /* adhoc client */
- 		Set_MSR(padapter, WIFI_FW_ADHOC_STATE);
- 
- 		val8 = 0xcf;
-@@ -2341,7 +2341,7 @@ static unsigned int receive_disconnect(struct adapter *padapter,
- 
- 	DBG_88E("%s\n", __func__);
- 
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE) {
- 		if (pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) {
- 			pmlmeinfo->state = WIFI_FW_NULL_STATE;
- 			report_del_sta_event(padapter, MacAddr, reason);
-@@ -2594,7 +2594,8 @@ static unsigned int OnBeacon(struct adapter *padapter,
- 			return _SUCCESS;
- 		}
- 
--		if (((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE) && (pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS)) {
-+		if ((pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE &&
-+		    (pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS)) {
- 			psta = rtw_get_stainfo(pstapriv, GetAddr2Ptr(pframe));
- 			if (psta != NULL) {
- 				ret = rtw_check_bcn_info(padapter, pframe, len);
-@@ -2608,7 +2609,7 @@ static unsigned int OnBeacon(struct adapter *padapter,
- 				if ((sta_rx_pkts(psta) & 0xf) == 0)
- 					update_beacon_info(padapter, pframe, len, psta);
- 			}
--		} else if ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) {
-+		} else if ((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE) {
- 			psta = rtw_get_stainfo(pstapriv, GetAddr2Ptr(pframe));
- 			if (psta != NULL) {
- 				/* update WMM, ERP in the beacon */
-@@ -2659,7 +2660,7 @@ static unsigned int OnAuth(struct adapter *padapter,
- 	u8 *pframe = precv_frame->pkt->data;
- 	uint len = precv_frame->pkt->len;
- 
--	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
-+	if ((pmlmeinfo->state & 0x03) != WIFI_FW_AP_STATE)
- 		return _FAIL;
- 
- 	DBG_88E("+%s\n", __func__);
-@@ -2910,7 +2911,7 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 	u8 *pframe = precv_frame->pkt->data;
- 	uint ie_len, pkt_len = precv_frame->pkt->len;
- 
--	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
-+	if ((pmlmeinfo->state & 0x03) != WIFI_FW_AP_STATE)
- 		return _FAIL;
- 
- 	frame_type = GetFrameSubType(pframe);
-@@ -3035,8 +3036,8 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 			pstat->dot8021xalg = 1;/* psk,  todo:802.1x */
- 			pstat->wpa_psk |= BIT(1);
- 
--			pstat->wpa2_group_cipher = group_cipher&psecuritypriv->wpa2_group_cipher;
--			pstat->wpa2_pairwise_cipher = pairwise_cipher&psecuritypriv->wpa2_pairwise_cipher;
-+			pstat->wpa2_group_cipher = group_cipher & psecuritypriv->wpa2_group_cipher;
-+			pstat->wpa2_pairwise_cipher = pairwise_cipher & psecuritypriv->wpa2_pairwise_cipher;
- 
- 			if (!pstat->wpa2_group_cipher)
- 				status = WLAN_STATUS_INVALID_GROUP_CIPHER;
-@@ -3056,8 +3057,8 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 			pstat->dot8021xalg = 1;/* psk,  todo:802.1x */
- 			pstat->wpa_psk |= BIT(0);
- 
--			pstat->wpa_group_cipher = group_cipher&psecuritypriv->wpa_group_cipher;
--			pstat->wpa_pairwise_cipher = pairwise_cipher&psecuritypriv->wpa_pairwise_cipher;
-+			pstat->wpa_group_cipher = group_cipher & psecuritypriv->wpa_group_cipher;
-+			pstat->wpa_pairwise_cipher = pairwise_cipher & psecuritypriv->wpa_pairwise_cipher;
- 
- 			if (!pstat->wpa_group_cipher)
- 				status = WLAN_STATUS_INVALID_GROUP_CIPHER;
-@@ -3153,30 +3154,30 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 					pstat->qos_option = 1;
- 					pstat->qos_info = *(p+8);
- 
--					pstat->max_sp_len = (pstat->qos_info>>5)&0x3;
-+					pstat->max_sp_len = (pstat->qos_info>>5) & 0x3;
- 
--					if ((pstat->qos_info&0xf) != 0xf)
-+					if ((pstat->qos_info & 0xf) != 0xf)
- 						pstat->has_legacy_ac = true;
- 					else
- 						pstat->has_legacy_ac = false;
- 
--					if (pstat->qos_info&0xf) {
--						if (pstat->qos_info&BIT(0))
-+					if (pstat->qos_info & 0xf) {
-+						if (pstat->qos_info & BIT(0))
- 							pstat->uapsd_vo = BIT(0)|BIT(1);
- 						else
- 							pstat->uapsd_vo = 0;
- 
--						if (pstat->qos_info&BIT(1))
-+						if (pstat->qos_info & BIT(1))
- 							pstat->uapsd_vi = BIT(0)|BIT(1);
- 						else
- 							pstat->uapsd_vi = 0;
- 
--						if (pstat->qos_info&BIT(2))
-+						if (pstat->qos_info & BIT(2))
- 							pstat->uapsd_bk = BIT(0)|BIT(1);
- 						else
- 							pstat->uapsd_bk = 0;
- 
--						if (pstat->qos_info&BIT(3))
-+						if (pstat->qos_info & BIT(3))
- 							pstat->uapsd_be = BIT(0)|BIT(1);
- 						else
- 							pstat->uapsd_be = 0;
-@@ -3203,14 +3204,14 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 	} else {
- 		pstat->flags &= ~WLAN_STA_HT;
- 	}
--	if ((!pmlmepriv->htpriv.ht_option) && (pstat->flags&WLAN_STA_HT)) {
-+	if ((!pmlmepriv->htpriv.ht_option) && (pstat->flags & WLAN_STA_HT)) {
- 		status = _STATS_FAILURE_;
- 		goto OnAssocReqFail;
- 	}
- 
- 	if ((pstat->flags & WLAN_STA_HT) &&
--	    ((pstat->wpa2_pairwise_cipher&WPA_CIPHER_TKIP) ||
--	    (pstat->wpa_pairwise_cipher&WPA_CIPHER_TKIP))) {
-+	    ((pstat->wpa2_pairwise_cipher & WPA_CIPHER_TKIP) ||
-+	    (pstat->wpa_pairwise_cipher & WPA_CIPHER_TKIP))) {
- 		DBG_88E("HT: %pM tried to "
- 			"use TKIP with HT association\n", pstat->hwaddr);
- 
-@@ -3365,7 +3366,7 @@ static unsigned int OnAssocRsp(struct adapter *padapter,
- 	pmlmeinfo->slotTime = (pmlmeinfo->capability & BIT(10)) ? 9 : 20;
- 
- 	/* AID */
--	pmlmeinfo->aid = (int)(le16_to_cpu(*(__le16 *)(pframe + WLAN_HDR_A3_LEN + 4))&0x3fff);
-+	pmlmeinfo->aid = (int)(le16_to_cpu(*(__le16 *)(pframe + WLAN_HDR_A3_LEN + 4)) & 0x3fff);
- 	res = pmlmeinfo->aid;
- 
- 	/* following are moved to join event callback function */
-@@ -3596,7 +3597,7 @@ static unsigned int OnAction_back(struct adapter *padapter,
- 
- 	DBG_88E("%s\n", __func__);
- 
--	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
-+	if ((pmlmeinfo->state & 0x03) != WIFI_FW_AP_STATE)
- 		if (!(pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS))
- 			return _SUCCESS;
- 
-@@ -3661,7 +3662,7 @@ static s32 rtw_action_public_decache(struct recv_frame *recv_frame, s32 token)
- 	struct adapter *adapter = recv_frame->adapter;
- 	struct mlme_ext_priv *mlmeext = &adapter->mlmeextpriv;
- 	u8 *frame = recv_frame->pkt->data;
--	u16 seq_ctrl = ((recv_frame->attrib.seq_num&0xffff) << 4) |
-+	u16 seq_ctrl = ((recv_frame->attrib.seq_num & 0xffff) << 4) |
- 		(recv_frame->attrib.frag_num & 0xf);
- 
- 	if (GetRetry(frame)) {
-@@ -4474,7 +4475,7 @@ void mlmeext_joinbss_event_callback(struct adapter *padapter, int join_res)
- 		goto exit_mlmeext_joinbss_event_callback;
- 	}
- 
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE) {
- 		/* for bc/mc */
- 		psta_bmc = rtw_get_bcmc_stainfo(padapter);
- 		if (psta_bmc) {
-@@ -4522,7 +4523,7 @@ void mlmeext_joinbss_event_callback(struct adapter *padapter, int join_res)
- 	join_type = 2;
- 	rtw_hal_set_hwreg(padapter, HW_VAR_MLME_JOIN, (u8 *)(&join_type));
- 
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE) {
- 		/*  correcting TSF */
- 		correct_TSF(padapter, pmlmeext);
- 	}
-@@ -4541,7 +4542,7 @@ void mlmeext_sta_add_event_callback(struct adapter *padapter, struct sta_info *p
- 
- 	DBG_88E("%s\n", __func__);
- 
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE) {
- 		if (pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) {/* adhoc master or sta_count>1 */
- 			/* nothing to do */
- 		} else { /* adhoc client */
-@@ -5049,7 +5050,8 @@ u8 disconnect_hdl(struct adapter *padapter, unsigned char *pbuf)
- 	/* restore to initial setting. */
- 	update_tx_basic_rate(padapter, padapter->registrypriv.wireless_mode);
- 
--	if (((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE ||
-+	    (pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE) {
- 		/* Stop BCN */
- 		val8 = 0;
- 		rtw_hal_set_hwreg(padapter, HW_VAR_BCN_FUNC, (u8 *)(&val8));
-@@ -5249,7 +5251,7 @@ u8 set_stakey_hdl(struct adapter *padapter, u8 *pbuf)
- 
- 	DBG_88E_LEVEL(_drv_info_, "set pairwise key to hw: alg:%d(WEP40-1 WEP104-5 TKIP-2 AES-4) camid:%d\n",
- 		      pparm->algorithm, cam_id);
--	if ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE) {
-+	if ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE) {
- 		struct sta_info *psta;
- 		struct sta_priv *pstapriv = &padapter->stapriv;
- 
-@@ -5307,7 +5309,7 @@ u8 add_ba_hdl(struct adapter *padapter, unsigned char *pbuf)
- 		return	H2C_SUCCESS;
- 
- 	if (((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && (pmlmeinfo->HT_enable)) ||
--	    ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)) {
-+	    ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE)) {
- 		issue_action_BA(padapter, pparm->addr, RTW_WLAN_ACTION_ADDBA_REQ, (u16)pparm->tid);
- 		mod_timer(&psta->addba_retry_timer,
- 			  jiffies + msecs_to_jiffies(ADDBA_TO));
-@@ -5362,8 +5364,8 @@ u8 mlme_evt_hdl(struct adapter *padapter, unsigned char *pbuf)
- 	void (*event_callback)(struct adapter *dev, u8 *pbuf);
- 
- 	peventbuf = (uint *)pbuf;
--	evt_sz = (u16)(*peventbuf&0xffff);
--	evt_code = (u8)((*peventbuf>>16)&0xff);
-+	evt_sz = (u16)(*peventbuf & 0xffff);
-+	evt_code = (u8)((*peventbuf>>16) & 0xff);
- 
- 	/*  checking if event code is valid */
- 	if (evt_code >= MAX_C2HEVT) {
-@@ -5409,7 +5411,7 @@ u8 tx_beacon_hdl(struct adapter *padapter, unsigned char *pbuf)
- 		if (!psta_bmc)
- 			return H2C_SUCCESS;
- 
--		if ((pstapriv->tim_bitmap&BIT(0)) && (psta_bmc->sleepq_len > 0)) {
-+		if ((pstapriv->tim_bitmap & BIT(0)) && (psta_bmc->sleepq_len > 0)) {
- 			msleep(10);/*  10ms, ATIM(HIQ) Windows */
- 			spin_lock_bh(&psta_bmc->sleep_q.lock);
+ 			pframe = pxmitframe->buf_addr + hw_hdr_offset;
  
 -- 
 2.20.0
