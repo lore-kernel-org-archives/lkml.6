@@ -2,158 +2,156 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECA3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E636BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D185C206A2
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:12:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 125E9206A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:12:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j532HYtx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbeLOAMp (ORCPT
+        id S1730078AbeLOAM5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 19:12:45 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:6509 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726448AbeLOAMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 19:12:45 -0500
-Received: from DGGEMA403-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 2710F66B1BB7;
-        Sat, 15 Dec 2018 08:12:41 +0800 (CST)
-Received: from DGGEMA523-MBX.china.huawei.com ([169.254.5.180]) by
- DGGEMA403-HUB.china.huawei.com ([10.3.20.44]) with mapi id 14.03.0415.000;
- Sat, 15 Dec 2018 08:12:40 +0800
-From:   gengdongjiu <gengdongjiu@huawei.com>
-To:     Peter Maydell <peter.maydell@linaro.org>,
-        James Morse <james.morse@arm.com>
-CC:     =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-Thread-Topic: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-Thread-Index: AdST/PTIoTJkAAg6TOC88quIUt5hUwADV3eg
-Date:   Sat, 15 Dec 2018 00:12:40 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F201FFC21E@dggema523-mbx.china.huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.91.186]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 14 Dec 2018 19:12:57 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36082 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729731AbeLOAM5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 19:12:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MYI4FR5Cx0ahm+Z7P280dKZ4U23RIOi/IfMmiaZjC/c=; b=j532HYtx+JMvZhYmY787A9Cdfu
+        tHthA7l/a9a9NkKJ3KxTsp8uCG2D02VPr8JXualNRtAkClmfPEZBT1OyAT2+33s5eFHBLCs8F7szG
+        UTE08jcEZlhB39NJawElRkFoibNzo2wpryBcwsa//tGQd5NDnhhRRqC7nEpVlakK7lj43NTa8K0nC
+        HYfrJHH7c0H9LqBFr2aWoKIxJqox3Wjx8nWNpDnQ8kPD4tCvKXEtBWGRXtCbU/Zxs21Qo4ePW2ja7
+        xzf7StXFwPXcgAFqieyqfgfFMndv7XN2oV09vFwQKsvCEP8CUIeOWQDX5msNTirSDXluE3c1OPMAz
+        LcE34k8w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXxZB-0007Tg-2V; Sat, 15 Dec 2018 00:12:25 +0000
+Subject: Re: [PATCH v1 9/9] mm: better document PG_reserved
+To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        yi.z.zhang@linux.intel.com, Dan Williams <dan.j.williams@intel.com>
+References: <20181214111014.15672-1-david@redhat.com>
+ <20181214111014.15672-10-david@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <03f65c6f-1287-4c63-6705-16e58d659d94@infradead.org>
+Date:   Fri, 14 Dec 2018 16:12:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181214111014.15672-10-david@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gT24gRnJpLCAxNCBEZWMgMjAxOCBhdCAxMzo1NiwgSmFtZXMgTW9yc2UgPGphbWVzLm1v
-cnNlQGFybS5jb20+IHdyb3RlOg0KPiA+DQo+ID4gSGkgRG9uZ2ppdSBHZW5nLA0KPiA+DQo+ID4g
-T24gMTQvMTIvMjAxOCAxMDoxNSwgRG9uZ2ppdSBHZW5nIHdyb3RlOg0KPiA+ID4gV2hlbiB1c2Vy
-IHNwYWNlIGRvIG1lbW9yeSByZWNvdmVyeSwgaXQgd2lsbCBjaGVjayB3aGV0aGVyIEtWTSBhbmQg
-DQo+ID4gPiBndWVzdCBzdXBwb3J0IHRoZSBlcnJvciByZWNvdmVyeSwgb25seSB3aGVuIGJvdGgg
-b2YgdGhlbSBzdXBwb3J0LCANCj4gPiA+IHVzZXIgc3BhY2Ugd2lsbCBkbyB0aGUgZXJyb3IgcmVj
-b3ZlcnkuIFRoaXMgcGF0Y2ggZXhwb3J0cyB0aGlzIA0KPiA+ID4gY2FwYWJpbGl0eSBvZiBLVk0g
-dG8gdXNlciBzcGFjZS4NCj4gPg0KPiA+IEkgY2FuIHVuZGVyc3RhbmQgdXNlci1zcGFjZSBvbmx5
-IHdhbnRpbmcgdG8gZG8gdGhlIHdvcmsgaWYgaG9zdCBhbmQgDQo+ID4gZ3Vlc3Qgc3VwcG9ydCB0
-aGUgZmVhdHVyZS4gQnV0ICdlcnJvciByZWNvdmVyeScgaXNuJ3QgYSBLVk0gZmVhdHVyZSwgDQo+
-ID4gaXRzIGEgTGludXgga2VybmVsIGZlYXR1cmUuDQo+ID4NCj4gPiBLVk0gd2lsbCBzZW5kIGl0
-J3MgdXNlci1zcGFjZSBhIFNJR0JVUyB3aXRoIE1DRUVSUiBjb2RlIHdoZW5ldmVyIGl0cyANCj4g
-PiB0cnlpbmcgdG8gbWFwIGEgcGFnZSBhdCBzdGFnZTIgdGhhdCB0aGUga2VybmVsLW1tIGNvZGUg
-cmVmdXNlcyB0aGlzIGJlY2F1c2UgaXRzIHBvaXNvbmVkLg0KPiA+IChlLmcuIGNoZWNrX3VzZXJf
-cGFnZV9od3BvaXNvbigpLCBnZXRfdXNlcl9wYWdlcygpIHJldHVybnMgDQo+ID4gLUVIV1BPSVNP
-TikNCj4gPg0KPiA+IFRoaXMgaXMgZXhhY3RseSB0aGUgc2FtZSBhcyBoYXBwZW5zIHRvIGEgbm9y
-bWFsIHVzZXItc3BhY2UgcHJvY2Vzcy4NCj4gPg0KPiA+IEkgdGhpbmsgeW91IHJlYWxseSB3YW50
-IHRvIGtub3cgaWYgdGhlIGhvc3Qga2VybmVsIHdhcyBidWlsdCB3aXRoIA0KPiA+IENPTkZJR19N
-RU1PUllfRkFJTFVSRS4NCj4gDQo+IERvZXMgdXNlcnNwYWNlIG5lZWQgdG8gY2FyZSBhYm91dCB0
-aGF0PyBQcmVzdW1hYmx5IGlmIHRoZSBob3N0IGtlcm5lbCANCj4gd2Fzbid0IGJ1aWx0IHdpdGgg
-dGhhdCBzdXBwb3J0IHRoZW4gaXQgd2lsbCBzaW1wbHkgbmV2ZXIgZGVsaXZlciBhbnkgbWVtb3J5
-IGZhaWx1cmUgZXZlbnRzIHRvIFFFTVUsIHdoaWNoIGlzIGZpbmUuDQo+IA0KPiBUaGUgcG9pbnQg
-SSB3YXMgdHJ5aW5nIHRvIG1ha2UgaW4gdGhlIGVtYWlsIERvbmdqaXUgcmVmZXJlbmNlcw0KPiAo
-aHR0cHM6Ly9wYXRjaHdvcmsuY29kZWF1cm9yYS5vcmcvcGF0Y2gvNjUyMjYxLykgaXMgc2ltcGx5
-IHRoYXQgIlFFTVUgZ2V0cyBtZW1vcnktZmFpbHVyZSBub3RpZmljYXRpb25zIGZyb20gdGhlIGhv
-c3Qga2VybmVsIg0KPiBkb2VzIG5vdCBpbXBseSAidGhlIGd1ZXN0IGlzIHByZXBhcmVkIHRvIHJl
-Y2VpdmUgbWVtb3J5IGZhaWx1cmUgDQo+IG5vdGlmaWNhdGlvbnMiLCBhbmQgc28gdGhlIGNvZGUg
-cGF0aCB3aGljaCBoYW5kbGVzIHRoZSBTSUdCVVMgbXVzdCBkbyANCj4gc29tZSBraW5kIG9mIGNo
-ZWNrIGZvciB3aGV0aGVyIHRoZSBndWVzdCBDUFUgaXMgYSB0eXBlIHdoaWNoIGV4cGVjdHMgdGhl
-bSBhbmQgdGhhdCB0aGUgYm9hcmQgY29kZSBzZXQgdXAgdGhlIEFDUEkgdGFibGVzIHRoYXQgaXQg
-d2FudHMgdG8gZmlsbCBpbi4NCg0KVGhhbmtzIFBldGVyJ3MgZXhwbGFuYXRpb24uIEZyYW5rbHkg
-c3BlYWtpbmcsIEkgYWdyZWUgUGV0ZXIncyBzdWdnZXN0aW9uLg0KDQpUbyBKYW1lcywgSSBleHBs
-YWluIG1vcmUgdG8geW91LCBhcyBwZXRlciBzYWlkIFFFTVUgbmVlZHMgdG8gY2hlY2sgd2hldGhl
-ciB0aGUgZ3Vlc3QgQ1BVIGlzIGEgdHlwZSB3aGljaCBjYW4gaGFuZGxlIHRoZSBlcnJvciB0aG91
-Z2ggZ3Vlc3QgQUNQSSB0YWJsZS4gTGV0IHVzIHNlZSB0aGUgWDg2J3MgUUVNVSBsb2dpYzoNCjEu
-IEJlZm9yZSB0aGUgdkNQVSBjcmVhdGVkLCBpdCB3aWxsIHNldCBhIGRlZmF1bHQgZW52LT5tY2df
-Y2FwIHZhbHVlIHdpdGggTUNFX0NBUF9ERUYgZmxhZywgTUNHX1NFUl9QIG1lYW5zIGl0IGV4cGVj
-dGVkIHRoZSBndWVzdCBDUFUgbW9kZWwgc3VwcG9ydHMgUkFTIGVycm9yIHJlY292ZXJ5LlsxXSAy
-LiB3aGVuIHRoZSB2Q1BVIGluaXRpYWxpemUsIGl0IHdpbGwgY2hlY2sgd2hldGhlciBob3N0IGtl
-cm5lbCBzdXBwb3J0IHRoaXMgZmVhdHVyZVsyXS4gT25seSB3aGVuIGhvc3Qga2VybmVsIGFuZCBk
-ZWZhdWx0IGVudi0+bWNnX2NhcCB2YWx1ZSBhbGwgZXhwZWN0ZWQgdGhpcyBmZWF0dXJlLCB0aGVu
-IGl0IHdpbGwgc2V0dXAgdkNQVSBzdXBwb3J0IFJBUyBlcnJvciByZWNvdmVyeVszXS4NClNvIEkg
-YWRkIHRoaXMgSU9DVEwgIktWTV9DQVBfQVJNX01FTU9SWV9FUlJPUl9SRUNPVkVSWSIgdG8gTGV0
-IFFFTVUgY2hlY2sgd2hldGhlciBob3N0L0tWTSBzdXBwb3J0IFJBUyBlcnJvciBkZXRlY3Rpb24g
-YW5kIHJlY292ZXJ5LCBvbmx5IHdoZW4gdGhpcyBzdXBwb3J0cywgUUVNVSB3aWxsIGRvIHRoZSBl
-cnJvciByZWNvdmVyeSBmb3IgdGhlIGd1ZXN0IG1lbW9yeS4gDQoNClsxXQ0KI2RlZmluZSBNQ0Vf
-Q0FQX0RFRiAgICAgKE1DR19DVExfUHxNQ0dfU0VSX1ApDQpjZW52LT5tY2dfY2FwID0gTUNFX0NB
-UF9ERUYgfCBNQ0VfQkFOS1NfREVGIHwNCiAgICAgICAgICAgICAgICAgICAgICAgIChjcHUtPmVu
-YWJsZV9sbWNlID8gTUNHX0xNQ0VfUCA6IDApOw0KDQpbMl0gcmV0ID0ga3ZtX2dldF9tY2VfY2Fw
-X3N1cHBvcnRlZChjcy0+a3ZtX3N0YXRlLCAmbWNnX2NhcCwgJmJhbmtzKTsNCg0KWzNdDQplbnYt
-Pm1jZ19jYXAgJj0gbWNnX2NhcCB8IE1DR19DQVBfQkFOS1NfTUFTSzsNCnJldCA9IGt2bV92Y3B1
-X2lvY3RsKGNzLCBLVk1fWDg2X1NFVFVQX01DRSwgJmVudi0+bWNnX2NhcCk7DQoNCi0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1Gb3IgSmFtZXMncyBjb21tZW50cy0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQ0KPiBLVk0gZG9lc24ndCBkZXRlY3QgdGhlc2UgZXJyb3JzLg0KPiBUaGUgaGFyZHdhcmUg
-ZGV0ZWN0cyB0aGVtIGFuZCBub3RpZmllcyB0aGUgT1MgdmlhIG9uZSBvZiBhIG51bWJlciBvZiBt
-ZWNoYW5pc21zLg0KPiBUaGlzIGdldHMgcGx1bWJlZCBpbnRvIG1lbW9yeV9mYWlsdXJlKCksIHdo
-aWNoIHNldHMgYSBmbGFnIHRoYXQgdGhlIG1tIA0KPiBjb2RlIHVzZXMgdG8gcHJldmVudCB0aGUg
-cGFnZSBiZWluZyB1c2VkIGFnYWluLg0KDQo+IEtWTSBpcyBvbmx5IGludm9sdmVkIHdoZW4gaXQg
-dHJpZXMgdG8gbWFwIGEgcGFnZSBhdCBzdGFnZTIgYW5kIHRoZSBtbSANCj4gY29kZSByZWplY3Rz
-IGl0IHdpdGggLUVIV1BPSVNPTi4gVGhpcyBpcyB0aGUgc2FtZSBhcyB0aGUgYXJjaGl0ZWN0dXJl
-cw0KPiBkb19wYWdlX2ZhdWx0KCkgY2hlY2tpbmcgZm9yIChmYXVsdCAmIFZNX0ZBVUxUX0hXUE9J
-U09OKSBvdXQgb2YgDQo+IGhhbmRsZV9tbV9mYXVsdCgpLiBXZSBkb24ndCBoYXZlIGEgS1ZNIGNh
-cCBmb3IgdGhpcywgbm9yIGRvIHdlIG5lZWQgb25lLg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpKYW1lcywgZm9y
-IHlvdXIgYWJvdmUgY29tbWVudHMsIEkgY29tcGxldGVkIHVuZGVyc3RhbmQsIGJ1dCBLVk0gYWxz
-byBkZWxpdmVyZWQgdGhlIFNJR0JVUywgd2hpY2ggbWVhbnMgS1ZNIHN1cHBvcnRzIGd1ZXN0IG1l
-bW9yeSBSQVMgZXJyb3IgcmVjb3ZlcnksIHNvIG1heWJlIHdlIG5lZWQgdG8gdGVsbCB1c2VyIHNw
-YWNlIHRoaXMgY2FwYWJpbGl0eS4NCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLSBGb3IgSmFtZXMncyBjb21tZW50cyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gVGhlIENQVSBSQVMgRXh0ZW5zaW9ucyBh
-cmUgbm90IGF0IGFsbCByZWxldmFudCBoZXJlLiBJdCBpcyBwZXJmZWN0bHkgDQo+IHBvc3NpYmxl
-IHRvIHN1cHBvcnQgbWVtb3J5LWZhaWx1cmUgd2l0aG91dCB0aGVtLCBBTUQtU2VhdHRsZSBhbmQg
-DQo+IEFQTS1YLUdlbmUgZG8gdGhpcy4gVGhlc2Ugc3lzdGVtcyB3b3VsZCByZXBvcnQgbm90LXN1
-cHBvcnRlZCBoZXJlLCBidXQgdGhlIGtlcm5lbCBkb2VzIHN1cHBvcnQgdGhpcyBzdHVmZi4NCj4g
-SnVzdCBiZWNhdXNlIHRoZSBDUFUgc3VwcG9ydHMgdGhpcywgZG9lc24ndCBtZWFuIHRoZSBrZXJu
-ZWwgd2FzIGJ1aWx0IA0KPiB3aXRoIENPTkZJR19NRU1PUllfRkFJTFVSRS4gVGhlIENQVSByZXBv
-cnRzIG1heSBiZSBpZ25vcmVkLCBvciB1cGdyYWRlZCB0byBTSUdLSUxMLg0KLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0NCkphbWVzLCBmb3IgeW91ciBhYm92ZSBjb21tZW50cywgaWYgeW91IHRoaW5rIHdl
-IHNob3VsZCBub3QgY2hlY2sgdGhlICJjcHVzX2hhdmVfY29uc3RfY2FwKEFSTTY0X0hBU19SQVNf
-RVhUTikiLCB3aGljaCBkbyB5b3UgcHJlZmVyIHdlIHNob3VsZCBjaGVjaz8NCkluIHRoZSBYODYg
-S1ZNIGNvZGUsIGl0IHVzZXMgaGFyZGNvZGUgdG8gdGVsbCB1c2Ugc3BhY2UgdGhlIGhvc3QvS1ZN
-IHN1cHBvcnQgUkFTIGVycm9yIHNvZnR3YXJlIHJlY292ZXJ5WzRdLiBJZiBLVk0gZG9lcyBub3Qg
-Y2hlY2sgdGhlICIgY3B1c19oYXZlX2NvbnN0X2NhcChBUk02NF9IQVNfUkFTX0VYVE4pIiwgd2Ug
-aGF2ZSB0byBjaGVjayB0aGUgaGFyZGNvZGUgYXMgWDg2J3MgbWV0aG9kLg0KDQpbNF06DQp1NjQg
-X19yZWFkX21vc3RseSBrdm1fbWNlX2NhcF9zdXBwb3J0ZWQgPSBNQ0dfQ1RMX1AgfCBNQ0dfU0VS
-X1A7DQoNCmxvbmcga3ZtX2FyY2hfZGV2X2lvY3RsKHN0cnVjdCBmaWxlICpmaWxwLA0KCQkJdW5z
-aWduZWQgaW50IGlvY3RsLCB1bnNpZ25lZCBsb25nIGFyZykNCnsNCiAgICAuLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uDQoJY2FzZSBLVk1fWDg2X0dFVF9NQ0VfQ0FQX1NVUFBPUlRFRDogew0KCQlyID0gLUVG
-QVVMVDsNCgkJaWYgKGNvcHlfdG9fdXNlcihhcmdwLCAma3ZtX21jZV9jYXBfc3VwcG9ydGVkLA0K
-CQkJCSBzaXplb2Yoa3ZtX21jZV9jYXBfc3VwcG9ydGVkKSkpDQoJCQlnb3RvIG91dDsNCgkJciA9
-IDA7DQoJCWJyZWFrOw0KCX0NCiAgICAuLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLg0KfQ0KDQo+IA0KPiB0aGFua3MN
-Cj4gLS0gUE1NDQo=
+On 12/14/18 3:10 AM, David Hildenbrand wrote:
+> The usage of PG_reserved and how PG_reserved pages are to be treated is
+> buried deep down in different parts of the kernel. Let's shine some light
+> onto these details by documenting current users and expected
+> behavior.
+> 
+> Especially, clarify on the "Some of them might not even exist" case.
+> These are physical memory gaps that will never be dumped as they
+> are not marked as IORESOURCE_SYSRAM. PG_reserved does in general not
+> hinder anybody from dumping or swapping. In some cases, these pages
+> will not be stored in the hibernation image.
+
+Hi,
+Thanks for the doc update.
+Comments below.
+
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
+> Cc: Miles Chen <miles.chen@mediatek.com>
+> Cc: yi.z.zhang@linux.intel.com
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  include/linux/page-flags.h | 33 +++++++++++++++++++++++++++++++--
+>  1 file changed, 31 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index 808b4183e30d..9de2e941cbd5 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -17,8 +17,37 @@
+>  /*
+>   * Various page->flags bits:
+>   *
+> - * PG_reserved is set for special pages, which can never be swapped out. Some
+> - * of them might not even exist...
+> + * PG_reserved is set for special pages. The "struct page" of such a page
+> + * should in general not be touched (e.g. set dirty) except by their owner.
+
+                                                               by its owner.
+
+> + * Pages marked as PG_reserved include:
+> + * - Pages part of the kernel image (including vDSO) and similar (e.g. BIOS,
+> + *   initrd, HW tables)
+> + * - Pages reserved or allocated early during boot (before the page allocator
+> + *   was initialized). This includes (depending on the architecture) the
+> + *   initial vmmap, initial page tables, crashkernel, elfcorehdr, and much
+
+                VM map,
+
+> + *   much more. Once (if ever) freed, PG_reserved is cleared and they will
+> + *   be given to the page allocator.
+> + * - Pages falling into physical memory gaps - not IORESOURCE_SYSRAM. Trying
+> + *   to read/write these pages might end badly. Don't touch!
+> + * - The zero page(s)
+> + * - Pages not added to the page allocator when onlining a section because
+> + *   they were excluded via the online_page_callback() or because they are
+> + *   PG_hwpoison.
+> + * - Pages allocated in the context of kexec/kdump (loaded kernel image,
+> + *   control pages, vmcoreinfo)
+> + * - MMIO/DMA pages. Some architectures don't allow to ioremap pages that are
+> + *   not marked PG_reserved (as they might be in use by somebody else who does
+> + *   not respect the caching strategy).
+> + * - Pages part of an offline section (struct pages of offline sections should
+> + *   not be trusted as they will be initialized when first onlined).
+> + * - MCA pages on ia64
+> + * - Pages holding CPU notes for POWER Firmware Assisted Dump
+> + * - Device memory (e.g. PMEM, DAX, HMM)
+> + * Some PG_reserved pages will be excluded from the hibernation image.
+> + * PG_reserved does in general not hinder anybody from dumping or swapping
+> + * and is no longer required for remap_pfn_range(). ioremap might require it.
+> + * Consequently, PG_reserved for a page mapped into user space can indicate
+> + * the zero page, the vDSO, MMIO pages or device memory.
+>   *
+>   * The PG_private bitflag is set on pagecache pages if they contain filesystem
+>   * specific data (which is normally at page->private). It can be used by
+> 
+
+cheers.
+-- 
+~Randy
