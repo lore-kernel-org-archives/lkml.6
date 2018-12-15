@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F16FC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D04C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1022D2171F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D823206A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:41:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAd4JFYA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d/oZsmzo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbeLOIik (ORCPT
+        id S1729892AbeLOIlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 03:38:40 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35409 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbeLOIik (ORCPT
+        Sat, 15 Dec 2018 03:41:23 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46314 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbeLOIlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 03:38:40 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s198so3789226pgs.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 00:38:40 -0800 (PST)
+        Sat, 15 Dec 2018 03:41:22 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so3797928ply.13
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 00:41:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=ZKF7rTp/Hn9JYdXpbRNySs1ekX+o8UXhXsNs8bKO+fo=;
-        b=NAd4JFYAeOxQAaeZEJjdHAZBN8Xxa/gbQcDH4CBB6J092pvjcjJDrW7qgrXCE2HeoF
-         M9iSwiod+pYB8GvmyuW1C1tkPN5dSkoAITOm+oMVSVVlZzEDj9+6fXwMT0jU/WUt/ksa
-         z9LhnNpIe6gaKti/ZbFYiZo8mwF0liXnOnRc4K85pkMdLaXmRwQzy8RRP8yZZyhly7dT
-         yrDcrN6rEOhjTrLi1ABDBy90On4Vj03DAvB+Q12A2VKalyp0kOO1zu5rg/f8jjbWyo75
-         /stZ1SMJTkFh1XJtIfMAge7sALKyVRMBAXXDWxpesepCNUX51jNJtALjwLmdpWX0Ntbq
-         ysDg==
+        bh=Dm2bXgbmpX/ceQ6mZiQfmrP/eexd+tGYTDLvO3GOZ3c=;
+        b=d/oZsmzoVQBQZ4IflpuYocEhOxlqSkvX8hwvjTlW90UZS+hhRTDc7AnuvoGLfuPEB2
+         s+nmSUTFF9CrAhQKpjetePv+zswcnwtJRAi8yLYHAJBdWOlMFPBocbhzr50WQ6qp/bG5
+         UavfN89vnhog8F659O+pviGHl8E0G7MJkAhqGH+/eUhMYyC8pnMWOGocpuwpWLXXJKoh
+         IOA94crRrQVsN3WMifSdJCSZRZDz+WxK6W03anljGyd5KJ1afSFPNmEa1dKbS2PxFMvR
+         O0sf0DbRxtRnijd1FUNZzMrCE8fTREoOa121cnzOOznVVbKahy5XBikBeNyLYUJD2phQ
+         yBLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZKF7rTp/Hn9JYdXpbRNySs1ekX+o8UXhXsNs8bKO+fo=;
-        b=tpheWzO9OKVLs6+I+IsCEDngcXn2ME3cijek+5NPfhEOv4tH2kQqGUx7qmTXldOxMx
-         9b2saGOPgBM55Kwpk/bBMgn2GOA5TcKgtpJwdZ/Die6F9436QLfZdoNqfBwEjWs5f86V
-         4B5pRngm8zw5p+DgBapL69FuuDBmrcQKJ5uppCopf2erVIO+oUm7qlvKvhhKQUQmnL3/
-         KTp5rt34rVRbo+fnRPUsFBBs4eYf31kF/eEmqV0pzoFhrA52DFpRCan8i3gMzXlAspJj
-         rNn/FCFCzlz8NDu/wW0ab6WfbNAjdrQqGMNAjr/svSjzG7JP2r2sW9Lkao6BpWYZbBDY
-         LQnA==
-X-Gm-Message-State: AA+aEWbyD34sypdb9uff9ZjRgmTAnmuuixuCaf+4XxVROgsHU1nSJfLX
-        DFtttyIDi5VgcgNEOZ669R0=
-X-Google-Smtp-Source: AFSGD/UHhLKtXoUg0ScShKtKwzG1+hDcesR/E+f/je4nyE9bTuXITLeykQvWj4x2s/FCQvpdlXbw0w==
-X-Received: by 2002:a62:35c7:: with SMTP id c190mr5945618pfa.76.1544863119898;
-        Sat, 15 Dec 2018 00:38:39 -0800 (PST)
+        bh=Dm2bXgbmpX/ceQ6mZiQfmrP/eexd+tGYTDLvO3GOZ3c=;
+        b=Xu6r7qWGVLFMxbWyRb+Zv+g0jxhz+SjurW+VCCrt6rxgtjmFCq0zhGSX5t20UCapMZ
+         u//n2gRBWLwV3S/W7xMb/6P78xpzyG3C218IiujpW6irfKxSE3w1J9l4yfs7mqQ2dh5a
+         D7gcsJCOL0tb8U9NrIFsl/v6SiJiCsAf8/YiY8scf9U7IfqFOnzyA9BY3mJnwBkx3+23
+         Mb4P8sgcTU8cMw22Qx5MPVu9orZCz8JsP2zkU4C8oTgyWjsWVD+qg8WlNOSJMe+/+HZL
+         bCfJHJ4Zd0XOiVkAtkL3L2YYFF9gb/qLkAkrrLFAx7ZzuKzngag984k+9HBFu2cdUw7K
+         aNhg==
+X-Gm-Message-State: AA+aEWaL7Iq2xfTvTmBT51ho6Jr6ADW1Bx0wElfiESh4zw4ngQBmSq4T
+        D/dbJL8caqCgkUDmU1RwUhqc1Y4vAeA=
+X-Google-Smtp-Source: AFSGD/ViaOylThGAaCy2iNVDeV3GSkjDHjLvDtwaVQLXFcm7AwtfS12K2s6Glv5kjBkHYBFRfYG2Ag==
+X-Received: by 2002:a17:902:82c2:: with SMTP id u2mr5747514plz.110.1544863282311;
+        Sat, 15 Dec 2018 00:41:22 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id h19sm8549635pfn.114.2018.12.15.00.38.39
+        by smtp.gmail.com with ESMTPSA id l19sm15462489pfi.71.2018.12.15.00.41.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Dec 2018 00:38:39 -0800 (PST)
+        Sat, 15 Dec 2018 00:41:21 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org
 Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [RESEND] regmap: rbtree: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Sat, 15 Dec 2018 03:38:37 -0500
-Message-Id: <20181215083837.26928-1-tiny.windzz@gmail.com>
+Subject: [RESEND] regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sat, 15 Dec 2018 03:41:19 -0500
+Message-Id: <20181215084119.27058-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -70,32 +70,32 @@ Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/base/regmap/regcache-rbtree.c | 12 +-----------
+ drivers/base/regmap/regmap-debugfs.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/base/regmap/regcache-rbtree.c b/drivers/base/regmap/regcache-rbtree.c
-index b1e9aae9a5d0..2e8f0144f9ab 100644
---- a/drivers/base/regmap/regcache-rbtree.c
-+++ b/drivers/base/regmap/regcache-rbtree.c
-@@ -177,17 +177,7 @@ static int rbtree_show(struct seq_file *s, void *ignored)
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index 87b562e49a43..19eb454f26c3 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -435,17 +435,7 @@ static int regmap_access_show(struct seq_file *s, void *ignored)
  	return 0;
  }
  
--static int rbtree_open(struct inode *inode, struct file *file)
+-static int access_open(struct inode *inode, struct file *file)
 -{
--	return single_open(file, rbtree_show, inode->i_private);
+-	return single_open(file, regmap_access_show, inode->i_private);
 -}
 -
--static const struct file_operations rbtree_fops = {
--	.open		= rbtree_open,
+-static const struct file_operations regmap_access_fops = {
+-	.open		= access_open,
 -	.read		= seq_read,
 -	.llseek		= seq_lseek,
 -	.release	= single_release,
 -};
-+DEFINE_SHOW_ATTRIBUTE(rbtree);
++DEFINE_SHOW_ATTRIBUTE(regmap_access);
  
- static void rbtree_debugfs_init(struct regmap *map)
- {
+ static ssize_t regmap_cache_only_write_file(struct file *file,
+ 					    const char __user *user_buf,
 -- 
 2.17.0
 
