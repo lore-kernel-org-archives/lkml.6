@@ -2,295 +2,120 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB028C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BEAC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF1B4206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07E79206C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:26:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nsuUP3RU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Chca5DV3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729939AbeLOAW0 (ORCPT
+        id S1728415AbeLOA0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 19:22:26 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11415 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeLOAW0 (ORCPT
+        Fri, 14 Dec 2018 19:26:17 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36896 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbeLOA0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 19:22:26 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c14493a0000>; Fri, 14 Dec 2018 16:22:18 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 14 Dec 2018 16:22:23 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 14 Dec 2018 16:22:23 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 15 Dec
- 2018 00:22:23 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Sat, 15 Dec 2018 00:22:23 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c14493f0000>; Fri, 14 Dec 2018 16:22:23 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] mmc: tegra: HW Command Queue Support for Tegra SDMMC
-Date:   Fri, 14 Dec 2018 16:22:20 -0800
-Message-ID: <1544833340-5024-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Fri, 14 Dec 2018 19:26:17 -0500
+Received: by mail-ed1-f68.google.com with SMTP id h15so6330421edb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:26:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=V95dr3G3RkBJgZIaKV8YGexD6Uh5VM+r1rC1lbrlLDQ=;
+        b=Chca5DV3SKqC6gAajVcbCfugnX6NpDFc5pzG91yZrXK9BYg0/JehLWNQEpVsQJy8R5
+         4DSvxTZaXrocMAf1eDtQHF6jF2V1W1x9rFWVwPHXs4bf0UncJIRG2blV82Fmpn48EK/c
+         qxRLvlGTCTCZDtXp4Q+Z59gvWHjr/RR/n/qqfMD6XMiBCweJkJBhY/TsKz4M9P5zdojs
+         RdhsbZp3coUcBCm7+oQcnG0n/kp2ZCJxfR4DEjRflVC6SpHgyepsH+uP5ADAL6qZVAh2
+         cc3LTe1gGQEpdxdPXwEuUftRqJc0QdWJb8qsuOOdYL88wX4FXlAjkTczSl/h6RPzjanH
+         SRAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V95dr3G3RkBJgZIaKV8YGexD6Uh5VM+r1rC1lbrlLDQ=;
+        b=BQr0v2Z8r5ObfcaN4kGkPJWfmDeCg/VMCrOWM3APzb9ffQysYHMN/+GcnASA1IdTwF
+         B5/pSI4vxc7YC/UIcqmIIv1/LlpYj/WIZXYFzMOc+PfsSgIVviKp6I7VOkhVgG3rWjsN
+         8PziXRSeEZ3LW/wdbZReSogcD5Zz4NhZXb6vyFPdA82PYzHEi/AGMrqQWe6KYmnNvr+a
+         YAWlnaQkY48cMc9ZAo3Tb0V8hes+BUJVpke9cn9AdS7dbFEi73Dy52OLPEgVGT6JFXzi
+         I5m4xDpbYFqMU0UxyMZDFTHuTcByoIzpu0mwEiraZjyd0DXuMsWVRJ6rGfBTpgOI0vsO
+         8Vrw==
+X-Gm-Message-State: AA+aEWYqTzYFDRrHZXviDyV/69iNp5VcfjEHDX1NlhoyLGigrZkXJKP0
+        VTuHhrSECwBFIIQW1lK7mug=
+X-Google-Smtp-Source: AFSGD/WXbUI3e6qxw94DAsp4vRWnMbZNej+OknmMv3eFIci9pScO8ZAXrpNMxdpKa2CpfeuEp6Kcow==
+X-Received: by 2002:a50:ae64:: with SMTP id c91mr4596263edd.222.1544833575203;
+        Fri, 14 Dec 2018 16:26:15 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id d56sm1939734ede.76.2018.12.14.16.26.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 16:26:14 -0800 (PST)
+Date:   Sat, 15 Dec 2018 00:26:13 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Zaslonko Mikhail <zaslonko@linux.ibm.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Pavel.Tatashin@microsoft.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        gerald.schaefer@de.ibm.com
+Subject: Re: [PATCH v2 1/1] mm, memory_hotplug: Initialize struct pages for
+ the full memory section
+Message-ID: <20181215002613.gj3s62uuxad6n4rb@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181212172712.34019-1-zaslonko@linux.ibm.com>
+ <20181212172712.34019-2-zaslonko@linux.ibm.com>
+ <20181213034615.4ntpo4cl2oo5mcx4@master>
+ <e4cebbae-3fcb-f03c-3d0e-a1a44ff0675a@linux.bm.com>
+ <20181213151209.hmrhrr5gvb256bzm@master>
+ <674c53e2-e4b3-f21f-4613-b149acef7e53@linux.bm.com>
+ <20181214101651.GE5624@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544833338; bh=nZ84WLFvunZ73W0irA8EWdoPgkaqB7m+hKzWvPoUhHA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=nsuUP3RUSytfE3BurOfCsYez8yLJqvIMEbjRIvFdmHnVpWwDbxsmeXjxRXWMAbbGd
-         dbRmm/K7PYElwsNC3cQC7RBPY3GZa+3NQcgiwgJ0QukyDxIU3/+06fIDIiUmqS4umQ
-         Dl6Ba6vU6wzwJHEAZAsaPl7VsWkrNPBfN7m+MVV5rXPvPqKQlqcbJ7uH9Xm4+q1JUA
-         7zKIW1JQHt5c3ylqTupDf8jIwM7iMEpdK8jh9gao+83a442yyrVvrReHmnKNO1PmvM
-         L2OO4QAPuTvdz/0tDkUxfHoaIGCm15jejY4uif84L33UCMWSzXQsyMMs6+szu9x3ah
-         NBL7L53S0LoPA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214101651.GE5624@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds HW Command Queue for supported Tegra SDMMC
-controllers.
+On Fri, Dec 14, 2018 at 11:19:59AM +0100, Michal Hocko wrote:
+>[Your From address seems to have a typo (linux.bm.com) - fixed]
+>
+>On Fri 14-12-18 10:33:55, Zaslonko Mikhail wrote:
+>[...]
+>> Yes, it might still trigger PF_POISONED_CHECK if the first page 
+>> of the pageblock is left uninitialized (poisoned).
+>> But in order to cover these exceptional cases we would need to 
+>> adjust memory_hotplug sysfs handler functions with similar 
+>> checks (as in the for loop of memmap_init_zone()). And I guess 
+>> that is what we were trying to avoid (adding special cases to 
+>> memory_hotplug paths).
+>
+>is_mem_section_removable should test pfn_valid_within at least.
+>But that would require some care because next_active_pageblock expects
+>aligned pages. Ble, this code is just horrible. I would just remove it
+>altogether. I strongly suspect that nobody is using it for anything
+>reasonable anyway. The only reliable way to check whether a block is
+>removable is to remove it. Everything else is just racy.
+>
 
-Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
-use of 64_BIT DMA to disable 64-bit addressing mode access to the
-system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
-for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
+Sounds reasonable.
 
-CQE need to use ADMA3 as it need to fetch task descriptor along
-with transfer descriptor, so this patch forces DMA Select to be
-ADMA3 for CQE.
+The result return from removable sysfs is transient. If no user rely on
+this, remove this is a better way.
 
-Note that this patch depends on below patches
-[0] DMA Config prior to CQE
-    https://lkml.org/lkml/2018/12/14/1062
-[1] SDMMC address range
-    https://lkml.org/lkml/2018/12/14/1323
-[2] Fix sdhci_do_enable_v4_mode
-    https://lkml.org/lkml/2018/12/14/72
+>-- 
+>Michal Hocko
+>SUSE Labs
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 76 +++++++++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci.c       | 18 +++++++++-
- drivers/mmc/host/sdhci.h       |  1 +
- 3 files changed, 93 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 7b95d088fdef..eaebe5e22183 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -33,6 +33,7 @@
- #include <linux/ktime.h>
- 
- #include "sdhci-pltfm.h"
-+#include "cqhci.h"
- 
- /* Tegra SDHOST controller vendor register definitions */
- #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
-@@ -89,6 +90,10 @@
- #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
- #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
- 
-+/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-+#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-+
-+
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
- 	u32 nvquirks;
-@@ -128,6 +133,7 @@ struct sdhci_tegra {
- 	u32 default_tap;
- 	u32 default_trim;
- 	u32 dqs_trim;
-+	bool enable_hwcq;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -836,6 +842,17 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
- 		tegra_host->pad_calib_required = true;
- }
- 
-+static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-+{
-+	sdhci_dumpregs(mmc_priv(mmc));
-+}
-+
-+static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
-+	.enable	= sdhci_cqe_enable,
-+	.disable = sdhci_cqe_disable,
-+	.dumpregs = sdhci_tegra_dumpregs,
-+};
-+
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
-@@ -989,6 +1006,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
- 	.voltage_switch = tegra_sdhci_voltage_switch,
- 	.get_max_clock = tegra_sdhci_get_max_clock,
-+	.irq = sdhci_cqhci_irq,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-@@ -1030,6 +1048,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
- 
-+static int sdhci_tegra_add_host(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct cqhci_host *cq_host;
-+	bool dma64;
-+	int ret;
-+
-+	if (!tegra_host->enable_hwcq)
-+		return sdhci_add_host(host);
-+
-+	host->v4_mode = true;
-+
-+	ret = sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-+
-+	cq_host = devm_kzalloc(host->mmc->parent,
-+				sizeof(*cq_host), GFP_KERNEL);
-+	if (!cq_host) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
-+	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-+	cq_host->ops = &sdhci_tegra_cqhci_ops;
-+
-+	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-+	if (dma64)
-+		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-+
-+	ret = cqhci_init(cq_host, host->mmc, dma64);
-+	if (ret)
-+		goto cleanup;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto cleanup;
-+
-+	return 0;
-+
-+cleanup:
-+	sdhci_cleanup_host(host);
-+	return ret;
-+
-+}
-+
- static int sdhci_tegra_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
-@@ -1039,6 +1106,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	struct sdhci_tegra *tegra_host;
- 	struct clk *clk;
- 	int rc;
-+	struct resource *iomem;
- 
- 	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
- 	if (!match)
-@@ -1056,6 +1124,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	tegra_host->pad_control_available = false;
- 	tegra_host->soc_data = soc_data;
- 
-+	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
-+		tegra_host->enable_hwcq = true;
-+	else
-+		tegra_host->enable_hwcq = false;
-+
- 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
- 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
- 		if (rc == 0)
-@@ -1117,7 +1191,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 
- 	usleep_range(2000, 4000);
- 
--	rc = sdhci_add_host(host);
-+	rc = sdhci_tegra_add_host(host);
- 	if (rc)
- 		goto err_add_host;
- 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 99bdae53fa2e..8c03c7a3dab2 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -36,6 +36,7 @@
- #include <linux/mmc/slot-gpio.h>
- 
- #include "sdhci.h"
-+#include "cqhci.h"
- 
- #define DRIVER_NAME "sdhci"
- 
-@@ -3308,7 +3309,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
- 
- 	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
- 	ctrl &= ~SDHCI_CTRL_DMA_MASK;
--	if (host->flags & SDHCI_USE_64_BIT_DMA)
-+	if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
-+			(host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
- 		ctrl |= SDHCI_CTRL_ADMA64;
- 	else
- 		ctrl |= SDHCI_CTRL_ADMA32;
-@@ -3361,6 +3363,20 @@ void sdhci_cqe_disable(struct mmc_host *mmc, bool recovery)
- }
- EXPORT_SYMBOL_GPL(sdhci_cqe_disable);
- 
-+u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
-+
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
-+
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(sdhci_cqhci_irq);
-+
- bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
- 		   int *data_error)
- {
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index b001cf4d3d7e..9ff7a138270e 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -777,6 +777,7 @@ void sdhci_cqe_enable(struct mmc_host *mmc);
- void sdhci_cqe_disable(struct mmc_host *mmc, bool recovery);
- bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
- 		   int *data_error);
-+u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask);
- 
- void sdhci_dumpregs(struct sdhci_host *host);
- void sdhci_enable_v4_mode(struct sdhci_host *host);
 -- 
-2.7.4
-
+Wei Yang
+Help you, Help me
