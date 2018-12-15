@@ -2,89 +2,95 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB592C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C07EC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF5E2084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF6B206A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XFCe4gV6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phTVbXxA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbeLOJLs (ORCPT
+        id S1730056AbeLOJNQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 04:11:48 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50231 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbeLOJLs (ORCPT
+        Sat, 15 Dec 2018 04:13:16 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35988 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeLOJNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 04:11:48 -0500
-Received: by mail-it1-f195.google.com with SMTP id z7so12484824iti.0;
-        Sat, 15 Dec 2018 01:11:47 -0800 (PST)
+        Sat, 15 Dec 2018 04:13:15 -0500
+Received: by mail-io1-f67.google.com with SMTP id m19so6404935ioh.3;
+        Sat, 15 Dec 2018 01:13:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SwIC/oD048MqZ850x9+8RTF8LoL/W8/w4ryKmWzrwmk=;
-        b=XFCe4gV6EXRIsCzefRdQuteB1EnPKlku9UcAg7Z5EcsiP0ivsFDVRARdBUJDH0eCQw
-         zbCftZfiGKMotMXG1yaFNiTjvRLeXMJyQh7wUEBqyT9q5iY+kbVAWrIuJ/th/E4UdcSB
-         Rb8LbjCbR+I/2KPeezG2erTh2My3GdP9Px1R7zf/O0VqiKmXyrYHWmqjACqbpunZBXQ/
-         gNTprOlAnDak78H846DeeoFMzTIROT91m2mME6KDivLVSli/nFfvtYEnAMzy9OzIAaqC
-         LWR1WS2AiysbXmoVqUFvDg7FrXIdjCyPh3ock/z/xLN2/l64FYUuUIJhmfdPYlaLAS66
-         z30Q==
+        bh=VF1aZeyMiPPHIzY1pS1EtQQuVYTyqIVSXTQc270tkSs=;
+        b=phTVbXxA/d9/HwLKY2wnQjHkLqScDPCceyX/9QjXjRJ2SjmvAYYHfQfzI9fYjjBAsj
+         nzi8t+Rq/tw8Q5/3RCXk1vK0GO1/e8pdVUR/pQpouU3DoG4ZMYLLua//Vmmwnj0PogZU
+         ScAp6Q4UtImDUvo+gPMOpOpdxCqU9F1CIIK8tGxpAbKJM83tDokL5TNnMgBv9wmUBV+D
+         3g1GqlRb6k6UdllMa+1g+WEjlT4/ne5neVbIagrxVIm9RY0FS0v4ajw1iEGvyOHNkJCC
+         BX+xYqGI49VG0zd/WUJmVTud9fEW1R8c8pAvjTjStF9Z4R7Uyly9AhlB5k8dBIva18CJ
+         hNcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SwIC/oD048MqZ850x9+8RTF8LoL/W8/w4ryKmWzrwmk=;
-        b=SrPjUSMtWG6YTXhb/UirtL5H6lDGACXSW2FDB7VHNsz8hadk+LHOg/af0LxCxGrY7x
-         ZC+wVZpN/4PqSmskltPNOGrO5GDfLiqx1iiyO+vp/JeiYlWmVuCiw+CNntyY+KRHK5zF
-         49av/aB3FVBs27SgARPOq3OSuo2CvAkFv3ub6sGPp2hih00yjVuxu6JXQPTutFQWzaX1
-         5l2xwo9fG79qWGYa5C95axn/CBOr3XPiDJTCYeYZjy3pq0VM5XtKb1FUYAAHkRPWG8Tt
-         6kb7TYzBk8x2qRX/2AddotoACtgMsh/i0bmkYDpZbsF+rwmCJ3kIHTeXpM51MiUbaWAm
-         ZZgA==
-X-Gm-Message-State: AA+aEWZqoC1w2cFfrwuLG5lTDYFUO1H33hmg5r1YUaj5OK2YW/G52+iD
-        ixIpSYJ5GdntQcVzjBh/Y6ww0tY2PaUAHJZCp1c=
-X-Google-Smtp-Source: AFSGD/Xtkh5yrfBuGb8MpXZIZaMTX0fFeNBRTtHQpWyv4oD5su3H4TWEoe2JuL5owZItQnSRLfKZPUcyikBxtc5IahY=
-X-Received: by 2002:a02:9d27:: with SMTP id n36mr5319250jak.30.1544865107383;
- Sat, 15 Dec 2018 01:11:47 -0800 (PST)
+        bh=VF1aZeyMiPPHIzY1pS1EtQQuVYTyqIVSXTQc270tkSs=;
+        b=YQipffn/ZykFWxqjrIFC8ZZ1NLr8T4j+ocmyLtq/RW8KIyz+G5+koK5J+NgJ09WuE3
+         2G80jCiDHDvGuYetGUOkKQ1MePQ5hUk64oIWU6KA1FNyzsut0eKJSo9XPjXxRsJLP8ci
+         D3R1d3sGBCOnGTib4FNN2a7szan6b00HkcAQjPwmkkC2h9upEHVQwsxDvGHPYt9pkQ5j
+         MSJJoCrFYinzFySqsR+rLUkpa2cJYIeNsloHALmLUCDb8AWNnqbpuAtprKScqHfFK6Kj
+         nnJAS26tlLgMoZrtGixZCzS0SWnAUPGCZ1IaGpX5rSLbXtAhvr+cVDX4oiPMjdkzYwSU
+         5czg==
+X-Gm-Message-State: AA+aEWY5rnk0E4+iYg+SLhXK1dp9kJ/GIIIPA1SKJk/ZY8PpSt9FTuLA
+        5OCu8MqFqiTETWaismoKJy+vtZ5WY1pVF984hV4=
+X-Google-Smtp-Source: AFSGD/WAgzC3G0sY5X7jS4D/tuAP1SqCTGkPlkl6ggFAogKRNTpRFyAufmU/97stGPDwN2sSCdIyovkubfl+i8rNkbs=
+X-Received: by 2002:a5e:8b46:: with SMTP id z6mr5002133iom.7.1544865194645;
+ Sat, 15 Dec 2018 01:13:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20181203134028.12645-1-tiny.windzz@gmail.com> <a8daff3575d4682107dede1f07bf98470acb98ff.camel@perches.com>
-In-Reply-To: <a8daff3575d4682107dede1f07bf98470acb98ff.camel@perches.com>
+References: <20181202031912.9736-1-tiny.windzz@gmail.com> <20181204145943.GS154160@art_vandelay>
+In-Reply-To: <20181204145943.GS154160@art_vandelay>
 From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Sat, 15 Dec 2018 17:11:37 +0800
-Message-ID: <CAEExFWvtMsYkMR5gzCF6rrRKFX_Z+wuZTO8mXwEodsR8CAAFuw@mail.gmail.com>
-Subject: Re: [PATCH] mt76: convert to DEFINE_SHOW_ATTRIBUTE
-To:     Joe Perches <joe@perches.com>
-Cc:     davem@davemloft.net, kubakici@wp.pl,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Felix Fietkau <nbd@nbd.name>, lorenzo.bianconi@redhat.com,
-        sgruszka@redhat.com, kvalo@codeaurora.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+Date:   Sat, 15 Dec 2018 17:13:04 +0800
+Message-ID: <CAEExFWscup+j7ich70wo+oWix3iLWQAmWQbdN50cD166E3KQ7Q@mail.gmail.com>
+Subject: Re: [PATCH] gpu/drm: remove DEFINE_DPU_DEBUGFS_SEQ_FOPS()
+To:     Sean Paul <sean@poorly.run>
+Cc:     Arnd Bergmann <arnd@arndb.de>, abhinavk@codeaurora.org,
+        bzwang@chromium.org, Colin King <colin.king@canonical.com>,
+        airlied@linux.ie, jsanka@codeaurora.org, jcrouse@codeaurora.org,
+        ryadav@codeaurora.org, Rob Clark <robdclark@gmail.com>,
+        linux@armlinux.org.uk, swboyd@chromium.org,
+        skolluku@codeaurora.org, Sean Paul <seanpaul@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 6, 2018 at 2:09 AM Joe Perches <joe@perches.com> wrote:
+On Tue, Dec 4, 2018 at 10:59 PM Sean Paul <sean@poorly.run> wrote:
 >
-> On Mon, 2018-12-03 at 08:40 -0500, Yangtao Li wrote:
-> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> On Sat, Dec 01, 2018 at 10:19:11PM -0500, Yangtao Li wrote:
+> > We already have the DEFINE_SHOW_ATTRIBUTE.There is no need to define
+> > such a macro separately,so remove DEFINE_DPU_DEBUGFS_SEQ_FOPS.
+> > Also use DEFINE_SHOW_ATTRIBUTE to simplify some code.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  drivers/gpu/drm/armada/armada_debugfs.c      | 21 ++++--------
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c | 14 +-------
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c     | 33 +++---------------
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c  | 17 ++-------
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c      | 36 ++++----------------
 >
-> Thanks.
->
-> Are you doing these manually or using some script?
-In fact, just use grep.
-
-Yours,
-Yangtao
->
->
+> For the dpu portion:
+> Acked-by: Sean Paul <sean@poorly.run>
+ping......
