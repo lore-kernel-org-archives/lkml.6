@@ -2,125 +2,147 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F307CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD08EC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23BB2171F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 808102171F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:15:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ttCFOX6w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbeLOHGl convert rfc822-to-8bit (ORCPT
+        id S1729884AbeLOHO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 02:06:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39660 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727757AbeLOHGk (ORCPT
+        Sat, 15 Dec 2018 02:14:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44581 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728675AbeLOHO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 02:06:40 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBF74eOQ072703
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 02:06:39 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcvrj0c87-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 02:06:38 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
-        Sat, 15 Dec 2018 07:06:37 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 15 Dec 2018 07:06:34 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBF76Y8n3473682
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 15 Dec 2018 07:06:34 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4CD411C04C;
-        Sat, 15 Dec 2018 07:06:33 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9245511C04A;
-        Sat, 15 Dec 2018 07:06:33 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat, 15 Dec 2018 07:06:33 +0000 (GMT)
-Received: from [9.102.52.54] (unknown [9.102.52.54])
-        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 2F36FA0118;
-        Sat, 15 Dec 2018 18:06:31 +1100 (AEDT)
-Subject: Re: [ANNOUNCE] Call for Papers - linux.conf.au Kernel Miniconf,
- Christchurch NZ, 21-25 Jan 2019
-From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     lwn@lwn.net
-References: <4e8f907e-ce44-191e-8ded-29ba9ab1cd08@au1.ibm.com>
-Date:   Sat, 15 Dec 2018 18:06:30 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-In-Reply-To: <4e8f907e-ce44-191e-8ded-29ba9ab1cd08@au1.ibm.com>
-Content-Language: en-AU
-X-TM-AS-GCONF: 00
-x-cbid: 18121507-0028-0000-0000-0000032AD223
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121507-0029-0000-0000-000023E72325
-Message-Id: <6fb351c7-cedd-7853-6640-3e673f831d21@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-15_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812150063
+        Sat, 15 Dec 2018 02:14:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t13so3702123pgr.11;
+        Fri, 14 Dec 2018 23:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7WhZFtyQPupUrhseVxS4U/IqOGv8mntZLgJcYp7oNsk=;
+        b=ttCFOX6wwWoUKn29kfFk/YFShXgy//Ic7+dIRBDzVfiylXFRoK7q6WoVeKuyJKvdMB
+         Hg5rB7j/xzg4EXrRzghwAfdDSD85HySQMiE1offC+wBX9bFaHMwlLTZiGaNIRBvB3bTv
+         LDTg0NgP/Cvc7qMskJGB9MXN3owdcQ++ei4cXECO23BR/fTT93IiOwY/mQYA2QD8axaY
+         ScqUBirgNMF5w8KsE+L2yRaJ0Uzl6usCiysGBEpA2hjYJal1fNunxFp1Fz8lkCbNfli3
+         YSSXNglZTLi6WMBUedc78xYO0wxYEmHUoSUVjU/LFDRn/hpFGRErn5t4fD2eFulMPa5K
+         MBFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7WhZFtyQPupUrhseVxS4U/IqOGv8mntZLgJcYp7oNsk=;
+        b=BG1CqqQ5HBNSRD52nL+BxO4yHbTKEMnuFsHgIUqkOHuNn20pftOX3PQodzuyejsWZn
+         LgtQRNjelHlDrH1uqst1vgEsPhskpmqI5lh5UkFm6yiSD/ACH7QT4A1t3zIYfYzRI/HF
+         JhzJOIW3yXkMUSGn2weea5j1oTuzpXXsRlkxZ67hVn4S8ea2xb5MbAZj4/aJyX+FrebH
+         kZI3vV6Je9ZpVHJCLPKqV0PEoAOve4t5kpTqPNvqBOWpEv2OcG45INZUzOLkDyz47UMO
+         9DA2Wj7lhFChLYSWZ3bsXXADOEaVGAdVldLWRVJzWU9XKfElwkY5EkirefvQYrUHxSep
+         E/NQ==
+X-Gm-Message-State: AA+aEWaFH4aNAV3gPuKFCp5cmiMKvE4WsIydr+eX98bGBLxFPut5dgwV
+        4UBA4pvVri2nZ6w22A8iTCCl+z/Ppbg=
+X-Google-Smtp-Source: AFSGD/Utr4KGtV8Lc3OOVFpRN6U14NuBB03Mb//0nJeTjhP2+QvsQZzph2Hb178BvjAogeSvKBo/3w==
+X-Received: by 2002:a63:e915:: with SMTP id i21mr5111316pgh.409.1544858094929;
+        Fri, 14 Dec 2018 23:14:54 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id y5sm9212549pge.49.2018.12.14.23.14.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 23:14:53 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     bfields@fieldses.org, jlayton@kernel.org,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        davem@davemloft.net
+Cc:     linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] sunrpc: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sat, 15 Dec 2018 02:14:51 -0500
+Message-Id: <20181215071451.25752-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/10/18 12:10 pm, Andrew Donnellan wrote:
-> The linux.conf.au Kernel Miniconf is happening once again, this time in 
-> Christchurch on 22 Jan 2019.
-> 
-> *** Submissions close on 2018-12-16, 23:59 AoE, with early submissions 
-> (before 2018-11-16, 23:59 AoE) given priority. ***
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-This deadline is in just under 53 hours, and will not be extended.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ net/sunrpc/rpc_pipe.c | 19 +++----------------
+ net/sunrpc/stats.c    | 14 +-------------
+ 2 files changed, 4 insertions(+), 29 deletions(-)
 
-> 
-> *** Submission details: http://lca-kernel.ozlabs.org/2019-cfp.html ***
-> 
-> The Kernel Miniconf is a 1 day stream alongside the main LCA conference 
-> to talk about kernel stuff.
-> 
-> We invite submissions on anything related to kernel and low-level 
-> systems programming. We welcome submissions from developers of all 
-> levels of experience in the kernel community, covering a broad range of 
-> topics.
-> 
-> Past Kernel Miniconfs have included technical talks on topics such as 
-> memory management, RCU, scheduling and filesystems, as well as talks on 
-> Linux kernel community topics such as licensing and Linux kernel 
-> development process.
-> 
-> We strongly encourage both first-time and seasoned speakers from all 
-> backgrounds, ages, genders, nationalities, ethnicities, religions and 
-> abilities. Like the main LCA conference itself, we respect and encourage 
-> diversity at our miniconf.
-> 
-> Speakers will need to purchase an LCA ticket to attend.
-> 
-> See http://lca-kernel.ozlabs.org/2019-cfp.html for full details and the 
-> submission form.
-> 
-
+diff --git a/net/sunrpc/rpc_pipe.c b/net/sunrpc/rpc_pipe.c
+index 4fda18d47e2c..69663681bf9d 100644
+--- a/net/sunrpc/rpc_pipe.c
++++ b/net/sunrpc/rpc_pipe.c
+@@ -1266,7 +1266,7 @@ static const struct rpc_pipe_ops gssd_dummy_pipe_ops = {
+  * that this file will be there and have a certain format.
+  */
+ static int
+-rpc_show_dummy_info(struct seq_file *m, void *v)
++rpc_dummy_info_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "RPC server: %s\n", utsname()->nodename);
+ 	seq_printf(m, "service: foo (1) version 0\n");
+@@ -1275,25 +1275,12 @@ rpc_show_dummy_info(struct seq_file *m, void *v)
+ 	seq_printf(m, "port: 0\n");
+ 	return 0;
+ }
+-
+-static int
+-rpc_dummy_info_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rpc_show_dummy_info, NULL);
+-}
+-
+-static const struct file_operations rpc_dummy_info_operations = {
+-	.owner		= THIS_MODULE,
+-	.open		= rpc_dummy_info_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(rpc_dummy_info);
+ 
+ static const struct rpc_filelist gssd_dummy_info_file[] = {
+ 	[0] = {
+ 		.name = "info",
+-		.i_fop = &rpc_dummy_info_operations,
++		.i_fop = &rpc_dummy_info_fops,
+ 		.mode = S_IFREG | 0400,
+ 	},
+ };
+diff --git a/net/sunrpc/stats.c b/net/sunrpc/stats.c
+index 71166b393732..d064fcec0b2e 100644
+--- a/net/sunrpc/stats.c
++++ b/net/sunrpc/stats.c
+@@ -62,19 +62,7 @@ static int rpc_proc_show(struct seq_file *seq, void *v) {
+ 	}
+ 	return 0;
+ }
+-
+-static int rpc_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rpc_proc_show, PDE_DATA(inode));
+-}
+-
+-static const struct file_operations rpc_proc_fops = {
+-	.owner = THIS_MODULE,
+-	.open = rpc_proc_open,
+-	.read  = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(rpc_proc);
+ 
+ /*
+  * Get RPC server stats
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+2.17.0
 
