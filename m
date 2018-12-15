@@ -2,70 +2,69 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DC9C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA89EC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 14:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7212084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:52:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="m1r4J9Ii"
+	by mail.kernel.org (Postfix) with ESMTP id A9B7B20675
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 14:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbeLONwk (ORCPT
+        id S1730272AbeLOORN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 08:52:40 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:47122 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeLONwj (ORCPT
+        Sat, 15 Dec 2018 09:17:13 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54304 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729747AbeLOORN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 08:52:39 -0500
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id E3D7825AE79;
-        Sun, 16 Dec 2018 00:52:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1544881957; bh=2h0M6p5G0OTFrGpF/kdS/HoZQ5aWMZxGCguJxxgcngg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m1r4J9IidbOQWbbfc5DEQgZTNtY4C5CCbkuy7CJPIejI31QpXwELWdqkGhIQuxAnR
-         iGxXWxQ/NmaWmqZX4eGMJRLIt9+pWWSSq++kythZU2iEWjbvz5un5MAVC9ZFNFeqnJ
-         pjAiPpNvwdBdnnYrIRe/N0SsXVSyc7B8aH28JJhk=
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id CE233E20E06; Sat, 15 Dec 2018 05:52:34 -0800 (PST)
-Date:   Sat, 15 Dec 2018 14:52:34 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: add R8A774C0 support
-Message-ID: <20181215135234.azq3f2e4zq77ne4b@verge.net.au>
-References: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Sat, 15 Dec 2018 09:17:13 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gYAkf-0001bG-R3; Sat, 15 Dec 2018 14:17:09 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Adam Radford <aradford@gmail.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: 3w-xxx: fix indentation issue, add missing tab
+Date:   Sat, 15 Dec 2018 14:17:08 +0000
+Message-Id: <20181215141708.30883-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:19:48PM +0000, Fabrizio Castro wrote:
-> Document RZ/G2E SoC (a.k.a. r8a774c0) bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+There is a tab missing on a return statement, add the missing tab.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/3w-xxxx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
+index a58257645e94..04164d2f03dd 100644
+--- a/drivers/scsi/3w-xxxx.c
++++ b/drivers/scsi/3w-xxxx.c
+@@ -1174,7 +1174,7 @@ static int tw_setfeature(TW_Device_Extension *tw_dev, int parm, int param_size,
+   	command_que_value = tw_dev->command_packet_physical_address[request_id];
+ 	if (command_que_value == 0) {
+ 		printk(KERN_WARNING "3w-xxxx: tw_setfeature(): Bad command packet physical address.\n");
+-	return 1;
++		return 1;
+ 	}
+ 
+ 	/* Send command packet to the board */
+-- 
+2.19.1
 
