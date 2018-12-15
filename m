@@ -2,128 +2,168 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1899C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9A42084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAAE62084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:52:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/K8VTex"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeLOSnF (ORCPT
+        id S1728683AbeLOSwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 13:43:05 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:51824 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeLOSnF (ORCPT
+        Sat, 15 Dec 2018 13:52:11 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46644 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbeLOSwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 13:43:05 -0500
-Received: by mail-io1-f71.google.com with SMTP id h6so7796822ioq.18
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 10:43:04 -0800 (PST)
+        Sat, 15 Dec 2018 13:52:10 -0500
+Received: by mail-ed1-f67.google.com with SMTP id o10so7526825edt.13;
+        Sat, 15 Dec 2018 10:52:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Gh9VSBUiyRxEelqw76QjxfGZ6ARrZNgGUj+3Pb21AwU=;
+        b=B/K8VTexnUfAYVE5+QSoU4ojriHhgCqraUBWkBnJhFtbhnjqzQDofKoyUlaMtS6OZS
+         GDaehYyxd1dhcnMC4EQOGVNa8y9k7BYLJNsb4IRalSHCuOqJsxGcIy1bYjim4d88Fhwn
+         fzIqQ7p8gL1hckM29JQOzB4fXU0jBRlIY/VNuPjrDfUo+JeSXjTa9zoWHDlxun/zfYCa
+         iiUqCIGhezB3dr7NveEMjRSl0eZ0sCbMPGtHi8iKx4Z/ZJP16bjV1xk6pTL1OCEygZVz
+         /VYjT2FabCOmXBdb+B18/3SHz/bUYk01ZrIT3xNLeGKrInQMBjgaG3eU8twgGtO/te/1
+         AaXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=GSxp26CwHguU++n7uWPFJxMxTbWpXBDsuInFpbVm4a4=;
-        b=LSPQLhsMAtz/6arCPkcUYQRs8A9izEyrNUPUUc0W/q4pYKqdh7/TlQ3eMs1iaz8+ch
-         GK6PThSh6RClbv7fxRk1WaVbsOMwX/qnLQWDLLBfH6KkjiLjfBC224AgGWIlCSsk6U5U
-         0AVZKnSYEPAHPHE64LjwVvEBvF09hwRJN9Xo1qG9b+xlk+w4frMFxifWc4+2kHBVJu7y
-         ypAxA1v2mEvZDZVJWUqkCYHVvD8h/0gqNldTTe/UMRZqUJJjR1OrAE1ajV1ZwbVslJ+x
-         pGKwe0UXSz+nVyc4lRRSAOqB5R07gKbyztxafmZJX8B4COzoABvoFxtXEY8j8LDvNhsK
-         yiKQ==
-X-Gm-Message-State: AA+aEWbkgEFNrO9OvFOL3ZnVGBEUbGyzarz3txA42VGrr4ptUH4gRZ5i
-        jNRN8dKCmiddc/KgZXiJa9ARrthQao8xn2pVYaFvieZQlqQt
-X-Google-Smtp-Source: AFSGD/XIUcXYgL5+d27yrmhI1UIo1yNlDM/uZUpppVNZMmF3fSGRXeCwzEVtwdvXUW+uAWG2XBmdLnyLyR5+1QgjkOZLyChGNS+z
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gh9VSBUiyRxEelqw76QjxfGZ6ARrZNgGUj+3Pb21AwU=;
+        b=KeZcF5VPrjrimSfWOlG+zmqQqrfTCKL+puoqHdRhtNBI1UL56gRyqIo8OWRmWINH+4
+         9wZhZFagl3gn1DAIA4B1FNM4AkY4Qz4wOEiW7CiiKtHiyhnmGt67DXnBpfy6bYJl+ZZx
+         X6Hc+8eZwQcyZaPLVBYaPAc1daavfpZu0zEx6bDXPmnvRhoib8m0sArTB5chq3h4VmVn
+         clt60tFm5U3+aM0f8GTFtJRfRccWUipUZ1mK1sz9z5iynOqcbW/Ttcb01CN3YnyaHmRR
+         DAvANfoMAU8Ay2sn6GqU0Q3hTHiPXCb1joY1qql/4pcRdoPfyy6wgtOX96ZhRA0MS+IT
+         6pkA==
+X-Gm-Message-State: AA+aEWZF+BN/4S6S7Q9g7njBwr4HYT1bYrDGOn+msDGjbbxNt+0TyU0/
+        WwIoIienMQkApqLUOp9n7BY0NmLaQRuSir3Pj9o=
+X-Google-Smtp-Source: AFSGD/VjPbWkQ6thqkJiI2L6m19jcZPx/3Iyc74A01BVpicbYAbwk87k1xqAnNHOJMx/tMt3Vum8TneQJWrjxJCOPe0=
+X-Received: by 2002:a50:ac81:: with SMTP id x1mr7341008edc.71.1544899927565;
+ Sat, 15 Dec 2018 10:52:07 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a5e:c206:: with SMTP id v6mr6404745iop.1.1544899383729;
- Sat, 15 Dec 2018 10:43:03 -0800 (PST)
-Date:   Sat, 15 Dec 2018 10:43:03 -0800
-In-Reply-To: <00000000000085c1ce05708f6724@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fb268d057d13ea55@google.com>
-Subject: Re: BUG: sleeping function called from invalid context at
- mm/slab.h:LINE (4)
-From:   syzbot <syzbot+9bf843c33f782d73ae7d@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, gregkh@linuxfoundation.org,
-        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20181211202520.16799-1-deepa.kernel@gmail.com>
+ <20181211202520.16799-7-deepa.kernel@gmail.com> <CAF=yD-LDWrjxK+XFv-KNAoyP7NCOZiL00n5PkzQ-5aEzq+eCLQ@mail.gmail.com>
+ <CABeXuvpAZfd6gAdJbKxsOowXnDnwyQQRuYMJ-6LDo9BsRDDj-g@mail.gmail.com>
+ <CAF=yD-L4xTU-KXsQ=uU36fEKv5St=69mmKqT8sD1mAmT_hfuVQ@mail.gmail.com> <CABeXuvqrZgEDF5RYQEPJ8RyXDg0uvXx_qMq=2ER8Bc9RXFPDGQ@mail.gmail.com>
+In-Reply-To: <CABeXuvqrZgEDF5RYQEPJ8RyXDg0uvXx_qMq=2ER8Bc9RXFPDGQ@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Sat, 15 Dec 2018 13:51:31 -0500
+Message-ID: <CAF=yD-KFYdXRgL-HpAJLLHuywMcaBGfz7sDL35DBNs0hoq+zxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] socket: Add SO_TIMESTAMP[NS]_NEW
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Ralf Baechle <ralf@linux-mips.org>, rth@twiddle.net,
+        linux-alpha@vger.kernel.org,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-rdma@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+> 3 reasons for not doing this:
+>
+> 1. We do not want to break userspace. If we move this to
+> linux/socket.h all the userspace programs now have to include
+> linux/socket.h or get this definition through a new libc.
+> 2. All the socket options are together in the file asm/socket.h. It
+> doesn't seem good for maintainability to move just a few bits
+> elsewhere.
+> 3. There are only 4 arches (after the series is applied) that have
+> their own asm/socket.h. And, this is because there seems to be
+> significant differences to asm-generic/socket.h that don't seem
+> logically obvious to group and eliminate some of the defines.
 
-HEAD commit:    d14b746c6c1c Add linux-next specific files for 20181214
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=129bc943400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1da6d2d18f803140
-dashboard link: https://syzkaller.appspot.com/bug?extid=9bf843c33f782d73ae7d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136154cd400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1687bfa3400000
+Agreed. All good reasons to leave as is.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9bf843c33f782d73ae7d@syzkaller.appspotmail.com
+> Also for the other comment. The reason the conditionals were not
+> consistent is because they were not consistent to begin with.
 
-sshd (6035) used greatest stack depth: 15600 bytes left
-BUG: sleeping function called from invalid context at mm/slab.h:421
-in_atomic(): 1, irqs_disabled(): 0, pid: 6051, name: syz-executor515
-1 lock held by syz-executor515/6051:
-  #0: 000000002f6552ef (sk_lock-AF_ALG){+.+.}, at: lock_sock  
-include/net/sock.h:1502 [inline]
-  #0: 000000002f6552ef (sk_lock-AF_ALG){+.+.}, at:  
-skcipher_recvmsg+0xbb/0x1420 crypto/algif_skcipher.c:163
-Preemption disabled at:
-[<ffffffff812e4ae6>] kernel_fpu_begin+0x16/0x260  
-arch/x86/kernel/fpu/core.c:127
-CPU: 0 PID: 6051 Comm: syz-executor515 Not tainted  
-4.20.0-rc6-next-20181214+ #171
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  ___might_sleep.cold.86+0x221/0x254 kernel/sched/core.c:6148
-  __might_sleep+0x95/0x190 kernel/sched/core.c:6101
-  slab_pre_alloc_hook mm/slab.h:421 [inline]
-  slab_alloc mm/slab.c:3365 [inline]
-  __do_kmalloc mm/slab.c:3707 [inline]
-  __kmalloc+0x2da/0x760 mm/slab.c:3718
-  kmalloc include/linux/slab.h:550 [inline]
-  kzalloc include/linux/slab.h:740 [inline]
-  skcipher_next_slow crypto/skcipher.c:254 [inline]
-  skcipher_walk_next+0x7f9/0x17f0 crypto/skcipher.c:358
-  skcipher_walk_first+0xff/0x3a0 crypto/skcipher.c:441
-  skcipher_walk_skcipher+0x541/0x700 crypto/skcipher.c:469
-  skcipher_walk_virt+0x58/0xd0 crypto/skcipher.c:479
-  chacha_simd_stream_xor+0xb3/0xa40 arch/x86/crypto/chacha_glue.c:141
-  chacha_simd+0xd8/0x110 arch/x86/crypto/chacha_glue.c:179
-  crypto_skcipher_decrypt include/crypto/skcipher.h:538 [inline]
-  _skcipher_recvmsg crypto/algif_skcipher.c:146 [inline]
-  skcipher_recvmsg+0xcc9/0x1420 crypto/algif_skcipher.c:165
-  sock_recvmsg_nosec net/socket.c:795 [inline]
-  sock_recvmsg+0xd0/0x110 net/socket.c:802
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2279
-  do_recvmmsg+0x303/0xb90 net/socket.c:2392
-  __sys_recvmmsg+0x265/0x2a0 net/socket.c:2471
-  __do_sys_recvmmsg net/socket.c:2494 [inline]
-  __se_sys_recvmmsg net/socket.c:2487 [inline]
-  __x64_sys_recvmmsg+0xe6/0x140 net/socket.c:2487
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440349
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff9312c608 EFLAGS: 00000203 ORIG_RAX: 000000000000012b
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440349
-RDX: 0000000000000001 RSI: 000000002000a280 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000203 R12: 00000000
+The only difference I see is an inversion of the test. Nesting order
+is the same:
 
+        int need_software_tstamp = sock_flag(sk, SOCK_RCVTSTAMP);
+        ...
+        if (need_software_tstamp) {
+                if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+                } else {
+                }
+        }
+
+vs
+
+                if (sock_flag(sk, SOCK_RCVTSTAMP)) {
+                        if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+                        } else {
+                        }
+                }
+
+I suggest just adding something like
+
+        if (need_software_tstamp) {
++              if (sock_uses_new_tstamp(sk) {
++                   __sock_recv_timestamp_new(msg, sk,
+ktime_to_timespec64(skb->tstamp));
++              } else if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+-               if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+                } else {
+                }
+
+and
+
+                if (sock_flag(sk, SOCK_RCVTSTAMP)) {
++                      if (sock_uses_new_tstamp(sk) {
++                           __sock_recv_timestamp_new(msg, sk, ts);
++                      else if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+-                       if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+                        } else {
+                        }
+
+I think we can use the same helper for both the sock and tcp variant.
+The only intended difference between the two functions, as described
+in the tcp_recv_timestamp function comment, is the absence of an skb
+in the tcp case. That is immaterial at this level.
+
+Note also (2) tentative helper function sock_uses_new_tstamp(const
+struct sock *sk) instead of testing sock_flag(sk, SOCK_TSTAMP_NEW)
+directly. Since the .._NEW variants are equivalent to .._OLD on 64-bit,
+I wonder if we can just compile out the branch. Something like
+
+    static inline bool sock_uses_new_tstamp(const struct sock *sk) {
+            return (sizeof(time_t) != sizeof(__kernel_long_t)) &&
+                       sock_flag(sk, SOCK_TSTAMP_NEW);
+    }
+
+> I'm trying to follow your request to keep code churn to minimal.
+> It's just that I moved to a different function as that seemed logical
+> to me. Do you prefer me to remove that refactoring?
+
+Yes, please avoid rearranging existing code as much as possible.
+
+If there is any refactoring to be done, I think it would be to
+deduplicate the shared logic between __sock_recv_timestamp and
+tcp_recv_timestamp. I think the first can be rewritten to reuse the
+second, if the only difference really is that the first takes an skb with
+embedded timestamps, while the second directly takes a pointer to
+struct scm_timestamping.
+
+Either way, that's out of scope for this patchset.
