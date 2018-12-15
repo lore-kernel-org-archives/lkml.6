@@ -2,82 +2,83 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D82C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 19:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8448DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 19:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 575212084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 19:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CF062084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 19:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbeLOTmF (ORCPT
+        id S1729446AbeLOTnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 14:42:05 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60624 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727168AbeLOTmE (ORCPT
+        Sat, 15 Dec 2018 14:43:10 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:54146 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727168AbeLOTnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 14:42:04 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id CD8D6808C2; Sat, 15 Dec 2018 20:41:58 +0100 (CET)
-Date:   Sat, 15 Dec 2018 20:42:02 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: isp1704: switch to gpiod API
-Message-ID: <20181215194201.GB31052@amd>
-References: <20181213013858.23996-1-sebastian.reichel@collabora.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
-Content-Disposition: inline
-In-Reply-To: <20181213013858.23996-1-sebastian.reichel@collabora.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 15 Dec 2018 14:43:09 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3468914E8B31D;
+        Sat, 15 Dec 2018 11:43:09 -0800 (PST)
+Date:   Sat, 15 Dec 2018 11:43:08 -0800 (PST)
+Message-Id: <20181215.114308.647436101869587689.davem@davemloft.net>
+To:     jasowang@redhat.com
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
+ vmap()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
+References: <20181213101022.12475-1-jasowang@redhat.com>
+        <20181213144116-mutt-send-email-mst@kernel.org>
+        <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-2022-jp
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 15 Dec 2018 11:43:09 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 14 Dec 2018 12:29:54 +0800
 
---E39vaYmALEf/7YXx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> On 2018/12/14 上午4:12, Michael S. Tsirkin wrote:
+>> On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
+>>> Hi:
+>>>
+>>> This series tries to access virtqueue metadata through kernel virtual
+>>> address instead of copy_user() friends since they had too much
+>>> overheads like checks, spec barriers or even hardware feature
+>>> toggling.
+>>>
+>>> Test shows about 24% improvement on TX PPS. It should benefit other
+>>> cases as well.
+>>>
+>>> Please review
+>> I think the idea of speeding up userspace access is a good one.
+>> However I think that moving all checks to start is way too aggressive.
+> 
+> 
+> So did packet and AF_XDP. Anyway, sharing address space and access
+> them directly is the fastest way. Performance is the major
+> consideration for people to choose backend. Compare to userspace
+> implementation, vhost does not have security advantages at any
+> level. If vhost is still slow, people will start to develop backends
+> based on e.g AF_XDP.
 
-On Thu 2018-12-13 02:38:58, Sebastian Reichel wrote:
-> This migrates isp1704 driver from old GPIO API to new descriptor
-> based GPIO API and drops useless platform data as a side-effect.
->=20
-> Migration is simple, since all mainline users are DT based and
-> DT API does not change. Out of tree users of the platform data
-> need to migrate to gpiod_lookup_table as described here:
->=20
-> Documentation/driver-api/gpio/board.rst
->=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Exactly, this is precisely how this kind of problem should be solved.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Michael, I strongly support the approach Jason is taking here, and I
+would like to ask you to seriously reconsider your objections.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---E39vaYmALEf/7YXx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwVWQkACgkQMOfwapXb+vI2XwCfQ1Tx9Bx7hb1V9trNx0wWdtep
-l5AAniXQcMV7UwsqACdEXEdcZtGKj9EJ
-=YdWX
------END PGP SIGNATURE-----
-
---E39vaYmALEf/7YXx--
+Thank you.
