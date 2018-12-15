@@ -2,100 +2,92 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1962C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 03:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCF1C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 03:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B658A2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 03:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFD0420645
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 03:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hI246O9+"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N5girEMf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbeLODCS (ORCPT
+        id S1729815AbeLODCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 22:02:18 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45948 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727668AbeLODCS (ORCPT
+        Fri, 14 Dec 2018 22:02:24 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45174 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728656AbeLODCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 22:02:18 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so3503575pgc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 19:02:18 -0800 (PST)
+        Fri, 14 Dec 2018 22:02:23 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so3677308pfd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 19:02:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ircXPkLKlb7ZlNEJJFaa+uDJP6y5IrcHuMjbfpKiMOA=;
-        b=hI246O9+rjglH+Fpwi7teN9sIiZjU7bBHZjPD0MJfbc/wztB8yiiViidzL7qK9Ruc/
-         rM4u6wZmwVZ1iTckFuYIau29gF1l9SIC8U0HOMU+JGFaiktpq8/OGlxfaOBBWlUblU0W
-         ulKzQqAvAQpfZ2rdpE0BrJq6iU4kZDj8d1R8U=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=IA4f8trOcC05mppHip2IfoM8w5YdU8xupgECA60alGo=;
+        b=N5girEMfNekJHYTVKfmiRezC2W4eSPNeKQlw00k7eI97yCnAcMD49sZTFDWfg3NRD6
+         0BRcUD59sRfQGsixEFRnLNzYJpKBN+21eTcsk/EMHY2wRxlvW1Zcl6E2UXFAIl7uvdEr
+         DNxWIQUORP815yIKfIm9J6NSw98Rlwhi+2XPQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ircXPkLKlb7ZlNEJJFaa+uDJP6y5IrcHuMjbfpKiMOA=;
-        b=sxr29eGzTaeKS1dQUyq2fKilxyVA6fvZkZQrIN8EL4RqSLyS02BeDeVjsYOQjWW5DF
-         DL6iJv0vYmlFrR3q+1bYmWhOqOun6l6r8l4skjOjQwRoFpbvTj+WvHx5yTg2T0GlQtiy
-         mTp4oD05H+wpEmPqpWvlHe+dVir2l8Ff28kMEli2mK//sa9QGRkyTYPvv8dCFe9h1VZb
-         bCAbHPFEuxlM1T+2A+iZ45XKQcolxnS40P8XeuAHE8ZUtBhHujLLn8kO3CY79UuUyk7v
-         cIa7CpwOQOLYEJn1lWVm4qqRowdSFQV+3BOPUELD4yxrkvW1lHmnS23IIYfK99cFsqNo
-         qpdA==
-X-Gm-Message-State: AA+aEWaxhSR0A3JeK1OIX4Jf90jd0I1GtL/ymi2uJW9oj+nFgwfKYQ7Q
-        yz5ZGHpmDNiq0fccQtDIWn1Q
-X-Google-Smtp-Source: AFSGD/WTLEHHv8GWZsDQuLb/c22diVLXIs4DHvBqscDpWO5WejTmyN6nTgQvMOE9gEPuCDKSfGaZyg==
-X-Received: by 2002:a62:64d7:: with SMTP id y206mr5204641pfb.84.1544842937540;
-        Fri, 14 Dec 2018 19:02:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=IA4f8trOcC05mppHip2IfoM8w5YdU8xupgECA60alGo=;
+        b=MEwhfiH23ju2hwxFXOfK+KDgbjW7UjuSKgNY4Cbf77igB952g8AUpXLKzvQ1Jze6JQ
+         p5Y1NUCFDCWDWcUJ7g1xgouqcUiG9SslP85ORCJ8RkgBJTd0Fq7xjGfUdBTexyrhTalX
+         LEQC5EiLQCstcqo2MABo/vFLINEDcd2FQtbHMOORGFJ32bYGPSjvJFlrJ0bEbxq2qU8Z
+         Y8Rq5rQf77RYpA/KO1LRDtfexR4xnVcXiyv7ltqglBLjkLzNwtVpZhFulw22KbG2aP/x
+         6GRhVnDoC+1Mfpj/Lk+vByllNw/Xl3ZXwJlhxrSzbOS8kC5xzhaHfD8HeTMnIOUV/TxP
+         FJjw==
+X-Gm-Message-State: AA+aEWafros3chqV6hurYF0GATB/Rq0EA7YMfx/3lu/TRD58yjltSn63
+        bNZglVcIE3fOgfT42btrMPc/
+X-Google-Smtp-Source: AFSGD/UFtsfZW6LjpCWIDfSSRzZt0VO4Qz1tjAEFi1wFtIV0tnGhOk7O0/atqGDgrUKyuoXiWQh8DQ==
+X-Received: by 2002:a62:1043:: with SMTP id y64mr5260161pfi.78.1544842942629;
+        Fri, 14 Dec 2018 19:02:22 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:6301:5419:f1e8:77a0:59f7:2cb5])
-        by smtp.gmail.com with ESMTPSA id h15sm7309534pgl.43.2018.12.14.19.02.11
+        by smtp.gmail.com with ESMTPSA id h15sm7309534pgl.43.2018.12.14.19.02.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 19:02:16 -0800 (PST)
+        Fri, 14 Dec 2018 19:02:21 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     dinguyen@kernel.org, robh+dt@kernel.org
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, amit.kucheria@linaro.org,
         yossi@novtech.com, nazik@novtech.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/2] Add board support for Chameleon96 Board
-Date:   Sat, 15 Dec 2018 08:31:50 +0530
-Message-Id: <20181215030152.4386-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/2] dt-bindings: vendor-prefixes: Add Novtech Vendor Prefix
+Date:   Sat, 15 Dec 2018 08:31:51 +0530
+Message-Id: <20181215030152.4386-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181215030152.4386-1-manivannan.sadhasivam@linaro.org>
+References: <20181215030152.4386-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add vendor prefix for NovTech, Inc.
 
-This patchset adds board support for Chameleon96 board from Novetech
-based on Intel Cyclone V SoC FPGA. This board is one of the Consumer
-Edition boards of the 96Boards family and has the following key features:
-    
-* SoC - Intel Cyclone V SoC FPGA
-* GPU - Graphics based on Intel Video Suite for FPGA
-* RAM - 512MB DDR3L
-* USB - 2x USB2.0 Host, 1x USB2.0 OTG
-* Wireless - Wifi, BT
-    
-More information about this board can be found in 96Boards product
-page: https://www.96boards.org/product/chameleon96/
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-This patchset has been tested on Chameleon96 board and the board boots
-into a distro on SD card with USB ports working.
-
-Thanks,
-Mani
-
-Manivannan Sadhasivam (2):
-  dt-bindings: vendor-prefixes: Add Novtech Vendor Prefix
-  ARM: dts: Add support for 96Boards Chameleon96 board
-
- .../devicetree/bindings/vendor-prefixes.txt   |   1 +
- arch/arm/boot/dts/Makefile                    |   1 +
- .../boot/dts/socfpga_cyclone5_chameleon96.dts | 130 ++++++++++++++++++
- 3 files changed, 132 insertions(+)
- create mode 100644 arch/arm/boot/dts/socfpga_cyclone5_chameleon96.dts
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 4b1a2a8fcc16..ac182966249c 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -270,6 +270,7 @@ nintendo	Nintendo
+ nlt	NLT Technologies, Ltd.
+ nokia	Nokia
+ nordic	Nordic Semiconductor
++novtech NovTech, Inc.
+ nutsboard	NutsBoard
+ nuvoton	Nuvoton Technology Corporation
+ nvd	New Vision Display
 -- 
 2.17.1
 
