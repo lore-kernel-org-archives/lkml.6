@@ -2,107 +2,133 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF13C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4B7C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE6CD2080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B0CF2080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 09:38:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wrz79qkR"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oHss5UCR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbeLOJdV (ORCPT
+        id S1730031AbeLOJit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 04:33:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37410 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728731AbeLOJdV (ORCPT
+        Sat, 15 Dec 2018 04:38:49 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:18725 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728731AbeLOJis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 04:33:21 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so3859746plr.4;
-        Sat, 15 Dec 2018 01:33:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Hs7nsjsykKZ3hTMp6zGOqOD3FYy+k3AZmDCkDxXVlgI=;
-        b=Wrz79qkRHKZsY2TMklQpv0viUdBZpdvr0V8FvLBK2+IAV6JAEYzoRvzFZhEN+zcwPv
-         6D1VdCWPGxwzvwGrOiybupStykaRmVcQlwD5190mCgY5DnZq5ZvVGqeWdWZM0OU033Ns
-         3C3SrCjl+K0pfJVE7xKAKwC6sWPd/VaMvm/tCaJivQkFEuKxR0D3XfoMjIzKirvmy+oz
-         uAJ45ilB7IFAr/J0oWMEpLall9HuRV0baqHba0L1JUTDbKPi2Lh3RclIFAmhkjgPumgd
-         hZzhXf2UzHtAwx4U9v5Y96Mm/65gjzCHAO0JpkYZfPcso0ePb/Lmn6hdEd53Uzd6ow3d
-         UX5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Hs7nsjsykKZ3hTMp6zGOqOD3FYy+k3AZmDCkDxXVlgI=;
-        b=f5i7T13xyv6+/JrbYjHqOwxRbPuoeOVPAOfj7UYBMiy/mypO2YRNGwO6um755UVX3m
-         Io3+t3vVVDsTmIEE3UFm8U4ivSawuslEVMLGKJSFAngPeLSINa7KMOoNJ6pLKEanCg4f
-         urwkDnueSMZpCU/trWqVsO+o/AGZMuGQC7jfq2ynrpYPFvQpMyXTgbF90IE/NCxvRf5I
-         HYoh9riv+u58FM9DNFgePPPGGWVm5QAq39HKT6CxngTLDp5oxUf4Uu1cXZlEN4Le/cDk
-         Sko4/ZERkvNKtJnr8RaM3GOFadqQhlLzX8VNoHZPBpktRZWsHbTAuBkmFGBG+MgEMwFd
-         EqMA==
-X-Gm-Message-State: AA+aEWb9GWoB7Lou08PPpC8q5/otY+u7kJVZ0CUbQ9rX7NGlXK9GPeGo
-        ocQgDx7VEFESwLWj4ZeERFs=
-X-Google-Smtp-Source: AFSGD/VJ7keuDE6Vb5zprXIi4rBza3JtM9pcb7SxDTMCXKrnRngDfqWSbiA3Feq9o8ET9u+/bYGZqw==
-X-Received: by 2002:a17:902:4827:: with SMTP id s36mr5679758pld.168.1544866400900;
-        Sat, 15 Dec 2018 01:33:20 -0800 (PST)
-Received: from li1588-6.members.linode.com (li1588-6.members.linode.com. [139.162.104.6])
-        by smtp.gmail.com with ESMTPSA id q1sm9616294pfb.96.2018.12.15.01.33.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 01:33:20 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     edumazet@google.com, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next] tcp: minor optimization for calculating packets_out in tcp connect
-Date:   Sat, 15 Dec 2018 17:33:09 +0800
-Message-Id: <1544866389-11168-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 15 Dec 2018 04:38:48 -0500
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wBF9cQYB008452;
+        Sat, 15 Dec 2018 18:38:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wBF9cQYB008452
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544866707;
+        bh=c3rKRXWxtwSQ9KtyVVkel0TbvEqzIGhF6c8ZIY1ZZrU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oHss5UCRRgdNJoouSqjk8deSLH/UayiTbUImM1xz+QPeomnSe00567zD/LctIY0vs
+         WWMo+jXaJLoTDYHlYtbkejFlkqvTv09U0I3gGMWQwnzVK1rjJLdRulunUXURH20csj
+         Tmzcp0JH56ofqazn0mWS/PPZ8JrsTbu4baHLdQOltHxETHRMdS2CWHd4W/OPGbOTzK
+         MS8QMKQqtsH4TK36ccyGgm796pTqRu64R6x0W02GXJ7HzFXSg+yuk0Jsd9BVLUQf9O
+         6lsbfoGih9kytniOPEXoDudx9VQQhQi4virVYoBmBsib6MbHLTuxPcfJej7SuFSMjq
+         fTgA7mFZqicEg==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id x64so4895052vsa.5;
+        Sat, 15 Dec 2018 01:38:26 -0800 (PST)
+X-Gm-Message-State: AA+aEWY7SIDVGOdqg36rBYH/NqUfm8GSvClD1YrHR6Tl42D2RAQWrQMx
+        8mcw72Ub/objPJDb0plQBC8EDH+S6KZCsb4cRcM=
+X-Google-Smtp-Source: AFSGD/XGG9VbGe70bdKLjTsanf3MZnKRHJpd+TirgVzzkCcG+F0ugnf6rePRvK19j9nDRgMAKXYZ8B8xFpEVvC8wt+Y=
+X-Received: by 2002:a67:485:: with SMTP id 127mr2949918vse.54.1544866705872;
+ Sat, 15 Dec 2018 01:38:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20181206222318.218157-1-tmroeder@google.com>
+In-Reply-To: <20181206222318.218157-1-tmroeder@google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 15 Dec 2018 18:37:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATZm6T9bjcAxB_WQw-um-Hjkhiew6qg8CRLayr8qYzLeQ@mail.gmail.com>
+Message-ID: <CAK7LNATZm6T9bjcAxB_WQw-um-Hjkhiew6qg8CRLayr8qYzLeQ@mail.gmail.com>
+Subject: Re: [PATCH] scripts: add a tool to produce a compile_commands.json file
+To:     Tom Roeder <tmroeder@google.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we building a syn packet, the tcp_skb_pcount(skb) is always 1,
-which is set in tcp_init_nondata_skb().
-Regarding the syn_data, it is set through
-memcpy(syn_data->cb, syn->cb, sizeof(syn->cb)),
-which is always 1 as well.
+On Fri, Dec 7, 2018 at 7:24 AM Tom Roeder <tmroeder@google.com> wrote:
+>
+> The LLVM/Clang project provides many tools for analyzing C source code.
+> Many of these tools are based on LibTooling
+> (https://clang.llvm.org/docs/LibTooling.html), which depends on a
+> database of compiler flags. The standard container for this database is
+> compile_commands.json, which consists of a list of JSON objects, each
+> with "directory", "file", and "command" fields.
+>
+> Some build systems, like cmake or bazel, produce this compilation
+> information directly. Naturally, Makefiles don't. However, the kernel
+> makefiles already create .<target>.o.cmd files that contain all the
+> information needed to build a compile_commands.json file.
+>
+> So, this commit adds scripts/gen_compile_commands.py, which recursively
+> searches through a directory for .<target>.o.cmd files and extracts
+> appropriate compile commands from them. It writes a
+> compile_commands.json file that LibTooling-based tools can use.
+>
+> By default, gen_compile_commands.py starts its search in its working
+> directory and (over)writes compile_commands.json in the working
+> directory. However, it also supports --output and --directory flags for
+> out-of-tree use.
+>
+> Note that while gen_compile_commands.py enables the use of clang-based
+> tools, it does not require the kernel to be compiled with clang. E.g.,
+> the following sequence of commands produces a compile_commands.json file
+> that works correctly with LibTooling.
+>
+> make defconfig
+> make
+> scripts/gen_compile_commands.py
+>
+> Also note that this script is written to work correctly in both Python 2
+> and Python 3, so it does not specify the Python version in its first
+> line.
+>
+> For an example of the utility of this script: after running
+> gen_compile_commands.json on the latest kernel version, I was able to
+> use Vim + the YouCompleteMe pluging + clangd to automatically jump to
+> definitions and declarations. Obviously, cscope and ctags provide some
+> of this functionality; the advantage of supporting LibTooling is that it
+> opens the door to many other clang-based tools that understand the code
+> directly and do not rely on regular expressions and heuristics.
+>
+> Tested: Built several recent kernel versions and ran the script against
+> them, testing tools like clangd (for editor/LSP support) and clang-check
+> (for static analysis). Also extracted some test .cmd files from a kernel
+> build and wrote a test script to check that the script behaved correctly
+> with all permutations of the --output and --directory flags.
+>
+> Signed-off-by: Tom Roeder <tmroeder@google.com>
 
-So we don't need to use tcp_skb_pcount(skb), that could give us a
-little improvement.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- net/ipv4/tcp_output.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I am fine with this,
+but I have one question.
 
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 730bc44..12bb5e7 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -3404,7 +3404,7 @@ static void tcp_connect_queue_skb(struct sock *sk, struct sk_buff *skb)
- 	sk->sk_wmem_queued += skb->truesize;
- 	sk_mem_charge(sk, skb->truesize);
- 	tp->write_seq = tcb->end_seq;
--	tp->packets_out += tcp_skb_pcount(skb);
-+	tp->packets_out += 1;
- }
- 
- /* Build and send a SYN with data and (cached) Fast Open cookie. However,
-@@ -3486,7 +3486,7 @@ static int tcp_send_syn_data(struct sock *sk, struct sk_buff *syn)
- 
- 	/* data was not sent, put it in write_queue */
- 	__skb_queue_tail(&sk->sk_write_queue, syn_data);
--	tp->packets_out -= tcp_skb_pcount(syn_data);
-+	tp->packets_out -= 1;
- 
- fallback:
- 	/* Send a regular SYN with Fast Open cookie request option */
+The generated compile_commands.json
+contains $(pound)
+
+How is it handled?
+Should it be replaced with '\#' ?
+
+
+
+
+
 -- 
-1.8.3.1
-
+Best Regards
+Masahiro Yamada
