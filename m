@@ -2,157 +2,120 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48251C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 20:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD631C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 21:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165B62080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 20:56:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaE57+j5"
+	by mail.kernel.org (Postfix) with ESMTP id 75BD72171F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 21:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544907700;
+	bh=0ntFjkLax+h+m+5ABLI8ZX5Z9N5HcWceIC3au+YT+lY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=DsVW5ry55F0QS1jwwOwBHZ+jXffRGThVhFAnz2Cx10cMJfeNta2plG+gsIi+Jmu9z
+	 f7QXHzyae7NoTUzpV0b0vGKmDq0kORz06wCzL6Nq/9D3MrfIF9yQLjP4dbWN1Rs85L
+	 2N4clj+GBtE3uVNxc4M2w8jHCGs/zgNZ1Ame9gCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729549AbeLOU4W (ORCPT
+        id S1729551AbeLOVBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 15:56:22 -0500
-Received: from mail-io1-f52.google.com ([209.85.166.52]:43278 "EHLO
-        mail-io1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbeLOU4V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 15:56:21 -0500
-Received: by mail-io1-f52.google.com with SMTP id l3so7161446ioc.10;
-        Sat, 15 Dec 2018 12:56:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RxUIYK5jq5UFHGA9uu0rZ7mZo30FH8h4myjB1K/gJPk=;
-        b=EaE57+j5uiOByuwN6hqdu1RyKysSVPETULK74LbAvzHx9c3ARjSCow5D3a7EBWh+Ri
-         zJJ4pQQ5az5tbEa70GAw8ejjYnYFu9cPkcCCAE86IiYPbqb7SEQRbPU+1/H3YX4+pDC4
-         3TTzM+uRMvUv+rEOZG+zcykyjUMDpfufsvONSMY09uRjn1H+OG91HHzfkHawe3wWMrIe
-         JMmkE5onTp/Ge+GVfU/A1yzzE3yz8VUAGMGMj3JZGoPMRRVRx/9qWgVqRvNDFycaDRxy
-         a+nSG2FzC5qi/cNws9yu2dsPCw2d/cba/InvuOWzdDuVuK1LwphU8Xu64Ejqal8Bzkee
-         vx2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RxUIYK5jq5UFHGA9uu0rZ7mZo30FH8h4myjB1K/gJPk=;
-        b=aNZR8a1kfqD1yV/E9uZtiKxZ6tz9pbGKdgLV0SoZmngUCjrnFJ43BU5zjdjjMnSKxW
-         rYoVDG+64fkQDgZbnX15zxgFIM058PCLp8Eety0/vMXztBUZRcZb6A/9NP+aH2/nzHv4
-         g584GPh1shRNiNjZsLbRiuO0onjUe8hyelBMwg/ZYevwExOQ1D/gD8xeWaN1AbCJ+ak5
-         OQce1kUnvRsbJrEIdGm+yB7o4nK8/76cSinA86Gb4jHLVF6D4d43D8DaUw74wXATWpDu
-         N5xQ8hJnpKCkqayPIYUhX3yFHjyxw28L/PyoiCaric95lnhPs898VPxWbOrOhfRwAz99
-         ZNeg==
-X-Gm-Message-State: AA+aEWYGLTrdpeQh76y9NruOI8ijki8oUN5vmql1gmnCw/O4Qi0WmT4e
-        7FdAgCf5ij2VuGkqqS7dKPNC39wHu61OTgBcSbs=
-X-Google-Smtp-Source: AFSGD/XizO6+SosvWysC4HJY/uLigM+kNpJUHJrJa7Z+a4hSMTmMfRrE3hAkm9ZRP7SVtvFZ19fQtRcMN1GGkX0FkMQ=
-X-Received: by 2002:a6b:4001:: with SMTP id k1mr7176331ioa.34.1544907380181;
- Sat, 15 Dec 2018 12:56:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20181211202520.16799-1-deepa.kernel@gmail.com>
- <20181211202520.16799-7-deepa.kernel@gmail.com> <CAF=yD-LDWrjxK+XFv-KNAoyP7NCOZiL00n5PkzQ-5aEzq+eCLQ@mail.gmail.com>
- <CABeXuvpAZfd6gAdJbKxsOowXnDnwyQQRuYMJ-6LDo9BsRDDj-g@mail.gmail.com>
- <CAF=yD-L4xTU-KXsQ=uU36fEKv5St=69mmKqT8sD1mAmT_hfuVQ@mail.gmail.com>
- <CABeXuvqrZgEDF5RYQEPJ8RyXDg0uvXx_qMq=2ER8Bc9RXFPDGQ@mail.gmail.com> <CAF=yD-KFYdXRgL-HpAJLLHuywMcaBGfz7sDL35DBNs0hoq+zxQ@mail.gmail.com>
-In-Reply-To: <CAF=yD-KFYdXRgL-HpAJLLHuywMcaBGfz7sDL35DBNs0hoq+zxQ@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sat, 15 Dec 2018 12:56:07 -0800
-Message-ID: <CABeXuvr7je=LG9+xO286b7HH2WNLSfoOL4V6nN0AkjsGr_SoCQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] socket: Add SO_TIMESTAMP[NS]_NEW
-To:     willemdebruijn.kernel@gmail.com
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Ralf Baechle <ralf@linux-mips.org>, rth@twiddle.net,
-        linux-alpha@vger.kernel.org,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-rdma@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>
+        Sat, 15 Dec 2018 16:01:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727928AbeLOVBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 16:01:39 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50FC920578;
+        Sat, 15 Dec 2018 21:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544907698;
+        bh=0ntFjkLax+h+m+5ABLI8ZX5Z9N5HcWceIC3au+YT+lY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=M0DK+55P1o2ulH0Ej5f/TxRyMTWdt/chWJrR0Q0D20aopuRKnpKW2yAGPnr3Np+Su
+         EYeDeSoWjXmVGXKfdtYEdnUM8eI5F61BQ3wFveOuelrDgQvgVqApFmCA9VvIHPFsRB
+         NpRc0BmB7qLSm0wHNF71id5sIu6DP4FDVP/rAlfc=
+Message-ID: <1544907696.10497.17.camel@kernel.org>
+Subject: Re: [PATCH v8 20/22] tracing: Use hist trigger's var_ref array to
+ destroy var_refs
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>, vedang.patel@intel.com,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        julia@ni.com, linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Date:   Sat, 15 Dec 2018 15:01:36 -0600
+In-Reply-To: <CAM9d7ciW3cHVFLeuP+pdC-+1fnGMkRnfwGsbeKX_Zj30f-r4hA@mail.gmail.com>
+References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
+         <4d6103ab7b4fdef81a82e2977b4005a26212a726.1544483273.git.tom.zanussi@linux.intel.com>
+         <20181215013119.dc796fd4d2d21535adb4cf6c@kernel.org>
+         <1544808561.10497.15.camel@kernel.org>
+         <CAM9d7ciW3cHVFLeuP+pdC-+1fnGMkRnfwGsbeKX_Zj30f-r4hA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Also for the other comment. The reason the conditionals were not
-> > consistent is because they were not consistent to begin with.
->
-> The only difference I see is an inversion of the test. Nesting order
-> is the same:
->
->         int need_software_tstamp = sock_flag(sk, SOCK_RCVTSTAMP);
->         ...
->         if (need_software_tstamp) {
->                 if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
->                 } else {
->                 }
->         }
->
-> vs
->
->                 if (sock_flag(sk, SOCK_RCVTSTAMP)) {
->                         if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
->                         } else {
->                         }
->                 }
->
-> I suggest just adding something like
->
->         if (need_software_tstamp) {
-> +              if (sock_uses_new_tstamp(sk) {
-> +                   __sock_recv_timestamp_new(msg, sk,
-> ktime_to_timespec64(skb->tstamp));
-> +              } else if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
-> -               if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
->                 } else {
->                 }
->
-> and
->
->                 if (sock_flag(sk, SOCK_RCVTSTAMP)) {
-> +                      if (sock_uses_new_tstamp(sk) {
-> +                           __sock_recv_timestamp_new(msg, sk, ts);
-> +                      else if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
-> -                       if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
->                         } else {
->                         }
->
-> I think we can use the same helper for both the sock and tcp variant.
-> The only intended difference between the two functions, as described
-> in the tcp_recv_timestamp function comment, is the absence of an skb
-> in the tcp case. That is immaterial at this level.
+Hi Namhyung,
 
-I will just not refactor things into a function: __sock_rescv_timestamp_new().
-I will just add new conditionals for the new timestamps.
-When you guys refactor the other timestamp stuff like you mentioned
-below maybe you can move the new timestamps to a new funtcion as you
-see fit.
+On Sat, 2018-12-15 at 15:50 +0900, Namhyung Kim wrote:
+> Hi Tom and Masami,
+> 
+> On Sat, Dec 15, 2018 at 2:29 AM Tom Zanussi <zanussi@kernel.org>
+> wrote:
+> > 
+> > Hi Masami,
+> > 
+> > On Sat, 2018-12-15 at 01:31 +0900, Masami Hiramatsu wrote:
+> > > On Mon, 10 Dec 2018 18:01:34 -0600
+> > > Tom Zanussi <zanussi@kernel.org> wrote:
+> > > 
+> > > > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > > 
+> > > > Since every var ref for a trigger has an entry in the var_ref[]
+> > > > array,
+> > > > use that to destroy the var_refs, instead of piecemeal via the
+> > > > field
+> > > > expressions.
+> > > > 
+> > > > This allows us to avoid having to keep and treat differently
+> > > > separate
+> > > > lists for the action-related references, which future patches
+> > > > will
+> > > > remove.
+> > > 
+> > > I'm not so sure, but this seems a bugfix... if so, please move
+> > > this
+> > > at
+> > > the top of this series.
+> > > 
+> > 
+> > No, none of these are bugfixes - patches 17-22 are just some
+> > additional
+> > cleanup that try to make the code easier to follow after Namhyung's
+> > comments that things were confusing here.
+> > 
+> > Actually, what I should probably do is make these a separate
+> > series..
+> 
+> Agreed, I also think it's getting bigger and having these cleanups
+> before the actual change would make things little bit easier IMHO.
+> 
 
-The helper functions in skbuff.h might first need to be refactored
-first. But I again leave this to you guys.
+Yep, that's what I'll do then.
 
-> Note also (2) tentative helper function sock_uses_new_tstamp(const
-> struct sock *sk) instead of testing sock_flag(sk, SOCK_TSTAMP_NEW)
-> directly. Since the .._NEW variants are equivalent to .._OLD on 64-bit,
-> I wonder if we can just compile out the branch. Something like
->
->     static inline bool sock_uses_new_tstamp(const struct sock *sk) {
->             return (sizeof(time_t) != sizeof(__kernel_long_t)) &&
->                        sock_flag(sk, SOCK_TSTAMP_NEW);
->     }
->
+Thanks,
 
-You could just ifdef CONFIG_64BIT if you are worried about branching.
-Note that SO_TIMESTAMP is by default SO_TIMESTAMP_OLD on 64 bit machines.
-But, I will again leave the optimization to you. I will implement in a
-straight forward way and you guys can deicde how you want to optimize
-the fast path or what should it even be.
+Tom
 
--Deepa
