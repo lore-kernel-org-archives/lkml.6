@@ -2,129 +2,89 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1599CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 05:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891E9C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 05:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E586E206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 05:01:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYEggcRT"
+	by mail.kernel.org (Postfix) with ESMTP id 71C8521721
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 05:03:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729788AbeLOFBP (ORCPT
+        id S1729906AbeLOFDk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 00:01:15 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56035 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729285AbeLOFBO (ORCPT
+        Sat, 15 Dec 2018 00:03:40 -0500
+Received: from static-87-79-237-121.netcologne.de ([87.79.237.121]:2499 "EHLO
+        herc.mirbsd.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729245AbeLOFDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 00:01:14 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y139so7419128wmc.5;
-        Fri, 14 Dec 2018 21:01:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=VswJgG7it5Q1jm3GYiiCXHIERMYE0/nKe9e0nOL8x18=;
-        b=aYEggcRTKItUfulNlrHg3uixHHTUEI0EgJTS5S1IqZsflA85u+E4XBX2rQNAFEx394
-         v4BejI7sjlm6zLWie0Nx8BWMgJOLQ6XgVYxoz0ifXCrgTgLA1LxzmVTUPcWCLt6DEOOF
-         Y0AecUipeErVf5wv3V2/xWyuSoCMMvVRmGSHDpm4WVLLIZX6Iwy4IfuH1R6BGqBQm/CI
-         Y5xASgibezyAGw1ieH2szhcJnkkYJRahKwSNANVEYq2KnV8a4QDeJQaTKkHF9SV7ZL/L
-         v5niPQOoPYHE3rNBCgIXAHZEQUMiw+4wFzke1zTcM8kmcqeYNT0mWScz/CD4Dk/OPLkX
-         gJpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=VswJgG7it5Q1jm3GYiiCXHIERMYE0/nKe9e0nOL8x18=;
-        b=CauJhn7SdEEnEXmtWHCmoxM/yFROrRHhsDAittb3/MeIcfVoYth/PP1J8jbG6JN1SG
-         b2iUhaQwPPjLCwL52cOFyoq7e+hFsGfg3ZoQkFtZfTQCv2Mx8MGLIro0xybJtFX9gB0J
-         xB789z9Uw+Tt0MbE7b2aDN4ESXN3ZbzGwodKC8ChEoBWygU1XgT1OVBIanryBNvSIBTr
-         j6iWtB50ZfHDSk+wFvCw0OZxNeE4qex5b+QyHwP0MCWNeG09AlfbwxCUQUGaEKBAoKAS
-         QyxBhE6gAZ/pxNmO+2a68aU36WCc8V8PbOojcdGN5C0OADuFZ33rFfzh5mvF9v9n4nc/
-         J0Ag==
-X-Gm-Message-State: AA+aEWZnRldqDF5kXkqx34nF+vkwnPNXXVzngkADRnV+5V49bRYrwbd6
-        IE6tTGFafGzwXmUCLsslBfPy+OwiRcE=
-X-Google-Smtp-Source: AFSGD/Wy8ijdFTufkBYNE3dbNo7sqvDQLJeKmAq8quhCBL6B355SqTS8k1JR0kBPDB5unDPw/niPtw==
-X-Received: by 2002:a1c:8f95:: with SMTP id r143mr4908698wmd.65.1544850070918;
-        Fri, 14 Dec 2018 21:01:10 -0800 (PST)
-Received: from localhost (112.68.155.104.bc.googleusercontent.com. [104.155.68.112])
-        by smtp.gmail.com with ESMTPSA id i192sm6316934wmg.7.2018.12.14.21.01.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 21:01:10 -0800 (PST)
-From:   Junio C Hamano <gitster@pobox.com>
-To:     git@vger.kernel.org
-Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: [ANNOUNCE] Git v2.20.1
-Date:   Sat, 15 Dec 2018 14:01:09 +0900
-Message-ID: <xmqqsgyzbcyy.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sat, 15 Dec 2018 00:03:40 -0500
+Received: from herc.mirbsd.org (tg@herc.mirbsd.org [192.168.0.82])
+        by herc.mirbsd.org (8.14.9/8.14.5) with ESMTP id wBF4rmGx012362
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 15 Dec 2018 04:53:50 GMT
+Date:   Sat, 15 Dec 2018 04:53:48 +0000 (UTC)
+From:   Thorsten Glaser <tg@mirbsd.de>
+X-X-Sender: tg@herc.mirbsd.org
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
+        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: Can we drop upstream Linux x32 support?
+In-Reply-To: <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
+Message-ID: <Pine.BSM.4.64L.1812150450500.18185@herc.mirbsd.org>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
+ <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
+ <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
+ <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
+Content-Language: de-DE-1901, en-GB
+X-Message-Flag: Your mailer is broken. Get an update at http://www.washington.edu/pine/getpine/pcpine.html for free.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The latest maintenance release Git v2.20.1 is now available at
-the usual places.
+Andy Lutomirski dixit:
 
-The tarballs are found at:
+>x32 is not this at all.  The kernel ABI part of x32 isn't ILP32.  It's
+>IP32, 32-bit size_t, and *64-bit* long.  The core kernel doesn't
 
-    https://www.kernel.org/pub/software/scm/git/
+Yeah, I was looking at this from userspace PoV, as I said I’m not
+a Linux kernel programmer.
 
-The following public repositories all have a copy of the 'v2.20.1'
-tag and the 'maint' branch that the tag points at:
+In BSD we have register_t which is probably the equivalent to your
+__kernel_long_t? Maybe removing the “long” from the name helps.
 
-  url = https://kernel.googlesource.com/pub/scm/git/git
-  url = git://repo.or.cz/alt-git.git
-  url = https://github.com/gitster/git
+But yes, x32 is just a (second to i386) ILP32 userspace API in an
+amd64 kernel. This does imply mapping on the userspace (x32) to
+kernel (amd64) boundary and back. I would have thought full struct
+member mapping, as dalias described, to be the most robust.
 
-----------------------------------------------------------------
+>something similar to work using the normal x86_64 syscalls.  And I'm
 
-Git v2.20.1 Release Notes
-=========================
+But those would require the longer structs etc. and therefore
+lose all the benefits of x32…
 
-This release is primarily to fix brown-paper-bag breakages in the
-2.20.0 release.
-
-Fixes since v2.20
------------------
-
- * A few newly added tests were not portable and caused minority
-   platforms to report false breakages, which have been fixed.
-
- * Portability fix for a recent update to parse-options API.
-
- * "git help -a" did not work well when an overly long alias is
-   defined, which has been corrected.
-
- * A recent update accidentally squelched an error message when the
-   run_command API failed to run a missing command, which has been
-   corrected.
-
-----------------------------------------------------------------
-
-Changes since v2.20.0 are as follows:
-
-Derrick Stolee (1):
-      .gitattributes: ensure t/oid-info/* has eol=lf
-
-Johannes Schindelin (4):
-      help.h: fix coding style
-      help -a: handle aliases with long names gracefully
-      t4256: mark support files as LF-only
-      t9902: 'send-email' test case requires PERL
-
-Junio C Hamano (2):
-      run-command: report exec failure
-      Git 2.20.1
-
-Nguyễn Thái Ngọc Duy (1):
-      parse-options: fix SunCC compiler warning
-
+bye,
+//mirabilos
+-- 
+„Cool, /usr/share/doc/mksh/examples/uhr.gz ist ja ein Grund,
+mksh auf jedem System zu installieren.“
+	-- XTaran auf der OpenRheinRuhr, ganz begeistert
+(EN: “[…]uhr.gz is a reason to install mksh on every system.”)
