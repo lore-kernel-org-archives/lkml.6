@@ -2,104 +2,116 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22A3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44862C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8292920672
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:22:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3CeH+hZ"
+	by mail.kernel.org (Postfix) with ESMTP id 1584220449
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 07:42:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbeLOHWV (ORCPT
+        id S1729723AbeLOHlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 02:22:21 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34753 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728675AbeLOHWV (ORCPT
+        Sat, 15 Dec 2018 02:41:40 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:20605 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeLOHlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 02:22:21 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w4so3768202plz.1;
-        Fri, 14 Dec 2018 23:22:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xNSQnLp2ea1UJjtMX5kv0ypQi79onHL2a/igC8HRsrE=;
-        b=i3CeH+hZC8i4s3hA3MTygU6Qa9RqRpWIp43U734ZciNoSVfaw0u9IW3BrFuruEsFP/
-         jbPUgqRQAYq1gNA7Up/xWzvSaow47L4G+wC2SVl5FiER+oT5pmj24rggAQq0NtgPWD35
-         gJbxAr4R1gp56ib5i3BlRaMNUSByOUjdegle8QxVcVULJXmPgVbLFoG/yLYf2FXB0+Cb
-         0IOie6umI3z9JzO3DVg9OMrnwxud0QCkLM6GU6zD7vdp6KGDfmpWs5vfjnpSNFBPHBP1
-         MT8l/LVzi36b60H+NnDcynooR8n+XMtWilWH1fyCRwWRByMUbDRvNT2IlPJb638Cts70
-         CxQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xNSQnLp2ea1UJjtMX5kv0ypQi79onHL2a/igC8HRsrE=;
-        b=KVV1MBK8S/Bl1IuP2jfAiAvZFHKARRhH475Ra5CEh7An0a257IBN6j+WZ0uuta2JsC
-         oeTvrrNDOMYNIKhm8GFozqxlPcsBUOhM5RHZ/nLHmxE4SGLO/4SUcW0ZBZNGHgVl9x+G
-         Ek0dlD+Hcy6d56HQV6gpyhCq0V71VPhEmI3tM1Ewj1GW9EFQRyaYfVNb2gg23EERuM/o
-         m+nq23bc9qUP79K5/PcG56vRoME4OmQ0Av6x42/uirOR/khQSeu+W5ekwftemEXppO08
-         Ckk9/nBNBeEkro67ZNI1QYu6jpxm1UMm5U5B5gV84Jlaz2RM5khPKhbJvXmzWVzmpdJ/
-         1g0g==
-X-Gm-Message-State: AA+aEWZ0NswU9IEQ3HcUawGe2d0nAzfWvG37uidBgEXG5CFNJmJC94Sk
-        PtvNlkKJV8YGcOT3MIN7pIBYkAPPIKE=
-X-Google-Smtp-Source: AFSGD/Xr3NiL/VDa9o5FushEkh3TT9+3wB5GheOwgyGbADGkLi48cu06bO80VnawtUOeQHxba6Xyvw==
-X-Received: by 2002:a17:902:47aa:: with SMTP id r39mr5542068pld.219.1544858539576;
-        Fri, 14 Dec 2018 23:22:19 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id r83sm12121143pfc.115.2018.12.14.23.22.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 23:22:18 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     alex.aring@gmail.com, jukka.rissanen@linux.intel.com,
-        davem@davemloft.net
-Cc:     linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] 6lowpan: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Sat, 15 Dec 2018 02:22:17 -0500
-Message-Id: <20181215072217.26085-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sat, 15 Dec 2018 02:41:39 -0500
+X-RZG-AUTH: ":OH8QVVOrc/CP6za/qRmbF3BWedPGA1vjs2e0bDjfg8OiOrPJifeRMRhMZvCxcJErFBRp4dQsAj0geA=="
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.2.24]
+        by smtp.strato.de (RZmta 44.8 DYNA|AUTH)
+        with ESMTPSA id V03c59uBF7fV75T
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 15 Dec 2018 08:41:31 +0100 (CET)
+Subject: Re: Can we drop upstream Linux x32 support?
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
+        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <6577ac4f-524c-37f4-a4d0-6eb94ec7d9a5@schoebel-theuer.de>
+ <CALCETrV0fVLZKG6JrOvzvOzP06UxhZW=LbHpPXbonoeFdPJB1A@mail.gmail.com>
+ <35905587-2d7b-c0ab-e081-2b938d60e881@schoebel-theuer.de>
+From:   Thomas Schoebel-Theuer <tst@schoebel-theuer.de>
+Message-ID: <54449048-a057-5005-1b50-b884628643eb@schoebel-theuer.de>
+Date:   Sat, 15 Dec 2018 08:41:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <35905587-2d7b-c0ab-e081-2b938d60e881@schoebel-theuer.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+On 12/14/18 22:41, Thomas Schöbel-Theuer wrote:
+> On 12/14/18 22:24, Andy Lutomirski wrote:
+>>
+>> I'm talking about x32, which is a different beast.
+>>
+>
+> So from my viewpoint the mentioned roadmap / timing requirements will 
+> remain the same, whatever you are dropping.
+>
+> Enterprise-critical use cases will probably need to be migrated to 
+> KVM/qemu together with their old kernel versions, anyway (because the 
+> original hardware will be no longer available in a few decades).
+>
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- net/6lowpan/debugfs.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Here is a systematic approach to the problem.
 
-diff --git a/net/6lowpan/debugfs.c b/net/6lowpan/debugfs.c
-index 24915e0bb9ea..6c152f9ea26e 100644
---- a/net/6lowpan/debugfs.c
-+++ b/net/6lowpan/debugfs.c
-@@ -232,18 +232,7 @@ static int lowpan_context_show(struct seq_file *file, void *offset)
- 
- 	return 0;
- }
--
--static int lowpan_context_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, lowpan_context_show, inode->i_private);
--}
--
--static const struct file_operations lowpan_context_fops = {
--	.open		= lowpan_context_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(lowpan_context);
- 
- static int lowpan_short_addr_get(void *data, u64 *val)
- {
--- 
-2.17.0
+
+AFAICS legacy 32bit userspace code (which exists in some notable masses) 
+can be executed at least in the following ways:
+
+
+1) natively on 32bit-capable hardware, under 32bit kernels. Besides 
+legacy hardware, this also encompasses most current Intel / AMD 64bit 
+hardware in 32bit compatibility mode.
+
+2) under 64bit kernels, using the 32bit compat layer from practically 
+any kernel version.
+
+3) under KVM/qemu.
+
+
+When you just drop 1), users have a fair chance by migrating to any of 
+the other two possibilities.
+
+As explained, a time frame of ~5 years should work for the vast majority.
+
+If you clearly explain the migration paths to your users (and to the 
+press), I think it will be acceptable.
+
+
+[side note: I know of a single legacy instance which is now ~20 years 
+old, but makes a revenue of several millions per month. These guys have 
+large quantities of legacy hardware in stock. And they have enough money 
+to hire a downstream maintainer in case of emergency.]
+
+
+Fatal problems would only arise if you would drop all three 
+possibilities in the very long term.
+
+
+In ~100 years, possibility 3) should be sufficient for handling use 
+cases like preservation of historic documents. The latter is roughly 
+equivalent to running binary-only MSDOS, Windows NT, and similar, even 
+in 100 years, and even non-natively under future hardware architectures.
 
