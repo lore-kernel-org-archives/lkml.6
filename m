@@ -2,59 +2,57 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0005C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 21:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDBEC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 21:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9408520578
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 21:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D902084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 21:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbeLOVFO (ORCPT
+        id S1729419AbeLOVPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 16:05:14 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:55592 "EHLO
+        Sat, 15 Dec 2018 16:15:08 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:55778 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727206AbeLOVFO (ORCPT
+        with ESMTP id S1727206AbeLOVPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 16:05:14 -0500
+        Sat, 15 Dec 2018 16:15:08 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DCA1414E8DB9B;
-        Sat, 15 Dec 2018 13:05:12 -0800 (PST)
-Date:   Sat, 15 Dec 2018 13:05:09 -0800 (PST)
-Message-Id: <20181215.130509.170699144609598328.davem@davemloft.net>
-To:     fabrizio.castro@bp.renesas.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        sergei.shtylyov@cogentembedded.com, horms+renesas@verge.net.au,
-        biju.das@bp.renesas.com, geert+renesas@glider.be,
-        jacopo+renesas@jmondi.org, yoshihiro.shimoda.uh@renesas.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        horms@verge.net.au, Chris.Paterson2@renesas.com
-Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a774c0 SoC
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7AC0014E8B9BD;
+        Sat, 15 Dec 2018 13:15:07 -0800 (PST)
+Date:   Sat, 15 Dec 2018 13:15:06 -0800 (PST)
+Message-Id: <20181215.131506.1592727721701772545.davem@davemloft.net>
+To:     jasowang@redhat.com
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
+ virtual address
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1544732314-6041-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1544732314-6041-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
+References: <20181213101022.12475-4-jasowang@redhat.com>
+        <20181213102713-mutt-send-email-mst@kernel.org>
+        <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 15 Dec 2018 13:05:13 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 15 Dec 2018 13:15:07 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Date: Thu, 13 Dec 2018 20:18:34 +0000
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 14 Dec 2018 11:57:35 +0800
 
-> Document RZ/G2E (R8A774C0) SoC bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> This is the price of all GUP users not only vhost itself. What's more
+> important, the goal is not to be left too much behind for other
+> backends like DPDK or AF_XDP (all of which are using GUP).
 
-Applied to net-next.
++1
