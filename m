@@ -2,155 +2,129 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F981C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 10:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02929C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 10:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 698BA2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 10:36:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E6692084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 10:37:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HRs3yuhg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbeLOKgY convert rfc822-to-8bit (ORCPT
+        id S1730238AbeLOKhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 05:36:24 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32816 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729671AbeLOKgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 05:36:23 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 7550E66C98EF9;
-        Sat, 15 Dec 2018 10:36:19 +0000 (GMT)
-Received: from FRAEMA702-CHM.china.huawei.com (10.206.14.51) by
- LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 15 Dec 2018 10:36:20 +0000
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.202]) by
- FRAEMA702-CHM.china.huawei.com ([169.254.2.35]) with mapi id 14.03.0415.000;
- Sat, 15 Dec 2018 11:36:11 +0100
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     David Miller <davem@davemloft.net>
-CC:     "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "lipeng (Y)" <lipeng321@huawei.com>,
-        "mehta.salil@opnsrc.net" <mehta.salil@opnsrc.net>,
+        Sat, 15 Dec 2018 05:37:53 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:49462 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729077AbeLOKhx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 05:37:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9qVWMEg1FqMy2cTe0P4YBNSrLkIr3U7RdOd7f04YqHE=; b=HRs3yuhgaoPAsF3dIucTFT1fR
+        80NFSwMbjwE2IHjpFiaGsbvbpKi5w7c9zBYRTz4y2+v4HBzANxjcc/Y+Ay9MLwAv0nMgKBHkgrYqW
+        W5Iaxv0uvzVUvPtLk37TmtYgETKzhp8tbcxlP/B3j3zY+I7l72lZFPghlv7/blH+TqpNo=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:50975)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gY7KG-0004tw-U7; Sat, 15 Dec 2018 10:37:41 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gY7KE-0006wm-4T; Sat, 15 Dec 2018 10:37:38 +0000
+Date:   Sat, 15 Dec 2018 10:37:36 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Yunsheng Lin <linyunsheng@huawei.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH net-next 0/6] net: hns3: Add more commands to Debugfs in
- HNS3 driver
-Thread-Topic: [PATCH net-next 0/6] net: hns3: Add more commands to Debugfs
- in HNS3 driver
-Thread-Index: AQHUk/yxUCQY1ZH6PECuDb3D6nds5aV+wi6AgADZPJA=
-Date:   Sat, 15 Dec 2018 10:36:10 +0000
-Message-ID: <F4CC6FACFEB3C54C9141D49AD221F7F93C0A43D4@FRAEML521-MBX.china.huawei.com>
-References: <20181211171330.20592-1-salil.mehta@huawei.com>
-        <20181214.143046.597375776514311090.davem@davemloft.net>
- <20181214.143631.1081032057703599919.davem@davemloft.net>
-In-Reply-To: <20181214.143631.1081032057703599919.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.81.88]
-Content-Type: text/plain; charset="iso-8859-7"
-Content-Transfer-Encoding: 8BIT
+        Weiwei Deng <dengweiwei@huawei.com>,
+        "Yisen.Zhuang@huawei.com" <Yisen.Zhuang@huawei.com>,
+        "huangdaode@hisilicon.com" <huangdaode@hisilicon.com>,
+        "lipeng321@huawei.com" <lipeng321@huawei.com>,
+        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
+        lijianhua 00216010 <lijianhua@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Question: pause mode disabled for marvell 88e151x phy
+Message-ID: <20181215103736.GG26090@n2100.armlinux.org.uk>
+References: <04b323d7-2a30-eaa5-8268-a7d3f30d989c@huawei.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04b323d7-2a30-eaa5-8268-a7d3f30d989c@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: David Miller [mailto:davem@davemloft.net]
-> Sent: Friday, December 14, 2018 10:37 PM
-> To: Salil Mehta <salil.mehta@huawei.com>
-> Cc: Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>; lipeng (Y)
-> <lipeng321@huawei.com>; mehta.salil@opnsrc.net; netdev@vger.kernel.org;
-> linux-kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>
-> Subject: Re: [PATCH net-next 0/6] net: hns3: Add more commands to
-> Debugfs in HNS3 driver
-> 
-> From: David Miller <davem@davemloft.net>
-> Date: Fri, 14 Dec 2018 14:30:46 -0800 (PST)
-> 
-> > From: Salil Mehta <salil.mehta@huawei.com>
-> > Date: Tue, 11 Dec 2018 17:13:24 +0000
-> >
-> >> This patch-set adds few more debugfs commands to HNS3 Ethernet
-> >> Driver. Support has been added to query info related to below
-> >> items:
-> >> 1. Packet buffer descriptor ("echo bd info [queue no] [bd index] > cmd")
-> >> 2. Manager table("echo dump mng tbl > cmd")
-> >> 3. Dfx status register("echo dump reg ssu [prt id] > cmd")
-> >> 4. Dcb status register("echo dump reg dcb [port id] > cmd")
-> >> 5. Queue map ("echo queue map [queue no] > cmd")
-> >> 6. Tm map ("echo tm map [queue no] > cmd")
-> >>
-> >> NOTE: Above commands are *read-only* and are only intended to
-> >> query the information from the SoC(and dump inside the kernel,
-> >> for now) and in no way tries to perform write operations for
-> >> the purpose of configuration etc.
-> >
-> > Series applied.
-> 
-> Actually, reverted.
-> 
-> Please fix these warnings and resubmit (with gcc version
-> "gcc (GCC) 8.2.1 20181105 (Red Hat 8.2.1-5)"):
-> 
-> In file included from ./include/linux/bitmap.h:9,
->                  from ./include/linux/cpumask.h:12,
->                  from ./arch/x86/include/asm/cpumask.h:5,
->                  from ./arch/x86/include/asm/msr.h:11,
->                  from ./arch/x86/include/asm/processor.h:21,
->                  from ./arch/x86/include/asm/cpufeature.h:8,
->                  from ./arch/x86/include/asm/thread_info.h:53,
->                  from ./include/linux/thread_info.h:38,
->                  from ./arch/x86/include/asm/preempt.h:7,
->                  from ./include/linux/preempt.h:81,
->                  from ./include/linux/spinlock.h:51,
->                  from ./include/linux/wait.h:9,
->                  from ./include/linux/wait_bit.h:8,
->                  from ./include/linux/fs.h:6,
->                  from ./include/linux/debugfs.h:15,
->                  from
-> drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c:4:
-> In function ¡strncat¢,
->     inlined from ¡hns3_dbg_help¢ at
-> drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c:263:2:
-> ./include/linux/string.h:320:10: warning: ¡__builtin_strncat¢ specified
-> bound 256 equals destination size [-Wstringop-overflow=]
->    return __builtin_strncat(p, q, count);
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In function ¡strncat¢,
->     inlined from ¡hns3_dbg_help¢ at
-> drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c:252:2:
-> ./include/linux/string.h:320:10: warning: ¡__builtin_strncat¢ specified
-> bound 256 equals destination size [-Wstringop-overflow=]
->    return __builtin_strncat(p, q, count);
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> In file included from ./include/linux/bitmap.h:9,
->                  from ./include/linux/cpumask.h:12,
->                  from ./arch/x86/include/asm/cpumask.h:5,
->                  from ./arch/x86/include/asm/msr.h:11,
->                  from ./arch/x86/include/asm/processor.h:21,
->                  from ./include/linux/mutex.h:19,
->                  from ./include/linux/kernfs.h:13,
->                  from ./include/linux/sysfs.h:16,
->                  from ./include/linux/kobject.h:20,
->                  from ./include/linux/device.h:16,
->                  from
-> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c:4:
-> In function ¡strncat¢,
->     inlined from ¡hclge_dbg_dump_mng_table¢ at
-> drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c:795:2:
-> ./include/linux/string.h:320:10: warning: ¡__builtin_strncat¢ specified
-> bound 256 equals destination size [-Wstringop-overflow=]
->    return __builtin_strncat(p, q, count);
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On Sat, Dec 15, 2018 at 04:07:42PM +0800, Yunsheng Lin wrote:
+> There seems to be some problem with pause subsequent negotiation.
+> We reverted the above patch and tried to reproduce the above problem
+> by triggering another negotiation by reconnection of the cable, using
+> ethtool -a cmd shows both still have tx and rx pause enable.
 
-Ahh, goodness. Perhaps, I have been using outdated compiler.
-I will float the V2 version today after fixing above.
+That's where the problem is - as far as the network device and Linux
+is concerned, pause was successfully negotiated.  However, as the
+advertisment register has ended up with the pause mode bits cleared,
+Linux doesn't realise that what we conveyed to the partner was an
+advertisment containing no pause mode bits.
 
-Thanks
-Dave
+ethtool doesn't read the PHY advertisment register when displaying
+what we advertised, it returns what's in phydev->advertising - it
+gives you the cached value not the this-is-what-the-hardware-is-doing
+value.
+
+> 1. Does all the 88e151x supporting SGMII-to-Copper have the above problem?
+
+Unknown.
+
+> 2. If not, can we use revision id field in phydev->phy_id to only disable
+>    the pause support for specific 88e151x phy? We can not find some useful
+>    revision info in datasheet, and by printing the phy id when phy init, we
+>    are able to find that the phy we are using has a phy id as 0x1d10dd1,
+>    which has revision id as 0x1.
+
+0x01d10dd1 doesn't look to be a Marvell part - Marvell parts generally
+start with 0x0141....  Is your 0x1d1 a typo?  My device is 0x01410dd1.
+
+> 3. Does this problem only happen marvel 88e1512 phy with some specific partner
+>    phy? We are unable to reproduce this problem, so any suggestion to reproduce
+>    this would be very helpful to us too.
+
+I don't think you've proven that you do not have a problem (see below
+for how to do this.)
+
+> 4. Also the commit disables the pause support completely, if using revision id
+>    can not aviod this problem, can we only disable pause support when negotiation
+>    by only clearing pause support in phydev->advertising, but not phydev->supported?
+
+No comment at present.
+
+
+I think you first need to ensure that your observations are correct.
+You are basing your assumptions on ethtool -a's output, which is
+definitely wrong as I've mentioned above.
+
+You need to read directly from the hardware using mii-diag -v ethN
+and manually decode the advertisment register (register 4) checking
+bits 11 and 10 (the pause mode bits).  My observation is that Linux
+can set these bits, but then both bits clear during the negotiation
+process.
+
+If you then find that these bits do not clear, then we need further
+research to work out why there's a different behaviour between the
+device I've tested here and the device that you are testing.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
