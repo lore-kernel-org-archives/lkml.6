@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B4BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 126AEC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106BC2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DABE72086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:25:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbeLONYP (ORCPT
+        id S1730320AbeLONZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 08:24:15 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16140 "EHLO huawei.com"
+        Sat, 15 Dec 2018 08:25:06 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53359 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729687AbeLONYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 08:24:15 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 68C19BEAC84F8;
-        Sat, 15 Dec 2018 21:24:11 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Sat, 15 Dec 2018
- 21:24:07 +0800
-Subject: Re: [PATCH] jffs2: ensure wbuf_verify is valid before using it.
+        id S1729192AbeLONZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 08:25:05 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E1EDCA117FB96;
+        Sat, 15 Dec 2018 21:25:01 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.14) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Sat, 15 Dec 2018
+ 21:24:58 +0800
+Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
+ in mem alloc
 From:   Hou Tao <houtao1@huawei.com>
-To:     <linux-mtd@lists.infradead.org>, <dwmw2@infradead.org>
-CC:     <richard.weinberger@gmail.com>, <boris.brezillon@bootlin.com>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20181020120849.65708-1-houtao1@huawei.com>
- <df5b520c-bc32-e550-4c58-2c79d5e09893@huawei.com>
-Message-ID: <0c465568-8459-5164-bba9-8a1651b97bb6@huawei.com>
-Date:   Sat, 15 Dec 2018 21:24:06 +0800
+To:     <phillip@squashfs.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20181204020840.49576-1-houtao1@huawei.com>
+ <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
+ <9a6b1897-7b02-09d8-4103-d887a286dda3@huawei.com>
+Message-ID: <81a996d7-ba4c-e5a0-d0ce-11951f1fd612@huawei.com>
+Date:   Sat, 15 Dec 2018 21:24:57 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <df5b520c-bc32-e550-4c58-2c79d5e09893@huawei.com>
+In-Reply-To: <9a6b1897-7b02-09d8-4103-d887a286dda3@huawei.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,67 +52,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ping ?
 
-On 2018/12/9 14:35, Hou Tao wrote:
+On 2018/12/13 10:18, Hou Tao wrote:
 > ping ?
 > 
-> On 2018/10/20 20:08, Hou Tao wrote:
->> Now MTD emulated by UBI volumn doesn't allocate wbuf_verify in
->> jffs2_ubivol_setup(), because UBI can do the verifcation itself,
->> so when CONFIG_JFFS2_FS_WBUF_VERIFY is enabled and a MTD device
->> emulated by UBI volumn is used, a Oops will occur as show in the
->> following trace:
+> On 2018/12/6 9:14, Hou Tao wrote:
+>> ping ?
 >>
->>     general protection fault: 0000 [#1] SMP KASAN PTI
->>     CPU: 6 PID: 404 Comm: kworker/6:1 Not tainted 4.19.0-rc8
->>     Workqueue: events_long delayed_wbuf_sync
->>     RIP: 0010:ubi_io_read+0x156/0x650
->>     Call Trace:
->>      ubi_eba_read_leb+0x57d/0xba0
->>      ubi_leb_read+0xe5/0x1b0
->>      gluebi_read+0x10c/0x1a0
->>      mtd_read+0x112/0x340
->>      jffs2_verify_write+0xef/0x440
->>      __jffs2_flush_wbuf+0x3fa/0x3540
->>      jffs2_flush_wbuf_gc+0x1b1/0x2e0
->>      process_one_work+0x58b/0x11e0
->>      worker_thread+0x8f/0xfe0
->>      kthread+0x2ae/0x3a0
->>      ret_from_fork+0x35/0x40
+>> On 2018/12/4 10:08, Hou Tao wrote:
+>>> There is no need to disable __GFP_FS in ->readpage:
+>>> * It's a read-only fs, so there will be no dirty/writeback page and
+>>>   there will be no deadlock against the caller's locked page
+>>> * It just allocates one page, so compaction will not be invoked
+>>> * It doesn't take any inode lock, so the reclamation of inode will be fine
+>>>
+>>> And no __GFP_FS may lead to hang in __alloc_pages_slowpath() if a
+>>> squashfs page fault occurs in the context of a memory hogger, because
+>>> the hogger will not be killed due to the logic in __alloc_pages_may_oom().
+>>>
+>>> Signed-off-by: Hou Tao <houtao1@huawei.com>
+>>> ---
+>>>  fs/squashfs/file.c          |  3 ++-
+>>>  fs/squashfs/file_direct.c   |  4 +++-
+>>>  fs/squashfs/squashfs_fs_f.h | 25 +++++++++++++++++++++++++
+>>>  3 files changed, 30 insertions(+), 2 deletions(-)
+>>>  create mode 100644 fs/squashfs/squashfs_fs_f.h
+>>>
+>>> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+>>> index f1c1430ae721..8603dda4a719 100644
+>>> --- a/fs/squashfs/file.c
+>>> +++ b/fs/squashfs/file.c
+>>> @@ -51,6 +51,7 @@
+>>>  #include "squashfs_fs.h"
+>>>  #include "squashfs_fs_sb.h"
+>>>  #include "squashfs_fs_i.h"
+>>> +#include "squashfs_fs_f.h"
+>>>  #include "squashfs.h"
+>>>  
+>>>  /*
+>>> @@ -414,7 +415,7 @@ void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
+>>>  		TRACE("bytes %d, i %d, available_bytes %d\n", bytes, i, avail);
+>>>  
+>>>  		push_page = (i == page->index) ? page :
+>>> -			grab_cache_page_nowait(page->mapping, i);
+>>> +			squashfs_grab_cache_page_nowait(page->mapping, i);
+>>>  
+>>>  		if (!push_page)
+>>>  			continue;
+>>> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
+>>> index 80db1b86a27c..a0fdd6215348 100644
+>>> --- a/fs/squashfs/file_direct.c
+>>> +++ b/fs/squashfs/file_direct.c
+>>> @@ -17,6 +17,7 @@
+>>>  #include "squashfs_fs.h"
+>>>  #include "squashfs_fs_sb.h"
+>>>  #include "squashfs_fs_i.h"
+>>> +#include "squashfs_fs_f.h"
+>>>  #include "squashfs.h"
+>>>  #include "page_actor.h"
+>>>  
+>>> @@ -60,7 +61,8 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
+>>>  	/* Try to grab all the pages covered by the Squashfs block */
+>>>  	for (missing_pages = 0, i = 0, n = start_index; i < pages; i++, n++) {
+>>>  		page[i] = (n == target_page->index) ? target_page :
+>>> -			grab_cache_page_nowait(target_page->mapping, n);
+>>> +			squashfs_grab_cache_page_nowait(
+>>> +					target_page->mapping, n);
+>>>  
+>>>  		if (page[i] == NULL) {
+>>>  			missing_pages++;
+>>> diff --git a/fs/squashfs/squashfs_fs_f.h b/fs/squashfs/squashfs_fs_f.h
+>>> new file mode 100644
+>>> index 000000000000..fc5fb7aeb27d
+>>> --- /dev/null
+>>> +++ b/fs/squashfs/squashfs_fs_f.h
+>>> @@ -0,0 +1,25 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +#ifndef SQUASHFS_FS_F
+>>> +#define SQUASHFS_FS_F
+>>> +
+>>> +/*
+>>> + * No need to use FGP_NOFS here:
+>>> + * 1. It's a read-only fs, so there will be no dirty/writeback page and
+>>> + *    there will be no deadlock against the caller's locked page.
+>>> + * 2. It just allocates one page, so compaction will not be invoked.
+>>> + * 3. It doesn't take any inode lock, so the reclamation of inode
+>>> + *    will be fine.
+>>> + *
+>>> + * And GFP_NOFS may lead to infinite loop in __alloc_pages_slowpath() if a
+>>> + * squashfs page fault occurs in the context of a memory hogger, because
+>>> + * the hogger will not be killed due to the logic in __alloc_pages_may_oom().
+>>> + */
+>>> +static inline struct page *
+>>> +squashfs_grab_cache_page_nowait(struct address_space *mapping, pgoff_t index)
+>>> +{
+>>> +	return pagecache_get_page(mapping, index,
+>>> +			FGP_LOCK|FGP_CREAT|FGP_NOWAIT,
+>>> +			mapping_gfp_mask(mapping));
+>>> +}
+>>> +#endif
+>>> +
+>>>
 >>
->> Fix the problem by checking the validity of wbuf_verify before
->> using it in jffs2_verify_write().
 >>
->> Cc: stable@vger.kernel.org
->> Fixes: 0029da3bf430 ("JFFS2: add UBI support")
->> Signed-off-by: Hou Tao <houtao1@huawei.com>
->> ---
->>  fs/jffs2/wbuf.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/fs/jffs2/wbuf.c b/fs/jffs2/wbuf.c
->> index c6821a509481..3de45f4559d1 100644
->> --- a/fs/jffs2/wbuf.c
->> +++ b/fs/jffs2/wbuf.c
->> @@ -234,6 +234,13 @@ static int jffs2_verify_write(struct jffs2_sb_info *c, unsigned char *buf,
->>  	size_t retlen;
->>  	char *eccstr;
->>  
->> +	/*
->> +	 * MTD emulated by UBI volume doesn't allocate wbuf_verify,
->> +	 * because it can do the verification itself.
->> +	 */
->> +	if (!c->wbuf_verify)
->> +		return 0;
->> +
->>  	ret = mtd_read(c->mtd, ofs, c->wbuf_pagesize, &retlen, c->wbuf_verify);
->>  	if (ret && ret != -EUCLEAN && ret != -EBADMSG) {
->>  		pr_warn("%s(): Read back of page at %08x failed: %d\n",
+>> .
 >>
 > 
 > 
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
-> 
+> .
 > 
 
