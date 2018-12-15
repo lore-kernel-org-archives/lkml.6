@@ -2,133 +2,109 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E9DC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C7CC43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E36A8208C1
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3443E208C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:51:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOjZhyXZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0HVO7Yy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbeLOBrk (ORCPT
+        id S1729200AbeLOBva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 20:47:40 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39489 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeLOBrk (ORCPT
+        Fri, 14 Dec 2018 20:51:30 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54311 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeLOBv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 20:47:40 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w6so3465969pgl.6;
-        Fri, 14 Dec 2018 17:47:39 -0800 (PST)
+        Fri, 14 Dec 2018 20:51:29 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so7296526wmh.4;
+        Fri, 14 Dec 2018 17:51:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TzfGt5gJofimzxV/+FAhN7Dc4mIJAhSYfyF+BnGPH0g=;
-        b=cOjZhyXZfCAokPxhv7k00zi5qoamBGK1r2CYoDfpW87kBm0nrz9+CCugoIskU59umh
-         CzXlxS/yDU2ZwO3R14VJkBa0MtB5tIPwLLCXKu+6nfIgOGGJzBx+WhAhD2KpkjyQpCnn
-         0lkzI1Y7ENg/lPiQavGCttcvQ3StQlpkb3UhbWosOyo20DQuyh4Owi6ONYBsSnAlxgPt
-         fx7pyxlzSYyNukY3WUeJjfenewf2tsJTLhzIodtGVD3CQ+1CypHI8TIo7MhH9q8Jsqki
-         yd54z3pxSAIY6OompjeHaAvT4oCRfTWVEhxLAs1E8tmFKQFAyqkD8boJ7KXI8Tq0cCz4
-         jerA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eytp6S4CCsTnroWEVjtGUJzt6s+Tt0DF8TpdrSgEByM=;
+        b=h0HVO7YytXrUltdpNPncPPrV25EGJ+3dNMTETaITsB95Th7MyOhIJi0jdHXzQte2AM
+         ltoXdqTgo8kahvkkW1lYHJrkprjBVmt8AfKvLEKesV2qGuzdZSD+lQWmKljFH+a6PxR8
+         q/iiirwvpXp5WkvOblYeCy+p4nuXsErnt14eVSceciNhJZOLqGTd7gv4Af++JZxnVOPN
+         MFBS004Rx8IjtnrZPmqhbGd0rPMUi1tVVEJVGJ1XOo6UqXPb0/1O6Dm3prMtcZWpyEHS
+         YuQLuRxrXDmgZydEbfHWGwYUeRIBux5Y3kIZf7Xvk7B+wR5DG9r7MLbQPrTMqtHTy1+f
+         45cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TzfGt5gJofimzxV/+FAhN7Dc4mIJAhSYfyF+BnGPH0g=;
-        b=DevFdVZO5/AMUlFytyBCo+nc5VAnMcw1XwpgaCcKPxH4YhEqvKpLIujX9opd8yxp4h
-         4ATd9Pebbs0HR+8RtOTJWtuq/FoWunyEZYJkQRvuGJ8L12RProg5SVLM3CRWusWPMkgG
-         u+zR+I9nbF4q6l6htFAFeH+zgn0U6hMQctxmVFGJMk1m/8d7V93xi+qHvWYY2Oh9g+JD
-         OWvutduQ9xIxuVbAZ0JeyGsNGKBbsn9etqFPh1RI0jPGF2uxSOLknMAR3sliYcwhdtIZ
-         s0uluUuk0PvmUkQI1k2WtQ/zDwooG/7+o8Zc3oSrI4aigqHNlvX320QQDRgkt/6tpoDK
-         EkBA==
-X-Gm-Message-State: AA+aEWa1mcohXY/KJhsMIDJQDfyIgZzCff2VmziesLY6jkc8s0OebtvH
-        +PGO+AqH2nMNipCFfiQ2fGM=
-X-Google-Smtp-Source: AFSGD/Wbh8uz18SAZt9axHooUikpQWfT4I0ZpQjPUVfZICbIfybkrF3FiEULWbGalgAO+Hy2txzqmg==
-X-Received: by 2002:a62:64d7:: with SMTP id y206mr4996281pfb.84.1544838458911;
-        Fri, 14 Dec 2018 17:47:38 -0800 (PST)
-Received: from localhost.localdomain ([73.93.152.175])
-        by smtp.gmail.com with ESMTPSA id w136sm9687953pfd.169.2018.12.14.17.47.36
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eytp6S4CCsTnroWEVjtGUJzt6s+Tt0DF8TpdrSgEByM=;
+        b=h7n45/WeAeTw4zFG+PdpWLpzNqXIie447ediGRKuK6ZqD0x+JXfFmwm7okfFCAX7nS
+         dnbCeAWUSABDwy4Kzs5exWBY7LBDGNQYOjCxw/nK4CXzNyWXHvs0DP7qHF0pyaUA/SGW
+         HgkUKV78AXl7DqoTJe3n5fq6K4xWm6j3dLugrGBiSVRCOe3Cbv2IaGDJ+siO0akFJx9l
+         DNLK9+RnBHBE0ldA+rpMTYBFAjwzFvc6fr7B/BmQLO8AdkDuwvIqKmOhvJTDbye08Wle
+         K7g/lZGAKck4kBNFCs3nxdSj71Bf7c9mG7FPzh9+fsIhCFDJFMfOhDbtHJSAOFgQW8C+
+         5gGQ==
+X-Gm-Message-State: AA+aEWasmTKDczyxjfZiM6NvHYAqnkNTlkm8GmvxAQZ9lXMXkDEdckGl
+        dbd7EJRn73tk5RJ9/a3+mwU=
+X-Google-Smtp-Source: AFSGD/Vuu7depUYfubc4xMapmX3505PmQd4YBYrgOF94Orplin97nCy/UQa78OugdUhaRlpqfJdAnQ==
+X-Received: by 2002:a1c:9cce:: with SMTP id f197mr4837759wme.135.1544838686382;
+        Fri, 14 Dec 2018 17:51:26 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id t76sm9065024wme.33.2018.12.14.17.51.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 17:47:37 -0800 (PST)
-Date:   Fri, 14 Dec 2018 17:47:34 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: Re: [PATCH] thermal: stm32: read factory settings inside
- stm_thermal_prepare
-Message-ID: <20181215014732.GA24528@localhost.localdomain>
-References: <1544102603-14899-1-git-send-email-david.hernandezsanchez@st.com>
- <1544102603-14899-2-git-send-email-david.hernandezsanchez@st.com>
+        Fri, 14 Dec 2018 17:51:25 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] PCI: Remove unused attr variable in pci_dma_configure
+Date:   Fri, 14 Dec 2018 18:49:01 -0700
+Message-Id: <20181215014900.10308-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544102603-14899-2-git-send-email-david.hernandezsanchez@st.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Clang warns:
 
-On Thu, Dec 06, 2018 at 01:23:32PM +0000, David HERNANDEZ SANCHEZ wrote:
-> Calling stm_thermal_read_factory_settings before clocking
-> internal peripheral causes bad register values and makes
-> temperature computation wrong.
-> 
-> Calling stm_thermal_read_factory_settings inside
-> stm_thermal_prepare fixes this problem as internal
-> peripheral is well clocked at this stage.
-> 
-> Signed-off-by: David Hernandez Sanchez <david.hernandezsanchez@st.com>
-> Fixes: 1d693155 ("thermal: add stm32 thermal driver")
+drivers/pci/pci-driver.c:1603:21: error: unused variable 'attr'
+[-Werror,-Wunused-variable]
 
-Please append patch version in the title next time to help tracking it.
+Commit e5361ca29f2f ("ACPI / scan: Refactor _CCA enforcement") removed
+attr's use and replaced it with its assigned value so it is no longer
+needed.
 
-> 
-> diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-> index 47623da..daa1257 100644
-> --- a/drivers/thermal/st/stm_thermal.c
-> +++ b/drivers/thermal/st/stm_thermal.c
-> @@ -532,6 +532,10 @@ static int stm_thermal_prepare(struct stm_thermal_sensor *sensor)
->  	if (ret)
->  		return ret;
->  
-> +	ret = stm_thermal_read_factory_settings(sensor);
-> +	if (ret)
-> +		goto thermal_unprepare;
-> +
->  	ret = stm_thermal_calibration(sensor);
->  	if (ret)
->  		goto thermal_unprepare;
-> @@ -636,10 +640,6 @@ static int stm_thermal_probe(struct platform_device *pdev)
->  	/* Populate sensor */
->  	sensor->base = base;
->  
-> -	ret = stm_thermal_read_factory_settings(sensor);
-> -	if (ret)
-> -		return ret;
-> -
->  	sensor->clk = devm_clk_get(&pdev->dev, "pclk");
->  	if (IS_ERR(sensor->clk)) {
->  		dev_err(&pdev->dev, "%s: failed to fetch PCLK clock\n",
-> -- 
-> 2.7.4
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+The commit that causes this warning is in Christoph's dma-mapping tree
+so I assume this will go there too (roll it into it if need be).
+
+ drivers/pci/pci-driver.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 1b58e058b13f..ea55444e6ead 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1600,7 +1600,6 @@ static int pci_dma_configure(struct device *dev)
+ 		ret = of_dma_configure(dev, bridge->parent->of_node, true);
+ 	} else if (has_acpi_companion(bridge)) {
+ 		struct acpi_device *adev = to_acpi_device_node(bridge->fwnode);
+-		enum dev_dma_attr attr = acpi_get_dma_attr(adev);
+ 
+ 		ret = acpi_dma_configure(dev, acpi_get_dma_attr(adev));
+ 	}
+-- 
+2.20.0
+
