@@ -6,50 +6,53 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AADC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B64C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6AE208CE
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:03:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20398206C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 01:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544835801;
-	bh=axETaXZqShzOpC2KwehXL02FzV0yWfAqT5VBHcQcOOU=;
+	s=default; t=1544835807;
+	bh=JSnqW4EVNCLR8clO+ZtGh9AaHwHlbjePrfHlvSYS+c0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oAprFFfBR4638oTJQK+04VSZTj+GOtGrcSGrJpctw4QBI8YuXYkkgksB3/XwvOIDj
-	 VYetCwwozkPZ5pi+Z/c1GpEJrDUjsHUkjopxlEMsKpFYBxIZu/oNg33cGQPsHw/hCc
-	 Wj6rQqE8+oXVOTnNItPUrZcVGOIKUZFaqoLJ4UB8=
+	b=wAaRgEqbjKIoSpxSBh/3da6CtbFej6nPVMHay1bK63C331ZsyalYJnZU/h/x4165Q
+	 P+mIrKN599WnZs2T54fyj7fIfr8G10DD6QAwTsNqtBIMcbRoFHhZZ/olkLDzSLbLIL
+	 RVwOqwmL33wRJacVtLRzoRvq03f67UofjACSEJ9I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbeLOBDU (ORCPT
+        id S1730103AbeLOBD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 20:03:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55040 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 20:03:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729747AbeLOBDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 20:03:16 -0500
+        id S1729890AbeLOBDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 20:03:15 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [23.96.30.70])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8B84208CC;
-        Sat, 15 Dec 2018 01:03:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B88A208C3;
+        Sat, 15 Dec 2018 01:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544835796;
-        bh=axETaXZqShzOpC2KwehXL02FzV0yWfAqT5VBHcQcOOU=;
+        s=default; t=1544835794;
+        bh=JSnqW4EVNCLR8clO+ZtGh9AaHwHlbjePrfHlvSYS+c0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kUH3UlVhYU4IE41pyh4x0Lv2SUxNqPqmk2QPaMCfUiz0Q+wwWcAPq6Bphm3MvWcMh
-         FYYHmfLqLQVlzTW4tue8+zsSeTePEY4xxuM57kxYmrRc2cljajlSeK6AXfaGV+hkpX
-         sBT98lRkCdBjtd655tDzi3mKZ64ALERM1YxfltLU=
+        b=dLXrB4S81AYSCwr5SNBTRi+MdIHcbGksDui/Dmf9LqyKDpVxpO0UrWC/U795wEX8b
+         LV5xgp4bpsh5thU+9A024JFR/2qQ3fCvfpEOoOAFcfl7MhkMYzIZrtVk6v2Q8gPy3P
+         W0sajC0JpNL5KPYpz0pDjetggr6/pbBnrVy8VvyU=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-acpi@vger.kernel.org
 Cc:     Sinan Kaya <okaya@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Len Brown <lenb@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Lv Zheng <lv.zheng@intel.com>,
+        Anuj Mittal <anuj.mittal@intel.com>,
+        devel@acpica.org (open list:ACPI COMPONENT ARCHITECTURE (ACPICA)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v10 6/6] ACPI/IORT: Stub out ACS functions when CONFIG_PCI is not set
-Date:   Sat, 15 Dec 2018 01:02:47 +0000
-Message-Id: <20181215010247.26101-7-okaya@kernel.org>
+Subject: [PATCH v10 4/6] ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is unset
+Date:   Sat, 15 Dec 2018 01:02:45 +0000
+Message-Id: <20181215010247.26101-5-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181215010247.26101-1-okaya@kernel.org>
 References: <20181215010247.26101-1-okaya@kernel.org>
@@ -60,33 +63,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove PCI dependent code out of iort.c when CONFIG_PCI is not defined.
+Now that we allow CONFIG_PCI to be unset, remove useless code from ACPICA
+too.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/acpi/arm64/iort.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/acpica/Makefile    | 2 +-
+ drivers/acpi/acpica/achware.h   | 9 +++++++++
+ include/acpi/platform/aclinux.h | 4 ++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 70f4e80b9246..d0f68607efe6 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1437,6 +1437,7 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+diff --git a/drivers/acpi/acpica/Makefile b/drivers/acpi/acpica/Makefile
+index b14621da5413..59700433a96e 100644
+--- a/drivers/acpi/acpica/Makefile
++++ b/drivers/acpi/acpica/Makefile
+@@ -77,13 +77,13 @@ acpi-y +=		\
+ 	hwacpi.o	\
+ 	hwesleep.o	\
+ 	hwgpe.o		\
+-	hwpci.o		\
+ 	hwregs.o	\
+ 	hwsleep.o	\
+ 	hwvalid.o	\
+ 	hwxface.o	\
+ 	hwxfsleep.o
  
- static bool __init iort_enable_acs(struct acpi_iort_node *iort_node)
- {
-+#ifdef CONFIG_PCI
- 	if (iort_node->type == ACPI_IORT_NODE_PCI_ROOT_COMPLEX) {
- 		struct acpi_iort_node *parent;
- 		struct acpi_iort_id_mapping *map;
-@@ -1462,6 +1463,7 @@ static bool __init iort_enable_acs(struct acpi_iort_node *iort_node)
- 			}
- 		}
- 	}
++acpi-$(CONFIG_PCI) += hwpci.o
+ acpi-$(ACPI_FUTURE_USAGE) += hwtimer.o
+ 
+ acpi-y +=		\
+diff --git a/drivers/acpi/acpica/achware.h b/drivers/acpi/acpica/achware.h
+index 43ce67a9da1f..ef99e2fc37f8 100644
+--- a/drivers/acpi/acpica/achware.h
++++ b/drivers/acpi/acpica/achware.h
+@@ -106,11 +106,20 @@ acpi_hw_enable_runtime_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ 				 struct acpi_gpe_block_info *gpe_block,
+ 				 void *context);
+ 
++#ifdef ACPI_PCI_CONFIGURED
+ /*
+  * hwpci - PCI configuration support
+  */
+ acpi_status
+ acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id,
+ 		      acpi_handle root_pci_device, acpi_handle pci_region);
++#else
++static inline acpi_status
++acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id, acpi_handle root_pci_device,
++		      acpi_handle pci_region)
++{
++	return AE_SUPPORT;
++}
 +#endif
  
- 	return false;
- }
+ #endif				/* __ACHWARE_H__ */
+diff --git a/include/acpi/platform/aclinux.h b/include/acpi/platform/aclinux.h
+index 7451b3bca83a..e3d21d014fcc 100644
+--- a/include/acpi/platform/aclinux.h
++++ b/include/acpi/platform/aclinux.h
+@@ -33,6 +33,10 @@
+ 
+ /* Kernel specific ACPICA configuration */
+ 
++#ifdef CONFIG_PCI
++#define ACPI_PCI_CONFIGURED
++#endif
++
+ #ifdef CONFIG_ACPI_REDUCED_HARDWARE_ONLY
+ #define ACPI_REDUCED_HARDWARE 1
+ #endif
 -- 
 2.19.0
 
