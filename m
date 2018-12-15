@@ -2,162 +2,205 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126AEC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8BF1C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABE72086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:25:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D792080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 13:27:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rnEXop1O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730320AbeLONZG (ORCPT
+        id S1730224AbeLON1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 08:25:06 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53359 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729192AbeLONZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 08:25:05 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E1EDCA117FB96;
-        Sat, 15 Dec 2018 21:25:01 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Sat, 15 Dec 2018
- 21:24:58 +0800
-Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
- in mem alloc
-From:   Hou Tao <houtao1@huawei.com>
-To:     <phillip@squashfs.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20181204020840.49576-1-houtao1@huawei.com>
- <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
- <9a6b1897-7b02-09d8-4103-d887a286dda3@huawei.com>
-Message-ID: <81a996d7-ba4c-e5a0-d0ce-11951f1fd612@huawei.com>
-Date:   Sat, 15 Dec 2018 21:24:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 15 Dec 2018 08:27:47 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35884 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729192AbeLON1r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 08:27:47 -0500
+Received: by mail-wr1-f66.google.com with SMTP id u4so7006637wrp.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 05:27:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0is6RZdTE95QKK/hhbwz5QJMg73ytv622kW2Ph/I3rE=;
+        b=rnEXop1OFlhyEqoFRiO8y9xCQXpCx3ty4iJzbrEe7MjF9ywZsf+fpbYmlH0r5Q+6Xi
+         QMbErt2tPk+puBH1vqpzqlnG4EKG9E+uzrJwsmeqV5SunP6aXyM77Pe9fanZLwQybQA2
+         bEznsWCdeK2R3nkz9aW5xpn4SsCIomms+RxMzjfebzLQySYDIXROMjqNexlDbqIu9eXd
+         JMdONZeaPqIiU7phRu0L4Eto/NeiVSn9soQXmHJ0ojiRistm2tjy0MfWDxCX4nzkBT+V
+         S538OxSFnVVlEtOJ079j1tN1zqWDT/bkxTY+Uvy60beqwj/jUR0/bh0WbzcrJdzd2RMv
+         Zhvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0is6RZdTE95QKK/hhbwz5QJMg73ytv622kW2Ph/I3rE=;
+        b=PTr3qVyoF6gBfSFJsW+1L6ybovWo5EfRvwFS/OfTIAx3CrjVStxzwNABA53DDV5lzC
+         Mdubd6s1HIf5M/wyQFI9gcbNKrKu/rGVPI2vkJOzTOD5HGwwk+l1KiOcgogOsI4iOnng
+         7S6ktfWpFZCRVh9C45y3lf5WTIJTye2ayS47t6PXsz/EuRqjWLL8zcKkwVxCvQWJRcpT
+         ikfbuZ36K8GDDpj1svjYWEqCaCGwQE4p6tJRVfOPmSNVwkjCTKdNKJrtvTCNshFADToS
+         367pzuNu1+PzjXDdyQubSlUQI4A9F2geleKhibo8ypJv9Y0EJLpV3XfRAxZPtBZSMekB
+         4q9Q==
+X-Gm-Message-State: AA+aEWYXpuxRSiZKZdXmg57X7QzsO75f6ZwAvHfXZfnEOPplLI8Akq+1
+        A2GYubMz6J43jpZmieNr17TOhAK1kxIViRqtoamx7g==
+X-Google-Smtp-Source: AFSGD/VSLfWR9yqjxswcSZUluJ7dy5OU7owZbFjIdLiTD3VELmrikzZ4DoeamKmvWb/GxycXketTl0OU9X9uhuupew4=
+X-Received: by 2002:a5d:6b81:: with SMTP id n1mr5963304wrx.149.1544880464806;
+ Sat, 15 Dec 2018 05:27:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9a6b1897-7b02-09d8-4103-d887a286dda3@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.14]
-X-CFilter-Loop: Reflected
+References: <20181209062133.106781-1-houtao1@huawei.com> <ae0156e3-82f7-1ae1-c8dc-2ccf4648fc57@huawei.com>
+In-Reply-To: <ae0156e3-82f7-1ae1-c8dc-2ccf4648fc57@huawei.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Sat, 15 Dec 2018 14:27:33 +0100
+Message-ID: <CAFLxGvyR+WNfYPn8Yj_i-1mtvwde4zwiS9he1M8iczEFhZZhjA@mail.gmail.com>
+Subject: Re: [PATCH] jffs2: make the overwritten xattr invisible after remount
+To:     houtao1@huawei.com
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ?
-
-On 2018/12/13 10:18, Hou Tao wrote:
+On Sat, Dec 15, 2018 at 2:23 PM Hou Tao <houtao1@huawei.com> wrote:
+>
 > ping ?
-> 
-> On 2018/12/6 9:14, Hou Tao wrote:
->> ping ?
->>
->> On 2018/12/4 10:08, Hou Tao wrote:
->>> There is no need to disable __GFP_FS in ->readpage:
->>> * It's a read-only fs, so there will be no dirty/writeback page and
->>>   there will be no deadlock against the caller's locked page
->>> * It just allocates one page, so compaction will not be invoked
->>> * It doesn't take any inode lock, so the reclamation of inode will be fine
->>>
->>> And no __GFP_FS may lead to hang in __alloc_pages_slowpath() if a
->>> squashfs page fault occurs in the context of a memory hogger, because
->>> the hogger will not be killed due to the logic in __alloc_pages_may_oom().
->>>
->>> Signed-off-by: Hou Tao <houtao1@huawei.com>
->>> ---
->>>  fs/squashfs/file.c          |  3 ++-
->>>  fs/squashfs/file_direct.c   |  4 +++-
->>>  fs/squashfs/squashfs_fs_f.h | 25 +++++++++++++++++++++++++
->>>  3 files changed, 30 insertions(+), 2 deletions(-)
->>>  create mode 100644 fs/squashfs/squashfs_fs_f.h
->>>
->>> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
->>> index f1c1430ae721..8603dda4a719 100644
->>> --- a/fs/squashfs/file.c
->>> +++ b/fs/squashfs/file.c
->>> @@ -51,6 +51,7 @@
->>>  #include "squashfs_fs.h"
->>>  #include "squashfs_fs_sb.h"
->>>  #include "squashfs_fs_i.h"
->>> +#include "squashfs_fs_f.h"
->>>  #include "squashfs.h"
->>>  
->>>  /*
->>> @@ -414,7 +415,7 @@ void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
->>>  		TRACE("bytes %d, i %d, available_bytes %d\n", bytes, i, avail);
->>>  
->>>  		push_page = (i == page->index) ? page :
->>> -			grab_cache_page_nowait(page->mapping, i);
->>> +			squashfs_grab_cache_page_nowait(page->mapping, i);
->>>  
->>>  		if (!push_page)
->>>  			continue;
->>> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
->>> index 80db1b86a27c..a0fdd6215348 100644
->>> --- a/fs/squashfs/file_direct.c
->>> +++ b/fs/squashfs/file_direct.c
->>> @@ -17,6 +17,7 @@
->>>  #include "squashfs_fs.h"
->>>  #include "squashfs_fs_sb.h"
->>>  #include "squashfs_fs_i.h"
->>> +#include "squashfs_fs_f.h"
->>>  #include "squashfs.h"
->>>  #include "page_actor.h"
->>>  
->>> @@ -60,7 +61,8 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
->>>  	/* Try to grab all the pages covered by the Squashfs block */
->>>  	for (missing_pages = 0, i = 0, n = start_index; i < pages; i++, n++) {
->>>  		page[i] = (n == target_page->index) ? target_page :
->>> -			grab_cache_page_nowait(target_page->mapping, n);
->>> +			squashfs_grab_cache_page_nowait(
->>> +					target_page->mapping, n);
->>>  
->>>  		if (page[i] == NULL) {
->>>  			missing_pages++;
->>> diff --git a/fs/squashfs/squashfs_fs_f.h b/fs/squashfs/squashfs_fs_f.h
->>> new file mode 100644
->>> index 000000000000..fc5fb7aeb27d
->>> --- /dev/null
->>> +++ b/fs/squashfs/squashfs_fs_f.h
->>> @@ -0,0 +1,25 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +#ifndef SQUASHFS_FS_F
->>> +#define SQUASHFS_FS_F
->>> +
->>> +/*
->>> + * No need to use FGP_NOFS here:
->>> + * 1. It's a read-only fs, so there will be no dirty/writeback page and
->>> + *    there will be no deadlock against the caller's locked page.
->>> + * 2. It just allocates one page, so compaction will not be invoked.
->>> + * 3. It doesn't take any inode lock, so the reclamation of inode
->>> + *    will be fine.
->>> + *
->>> + * And GFP_NOFS may lead to infinite loop in __alloc_pages_slowpath() if a
->>> + * squashfs page fault occurs in the context of a memory hogger, because
->>> + * the hogger will not be killed due to the logic in __alloc_pages_may_oom().
->>> + */
->>> +static inline struct page *
->>> +squashfs_grab_cache_page_nowait(struct address_space *mapping, pgoff_t index)
->>> +{
->>> +	return pagecache_get_page(mapping, index,
->>> +			FGP_LOCK|FGP_CREAT|FGP_NOWAIT,
->>> +			mapping_gfp_mask(mapping));
->>> +}
->>> +#endif
->>> +
->>>
->>
->>
->> .
->>
-> 
-> 
-> .
-> 
 
+Sorry for the delay.
+I'll try now to review all the pending jffs2 patches.
+
+> On 2018/12/9 14:21, Hou Tao wrote:
+> > For xattr modification, we do not write a new jffs2_raw_xref with
+> > delete marker into flash, so if a xattr is modified then removed,
+> > and the old xref & xdatum are not erased by GC, after reboot or
+> > remount, the new xattr xref will be dead but the old xattr xref
+> > will be alive, and we will get the overwritten xattr instead of
+> > non-existent error when reading the removed xattr.
+> >
+> > Fix it by writing the deletion mark for xattr overwrite.
+> >
+> > Fixes: 8a13695cbe4e ("[JFFS2][XATTR] rid unnecessary writing of delete marker.")
+> > Signed-off-by: Hou Tao <houtao1@huawei.com>
+> > ---
+> >  fs/jffs2/xattr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++------
+> >  1 file changed, 49 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/fs/jffs2/xattr.c b/fs/jffs2/xattr.c
+> > index da3e18503c65..b2d6072f34af 100644
+> > --- a/fs/jffs2/xattr.c
+> > +++ b/fs/jffs2/xattr.c
+> > @@ -573,6 +573,15 @@ static struct jffs2_xattr_ref *create_xattr_ref(struct jffs2_sb_info *c, struct
+> >       return ref; /* success */
+> >  }
+> >
+> > +static void move_xattr_ref_to_dead_list(struct jffs2_sb_info *c,
+> > +             struct jffs2_xattr_ref *ref)
+> > +{
+> > +     spin_lock(&c->erase_completion_lock);
+> > +     ref->next = c->xref_dead_list;
+> > +     c->xref_dead_list = ref;
+> > +     spin_unlock(&c->erase_completion_lock);
+> > +}
+> > +
+> >  static void delete_xattr_ref(struct jffs2_sb_info *c, struct jffs2_xattr_ref *ref)
+> >  {
+> >       /* must be called under down_write(xattr_sem) */
+> > @@ -582,10 +591,7 @@ static void delete_xattr_ref(struct jffs2_sb_info *c, struct jffs2_xattr_ref *re
+> >       ref->xseqno |= XREF_DELETE_MARKER;
+> >       ref->ino = ref->ic->ino;
+> >       ref->xid = ref->xd->xid;
+> > -     spin_lock(&c->erase_completion_lock);
+> > -     ref->next = c->xref_dead_list;
+> > -     c->xref_dead_list = ref;
+> > -     spin_unlock(&c->erase_completion_lock);
+> > +     move_xattr_ref_to_dead_list(c, ref);
+> >
+> >       dbg_xattr("xref(ino=%u, xid=%u, xseqno=%u) was removed.\n",
+> >                 ref->ino, ref->xid, ref->xseqno);
+> > @@ -1090,6 +1096,40 @@ int do_jffs2_getxattr(struct inode *inode, int xprefix, const char *xname,
+> >       return rc;
+> >  }
+> >
+> > +static void do_jffs2_delete_xattr_ref(struct jffs2_sb_info *c,
+> > +             struct jffs2_xattr_ref *ref)
+> > +{
+> > +     uint32_t request, length;
+> > +     int err;
+> > +     struct jffs2_xattr_datum *xd;
+> > +
+> > +     request = PAD(sizeof(struct jffs2_raw_xref));
+> > +     err = jffs2_reserve_space(c, request, &length,
+> > +                     ALLOC_NORMAL, JFFS2_SUMMARY_XREF_SIZE);
+> > +     down_write(&c->xattr_sem);
+> > +     if (err) {
+> > +             JFFS2_WARNING("jffs2_reserve_space()=%d, request=%u\n",
+> > +                             err, request);
+> > +             delete_xattr_ref(c, ref);
+> > +             up_write(&c->xattr_sem);
+> > +             return;
+> > +     }
+> > +
+> > +     xd = ref->xd;
+> > +     ref->ino = ref->ic->ino;
+> > +     ref->xid = xd->xid;
+> > +     ref->xseqno |= XREF_DELETE_MARKER;
+> > +     save_xattr_ref(c, ref);
+> > +
+> > +     move_xattr_ref_to_dead_list(c, ref);
+> > +     dbg_xattr("xref(ino=%u, xid=%u, xseqno=%u) was removed.\n",
+> > +               ref->ino, ref->xid, ref->xseqno);
+> > +     unrefer_xattr_datum(c, xd);
+> > +
+> > +     up_write(&c->xattr_sem);
+> > +     jffs2_complete_reservation(c);
+> > +}
+> > +
+> >  int do_jffs2_setxattr(struct inode *inode, int xprefix, const char *xname,
+> >                     const char *buffer, size_t size, int flags)
+> >  {
+> > @@ -1097,7 +1137,7 @@ int do_jffs2_setxattr(struct inode *inode, int xprefix, const char *xname,
+> >       struct jffs2_sb_info *c = JFFS2_SB_INFO(inode->i_sb);
+> >       struct jffs2_inode_cache *ic = f->inocache;
+> >       struct jffs2_xattr_datum *xd;
+> > -     struct jffs2_xattr_ref *ref, *newref, **pref;
+> > +     struct jffs2_xattr_ref *ref, *newref, *oldref, **pref;
+> >       uint32_t length, request;
+> >       int rc;
+> >
+> > @@ -1113,6 +1153,7 @@ int do_jffs2_setxattr(struct inode *inode, int xprefix, const char *xname,
+> >               return rc;
+> >       }
+> >
+> > +     oldref = NULL;
+> >       /* Find existing xattr */
+> >       down_write(&c->xattr_sem);
+> >   retry:
+> > @@ -1196,11 +1237,13 @@ int do_jffs2_setxattr(struct inode *inode, int xprefix, const char *xname,
+> >               rc = PTR_ERR(newref);
+> >               unrefer_xattr_datum(c, xd);
+> >       } else if (ref) {
+> > -             delete_xattr_ref(c, ref);
+> > +             oldref = ref;
+> >       }
+> >   out:
+> >       up_write(&c->xattr_sem);
+> >       jffs2_complete_reservation(c);
+> > +     if (oldref)
+> > +             do_jffs2_delete_xattr_ref(c, oldref);
+> >       return rc;
+> >  }
+> >
+> >
+>
+
+
+-- 
+Thanks,
+//richard
