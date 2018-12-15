@@ -2,128 +2,92 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674E9C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 15:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C72CC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 15:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0DF2086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 15:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFBC02086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 15:10:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="SsHJKjAE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbeLOPCS (ORCPT
+        id S1730308AbeLOPK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 10:02:18 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:45922 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729687AbeLOPCS (ORCPT
+        Sat, 15 Dec 2018 10:10:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:47742 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729687AbeLOPK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 10:02:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 2AD2018198DC4;
-        Sat, 15 Dec 2018 16:02:15 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hsiangkao@mail.ru, kirill.shutemov@linux.intel.com,
-        Richard Weinberger <richard@nod.at>, stable@vger.kernel.org,
-        zhangjun <openzhangj@gmail.com>
-Subject: [PATCH] ubifs: Get/put page when changing PG_private
-Date:   Sat, 15 Dec 2018 16:01:30 +0100
-Message-Id: <20181215150130.19381-1-richard@nod.at>
-X-Mailer: git-send-email 2.20.0
+        Sat, 15 Dec 2018 10:10:28 -0500
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 899A325AD76;
+        Sun, 16 Dec 2018 02:10:24 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1544886624; bh=29RLGCxGCFhYuv+baaInVTGEOHIyPnagRONXiomE4C4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SsHJKjAED5PK/r1xR7bZ3wbOWG7Fh7pTS3llWFNgYyfmuLJqyNrlBtzRVXSYq7H4Z
+         ciEoS/4x3NlKIPi3Gop3nA2VQlq6Vp5BzUCIDs4LgaIbuqP//swkHGYvo3/SxREwoR
+         XvjqPJ5kBXBCpIjRyTyhVyoGoBvc+Re1JycxmB2Y=
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id 3FCF2E20E06; Sat, 15 Dec 2018 07:10:22 -0800 (PST)
+Date:   Sat, 15 Dec 2018 16:10:22 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 0/9] RZ/G2E basic device tree
+Message-ID: <20181215151017.2wqpiwvd7texfk7e@verge.net.au>
+References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The page migration code assumes that a page with PG_private
-set has its page count elevated by 1.
-UBIFS never did this and therefore the migration code was unable
-to migrate some pages owned by UBIFS.
-The lead to situations where the CMA memory allocator failed to
-allocate memory.
+On Fri, Dec 14, 2018 at 09:10:04AM +0000, Fabrizio Castro wrote:
+> Dear All,
+> 
+> this series adds a basic dtsi for the RZ/G2E (a.k.a. r8a774c0).
 
-Fix this by using get/put_page when changing PG_private.
+Thanks Fabrizio,
 
-Cc: <stable@vger.kernel.org>
-Cc: zhangjun <openzhangj@gmail.com>
-Fixes: 4ac1c17b2044 ("UBIFS: Implement ->migratepage()")
-Reported-by: zhangjun <openzhangj@gmail.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
-zhangjun,
+This series looks fine to me but I will wait to see if there are other
+reviews before applying.
 
-Please give this patch a try!
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Thanks,
-//richard
----
- fs/ubifs/file.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Fabrizio Castro (9):
+>   arm64: dts: renesas: Initial device tree for r8a774c0
+>   arm64: dts: renesas: r8a774c0: Add SYS-DMAC controller nodes
+>   arm64: dts: renesas: r8a774c0: Add SCIF and HSCIF nodes
+>   arm64: dts: renesas: r8a774c0: Add INTC-EX device node
+>   arm64: dts: renesas: r8a774c0: Add PFC support
+>   arm64: dts: renesas: r8a774c0: Add GPIO device nodes
+>   arm64: dts: renesas: r8a774c0: Add Ethernet AVB node
+>   arm64: dts: renesas: r8a774c0: Add watchdog support
+>   arm64: dts: renesas: r8a774c0: Add secondary CA53 CPU core
 
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 1b78f2e09218..abe940d0767c 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -582,6 +582,7 @@ static int ubifs_write_end(struct file *file, struct =
-address_space *mapping,
- 	}
-=20
- 	if (!PagePrivate(page)) {
-+		get_page(page);
- 		SetPagePrivate(page);
- 		atomic_long_inc(&c->dirty_pg_cnt);
- 		__set_page_dirty_nobuffers(page);
-@@ -959,6 +960,7 @@ static int do_writepage(struct page *page, int len)
- 	atomic_long_dec(&c->dirty_pg_cnt);
- 	ClearPagePrivate(page);
- 	ClearPageChecked(page);
-+	put_page(page);
-=20
- 	kunmap(page);
- 	unlock_page(page);
-@@ -1318,6 +1320,7 @@ static void ubifs_invalidatepage(struct page *page,=
- unsigned int offset,
- 	atomic_long_dec(&c->dirty_pg_cnt);
- 	ClearPagePrivate(page);
- 	ClearPageChecked(page);
-+	put_page(page);
- }
-=20
- int ubifs_fsync(struct file *file, loff_t start, loff_t end, int datasyn=
-c)
-@@ -1487,6 +1490,8 @@ static int ubifs_migrate_page(struct address_space =
-*mapping,
-=20
- 	if (PagePrivate(page)) {
- 		ClearPagePrivate(page);
-+		put_page(page);
-+		get_page(newpage);
- 		SetPagePrivate(newpage);
- 	}
-=20
-@@ -1513,6 +1518,7 @@ static int ubifs_releasepage(struct page *page, gfp=
-_t unused_gfp_flags)
- 	ubifs_assert(c, 0);
- 	ClearPagePrivate(page);
- 	ClearPageChecked(page);
-+	put_page(page);
- 	return 1;
- }
-=20
-@@ -1582,6 +1588,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_f=
-ault *vmf)
- 	else {
- 		if (!PageChecked(page))
- 			ubifs_convert_page_budget(c);
-+		get_page(page);
- 		SetPagePrivate(page);
- 		atomic_long_inc(&c->dirty_pg_cnt);
- 		__set_page_dirty_nobuffers(page);
---=20
-2.20.0
+My usual question regarding SMP enablement: to what extent has this
+been verified with respect to CPU hotplug and Suspend-2-RAM ?
 
+>  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 649 ++++++++++++++++++++++++++++++
+>  1 file changed, 649 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> 
+> -- 
+> 2.7.4
+> 
