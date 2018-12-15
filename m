@@ -2,207 +2,115 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF3EC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83091C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F63C2080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FB4F2080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 16:46:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJkMEkDf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SV0dUkfc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbeLOQoM (ORCPT
+        id S1727949AbeLOQqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 11:44:12 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44638 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729290AbeLOQoL (ORCPT
+        Sat, 15 Dec 2018 11:46:32 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39318 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbeLOQqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 11:44:11 -0500
-Received: by mail-oi1-f193.google.com with SMTP id m6so7031783oig.11
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 08:44:10 -0800 (PST)
+        Sat, 15 Dec 2018 11:46:31 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f81so8609025wmd.4
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 08:46:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Za1Z6j7BOPL/wHXrKWRUJ6IlG92YsckpGixHIh/9NqY=;
-        b=DJkMEkDfYXiyE3l1fW96FRSYH9YMyGHfU8UMzR9tt78q5luDZMwdjh/vgpMTArShtp
-         JTi8Of2TcGkFhS9gAh50A8qJ7ZYZfkrC2lkVb+85DoWUF+/wdRnqpNUgGvtKEzVruMeZ
-         rCdlxOCl5fsdtas+nkxci5GM4uCs7el9XWXcQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vEfWUpT9cIBwVyzYLcN+unBDZ/0dXe3jcxcWZpF4cVY=;
+        b=SV0dUkfcvO1ku1yZhUonrgL+y2Aq2ercA2h0ZBmdp0jrET8PJvWMhZmE7hpZFc8Gqx
+         ScVll9OLFEqBjw3yvmXd+aSlXI4jSjJc16bVfvybohuXrtxxg5GAOil3sD7uSCj2FH71
+         ObFLjiH8mH/Z4fqd0iaKX6DaGlQWEtsy6OXBY5DtXwSb996lh4HIh6rSdW+vK9K993sZ
+         3wrssYxmDpHdhYPbAo3ooFmOpinBk55e3aHW8JEZe6NiRWvx5SlVc0DgXyimIFQmmkO0
+         44Ig215vdDqnijB0/eVi8wulP1tLvyY6fx+94tebrWb3jmJuxbP0NElrpV7vkYWE+deV
+         AftA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Za1Z6j7BOPL/wHXrKWRUJ6IlG92YsckpGixHIh/9NqY=;
-        b=LoJNqPGIZoLY2BH3TSu5CG9PUs1PaEyvBWC5229yXAT3X8a3vK1+lrGXP7iGaR9AQc
-         b96wcX7JjiwgaH6Tb3UuajOcHdG41OfocDa3f+fiDcpIf+/25q7sWGp+ydYXPKWigvft
-         YtsRnBgLlcfL0u1Gq4t6dCMdTw1HtypLMxlKHgQvOCL0yaprRi3GB/LDKp83s3ZkcBi7
-         r631XZlOvPZfOrH7Pqh8Tra/VkBO2jQMMZk+QmUZYC4LYnoaECICC8pXfvnACcy55p08
-         NWk2/EJPx4NiXx3aRfZvWAXJ0/ey0lz6uidCbxKwMirZgFOmNOJ2czz/cdATi1UTL6x6
-         r1kQ==
-X-Gm-Message-State: AA+aEWas9lnliRzn7CIzc2L4Lp3aoM8p4Pz62IxENUjV3MOnDQdoPXtM
-        u4mMkHWVCft/OcDTw9v1UoHvpA==
-X-Google-Smtp-Source: AFSGD/WMjBI+U6Hl1quzysl41U5Fyefelv5z8nUUJOM4zqrNmUoCQ+WVutWeqL/dExMqgcOwuonoXg==
-X-Received: by 2002:aca:c501:: with SMTP id v1mr1604049oif.48.1544892249444;
-        Sat, 15 Dec 2018 08:44:09 -0800 (PST)
-Received: from localhost ([2603:3016:300:100::968a])
-        by smtp.gmail.com with ESMTPSA id v141sm4184603oia.25.2018.12.15.08.44.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Dec 2018 08:44:08 -0800 (PST)
-Date:   Sat, 15 Dec 2018 10:44:07 -0600
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/88] 4.4.168-stable review
-Message-ID: <20181215164407.qxit5j5ocmpxiu4a@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20181214115702.151309521@linuxfoundation.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vEfWUpT9cIBwVyzYLcN+unBDZ/0dXe3jcxcWZpF4cVY=;
+        b=XW0oWVy+urEKltv8pNFu4F7BgBzsgO/490RiZPRCJlLRz8MPF+pi2Y71ZVbl2OiX3f
+         t9XKymbH9WYgW3DN6jywn5vPKp42AHPPNH7jqC5yBcrhnk2+4hkgF30stiA1SrzzUtQb
+         zFLZMf8OdBd/ygCmaVj3ki5UcSxz0ZIGOZMe9xRFWR8eOXiirHCHLXb6A29/TmfRdGdV
+         Tb/bzEv7ESbNoWr/Z6JN9V+xEuqnbTK/uDcy1of5oLXhA7IBPJdRB/vBlSSxZ7ZCM1Hx
+         vnB5ApXCg+X1xMtSv4Ym6tdb/OHzknwhgIxGNhPVOpXCkTUDtQsQlyXwNoOCLpsxSg2q
+         H64w==
+X-Gm-Message-State: AA+aEWbMLFdQoZFyOVxu95K2UjeTS45UuvVK6ZdSCnrj6Bn1+ILfGvzp
+        MQhgUHqD0ygBFXHOxoGhiDA=
+X-Google-Smtp-Source: AFSGD/VXfW6yi4jPtv2tYyMTDXJ36r22LmnAqwqfJz4g4giE4QzxmKs2Mpua+Nefo2kWoq4Vmewpfw==
+X-Received: by 2002:a1c:cec1:: with SMTP id e184mr6869775wmg.75.1544892389930;
+        Sat, 15 Dec 2018 08:46:29 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id i186sm8820935wmd.19.2018.12.15.08.46.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Dec 2018 08:46:29 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 3/9] staging: rtl8188eu: remove unused arrays WFD_OUI and WMM_INFO_OUI
+Date:   Sat, 15 Dec 2018 17:46:10 +0100
+Message-Id: <20181215164616.2643-3-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181215164616.2643-1-straube.linux@gmail.com>
+References: <20181215164616.2643-1-straube.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:59:34PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.168 release.
-> There are 88 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Dec 16 11:56:41 UTC 2018.
-> Anything received after that time might be too late.
+The arrays WFD_OUI and WMM_INFO_OUI are not used anywhere,
+so remove them.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c    | 2 --
+ drivers/staging/rtl8188eu/include/rtw_mlme_ext.h | 2 --
+ 2 files changed, 4 deletions(-)
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.168-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.4.y
-git commit: 9c558d7fe359a962e214e426ffeb338e012bba39
-git describe: v4.4.167-89-g9c558d7fe359
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.167-89-g9c558d7fe359
-
-
-No regressions (compared to build v4.4.167-40-g840a97100a76)
-
-
-No fixes (compared to build v4.4.167-40-g840a97100a76)
-
-Ran 17023 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.168-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.168-rc1-hikey-20181214-340
-git commit: adb4d07253946d647c9afde07d2002b28b3c0ec0
-git describe: 4.4.168-rc1-hikey-20181214-340
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4-oe/build/4.4.168-rc1-hikey-20181214-340
-
-
-No regressions (compared to build 4.4.167-rc1-hikey-20181211-336)
-
-
-No fixes (compared to build 4.4.167-rc1-hikey-20181211-336)
-
-Ran 2756 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+index 16c449d2e6c2..eda11eff5051 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+@@ -26,9 +26,7 @@ unsigned char RTW_WPA_OUI[] = {0x00, 0x50, 0xf2, 0x01};
+ unsigned char WMM_OUI[] = {0x00, 0x50, 0xf2, 0x02};
+ unsigned char WPS_OUI[] = {0x00, 0x50, 0xf2, 0x04};
+ unsigned char P2P_OUI[] = {0x50, 0x6F, 0x9A, 0x09};
+-unsigned char WFD_OUI[] = {0x50, 0x6F, 0x9A, 0x0A};
+ 
+-unsigned char WMM_INFO_OUI[] = {0x00, 0x50, 0xf2, 0x02, 0x00, 0x01};
+ unsigned char WMM_PARA_OUI[] = {0x00, 0x50, 0xf2, 0x02, 0x01, 0x01};
+ 
+ unsigned char WPA_TKIP_CIPHER[4] = {0x00, 0x50, 0xf2, 0x02};
+diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+index 0ade33df16d2..62999bc06de5 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+@@ -84,10 +84,8 @@
+ extern unsigned char RTW_WPA_OUI[];
+ extern unsigned char WMM_OUI[];
+ extern unsigned char WPS_OUI[];
+-extern unsigned char WFD_OUI[];
+ extern unsigned char P2P_OUI[];
+ 
+-extern unsigned char WMM_INFO_OUI[];
+ extern unsigned char WMM_PARA_OUI[];
+ 
+ /*  Channel Plan Type. */
 -- 
-Linaro LKFT
-https://lkft.linaro.org
+2.20.0
+
