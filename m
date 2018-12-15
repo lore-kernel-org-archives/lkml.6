@@ -2,169 +2,92 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C359C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 22:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6032C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 22:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F68206C2
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 22:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58292086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 22:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbeLOWib convert rfc822-to-8bit (ORCPT
+        id S1729339AbeLOWuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 17:38:31 -0500
-Received: from mga05.intel.com ([192.55.52.43]:35114 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbeLOWia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 17:38:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Dec 2018 14:38:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,358,1539673200"; 
-   d="scan'208";a="126264857"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Dec 2018 14:38:29 -0800
-Received: from FMSMSX110.amr.corp.intel.com (10.18.116.10) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Sat, 15 Dec 2018 14:38:29 -0800
-Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
- fmsmsx110.amr.corp.intel.com (10.18.116.10) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Sat, 15 Dec 2018 14:38:29 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.203]) by
- SHSMSX101.ccr.corp.intel.com ([169.254.1.201]) with mapi id 14.03.0415.000;
- Sun, 16 Dec 2018 06:38:27 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "Zeng, Xin" <xin.zeng@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
-Thread-Topic: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
-Thread-Index: AQHUelOoaj4q5o5bw0yVukg2nF8lF6WAlpzw
-Date:   Sat, 15 Dec 2018 22:38:26 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C257439D8E060@SHSMSX104.ccr.corp.intel.com>
-References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
- <20181112064501.2290-2-baolu.lu@linux.intel.com>
-In-Reply-To: <20181112064501.2290-2-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjBkNWIwYmQtYWQyMS00ZGFkLTgxNzktMDFjMGRlZjM1NjliIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSkVzWnpuU2VYNXB4dDJrYUNKT2Jydzd4bWYyeXVMdHpXWVp2eHdRdmZVWmlUQmRCTnVQYlJFQ0UwcnZ4M2l5ZSJ9
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Sat, 15 Dec 2018 17:50:17 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:59104 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbeLOWuR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 17:50:17 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gYIl8-0001dl-00; Sat, 15 Dec 2018 22:50:10 +0000
+Date:   Sat, 15 Dec 2018 17:50:10 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@imgtec.com>,
+        David Daney <david.daney@cavium.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Subject: Re: Fixing MIPS delay slot emulation weakness?
+Message-ID: <20181215225009.GB23599@brightrain.aerifal.cx>
+References: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
-> Sent: Sunday, November 11, 2018 10:45 PM
-> Subject: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
+On Sat, Dec 15, 2018 at 11:19:37AM -0800, Andy Lutomirski wrote:
+> Hi all-
 > 
-> This adds APIs for IOMMU drivers and device drivers to manage the PASIDs used for
-> DMA transfer and translation. It bases on I/O ASID allocator for PASID namespace
-> management and relies on vendor specific IOMMU drivers for paravirtual PASIDs.
+> Some security researchers pointed out that writing to the delay slot
+> emulation page is a great exploit technique on MIPS.  It was
+> introduced in:
 > 
-> Below APIs are added:
+> commit 432c6bacbd0c16ec210c43da411ccc3855c4c010
+> Author: Paul Burton <paul.burton@imgtec.com>
+> Date:   Fri Jul 8 11:06:19 2016 +0100
 > 
-> * iommu_pasid_init(pasid)
->   - Initialize a PASID consumer. The vendor specific IOMMU
->     drivers are able to set the PASID range imposed by IOMMU
->     hardware through a callback in iommu_ops.
+>     MIPS: Use per-mm page to execute branch delay slot instructions
 > 
-> * iommu_pasid_exit(pasid)
->   - The PASID consumer stops consuming any PASID.
+> With my vDSO hat on, I hereby offer a couple of straightforward
+> suggestions for fixing it.  The offending code is:
 > 
-> * iommu_pasid_alloc(pasid, min, max, private, *ioasid)
->   - Allocate a PASID and associate a @private data with this
->     PASID. The PASID value is stored in @ioaisd if returning
->     success.
+>         base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
+>                            VM_READ|VM_WRITE|VM_EXEC|
+>                            VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
+>                            0, NULL);
 > 
-> * iommu_pasid_free(pasid, ioasid)
->   - Free a PASID to the pool so that it could be consumed by
->     others.
+> VM_WRITE | VM_EXEC is a big no-no, especially at a fixed address.
 > 
-> This also adds below helpers to lookup or iterate PASID items associated with a
-> consumer.
+> The really simple but possibly suboptimal fix is to get rid of
+> VM_WRITE and to use get_user_pages(..., FOLL_FORCE) to write to it.
 > 
-> * iommu_pasid_for_each(pasid, func, data)
->   - Iterate PASID items of the consumer identified by @pasid,
->     and call @func() against each item. An error returned from
->     @func() will break the iteration.
+> A possibly nicer way to accomplish more or less the same thing would
+> be to allocate the area with _install_special_mapping() and arrange to
+> keep a reference to the struct page around.
 > 
-> * iommu_pasid_find(pasid, ioasid)
->   - Retrieve the private data associated with @ioasid.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/Kconfig |  1 +
->  drivers/iommu/iommu.c | 89 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/iommu.h | 73 +++++++++++++++++++++++++++++++++++
->  3 files changed, 163 insertions(+)
-> 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig index
-> d9a25715650e..39f2bb76c7b8 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -1,6 +1,7 @@
->  # IOMMU_API always gets selected by whoever wants it.
->  config IOMMU_API
->  	bool
-> +	select IOASID
-> 
->  menuconfig IOMMU_SUPPORT
->  	bool "IOMMU Hardware Support"
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c index
-> 0b7c96d1425e..570b244897bb 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -2082,3 +2082,92 @@ void iommu_detach_device_aux(struct iommu_domain
-> *domain, struct device *dev)
->  	}
->  }
->  EXPORT_SYMBOL_GPL(iommu_detach_device_aux);
-> +
-> +/*
-> + * APIs for PASID used by IOMMU and the device drivers which depend
-> + * on IOMMU.
-> + */
-> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus) {
+> The really nice but less compatible fix would be to let processes or
+> even the whole system opt out by promising not to put anything in FPU
+> branch delay slots, of course.
 
-I'm thinking about if using struct iommu_domain here is better
-than struct bus_type. The major purpose is to pass iommu_ops
-in it and route into iommu-sublayer. iommu_domain may be
-better since some modules like vfio_iommu_type1 would use
-iommu_domain more than bus type.
+As I noted on Twitter when Mudge brought this topic back up, there's a
+much more compatible, elegant, and safe fix possible that does not
+involve any W+X memory. Emulate the delay slot in kernel-space. This
+is trivial to do safely for pretty much everything but loads/stores.
+For loads/stores, where you want them to execute with user privilege
+level, what you do is compute the effective address in kernel-space,
+then return to a fixed instruction in the vdso page that performs a
+generic load/store using the register the kernel put the effective
+address result in, then restores registers off the stack and jumps to
+the branch destination.
 
-Thanks,
-Yi Liu
-
+Rich
