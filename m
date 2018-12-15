@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07841C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D390C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11342086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16BCB2080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:56:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZBfbsME"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DF9MVea4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbeLOIxR (ORCPT
+        id S1729855AbeLOI4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 03:53:17 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44666 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728675AbeLOIxQ (ORCPT
+        Sat, 15 Dec 2018 03:56:39 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36223 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbeLOI4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 03:53:16 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t13so3777232pgr.11
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 00:53:15 -0800 (PST)
+        Sat, 15 Dec 2018 03:56:38 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b85so3983233pfc.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 00:56:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=9U3uvT6zrPqp0P1HU9+D41u6306krIKZi7mqEDWsETM=;
-        b=HZBfbsME6uAPYBJjwGYaJjM87sJoT8coneCZ7QDTZn4pps6AX4wvHHYvQG8sjyK4dM
-         yB+k0KoooTWyH23yus+yQ9+ezJJO8xUGjjLrj6K6ENQSkvzVJEHuTozkaY3ZtPHAZFZQ
-         LQ6DCNwCwQsAQqTb4Nb1qBBPu5S/hTQuncTmeovI8p552F8nebuyEIh0C0K27XqIvjTo
-         UTLUYBRExdyDmHjxfJrPOPrSCvqZnVhFTbumXt6yDFRTGNqS6jIfFLjUW3kagcvtjM52
-         UGTjw6EOMWr470/8PJvTgV5ltw7Q75SL+vVUS+nzBPla1r2+rRnZVw2dEBRq5rcDIbQa
-         1cpw==
+        bh=KQpN2oTnZlLoB4egBeZPvEFrtLna5LyJLzSDHWpm/gQ=;
+        b=DF9MVea4utLpF5hHBcsytaWiQ0KANl2wTevapGot8PVgR5Ech9rwux1G+WQ07UVy3v
+         wPBfSG2b7RKFEOwKeJvZcpqKr0nF9KOnS+cuCLfpuGNdjMZJ0VWcNrd+L6rKvrlnTjzX
+         oOtI6Xi1PkCRpnKyhLKW2wZbQgrWirr95qda29U2pMQdPZ+cF/tPojKuJ6i2bj/a6aXf
+         y3uNyQeYhS46koacBXyh4Fo6A/EmO0nSWAfHLSUAubNZCwYhK9rMJrLRQJT8jSeAPgde
+         ioe07PKyRZTUsKxRIORElR7zvyqUaqMGJf6h1zKtZkLgqgSsdn1AE7bepxf03Ir1LmkN
+         ATcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9U3uvT6zrPqp0P1HU9+D41u6306krIKZi7mqEDWsETM=;
-        b=IGW+/UoZNwZYc1NkNQoNwIZW22bsz/P/yIqa5IwyzyreMCeGXlQetvM0wn3YGqacZ5
-         W9bAMi8k+tinYiS6/xup0unVJDg79HWvRqMULEd3aA6U6SnCAJJo5PSIsU4IklOnjaTu
-         JFtwxJSqXdPj2On3Siz+byohwfgDX4e2Vkp55/MYexqgezViueEji9PqaWDaJkC1fkLP
-         +GiiZrwoTVGWkCM1snFNElKbjdJGfkmHfzIoerAe284C3nK41Y/7yvOaOqvinAWs5Rev
-         4rexD4p3YvDopPnBpczi/zO5J4OvYav7moQ6CoaDBY35YACiAJ1i53w1rsX2Yjlw8gaw
-         VvBg==
-X-Gm-Message-State: AA+aEWY+JK1qR6I9jvR2SYD7nDubqCUcuISkG18e4yb3GX3qlqgP8dgv
-        E13ENyu4+M7mWWoFjFbY6iU=
-X-Google-Smtp-Source: AFSGD/W0j+oODEv4GHW+tZBtwBFLSDi5uHdMRbbAZZ7ttjGVYHvQEK5RptQFNKhKbsFTs3hG8u6j3w==
-X-Received: by 2002:a62:be15:: with SMTP id l21mr5616708pff.51.1544863995098;
-        Sat, 15 Dec 2018 00:53:15 -0800 (PST)
+        bh=KQpN2oTnZlLoB4egBeZPvEFrtLna5LyJLzSDHWpm/gQ=;
+        b=iXDWCnSt2sJ/qI2Lbh9ETTSoJZG2PV5kqrK/x/DjcYYI2RqYMMKy9sjjspndhEB5b3
+         7b+flRBzDr6MoxBOxr3AxZBxFo2do/jz+QUEwISuN1mN3cMl5yPLfruCde0Jg9uPrH+y
+         aaIm/rYTqKl86EvSPd0wC9RW59VbKW5OZMBrZEgI2Ji+eTMBFROqzOOqyyE/Iyw5KWRg
+         sWlmESLSZbdoY7hb8xlbfbfgPJ7IKDV4zinNvFZ5apaOAQ5R/gNgjZLaZ+UIiVkJ8JLV
+         w7e4XLRdvzJVTUTk5qZ0lKwAStSL2y7Kmgu3UYylaKTPCq3lIKIfFYMXFhoF5h+QEGYb
+         7oAg==
+X-Gm-Message-State: AA+aEWYs70U1y0TPka3Eq1gN2a1fvPZaQ6pXfKHX8J9LZzrXx/9Z+zcn
+        TgS2dmynzukXczKMaD6w7jGYbJAJrcE=
+X-Google-Smtp-Source: AFSGD/W2yrKIeTrFy4Oibzyk9yW9fH5q9vLQjDqOXKbDwrEaAEIV46xn6rsez0I4YJrIsuEXMTFp4A==
+X-Received: by 2002:a63:e101:: with SMTP id z1mr5478863pgh.310.1544864197830;
+        Sat, 15 Dec 2018 00:56:37 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id i123sm12032332pfg.164.2018.12.15.00.53.14
+        by smtp.gmail.com with ESMTPSA id o7sm9363226pfb.34.2018.12.15.00.56.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Dec 2018 00:53:14 -0800 (PST)
+        Sat, 15 Dec 2018 00:56:36 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     pure.logic@nexus-software.ie, johan@kernel.org, elder@kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [RESEND] staging: greybus: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Sat, 15 Dec 2018 03:53:12 -0500
-Message-Id: <20181215085312.27493-1-tiny.windzz@gmail.com>
+To:     gregkh@linuxfoundation.org, natechancellor@gmail.com,
+        kernelpatch@126.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [RESEND] staging: rtlwifi: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Sat, 15 Dec 2018 03:56:35 -0500
+Message-Id: <20181215085635.27602-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -72,43 +72,76 @@ Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/staging/greybus/loopback.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ drivers/staging/rtlwifi/debug.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/staging/greybus/loopback.c b/drivers/staging/greybus/loopback.c
-index 7080294f705c..33cda7527714 100644
---- a/drivers/staging/greybus/loopback.c
-+++ b/drivers/staging/greybus/loopback.c
-@@ -973,19 +973,7 @@ static int gb_loopback_dbgfs_latency_show(struct seq_file *s, void *unused)
- 	return gb_loopback_dbgfs_latency_show_common(s, &gb->kfifo_lat,
- 						     &gb->mutex);
+diff --git a/drivers/staging/rtlwifi/debug.c b/drivers/staging/rtlwifi/debug.c
+index 8999feda29b4..543889923864 100644
+--- a/drivers/staging/rtlwifi/debug.c
++++ b/drivers/staging/rtlwifi/debug.c
+@@ -79,24 +79,13 @@ struct rtl_debugfs_priv {
+ 
+ static struct dentry *debugfs_topdir;
+ 
+-static int rtl_debug_get_common(struct seq_file *m, void *v)
++static int common_show(struct seq_file *m, void *v)
+ {
+ 	struct rtl_debugfs_priv *debugfs_priv = m->private;
+ 
+ 	return debugfs_priv->cb_read(m, v);
  }
 -
--static int gb_loopback_latency_open(struct inode *inode, struct file *file)
+-static int dl_debug_open_common(struct inode *inode, struct file *file)
 -{
--	return single_open(file, gb_loopback_dbgfs_latency_show,
--			   inode->i_private);
+-	return single_open(file, rtl_debug_get_common, inode->i_private);
 -}
 -
--static const struct file_operations gb_loopback_debugfs_latency_ops = {
--	.open		= gb_loopback_latency_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
+-static const struct file_operations file_ops_common = {
+-	.open = dl_debug_open_common,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release,
 -};
-+DEFINE_SHOW_ATTRIBUTE(gb_loopback_dbgfs_latency);
++DEFINE_SHOW_ATTRIBUTE(common);
  
- static int gb_loopback_bus_id_compare(void *priv, struct list_head *lha,
- 				      struct list_head *lhb)
-@@ -1076,7 +1064,7 @@ static int gb_loopback_probe(struct gb_bundle *bundle,
- 	snprintf(name, sizeof(name), "raw_latency_%s",
- 		 dev_name(&connection->bundle->dev));
- 	gb->file = debugfs_create_file(name, S_IFREG | 0444, gb_dev.root, gb,
--				       &gb_loopback_debugfs_latency_ops);
-+				       &gb_loopback_dbgfs_latency_fops);
+ static int rtl_debug_get_mac_page(struct seq_file *m, void *v)
+ {
+@@ -439,7 +428,7 @@ static ssize_t rtl_debugfs_common_write(struct file *filp,
+ 	return debugfs_priv->cb_write(filp, buffer, count, loff);
+ }
  
- 	gb->id = ida_simple_get(&loopback_ida, 0, 0, GFP_KERNEL);
- 	if (gb->id < 0) {
+-static const struct file_operations file_ops_common_write = {
++static const struct file_operations common_write_fops = {
+ 	.owner = THIS_MODULE,
+ 	.write = rtl_debugfs_common_write,
+ 	.open = simple_open,
+@@ -488,7 +477,7 @@ static int rtl_debugfs_open_rw(struct inode *inode, struct file *filp)
+ 	int ret = 0;
+ 
+ 	if (filp->f_mode & FMODE_READ)
+-		ret = single_open(filp, rtl_debug_get_common, inode->i_private);
++		ret = single_open(filp, common_show, inode->i_private);
+ 	else
+ 		filp->private_data = inode->i_private;
+ 
+@@ -509,7 +498,7 @@ static struct rtl_debugfs_priv rtl_debug_priv_phydm_cmd = {
+ 	.cb_data = 0,
+ };
+ 
+-static const struct file_operations file_ops_common_rw = {
++static const struct file_operations common_rw_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = rtl_debugfs_open_rw,
+ 	.release = rtl_debugfs_close_rw,
+@@ -523,7 +512,7 @@ static const struct file_operations file_ops_common_rw = {
+ 		rtl_debug_priv_ ##name.rtlpriv = rtlpriv;		   \
+ 		debugfs_create_file(#name, mode, parent,		   \
+ 				    &rtl_debug_priv_ ##name,		   \
+-				    &file_ops_ ##fopname);		   \
++				    &fopname ##fops);		   	   \
+ 	} while (0)
+ 
+ #define RTL_DEBUGFS_ADD(name)						   \
 -- 
 2.17.0
 
