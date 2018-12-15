@@ -2,434 +2,106 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DF6C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1377FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41292171F
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D827A2084D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 18:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544899976;
-	bh=Iy54GkS4B6mRSnQF3AhOvFyagZKuuCXzU/TIfaDvW3E=;
+	s=default; t=1544900028;
+	bh=8fjHdiviQM8t0qPTBk97mam23ufHd+C9CyqHumwsP9Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=VnokbybT2My8T1GRirMb136O49+FA+tu+VZnJRaaX68WwTQgBbyP3x7UH1i6ToZx9
-	 K6fLy8q9RryBSvImxo+Q0lY5p8HiMcgLJhST9nsfmjnpFAN5JlI+ItiHDJ4cQvgNp9
-	 BWbQ8necn5CYuQu1xC9Sqg2Qdr8TSSRabtpzTmqU=
+	b=iOyEfHO6x/240//JMBvSdxife0UD0DXrZ8jxC1rUChFbE8LOkMUyqfWGDbi4tKcQt
+	 yNNOwzXpHaG2tG/MZbAO2y84P7Do+JgNH5jAYjDaVWUP4Btls5ZEYwIKsNl89Fzeqt
+	 EXx56qDnbvIiSGac1dJguhOFLgUtqvns6Wzz4wYA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbeLOSwz (ORCPT
+        id S1729488AbeLOSxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 13:52:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50742 "EHLO mail.kernel.org"
+        Sat, 15 Dec 2018 13:53:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeLOSwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 13:52:55 -0500
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+        id S1726520AbeLOSxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 13:53:47 -0500
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2153D2177B
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 18:52:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004692084D
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 18:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544899973;
-        bh=Iy54GkS4B6mRSnQF3AhOvFyagZKuuCXzU/TIfaDvW3E=;
+        s=default; t=1544900026;
+        bh=8fjHdiviQM8t0qPTBk97mam23ufHd+C9CyqHumwsP9Q=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MwivbiHGetBqCVIgjG3mLl3HybkxF9Tkv04ipY8gyJib3r929PogK2CHp8I0i60hl
-         d+1yHn+90Ort/Q5S5ZF/AzvJPzoDRTK6IIot643WeK+vLcCH6Um/iOxGRB7vfKf0LF
-         kQ3KPCSzNFxFlE+3IlEWp3e9BDv5xt7nZMWV39QI=
-Received: by mail-wr1-f43.google.com with SMTP id t27so8467005wra.6
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 10:52:53 -0800 (PST)
-X-Gm-Message-State: AA+aEWaMdpCt+t6D0T58O6wv4j+ri6PiTS1qZcLrJpFqWP5dEOMc4j5D
-        ByagG19j4d/+MyWgqZ7QGgkl//9WTSzfgIkqFs+Srw==
-X-Google-Smtp-Source: AFSGD/XO8czHSQ1SWdceGk5/H//doAKQbU0Udyk1nVZ/5CduXwJxlD+chjYk5z8q0m+y5MYz1QEfTB72VEX8KZGoeRU=
-X-Received: by 2002:adf:e08c:: with SMTP id c12mr5676171wri.199.1544899971481;
- Sat, 15 Dec 2018 10:52:51 -0800 (PST)
+        b=xA44NsJmInFg8tWu2y27kNSXUyPLfbTrI0kNeRPWtBX1j1gqINcZ/ICksaM3MhAed
+         PpK7LyBq9smtWMYeHepiZDPZu1VWJe6ib/g5K1CVn7uvGGlYHKjDbz/jxoOXFDCS75
+         tbQfbGrQv6WT/+fK6tpcfJ/OD3j7gmHnZMc/ND2A=
+Received: by mail-wm1-f46.google.com with SMTP id y1so8596970wmi.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 10:53:45 -0800 (PST)
+X-Gm-Message-State: AA+aEWaM+7r1mJBvpPwYsH9+HluXq47yLtYqBCOIGw6IOEhTvwi5xJ1D
+        KSNaZg1TkSTyLD/YSVHy6n3TS1qbtvbPyh3slOtpXg==
+X-Google-Smtp-Source: AFSGD/XbCF9dKU6r9cNA/ZJIA8NrOcFUL00YzAWAkMcYZXTVODjKTyK5QOdZ87HEETu7r3xQYSqVhZ10P2ghpOgF5pU=
+X-Received: by 2002:a7b:ce17:: with SMTP id m23mr7338555wmc.74.1544900024477;
+ Sat, 15 Dec 2018 10:53:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
- <20181212000354.31955-2-rick.p.edgecombe@intel.com> <CALCETrVP577NvdeYj8bzpEfTXj3GZD3nFcJxnUq5n1daDBxU=g@mail.gmail.com>
- <f5cbf6aefeb19f12faafa6f213c6ff72bf693ddc.camel@intel.com>
- <CALCETrV0BGagp8stapCPBQ9iWOeepGkcKybzmi2WwLU_zzy2sQ@mail.gmail.com> <096da253543acc3d1aa23df22db5ce0acfc0c961.camel@intel.com>
-In-Reply-To: <096da253543acc3d1aa23df22db5ce0acfc0c961.camel@intel.com>
+References: <20181211222326.14581-1-bp@alien8.de> <20181211222326.14581-5-bp@alien8.de>
+ <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
+ <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com> <20181211233901.GV27375@zn.tnic>
+ <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
+ <20181212100814.GB6653@zn.tnic> <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
+ <20181212184459.GE6653@zn.tnic> <d7d04973d6d54a969c9324ab3240b401@AcuMS.aculab.com>
+In-Reply-To: <d7d04973d6d54a969c9324ab3240b401@AcuMS.aculab.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 15 Dec 2018 10:52:39 -0800
-X-Gmail-Original-Message-ID: <CALCETrW+5JZOQDnJ6HYkDRvMHiz+cY5HAn06SrxCxmk2XzoyDQ@mail.gmail.com>
-Message-ID: <CALCETrW+5JZOQDnJ6HYkDRvMHiz+cY5HAn06SrxCxmk2XzoyDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] vmalloc: New flags for safe vfree on special perms
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "namit@vmware.com" <namit@vmware.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
+Date:   Sat, 15 Dec 2018 10:53:32 -0800
+X-Gmail-Original-Message-ID: <CALCETrW6QgD4SLo7S+b+MgX4X4w1wAv1oJoi8px_q4+XGydyOQ@mail.gmail.com>
+Message-ID: <CALCETrW6QgD4SLo7S+b+MgX4X4w1wAv1oJoi8px_q4+XGydyOQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
+        Tom Lendacky <Thomas.Lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 2:01 PM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
+On Fri, Dec 14, 2018 at 5:39 AM David Laight <David.Laight@aculab.com> wrote:
 >
-> On Wed, 2018-12-12 at 11:57 -0800, Andy Lutomirski wrote:
-> > On Wed, Dec 12, 2018 at 11:50 AM Edgecombe, Rick P
-> > <rick.p.edgecombe@intel.com> wrote:
-> > >
-> > > On Tue, 2018-12-11 at 18:20 -0800, Andy Lutomirski wrote:
-> > > > On Tue, Dec 11, 2018 at 4:12 PM Rick Edgecombe
-> > > > <rick.p.edgecombe@intel.com> wrote:
-> > > > >
-> > > > > This adds two new flags VM_IMMEDIATE_UNMAP and VM_HAS_SPECIAL_PERMS, for
-> > > > > enabling vfree operations to immediately clear executable TLB entries to
-> > > > > freed
-> > > > > pages, and handle freeing memory with special permissions.
-> > > > >
-> > > > > In order to support vfree being called on memory that might be RO, the
-> > > > > vfree
-> > > > > deferred list node is moved to a kmalloc allocated struct, from where it
-> > > > > is
-> > > > > today, reusing the allocation being freed.
-> > > > >
-> > > > > arch_vunmap is a new __weak function that implements the actual
-> > > > > unmapping
-> > > > > and
-> > > > > resetting of the direct map permissions. It can be overridden by more
-> > > > > efficient
-> > > > > architecture specific implementations.
-> > > > >
-> > > > > For the default implementation, it uses architecture agnostic methods
-> > > > > which
-> > > > > are
-> > > > > equivalent to what most usages do before calling vfree. So now it is
-> > > > > just
-> > > > > centralized here.
-> > > > >
-> > > > > This implementation derives from two sketches from Dave Hansen and Andy
-> > > > > Lutomirski.
-> > > > >
-> > > > > Suggested-by: Dave Hansen <dave.hansen@intel.com>
-> > > > > Suggested-by: Andy Lutomirski <luto@kernel.org>
-> > > > > Suggested-by: Will Deacon <will.deacon@arm.com>
-> > > > > Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > > > > ---
-> > > > >  include/linux/vmalloc.h |  2 ++
-> > > > >  mm/vmalloc.c            | 73 +++++++++++++++++++++++++++++++++++++----
-> > > > >  2 files changed, 69 insertions(+), 6 deletions(-)
-> > > > >
-> > > > > diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> > > > > index 398e9c95cd61..872bcde17aca 100644
-> > > > > --- a/include/linux/vmalloc.h
-> > > > > +++ b/include/linux/vmalloc.h
-> > > > > @@ -21,6 +21,8 @@ struct notifier_block;                /* in notifier.h
-> > > > > */
-> > > > >  #define VM_UNINITIALIZED       0x00000020      /* vm_struct is not
-> > > > > fully
-> > > > > initialized */
-> > > > >  #define VM_NO_GUARD            0x00000040      /* don't add guard page
-> > > > > */
-> > > > >  #define VM_KASAN               0x00000080      /* has allocated kasan
-> > > > > shadow memory */
-> > > > > +#define VM_IMMEDIATE_UNMAP     0x00000200      /* flush before
-> > > > > releasing
-> > > > > pages */
-> > > > > +#define VM_HAS_SPECIAL_PERMS   0x00000400      /* may be freed with
-> > > > > special
-> > > > > perms */
-> > > > >  /* bits [20..32] reserved for arch specific ioremap internals */
-> > > > >
-> > > > >  /*
-> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > index 97d4b25d0373..02b284d2245a 100644
-> > > > > --- a/mm/vmalloc.c
-> > > > > +++ b/mm/vmalloc.c
-> > > > > @@ -18,6 +18,7 @@
-> > > > >  #include <linux/interrupt.h>
-> > > > >  #include <linux/proc_fs.h>
-> > > > >  #include <linux/seq_file.h>
-> > > > > +#include <linux/set_memory.h>
-> > > > >  #include <linux/debugobjects.h>
-> > > > >  #include <linux/kallsyms.h>
-> > > > >  #include <linux/list.h>
-> > > > > @@ -38,6 +39,11 @@
-> > > > >
-> > > > >  #include "internal.h"
-> > > > >
-> > > > > +struct vfree_work {
-> > > > > +       struct llist_node node;
-> > > > > +       void *addr;
-> > > > > +};
-> > > > > +
-> > > > >  struct vfree_deferred {
-> > > > >         struct llist_head list;
-> > > > >         struct work_struct wq;
-> > > > > @@ -50,9 +56,13 @@ static void free_work(struct work_struct *w)
-> > > > >  {
-> > > > >         struct vfree_deferred *p = container_of(w, struct
-> > > > > vfree_deferred,
-> > > > > wq);
-> > > > >         struct llist_node *t, *llnode;
-> > > > > +       struct vfree_work *cur;
-> > > > >
-> > > > > -       llist_for_each_safe(llnode, t, llist_del_all(&p->list))
-> > > > > -               __vunmap((void *)llnode, 1);
-> > > > > +       llist_for_each_safe(llnode, t, llist_del_all(&p->list)) {
-> > > > > +               cur = container_of(llnode, struct vfree_work, node);
-> > > > > +               __vunmap(cur->addr, 1);
-> > > > > +               kfree(cur);
-> > > > > +       }
-> > > > >  }
-> > > > >
-> > > > >  /*** Page table manipulation functions ***/
-> > > > > @@ -1494,6 +1504,48 @@ struct vm_struct *remove_vm_area(const void
-> > > > > *addr)
-> > > > >         return NULL;
-> > > > >  }
-> > > > >
-> > > > > +/*
-> > > > > + * This function handles unmapping and resetting the direct map as
-> > > > > efficiently
-> > > > > + * as it can with cross arch functions. The three categories of
-> > > > > architectures
-> > > > > + * are:
-> > > > > + *   1. Architectures with no set_memory implementations and no direct
-> > > > > map
-> > > > > + *      permissions.
-> > > > > + *   2. Architectures with set_memory implementations but no direct map
-> > > > > + *      permissions
-> > > > > + *   3. Architectures with set_memory implementations and direct map
-> > > > > permissions
-> > > > > + */
-> > > > > +void __weak arch_vunmap(struct vm_struct *area, int deallocate_pages)
-> > > >
-> > > > My general preference is to avoid __weak functions -- they don't
-> > > > optimize well.  Instead, I prefer either:
-> > > >
-> > > > #ifndef arch_vunmap
-> > > > void arch_vunmap(...);
-> > > > #endif
-> > > >
-> > > > or
-> > > >
-> > > > #ifdef CONFIG_HAVE_ARCH_VUNMAP
-> > > > ...
-> > > > #endif
-> > >
-> > > Ok.
-> > > >
-> > > > > +{
-> > > > > +       unsigned long addr = (unsigned long)area->addr;
-> > > > > +       int immediate = area->flags & VM_IMMEDIATE_UNMAP;
-> > > > > +       int special = area->flags & VM_HAS_SPECIAL_PERMS;
-> > > > > +
-> > > > > +       /*
-> > > > > +        * In case of 2 and 3, use this general way of resetting the
-> > > > > permissions
-> > > > > +        * on the directmap. Do NX before RW, in case of X, so there is
-> > > > > no
-> > > > > W^X
-> > > > > +        * violation window.
-> > > > > +        *
-> > > > > +        * For case 1 these will be noops.
-> > > > > +        */
-> > > > > +       if (immediate)
-> > > > > +               set_memory_nx(addr, area->nr_pages);
-> > > > > +       if (deallocate_pages && special)
-> > > > > +               set_memory_rw(addr, area->nr_pages);
-> > > >
-> > > > Can you elaborate on the intent here?  VM_IMMEDIATE_UNMAP means "I
-> > > > want that alias gone before any deallocation happens".
-> > > > VM_HAS_SPECIAL_PERMS means "I mucked with the direct map -- fix it for
-> > > > me, please".  deallocate means "this was vfree -- please free the
-> > > > pages".  I'm not convinced that all the various combinations make
-> > > > sense.  Do we really need both flags?
-> > >
-> > > VM_HAS_SPECIAL_PERMS is supposed to mean, like you said, "reset the direct
-> > > map".
-> > > Where VM_IMMEDIATE_UNMAP means, the vmalloc allocation has extra capabilties
-> > > where we don't want to leave an enhanced capability TLB entry to the freed
-> > > page.
-> > >
-> > > I was trying to pick names that could apply more generally for potential
-> > > future
-> > > special memory capabilities. Today VM_HAS_SPECIAL_PERMS does just mean reset
-> > > write to the directmap and VM_IMMEDIATE_UNMAP means vmalloc mapping is
-> > > executable.
-> > >
-> > > A present day reason for keeping both flags is, it is more efficient in the
-> > > arch-agnostic implementation when freeing memory that is just RO and not
-> > > executable. It saves a TLB flush.
-> > >
-> > > > (VM_IMMEDIATE_UNMAP is a bit of a lie, since, if in_interrupt(), it's
-> > > > not immediate.)
-> > >
-> > > True, maybe VM_MUST_FLUSH or something else?
-> > >
-> > > > If we do keep both flags, maybe some restructuring would make sense,
-> > > > like this, perhaps.  Sorry about horrible whitespace damage.
-> > > >
-> > > > if (special) {
-> > > >   /* VM_HAS_SPECIAL_PERMS makes little sense without deallocate_pages. */
-> > > >   WARN_ON_ONCE(!deallocate_pages);
-> > > >
-> > > >   if (immediate) {
-> > > >     /* It's possible that the vmap alias is X and we're about to make
-> > > > the direct map RW.  To avoid a window where executable memory is
-> > > > writable, first mark the vmap alias NX.  This is silly, since we're
-> > > > about to *unmap* it, but this is the best we can do if all we have to
-> > > > work with is the set_memory_abc() APIs.  Architectures should override
-> > > > this whole function to get better behavior. */
-> > > >     set_memory_nx(...);
-> > > >   }
-> > > >
-> > > >   set_memory_rw(addr, area->nr_pages);
-> > > > }
-> > >
-> > > Ok.
-> > >
-> > > >
-> > > > > +
-> > > > > +       /* Always actually remove the area */
-> > > > > +       remove_vm_area(area->addr);
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Need to flush the TLB before freeing pages in the case of
-> > > > > this
-> > > > > flag.
-> > > > > +        * As long as that's happening, unmap aliases.
-> > > > > +        *
-> > > > > +        * For 2 and 3, this will not be needed because of the
-> > > > > set_memory_nx
-> > > > > +        * above, because the stale TLBs will be NX.
-> > > >
-> > > > I'm not sure I agree with this comment.  If the caller asked for an
-> > > > immediate unmap, we should give an immediate unmap.  But I'm still not
-> > > > sure I see why VM_IMMEDIATE_UNMAP needs to exist as a separate flag.
-> > >
-> > > Yea. I was just trying to save a TLB flush, since for today's callers that
-> > > have
-> > > set_memory there isn't a security downside I know of to just leaving it NX.
-> > > Maybe its not worth the tradeoff of confusion? Or I can clarify that in the
-> > > comment.
+> From:  Borislav Petkov
+> > Sent: 12 December 2018 18:45
+> ...
+> > > The property I want for RDTSC ordering is much weaker: I want it to be
+> > > ordered like a load.  Imagine that, instead of an on-chip TSC, the TSC
+> > > is literally a location in main memory that gets incremented by an
+> > > extra dedicated CPU every nanosecond or so.  I want users of RDTSC to
+> > > work as if they were reading such a location in memory using an
+> > > ordinary load.  I believe this gives the real desired property that it
+> > > should be impossible to observe the TSC going backwards.  This is a
+> > > much weaker form of serialization.
 > >
-> > Don't both of the users in your series set both flags, though?  My
-> > real objection to having them be separate is that, in the absence of
-> > users, it's less clear exactly what they should do and the code
-> > doesn't get exercised.
-> The only "just RO" user today is one of the BPF allocations. I don't have a
-> strong objection to combining them, just explaining the thinking. I guess if we
-> could always add another flag later if it becomes more needed.
->
-> > If you document that VM_IMMEDIATE_UNMAP means "I want the TLB entries
-> > gone", then I can re-review the code in light of that.  But then I'm
-> > unconvinced by your generic implementation, since set_memory_nx()
-> > seems like an odd way to go about it.
-> Masami Hiramatsu pointed out if we don't do set_memory_nx before set_memory_rw,
-> then there will be a small window of W^X violation. So that was the concern for
-> the executable case, regardless of the semantics. I think the concern applies
-> for any "special capability" permissions. Alternatively, if we remove_vm_area
-> before we reset the direct map perms RW, maybe that would accomplish the same
-> thing, if that's possible in a cross arch way. Maybe this is too much designing
-> for hypothetical future... just was trying to avoid having to change the
-> interface, and could just update the generic implementation if new permissions
-> or usages come up.
->
-> The set_memory_ stuff is really only needed for arm64 which seems to be the only
-> other one with directmap permissions. So if it could eventually have its own
-> arch_vunmap then all of the set_memory_ parts could be dropped and the default
-> would just be the simple unmap then flush logic that it was originally.
-
-I think that's probably the best solution.  If there are only two
-arches that have anything fancy here, let's just fix both of them up
-for real.
-
->
-> Or we have up to three flushes for the generic version and meet the name
-> expectations and needed functionality today. I guess I'll just try that.
-> > >
-> > > > > +        */
-> > > > > +       if (immediate && !IS_ENABLED(ARCH_HAS_SET_MEMORY))
-> > > > > +               vm_unmap_aliases();
-> > > > > +}
-> > > > > +
-> > > > >  static void __vunmap(const void *addr, int deallocate_pages)
-> > > > >  {
-> > > > >         struct vm_struct *area;
-> > > > > @@ -1515,7 +1567,8 @@ static void __vunmap(const void *addr, int
-> > > > > deallocate_pages)
-> > > > >         debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
-> > > > >         debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
-> > > > >
-> > > > > -       remove_vm_area(addr);
-> > > > > +       arch_vunmap(area, deallocate_pages);
-> > > > > +
-> > > > >         if (deallocate_pages) {
-> > > > >                 int i;
-> > > > >
-> > > > > @@ -1542,8 +1595,15 @@ static inline void __vfree_deferred(const void
-> > > > > *addr)
-> > > > >          * nother cpu's list.  schedule_work() should be fine with this
-> > > > > too.
-> > > > >          */
-> > > > >         struct vfree_deferred *p = raw_cpu_ptr(&vfree_deferred);
-> > > > > +       struct vfree_work *w = kmalloc(sizeof(struct vfree_work),
-> > > > > GFP_ATOMIC);
-> > > > > +
-> > > > > +       /* If no memory for the deferred list node, give up */
-> > > > > +       if (!w)
-> > > > > +               return;
-> > > >
-> > > > That's nasty.  I see what you're trying to do here, but I think you're
-> > > > solving a problem that doesn't need solving quite so urgently.  How
-> > > > about dropping this part and replacing it with a comment like "NB:
-> > > > this writes a word to a potentially executable address.  It would be
-> > > > nice if we could avoid doing this."  And maybe a future patch could
-> > > > more robustly avoid it without risking memory leaks.
-> > >
-> > > Yea, sorry I should have called this out, because I wasn't sure on how
-> > > likely
-> > > that was to happen. I did find some other places in the kernel with the same
-> > > ignoring logic.
-> > >
-> > > I'll have to think though, I am not sure what the alternative is. Since the
-> > > memory can be RO in the module_memfree case, the old method of re-using the
-> > > allocation will no longer work. The list node could be stuffed on the
-> > > vm_struct,
-> > > but then the all of the spin_lock(&vmap_area_lock)'s need to be changed to
-> > > work
-> > > with interrupts so that the struct could be looked up. Not sure of the
-> > > implications of that. Or maybe have some slow backup that resets the
-> > > permissions
-> > > and re-uses the allocation if kmalloc fails?
-> > >
-> > > I guess it could also go back to the old v1 implementation that doesn't
-> > > handle
-> > > RO and the directmap, and leave the W^X violation window during teardown.
-> > > Then
-> > > solve that problem when modules are loaded via something like Nadav's stuff.
-> > >
+> > Well, in that case you need something new.
 > >
-> > Hmm.  Switching to spin_lock_irqsave() doesn't seem so bad to me.
-> Ok.
+> > Because, the moment you have a RDTSC in flight and a second RDTSC comes
+> > in and that second RDTSC must *not* bypass the first one and execute
+> > earlier due to OoO, you need to impose some ordering. And that's pretty
+> > much uarch-dependent, I'd say.
+> >
+> > And I guess on AMD the way to do that is to stop dispatch until the
+> > first RDTSC retires.
+> >
+> > Can it be done faster? Sure. And I'm pretty sure there's a lot of pesky
+> > little hw details we're not even hearing of, which get in the way.
+>
+> ISTR one of the problems with RDTSC serialising is that it is used
+> for micro-benchmarks.
 
-Actually, I think I have a better solution.  Just declare the
-problematic case to be illegal: say that you may not free memory with
-the new flags set while IRQs are off.  Enforce this with a VM_WARN_ON
-in the code that reads the vfree_deferred list.
+If you're benchmarking with that level of detail, you're probably
+doing RDTSC directly instead of using the vDSO.  Or, even better,
+RDPMC.
