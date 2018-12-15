@@ -3,41 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CADC43613
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51295C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CAD2208CD
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 690FD208C2
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730039AbeLOCBX (ORCPT
+        id S1730162AbeLOCBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 21:01:23 -0500
-Received: from mga05.intel.com ([192.55.52.43]:6393 "EHLO mga05.intel.com"
+        Fri, 14 Dec 2018 21:01:36 -0500
+Received: from mga02.intel.com ([134.134.136.20]:36217 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727668AbeLOCBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 21:01:22 -0500
+        id S1727668AbeLOCBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 21:01:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 18:01:21 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 18:01:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,355,1539673200"; 
-   d="scan'208";a="126105881"
+   d="scan'208";a="118697679"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga002.fm.intel.com with ESMTP; 14 Dec 2018 18:01:21 -0800
-Subject: [PATCH v5 3/5] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Dec 2018 18:01:32 -0800
+Subject: [PATCH v5 5/5] mm: Maintain randomization of page free lists
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
 Cc:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         peterz@infradead.org, linux-mm@kvack.org, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 14 Dec 2018 17:48:46 -0800
-Message-ID: <154483852617.1672629.2068988045031389440.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Fri, 14 Dec 2018 17:48:57 -0800
+Message-ID: <154483853710.1672629.8156030383787599207.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -49,600 +48,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randomization of the page allocator improves the average utilization of
-a direct-mapped memory-side-cache. Memory side caching is a platform
-capability that Linux has been previously exposed to in HPC
-(high-performance computing) environments on specialty platforms. In
-that instance it was a smaller pool of high-bandwidth-memory relative to
-higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-be found on general purpose server platforms where DRAM is a cache in
-front of higher latency persistent memory [1].
+When freeing a page with an order >= shuffle_page_order randomly select
+the front or back of the list for insertion.
 
-Robert offered an explanation of the state of the art of Linux
-interactions with memory-side-caches [2], and I copy it here:
+While the mm tries to defragment physical pages into huge pages this can
+tend to make the page allocator more predictable over time. Inject the
+front-back randomness to preserve the initial randomness established by
+shuffle_free_memory() when the kernel was booted.
 
-    It's been a problem in the HPC space:
-    http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
-
-    A kernel module called zonesort is available to try to help:
-    https://software.intel.com/en-us/articles/xeon-phi-software
-
-    and this abandoned patch series proposed that for the kernel:
-    https://lkml.org/lkml/2017/8/23/195
-
-    Dan's patch series doesn't attempt to ensure buffers won't conflict, but
-    also reduces the chance that the buffers will. This will make performance
-    more consistent, albeit slower than "optimal" (which is near impossible
-    to attain in a general-purpose kernel).  That's better than forcing
-    users to deploy remedies like:
-        "To eliminate this gradual degradation, we have added a Stream
-         measurement to the Node Health Check that follows each job;
-         nodes are rebooted whenever their measured memory bandwidth
-         falls below 300 GB/s."
-
-A replacement for zonesort was merged upstream in commit cc9aec03e58f
-"x86/numa_emulation: Introduce uniform split capability". With this
-numa_emulation capability, memory can be split into cache sized
-("near-memory" sized) numa nodes. A bind operation to such a node, and
-disabling workloads on other nodes, enables full cache performance.
-However, once the workload exceeds the cache size then cache conflicts
-are unavoidable. While HPC environments might be able to tolerate
-time-scheduling of cache sized workloads, for general purpose server
-platforms, the oversubscribed cache case will be the common case.
-
-The worst case scenario is that a server system owner benchmarks a
-workload at boot with an un-contended cache only to see that performance
-degrade over time, even below the average cache performance due to
-excessive conflicts. Randomization clips the peaks and fills in the
-valleys of cache utilization to yield steady average performance.
-
-Here are some performance impact details of the patches:
-
-1/ An Intel internal synthetic memory bandwidth measurement tool, saw a
-3X speedup in a contrived case that tries to force cache conflicts. The
-contrived cased used the numa_emulation capability to force an instance
-of the benchmark to be run in two of the near-memory sized numa nodes.
-If both instances were placed on the same emulated they would fit and
-cause zero conflicts.  While on separate emulated nodes without
-randomization they underutilized the cache and conflicted unnecessarily
-due to the in-order allocation per node.
-
-2/ A well known Java server application benchmark was run with a heap
-size that exceeded cache size by 3X. The cache conflict rate was 8% for
-the first run and degraded to 21% after page allocator aging. With
-randomization enabled the rate levelled out at 11%.
-
-3/ A MongoDB workload did not observe measurable difference in
-cache-conflict rates, but the overall throughput dropped by 7% with
-randomization in one case.
-
-4/ Mel Gorman ran his suite of performance workloads with randomization
-enabled on platforms without a memory-side-cache and saw a mix of some
-improvements and some losses [3].
-
-While there is potentially significant improvement for applications that
-depend on low latency access across a wide working-set, the performance
-may be negligible to negative for other workloads. For this reason the
-shuffle capability defaults to off unless a direct-mapped
-memory-side-cache is detected. Even then, the page_alloc.shuffle=0
-parameter can be specified to disable the randomization on those
-systems.
-
-Outside of memory-side-cache utilization concerns there is potentially
-security benefit from randomization. Some data exfiltration and
-return-oriented-programming attacks rely on the ability to infer the
-location of sensitive data objects. The kernel page allocator,
-especially early in system boot, has predictable first-in-first out
-behavior for physical pages. Pages are freed in physical address order
-when first onlined.
-
-Quoting Kees:
-    "While we already have a base-address randomization
-     (CONFIG_RANDOMIZE_MEMORY), attacks against the same hardware and
-     memory layouts would certainly be using the predictability of
-     allocation ordering (i.e. for attacks where the base address isn't
-     important: only the relative positions between allocated memory).
-     This is common in lots of heap-style attacks. They try to gain
-     control over ordering by spraying allocations, etc.
-
-     I'd really like to see this because it gives us something similar
-     to CONFIG_SLAB_FREELIST_RANDOM but for the page allocator."
-
-While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
-caches it leaves vast bulk of memory to be predictably in order
-allocated.  However, it should be noted, the concrete security benefits
-are hard to quantify, and no known CVE is mitigated by this
-randomization.
-
-Introduce shuffle_free_memory(), and its helper shuffle_zone(), to
-perform a Fisher-Yates shuffle of the page allocator 'free_area' lists
-when they are initially populated with free memory at boot and at
-hotplug time.
-
-The shuffling is done in terms of CONFIG_SHUFFLE_PAGE_ORDER sized free
-pages where the default CONFIG_SHUFFLE_PAGE_ORDER is MAX_ORDER-1 i.e.
-10, 4MB this trades off randomization granularity for time spent
-shuffling.  MAX_ORDER-1 was chosen to be minimally invasive to the page
-allocator while still showing memory-side cache behavior improvements,
-and the expectation that the security implications of finer granularity
-randomization is mitigated by CONFIG_SLAB_FREELIST_RANDOM.
-
-The performance impact of the shuffling appears to be in the noise
-compared to other memory initialization work. Also the bulk of the work
-is done in the background as a part of deferred_init_memmap().
-
-This initial randomization can be undone over time so a follow-on patch
-is introduced to inject entropy on page free decisions. It is reasonable
-to ask if the page free entropy is sufficient, but it is not enough due
-to the in-order initial freeing of pages. At the start of that process
-putting page1 in front or behind page0 still keeps them close together,
-page2 is still near page1 and has a high chance of being adjacent. As
-more pages are added ordering diversity improves, but there is still
-high page locality for the low address pages and this leads to no
-significant impact to the cache conflict rate.
-
-[1]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
-[2]: https://lkml.org/lkml/2018/9/22/54
-[3]: https://lkml.org/lkml/2018/10/12/309
+The overhead of this manipulation is constrained by only being applied
+for MAX_ORDER sized pages by default.
 
 Cc: Michal Hocko <mhocko@suse.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- include/linux/list.h   |   17 ++++
- include/linux/mm.h     |   38 +++++++++
- include/linux/mmzone.h |    4 +
- init/Kconfig           |   36 ++++++++
- mm/Makefile            |    7 +-
- mm/memblock.c          |   21 ++++-
- mm/memory_hotplug.c    |    2 
- mm/page_alloc.c        |    2 
- mm/shuffle.c           |  206 ++++++++++++++++++++++++++++++++++++++++++++++++
- 9 files changed, 329 insertions(+), 4 deletions(-)
- create mode 100644 mm/shuffle.c
+ include/linux/mm.h     |   12 ++++++++++++
+ include/linux/mmzone.h |   10 ++++++++++
+ mm/page_alloc.c        |   11 +++++++++--
+ mm/shuffle.c           |   16 ++++++++++++++++
+ 4 files changed, 47 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/list.h b/include/linux/list.h
-index edb7628e46ed..3dfb8953f241 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -150,6 +150,23 @@ static inline void list_replace_init(struct list_head *old,
- 	INIT_LIST_HEAD(old);
- }
- 
-+/**
-+ * list_swap - replace entry1 with entry2 and re-add entry1 at entry2's position
-+ * @entry1: the location to place entry2
-+ * @entry2: the location to place entry1
-+ */
-+static inline void list_swap(struct list_head *entry1,
-+			     struct list_head *entry2)
-+{
-+	struct list_head *pos = entry2->prev;
-+
-+	list_del(entry2);
-+	list_replace(entry1, entry2);
-+	if (pos == entry1)
-+		pos = entry2;
-+	list_add(entry1, pos);
-+}
-+
- /**
-  * list_del_init - deletes entry from list and reinitialize it.
-  * @entry: the element to delete from the list.
 diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5411de93a363..f9647779e82b 100644
+index 43e5a449caaf..8299267c028a 100644
 --- a/include/linux/mm.h
 +++ b/include/linux/mm.h
-@@ -2069,6 +2069,44 @@ extern void mem_init_print_info(const char *str);
- 
- extern void reserve_bootmem_region(phys_addr_t start, phys_addr_t end);
- 
-+#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
-+DECLARE_STATIC_KEY_FALSE(page_alloc_shuffle_key);
-+extern void page_alloc_shuffle_enable(void);
-+extern void __shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
-+		unsigned long end_pfn);
-+static inline void shuffle_free_memory(pg_data_t *pgdat,
-+		unsigned long start_pfn, unsigned long end_pfn)
+@@ -2088,6 +2088,13 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
+ 		return;
+ 	__shuffle_zone(z, start_pfn, end_pfn);
+ }
++
++static inline bool is_shuffle_order(int order)
 +{
 +	if (!static_branch_unlikely(&page_alloc_shuffle_key))
-+		return;
-+	__shuffle_free_memory(pgdat, start_pfn, end_pfn);
++                return false;
++	return order >= CONFIG_SHUFFLE_PAGE_ORDER;
 +}
-+
-+extern void __shuffle_zone(struct zone *z, unsigned long start_pfn,
-+		unsigned long end_pfn);
-+static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
-+		unsigned long end_pfn)
-+{
-+	if (!static_branch_unlikely(&page_alloc_shuffle_key))
-+		return;
-+	__shuffle_zone(z, start_pfn, end_pfn);
-+}
-+#else
-+static inline void shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
-+		unsigned long end_pfn)
-+{
-+}
-+
-+static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
-+		unsigned long end_pfn)
-+{
-+}
-+
-+static inline void page_alloc_shuffle_enable(void)
-+{
-+}
-+#endif
-+
- /* Free the reserved page into the buddy system, so it gets managed. */
- static inline void __free_reserved_page(struct page *page)
+ #else
+ static inline void shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
+ 		unsigned long end_pfn)
+@@ -2102,6 +2109,11 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
+ static inline void page_alloc_shuffle_enable(void)
  {
+ }
++
++static inline bool is_shuffle_order(int order)
++{
++	return false;
++}
+ #endif
+ 
+ /* Free the reserved page into the buddy system, so it gets managed. */
 diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 847705a6d0ec..eafa66d66232 100644
+index 35cc33af87f2..338929647eea 100644
 --- a/include/linux/mmzone.h
 +++ b/include/linux/mmzone.h
-@@ -1266,6 +1266,10 @@ void sparse_init(void);
- #else
- #define sparse_init()	do {} while (0)
- #define sparse_index_init(_sec, _nid)  do {} while (0)
-+static inline int pfn_present(unsigned long pfn)
-+{
-+	return 1;
-+}
- #endif /* CONFIG_SPARSEMEM */
+@@ -98,6 +98,8 @@ extern int page_group_by_mobility_disabled;
+ struct free_area {
+ 	struct list_head	free_list[MIGRATE_TYPES];
+ 	unsigned long		nr_free;
++	u64			rand;
++	u8			rand_bits;
+ };
  
- /*
-diff --git a/init/Kconfig b/init/Kconfig
-index cf5b5a0dcbc2..fa6812d995ec 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1720,6 +1720,42 @@ config SLAB_FREELIST_HARDENED
- 	  sacrifies to harden the kernel slab allocator against common
- 	  freelist exploit methods.
- 
-+config SHUFFLE_PAGE_ALLOCATOR
-+	bool "Page allocator randomization"
-+	depends on HAVE_MEMBLOCK_CACHE_INFO
-+	default SLAB_FREELIST_RANDOM
-+	help
-+	  Randomization of the page allocator improves the average
-+	  utilization of a direct-mapped memory-side-cache. See section
-+	  5.2.27 Heterogeneous Memory Attribute Table (HMAT) in the ACPI
-+	  6.2a specification for an example of how a platform advertises
-+	  the presence of a memory-side-cache. There are also incidental
-+	  security benefits as it reduces the predictability of page
-+	  allocations to compliment SLAB_FREELIST_RANDOM, but the
-+	  default granularity of shuffling on 4MB (MAX_ORDER) pages is
-+	  selected based on cache utilization benefits.
-+
-+	  While the randomization improves cache utilization it may
-+	  negatively impact workloads on platforms without a cache. For
-+	  this reason, by default, the randomization is enabled only
-+	  after runtime detection of a direct-mapped memory-side-cache.
-+	  Otherwise, the randomization may be force enabled with the
-+	  'page_alloc.shuffle' kernel command line parameter.
-+
-+	  Say Y if unsure.
-+
-+config SHUFFLE_PAGE_ORDER
-+	depends on SHUFFLE_PAGE_ALLOCATOR
-+	int "Page allocator shuffle order"
-+	range 0 10
-+	default 10
-+	help
-+	  Specify the granularity at which shuffling (randomization) is
-+	  performed. By default this is set to MAX_ORDER-1 to minimize
-+	  runtime impact of randomization and with the expectation that
-+	  SLAB_FREELIST_RANDOM mitigates heap attacks on smaller
-+	  object granularities.
-+
- config SLUB_CPU_PARTIAL
- 	default y
- 	depends on SLUB && SMP
-diff --git a/mm/Makefile b/mm/Makefile
-index d210cc9d6f80..ac5e5ba78874 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -33,7 +33,7 @@ mmu-$(CONFIG_MMU)	+= process_vm_access.o
- endif
- 
- obj-y			:= filemap.o mempool.o oom_kill.o fadvise.o \
--			   maccess.o page_alloc.o page-writeback.o \
-+			   maccess.o page-writeback.o \
- 			   readahead.o swap.o truncate.o vmscan.o shmem.o \
- 			   util.o mmzone.o vmstat.o backing-dev.o \
- 			   mm_init.o mmu_context.o percpu.o slab_common.o \
-@@ -41,6 +41,11 @@ obj-y			:= filemap.o mempool.o oom_kill.o fadvise.o \
- 			   interval_tree.o list_lru.o workingset.o \
- 			   debug.o $(mmu-y)
- 
-+# Give 'page_alloc' its own module-parameter namespace
-+page-alloc-y := page_alloc.o
-+page-alloc-$(CONFIG_SHUFFLE_PAGE_ALLOCATOR) += shuffle.o
-+
-+obj-y += page-alloc.o
- obj-y += init-mm.o
- obj-y += memblock.o
- 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 185bfd4e87bb..fd617928ccc1 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -834,8 +834,16 @@ int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
- 		return ret;
- 
- 	for (i = start_rgn; i < end_rgn; i++) {
--		type->regions[i].cache_size = cache_size;
--		type->regions[i].direct_mapped = direct_mapped;
-+		struct memblock_region *r = &type->regions[i];
-+
-+		r->cache_size = cache_size;
-+		r->direct_mapped = direct_mapped;
-+		/*
-+		 * Enable randomization for amortizing direct-mapped
-+		 * memory-side-cache conflicts.
-+		 */
-+		if (r->size > r->cache_size && r->direct_mapped)
-+			page_alloc_shuffle_enable();
- 	}
- 
- 	return 0;
-@@ -1957,9 +1965,16 @@ static unsigned long __init free_low_memory_core_early(void)
- 	 *  low ram will be on Node1
- 	 */
- 	for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end,
--				NULL)
-+				NULL) {
-+		pg_data_t *pgdat;
-+
- 		count += __free_memory_core(start, end);
- 
-+		for_each_online_pgdat(pgdat)
-+			shuffle_free_memory(pgdat, PHYS_PFN(start),
-+					PHYS_PFN(end));
-+	}
-+
- 	return count;
+ /* Used for pages not on another list */
+@@ -116,6 +118,14 @@ static inline void add_to_free_area_tail(struct page *page, struct free_area *ar
+ 	area->nr_free++;
  }
  
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 2b2b3ccbbfb5..fb17c54d47b0 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -895,6 +895,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 	zone->zone_pgdat->node_present_pages += onlined_pages;
- 	pgdat_resize_unlock(zone->zone_pgdat, &flags);
- 
-+	shuffle_zone(zone, pfn, zone_end_pfn(zone));
++#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
++/* Used to preserve page allocation order entropy */
++void add_to_free_area_random(struct page *page, struct free_area *area,
++		int migratetype);
++#else
++#define add_to_free_area_random add_to_free_area
++#endif
 +
- 	if (onlined_pages) {
- 		node_states_set_node(nid, &arg);
- 		if (need_zonelists_rebuild)
+ /* Used for pages which are on another list */
+ static inline void move_to_free_area(struct page *page, struct free_area *area,
+ 			     int migratetype)
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2ec9cc407216..a51031cf16fe 100644
+index d2f7b050bc13..62a40ad07593 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -1595,6 +1595,8 @@ static int __init deferred_init_memmap(void *data)
- 	}
- 	pgdat_resize_unlock(pgdat, &flags);
- 
-+	shuffle_zone(zone, first_init_pfn, zone_end_pfn(zone));
-+
- 	/* Sanity check that the next zone really is unpopulated */
- 	WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
- 
-diff --git a/mm/shuffle.c b/mm/shuffle.c
-new file mode 100644
-index 000000000000..621fde268d01
---- /dev/null
-+++ b/mm/shuffle.c
-@@ -0,0 +1,206 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright(c) 2018 Intel Corporation. All rights reserved.
-+
-+#include <linux/mm.h>
-+#include <linux/init.h>
-+#include <linux/mmzone.h>
+@@ -42,6 +42,7 @@
+ #include <linux/mempolicy.h>
+ #include <linux/memremap.h>
+ #include <linux/stop_machine.h>
 +#include <linux/random.h>
-+#include <linux/moduleparam.h>
-+#include "internal.h"
-+
-+DEFINE_STATIC_KEY_FALSE(page_alloc_shuffle_key);
-+static unsigned long shuffle_state;
-+enum {
-+	SHUFFLE_ENABLE,
-+	SHUFFLE_FORCE_DISABLE,
-+};
-+
-+void page_alloc_shuffle_enable(void)
-+{
-+	if (test_bit(SHUFFLE_FORCE_DISABLE, &shuffle_state)) {
-+		/*
-+		 * If platform cache auto-detect runs before module
-+		 * parameter parsing, disable the shuffle implementation
-+		 */
-+		if (test_and_clear_bit(SHUFFLE_ENABLE, &shuffle_state))
-+			static_branch_disable(&page_alloc_shuffle_key);
-+	} else if (!test_and_set_bit(SHUFFLE_ENABLE, &shuffle_state))
-+		static_branch_enable(&page_alloc_shuffle_key);
-+}
-+
-+static bool shuffle_param;
-+static int force_shuffle(const char *val, const struct kernel_param *kp)
-+{
-+	int rc = param_set_bool(val, kp);
-+
-+	if (rc < 0)
-+		return rc;
-+	if (shuffle_param)
-+		page_alloc_shuffle_enable();
+ #include <linux/sort.h>
+ #include <linux/pfn.h>
+ #include <linux/backing-dev.h>
+@@ -850,7 +851,8 @@ static inline void __free_one_page(struct page *page,
+ 	 * so it's less likely to be used soon and more likely to be merged
+ 	 * as a higher order page
+ 	 */
+-	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
++	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
++			&& !is_shuffle_order(order)) {
+ 		struct page *higher_page, *higher_buddy;
+ 		combined_pfn = buddy_pfn & pfn;
+ 		higher_page = page + (combined_pfn - pfn);
+@@ -864,7 +866,12 @@ static inline void __free_one_page(struct page *page,
+ 		}
+ 	}
+ 
+-	add_to_free_area(page, &zone->free_area[order], migratetype);
++	if (is_shuffle_order(order))
++		add_to_free_area_random(page, &zone->free_area[order],
++				migratetype);
 +	else
-+		set_bit(SHUFFLE_FORCE_DISABLE, &shuffle_state);
-+	return 0;
-+}
-+module_param_call(shuffle, force_shuffle, param_get_bool, &shuffle_param, 0400);
++		add_to_free_area(page, &zone->free_area[order], migratetype);
 +
-+/*
-+ * For two pages to be swapped in the shuffle, they must be free (on a
-+ * 'free_area' lru), have the same order, and have the same migratetype.
-+ */
-+static struct page * __meminit shuffle_valid_page(unsigned long pfn, int order)
+ }
+ 
+ /*
+diff --git a/mm/shuffle.c b/mm/shuffle.c
+index 621fde268d01..5850a0761d10 100644
+--- a/mm/shuffle.c
++++ b/mm/shuffle.c
+@@ -204,3 +204,19 @@ void __meminit __shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
+ 	for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
+ 		shuffle_zone(z, start_pfn, end_pfn);
+ }
++
++void add_to_free_area_random(struct page *page, struct free_area *area,
++		int migratetype)
 +{
-+	struct page *page;
-+
-+	/*
-+	 * Given we're dealing with randomly selected pfns in a zone we
-+	 * need to ask questions like...
-+	 */
-+
-+	/* ...is the pfn even in the memmap? */
-+	if (!pfn_valid_within(pfn))
-+		return NULL;
-+
-+	/* ...is the pfn in a present section or a hole? */
-+	if (!pfn_present(pfn))
-+		return NULL;
-+
-+	/* ...is the page free and currently on a free_area list? */
-+	page = pfn_to_page(pfn);
-+	if (!PageBuddy(page))
-+		return NULL;
-+
-+	/*
-+	 * ...is the page on the same list as the page we will
-+	 * shuffle it with?
-+	 */
-+	if (page_order(page) != order)
-+		return NULL;
-+
-+	return page;
-+}
-+
-+/*
-+ * Fisher-Yates shuffle the freelist which prescribes iterating through
-+ * an array, pfns in this case, and randomly swapping each entry with
-+ * another in the span, end_pfn - start_pfn.
-+ *
-+ * To keep the implementation simple it does not attempt to correct for
-+ * sources of bias in the distribution, like modulo bias or
-+ * pseudo-random number generator bias. I.e. the expectation is that
-+ * this shuffling raises the bar for attacks that exploit the
-+ * predictability of page allocations, but need not be a perfect
-+ * shuffle.
-+ *
-+ * Note that we don't use @z->zone_start_pfn and zone_end_pfn(@z)
-+ * directly since the caller may be aware of holes in the zone and can
-+ * improve the accuracy of the random pfn selection.
-+ */
-+#define SHUFFLE_RETRY 10
-+static void __meminit shuffle_zone_order(struct zone *z, unsigned long start_pfn,
-+		unsigned long end_pfn, const int order)
-+{
-+	unsigned long i, flags;
-+	const int order_pages = 1 << order;
-+
-+	if (start_pfn < z->zone_start_pfn)
-+		start_pfn = z->zone_start_pfn;
-+	if (end_pfn > zone_end_pfn(z))
-+		end_pfn = zone_end_pfn(z);
-+
-+	/* probably means that start/end were outside the zone */
-+	if (end_pfn <= start_pfn)
-+		return;
-+	spin_lock_irqsave(&z->lock, flags);
-+	start_pfn = ALIGN(start_pfn, order_pages);
-+	for (i = start_pfn; i < end_pfn; i += order_pages) {
-+		unsigned long j;
-+		int migratetype, retry;
-+		struct page *page_i, *page_j;
-+
-+		/*
-+		 * We expect page_i, in the sub-range of a zone being
-+		 * added (@start_pfn to @end_pfn), to more likely be
-+		 * valid compared to page_j randomly selected in the
-+		 * span @zone_start_pfn to @spanned_pages.
-+		 */
-+		page_i = shuffle_valid_page(i, order);
-+		if (!page_i)
-+			continue;
-+
-+		for (retry = 0; retry < SHUFFLE_RETRY; retry++) {
-+			/*
-+			 * Pick a random order aligned page from the
-+			 * start of the zone. Use the *whole* zone here
-+			 * so that if it is freed in tiny pieces that we
-+			 * randomize in the whole zone, not just within
-+			 * those fragments.
-+			 *
-+			 * Since page_j comes from a potentially sparse
-+			 * address range we want to try a bit harder to
-+			 * find a shuffle point for page_i.
-+			 */
-+			j = z->zone_start_pfn +
-+				ALIGN_DOWN(get_random_long() % z->spanned_pages,
-+						order_pages);
-+			page_j = shuffle_valid_page(j, order);
-+			if (page_j && page_j != page_i)
-+				break;
-+		}
-+		if (retry >= SHUFFLE_RETRY) {
-+			pr_debug("%s: failed to swap %#lx\n", __func__, i);
-+			continue;
-+		}
-+
-+		/*
-+		 * Each migratetype corresponds to its own list, make
-+		 * sure the types match otherwise we're moving pages to
-+		 * lists where they do not belong.
-+		 */
-+		migratetype = get_pageblock_migratetype(page_i);
-+		if (get_pageblock_migratetype(page_j) != migratetype) {
-+			pr_debug("%s: migratetype mismatch %#lx\n", __func__, i);
-+			continue;
-+		}
-+
-+		list_swap(&page_i->lru, &page_j->lru);
-+
-+		pr_debug("%s: swap: %#lx -> %#lx\n", __func__, i, j);
-+
-+		/* take it easy on the zone lock */
-+		if ((i % (100 * order_pages)) == 0) {
-+			spin_unlock_irqrestore(&z->lock, flags);
-+			cond_resched();
-+			spin_lock_irqsave(&z->lock, flags);
-+		}
++	if (area->rand_bits == 0) {
++		area->rand_bits = 64;
++		area->rand = get_random_u64();
 +	}
-+	spin_unlock_irqrestore(&z->lock, flags);
-+}
 +
-+void __meminit __shuffle_zone(struct zone *z, unsigned long start_pfn,
-+               unsigned long end_pfn)
-+{
-+       int i;
-+
-+       /* shuffle all the orders at the specified order and higher */
-+       for (i = CONFIG_SHUFFLE_PAGE_ORDER; i < MAX_ORDER; i++)
-+               shuffle_zone_order(z, start_pfn, end_pfn, i);
-+}
-+
-+/**
-+ * shuffle_free_memory - reduce the predictability of the page allocator
-+ * @pgdat: node page data
-+ * @start_pfn: Limit the shuffle to the greater of this value or zone start
-+ * @end_pfn: Limit the shuffle to the less of this value or zone end
-+ *
-+ * While shuffle_zone() attempts to avoid holes with pfn_valid() and
-+ * pfn_present() they can not report sub-section sized holes. @start_pfn
-+ * and @end_pfn limit the shuffle to the exact memory pages being freed.
-+ */
-+void __meminit __shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
-+		unsigned long end_pfn)
-+{
-+	struct zone *z;
-+
-+	for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
-+		shuffle_zone(z, start_pfn, end_pfn);
++	if (area->rand & 1)
++		add_to_free_area(page, area, migratetype);
++	else
++		add_to_free_area_tail(page, area, migratetype);
++	area->rand_bits--;
++	area->rand >>= 1;
 +}
 
