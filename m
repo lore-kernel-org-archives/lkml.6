@@ -2,47 +2,47 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495C2C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB70C43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7B4206E0
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30C00208C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 02:01:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbeLOCBH (ORCPT
+        id S1729975AbeLOCBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 21:01:07 -0500
-Received: from mga02.intel.com ([134.134.136.20]:36104 "EHLO mga02.intel.com"
+        Fri, 14 Dec 2018 21:01:20 -0500
+Received: from mga18.intel.com ([134.134.136.126]:24924 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727668AbeLOCBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 21:01:06 -0500
+        id S1727668AbeLOCBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 21:01:20 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 18:01:05 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 18:01:16 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,355,1539673200"; 
-   d="scan'208";a="118505194"
+   d="scan'208";a="302342411"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga002.jf.intel.com with ESMTP; 14 Dec 2018 18:01:05 -0800
-Subject: [PATCH v5 0/5] mm: Randomize free memory
+  by fmsmga006.fm.intel.com with ESMTP; 14 Dec 2018 18:01:16 -0800
+Subject: [PATCH v5 2/5] acpi/numa: Set the memory-side-cache size in
+ memblocks
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        Michal Hocko <mhocko@suse.com>,
+Cc:     x86@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andy Lutomirski <luto@kernel.org>, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
         x86@kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 14 Dec 2018 17:48:30 -0800
-Message-ID: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Fri, 14 Dec 2018 17:48:40 -0800
+Message-ID: <154483852084.1672629.6281294122517430332.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -52,115 +52,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes since v4: [1]
-* Default the randomization to off and enable it dynamically based on
-  the detection of a memory side cache advertised by platform firmware.
-  In the case of x86 this enumeration comes from the ACPI HMAT. (Michal
-  and Mel)
-* Improve the changelog of the patch that introduces the shuffling to
-  clarify the motivation and better explain the tradeoffs. (Michal and
-  Mel)
-* Include the required HMAT enabling in the series.
+From: Keith Busch <keith.busch@intel.com>
 
-[1]: https://lkml.kernel.org/r/153922180166.838512.8260339805733812034.stgit@dwillia2-desk3.amr.corp.intel.com
+Add memblock based enumeration of memory-side-cache of System RAM.
+Detect the capability in early init through HMAT tables, and set the
+size in the address range memblocks if a direct mapped side cache is
+present.
 
+Cc: <x86@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
+ arch/x86/Kconfig         |    1 +
+ drivers/acpi/numa.c      |   32 ++++++++++++++++++++++++++++++++
+ include/linux/memblock.h |   36 ++++++++++++++++++++++++++++++++++++
+ mm/Kconfig               |    3 +++
+ mm/memblock.c            |   20 ++++++++++++++++++++
+ 5 files changed, 92 insertions(+)
 
-Quote patch 3:
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8689e794a43c..3f9c413d8eb5 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -171,6 +171,7 @@ config X86
+ 	select HAVE_KVM
+ 	select HAVE_LIVEPATCH			if X86_64
+ 	select HAVE_MEMBLOCK_NODE_MAP
++	select HAVE_MEMBLOCK_CACHE_INFO		if ACPI_NUMA
+ 	select HAVE_MIXED_BREAKPOINTS_REGS
+ 	select HAVE_MOD_ARCH_SPECIFIC
+ 	select HAVE_NMI
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index f5e09c39ff22..ec7e849f1c19 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -40,6 +40,12 @@ static int pxm_to_node_map[MAX_PXM_DOMAINS]
+ static int node_to_pxm_map[MAX_NUMNODES]
+ 			= { [0 ... MAX_NUMNODES - 1] = PXM_INVAL };
+ 
++struct mem_cacheinfo {
++	phys_addr_t size;
++	bool direct_mapped;
++};
++static struct mem_cacheinfo side_cached_pxms[MAX_PXM_DOMAINS] __initdata;
++
+ unsigned char acpi_srat_revision __initdata;
+ int acpi_numa __initdata;
+ 
+@@ -262,6 +268,8 @@ acpi_numa_memory_affinity_init(struct acpi_srat_mem_affinity *ma)
+ 	u64 start, end;
+ 	u32 hotpluggable;
+ 	int node, pxm;
++	u64 cache_size;
++	bool direct;
+ 
+ 	if (srat_disabled())
+ 		goto out_err;
+@@ -308,6 +316,13 @@ acpi_numa_memory_affinity_init(struct acpi_srat_mem_affinity *ma)
+ 		pr_warn("SRAT: Failed to mark hotplug range [mem %#010Lx-%#010Lx] in memblock\n",
+ 			(unsigned long long)start, (unsigned long long)end - 1);
+ 
++	cache_size = side_cached_pxms[pxm].size;
++	direct = side_cached_pxms[pxm].direct_mapped;
++	if (cache_size &&
++	    memblock_set_sidecache(start, ma->length, cache_size, direct))
++		pr_warn("SRAT: Failed to mark side cached range [mem %#010Lx-%#010Lx] in memblock\n",
++			(unsigned long long)start, (unsigned long long)end - 1);
++
+ 	max_possible_pfn = max(max_possible_pfn, PFN_UP(end - 1));
+ 
+ 	return 0;
+@@ -411,6 +426,18 @@ acpi_parse_memory_affinity(union acpi_subtable_headers * header,
+ 	return 0;
+ }
+ 
++static int __init
++acpi_parse_cache(union acpi_subtable_headers *header, const unsigned long end)
++{
++	struct acpi_hmat_cache *c = (void *)header;
++	u32 attrs = (c->cache_attributes & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8;
++
++	if (attrs == ACPI_HMAT_CA_DIRECT_MAPPED)
++		side_cached_pxms[c->memory_PD].direct_mapped = true;
++	side_cached_pxms[c->memory_PD].size += c->cache_size;
++	return 0;
++}
++
+ static int __init acpi_parse_srat(struct acpi_table_header *table)
+ {
+ 	struct acpi_table_srat *srat = (struct acpi_table_srat *)table;
+@@ -460,6 +487,11 @@ int __init acpi_numa_init(void)
+ 					sizeof(struct acpi_table_srat),
+ 					srat_proc, ARRAY_SIZE(srat_proc), 0);
+ 
++		acpi_table_parse_entries(ACPI_SIG_HMAT,
++					 sizeof(struct acpi_table_hmat),
++					 ACPI_HMAT_TYPE_CACHE,
++					 acpi_parse_cache, 0);
++
+ 		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
+ 					    acpi_parse_memory_affinity, 0);
+ 	}
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index aee299a6aa76..169ed3dd456d 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -60,6 +60,10 @@ struct memblock_region {
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	int nid;
+ #endif
++#ifdef CONFIG_HAVE_MEMBLOCK_CACHE_INFO
++	phys_addr_t cache_size;
++	bool direct_mapped;
++#endif
+ };
+ 
+ /**
+@@ -317,6 +321,38 @@ static inline int memblock_get_region_node(const struct memblock_region *r)
+ }
+ #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+ 
++#ifdef CONFIG_HAVE_MEMBLOCK_CACHE_INFO
++int memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
++			   phys_addr_t cache_size, bool direct_mapped);
++
++static inline bool memblock_sidecache_direct_mapped(struct memblock_region *m)
++{
++	return m->direct_mapped;
++}
++
++static inline phys_addr_t memblock_sidecache_size(struct memblock_region *m)
++{
++	return m->cache_size;
++}
++#else
++static inline int memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
++					 phys_addr_t cache_size,
++					 bool direct_mapped)
++{
++	return 0;
++}
++
++static inline phys_addr_t memblock_sidecache_size(struct memblock_region *m)
++{
++	return 0;
++}
++
++static inline bool memblock_sidecache_direct_mapped(struct memblock_region *m)
++{
++	return false;
++}
++#endif /* CONFIG_HAVE_MEMBLOCK_CACHE_INFO */
++
+ /* Flags for memblock allocation APIs */
+ #define MEMBLOCK_ALLOC_ANYWHERE	(~(phys_addr_t)0)
+ #define MEMBLOCK_ALLOC_ACCESSIBLE	0
+diff --git a/mm/Kconfig b/mm/Kconfig
+index d85e39da47ae..c7944299a89e 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -142,6 +142,9 @@ config ARCH_DISCARD_MEMBLOCK
+ config MEMORY_ISOLATION
+ 	bool
+ 
++config HAVE_MEMBLOCK_CACHE_INFO
++	bool
++
+ #
+ # Only be set on architectures that have completely implemented memory hotplug
+ # feature. If you are not sure, don't touch it.
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 9a2d5ae81ae1..185bfd4e87bb 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -822,6 +822,26 @@ int __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
+ 	return memblock_add_range(&memblock.reserved, base, size, MAX_NUMNODES, 0);
+ }
+ 
++#ifdef CONFIG_HAVE_MEMBLOCK_CACHE_INFO
++int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
++			   phys_addr_t cache_size, bool direct_mapped)
++{
++	struct memblock_type *type = &memblock.memory;
++	int i, ret, start_rgn, end_rgn;
++
++	ret = memblock_isolate_range(type, base, size, &start_rgn, &end_rgn);
++	if (ret)
++		return ret;
++
++	for (i = start_rgn; i < end_rgn; i++) {
++		type->regions[i].cache_size = cache_size;
++		type->regions[i].direct_mapped = direct_mapped;
++	}
++
++	return 0;
++}
++#endif
++
+ /**
+  * memblock_setclr_flag - set or clear flag for a memory region
+  * @base: base address of the region
 
-Randomization of the page allocator improves the average utilization of
-a direct-mapped memory-side-cache. Memory side caching is a platform
-capability that Linux has been previously exposed to in HPC
-(high-performance computing) environments on specialty platforms. In
-that instance it was a smaller pool of high-bandwidth-memory relative to
-higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-be found on general purpose server platforms where DRAM is a cache in
-front of higher latency persistent memory [2].
-
-Robert offered an explanation of the state of the art of Linux
-interactions with memory-side-caches [3], and I copy it here:
-
-    It's been a problem in the HPC space:
-    http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
-
-    A kernel module called zonesort is available to try to help:
-    https://software.intel.com/en-us/articles/xeon-phi-software
-
-    and this abandoned patch series proposed that for the kernel:
-    https://lkml.org/lkml/2017/8/23/195
-
-    Dan's patch series doesn't attempt to ensure buffers won't conflict, but
-    also reduces the chance that the buffers will. This will make performance
-    more consistent, albeit slower than "optimal" (which is near impossible
-    to attain in a general-purpose kernel).  That's better than forcing
-    users to deploy remedies like:
-        "To eliminate this gradual degradation, we have added a Stream
-         measurement to the Node Health Check that follows each job;
-         nodes are rebooted whenever their measured memory bandwidth
-         falls below 300 GB/s."
-
-A replacement for zonesort was merged upstream in commit cc9aec03e58f
-"x86/numa_emulation: Introduce uniform split capability". With this
-numa_emulation capability, memory can be split into cache sized
-("near-memory" sized) numa nodes. A bind operation to such a node, and
-disabling workloads on other nodes, enables full cache performance.
-However, once the workload exceeds the cache size then cache conflicts
-are unavoidable. While HPC environments might be able to tolerate
-time-scheduling of cache sized workloads, for general purpose server
-platforms, the oversubscribed cache case will be the common case.
-
-The worst case scenario is that a server system owner benchmarks a
-workload at boot with an un-contended cache only to see that performance
-degrade over time, even below the average cache performance due to
-excessive conflicts. Randomization clips the peaks and fills in the
-valleys of cache utilization to yield steady average performance.
-
-See patch 3 for more details.
-
-[2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
-[3]: https://lkml.org/lkml/2018/9/22/54
-
----                                                                                        
-                                                                                           
-Dan Williams (3):
-      mm: Shuffle initial free memory to improve memory-side-cache utilization
-      mm: Move buddy list manipulations into helpers
-      mm: Maintain randomization of page free lists
-
-Keith Busch (2):
-      acpi: Create subtable parsing infrastructure
-      acpi/numa: Set the memory-side-cache size in memblocks
-
-
- arch/ia64/kernel/acpi.c                       |   12 +
- arch/x86/Kconfig                              |    1 
- arch/x86/kernel/acpi/boot.c                   |   36 ++--
- drivers/acpi/numa.c                           |   48 +++++
- drivers/acpi/scan.c                           |    4 
- drivers/acpi/tables.c                         |   67 ++++++--
- drivers/irqchip/irq-gic-v2m.c                 |    2 
- drivers/irqchip/irq-gic-v3-its-pci-msi.c      |    2 
- drivers/irqchip/irq-gic-v3-its-platform-msi.c |    2 
- drivers/irqchip/irq-gic-v3-its.c              |    6 -
- drivers/irqchip/irq-gic-v3.c                  |    8 -
- drivers/irqchip/irq-gic.c                     |    4 
- drivers/mailbox/pcc.c                         |    2 
- include/linux/acpi.h                          |    5 -
- include/linux/list.h                          |   17 ++
- include/linux/memblock.h                      |   36 ++++
- include/linux/mm.h                            |   53 ++++++
- include/linux/mm_types.h                      |    3 
- include/linux/mmzone.h                        |   65 +++++++
- init/Kconfig                                  |   36 ++++
- mm/Kconfig                                    |    3 
- mm/Makefile                                   |    7 +
- mm/compaction.c                               |    4 
- mm/memblock.c                                 |   37 ++++
- mm/memory_hotplug.c                           |    2 
- mm/page_alloc.c                               |   81 ++++-----
- mm/shuffle.c                                  |  222 +++++++++++++++++++++++++
- 27 files changed, 657 insertions(+), 108 deletions(-)
- create mode 100644 mm/shuffle.c
-
---
-Signature
