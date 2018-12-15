@@ -2,162 +2,286 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EC5C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 14:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DDFC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 14:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE6892084D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 14:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79DA7206C2
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 14:45:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uchuujin.de header.i=@uchuujin.de header.b="kNFt8RCJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzdZV67P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbeLOOkw (ORCPT
+        id S1730290AbeLOOpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 09:40:52 -0500
-Received: from static.85-10-192-230.clients.your-server.de ([85.10.192.230]:58833
-        "EHLO mxout.uchuujin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729687AbeLOOkv (ORCPT
+        Sat, 15 Dec 2018 09:45:36 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42000 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729707AbeLOOpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 09:40:51 -0500
-X-Greylist: delayed 365 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Dec 2018 09:40:50 EST
-Received: by neutronstar.dyndns.org (Postfix, from userid 1000)
-        id 73EA41430BAF0; Sat, 15 Dec 2018 15:35:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=uchuujin.de; s=h;
-        t=1544884530; bh=ktVaweSJBGbotv4bGWuEgtAOxgFdU0L9s5IYQMXXwAQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kNFt8RCJUzwE1kqN6IlFnng2FOiaBgHwC4IVbL+yr9oz8OrTYh3d3otUeWVutLg4g
-         jcQT+xSMVasuZYLyMm0CZ5T/S1u8tTYpcpZceLlTdYuTexLx+cMwNvzojLrsrMctLh
-         wdPJR7wjt6K7z9+7JChZSURHzuguv1xitQjoSoUMU9iDgtleStNNVhw9J9eqbwYutg
-         f/E9HK/VFEjLtF/Nfd2JBoi5RRaIhbMCbR4jOzqdt1fbmJAKoTPxRlWKn+pf1YzPNi
-         s0s7mNHYcrq9u8/YCbbEPSivHI1NTA7wwKZgN4pp8S76LiZW5+jGcm5RTmna8gopwo
-         U/Mm518fCKj5w==
-From:   Martin Hostettler <textshell@uchuujin.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Egmont Koblinger <egmont@gmail.com>,
-        Martin Hostettler <textshell@uchuujin.de>
-Subject: [PATCH 1/4] vt: refactor vc_ques to allow of other private sequences.
-Date:   Sat, 15 Dec 2018 15:34:20 +0100
-Message-Id: <20181215143423.4556-2-textshell@uchuujin.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181215143423.4556-1-textshell@uchuujin.de>
-References: <20181215143423.4556-1-textshell@uchuujin.de>
+        Sat, 15 Dec 2018 09:45:36 -0500
+Received: by mail-io1-f68.google.com with SMTP id x6so6752751ioa.9;
+        Sat, 15 Dec 2018 06:45:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qHIDoG5AdbQv/fstTC9sMSX2gCkXtzFVIfn1LvrGk80=;
+        b=RzdZV67P2kRyieS8T5TWL6S5/fuZbS1szooZOl+84x0b/TbZh5Nle88ADlWyERYNZL
+         cYbqZwc3t5vaaUu9IxBqytLUl2CXOOXS8VMVPY2yvKs/HHBG2cIPYRH5HUVSJ9Tv9Pd1
+         vqQIWL0CKxspyAizY7G3tCEX8n6plE7sLH979mEQjk1q+5xFCk25Rjc1Fb6YiKVX1CIP
+         pl2OOZH6hf66SBT8BYHDtfUWs/V1t5CHFVMnZETBFWyw9c93TQjO6C71Uhro4lDJlb09
+         PnOI+O/+B8M/GLESy/Ad+giB6pZaZ6XqZ4Q0IWZ3GknTE+EwhpEBOtRpsGePIw64IgDY
+         YBWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qHIDoG5AdbQv/fstTC9sMSX2gCkXtzFVIfn1LvrGk80=;
+        b=cVLD35HZz3VQmzLz1Oaj7HvjTvzoCHrDgeC4aMoaEtq4S894FAhfoImntVFLBtF3tE
+         DNPhFYH7urGNUiQUAZfnrLDtbIOEh9+A1a8u9JTi5FB5lVP9Nmh9Adbhhny0QAFieqc5
+         wlpUPukyTgwgZoX+cYWgFy26f9YxZ6x94jHVNluWSpep8hs52GEYnyN56jo+HI8YaMAX
+         QqDi9oWqf0alxhiu63xB8aNaknfniaqqwN39zvCjVhvJPZxG0DKVwut4qyaX6GmnMco3
+         K7wu6ibFwCS+vrqaJnTG9iFziHJCpo5z5d027z6tFFjPipIqif06wPUCcB8PNFSNMJg+
+         AHyQ==
+X-Gm-Message-State: AA+aEWZDkmLBwOawnvaz2qDmh410p99F2v1uGYpsyExYthqBWNvfkd0J
+        4dRfZQ0OjrvBlpd8ojzLiRiQ3zmx4rrJeIL1KEE=
+X-Google-Smtp-Source: AFSGD/XGqtOnxx+9YXOod/Onz0L/L8p3+UIL3Itn8NQVUP08sQfAtk+7tDS8HDSJbqdA559CvFjeT7gVgiiMrD6AfAo=
+X-Received: by 2002:a6b:600b:: with SMTP id r11mr6271284iog.259.1544885133732;
+ Sat, 15 Dec 2018 06:45:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20181205004228.10714-1-peter.hutterer@who-t.net>
+ <20181205004228.10714-8-peter.hutterer@who-t.net> <CAM4jgCqAh9Pck-9i8F5tO4-Kzpu+SjH-mQnGYThadSf-3b1ikw@mail.gmail.com>
+ <CA+jURcuhBRYiqFYHDgK8dDycrPgvzkujTRZfnmYraiHvwE+e6w@mail.gmail.com>
+In-Reply-To: <CA+jURcuhBRYiqFYHDgK8dDycrPgvzkujTRZfnmYraiHvwE+e6w@mail.gmail.com>
+From:   =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>
+Date:   Sat, 15 Dec 2018 15:45:21 +0100
+Message-ID: <CAM4jgCo483upCJWUnpP45zh2LzQWqAZmQREf2622p49a1vbnnA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] HID: logitech: Enable high-resolution scrolling on
+ Logitech mice
+To:     Harry Cutts <hcutts@chromium.org>
+Cc:     Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input <linux-input@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, torvalds@linux-foundation.org,
+        Nestor Lopez Casado <nlopezcasad@logitech.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vc_ques keeps track if a csi sequence is a private DEC control
-function beginning with '?'. Nowadays some private control functions
-begin with '>' and '='. Switch the code to instead use a new 3-bit
-vc_priv that allows for all private use parameter prefixes.
+Le ven. 14 d=C3=A9c. 2018 =C3=A0 19:37, Harry Cutts <hcutts@chromium.org> a=
+ =C3=A9crit :
+>
+> Hi Clement,
+>
+> On Fri, 14 Dec 2018 at 05:47, Cl=C3=A9ment VUCHENER
+> <clement.vuchener@gmail.com> wrote:
+> > Hi, The G500s (and the G500 too, I think) does support the "scrolling
+> > acceleration" bit. If I set it, I get around 8 events for each wheel
+> > "click", this is what this driver expects, right? If I understood
+> > correctly, I should try this patch with the
+> > HIDPP_QUIRK_HI_RES_SCROLL_1P0 quirk set for my mouse.
+>
+> Thanks for the info! Yes, that should work.
 
-Signed-off-by: Martin Hostettler <textshell@uchuujin.de>
----
- drivers/tty/vt/vt.c            | 20 +++++++++++---------
- include/linux/console_struct.h |  2 +-
- 2 files changed, 12 insertions(+), 10 deletions(-)
+Well, it is not that simple. I get "Device not connected" errors for
+both interfaces of the mouse.
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 41ec8e5010f3..75826a97b0c3 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1341,6 +1341,8 @@ struct vc_data *vc_deallocate(unsigned int currcons)
-  *	VT102 emulator
-  */
- 
-+enum { EPecma = 0, EPdec, EPeq, EPgt, EPlt};
-+
- #define set_kbd(vc, x)	vt_set_kbd_mode_bit((vc)->vc_num, (x))
- #define clr_kbd(vc, x)	vt_clr_kbd_mode_bit((vc)->vc_num, (x))
- #define is_kbd(vc, x)	vt_get_kbd_mode_bit((vc)->vc_num, (x))
-@@ -1814,7 +1816,7 @@ static void set_mode(struct vc_data *vc, int on_off)
- 	int i;
- 
- 	for (i = 0; i <= vc->vc_npar; i++)
--		if (vc->vc_ques) {
-+		if (vc->vc_priv == EPdec) {
- 			switch(vc->vc_par[i]) {	/* DEC private modes set/reset */
- 			case 1:			/* Cursor keys send ^[Ox/^[[x */
- 				if (on_off)
-@@ -2030,7 +2032,7 @@ static void reset_terminal(struct vc_data *vc, int do_clear)
- 	vc->vc_top		= 0;
- 	vc->vc_bottom		= vc->vc_rows;
- 	vc->vc_state		= ESnormal;
--	vc->vc_ques		= 0;
-+	vc->vc_priv		= EPecma;
- 	vc->vc_translate	= set_translate(LAT1_MAP, vc);
- 	vc->vc_G0_charset	= LAT1_MAP;
- 	vc->vc_G1_charset	= GRAF_MAP;
-@@ -2233,8 +2235,8 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
- 			vc->vc_state=ESfunckey;
- 			return;
- 		}
--		vc->vc_ques = (c == '?');
--		if (vc->vc_ques)
-+		vc->vc_priv = (c == '?') ? EPdec : EPecma;
-+		if (vc->vc_priv != EPecma)
- 			return;
- 	case ESgetpars:
- 		if (c == ';' && vc->vc_npar < NPAR - 1) {
-@@ -2254,7 +2256,7 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
- 			set_mode(vc, 0);
- 			return;
- 		case 'c':
--			if (vc->vc_ques) {
-+			if (vc->vc_priv == EPdec) {
- 				if (vc->vc_par[0])
- 					vc->vc_cursor_type = vc->vc_par[0] | (vc->vc_par[1] << 8) | (vc->vc_par[2] << 16);
- 				else
-@@ -2263,7 +2265,7 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
- 			}
- 			break;
- 		case 'm':
--			if (vc->vc_ques) {
-+			if (vc->vc_priv == EPdec) {
- 				clear_selection();
- 				if (vc->vc_par[0])
- 					vc->vc_complement_mask = vc->vc_par[0] << 8 | vc->vc_par[1];
-@@ -2273,7 +2275,7 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
- 			}
- 			break;
- 		case 'n':
--			if (!vc->vc_ques) {
-+			if (vc->vc_priv == EPecma) {
- 				if (vc->vc_par[0] == 5)
- 					status_report(tty);
- 				else if (vc->vc_par[0] == 6)
-@@ -2281,8 +2283,8 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
- 			}
- 			return;
- 		}
--		if (vc->vc_ques) {
--			vc->vc_ques = 0;
-+		if (vc->vc_priv != EPecma) {
-+			vc->vc_priv = EPecma;
- 			return;
- 		}
- 		switch(c) {
-diff --git a/include/linux/console_struct.h b/include/linux/console_struct.h
-index ab137f97ecbd..ed798e114663 100644
---- a/include/linux/console_struct.h
-+++ b/include/linux/console_struct.h
-@@ -119,7 +119,7 @@ struct vc_data {
- 	unsigned int	vc_s_blink	: 1;
- 	unsigned int	vc_s_reverse	: 1;
- 	/* misc */
--	unsigned int	vc_ques		: 1;
-+	unsigned int	vc_priv		: 3;
- 	unsigned int	vc_need_wrap	: 1;
- 	unsigned int	vc_can_do_color	: 1;
- 	unsigned int	vc_report_mouse : 2;
--- 
-2.11.0
+logitech-hidpp-device 0003:046D:C24E.000E: Device not connected
+logitech-hidpp-device 0003:046D:C24E.000F: Device not connected
 
+Here is the usbmon trace when connecting a G500s:
+
+0cd42cc0 3.313741 C Ii:3:001:1 0:2048 1 =3D
+    04
+0cd42cc0 3.313750 S Ii:3:001:1 -:2048 4 <
+17b49a80 3.313764 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.313775 C Ci:3:001:0 0 4 =3D
+    01010100
+17b49a80 3.313781 S Co:3:001:0 s 23 01 0010 0002 0000 0
+17b49a80 3.313789 C Co:3:001:0 0 0
+17b49a80 3.313792 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.313797 C Ci:3:001:0 0 4 =3D
+    01010000
+17b49a80 3.340415 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.340438 C Ci:3:001:0 0 4 =3D
+    01010000
+17b49a80 3.367434 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.367448 C Ci:3:001:0 0 4 =3D
+    01010000
+17b49a80 3.394434 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.394449 C Ci:3:001:0 0 4 =3D
+    01010000
+17b49a80 3.421416 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.421431 C Ci:3:001:0 0 4 =3D
+    01010000
+17b49a80 3.421690 S Co:3:001:0 s 23 03 0004 0002 0000 0
+17b49a80 3.421707 C Co:3:001:0 0 0
+17b49a80 3.483421 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b49a80 3.483436 C Ci:3:001:0 0 4 =3D
+    11010000
+17b499c0 3.545429 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b499c0 3.545442 C Ci:3:001:0 0 4 =3D
+    03011000
+17b499c0 3.545448 S Co:3:001:0 s 23 01 0014 0002 0000 0
+17b499c0 3.545456 C Co:3:001:0 0 0
+17b499c0 3.597659 S Ci:3:000:0 s 80 06 0100 0000 0040 64 <
+17b499c0 3.597851 C Ci:3:000:0 0 8 =3D
+    12010002 00000008
+17b499c0 3.597870 S Co:3:001:0 s 23 03 0004 0002 0000 0
+17b499c0 3.597884 C Co:3:001:0 0 0
+17b499c0 3.659419 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b499c0 3.659434 C Ci:3:001:0 0 4 =3D
+    11010000
+17b499c0 3.721421 S Ci:3:001:0 s a3 00 0000 0002 0004 4 <
+17b499c0 3.721435 C Ci:3:001:0 0 4 =3D
+    03011000
+17b499c0 3.721442 S Co:3:001:0 s 23 01 0014 0002 0000 0
+17b499c0 3.721451 C Co:3:001:0 0 0
+17b49600 3.788420 S Ci:3:007:0 s 80 06 0100 0000 0012 18 <
+17b49600 3.788897 C Ci:3:007:0 0 18 =3D
+    12010002 00000008 6d044ec2 01840102 0301
+     . . . .  . . . .  m . N .  . . . .  . .
+17b49600 3.788920 S Ci:3:007:0 s 80 06 0600 0000 000a 10 <
+17b49600 3.789057 C Ci:3:007:0 -32 0
+17b49600 3.789092 S Ci:3:007:0 s 80 06 0600 0000 000a 10 <
+17b49600 3.789438 C Ci:3:007:0 -32 0
+17b49600 3.789459 S Ci:3:007:0 s 80 06 0600 0000 000a 10 <
+17b49600 3.789827 C Ci:3:007:0 -32 0
+17b49600 3.789850 S Ci:3:007:0 s 80 06 0200 0000 0009 9 <
+17b49600 3.790272 C Ci:3:007:0 0 9 =3D
+    09023b00 020104a0 31
+     . . ; .  . . . .  1
+17b49600 3.790285 S Ci:3:007:0 s 80 06 0200 0000 003b 59 <
+17b49600 3.791004 C Ci:3:007:0 0 59 =3D
+    09023b00 020104a0 31090400 00010301 02000921 11010001 22430007 05810308
+     . . ; .  . . . .  1 . . .  . . . .  . . . !  . . . .  " C . .  . . . .
+17b49600 3.791021 S Ci:3:007:0 s 80 06 0300 0000 00ff 255 <
+17b49600 3.791203 C Ci:3:007:0 0 4 =3D
+    04030904
+17b49600 3.791212 S Ci:3:007:0 s 80 06 0302 0409 00ff 255 <
+17b49600 3.791829 C Ci:3:007:0 0 50 =3D
+    32034700 35003000 30007300 20004c00 61007300 65007200 20004700 61006d00
+     2 . G .  5 . 0 .  0 . s .    . L .  a . s .  e . r .    . G .  a . m .
+17b49600 3.791844 S Ci:3:007:0 s 80 06 0301 0409 00ff 255 <
+17b49600 3.792141 C Ci:3:007:0 0 18 =3D
+    12034c00 6f006700 69007400 65006300 6800
+     . . L .  o . g .  i . t .  e . c .  h .
+17b49600 3.792154 S Ci:3:007:0 s 80 06 0303 0409 00ff 255 <
+17b49600 3.792563 C Ci:3:007:0 0 30 =3D
+    1e033300 34004500 31003300 38003500 30003800 36003000 30003000 3900
+     . . 3 .  4 . E .  1 . 3 .  8 . 5 .  0 . 8 .  6 . 0 .  0 . 0 .  9 .
+17b49300 3.795944 S Co:3:007:0 s 00 09 0001 0000 0000 0
+17b49300 3.795998 C Co:3:007:0 0 0
+17b49300 3.796025 S Ci:3:007:0 s 80 06 0304 0409 00ff 255 <
+17b49300 3.796392 C Ci:3:007:0 0 26 =3D
+    1a035500 38003400 2e003000 31005f00 42003000 30003000 3900
+     . . U .  8 . 4 .  . . 0 .  1 . _ .  B . 0 .  0 . 0 .  9 .
+17b49900 3.796473 S Ci:3:007:0 s 80 06 0303 0409 00ff 255 <
+17b49900 3.796883 C Ci:3:007:0 0 30 =3D
+    1e033300 34004500 31003300 38003500 30003800 36003000 30003000 3900
+     . . 3 .  4 . E .  1 . 3 .  8 . 5 .  0 . 8 .  6 . 0 .  0 . 0 .  9 .
+17b49900 3.796914 S Co:3:007:0 s 21 0a 0000 0000 0000 0
+17b49900 3.797027 C Co:3:007:0 -32 0
+17b49900 3.797056 S Ci:3:007:0 s 81 06 2200 0000 0043 67 <
+17b49900 3.798055 C Ci:3:007:0 0 67 =3D
+    05010902 a1010901 a1000509 19012910 15002501 95107501 81020501 16018026
+     . . . .  . . . .  . . . .  . . ) .  . . % .  . . u .  . . . .  . . . &
+17b49840 3.798350 S Co:3:007:0 s 21 09 0211 0000 0014 20 =3D
+    11ff0011 00000000 00000000 00000000 00000000
+17b49840 3.798500 C Co:3:007:0 0 20 >
+17b49240 9.289560 S Ci:3:007:0 s 80 06 0303 0409 00ff 255 <
+17b49240 9.289999 C Ci:3:007:0 0 30 =3D
+    1e033300 34004500 31003300 38003500 30003800 36003000 30003000 3900
+     . . 3 .  4 . E .  1 . 3 .  8 . 5 .  0 . 8 .  6 . 0 .  0 . 0 .  9 .
+17b49240 9.290040 S Co:3:007:0 s 21 0a 0000 0001 0000 0
+17b49240 9.290145 C Co:3:007:0 -32 0
+17b49240 9.290155 S Ci:3:007:0 s 81 06 2200 0001 007a 122 <
+17b49240 9.291756 C Ci:3:007:0 0 122 =3D
+    05010906 a1018501 050719e0 29e71500 25017501 95088102 95057508 150026a4
+     . . . .  . . . .  . . . .  ) . . .  % . u .  . . . .  . . u .  . . & .
+17b49c00 9.292167 S Co:3:007:0 s 21 09 0211 0001 0014 20 =3D
+    11ff0011 00000000 00000000 00000000 00000000
+17b49c00 9.292628 C Co:3:007:0 0 20 >
+
+It looks like the mouse is not responding to the
+root_get_protocol_version packet. I don't know why, but even if it
+did, it would not work correctly. The HID++ reports will only work
+with one of the interfaces, the other should be ignored by the driver
+instead of being disabled because it failed to respond to the HID++
+report. The G500s and G500 HID++ interface also use the device index 0
+instead of 0xff.
+
+For comparison, if I use my distribution kernel
+(4.19.7-200.fc28.x86_64) and send reports from user-space (using
+hidraw) instead of for-4.21/highres-wheel kernel. I get this kind of
+trace:
+
+592193c0 0.253975 S Co:3:003:0 s 21 09 0211 0001 0014 20 =3D
+    11ff0011 00000000 00000000 00000000 00000000
+592193c0 0.254426 C Co:3:003:0 0 20 >
+9ee5ff00 0.255859 C Ii:3:003:2 0:1 7 =3D
+    10ff8f00 110800
+9ee5ff00 0.255867 S Ii:3:003:2 -:1 20 <
+592193c0 11.116794 S Co:3:003:0 s 21 09 0211 0001 0014 20 =3D
+    11000011 00000000 00000000 00000000 00000000
+592193c0 11.117258 C Co:3:003:0 0 20 >
+9ee5ff00 11.118023 C Ii:3:003:2 0:1 7 =3D
+    10008f00 110100
+9ee5ff00 11.118033 S Ii:3:003:2 -:1 20 <
+
+When using device index 0xff the mouse responds with a
+ERR_UNKNOWN_DEVICE (0x08) error, when using device index 0 it responds
+ERR_INVALID_SUBID (0x01), the expected error for a HID++1.0 device.
+
+Here is the diff from the for-4.21/highres-wheel branch, I only added
+the devices to the device list with the required quirk.
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index ed35c9a9a110..a1c431e7841c 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -724,6 +724,7 @@
+ #define USB_DEVICE_ID_LOGITECH_KEYBOARD_G710_PLUS 0xc24d
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C01A      0xc01a
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C05A      0xc05a
++#define USB_DEVICE_ID_LOGITECH_MOUSE_G500      0xc068
+ #define USB_DEVICE_ID_LOGITECH_MOUSE_C06A      0xc06a
+ #define USB_DEVICE_ID_LOGITECH_RUMBLEPAD_CORD  0xc20a
+ #define USB_DEVICE_ID_LOGITECH_RUMBLEPAD       0xc211
+@@ -731,6 +732,7 @@
+ #define USB_DEVICE_ID_LOGITECH_DUAL_ACTION     0xc216
+ #define USB_DEVICE_ID_LOGITECH_RUMBLEPAD2      0xc218
+ #define USB_DEVICE_ID_LOGITECH_RUMBLEPAD2_2    0xc219
++#define USB_DEVICE_ID_LOGITECH_MOUSE_G500S     0xc24e
+ #define USB_DEVICE_ID_LOGITECH_G29_WHEEL       0xc24f
+ #define USB_DEVICE_ID_LOGITECH_G920_WHEEL      0xc262
+ #define USB_DEVICE_ID_LOGITECH_WINGMAN_F3D     0xc283
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hi=
+dpp.c
+index 15ed6177a7a3..b9b34ce455a4 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -3416,6 +3416,10 @@ static const struct hid_device_id hidpp_devices[] =
+=3D {
+
+        { HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+USB_DEVICE_ID_LOGITECH_G920_WHEEL),
+                .driver_data =3D HIDPP_QUIRK_CLASS_G920 |
+HIDPP_QUIRK_FORCE_OUTPUT_REPORTS},
++       { HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+USB_DEVICE_ID_LOGITECH_MOUSE_G500),
++               .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_1P0 },
++       { HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+USB_DEVICE_ID_LOGITECH_MOUSE_G500S),
++               .driver_data =3D HIDPP_QUIRK_HI_RES_SCROLL_1P0 },
+        {}
+ };
