@@ -2,99 +2,236 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828EFC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 17:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08D5C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 17:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47CB921726
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 17:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544893909;
-	bh=oEZiDE5FNwT7ih/+gCLxYt8tIy6MTmPzMkZO3FzlO94=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=FX1nC3h5aA2loi6zfhn59/TX44zCjmqzNd2PnZrmGhGx+mkmBJZu0le6iFbeuTt7R
-	 QS0OUgFDj77EV1gx5vr8tVYD5iCEdsxsyoJund+YPW/DRhWuuSzqf8KVsQ73lFROvO
-	 5IT78gpgsClt1J7yVzRkJGBW0YWtfpZj4t9We+Vw=
+	by mail.kernel.org (Postfix) with ESMTP id C46062171F
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 17:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeLORLs (ORCPT
+        id S1728905AbeLORME convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 12:11:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbeLORLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 12:11:48 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36A07206C2;
-        Sat, 15 Dec 2018 17:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544893907;
-        bh=oEZiDE5FNwT7ih/+gCLxYt8tIy6MTmPzMkZO3FzlO94=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=x0LkcS+sYzZ5rWcOC7LWSa+Pg6SdV1YBVyaV9KXALu+NYi/dSzE09kxlVVd1Jzle7
-         uwHhK1ch5qTCPh9P0adzaszTgA96wwkQ/Lj1qw8JVceOF/48Ii5T64wnbeFJxP5QX0
-         htRINpGglKMeOTNFaXvve+PQ7MvP7d6If9ZGdU9Q=
-Date:   Sat, 15 Dec 2018 18:11:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 4.19 000/142] 4.19.10-stable review
-Message-ID: <20181215171145.GA2086@kroah.com>
-References: <20181214115747.053633987@linuxfoundation.org>
- <20181215170102.es7drxdtiz7gzaib@xps.therub.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181215170102.es7drxdtiz7gzaib@xps.therub.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Sat, 15 Dec 2018 12:12:04 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21831 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeLORMD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 12:12:03 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1544893898; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=h3Ko5oTCaFix2V5B+/bkpHYx7ke7iQypFUP06mf8LGyHHHZR13TyqKjPJCdTM04RdLPogUdJdX8ZmymEGmhFUMyUuBhucILsC89cNn2Bnm9Ap/pNVN+zX73ogau82nRVSj1c7boAuzuGKb8eH5gMPHGekcLStwstTftHLN+9Bp8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1544893898; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=fFdsYoE7qk2pEEa1OEYNRLPLsD9zhhV0eRvgc1ycnxU=; 
+        b=Zq2yDvu3MtdBn+N2oynFpTUJhvJOD2vubrHzQAuRRufUIV+eJsoSSabSkHxtYv5e4fdQy0TPoLEzWOaWiVANENp6fG+vtXRqGrPSrVw9eu1Wdowe1uyIlc1i5lrqTI9w7VcGSQxIlSKcq57McILVttLGq79hSIOtGINDPXG4zNo=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1544893895227384.15539478682865; Sat, 15 Dec 2018 09:11:35 -0800 (PST)
+Message-ID: <bc8a550472c42e010a70090c1b1bc87c7a26627d.camel@mniewoehner.de>
+Subject: Re: [PATCH] Allow hwrng to initialize crng.
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Louis Collard <louiscollard@chromium.org>
+Cc:     linux-integrity@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrey Pronin <apronin@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David R. Bild" <david.bild@xaptum.com>
+In-Reply-To: <CAKNRAJVF5bf7LgyxQRkRFq3ihm9TmbGO8=wCo8i8NWds2yr2bg@mail.gmail.com>
+References: <20180926032455.224600-1-louiscollard@chromium.org>
+         <568ea3447a8116ef460d191bf3599e2761bca3a5.camel@mniewoehner.de>
+         <CAKNRAJVF5bf7LgyxQRkRFq3ihm9TmbGO8=wCo8i8NWds2yr2bg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sat, 15 Dec 2018 18:11:31 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 11:01:02AM -0600, Dan Rue wrote:
-> On Fri, Dec 14, 2018 at 12:58:05PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.10 release.
-> > There are 142 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+On Thu, 2018-12-13 at 12:50 +0800, Louis Collard wrote:
+> On Sun, Nov 18, 2018 at 4:15 AM Michael Niewöhner <linux@mniewoehner.de>
+> wrote:
 > > 
-> > Responses should be made by Sun Dec 16 11:57:12 UTC 2018.
-> > Anything received after that time might be too late.
+> > Hi Louis,
+> > 
+> > On Wed, 2018-09-26 at 11:24 +0800, Louis Collard wrote:
+> > > Some systems, for example embedded systems, do not generate
+> > > enough entropy on boot through interrupts, and boot may be blocked for
+> > > several minutes waiting for a call to getrandom to complete.
+> > > 
+> > > Currently, random data is read from a hwrng when it is registered,
+> > > and is loaded into primary_crng. This data is treated in the same
+> > > way as data that is device-specific but otherwise unchanging, and
+> > > so primary_crng cannot become initialized with the data from the
+> > > hwrng.
+> > > 
+> > > This change causes the data initially read from the hwrng to be
+> > > treated the same as subsequent data that is read from the hwrng if
+> > > it's quality score is non-zero.
+> > > 
+> > > The implications of this are:
+> > > 
+> > > The data read from hwrng can cause primary_crng to become
+> > > initialized, therefore avoiding problems of getrandom blocking
+> > > on boot.
+> > > 
+> > > Calls to getrandom (with GRND_RANDOM) may be using entropy
+> > > exclusively (or in practise, almost exclusively) from the hwrng.
+> > > 
+> > > Regarding the latter point; this behavior is the same as if a
+> > > user specified a quality score of 1 (bit of entropy per 1024 bits)
+> > > so hopefully this is not too scary a change to make.
+> > > 
+> > > This change is the result of the discussion here:
+> > > https://patchwork.kernel.org/patch/10453893/
+> > > 
+> > > Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> > > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > ---
+> > >  drivers/char/hw_random/core.c | 9 +++++++--
+> > >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+> > > index aaf9e5afaad4..47f358aa0c3d 100644
+> > > --- a/drivers/char/hw_random/core.c
+> > > +++ b/drivers/char/hw_random/core.c
+> > > @@ -24,6 +24,7 @@
+> > >  #include <linux/sched.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/uaccess.h>
+> > > +#include <crypto/chacha20.h>
+> > > 
+> > >  #define RNG_MODULE_NAME              "hw_random"
+> > > 
+> > > @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
+> > >  static void add_early_randomness(struct hwrng *rng)
+> > >  {
+> > >       int bytes_read;
+> > > -     size_t size = min_t(size_t, 16, rng_buffer_size());
+> > > +     /* Read enough to initialize crng. */
+> > > +     size_t size = 2*CHACHA20_KEY_SIZE;
+> > > 
+> > >       mutex_lock(&reading_mutex);
+> > >       bytes_read = rng_get_data(rng, rng_buffer, size, 1);
+> > >       mutex_unlock(&reading_mutex);
+> > >       if (bytes_read > 0)
+> > > -             add_device_randomness(rng_buffer, bytes_read);
+> > > +             /* Allow crng to become initialized, but do not add
+> > > +              * entropy to the pool.
+> > > +              */
+> > > +             add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+> > >  }
+> > > 
+> > >  static inline void cleanup_rng(struct kref *kref)
+> > 
+> > I found your patch by chance, searching for a solution for crng init delay
+> > on my
+> > headless machine. Unfortunately it hardly makes any difference for me. With
+> > the
+> > patch the system hangs for about 80s instead of 120s until the "crng init
+> > done"
+> > message.In contrast, doing a `cat /dev/hwrng >/dev/random` or running rngd
+> > initializes the crng instantly.
+> > 
+> > Isn't that delay the problem this patch tries to fix? Any idea what is wrong
+> > here?
+> > 
+> > Thanks!
+> > 
+> > Best regards
+> > Michael
+> > 
+> > 
 > 
-> Results from Linaro’s test farm.
-> Regressions detected.
+> Yes that is the problem this is trying to address. My guess would be
+> rng_get_data() is not returning as much data as requested, so the
+> delay is reduced but not eliminated. Looking at implementation of
+> rng_get_data() it appears this could be caused by device support for
+> read() vs data_read(). I don't have a good feel for whether looping to
+> retrieve more data here would be acceptable, it is certainly a bigger
+> change than currently proposed.
+> 
+> Thanks,
+> Louis
 
-They were?
+Hi Louis,
 
-> 
-> Summary
-> ------------------------------------------------------------------------
-> 
-> kernel: 4.19.10-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-4.19.y
-> git commit: 4875bf1f86d7bdc8dbf3222ab4028239446fab3f
-> git describe: v4.19.9-143-g4875bf1f86d7
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.9-143-g4875bf1f86d7
-> 
-> No regressions (compared to build v4.19.9)
-> 
-> No fixes (compared to build v4.19.9)
-> 
-> Ran 18346 total tests in the following environments and test suites.
+that is what I thought first, too, but I was able to verify that 64 bytes are
+read as expected.
 
-This said there were no regressions.
+It seems this is exactly what David noticed in your discussion about the quality
+module parameter (https://patchwork.kernel.org/patch/10453893/#22130681):
 
-confused,
+> Interesting.
+> 
+> add_hwgenereator_randomness() will call crng_fast_load(), regardless
+> of entropy estimate/quality, if crng_init is 0.  So initializing
+> crng_init from the hwrng, regardless of quality, is already the
+> intent.
+> 
+> But hw_random only calls add_hwgenerator_randomness() if
+> current_quality > 0, via the hwrng_fillfn() kthread.
+> 
+> All that to say, I agree.  add_early_randomness() should (indirectly)
+> call crng_fast_load(), like add_hwgenerator_randomness() does.
 
-greg k-h
+When I set rng_quality=1024, the crng does get initialized more or less
+instantly.
+
+
+dmesg with default rng_quality=0:
+
+[    0.003831] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI  00000000)
+[    0.161803] random: get_random_bytes called from start_kernel+0x8f/0x50e with
+crng_init=0
+[    3.590433] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+[    3.644148] random: fast init done
+[   85.183006] random: crng init done
+
+
+dmesg with rng_quality patch:
+
+[    0.003837] ACPI: TPM2 0x000000009E0B7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI  00000000)
+[    0.162136] random: get_random_bytes called from start_kernel+0x8f/0x50e with
+crng_init=0
+[    3.582675] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+[    3.636408] random: fast init done
+[    3.650355] random: crng init done
+
+
+Test patch:
+
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index f08949a5f678..59e5a8753ba1 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -214,6 +214,8 @@ static int tpm_tis_init(struct device *dev, struct tpm_info
+*tpm_info)
+        if (itpm || is_itpm(ACPI_COMPANION(dev)))
+                phy->priv.flags |= TPM_TIS_ITPM_WORKAROUND;
+ 
++       priv->rng_quality = 1;
++
+        return tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
+                                 ACPI_HANDLE(dev));
+ }
+
+
+
+Thanks
+Michael
+
+
