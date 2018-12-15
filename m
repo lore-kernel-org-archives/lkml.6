@@ -7,202 +7,85 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E0EC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 185B0C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8AC206C2
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D39E1206A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abgRxB+7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cp/te5gK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbeLOIVw (ORCPT
+        id S1729837AbeLOI3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 03:21:52 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45757 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728987AbeLOIVv (ORCPT
+        Sat, 15 Dec 2018 03:29:22 -0500
+Received: from mail-pg1-f169.google.com ([209.85.215.169]:42172 "EHLO
+        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbeLOI3W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 03:21:51 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so3747755pgc.12
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 00:21:51 -0800 (PST)
+        Sat, 15 Dec 2018 03:29:22 -0500
+Received: by mail-pg1-f169.google.com with SMTP id d72so3764870pga.9
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 00:29:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=ZzR+ol4XWcYfVPJjID8gzHQ6ufC5oRR3J4SR2o4vcBU=;
-        b=abgRxB+76o92pLItAKB4ZbaU7Us7bgZbtdCM6X9plJwogyiJn5sIubsc1Dz9ZjKUsr
-         +UkztzQUB+nrMc7dlYoX/7gFk/qZat6G498Ggc7UmvVisrh0K7vFn5/FVr9C7+eWF20m
-         7gVjdt8doJ00+CIV9u1Dn1iJmGUi/hZjzMMbscLVvKPtX43zPtWBNjn5xtkKNEyZzoGT
-         escYIAvU+RgBs/zT4ZHvcfWH83/XGgSeLU+70YqbXTlXJuACsMDqMo89Xz/4UT2q3T5S
-         gMeUPpnXK7+TGI8/Ng2dWLIJU9Yfp0FRtxr+6CkLup9M6uto0jd/ufuuG0Vv+USrNyb1
-         2gAw==
+        bh=4C9O30ph4iDhXHzn6duFRQH5JuyzpQn9LSFeNwvHKoE=;
+        b=Cp/te5gKn6WwOimL58R4oeWk/9JJi5tC+LzbfDlRSxEAZ0PIvGJ3Ub+wSohd/zhLY8
+         ZM074wU5LP4pwIhXliDcznBjznL/kmIRJ9ctveVM8lpnFuKZYKoyF2czJoa+du7U347j
+         EKxrW/M1n9SY5DIU0w2yvfMDzcagnjSGlMDp5FFEksh75S2SBrXvZCgjgaKgB6kcnM80
+         r2BvPcQcepnyueBds1bkliSQC0ge+0GfwP/56bj0kLLoSRdEqYiRbn22TuC4WhIZzLCu
+         f+mhIsn8uTdUu+qkDqTr0VsFeUnVPpLp2UJL29ImObdrnA+GDoI39gyIS+TOG/GKcsVu
+         VZ9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZzR+ol4XWcYfVPJjID8gzHQ6ufC5oRR3J4SR2o4vcBU=;
-        b=bcYWKJwpXlv7i0f9vqq8bxoq146yis96BjgkHwefFJVu06L0nYY1TkqA+dU6D0DSrr
-         DblqUuN2YUl5wHj2gDpaTXU5saT1TC4IwdlH/IKO/xjyvTUyGbgKozLZJ+HHioHaB4hl
-         n8ysM8IzT9YaaduSespIlWh2dk+xAOmBaYuVEK/bwahIDUBQLiOAWwvpyJXXs3zOFcet
-         Dy2cpG6TbDm4QcUidGli0Zv6VqIaxYMbijGTpHDddP6bXhMfVy8TYztgXFnzgIK/xH0f
-         B3zQjA3cK4q2ae/hPcpyuM8q+jAzB9ssiKQ8G2PGzZnudfbWbnm8rG2LrsaKjnXdMc8G
-         d5pw==
-X-Gm-Message-State: AA+aEWZkNjY7fRPOSdXVu9QdWghLrwQktS0mfwyfbNXNaNXfEdR3mqOi
-        XYDTKY0E1vMmG8fyel8Rwms=
-X-Google-Smtp-Source: AFSGD/WQyudEeabzBnwt1PfVQvzQzjBlTD+MQomqk/et2Fk9CBV/1RTr6ZZ+IlLhwq7L5K8ALNYWTg==
-X-Received: by 2002:a63:c141:: with SMTP id p1mr5401045pgi.424.1544862110753;
-        Sat, 15 Dec 2018 00:21:50 -0800 (PST)
+        bh=4C9O30ph4iDhXHzn6duFRQH5JuyzpQn9LSFeNwvHKoE=;
+        b=MADsAjr3qpRNZJ3Wx3b/jmWCDHx0t++wjAtFYJ94StYlaDViSYbMdbz5kI+UQFWYci
+         UGX35tbwQj4seWnSGwbOMSFvfeu6xC6nqsszHLZQ6czxVkXlsZewdSlPvT2ugiv7eslL
+         ofFaVLOeRTmd97qDgDTRA8yTLuFYGox225y786tC4QHlIf/bqMGNgF81xMb3s/SogeO/
+         DmvBusbN6n9ix8ebi5iE2TkoQPjoKnXptqLrhsmow5EJ9GxMe/a38QZcjG+tB4i64XZy
+         HgmSikXH+pYZ9Ghvl/U4NwQ2CwhyAyaZSdm++5P0ZG5cGm/cSPQvXNzjnIRGSmiDQ9P6
+         BckQ==
+X-Gm-Message-State: AA+aEWY2zkpeX8jtlkv6Wj1xIS/h+F9vV4u0yvPMXIhMuIPlkAz+0tMj
+        dP5qpm7Imcjdk0Z7hKX5aoU=
+X-Google-Smtp-Source: AFSGD/V9M0hm/gXwcxGx9fAQp2JZtZ/7Xcad7fT2wGBkhU+/qvFTTTpWEURMOB3xN2mnpEb98kG21A==
+X-Received: by 2002:a63:f444:: with SMTP id p4mr5381734pgk.124.1544862561676;
+        Sat, 15 Dec 2018 00:29:21 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id v12sm8560627pgg.41.2018.12.15.00.21.49
+        by smtp.gmail.com with ESMTPSA id 125sm15607454pfd.124.2018.12.15.00.29.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 15 Dec 2018 00:21:50 -0800 (PST)
+        Sat, 15 Dec 2018 00:29:21 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org
+To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] regulator: convert to DEFINE_SHOW_ATTRIBUTE
-Date:   Sat, 15 Dec 2018 03:21:48 -0500
-Message-Id: <20181215082148.26511-1-tiny.windzz@gmail.com>
+Subject: [RESEND] mfd: rave-sp: fix typo in rave_sp_checksum comment
+Date:   Sat, 15 Dec 2018 03:29:18 -0500
+Message-Id: <20181215082918.26613-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+Caculated -> Calculated
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/regulator/core.c         | 37 +++++---------------------------
- drivers/regulator/dbx500-prcmu.c | 35 ++++--------------------------
- 2 files changed, 9 insertions(+), 63 deletions(-)
+ drivers/mfd/rave-sp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 2c66b528aede..efcfc5e2ff85 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4621,23 +4621,8 @@ static int supply_map_show(struct seq_file *sf, void *data)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(supply_map);
- 
--static int supply_map_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, supply_map_show, inode->i_private);
--}
--#endif
--
--static const struct file_operations supply_map_fops = {
--#ifdef CONFIG_DEBUG_FS
--	.open = supply_map_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--#endif
--};
--
--#ifdef CONFIG_DEBUG_FS
- struct summary_data {
- 	struct seq_file *s;
- 	struct regulator_dev *parent;
-@@ -4755,21 +4740,8 @@ static int regulator_summary_show(struct seq_file *s, void *data)
- 
- 	return 0;
- }
--
--static int regulator_summary_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, regulator_summary_show, inode->i_private);
--}
--#endif
--
--static const struct file_operations regulator_summary_fops = {
--#ifdef CONFIG_DEBUG_FS
--	.open		= regulator_summary_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--#endif
--};
-+DEFINE_SHOW_ATTRIBUTE(regulator_summary);
-+#endif /* CONFIG_DEBUG_FS */
- 
- static int __init regulator_init(void)
- {
-@@ -4781,12 +4753,13 @@ static int __init regulator_init(void)
- 	if (!debugfs_root)
- 		pr_warn("regulator: Failed to create debugfs directory\n");
- 
-+#ifdef CONFIG_DEBUG_FS
- 	debugfs_create_file("supply_map", 0444, debugfs_root, NULL,
- 			    &supply_map_fops);
- 
- 	debugfs_create_file("regulator_summary", 0444, debugfs_root,
- 			    NULL, &regulator_summary_fops);
--
-+#endif
- 	regulator_dummy_init();
- 
- 	return ret;
-diff --git a/drivers/regulator/dbx500-prcmu.c b/drivers/regulator/dbx500-prcmu.c
-index 8976141c1438..308e3ff0a1bd 100644
---- a/drivers/regulator/dbx500-prcmu.c
-+++ b/drivers/regulator/dbx500-prcmu.c
-@@ -75,7 +75,7 @@ static struct ux500_regulator_debug {
- 	u8 *state_after_suspend;
- } rdebug;
- 
--static int ux500_regulator_power_state_cnt_print(struct seq_file *s, void *p)
-+static int ux500_regulator_power_state_cnt_show(struct seq_file *s, void *p)
- {
- 	/* print power state count */
- 	seq_printf(s, "ux500-regulator power state count: %i\n",
-@@ -83,23 +83,9 @@ static int ux500_regulator_power_state_cnt_print(struct seq_file *s, void *p)
- 
- 	return 0;
- }
-+DEFINE_SHOW_ATTRIBUTE(ux500_regulator_power_state_cnt);
- 
--static int ux500_regulator_power_state_cnt_open(struct inode *inode,
--	struct file *file)
--{
--	return single_open(file, ux500_regulator_power_state_cnt_print,
--		inode->i_private);
--}
--
--static const struct file_operations ux500_regulator_power_state_cnt_fops = {
--	.open = ux500_regulator_power_state_cnt_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--	.owner = THIS_MODULE,
--};
--
--static int ux500_regulator_status_print(struct seq_file *s, void *p)
-+static int ux500_regulator_status_show(struct seq_file *s, void *p)
- {
- 	int i;
- 
-@@ -122,20 +108,7 @@ static int ux500_regulator_status_print(struct seq_file *s, void *p)
- 
- 	return 0;
- }
--
--static int ux500_regulator_status_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ux500_regulator_status_print,
--		inode->i_private);
--}
--
--static const struct file_operations ux500_regulator_status_fops = {
--	.open = ux500_regulator_status_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--	.owner = THIS_MODULE,
--};
-+DEFINE_SHOW_ATTRIBUTE(ux500_regulator_status);
- 
- int __attribute__((weak)) dbx500_regulator_testcase(
- 	struct dbx500_regulator_info *regulator_info,
+diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+index 2a8369657e38..26c7b63e008a 100644
+--- a/drivers/mfd/rave-sp.c
++++ b/drivers/mfd/rave-sp.c
+@@ -109,7 +109,7 @@ struct rave_sp_reply {
+ /**
+  * struct rave_sp_checksum - Variant specific checksum implementation details
+  *
+- * @length:	Caculated checksum length
++ * @length:	Calculated checksum length
+  * @subroutine:	Utilized checksum algorithm implementation
+  */
+ struct rave_sp_checksum {
 -- 
 2.17.0
 
