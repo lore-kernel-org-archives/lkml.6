@@ -4,54 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7731C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9703C43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0B8E206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:19:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6EF206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 00:19:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730242AbeLOATw (ORCPT
+        id S1730287AbeLOATz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 19:19:52 -0500
-Received: from mail-qt1-f197.google.com ([209.85.160.197]:52659 "EHLO
-        mail-qt1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729745AbeLOATp (ORCPT
+        Fri, 14 Dec 2018 19:19:55 -0500
+Received: from mail-qk1-f198.google.com ([209.85.222.198]:49271 "EHLO
+        mail-qk1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730182AbeLOATv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 19:19:45 -0500
-Received: by mail-qt1-f197.google.com with SMTP id w15so7364410qtk.19
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:19:44 -0800 (PST)
+        Fri, 14 Dec 2018 19:19:51 -0500
+Received: by mail-qk1-f198.google.com with SMTP id a193so6702059qkg.16
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:19:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=8YHtOW9Sf0d3+xxK5TzPzt8C1EAaqAAq50WjWnt/9nE=;
-        b=nEFxGuk17ufmgcWeNePjTFtRbvhuJymDj9d3bfdkgykiFgQy0Bvor5/e/uBF4uSN9Q
-         Ju2w9GvtV1LXLArBV7L+aqaOmecd3bkyI13I8iG0Bjbbqn6T/n4fmmqpY+4UvoaiH2V/
-         4b7HSm/rQvRM2ZhrN/No1YgFDiGu/N5EH6sV/Z31vGcJojhx1LVCj2JBXvJ2dveIRxJl
-         68YCNEQTdwEliHNDBQU4dPg62rGbBZjk9w9jr+u3Ait3gthRuEB5CbfCOcQnDR4fr3TV
-         +xbu5kvtzyD9epxhjAo017jEOafFmQ1ZQgUf5DnKlmx4cAXHAxS1t9BQ+fMMNZY03+xO
-         Fu7Q==
-X-Gm-Message-State: AA+aEWb1NizLX5RmylpLnM6RH8BK/1OCctEDNuzJ87plZtxyR8l+4eUf
-        J5wxp12XaFDqHTah0lD8BiYUiVjlrpxIKLfKyCC3hduqW+p4/xSEz4o+b0+/1DoCajZRXPEl3nE
-        wbGK2eeY+K90Fc+BhlZ+8ViHo/rgQFn//6PRCHyXfvT2DMzw4ki7eSUgDjqj3alSmIK8KLxS56q
+        bh=pW0/2ceoQqnDm9D9Q0nQFiWusKOGVyXQKc2tj36P0yk=;
+        b=OoKjvs921ZhiFJqf5SBCPLG81/mZ2UYUQ85Wl6bqNcOQix1KbmvOvRnSPJQEVP6lIg
+         j4161Z8l1gTtd3T7lGRm1SVe9pPjF+6zUnymq6CzIV8P+2KMea+N8HEinS0APYz306un
+         cvv/O9RN4OvNhBZKFdVBwnfdm1xatnGmBbVQYJXP7RRT7c8YS/4qasSejzV1/mo5GLjw
+         lhmuXSrksi737FOJT0MPPBw7hzRSHTDRaA0KK7Uq6HSGwJ1OJTc55EG/Gzpxq6dwlhvg
+         ixVBecsRjOPJZZ38AL01VOkZ4ieZZaqtdcBrshfkRyQxpYER/ngxkLRY00U7vlMo335m
+         /GjQ==
+X-Gm-Message-State: AA+aEWaNj5ddXvtX5cV+n1TQ51eO9byHVDBsK16O4S9DJ2Ltf/iO3bc5
+        ETNtX7QpEf7xVKS6ErxNT7oXQve0oSFvE6c2UX9w3OdQuAVZvmbWy6c7PB2WuMOexG/6mXXsOjG
+        uOt0p1KYTYIcOma8VZ34wFVhIM7W7Y0wLiT3batkayarBJ9T6DJVcjm9UUsBNVMReLsoAedcxtK
         w=
-X-Google-Smtp-Source: AFSGD/XwebMCG4019D0yUV1re7bHAnHpoXAjKDTKrbl9aJdZBvJ89+zxnSZZ9fHcSmXoiv+qpPCp4CSu6o/WDAm3
-X-Received: by 2002:a0c:a8cd:: with SMTP id h13mr4927060qvc.54.1544833183592;
- Fri, 14 Dec 2018 16:19:43 -0800 (PST)
-Date:   Fri, 14 Dec 2018 17:18:39 -0700
+X-Google-Smtp-Source: AFSGD/Xeeb5r+dpRBhDgOi24ti0qiFJi4Wt62RRcY5M2efd+Hr2I3DioLZ8N6k3Qnc2LH9rcLmjFfTrpzDalg/nQ
+X-Received: by 2002:a0c:9199:: with SMTP id n25mr4912286qvn.49.1544833189107;
+ Fri, 14 Dec 2018 16:19:49 -0800 (PST)
+Date:   Fri, 14 Dec 2018 17:18:42 -0700
 In-Reply-To: <20181215001843.62404-1-ncrews@google.com>
-Message-Id: <20181215001843.62404-7-ncrews@google.com>
+Message-Id: <20181215001843.62404-10-ncrews@google.com>
 Mime-Version: 1.0
 References: <20181215001843.62404-1-ncrews@google.com>
 X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
-Subject: [RFC PATCH 06/10] CHROMIUM: wilco_ec: Add event handling
+Subject: [RFC PATCH 09/10] CHROMIUM: wilco_ec: Add peakshift and adv_batt_charging
 From:   Nick Crews <ncrews@google.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Duncan Laurie <dlaurie@google.com>, Nick Crews <ncrews@google.com>,
-        Olof Johansson <olof@lixom.net>,
+Cc:     Nick Crews <ncrews@google.com>, Olof Johansson <olof@lixom.net>,
         Benson Leung <bleung@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,152 +57,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Duncan Laurie <dlaurie@google.com>
+Create "peakshift" and "advanced_battery_charging" directories
+within the "properties" directory, and create the relevant
+attributes within these. These properties have to do with
+configuring some of the advanced power management options that
+prolong battery health and reduce energy use at peak hours
+of the day.
 
-The Wilco Embedded Controller can return extended events that
-are not handled by standard ACPI objects.  These events can
-include hotkeys which map to standard functions like brightness
-controls, or information about EC controlled features like the
-charger or battery.
+Scheduling events uses a 24 hour clock, and only supports time
+intervals of 15 minutes. For example, to set
+advanced_battery_charging to start at 4:15pm and to last for
+6 hours and 45 minutes, you would use the argument "16 15 6 45".
 
-These events are triggered with an ACPI Notify(0x90) and the
-event data buffer is read through an ACPI method provided by
-the BIOS which reads the event buffer from EC RAM.
+> cd /sys/bus/platform/devices/GOOG000C\:00
+> cat properties/peakshift/peakshift_battery_threshold
+> 015
+[means 15 percent]
+> cat properties/peakshift/peakshift_monday
+16 00 20 30 00 00
+[starts at 4:00 pm, ends at 8:30, charging resumes at midnight]
+> echo "16 00 20 31 00 00" > properties/peakshift/peakshift_monday
+-bash: echo: write error: Invalid argument
+> dmesg | tail -n1
+[40.34534] wilco_ec GOOG00C:00: minutes must be at the quarter hour
+> echo "16 0 20 45 0 0" > properties/peakshift/peakshift_monday
+> cat properties/peakshift/peakshift_monday
+16 00 20 45 00 00
 
-These events are then processed, with hotkey events being sent
-to the input subsystem and other events put into a queue which
-can be read by a userspace daemon via a sysfs attribute.
-
-> evtest /dev/input/event6
-Input driver version is 1.0.1
-Input device ID: bus 0x19 vendor 0x0 product 0x0 version 0x0
-Input device name: "Wilco EC hotkeys"
-Supported events:
-  Event type 0 (EV_SYN)
-  Event type 1 (EV_KEY)
-    Event code 224 (KEY_BRIGHTNESSDOWN)
-    Event code 225 (KEY_BRIGHTNESSUP)
-    Event code 240 (KEY_UNKNOWN)
-  Event type 4 (EV_MSC)
-    Event code 4 (MSC_SCAN)
-Properties:
-Testing ... (interrupt to exit)
-Event: type 4 (EV_MSC), code 4 (MSC_SCAN), value 57
-Event: type 1 (EV_KEY), code 224 (KEY_BRIGHTNESSDOWN), value 1
-Event: -------------- SYN_REPORT ------------
-Event: type 1 (EV_KEY), code 224 (KEY_BRIGHTNESSDOWN), value 0
-Event: -------------- SYN_REPORT ------------
-Event: type 4 (EV_MSC), code 4 (MSC_SCAN), value 58
-Event: type 1 (EV_KEY), code 225 (KEY_BRIGHTNESSUP), value 1
-Event: -------------- SYN_REPORT ------------
-Event: type 1 (EV_KEY), code 225 (KEY_BRIGHTNESSUP), value 0
-Event: -------------- SYN_REPORT ------------
-
-Signed-off-by: Duncan Laurie <dlaurie@google.com>
 Signed-off-by: Nick Crews <ncrews@google.com>
 ---
 
- drivers/platform/chrome/Makefile           |   4 +-
- drivers/platform/chrome/wilco_ec.h         |  34 ++
- drivers/platform/chrome/wilco_ec_event.c   | 343 +++++++++++++++++++++
- drivers/platform/chrome/wilco_ec_mailbox.c |  11 +
- 4 files changed, 390 insertions(+), 2 deletions(-)
- create mode 100644 drivers/platform/chrome/wilco_ec_event.c
+ drivers/platform/chrome/Makefile             |   3 +-
+ drivers/platform/chrome/wilco_ec_adv_power.c | 533 +++++++++++++++++++
+ drivers/platform/chrome/wilco_ec_adv_power.h | 193 +++++++
+ drivers/platform/chrome/wilco_ec_sysfs.c     | 103 ++++
+ 4 files changed, 831 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/platform/chrome/wilco_ec_adv_power.c
+ create mode 100644 drivers/platform/chrome/wilco_ec_adv_power.h
 
 diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-index 5ca484c2d0d7..60b19190dba1 100644
+index eefb75e5e69c..c9d3d44098f9 100644
 --- a/drivers/platform/chrome/Makefile
 +++ b/drivers/platform/chrome/Makefile
-@@ -13,6 +13,6 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
- obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
- obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
+@@ -15,6 +15,7 @@ obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
  
--wilco_ec-objs				:= wilco_ec_mailbox.o wilco_ec_rtc.o \
+ wilco_ec-objs				:= wilco_ec_mailbox.o wilco_ec_event.o \
+ 					   wilco_ec_rtc.o wilco_ec_legacy.o \
++					   wilco_ec_sysfs.o \
+ 					   wilco_ec_properties.o \
 -					   wilco_ec_sysfs.o
-+wilco_ec-objs				:= wilco_ec_mailbox.o wilco_ec_event.o \
-+					   wilco_ec_rtc.o wilco_ec_sysfs.o
++					   wilco_ec_adv_power.o
  obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
-diff --git a/drivers/platform/chrome/wilco_ec.h b/drivers/platform/chrome/wilco_ec.h
-index eee5c514e720..6f084188faa1 100644
---- a/drivers/platform/chrome/wilco_ec.h
-+++ b/drivers/platform/chrome/wilco_ec.h
-@@ -18,7 +18,9 @@
- #define WILCO_EC_H
- 
- #include <linux/device.h>
-+#include <linux/input.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
- #include <linux/rtc.h>
- 
- /* Normal commands have a maximum 32 bytes of data */
-@@ -46,6 +48,22 @@ enum wilco_ec_msg_type {
- 	WILCO_EC_MSG_TELEMETRY = 0x00f5,
- };
- 
-+/**
-+ * struct wilco_ec_event - EC extended events.
-+ * @lock: Mutex to guard the list of events.
-+ * @list: Queue of EC events to be provided to userspace.
-+ * @attr: Sysfs attribute for userspace to read events.
-+ * @count: Count of events in the queue.
-+ * @input: Input device for hotkey events.
-+ */
-+struct wilco_ec_event {
-+	struct mutex lock;
-+	struct list_head list;
-+	struct bin_attribute attr;
-+	size_t count;
-+	struct input_dev *input;
-+};
-+
- /**
-  * struct wilco_ec_device - Wilco Embedded Controller handle.
-  * @dev: Device handle.
-@@ -57,6 +75,7 @@ enum wilco_ec_msg_type {
-  *               is used to hold the request and the response.
-  * @data_size: Size of the data buffer used for EC communication.
-  * @rtc: RTC device handler.
-+ * @event: EC extended event handler.
-  */
- struct wilco_ec_device {
- 	struct device *dev;
-@@ -67,6 +86,7 @@ struct wilco_ec_device {
- 	void *data_buffer;
- 	size_t data_size;
- 	struct rtc_device *rtc;
-+	struct wilco_ec_event event;
- };
- 
- /**
-@@ -143,4 +163,18 @@ int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm);
-  */
- int wilco_ec_rtc_sync(struct device *dev);
- 
-+/**
-+ * wilco_ec_event_init() - Prepare to handle EC events.
-+ * @ec: EC device.
-+ *
-+ * Return: 0 for success or negative error code on failure.
-+ */
-+int wilco_ec_event_init(struct wilco_ec_device *ec);
-+
-+/**
-+ * wilco_ec_event_remove() - Remove EC event handler.
-+ * @ec: EC device.
-+ */
-+void wilco_ec_event_remove(struct wilco_ec_device *ec);
-+
- #endif /* WILCO_EC_H */
-diff --git a/drivers/platform/chrome/wilco_ec_event.c b/drivers/platform/chrome/wilco_ec_event.c
+diff --git a/drivers/platform/chrome/wilco_ec_adv_power.c b/drivers/platform/chrome/wilco_ec_adv_power.c
 new file mode 100644
-index 000000000000..248f2ec095ab
+index 000000000000..30120e2dd007
 --- /dev/null
-+++ b/drivers/platform/chrome/wilco_ec_event.c
-@@ -0,0 +1,343 @@
++++ b/drivers/platform/chrome/wilco_ec_adv_power.c
+@@ -0,0 +1,533 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * wilco_ec_event - Event handling for Wilco Embedded Controller
++ * wilco_ec_adv_power - peakshift and adv_batt_charging config of Wilco EC
 + *
 + * Copyright 2018 Google LLC
 + *
@@ -218,362 +130,860 @@ index 000000000000..248f2ec095ab
 + * GNU General Public License for more details.
 + */
 +
-+#include <linux/acpi.h>
++#include <linux/kobject.h>
 +#include <linux/device.h>
-+#include <linux/input.h>
-+#include <linux/input/sparse-keymap.h>
-+#include <linux/list.h>
-+#include <linux/platform_device.h>
++#include "wilco_ec_adv_power.h"
++#include "wilco_ec_properties.h"
++#include "wilco_ec_sysfs_util.h"
 +#include "wilco_ec.h"
 +
-+/* ACPI Notify event code indicating event data is available */
-+#define EC_ACPI_NOTIFY_EVENT		0x90
++struct adv_batt_charging_data {
++	int duration_hours;
++	int duration_minutes;
++	int start_hours;
++	int start_minutes;
++};
 +
-+/* ACPI Method to execute to retrieve event data buffer from the EC */
-+#define EC_ACPI_GET_EVENT		"^QSET"
-+
-+/* Maximum number of words in event data returned by the EC */
-+#define EC_ACPI_MAX_EVENT_DATA		6
-+
-+/* Keep at most 100 events in the queue */
-+#define EC_EVENT_QUEUE_MAX		100
-+
-+/**
-+ * enum ec_event_type - EC event categories.
-+ * @EC_EVENT_TYPE_HOTKEY: Hotkey event for handling special keys.
-+ * @EC_EVENT_TYPE_NOTIFY: EC feature state changes.
-+ * @EC_EVENT_TYPE_SYSTEM: EC system messages.
-+ */
-+enum ec_event_type {
-+	EC_EVENT_TYPE_HOTKEY = 0x10,
-+	EC_EVENT_TYPE_NOTIFY = 0x11,
-+	EC_EVENT_TYPE_SYSTEM = 0x12,
++struct peakshift_data {
++	int start_hours;
++	int start_minutes;
++	int end_hours;
++	int end_minutes;
++	int charge_start_hours;
++	int charge_start_minutes;
 +};
 +
 +/**
-+ * struct ec_event - Extended event returned by the EC.
-+ * @size: Number of words in structure after the size word.
-+ * @type: Extended event type from &enum ec_event_type.
-+ * @event: Event data words.  Max count is %EC_ACPI_MAX_EVENT_DATA.
++ * struct time_bcd_format - spec for binary coded decimal time format
++ * @hour_position: how many bits left within the byte is the hour
++ * @minute_position: how many bits left within the byte is the minute
++ *
++ * Date and hour information is passed to/from the EC using packed bytes,
++ * where each byte represents an hour and a minute that some event occurs.
++ * The minute field always happens at quarter-hour intervals, so either
++ * 0, 15, 20, or 45. This allows this info to be packed within 2 bits.
++ * Along with the 5 bits of hour info [0-23], this gives us 7 used bits
++ * within each packed byte. The annoying thing is that the PEAKSHIFT and
++ * ADVANCED_BATTERY_CHARGING properties pack these 7 bits differently,
++ * hence this struct.
 + */
-+struct ec_event {
-+	u16 size;
-+	u16 type;
-+	u16 event[0];
++struct time_bcd_format {
++	u8 hour_position;
++	u8 minute_position;
++};
++
++const struct time_bcd_format PEAKSHIFT_BCD_FORMAT = {
++			     // bit[0] is unused
++	.hour_position = 1,  // bits[1:7]
++	.minute_position = 6 // bits[6:8]
++};
++
++const struct time_bcd_format ADV_BATT_CHARGING_BCD_FORMAT = {
++	.minute_position = 0, // bits[0:2]
++	.hour_position = 2    // bits[2:7]
++			      // bit[7] is unused
++};
++
++/**
++ * struct peakshift_payload - The formatted peakshift time sent/received by EC.
++ * @start_time: packed byte of hour and minute info
++ * @end_time: packed byte of hour and minute info
++ * @charge_start_time: packed byte of hour and minute info
++ * @RESERVED: an unused padding byte
++ */
++struct peakshift_payload {
++	u8 start_time;
++	u8 end_time;
++	u8 charge_start_time;
++	u8 RESERVED;
++} __packed;
++
++struct adv_batt_charging_payload {
++	u16 RESERVED;
++	u8 duration_time;
++	u8 start_time;
 +} __packed;
 +
 +/**
-+ * struct ec_event_entry - Event queue entry.
-+ * @list: List node.
-+ * @size: Number of bytes in event structure.
-+ * @event: Extended event returned by the EC.  This should be the last
-+ *         element because &struct ec_event includes a zero length array.
-+ */
-+struct ec_event_entry {
-+	struct list_head list;
-+	size_t size;
-+	struct ec_event event;
-+};
-+
-+static const struct key_entry wilco_ec_keymap[] = {
-+	{ KE_KEY, 0x0057, { KEY_BRIGHTNESSDOWN } },
-+	{ KE_KEY, 0x0058, { KEY_BRIGHTNESSUP } },
-+	{ KE_END, 0 }
-+};
-+
-+/**
-+ * wilco_ec_handle_events() - Handle Embedded Controller events.
-+ * @ec: EC device.
-+ * @buf: Buffer of event data.
-+ * @length: Length of event data buffer.
++ * extract_quarter_hour() - Convert from literal minutes to quarter hour.
++ * @minutes: Literal minutes value. Needs to be one of {0, 15, 30, 45}
 + *
-+ * Return: Number of events in queue or negative error code on failure.
-+ *
-+ * This function will handle EC extended events, sending hotkey events
-+ * to the input subsystem and queueing others to be read by userspace.
++ * Return one of {0, 1, 2, 3} for each of {0, 15, 30, 45}, or -EINVAL on error.
 + */
-+static int wilco_ec_handle_events(struct wilco_ec_device *ec,
-+				  u8 *buf, u32 length)
++static int extract_quarter_hour(int minutes)
 +{
-+	struct wilco_ec_event *queue = &ec->event;
-+	struct ec_event *event;
-+	struct ec_event_entry *entry;
-+	size_t entry_size, num_words;
-+	u32 offset = 0;
-+
-+	while (offset < length) {
-+		event = (struct ec_event *)(buf + offset);
-+		if (!event)
-+			return -EINVAL;
-+
-+		dev_dbg(ec->dev, "EC event type 0x%02x size %d\n", event->type,
-+			event->size);
-+
-+		/* Number of 16bit event data words is size - 1 */
-+		num_words = event->size - 1;
-+		entry_size = sizeof(*event) + (num_words * sizeof(u16));
-+
-+		if (num_words > EC_ACPI_MAX_EVENT_DATA) {
-+			dev_err(ec->dev, "Invalid event word count: %d > %d\n",
-+				num_words, EC_ACPI_MAX_EVENT_DATA);
-+			return -EOVERFLOW;
-+		};
-+
-+		/* Ensure event does not overflow the available buffer */
-+		if ((offset + entry_size) > length) {
-+			dev_err(ec->dev, "Event exceeds buffer: %d > %d\n",
-+				offset + entry_size, length);
-+			return -EOVERFLOW;
-+		}
-+
-+		/* Point to the next event in the buffer */
-+		offset += entry_size;
-+
-+		/* Hotkeys are sent to the input subsystem */
-+		if (event->type == EC_EVENT_TYPE_HOTKEY) {
-+			if (sparse_keymap_report_event(queue->input,
-+						       event->event[0],
-+						       1, true))
-+				continue;
-+
-+			/* Unknown hotkeys are put into the event queue */
-+			dev_dbg(ec->dev, "Unknown hotkey 0x%04x\n",
-+				event->event[0]);
-+		}
-+
-+		/* Prepare event for the queue */
-+		entry = kzalloc(entry_size, GFP_KERNEL);
-+		if (!entry)
-+			return -ENOMEM;
-+
-+		/* Copy event data */
-+		entry->size = entry_size;
-+		memcpy(&entry->event, event, entry->size);
-+
-+		/* Add this event to the queue */
-+		mutex_lock(&queue->lock);
-+		list_add_tail(&entry->list, &queue->list);
-+		queue->count++;
-+		mutex_unlock(&queue->lock);
-+	}
-+
-+	return queue->count;
-+}
-+
-+/**
-+ * wilco_ec_acpi_notify() - Handler called by ACPI subsystem for Notify.
-+ * @device: EC ACPI device.
-+ * @value: Value passed to Notify() in ACPI.
-+ * @data: Private data, pointer to EC device.
-+ */
-+static void wilco_ec_acpi_notify(acpi_handle device, u32 value, void *data)
-+{
-+	struct wilco_ec_device *ec = data;
-+	struct acpi_buffer event_buffer = { ACPI_ALLOCATE_BUFFER, NULL };
-+	union acpi_object *obj;
-+	acpi_status status;
-+	int count;
-+
-+	/* Currently only handle event notifications */
-+	if (value != EC_ACPI_NOTIFY_EVENT) {
-+		dev_err(ec->dev, "Invalid event: 0x%08x\n", value);
-+		return;
-+	}
-+
-+	/* Execute ACPI method to get event data buffer */
-+	status = acpi_evaluate_object(device, EC_ACPI_GET_EVENT,
-+				      NULL, &event_buffer);
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(ec->dev, "Error executing ACPI method %s()\n",
-+			 EC_ACPI_GET_EVENT);
-+		return;
-+	}
-+
-+	obj = (union acpi_object *)event_buffer.pointer;
-+	if (!obj) {
-+		dev_err(ec->dev, "Nothing returned from %s()\n",
-+			EC_ACPI_GET_EVENT);
-+		return;
-+	}
-+	if (obj->type != ACPI_TYPE_BUFFER) {
-+		dev_err(ec->dev, "Invalid object returned from %s()\n",
-+			EC_ACPI_GET_EVENT);
-+		kfree(obj);
-+		return;
-+	}
-+	if (obj->buffer.length < sizeof(struct ec_event)) {
-+		dev_err(ec->dev, "Invalid buffer length %d from %s()\n",
-+			obj->buffer.length, EC_ACPI_GET_EVENT);
-+		kfree(obj);
-+		return;
-+	}
-+
-+	/* Handle events and notify sysfs if any queued for userspace */
-+	count = wilco_ec_handle_events(ec, obj->buffer.pointer,
-+				       obj->buffer.length);
-+
-+	if (count > 0) {
-+		dev_dbg(ec->dev, "EC event queue has %d entries\n", count);
-+		sysfs_notify(&ec->dev->kobj, NULL, "event");
-+	}
-+
-+	kfree(obj);
-+}
-+
-+static ssize_t wilco_ec_event_read(struct file *filp, struct kobject *kobj,
-+				   struct bin_attribute *attr,
-+				   char *buf, loff_t off, size_t count)
-+{
-+	struct wilco_ec_device *ec = attr->private;
-+	struct ec_event_entry *entry;
-+
-+	/* Only supports reading full events */
-+	if (off != 0)
++	if ((minutes < 0) || (minutes > 45) || minutes % 15)
 +		return -EINVAL;
++	return minutes / 15;
++}
 +
-+	/* Remove the first event and provide it to userspace */
-+	mutex_lock(&ec->event.lock);
-+	entry = list_first_entry_or_null(&ec->event.list,
-+					 struct ec_event_entry, list);
-+	if (entry) {
-+		if (entry->size < count)
-+			count = entry->size;
-+		memcpy(buf, &entry->event, count);
-+		list_del(&entry->list);
-+		kfree(entry);
-+		ec->event.count--;
-+	} else {
-+		count = 0;
++static int check_adv_batt_charging_data(struct device *dev,
++					struct adv_batt_charging_data *data)
++{
++	if (data->start_hours < 0 || data->start_hours > 23) {
++		dev_err(dev, "start_hours must be in [0-23], got %d",
++			data->start_hours);
++		return -EINVAL;
 +	}
-+	mutex_unlock(&ec->event.lock);
++	if (data->duration_hours < 0 || data->duration_hours > 23) {
++		dev_err(dev, "duration_hours must be in [0-23], got %d",
++			data->duration_hours);
++		return -EINVAL;
++	}
++	if (data->start_minutes < 0 || data->start_minutes > 59) {
++		dev_err(dev, "start_minutes must be in [0-59], got %d",
++			data->start_minutes);
++		return -EINVAL;
++	}
++	if (data->duration_minutes < 0 || data->duration_minutes > 59) {
++		dev_err(dev, "duration_minutes must be in [0-59], got %d",
++			data->duration_minutes);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int check_peakshift_data(struct device *dev, struct peakshift_data *data)
++{
++	if (data->start_hours < 0 || data->start_hours > 23) {
++		dev_err(dev, "start_hours must be in [0-23], got %d",
++			data->start_hours);
++		return -EINVAL;
++	}
++	if (data->end_hours < 0 || data->end_hours > 23) {
++		dev_err(dev, "end_hours must be in [0-23], got %d",
++			data->end_hours);
++		return -EINVAL;
++	}
++	if (data->charge_start_hours < 0 || data->charge_start_hours > 23) {
++		dev_err(dev, "charge_start_hours must be in [0-23], got %d",
++			data->charge_start_hours);
++		return -EINVAL;
++	}
++	if (data->start_minutes < 0 || data->start_minutes > 59) {
++		dev_err(dev, "start_minutes must be in [0-59], got %d",
++			data->start_minutes);
++		return -EINVAL;
++	}
++	if (data->end_minutes < 0 || data->end_minutes > 59) {
++		dev_err(dev, "end_minutes must be in [0-59], got %d",
++			data->end_minutes);
++		return -EINVAL;
++	}
++	if (data->charge_start_minutes < 0 || data->charge_start_minutes > 59) {
++		dev_err(dev, "charge_start_minutes must be in [0-59], got %d",
++			data->charge_start_minutes);
++		return -EINVAL;
++	}
++	return 0;
++}
++
++/**
++ * pack_field() - Pack hour and minute info into a byte.
++ *
++ * @fmt: The format for how to place the info within the byte
++ * @hours: In range [0-23]
++ * @quarter_hour: In range [0-3], representing :00, :15, :30, and :45
++ *
++ * Return the packed byte.
++ */
++static u8 pack_field(struct time_bcd_format fmt, int hours, int quarter_hour)
++{
++	int result = 0;
++
++	result |= hours << fmt.hour_position;
++	result |= quarter_hour << fmt.minute_position;
++	return (u8) result;
++}
++
++/**
++ * unpack_field() - Extract hour and minute info from a byte.
++ *
++ * @fmt: The format for how to place the info within the byte
++ * @field: Byte which contains the packed info
++ * @hours: The value to be filled, in [0, 24]
++ * @quarter_hour: to be filled in range [0-3], meaning :00, :15, :30, and :45
++ */
++static void unpack_field(struct time_bcd_format fmt, u8 field, int *hours,
++			 int *quarter_hour)
++{
++	*hours =	(field >> fmt.hour_position)   & 0x1f; // 00011111
++	*quarter_hour = (field >> fmt.minute_position) & 0x03; // 00000011
++}
++
++static void pack_adv_batt_charging(struct adv_batt_charging_data *data,
++		     struct adv_batt_charging_payload *payload)
++{
++	payload->start_time = pack_field(ADV_BATT_CHARGING_BCD_FORMAT,
++					 data->start_hours,
++					 data->start_minutes);
++	payload->duration_time = pack_field(ADV_BATT_CHARGING_BCD_FORMAT,
++				       data->duration_hours,
++				       data->duration_minutes);
++}
++
++static void unpack_adv_batt_charging(struct adv_batt_charging_data *data,
++		       struct adv_batt_charging_payload *payload)
++{
++	unpack_field(ADV_BATT_CHARGING_BCD_FORMAT, payload->start_time,
++		     &(data->start_hours),
++		     &(data->start_minutes));
++	unpack_field(ADV_BATT_CHARGING_BCD_FORMAT, payload->duration_time,
++		     &(data->duration_hours),
++		     &(data->duration_minutes));
++}
++
++static void pack_peakshift(struct peakshift_data *data,
++			   struct peakshift_payload *payload)
++{
++	payload->start_time = pack_field(PEAKSHIFT_BCD_FORMAT,
++					 data->start_hours,
++					 data->start_minutes);
++	payload->end_time = pack_field(PEAKSHIFT_BCD_FORMAT,
++				       data->end_hours,
++				       data->end_minutes);
++	payload->charge_start_time = pack_field(PEAKSHIFT_BCD_FORMAT,
++						data->charge_start_hours,
++						data->charge_start_minutes);
++}
++
++static void unpack_peakshift(struct peakshift_data *data,
++			     struct peakshift_payload *payload)
++{
++	unpack_field(PEAKSHIFT_BCD_FORMAT, payload->start_time,
++		     &(data->start_hours),
++		     &(data->start_minutes));
++	unpack_field(PEAKSHIFT_BCD_FORMAT, payload->end_time,
++		     &(data->end_hours),
++		     &(data->end_minutes));
++	unpack_field(PEAKSHIFT_BCD_FORMAT, payload->charge_start_time,
++		     &(data->charge_start_hours),
++		     &(data->charge_start_minutes));
++}
++
++ssize_t wilco_ec_peakshift_show(struct kobject *kobj,
++				struct kobj_attribute *attr, char *buf)
++{
++	struct property_attribute *prop_attr;
++	struct device *dev;
++	struct wilco_ec_device *ec;
++	struct peakshift_payload payload;
++	struct peakshift_data data;
++	const char FORMAT[] = "%02d %02d %02d %02d %02d %02d\n";
++	const int OUT_LENGTH = 18; //six 2-char nums, 5 spaces, 1 newline
++	int ret;
++
++	if (OUT_LENGTH + 1 > PAGE_SIZE)
++		return -ENOBUFS; //no buffer space for message + null
++
++	prop_attr = container_of(attr, struct property_attribute, kobj_attr);
++	dev = device_from_kobject(kobj);
++	ec = dev_get_drvdata(dev);
++
++	/* get the raw payload of data from the EC */
++	ret = wilco_ec_get_property(ec, prop_attr->pid, sizeof(payload),
++				    (u8 *) &payload);
++	if (ret < 0) {
++		dev_err(dev, "error in wilco_ec_mailbox()");
++		return ret;
++	}
++
++	/* unpack raw bytes, and convert quarter-hour to literal minute */
++	unpack_peakshift(&data, &payload);
++	data.start_minutes *= 15;
++	data.end_minutes *= 15;
++	data.charge_start_minutes *= 15;
++
++	/* Check that the EC returns good data */
++	ret = check_peakshift_data(dev, &data);
++	if (ret < 0) {
++		dev_err(dev, "EC returned out of range minutes or hours");
++		return -EBADMSG;
++	}
++
++	/* Print the numbers to the string */
++	ret = scnprintf(buf, OUT_LENGTH+1, FORMAT,
++			data.start_hours,
++			data.start_minutes,
++			data.end_hours,
++			data.end_minutes,
++			data.charge_start_hours,
++			data.charge_start_minutes);
++	if (ret != OUT_LENGTH) {
++		dev_err(dev, "expected to write %d chars, wrote %d", OUT_LENGTH,
++			ret);
++		return -EIO;
++	}
++
++	return OUT_LENGTH;
++}
++
++ssize_t wilco_ec_peakshift_store(struct kobject *kobj,
++				 struct kobj_attribute *attr, const char *buf,
++				 size_t count)
++{
++	struct property_attribute *prop_attr;
++	struct device *dev;
++	struct wilco_ec_device *ec;
++	struct peakshift_data data;
++	struct peakshift_payload payload;
++	const char FORMAT[] = "%d %d %d %d %d %d";
++	int ret;
++
++	prop_attr = container_of(attr, struct property_attribute, kobj_attr);
++	dev = device_from_kobject(kobj);
++	ec = dev_get_drvdata(dev);
++
++	/* Extract our 6 numbers from the input string */
++	ret = sscanf(buf, FORMAT,
++		     &data.start_hours,
++		     &data.start_minutes,
++		     &data.end_hours,
++		     &data.end_minutes,
++		     &data.charge_start_hours,
++		     &data.charge_start_minutes);
++	if (ret != 6) {
++		dev_err(dev, "unable to parse '%s' into 6 integers", buf);
++		return -EINVAL;
++	}
++
++	/* Ensure the integers we parsed are valid */
++	ret = check_peakshift_data(dev, &data);
++	if (ret < 0)
++		return ret;
++
++	/* Convert the literal minutes to which quarter hour they represent */
++	data.start_minutes = extract_quarter_hour(data.start_minutes);
++	if (data.start_minutes < 0)
++		goto bad_minutes;
++	data.end_minutes = extract_quarter_hour(data.end_minutes);
++	if (data.end_minutes < 0)
++		goto bad_minutes;
++	data.charge_start_minutes = extract_quarter_hour(
++						data.charge_start_minutes);
++	if (data.charge_start_minutes < 0)
++		goto bad_minutes;
++
++	/* Create the raw byte payload and send it off */
++	pack_peakshift(&data, &payload);
++	wilco_ec_set_property(ec, OP_SET, prop_attr->pid, sizeof(payload),
++			      (u8 *) &payload);
++
++	return count;
++
++bad_minutes:
++	dev_err(dev, "minutes must be at the quarter hour");
++	return -EINVAL;
++}
++
++ssize_t wilco_ec_peakshift_batt_thresh_show(struct kobject *kobj,
++					    struct kobj_attribute *attr,
++					    char *buf)
++{
++	struct device *dev;
++	struct wilco_ec_device *ec;
++	const char FORMAT[] = "%02d\n";
++	size_t RESULT_LENGTH = 3; /* 2-char number and newline */
++	u8 percent;
++	int ret;
++
++	dev = device_from_kobject(kobj);
++	ec = dev_get_drvdata(dev);
++
++	ret = wilco_ec_get_property(ec, PID_PEAKSHIFT_BATTERY_THRESHOLD, 1,
++				    &percent);
++	if (ret < 0)
++		return ret;
++
++	if (percent < 15 || percent > 50) {
++		dev_err(ec->dev, "expected 15 < percentage < 50, got %d",
++			percent);
++		return -EBADMSG;
++	}
++
++	scnprintf(buf, RESULT_LENGTH+1, FORMAT, percent);
++
++	return RESULT_LENGTH;
++}
++
++ssize_t wilco_ec_peakshift_batt_thresh_store(struct kobject *kobj,
++					     struct kobj_attribute *attr,
++					     const char *buf, size_t count)
++{
++	struct device *dev;
++	struct wilco_ec_device *ec;
++	u8 DECIMAL_BASE = 10;
++	u8 percent;
++	int ret;
++
++	dev = device_from_kobject(kobj);
++	ec = dev_get_drvdata(dev);
++
++
++	ret = kstrtou8(buf, DECIMAL_BASE, &percent);
++	if (ret) {
++		dev_err(dev, "unable to parse '%s' to u8", buf);
++		return ret;
++	}
++
++	if (percent < 15 || percent > 50) {
++		dev_err(dev, "require 15 < batt_thresh_percent < 50, got %d",
++			percent);
++		return -EINVAL;
++	}
++
++	ret = wilco_ec_set_property(ec, OP_SET, PID_PEAKSHIFT_BATTERY_THRESHOLD,
++				    1, &percent);
++	if (ret < 0)
++		return ret;
 +
 +	return count;
 +}
 +
-+static void wilco_ec_event_clear(struct wilco_ec_device *ec)
++ssize_t wilco_ec_abc_show(struct kobject *kobj, struct kobj_attribute *attr,
++			  char *buf)
 +{
-+	struct ec_event_entry *entry, *next;
-+
-+	mutex_lock(&ec->event.lock);
-+
-+	/* Clear the event queue */
-+	list_for_each_entry_safe(entry, next, &ec->event.list, list) {
-+		list_del(&entry->list);
-+		kfree(entry);
-+		ec->event.count--;
-+	}
-+
-+	mutex_unlock(&ec->event.lock);
-+}
-+
-+int wilco_ec_event_init(struct wilco_ec_device *ec)
-+{
-+	struct wilco_ec_event *event = &ec->event;
-+	struct device *dev = ec->dev;
-+	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	acpi_status status;
++	struct property_attribute *prop_attr;
++	struct device *dev;
++	struct wilco_ec_device *ec;
++	struct adv_batt_charging_payload payload;
++	struct adv_batt_charging_data data;
++	const char FORMAT[] = "%02d %02d %02d %02d\n";
++	const int OUT_LENGTH = 12; //four 2-char nums, 3 spaces, 1 newline
 +	int ret;
 +
-+	if (!adev) {
-+		dev_err(dev, "Unable to find Wilco ACPI Device\n");
-+		return -ENODEV;
-+	}
++	prop_attr = container_of(attr, struct property_attribute, kobj_attr);
++	dev = device_from_kobject(kobj);
++	ec = dev_get_drvdata(dev);
 +
-+	INIT_LIST_HEAD(&event->list);
-+	mutex_init(&event->lock);
 +
-+	/* Allocate input device for hotkeys */
-+	event->input = input_allocate_device();
-+	if (!event->input)
-+		return -ENOMEM;
-+	event->input->name = "Wilco EC hotkeys";
-+	event->input->phys = "ec/input0";
-+	event->input->id.bustype = BUS_HOST;
-+	ret = sparse_keymap_setup(event->input, wilco_ec_keymap, NULL);
-+	if (ret) {
-+		dev_err(dev, "Unable to setup input device keymap\n");
-+		input_free_device(event->input);
-+		return ret;
-+	}
-+	ret = input_register_device(event->input);
-+	if (ret) {
-+		dev_err(dev, "Unable to register input device\n");
-+		input_free_device(event->input);
++	if (OUT_LENGTH + 1 > PAGE_SIZE)
++		return -ENOBUFS; //no buffer space for message + null
++
++	/* get the raw payload of data from the EC */
++	ret = wilco_ec_get_property(ec, prop_attr->pid, sizeof(payload),
++				    (u8 *) &payload);
++	if (ret < 0) {
++		dev_err(dev, "error in wilco_ec_mailbox()");
 +		return ret;
 +	}
 +
-+	/* Create sysfs attribute for userspace event handling */
-+	sysfs_bin_attr_init(&event->attr);
-+	event->attr.attr.name = "event";
-+	event->attr.attr.mode = 0400;
-+	event->attr.read = wilco_ec_event_read;
-+	event->attr.private = ec;
-+	ret = device_create_bin_file(dev, &event->attr);
-+	if (ret) {
-+		dev_err(dev, "Failed to create event attribute in sysfs\n");
-+		input_unregister_device(event->input);
-+		return ret;
++	/* unpack raw bytes, and convert quarter-hour to literal minute */
++	unpack_adv_batt_charging(&data, &payload);
++	data.start_minutes *= 15;
++	data.duration_minutes *= 15;
++
++	// /* Is this needed? can we assume the EC returns good data? */
++	// EC is returning 00 00 27 30. Was this modified, or is EC weird
++	// out of the box?
++	ret = check_adv_batt_charging_data(dev, &data);
++	if (ret < 0) {
++		dev_err(dev, "EC returned out of range minutes or hours");
++		return -EBADMSG;
 +	}
 +
-+	/* Install ACPI handler for Notify events */
-+	status = acpi_install_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
-+					     wilco_ec_acpi_notify, ec);
-+
-+	if (ACPI_FAILURE(status)) {
-+		dev_err(dev, "Failed to register notifier %08x\n", status);
-+		device_remove_bin_file(dev, &event->attr);
-+		input_unregister_device(event->input);
-+		return -ENODEV;
++	/* Print the numbers to the string */
++	ret = scnprintf(buf, OUT_LENGTH+1, FORMAT,
++			data.start_hours,
++			data.start_minutes,
++			data.duration_hours,
++			data.duration_minutes);
++	if (ret != OUT_LENGTH) {
++		dev_err(dev, "expected to write %d chars, wrote %d", OUT_LENGTH,
++			ret);
++		return -EIO;
 +	}
 +
-+	return 0;
++	return OUT_LENGTH;
 +}
 +
-+void wilco_ec_event_remove(struct wilco_ec_device *ec)
++ssize_t wilco_ec_abc_store(struct kobject *kobj, struct kobj_attribute *attr,
++			   const char *buf, size_t count)
 +{
-+	struct acpi_device *adev = ACPI_COMPANION(ec->dev);
++	struct property_attribute *prop_attr;
++	struct device *dev;
++	struct wilco_ec_device *ec;
++	struct adv_batt_charging_data data;
++	struct adv_batt_charging_payload payload;
++	const char FORMAT[] = "%d %d %d %d";
++	int ret;
 +
-+	/* Stop new events */
-+	if (adev)
-+		acpi_remove_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
-+					   wilco_ec_acpi_notify);
++	prop_attr = container_of(attr, struct property_attribute, kobj_attr);
++	dev = device_from_kobject(kobj);
++	ec = dev_get_drvdata(dev);
 +
-+	/* Remove event interfaces */
-+	device_remove_bin_file(ec->dev, &ec->event.attr);
-+	input_unregister_device(ec->event.input);
-+
-+	/* Clear the event queue */
-+	wilco_ec_event_clear(ec);
-+}
-diff --git a/drivers/platform/chrome/wilco_ec_mailbox.c b/drivers/platform/chrome/wilco_ec_mailbox.c
-index 2f093a281a30..25c2c539c813 100644
---- a/drivers/platform/chrome/wilco_ec_mailbox.c
-+++ b/drivers/platform/chrome/wilco_ec_mailbox.c
-@@ -377,6 +377,14 @@ static int wilco_ec_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	/* Prepare to handle events */
-+	if (wilco_ec_event_init(ec) < 0) {
-+		dev_err(dev, "Failed to setup event handling\n");
-+		wilco_ec_sysfs_remove(ec);
-+		cros_ec_lpc_mec_destroy();
-+		return -ENODEV;
++	/* Extract our 4 numbers from the input string */
++	ret = sscanf(buf, FORMAT,
++		     &data.start_hours,
++		     &data.start_minutes,
++		     &data.duration_hours,
++		     &data.duration_minutes);
++	if (ret != 4) {
++		dev_err(dev, "unable to parse '%s' into 4 integers", buf);
++		return -EINVAL;
 +	}
++
++	/* Ensure the integers we parsed are valid */
++	ret = check_adv_batt_charging_data(dev, &data);
++	if (ret < 0)
++		return ret;
++
++	/* Convert the literal minutes to which quarter hour they represent */
++	data.start_minutes = extract_quarter_hour(data.start_minutes);
++	if (data.start_minutes < 0)
++		goto bad_minutes;
++	data.duration_minutes = extract_quarter_hour(data.duration_minutes);
++	if (data.duration_minutes < 0)
++		goto bad_minutes;
++
++	/* Create the raw byte payload and send it off */
++	pack_adv_batt_charging(&data, &payload);
++	wilco_ec_set_property(ec, OP_SET, prop_attr->pid, sizeof(payload),
++			      (u8 *) &payload);
++
++	return count;
++
++bad_minutes:
++	dev_err(dev, "minutes must be at the quarter hour");
++	return -EINVAL;
++}
+diff --git a/drivers/platform/chrome/wilco_ec_adv_power.h b/drivers/platform/chrome/wilco_ec_adv_power.h
+new file mode 100644
+index 000000000000..8302650144ab
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec_adv_power.h
+@@ -0,0 +1,193 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * wilco_ec_adv_power - peakshift and adv_batt_charging config of Wilco EC
++ *
++ * Copyright 2018 Google LLC
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++/**
++ * Peakshift:
++ * For each weekday a start and end time to run in Peak Shift mode can be set.
++ * During these times the system will run from the battery even if the AC is
++ * attached as long as the battery stays above the threshold specified.
++ * After the end time specified the system will run from AC if attached but
++ * will not charge the battery. The system will again function normally using AC
++ * and recharging the battery after the specified Charge Start time.
++ *
++ * Advanced Charging Mode:
++ * Advanced Charging Mode allows the user to maximize the battery health.
++ * In Advanced Charging Mode the system will use standard charging algorithm and
++ * other techniques during non-work hours to maximize battery health.
++ * During work hours, an express charge is used. This express charge allows the
++ * battery to be charged faster; therefore, the battery is at
++ * full charge sooner. For each day the time in which the system will be most
++ * heavily used is specified by the start time and the duration.
++ * Please read the Common UEFI BIOS Behavioral Specification and
++ * BatMan 2 BIOS_EC Specification for more details about this feature.
++ */
++
++#ifndef WILCO_EC_ADV_POWER_H
++#define WILCO_EC_ADV_POWER_H
++
++#include <linux/kobject.h>
++#include <linux/sysfs.h>
++#include "wilco_ec.h"
++#include "wilco_ec_sysfs_util.h"
++#include "wilco_ec_properties.h"
++
++#define PID_PEAKSHIFT				0x0412
++#define PID_PEAKSHIFT_BATTERY_THRESHOLD		0x04EB
++#define PID_PEAKSHIFT_SUNDAY_HOURS		0x04F5
++#define PID_PEAKSHIFT_MONDAY_HOURS		0x04F6
++#define PID_PEAKSHIFT_TUESDAY_HOURS		0x04F7
++#define PID_PEAKSHIFT_WEDNESDAY_HOURS		0x04F8
++#define PID_PEAKSHIFT_THURSDAY_HOURS		0x04F9
++#define PID_PEAKSHIFT_FRIDAY_HOURS		0x04Fa
++#define PID_PEAKSHIFT_SATURDAY_HOURS		0x04Fb
++
++#define PID_ABC_MODE				0x04ed
++#define PID_ABC_SUNDAY_HOURS			0x04F5
++#define PID_ABC_MONDAY_HOURS			0x04F6
++#define PID_ABC_TUESDAY_HOURS			0x04F7
++#define PID_ABC_WEDNESDAY_HOURS			0x04F8
++#define PID_ABC_THURSDAY_HOURS			0x04F9
++#define PID_ABC_FRIDAY_HOURS			0x04FA
++#define PID_ABC_SATURDAY_HOURS			0x04FB
++
++/**
++ * wilco_ec_peakshift_show() - Retrieves times stored for the peakshift policy.
++ * @kobj: kobject representing the directory this attribute is in
++ * @attr: Attribute stored within the proper property_attribute
++ * @buf: Output buffer to fill with the result
++ *
++ * The output buffer will be filled with the format
++ * "start_hr start_min end_hr end_min charge_start_hr charge_start_min"
++ * The hour fields will be in the range [0-23], and the minutes will be
++ * one of (0, 15, 30, 45). Each number will be zero padded to two characters.
++ *
++ * An example output is "06 15 09 45 23 00",
++ * which corresponds to 6:15, 9:45, and 23:00
++ *
++ * Return the length of the output buffer, or negative error code on failure.
++ */
++ssize_t wilco_ec_peakshift_show(struct kobject *kobj,
++				struct kobj_attribute *attr, char *buf);
++
++/**
++ * wilco_ec_peakshift_store() - Saves times for the peakshift policy.
++ * @kobj: kobject representing the directory this attribute is in
++ * @attr: Attribute stored within the proper property_attribute
++ * @buf: Raw input buffer
++ * @count: Number of bytes in input buffer
++ *
++ * The input buffer must have the format
++ * "start_hr start_min end_hr end_min charge_start_hr charge_start_min"
++ * The hour fields must be in the range [0-23], and the minutes must be
++ * one of (0, 15, 30, 45). The string must be parseable by sscanf() using the
++ * format string "%d %d %d %d %d %d".
++ *
++ * An example valid input is "6 15     009 45 23 0",
++ * which corresponds to 6:15, 9:45, and 23:00
++ *
++ * Return number of bytes consumed from input, negative error code on failure.
++ */
++ssize_t wilco_ec_peakshift_store(struct kobject *kobj,
++				 struct kobj_attribute *attr, const char *buf,
++				 size_t count);
++
++/**
++ * peakshift_battery_show() - Retrieve batt percentage at which peakshift stops
++ * @kobj: kobject representing the directory this attribute is in
++ * @attr: Attribute stored within the proper property_attribute
++ * @buf: Output buffer to fill with the result
++ *
++ * Result will be a 2 character integer representing the
++ * battery percentage at which peakshift stops. Will be in range [15, 50].
++ *
++ * Return the length of the output buffer, or negative error code on failure.
++ */
++ssize_t wilco_ec_peakshift_batt_thresh_show(struct kobject *kobj,
++					    struct kobj_attribute *attr,
++					    char *buf);
++
++/**
++ * peakshift_battery_store() - Save batt percentage at which peakshift stops
++ * @kobj: kobject representing the directory this attribute is in
++ * @attr: Attribute stored within the proper property_attribute
++ * @buf: Input buffer, should be parseable to range [15,50] by kstrtou8()
++ * @count: Number of bytes in input buffer
++ *
++ * Return number of bytes consumed from input, negative error code on failure.
++ */
++ssize_t wilco_ec_peakshift_batt_thresh_store(struct kobject *kobj,
++					     struct kobj_attribute *attr,
++					     const char *buf, size_t count);
++
++/**
++ * wilco_ec_abc_show() - Retrieve times for Advanced Battery Charging
++ * @kobj: kobject representing the directory this attribute is in
++ * @attr: Attribute stored within the proper property_attribute
++ * @buf: Output buffer to fill with the result
++ *
++ * The output buffer will be filled with the format
++ * "start_hr start_min duration_hr duration_min"
++ * The hour fields will be in the range [0-23], and the minutes will be
++ * one of (0, 15, 30, 45). Each number will be zero padded to two characters.
++ *
++ * An example output is "06 15 23 45",
++ * which corresponds to a start time of 6:15 and a duration of 23:45
++ *
++ * Return the length of the output buffer, or negative error code on failure.
++ */
++ssize_t wilco_ec_abc_show(struct kobject *kobj, struct kobj_attribute *attr,
++			  char *buf);
++
++/**
++ * wilco_ec_abc_store() - Save times for Advanced Battery Charging
++ * @kobj: kobject representing the directory this attribute is in
++ * @attr: Attribute stored within the proper property_attribute
++ * @buf: The raw input buffer
++ * @count: Number of bytes in input buffer
++ *
++ * The input buffer must have the format
++ * "start_hr start_min duration_hr duration_min"
++ * The hour fields must be in the range [0-23], and the minutes must be
++ * one of (0, 15, 30, 45). The string must be parseable by sscanf() using the
++ * format string "%d %d %d %d %d %d".
++ *
++ * An example valid input is "0006 15     23 45",
++ * which corresponds to a start time of 6:15 and a duration of 23:45
++ *
++ * Return number of bytes consumed, or negative error code on failure.
++ */
++ssize_t wilco_ec_abc_store(struct kobject *kobj, struct kobj_attribute *attr,
++			   const char *buf, size_t count);
++
++#define PEAKSHIFT_KOBJ_ATTR(_name)					\
++__ATTR(_name, 0644, wilco_ec_peakshift_show, wilco_ec_peakshift_store)
++
++#define PEAKSHIFT_ATTRIBUTE(_var, _name, _pid)				\
++struct property_attribute _var = {					\
++	.kobj_attr = PEAKSHIFT_KOBJ_ATTR(_name),			\
++	.pid = _pid,							\
++}
++
++#define ABC_KOBJ_ATTR(_name)						\
++__ATTR(_name, 0644, wilco_ec_abc_show, wilco_ec_abc_store)
++
++#define ABC_ATTRIBUTE(_var, _name, _pid)				\
++struct property_attribute _var = {					\
++	.kobj_attr = ABC_KOBJ_ATTR(_name),				\
++	.pid = _pid,							\
++}
++
++#endif /* WILCO_EC_ADV_POWER_H */
+diff --git a/drivers/platform/chrome/wilco_ec_sysfs.c b/drivers/platform/chrome/wilco_ec_sysfs.c
+index 3cb7cf95098e..81dded951058 100644
+--- a/drivers/platform/chrome/wilco_ec_sysfs.c
++++ b/drivers/platform/chrome/wilco_ec_sysfs.c
+@@ -18,6 +18,7 @@
+ #include "wilco_ec.h"
+ #include "wilco_ec_legacy.h"
+ #include "wilco_ec_properties.h"
++#include "wilco_ec_adv_power.h"
+ 
+ #define WILCO_EC_ATTR_RO(_name)						\
+ __ATTR(_name, 0444, wilco_ec_##_name##_show, NULL)
+@@ -82,6 +83,70 @@ struct attribute *wilco_ec_property_attrs[] = {
+ ATTRIBUTE_GROUPS(wilco_ec_property);
+ struct kobject *prop_dir_kobj;
+ 
++/* Make peakshift attrs, which live inside GOOG000C:00/properties/peakshift */
++
++struct kobj_attribute kobj_attr_peakshift_battery_threshold =
++	__ATTR(battery_threshold, 0644, wilco_ec_peakshift_batt_thresh_show,
++	       wilco_ec_peakshift_batt_thresh_store);
++BOOLEAN_PROPERTY_RW_ATTRIBUTE(OP_SET, prop_attr_peakshift, enable,
++			      PID_PEAKSHIFT);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_sunday, sunday,
++		    PID_PEAKSHIFT_SUNDAY_HOURS);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_monday, monday,
++		    PID_PEAKSHIFT_MONDAY_HOURS);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_tuesday, tuesday,
++		    PID_PEAKSHIFT_TUESDAY_HOURS);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_wednesday, wednesday,
++		    PID_PEAKSHIFT_WEDNESDAY_HOURS);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_thursday, thursday,
++		    PID_PEAKSHIFT_THURSDAY_HOURS);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_friday, friday,
++		    PID_PEAKSHIFT_FRIDAY_HOURS);
++PEAKSHIFT_ATTRIBUTE(prop_attr_peakshift_saturday, saturday,
++		    PID_PEAKSHIFT_SATURDAY_HOURS);
++
++struct attribute *wilco_ec_peakshift_attrs[] = {
++	&kobj_attr_peakshift_battery_threshold.attr,
++	&prop_attr_peakshift.kobj_attr.attr,
++	&prop_attr_peakshift_sunday.kobj_attr.attr,
++	&prop_attr_peakshift_monday.kobj_attr.attr,
++	&prop_attr_peakshift_tuesday.kobj_attr.attr,
++	&prop_attr_peakshift_wednesday.kobj_attr.attr,
++	&prop_attr_peakshift_thursday.kobj_attr.attr,
++	&prop_attr_peakshift_friday.kobj_attr.attr,
++	&prop_attr_peakshift_saturday.kobj_attr.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(wilco_ec_peakshift);
++struct kobject *peakshift_dir_kobj;
++
++/**
++ * Make peakshift attrs, which live inside
++ * GOOG000C:00/properties/advanced_battery_charging
++ */
++
++BOOLEAN_PROPERTY_RW_ATTRIBUTE(OP_SET, prop_attr_abc, enable, PID_ABC_MODE);
++ABC_ATTRIBUTE(prop_attr_abc_sunday, sunday, PID_ABC_SUNDAY_HOURS);
++ABC_ATTRIBUTE(prop_attr_abc_monday, monday, PID_ABC_MONDAY_HOURS);
++ABC_ATTRIBUTE(prop_attr_abc_tuesday, tuesday, PID_ABC_TUESDAY_HOURS);
++ABC_ATTRIBUTE(prop_attr_abc_wednesday, wednesday, PID_ABC_WEDNESDAY_HOURS);
++ABC_ATTRIBUTE(prop_attr_abc_thursday, thursday, PID_ABC_THURSDAY_HOURS);
++ABC_ATTRIBUTE(prop_attr_abc_friday, friday, PID_ABC_FRIDAY_HOURS);
++ABC_ATTRIBUTE(prop_attr_abc_saturday, saturday, PID_ABC_SATURDAY_HOURS);
++
++struct attribute *wilco_ec_adv_batt_charging_attrs[] = {
++	&prop_attr_abc.kobj_attr.attr,
++	&prop_attr_abc_sunday.kobj_attr.attr,
++	&prop_attr_abc_monday.kobj_attr.attr,
++	&prop_attr_abc_tuesday.kobj_attr.attr,
++	&prop_attr_abc_wednesday.kobj_attr.attr,
++	&prop_attr_abc_thursday.kobj_attr.attr,
++	&prop_attr_abc_friday.kobj_attr.attr,
++	&prop_attr_abc_saturday.kobj_attr.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(wilco_ec_adv_batt_charging);
++struct kobject *adv_batt_charging_dir_kobj;
+ 
+ /**
+  * wilco_ec_sysfs_init() - Initialize the sysfs directories and attributes
+@@ -112,9 +177,42 @@ int wilco_ec_sysfs_init(struct wilco_ec_device *ec)
+ 	if (ret)
+ 		goto rm_properties_dir;
+ 
++	// add the directory for adv batt charging into the properties directory
++	adv_batt_charging_dir_kobj = kobject_create_and_add(
++					"advanced_battery_charging",
++					prop_dir_kobj);
++	if (!adv_batt_charging_dir_kobj)
++		goto rm_properties_attrs;
++
++	// add the adv batt charging attributes into the abc directory
++	ret = sysfs_create_groups(adv_batt_charging_dir_kobj,
++				  wilco_ec_adv_batt_charging_groups);
++	if (ret)
++		goto rm_abc_dir;
++
++	// add the directory for peakshift into the properties directory
++	peakshift_dir_kobj = kobject_create_and_add("peakshift", prop_dir_kobj);
++	if (!peakshift_dir_kobj)
++		goto rm_abc_attrs;
++
++	// add the peakshift attributes into the peakshift directory
++	ret = sysfs_create_groups(peakshift_dir_kobj,
++				  wilco_ec_peakshift_groups);
++	if (ret)
++		goto rm_peakshift_dir;
 +
  	return 0;
- }
  
-@@ -384,6 +392,9 @@ static int wilco_ec_remove(struct platform_device *pdev)
- {
- 	struct wilco_ec_device *ec = platform_get_drvdata(pdev);
+ /* Go upwards through the directory structure, cleaning up */
++rm_peakshift_dir:
++	kobject_put(peakshift_dir_kobj);
++rm_abc_attrs:
++	sysfs_remove_groups(adv_batt_charging_dir_kobj,
++			    wilco_ec_adv_batt_charging_groups);
++rm_abc_dir:
++	kobject_put(adv_batt_charging_dir_kobj);
++rm_properties_attrs:
++	sysfs_remove_groups(prop_dir_kobj, wilco_ec_property_groups);
+ rm_properties_dir:
+ 	kobject_put(prop_dir_kobj);
+ rm_toplevel_attrs:
+@@ -129,6 +227,11 @@ void wilco_ec_sysfs_remove(struct wilco_ec_device *ec)
+ 	struct device *dev = ec->dev;
  
-+	/* Stop handling EC events */
-+	wilco_ec_event_remove(ec);
-+
- 	/* Remove sysfs attributes */
- 	wilco_ec_sysfs_remove(ec);
- 
+ 	/* go upwards through the directory structure */
++	sysfs_remove_groups(peakshift_dir_kobj, wilco_ec_peakshift_groups);
++	kobject_put(peakshift_dir_kobj);
++	sysfs_remove_groups(adv_batt_charging_dir_kobj,
++			    wilco_ec_adv_batt_charging_groups);
++	kobject_put(adv_batt_charging_dir_kobj);
+ 	sysfs_remove_groups(prop_dir_kobj, wilco_ec_property_groups);
+ 	kobject_put(prop_dir_kobj);
+ 	sysfs_remove_groups(&dev->kobj, wilco_ec_toplevel_groups);
 -- 
 2.20.0.405.gbc1bbc6f85-goog
 
