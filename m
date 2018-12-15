@@ -2,145 +2,69 @@ Return-Path: <SRS0=+3zQ=OY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C305BC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 12:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08C9C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 12:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84DE92086D
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 12:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9642F2086D
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 12:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730198AbeLOMlF (ORCPT
+        id S1730284AbeLOMlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 07:41:05 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:40670 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729192AbeLOMlF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 07:41:05 -0500
-Received: by mail-io1-f71.google.com with SMTP id u2so7219589iob.7
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 04:41:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=UF7Srjku8xbGmYR+uMTLDvsLiRu9P5zr1cSQoY9asOs=;
-        b=ozLHIcansprw/EAOft0Zn+aI1J5RpGGTwsBxYI+Vy20mSKmKbdr5cGGrQaF3PLCIeu
-         NW/K4k4S6Xp5gziLiep2TcB2+VJsBRTzhEtY0iJ+VCpI6KpXGrDrNKwq3uXibxBNaJi4
-         nDisuTVzs/h/YqROtMjmYmmmFbKyp+PDpDTXZji1oCZiaA+wxwbjICxZPj96SJA6omhp
-         eowR2zXiiHilylWn5Ca/VooSmE3EUe8ORWls36yVgpGGCTHW8Kx/YQOYXDxdH5ACsRiS
-         mX+Q3S4CLuV6iPh+ruZZtK/k3f4TEecGe9fWy2sfXg9c3sNGYo0bWTO+UMPz2I00w87T
-         m0EA==
-X-Gm-Message-State: AA+aEWbPN13ZsGqYuyNGFaIkbSSZNPRX0hkMxzR7G1yiJO+EDdF//0ot
-        A3keywA8zuvENwohZoeoMRXRx00NKL+0RAGhSqe/z0UNt/U/
-X-Google-Smtp-Source: AFSGD/Uak4folfCDrFPfoclMaybHsJ9p4qR/UMuyyRzdhJoA8D+UyJMznGZmnk/12IyoxAJh0rOyCqeizhC7C2fNNAnLjLrL6Tu2
+        Sat, 15 Dec 2018 07:41:55 -0500
+Received: from verein.lst.de ([213.95.11.211]:53121 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729192AbeLOMlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 07:41:55 -0500
+Received: by newverein.lst.de (Postfix, from userid 107)
+        id 0F3DE68DEF; Sat, 15 Dec 2018 13:41:54 +0100 (CET)
+Received: from blackhole.lan (p5B33F2D3.dip0.t-ipconnect.de [91.51.242.211])
+        by newverein.lst.de (Postfix) with ESMTPSA id 3653E68D7F;
+        Sat, 15 Dec 2018 13:41:50 +0100 (CET)
+Date:   Sat, 15 Dec 2018 13:41:44 +0100
+From:   Torsten Duwe <duwe@lst.de>
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        julien.thierry@arm.com, rostedt@goodmis.org, jpoimboe@redhat.com,
+        mingo@redhat.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, takahiro.akashi@linaro.org,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH v5] arm64: implement ftrace with regs
+Message-ID: <20181215134144.6b0cc45b@blackhole.lan>
+In-Reply-To: <CADGdYn69reXed-DBMTCezNyNEgKn-h0NA-D6dnoRrJx2_bE71Q@mail.gmail.com>
+References: <20181130162015.83FE767357@newverein.lst.de>
+        <CADGdYn46uQWfoDmRjk1OFj9fYXYbC669Ar=oVtnx141HcMFr8w@mail.gmail.com>
+        <20181214094714.GA30043@lst.de>
+        <CADGdYn69reXed-DBMTCezNyNEgKn-h0NA-D6dnoRrJx2_bE71Q@mail.gmail.com>
+Organization: LST e.V.
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-X-Received: by 2002:a24:7515:: with SMTP id y21mr5796870itc.38.1544877663731;
- Sat, 15 Dec 2018 04:41:03 -0800 (PST)
-Date:   Sat, 15 Dec 2018 04:41:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005e47a2057d0edc49@google.com>
-Subject: WARNING in __rcu_read_unlock
-From:   syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, arjan@linux.intel.com,
-        josh@joshtriplett.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgMmFhNTVkY2NmODNkIGhuczM6IHByZXZlbnQgYnVpbGRpbmcgd2l0aG91dCBDT05G
-SUdfSU5FVA0KZ2l0IHRyZWU6ICAgICAgIG5ldC1uZXh0DQpjb25zb2xlIG91dHB1dDogaHR0cHM6
-Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9sb2cudHh0P3g9MTU2MjhmNmQ0MDAwMDANCmtlcm5l
-bCBjb25maWc6ICBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94Ly5jb25maWc/eD1kOTY1
-NWIwNWFjZmM5N2ZmDQpkYXNoYm9hcmQgbGluazogaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5j
-b20vYnVnP2V4dGlkPTQzZjY3NTVkMWMyZTYyNzQzNDY4DQpjb21waWxlcjogICAgICAgZ2NjIChH
-Q0MpIDguMC4xIDIwMTgwNDEzIChleHBlcmltZW50YWwpDQpzeXogcmVwcm86ICAgICAgaHR0cHM6
-Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9yZXByby5zeXo/eD0xMjVmZGE4YjQwMDAwMA0KQyBy
-ZXByb2R1Y2VyOiAgIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvcmVwcm8uYz94PTEz
-NWU1NGNkNDAwMDAwDQoNCklNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRk
-IHRoZSBmb2xsb3dpbmcgdGFnIHRvIHRoZSBjb21taXQ6DQpSZXBvcnRlZC1ieTogc3l6Ym90KzQz
-ZjY3NTVkMWMyZTYyNzQzNDY4QHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCg0KSVB2NjogQURE
-UkNPTkYoTkVUREVWX0NIQU5HRSk6IHZldGgxOiBsaW5rIGJlY29tZXMgcmVhZHkNCklQdjY6IEFE
-RFJDT05GKE5FVERFVl9DSEFOR0UpOiB2ZXRoMDogbGluayBiZWNvbWVzIHJlYWR5DQo4MDIxcTog
-YWRkaW5nIFZMQU4gMCB0byBIVyBmaWx0ZXIgb24gZGV2aWNlIHRlYW0wDQprYXNhbjogQ09ORklH
-X0tBU0FOX0lOTElORSBlbmFibGVkDQprYXNhbjogR1BGIGNvdWxkIGJlIGNhdXNlZCBieSBOVUxM
-LXB0ciBkZXJlZiBvciB1c2VyIG1lbW9yeSBhY2Nlc3MNCldBUk5JTkc6IENQVTogMCBQSUQ6IC0y
-MDM1MTgwOTM3IGF0IGtlcm5lbC9yY3UvdHJlZV9wbHVnaW4uaDo0MzggIA0KX19yY3VfcmVhZF91
-bmxvY2srMHgyNjYvMHgyZTAga2VybmVsL3JjdS90cmVlX3BsdWdpbi5oOjQzMg0KS2VybmVsIHBh
-bmljIC0gbm90IHN5bmNpbmc6IHBhbmljX29uX3dhcm4gc2V0IC4uLg0KQ1BVOiAwIFBJRDogLTIw
-MzUxODA5MzcgQ29tbTogIEwf77+977+977+977+977+9IE5vdCB0YWludGVkIDQuMjAuMC1yYzYr
-ICMzNDQNCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xl
-IENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAwMS8wMS8yMDExDQpDYWxsIFRyYWNlOg0K
-ICA8SVJRPg0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo3NyBbaW5saW5lXQ0KICBk
-dW1wX3N0YWNrKzB4MjQ0LzB4MzlkIGxpYi9kdW1wX3N0YWNrLmM6MTEzDQogIHBhbmljKzB4MmFk
-LzB4NTVjIGtlcm5lbC9wYW5pYy5jOjE4OA0KICBfX3dhcm4uY29sZC44KzB4MjAvMHg0NSBrZXJu
-ZWwvcGFuaWMuYzo1NDANCiAgcmVwb3J0X2J1ZysweDI1NC8weDJkMCBsaWIvYnVnLmM6MTg2DQog
-IGZpeHVwX2J1ZyBhcmNoL3g4Ni9rZXJuZWwvdHJhcHMuYzoxNzggW2lubGluZV0NCiAgZG9fZXJy
-b3JfdHJhcCsweDExYi8weDIwMCBhcmNoL3g4Ni9rZXJuZWwvdHJhcHMuYzoyNzENCiAgZG9faW52
-YWxpZF9vcCsweDM2LzB4NDAgYXJjaC94ODYva2VybmVsL3RyYXBzLmM6MjkwDQogIGludmFsaWRf
-b3ArMHgxNC8weDIwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6OTczDQpSSVA6IDAwMTA6X19y
-Y3VfcmVhZF91bmxvY2srMHgyNjYvMHgyZTAga2VybmVsL3JjdS90cmVlX3BsdWdpbi5oOjQzMg0K
-Q29kZTogMDAgMDAgMDAgZmMgZmYgZGYgNGMgODkgZjIgNDggYzEgZWEgMDMgMGYgYjYgMDQgMDIg
-ODQgYzAgNzQgMDQgM2MgMDMgIA0KN2UgNmYgNDEgYzcgODQgMjQgNzAgMDMgMDAgMDAgMDAgMDAg
-MDAgMDAgZTkgNWEgZmUgZmYgZmYgPDBmPiAwYiBlOSBkYSBmZSAgDQpmZiBmZiA0YyA4OSBmNyBl
-OCAxYiAxNCA1OSAwMCBlOSAyYSBmZSBmZiBmZiA0YyA4OQ0KUlNQOiAwMDE4OmZmZmY4ODgxZGFl
-MDc1ZTggRUZMQUdTOiAwMDAxMDAwNg0KUkFYOiBkZmZmZmMwMDAwMDAwMDAwIFJCWDogMWZmZmYx
-MTAzYjVjMGViZSBSQ1g6IGZmZmZmZmZmODE1M2Y1OTkNClJEWDogMWZmZmYxMTAzYjVjMGVjYSBS
-U0k6IGZmZmZmZmZmODE1M2Y1YmIgUkRJOiAwMDAwMDAwMDAwMDAwMDA1DQpSQlA6IGZmZmY4ODgx
-ZGFlMDc2YjggUjA4OiBmZmZmODg4MWJmMWY0NTQwIFIwOTogZmZmZmVkMTAzYjVjM2VmOA0KUjEw
-OiBmZmZmZWQxMDNiNWMzZWY4IFIxMTogZmZmZjg4ODFkYWUxZjdjNyBSMTI6IDAwMDAwMDAwZmRi
-MjE1MDENClIxMzogMWZmZmYxMTAzYjVjMGVjYSBSMTQ6IGZmZmY4ODgxYmYxZjQ4YjAgUjE1OiBm
-ZmZmODg4MWRhZTA3NjkwDQogIHJjdV9yZWFkX3VubG9jayBpbmNsdWRlL2xpbnV4L3JjdXBkYXRl
-Lmg6NjYwIFtpbmxpbmVdDQogIF9fYXRvbWljX25vdGlmaWVyX2NhbGxfY2hhaW4ga2VybmVsL25v
-dGlmaWVyLmM6MTg0IFtpbmxpbmVdDQogIGF0b21pY19ub3RpZmllcl9jYWxsX2NoYWluKzB4ZDAv
-MHgxOTAga2VybmVsL25vdGlmaWVyLmM6MTkzDQogIG5vdGlmeV9kaWUrMHgxYmQvMHgyZDAga2Vy
-bmVsL25vdGlmaWVyLmM6NTQ5DQogIGRvX2dlbmVyYWxfcHJvdGVjdGlvbisweDE2ZC8weDJmMCBh
-cmNoL3g4Ni9rZXJuZWwvdHJhcHMuYzo1NTcNCiAgZ2VuZXJhbF9wcm90ZWN0aW9uKzB4MWUvMHgz
-MCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjExNDINClJJUDogMDAxMDp0YXNrX2NzcyBpbmNs
-dWRlL2xpbnV4L2Nncm91cC5oOjQ3NyBbaW5saW5lXQ0KUklQOiAwMDEwOnRhc2tfY2Ega2VybmVs
-L3NjaGVkL2NwdWFjY3QuYzo0MyBbaW5saW5lXQ0KUklQOiAwMDEwOmNwdWFjY3RfYWNjb3VudF9m
-aWVsZCsweDE0MC8weDNkMCBrZXJuZWwvc2NoZWQvY3B1YWNjdC5jOjM2NQ0KQ29kZTogYjYgOTcg
-MDggMDAgODUgYzAgNzQgMGQgODAgM2QgNjkgYmIgYjIgMDggMDAgMGYgODQgYTQgMDEgMDAgMDAg
-NDkgOGQgIA0KN2UgMTAgNDggYjggMDAgMDAgMDAgMDAgMDAgZmMgZmYgZGYgNDggODkgZmEgNDgg
-YzEgZWEgMDMgPDgwPiAzYyAwMiAwMCAwZiAgDQo4NSA0ZSAwMiAwMCAwMCA0ZCA4YiA3ZSAxMCA0
-OSA4MSBmZiAyMCAyMyA1OCA4OSAwZg0KUlNQOiAwMDE4OmZmZmY4ODgxZGFlMDc4YTggRUZMQUdT
-OiAwMDAxMDAwMg0KUkFYOiBkZmZmZmMwMDAwMDAwMDAwIFJCWDogZmZmZjg4ODFkYWUwNzkxOCBS
-Q1g6IDAwMDAwMDAwMDAwMDAwMDANClJEWDogMDAwMDAwMDAwMDAwMDAwZSBSU0k6IDAwMDAwMDAw
-ZmZmZjg4ODEgUkRJOiAwMDAwMDAwMDAwMDAwMDcyDQpSQlA6IGZmZmY4ODgxZGFlMDc5NDAgUjA4
-OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMA0KUjEwOiBmZmZmZWQxMDM3
-MzA0ODUxIFIxMTogMDAwMDAwMDAwMDAwMDAwNyBSMTI6IDAwMDAwMDAwMDA5ODJlMTQNClIxMzog
-ZGZmZmZjMDAwMDAwMDAwMCBSMTQ6IDAwMDAwMDAwMDAwMDAwNjIgUjE1OiBmZmZmODg4MWJmMWY0
-NTQwDQogIGNncm91cF9hY2NvdW50X2NwdXRpbWVfZmllbGQgaW5jbHVkZS9saW51eC9jZ3JvdXAu
-aDo3NzUgW2lubGluZV0NCiAgdGFza19ncm91cF9hY2NvdW50X2ZpZWxkIGtlcm5lbC9zY2hlZC9j
-cHV0aW1lLmM6MTA4IFtpbmxpbmVdDQogIGFjY291bnRfc3lzdGVtX2luZGV4X3RpbWUrMHgxZTgv
-MHg1ZDAga2VybmVsL3NjaGVkL2NwdXRpbWUuYzoxNzENCiAgaXJxdGltZV9hY2NvdW50X3Byb2Nl
-c3NfdGljay5pc3JhLjYrMHgzNWIvMHg0OTAga2VybmVsL3NjaGVkL2NwdXRpbWUuYzozODgNCiAg
-YWNjb3VudF9wcm9jZXNzX3RpY2srMHgyODIvMHgzNTAga2VybmVsL3NjaGVkL2NwdXRpbWUuYzo0
-ODMNCiAgdXBkYXRlX3Byb2Nlc3NfdGltZXMrMHgyMS8weDcwIGtlcm5lbC90aW1lL3RpbWVyLmM6
-MTYzNA0KICB0aWNrX3NjaGVkX2hhbmRsZSsweDlmLzB4MTgwIGtlcm5lbC90aW1lL3RpY2stc2No
-ZWQuYzoxNjQNCiAgdGlja19zY2hlZF90aW1lcisweDQ1LzB4MTMwIGtlcm5lbC90aW1lL3RpY2st
-c2NoZWQuYzoxMjc0DQogIF9fcnVuX2hydGltZXIga2VybmVsL3RpbWUvaHJ0aW1lci5jOjEzOTgg
-W2lubGluZV0NCiAgX19ocnRpbWVyX3J1bl9xdWV1ZXMrMHg0MWMvMHgxMGQwIGtlcm5lbC90aW1l
-L2hydGltZXIuYzoxNDYwDQogIGhydGltZXJfaW50ZXJydXB0KzB4MzEzLzB4NzgwIGtlcm5lbC90
-aW1lL2hydGltZXIuYzoxNTE4DQogIGxvY2FsX2FwaWNfdGltZXJfaW50ZXJydXB0IGFyY2gveDg2
-L2tlcm5lbC9hcGljL2FwaWMuYzoxMDM0IFtpbmxpbmVdDQogIHNtcF9hcGljX3RpbWVyX2ludGVy
-cnVwdCsweDFhMS8weDc2MCBhcmNoL3g4Ni9rZXJuZWwvYXBpYy9hcGljLmM6MTA1OQ0KICBhcGlj
-X3RpbWVyX2ludGVycnVwdCsweGYvMHgyMCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjgwNw0K
-ICA8L0lSUT4NCktlcm5lbCBPZmZzZXQ6IGRpc2FibGVkDQpSZWJvb3RpbmcgaW4gODY0MDAgc2Vj
-b25kcy4uDQoNCg0KLS0tDQpUaGlzIGJ1ZyBpcyBnZW5lcmF0ZWQgYnkgYSBib3QuIEl0IG1heSBj
-b250YWluIGVycm9ycy4NClNlZSBodHRwczovL2dvby5nbC90cHNtRUogZm9yIG1vcmUgaW5mb3Jt
-YXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBz
-eXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCg0Kc3l6Ym90IHdpbGwga2VlcCB0cmFjayBvZiB0
-aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0dHBzOi8vZ29vLmdsL3Rwc21FSiNidWctc3RhdHVzLXRy
-YWNraW5nIGZvciBob3cgdG8gY29tbXVuaWNhdGUgd2l0aCAgDQpzeXpib3QuDQpzeXpib3QgY2Fu
-IHRlc3QgcGF0Y2hlcyBmb3IgdGhpcyBidWcsIGZvciBkZXRhaWxzIHNlZToNCmh0dHBzOi8vZ29v
-LmdsL3Rwc21FSiN0ZXN0aW5nLXBhdGNoZXMNCg==
+On Fri, 14 Dec 2018 21:45:03 +0530
+Amit Daniel Kachhap <amit.kachhap@arm.com> wrote:
+
+> Sorry I didn't mention my environment. I am using 4.20-rc3 and it has
+> all the above 8 extra patches
+> mentioned by you.
+
+So that should be fine.
+
+> I read your change description in v3 patchset. You had mentioned there
+> that graph caller
+> is broken.
+
+No, actually I thought I had fixed that for v4. Would you care to show
+us an actual error message or some symptom?
+
+	Torsten
