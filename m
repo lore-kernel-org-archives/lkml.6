@@ -7,65 +7,64 @@ X-Spam-Status: No, score=1.5 required=3.0 tests=BODY_SINGLE_WORD,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BDAC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3345C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5244C206A2
-	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B13C320672
+	for <linux-kernel@archiver.kernel.org>; Sat, 15 Dec 2018 08:32:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uzkyc5Eu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gH50E7u8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729993AbeLOIcJ (ORCPT
+        id S1730033AbeLOIcc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 03:32:09 -0500
-Received: from mail-io1-f54.google.com ([209.85.166.54]:42539 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728675AbeLOIcI (ORCPT
+        Sat, 15 Dec 2018 03:32:32 -0500
+Received: from mail-it1-f176.google.com ([209.85.166.176]:53140 "EHLO
+        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728675AbeLOIcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 03:32:08 -0500
-Received: by mail-io1-f54.google.com with SMTP id x6so6327445ioa.9;
-        Sat, 15 Dec 2018 00:32:07 -0800 (PST)
+        Sat, 15 Dec 2018 03:32:32 -0500
+Received: by mail-it1-f176.google.com with SMTP id g76so12377193itg.2;
+        Sat, 15 Dec 2018 00:32:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Lx6jElU+VgfY4Bhw8zy9GLpHJyyAtrcr2M9tyhr/Psc=;
-        b=uzkyc5EuxmUYSHlpsKLitWrK4CjcSAbt43UQVGiUc6w6BJsbqYk0iAPY0Qu8V+u6up
-         AgUiXsAwBS2EQiVZD5PznGPE7BwQbNjKJACH3FzPUtGqsgf233HyepU5PEEqk1kqjyym
-         fW9j1NC66K6p8BT4mCvD14TOlJlVwbmoWxSGcFDrrFS3iqadRAmgaGFtJSmi/PacJDFu
-         yrew67hNxS5Tq+j+Sg2qHGsVqiCU1UIIIAjkCdFqu8Xb+5t3pzJYPOnIWffkeFvIvqk1
-         S4OEFVdTWrZK0aS8H+xqV0rMCSNmetLVESvFgA5On8DdMYBNcyFnYhj30xHDyv1va3wS
-         Unbw==
+        bh=WASiI+LGr+j54QgtHqz/Mb0c0vmWaC6GIOI+FQCQgEU=;
+        b=gH50E7u8YnTSnx0BCX5h4dFs2f3nXKXK5B9jeigPXk3FQCft35/i9wpnfb+lotFT8u
+         8IbvODabqXWkrmqEOIJpkYKy3Kit9hnVns3exzhXyTM09oMZsXYPrwaOmukAqQYAQS4j
+         R3gUqii7NlrJm5jWXmbI2p8/pt2HHzWXNFPm9yvkV4BuFJLeHGfEcYmBge2nModytx6C
+         Fwbk5Oh1rNDTeiQVvaxnhgZy/XsbUEfTS/CMMGhY6XS1b8/5aM7Qj6NCI+Vw4KfF9ixw
+         253/j0bx2fylF0lRyu7SUJ87V+3bfAKJ/m+1c/xQJAnyKREnYyJqDbhN7hLyzcP9RSNV
+         /r6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Lx6jElU+VgfY4Bhw8zy9GLpHJyyAtrcr2M9tyhr/Psc=;
-        b=ZJbSp/IEq43MtLOKy9QrmyUJ/Fu64A7AjocjV1LwRgkE0E/Cr55uEjlj0WKsyOqavs
-         HMulRumDmMGHCxpLogCwPpWqTgWwlM87gJG8YqZ1hH2dRgDQ+EIC/qoSdrVLStxcmu2R
-         i3VNH9wkzajuYUG66tO+I0gtVBmu13ZLeNhSYJ/igZdgS+kHCXQh444M/a/w8XylsuQu
-         Yg4fim0ga3cfOuAFvL6iB/bXIXTb1k1umhsKf8hZqqA+pQwqjlZWpDlql66+fGC2SBdm
-         lum8eGCsA8fOHEG+pxcEFD/ASB9ufo8JLBrFU1sDw/9bBnO5Vyz0Y9ItrS95b60M50O2
-         qREA==
-X-Gm-Message-State: AA+aEWbiWgPQ8ksfRmm41oKvHEPywQFTmtZdCJN+3kRDt9D4arHsiVai
-        Jwoe6NBGmJ8LoEpYTJCoTszc660bzeyiWX5XOoWctXr4
-X-Google-Smtp-Source: AFSGD/WE50kMJeazQCzsdVor4W+XkrOkACmhkn1khozXMuCp/7+UhX026s3sQ2as3o4b7axjLIcMn5wKA3dcpE7Xeyg=
-X-Received: by 2002:a6b:9355:: with SMTP id v82mr5261914iod.40.1544862727047;
- Sat, 15 Dec 2018 00:32:07 -0800 (PST)
+        bh=WASiI+LGr+j54QgtHqz/Mb0c0vmWaC6GIOI+FQCQgEU=;
+        b=d7FJNj+pIFU+QR4DSn+LmRaLV13l7XEREnGhIelxftU3fQXNNxjJtcjEghgbW/Fm1T
+         6edI0vczvcY+n3BrNYYdrc4iH3F2yf6ZwIiIXil0R4LNJxCR2BCdMcG5mBqsdeTYzPIf
+         NZxjnBAUjM9EqRfl3tso1yHDEYTpVsH26chzFNJAn+AnEayY9mzqiGdvLOaTTTYGvhjU
+         /RJIQCWfwLTYnqrZ65QFKsqxo2DH2tmuK1eA11Ry9b350wSf3mDtHkwJ0Tb/vtOVxbmL
+         fcJnLdEL9H6BX/qpLElwlbYAyMooGiLBq29FB2WdEw0dOYlZV0taYzUXK/tyld1t5h5R
+         ZrxQ==
+X-Gm-Message-State: AA+aEWYKSXYq0giSIRuF7r7dSguM4JShXbTJlSeCSDnt7vFKFWni+uv/
+        Du1Lsf06sNIGM4Lcwu8jx6brxbophorEiZxb/dk=
+X-Google-Smtp-Source: AFSGD/UKfmC1se6bQ32QB2O6E+MfiMvqBfqLbvLXLIMhbosaGBfC+O4uV44jnaINVr3LtOPNAvE/le1La93OLQ3Dlb0=
+X-Received: by 2002:a02:5184:: with SMTP id s126mr5300931jaa.12.1544862751432;
+ Sat, 15 Dec 2018 00:32:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20181105144717.6233-1-tiny.windzz@gmail.com>
-In-Reply-To: <20181105144717.6233-1-tiny.windzz@gmail.com>
+References: <20181106144030.8663-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181106144030.8663-1-tiny.windzz@gmail.com>
 From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Sat, 15 Dec 2018 16:31:56 +0800
-Message-ID: <CAEExFWvoF+Rj43emhQQ7NpAXY_A_w0wTTNMjQ2JeHmYrBU0Y0w@mail.gmail.com>
-Subject: Re: [PATCH] KVM: PPC: Book3S HV: Change to use DEFINE_SHOW_ATTRIBUTE macro
-To:     paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au
-Cc:     kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
+Date:   Sat, 15 Dec 2018 16:32:20 +0800
+Message-ID: <CAEExFWs36ntEoj5jhgJbVDF+xNdyjkbKpu=Y+f5M+9w2BNG4zw@mail.gmail.com>
+Subject: Re: [PATCH] sh: mm: Change to use DEFINE_SHOW_ATTRIBUTE macro
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org
+Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping...
+ping......
