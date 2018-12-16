@@ -2,304 +2,113 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D50C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 12:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D448C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 12:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46124217F9
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 12:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44F3E21839
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 12:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544963891;
+	bh=KhFLQsot0xO71kOD5sz/O03rvRcitoQeNHwTao0KAQM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=2oAYD9c9kPD2s5skCJb4rW/b3+bBd33KIl6kXEG2f1dSWxAHT/qK4d/7xAS7voDLZ
+	 tlvGA+wyGWDwZSuxQaUShggLmmA48u29vpGzstjFKScmsnGQ7A+wbXm7etKdVbNV/I
+	 9OiwCREHP9ePO1EKDa/RQqNB+hYCZyevdA8ZAfWE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730536AbeLPMer (ORCPT
+        id S1730517AbeLPMiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 07:34:47 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730316AbeLPMeq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 07:34:46 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBGCTYJT044897
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 07:34:45 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pdfx4ubqt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 07:34:45 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sun, 16 Dec 2018 12:34:43 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 16 Dec 2018 12:34:38 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBGCYbGN58589230
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 16 Dec 2018 12:34:37 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4F89A405B;
-        Sun, 16 Dec 2018 12:34:37 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1009A4054;
-        Sun, 16 Dec 2018 12:34:36 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.52])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sun, 16 Dec 2018 12:34:36 +0000 (GMT)
-Date:   Sun, 16 Dec 2018 14:34:35 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, x86@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Keith Busch <keith.busch@intel.com>, linux-mm@kvack.org,
+        Sun, 16 Dec 2018 07:38:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730269AbeLPMiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 07:38:10 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAF77217F9;
+        Sun, 16 Dec 2018 12:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544963889;
+        bh=KhFLQsot0xO71kOD5sz/O03rvRcitoQeNHwTao0KAQM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=I6ty1m2zF+hM7qdwDlqv4keccpkH+J4s0ZjhFoX1N8c8zZpOLnbz/emMaZGF4lJEA
+         h0XZiGis4DCnXXlFf2x/KGlk4c3YPnie9pmowi6FFrTisaw0MEpRrBpjXppg/ECsMz
+         nLA7SVvVkJdLxMz53PGqG4PQmALzetT8qi3LjKiY=
+Date:   Sun, 16 Dec 2018 12:38:04 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Hardik Singh Rathore <hardiksingh.k@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] acpi/numa: Set the memory-side-cache size in
- memblocks
-References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154483852084.1672629.6281294122517430332.stgit@dwillia2-desk3.amr.corp.intel.com>
+Subject: Re: [PATCH] staging: iio: ad7816: drop unnecessary initialization
+ of variables
+Message-ID: <20181216123804.7d5ed60d@archlinux>
+In-Reply-To: <20181212175707.12513-1-hardiksingh.k@gmail.com>
+References: <20181212175707.12513-1-hardiksingh.k@gmail.com>
+X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154483852084.1672629.6281294122517430332.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18121612-0016-0000-0000-000002373FE4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121612-0017-0000-0000-0000328F8557
-Message-Id: <20181216123434.GA30212@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-16_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812160119
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 05:48:40PM -0800, Dan Williams wrote:
-> From: Keith Busch <keith.busch@intel.com>
+On Wed, 12 Dec 2018 23:27:07 +0530
+Hardik Singh Rathore <hardiksingh.k@gmail.com> wrote:
+
+> Initialization is unnecessary when the variable is written before it is
+> read. There were some occasions in which the driver would initialize `ret'
+> during declaration without need.
 > 
-> Add memblock based enumeration of memory-side-cache of System RAM.
-> Detect the capability in early init through HMAT tables, and set the
-> size in the address range memblocks if a direct mapped side cache is
-> present.
-> 
-> Cc: <x86@kernel.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Mike Rapoport <rppt@linux.ibm.com>
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Hardik Singh Rathore <hardiksingh.k@gmail.com>
+Applied.
+
+Thanks,
+
+Jonathan
 > ---
->  arch/x86/Kconfig         |    1 +
->  drivers/acpi/numa.c      |   32 ++++++++++++++++++++++++++++++++
->  include/linux/memblock.h |   36 ++++++++++++++++++++++++++++++++++++
->  mm/Kconfig               |    3 +++
->  mm/memblock.c            |   20 ++++++++++++++++++++
->  5 files changed, 92 insertions(+)
+>  drivers/staging/iio/adc/ad7816.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 8689e794a43c..3f9c413d8eb5 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -171,6 +171,7 @@ config X86
->  	select HAVE_KVM
->  	select HAVE_LIVEPATCH			if X86_64
->  	select HAVE_MEMBLOCK_NODE_MAP
-> +	select HAVE_MEMBLOCK_CACHE_INFO		if ACPI_NUMA
->  	select HAVE_MIXED_BREAKPOINTS_REGS
->  	select HAVE_MOD_ARCH_SPECIFIC
->  	select HAVE_NMI
-> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-> index f5e09c39ff22..ec7e849f1c19 100644
-> --- a/drivers/acpi/numa.c
-> +++ b/drivers/acpi/numa.c
-> @@ -40,6 +40,12 @@ static int pxm_to_node_map[MAX_PXM_DOMAINS]
->  static int node_to_pxm_map[MAX_NUMNODES]
->  			= { [0 ... MAX_NUMNODES - 1] = PXM_INVAL };
->  
-> +struct mem_cacheinfo {
-> +	phys_addr_t size;
-> +	bool direct_mapped;
-> +};
-> +static struct mem_cacheinfo side_cached_pxms[MAX_PXM_DOMAINS] __initdata;
-> +
->  unsigned char acpi_srat_revision __initdata;
->  int acpi_numa __initdata;
->  
-> @@ -262,6 +268,8 @@ acpi_numa_memory_affinity_init(struct acpi_srat_mem_affinity *ma)
->  	u64 start, end;
->  	u32 hotpluggable;
->  	int node, pxm;
-> +	u64 cache_size;
-> +	bool direct;
->  
->  	if (srat_disabled())
->  		goto out_err;
-> @@ -308,6 +316,13 @@ acpi_numa_memory_affinity_init(struct acpi_srat_mem_affinity *ma)
->  		pr_warn("SRAT: Failed to mark hotplug range [mem %#010Lx-%#010Lx] in memblock\n",
->  			(unsigned long long)start, (unsigned long long)end - 1);
->  
-> +	cache_size = side_cached_pxms[pxm].size;
-> +	direct = side_cached_pxms[pxm].direct_mapped;
-> +	if (cache_size &&
-> +	    memblock_set_sidecache(start, ma->length, cache_size, direct))
-> +		pr_warn("SRAT: Failed to mark side cached range [mem %#010Lx-%#010Lx] in memblock\n",
-> +			(unsigned long long)start, (unsigned long long)end - 1);
-> +
->  	max_possible_pfn = max(max_possible_pfn, PFN_UP(end - 1));
->  
->  	return 0;
-> @@ -411,6 +426,18 @@ acpi_parse_memory_affinity(union acpi_subtable_headers * header,
->  	return 0;
->  }
->  
-> +static int __init
-> +acpi_parse_cache(union acpi_subtable_headers *header, const unsigned long end)
-> +{
-> +	struct acpi_hmat_cache *c = (void *)header;
-> +	u32 attrs = (c->cache_attributes & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8;
-> +
-> +	if (attrs == ACPI_HMAT_CA_DIRECT_MAPPED)
-> +		side_cached_pxms[c->memory_PD].direct_mapped = true;
-> +	side_cached_pxms[c->memory_PD].size += c->cache_size;
-> +	return 0;
-> +}
-> +
->  static int __init acpi_parse_srat(struct acpi_table_header *table)
+> diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+> index 5209651a1b25..ee50e7296795 100644
+> --- a/drivers/staging/iio/adc/ad7816.c
+> +++ b/drivers/staging/iio/adc/ad7816.c
+> @@ -65,7 +65,7 @@ enum ad7816_type {
+>  static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
 >  {
->  	struct acpi_table_srat *srat = (struct acpi_table_srat *)table;
-> @@ -460,6 +487,11 @@ int __init acpi_numa_init(void)
->  					sizeof(struct acpi_table_srat),
->  					srat_proc, ARRAY_SIZE(srat_proc), 0);
+>  	struct spi_device *spi_dev = chip->spi_dev;
+> -	int ret = 0;
+> +	int ret;
+>  	__be16 buf;
 >  
-> +		acpi_table_parse_entries(ACPI_SIG_HMAT,
-> +					 sizeof(struct acpi_table_hmat),
-> +					 ACPI_HMAT_TYPE_CACHE,
-> +					 acpi_parse_cache, 0);
-> +
->  		cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
->  					    acpi_parse_memory_affinity, 0);
->  	}
-> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-> index aee299a6aa76..169ed3dd456d 100644
-> --- a/include/linux/memblock.h
-> +++ b/include/linux/memblock.h
-> @@ -60,6 +60,10 @@ struct memblock_region {
->  #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
->  	int nid;
->  #endif
-> +#ifdef CONFIG_HAVE_MEMBLOCK_CACHE_INFO
-> +	phys_addr_t cache_size;
-> +	bool direct_mapped;
-> +#endif
-
-Please add descriptions of the new fields to the 'struct memblock_region'
-kernel-doc.
-
->  };
+>  	gpiod_set_value(chip->rdwr_pin, 1);
+> @@ -106,7 +106,7 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
+>  static int ad7816_spi_write(struct ad7816_chip_info *chip, u8 data)
+>  {
+>  	struct spi_device *spi_dev = chip->spi_dev;
+> -	int ret = 0;
+> +	int ret;
 >  
->  /**
-> @@ -317,6 +321,38 @@ static inline int memblock_get_region_node(const struct memblock_region *r)
->  }
->  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+>  	gpiod_set_value(chip->rdwr_pin, 1);
+>  	gpiod_set_value(chip->rdwr_pin, 0);
+> @@ -354,8 +354,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>  {
+>  	struct ad7816_chip_info *chip;
+>  	struct iio_dev *indio_dev;
+> -	int ret = 0;
+> -	int i;
+> +	int i, ret;
 >  
-> +#ifdef CONFIG_HAVE_MEMBLOCK_CACHE_INFO
-> +int memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
-> +			   phys_addr_t cache_size, bool direct_mapped);
-> +
-> +static inline bool memblock_sidecache_direct_mapped(struct memblock_region *m)
-> +{
-> +	return m->direct_mapped;
-> +}
-> +
-> +static inline phys_addr_t memblock_sidecache_size(struct memblock_region *m)
-> +{
-> +	return m->cache_size;
-> +}
-> +#else
-> +static inline int memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
-> +					 phys_addr_t cache_size,
-> +					 bool direct_mapped)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline phys_addr_t memblock_sidecache_size(struct memblock_region *m)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline bool memblock_sidecache_direct_mapped(struct memblock_region *m)
-> +{
-> +	return false;
-> +}
-> +#endif /* CONFIG_HAVE_MEMBLOCK_CACHE_INFO */
-> +
->  /* Flags for memblock allocation APIs */
->  #define MEMBLOCK_ALLOC_ANYWHERE	(~(phys_addr_t)0)
->  #define MEMBLOCK_ALLOC_ACCESSIBLE	0
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index d85e39da47ae..c7944299a89e 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -142,6 +142,9 @@ config ARCH_DISCARD_MEMBLOCK
->  config MEMORY_ISOLATION
->  	bool
->  
-> +config HAVE_MEMBLOCK_CACHE_INFO
-> +	bool
-> +
->  #
->  # Only be set on architectures that have completely implemented memory hotplug
->  # feature. If you are not sure, don't touch it.
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 9a2d5ae81ae1..185bfd4e87bb 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -822,6 +822,26 @@ int __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
->  	return memblock_add_range(&memblock.reserved, base, size, MAX_NUMNODES, 0);
->  }
->  
-> +#ifdef CONFIG_HAVE_MEMBLOCK_CACHE_INFO
-
-Kernel-doc here would be appreciated.
-
-> +int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
-> +			   phys_addr_t cache_size, bool direct_mapped)
-> +{
-> +	struct memblock_type *type = &memblock.memory;
-> +	int i, ret, start_rgn, end_rgn;
-> +
-> +	ret = memblock_isolate_range(type, base, size, &start_rgn, &end_rgn);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = start_rgn; i < end_rgn; i++) {
-> +		type->regions[i].cache_size = cache_size;
-> +		type->regions[i].direct_mapped = direct_mapped;
-> +	}
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  /**
->   * memblock_setclr_flag - set or clear flag for a memory region
->   * @base: base address of the region
-> 
-
--- 
-Sincerely yours,
-Mike.
+>  	indio_dev = devm_iio_device_alloc(&spi_dev->dev, sizeof(*chip));
+>  	if (!indio_dev)
 
