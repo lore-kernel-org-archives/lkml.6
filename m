@@ -2,172 +2,196 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1600C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDDBC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773522086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:51:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D55C217FB
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544986519;
+	bh=vGQECqz+y7APmcjDOQArWa9o48cUPml+P6H5vTT38gA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lTsofLh1HLkifAuL4rfP/2gb96l6gIi7JGeU6W0o+4lzd8yBNvSF3FETVy9NnPvIQ
+	 Hyg7uqtfPflRL8V719foatOI9WOceWbmy93xP+YBdL9FaEUK8yMqgHLRWSmmVDzpJy
+	 QtYJ74rz4wmdORpwb3pybiC3kx0HOAVzajFcYzvY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbeLPSvj (ORCPT
+        id S1730786AbeLPSzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 13:51:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60334 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730593AbeLPSvj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 13:51:39 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBGImwGM054698
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 13:51:38 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pdfman2pj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 13:51:38 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 16 Dec 2018 18:51:35 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 16 Dec 2018 18:51:29 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBGIpS2T21692458
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 16 Dec 2018 18:51:28 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9BA53B2065;
-        Sun, 16 Dec 2018 18:51:28 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 62DF6B2064;
-        Sun, 16 Dec 2018 18:51:28 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 16 Dec 2018 18:51:28 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 71C5916C0FD2; Sun, 16 Dec 2018 10:51:30 -0800 (PST)
-Date:   Sun, 16 Dec 2018 10:51:30 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        mathieu.desnoyers@efficios.com,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Linux: Implement membarrier function
-Reply-To: paulmck@linux.ibm.com
-References: <20181214184344.GW4170@linux.ibm.com>
- <Pine.LNX.4.44L0.1812141404450.1570-100000@iolanthe.rowland.org>
+        Sun, 16 Dec 2018 13:55:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730097AbeLPSzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 13:55:17 -0500
+Received: from sol.localdomain (c-24-23-142-8.hsd1.ca.comcast.net [24.23.142.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15E772086C;
+        Sun, 16 Dec 2018 18:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544986516;
+        bh=vGQECqz+y7APmcjDOQArWa9o48cUPml+P6H5vTT38gA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ip9EJ2xVPxsTjpnn8O9YOnG2axRoDFcY4eURFOjOQ4XM6XWKXlYYhY0NYJnv85EzK
+         RD563pJTCTlTYqqm0WIQHf6b6v/m7VxIAqB+A7rwWvLorgQdWuTW6mEjN1dGW0HTYD
+         NVkAGESHUPf4zrWXiD+Ag9prIOTO23yp1SgFdQT4=
+Date:   Sun, 16 Dec 2018 10:55:14 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Peng Hao <peng.hao2@zte.com.cn>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     syzbot <syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rkrcmar@redhat.com, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in kvm_put_kvm (caused by: "kvm/x86:
+ add coalesced pio support")
+Message-ID: <20181216185513.GA691@sol.localdomain>
+References: <000000000000bc23740578abe82c@google.com>
+ <3ad5acd8-5c73-1d82-aea5-426e598b15ed@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1812141404450.1570-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121618-0052-0000-0000-000003683A04
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010237; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01132725; UDB=6.00588778; IPR=6.00912856;
- MB=3.00024712; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-16 18:51:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121618-0053-0000-0000-00005F213DF4
-Message-Id: <20181216185130.GB4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-16_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=401 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812160176
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3ad5acd8-5c73-1d82-aea5-426e598b15ed@redhat.com>
+User-Agent: Mutt/1.11.0 (2018-11-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 04:39:34PM -0500, Alan Stern wrote:
-> On Fri, 14 Dec 2018, Paul E. McKenney wrote:
-> 
-> > I would say that sys_membarrier() has zero-sized read-side critical
-> > sections, either comprising a single instruction (as is the case for
-> > synchronize_sched(), actually), preempt-disable regions of code
-> > (which are irrelevant to userspace execution), or the spaces between
-> > consecutive pairs of instructions (as is the case for the newer
-> > IPI-based implementation).
+Hi Peng and Paolo,
+
+On Sun, Oct 21, 2018 at 12:01:55PM +0200, Paolo Bonzini wrote:
+> On 20/10/2018 18:57, syzbot wrote:
+> > Hello,
 > > 
-> > The model picks the single-instruction option, and I haven't yet found
-> > a problem with this -- which is no surprise given that, as you say,
-> > an actual implementation makes this same choice.
-> 
-> I believe that for RCU tests the LKMM gives the same results for
-> length-zero critical sections interspersed between all the instructions
-> and length-one critical sections surrounding all instructions (except
-> synchronize_rcu).  But the proof is tricky and I haven't checked it
-> carefully.
-
-That assertion is completely consistent with my implementation experience,
-give or take the usual caveats about idle and offline execution.
-
-> > > > The other thing that took some time to get used to is the possibility
-> > > > of long delays during sys_membarrier() execution, allowing significant
-> > > > execution and reordering between different CPUs' IPIs.  This was key
-> > > > to my understanding of the six-process example, and probably needs to
-> > > > be clearly called out, including in an example or two.
-> > > 
-> > > In all the examples I'm aware of, no more than one of the IPIs
-> > > generated by each sys_membarrier call really matters.  (Of course,
-> > > there's no way to know in advance which one it will be, so you have to
-> > > send an IPI to every CPU.)  The execution delays and reordering
-> > > between different CPUs' IPIs don't appear to be significant.
+> > syzbot found the following crash on:
 > > 
-> > Well, there are litmus tests that are allowed in which the allowed
-> > execution is more easily explained in terms of delays between different
-> > CPUs' IPIs, so it seems worth keeping track of.
+> > HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12d808b5400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
+> > dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=f87f60bb6f13f39b54e3
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cf2f5e400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036dcce400000
 > > 
-> > There might be a litmus test that can tell the difference between
-> > simultaneous and non-simultaneous IPIs, but I cannot immediately think of
-> > one that matters.  Might be a failure of imagination on my part, though.
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com
 > 
-> 	P0	P1	P2
-> 	Wc=1	[mb01]	Rb=1
-> 	memb	Wa=1	Rc=0
-> 	Ra=0	Wb=1	[mb02]
+> Tentative (untested) patch:
 > 
-> The IPIs have to appear in the positions shown, which means they cannot
-> be simultaneous.  The test is allowed because P2's reads can be
-> reordered.
+> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+> index 3710342cf6ad..dc76cc8d24fd 100644
+> --- a/virt/kvm/coalesced_mmio.c
+> +++ b/virt/kvm/coalesced_mmio.c
+> @@ -90,6 +90,7 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
+>  	return 0;
+>  }
+> 
+> +/* called with kvm->slots_lock held */
+>  static void coalesced_mmio_destructor(struct kvm_io_device *this)
+>  {
+>  	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+> diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+> index b20b751286fc..001e1ef18c8c 100644
+> --- a/virt/kvm/eventfd.c
+> +++ b/virt/kvm/eventfd.c
+> @@ -741,8 +741,8 @@ ioeventfd_write(struct kvm_vcpu *vcpu, struct
+> kvm_io_device *this, gpa_t addr,
+>  }
+> 
+>  /*
+> - * This function is called as KVM is completely shutting down.  We do not
+> - * need to worry about locking just nuke anything we have as quickly as
+> possible
+> + * This function is called as KVM is completely shutting down, so there
+> + * are no RCU readers anymore. Called with kvm->slots_lock held.
+>   */
+>  static void
+>  ioeventfd_destructor(struct kvm_io_device *this)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index aff1242b7af7..e6f2ae6fedcd 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -783,6 +783,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>  	list_del(&kvm->vm_list);
+>  	spin_unlock(&kvm_lock);
+>  	kvm_free_irq_routing(kvm);
+> +	mutex_lock(&kvm->slots_lock);
+>  	for (i = 0; i < KVM_NR_BUSES; i++) {
+>  		struct kvm_io_bus *bus = kvm_get_bus(kvm, i);
+> 
+> @@ -790,6 +791,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>  			kvm_io_bus_destroy(bus);
+>  		kvm->buses[i] = NULL;
+>  	}
+> +	mutex_unlock(&kvm->slots_lock);
+>  	kvm_coalesced_mmio_free(kvm);
+>  #ifdef KVM_DIRTY_LOG_PAGE_OFFSET
+>  	if (kvm->dirty_ring_size)
+> 
 
-OK, so "simultaneous" IPIs could be emulated in a real implementation by
-having sys_membarrier() send each IPI (but not wait for a response), then
-execute a full memory barrier and set a shared variable.  Each IPI handler
-would spin waiting for the shared variable to be set, then execute a full
-memory barrier and atomically increment yet another shared variable and
-return from interrupt.  When that other shared variable's value reached
-the number of IPIs sent, the sys_membarrier() would execute its final
-(already existing) full memory barrier and return.  Horribly expensive
-and definitely not recommended, but eminently doable.
+This is still happening.  Paolo, I don't see how your patch matches this bug, as
+it has a single threaded reproducer.  I simplified it to:
 
-The difference between current sys_membarrier() and the "simultaneous"
-variant described above is similar to the difference between
-non-multicopy-atomic and multicopy-atomic memory ordering.  So, after
-thinking it through, my guess is that pretty much any litmus test that
-can discern between multicopy-atomic and  non-multicopy-atomic should
-be transformable into something that can distinguish between the current
-and the "simultaneous" sys_membarrier() implementation.
+	#include <fcntl.h>
+	#include <linux/kvm.h>
+	#include <sys/ioctl.h>
 
-Seem reasonable?
+	int main(void)
+	{
+		int kvm, vm;
+		struct kvm_coalesced_mmio_zone zone = { 0 };
 
-Or alternatively, may I please apply your Signed-off-by to your earlier
-sys_membarrier() patch so that I can queue it?  I will probably also
-change smp_memb() to membarrier() or some such.  Again, within the
-Linux kernel, membarrier() can be emulated with smp_call_function()
-invoking a handler that does smp_mb().
+		kvm = open("/dev/kvm", O_RDWR);
 
-							Thanx, Paul
+		vm = ioctl(kvm, KVM_CREATE_VM, 0);
 
+		ioctl(vm, KVM_REGISTER_COALESCED_MMIO, &zone);
+
+		zone.pio = 1;
+		ioctl(vm, KVM_UNREGISTER_COALESCED_MMIO, &zone);
+	}
+
+The bug is in this commit:
+
+	commit 0804c849f1df0992d39a37c4fc259f7f8b16f385
+	Author: Peng Hao <peng.hao2@zte.com.cn>
+	Date:   Sun Oct 14 07:09:55 2018 +0800
+
+	    kvm/x86 : add coalesced pio support
+
+The problem is that if you register a kvm_coalesced_mmio_zone with '.pio = 0'
+but then unregister it with '.pio = 1', KVM_UNREGISTER_COALESCED_MMIO will try
+to unregister it from KVM_PIO_BUS rather than KVM_MMIO_BUS, which is a no-op,
+but then it frees the kvm_coalesced_mmio_dev anyway.
+
+Here's one possible fix but I don't know what was intended here.  Are you
+supposed to pass in the same value of '.pio' when unregistering or is it
+supposed to use the existing value?  Can one of you please point me to the
+documentation for these ioctls?
+
+diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+index 3710342cf6ad0..6855cce3e5287 100644
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -175,10 +175,14 @@ int kvm_vm_ioctl_unregister_coalesced_mmio(struct kvm *kvm,
+ {
+ 	struct kvm_coalesced_mmio_dev *dev, *tmp;
+ 
++	if (zone->pio != 1 && zone->pio != 0)
++		return -EINVAL;
++
+ 	mutex_lock(&kvm->slots_lock);
+ 
+ 	list_for_each_entry_safe(dev, tmp, &kvm->coalesced_zones, list)
+-		if (coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
++		if (zone->pio == dev->zone.pio &&
++		    coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
+ 			kvm_io_bus_unregister_dev(kvm,
+ 				zone->pio ? KVM_PIO_BUS : KVM_MMIO_BUS, &dev->dev);
+ 			kvm_iodevice_destructor(&dev->dev);
