@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5BDC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B97C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83DF521836
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92DB4217FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbeLPJmM (ORCPT
+        id S1730360AbeLPJmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 04:42:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55867 "EHLO mail.bootlin.com"
+        Sun, 16 Dec 2018 04:42:16 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55897 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729805AbeLPJmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 04:42:04 -0500
+        id S1730323AbeLPJmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 04:42:13 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A530B20C94; Sun, 16 Dec 2018 10:42:01 +0100 (CET)
+        id 206BF20BE6; Sun, 16 Dec 2018 10:42:11 +0100 (CET)
 Received: from localhost (vfc69-4-88-175-133-2.fbx.proxad.net [88.175.133.2])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 647C3206FF;
-        Sun, 16 Dec 2018 10:41:51 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7840D20C36;
+        Sun, 16 Dec 2018 10:41:54 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@codeaurora.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -38,9 +38,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v3 1/6] dt-bindings: ap806: add the cluster clock node in the syscon file
-Date:   Sun, 16 Dec 2018 10:41:42 +0100
-Message-Id: <20181216094147.6468-2-gregory.clement@bootlin.com>
+Subject: [PATCH v3 5/6] arm64: marvell: enable the  Armada 7K/8K CPU clk driver
+Date:   Sun, 16 Dec 2018 10:41:46 +0100
+Message-Id: <20181216094147.6468-6-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181216094147.6468-1-gregory.clement@bootlin.com>
 References: <20181216094147.6468-1-gregory.clement@bootlin.com>
@@ -51,44 +51,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the device tree binding for the cluster clock controllers found
-in the Armada 7K/8K SoCs.
+This commit makes sure the driver for the Armada 7K/8K CPU clock is
+enabled.
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- .../arm/marvell/ap806-system-controller.txt   | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-index 3fd21bb7cb37..8f281816a6b8 100644
---- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-+++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-@@ -136,3 +136,25 @@ ap_syscon1: system-controller@6f8000 {
- 		#thermal-sensor-cells = <1>;
- 	};
- };
-+
-+Cluster clocks:
-+---------------
-+
-+Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
-+cluster contain up to 2 CPUs running at the same frequency.
-+
-+Required properties:
-+- compatible: must be  "marvell,ap806-cpu-clock";
-+- #clock-cells : should be set to 1.
-+- clocks : shall be the input parents clock phandle for the clock.
-+
-+ap_syscon1: system-controller@6f8000 {
-+	compatible = "syscon", "simple-mfd";
-+	reg = <0x6f8000 0x1000>;
-+
-+	cpu_clk: clock-cpu {
-+		compatible = "marvell,ap806-cpu-clock";
-+		clocks = <&ap_clk 0>, <&ap_clk 1>;
-+		#clock-cells = <1>;
-+	};
-+};
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 51bc479334a4..8a05870b1ba8 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -121,6 +121,7 @@ config ARCH_MESON
+ 
+ config ARCH_MVEBU
+ 	bool "Marvell EBU SoC Family"
++	select ARMADA_AP_CPU_CLK
+ 	select ARMADA_AP806_SYSCON
+ 	select ARMADA_CP110_SYSCON
+ 	select ARMADA_37XX_CLK
 -- 
 2.19.2
 
