@@ -2,93 +2,116 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D8AC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB02C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9572082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003282082F
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544989615;
+	bh=UdYVx5GGtu9r8tifhjI5FSvucXiHocbZJsPJay6zmRo=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=WUp5vHj45MORyTlSbSlgvl0WAozLaN6SlaxCjGaZOvU3fvqiGXjcwBmpEOaFNz18S
+	 9+EXCUDXqaKWF8BztOty8rVh0UabLsYovewzLkHvDhvs2DBedh7aYUqo1NHDNp53je
+	 7mj9Q94Jnrz6vKKS9byeS1hFkpfDl/0e6K6poNAA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbeLPTpE (ORCPT
+        id S1730897AbeLPTqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 14:45:04 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:56600 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730673AbeLPTpD (ORCPT
+        Sun, 16 Dec 2018 14:46:54 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38411 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730673AbeLPTqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 14:45:03 -0500
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23992280AbeLPTpA1mgAN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 20:45:00 +0100
-Date:   Sun, 16 Dec 2018 19:45:00 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Rich Felker <dalias@libc.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@imgtec.com>,
-        David Daney <david.daney@cavium.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Subject: Re: Fixing MIPS delay slot emulation weakness?
-In-Reply-To: <CALCETrXBfQ-EnOD3OjQh_BaiFyvULtmrMHoX0nv+=yrp6uHzgQ@mail.gmail.com>
-Message-ID: <alpine.LFD.2.21.1812161911020.11202@eddie.linux-mips.org>
-References: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com> <20181215225009.GB23599@brightrain.aerifal.cx> <alpine.LFD.2.21.1812160054300.11202@eddie.linux-mips.org> <20181216023259.GE23599@brightrain.aerifal.cx>
- <alpine.LFD.2.21.1812160319120.11202@eddie.linux-mips.org> <20181216181336.GG23599@brightrain.aerifal.cx> <CALCETrXBfQ-EnOD3OjQh_BaiFyvULtmrMHoX0nv+=yrp6uHzgQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Sun, 16 Dec 2018 14:46:53 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p17so11904007qtl.5
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 11:46:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=UdYVx5GGtu9r8tifhjI5FSvucXiHocbZJsPJay6zmRo=;
+        b=QPrOJ2CMw4KLEZUKOz+KHEE0XJ8WIfoi+s80wQlgaCQsi68ZVxeH9lBOzblQEIcS+b
+         uWQuqemyR+qYhk/97rjr1IeobQmVyO7imeVsqz9cR4kKelFSnEAJQZ7Oh3WZwctdlJmL
+         P8Q0wmDVFVBMTc6qNejQVwwzDmGpb5GgIqtBA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=UdYVx5GGtu9r8tifhjI5FSvucXiHocbZJsPJay6zmRo=;
+        b=lnTe/AQQGhZb4Hpcv83jyLUldcuq0sg0aFM55kQ5MVhGtU0gQNOfKSlT1n+vD2r2YP
+         rBR0dJ5Es2tmSa7vyFYTxgYVjOMohVylV0J3QPQwbGZBSCaGNkCCIYK84F5WqsRRDfhs
+         9Xf74VGjddm+uv6GXj+gDtlL7sBqY0+9gbGEDdCOpp/2Hq0Mkh7HLZgQafZhuy7amkSj
+         XHOPyPx5CgqXafgu7PrGjV2eHwxfgdKsweuPb82kFMFksmBnkvXnIYJM8H3s5qZMz9r0
+         wGrM1fUcCwLHtCBDbM4ah1t1k2upALdL7oxicKrR+mmPIdYLUfBMOiJ4gFCZ/2db3W9+
+         zQ/w==
+X-Gm-Message-State: AA+aEWbruSz7IbC7jWKwuiVfLvw906AIeMlKrAxa0C/twAK+rSIQ6NtQ
+        9KfTiFFeQYqMaA70l+bXGUX8Tw==
+X-Google-Smtp-Source: AFSGD/W7PoX6zk8G11BJN61HtUd4XAloiIQ5pkJbv44mWeyVyy0tMPVr9cM59qKDlLe3rtT5yLqOuA==
+X-Received: by 2002:aed:3a22:: with SMTP id n31mr10901212qte.29.1544989612318;
+        Sun, 16 Dec 2018 11:46:52 -0800 (PST)
+Received: from pure.paranoia.local ([198.144.156.49])
+        by smtp.gmail.com with ESMTPSA id h31sm2014690qtk.5.2018.12.16.11.46.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 16 Dec 2018 11:46:51 -0800 (PST)
+Date:   Sun, 16 Dec 2018 14:46:49 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernelnewbies@kernelnewbies.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC] LKML Archive in Maildir Format
+Message-ID: <20181216194649.GA7732@pure.paranoia.local>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernelnewbies@kernelnewbies.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20181216190639.6safwjqwdphkce67@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181216190639.6safwjqwdphkce67@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Dec 2018, Andy Lutomirski wrote:
+On Sun, Dec 16, 2018 at 09:06:39AM -1000, Joey Pabalinas wrote:
+> I spent a lot of time trying to find an LKML archive in Maildir format
+> that I could use for local searches with nutmuch or something, but all
+> the links I was able to find were all dead.
+>=20
+> I ended up just compiling one myself and I currently host it at:
+>=20
+> https://alyptik.org/lkml.tar.xz
 
-> > I think it suffices to emulate what compilers generate in delay slots,
-> > which should be fairly minimal and stable. At the very least we could
-> > enumerate everything GCC and LLVM already emit there, and get them to
-> > upstream a policy of not adding new insns as fpu-delay-slot-allowed.
-> > If someone is writing asm by hand to do ridiculous things in the delay
-> > slot with random ISA extensions, they shouldn't expect it to work.
-> >
-> 
-> I feel like I have to ask: the real thing preventing emulation is that
-> new nonstandard instructions might get used in FPU delay slots on
-> non-FPU-supporting hardware?  This seems utterly nuts.  If you're
-> using custom ISA extensions, why on Earth are you also using emulated
-> floating point instructions?  You're targetting a specific known CPU
-> if you do this, so you should use only instructions that actually work
-> on that CPU.
+You seem to have duplicated a lot of effort that has already been done
+to compile the archive on lore.kernel.org.
 
- The FPU is a part of the MIPS/Linux psABI and as far as CPU hardware is 
-concerned it is typically an RTL option for the customer to control when 
-synthesising hardware, just like say the sizes of the caches.  IOW you'll 
-have some hardware with FPU and some without that is otherwise identical, 
-and maintaining two sets of binaries for what is a part of the psABI 
-anyway is often seen as not technically or commercially justified.
+> It's possible I'm the only weirdo who finds this kind of thing useful, but
+> I figured I should share it just in case I'm not.
 
- E.g. the (somewhat dated now) 24KEf and 24KEc are complementing standard
-MIPS32r2+DSP processor cores with and without the FPU respectively.  Of 
-course you can stick to the soft-float ABI instead, but then you'll be 
-wasting the FPU resource on FPU cores, so using the hard-float ABI and 
-having instructions emulated on non-FPU cores is usually considered a good 
-compromise.
+The maildir format is kind of terrible for LKML, because having millions
+of messages in a single directory is very hard on the underlying FS. If
+you break it up into multiple folders, then it becomes difficult to
+search. This is the main reason why we have chosen to go with the
+public-inbox format, which solves both of these problems and allows for
+a very efficient archive updating and replication using git.
 
- Of course the FPU emulator should have been left to the userland rather 
-than put in the kernel, but that mistake was made many years ago and we 
-need to maintain compatibility.  Also someone would actually have to 
-implement that userland emulator.
+> It's about 1.1 million files, I was wondering if anyone had an idea of a
+> better way to host this? I've tried Github and GitLab, but they don't
+> appreciate repos with that many files, hah.
 
- FAOD both GCC and GAS will happily schedule delay slots themselves as 
-long as the candidate instruction is recognised as valid in a delay slot, 
-so there's no need for anyone to do anything manually for the less common 
-instructions to end up in a delay slot.  They just need to appear right 
-before a branch or a jump for that to happen.  I can't speak for LLVM.
+Like I said, you seem to be going down the road we've already tried and
+rejected. :)
 
-  Maciej
+-K
