@@ -2,110 +2,149 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C82AC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32087C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76C621839
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB6652082F
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:50:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WU8pudIb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="nfdbp/l6";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="lyCssAPB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731155AbeLPXmw (ORCPT
+        id S1731094AbeLPXu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:42:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:36989 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730780AbeLPXmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:42:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43J16w23YQz9sD4;
-        Mon, 17 Dec 2018 10:42:48 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545003769;
-        bh=pCUSTxGzf9OwR7jcJxD2nLtL8SjoTREq4yB/dxfkSsI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WU8pudIb1Do4EKQwPcPql2WpfikCXVyn/CuF0ra8vbiX7xZU7aWOm1bqk+da897Dn
-         b/EHkhSF+VnKS6d5+Dq8I3tIlMgriKqjY3v74Y3AsPJD0J+ZFq9O7SmM7TG9wGkOBx
-         F47f/9reW6pEHwwgD+hfzqLScMrNPUG9KofbtSDvnlBBTYJiA24S4btm5SDP+RaDmI
-         1/xo8CWUWjRItjnjV+g9mWwnslb9w/VFJVNDsifauRPIIStPK6B51YckNCGZ/HCc88
-         x8wVoawdV9ZZWfOW0omX+/kh2VqSozVEM0N7IgpXmHH727Nhhd64xHDBsMMq+T2RjY
-         /z5KorWisa/5Q==
-Date:   Mon, 17 Dec 2018 10:42:47 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the tip tree
-Message-ID: <20181217104247.26549a16@canb.auug.org.au>
+        Sun, 16 Dec 2018 18:50:56 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53574 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbeLPXu4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 18:50:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1545004268; x=1576540268;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=k0iYrUF3T3NGvVmHM7Dzp/+HzaustFgA0BPUgyRUWw4=;
+  b=nfdbp/l60EWjb6u769pZ+uQHopfAkYENuvBPCc7PFKWruG/riePXhB4S
+   nXqSGGCsoJ1W5q3VpY3s1tYP1SwckNrqgHxJ/w2vOtiPZDyruM39JAPxl
+   3TtdugRED6P4y45rCJ8y4LXYSRQW8thsPQNH81SND+RbbLjQ1Rkn5D2Z1
+   a6cN5qcO62wFtYpUEAnywwb6qZNT6ht1oUk1+LD6rBIJj5GU2buNLbh8N
+   oPPsSFJhI3sJBAbw0s5eoXwmZKlKw+5rLmzBKEJwAst9L0p/RydlfgDIL
+   MW8jyPceUPJviFHGKYySml3FW75ZGAfRz2UUbxHr7pWIHI94R6BXN07vt
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,363,1539619200"; 
+   d="scan'208";a="194633367"
+Received: from mail-bn3nam01lp2052.outbound.protection.outlook.com (HELO NAM01-BN3-obe.outbound.protection.outlook.com) ([104.47.33.52])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Dec 2018 07:51:07 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FzFSnBZGIDwPoZDxiWfnmIiSlvfBV7FGbaABp/sgpeA=;
+ b=lyCssAPBNp4wr2JfFY6TsZWCXz+ZXZkCCH5c64q1BpS+Yu1JUfpvT/UZLADgHENXOE7ui1zNr6P19QQX5Q31A//Coxe5B8gIQmiGkPC4t/LyDVjVxzMpn5dPw+eYopHhT18OuHiuwMMQ7W8Wo67gCPqS25BzZpLQtgI2Q0NYl0o=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
+ BYAPR04MB5286.namprd04.prod.outlook.com (20.178.49.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Sun, 16 Dec 2018 23:50:50 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::957b:6353:d3c5:1b8d]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::957b:6353:d3c5:1b8d%2]) with mapi id 15.20.1425.021; Sun, 16 Dec 2018
+ 23:50:50 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>, Jens Axboe <axboe@kernel.dk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] uapi: linux/blkzoned.h: fix BLKGETZONESZ and
+ BLKGETNRZONES definitions
+Thread-Topic: [PATCH] uapi: linux/blkzoned.h: fix BLKGETZONESZ and
+ BLKGETNRZONES definitions
+Thread-Index: AQHUlOGnwpt3q7yotU+90ZUB+2A3JQ==
+Date:   Sun, 16 Dec 2018 23:50:50 +0000
+Message-ID: <BYAPR04MB5816E9F89EAF570A21C5D5A8E7A30@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20181216014951.GA14229@altlinux.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.5]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR04MB5286;6:k4g6brxXxhwsYRzr9l+AXQKPJRb9m/urCLx3lfbWk9RLCF6ivvXFTOxBZT4n/wG4qWpSE7FU9AuvqjOButD1mW9QNyxptmbwtZvYxuY2Wp0EDVauIfKcLi4dU7W7sjUHmcgQ67uzaQ6N49cA6cKChIZH9t72Hc2mhHeZj5UVAU/NlcY8FLmZosxTvZOMTqgARHHLrj366zUSUSieuchz6GqutD3cGumyD+/PyO4Gi245fwy+Cf3YL2YixOI7FRmvm3f/vLkKb+R9oNiJQoiAVSNdy1sai933b0riVvxXKumxb4lycv5KIENHNwn6zQjWRaPAPaZ+fEuSAdA85rqjbg8L/U1/MAwIGXkwXKCA1FVGof+Hu1NpP0CXPGCCyM1OVUmsgd02AFCjo2bXxFyc0ptWVm4yQOi7mm3RWs/lDLoF/WuXIVLFn+A7nDYpAP5tPns9HxyX5faHMl4B2DSk7Q==;5:RAeoyCnh5FiR+lWpqVctsABANIdiG7I8EpYBGBSf6QqqYWgn6yI4vUUUQNOJtNNqC2cOQjz8ZyPufFtwTH5AsC/l73zuF2aDwRdF8Fwf3FS16oajUGqLivxAUdIXTTMSmZPCTBH2XVnowRViDJ3ff4C1UoqKjG1jP1bde3doY7c=;7:MrJPkl4v5Gzb2WUQHVhfSKQ4u+yLs9Wrj6uUy+kfl+1Xsggm46ypjCx2ginloKuS+ixk+Oy3hvddw2lFheBgY96kY3hzyhxgQvD5Lq3CICDLg4NSUX+/brSrdCHh7516XVKQhzUk+6fv7GLcQE2Mag==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f43daae8-dcaa-47d7-4e5c-08d663b14f21
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB5286;
+x-ms-traffictypediagnostic: BYAPR04MB5286:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <BYAPR04MB5286E3A83FAB82602F87E65FE7A30@BYAPR04MB5286.namprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR04MB5286;BCL:0;PCL:0;RULEID:;SRVR:BYAPR04MB5286;
+x-forefront-prvs: 0888B1D284
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(376002)(396003)(136003)(199004)(189003)(316002)(68736007)(110136005)(478600001)(9686003)(33656002)(55016002)(99286004)(14454004)(6436002)(2906002)(72206003)(81166006)(486006)(25786009)(8676002)(6246003)(8936002)(66066001)(53936002)(229853002)(81156014)(86362001)(6116002)(4326008)(26005)(7736002)(97736004)(476003)(3846002)(186003)(74316002)(7696005)(76176011)(102836004)(305945005)(53546011)(6506007)(71200400001)(71190400001)(5660300001)(446003)(105586002)(106356001)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5286;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: J9awMQfYxTI2BmP17WaWcqlcEkURMEiZ8vF0YPDEiX012KEzYqNuLOOr5hTe6WjPtm1dkIot8DbOgxUDyCOGbfMiCauQ9BZ2B219L4yNr9SrJk93REQOYaDldJRvjg8Dcy1VKuJbzaFeT33JD4TVjzs5AWGtu0Xzafijx+TjRyxcm4Zne0OHPj1nnsOg7goSCv6hWlMc027dul5ChxF0D02rXAnB+N0wPw5ll6Qv4pdGT3LO0R2ImO5mvkZuu0Qz82TJXwF47nklGInio4KQT4R8yWTb7ZMZp2c0UXATsXbQu0DLugyE7eZW+8lXjzOr
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XCS2Nje.p44kZ2wwKL5rGSJ"; protocol="application/pgp-signature"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f43daae8-dcaa-47d7-4e5c-08d663b14f21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2018 23:50:50.5586
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5286
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XCS2Nje.p44kZ2wwKL5rGSJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Commit
-
-  5a0cb2ffce06 ("perf ordered_events: Add first_time() method")
-
-is missing a Signed-off-by from its author.
-
-Commits
-
-  a1dcb76e592a ("perf top: Move perf_top__reset_sample_counters() to after =
-counts display")
-  ffec48b73449 ("perf top: Display slow reader warning when droping samples=
-")
-  30eacd0f6c56 ("perf top: Save and display the drop count stats")
-  bdbc7bcf0f9a ("perf top: Drop samples which are behind the refresh rate")
-  2e86f646dd68 ("perf top: Set the 'session_done' volatile variable when ex=
-iting")
-  bc67057cab13 ("perf top: Use cond variable instead of a lock")
-  73df315a5120 ("perf top: Add processing thread")
-  f0a93bdc13e4 ("perf top: Move lost events warning to helpline")
-  f03b87dd0b44 ("perf top: Save and display the lost count stats")
-  4bc8acb7e06b ("perf ordered_events: Add private data member")
-  52ea6a5168fb ("perf ordered_events: Rework show_progress for __ordered_ev=
-ents__flush")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/XCS2Nje.p44kZ2wwKL5rGSJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW4vcACgkQAVBC80lX
-0GwD3Qf+IWmywzDEtcSTYYRRQjkJtfpz/WxgN5Kv1rBUx+BR43o6IDkHUiWl77D/
-6Cpz9MivIYu8wJ6JxrX9njXiI3oHcGXNjpCItwpM7L5J6mdYY3l1idD6P6FRvg6b
-K6k8ZVvIOaBKiNN4dl7sBq1RggAudn2jiiAv1SOE0uYBxUXGtAJ0eUBiBXuWj+Um
-kmt5W32qR7I11zoODQVMmlDQ2UYGVdSkeLi85JODp9YBmgqXGeUfachG83uyJI1G
-G+AbRccI4K1gMy4WGuzobXQRQbzYPzqZWxb4EHNCQQ9TCZTdK/AxR75u7eUxHrcR
-Oayh+Ffp9cxH5F67Zc9PWPFeHV15uA==
-=3/nj
------END PGP SIGNATURE-----
-
---Sig_/XCS2Nje.p44kZ2wwKL5rGSJ--
+On 2018/12/16 10:50, Dmitry V. Levin wrote:=0A=
+> According to the documentation in include/uapi/asm-generic/ioctl.h,=0A=
+> _IOW means userspace is writing and kernel is reading, and=0A=
+> _IOR means userspace is reading and kernel is writing.=0A=
+> =0A=
+> In case of these two ioctls, kernel is writing and userspace is reading,=
+=0A=
+> so they have to be _IOR instead of _IOW.=0A=
+> =0A=
+> Fixes: 72cd87576d1d8 ("block: Introduce BLKGETZONESZ ioctl")=0A=
+> Fixes: 65e4e3eee83d7 ("block: Introduce BLKGETNRZONES ioctl")=0A=
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>=0A=
+> ---=0A=
+> =0A=
+> Since both ioctls were introduced after 4.19,=0A=
+> please make sure they are fixed in 4.20.=0A=
+> Thanks.=0A=
+> =0A=
+>  include/uapi/linux/blkzoned.h | 4 ++--=0A=
+>  1 file changed, 2 insertions(+), 2 deletions(-)=0A=
+> =0A=
+> diff --git a/include/uapi/linux/blkzoned.h b/include/uapi/linux/blkzoned.=
+h=0A=
+> index 8f08ff9bdea0..6fa38d001d84 100644=0A=
+> --- a/include/uapi/linux/blkzoned.h=0A=
+> +++ b/include/uapi/linux/blkzoned.h=0A=
+> @@ -141,7 +141,7 @@ struct blk_zone_range {=0A=
+>   */=0A=
+>  #define BLKREPORTZONE	_IOWR(0x12, 130, struct blk_zone_report)=0A=
+>  #define BLKRESETZONE	_IOW(0x12, 131, struct blk_zone_range)=0A=
+> -#define BLKGETZONESZ	_IOW(0x12, 132, __u32)=0A=
+> -#define BLKGETNRZONES	_IOW(0x12, 133, __u32)=0A=
+> +#define BLKGETZONESZ	_IOR(0x12, 132, __u32)=0A=
+> +#define BLKGETNRZONES	_IOR(0x12, 133, __u32)=0A=
+>  =0A=
+>  #endif /* _UAPI_BLKZONED_H */=0A=
+> =0A=
+=0A=
+Indeed, my bad.=0A=
+=0A=
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
