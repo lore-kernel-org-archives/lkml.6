@@ -2,117 +2,97 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8592FC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A32C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E72B2086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:55:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E735B2086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:56:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544986575;
+	bh=MCiUR2NprOQeHfKvw6aflAs3MJrwmgnf25fiVDa0aRE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=BLFZ7CNiRkzDfp3H+uxh9RJpZennEX3YT+rqAQclm0WOi2Vc31/BIVTS9/tqzbzZu
+	 Qr0Xy2akGV1emGR1vUAbMzwCyASFB2uGAdvO48bxTycOIViuWOA1nnDNmGSTHWLaaR
+	 3f1qxoGPehIzUM2mJTbp2lYI+rvtWPUy0gmuigGE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbeLPSzo (ORCPT
+        id S1730842AbeLPS4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 13:55:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38752 "EHLO mx1.redhat.com"
+        Sun, 16 Dec 2018 13:56:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730593AbeLPSzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 13:55:43 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730097AbeLPS4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 13:56:13 -0500
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6B8F4E3E19;
-        Sun, 16 Dec 2018 18:55:43 +0000 (UTC)
-Received: from ovpn-116-87.ams2.redhat.com (ovpn-116-87.ams2.redhat.com [10.36.116.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6611B1055006;
-        Sun, 16 Dec 2018 18:55:41 +0000 (UTC)
-Message-ID: <2444a44091ae292166c6cad1e31fd85ed2b77fe7.camel@redhat.com>
-Subject: Re: [PATCH net-next v3 0/4] net: mitigate retpoline overhead
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, eric.dumazet@gmail.com, pjt@google.com,
-        linux-kernel@vger.kernel.org, ecree@solarflare.com,
-        dwmw2@infradead.org
-Date:   Sun, 16 Dec 2018 19:55:40 +0100
-In-Reply-To: <20181215.132333.867660599141318055.davem@davemloft.net>
-References: <cover.1544784419.git.pabeni@redhat.com>
-         <20181215.132333.867660599141318055.davem@davemloft.net>
+        by mail.kernel.org (Postfix) with ESMTPSA id 62E082086C
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 18:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544986572;
+        bh=MCiUR2NprOQeHfKvw6aflAs3MJrwmgnf25fiVDa0aRE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rtP3SvRpe2SHQ0k60c1F0mev9/rr4Blk1PwutDPFBbxn83HVVt12NbEQAumejkc/Z
+         g3uxCwdBjtWMBO9hh0q3+4sXnnTWj85O2fI2dviIQb71bXErJZjobpNkHw/zBP7VGZ
+         Xlh7/Trs7iimCXlmeGWUf0vLahUA6hivkSqfRBgE=
+Received: by mail-wr1-f44.google.com with SMTP id t27so10119195wra.6
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 10:56:12 -0800 (PST)
+X-Gm-Message-State: AA+aEWZxIP5aLxJn46aMrhVjwvYtShl+re2c3pl3EYLSiZetZfhVpQKE
+        n1wKySkDqRH6D0B1NyI7gvXgubTo+oX4fXOwiSpM3g==
+X-Google-Smtp-Source: AFSGD/Xw467mRKoqES+eJaK3104rTPAggMsMuQeOVl+0vvhenT14gb6V8KbUIbFP93ApTB0u9EZ+qnGGmLW61ttsX2o=
+X-Received: by 2002:adf:8323:: with SMTP id 32mr8013201wrd.176.1544986570861;
+ Sun, 16 Dec 2018 10:56:10 -0800 (PST)
+MIME-Version: 1.0
+References: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com>
+ <20181215212643.sfk2zwzatdfysbk3@pburton-laptop>
+In-Reply-To: <20181215212643.sfk2zwzatdfysbk3@pburton-laptop>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 16 Dec 2018 10:55:48 -0800
+X-Gmail-Original-Message-ID: <CALCETrW49AdvgFrKkFaMtfaFcUDGGDykLDZoCH93utxe5pmPDQ@mail.gmail.com>
+Message-ID: <CALCETrW49AdvgFrKkFaMtfaFcUDGGDykLDZoCH93utxe5pmPDQ@mail.gmail.com>
+Subject: Re: Fixing MIPS delay slot emulation weakness?
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@imgtec.com>,
+        David Daney <david.daney@cavium.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Rich Felker <dalias@libc.org>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sun, 16 Dec 2018 18:55:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-12-15 at 13:23 -0800, David Miller wrote:
-> From: Paolo Abeni <pabeni@redhat.com>
-> Date: Fri, 14 Dec 2018 11:51:56 +0100
-> 
-> > The spectre v2 counter-measures, aka retpolines, are a source of measurable
-> > overhead[1]. We can partially address that when the function pointer refers to
-> > a builtin symbol resorting to a list of tests vs well-known builtin function and
-> > direct calls.
-> > 
-> > Experimental results show that replacing a single indirect call via
-> > retpoline with several branches and a direct call gives performance gains
-> > even when multiple branches are added - 5 or more, as reported in [2].
-> > 
-> > This may lead to some uglification around the indirect calls. In netconf 2018
-> > Eric Dumazet described a technique to hide the most relevant part of the needed
-> > boilerplate with some macro help.
-> > 
-> > This series is a [re-]implementation of such idea, exposing the introduced
-> > helpers in a new header file. They are later leveraged to avoid the indirect
-> > call overhead in the GRO path, when possible.
-> > 
-> > Overall this gives > 10% performance improvement for UDP GRO benchmark and
-> > smaller but measurable for TCP syn flood.
-> > 
-> > The added infra can be used in follow-up patches to cope with retpoline overhead
-> > in other points of the networking stack (e.g. at the qdisc layer) and possibly
-> > even in other subsystems.
->  ...
-> 
-> Series applied, I'll push this out after a build check completes.
+On Sun, Dec 16, 2018 at 1:22 AM Paul Burton <paul.burton@mips.com> wrote:
+>
+> Hi Andy,
+>
+> On Sat, Dec 15, 2018 at 11:19:37AM -0800, Andy Lutomirski wrote:
+> > Some security researchers pointed out that writing to the delay slot
+> > emulation page is a great exploit technique on MIPS.  It was
+> > introduced in:
+> >
+> > commit 432c6bacbd0c16ec210c43da411ccc3855c4c010
+> > Author: Paul Burton <paul.burton@imgtec.com>
+> > Date:   Fri Jul 8 11:06:19 2016 +0100
+> >
+> >     MIPS: Use per-mm page to execute branch delay slot instructions
+>
+> Are there any further details you can share? You'd still need to
+> persuade a program to both write to & jump to the page, right? We're
+> talking purely about this providing writable+executable memory?
 
-Again, I messed it! I'm really sorry to waste everybody's time.
-I was unable to give proper coverage with different configs. I tested
-vs.:
+Yes, exactly.  You need a bug in order to take advantage of it.  The
+RWX page at a known location just makes exploitation considerably
+easier.
 
-CONFIG_IPV6=ymn
-CONFIG_INET=yn
-
-but
-
-# CONFIG_RETPOLINE is not set
-
-fooled me. The following patch should fix. I'll try more
-configurations. Is there any way to try/tests all kbuild robot configs?
-
-Please feel free to give me an hard stop if this sounds too much a
-trial and error thing.
-
-Paolo
-
---
-diff --git a/include/linux/indirect_call_wrapper.h b/include/linux/indirect_call_wrapper.h
-index 7c8b7f4..00d7e8e9 100644
---- a/include/linux/indirect_call_wrapper.h
-+++ b/include/linux/indirect_call_wrapper.h
-@@ -28,8 +28,8 @@
- #define INDIRECT_CALLABLE_SCOPE
- 
- #else
--#define INDIRECT_CALL_1(f, name, ...) f(__VA_ARGS__)
--#define INDIRECT_CALL_2(f, name, ...) f(__VA_ARGS__)
-+#define INDIRECT_CALL_1(f, f1, ...) f(__VA_ARGS__)
-+#define INDIRECT_CALL_2(f, f2, f1, ...) f(__VA_ARGS__)
- #define INDIRECT_CALLABLE_DECLARE(f)
- #define INDIRECT_CALLABLE_SCOPE                static
- #endif
-
+I should also note that, on x86 at least, emulating loads and stores
+is not so bad.  The x86 vsyscall emulation code does it and has almost
+fully correct fault semantics.  (I say "almost" because I didn't
+bother getting the semantics exactly right for non-canonical addresses
+and kernel addresses.)
