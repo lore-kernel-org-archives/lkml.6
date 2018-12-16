@@ -2,276 +2,193 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC079C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A7DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5C72086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:01:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="B0yFXnle";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="Nls637ZV"
+	by mail.kernel.org (Postfix) with ESMTP id E4E1F2086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730463AbeLPNBz (ORCPT
+        id S1730444AbeLPNLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 08:01:55 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:48678 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730197AbeLPNBy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 08:01:54 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBGCtIlt029593;
-        Sun, 16 Dec 2018 05:01:39 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=fDCm/HFsZG14Ag3xQNlTko6Va6pv7uXrlYStXW15Waw=;
- b=B0yFXnleIYlEESwz05TtDmtHA1wXlQdNHm+55arAzgFx0xMbhPGU3hZJcI/Y1O7rFkB2
- /YbO5JV+qSqb8cMDZVgCxwbxtqRIXVxJF8FMF3SWpsWYBY+QI+Q18gwy1dR6/h+HMvGp
- bN447leiVEedkmWYdQjuUMr8d2QhfZRrhNJrOS3UEE5EK4BbUIGoSKW/22Es+rGCSvOW
- 8Ji1yCMeF/25cEjGD/2t7IpWBX39ULG/I1IGMozdT22dk0C5LPw5fGe4QH5vcLYuoMWr
- lzqsfPGMKzTFS1kwH9wcbvUk17yfRuuYY4ztAwQ035x4Ag6gGQwMxhwP5i5OCSS3cflE dg== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2053.outbound.protection.outlook.com [104.47.42.53])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2pde961mmv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 16 Dec 2018 05:01:39 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fDCm/HFsZG14Ag3xQNlTko6Va6pv7uXrlYStXW15Waw=;
- b=Nls637ZVtYhPBQGUU6NOS5bMtw1cTZDFl/Xab8lmNPSnv4sSLkxXChDvkzLJZAyHNny5vWc2t6CIN9Al5Pogic3CtkVHAtKBL2m0C2Krf2wZNX6c/IgMxp6VtYUOES4J3UtYpHOmHKxWG5IQvdHGgpXT01x4asxty5zeWh9S4WE=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB5254.namprd07.prod.outlook.com (52.135.241.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Sun, 16 Dec 2018 13:01:36 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e97e:1c66:94bc:24ef]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::e97e:1c66:94bc:24ef%2]) with mapi id 15.20.1425.021; Sun, 16 Dec 2018
- 13:01:36 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Peter Chen <hzpeterchen@gmail.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "balbi@kernel.org" <balbi@kernel.org>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-Thread-Topic: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-Thread-Index: AQHUkIWTYw8ZmuofoE+7Ba9cSOLyP6V8bT2AgATupMA=
-Date:   Sun, 16 Dec 2018 13:01:36 +0000
-Message-ID: <BYAPR07MB4709A216316119DCFF25A31EDDA30@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
- <1544445555-17325-3-git-send-email-pawell@cadence.com>
- <CAL411-phi=PV1Voe=mTrjKDXNPL7dt9B-f_RaekCoXy=pqNMPA@mail.gmail.com>
-In-Reply-To: <CAL411-phi=PV1Voe=mTrjKDXNPL7dt9B-f_RaekCoXy=pqNMPA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-tag-bcast: {3DE89042-74AB-4755-9D53-B536026EFFC6};
- {51BD6E37-66BD-4186-8AFE-835F952BA4E6};
- {F0B656D1-F768-43A1-A424-45742A6E25CF}
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jY0dGM1pXeHNYR0Z3Y0dSaGRHRmNjbTloYldsdVoxd3dPV1E0TkRsaU5p?=
- =?utf-8?B?MHpNbVF6TFRSaE5EQXRPRFZsWlMwMllqZzBZbUV5T1dVek5XSmNiWE5uYzF4?=
- =?utf-8?B?dGMyY3RZamMyWWpZNU56Z3RNREV6TWkweE1XVTVMVGczTWpndE1XTTBaRGN3?=
- =?utf-8?B?TVdSbVltRTBYR0Z0WlMxMFpYTjBYR0kzTm1JMk9UZGhMVEF4TXpJdE1URmxP?=
- =?utf-8?B?UzA0TnpJNExURmpOR1EzTURGa1ptSmhOR0p2WkhrdWRIaDBJaUJ6ZWowaU1U?=
- =?utf-8?B?Y3lNaUlnZEQwaU1UTXhPRGswTXpnNE9UVTVNREk1TlRjMklpQm9QU0l5UXpW?=
- =?utf-8?B?SFlXdGFiemxzTVZkeVRWbEtVMjF0YVZSbU9GbElRWE05SWlCcFpEMGlJaUJp?=
- =?utf-8?B?YkQwaU1DSWdZbTg5SWpFaUlHTnBQU0pqUVVGQlFVVlNTRlV4VWxOU1ZVWk9R?=
- =?utf-8?B?MmRWUVVGTlFVdEJRVVJMUlM5b2VYcHdWRlZCV2t0VVIwOXZibGhDTm5acmNF?=
- =?utf-8?B?MVpObWxrWTBoeE9FOUJRVUZCUVVGQlFVRkxkMEpCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlNFRkJRVUZEYTBOQlFVRkdRV3RCUVV0M1FrRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UlVGQlVVRkNRVUZCUVNzMVVXSm5VVUZCUVVGQlFVRkJRVUZCUVVGQlFVbzBR?=
- =?utf-8?B?VUZCUW1wQlIwVkJXa0ZDYkVGSE5FRlpkMEpzUVVZNFFWbDNRblpCUnpSQldt?=
- =?utf-8?B?ZENjRUZIVVVGYVVVSjFRVWhSUVdGUlFtaEJSM2RCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZGUVVGQlFVRkJRVUZCUVdk?=
- =?utf-8?B?QlFVRkJRVUZ1WjBGQlFVZE5RVmxSUW10QlIxVkJZbWRDYWtGSFZVRllkMEpy?=
- =?utf-8?B?UVVkVlFXTjNRbkJCUjJOQlltZENaa0ZJVFVGbFVVSjZRVWhSUVZwUlFuUkJT?=
- =?utf-8?B?RTFCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRlJRVUZCUVVGQlFVRkJRVUZCUVVGQlVVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVTkJRVUZCUVVGRFpVRkJRVUZaZDBKb1FVZFJRVnBSUW5WQlIw?=
- =?utf-8?B?MUJXbEZDWmtGSVFVRmpaMEoyUVVkUlFXUlJRbXBCU0ZGQlkzZEJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRa0ZCUVVGQlFVRkJRVUZKUVVGQlFVRkJTalJCUVVGQ2VrRkhPRUZr?=
- =?utf-8?B?VVVKNVFVZE5RVnBSUW1wQlJ6aEJXa0ZDYkVGR09FRlpVVUo2UVVjd1FVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVGQlowRkJRVUZCUVc1blFV?=
- =?utf-8?B?RkJTRTFCWW5kQ01VRklTVUZaZDBKc1FVZE5RV0ozUW10QlIxVkJXSGRDYWtG?=
- =?utf-8?B?SE9FRlpaMEoyUVVkM1FVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJRVUZCUVVGQlFVRkJRMEZC?=
- =?utf-8?B?UVVGQlFVTmxRVUZCUVdOM1FuWkJTRlZCWTJkQ2FrRkhWVUZaZDBKMlFVZFJR?=
- =?utf-8?B?VnBSUW1aQlIwMUJZMEZDZDBGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVGQlFVRkJRVUZDUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSjZRVWM0UVdSUlFubEJSMDFCV2xG?=
- =?utf-8?B?Q2FrRkhPRUZhUVVKc1FVWTRRVmwzUW5wQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJtZEJRVUZJVFVGaWQwSXhR?=
- =?utf-8?B?VWhKUVZsM1FteEJSMDFCWW5kQ2EwRkhWVUZZZDBKc1FVaFZRV05CUW05QlJ6?=
- =?utf-8?B?aEJZMmRDY0VGSFJVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZEUVVGQlFVRkJRMlZCUVVG?=
- =?utf-8?B?QlkzZENka0ZJVlVGalowSnFRVWRWUVZsM1FuWkJSMUZCV2xGQ1prRkhXVUZp?=
- =?utf-8?B?ZDBKNVFVaFJRV05uUW1oQlJ6UkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFVRkJRVUZCUVVGQlNVRkJR?=
- =?utf-8?B?VUZCUVVvMFFVRkJRbnBCUnpoQlpGRkNlVUZIVFVGYVVVSnFRVWM0UVZwQlFt?=
- =?utf-8?B?eEJSamhCWVdkQ2FFRklXVUZaVVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkZRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVoTlFXSjNRakZCU0VsQldYZENiRUZI?=
- =?utf-8?B?VFVGaWQwSnJRVWRWUVZoM1FuZEJTR3RCWkVGQ2IwRkhPRUZpWjBGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVGQlFVRmpkMEoyUVVoVlFX?=
- =?utf-8?B?Tm5RbXBCUjFWQldYZENka0ZIVVVGYVVVSm1RVWhKUVdSUlFtbEJTR3RCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpRVUZCUVVGQlNqUkJRVUZD?=
- =?utf-8?B?ZWtGSE9FRmtVVUo1UVVkTlFWcFJRbXBCUnpoQldrRkNiRUZHT0VGamQwSXdR?=
- =?utf-8?B?VWQzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVGQlFVRkJRVUZCWjBGQlFV?=
- =?utf-8?B?RkJRVzVuUVVGQlNFMUJZbmRDTVVGSVNVRlpkMEpzUVVkTlFXSjNRbXRCUjFW?=
- =?utf-8?B?QldIZENNa0ZIU1VGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGUlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlEwRkJRVUZCUVVOelFWRkJRVUZCUVVGQlNVRkJRVUZCUjBGQlFVRkJV?=
- =?utf-8?B?VUZCUVVKc1QyNXNLekkxVG1oRWRHUkpMMlJDVWxobE1uZENRVUZCUVU0d09V?=
- =?utf-8?B?UkVWVko0WkRBeU1tVkdWa1JhUkhaVk5WRkJRVUZCUWxJekt6UTBVbWRSVTFG?=
- =?utf-8?B?eWRuZzRVbXRFWXpCRFowRlJRVUZCUjNoclZWbDFhVUZ5WkVwdGVHUnhaREpQ?=
- =?utf-8?B?Y1hGWVVVSkJRVUZCWkZGU05YQk9TRU5LUlhVMFdWSjJaV2hMVWt0b1owVkJR?=
- =?utf-8?B?VUZEV1hORWNVNDBNV1UyVVdFMVoxWXdUVzFWUVUxeVowRkJRVUZCV1VGQlFV?=
- =?utf-8?B?RkNRVUZCUVZCQmJqSmlOSFp0V210VEswZG5jMU41VERkcGFXZEZRVUZCUWtW?=
- =?utf-8?B?bGNsSnNabGRGUjFOWk5rcHpZM1l6WW5sWGVVRkJRVUZCU20xWFFWWlhRVlps?=
- =?utf-8?B?Y0VkeldFa3ZiVzFwTmtSWVZVSkJRVUZCYzNSM1dFMUVVVEkzVlhWWE5EWTFk?=
- =?utf-8?B?M1J3WlRSVFowVkJRVUZETmpnM1RFOTBkMkUwVkhCbk5scFdhek00TDJRM1FW?=
- =?utf-8?B?RkJRVUZRWlhnd1Frc3ZMMjVLUVhJek1ucEZPVTR2VjBGNWEwRkJRVUZCZDBG?=
- =?utf-8?B?QlFVUkpRVUZCUVVKQlFVRkJXWGRDYUVGSFVVRmFVVUoxUVVkTlFWcFJRbVpC?=
- =?utf-8?B?UjAxQlluZENkVUZIV1VGaFVVSnJRVWRWUVdKblFqQkJSMnRCV1ZGQ2MwRkJR?=
- =?utf-8?B?VUZMWjBGQlFVRkJRVUZCUW1wQlIxRkJZbWRCWjBGSVRVRmlkMEl4UVVoSlFW?=
- =?utf-8?B?bDNRbXhCUTBGQldYZENka0ZIVVVGYVVVSjZRVUZCUVZGQlFVRkJRVVZCUVVG?=
- =?utf-8?B?Q2FrRkhVVUZpWjBKbVFVaE5RV0ozUWpGQlNFbEJXWGRDYkVGSFRVRmlkMEpy?=
- =?utf-8?B?UVVkVlFWaDNRbXBCUnpoQlltZENiVUZIYTBGYVFVSnNRVWMwUVdSQlFuQkJS?=
- =?utf-8?Q?0VBYkFBQUFBPT0iLz48L21ldGE+?=
-x-dg-paste: 
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB5254;20:D+VacvCZz3+CRR94SMPKU6f0619np+fnv6RU6U0HzVx4xhIZP6aHa852GqiwDrrVP47fh6Cv3grS2HPd+3MmrSWhoCPXya6TduG7ETpD/sto4PA/RPqHx3JiybzI6AZy1nNSC9+fFEj77Xo5UgRZVIc1sVTxoi7KR/eBOscGtRO2RaAIQ0Ssi4IVFD++9ADbM/+X+bevcUoq17ZjAgRbPg4nU+hy/hj17nPajJdu69BNEPUZstLvBaTD1nj0JSMH
-x-ms-office365-filtering-correlation-id: f9a4369f-f660-4b91-ff79-08d663569ce0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5254;
-x-ms-traffictypediagnostic: BYAPR07MB5254:
-x-microsoft-antispam-prvs: <BYAPR07MB52547B87A37A119867A0C507DDA30@BYAPR07MB5254.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB5254;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5254;
-x-forefront-prvs: 0888B1D284
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(136003)(366004)(346002)(189003)(199004)(36092001)(6916009)(186003)(97736004)(74316002)(1411001)(305945005)(14454004)(256004)(486006)(14444005)(71190400001)(446003)(11346002)(476003)(71200400001)(478600001)(66066001)(105586002)(86362001)(25786009)(106356001)(68736007)(6436002)(2906002)(6116002)(3846002)(76176011)(6246003)(107886003)(53936002)(39060400002)(8936002)(316002)(4326008)(6506007)(102836004)(81156014)(229853002)(7416002)(5660300001)(33656002)(9686003)(99286004)(26005)(8676002)(55016002)(81166006)(54906003)(7736002)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5254;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: johMyFgom3+RUpPqfnT7abX8eDFG9OlB0eg1CMqq8u6Q7uEbHmHUPmr2/wi1NgDuFkq7xtCGUBGgOo8ZDchxBB9QHPT7YjCAiUgX0UjS+WdLsdi06p7hdq4XGF0Q7HgpcvViVigiiPjKENhr1b2ECtkva8gWywKgjAQWRpPIZ3rzgL37d8eKCiI7elRRbwM4Z1RANbWTzs5RKqO2Bwml9NJ20bASBSRbdWxwPR4g8OVtrtKUfdITDNcVoNllsGn5oEnnpGw3Tby9PllQYgjFa5qS5i0ZbCDnplSSB9zoqez/DNIfm56Sg1GIA9HtdYbg
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9a4369f-f660-4b91-ff79-08d663569ce0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2018 13:01:36.8582
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5254
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=892 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812160123
+        Sun, 16 Dec 2018 08:11:55 -0500
+Received: from www.osadl.org ([62.245.132.105]:47366 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730197AbeLPNLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 08:11:54 -0500
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id wBGDBNQU021573;
+        Sun, 16 Dec 2018 14:11:23 +0100
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH V2] livepatch: fix non-static warnings
+Date:   Sun, 16 Dec 2018 14:07:37 +0100
+Message-Id: <1544965657-26804-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUGV0ZXINCg0KPk9uIE1vbiwgRGVjIDEwLCAyMDE4IGF0IDg6NTUgUE0gUGF3ZWwgTGFzemN6
-YWsgPHBhd2VsbEBjYWRlbmNlLmNvbT4gd3JvdGU6DQo+Pg0KPj4gVGhpcyBwYXRjaCBpbnRyb2R1
-Y2UgbmV3IENhZGVuY2UgVVNCU1MgRFJEIGRyaXZlcg0KPj4gdG8gbGludXgga2VybmVsLg0KPj4N
-Cj4+IFRoZSBDYWRlbmNlIFVTQlNTIERSRCBEcml2ZXIgaXMgYSBoaWdobHkNCj4+IGNvbmZpZ3Vy
-YWJsZSBJUCBDb3JlIHdoaWNoIGNhbiBiZQ0KPj4gaW5zdGFudGlhdGVkIGFzIER1YWwtUm9sZSBE
-ZXZpY2UgKERSRCksDQo+PiBQZXJpcGhlcmFsIE9ubHkgYW5kIEhvc3QgT25seSAoWEhDSSkNCj4+
-IGNvbmZpZ3VyYXRpb25zLg0KPj4NCj4+IFRoZSBjdXJyZW50IGRyaXZlciBoYXMgYmVlbiB2YWxp
-ZGF0ZWQgd2l0aA0KPj4gRlBHQSBidXJuZWQuIFdlIGhhdmUgc3VwcG9ydCBmb3IgUENJZQ0KPj4g
-YnVzLCB3aGljaCBpcyB1c2VkIG9uIEZQR0EgcHJvdG90eXBpbmcuDQo+Pg0KPj4gVGhlIGhvc3Qg
-c2lkZSBvZiBVU0JTUy1EUkQgY29udHJvbGxlciBpcyBjb21wbGlhbmNlDQo+PiB3aXRoIFhIQ0kg
-c3BlY2lmaWNhdGlvbiwgc28gaXQgd29ya3Mgd2l0aA0KPj4gc3RhbmRhcmQgWEhDSSBsaW51eCBk
-cml2ZXIuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUGF3ZWwgTGFzemN6YWsgPHBhd2VsbEBjYWRl
-bmNlLmNvbT4NCj4+IC0tLQ0KPg0KPkkgaGF2ZSBjb21waWxlZCBpdCBhdCBteSBBUk02NCBwbGF0
-Zm9ybSwgYW5kIHdpbGwgZ2l2ZSB5b3UgbW9yZSBmZWVkYmFjayBhZnRlcg0KPmFkZGluZyBwbGF0
-Zm9ybSBzdXBwb3J0LiBCZWxvdyBpcyBvbmUgY29tcGlsZSB3YXJuaW5nLCBwbGVhc2UgZml4DQo+
-DQo+ICBDQyAgICAgIGRyaXZlcnMvdXNiL2NkbnMzL2hvc3Qubw0KPiAgQVIgICAgICBkcml2ZXJz
-L3VzYi9jZG5zMy9jZG5zMy1wY2kubw0KPi9ob21lL2IyOTM5Ny93b3JrL3Byb2plY3RzL2xpbnV4
-LWlteC9kcml2ZXJzL3VzYi9jZG5zMy9nYWRnZXQuYzogSW4NCj5mdW5jdGlvbiDigJhjZG5zM19n
-YWRnZXRfZXBfZGlzYWJsZeKAmToNCj4vaG9tZS9iMjkzOTcvd29yay9wcm9qZWN0cy9saW51eC1p
-bXgvZHJpdmVycy91c2IvY2RuczMvZ2FkZ2V0LmM6MTEyMjoxOToNCj53YXJuaW5nOiDigJhwcml2
-X2RlduKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxpemVkIGluIHRoaXMgZnVuY3Rpb24NCj5bLVdt
-YXliZS11bmluaXRpYWxpemVkXQ0KPiAgIGRldl9kYmcocHJpdl9kZXYtPmRldiwgInVzYnNzOiBp
-bnZhbGlkIHBhcmFtZXRlcnNcbiIpOw0KPiAgICAgICAgICAgICAgICAgICBefg0KPiAgQVIgICAg
-ICBkcml2ZXJzL3VzYi9jZG5zMy9jZG5zMy5vDQo+DQoNCkkgZm91bmQgdGhpcyBhbHNvLiBTb21l
-IHRpbWUgYWdvIEkgY2hhbmdlZCANCnByX2VycigidXNic3M6IGludmFsaWQgcGFyYW1ldGVyc1xu
-Iik7ICANCnRvDQpkZXZfZXJyKHByaXZfZGV2LT5kZXYsICJ1c2JzczogaW52YWxpZCBwYXJhbWV0
-ZXJzXG4iKTsgICAgDQoNCkluIGNkbnMzX2dhZGdldF9lcF9kaXNhYmxlIGZ1bmN0aW9uIGFuZCBp
-dCB3YXMgbWlzdGFrZS4gDQoNCkkgZG9uJ3Qga25vdyB3aHkgSSBkaWRuJ3Qgc2VlIHRoaXMgd2Fy
-bmluZyBiZWZvcmUgcG9zdGluZyBwYXRjaC4NCg0KQ2hlZXJzIA0KUGF3ZWwNCg0K
+Sparse reported warnings about non-static symbols. For the variables
+a simple static attribute is fine - for those symbols referenced by
+livepatch via klp_func the symbol-names must be unmodified in the
+symbol table - to resolve this the __noclone attribute is used
+for the shared statically declared functions.
+
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Suggested-by: Joe Lawrence <joe.lawrence@redhat.com>
+Link: https://lkml.org/lkml/2018/12/13/827
+---
+
+V2: not all static functions shared need to carry the __noclone
+    attribute only those that need to be resolved at runtime by
+    livepatch - so drop the unnecessary __noclone attributes as
+    well as the Note on __noclone as suggested by Joe Lawrence
+    <joe.lawrence@redhat.com> - thanks !
+
+Sparse reported the following findings:
+
+CHECK   samples/livepatch/livepatch-shadow-mod.c
+samples/livepatch/livepatch-shadow-mod.c:99:1: warning: symbol
+ 'dummy_list' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:100:1: warning: symbol
+ 'dummy_list_mutex' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:107:23: warning: symbol
+ 'dummy_alloc' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:128:15: warning: symbol
+ 'dummy_free' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-mod.c:136:15: warning: symbol
+ 'dummy_check' was not declared. Should it be static?
+
+CHECK   samples/livepatch/livepatch-shadow-fix1.c
+samples/livepatch/livepatch-shadow-fix1.c:74:14: warning: symbol
+ 'livepatch_fix1_dummy_alloc' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-fix1.c:111:6: warning: symbol
+ 'livepatch_fix1_dummy_free' was not declared. Should it be static?
+
+CHECK   samples/livepatch/livepatch-shadow-fix2.c
+samples/livepatch/livepatch-shadow-fix2.c:53:6: warning: symbol
+ 'livepatch_fix2_dummy_check' was not declared. Should it be static?
+samples/livepatch/livepatch-shadow-fix2.c:81:6: warning: symbol
+ 'livepatch_fix2_dummy_free' was not declared. Should it be static?
+
+Patch was compile tested with: x86_64_defconfig + FTRACE=y
+FUNCTION_TRACER=y, EXPERT=y, LATENCYTOP=y, SAMPLES=y,
+SAMPLE_LIVEPATCH=y
+
+Patch was runtested with:
+   insmod samples/livepatch/livepatch-shadow-mod.ko
+   insmod samples/livepatch/livepatch-shadow-fix1.ko
+   insmod samples/livepatch/livepatch-shadow-fix2.ko
+   echo 0 > /sys/kernel/livepatch/livepatch_shadow_fix2/enabled
+   echo 0 > /sys/kernel/livepatch/livepatch_shadow_fix1/enabled
+   rmmod livepatch-shadow-fix2
+   rmmod livepatch-shadow-fix1
+   rmmod livepatch-shadow-mod
+and dmesg output compared with the run before the patch was
+applied.
+
+Patch is against 4.20-rc6 (localversion-next is next-20181214)
+
+ samples/livepatch/livepatch-shadow-fix1.c |  4 ++--
+ samples/livepatch/livepatch-shadow-fix2.c |  4 ++--
+ samples/livepatch/livepatch-shadow-mod.c  | 11 ++++++-----
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+index 49b1355..ebe78e2 100644
+--- a/samples/livepatch/livepatch-shadow-fix1.c
++++ b/samples/livepatch/livepatch-shadow-fix1.c
+@@ -71,7 +71,7 @@ static int shadow_leak_ctor(void *obj, void *shadow_data, void *ctor_data)
+ 	return 0;
+ }
+ 
+-struct dummy *livepatch_fix1_dummy_alloc(void)
++static struct dummy *livepatch_fix1_dummy_alloc(void)
+ {
+ 	struct dummy *d;
+ 	void *leak;
+@@ -108,7 +108,7 @@ static void livepatch_fix1_dummy_leak_dtor(void *obj, void *shadow_data)
+ 			 __func__, d, *shadow_leak);
+ }
+ 
+-void livepatch_fix1_dummy_free(struct dummy *d)
++static void livepatch_fix1_dummy_free(struct dummy *d)
+ {
+ 	void **shadow_leak;
+ 
+diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
+index b34c7bf..b6dac2b 100644
+--- a/samples/livepatch/livepatch-shadow-fix2.c
++++ b/samples/livepatch/livepatch-shadow-fix2.c
+@@ -50,7 +50,7 @@ struct dummy {
+ 	unsigned long jiffies_expire;
+ };
+ 
+-bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
++static bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
+ {
+ 	int *shadow_count;
+ 
+@@ -78,7 +78,7 @@ static void livepatch_fix2_dummy_leak_dtor(void *obj, void *shadow_data)
+ 			 __func__, d, *shadow_leak);
+ }
+ 
+-void livepatch_fix2_dummy_free(struct dummy *d)
++static void livepatch_fix2_dummy_free(struct dummy *d)
+ {
+ 	void **shadow_leak;
+ 	int *shadow_count;
+diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
+index 4c54b25..2168d57 100644
+--- a/samples/livepatch/livepatch-shadow-mod.c
++++ b/samples/livepatch/livepatch-shadow-mod.c
+@@ -96,15 +96,15 @@ MODULE_DESCRIPTION("Buggy module for shadow variable demo");
+  * Keep a list of all the dummies so we can clean up any residual ones
+  * on module exit
+  */
+-LIST_HEAD(dummy_list);
+-DEFINE_MUTEX(dummy_list_mutex);
++static LIST_HEAD(dummy_list);
++static DEFINE_MUTEX(dummy_list_mutex);
+ 
+ struct dummy {
+ 	struct list_head list;
+ 	unsigned long jiffies_expire;
+ };
+ 
+-noinline struct dummy *dummy_alloc(void)
++static __noclone noinline struct dummy *dummy_alloc(void)
+ {
+ 	struct dummy *d;
+ 	void *leak;
+@@ -125,7 +125,7 @@ noinline struct dummy *dummy_alloc(void)
+ 	return d;
+ }
+ 
+-noinline void dummy_free(struct dummy *d)
++static __noclone noinline void dummy_free(struct dummy *d)
+ {
+ 	pr_info("%s: dummy @ %p, expired = %lx\n",
+ 		__func__, d, d->jiffies_expire);
+@@ -133,7 +133,8 @@ noinline void dummy_free(struct dummy *d)
+ 	kfree(d);
+ }
+ 
+-noinline bool dummy_check(struct dummy *d, unsigned long jiffies)
++static __noclone noinline bool dummy_check(struct dummy *d,
++					   unsigned long jiffies)
+ {
+ 	return time_after(jiffies, d->jiffies_expire);
+ }
+-- 
+2.1.4
+
