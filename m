@@ -2,112 +2,101 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDC6C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C11C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2EB0206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F39C206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:43:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMY31ieN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbeLPVml (ORCPT
+        id S1730976AbeLPVn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 16:42:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39272 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727256AbeLPVml (ORCPT
+        Sun, 16 Dec 2018 16:43:57 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:35730 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727256AbeLPVn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 16:42:41 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gYeBJ-0000ZG-59; Sun, 16 Dec 2018 21:42:37 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gYeBJ-0007ef-02; Sun, 16 Dec 2018 21:42:37 +0000
-Message-ID: <1a378bff338f296670091cfad7e22b05d9cf514c.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 047/328] xen-netfront: fix queue name setting
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>
-Date:   Sun, 16 Dec 2018 21:42:32 +0000
-In-Reply-To: <87y38ycmgq.fsf@vitty.brq.redhat.com>
-References: <lsq.1544392233.936009164@decadent.org.uk>
-         <87y38ycmgq.fsf@vitty.brq.redhat.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-NKf/S06HmMuX4mTcQLou"
-User-Agent: Evolution 3.30.2-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Sun, 16 Dec 2018 16:43:57 -0500
+Received: by mail-yw1-f67.google.com with SMTP id h32so4454180ywk.2;
+        Sun, 16 Dec 2018 13:43:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bwVsWfSOkHXisZL6Xc4MoMxw3RY51YJz4Sl3LpEOmkw=;
+        b=OMY31ieNevhcW0U7sGXVmBZHyDN989kLngfx89x7rlx8MSSt9npnfyoKy1G0p3RY9a
+         20bPMwtsJY1rBbgmCqD5M7L3pw44WD6tcq1DymBf7d6w7LfckhvcdDF98+fpqr+fsJBj
+         hyFHXUZ9v39+YKTn8O4VD75d7VFTXl9gObACWMa0mEArOfUhHK+V/SdZQlOsULbzrZZX
+         DZlsburJBLXmt3vlXlqR1qmuZojqmXcJJ3id4Ur/4AN57pGY7OphsQnNcOh7MRXjzwKO
+         QpdR9ilmjbxrA4pl9IZlAbqb0SEMtNLcJpyqQoHMcB7ZEcvHXtbOjq/LWNSEq4Sb6uvj
+         DNcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bwVsWfSOkHXisZL6Xc4MoMxw3RY51YJz4Sl3LpEOmkw=;
+        b=lfIo7D/0l3JiC7v272K4ah9aB22IunVoLDfcgg5uTX6rC+nIGOvVssEuM08OjEYLDU
+         WeB7y5WD5VBjWUCdDdzRuW12Jr4s37j1HusiEPHAIStNar9HVROgzwQ+iPUxoKzVzD08
+         vwx08C55J/aJMtLGgg+H/Qx6ZbXOpc6OMpwV+LqMOeraPAoFIa3BcOr22BL7QeSPrFOx
+         wLJiWmTKHQjGftQCkuyLMZpJkjDjEMJyupFoppMHMQQhiLbRYYTmu7cu6lj78vFMdUXW
+         jREUiwT4EyNYZlWTPHmEDQ/9eEt6RVFxTo/7MHVVlKREkys3ZzCfsX3BBGbv1uQlKR5Y
+         rgJg==
+X-Gm-Message-State: AA+aEWZJJayqONYBKSUge2Vsu9OysUZdTyqwZvU8TNtSwxF8RRKILYTN
+        wpvJi2onENbXIUcIYhI1FvP4Vsrt
+X-Google-Smtp-Source: AFSGD/WZ9hk7kHV0CbgmBsB5OZsvQERgdRKFxwlq3DbqvOwsWWeZauy7Sb+W5qT/PWeHfLNGYJbjSg==
+X-Received: by 2002:a81:a355:: with SMTP id a82mr10862027ywh.445.1544996636315;
+        Sun, 16 Dec 2018 13:43:56 -0800 (PST)
+Received: from ubuntu ([67.191.186.148])
+        by smtp.gmail.com with ESMTPSA id u132sm3212511ywc.11.2018.12.16.13.43.55
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 16 Dec 2018 13:43:55 -0800 (PST)
+From:   Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+To:     marvin24@gmx.de
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH] Staging: nvec: nvec: fixed check style issues
+Date:   Sun, 16 Dec 2018 13:43:54 -0800
+Message-Id: <1544996634-10427-1-git-send-email-indigoomega021@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replaced udelay() by the preferred usleep_range() function.
 
---=-NKf/S06HmMuX4mTcQLou
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Mon, 2018-12-10 at 00:24 +0100, Vitaly Kuznetsov wrote:
-> Ben Hutchings <ben@decadent.org.uk> writes:
->=20
-> > 3.16.62-rc1 review patch.  If anyone has any objections, please let me =
-know.
-> >=20
-> > ------------------
-> >=20
-> > From: Vitaly Kuznetsov <vkuznets@redhat.com>
-> >=20
-> > commit 2d408c0d4574b01b9ed45e02516888bf925e11a9 upstream.
-[...]
-> We should also take=20
->=20
-> commit 21f2706b20100bb3db378461ab9b8e2035309b5b
-> Author: Xiao Liang <xiliang@redhat.com>
-> Date:   Tue Aug 14 23:21:28 2018 +0800
->=20
->     xen-netfront: fix warn message as irq device name has '/'
->=20
-> as it fixes an issue introduced by the commit in question. Sorry if this
-> is already in your series but I wasn't CCed on it.
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 08027a3..6f35f92 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -626,7 +626,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 		break;
+ 	case 2:		/* first byte after command */
+ 		if (status == (I2C_SL_IRQ | RNW | RCVD)) {
+-			udelay(33);
++			usleep_range(0, 33);
+ 			if (nvec->rx->data[0] != 0x01) {
+ 				dev_err(nvec->dev,
+ 					"Read without prior read command\n");
+@@ -713,7 +713,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 	 * We experience less incomplete messages with this delay than without
+ 	 * it, but we don't know why. Help is appreciated.
+ 	 */
+-	udelay(100);
++	usleep_range(0, 100);
+ 
+ 	return IRQ_HANDLED;
+ }
+-- 
+2.7.4
 
-Thanks, I've added that.
-
-Ben.
-
---=20
-Ben Hutchings
-If you seem to know what you are doing, you'll be given more to do.
-
-
-
---=-NKf/S06HmMuX4mTcQLou
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlwWxsgACgkQ57/I7JWG
-EQlH1A//btl/kXrTAKf5SPY6raBpp9W43yv6QdYhq8+iLPW533UK43ycoWLHqGyH
-Av4NxHGtSvyNw/sV0uOn46KexQ1tetPRLWK4Oii3KNWID2GoFhZSEDiM7M2KNFrm
-1zBN192C/sIzbGXeZc5M5pBdnc/MRSUeBQZ0w75vXBhdNqABAJ7niyXkbxfV4ESg
-jZ3Xk22/iAV7jdtPfjX7eTFz2dcXZ7s90FcXZFl6lshGXVSO4n6XR46ADADbtHov
-MTbqY6kHMCsS3orD8KVa71H9ZaHBG3jKrlGxmQjOcAgCXqCtrWGJMtKCzkkpgwhj
-qFSHzr6yK2uP5SVGq8Ih4laqLkbIzhpVwKSrj8XYGXnETnrz6ErB5Zaq2HKbV3Dk
-OA64c5IhO/LiJ0vtUsZ3fryHO8w8ig+nzHXbsNfvvZZqP2oOIOetIFD+6Q+KO4Fw
-9HtX0jCVGXzTwJk2pKomv4CKe8LTDMbCqQNWzpd2OegIx7xwvy1mSHoJqENDHDWB
-kRuAAzkYrB+lQd4a8rch+RU2RV5ehKYdVqO2fz9hZ2xYHASlaf5o+xlVadf6Jvej
-1alJpTjgzclFtE5mYuX4Dregt7nB2LZv+8MLR3tBlKc3ZKx+fJLekUnIvwME1vSB
-PI+BAvU1M8NG1FuVmjD6F0Ps0iUsNB2nW1THYMDFJgCztL0dzvA=
-=28Vk
------END PGP SIGNATURE-----
-
---=-NKf/S06HmMuX4mTcQLou--
