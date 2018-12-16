@@ -2,82 +2,155 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84529C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8EAC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFD8206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:05:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="eDv9TxRf"
+	by mail.kernel.org (Postfix) with ESMTP id 6C93F2086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbeLPPFR (ORCPT
+        id S1730497AbeLPPSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 10:05:17 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:53299 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729822AbeLPPFQ (ORCPT
+        Sun, 16 Dec 2018 10:18:06 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:6392 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729822AbeLPPSF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 10:05:16 -0500
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id wBGF4hLs015268;
-        Mon, 17 Dec 2018 00:04:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wBGF4hLs015268
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544972684;
-        bh=MA2Jjh7xK/VA5C7P2Ase8nz3E8v8zThDpaq5G92NU/I=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eDv9TxRfP3f3YMZVKyBhfCTKWqH/1ScVCmmJfX+gAqIrNham8+fCqOtthajF6YSKx
-         Wv4qnwc2890CMsIH0998FiYCXjcyFZK0J/DD7yMzG5TvDOLpCZMdAZYegXYGM/ErSh
-         NYB4MplaOcmzKw27LelRC1No6ovt+O6GaRFPCmz3Scl6zU6fWebjapiCT4k+IBBKU/
-         LhJo1tnAv1T80ZLIolSyaqQRmBqROLVioVvDJdn4T9OWku0jicVCbQfVqt//ZJuKfO
-         WaqZlO/UBsoQRn/ljrviouzXImcgxJkw5wJWxdrGCk10Bl+MNssCzRZtPgdjxz8il9
-         T2PeiWu3NeR+w==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
-Cc:     Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] bpf: promote bpf_perf_event.h to mandatory UAPI header
-Date:   Mon, 17 Dec 2018 00:04:40 +0900
-Message-Id: <1544972680-4105-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 16 Dec 2018 10:18:05 -0500
+Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Sun, 16 Dec 2018
+ 23:18:17 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v8 0/2] mtd: rawnand: meson: add Amlogic NAND driver support
+Date:   Sun, 16 Dec 2018 23:17:41 +0800
+Message-ID: <1544973463-59523-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c895f6f703ad ("bpf: correct broken uapi for
-BPF_PROG_TYPE_PERF_EVENT program type"), all architectures
-(except um) are required to have bpf_perf_event.h in uapi/asm.
+These two patches try to add initial NAND driver support for Amlogic Meson
+SoCs, current it has been tested on GXL(p212) and AXG(s400) platform.
 
-Add it to mandatory-y so "make headers_install" can check it.
+Changes since V6 at [8]
+ - fix bitflips checking for blank pages
+ - trace the latest commit with nand/next branch
+ - checking the return of meson_nand_op_get_dma_safe_*input/output*_buf
+ - add .detach_chip for free meson_nand.data_buf/info_buf
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Changes since V6 at [7]
+ - use timings->tBERS_max as the maximum time out, delete NFC_CMD_RB_TIMEOUT
+ - fix nand_rw_cmd and support small block flash and which row address less than 3
+ - fix coding style
+ - replace readl/writel_* with readl/writel_relaxed*
+ - delete ECC_SET_PROTECTED_OOB_BYTE and ECC_GET_PROTECTED_OOB_BYTE
+ - implement dma access for read_buf and write_buf, more efficient.
+ - delete waiting dma finish in write process and let NAND_CMD_PAGEPROG and
+RB command go on queuing
+ - add waiting the completed flag of last ecc page be set, for more strict
 
- include/uapi/asm-generic/Kbuild.asm | 1 +
- 1 file changed, 1 insertion(+)
+Changes since v5 at [6]:
+ - use instr->delay_ns in exec_op() to caculate the delay cycle
+ - delete struct meson_nfc_info_format and use macros instead
+ - delete "is_scramble" in struct meson_nfc_nand_chip
+ - add WARN_ON_ONCE() for chip > MAX_CE_NUM
+ - drop param *mtd* or struct *nfc* if param *nand exist
+ - substitute set_data_oob and get_data_oob for prase_data_oob and format_data_oob
+ - split timings caculating and setting timings
+ - move info_buf and data_buf to struct meson_nfc_nand_chip
 
-diff --git a/include/uapi/asm-generic/Kbuild.asm b/include/uapi/asm-generic/Kbuild.asm
-index 2138144..355c4ac 100644
---- a/include/uapi/asm-generic/Kbuild.asm
-+++ b/include/uapi/asm-generic/Kbuild.asm
-@@ -3,6 +3,7 @@
- #
- mandatory-y += auxvec.h
- mandatory-y += bitsperlong.h
-+mandatory-y += bpf_perf_event.h
- mandatory-y += byteorder.h
- mandatory-y += errno.h
- mandatory-y += fcntl.h
+Changes since v4 at [5]:
+ - remove the initial default divider(CLK_DIV_MASK) in meson_nfc_clk_init()
+ - dt-bindings: remove staus, add "rx" and "tx" clock, and node rename
+
+Changes since v3 at [4]:
+ - remove partition table and some used props from dt-bindings 
+
+Changes since v2 at [3]:
+ - remove some hardcode time value, like twb
+ - use dev wait R/B instead of nand_soft_waitrdy
+ - implement nfc ecc init by ecc helper
+ - rework nfc buffer init to register the maximun buffer when several chips
+ - free nfc buffer when error and cleanup
+ - add variable to teack all the already assigned CS lines
+ - fix mtd->name use the first cs line only
+ - remove dt "nand-enable-scrambler" and use NAND_NEED_SCRAMBLING instead.
+ - move setuping ECC fileds after the identification phase
+ - use nand_scan() and attach_chip()
+ - check one event to return IRQ_NONE
+ - delete cast when of_device_get_match_data
+ - use nand_controller_init() helper
+ - remove nfc driver complains when calling devm_ioremap_resource
+ - clear irqs before setting up irq handler
+
+Changes since v1 at [1]:
+ - adopt property amlogic,nand-enable-scrambler - thanks Martin
+ - drop nand pins in DT
+ - convert clk access to emmc clkc model 
+ - fix regiser field definition alignment
+ - drop nand-user-mode 
+ - parse cs id from DT
+ - rework n2m, m2n function
+ - explain why insert two "IDLE" command
+ - implement exec_op()
+ - drop meson_nfc_get_nand_chip_dts()
+ - release resource once error occur in meson_nfc_nand_chips_init(), 
+ - call nand_cleanup(nand) once mtd_device_register fail
+
+Items not addressed ( or confirmed ) in this version:
+ - convert to ECC conf helper() 
+ - convert to dma coherent API
+ - how to construct mtd->name
+
+[1] https://lkml.kernel.org/r/20180613161314.14894-1-yixun.lan@amlogic.com
+[2] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180719094612.5833-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/1536317831-58056-1-git-send-email-jianxin.pan@amlogic.com/
+[5] https://lore.kernel.org/r/1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com/
+[6] https://lore.kernel.org/r/1539839345-14021-1-git-send-email-jianxin.pan@amlogic.com
+[7] https://lore.kernel.org/r/1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com
+[8] http://lkml.kernel.org/r/1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com
+
+Liang Yang (2):
+  dt-bindings: nand: meson: add Amlogic NAND controller driver
+  mtd: rawnand: meson: add support for Amlogic NAND flash controller
+
+ .../devicetree/bindings/mtd/amlogic,meson-nand.txt |   60 +
+ drivers/mtd/nand/raw/Kconfig                       |   10 +
+ drivers/mtd/nand/raw/Makefile                      |    1 +
+ drivers/mtd/nand/raw/meson_nand.c                  | 1467 ++++++++++++++++++++
+ 4 files changed, 1538 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/meson_nand.c
+
 -- 
-2.7.4
+1.9.1
 
