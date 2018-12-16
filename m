@@ -2,143 +2,191 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DB6C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936C1C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38444206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:55:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDhkIV9D"
+	by mail.kernel.org (Postfix) with ESMTP id 55C622084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 21:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731013AbeLPVzc (ORCPT
+        id S1731039AbeLPV61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 16:55:32 -0500
-Received: from mail-pg1-f179.google.com ([209.85.215.179]:42827 "EHLO
-        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730853AbeLPVzc (ORCPT
+        Sun, 16 Dec 2018 16:58:27 -0500
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:13151 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730945AbeLPV60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 16:55:32 -0500
-Received: by mail-pg1-f179.google.com with SMTP id d72so5119367pga.9
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 13:55:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OeljkH5n44UpHpi5rGk9vz/vj7CgCFuZEyH/d99Iasg=;
-        b=EDhkIV9DWJS8TJg7dKIo7qHUpGoaYqvnRafVvsuSRAoPj7DBUWJi39+6PZ1wdVby1+
-         +weqz/ZZcp8j7ZtZSo3rqFj0pZAkc9qGD4ogIcbZ00bECDpcO3BvgEltQ2agDofq3SiF
-         Zy6qM/bKx3T58tFzF+cU8f440S1d7QoaEqlctiqxhiRN+K2Qm46iP9cElz2KTQDPsMNq
-         4GMYDiY14dBa+fjezyvM4T7Pi3ky/45uZHO17UQjnUWmPz6CO4aUpdL2p2FOenuVhSKn
-         cp6MEj6o1kjZS4X7Qt1ICnDnEq730jQEnq5f36KtLmUvLD9YSjKiSr8ODRc/tmuI2qns
-         oUtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OeljkH5n44UpHpi5rGk9vz/vj7CgCFuZEyH/d99Iasg=;
-        b=IlvI3sMOBi2nfNd+fXVquW0A8NuyyE6wdZ1GfGGq7fZ69Ui61dR1mSMUom1qUVMe3U
-         81ZNdE4Hs0/ZNZMqVcIn8sNLmCW43JcDJpeSxbSWeSlcjkV9OWOW87BbP9mhMdy18HAw
-         gCbzMJf7tSHsoHXfUVs4AmH7mv1FNDQ8x2aVT/tiS3GOgA3RSEtac+M0MspJ4YIBuXvc
-         rToqY2ds/mb8dYKuvyf68clAX9WIQs5oHn4rv6n7NjY1K6hZGpWkqYqr1IkZuAQoSfSI
-         mKt2hdTnSbkQC+LWQOChoKC9jShJipdCZtzvFOVhvlZUMGQAZEQ8qpPGqBljD1yuIy86
-         eJUg==
-X-Gm-Message-State: AA+aEWZE31k8SGyPWSPzcUPkQwCbBYgoMUDzs3xlvo4KT2WQxOncGLwc
-        f1EvwR6xFF5jjfSH4y2ob3A=
-X-Google-Smtp-Source: AFSGD/Ut+r35SZMfX6toJLBLo9YFegMmjSx4X0MRV3EKIVKFCyI5esmzua+es6ObzN1j/bYQCYEGVg==
-X-Received: by 2002:a63:8149:: with SMTP id t70mr10288161pgd.172.1544997331048;
-        Sun, 16 Dec 2018 13:55:31 -0800 (PST)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id r6sm23563976pgk.91.2018.12.16.13.55.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 Dec 2018 13:55:28 -0800 (PST)
-Date:   Sun, 16 Dec 2018 11:55:26 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Joe Perches <joe@perches.com>,
+        Sun, 16 Dec 2018 16:58:26 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl6.internode.on.net with ESMTP; 17 Dec 2018 08:28:21 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gYeQV-0006PM-Vl; Mon, 17 Dec 2018 08:58:20 +1100
+Date:   Mon, 17 Dec 2018 08:58:19 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC] LKML Archive in Maildir Format
-Message-ID: <20181216215526.kmbrv2srsgqlqde4@gmail.com>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20181216190639.6safwjqwdphkce67@gmail.com>
- <c7865616af2eab80f5e5a4cf756ba430f2293499.camel@perches.com>
- <20181216192135.hc7gykmwkfgil2j5@gmail.com>
- <20181216195505.GB7732@pure.paranoia.local>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181216215819.GC10644@dastard>
+References: <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ue54b77hefxhqtbv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181216195505.GB7732@pure.paranoia.local>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181214154321.GF8896@quack2.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 14, 2018 at 04:43:21PM +0100, Jan Kara wrote:
+> Hi!
+> 
+> On Thu 13-12-18 08:46:41, Dave Chinner wrote:
+> > On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
+> > > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+> > > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+> > > > So this approach doesn't look like a win to me over using counter in struct
+> > > > page and I'd rather try looking into squeezing HMM public page usage of
+> > > > struct page so that we can fit that gup counter there as well. I know that
+> > > > it may be easier said than done...
+> > > 
+> > > So i want back to the drawing board and first i would like to ascertain
+> > > that we all agree on what the objectives are:
+> > > 
+> > >     [O1] Avoid write back from a page still being written by either a
+> > >          device or some direct I/O or any other existing user of GUP.
+> > >          This would avoid possible file system corruption.
+> > > 
+> > >     [O2] Avoid crash when set_page_dirty() is call on a page that is
+> > >          considered clean by core mm (buffer head have been remove and
+> > >          with some file system this turns into an ugly mess).
+> > 
+> > I think that's wrong. This isn't an "avoid a crash" case, this is a
+> > "prevent data and/or filesystem corruption" case. The primary goal
+> > we have here is removing our exposure to potential corruption, which
+> > has the secondary effect of avoiding the crash/panics that currently
+> > occur as a result of inconsistent page/filesystem state.
+> > 
+> > i.e. The goal is to have ->page_mkwrite() called on the clean page
+> > /before/ the file-backed page is marked dirty, and hence we don't
+> > expose ourselves to potential corruption or crashes that are a
+> > result of inappropriately calling set_page_dirty() on clean
+> > file-backed pages.
+> 
+> I agree that [O1] - i.e., avoid corrupting fs data - is more important and
+> [O2] is just one consequence of [O1].
+> 
+> > > For [O1] and [O2] i believe a solution with mapcount would work. So
+> > > no new struct, no fake vma, nothing like that. In GUP for file back
+> > > pages we increment both refcount and mapcount (we also need a special
+> > > put_user_page to decrement mapcount when GUP user are done with the
+> > > page).
+> > 
+> > I don't see how a mapcount can prevent anyone from calling
+> > set_page_dirty() inappropriately.
+> > 
+> > > Now for [O1] the write back have to call page_mkclean() to go through
+> > > all reverse mapping of the page and map read only. This means that
+> > > we can count the number of real mapping and see if the mapcount is
+> > > bigger than that. If mapcount is bigger than page is pin and we need
+> > > to use a bounce page to do the writeback.
+> > 
+> > Doesn't work. Generally filesystems have already mapped the page
+> > into bios before they call clear_page_dirty_for_io(), so it's too
+> > late for the filesystem to bounce the page at that point.
+> 
+> Yes, for filesystem it is too late. But the plan we figured back in October
+> was to do the bouncing in the block layer. I.e., mark the bio (or just the
+> particular page) as needing bouncing and then use the existing page
+> bouncing mechanism in the block layer to do the bouncing for us. Ext3 (when
+> it was still a separate fs driver) has been using a mechanism like this to
+> make DIF/DIX work with its metadata.
 
---ue54b77hefxhqtbv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, that's a possibility, but that doesn't close off any race
+conditions because there can be DMA into the page in progress while
+the page is being bounced, right? AFAICT this ext3+DIF/DIX case is
+different in that there is no 3rd-party access to the page while it
+is under IO (ext3 arbitrates all access to it's metadata), and so
+nothing can actually race for modification of the page between
+submission and bouncing at the block layer.
 
-On Sun, Dec 16, 2018 at 02:55:05PM -0500, Konstantin Ryabitsev wrote:
-> On Sun, Dec 16, 2018 at 09:21:35AM -1000, Joey Pabalinas wrote:
-> > That was my first attempt, but the ducumentation for the public-inbox
-> > format is sort of terrible,=20
->=20
-> I'm surprised you think so, because it's basically a simple file called
-> "m" that is updated on each commit and contains the body of the
-> message.
->=20
-> > and after a few hours trying to convert it to Maildir I just gave up.
->=20
-> It's as easy as something like this:
->=20
-> for commit in $(git rev-list master); do:
->   git show $commit:m > maildir/new/$commit
-> done
->=20
-> You have to do it per each of the shards for the complete archive.
+In this case, the moment the page is unlocked, anyone else can map
+it and start (R)DMA on it, and that can happen before the bio is
+bounced by the block layer. So AFAICT, block layer bouncing doesn't
+solve the problem of racing writeback and DMA direct to the page we
+are doing IO on. Yes, it reduces the race window substantially, but
+it doesn't get rid of it.
 
-Ah dang, I was trying to use stuff like ssoma to split it, no wonder it
-didn't work.  Not sure why I didn't think to try any git commands...
+/me points to wait_for_stable_page() in ->page_mkwrite as the
+mechanism we already have to avoid races between dirtying mapped
+pages and page writeback....
 
-Well, at least now I know, ha. Thanks!
+> > > For [O2] i believe we can handle that case in the put_user_page()
+> > > function to properly dirty the page without causing filesystem
+> > > freak out.
+> > 
+> > I'm pretty sure you can't call ->page_mkwrite() from
+> > put_user_page(), so I don't think this is workable at all.
+> 
+> Yes, calling ->page_mkwrite() in put_user_page() is not only technically
+> complicated but also too late - DMA has already modified page contents.
+> What we planned to do (again discussed back in October) was to never allow
+> the pinned page to become clean. I.e., clear_page_dirty_for_io() would
+> leave pinned pages dirty. Also we would skip pinned pages for WB_SYNC_NONE
+> writeback as there's no point in that really. That way MM and filesystems
+> would be aware of the real page state - i.e., what's in memory is not in
+> sync (potentially) with what's on disk. I was thinking whether this
+> permanently-dirty state couldn't confuse filesystem in some way but I
+> didn't find anything serious - the worst I could think of are places that
+> do filemap_write_and_wait() and then invalidate page cache e.g. before hole
+> punching or extent shifting.
 
---=20
+If it's permanently dirty, how do we trigger new COW operations
+after writeback has "cleaned" the page? i.e. we still need a
+->page_mkwrite call to run before we allow the next write to the
+page to be done, regardless of whether the page is "permanently
+dirty" or not....
+
+> But these should work fine as is (page cache
+> invalidation will just happily truncate dirty pages). DIO might get
+> confused by the inability to invalidate dirty pages but then user combining
+> RDMA with DIO on the same file at one moment gets what he deserves...
+
+I'm almost certain this will do something that will occur. i.e.
+permanently mapped RDMA file, filesystem backup program uses DIO....
+
 Cheers,
-Joey Pabalinas
 
---ue54b77hefxhqtbv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlwWyc0ACgkQ2rGdfm9D
-tVKueA/+MeJmr1KrzXu74xk63vZjaG/NnY+lCQ2Snc5qHgLWeNRenFvexTjtNh4q
-BO9jFzjdhLi6u/TkZRj74C08Yey2fXGkJ21QhU8yTxkERFjGw0/XVpCTPdf31XEv
-twEuSfd1eAMwsUtA2Cxitrxn4iLvyHRCLlOfdxG2vplOpyrKAl+JD+knzo2MFGVh
-u0iJ8fdy3JWGuDVz+YUO6SkkiDu/3h7czfMq5Hb1xafAFUHwsoIqYm+utoF4o7GS
-41CmGXlapNNcQdN6wJLEtnP5zsT+xgr8SKx3IfJ8jzNp3Zk7POPvoAYdKyWISMiA
-zzjZNdZvcT5gq7x0q0xzKlXads6aOPx6hzEWMmOMEzgEL+S4ddColssFaNMLX7do
-WqGlWhvp5a3FEfmPzZcvaYT9NoDgYpSJyJTOw8MKc6Tvl3f9wvMPYaL0aYnKbowU
-f6QZ2sbkFG0EV1nkQVC+CD/NbLpTk049AR0QH1eU6iD2ymg3E6/OVxaZd+7tc94X
-zKMUDStRM/1327/XoSj+Z7N8tKSTsUK7PQOfTAGL6c4KONRp1GU1t+Z1tkhfczxL
-Xu/xzSJCkshAb678z6prYHnYwqbJ3RPBTvDHgSEhkqoKi+ZdN+mJOapmkcTl1i/V
-vicPHDH0dmMn+f9t+kq6EJ5Zwyhw5DGKSEwOry1nhIx9LG7HPEc=
-=b3Fj
------END PGP SIGNATURE-----
-
---ue54b77hefxhqtbv--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
