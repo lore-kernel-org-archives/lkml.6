@@ -2,161 +2,106 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F226C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0BBC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9FF621839
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:53:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4nUhHI9"
+	by mail.kernel.org (Postfix) with ESMTP id 081812082F
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544990111;
+	bh=efKtOVfyA8RIrxpSE0kjM7/gS+j6CDncFFH8B/6G9zs=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=KyxBMM4GX0lkpSrZBKAej3hHgdoRsZA2//iz3DafR6ZiM9FnRZdEb+FJAn4082U2F
+	 PaLCMwPMnJtIalV+lnVNowK0Cy2/vVuI1/5Nw4IlHh/XSNa3RF4pxM2cez2Uc4uz5q
+	 gkLDrt7yonlArajT6BUC9hku1XRkM4En3TzSgXzE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730906AbeLPTxs (ORCPT
+        id S1730929AbeLPTzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 14:53:48 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46553 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730673AbeLPTxs (ORCPT
+        Sun, 16 Dec 2018 14:55:09 -0500
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:41666 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbeLPTzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 14:53:48 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so5062033ply.13
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 11:53:47 -0800 (PST)
+        Sun, 16 Dec 2018 14:55:09 -0500
+Received: by mail-qt1-f175.google.com with SMTP id l12so10009666qtf.8
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 11:55:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linuxfoundation.org; s=google;
         h=date:from:to:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZDfnIYctEqxRMwzhSszUskWr+1+tQzBqfWGHwebVw14=;
-        b=R4nUhHI9OefX8/llxxgxwew0Ruf59l7W5EUihmevGeUQb4P1dI7l3wqX3BjXOx39NY
-         dGrkNkBELEJFljONmd1YXEnM7GRZAfEa3sIRa4e7rY5MElXTqgXcrpOn+S56v85I5x3X
-         Y0bENZGmEnsuvybODc3MeglA4j9CmGMNtn02aUbo2Qn9imbTkCwTTfZJyp0XjmzbjXgy
-         sW7Bad+QX5WRiISyoi42Bq7hc1NzUXU9v9KguFhJ65xzPTLRy84pWtWSRrJv0nQCvL46
-         cLbo86esLoMeq5P4u2+jHjZj8y8uxcH2TCxYuKps/2dDdhNV+YrrRulKRt8a8CxICYQv
-         5CPA==
+        bh=L+VoJTO7+0aCtAMTLuSAi4R6E/aMB39NLKOiE3Qh1Ag=;
+        b=BOpd6iaKUuDw6ggNwMiB/9vpSIKjhQ71Bmt/dK4XT02BVrz7/ivXIONNx5NHSFpx8P
+         xR1aOpVPWD8vK/vLYWB5dVvq2aSGL/qZz4V21ScPJpCq7Ge0ytO/dxPc/jE8baj0Sxx5
+         SMKXLiUAOZqNe+0Ltk9ujxpavpbWexiRH+zTk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZDfnIYctEqxRMwzhSszUskWr+1+tQzBqfWGHwebVw14=;
-        b=oDBTo1Of4PC6ZK0ITVZESKagpJ67XgWpzcP3hUnxJlEjaK9VtZ/jZaLLsRVf3P1mjY
-         7BH65yicDCexPJkds+cxd5wQ+wn8f12OU3XnwM9iwA7jwIaRvNzE4rQ7Yaf35n2Oakfz
-         jVypT3+Nyw2Zk34cQ+9I5uJLyaRKAcqPhJh9jeEsaA1VszURal0PyttLnOOHRdx4hJWL
-         i7lM7PeSLOxLCWWVsWoOUaxILLq51XJzHBiXf+x64sYSM7jOyDL/P+eOmRLRB+dYdP0I
-         8a+2IWbhj5eunA2inLJjiH7NbAKM1761CHnTnyGga3nNKmkEQWq8Jl3SEnABgfgCv/Vi
-         wqPQ==
-X-Gm-Message-State: AA+aEWantWP9cDiHGsLBIcPC1GrO9odIkVRwDL5JLm4aLQN4bSJ9W9nA
-        5Rq92DMru+XQ5QHAPnUKBLfEseD6
-X-Google-Smtp-Source: AFSGD/V82FCPelHZ7Xg7jWPbMomPcFr/1RwzuIhNp1nBjJf8fFh02dcV0+jHyaEcDDlofNGHdoT1Eg==
-X-Received: by 2002:a17:902:bb05:: with SMTP id l5mr10491955pls.230.1544990027273;
-        Sun, 16 Dec 2018 11:53:47 -0800 (PST)
-Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
-        by smtp.gmail.com with ESMTPSA id x12sm11856295pgr.55.2018.12.16.11.53.45
+        bh=L+VoJTO7+0aCtAMTLuSAi4R6E/aMB39NLKOiE3Qh1Ag=;
+        b=uWrt98xId7Z06CFBsCyM4cr5T+/eCbQkMnIfQ1h3UtirkAfLd/fNhmS5lAQVmtpefs
+         pmxyDFbGygwfYeLHUN3uLdmzsXhhwwCmex7OjvmFFxdiZucIvjU0wbgQIS5DQzxCDcjC
+         htNVFAb5WN4jC8bd7VZrFNOEm4GtBlcUZvp3agS1bNsmLPKyXaf/8iLzOmzSIPbgASDI
+         M797Wx9s6a5AeEoMZmwelzMGUw5RHV8BdpR3vXfqjuwx37th58wcwAt9WEkeQmtBw5dZ
+         /nGvKWRgli0jD+OY6g1DWVJvM21L83+k+RWugpAa+Qc7Q6GZ+PR5ZyhDdcq500vyhrVp
+         Zb1w==
+X-Gm-Message-State: AA+aEWacYGi0Zvda8AyCR7KaPWMcm/DFd7UdXp/6g0Mgvn7UD3m5GD+l
+        jePYHkQIgliI7G7RtuXQzvzPEQ==
+X-Google-Smtp-Source: AFSGD/WTNeboOHaPS6kzVdhAVuj4P1dEulWSEmpwmWiojFGFk9DmFOU1zk1bKgO+b06lcP/5i520Uw==
+X-Received: by 2002:ac8:3b52:: with SMTP id r18mr10612644qtf.81.1544990108358;
+        Sun, 16 Dec 2018 11:55:08 -0800 (PST)
+Received: from pure.paranoia.local ([198.144.156.49])
+        by smtp.gmail.com with ESMTPSA id r56sm6545046qtj.30.2018.12.16.11.55.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 Dec 2018 11:53:46 -0800 (PST)
-Date:   Sun, 16 Dec 2018 09:53:43 -1000
-From:   Joey Pabalinas <joeypabalinas@gmail.com>
+        Sun, 16 Dec 2018 11:55:07 -0800 (PST)
+Date:   Sun, 16 Dec 2018 14:55:05 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
 To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        Joe Perches <joe@perches.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernelnewbies@kernelnewbies.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [RFC] LKML Archive in Maildir Format
-Message-ID: <20181216195343.idnt2y5y5wjky5gu@gmail.com>
+Message-ID: <20181216195505.GB7732@pure.paranoia.local>
 Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        Joe Perches <joe@perches.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         kernelnewbies@kernelnewbies.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 References: <20181216190639.6safwjqwdphkce67@gmail.com>
- <20181216194649.GA7732@pure.paranoia.local>
+ <c7865616af2eab80f5e5a4cf756ba430f2293499.camel@perches.com>
+ <20181216192135.hc7gykmwkfgil2j5@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qzphf3hwzqdjxeaq"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181216194649.GA7732@pure.paranoia.local>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181216192135.hc7gykmwkfgil2j5@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 16, 2018 at 09:21:35AM -1000, Joey Pabalinas wrote:
+> That was my first attempt, but the ducumentation for the public-inbox
+> format is sort of terrible, 
 
---qzphf3hwzqdjxeaq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm surprised you think so, because it's basically a simple file called
+"m" that is updated on each commit and contains the body of the
+message.
 
-On Sun, Dec 16, 2018 at 02:46:49PM -0500, Konstantin Ryabitsev wrote:
-> On Sun, Dec 16, 2018 at 09:06:39AM -1000, Joey Pabalinas wrote:
-> > I spent a lot of time trying to find an LKML archive in Maildir format
-> > that I could use for local searches with nutmuch or something, but all
-> > the links I was able to find were all dead.
-> >=20
-> > I ended up just compiling one myself and I currently host it at:
-> >=20
-> > https://alyptik.org/lkml.tar.xz
->=20
-> You seem to have duplicated a lot of effort that has already been done
-> to compile the archive on lore.kernel.org.
+> and after a few hours trying to convert it to Maildir I just gave up.
 
-Absolutely correct, haha.
+It's as easy as something like this:
 
->=20
-> > It's possible I'm the only weirdo who finds this kind of thing useful, =
-but
-> > I figured I should share it just in case I'm not.
->=20
-> The maildir format is kind of terrible for LKML, because having millions
-> of messages in a single directory is very hard on the underlying FS. If
-> you break it up into multiple folders, then it becomes difficult to
-> search. This is the main reason why we have chosen to go with the
-> public-inbox format, which solves both of these problems and allows for
-> a very efficient archive updating and replication using git.
->=20
-> > It's about 1.1 million files, I was wondering if anyone had an idea of a
-> > better way to host this? I've tried Github and GitLab, but they don't
-> > appreciate repos with that many files, hah.
->=20
-> Like I said, you seem to be going down the road we've already tried and
-> rejected. :)
+for commit in $(git rev-list master); do:
+  git show $commit:m > maildir/new/$commit
+done
 
-Yes, I had a strong suspicion I might be the only crazy person who prefers =
-this
-kind of format :)
+You have to do it per each of the shards for the complete archive.
 
-My only comment on the public-mailbox choice is that the documentation
-is very sparse and erratic. Myself and a couple other people just
-couldn't figure out how to convert that format to Maildir or some other
-format you could feed into a reader like neomutt.
-
-Do you have any advice on how to convert those public-inbox files
-correctly?
-
---=20
-Cheers,
-Joey Pabalinas
-
---qzphf3hwzqdjxeaq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlwWrUYACgkQ2rGdfm9D
-tVK2AA//UtRqe1x6D0rrKt0VvWWDxnIuk79bqae/yyW4c4DW34bbOvsK+PboKj1M
-KrX8qLqqrpmPNd2bfGTTeL+5fBbc26VPatid3FLMW9YLX3ADSQ8cHSvOMUPP7lgy
-uDcyIqdn8grKlnZcLNSQB5QdbN0cD96AGcjGdOtUbzEVbaSIVePcgg1fTU2rF3/q
-qm7Kv+i0qAaX2s+0xSaTPI8XGSKMVWlpi8nrsyJ7TViLDreKs+xnpiloAU+eugkC
-nPO/D2WSCimH3SyRoUwSESNWzX7vNJSpVBvPY3evpsa4P2jTF8vbJ32nFdW0FeEW
-Ko1Tl+Y2MLYdW+Gu3035DYfvXU1JLTyrSrb0jyQAE2ckEEfkwngk1/WmVL8EWOaM
-mvJlQQZf2SqOJWMk3tJWLmG9IDkFHkFTfKU8famMN18orowlkYromcHMXu+TBWsG
-ljQhPmsFuIQoMy8zV6klxZtl0hhwFeHgqyE4hRauzORluGurCFyFo96fqXoON+cH
-5G3j8tuqR4fGcRPen0zOJg4kB3wnufQE5HOBpO64foOLLP8Uk1g+hXjDqN95aUT+
-ZFSnN7CHlk0MgH0YKl3f8DvJTkBoySYQJO9fWYJhcFxqQbzDqqR5G7yGRzoodzkK
-Er6yZad0rEAIZ3A9rrWL/M/3Ccyz8HLrjGtwr5cJ0iNjeJ1U8EU=
-=SRwz
------END PGP SIGNATURE-----
-
---qzphf3hwzqdjxeaq--
+-K
