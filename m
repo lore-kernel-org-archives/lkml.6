@@ -2,106 +2,108 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0BBC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CFCC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081812082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544990111;
-	bh=efKtOVfyA8RIrxpSE0kjM7/gS+j6CDncFFH8B/6G9zs=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=KyxBMM4GX0lkpSrZBKAej3hHgdoRsZA2//iz3DafR6ZiM9FnRZdEb+FJAn4082U2F
-	 PaLCMwPMnJtIalV+lnVNowK0Cy2/vVuI1/5Nw4IlHh/XSNa3RF4pxM2cez2Uc4uz5q
-	 gkLDrt7yonlArajT6BUC9hku1XRkM4En3TzSgXzE=
+	by mail.kernel.org (Postfix) with ESMTP id 2A9AD217FB
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:57:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730929AbeLPTzJ (ORCPT
+        id S1730946AbeLPT5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 14:55:09 -0500
-Received: from mail-qt1-f175.google.com ([209.85.160.175]:41666 "EHLO
-        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbeLPTzJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 14:55:09 -0500
-Received: by mail-qt1-f175.google.com with SMTP id l12so10009666qtf.8
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 11:55:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L+VoJTO7+0aCtAMTLuSAi4R6E/aMB39NLKOiE3Qh1Ag=;
-        b=BOpd6iaKUuDw6ggNwMiB/9vpSIKjhQ71Bmt/dK4XT02BVrz7/ivXIONNx5NHSFpx8P
-         xR1aOpVPWD8vK/vLYWB5dVvq2aSGL/qZz4V21ScPJpCq7Ge0ytO/dxPc/jE8baj0Sxx5
-         SMKXLiUAOZqNe+0Ltk9ujxpavpbWexiRH+zTk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L+VoJTO7+0aCtAMTLuSAi4R6E/aMB39NLKOiE3Qh1Ag=;
-        b=uWrt98xId7Z06CFBsCyM4cr5T+/eCbQkMnIfQ1h3UtirkAfLd/fNhmS5lAQVmtpefs
-         pmxyDFbGygwfYeLHUN3uLdmzsXhhwwCmex7OjvmFFxdiZucIvjU0wbgQIS5DQzxCDcjC
-         htNVFAb5WN4jC8bd7VZrFNOEm4GtBlcUZvp3agS1bNsmLPKyXaf/8iLzOmzSIPbgASDI
-         M797Wx9s6a5AeEoMZmwelzMGUw5RHV8BdpR3vXfqjuwx37th58wcwAt9WEkeQmtBw5dZ
-         /nGvKWRgli0jD+OY6g1DWVJvM21L83+k+RWugpAa+Qc7Q6GZ+PR5ZyhDdcq500vyhrVp
-         Zb1w==
-X-Gm-Message-State: AA+aEWacYGi0Zvda8AyCR7KaPWMcm/DFd7UdXp/6g0Mgvn7UD3m5GD+l
-        jePYHkQIgliI7G7RtuXQzvzPEQ==
-X-Google-Smtp-Source: AFSGD/WTNeboOHaPS6kzVdhAVuj4P1dEulWSEmpwmWiojFGFk9DmFOU1zk1bKgO+b06lcP/5i520Uw==
-X-Received: by 2002:ac8:3b52:: with SMTP id r18mr10612644qtf.81.1544990108358;
-        Sun, 16 Dec 2018 11:55:08 -0800 (PST)
-Received: from pure.paranoia.local ([198.144.156.49])
-        by smtp.gmail.com with ESMTPSA id r56sm6545046qtj.30.2018.12.16.11.55.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 Dec 2018 11:55:07 -0800 (PST)
-Date:   Sun, 16 Dec 2018 14:55:05 -0500
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC] LKML Archive in Maildir Format
-Message-ID: <20181216195505.GB7732@pure.paranoia.local>
-Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernelnewbies@kernelnewbies.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20181216190639.6safwjqwdphkce67@gmail.com>
- <c7865616af2eab80f5e5a4cf756ba430f2293499.camel@perches.com>
- <20181216192135.hc7gykmwkfgil2j5@gmail.com>
+        Sun, 16 Dec 2018 14:57:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726200AbeLPT5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 14:57:35 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 20EC7C057F9A;
+        Sun, 16 Dec 2018 19:57:35 +0000 (UTC)
+Received: from redhat.com (ovpn-120-77.rdu2.redhat.com [10.10.120.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A48B19C7C;
+        Sun, 16 Dec 2018 19:57:34 +0000 (UTC)
+Date:   Sun, 16 Dec 2018 14:57:33 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
+ vmap()
+Message-ID: <20181216144200-mutt-send-email-mst@kernel.org>
+References: <20181213101022.12475-1-jasowang@redhat.com>
+ <20181213144116-mutt-send-email-mst@kernel.org>
+ <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
+ <20181215.114308.647436101869587689.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181216192135.hc7gykmwkfgil2j5@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181215.114308.647436101869587689.davem@davemloft.net>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sun, 16 Dec 2018 19:57:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 09:21:35AM -1000, Joey Pabalinas wrote:
-> That was my first attempt, but the ducumentation for the public-inbox
-> format is sort of terrible, 
+On Sat, Dec 15, 2018 at 11:43:08AM -0800, David Miller wrote:
+> From: Jason Wang <jasowang@redhat.com>
+> Date: Fri, 14 Dec 2018 12:29:54 +0800
+> 
+> > 
+> > On 2018/12/14 上午4:12, Michael S. Tsirkin wrote:
+> >> On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
+> >>> Hi:
+> >>>
+> >>> This series tries to access virtqueue metadata through kernel virtual
+> >>> address instead of copy_user() friends since they had too much
+> >>> overheads like checks, spec barriers or even hardware feature
+> >>> toggling.
+> >>>
+> >>> Test shows about 24% improvement on TX PPS. It should benefit other
+> >>> cases as well.
+> >>>
+> >>> Please review
+> >> I think the idea of speeding up userspace access is a good one.
+> >> However I think that moving all checks to start is way too aggressive.
+> > 
+> > 
+> > So did packet and AF_XDP. Anyway, sharing address space and access
+> > them directly is the fastest way. Performance is the major
+> > consideration for people to choose backend. Compare to userspace
+> > implementation, vhost does not have security advantages at any
+> > level. If vhost is still slow, people will start to develop backends
+> > based on e.g AF_XDP.
+> 
+> Exactly, this is precisely how this kind of problem should be solved.
+> 
+> Michael, I strongly support the approach Jason is taking here, and I
+> would like to ask you to seriously reconsider your objections.
+> 
+> Thank you.
 
-I'm surprised you think so, because it's basically a simple file called
-"m" that is updated on each commit and contains the body of the
-message.
+Okay. Won't be the first time I'm wrong.
 
-> and after a few hours trying to convert it to Maildir I just gave up.
+Let's say we ignore security aspects, but we need to make sure the
+following all keep working (broken with this revision):
+- file backed memory (I didn't see where we mark memory dirty -
+  if we don't we get guest memory corruption on close, if we do
+  then host crash as https://lwn.net/Articles/774411/ seems to apply here?)
+- THP
+- auto-NUMA
 
-It's as easy as something like this:
+Because vhost isn't like AF_XDP where you can just tell people "use
+hugetlbfs" and "data is removed on close" - people are using it in lots
+of configurations with guest memory shared between rings and unrelated
+data.
 
-for commit in $(git rev-list master); do:
-  git show $commit:m > maildir/new/$commit
-done
+Jason, thoughts on these?
 
-You have to do it per each of the shards for the complete archive.
-
--K
+-- 
+MST
