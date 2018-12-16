@@ -2,83 +2,156 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A48C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 00:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C53DC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 01:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B11EE2086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 00:24:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YurVLAZ3"
+	by mail.kernel.org (Postfix) with ESMTP id 4B7962086D
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 01:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729737AbeLPAYB (ORCPT
+        id S1729656AbeLPBYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 19:24:01 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42169 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbeLPAYB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 19:24:01 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l10so6902390lfh.9
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 16:23:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x/wXWijC5sXloSVHQvvLkkFGdyUckN6W9iO16EUSGP8=;
-        b=YurVLAZ3QPt+RUAeLQqynWN2d22ySzTvG8Wa8q83VWnhASro/75edN0T2Nub4iecEl
-         NWH5cywjkuc2Tkq8PcEnDN4hd7jClYJiqjX3a33jYwqj/mei/IlEy8KysTv3sXgZHIGC
-         kCOuSwFk7h9Ox7BVD3IyN4vDQ/Gax6xKbm3Rs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x/wXWijC5sXloSVHQvvLkkFGdyUckN6W9iO16EUSGP8=;
-        b=mge/3IeQPkCreis/h6tVrH32Gm3mPvr1Hze7QvYrYFXijZFjZ+29VfkN8BOBEPE5jS
-         +g99fyj638SvQPeJ9G+1u9cG3m5IlsUn5Z+szObrJN1jhlcaZR9y2QkZRZSBK21ektuY
-         Odz7+T4N1r+StQbOeGpJ8+yxe2nxpcYw/NswwPCazDlTJIIL1AC8XjiGUx6NTNwPJxp0
-         2QMgBMwvRz+GdnwY4C4UJv68V5hwpsmb6E6IoalZZnEtNiqGd5jy5u//2hGxzUGpddUn
-         Z0M4riRwmxieXvJXBDx6PDAoSSVuEUZrb+/VXz36dFsi/VvTfaelhZLM0y46FPdFuT3X
-         0I/Q==
-X-Gm-Message-State: AA+aEWbfHMaDI43GnDtkNh3fMlXVG3OXHp5exy5SdNnQRXRntwb9Gfoc
-        Z/uNvKIUqGkzAvG1C1DCYEY2rSpLAhxWsWNCCcrRew==
-X-Google-Smtp-Source: AFSGD/XT4DcCs4J5DYsLcJjspPIaeJRfDEOYdNVXff6Xs0Xkm2SzbCfjKkdTKC2cGUDjaLbFS9sgO6EXHFgb5DQl3+M=
-X-Received: by 2002:a19:4849:: with SMTP id v70mr4377570lfa.62.1544919838333;
- Sat, 15 Dec 2018 16:23:58 -0800 (PST)
+        Sat, 15 Dec 2018 20:24:19 -0500
+Received: from mga02.intel.com ([134.134.136.20]:32192 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727227AbeLPBYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 20:24:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Dec 2018 17:24:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,359,1539673200"; 
+   d="scan'208";a="99054648"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by orsmga007.jf.intel.com with ESMTP; 15 Dec 2018 17:24:13 -0800
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "peterx@redhat.com" <peterx@redhat.com>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>,
+        "Zeng, Xin" <xin.zeng@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
+ <20181112064501.2290-2-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C257439D8E060@SHSMSX104.ccr.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <63ba6b78-ab31-4f54-002c-4c3baf818d3e@linux.intel.com>
+Date:   Sun, 16 Dec 2018 09:20:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181211000506.7559-1-natechancellor@gmail.com>
-In-Reply-To: <20181211000506.7559-1-natechancellor@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 16 Dec 2018 01:23:46 +0100
-Message-ID: <CACRpkdYH9VDjzpH90X=gTKAnw1guGG3uUjDmUXcSkBxg=6LgyA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: aspeed: Wrap -Woverride-init with cc-option
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <A2975661238FB949B60364EF0F2C257439D8E060@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 1:05 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+Hi,
 
-> Clang does not support this option:
->
-> warning: unknown warning option '-Woverride-init'; did you mean
-> '-Woverride-module'? [-Wunknown-warning-option]
-> 1 warning generated.
->
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On 12/16/18 6:38 AM, Liu, Yi L wrote:
+>> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+>> Sent: Sunday, November 11, 2018 10:45 PM
+>> Subject: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
+>>
+>> This adds APIs for IOMMU drivers and device drivers to manage the PASIDs used for
+>> DMA transfer and translation. It bases on I/O ASID allocator for PASID namespace
+>> management and relies on vendor specific IOMMU drivers for paravirtual PASIDs.
+>>
+>> Below APIs are added:
+>>
+>> * iommu_pasid_init(pasid)
+>>    - Initialize a PASID consumer. The vendor specific IOMMU
+>>      drivers are able to set the PASID range imposed by IOMMU
+>>      hardware through a callback in iommu_ops.
+>>
+>> * iommu_pasid_exit(pasid)
+>>    - The PASID consumer stops consuming any PASID.
+>>
+>> * iommu_pasid_alloc(pasid, min, max, private, *ioasid)
+>>    - Allocate a PASID and associate a @private data with this
+>>      PASID. The PASID value is stored in @ioaisd if returning
+>>      success.
+>>
+>> * iommu_pasid_free(pasid, ioasid)
+>>    - Free a PASID to the pool so that it could be consumed by
+>>      others.
+>>
+>> This also adds below helpers to lookup or iterate PASID items associated with a
+>> consumer.
+>>
+>> * iommu_pasid_for_each(pasid, func, data)
+>>    - Iterate PASID items of the consumer identified by @pasid,
+>>      and call @func() against each item. An error returned from
+>>      @func() will break the iteration.
+>>
+>> * iommu_pasid_find(pasid, ioasid)
+>>    - Retrieve the private data associated with @ioasid.
+>>
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Cc: Kevin Tian <kevin.tian@intel.com>
+>> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/Kconfig |  1 +
+>>   drivers/iommu/iommu.c | 89 +++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/iommu.h | 73 +++++++++++++++++++++++++++++++++++
+>>   3 files changed, 163 insertions(+)
+>>
+>> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig index
+>> d9a25715650e..39f2bb76c7b8 100644
+>> --- a/drivers/iommu/Kconfig
+>> +++ b/drivers/iommu/Kconfig
+>> @@ -1,6 +1,7 @@
+>>   # IOMMU_API always gets selected by whoever wants it.
+>>   config IOMMU_API
+>>   	bool
+>> +	select IOASID
+>>
+>>   menuconfig IOMMU_SUPPORT
+>>   	bool "IOMMU Hardware Support"
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c index
+>> 0b7c96d1425e..570b244897bb 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -2082,3 +2082,92 @@ void iommu_detach_device_aux(struct iommu_domain
+>> *domain, struct device *dev)
+>>   	}
+>>   }
+>>   EXPORT_SYMBOL_GPL(iommu_detach_device_aux);
+>> +
+>> +/*
+>> + * APIs for PASID used by IOMMU and the device drivers which depend
+>> + * on IOMMU.
+>> + */
+>> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus) {
+> 
+> I'm thinking about if using struct iommu_domain here is better
+> than struct bus_type. The major purpose is to pass iommu_ops
+> in it and route into iommu-sublayer. iommu_domain may be
+> better since some modules like vfio_iommu_type1 would use
+> iommu_domain more than bus type.
 
-Patch applied with the ACKs!
+But drivers might call this during initialization when it doesn't has
+any domain yet.
 
-Yours,
-Linus Walleij
+Best regards,
+Lu Baolu
