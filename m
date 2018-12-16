@@ -2,112 +2,113 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06554C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 01:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E6EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 02:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE270206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 01:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 275A32084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 02:08:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731313AbeLQBzb (ORCPT
+        id S1731282AbeLQCIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 20:55:31 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:44646 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbeLQBzb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 20:55:31 -0500
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23992280AbeLQBz2KRwHq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:55:28 +0100
-Date:   Mon, 17 Dec 2018 01:55:28 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Rich Felker <dalias@libc.org>
-cc:     Andy Lutomirski <luto@kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@imgtec.com>,
-        David Daney <david.daney@cavium.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Subject: Re: Fixing MIPS delay slot emulation weakness?
-In-Reply-To: <20181217005915.GH23599@brightrain.aerifal.cx>
-Message-ID: <alpine.LFD.2.21.1812170106120.11202@eddie.linux-mips.org>
-References: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com> <20181215225009.GB23599@brightrain.aerifal.cx> <alpine.LFD.2.21.1812160054300.11202@eddie.linux-mips.org> <20181216023259.GE23599@brightrain.aerifal.cx>
- <alpine.LFD.2.21.1812160319120.11202@eddie.linux-mips.org> <20181216181336.GG23599@brightrain.aerifal.cx> <CALCETrXBfQ-EnOD3OjQh_BaiFyvULtmrMHoX0nv+=yrp6uHzgQ@mail.gmail.com> <20181217005915.GH23599@brightrain.aerifal.cx>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 16 Dec 2018 21:08:37 -0500
+Received: from mga04.intel.com ([192.55.52.120]:58502 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726259AbeLQCIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 21:08:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2018 18:08:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,363,1539673200"; 
+   d="scan'208";a="302696479"
+Received: from aubrey-skl.sh.intel.com ([10.239.53.9])
+  by fmsmga006.fm.intel.com with ESMTP; 16 Dec 2018 18:08:35 -0800
+From:   Aubrey Li <aubrey.li@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
+        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
+Subject: [PATCH v5 1/3] x86/fpu: track AVX-512 usage of tasks
+Date:   Mon, 17 Dec 2018 02:50:19 +0800
+Message-Id: <20181216185021.16912-1-aubrey.li@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Dec 2018, Rich Felker wrote:
+User space tools which do automated task placement need information
+about AVX-512 usage of tasks, because AVX-512 usage could cause core
+turbo frequency drop and impact the running task on the sibling CPU.
 
-> So in theory it's possible that there's a cpu model with fancy new
-> core instructions but no fpu. In this case, you would need the
-> capability to emulate or execute-out-of-line these instructions. But I
-> have no idea if such cpu models actually exist. If not, the concern
-> can probably be ignored and it suffices to emulate just the parts of
-> the base ISA that are valid in delay slots.
+The XSAVE hardware structure has bits that indicate when valid state
+is present in registers unique to AVX-512 use.  Use these bits to
+indicate when AVX-512 has been in use and add per-task AVX-512 state
+timestamp tracking to context switch.
 
- What do you call "a cpu model with fancy new core instructions"?
+Well-written AVX-512 applications are expected to clear the AVX-512
+state when not actively using AVX-512 registers, so the tracking
+mechanism is imprecise and can theoretically miss AVX-512 usage during
+context switch. But it has been measured to be precise enough to be
+useful under real-world workloads like tensorflow and linpack.
 
- We've gone through 4 legacy MIPS base ISA revisions (I to IV) and then 4 
-modern ones that matter (R1 to R5; R4 was left out and R6 actually does 
-not have FPU branch delay slots), plus a bunch of ASEs (Application 
-Specific Extensions), such as DSP, MDMX, MIPS-3D, MSA, etc., each defining 
-further instructions.  And then the microMIPS R3 and R5 ISAs (R6 uses a 
-different instruction encoding and does not have delay slots at all).  
-The MIPS16 ISA does not count however, even though it has delay slots and 
-we support it, because it does not have FPU instructions, let alone ones 
-that require delay slot emulation.
+If higher precision is required, suggest user space tools to use the
+PMU-based mechanisms in combination.
 
- Some of the ASEs do not matter, e.g. we don't support MDMX in Linux as it 
-has user state we don't handle with context switches, and MIPS-3D and MSA 
-both imply an FPU, so software making use of them won't run with our FPU 
-emulation anyway as these ASEs' instructions are not emulated.  Anything 
-else is potentially required.
+Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+---
+ arch/x86/include/asm/fpu/internal.h | 7 +++++++
+ arch/x86/include/asm/fpu/types.h    | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
- As to actual implementations I believe all the Cavium Octeon line CPUs 
-(David, please correct me if I am wrong) have no FPU and they have vendor 
-extensions beyond the base ISA + ASE instruction set.  Arguably you could 
-say that their additional instructions should not be scheduled into FPU 
-branch delay slots then, however the toolchain will happily do that, as I 
-wrote before.
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index a38bf5a1e37a..8778ac172255 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -411,6 +411,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
+ {
+ 	if (likely(use_xsave())) {
+ 		copy_xregs_to_kernel(&fpu->state.xsave);
++
++		/*
++		 * AVX512 state is tracked here because its use is
++		 * known to slow the max clock speed of the core.
++		 */
++		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
++			fpu->avx512_timestamp = jiffies_64;
+ 		return 1;
+ 	}
+ 
+diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+index 202c53918ecf..81393dabdb46 100644
+--- a/arch/x86/include/asm/fpu/types.h
++++ b/arch/x86/include/asm/fpu/types.h
+@@ -302,6 +302,13 @@ struct fpu {
+ 	 */
+ 	unsigned char			initialized;
+ 
++	/*
++	 * @avx512_timestamp:
++	 *
++	 * Records the timestamp of AVX512 use during last context switch.
++	 */
++	u64				avx512_timestamp;
++
+ 	/*
+ 	 * @state:
+ 	 *
+-- 
+2.17.1
 
- I don't fully remember what the situation is WRT NetLogic/Broadcom XLR 
-and XLP chips.  They do have vendor extensions, though IIRC they do have 
-an FPU too.
-
- But then we have the "nofpu" kernel parameter anyway, which forces FPU 
-emulation for any hardware, so we need to emulate delay slots in that mode 
-with any hardware.
-
- I'm afraid the problem is complex to solve overall, which is why we still 
-have issues, 18 years on from the inclusion of the FPU emulator:
-
-commit 4c55adaa6d06e5533aebaceea7640ecf10952231
-Author: Ralf Baechle <ralf@linux-mips.org>
-Date:   Sat Nov 25 04:49:46 2000 +0000
-
-    Kernel FPU emulator, chain saw edition.
-
-(in the LMO GIT repo) and I think actually running the delay-slot 
-instruction (with a possible exception for things like ADDIUPC) rather 
-than interpreting it is the only feasible solution.
-
- I'm not involved with MIPS architecture development anymore though and at 
-this point I only care about the few legacy platforms I have been taking 
-care of since forever, such as the DECstation port, for which our current 
-emulation solution suffices, so I am not going to commit myself to making 
-any inventions in this area.  I hope my input is valuable though and will 
-help someone working on this.
-
-  Maciej
