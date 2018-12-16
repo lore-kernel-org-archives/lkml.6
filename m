@@ -2,216 +2,276 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9777C43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 12:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC079C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D8421839
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 12:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544964261;
-	bh=1/BI2MY629SCIP7eTj7apRCrjjaFXf/Zhr+FhUSvYXU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=C6jXO6J7V6ZNmvb0iJJM+LHxcyePDKjQI3VRIqdLth17fzExIruckEcb82bmca5yk
-	 2SYAC67HSqhQTI43k3TLFWzQICmLirLDKvkc7VIEMikGALsvJ6OFt22D60j1sKD4Cd
-	 jmShKQ5/aY/GNtiXM3HY71iLPMLM5AiNrVFlvFFE=
+	by mail.kernel.org (Postfix) with ESMTP id 9E5C72086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:01:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="B0yFXnle";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="Nls637ZV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbeLPMoU (ORCPT
+        id S1730463AbeLPNBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 07:44:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730197AbeLPMoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 07:44:20 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0DB8217FA;
-        Sun, 16 Dec 2018 12:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544964258;
-        bh=1/BI2MY629SCIP7eTj7apRCrjjaFXf/Zhr+FhUSvYXU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AJ3cjkigucYJy/USdfwkYUTh+rn/zTaLfkn6rktQD42T4gcr1gIk1dyaDEm1m8s50
-         WqIN00hCbuAGS26KzKX9g2bfQzveYhGLcZXj4BiahsjxfWrGswGsM8MjX8ciT5dl2Z
-         n+beWyCDoz+kCAN3st+2ev3Q3gLltn7on6DxaxhE=
-Date:   Sun, 16 Dec 2018 12:44:13 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "preid@electromag.com.au" <preid@electromag.com.au>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V6] iio: light: isl29018: add optional vcc regulator
- operation support
-Message-ID: <20181216124413.40c6a63c@archlinux>
-In-Reply-To: <1544681529-22268-1-git-send-email-Anson.Huang@nxp.com>
-References: <1544681529-22268-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 16 Dec 2018 08:01:55 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:48678 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730197AbeLPNBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 08:01:54 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBGCtIlt029593;
+        Sun, 16 Dec 2018 05:01:39 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=fDCm/HFsZG14Ag3xQNlTko6Va6pv7uXrlYStXW15Waw=;
+ b=B0yFXnleIYlEESwz05TtDmtHA1wXlQdNHm+55arAzgFx0xMbhPGU3hZJcI/Y1O7rFkB2
+ /YbO5JV+qSqb8cMDZVgCxwbxtqRIXVxJF8FMF3SWpsWYBY+QI+Q18gwy1dR6/h+HMvGp
+ bN447leiVEedkmWYdQjuUMr8d2QhfZRrhNJrOS3UEE5EK4BbUIGoSKW/22Es+rGCSvOW
+ 8Ji1yCMeF/25cEjGD/2t7IpWBX39ULG/I1IGMozdT22dk0C5LPw5fGe4QH5vcLYuoMWr
+ lzqsfPGMKzTFS1kwH9wcbvUk17yfRuuYY4ztAwQ035x4Ag6gGQwMxhwP5i5OCSS3cflE dg== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2053.outbound.protection.outlook.com [104.47.42.53])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2pde961mmv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Sun, 16 Dec 2018 05:01:39 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fDCm/HFsZG14Ag3xQNlTko6Va6pv7uXrlYStXW15Waw=;
+ b=Nls637ZVtYhPBQGUU6NOS5bMtw1cTZDFl/Xab8lmNPSnv4sSLkxXChDvkzLJZAyHNny5vWc2t6CIN9Al5Pogic3CtkVHAtKBL2m0C2Krf2wZNX6c/IgMxp6VtYUOES4J3UtYpHOmHKxWG5IQvdHGgpXT01x4asxty5zeWh9S4WE=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB5254.namprd07.prod.outlook.com (52.135.241.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.20; Sun, 16 Dec 2018 13:01:36 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e97e:1c66:94bc:24ef]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::e97e:1c66:94bc:24ef%2]) with mapi id 15.20.1425.021; Sun, 16 Dec 2018
+ 13:01:36 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Peter Chen <hzpeterchen@gmail.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "balbi@kernel.org" <balbi@kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+Subject: RE: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Topic: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Index: AQHUkIWTYw8ZmuofoE+7Ba9cSOLyP6V8bT2AgATupMA=
+Date:   Sun, 16 Dec 2018 13:01:36 +0000
+Message-ID: <BYAPR07MB4709A216316119DCFF25A31EDDA30@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
+ <1544445555-17325-3-git-send-email-pawell@cadence.com>
+ <CAL411-phi=PV1Voe=mTrjKDXNPL7dt9B-f_RaekCoXy=pqNMPA@mail.gmail.com>
+In-Reply-To: <CAL411-phi=PV1Voe=mTrjKDXNPL7dt9B-f_RaekCoXy=pqNMPA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-tag-bcast: {3DE89042-74AB-4755-9D53-B536026EFFC6};
+ {51BD6E37-66BD-4186-8AFE-835F952BA4E6};
+ {F0B656D1-F768-43A1-A424-45742A6E25CF}
+x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
+ =?utf-8?B?bk5jY0dGM1pXeHNYR0Z3Y0dSaGRHRmNjbTloYldsdVoxd3dPV1E0TkRsaU5p?=
+ =?utf-8?B?MHpNbVF6TFRSaE5EQXRPRFZsWlMwMllqZzBZbUV5T1dVek5XSmNiWE5uYzF4?=
+ =?utf-8?B?dGMyY3RZamMyWWpZNU56Z3RNREV6TWkweE1XVTVMVGczTWpndE1XTTBaRGN3?=
+ =?utf-8?B?TVdSbVltRTBYR0Z0WlMxMFpYTjBYR0kzTm1JMk9UZGhMVEF4TXpJdE1URmxP?=
+ =?utf-8?B?UzA0TnpJNExURmpOR1EzTURGa1ptSmhOR0p2WkhrdWRIaDBJaUJ6ZWowaU1U?=
+ =?utf-8?B?Y3lNaUlnZEQwaU1UTXhPRGswTXpnNE9UVTVNREk1TlRjMklpQm9QU0l5UXpW?=
+ =?utf-8?B?SFlXdGFiemxzTVZkeVRWbEtVMjF0YVZSbU9GbElRWE05SWlCcFpEMGlJaUJp?=
+ =?utf-8?B?YkQwaU1DSWdZbTg5SWpFaUlHTnBQU0pqUVVGQlFVVlNTRlV4VWxOU1ZVWk9R?=
+ =?utf-8?B?MmRWUVVGTlFVdEJRVVJMUlM5b2VYcHdWRlZCV2t0VVIwOXZibGhDTm5acmNF?=
+ =?utf-8?B?MVpObWxrWTBoeE9FOUJRVUZCUVVGQlFVRkxkMEpCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlNFRkJRVUZEYTBOQlFVRkdRV3RCUVV0M1FrRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UlVGQlVVRkNRVUZCUVNzMVVXSm5VVUZCUVVGQlFVRkJRVUZCUVVGQlFVbzBR?=
+ =?utf-8?B?VUZCUW1wQlIwVkJXa0ZDYkVGSE5FRlpkMEpzUVVZNFFWbDNRblpCUnpSQldt?=
+ =?utf-8?B?ZENjRUZIVVVGYVVVSjFRVWhSUVdGUlFtaEJSM2RCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZGUVVGQlFVRkJRVUZCUVdk?=
+ =?utf-8?B?QlFVRkJRVUZ1WjBGQlFVZE5RVmxSUW10QlIxVkJZbWRDYWtGSFZVRllkMEpy?=
+ =?utf-8?B?UVVkVlFXTjNRbkJCUjJOQlltZENaa0ZJVFVGbFVVSjZRVWhSUVZwUlFuUkJT?=
+ =?utf-8?B?RTFCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRlJRVUZCUVVGQlFVRkJRVUZCUVVGQlVVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVTkJRVUZCUVVGRFpVRkJRVUZaZDBKb1FVZFJRVnBSUW5WQlIw?=
+ =?utf-8?B?MUJXbEZDWmtGSVFVRmpaMEoyUVVkUlFXUlJRbXBCU0ZGQlkzZEJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRa0ZCUVVGQlFVRkJRVUZKUVVGQlFVRkJTalJCUVVGQ2VrRkhPRUZr?=
+ =?utf-8?B?VVVKNVFVZE5RVnBSUW1wQlJ6aEJXa0ZDYkVGR09FRlpVVUo2UVVjd1FVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVGQlowRkJRVUZCUVc1blFV?=
+ =?utf-8?B?RkJTRTFCWW5kQ01VRklTVUZaZDBKc1FVZE5RV0ozUW10QlIxVkJXSGRDYWtG?=
+ =?utf-8?B?SE9FRlpaMEoyUVVkM1FVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJRVUZCUVVGQlFVRkJRMEZC?=
+ =?utf-8?B?UVVGQlFVTmxRVUZCUVdOM1FuWkJTRlZCWTJkQ2FrRkhWVUZaZDBKMlFVZFJR?=
+ =?utf-8?B?VnBSUW1aQlIwMUJZMEZDZDBGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVGQlFVRkJRVUZDUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSjZRVWM0UVdSUlFubEJSMDFCV2xG?=
+ =?utf-8?B?Q2FrRkhPRUZhUVVKc1FVWTRRVmwzUW5wQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJtZEJRVUZJVFVGaWQwSXhR?=
+ =?utf-8?B?VWhKUVZsM1FteEJSMDFCWW5kQ2EwRkhWVUZZZDBKc1FVaFZRV05CUW05QlJ6?=
+ =?utf-8?B?aEJZMmRDY0VGSFJVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZEUVVGQlFVRkJRMlZCUVVG?=
+ =?utf-8?B?QlkzZENka0ZJVlVGalowSnFRVWRWUVZsM1FuWkJSMUZCV2xGQ1prRkhXVUZp?=
+ =?utf-8?B?ZDBKNVFVaFJRV05uUW1oQlJ6UkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFVRkJRVUZCUVVGQlNVRkJR?=
+ =?utf-8?B?VUZCUVVvMFFVRkJRbnBCUnpoQlpGRkNlVUZIVFVGYVVVSnFRVWM0UVZwQlFt?=
+ =?utf-8?B?eEJSamhCWVdkQ2FFRklXVUZaVVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkZRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVoTlFXSjNRakZCU0VsQldYZENiRUZI?=
+ =?utf-8?B?VFVGaWQwSnJRVWRWUVZoM1FuZEJTR3RCWkVGQ2IwRkhPRUZpWjBGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVGQlFVRmpkMEoyUVVoVlFX?=
+ =?utf-8?B?Tm5RbXBCUjFWQldYZENka0ZIVVVGYVVVSm1RVWhKUVdSUlFtbEJTR3RCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpRVUZCUVVGQlNqUkJRVUZD?=
+ =?utf-8?B?ZWtGSE9FRmtVVUo1UVVkTlFWcFJRbXBCUnpoQldrRkNiRUZHT0VGamQwSXdR?=
+ =?utf-8?B?VWQzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVGQlFVRkJRVUZCWjBGQlFV?=
+ =?utf-8?B?RkJRVzVuUVVGQlNFMUJZbmRDTVVGSVNVRlpkMEpzUVVkTlFXSjNRbXRCUjFW?=
+ =?utf-8?B?QldIZENNa0ZIU1VGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGUlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlEwRkJRVUZCUVVOelFWRkJRVUZCUVVGQlNVRkJRVUZCUjBGQlFVRkJV?=
+ =?utf-8?B?VUZCUVVKc1QyNXNLekkxVG1oRWRHUkpMMlJDVWxobE1uZENRVUZCUVU0d09V?=
+ =?utf-8?B?UkVWVko0WkRBeU1tVkdWa1JhUkhaVk5WRkJRVUZCUWxJekt6UTBVbWRSVTFG?=
+ =?utf-8?B?eWRuZzRVbXRFWXpCRFowRlJRVUZCUjNoclZWbDFhVUZ5WkVwdGVHUnhaREpQ?=
+ =?utf-8?B?Y1hGWVVVSkJRVUZCWkZGU05YQk9TRU5LUlhVMFdWSjJaV2hMVWt0b1owVkJR?=
+ =?utf-8?B?VUZEV1hORWNVNDBNV1UyVVdFMVoxWXdUVzFWUVUxeVowRkJRVUZCV1VGQlFV?=
+ =?utf-8?B?RkNRVUZCUVZCQmJqSmlOSFp0V210VEswZG5jMU41VERkcGFXZEZRVUZCUWtW?=
+ =?utf-8?B?bGNsSnNabGRGUjFOWk5rcHpZM1l6WW5sWGVVRkJRVUZCU20xWFFWWlhRVlps?=
+ =?utf-8?B?Y0VkeldFa3ZiVzFwTmtSWVZVSkJRVUZCYzNSM1dFMUVVVEkzVlhWWE5EWTFk?=
+ =?utf-8?B?M1J3WlRSVFowVkJRVUZETmpnM1RFOTBkMkUwVkhCbk5scFdhek00TDJRM1FW?=
+ =?utf-8?B?RkJRVUZRWlhnd1Frc3ZMMjVLUVhJek1ucEZPVTR2VjBGNWEwRkJRVUZCZDBG?=
+ =?utf-8?B?QlFVUkpRVUZCUVVKQlFVRkJXWGRDYUVGSFVVRmFVVUoxUVVkTlFWcFJRbVpC?=
+ =?utf-8?B?UjAxQlluZENkVUZIV1VGaFVVSnJRVWRWUVdKblFqQkJSMnRCV1ZGQ2MwRkJR?=
+ =?utf-8?B?VUZMWjBGQlFVRkJRVUZCUW1wQlIxRkJZbWRCWjBGSVRVRmlkMEl4UVVoSlFW?=
+ =?utf-8?B?bDNRbXhCUTBGQldYZENka0ZIVVVGYVVVSjZRVUZCUVZGQlFVRkJRVVZCUVVG?=
+ =?utf-8?B?Q2FrRkhVVUZpWjBKbVFVaE5RV0ozUWpGQlNFbEJXWGRDYkVGSFRVRmlkMEpy?=
+ =?utf-8?B?UVVkVlFWaDNRbXBCUnpoQlltZENiVUZIYTBGYVFVSnNRVWMwUVdSQlFuQkJS?=
+ =?utf-8?Q?0VBYkFBQUFBPT0iLz48L21ldGE+?=
+x-dg-paste: 
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB5254;20:D+VacvCZz3+CRR94SMPKU6f0619np+fnv6RU6U0HzVx4xhIZP6aHa852GqiwDrrVP47fh6Cv3grS2HPd+3MmrSWhoCPXya6TduG7ETpD/sto4PA/RPqHx3JiybzI6AZy1nNSC9+fFEj77Xo5UgRZVIc1sVTxoi7KR/eBOscGtRO2RaAIQ0Ssi4IVFD++9ADbM/+X+bevcUoq17ZjAgRbPg4nU+hy/hj17nPajJdu69BNEPUZstLvBaTD1nj0JSMH
+x-ms-office365-filtering-correlation-id: f9a4369f-f660-4b91-ff79-08d663569ce0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5254;
+x-ms-traffictypediagnostic: BYAPR07MB5254:
+x-microsoft-antispam-prvs: <BYAPR07MB52547B87A37A119867A0C507DDA30@BYAPR07MB5254.namprd07.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB5254;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5254;
+x-forefront-prvs: 0888B1D284
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(136003)(366004)(346002)(189003)(199004)(36092001)(6916009)(186003)(97736004)(74316002)(1411001)(305945005)(14454004)(256004)(486006)(14444005)(71190400001)(446003)(11346002)(476003)(71200400001)(478600001)(66066001)(105586002)(86362001)(25786009)(106356001)(68736007)(6436002)(2906002)(6116002)(3846002)(76176011)(6246003)(107886003)(53936002)(39060400002)(8936002)(316002)(4326008)(6506007)(102836004)(81156014)(229853002)(7416002)(5660300001)(33656002)(9686003)(99286004)(26005)(8676002)(55016002)(81166006)(54906003)(7736002)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5254;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: johMyFgom3+RUpPqfnT7abX8eDFG9OlB0eg1CMqq8u6Q7uEbHmHUPmr2/wi1NgDuFkq7xtCGUBGgOo8ZDchxBB9QHPT7YjCAiUgX0UjS+WdLsdi06p7hdq4XGF0Q7HgpcvViVigiiPjKENhr1b2ECtkva8gWywKgjAQWRpPIZ3rzgL37d8eKCiI7elRRbwM4Z1RANbWTzs5RKqO2Bwml9NJ20bASBSRbdWxwPR4g8OVtrtKUfdITDNcVoNllsGn5oEnnpGw3Tby9PllQYgjFa5qS5i0ZbCDnplSSB9zoqez/DNIfm56Sg1GIA9HtdYbg
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9a4369f-f660-4b91-ff79-08d663569ce0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2018 13:01:36.8582
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5254
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-16_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=892 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812160123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 06:18:07 +0000
-Anson Huang <anson.huang@nxp.com> wrote:
-
-> The light sensor's power supply could be controlled by regulator
-> on some platforms, such as i.MX6Q-SABRESD board, the light sensor
-> isl29023's power supply is controlled by a GPIO fixed regulator,
-> need to make sure the regulator is enabled before any operation of
-> sensor, this patch adds optional vcc regulator operation support.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> ChangeLog since V5:
-> 	Since the dt-binding doc states the power supply name is "vdd" and many dts files already using
-> 	"vcc" as the power supply name, althoug it does NOT match the datasheet which has "vdd", to make
-> 	it NOT breaking existing dtb files, just use "vcc" as the regulator name.
-> ---
->  drivers/iio/light/isl29018.c | 47 +++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 44 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
-> index b45400f..76c3a48 100644
-> --- a/drivers/iio/light/isl29018.c
-> +++ b/drivers/iio/light/isl29018.c
-> @@ -23,6 +23,7 @@
->  #include <linux/mutex.h>
->  #include <linux/delay.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -95,6 +96,7 @@ struct isl29018_chip {
->  	struct isl29018_scale	scale;
->  	int			prox_scheme;
->  	bool			suspended;
-> +	struct regulator	*vcc_reg;
->  };
->  
->  static int isl29018_set_integration_time(struct isl29018_chip *chip,
-> @@ -735,6 +737,19 @@ static int isl29018_probe(struct i2c_client *client,
->  
->  	mutex_init(&chip->lock);
->  
-> +	chip->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
-> +	if (!IS_ERR(chip->vcc_reg)) {
-> +		err = regulator_enable(chip->vcc_reg);
-> +		if (err) {
-> +			dev_err(&client->dev, "failed to enable VCC regulator\n");
-> +			return err;
-> +		}
-> +	} else {
-> +		err = PTR_ERR(chip->vcc_reg);
-> +		if (err != -ENODEV)
-> +			return err;
-> +	}
-> +
->  	chip->type = dev_id;
->  	chip->calibscale = 1;
->  	chip->ucalibscale = 0;
-> @@ -747,12 +762,12 @@ static int isl29018_probe(struct i2c_client *client,
->  	if (IS_ERR(chip->regmap)) {
->  		err = PTR_ERR(chip->regmap);
->  		dev_err(&client->dev, "regmap initialization fails: %d\n", err);
-> -		return err;
-> +		goto disable_regulator;
->  	}
->  
->  	err = isl29018_chip_init(chip);
->  	if (err)
-> -		return err;
-> +		goto disable_regulator;
->  
->  	indio_dev->info = isl29018_chip_info_tbl[dev_id].indio_info;
->  	indio_dev->channels = isl29018_chip_info_tbl[dev_id].channels;
-> @@ -761,13 +776,22 @@ static int isl29018_probe(struct i2c_client *client,
->  	indio_dev->dev.parent = &client->dev;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  
-> -	return devm_iio_device_register(&client->dev, indio_dev);
-> +	err = devm_iio_device_register(&client->dev, indio_dev);
-> +	if (!err)
-> +		return 0;
-Don't make this change.  It makes the code less readable.  
-
-Right now you don't turn the regulator off in remove at all and
-you definitely should.
-
-You should not be mixing managed and unmanaged calls.
-This is because you will end up with race conditions.  Here the
-regulators are disabled before the automated unwinding calls
-device unregister.  Hence we have a window in which the power
-is turned off but the userspace interfaces are still there.
-
-Weird crashes likely to follow!
-
-Two options:
-1) For everything after the power on change from devm to non
-devm and do the unwinding.
-2) Use devm_add_action_or_reset to automatically handle
-the unwinding of the regulator enable.  The result being that
-it is back in the right place order wise.
-
-
-
-> +
-> +disable_regulator:
-> +	if (!IS_ERR(chip->vcc_reg))
-> +		regulator_disable(chip->vcc_reg);
-> +
-> +	return err;
->  }
->  
->  #ifdef CONFIG_PM_SLEEP
->  static int isl29018_suspend(struct device *dev)
->  {
->  	struct isl29018_chip *chip = iio_priv(dev_get_drvdata(dev));
-> +	int ret;
->  
->  	mutex_lock(&chip->lock);
->  
-> @@ -777,6 +801,14 @@ static int isl29018_suspend(struct device *dev)
->  	 * So we do not have much to do here.
->  	 */
->  	chip->suspended = true;
-> +	if (!IS_ERR(chip->vcc_reg)) {
-> +		ret = regulator_disable(chip->vcc_reg);
-> +		if (ret) {
-> +			dev_err(dev, "failed to disable VCC regulator\n");
-> +			mutex_unlock(&chip->lock);
-> +			return ret;
-> +		}
-> +	}
->  
->  	mutex_unlock(&chip->lock);
->  
-> @@ -790,6 +822,15 @@ static int isl29018_resume(struct device *dev)
->  
->  	mutex_lock(&chip->lock);
->  
-> +	if (!IS_ERR(chip->vcc_reg)) {
-> +		err = regulator_enable(chip->vcc_reg);
-> +		if (err) {
-> +			dev_err(dev, "failed to enable VCC regulator\n");
-> +			mutex_unlock(&chip->lock);
-> +			return err;
-> +		}
-> +	}
-> +
->  	err = isl29018_chip_init(chip);
->  	if (!err)
->  		chip->suspended = false;
-
+SGkgUGV0ZXINCg0KPk9uIE1vbiwgRGVjIDEwLCAyMDE4IGF0IDg6NTUgUE0gUGF3ZWwgTGFzemN6
+YWsgPHBhd2VsbEBjYWRlbmNlLmNvbT4gd3JvdGU6DQo+Pg0KPj4gVGhpcyBwYXRjaCBpbnRyb2R1
+Y2UgbmV3IENhZGVuY2UgVVNCU1MgRFJEIGRyaXZlcg0KPj4gdG8gbGludXgga2VybmVsLg0KPj4N
+Cj4+IFRoZSBDYWRlbmNlIFVTQlNTIERSRCBEcml2ZXIgaXMgYSBoaWdobHkNCj4+IGNvbmZpZ3Vy
+YWJsZSBJUCBDb3JlIHdoaWNoIGNhbiBiZQ0KPj4gaW5zdGFudGlhdGVkIGFzIER1YWwtUm9sZSBE
+ZXZpY2UgKERSRCksDQo+PiBQZXJpcGhlcmFsIE9ubHkgYW5kIEhvc3QgT25seSAoWEhDSSkNCj4+
+IGNvbmZpZ3VyYXRpb25zLg0KPj4NCj4+IFRoZSBjdXJyZW50IGRyaXZlciBoYXMgYmVlbiB2YWxp
+ZGF0ZWQgd2l0aA0KPj4gRlBHQSBidXJuZWQuIFdlIGhhdmUgc3VwcG9ydCBmb3IgUENJZQ0KPj4g
+YnVzLCB3aGljaCBpcyB1c2VkIG9uIEZQR0EgcHJvdG90eXBpbmcuDQo+Pg0KPj4gVGhlIGhvc3Qg
+c2lkZSBvZiBVU0JTUy1EUkQgY29udHJvbGxlciBpcyBjb21wbGlhbmNlDQo+PiB3aXRoIFhIQ0kg
+c3BlY2lmaWNhdGlvbiwgc28gaXQgd29ya3Mgd2l0aA0KPj4gc3RhbmRhcmQgWEhDSSBsaW51eCBk
+cml2ZXIuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUGF3ZWwgTGFzemN6YWsgPHBhd2VsbEBjYWRl
+bmNlLmNvbT4NCj4+IC0tLQ0KPg0KPkkgaGF2ZSBjb21waWxlZCBpdCBhdCBteSBBUk02NCBwbGF0
+Zm9ybSwgYW5kIHdpbGwgZ2l2ZSB5b3UgbW9yZSBmZWVkYmFjayBhZnRlcg0KPmFkZGluZyBwbGF0
+Zm9ybSBzdXBwb3J0LiBCZWxvdyBpcyBvbmUgY29tcGlsZSB3YXJuaW5nLCBwbGVhc2UgZml4DQo+
+DQo+ICBDQyAgICAgIGRyaXZlcnMvdXNiL2NkbnMzL2hvc3Qubw0KPiAgQVIgICAgICBkcml2ZXJz
+L3VzYi9jZG5zMy9jZG5zMy1wY2kubw0KPi9ob21lL2IyOTM5Ny93b3JrL3Byb2plY3RzL2xpbnV4
+LWlteC9kcml2ZXJzL3VzYi9jZG5zMy9nYWRnZXQuYzogSW4NCj5mdW5jdGlvbiDigJhjZG5zM19n
+YWRnZXRfZXBfZGlzYWJsZeKAmToNCj4vaG9tZS9iMjkzOTcvd29yay9wcm9qZWN0cy9saW51eC1p
+bXgvZHJpdmVycy91c2IvY2RuczMvZ2FkZ2V0LmM6MTEyMjoxOToNCj53YXJuaW5nOiDigJhwcml2
+X2RlduKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxpemVkIGluIHRoaXMgZnVuY3Rpb24NCj5bLVdt
+YXliZS11bmluaXRpYWxpemVkXQ0KPiAgIGRldl9kYmcocHJpdl9kZXYtPmRldiwgInVzYnNzOiBp
+bnZhbGlkIHBhcmFtZXRlcnNcbiIpOw0KPiAgICAgICAgICAgICAgICAgICBefg0KPiAgQVIgICAg
+ICBkcml2ZXJzL3VzYi9jZG5zMy9jZG5zMy5vDQo+DQoNCkkgZm91bmQgdGhpcyBhbHNvLiBTb21l
+IHRpbWUgYWdvIEkgY2hhbmdlZCANCnByX2VycigidXNic3M6IGludmFsaWQgcGFyYW1ldGVyc1xu
+Iik7ICANCnRvDQpkZXZfZXJyKHByaXZfZGV2LT5kZXYsICJ1c2JzczogaW52YWxpZCBwYXJhbWV0
+ZXJzXG4iKTsgICAgDQoNCkluIGNkbnMzX2dhZGdldF9lcF9kaXNhYmxlIGZ1bmN0aW9uIGFuZCBp
+dCB3YXMgbWlzdGFrZS4gDQoNCkkgZG9uJ3Qga25vdyB3aHkgSSBkaWRuJ3Qgc2VlIHRoaXMgd2Fy
+bmluZyBiZWZvcmUgcG9zdGluZyBwYXRjaC4NCg0KQ2hlZXJzIA0KUGF3ZWwNCg0K
