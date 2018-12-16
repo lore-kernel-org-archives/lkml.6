@@ -2,127 +2,97 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBCFC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 11:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6DBC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 11:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3F6217FB
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 11:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544958631;
-	bh=peP0ySD2rux8PRNQ+MptN+pEnOstnOnZT07tn9NK5RQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ubJ8H2cmvFPhuXpptauLkWsRM86xVTe5TuA8Fm9aZIcltj8zQfoo3K4lZVxPAJsA5
-	 Y5Z7QWM7wh+JCaCxnP18Yk/dfFDOLnrmDhv7Qku3DWWjkF+Od/4KUhcpPpvYfRQdjY
-	 yRVhNSQFWxrA+qo4Dw5DD3YDifIlPrEtCfxacl4k=
+	by mail.kernel.org (Postfix) with ESMTP id 79439217FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 11:12:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Fj9j1T3a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbeLPLKb (ORCPT
+        id S1730300AbeLPLMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 06:10:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38766 "EHLO mail.kernel.org"
+        Sun, 16 Dec 2018 06:12:34 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50184 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729821AbeLPLKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 06:10:30 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        id S1729821AbeLPLMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 06:12:34 -0500
+Received: from zn.tnic (p200300EC2BE55900ADD97DAFC8659476.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:5900:add9:7daf:c865:9476])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F4B4217FB;
-        Sun, 16 Dec 2018 11:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544958630;
-        bh=peP0ySD2rux8PRNQ+MptN+pEnOstnOnZT07tn9NK5RQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=2YYkIx1nmxSnVuiOMRZM/1Gp5Rm2rPSzREbNZFSa8//gpm5arDMyzu4yz3Eg5NL0S
-         5vvJ/LAKFsaqDXW3XS6WYPee5dPYpgy1uXumwmN6+IUG4s6RTdITGYaCH4zunYPsHa
-         GH/5hh3vrbI9qLktuDbjkMSvi6lGrgQIBrSFZakg=
-Date:   Sun, 16 Dec 2018 11:10:25 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 4/4] iio: ti-ads8688: Migrate to device managed IIO
- calls
-Message-ID: <20181216111025.0be9cb9e@archlinux>
-In-Reply-To: <20181211191207.21900-4-dmurphy@ti.com>
-References: <20181211191207.21900-1-dmurphy@ti.com>
-        <20181211191207.21900-4-dmurphy@ti.com>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 322E91EC0B86;
+        Sun, 16 Dec 2018 12:12:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544958751;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wLl7Z2RPNaHQT4UGOcpi8DPgJRuiogxJlHdEteQ+wxQ=;
+        b=Fj9j1T3a9gdTUaVUlAAaDgwOB+kUvsBKM6scVLmzwxlnF+dWOW4NnaAwvGAojOj39KiX2v
+        /d0B3e4MYAIgr5sR/+ngbGISWxVoW4Bqmqm0NlA3sJ/TGcblPZsCh+qJD/Z87R0kBRaJw+
+        cddKgcxMln5AOE/qfT8N5ljsJcYNdqI=
+Date:   Sun, 16 Dec 2018 12:12:28 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Problem with late AMD microcode reload/feedback
+Message-ID: <20181216111228.GE815@zn.tnic>
+References: <CACna6ryhfaOFS4qjZoLjJqcu5LQd05_jDndL5+GpADTHhu3_7Q@mail.gmail.com>
+ <20181216000510.GC6693@zn.tnic>
+ <bac495ca-ccfd-3551-97ca-1444a391fa40@gmail.com>
+ <20181216100645.GB815@zn.tnic>
+ <CACna6rynZtBC8YiGOD_YkwobvUsYxRqzsqwG0fNjs-LL+K2Oig@mail.gmail.com>
+ <20181216104453.GD815@zn.tnic>
+ <CACna6ryc2QacKUeSBH5ZVGazOR0-jTeNi7fhm9hGpaXtRJLD+w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACna6ryc2QacKUeSBH5ZVGazOR0-jTeNi7fhm9hGpaXtRJLD+w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 13:12:07 -0600
-Dan Murphy <dmurphy@ti.com> wrote:
+On Sun, Dec 16, 2018 at 12:02:49PM +0100, Rafał Miłecki wrote:
+> OK, if you say so, I'll try not to panic seeing those errors repeating
+> over and over.
 
-> Migrate the driver to use the devm IIO calls as opposed to
-> the unmanaged calls.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-The remove order should always be the opposite of probe.
-As devm cleanup is done 'after' whatever is in the remove function
-you should never mix and match between managed and unmanaged.
+Yes, patience is the key :-)
 
-That's not to say this can't be done, but it should also handle
-the regulator disables.  For that
-devm_add_action_or_reset is what you want.  As you need to check
-the regulator is not an error, you would need a little utility function.
+> I know such issues may take months or years to get fixed, so I was
+> trying to do some hacking on my own. I'll try some patience :)
 
-Jonathan
-> ---
-> 
-> v2 - New patch
-> 
->  drivers/iio/adc/ti-ads8688.c | 17 +++++++----------
->  1 file changed, 7 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ti-ads8688.c b/drivers/iio/adc/ti-ads8688.c
-> index 3597bc0697ee..8f42103a1fd9 100644
-> --- a/drivers/iio/adc/ti-ads8688.c
-> +++ b/drivers/iio/adc/ti-ads8688.c
-> @@ -462,21 +462,21 @@ static int ads8688_probe(struct spi_device *spi)
->  
->  	mutex_init(&st->lock);
->  
-> -	ret = iio_triggered_buffer_setup(indio_dev, NULL, ads8688_trigger_handler, NULL);
-> +	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev, NULL,
-> +					      ads8688_trigger_handler, NULL);
->  	if (ret < 0) {
->  		dev_err(&spi->dev, "iio triggered buffer setup failed\n");
->  		goto err_regulator_disable;
->  	}
->  
-> -	ret = iio_device_register(indio_dev);
-> -	if (ret)
-> -		goto err_buffer_cleanup;
-> +	ret = devm_iio_device_register(&spi->dev, indio_dev);
-> +	if (ret < 0) {
-> +		dev_err(&spi->dev, "iio device registration failed\n");
-> +		goto err_regulator_disable;
-> +	}
->  
->  	return 0;
->  
-> -err_buffer_cleanup:
-> -	iio_triggered_buffer_cleanup(indio_dev);
-> -
->  err_regulator_disable:
->  	if (!IS_ERR(st->reg))
->  		regulator_disable(st->reg);
-> @@ -489,9 +489,6 @@ static int ads8688_remove(struct spi_device *spi)
->  	struct iio_dev *indio_dev = spi_get_drvdata(spi);
->  	struct ads8688_state *st = iio_priv(indio_dev);
->  
-> -	iio_device_unregister(indio_dev);
-> -	iio_triggered_buffer_cleanup(indio_dev);
-> -
->  	if (!IS_ERR(st->reg))
->  		regulator_disable(st->reg);
->  
+Well, if you wanna hack on stuff, there's a lot more you can do which is
+100% safe.
 
+Like getting rid of -Wmissing-prototypes warnings, for example, so that
+we can enable this option per default. If you're interested, see here:
+
+https://marc.info/?l=kernel-janitors&m=154178546220848&w=2
+
+It is not hardcore stuff but if you're looking for doing some work on
+the kernel, that would be one thing to do.
+
+And of course there's the ever-so-helpful testing of linux-next kernels
+on old/spare hardware and trying to fix any issues there. Or reviewing
+patches on lkml.
+
+It all depends on what kind of "hacking" you wanna do.
+
+:-)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
