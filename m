@@ -2,79 +2,54 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 473C5C43444
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF92FC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072242082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:09:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tGIdgDb6"
+	by mail.kernel.org (Postfix) with ESMTP id 9F11A206C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbeLPXJr (ORCPT
+        id S1731031AbeLPXPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:09:47 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35042 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728203AbeLPXJo (ORCPT
+        Sun, 16 Dec 2018 18:15:14 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50336 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbeLPXPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:09:44 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s198so5185666pgs.2;
-        Sun, 16 Dec 2018 15:09:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5Ky7pgVvvF9hLcoAABtSFG13zMfTe+6ohhmnBjH727g=;
-        b=tGIdgDb675KcT+PZnOTanBgWwaRyRZ8akrzY/vSuOGVM6xzj5vyScaAVotj5bZpEkE
-         FVoDtXtL3k7gKaJWHU1Wq0E21vMIcZNUIHPcWwH452UDtgxX4pkbAaFCA906Abxtu30a
-         Db9Iti09HC0aKdfYRLmzFKM90w3eRdmmBx2fJqoBDNvKjWufckWbDUJJuwUsdDoLctMK
-         VUz8KjXSvUV09jhFTOVucBOU8bP+6Rj/qXvMSXsKM9pPCoWVTpJsptes7aHLA8QP0EGH
-         Yr03NV4WKX2YCp5CECk6Bjw0nNcJ5WnlmWHMrB3RGn8DpJDgdLCFxE9uF3xG/aomtjU8
-         GDbw==
+        Sun, 16 Dec 2018 18:15:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id n190so10644616wmd.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 15:15:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5Ky7pgVvvF9hLcoAABtSFG13zMfTe+6ohhmnBjH727g=;
-        b=XtyJ1bYzcuCde/f/dVj972ufMV/ClXSe0B++WkQiILEYzj7Hdz3OX5YzS0riui3hxz
-         mdKxJMGwAJ+q7ZKMdTn2ZBZoTDOuIIz5bVI1wdrqHwPDqQObs6eLu4pQPSU/igTSLjyF
-         KuWEFIsMuIi64IoRHU5GRnAXG7Se4scJ13g2Sz8CYRLRtdu84hKqJupF+DJPhsAHZogE
-         Q/uFmN7/UwR1Zq7ZFxkQldGwaBJIrxIotao+rXq8PoLoicR83vHB52sqAEBRUc3oG5Xm
-         kosn30ClPCf+2luNeNh3AlwHV9n7BLyIg5NCg5yO8eCvnYXtxio+uRSL0iO6L0UEAx/X
-         z64w==
-X-Gm-Message-State: AA+aEWbY8MyAhcyvk/tpeALo0aiaYHUa3IDGf97F4fAcbv4aatdQM4w8
-        EdB1ggAtN1SoigWVv+Sagwg=
-X-Google-Smtp-Source: AFSGD/XZNYx2ZnQ0ULXCggr6Tfm83Im0nuTyZ09O2JjFgAMUa2UbKSPGJU0RhePW3s4ea+HzH6fobg==
-X-Received: by 2002:a63:1e56:: with SMTP id p22mr10128690pgm.126.1545001783805;
-        Sun, 16 Dec 2018 15:09:43 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id d18sm13837878pfj.47.2018.12.16.15.09.41
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ko311uXmvpvD0UIJMxwURS+bJkiu7TA9/F70P4mhxG4=;
+        b=eEbDSeryYsOLvwKYmLcBDwUCPq5ykiFaZMh2ikXrU36AyLwJG9FD+x5T2tivdz3HJg
+         3P0FOPz1wYtVOQOVSnXWKECHU6CpICooGlWVr0pvFhX195phGWkMlLoYcGzJNqR3qWaK
+         RXHL7gQt5UNaY5kG0ST/pguDSmFJLcD0gJNtHcgATD4vOWvol3dLVmpIz4VnrAw2GzWz
+         Wl4IzmDDm+ICbHSifiMj10Eeki29fdGSK/E2Y75scxIyJSniLqnnfdy9HKpgwwq4EGiQ
+         xjl9oar8K3I7LVVnvGvXkgYfnfSaNdusXBxpb6ThNevpvlftgspFMW0HXj9HGSIuSVGG
+         HxFQ==
+X-Gm-Message-State: AA+aEWYIBZtcFfTR4UZJxpEZdDaBWPLslTKr3xR9m3+mHMmeJjGHa9de
+        U2Vd/k8u+lI+ebM/oqmc13FNPQ==
+X-Google-Smtp-Source: AFSGD/XfeEQ96b7HVW5UJEMq72qfirM3X3v9zEVs563V2VFe6a+9lr8hhAzqoPepBu7kfXK1raHY7Q==
+X-Received: by 2002:a1c:6e01:: with SMTP id j1mr9572192wmc.103.1545002112421;
+        Sun, 16 Dec 2018 15:15:12 -0800 (PST)
+Received: from raver.teknoraver.net (net-37-182-2-241.cust.vodafonedsl.it. [37.182.2.241])
+        by smtp.gmail.com with ESMTPSA id h12sm25594050wma.48.2018.12.16.15.15.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 16 Dec 2018 15:09:42 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH 3/3] PCI: imx6: Make fallthrough comments more consistent
-Date:   Sun, 16 Dec 2018 15:09:16 -0800
-Message-Id: <20181216230916.22982-4-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181216230916.22982-1-andrew.smirnov@gmail.com>
-References: <20181216230916.22982-1-andrew.smirnov@gmail.com>
+        Sun, 16 Dec 2018 15:15:11 -0800 (PST)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Timothy Redaelli <tredaelli@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] vfat: don't read garbage after last dirent
+Date:   Mon, 17 Dec 2018 00:15:10 +0100
+Message-Id: <20181216231510.26854-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,80 +57,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert all fallthrough comments to say "fall through", as well as
-modify their placement to the point where the "break" would normally
-be.
+The FAT32 File System Specification[1] states that:
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+    If DIR_Name[0] == 0x00, then the directory entry is free, and there
+    are no allocated directory entries after this one.
+
+    The special 0 value, indicates to FAT file system driver code that
+    the rest of the entries in this directory do not need to be examined
+    because they are all free.
+
+This is not enforced by Linux, and is possible to read garbage if not
+all dirents after the last one are filled with zeroes.
+
+[1] http://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/fatgen103.doc
+
+Reported-by: Timothy Redaelli <tredaelli@redhat.com>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
 ---
- drivers/pci/controller/dwc/pci-imx6.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+v2:
+* add the check also in lookup and dir empty check
+* fix two tipos in the commit message  
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 59658577e81d..a0510e185d44 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -362,7 +362,8 @@ static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
+ fs/fat/dir.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index c8366cb8eccd..955edf5df286 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -588,7 +588,7 @@ static int __fat_readdir(struct inode *inode, struct file *file,
  
- 	switch (imx6_pcie->variant) {
- 	case IMX7D:
--	case IMX8MQ: /* FALLTHROUGH */
-+		/* fall through */
-+	case IMX8MQ:
- 		reset_control_assert(imx6_pcie->pciephy_reset);
- 		reset_control_assert(imx6_pcie->apps_reset);
- 		break;
-@@ -415,7 +416,8 @@ static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
- 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
- 				   IMX6SX_GPR12_PCIE_TEST_POWERDOWN, 0);
- 		break;
--	case IMX6QP:		/* FALLTHROUGH */
-+	case IMX6QP:
-+		/* fall through */
- 	case IMX6Q:
- 		/* power up core phy and enable ref clock */
- 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR1,
-@@ -607,7 +609,7 @@ static void imx6_pcie_init_phy(struct imx6_pcie *imx6_pcie)
- 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
- 				   IMX6SX_GPR12_PCIE_RX_EQ_MASK,
- 				   IMX6SX_GPR12_PCIE_RX_EQ_2);
--		/* FALLTHROUGH */
-+		/* fall through */
- 	default:
- 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
- 				   IMX6Q_GPR12_PCIE_CTL_2, 0 << 10);
-@@ -731,7 +733,8 @@ static void imx6_pcie_ltssm_enable(struct device *dev)
- 				   IMX6Q_GPR12_PCIE_CTL_2);
- 		break;
- 	case IMX7D:
--	case IMX8MQ:		/* FALLTHROUGH */
-+		/* fall through */
-+	case IMX8MQ:
- 		reset_control_deassert(imx6_pcie->apps_reset);
- 		break;
- 	}
-@@ -1076,7 +1079,8 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 		}
- 		break;
- 	case IMX8MQ:
--	case IMX7D:		/* FALLTHROUGH */
-+		/* fall through */
-+	case IMX7D:
- 		imx6_pcie->pciephy_reset = devm_reset_control_get_exclusive(dev,
- 									    "pciephy");
- 		if (IS_ERR(imx6_pcie->pciephy_reset)) {
+ 	bh = NULL;
+ get_new:
+-	if (fat_get_entry(inode, &cpos, &bh, &de) == -1)
++	if (fat_get_entry(inode, &cpos, &bh, &de) == -1 || !de->name[0])
+ 		goto end_of_dir;
+ parse_record:
+ 	nr_slots = 0;
+@@ -916,7 +916,8 @@ int fat_dir_empty(struct inode *dir)
+ 
+ 	bh = NULL;
+ 	cpos = 0;
+-	while (fat_get_short_entry(dir, &cpos, &bh, &de) >= 0) {
++	while (fat_get_short_entry(dir, &cpos, &bh, &de) >= 0 &&
++	       de->name[0]) {
+ 		if (strncmp(de->name, MSDOS_DOT   , MSDOS_NAME) &&
+ 		    strncmp(de->name, MSDOS_DOTDOT, MSDOS_NAME)) {
+ 			result = -ENOTEMPTY;
+@@ -961,7 +962,7 @@ int fat_scan(struct inode *dir, const unsigned char *name,
+ 	sinfo->slot_off = 0;
+ 	sinfo->bh = NULL;
+ 	while (fat_get_short_entry(dir, &sinfo->slot_off, &sinfo->bh,
+-				   &sinfo->de) >= 0) {
++				   &sinfo->de) >= 0 && sinfo->de->name[0]) {
+ 		if (!strncmp(sinfo->de->name, name, MSDOS_NAME)) {
+ 			sinfo->slot_off -= sizeof(*sinfo->de);
+ 			sinfo->nr_slots = 1;
 -- 
-2.19.1
+2.19.2
 
