@@ -2,127 +2,94 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BF1C43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 10:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D085BC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 11:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6770B2086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 10:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544957561;
-	bh=j7SOKjdkPJGSB4XdLAvHVf6f/MeylomyxUVpu4NUrx4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=X3jR+VlwaqEDk3HyG1SiLsINHZPhG2EFAkmUV/Elvl0E5oJRKslawLkmJqf1I5siI
-	 dJ/TN0JST53GudX5xH57Lhc8Z4WKvz1bWqfWfv+X1Wpm5DwDRskHxxfOFbApGcx+Zb
-	 ghRxEBw0i92jSDagJZun+I8T1aNUrexZ6ICmLVcM=
+	by mail.kernel.org (Postfix) with ESMTP id 984BB217FB
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 11:03:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/hG229k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbeLPKwk (ORCPT
+        id S1730146AbeLPLDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 05:52:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729811AbeLPKwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 05:52:40 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C49D42086C;
-        Sun, 16 Dec 2018 10:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544957559;
-        bh=j7SOKjdkPJGSB4XdLAvHVf6f/MeylomyxUVpu4NUrx4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=x/XRBRotatyu1gMfP1lf64x0X+wEzOXoVU/J8/irvhJ3SptbyqHrBbduLHTquhK/s
-         +/zDvaaNJTlqUm/6OrSRWXimIhegJn1VwvqrWoJWBijplrSYXyuYx3A6HnR6mF1gup
-         zYkgHDsumux89vb/bFDBzxtOw/YkrJY6bWIBkrjw=
-Date:   Sun, 16 Dec 2018 10:52:35 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 1/4] iio: ti-ads124s08: Add DT binding documentation
-Message-ID: <20181216105235.6069abf1@archlinux>
-In-Reply-To: <20181211191207.21900-1-dmurphy@ti.com>
-References: <20181211191207.21900-1-dmurphy@ti.com>
-X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 16 Dec 2018 06:03:03 -0500
+Received: from mail-wm1-f47.google.com ([209.85.128.47]:54263 "EHLO
+        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729861AbeLPLDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 06:03:03 -0500
+Received: by mail-wm1-f47.google.com with SMTP id y1so9563487wmi.3
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 03:03:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4Je/9rgdraqoDqK3UaRE18XtGDmYmrmQ0lJguis4Ha4=;
+        b=g/hG229kTSTInWE3qEbwEsG17gsYFvsTP5tl67DD3U8ZOEw7J7z0wXUeXjUvUp4Y8F
+         0i1pINK72eqlXb47p4CVbtzHpY5J8l5jzFWnGxGqOJMoJZJ5RSfKrU72vcdF+taVXNd5
+         gYOMdeQTgFoZ4hYL8dgoLnsua96F/dAj7pce0rzAxeCyR/vB1AEOq4Wfdb1dMp6CUpAR
+         X4Rb8zTyjVetWk+8o5Ui9aLahGtvbJ+9gTzFAVnjr3jdVkxYrkj+Vp6XtQ2MJr2TSf6w
+         ZEoKC1dEVCDoqnkpcAOXyVNVTk6YLzXXCrZ6OUBMpFsLsKApmG6NhrTfHGsLH2nhalWT
+         CMkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4Je/9rgdraqoDqK3UaRE18XtGDmYmrmQ0lJguis4Ha4=;
+        b=ADaV0ZCZ/A3EtQVuV1MAqO5qukthaTKSC4cS7eTSpkpgMariI+8to17a+cwZp+VSmV
+         n0Jr9fa7deT0PE/rCZ+o31xLlMUcFgt0TLEE+EPRkEE19yrftxgxAYyI354rmht3aUJt
+         yAYe88bXuvnDyKJsQF6oFWF4CJXOMe/3aHAX3EvOnKESxopUlR7do5mq89c1dGd8w+1G
+         bDJhkWVbYd6DyXDYnVyrFLcc5yNz2phjovr1QkhAg5QPt7uha8CA5vrler3knI8PjJ2J
+         g/hDp946ot/ckJaw/yGE1J58dzTYuBPDtUfS1NyHoTzJFz3KXcN9b3fjOy43mbdgV0EK
+         qgtQ==
+X-Gm-Message-State: AA+aEWZxmMDjl52EABy2MrXRrxNumvCfHSfnwrCsCUUEBzoR1Wo8Kt28
+        zUUDR1wqxMyjQA1HGybYQq2Bgk28ahsf6hHECi8=
+X-Google-Smtp-Source: AFSGD/VRgdsKu3aUie44FJEahd7/dNPKXVOmyuVLNmAemBZD8oQZk2eDGiF1zgaQkEfyNB+/QtNX7b5aL1jPHLRJN4I=
+X-Received: by 2002:a1c:5545:: with SMTP id j66mr6461315wmb.15.1544958181136;
+ Sun, 16 Dec 2018 03:03:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CACna6ryhfaOFS4qjZoLjJqcu5LQd05_jDndL5+GpADTHhu3_7Q@mail.gmail.com>
+ <20181216000510.GC6693@zn.tnic> <bac495ca-ccfd-3551-97ca-1444a391fa40@gmail.com>
+ <20181216100645.GB815@zn.tnic> <CACna6rynZtBC8YiGOD_YkwobvUsYxRqzsqwG0fNjs-LL+K2Oig@mail.gmail.com>
+ <20181216104453.GD815@zn.tnic>
+In-Reply-To: <20181216104453.GD815@zn.tnic>
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date:   Sun, 16 Dec 2018 12:02:49 +0100
+Message-ID: <CACna6ryc2QacKUeSBH5ZVGazOR0-jTeNi7fhm9hGpaXtRJLD+w@mail.gmail.com>
+Subject: Re: Problem with late AMD microcode reload/feedback
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 13:12:04 -0600
-Dan Murphy <dmurphy@ti.com> wrote:
+On Sun, 16 Dec 2018 at 11:44, Borislav Petkov <bp@alien8.de> wrote:
+> On Sun, Dec 16, 2018 at 11:26:29AM +0100, Rafa=C5=82 Mi=C5=82ecki wrote:
+> > Debugging CPU errors.
+>
+> I told you that this issue is being worked on and there will be a fix
+> of sorts at some point. Don't try any funky business of downgrading the
+> microcode and maybe break your boxes in the process. Just ignore the MCE
+> - it is harmless! - until there's a fix.
+>
+> Ok?
 
-> Adding binding documentation for Texas Instruments ADS124S08
-> and ADS124S06 ADC.
-> 
-> S08 is a 12 channel ADC
-> S06 is a 6 channel ADC
-> 
-> Datesheet can be found here:
-> http://www.ti.com/lit/gpn/ads124s08
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
-> 
-> v2 - Fixed incorrect compatible example and removed vref-supply - https://lore.kernel.org/patchwork/patch/1021047/
+OK, if you say so, I'll try not to panic seeing those errors repeating
+over and over.
 
-There is a reasonable argument to put the binding in there even if
-not currently used.   However, I see it actually has multiple
-power supplies, so perhaps this needs more thought first.
+I know such issues may take months or years to get fixed, so I was
+trying to do some hacking on my own. I'll try some patience :)
 
-One other thing inline that I 'might' 'fix' depending on what is later
-in the series.
-
-> 
->  .../bindings/iio/adc/ti-ads124s08.txt         | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt b/Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt
-> new file mode 100644
-> index 000000000000..6993e76e61c6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/ti-ads124s08.txt
-> @@ -0,0 +1,23 @@
-> +* Texas Instruments' ads124s08 and ads124s06 ADC chip
-> +
-> +Required properties:
-> + - compatible: Should be "ti,ads124s08" or "ti,ads124s06"
-One per line.
-- compatible: Should be one of
-	"ti..."
-	"ti..."
-
-It's easier to add other parts with out having to rewrite the sentence
-to cover the now more than 2 case.
-
-If that's all I find in the series, I'll just fix it up when applying.
-
-Jonathan
-> + - reg: spi chip select number for the device
-> +
-> +Recommended properties:
-> + - spi-max-frequency: Definition as per
-> +		Documentation/devicetree/bindings/spi/spi-bus.txt
-> + - spi-cpha: Definition as per
-> +		Documentation/devicetree/bindings/spi/spi-bus.txt
-> +
-> +Optional properties:
-> + - reset-gpios: GPIO pin used to reset the device.
-> +
-> +Example:
-> +adc@0 {
-> +	compatible = "ti,ads124s08";
-> +	reg = <0>;
-> +	spi-max-frequency = <1000000>;
-> +	spi-cpha;
-> +	reset-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
-> +};
-
+--=20
+Rafa=C5=82
