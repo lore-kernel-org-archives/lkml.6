@@ -3,121 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB718C43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F30C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41292084A
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA2442084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:41:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730988AbeLPUdR (ORCPT
+        id S1730912AbeLPUlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 15:33:17 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:57784 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730772AbeLPUdQ (ORCPT
+        Sun, 16 Dec 2018 15:41:22 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:48124 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeLPUlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 15:33:16 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43Hww81vvJz1qx96;
-        Sun, 16 Dec 2018 21:33:12 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43Hww8192mz1qsZQ;
-        Sun, 16 Dec 2018 21:33:12 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id AYa6thiwyWgJ; Sun, 16 Dec 2018 21:33:10 +0100 (CET)
-X-Auth-Info: yaOdvTUCrt+hQr4sz1xTUa37B7MsjCS97HCky7vH1nM=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun, 16 Dec 2018 21:33:10 +0100 (CET)
-Subject: Re: [PATCH] Revert "serial: 8250: Fix clearing FIFOs in RS485 mode
- again"
-To:     Paul Burton <paul.burton@mips.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        Daniel Jedrychowski <avistel@gmail.com>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-References: <20181213174834.kxdy6fphaeoivqgh@pburton-laptop>
- <20181216200833.27928-1-paul.burton@mips.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <f5a76d73-862f-3ebc-cd07-effc5c432103@denx.de>
-Date:   Sun, 16 Dec 2018 21:32:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20181216200833.27928-1-paul.burton@mips.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sun, 16 Dec 2018 15:41:22 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2CF7A14EF614A;
+        Sun, 16 Dec 2018 12:41:21 -0800 (PST)
+Date:   Sun, 16 Dec 2018 12:41:20 -0800 (PST)
+Message-Id: <20181216.124120.731491122771817496.davem@davemloft.net>
+To:     mw@semihalf.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux@armlinux.org.uk,
+        maxime.chevallier@bootlin.com, thomas.petazzoni@bootlin.com,
+        gregory.clement@bootlin.com, antoine.tenart@bootlin.com,
+        stefanc@marvell.com, nadavh@marvell.com, jaz@semihalf.com
+Subject: Re: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1544533009-12425-1-git-send-email-mw@semihalf.com>
+References: <1544533009-12425-1-git-send-email-mw@semihalf.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Dec 2018 12:41:21 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/2018 09:10 PM, Paul Burton wrote:
-> Commit f6aa5beb45be ("serial: 8250: Fix clearing FIFOs in RS485 mode
-> again") makes a change to FIFO clearing code which its commit message
-> suggests was intended to be specific to use with RS485 mode, however:
-> 
->  1) The change made does not just affect __do_stop_tx_rs485(), it also
->     affects other uses of serial8250_clear_fifos() including paths for
->     starting up, shutting down or auto-configuring a port regardless of
->     whether it's an RS485 port or not.
-> 
->  2) It makes the assumption that resetting the FIFOs is a no-op when
->     FIFOs are disabled, and as such it checks for this case & explicitly
->     avoids setting the FIFO reset bits when the FIFO enable bit is
->     clear. A reading of the PC16550D manual would suggest that this is
->     OK since the FIFO should automatically be reset if it is later
->     enabled, but we support many 16550-compatible devices and have never
->     required this auto-reset behaviour for at least the whole git era.
->     Starting to rely on it now seems risky, offers no benefit, and
->     indeed breaks at least the Ingenic JZ4780's UARTs which reads
->     garbage when the RX FIFO is enabled if we don't explicitly reset it.
-> 
->  3) By only resetting the FIFOs if they're enabled, the behaviour of
->     serial8250_do_startup() during boot now depends on what the value of
->     FCR is before the 8250 driver is probed. This in itself seems
->     questionable and leaves us with FCR=0 & no FIFO reset if the UART
->     was used by 8250_early, otherwise it depends upon what the
->     bootloader left behind.
-> 
->  4) Although the naming of serial8250_clear_fifos() may be unclear, it
->     is clear that callers of it expect that it will disable FIFOs. Both
->     serial8250_do_startup() & serial8250_do_shutdown() contain comments
->     to that effect, and other callers explicitly re-enable the FIFOs
->     after calling serial8250_clear_fifos(). The premise of that patch
->     that disabling the FIFOs is incorrect therefore seems wrong.
-> 
-> For these reasons, this reverts commit f6aa5beb45be ("serial: 8250: Fix
-> clearing FIFOs in RS485 mode again").
-> 
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
-> Fixes: f6aa5beb45be ("serial: 8250: Fix clearing FIFOs in RS485 mode again").
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Daniel Jedrychowski <avistel@gmail.com>
-> Cc: Marek Vasut <marex@denx.de>
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-serial@vger.kernel.org
-> Cc: stable <stable@vger.kernel.org> # 4.10+
-I am unable to test it on such a short notice as I'm currently ill, so I
-cannot tell if your change breaks the OMAP3/AM335x boards or not. Given
-that there are very few CI20 boards in use, I'd like to ask you for some
-extra time to investigate this on the OMAP3 too.
+From: Marcin Wojtas <mw@semihalf.com>
+Date: Tue, 11 Dec 2018 13:56:49 +0100
 
-btw what strikes me as curious is that this patch emerged shortly after
-Ezequiel re-posted the CI20 U-Boot patches after an year-long hiatus, is
-it somehow related ?
+> Recent changes in the mvneta driver reworked allocation
+> and handling of the ingress buffers to use entire pages.
+> Apart from that in SW BM scenario the HW must be informed
+> via PRXDQS about the biggest possible incoming buffer
+> that can be propagated by RX descriptors.
+> 
+> The BufferSize field was filled according to the MTU-dependent
+> pkt_size value. Later change to PAGE_SIZE broke RX operation
+> when usin 64K pages, as the field is simply too small.
+> 
+> This patch conditionally limits the value passed to the BufferSize
+> of the PRXDQS register, depending on the PAGE_SIZE used.
+> On the occasion remove now unused frag_size field of the mvneta_port
+> structure.
+> 
+> Fixes: 562e2f467e71 ("net: mvneta: Improve the buffer allocation method for SWBM")
+> Signed-off-by: Marcin Wojtas <mw@semihalf.com>
 
--- 
-Best regards,
-Marek Vasut
+The discussion died on this, but the bug should be fixed.
+
+So in the short term I am applying this and queueing it up for v4.19
+-stable.
+
+Thanks.
