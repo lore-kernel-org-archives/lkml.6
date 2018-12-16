@@ -2,97 +2,107 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F20C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 10:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD1CC43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 10:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD9D92086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 10:06:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="aUlx4RBR"
+	by mail.kernel.org (Postfix) with ESMTP id 0049B21836
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 10:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544954870;
+	bh=Eh9wW8TO2y4lVphbj8fY/LBgvhDq4RcVnR/VtZC/9KA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=pCKMRZmOwDc8DB6MMmzEF3EFrEQf581iYAd0MPxr6B7644Abaoag9HYorSKhQ0dF2
+	 KbdbtT/9TPoCo18ko5Qag0YTRxi4ibLMv9g5RaLbGLIq7mvppFQP1vlnO1121S8MOU
+	 zxPkE9oG3MZHXTvYRfjjuV9D5fFinRnPSt9NDNdA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729901AbeLPKGs (ORCPT
+        id S1730138AbeLPKHt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 05:06:48 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:39460 "EHLO mail.skyhub.de"
+        Sun, 16 Dec 2018 05:07:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729354AbeLPKGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 05:06:48 -0500
-Received: from zn.tnic (p200300EC2BE55900ADD97DAFC8659476.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:5900:add9:7daf:c865:9476])
+        id S1729354AbeLPKHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 05:07:48 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 83F9C1EC08EA;
-        Sun, 16 Dec 2018 11:06:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544954806;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EruzAkpiIwT2+8kHgKnBEwbHRt8xGPbZKMqtP7nnRQQ=;
-        b=aUlx4RBRiPXULaXS0Y6kV5ziOPPXN3IcIuaMtKTTiIgkEyY9ChRaIi8BevLSH1AcGpjW2F
-        UW+kXbk1bEVPAUA+ToYuJ/yWwLJOniZgXlWnkbMArOFdBTi5+l++EnZeosYPqkreyZOZwP
-        qn3pI2q0RTUQJ6m9u6ZEI6vMa7GpNKI=
-Date:   Sun, 16 Dec 2018 11:06:45 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Problem with late AMD microcode reload/feedback
-Message-ID: <20181216100645.GB815@zn.tnic>
-References: <CACna6ryhfaOFS4qjZoLjJqcu5LQd05_jDndL5+GpADTHhu3_7Q@mail.gmail.com>
- <20181216000510.GC6693@zn.tnic>
- <bac495ca-ccfd-3551-97ca-1444a391fa40@gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 542832086C;
+        Sun, 16 Dec 2018 10:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544954867;
+        bh=Eh9wW8TO2y4lVphbj8fY/LBgvhDq4RcVnR/VtZC/9KA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=0hr31RY8GqkgL9j7cUK2ap7T6tTwSZ9oYmBbmhYxWN51H3XbIgRLkOQCFN0rdsbpw
+         nQmAe798yMfJaDpWHT3bndYOUAu+0J37qdsbO7fzkT0vX79OD6+8Zn30KAYeZYuOQF
+         3jGbjOcw0DOZ/Yf6oqS3xshE8XzfLYw2HOkn6TnQ=
+Date:   Sun, 16 Dec 2018 10:07:41 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mircea Caprioru <mircea.caprioru@analog.com>,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: iio: adc: ad7192: Add clock for external
+ clock reference
+Message-ID: <20181216100741.4e362a17@archlinux>
+In-Reply-To: <154475156267.19322.6284056396098102605@swboyd.mtv.corp.google.com>
+References: <20181206091052.7644-1-mircea.caprioru@analog.com>
+        <20181208152954.596529f8@archlinux>
+        <154475156267.19322.6284056396098102605@swboyd.mtv.corp.google.com>
+X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bac495ca-ccfd-3551-97ca-1444a391fa40@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 09:08:00AM +0100, Rafał Miłecki wrote:
-> Thanks! I had no idea microcode_amd_fam17h.bin is a container with few
-> microcodes. I thought there is a single microcode for a whole family
-> (e.g. 17h).
+Rob, Clk experts, questions for you below.
 
-It is a container for all F17h - you're simply making the wrong
-assumption that it would have microcode for *all* F17h out there. Which
-is not the case, because, well, there's not microcode for all of them
-... yet.
+Jonathan
 
-:-)
 
-IOW, there are only two patches released:
+On Thu, 13 Dec 2018 17:39:22 -0800
+Stephen Boyd <sboyd@kernel.org> wrote:
 
-file offset: 60 (0x3c)
-Patch 00: type 1, size: 3200 (0xc80)
-   ID: 0x08001227, CPU rev ID: 0x00008012
+> Quoting Jonathan Cameron (2018-12-08 07:29:54)
+> > On Thu, 6 Dec 2018 11:10:51 +0200
+> > Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+> >   
+> > > This patch adds a clock to the state structure of ad7192 for getting the
+> > > external clock frequency. This modifications is in accordance with clock
+> > > framework dt bindings documentation.
+> > > 
+> > > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>  
+> > 
+> > +cc Rob and the clk list for advise on how to do the binding for this one.
+> > 
+> > It is basically 2 pins, you can put a clock in on one of them or connect
+> > a crystal across them.  The driver has to set a register to say which is
+> > the case.  
+> > 
+> > Current proposal is two optional clocks (fall back to internal oscillator)
+> > but that doesn't seem to be commonly done, so I'm wondering if there
+> > is a 'standard' way to handle this sort of thing.
+> >   
+> 
+> I'm not sure I fully understand, but I think perhaps
+> assigned-clock-parents would work? Or does that not work because either
+> way some parent is assigned, either the crystal or the optional clk that
+> isn't a crystal?
+> 
+My concern is they aren't really separate clock inputs.   They are just different
+ways of providing the same fundamental clock.  So I think we may want to just
+provide a single clock and have another dt binding to say what it is.
 
-file offset: 3268 (0xcc4)
-Patch 01: type 1, size: 3200 (0xc80)
-   ID: 0x0800820b, CPU rev ID: 0x00008082
+So lots of ways we could do it, but I'm not sure what the right one to
+go with is!
 
-> Using hex also makes more sense indeed!
-> [   44.127941] microcode: verify_and_add_patch: Added patch_id: 0x08001227, proc_id: 0x8012
-> [   44.127948] microcode: verify_and_add_patch: Added patch_id: 0x0800820b, proc_id: 0x8082
+Jonathan
 
-Yap.
-
-> For my hack tests I'd like to replace my 0x0810100b with a 0x08101007.
-
-Why would you even want to downgrade the microcode?!
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
