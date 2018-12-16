@@ -2,250 +2,92 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D45FC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F66CC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19BA02082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD02204FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:57:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="Un1Mu1Is"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAQE1ddG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730716AbeLPQ4I (ORCPT
+        id S1730751AbeLPQ53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 11:56:08 -0500
-Received: from mail.servus.at ([193.170.194.20]:35104 "EHLO mail.servus.at"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730496AbeLPQ4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 11:56:07 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.servus.at (Postfix) with ESMTP id 317BF3000693;
-        Sun, 16 Dec 2018 17:56:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
-        content-transfer-encoding:content-type:content-type:in-reply-to
-        :mime-version:user-agent:date:date:message-id:organization:from
-        :from:references:subject:subject:received:received; s=main; t=
-        1544979362; x=1546793763; bh=3Pyvics3o3VhhTjjHSU/4QOpNhTjCJH6oFL
-        h4o3O8II=; b=Un1Mu1IsIFowgjKg3+kyzqqk0E9sFhhzGKOPvVGG3JM3tyD/RLv
-        6wsmgKVlXXwiGg7fn7VXjprc2kyLLjgdO0OjtZwMKYkt5nhO4tFxU3VhvHaOqh0z
-        H8d72KYZFm39KDpAF3+x6ktrXL5tp/0IN7ZFIkJtq5ACUL2mnGOisYO0=
-X-Virus-Scanned: amavisd-new at servus.at
-Received: from mail.servus.at ([127.0.0.1])
-        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 63IB2ePR_oTp; Sun, 16 Dec 2018 17:56:02 +0100 (CET)
-Received: from [192.168.216.53] (unknown [81.10.228.128])
-        (Authenticated sender: oh_markus)
-        by mail.servus.at (Postfix) with ESMTPSA id 669E73000690;
-        Sun, 16 Dec 2018 17:56:01 +0100 (CET)
-Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
-To:     Kees Cook <keescook@chromium.org>,
-        richard -rw- weinberger <richard.weinberger@gmail.com>,
-        liyueyi@live.com
-References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
- <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
- <5C0654EE.5040001@oberhumer.com>
- <SN1PR13MB030484F09EE8A00DB094CDFADFA80@SN1PR13MB0304.namprd13.prod.outlook.com>
- <5C093A30.4020705@oberhumer.com>
- <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
- <5C110083.8060502@oberhumer.com>
- <CAFLxGvzj=P2FY6w7CBYztsUjJ5Td53zCzGa_FUjrfxA94cmSgA@mail.gmail.com>
- <CAGXu5jLR06ti_xhC8OODbF8m+Tsf6a0ebJLBe8KLcC+csG_i=w@mail.gmail.com>
-Cc:     dsterba@suse.cz, Greg KH <gregkh@linuxfoundation.org>,
-        Willy Tarreau <w@1wt.eu>, Don Bailey <donb@securitymouse.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Organization: oberhumer.com
-Message-ID: <5C1683A1.5090803@oberhumer.com>
-Date:   Sun, 16 Dec 2018 17:56:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLR06ti_xhC8OODbF8m+Tsf6a0ebJLBe8KLcC+csG_i=w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Sun, 16 Dec 2018 11:57:29 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:43340 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730213AbeLPQ53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 11:57:29 -0500
+Received: by mail-yb1-f193.google.com with SMTP id d136so4208962ybh.10;
+        Sun, 16 Dec 2018 08:57:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lcpo9vkJaU/B4DRr40bY8llUuPtTjVRD00OqQ9pC5Zo=;
+        b=UAQE1ddG/VLsNRlzaR4IDdx5+CqoGFCqEyZ3CsFBQmIK+ZOdOPndB/SdOvLg++/FZG
+         NSGPXUwurMlih2XKXHhMm5bff3xEg5Q2Bjm+UPHZtA9ZtucvHhvejIFWb4xN6SUHnI/u
+         BJIKx2JAdixI0od1yKkMPr1yieHGh7HmGjEcfcYoJJinCczPsxcI4i0Gq3XiBIqRAG1C
+         2zpHhR/0JtyvvWMnwbzldXT7YkWxMWPi4MQ7MeqPvgfoQgF+FPxfgN8qlLMEKd5iilH3
+         hX/BGGktxaB9O6baPcs4bsqh3f9q2lLkXNcKKDi2bJ4S5aScgtX+0ZunZdJyFiDgtf+Q
+         cvQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lcpo9vkJaU/B4DRr40bY8llUuPtTjVRD00OqQ9pC5Zo=;
+        b=A6xeM7yMFkVO3xNfONg/GH/4IJRw8VPMJIYXpgpJR9r8aXxEmS7u25MuLmqSZ0MB0S
+         MAyhHUdD2xhO/mxWNZp4F+i9wgMxyOyNDsKFNBjtsUPfJbSC3L8xYkcVVeV0IUdwxlNw
+         WDP8M1tUoWyd4Bpo3TDVEzSDhZ//7S6SxaTQpujql+xDhRXR8nLPcg8ezGjRSFOfrujE
+         v0idc26Y+ZRMlUYEiJEKPeh9Ax1PCZf62IxYMSvDkJLlWNkHF8DEduP8CsZpphAG+rhd
+         gG5TYyCvp+DKezkm3jTOiX6NKDj700LEwQHNerv4BfFycu1QH7m7vMHidbudIOYlm5x0
+         +6xQ==
+X-Gm-Message-State: AA+aEWZhAvKUDg3FZmBqDYSDI3jtacQr8KsCSmjNGZVANB3Sd897Efti
+        YSJ4BYOBpm2oSwKBQX28au4GXryZ
+X-Google-Smtp-Source: AFSGD/WvXA72Dj6w+afppRkwF0EzMAyXFekjQV66HfvbuOc1TdYvZ3/wnKQ50u7LR4jbjpHW4kPO9g==
+X-Received: by 2002:a25:6d42:: with SMTP id i63-v6mr10263068ybc.17.1544979447074;
+        Sun, 16 Dec 2018 08:57:27 -0800 (PST)
+Received: from ubuntu ([67.191.186.148])
+        by smtp.gmail.com with ESMTPSA id y1sm3317353ywe.86.2018.12.16.08.57.26
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 16 Dec 2018 08:57:26 -0800 (PST)
+From:   Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+To:     marvin24@gmx.de
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH 1/2] Staging: comedi: cb_pcidas: fixed a spelling mistake coding style issue
+Date:   Sun, 16 Dec 2018 08:57:25 -0800
+Message-Id: <1544979445-10079-1-git-send-email-indigoomega021@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yueyi,
+Fixed a coding style issue.
 
-if ASLR does indeed exclude the last page (like it should), how do
-you get the invalid (0xfffffffffffff000, 4096) mapping then?
+Signed-off-by: Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+---
+ drivers/staging/comedi/drivers/cb_pcidas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-~Markus
-
-
-On 2018-12-14 17:46, Kees Cook wrote:
-> On Fri, Dec 14, 2018 at 5:56 AM Richard Weinberger
-> <richard.weinberger@gmail.com> wrote:
->>
->> [CC'ing Kees]
->>
->> On Wed, Dec 12, 2018 at 1:37 PM Markus F.X.J. Oberhumer
->> <markus@oberhumer.com> wrote:
->>>
->>> I still claim that (0xfffffffffffff000, 4096) is not a valid C "pointer
->>> to an object" according to the C standard - please see my reply below.
->>>
->>> And I thought ASLR was introduced to improve security and not to create
->>> new security problems - someone from the ASLR team has to comment on this.
->>>
->>> Cheers,
->>> Markus
->>>
->>>
->>> On 2018-12-12 06:21, Yueyi Li wrote:
->>>> Hi Markus,
->>>>
->>>> OK, thanks. I`ll change it in v3.
->>>>
->>>> Thanks,
->>>> Yueyi
->>>>
->>>> On 2018/12/6 23:03, Markus F.X.J. Oberhumer wrote:
->>>>> Hi Yueyi,
->>>>>
->>>>> yes, my LZO patch works for all cases.
->>>>>
->>>>> The reason behind the issue in the first place is that if KASLR
->>>>> includes the very last page 0xfffffffffffff000 then we do not have a
->>>>> valid C "pointer to an object" anymore because of address wraparound.
->>>>>
->>>>> Unrelated to my patch I'd argue that KASLR should *NOT* include the
->>>>> very last page - indeed that might cause similar wraparound problems
->>>>> in lots of code.
->>>>>
->>>>> Eg, look at this simple clear_memory() implementation:
->>>>>
->>>>> void clear_memory(char *p, size_t len) {
->>>>>          char *end = p + len;
->>>>>          while (p < end)
->>>>>                  *p++= 0;
->>>>> }
->>>>>
->>>>> Valid code like this will fail horribly when (p, len) is the very
->>>>> last virtual page (because end will be the NULL pointer in this case).
->>>>>
->>>>> Cheers,
->>>>> Markus
->>>>>
->>>>>
->>>>>
->>>>> On 2018-12-05 04:07, Yueyi Li wrote:
->>>>>> Hi Markus,
->>>>>>
->>>>>> Thanks for your review.
->>>>>>
->>>>>> On 2018/12/4 18:20, Markus F.X.J. Oberhumer wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> I don't think that address space wraparound is legal in C, but I
->>>>>>> understand that we are in kernel land and if you really want to
->>>>>>> compress the last virtual page 0xfffffffffffff000 the following
->>>>>>> small patch should fix that dubious case.
->>>>>> I guess the VA 0xfffffffffffff000 is available because KASLR be
->>>>>> enabled. For this case we can see:
-> 
-> This is a weird case: I would expect the top 4k to be unmapped to
-> leave room of ERR_PTR, etc.
-> 
->>>>>>
->>>>>> crash> kmem 0xfffffffffffff000
->>>>>>         PAGE               PHYSICAL      MAPPING       INDEX CNT FLAGS
->>>>>> ffffffbfffffffc0        1fffff000 ffffffff1655ecb9  7181fd5  2
->>>>>> 8000000000064209 locked,uptodate,owner_priv_1,writeback,reclaim,swapbacked
->>>>>>
->>>>>>> This also avoids slowing down the the hot path of the compression
->>>>>>> core function.
->>>>>>>
->>>>>>> Cheers,
->>>>>>> Markus
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
->>>>>>> index 236eb21167b5..959dec45f6fe 100644
->>>>>>> --- a/lib/lzo/lzo1x_compress.c
->>>>>>> +++ b/lib/lzo/lzo1x_compress.c
->>>>>>> @@ -224,8 +224,8 @@ int lzo1x_1_compress(const unsigned char *in, size_t in_len,
->>>>>>>
->>>>>>>           while (l > 20) {
->>>>>>>                   size_t ll = l <= (M4_MAX_OFFSET + 1) ? l : (M4_MAX_OFFSET + 1);
->>>>>>> -               uintptr_t ll_end = (uintptr_t) ip + ll;
->>>>>>> -               if ((ll_end + ((t + ll) >> 5)) <= ll_end)
->>>>>>> +               // check for address space wraparound
->>>>>>> +               if (((uintptr_t) ip + ll + ((t + ll) >> 5)) <= (uintptr_t) ip)
->>>>>>>                           break;
-> 
-> Please just use the standard add overflow checks from the kernel. See
-> include/linux/overflow.h
-> 
-> Specifically, check_add_overflow(operand1, operand2, &result). I
-> assume something like:
-> 
-> if (check_add_overflow(ip, ll, &ll_end))
->    freak_out();
-> 
-> ?
-> 
->>>>>>>                   BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
->>>>>>>                   memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
->>>>>> I parsed panic ramdump and loaded CPU register values,  can see:
->>>>>>
->>>>>> -000|lzo1x_1_do_compress(
->>>>>>       |    in = 0xFFFFFFFFFFFFF000,
->>>>>>       |  ?,
->>>>>>       |    out = 0xFFFFFFFF2E2EE000,
->>>>>>       |    out_len = 0xFFFFFF801CAA3510,
->>>>>>       |  ?,
->>>>>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
->>>>>>       |  dict = 0xFFFFFFFF4EBC0000
->>>>>>       |  op = 0x1
->>>>>>       |  ip = 0x9
->>>>>>       |  ii = 0x9
->>>>>>       |  in_end = 0x0
->>>>>>       |  ip_end = 0xFFFFFFFFFFFFFFEC
->>>>>>       |  m_len = 0
->>>>>>       |  m_off = 1922
->>>>>> -001|lzo1x_1_compress(
->>>>>>       |    in = 0xFFFFFFFFFFFFF000,
->>>>>>       |    in_len = 0,
->>>>>>       |    out = 0xFFFFFFFF2E2EE000,
->>>>>>       |    out_len = 0x00000001616FB7D0,
->>>>>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
->>>>>>       |  ip = 0xFFFFFFFFFFFFF000
->>>>>>       |  op = 0xFFFFFFFF2E2EE000
->>>>>>       |  l = 4096
->>>>>>       |  t = 0
->>>>>>       |  ll = 4096
->>>>>>
->>>>>> ll = l = in_len = 4096 in lzo1x_1_compress,  so your patch is working
->>>>>> for this panic case, but, I`m
->>>>>> not sure, is it possible that in = 0xFFFFFFFFFFFFF000 and  in_len < 4096?
->>>>>>
->>>>>>
->>>>>> Thanks,
->>>>>> Yueyi
->>>>>>
->>>>
->>>>
->>>
->>> --
->>> Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
->>
->>
->>
->> --
->> Thanks,
->> //richard
-> 
-> 
-> 
-
+diff --git a/drivers/staging/comedi/drivers/cb_pcidas.c b/drivers/staging/comedi/drivers/cb_pcidas.c
+index 8429d57..02ae00c 100644
+--- a/drivers/staging/comedi/drivers/cb_pcidas.c
++++ b/drivers/staging/comedi/drivers/cb_pcidas.c
+@@ -116,7 +116,7 @@
+ #define PCIDAS_TRIG_SEL_ANALOG	PCIDAS_TRIG_SEL(3) /* ext. analog trigger */
+ #define PCIDAS_TRIG_SEL_MASK	PCIDAS_TRIG_SEL(3) /* start trigger mask */
+ #define PCIDAS_TRIG_POL		BIT(2)	/* invert trigger (1602 only) */
+-#define PCIDAS_TRIG_MODE	BIT(3)	/* edge/level trigerred (1602 only) */
++#define PCIDAS_TRIG_MODE	BIT(3)	/* edge/level triggered (1602 only) */
+ #define PCIDAS_TRIG_EN		BIT(4)	/* enable external start trigger */
+ #define PCIDAS_TRIG_BURSTE	BIT(5)	/* burst mode enable */
+ #define PCIDAS_TRIG_CLR		BIT(7)	/* clear external trigger */
 -- 
-Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
+2.7.4
+
