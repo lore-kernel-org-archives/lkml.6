@@ -2,74 +2,91 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FC3C43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BCFC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793EA206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:30:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rXcyW7Qw"
+	by mail.kernel.org (Postfix) with ESMTP id 37B43206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 16:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730672AbeLPQaM (ORCPT
+        id S1730724AbeLPQiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 11:30:12 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43982 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729910AbeLPQaL (ORCPT
+        Sun, 16 Dec 2018 11:38:06 -0500
+Received: from zimbra.alphalink.fr ([217.15.80.77]:58950 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730500AbeLPQiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 11:30:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=D2H1GSMozFs+gaYJ6wgcMq+9G6b+APx9+0U4Fyqo1qE=; b=rXcyW7QwiccD2IXs9cx5MMrqo
-        7xTPVWHm8NTSnNtzw+EK8hCUJJ/HO2nACajTOSbcoA9/OYISPig2ODVHdTsJmYwjiL7Su9421pMDw
-        tCZgy+QXtwR4+AiZe1RiPUAXW+znE2B13d0h4cg6GJNrZSSES3FZyjiNqRm4eqWm6Wr9zwzNxEDZU
-        zsWN3P3ON+3lQFqRa0UbUrjkyAOVkeuytHKmmdZbyPN1+MUBodBW2PU3Y131gZ/NUqSy4RuugOUjB
-        p/iPwtfS8ybQd00uNWniI7xRSpE5sux6aD1OVbSKIJfqOSL5Rr4lpqjykIg28qnAW8P0KqRPjRaZY
-        tKPDin4EA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYZIw-0007F2-Dm; Sun, 16 Dec 2018 16:30:10 +0000
-Date:   Sun, 16 Dec 2018 08:30:10 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     yupeng <yupeng0921@gmail.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, keith.busch@intel.com,
-        axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Subject: Re: [PATCH v2 1/2] share nvme trace event helper functions with
- multiple nvme modules
-Message-ID: <20181216163010.GA21285@infradead.org>
-References: <20181216014849.8584-1-yupeng0921@gmail.com>
+        Sun, 16 Dec 2018 11:38:05 -0500
+X-Greylist: delayed 521 seconds by postgrey-1.27 at vger.kernel.org; Sun, 16 Dec 2018 11:38:04 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 831FF2B52035;
+        Sun, 16 Dec 2018 17:30:24 +0100 (CET)
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id MqGsYIYXxy08; Sun, 16 Dec 2018 17:30:23 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 4A42B2B5208E;
+        Sun, 16 Dec 2018 17:30:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id zI5nstDccUim; Sun, 16 Dec 2018 17:30:23 +0100 (CET)
+Received: from localhost (unknown [82.120.188.200])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTPSA id 0B4B62B52035;
+        Sun, 16 Dec 2018 17:30:23 +0100 (CET)
+Date:   Sun, 16 Dec 2018 17:30:59 +0100
+From:   Guillaume Nault <g.nault@alphalink.fr>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     James Chapman <jchapman@katalix.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] l2tp: Add Protocol field compression
+Message-ID: <20181216163059.i5nadsfzyvcwa4o6@kdev>
+References: <20181214211242.9721-1-semen.protsenko@linaro.org>
+ <20181214211242.9721-2-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181216014849.8584-1-yupeng0921@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181214211242.9721-2-semen.protsenko@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 05:48:48PM -0800, yupeng wrote:
-> The trace.c could only be used by core.c, move it to a header file and
-> then other nvme modules could also use it. This commit creates a new
-> header file trace_common.h, which has all the functions of trace.c. It
-> changes all functions to static functions, so any other modules could
-> include it without conflict. This commit also moves some common
-> functions from trace.h to trace_common.h. Because the trace events in
-> trace.h are used by nvme-core only, this commit renames the trace.h to
-> trace_core.h.
+On Fri, Dec 14, 2018 at 11:12:42PM +0200, Sam Protsenko wrote:
+> When Protocol Field Compression (PFC) is enabled, the "Protocol" field
+> in PPP packet should be transmitted without leading 0x00. See section
+> 6.5 in RFC 1661 for details. Let's compress protocol field if needed,
+> the same way it's done in drivers/net/ppp/pptp.c.
+> 
+> To actually enable PFC, one should issue corresponding ioctl to L2TP
+> driver from user-space, like this:
+> 
+>     ioctl(fd, PPPIOCGFLAGS, &flags);
+>     flags |= SC_COMP_PROT;
+>     ioctl(fd, PPPIOCSFLAGS, &flags);
+> 
+> It can be done e.g. from pppol2tp plugin (pppd), when pcomp option was
+> negotiated with peer.
+> 
+> Of course, we don't compress Protocol field when sending LCP packets. As
+> stated in RFC 1661, section 6.5:
+> 
+>     The Protocol field is never compressed when sending any LCP
+>     packet.  This rule guarantees unambiguous recognition of LCP
+>     packets.
+> 
+Again, I'm sorry, but I must oppose this change. Although I'm lacking
+time to keep sanitising L2TP, at least I'd like to avoid making the
+situation worse.
 
-We could always export bits out of trace.o using EXPORT_SYMBOL_GPL,
-no need to move duplicate the code.  Also as far as I can tell you
-only use __assign_disk_name of the helpers, so we can move that into
-a new helper.  It might make sense to just move that into
-include/linux/genhd.h to make it easily available everywhere.
+L2TP's uapi is already messy enough. Please don't add non-L2TP features
+there.
 
+Activating PFC should be done on PPP file descriptors, not no L2TP
+sockets. We certainly don't want L2TP to snoop on PPP data, much less
+modify them.
