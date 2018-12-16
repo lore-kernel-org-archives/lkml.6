@@ -2,149 +2,111 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32087C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEBDC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6652082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F54020883
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="nfdbp/l6";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="lyCssAPB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNV+KDNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731094AbeLPXu4 (ORCPT
+        id S1731145AbeLPX5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:50:56 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53574 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbeLPXu4 (ORCPT
+        Sun, 16 Dec 2018 18:57:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37780 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730719AbeLPX5J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:50:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1545004268; x=1576540268;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=k0iYrUF3T3NGvVmHM7Dzp/+HzaustFgA0BPUgyRUWw4=;
-  b=nfdbp/l60EWjb6u769pZ+uQHopfAkYENuvBPCc7PFKWruG/riePXhB4S
-   nXqSGGCsoJ1W5q3VpY3s1tYP1SwckNrqgHxJ/w2vOtiPZDyruM39JAPxl
-   3TtdugRED6P4y45rCJ8y4LXYSRQW8thsPQNH81SND+RbbLjQ1Rkn5D2Z1
-   a6cN5qcO62wFtYpUEAnywwb6qZNT6ht1oUk1+LD6rBIJj5GU2buNLbh8N
-   oPPsSFJhI3sJBAbw0s5eoXwmZKlKw+5rLmzBKEJwAst9L0p/RydlfgDIL
-   MW8jyPceUPJviFHGKYySml3FW75ZGAfRz2UUbxHr7pWIHI94R6BXN07vt
-   w==;
-X-IronPort-AV: E=Sophos;i="5.56,363,1539619200"; 
-   d="scan'208";a="194633367"
-Received: from mail-bn3nam01lp2052.outbound.protection.outlook.com (HELO NAM01-BN3-obe.outbound.protection.outlook.com) ([104.47.33.52])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Dec 2018 07:51:07 +0800
+        Sun, 16 Dec 2018 18:57:09 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s12so10079424wrt.4;
+        Sun, 16 Dec 2018 15:57:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FzFSnBZGIDwPoZDxiWfnmIiSlvfBV7FGbaABp/sgpeA=;
- b=lyCssAPBNp4wr2JfFY6TsZWCXz+ZXZkCCH5c64q1BpS+Yu1JUfpvT/UZLADgHENXOE7ui1zNr6P19QQX5Q31A//Coxe5B8gIQmiGkPC4t/LyDVjVxzMpn5dPw+eYopHhT18OuHiuwMMQ7W8Wo67gCPqS25BzZpLQtgI2Q0NYl0o=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB5286.namprd04.prod.outlook.com (20.178.49.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.22; Sun, 16 Dec 2018 23:50:50 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::957b:6353:d3c5:1b8d]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::957b:6353:d3c5:1b8d%2]) with mapi id 15.20.1425.021; Sun, 16 Dec 2018
- 23:50:50 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>, Jens Axboe <axboe@kernel.dk>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] uapi: linux/blkzoned.h: fix BLKGETZONESZ and
- BLKGETNRZONES definitions
-Thread-Topic: [PATCH] uapi: linux/blkzoned.h: fix BLKGETZONESZ and
- BLKGETNRZONES definitions
-Thread-Index: AQHUlOGnwpt3q7yotU+90ZUB+2A3JQ==
-Date:   Sun, 16 Dec 2018 23:50:50 +0000
-Message-ID: <BYAPR04MB5816E9F89EAF570A21C5D5A8E7A30@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20181216014951.GA14229@altlinux.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [199.255.47.5]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR04MB5286;6:k4g6brxXxhwsYRzr9l+AXQKPJRb9m/urCLx3lfbWk9RLCF6ivvXFTOxBZT4n/wG4qWpSE7FU9AuvqjOButD1mW9QNyxptmbwtZvYxuY2Wp0EDVauIfKcLi4dU7W7sjUHmcgQ67uzaQ6N49cA6cKChIZH9t72Hc2mhHeZj5UVAU/NlcY8FLmZosxTvZOMTqgARHHLrj366zUSUSieuchz6GqutD3cGumyD+/PyO4Gi245fwy+Cf3YL2YixOI7FRmvm3f/vLkKb+R9oNiJQoiAVSNdy1sai933b0riVvxXKumxb4lycv5KIENHNwn6zQjWRaPAPaZ+fEuSAdA85rqjbg8L/U1/MAwIGXkwXKCA1FVGof+Hu1NpP0CXPGCCyM1OVUmsgd02AFCjo2bXxFyc0ptWVm4yQOi7mm3RWs/lDLoF/WuXIVLFn+A7nDYpAP5tPns9HxyX5faHMl4B2DSk7Q==;5:RAeoyCnh5FiR+lWpqVctsABANIdiG7I8EpYBGBSf6QqqYWgn6yI4vUUUQNOJtNNqC2cOQjz8ZyPufFtwTH5AsC/l73zuF2aDwRdF8Fwf3FS16oajUGqLivxAUdIXTTMSmZPCTBH2XVnowRViDJ3ff4C1UoqKjG1jP1bde3doY7c=;7:MrJPkl4v5Gzb2WUQHVhfSKQ4u+yLs9Wrj6uUy+kfl+1Xsggm46ypjCx2ginloKuS+ixk+Oy3hvddw2lFheBgY96kY3hzyhxgQvD5Lq3CICDLg4NSUX+/brSrdCHh7516XVKQhzUk+6fv7GLcQE2Mag==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f43daae8-dcaa-47d7-4e5c-08d663b14f21
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR04MB5286;
-x-ms-traffictypediagnostic: BYAPR04MB5286:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB5286E3A83FAB82602F87E65FE7A30@BYAPR04MB5286.namprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR04MB5286;BCL:0;PCL:0;RULEID:;SRVR:BYAPR04MB5286;
-x-forefront-prvs: 0888B1D284
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39860400002)(376002)(396003)(136003)(199004)(189003)(316002)(68736007)(110136005)(478600001)(9686003)(33656002)(55016002)(99286004)(14454004)(6436002)(2906002)(72206003)(81166006)(486006)(25786009)(8676002)(6246003)(8936002)(66066001)(53936002)(229853002)(81156014)(86362001)(6116002)(4326008)(26005)(7736002)(97736004)(476003)(3846002)(186003)(74316002)(7696005)(76176011)(102836004)(305945005)(53546011)(6506007)(71200400001)(71190400001)(5660300001)(446003)(105586002)(106356001)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5286;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: J9awMQfYxTI2BmP17WaWcqlcEkURMEiZ8vF0YPDEiX012KEzYqNuLOOr5hTe6WjPtm1dkIot8DbOgxUDyCOGbfMiCauQ9BZ2B219L4yNr9SrJk93REQOYaDldJRvjg8Dcy1VKuJbzaFeT33JD4TVjzs5AWGtu0Xzafijx+TjRyxcm4Zne0OHPj1nnsOg7goSCv6hWlMc027dul5ChxF0D02rXAnB+N0wPw5ll6Qv4pdGT3LO0R2ImO5mvkZuu0Qz82TJXwF47nklGInio4KQT4R8yWTb7ZMZp2c0UXATsXbQu0DLugyE7eZW+8lXjzOr
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LfUSmwDuqBqAikgSwV2pPocAsayQs7nw84OxK0kY2+M=;
+        b=bNV+KDNcg+CKpukYU5YtjqP2UhnVgWM45TDBQMMFZ/0gmaV3a6d8b2uefeFGGhoXfV
+         XoA5G7XZuB49vj/arGPh0a5ejPPBwwc1+j+kEustXG+JHvw/2dP2Ua7GC6DTTZz+Jmtt
+         UCyE7bOqDZOg0e/370+8f64x5MTnoDbi91jvrGYrYxA5NDLxK0b4fCt5EsEERO4RQMyf
+         nTQS6hTF/c0LFbfazWrI/mho4GsujifkKc3hMAo4IINbVYcb5Noaj0j+uQ02u4DFJnA2
+         VtTggorZ/7FdyMtfN1XLu3jt/YjNOjoYhgWeUXv4DNAe57OxvgYo7CqqEqgJYM78jz0k
+         jG2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LfUSmwDuqBqAikgSwV2pPocAsayQs7nw84OxK0kY2+M=;
+        b=Az5waer2Q4Y0pVps09u+fXIU4KnpKEL+LChNXwFErIEHWFAaGd+qvGSa/giugwuI+j
+         KD59S58PTKs+PqF0OLwZPvt5m1wVZpKwvjTCMOuoc/ZrbY8FCt/DmRTjwU9SBsXYh+5g
+         bpZrcROErqCtGPX24mHXCrpA5CRyD3UxEHEyYA2m2027vp8ayJMLrrt4R6HZyFwOTTHp
+         zTBM5eAuPlbQTkStUtr8WRUSWv8jdczhhb1px5a6q5aoBylwHv5lyxr0a7a/nFPGgguj
+         jOTf6W8i1/qIXmL9Vg8McYkXDM8Urrk0MsAosZ44VtBlTQ8XkwKfH8R52j/dDmYCFktk
+         L7bA==
+X-Gm-Message-State: AA+aEWbzw8H1vqnT/O5uq3ClQWXO60CeNL5spt9Dac5vepTZenVRMa3N
+        Ee4hbBJkiicByYOCVn//MwMQ+OfCEkbekKx8KyE=
+X-Google-Smtp-Source: AFSGD/WIA2E4t4PdYBA8MNw8YRnJPmqJw6/r6/dlHqaT+5CLbmAomhRst0bcPa8woHXz70KeaTKJy2n+et72VtG9Z6s=
+X-Received: by 2002:adf:ed46:: with SMTP id u6mr9203577wro.262.1545004627192;
+ Sun, 16 Dec 2018 15:57:07 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f43daae8-dcaa-47d7-4e5c-08d663b14f21
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2018 23:50:50.5586
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5286
+References: <20181020120849.65708-1-houtao1@huawei.com>
+In-Reply-To: <20181020120849.65708-1-houtao1@huawei.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Mon, 17 Dec 2018 00:56:55 +0100
+Message-ID: <CAFLxGvzSiFdVmGs4StKkJDyBv698wmLePBnfZwhF0HnEDSmPKA@mail.gmail.com>
+Subject: Re: [PATCH] jffs2: ensure wbuf_verify is valid before using it.
+To:     houtao1@huawei.com
+Cc:     linux-mtd@lists.infradead.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, boris.brezillon@bootlin.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/16 10:50, Dmitry V. Levin wrote:=0A=
-> According to the documentation in include/uapi/asm-generic/ioctl.h,=0A=
-> _IOW means userspace is writing and kernel is reading, and=0A=
-> _IOR means userspace is reading and kernel is writing.=0A=
-> =0A=
-> In case of these two ioctls, kernel is writing and userspace is reading,=
-=0A=
-> so they have to be _IOR instead of _IOW.=0A=
-> =0A=
-> Fixes: 72cd87576d1d8 ("block: Introduce BLKGETZONESZ ioctl")=0A=
-> Fixes: 65e4e3eee83d7 ("block: Introduce BLKGETNRZONES ioctl")=0A=
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>=0A=
-> ---=0A=
-> =0A=
-> Since both ioctls were introduced after 4.19,=0A=
-> please make sure they are fixed in 4.20.=0A=
-> Thanks.=0A=
-> =0A=
->  include/uapi/linux/blkzoned.h | 4 ++--=0A=
->  1 file changed, 2 insertions(+), 2 deletions(-)=0A=
-> =0A=
-> diff --git a/include/uapi/linux/blkzoned.h b/include/uapi/linux/blkzoned.=
-h=0A=
-> index 8f08ff9bdea0..6fa38d001d84 100644=0A=
-> --- a/include/uapi/linux/blkzoned.h=0A=
-> +++ b/include/uapi/linux/blkzoned.h=0A=
-> @@ -141,7 +141,7 @@ struct blk_zone_range {=0A=
->   */=0A=
->  #define BLKREPORTZONE	_IOWR(0x12, 130, struct blk_zone_report)=0A=
->  #define BLKRESETZONE	_IOW(0x12, 131, struct blk_zone_range)=0A=
-> -#define BLKGETZONESZ	_IOW(0x12, 132, __u32)=0A=
-> -#define BLKGETNRZONES	_IOW(0x12, 133, __u32)=0A=
-> +#define BLKGETZONESZ	_IOR(0x12, 132, __u32)=0A=
-> +#define BLKGETNRZONES	_IOR(0x12, 133, __u32)=0A=
->  =0A=
->  #endif /* _UAPI_BLKZONED_H */=0A=
-> =0A=
-=0A=
-Indeed, my bad.=0A=
-=0A=
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Sat, Oct 20, 2018 at 2:06 PM Hou Tao <houtao1@huawei.com> wrote:
+>
+> Now MTD emulated by UBI volumn doesn't allocate wbuf_verify in
+> jffs2_ubivol_setup(), because UBI can do the verifcation itself,
+> so when CONFIG_JFFS2_FS_WBUF_VERIFY is enabled and a MTD device
+> emulated by UBI volumn is used, a Oops will occur as show in the
+> following trace:
+>
+>     general protection fault: 0000 [#1] SMP KASAN PTI
+>     CPU: 6 PID: 404 Comm: kworker/6:1 Not tainted 4.19.0-rc8
+>     Workqueue: events_long delayed_wbuf_sync
+>     RIP: 0010:ubi_io_read+0x156/0x650
+>     Call Trace:
+>      ubi_eba_read_leb+0x57d/0xba0
+>      ubi_leb_read+0xe5/0x1b0
+>      gluebi_read+0x10c/0x1a0
+>      mtd_read+0x112/0x340
+>      jffs2_verify_write+0xef/0x440
+>      __jffs2_flush_wbuf+0x3fa/0x3540
+>      jffs2_flush_wbuf_gc+0x1b1/0x2e0
+>      process_one_work+0x58b/0x11e0
+>      worker_thread+0x8f/0xfe0
+>      kthread+0x2ae/0x3a0
+>      ret_from_fork+0x35/0x40
+>
+> Fix the problem by checking the validity of wbuf_verify before
+> using it in jffs2_verify_write().
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 0029da3bf430 ("JFFS2: add UBI support")
+> Signed-off-by: Hou Tao <houtao1@huawei.com>
+
+Reviewed-by: Richard Weinberger <richard@nod.at>
+
+BTW: Are you actually using glubi? It is on my list of things I'd like
+to kill. :-)
+
+-- 
+Thanks,
+//richard
