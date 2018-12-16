@@ -2,189 +2,367 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43275C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66684C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09E1E206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:45:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzJNRtKa"
+	by mail.kernel.org (Postfix) with ESMTP id 1DF85206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 15:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbeLPPpw (ORCPT
+        id S1730644AbeLPPqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 10:45:52 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37622 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729910AbeLPPpv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 10:45:51 -0500
-Received: by mail-pg1-f195.google.com with SMTP id c25so3402928pgb.4;
-        Sun, 16 Dec 2018 07:45:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=o1zildSPS9M6xJaRiD7Re7EsjxjSBCmH2v6qWfCb748=;
-        b=lzJNRtKaZOnZGmIGUYhUm4CLoxO048WhCvFRZFoOkHPagVtU726x/9T++uJjGAClKx
-         OlCEzKSO9cp/hO2MeJWqz7czFhh04s8G6kWNkBC91JhC2Igsp3b4pcdOukakU7qyJa0j
-         a3bxutjQ3K6V/ckC4RtC2t2LpEk1EYkYDDuqRHmZ1AXahLKrLg/tgntgF9pLKcY5c5Ua
-         fngMajZjRL35igTchT8bZch26tNxAzpwS2k08E4Z4VcxO76MpAmt4/nF4KquASs0YFUu
-         IqRNXwj7J7ww+N77MtPcDxPKJuPKq/O0bw4lz5B0NKoCeNRmS79HyR2r2ijrURn7lgat
-         gX0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=o1zildSPS9M6xJaRiD7Re7EsjxjSBCmH2v6qWfCb748=;
-        b=VDB2Uhk0FcNEZKqBf62P7kdhF5xJoh83iEU0nj/xx+nSAec00yvzD3Xu9AFuVzK6l6
-         iDYQ087t7SIC+KcFrr4J5TBzdv81MK2BzPohcy0f2DiXJ0Ue4H+CKiee6OWD7DJEVdCm
-         okiZ/NeOJ4oYGbEqkng41QEqytIdnS1bMW7stmKvmvxtGI4vgxr+8iM1uePcymSKQ7CU
-         9v/Pe4gKW5sZoLPdWhwafOQlgEDNFwaX2WsZw268gRSxb7LKcR/E2agz4jlfqGCoHSNE
-         1l+pfmRlotAiCb3yoF8h9nmWMLBmMaE+hYgzlhpm9S0qNPBryb2LbHsLZ6xWI4qtzdBo
-         jPdw==
-X-Gm-Message-State: AA+aEWZK9IHMQU3lAq2vrjbm4ARhphaoXrXhMHYZGEXsXiib2mfMdLe4
-        sAY4foyrIb583E8sNbmikgu4hcwv
-X-Google-Smtp-Source: AFSGD/UtSDDv92gjOCbm6xwnRERuPS3MN2QYE4DGyMEM0uYd3Dd76ITrBkFSINWCVQxnpXHdcpiJ0w==
-X-Received: by 2002:a65:6392:: with SMTP id h18mr9397530pgv.107.1544975150014;
-        Sun, 16 Dec 2018 07:45:50 -0800 (PST)
-Received: from [0.0.0.0] (97.64.17.87.16clouds.com. [97.64.17.87])
-        by smtp.gmail.com with ESMTPSA id d68sm13955108pfa.64.2018.12.16.07.45.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Dec 2018 07:45:49 -0800 (PST)
-Subject: Re: usb: thoughts of adding more support for FT232H
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Anatolij Gustschin <agust@denx.de>, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <48bc71bb-68e4-8b29-f609-940c9aedc0a9@gmail.com>
- <20181205161718.7451d98f@crub>
- <924d4ebb-5f9c-f863-c698-9f978e9bc337@gmail.com>
- <20181213132315.GN3500@localhost>
-From:   Song Qiang <songqiang1304521@gmail.com>
-Message-ID: <1aedd285-967a-4876-66be-c881fb81476c@gmail.com>
-Date:   Sun, 16 Dec 2018 23:45:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 16 Dec 2018 10:46:52 -0500
+Received: from mga07.intel.com ([134.134.136.100]:39404 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729822AbeLPPqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 10:46:51 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2018 07:46:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,361,1539673200"; 
+   d="gz'50?scan'50,208,50";a="101948836"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga008.jf.intel.com with ESMTP; 16 Dec 2018 07:46:45 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gYYcu-0004eL-Gm; Sun, 16 Dec 2018 23:46:44 +0800
+Date:   Sun, 16 Dec 2018 23:45:57 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     yulei.kernel@gmail.com
+Cc:     kbuild-all@01.org, keescook@chromium.org, mkelly@xevo.com,
+        jkosina@suse.cz, linux-kernel@vger.kernel.org,
+        Yulei Zhang <yuleixzhang@tencent.com>,
+        Guangrong Xiao <xiaoguangrong@tencent.com>
+Subject: Re: [PATCH] kfifo: add memory barrier in kfifo to prevent data loss
+Message-ID: <201812162314.goqRfpBM%fengguang.wu@intel.com>
+References: <20181211034032.32338-1-yuleixzhang@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <20181213132315.GN3500@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/mixed; boundary="2fHTh5uZTiUOsy+g"
+Content-Disposition: inline
+In-Reply-To: <20181211034032.32338-1-yuleixzhang@tencent.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2018/12/13 下午9:23, Johan Hovold wrote:
+--2fHTh5uZTiUOsy+g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Hi Song,
->
-> Sorry about the late reply.
->
-> On Thu, Dec 06, 2018 at 02:02:21PM +0800, Song Qiang wrote:
->> On 12/5/18 11:17 PM, Anatolij Gustschin wrote:
->>> Hi,
->>>
->>> On Wed, 5 Dec 2018 22:10:40 +0800
->>> Song Qiang songqiang1304521@gmail.com wrote:
->>> ...
->>>> I've been developing some iio device drivers and found that some people
->>>> would like to test their devices with a qemu system which requires an
->>>> i2c or spi port on our development hosts. Usually this is achieved with
->>>> a DLN-2 adapter, while this is a bit difficult for me because it costs
->>>> ~175$ in my country. Then I found that FTDI's FT232H supports both these
->>>> two modes and costs only less than 5$ but without full support in kernel.
->>>> The ftdi-sio driver supports FT232H only as a serial converter.
->>>> So I'm planning to write a mfd driver for it supports both these three
->>>> modes, here are my thoughts:
->>> There already has been a discussion [1] about adding an MFD driver for
->>> FT232H, since the operating modes are mutually exclusive (and bus pins
->>> shared between different modes), the MFD approach doesn't seem to be
->>> a good fit.
->>>
->>>>    - This device cannot support these three modes together because they
->>>>      share some common pins, so I'm planning to add a sysfs entry
->>>>      'current_mode' for selecting which mode the device should be working
->>>>      on.
->>>>    - This device is in uart mode on reset, so default mode would be reset,
->>>>      too. This also helps for people only want to use this as a serial
->>>>      converter feels nothing has happened (compatible).
->>>>    - I was trying to reuse the ftdi-sio driver but it seems like mfd can
->>>>      only register platform devices, while this is a usb driver. I may
->>>>      have to copy some functions from this driver.
->>>>
->>>> Would you share any ideas? I'd appreciate it.
->>> There is a patch series [2] adding an interface driver for FT232H-
->>> based adapter devices, it already supports adding custom MPSSE based
->>> SPI busses with SPI slaves for a custom USB PID. It already supports
->>> adding custom CBUS-/MPSSE-GPIO adapters for user-defined USB PID.
->>> Adding I2C driver/adapter support should be easy, too. Maybe you can
->>> re-use it.
->>> [1] https://patchwork.kernel.org/patch/9828985
->>> [2] https://patchwork.kernel.org/project/linux-usb/list/?series=48255
->> Patch series [2] added new custom PIDs to distinguish the mode this device
->> should be in when powered on, is this right? Since USB has a convention for all
->> the VIDs and PIDs, is this really a good approach to use some us-defined PIDs?
-> As I mentioned, I have not really had time to look at [2] yet, but yes,
-> the driver appears to encode the mode configuration in the device id
-> table.
->
->> In the discussion [1] #4, Johan said that mfd is not suitable for this situation
->> because 'all drivers for these devices be able to retrieve the current mode
->> during probe and only bind when the mode matches'.
-> Right, MFD is for devices exposing multiple functions concurrently, but
-> the FTDI serial-engine modes are mutually exclusive (as you also point
-> out below).
->
->> I think this is saying that we can only register these devices(i2c, spi, gpio)
->> when we plug it in, but FT232H's functions are surely mutually exclusive, so
->> can't we dynamically register these devices in userspace? I mean through a sysfs
->> interface, and through the implementation functions of this interface, we can
->> try to use mfd_add_devices() and mfd_remove_devices() to unload one
->> function(like uart) and load it as another device like a spi adapter. Is there
->> any side effects of doing this in this way?
-> It gets pretty messy implementation wise. That's one reason why having
-> separate drivers and binding based on PID is preferable (another is
-> being able to determine the mode at probe).
->
-> But if this is to be implemented, we probably also do want to be able to
-> share some code (e.g. for managing the cbus pins as gpios, and that
-> part could possibly be modelled as an mfd...).
->
-> Then you also have the problem of describing the buses that the FTDI
-> chip exposes. There's currently no way for example to load a device-tree
-> overlay from userspace after you configure the mode for, say, spi in
-> order to register the spi slaves.
->
-> This is also related to what we want to solve for serial-connected
-> devices (serdev). Using device-tree overlays for this has been
-> discussed, but there are some missing pieces for that to be realised
-> (not least a user-space interface for loading overlays).
->
-> Thanks,
-> Johan
+Hi Yulei,
 
-Hi Johan,
+Thank you for the patch! Perhaps something to improve:
 
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.20-rc6 next-20181214]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Thanks for your reply, now I understand why the mfd doesn't fit.
+url:    https://github.com/0day-ci/linux/commits/yulei-kernel-gmail-com/kfifo-add-memory-barrier-in-kfifo-to-prevent-data-loss/20181211-204949
+reproduce: make htmldocs
 
-So this is saying that currently there is not a very proper way of 
-implementing this kind of driver, right? I also noticed that there are 
-other series of chips supporting mutually exclusive multi-functions.  I 
-think we quite need a framework for them.
+All warnings (new ones prefixed by >>):
 
-Is there a kind of this framework under development? I'm curious and 
-want to know how everyone thinks about this problem.
+   WARNING: convert(1) not found, for SVG to PDF conversion install ImageMagick (https://www.imagemagick.org)
+>> include/linux/kfifo.h:305: warning: Function parameter or member 'kfifo' not described in 'kfifo_read_index_in'
+   include/linux/kfifo.h:305: warning: Excess function parameter 'fifo' description in 'kfifo_read_index_in'
+>> include/linux/kfifo.h:321: warning: Function parameter or member 'kfifo' not described in 'kfifo_write_index_in'
+>> include/linux/kfifo.h:321: warning: Function parameter or member 'val' not described in 'kfifo_write_index_in'
+   include/linux/kfifo.h:321: warning: Excess function parameter 'fifo' description in 'kfifo_write_index_in'
+>> include/linux/kfifo.h:337: warning: Function parameter or member 'kfifo' not described in 'kfifo_read_index_out'
+   include/linux/kfifo.h:337: warning: Excess function parameter 'fifo' description in 'kfifo_read_index_out'
+>> include/linux/kfifo.h:353: warning: Function parameter or member 'kfifo' not described in 'kfifo_write_index_out'
+>> include/linux/kfifo.h:353: warning: Function parameter or member 'val' not described in 'kfifo_write_index_out'
+   include/linux/kfifo.h:353: warning: Excess function parameter 'fifo' description in 'kfifo_write_index_out'
+   include/linux/rcutree.h:1: warning: no structured comments found
+   kernel/rcu/tree.c:684: warning: Excess function parameter 'irq' description in 'rcu_nmi_exit'
+   include/linux/srcu.h:175: warning: Function parameter or member 'p' not described in 'srcu_dereference_notrace'
+   include/linux/srcu.h:175: warning: Function parameter or member 'sp' not described in 'srcu_dereference_notrace'
+   include/linux/gfp.h:1: warning: no structured comments found
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.ibss' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.connect' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.keys' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.ie' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.ie_len' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.bssid' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.ssid' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.default_key' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.default_mgmt_key' not described in 'wireless_dev'
+   include/net/cfg80211.h:4439: warning: Function parameter or member 'wext.prev_bssid_valid' not described in 'wireless_dev'
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
+   include/net/cfg80211.h:2838: warning: cannot understand function prototype: 'struct cfg80211_ftm_responder_stats '
 
+vim +305 include/linux/kfifo.h
 
-yours,
+ > 305	
+   306	/**
+   307	 * kfifo_write_index_in - updates the in index of the fifo
+   308	 * @fifo: address of the kfifo to be used
+   309	 *
+   310	 * add memory write barrier to make sure the data entry is
+   311	 * updated before increase the fifo->in
+   312	 */
+   313	#define kfifo_write_index_in(kfifo, val) \
+   314	({ \
+   315		typeof((kfifo) + 1) __tmp = (kfifo); \
+   316		struct __kfifo *__kfifo = __tmp; \
+   317		unsigned int __val = (val); \
+   318		smp_wmb(); \
+   319		WRITE_ONCE(__kfifo->in, __val); \
+   320	})
+ > 321	
+   322	/**
+   323	 * kfifo_read_index_out - returns the out index of the fifo
+   324	 * @fifo: address of the kfifo to be used
+   325	 *
+   326	 * add memory barrier to make sure the fifo->out index is
+   327	 * fetched before read data from the fifo, which is paired
+   328	 * with the memory barrier in kfifo_write_index_out
+   329	 */
+   330	#define kfifo_read_index_out(kfifo) \
+   331	({ \
+   332		typeof((kfifo) + 1) __tmp = (kfifo); \
+   333		struct __kfifo *__kfifo = __tmp; \
+   334		unsigned int __val = smp_load_acquire(&__kfifo->out); \
+   335		__val; \
+   336	})
+ > 337	
+   338	/**
+   339	 * kfifo_write_index_out - updates the out index of the fifo
+   340	 * @fifo: address of the kfifo to be used
+   341	 *
+   342	 * add memory barrier to make sure reading out the entry before
+   343	 * update the fifo->out index to avoid overwitten the entry by
+   344	 * the producer
+   345	 */
+   346	#define kfifo_write_index_out(kfifo, val) \
+   347	({ \
+   348		typeof((kfifo) + 1) __tmp = (kfifo); \
+   349		struct __kfifo *__kfifo = __tmp; \
+   350		unsigned int __val = (val); \
+   351		smp_store_release(&__kfifo->out, __val); \
+   352	})
+ > 353	
 
-Song Qiang
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
+--2fHTh5uZTiUOsy+g
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+/xGVx9CoWwAA
+
+--2fHTh5uZTiUOsy+g--
