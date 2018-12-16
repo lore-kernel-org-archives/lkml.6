@@ -2,102 +2,85 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0688BC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EC5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBAF22084D
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:16:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sLxXMWuo"
+	by mail.kernel.org (Postfix) with ESMTP id 327BB206C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731078AbeLPXQe (ORCPT
+        id S1731115AbeLPXSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:16:34 -0500
-Received: from ozlabs.org ([203.11.71.1]:36979 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730772AbeLPXQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:16:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43J0XZ6THnz9sD4;
-        Mon, 17 Dec 2018 10:16:30 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545002190;
-        bh=n9AdQheZgXZvVJlfrUAkO5i4kd9GYRJ7aBd1BHJJhM0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sLxXMWuoIE5FhJHdS/kBN9K6MoHKRwwFiijLr36Bj5tDXifVh7NyvFmhmMpqKb7qu
-         Xys5eIhHsevISaWPaXoKusar2Dox/A0sCsIsb9O623lKjrH8RHTAC2LZ3D2oYw0GQu
-         6mA4juRbIGwTWiEpx1fO6RO9SiKTOMutpEX2Zu0nmMVTVlwbtu/qOlcDh2CPN8fiE7
-         kYSq4dU0+b0Ki86+voB+cDOvUOMTi5U+/D1+0+gVgm+dit8DIoVc1Xvh9tNWswZ0b0
-         a9X+EgVO40BVydFzL9xE8P8jl0BJ3y8Sq/VtWU/WHE3oeQr23fcDONUV35QNG/zT11
-         vofT5pK1+TKIA==
-Date:   Mon, 17 Dec 2018 10:16:30 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Trond Myklebust <trondmy@gmail.com>,
-        NFS Mailing List <linux-nfs@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: linux-next: build failure after merge of the nfs-anna tree
-Message-ID: <20181217101630.292dd55e@canb.auug.org.au>
+        Sun, 16 Dec 2018 18:18:16 -0500
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:56128
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730911AbeLPXSP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 18:18:15 -0500
+Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
+        by : HOSTING RELAY : with ESMTP
+        id YfesghRTUse9VYfesgsUNi; Sun, 16 Dec 2018 16:17:14 -0700
+x-originating-ip: 107.180.71.197
+Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
+        (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
+        id 1gYfes-0004N1-BI; Sun, 16 Dec 2018 16:17:14 -0700
+From:   Long Li <longli@linuxonhyperv.com>
+To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc:     Long Li <longli@microsoft.com>, stable@vger.kernel.org
+Subject: [PATCH] CIFS: use the correct length when pinning memory for direct I/O for write
+Date:   Sun, 16 Dec 2018 23:17:04 +0000
+Message-Id: <20181216231704.16761-1-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/b7l4dzBjV_3487Zir6v2ChE"; protocol="application/pgp-signature"
+Reply-To: longli@microsoft.com
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfGn50yF0YsEmJGgTR0bJMjMMe42gCNFOtx6XwYFW+BOmbfQX/TjRVZLrWCIy/pJhbs/GHkGWp1V7zXNECmtXsNlmTrG/lruIgaMaD/auMaVhfqOwRw1r
+ 6YL98WADIw3wtC9QKGhS2jpIwVDK1BBy6Qnljd/DVPmUQCcLOMFdpibu1umOyniVYPqKaHnNVBjsBwA5HEgXzAW/0QCJtDfyufiiwtNMDsUkcdjdFbBJ+Unf
+ +Pyy6CEWcW9x1I6BRi1B34Gj/GwOFh9RGtErz4JbxihuK5Py+ryUJols/W1P4Ykdwb/kBuqLJ3tjppBFcBUVEcsrbEVVw7GepHRu2hkKPWY1xpINznT/wUbT
+ kKTCZshls9cssJHO+2SixDpu3vrJ3zz785oF/8D5LRCffyvmkn6pGLrDs51RwfiiNmvvOvd7n7n8IvHgvrpOIZoJ6IqwrPbdHPN0MEigRH6yeBoxQws=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/b7l4dzBjV_3487Zir6v2ChE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Long Li <longli@microsoft.com>
 
-Hi all,
+The current code attempts to pin memory using the largest possible wsize
+based on the currect SMB credits. This doesn't cause kernel oops but this is
+not optimal as we may pin more pages then actually needed.
 
-After merging the nfs-anna tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Fix this by only pinning what are needed for doing this write I/O.
 
-/home/sfr/next/next/fs/nfs/nfsroot.c: In function 'root_nfs_data':
-/home/sfr/next/next/fs/nfs/nfsroot.c:264:5: error: implicit declaration of =
-function 'fmtcheck'; did you mean 'dst_check'? [-Werror=3Dimplicit-function=
--declaration]
-     fmtcheck(tmp, "%s", 0), utsname()->nodename);
-     ^~~~~~~~
-     dst_check
+Signed-off-by: Long Li <longli@microsoft.com>
+Cc: stable@vger.kernel.org
+---
+ fs/cifs/file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Caused by commit
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 3467351..c23bf9d 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -2617,11 +2617,13 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+ 		if (rc)
+ 			break;
+ 
++		cur_len = min_t(const size_t, len, wsize);
++
+ 		if (ctx->direct_io) {
+ 			ssize_t result;
+ 
+ 			result = iov_iter_get_pages_alloc(
+-				from, &pagevec, wsize, &start);
++				from, &pagevec, cur_len, &start);
+ 			if (result < 0) {
+ 				cifs_dbg(VFS,
+ 					"direct_writev couldn't get user pages "
+-- 
+2.7.4
 
-  66ab6f062d96 ("nfs: use fmtcheck() in root_nfs_data")
-
-For some reason this did not turn up until I was building the
-hwmon-staging tree (maybe some Kconfig change casued it to be built now),
-so I have just reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/b7l4dzBjV_3487Zir6v2ChE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW3M4ACgkQAVBC80lX
-0GyWpgf7BzuNbWNvh4jN36sW2BhM9Xo6BJ5qswIWKQCwJtiEG/CWidEcKMnV0DB/
-uIRij9FK45Yh0MgrWRkogTyQOnPTUyQckkBANRIOc6bKAflxT5+CzuqCtFYT263o
-KInyRT+KW3kp2V+6CTmpddyiIE9PL5PtPpdtBe63MIwxZHnWkX/t7fKwZI1nV8aW
-IX3TmybtKO6UKGYLEfVR9f+GikFhcodgfAzb9tVBBrv8vhr3c/Ifda0roQxHgrDr
-8r7sypF0FI6A/SETXjgwy3BwEgVAH/eGjvGW7uhonGaEf9NEWB+L6XztGBQMp9bp
-xZIjgZwRVNsrsmf8kosFIUp99viBng==
-=O2WA
------END PGP SIGNATURE-----
-
---Sig_/b7l4dzBjV_3487Zir6v2ChE--
