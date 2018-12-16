@@ -2,99 +2,125 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27B3C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 22:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55599C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7DA5206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 22:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17D6A2082F
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:00:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aA9pjgwK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731075AbeLPWmR (ORCPT
+        id S1731022AbeLPXA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 17:42:17 -0500
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:52220
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730758AbeLPWmR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 17:42:17 -0500
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with ESMTP
-        id Yf62geg8gThUeYf62gg634; Sun, 16 Dec 2018 15:41:15 -0700
-x-originating-ip: 107.180.71.197
-Received: from longli by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <longli@linuxonhyperv2.linuxonhyperv.com>)
-        id 1gYf62-0004DS-PW; Sun, 16 Dec 2018 15:41:14 -0700
-From:   Long Li <longli@linuxonhyperv.com>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc:     Long Li <longli@microsoft.com>, stable@vger.kernel.org,
-        Murphy Zhou <jencce.kernel@gmail.com>
-Subject: [PATCH] CIFS: return correct errors when pinning memory failed for direct I/O
-Date:   Sun, 16 Dec 2018 22:41:07 +0000
-Message-Id: <20181216224107.16164-1-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 2.19.1
+        Sun, 16 Dec 2018 18:00:56 -0500
+Received: from ozlabs.org ([203.11.71.1]:48063 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730772AbeLPXA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 18:00:56 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43J0BY3Y1Dz9sD4;
+        Mon, 17 Dec 2018 10:00:53 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545001253;
+        bh=Eg1LDCJuiycr+IJ1tTYlJ0JnuID5/I8C2ecxcy3sDgQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=aA9pjgwKPcggeH2HBbXOSu3ax12TQi2tYpN0VUoW5bQupX5S7JUnleVpSlZJdAX+K
+         vNe6pQO+VdLGi7aciJ2N9T31GUGkXwjhU7oJ9lj840WMv7YDENMFzZxN57qkxgsSwr
+         RygI/met5FVonoiXv16EfCXYcYIt5u2f8m0Swsj8g2NPvWQe2mevQNUEaTaBSFhZJE
+         uu6X0pSu870YVfWPFB/JhXJsfL1ZCOVm3bu7SSd/fB8DRjrFKomx5cKwbor77A1ygN
+         NDIXCZm7tg0yKsn86m1XprwMWfctYrdK+KA7EB2zesTJi+Xyhs+WGzgaJd9oCcCThb
+         NfMRtMjYXWaTQ==
+Date:   Mon, 17 Dec 2018 10:00:26 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: linux-next: build failure after merge of the hwmon-staging tree
+Message-ID: <20181217100026.03438bcf@canb.auug.org.au>
 MIME-Version: 1.0
-Reply-To: longli@microsoft.com
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfEe15opoqopfTRBJopBEjQextT9kIvKHLmYcxa2cjXKOGgaQ1Gk76SaDsG8K53H4v2VExPcKlQEO8E5qHDTURnh3q2S7qdLhBxv+nlhaxde6oCCCy4i+
- WlS+myf6QtxJD9siqgHzQqXjWhY/wm5UOb6V1uOAZsM4eb4VNbYp+p9c+4w8hEWF6peYQnV6eYxgO0HYkRzut1auoVN2wAojo/LIftoooGhYwDqj5X67Rgd2
- RdG5U7jyJvjt7H1WJi8CEGUUfENpX+o/a4sBaEAKe3VHMu9vPww/5anedhHcSahK7Kw4nfwhPYmMj8YcYHBJW9UD66EfZNyb5jBlHlAQo8HVpXBdZPRmobsJ
- J8jHVhciF8LiP/KYnJN9Q6/lwtzrDhZFD4xUJX5Gn3eQpW8c7dsEtCtbM1B3HvKoJIFF2M3TZJ/3MM/QDFJpQwaicj8gA08/ddB4o3GVnWNeT5p4wAzK8+kc
- 7krW/RcwJRUiWegf
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dzd9M8gZrQuqUT0Elw5Dp=U"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+--Sig_/dzd9M8gZrQuqUT0Elw5Dp=U
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-When pinning memory failed, we should return the correct error code and
-rewind the SMB credits.
+Hi Guenter,
 
-Reported-by: Murphy Zhou <jencce.kernel@gmail.com>
-Signed-off-by: Long Li <longli@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: Murphy Zhou <jencce.kernel@gmail.com>
+After merging the hwmon-staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/hwmon/Kconfig:1298:warning: ignoring unsupported character '/'
+drivers/hwmon/Kconfig:1299: syntax error
+drivers/hwmon/Kconfig:1298:warning: ignoring unsupported character '/'
+drivers/hwmon/Kconfig:1298:warning: ignoring unsupported character '/'
+drivers/hwmon/Kconfig:1298: invalid statement
+
+Caused by commit
+
+  de75c2156b2f ("hwmon: Add On-Chip Controller (OCC) hwmon driver")
+
+interacting with updates to the kconfig system.
+
+I have applied the following merge fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Dec 2018 09:50:14 +1100
+Subject: [PATCH] hwmon: quote the path in Kconfig source statements
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- fs/cifs/file.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/hwmon/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index c9bc56b..3467351 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -2630,6 +2630,9 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
- 					result, from->type,
- 					from->iov_offset, from->count);
- 				dump_stack();
-+
-+				rc = result;
-+				add_credits_and_wake_if(server, credits, 0);
- 				break;
- 			}
- 			cur_len = (size_t)result;
-@@ -3313,13 +3316,16 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
- 					cur_len, &start);
- 			if (result < 0) {
- 				cifs_dbg(VFS,
--					"couldn't get user pages (cur_len=%zd)"
-+					"couldn't get user pages (rc=%zd)"
- 					" iter type %d"
- 					" iov_offset %zd count %zd\n",
- 					result, direct_iov.type,
- 					direct_iov.iov_offset,
- 					direct_iov.count);
- 				dump_stack();
-+
-+				rc = result;
-+				add_credits_and_wake_if(server, credits, 0);
- 				break;
- 			}
- 			cur_len = (size_t)result;
--- 
-2.7.4
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 62b68cd280dc..6f929bfa9fcd 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1295,7 +1295,7 @@ config SENSORS_NSA320
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called nsa320-hwmon.
+=20
+-source drivers/hwmon/occ/Kconfig
++source "drivers/hwmon/occ/Kconfig"
+=20
+ config SENSORS_PCF8591
+ 	tristate "Philips PCF8591 ADC/DAC"
+--=20
+2.19.1
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dzd9M8gZrQuqUT0Elw5Dp=U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW2QoACgkQAVBC80lX
+0Gw/Qwf+N07HzHYu832boHvaSVadC7IutAx3CZa2PkZSNY8iGfEfHPHdqN/nVTk+
+J7DvXuj7/p8/T4w8xty2hTVUzmYJhMwgh+DZkc0TQ0DccVTHRcc3Xdrx2zIY/hT4
+oq5tYesPIj9bgvyxZ23i+ffmrikG6V+4Q+k45uRrpaWg71u7zMx0dVP1YGwFYkiy
+/Nie8dU33rhNIncv3S2TUeyuDlM/C94BZyK+eZvwjWMXJajJL81/ayAsMSl7immL
+x0ckeLRj83GWg4mN7EN4faLWt+pQLMDexeAHyROLUphQPb9MXjuVepk/R9rN0TRn
+vHZCbgFdgqEhaHj0dPhL5N0u+kjvFQ==
+=nlrm
+-----END PGP SIGNATURE-----
+
+--Sig_/dzd9M8gZrQuqUT0Elw5Dp=U--
