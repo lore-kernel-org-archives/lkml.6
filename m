@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5647CC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFF6C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2741B21839
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:53:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D528021836
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544968395;
-	bh=rSelNg/IcvBew8ramZ9ws65cEWnm3FdtocmSQlc32iY=;
+	s=default; t=1544968461;
+	bh=1jo1r9c4MFEHJEYkcKZKKVVsTdA6D7xWI05n9rB+cvg=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=ESTeaPrg7zOGuuErwBr9aWQI7UDsJijJrLKBI/XW67mWytYBRgWvNKwP+A5YM243D
-	 IEUatLRAZSYOuC4Xqm81P6MygiGMgFVp4fDuUfO5U5MUIbxhF//Zoz0pXRXwAU7JQp
-	 +pEhyOulrJLYMpL0m2wVCOT4CRj/KBk0jltu24Us=
+	b=qLDNIuaU7Av4ytwWPJpyBE/EgWv1kQMSGv/Zm8z5jS4TI9LTzHfjhtEmtlQxHSru5
+	 BP+jEZEKBQfJDtNG5ILbr3Km9W0bf/UZo9e3h5+HJpzbljeb2oI6X2T0ktWFqnBdmr
+	 E3jqKxGCz2OZNDZQPCdhtv9n15KZi0qv0YCkNmMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730714AbeLPNxO (ORCPT
+        id S1730701AbeLPNyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 08:53:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60988 "EHLO mail.kernel.org"
+        Sun, 16 Dec 2018 08:54:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730382AbeLPNxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 08:53:14 -0500
+        id S1729859AbeLPNyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 08:54:20 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AB382086C;
-        Sun, 16 Dec 2018 13:53:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63E162086C;
+        Sun, 16 Dec 2018 13:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544968393;
-        bh=rSelNg/IcvBew8ramZ9ws65cEWnm3FdtocmSQlc32iY=;
+        s=default; t=1544968459;
+        bh=1jo1r9c4MFEHJEYkcKZKKVVsTdA6D7xWI05n9rB+cvg=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zew8IQCkhWXbhXDheuB4B3v6Li5VI8F2s/JYET2FBMNzGwxtqzJpse9Zwzbrpyts4
-         bSRyIdoRk8ficX1707jsfn0yTWkG1S4pOP22eo+Xk5u4nFvZLrCnEHU4WAyiCfBFYX
-         V8GKHmRf4m7DKlWQGzNfUMkn3mmnmmEZf3uHnMH0=
-Date:   Sun, 16 Dec 2018 13:53:05 +0000
+        b=QIxOvGjj4Uow2Wo85CclAyYl2uw+hCg5aDPjROomTX7gC6ZBfqh2Dd+S8jAtj0snJ
+         9hmWOE29pCrVYdnUcVukf1Ab/kv9FfwRG4F5i5Cgr9yrKtiSqER8aWXLjVjVD6Clfi
+         aqy0Co5Sd1ONHMeE87oNhU07rJtFLAV296vVfDV4=
+Date:   Sun, 16 Dec 2018 13:54:14 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
 To:     Stefan Popa <stefan.popa@analog.com>
 Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
@@ -47,12 +47,11 @@ Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
         <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         <stefan.popa@analog.co>
-Subject: Re: [PATCH 07/11] staging: iio: adc: ad7606: Use vendor prefix for
- DT properties
-Message-ID: <20181216135305.59deb3c5@archlinux>
-In-Reply-To: <1544705183-13288-8-git-send-email-stefan.popa@analog.com>
+Subject: Re: [PATCH 08/11] staging: iio: adc: ad7606: Add OF device ID table
+Message-ID: <20181216135414.66e4aceb@archlinux>
+In-Reply-To: <1544705183-13288-9-git-send-email-stefan.popa@analog.com>
 References: <1544705183-13288-1-git-send-email-stefan.popa@analog.com>
-        <1544705183-13288-8-git-send-email-stefan.popa@analog.com>
+        <1544705183-13288-9-git-send-email-stefan.popa@analog.com>
 X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -62,64 +61,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 14:46:19 +0200
+On Thu, 13 Dec 2018 14:46:20 +0200
 Stefan Popa <stefan.popa@analog.com> wrote:
 
-> The 'adi' vendor prefix needs to be added to conversion-start, range,
-> first-data and oversampling-ratio properties.
+> The driver does not have a struct of_device_id table, but supported
+> devices are registered via Device Trees. This patch adds and OF device
+> ID table.
 > 
 > Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+Applied.
 
 Thanks,
 
 Jonathan
 
 > ---
->  drivers/staging/iio/adc/ad7606.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  drivers/staging/iio/adc/ad7606_par.c | 10 ++++++++++
+>  drivers/staging/iio/adc/ad7606_spi.c | 10 ++++++++++
+>  2 files changed, 20 insertions(+)
 > 
-> diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
-> index 0925379..3355301 100644
-> --- a/drivers/staging/iio/adc/ad7606.c
-> +++ b/drivers/staging/iio/adc/ad7606.c
-> @@ -322,7 +322,7 @@ static int ad7606_request_gpios(struct ad7606_state *st)
->  {
->  	struct device *dev = st->dev;
+> diff --git a/drivers/staging/iio/adc/ad7606_par.c b/drivers/staging/iio/adc/ad7606_par.c
+> index 6269ee7..ac0c7b0 100644
+> --- a/drivers/staging/iio/adc/ad7606_par.c
+> +++ b/drivers/staging/iio/adc/ad7606_par.c
+> @@ -90,12 +90,22 @@ static const struct platform_device_id ad7606_driver_ids[] = {
 >  
-> -	st->gpio_convst = devm_gpiod_get(dev, "conversion-start",
-> +	st->gpio_convst = devm_gpiod_get(dev, "adi,conversion-start",
->  					 GPIOD_OUT_LOW);
->  	if (IS_ERR(st->gpio_convst))
->  		return PTR_ERR(st->gpio_convst);
-> @@ -331,7 +331,8 @@ static int ad7606_request_gpios(struct ad7606_state *st)
->  	if (IS_ERR(st->gpio_reset))
->  		return PTR_ERR(st->gpio_reset);
+>  MODULE_DEVICE_TABLE(platform, ad7606_driver_ids);
 >  
-> -	st->gpio_range = devm_gpiod_get_optional(dev, "range", GPIOD_OUT_LOW);
-> +	st->gpio_range = devm_gpiod_get_optional(dev, "adi,range",
-> +						 GPIOD_OUT_LOW);
->  	if (IS_ERR(st->gpio_range))
->  		return PTR_ERR(st->gpio_range);
+> +static const struct of_device_id ad7606_of_match[] = {
+> +	{ .compatible = "adi,ad7605-4" },
+> +	{ .compatible = "adi,ad7606-4" },
+> +	{ .compatible = "adi,ad7606-6" },
+> +	{ .compatible = "adi,ad7606-8" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, ad7606_of_match);
+> +
+>  static struct platform_driver ad7606_driver = {
+>  	.probe = ad7606_par_probe,
+>  	.id_table = ad7606_driver_ids,
+>  	.driver = {
+>  		.name	 = "ad7606",
+>  		.pm	 = AD7606_PM_OPS,
+> +		.of_match_table = ad7606_of_match,
+>  	},
+>  };
 >  
-> @@ -340,7 +341,7 @@ static int ad7606_request_gpios(struct ad7606_state *st)
->  	if (IS_ERR(st->gpio_standby))
->  		return PTR_ERR(st->gpio_standby);
+> diff --git a/drivers/staging/iio/adc/ad7606_spi.c b/drivers/staging/iio/adc/ad7606_spi.c
+> index 9291598..2608d34 100644
+> --- a/drivers/staging/iio/adc/ad7606_spi.c
+> +++ b/drivers/staging/iio/adc/ad7606_spi.c
+> @@ -57,9 +57,19 @@ static const struct spi_device_id ad7606_id[] = {
+>  };
+>  MODULE_DEVICE_TABLE(spi, ad7606_id);
 >  
-> -	st->gpio_frstdata = devm_gpiod_get_optional(dev, "first-data",
-> +	st->gpio_frstdata = devm_gpiod_get_optional(dev, "adi,first-data",
->  						    GPIOD_IN);
->  	if (IS_ERR(st->gpio_frstdata))
->  		return PTR_ERR(st->gpio_frstdata);
-> @@ -348,7 +349,8 @@ static int ad7606_request_gpios(struct ad7606_state *st)
->  	if (!st->chip_info->has_oversampling)
->  		return 0;
->  
-> -	st->gpio_os = devm_gpiod_get_array_optional(dev, "oversampling-ratio",
-> +	st->gpio_os = devm_gpiod_get_array_optional(dev,
-> +						    "adi,oversampling-ratio",
->  						    GPIOD_OUT_LOW);
->  	return PTR_ERR_OR_ZERO(st->gpio_os);
->  }
+> +static const struct of_device_id ad7606_of_match[] = {
+> +	{ .compatible = "adi,ad7605-4" },
+> +	{ .compatible = "adi,ad7606-4" },
+> +	{ .compatible = "adi,ad7606-6" },
+> +	{ .compatible = "adi,ad7606-8" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, ad7606_of_match);
+> +
+>  static struct spi_driver ad7606_driver = {
+>  	.driver = {
+>  		.name = "ad7606",
+> +		.of_match_table = ad7606_of_match,
+>  		.pm = AD7606_PM_OPS,
+>  	},
+>  	.probe = ad7606_spi_probe,
 
