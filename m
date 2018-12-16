@@ -4,83 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCA6C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 00:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC1FC43444
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 00:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 026F92086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 00:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B7FA2171F
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 00:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RlMoGDpL"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GapDKGtD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbeLPAPK (ORCPT
+        id S1729800AbeLPAQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 19:15:10 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35866 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbeLPAPJ (ORCPT
+        Sat, 15 Dec 2018 19:16:15 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33520 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727558AbeLPAQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 19:15:09 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so7989529ljk.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 16:15:07 -0800 (PST)
+        Sat, 15 Dec 2018 19:16:14 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v1-v6so8007374ljd.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Dec 2018 16:16:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kaJUjhireTSJd5qGmM0k3oHxv5G0DZYtKI5l31H90S8=;
-        b=RlMoGDpLPLuaQLGUbXO5gYsA099s4rrT/kxukisvcP74dk46IahU5Ru7EjijesgHQV
-         t1LJIbPaArZO8rC18No7QG30REq6p+oSVTI7BpYLAF579+8n/3Y1BEOUdEKiWmilta2i
-         6dhEIUUSVB84c/8+eWA7IzZ1ZOEGECpFxmEWc=
+        bh=xowB4fO2ulejTfd/hVWncQjFixfhCvws4woiTLenw2I=;
+        b=GapDKGtDAKjLVGvkcLYvNGvI10+PZ3hawP/uMtdBfHRpd2qW0VMZ6M/kwRxSZ/TmuT
+         zYVXBbc4CZ0HuXdVoFhPuW9ZS/TyYB9IhaPUohKPY4xObr+kgCPPT3gBujECY+7y3R/5
+         6affQfw4XpaksxwxrtMTAZi4GC1a2aBhH3nyI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kaJUjhireTSJd5qGmM0k3oHxv5G0DZYtKI5l31H90S8=;
-        b=KUhaCAQBZvoMXmaEWjieu/IJeaZlVLJ6bVf9vIMixeFHLwiN8bq65LUe62urAmPk1m
-         wtEOLC8xYwzzlHdpnMA3Q3HXq49yIOFUTFmWbBJTsVBGFLwTIzgw6Q3Xzg3d29/Kxb7L
-         VUC3e4FAYPqeu61T10Yu1hDhdUUkmtjHvu9ANhdVvuYWAZeBzzIDIpQK70ylH+BJBwx4
-         tvtnINSc+JtWuYO8vaPA0HKl3jk+wfkqZuORziYW5Z+DOLmZx3D3kSuiLNBn62w7/oWS
-         8wq7H+xIzhKi9R5l9foTrVTzGTwmHaQ5i3q/I8++WY/X/teoMmY8bSPjLpb0LVTF1BsQ
-         w7Mw==
-X-Gm-Message-State: AA+aEWZvpXUM6a9vePk7RKkQrNBrsUBVGLS5qZl3bUId8xBu+trI045q
-        rNtrNHmDvZc+Zw1iix2cZTrOSZJRGXh2THkj7m2/zg==
-X-Google-Smtp-Source: AFSGD/VIgWUvSIZF81NTOi6KJxvqipGZFyBjiMrFPbOHcQ1n20gaGNpZp3a0ZsXyX4ZJi+ovPB5vbPT6LnrB1+nbefU=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr4629589ljj.9.1544919306999;
- Sat, 15 Dec 2018 16:15:06 -0800 (PST)
+        bh=xowB4fO2ulejTfd/hVWncQjFixfhCvws4woiTLenw2I=;
+        b=dATSaGAed7kWAVdJLzn+u3b3ArTOgFzIvcZBapnXnAFaLyVT5Dyg9JgjbJm7/+FeM1
+         nVfP2Q168IjemxiFL7QyGxyIYRBNSS+uULAq4XpCtkp0hJ5ofRv2sAIjnkozXTlwxgpQ
+         TnvoyRf2vTBeXRV3ZRS+9XzgkEQ6IvezXv29QoJhXJWZQw6KPtxqR4RL6gpi7jEVj7Vs
+         FwTTlHO1JxCm+Z9AsIYLx+cEB4BhzVhIsgtZd9tgB3N1W0M9/G4yN0btmCktmIolEgbS
+         XHnvRTih0XuzQK1KUhjUC/lBnFMj91yYT4njMtBwsBjMRHKZjNX0wVoTU7LnQ6N6COhG
+         xuAg==
+X-Gm-Message-State: AA+aEWapZVCf/LU5lVxEUjvDvoixwdUX+aJiwKcGd9XbWfoxHMkGZ5n7
+        sD8HmymZkRiw0SrZoQP/SmIiFWrpoWVoWyQFhiPfoA==
+X-Google-Smtp-Source: AFSGD/VFpcwYveA7OjmMz4CuZc0i9nUUNnXap7UWXfaqvi0aI8bOfQLB4ucPAFVTaop5KKqiv+r/Bj72Q/kw5s/8xYE=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr4618278ljc.97.1544919372414;
+ Sat, 15 Dec 2018 16:16:12 -0800 (PST)
 MIME-Version: 1.0
-References: <3f9179c9a1c8e2486cdd15d28530cd2e381a8830.1544152023.git.christophe.leroy@c-s.fr>
-In-Reply-To: <3f9179c9a1c8e2486cdd15d28530cd2e381a8830.1544152023.git.christophe.leroy@c-s.fr>
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com> <20181120141631.18949-4-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20181120141631.18949-4-ckeepax@opensource.cirrus.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 16 Dec 2018 01:14:55 +0100
-Message-ID: <CACRpkdahnp42c1vT6JHLDVWerCqUH9ugSE4i9Xiu+y49xHE76g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+Date:   Sun, 16 Dec 2018 01:16:00 +0100
+Message-ID: <CACRpkda2cmCurkAeTH0dwaHGOaDZRFC_XDV_qkgRz5M1kdr=tA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/8] pinctrl: lochnagar: Add initial binding documentation
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
+        patches@opensource.cirrus.com,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 2:07 PM Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+On Tue, Nov 20, 2018 at 3:16 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-> spi_read() and spi_write() require DMA-safe memory. When
-> CONFIG_VMAP_STACK is selected, those functions cannot be used
-> with buffers on stack.
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform. This driver supports the board
+> controller chip on the Lochnagar board.
 >
-> This patch replaces calls to spi_read() and spi_write() by
-> spi_write_then_read() which doesn't require DMA-safe buffers.
->
-> Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Patch applied for fixes.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
