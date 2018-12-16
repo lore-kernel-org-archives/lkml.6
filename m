@@ -2,129 +2,78 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB794C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 17:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A7B2C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 17:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFEC82082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 17:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5EDA2084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 17:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730695AbeLPR2b (ORCPT
+        id S1730722AbeLPRr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 12:28:31 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:40148 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730449AbeLPR2b (ORCPT
+        Sun, 16 Dec 2018 12:47:27 -0500
+Received: from smtprelay0231.hostedemail.com ([216.40.44.231]:36400 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730449AbeLPRr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 12:28:31 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 6394C72CC59;
-        Sun, 16 Dec 2018 20:28:28 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 50C20965035; Sun, 16 Dec 2018 20:28:28 +0300 (MSK)
-Date:   Sun, 16 Dec 2018 20:28:28 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc/ptrace: cleanup do_syscall_trace_enter
-Message-ID: <20181216172828.GA25359@altlinux.org>
-References: <20181119210139.GA8360@altlinux.org>
- <87efbe166y.fsf@concordia.ellerman.id.au>
- <20181203031823.GE11573@altlinux.org>
- <20181207011946.GA18558@altlinux.org>
- <87y391k2tq.fsf@concordia.ellerman.id.au>
- <20181207154255.GA28964@altlinux.org>
- <20181207155605.GB28964@altlinux.org>
- <20181207185226.GB31278@altlinux.org>
- <20181210132806.GA4177@redhat.com>
- <20181210133655.GH11942@altlinux.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210133655.GH11942@altlinux.org>
+        Sun, 16 Dec 2018 12:47:27 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 9800B100E86C0;
+        Sun, 16 Dec 2018 17:47:25 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: cub06_40a9d16c48d3b
+X-Filterd-Recvd-Size: 1997
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 16 Dec 2018 17:47:24 +0000 (UTC)
+Message-ID: <1bfa8186371146e05bc0d84e308e0e08115236d5.camel@perches.com>
+Subject: Re: [PATCH 2/2] Staging: nvec: nvec: fixed check style issues
+From:   Joe Perches <joe@perches.com>
+To:     Amir Mahdi Ghorbanian <indigoomega021@gmail.com>, marvin24@gmx.de
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, ac100@lists.launchpad.net,
+        linux-tegra@vger.kernel.org
+Date:   Sun, 16 Dec 2018 09:47:23 -0800
+In-Reply-To: <1544979463-10126-1-git-send-email-indigoomega021@gmail.com>
+References: <1544979463-10126-1-git-send-email-indigoomega021@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Invoke tracehook_report_syscall_entry once.
+On Sun, 2018-12-16 at 08:57 -0800, Amir Mahdi Ghorbanian wrote:
+> Fixed an endline open parenthesis issue and replaced udelay() by the
+> preferred usleep_range() function.
 
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
- arch/powerpc/kernel/ptrace.c | 54 +++++++++++++++++++++---------------
- 1 file changed, 31 insertions(+), 23 deletions(-)
+Not all checkpatch bleats need to be fixed.
 
-diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
-index 714c3480c52d..8794d32c2d9e 100644
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -3263,32 +3263,40 @@ static inline int do_seccomp(struct pt_regs *regs) { return 0; }
-  */
- long do_syscall_trace_enter(struct pt_regs *regs)
- {
-+	u32 cached_flags;
-+
- 	user_exit();
- 
--	if (test_thread_flag(TIF_SYSCALL_EMU)) {
--		/*
--		 * A nonzero return code from tracehook_report_syscall_entry()
--		 * tells us to prevent the syscall execution, but we are not
--		 * going to execute it anyway.
--		 *
--		 * Returning -1 will skip the syscall execution. We want to
--		 * avoid clobbering any register also, thus, not 'gotoing'
--		 * skip label.
--		 */
--		if (tracehook_report_syscall_entry(regs))
--			;
--		return -1;
--	}
-+	cached_flags = READ_ONCE(current_thread_info()->flags) &
-+		       (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE);
- 
--	/*
--	 * The tracer may decide to abort the syscall, if so tracehook
--	 * will return !0. Note that the tracer may also just change
--	 * regs->gpr[0] to an invalid syscall number, that is handled
--	 * below on the exit path.
--	 */
--	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
--	    tracehook_report_syscall_entry(regs))
--		goto skip;
-+	if (cached_flags) {
-+		int rc = tracehook_report_syscall_entry(regs);
-+
-+		if (unlikely(cached_flags & _TIF_SYSCALL_EMU)) {
-+			/*
-+			 * A nonzero return code from
-+			 * tracehook_report_syscall_entry() tells us
-+			 * to prevent the syscall execution, but
-+			 * we are not going to execute it anyway.
-+			 *
-+			 * Returning -1 will skip the syscall execution.
-+			 * We want to avoid clobbering any register also,
-+			 * thus, not 'gotoing' skip label.
-+			 */
-+			return -1;
-+		}
-+
-+		if (rc) {
-+			/*
-+			 * The tracer decided to abort the syscall.
-+			 * Note that the tracer may also just change
-+			 * regs->gpr[0] to an invalid syscall number,
-+			 * that is handled below on the exit path.
-+			 */
-+			goto skip;
-+		}
-+	}
- 
- 	/* Run seccomp after ptrace; allow it to set gpr[3]. */
- 	if (do_seccomp(regs))
--- 
-ldv
+Function names with 40+ character length identifiers makes
+fitting within an 80 column limit nearly impossible.
+
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+[]
+> @@ -382,8 +382,10 @@ static void nvec_request_master(struct work_struct *work)
+>  		msg = list_first_entry(&nvec->tx_data, struct nvec_msg, node);
+>  		spin_unlock_irqrestore(&nvec->tx_lock, flags);
+>  		nvec_gpio_set_value(nvec, 0);
+> -		err = wait_for_completion_interruptible_timeout(
+> -				&nvec->ec_transfer, msecs_to_jiffies(5000));
+> +		done = &nvec->ec_transfer;
+> +		timeout = msecs_to_jiffies(5000);
+> +		err = wait_for_completion_interruptible_timeout(done,
+> +								timeout);
+
+This was easier to read without the temporaries.
+And where are done and timeout declared?
+
+Please compile your patches before submitting them.
+
+
