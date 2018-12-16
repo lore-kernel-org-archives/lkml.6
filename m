@@ -2,113 +2,122 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA1DC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB718C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50B12084A
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:31:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="AijvR2uf"
+	by mail.kernel.org (Postfix) with ESMTP id B41292084A
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 20:33:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbeLPUb0 (ORCPT
+        id S1730988AbeLPUdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 15:31:26 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44400 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730772AbeLPUb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 15:31:26 -0500
-Received: from zn.tnic (p200300EC2BE55900158E932065747965.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:5900:158e:9320:6574:7965])
+        Sun, 16 Dec 2018 15:33:17 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:57784 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730772AbeLPUdQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 15:33:16 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 43Hww81vvJz1qx96;
+        Sun, 16 Dec 2018 21:33:12 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 43Hww8192mz1qsZQ;
+        Sun, 16 Dec 2018 21:33:12 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id AYa6thiwyWgJ; Sun, 16 Dec 2018 21:33:10 +0100 (CET)
+X-Auth-Info: yaOdvTUCrt+hQr4sz1xTUa37B7MsjCS97HCky7vH1nM=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8ADDA1EC0B59;
-        Sun, 16 Dec 2018 21:31:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544992284;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=32nOUmww+vodvB+wVip9dltqYcG/yfF2vY2qh137j6o=;
-        b=AijvR2ufuX3JPXKYL8XPfEUiFNNq98CkULGm0ZeC4PYfJcyK15MMns870mG58B/d4Tpjn8
-        nGA5KSz8P3uqz4KYM8LAhMLTNCPn9AZSSoiHeORQt5uIg3rtG2+raN23izcaNdBiwS5poJ
-        RnT6WOE7WusvBBtHl/8pv2uT/D9p/Bw=
-Date:   Sun, 16 Dec 2018 21:31:13 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
- directory instead of simple_strtoull()
-Message-ID: <20181216203113.GA23823@zn.tnic>
-References: <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
- <201812170347.uTJ6Fwb8%fengguang.wu@intel.com>
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sun, 16 Dec 2018 21:33:10 +0100 (CET)
+Subject: Re: [PATCH] Revert "serial: 8250: Fix clearing FIFOs in RS485 mode
+ again"
+To:     Paul Burton <paul.burton@mips.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        Daniel Jedrychowski <avistel@gmail.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+References: <20181213174834.kxdy6fphaeoivqgh@pburton-laptop>
+ <20181216200833.27928-1-paul.burton@mips.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <f5a76d73-862f-3ebc-cd07-effc5c432103@denx.de>
+Date:   Sun, 16 Dec 2018 21:32:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20181216200833.27928-1-paul.burton@mips.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <201812170347.uTJ6Fwb8%fengguang.wu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:22:39AM +0800, kbuild test robot wrote:
-> Hi Chao,
+On 12/16/2018 09:10 PM, Paul Burton wrote:
+> Commit f6aa5beb45be ("serial: 8250: Fix clearing FIFOs in RS485 mode
+> again") makes a change to FIFO clearing code which its commit message
+> suggests was intended to be specific to use with RS485 mode, however:
 > 
-> Thank you for the patch! Yet something to improve:
+>  1) The change made does not just affect __do_stop_tx_rs485(), it also
+>     affects other uses of serial8250_clear_fifos() including paths for
+>     starting up, shutting down or auto-configuring a port regardless of
+>     whether it's an RS485 port or not.
 > 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.20-rc6 next-20181214]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>  2) It makes the assumption that resetting the FIFOs is a no-op when
+>     FIFOs are disabled, and as such it checks for this case & explicitly
+>     avoids setting the FIFO reset bits when the FIFO enable bit is
+>     clear. A reading of the PC16550D manual would suggest that this is
+>     OK since the FIFO should automatically be reset if it is later
+>     enabled, but we support many 16550-compatible devices and have never
+>     required this auto-reset behaviour for at least the whole git era.
+>     Starting to rely on it now seems risky, offers no benefit, and
+>     indeed breaks at least the Ingenic JZ4780's UARTs which reads
+>     garbage when the RX FIFO is enabled if we don't explicitly reset it.
 > 
-> url:    https://github.com/0day-ci/linux/commits/Chao-Fan/x86-boot-KASLR-Parse-ACPI-table-and-limit-KASLR-to-choosing-immovable-memory/20181214-082218
-> config: i386-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
+>  3) By only resetting the FIFOs if they're enabled, the behaviour of
+>     serial8250_do_startup() during boot now depends on what the value of
+>     FCR is before the 8250 driver is probed. This in itself seems
+>     questionable and leaves us with FCR=0 & no FIFO reset if the UART
+>     was used by 8250_early, otherwise it depends upon what the
+>     bootloader left behind.
 > 
-> All error/warnings (new ones prefixed by >>):
+>  4) Although the naming of serial8250_clear_fifos() may be unclear, it
+>     is clear that callers of it expect that it will disable FIFOs. Both
+>     serial8250_do_startup() & serial8250_do_shutdown() contain comments
+>     to that effect, and other callers explicitly re-enable the FIFOs
+>     after calling serial8250_clear_fifos(). The premise of that patch
+>     that disabling the FIFOs is incorrect therefore seems wrong.
 > 
->    In file included from include/linux/kernel.h:207:0,
->                     from arch/x86/boot/string.c:17:
-> >> arch/x86/include/asm/div64.h:61:21: error: redefinition of 'div_u64_rem'
+> For these reasons, this reverts commit f6aa5beb45be ("serial: 8250: Fix
+> clearing FIFOs in RS485 mode again").
+> 
+> Signed-off-by: Paul Burton <paul.burton@mips.com>
+> Fixes: f6aa5beb45be ("serial: 8250: Fix clearing FIFOs in RS485 mode again").
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Daniel Jedrychowski <avistel@gmail.com>
+> Cc: Marek Vasut <marex@denx.de>
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: stable <stable@vger.kernel.org> # 4.10+
+I am unable to test it on such a short notice as I'm currently ill, so I
+cannot tell if your change breaks the OMAP3/AM335x boards or not. Given
+that there are very few CI20 boards in use, I'd like to ask you for some
+extra time to investigate this on the OMAP3 too.
 
-Thanks for the report. We need something like this I guess:
-
----
-diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
-index 771971efc0d6..4a823481e4e1 100644
---- a/arch/x86/boot/string.c
-+++ b/arch/x86/boot/string.c
-@@ -191,7 +191,7 @@ char *strchr(const char *s, int c)
- 	return (char *)s;
- }
- 
--static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
-+static inline u64 __div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
- {
- 	union {
- 		u64 v64;
-@@ -213,7 +213,7 @@ static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
- static inline u64 div_u64(u64 dividend, u32 divisor)
- {
- 	u32 remainder;
--	return div_u64_rem(dividend, divisor, &remainder);
-+	return __div_u64_rem(dividend, divisor, &remainder);
- }
- 
- static inline char _tolower(const char c)
+btw what strikes me as curious is that this patch emerged shortly after
+Ezequiel re-posted the CI20 U-Boot patches after an year-long hiatus, is
+it somehow related ?
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Best regards,
+Marek Vasut
