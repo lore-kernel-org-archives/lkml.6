@@ -2,132 +2,158 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6FAC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB127C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D48820578
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FveyYHr9"
+	by mail.kernel.org (Postfix) with ESMTP id BDAF62084D
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:58:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbeLPX5T (ORCPT
+        id S1731197AbeLPX60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:57:19 -0500
-Received: from ozlabs.org ([203.11.71.1]:54901 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730719AbeLPX5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:57:18 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43J1Rc0X8Pz9sDN;
-        Mon, 17 Dec 2018 10:57:15 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545004636;
-        bh=Pxcqezk0hlkGO7Is3YFHOdCZsD+6//981F3ztDCEL/M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FveyYHr9fpNFYHn+wlVHtvapuOS9fGkYY8ESYuCmT8v6bI49YdrWcY+O2fApKhtHW
-         YXrBLxr3oQJcUORROx31xRma7w/eMFV1MR1PTfRiSglkJVs9i7czl6e4taJt2xVQzD
-         YzkeynCLDMJAYxFoXWTtgATJE6dxGnko1ov1RMWFMv6syFV8urB4piV7aSI2hHDArm
-         gG4+yt1Y/uj65MBalZ8BhgVMR2XTi+Jpuap6wlEdf+enUnN4la6zyVT1XqyIaioCrL
-         ZbSiOsAnnLfIoKHGFaYGSNSt4XeWfUhuDCnp1W7jJNzljoDOyjvtpFsKtQemoVHl3c
-         aK+uadcPPOgRg==
-Date:   Mon, 17 Dec 2018 10:57:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: linux-next: manual merge of the thermal tree with the kbuild tree
-Message-ID: <20181217105715.5da0b389@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WQXhQ.z3uvrgIA0yf=AzGEV"; protocol="application/pgp-signature"
+        Sun, 16 Dec 2018 18:58:26 -0500
+Received: from imap1.codethink.co.uk ([176.9.8.82]:53101 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730719AbeLPX6Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 18:58:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1gYgIZ-0006n2-0l; Sun, 16 Dec 2018 23:58:15 +0000
+Message-ID: <1545004693.19315.66.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 00/88] 4.4.168-stable review
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Date:   Sun, 16 Dec 2018 23:58:13 +0000
+In-Reply-To: <c5862b36-beae-4810-fb33-4b646e96378b@roeck-us.net>
+References: <20181214115702.151309521@linuxfoundation.org>
+         <dfd49bfd-359a-7f5e-8332-5e6ad6da21cd@roeck-us.net>
+         <20181215080729.GG10074@kroah.com>
+         <c5862b36-beae-4810-fb33-4b646e96378b@roeck-us.net>
+Organization: Codethink Ltd.
+Content-Type: multipart/mixed; boundary="=-kROQblllK2+fsoWRxmgC"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WQXhQ.z3uvrgIA0yf=AzGEV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Zhang,
+--=-kROQblllK2+fsoWRxmgC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Today's linux-next merge of the thermal tree got a conflict in:
+On Sat, 2018-12-15 at 07:45 -0800, Guenter Roeck wrote:
+> On 12/15/18 12:07 AM, Greg Kroah-Hartman wrote:
+> > On Fri, Dec 14, 2018 at 06:10:29PM -0800, Guenter Roeck wrote:
+> > > On 12/14/18 3:59 AM, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.4.168 release.
+> > > > There are 88 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Sun Dec 16 11:56:41 UTC 2018.
+> > > > Anything received after that time might be too late.
+> > > 
+> > > Build results:
+> > > 	total: 170 pass: 145 fail: 25
+> > > Failed builds:
+> > > 	arm:allnoconfig
+> > > 	arm:tinyconfig
+> > > 	arm:efm32_defconfig
+> > > 	blackfin:defconfig
+> > > 	blackfin:BF561-EZKIT-SMP_defconfig
+> > > 	c6x:dsk6455_defconfig
+> > > 	c6x:evmc6457_defconfig
+> > > 	c6x:evmc6678_defconfig
+> > > 	h8300:allnoconfig
+> > > 	h8300:tinyconfig
+> > > 	h8300:edosk2674_defconfig
+> > > 	h8300:h8300h-sim_defconfig
+> > > 	h8300:h8s-sim_defconfig
+> > > 	m68k:allnoconfig
+> > > 	m68k:tinyconfig
+> > > 	m68k:m5272c3_defconfig
+> > > 	m68k:m5307c3_defconfig
+> > > 	m68k:m5249evb_defconfig
+> > > 	m68k:m5407c3_defconfig
+> > > 	microblaze:nommu_defconfig
+> > > 	microblaze:allnoconfig
+> > > 	microblaze:tinyconfig
+> > > 	sh:defconfig
+> > > 	sh:allnoconfig
+> > > 	sh:tinyconfig
+> > > Qemu test results:
+> > > 	total: 288 pass: 288 fail: 0
+> > > 
+> > > mm/nommu.c: In function '__get_user_pages_unlocked':
+> > > mm/nommu.c:211:49: error: 'write' undeclared (first use in this function)
+> > > mm/nommu.c:211:56: error: 'force' undeclared (first use in this function)
+> > > mm/nommu.c:212:9: warning: passing argument 7 of 'get_user_pages' from incompatible pointer type [enabled by default]
+> > > mm/nommu.c:185:6: note: expected 'struct vm_area_struct **' but argument is of type 'struct page **'
+> > > mm/nommu.c:212:9: error: too many arguments to function 'get_user_pages'
+> > > mm/nommu.c:185:6: note: declared here
+> > > 
+> > > Details are available at https://kerneltests.org/builders/.
+> > 
+> > Ugh, I'll dig through this later on today, we must be missing something
+> > with those backports that Ben did...
+> > 
+> 
+> 69ce144e5c3a ("mm: replace get_user_pages() write/force parameters
+> with gup_flags") seems to have missed converting a call of
+> get_user_pages().
 
-  drivers/thermal/Kconfig
+Right.  This was changed earlier upstream in commit cde70140fed8
+"mm/gup: Overload get_user_pages() functions", but I don't think it
+makes sense to apply all of that.  I'm attaching a minimal patch
+(tested with an arm allnoconfig build) which should ideally be inserted
+before mm-replace-get_user_pages-write-force-parameters-with-
+gup_flags.patch.
 
-between commit:
+Ben.
 
-  17815cc6622c ("treewide: surround Kconfig file paths with double quotes")
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+--=-kROQblllK2+fsoWRxmgC
+Content-Disposition: attachment;
+	filename*0=0001-mm-nommu.c-Switch-__get_user_pages_unlocked-to-use-_.pat;
+	filename*1=ch
+Content-Type: text/x-patch;
+	name="0001-mm-nommu.c-Switch-__get_user_pages_unlocked-to-use-_.patch";
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-from the kbuild tree and commit:
+RnJvbSAwZDBhZmU5MzNmNjBmNTczNmM5ODRlOTE3MTIxNGFhMzRiMTg3NjRjIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBCZW4gSHV0Y2hpbmdzIDxiZW4uaHV0Y2hpbmdzQGNvZGV0aGlu
+ay5jby51az4KRGF0ZTogU3VuLCAxNiBEZWMgMjAxOCAyMzo1MDowOCArMDAwMApTdWJqZWN0OiBb
+UEFUQ0hdIG1tL25vbW11LmM6IFN3aXRjaCBfX2dldF91c2VyX3BhZ2VzX3VubG9ja2VkKCkgdG8g
+dXNlCiBfX2dldF91c2VyX3BhZ2VzKCkKCkV4dHJhY3RlZCBmcm9tIGNvbW1pdCBjZGU3MDE0MGZl
+ZDggIm1tL2d1cDogT3ZlcmxvYWQgZ2V0X3VzZXJfcGFnZXMoKQpmdW5jdGlvbnMiLiAgVGhpcyBp
+cyBuZWVkZWQgYmVmb3JlIHBpY2tpbmcgY29tbWl0IDc2OGFlMzA5YTk2MQoibW06IHJlcGxhY2Ug
+Z2V0X3VzZXJfcGFnZXMoKSB3cml0ZS9mb3JjZSBwYXJhbWV0ZXJzIHdpdGggZ3VwX2ZsYWdzIi4K
+ClNpZ25lZC1vZmYtYnk6IEJlbiBIdXRjaGluZ3MgPGJlbi5odXRjaGluZ3NAY29kZXRoaW5rLmNv
+LnVrPgotLS0KIG1tL25vbW11LmMgfCA0ICsrLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvbW0vbm9tbXUuYyBiL21tL25vbW11
+LmMKaW5kZXggZmExNTYwYzIxOGQ1Li4yMzYwNTQ2ZGIwNjUgMTAwNjQ0Ci0tLSBhL21tL25vbW11
+LmMKKysrIGIvbW0vbm9tbXUuYwpAQCAtMjA4LDggKzIwOCw4IEBAIGxvbmcgX19nZXRfdXNlcl9w
+YWdlc191bmxvY2tlZChzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRzaywgc3RydWN0IG1tX3N0cnVjdCAq
+bW0sCiB7CiAJbG9uZyByZXQ7CiAJZG93bl9yZWFkKCZtbS0+bW1hcF9zZW0pOwotCXJldCA9IGdl
+dF91c2VyX3BhZ2VzKHRzaywgbW0sIHN0YXJ0LCBucl9wYWdlcywgd3JpdGUsIGZvcmNlLAotCQkJ
+ICAgICBwYWdlcywgTlVMTCk7CisJcmV0ID0gX19nZXRfdXNlcl9wYWdlcyh0c2ssIG1tLCBzdGFy
+dCwgbnJfcGFnZXMsIGd1cF9mbGFncywgcGFnZXMsCisJCQkgICAgICAgTlVMTCwgTlVMTCk7CiAJ
+dXBfcmVhZCgmbW0tPm1tYXBfc2VtKTsKIAlyZXR1cm4gcmV0OwogfQo=
 
-  3e8c4d31f8ed ("drivers: thermal: Move various drivers for intel platforms=
- into a subdir")
 
-from the thermal tree.
+--=-kROQblllK2+fsoWRxmgC--
 
-I fixed it up (I used the thermal tree version of this file and added
-the following merge fix patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 17 Dec 2018 10:54:07 +1100
-Subject: [PATCH] drivers: thermal: fixup for Kconfig string parsing tighten=
-ing up
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/thermal/intel/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kconfig
-index 9c06d4ad7c97..2e013eeb4a1d 100644
---- a/drivers/thermal/intel/Kconfig
-+++ b/drivers/thermal/intel/Kconfig
-@@ -55,7 +55,7 @@ config INTEL_QUARK_DTS_THERMAL
- 	  underlying BIOS/Firmware.
-=20
- menu "ACPI INT340X thermal drivers"
--source drivers/thermal/intel/int340x_thermal/Kconfig
-+source "drivers/thermal/intel/int340x_thermal/Kconfig"
- endmenu
-=20
- config INTEL_BXT_PMIC_THERMAL
---=20
-2.19.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WQXhQ.z3uvrgIA0yf=AzGEV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW5lsACgkQAVBC80lX
-0Gx+Wwf+Md4shsec2H6PMWmjwdCEbRfmgXe/a/jQThjPcPMBzrxOUA5uFQRsKhu/
-7AoJFxEpNhBFAEYgS7TZlASPokpN3zbqte0i+KoGCKtFoXNd1spBI0BYT7cqD4EP
-+QSEcVOrB2jPvRT+ujhLGmAhgul2jKlQya6btFYk5/ZP1eAdQoZ+r0ugu4qmudzt
-WvEEV+FtmNn7NqPWb5ScAtuyb1Q3SOauGFZqi4OklveZAWd9UfTgcX32eSSLOb1p
-f1KPOQxeR9i8SgNGsrNuHRdOY1gWPNRirAZ+L06jCYwr+QqcnndAc6ij/ORp1Wno
-1gjZSO0xmDjttEUwzPHqXE9mmDM9JQ==
-=7kxA
------END PGP SIGNATURE-----
-
---Sig_/WQXhQ.z3uvrgIA0yf=AzGEV--
