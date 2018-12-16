@@ -2,117 +2,88 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F71C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A1AC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CB0206C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAF9B206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="WdTdzif/"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="d05wh8SR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731162AbeLPX0N (ORCPT
+        id S1731127AbeLPXfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:26:13 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55513 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731012AbeLPX0N (ORCPT
+        Sun, 16 Dec 2018 18:35:46 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40647 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729842AbeLPXfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:26:13 -0500
-Received: by mail-it1-f193.google.com with SMTP id o19so16395611itg.5
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 15:26:12 -0800 (PST)
+        Sun, 16 Dec 2018 18:35:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so5415364pfo.7
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 15:35:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EavIckkG0CsdZ2qkKlOGygOr08ukf3mcJXqDqLICEd4=;
-        b=WdTdzif/YexPRKiaKDnPlS4T4i3EluuXHZFPCe2j9u1tQkqdu10uiA6jPMZX/hGMfP
-         MfW9zQvRVOcMGFPZoD5WVInFOdO7swQJz1wy/zc99saqDe6I61PrvywZKsTpsXMwCz+w
-         q5NXv5sLljdfMG01bo8NL6MpKnAVSMNtSGM9DZ7l1B2R+cfjS/AEtugL6poytNS2lf44
-         drMTK/sYpXyE3emmuUPDwujX4698sVGzGFp96/as/HPdvqpeXirTUk8CS5V6r7mZbPQS
-         74eap8VfuRcwZYTrsevzGAV9e00ZQaYAS+8gEQ6mqhsEWlZV75zkj8Kw/5lDU5SELs4Z
-         cVvA==
+        d=sifive.com; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=a2W2Erohv2kN1VDg1izFU8S9EnOS9gkcFOLAHDQ1PWI=;
+        b=d05wh8SRaVQJodD5iplqgKPG8oSHs3aViY+not3uTNBNxpIKOOP3tEhYOrGOBPnDHl
+         /OfxBH7d92IHlFEaX41xYQj1sWtrQ/vZW9en8mmmkvKAgi9qzpdVy2Nf+omtMLMHgMWO
+         B5M+b/mrgeG7FG/V+g3IFGAjOKZ2W8LKwYPyWpCrIzKsxJ2/bS3iNC6fbKuWqj8sfKny
+         NxVVB8wM1FFZYJww+rseq1DDUxYrrkrrl5llkjB5XTA/D9DkyssG74Ki69T8E04s+478
+         qQ8oQrErsJk5JsiIxBairMHTEuCXNaBNaKmM/Rc+iGY3ZXURux2x2iZdagckH6CPpJxX
+         s1Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EavIckkG0CsdZ2qkKlOGygOr08ukf3mcJXqDqLICEd4=;
-        b=NTDq2+3owZ4HLFJgLUkEbSkmfr8wTAFQEA28F3REJofTfxAYU7CxFcyobMz+NO7x//
-         N0hXnkEb5D/W/Uf/R9/LPKpW5vYsFx1xSRKmkOgCpgmwCscCdFVKmGOsV2EWRcr/BMXu
-         64Vho+PH/Cd+WTCAbK53m8k/hu4wMlf+NM4N4OjZNq6YYqHPBysid+WuPNVF5hs1aKKl
-         9UY2Me++a6xtaiBRaqMfQ7ayiLTkKGBj6tpFU3hhgdNwh/NqI8yTwa8bTcsc3WqNd23w
-         l8sOF5Up+3o+TLuwOcJ4/XiMXlDNuRa0HYnPlDZjHMpHLja3ejcsk/edUQ3j4djbyBh0
-         P+ZA==
-X-Gm-Message-State: AA+aEWZ+ufos0eE/BRhOW0+yP29pkc2bDSxkrIBHdtu14fI9v5CAlqN6
-        ScoFPG3vwjb1DuKcVTEfi3DxRryFwZp1ApGa3axSwQ==
-X-Google-Smtp-Source: AFSGD/UuyntCCCLhhZ0Q/o4kOf6pEK5gGUo1uRrUP70J/W2Wn/ox2CFs9pr2l63fPZHAJhPVGHt0V9k0XeKM1+y4OuQ=
-X-Received: by 2002:a02:5ec9:: with SMTP id h192mr10118712jab.112.1545002772089;
- Sun, 16 Dec 2018 15:26:12 -0800 (PST)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=a2W2Erohv2kN1VDg1izFU8S9EnOS9gkcFOLAHDQ1PWI=;
+        b=CBP0qvJbEGXBUjqI8U0pIpMKNOyYtsPOUBt0IcBWicLB8FLF+4T9Ol4xhqJfkTL94f
+         d6hwD/9A4tIsrpj66HgdIvv2AC1h8ViA3UOlleIhZlyKTKwGO6YLfttfpYxTgQd0Nkhz
+         qLKL4/Oj//JauuPfAXWWqLqZChDtiYAOzXMty9UAaZBlP95Z6reCk28ITmTE3oeEcOi5
+         Al4NBR8KqjUexYcOilTeU19kq6D7OK9QkEAicL7S5Pp4d69EIwsO2erx4Bpp813gXySO
+         /LwZojSaORcGFdsKd9BNX/poK4ZhvkEZLZmNjt0eO/XRS8vvayl8seVIe6Lhszz/gK0z
+         vFHA==
+X-Gm-Message-State: AA+aEWYOG8jBCk7LQRPpSxxJeL2U91wQSdosQ2dFB3MRFPmzbosU2C2j
+        CYWxckyzgq487jLqfrQhsedfTw==
+X-Google-Smtp-Source: AFSGD/VSe6tpgshFdVu6u/+4e/zr889PgKO2jZP7I1hFsiU/wLbRCOpLHFlmQZgplVFRQ6ZSYeRNWQ==
+X-Received: by 2002:a63:dd55:: with SMTP id g21mr10105713pgj.86.1545003344128;
+        Sun, 16 Dec 2018 15:35:44 -0800 (PST)
+Received: from ?IPv6:2607:f598:b382:d300::14ef? ([2607:f598:b382:d300::14ef])
+        by smtp.gmail.com with ESMTPSA id x28sm19933524pge.66.2018.12.16.15.35.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Dec 2018 15:35:43 -0800 (PST)
+Subject: Re: [PATCH 0/7] arch: riscv: add DT file support, starting with the
+ SiFive HiFive-U
+To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20181215052154.24347-1-paul.walmsley@sifive.com>
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+Message-ID: <41dac7a1-3f66-6a3f-8a68-206688e5bd9e@sifive.com>
+Date:   Sun, 16 Dec 2018 15:35:41 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <1544533009-12425-1-git-send-email-mw@semihalf.com> <20181216.124120.731491122771817496.davem@davemloft.net>
-In-Reply-To: <20181216.124120.731491122771817496.davem@davemloft.net>
-From:   Marcin Wojtas <mw@semihalf.com>
-Date:   Mon, 17 Dec 2018 00:25:58 +0100
-Message-ID: <CAPv3WKfz4AkODzJ+gsV=u6ve5YnZEdUhZF5+VmFPQa4mp9okUw@mail.gmail.com>
-Subject: Re: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
-To:     David Miller <davem@davemloft.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        netdev <netdev@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Stefan Chulski <stefanc@marvell.com>, nadavh@marvell.com,
-        Grzegorz Jaszczyk <jaz@semihalf.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181215052154.24347-1-paul.walmsley@sifive.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+.. along with the PRCI patches which are under review.
 
-niedz., 16 gru 2018 o 21:41 David Miller <davem@davemloft.net> napisa=C5=82=
-(a):
->
-> From: Marcin Wojtas <mw@semihalf.com>
-> Date: Tue, 11 Dec 2018 13:56:49 +0100
->
-> > Recent changes in the mvneta driver reworked allocation
-> > and handling of the ingress buffers to use entire pages.
-> > Apart from that in SW BM scenario the HW must be informed
-> > via PRXDQS about the biggest possible incoming buffer
-> > that can be propagated by RX descriptors.
-> >
-> > The BufferSize field was filled according to the MTU-dependent
-> > pkt_size value. Later change to PAGE_SIZE broke RX operation
-> > when usin 64K pages, as the field is simply too small.
-> >
-> > This patch conditionally limits the value passed to the BufferSize
-> > of the PRXDQS register, depending on the PAGE_SIZE used.
-> > On the occasion remove now unused frag_size field of the mvneta_port
-> > structure.
-> >
-> > Fixes: 562e2f467e71 ("net: mvneta: Improve the buffer allocation method=
- for SWBM")
-> > Signed-off-by: Marcin Wojtas <mw@semihalf.com>
->
-> The discussion died on this, but the bug should be fixed.
->
-> So in the short term I am applying this and queueing it up for v4.19
-> -stable.
->
-> Thanks.
+Will repost these such that the files that depend on the new clock
+headers are at the end of this series.  Then we can send those last two
+patches after the clock merge in the merge window, assuming the PRCI
+patches make it.
 
-Thanks. Indeed, the patch is valid as a fix for current version of SW
-BM. However, because this concept is broken, I will rework it and
-submit patch/patches some time early 2019.
 
-Best regards,
-Marcin
+- Paul
+
+On 12/14/18 9:21 PM, Paul Walmsley wrote:
+> Applies on v4.20-rc6.
