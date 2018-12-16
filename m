@@ -6,93 +6,98 @@ X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A32C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A04C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E735B2086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AFBB21836
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544986575;
-	bh=MCiUR2NprOQeHfKvw6aflAs3MJrwmgnf25fiVDa0aRE=;
+	s=default; t=1544986776;
+	bh=iEh2czqkRKQxKSmj42FERBP8dXMhD2BdHqh9k8fmnhY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=BLFZ7CNiRkzDfp3H+uxh9RJpZennEX3YT+rqAQclm0WOi2Vc31/BIVTS9/tqzbzZu
-	 Qr0Xy2akGV1emGR1vUAbMzwCyASFB2uGAdvO48bxTycOIViuWOA1nnDNmGSTHWLaaR
-	 3f1qxoGPehIzUM2mJTbp2lYI+rvtWPUy0gmuigGE=
+	b=cIP1E+4nXRemKbuHRUMBH+LSSQyvohttIbTgCChljTv2CFK3k3z9oUg0f34V9kX2o
+	 Og9XzW2bh6rbaBCQWHKf/zX04iTyTNVwywaVtbMshutK2LiDJuBJ0immVaCGYm897R
+	 TiUzWS/8VBoLc4xl6g0q6VKm/Pjuk5qqP3Yui0M8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730842AbeLPS4N (ORCPT
+        id S1730808AbeLPS7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 13:56:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46606 "EHLO mail.kernel.org"
+        Sun, 16 Dec 2018 13:59:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730097AbeLPS4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 13:56:13 -0500
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        id S1730097AbeLPS7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 13:59:34 -0500
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62E082086C
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 18:56:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9195A21842
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 18:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544986572;
-        bh=MCiUR2NprOQeHfKvw6aflAs3MJrwmgnf25fiVDa0aRE=;
+        s=default; t=1544986773;
+        bh=iEh2czqkRKQxKSmj42FERBP8dXMhD2BdHqh9k8fmnhY=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rtP3SvRpe2SHQ0k60c1F0mev9/rr4Blk1PwutDPFBbxn83HVVt12NbEQAumejkc/Z
-         g3uxCwdBjtWMBO9hh0q3+4sXnnTWj85O2fI2dviIQb71bXErJZjobpNkHw/zBP7VGZ
-         Xlh7/Trs7iimCXlmeGWUf0vLahUA6hivkSqfRBgE=
-Received: by mail-wr1-f44.google.com with SMTP id t27so10119195wra.6
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 10:56:12 -0800 (PST)
-X-Gm-Message-State: AA+aEWZxIP5aLxJn46aMrhVjwvYtShl+re2c3pl3EYLSiZetZfhVpQKE
-        n1wKySkDqRH6D0B1NyI7gvXgubTo+oX4fXOwiSpM3g==
-X-Google-Smtp-Source: AFSGD/Xw467mRKoqES+eJaK3104rTPAggMsMuQeOVl+0vvhenT14gb6V8KbUIbFP93ApTB0u9EZ+qnGGmLW61ttsX2o=
-X-Received: by 2002:adf:8323:: with SMTP id 32mr8013201wrd.176.1544986570861;
- Sun, 16 Dec 2018 10:56:10 -0800 (PST)
+        b=Pnf1Qqlz7p3DreCSow9XsJInT7KL2AH4BC4RJimruBizMY+21Ew66DRvWZuYZmQ6a
+         iF92nLu+cAiCgrrqohN3Tu6qeNNrW66hiHNhyXTmunTCjla991+e8LjUxM2OWmg4pr
+         B+lwB4gspEuJSUv7U5J7P3r6xDdz1ftcxvXo9zBc=
+Received: by mail-wm1-f43.google.com with SMTP id y185so3106946wmd.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 10:59:33 -0800 (PST)
+X-Gm-Message-State: AA+aEWaPH6CtR3XYmOXmn7T7Q86qFuRr1pEd8bIiG+iFy8R0RSbB5/MF
+        KQz8jXwUXs/SkUjFGRAIhFg3D3GE9qxqUhelXHcOFA==
+X-Google-Smtp-Source: AFSGD/UO/YP0DBMKjdaBpudLiMwz6gWufOtCry40XHR9ndsedbVgFPzIMfgVEOxZsY1CgkkRNf6GzdWiBaCh3YqfkuE=
+X-Received: by 2002:a1c:f112:: with SMTP id p18mr8736220wmh.83.1544986771932;
+ Sun, 16 Dec 2018 10:59:31 -0800 (PST)
 MIME-Version: 1.0
 References: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com>
- <20181215212643.sfk2zwzatdfysbk3@pburton-laptop>
-In-Reply-To: <20181215212643.sfk2zwzatdfysbk3@pburton-laptop>
+ <20181215225009.GB23599@brightrain.aerifal.cx> <alpine.LFD.2.21.1812160054300.11202@eddie.linux-mips.org>
+ <20181216023259.GE23599@brightrain.aerifal.cx> <alpine.LFD.2.21.1812160319120.11202@eddie.linux-mips.org>
+ <20181216181336.GG23599@brightrain.aerifal.cx>
+In-Reply-To: <20181216181336.GG23599@brightrain.aerifal.cx>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 16 Dec 2018 10:55:48 -0800
-X-Gmail-Original-Message-ID: <CALCETrW49AdvgFrKkFaMtfaFcUDGGDykLDZoCH93utxe5pmPDQ@mail.gmail.com>
-Message-ID: <CALCETrW49AdvgFrKkFaMtfaFcUDGGDykLDZoCH93utxe5pmPDQ@mail.gmail.com>
+Date:   Sun, 16 Dec 2018 10:59:19 -0800
+X-Gmail-Original-Message-ID: <CALCETrXBfQ-EnOD3OjQh_BaiFyvULtmrMHoX0nv+=yrp6uHzgQ@mail.gmail.com>
+Message-ID: <CALCETrXBfQ-EnOD3OjQh_BaiFyvULtmrMHoX0nv+=yrp6uHzgQ@mail.gmail.com>
 Subject: Re: Fixing MIPS delay slot emulation weakness?
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+To:     Rich Felker <dalias@libc.org>
+Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Linux MIPS Mailing List <linux-mips@linux-mips.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Paul Burton <paul.burton@imgtec.com>,
         David Daney <david.daney@cavium.com>,
         Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Rich Felker <dalias@libc.org>
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 1:22 AM Paul Burton <paul.burton@mips.com> wrote:
+On Sun, Dec 16, 2018 at 10:13 AM Rich Felker <dalias@libc.org> wrote:
 >
-> Hi Andy,
->
-> On Sat, Dec 15, 2018 at 11:19:37AM -0800, Andy Lutomirski wrote:
-> > Some security researchers pointed out that writing to the delay slot
-> > emulation page is a great exploit technique on MIPS.  It was
-> > introduced in:
+> On Sun, Dec 16, 2018 at 01:50:13PM +0000, Maciej W. Rozycki wrote:
+> > On Sat, 15 Dec 2018, Rich Felker wrote:
 > >
-> > commit 432c6bacbd0c16ec210c43da411ccc3855c4c010
-> > Author: Paul Burton <paul.burton@imgtec.com>
-> > Date:   Fri Jul 8 11:06:19 2016 +0100
 > >
-> >     MIPS: Use per-mm page to execute branch delay slot instructions
+> >  It doesn't help that information about that is scattered across many
+> > documents.  You can check for the NODS flag in the opcodes library from
+> > binutils though, which is almost 100% accurate, except for the SYNC
+> > instructions, for semantic reasons (i.e. they are allowed, but we don't
+> > want GAS to reorder them).  Most of the disallowed stuff is in the
+> > microMIPS instruction set, due to encodings that execute as hardware
+> > macros.
 >
-> Are there any further details you can share? You'd still need to
-> persuade a program to both write to & jump to the page, right? We're
-> talking purely about this providing writable+executable memory?
+> I think it suffices to emulate what compilers generate in delay slots,
+> which should be fairly minimal and stable. At the very least we could
+> enumerate everything GCC and LLVM already emit there, and get them to
+> upstream a policy of not adding new insns as fpu-delay-slot-allowed.
+> If someone is writing asm by hand to do ridiculous things in the delay
+> slot with random ISA extensions, they shouldn't expect it to work.
+>
 
-Yes, exactly.  You need a bug in order to take advantage of it.  The
-RWX page at a known location just makes exploitation considerably
-easier.
-
-I should also note that, on x86 at least, emulating loads and stores
-is not so bad.  The x86 vsyscall emulation code does it and has almost
-fully correct fault semantics.  (I say "almost" because I didn't
-bother getting the semantics exactly right for non-canonical addresses
-and kernel addresses.)
+I feel like I have to ask: the real thing preventing emulation is that
+new nonstandard instructions might get used in FPU delay slots on
+non-FPU-supporting hardware?  This seems utterly nuts.  If you're
+using custom ISA extensions, why on Earth are you also using emulated
+floating point instructions?  You're targetting a specific known CPU
+if you do this, so you should use only instructions that actually work
+on that CPU.
