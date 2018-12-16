@@ -2,111 +2,95 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06AFDC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69D6C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D195B21836
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 652BA21836
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 19:37:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Deb/anuv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730869AbeLPTdr (ORCPT
+        id S1730836AbeLPThh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 14:33:47 -0500
-Received: from zimbra.alphalink.fr ([217.15.80.77]:35569 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730688AbeLPTdr (ORCPT
+        Sun, 16 Dec 2018 14:37:37 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44076 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730747AbeLPThg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 14:33:47 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 403DB2B5202D;
-        Sun, 16 Dec 2018 20:33:45 +0100 (CET)
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id oUn-c8l3N9_9; Sun, 16 Dec 2018 20:33:43 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id CD2E52B52035;
-        Sun, 16 Dec 2018 20:33:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qFxLihmiS-mT; Sun, 16 Dec 2018 20:33:43 +0100 (CET)
-Received: from localhost (unknown [82.120.188.200])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTPSA id 8421A2B5202D;
-        Sun, 16 Dec 2018 20:33:43 +0100 (CET)
-Date:   Sun, 16 Dec 2018 20:33:43 +0100
-From:   Guillaume Nault <g.nault@alphalink.fr>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     James Chapman <jchapman@katalix.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] l2tp: Add Protocol field compression
-Message-ID: <20181216193319.h5kxzuuo7unalg7u@kdev>
-References: <20181214211242.9721-1-semen.protsenko@linaro.org>
- <20181214211242.9721-2-semen.protsenko@linaro.org>
- <20181216163059.i5nadsfzyvcwa4o6@kdev>
- <CAKaJLVvj2Yv0hOXiRLvJ1Gnm3axOds21LHxmCW5K0YNpx+hk6w@mail.gmail.com>
+        Sun, 16 Dec 2018 14:37:36 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so7866998lfe.11
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 11:37:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rhaHyVhc63MzSY3yf2QAnmgzLKrW87+qU0wix3hm9f0=;
+        b=Deb/anuvet0KUnP1M84Olye3QqbZdP758tOHfAhXxvHnBYl+yOjd00ejqoeO7D0sa/
+         m30wXMg5JEJ1O9/ANwXKZNH8uDiD3kpInAhIG1C3IqIwE4VT4bxCHfTJGWk9at9CcW5p
+         qc3ToOJ58WyaVvT5JDFJnpbPxDEsP0OJPiorI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rhaHyVhc63MzSY3yf2QAnmgzLKrW87+qU0wix3hm9f0=;
+        b=S6V/MbvVN/TmvvxdIRQKYL/5TCJwOokPaVFx8RG4LOtaacI08LTUVU33KXukenZ5pq
+         bJkXOIr5asIZX7CDwox28J7z4p9bCEuBCw9rI45GhzRSMjn/GqyeUR2FoaYcfSVq0EDQ
+         O8nWaLnykO6IZFGf8DPkrqs+Ay8yeVNO3fUP856z84cjWtDRLRong4eucG/+ROq5FoV9
+         LuGuvRcgK53AqZujcs/inCMli46OXkR0BSktjvbTQRvId5F9BUZahysi6wfvSh44MwAm
+         szw4QnPIlplrpecaaEMLTMP7NZLg49zSvcVQrEVvsVd9Jq0muE/6HYxFQAih90EaJelm
+         8fIg==
+X-Gm-Message-State: AA+aEWYXx3rriqPMurg6nq4dhjhNLDxONweB/4Zt9pgUktYiz1wP8DXD
+        PAN2U/0GcNRQh8sICpRoDGMYrjQdWLM=
+X-Google-Smtp-Source: AFSGD/Vo3aTI7uesnCvYFhJItNLA1/Rv2nRo9nP0NTKLjwsaVE0wGD3gmUdlPZIBmwGL5gEmL72hzQ==
+X-Received: by 2002:a19:7919:: with SMTP id u25mr5521596lfc.18.1544989053222;
+        Sun, 16 Dec 2018 11:37:33 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 12-v6sm2088282ljf.96.2018.12.16.11.37.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Dec 2018 11:37:32 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id v15-v6so9078072ljh.13
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 11:37:31 -0800 (PST)
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr6413154lji.133.1544989051486;
+ Sun, 16 Dec 2018 11:37:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKaJLVvj2Yv0hOXiRLvJ1Gnm3axOds21LHxmCW5K0YNpx+hk6w@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1544824384-17668-1-git-send-email-longman@redhat.com>
+In-Reply-To: <1544824384-17668-1-git-send-email-longman@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 16 Dec 2018 11:37:15 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi-V7LjAAzFuxg+eLQAdp+Ay4WmVJdTNxgPjqKXaj-3Xw@mail.gmail.com>
+Message-ID: <CAHk-=wi-V7LjAAzFuxg+eLQAdp+Ay4WmVJdTNxgPjqKXaj-3Xw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v4 0/3] fs/dcache: Track # of negative dentries
+To:     Waiman Long <longman@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org, mcgrof@kernel.org,
+        Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>, mszeredi@redhat.com,
+        Matthew Wilcox <willy@infradead.org>, lwoodman@redhat.com,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        wangkai86@huawei.com, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 08:46:19PM +0200, Sam Protsenko wrote:
-> Hi Guillaume,
-> 
-> On Sun, Dec 16, 2018 at 6:30 PM Guillaume Nault <g.nault@alphalink.fr> wrote:
-> >
-> > On Fri, Dec 14, 2018 at 11:12:42PM +0200, Sam Protsenko wrote:
-> > > When Protocol Field Compression (PFC) is enabled, the "Protocol" field
-> > > in PPP packet should be transmitted without leading 0x00. See section
-> > > 6.5 in RFC 1661 for details. Let's compress protocol field if needed,
-> > > the same way it's done in drivers/net/ppp/pptp.c.
-> > >
-> > > To actually enable PFC, one should issue corresponding ioctl to L2TP
-> > > driver from user-space, like this:
-> > >
-> > >     ioctl(fd, PPPIOCGFLAGS, &flags);
-> > >     flags |= SC_COMP_PROT;
-> > >     ioctl(fd, PPPIOCSFLAGS, &flags);
-> > >
-> > > It can be done e.g. from pppol2tp plugin (pppd), when pcomp option was
-> > > negotiated with peer.
-> > >
-> > > Of course, we don't compress Protocol field when sending LCP packets. As
-> > > stated in RFC 1661, section 6.5:
-> > >
-> > >     The Protocol field is never compressed when sending any LCP
-> > >     packet.  This rule guarantees unambiguous recognition of LCP
-> > >     packets.
-> > >
-> > Again, I'm sorry, but I must oppose this change. Although I'm lacking
-> > time to keep sanitising L2TP, at least I'd like to avoid making the
-> > situation worse.
-> >
-> > L2TP's uapi is already messy enough. Please don't add non-L2TP features
-> > there.
-> >
-> > Activating PFC should be done on PPP file descriptors, not no L2TP
-> > sockets. We certainly don't want L2TP to snoop on PPP data, much less
-> > modify them.
-> 
-> Makes sense. I thought about this, too, just found that it's done that
-> way in PPTP code and decided not to be too smart about this. Let me
-> try and re-work this one. Will send v2 soon.
-> 
-While at it, be sure to target net-next and to post a cover letter if
-you have more than one patch in the series.
+On Fri, Dec 14, 2018 at 1:53 PM Waiman Long <longman@redhat.com> wrote:
+>
+> This patchset addresses 2 issues found in the dentry code and adds a
+> new nr_dentry_negative per-cpu counter to track the total number of
+> negative dentries in all the LRU lists.
 
-Also, the code will have to be compatible with those layers that
-already implement PFC using their own API (pptp.c, ppp_async.c, etc.).
-I haven't looked at MP-PPP for a while, but multi-link might have to be
-taken into account too.
+The series looks sane to me. I'm assuming I'll get it either though
+-mm or from Al..
 
-But, for now, fixing the reception part is more important, IMO.
+            Linus
