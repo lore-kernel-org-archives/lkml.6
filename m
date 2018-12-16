@@ -2,156 +2,334 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C53DC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 01:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA4AC43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 01:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7962086D
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 01:24:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F91D2087B
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 01:48:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPydhI3A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbeLPBYT (ORCPT
+        id S1729580AbeLPBsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 15 Dec 2018 20:24:19 -0500
-Received: from mga02.intel.com ([134.134.136.20]:32192 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727227AbeLPBYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Dec 2018 20:24:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Dec 2018 17:24:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,359,1539673200"; 
-   d="scan'208";a="99054648"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by orsmga007.jf.intel.com with ESMTP; 15 Dec 2018 17:24:13 -0800
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>,
-        "Zeng, Xin" <xin.zeng@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
-To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
- <20181112064501.2290-2-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439D8E060@SHSMSX104.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <63ba6b78-ab31-4f54-002c-4c3baf818d3e@linux.intel.com>
-Date:   Sun, 16 Dec 2018 09:20:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <A2975661238FB949B60364EF0F2C257439D8E060@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 15 Dec 2018 20:48:52 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38929 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbeLPBsw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Dec 2018 20:48:52 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w6so4438946pgl.6;
+        Sat, 15 Dec 2018 17:48:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=HZQs3PQx2/bdtEO8VHnejHgNGOzdb07KmzpGf5Nbh/g=;
+        b=OPydhI3AmN+VnP0cPlqTOI+cdbKFeCMv26SyGHE2rMW4Z1TVETZ4YEPajA6vF9HmhV
+         jeJQxm9A3avkSNelIySZlAg7PuNMAbrD0MXnGr7lTBriT97cG1BvPdbrazIbd1w4foV4
+         EJAy94BTHDnbvbbnqzsaJxrD6zaHwJ5jdTpcRmOekG7/xZ+HSBKWBs6yWkko70zMN6i6
+         AEUzkS6qNE3AkYaG+518Kt566jVBv0uDT0pi95n1QAi5CipdMdz3undfyu6lWTalvF+h
+         l2dTEkWStFQWuX+KS3/ENCzN2IwKV0/j87hy2S02RsgMyfhRCbnxxNmsdWsBVcM4bbAX
+         Nu+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=HZQs3PQx2/bdtEO8VHnejHgNGOzdb07KmzpGf5Nbh/g=;
+        b=I5+iE4Ss3m2ROzM0R2s9kKR3sq12XVYto+3NQUqGjGsJyNvDzANLAi8hKY7+EIilOO
+         qKmb99ABFT3MAfRIWUZPmN+rEAZfUH4JliFsu8udbFWZ1gtJMZ6DWlRkUJ3GEJj7LRqv
+         7NbcgYlXe8B38T6vV7wNpgLbwCQ1Dn0DOAvmdRpBiUxFi1iWoDHDmYMPjrUto5R3wb/f
+         gtQv+5uiL5lloOG8J6ADhEi+sut6K3DPF46vTqWAyK+SGUC9RawtfSrOli1gTtOQFu4h
+         5EpLWMe5H7an4I5l+/pg1/lL5y3hr10UM8LPyvPQJI3VgMyY9THlohLDtySQ1MwvV+XS
+         MBFA==
+X-Gm-Message-State: AA+aEWb20xmngUcyl2Y15GaFmSJgERAz5CU+Y2I22uZna6xeVlQvZ/ZG
+        xceA8oQbKNb0UXTwg7nND/EkMaxdZ2Q=
+X-Google-Smtp-Source: AFSGD/VDI05SfkhKQPFPCzk5RR7S4rBXO+Iai1MJ0+m2OiAtam7nrFkyiLKhULHjJwVxuaK/gFShvQ==
+X-Received: by 2002:a62:db41:: with SMTP id f62mr8378361pfg.123.1544924930789;
+        Sat, 15 Dec 2018 17:48:50 -0800 (PST)
+Received: from localhost.localdomain ([2601:602:9602:6598:9540:1d4c:35c2:b8e8])
+        by smtp.gmail.com with ESMTPSA id z127sm14394990pfb.80.2018.12.15.17.48.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Dec 2018 17:48:50 -0800 (PST)
+From:   yupeng <yupeng0921@gmail.com>
+To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, keith.busch@intel.com,
+        axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Subject: [PATCH v2 1/2] share nvme trace event helper functions with multiple nvme modules
+Date:   Sat, 15 Dec 2018 17:48:48 -0800
+Message-Id: <20181216014849.8584-1-yupeng0921@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The trace.c could only be used by core.c, move it to a header file and
+then other nvme modules could also use it. This commit creates a new
+header file trace_common.h, which has all the functions of trace.c. It
+changes all functions to static functions, so any other modules could
+include it without conflict. This commit also moves some common
+functions from trace.h to trace_common.h. Because the trace events in
+trace.h are used by nvme-core only, this commit renames the trace.h to
+trace_core.h.
 
-On 12/16/18 6:38 AM, Liu, Yi L wrote:
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Sunday, November 11, 2018 10:45 PM
->> Subject: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
->>
->> This adds APIs for IOMMU drivers and device drivers to manage the PASIDs used for
->> DMA transfer and translation. It bases on I/O ASID allocator for PASID namespace
->> management and relies on vendor specific IOMMU drivers for paravirtual PASIDs.
->>
->> Below APIs are added:
->>
->> * iommu_pasid_init(pasid)
->>    - Initialize a PASID consumer. The vendor specific IOMMU
->>      drivers are able to set the PASID range imposed by IOMMU
->>      hardware through a callback in iommu_ops.
->>
->> * iommu_pasid_exit(pasid)
->>    - The PASID consumer stops consuming any PASID.
->>
->> * iommu_pasid_alloc(pasid, min, max, private, *ioasid)
->>    - Allocate a PASID and associate a @private data with this
->>      PASID. The PASID value is stored in @ioaisd if returning
->>      success.
->>
->> * iommu_pasid_free(pasid, ioasid)
->>    - Free a PASID to the pool so that it could be consumed by
->>      others.
->>
->> This also adds below helpers to lookup or iterate PASID items associated with a
->> consumer.
->>
->> * iommu_pasid_for_each(pasid, func, data)
->>    - Iterate PASID items of the consumer identified by @pasid,
->>      and call @func() against each item. An error returned from
->>      @func() will break the iteration.
->>
->> * iommu_pasid_find(pasid, ioasid)
->>    - Retrieve the private data associated with @ioasid.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/Kconfig |  1 +
->>   drivers/iommu/iommu.c | 89 +++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/iommu.h | 73 +++++++++++++++++++++++++++++++++++
->>   3 files changed, 163 insertions(+)
->>
->> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig index
->> d9a25715650e..39f2bb76c7b8 100644
->> --- a/drivers/iommu/Kconfig
->> +++ b/drivers/iommu/Kconfig
->> @@ -1,6 +1,7 @@
->>   # IOMMU_API always gets selected by whoever wants it.
->>   config IOMMU_API
->>   	bool
->> +	select IOASID
->>
->>   menuconfig IOMMU_SUPPORT
->>   	bool "IOMMU Hardware Support"
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c index
->> 0b7c96d1425e..570b244897bb 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -2082,3 +2082,92 @@ void iommu_detach_device_aux(struct iommu_domain
->> *domain, struct device *dev)
->>   	}
->>   }
->>   EXPORT_SYMBOL_GPL(iommu_detach_device_aux);
->> +
->> +/*
->> + * APIs for PASID used by IOMMU and the device drivers which depend
->> + * on IOMMU.
->> + */
->> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus) {
-> 
-> I'm thinking about if using struct iommu_domain here is better
-> than struct bus_type. The major purpose is to pass iommu_ops
-> in it and route into iommu-sublayer. iommu_domain may be
-> better since some modules like vfio_iommu_type1 would use
-> iommu_domain more than bus type.
+Signed-off-by: yupeng <yupeng0921@gmail.com>
+---
+ drivers/nvme/host/Makefile                    |  1 -
+ drivers/nvme/host/core.c                      |  2 +-
+ drivers/nvme/host/{trace.c => trace_common.h} | 82 +++++++++++++++++--
+ drivers/nvme/host/{trace.h => trace_core.h}   | 76 +----------------
+ 4 files changed, 80 insertions(+), 81 deletions(-)
+ rename drivers/nvme/host/{trace.c => trace_common.h} (55%)
+ rename drivers/nvme/host/{trace.h => trace_core.h} (56%)
 
-But drivers might call this during initialization when it doesn't has
-any domain yet.
+diff --git a/drivers/nvme/host/Makefile b/drivers/nvme/host/Makefile
+index aea459c65ae1..165c265f57f1 100644
+--- a/drivers/nvme/host/Makefile
++++ b/drivers/nvme/host/Makefile
+@@ -9,7 +9,6 @@ obj-$(CONFIG_NVME_RDMA)			+= nvme-rdma.o
+ obj-$(CONFIG_NVME_FC)			+= nvme-fc.o
+ 
+ nvme-core-y				:= core.o
+-nvme-core-$(CONFIG_TRACING)		+= trace.o
+ nvme-core-$(CONFIG_NVME_MULTIPATH)	+= multipath.o
+ nvme-core-$(CONFIG_NVM)			+= lightnvm.o
+ nvme-core-$(CONFIG_FAULT_INJECTION_DEBUG_FS)	+= fault_inject.o
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 962012135b62..a1cf8df4c507 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -30,7 +30,7 @@
+ #include <asm/unaligned.h>
+ 
+ #define CREATE_TRACE_POINTS
+-#include "trace.h"
++#include "trace_core.h"
+ 
+ #include "nvme.h"
+ #include "fabrics.h"
+diff --git a/drivers/nvme/host/trace.c b/drivers/nvme/host/trace_common.h
+similarity index 55%
+rename from drivers/nvme/host/trace.c
+rename to drivers/nvme/host/trace_common.h
+index 25b0e310f4a8..b9b88da74f58 100644
+--- a/drivers/nvme/host/trace.c
++++ b/drivers/nvme/host/trace_common.h
+@@ -12,9 +12,16 @@
+  * more details.
+  */
+ 
+-#include <asm/unaligned.h>
+-#include "trace.h"
++#ifndef TRACE_HEADER_MULTI_READ
++
++#include <linux/nvme.h>
++#include <linux/tracepoint.h>
++#include <linux/trace_seq.h>
++
++#include "nvme.h"
+ 
++#ifdef CONFIG_TRACING
++#include <asm/unaligned.h>
+ static const char *nvme_trace_create_sq(struct trace_seq *p, u8 *cdw10)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+@@ -99,7 +106,7 @@ static const char *nvme_trace_common(struct trace_seq *p, u8 *cdw10)
+ 	return ret;
+ }
+ 
+-const char *nvme_trace_parse_admin_cmd(struct trace_seq *p,
++static const char *nvme_trace_parse_admin_cmd(struct trace_seq *p,
+ 				       u8 opcode, u8 *cdw10)
+ {
+ 	switch (opcode) {
+@@ -114,7 +121,7 @@ const char *nvme_trace_parse_admin_cmd(struct trace_seq *p,
+ 	}
+ }
+ 
+-const char *nvme_trace_parse_nvm_cmd(struct trace_seq *p,
++static const char *nvme_trace_parse_nvm_cmd(struct trace_seq *p,
+ 				     u8 opcode, u8 *cdw10)
+ {
+ 	switch (opcode) {
+@@ -129,7 +136,7 @@ const char *nvme_trace_parse_nvm_cmd(struct trace_seq *p,
+ 	}
+ }
+ 
+-const char *nvme_trace_disk_name(struct trace_seq *p, char *name)
++static const char *nvme_trace_disk_name(struct trace_seq *p, char *name)
+ {
+ 	const char *ret = trace_seq_buffer_ptr(p);
+ 
+@@ -139,3 +146,68 @@ const char *nvme_trace_disk_name(struct trace_seq *p, char *name)
+ 
+ 	return ret;
+ }
++
++#endif	/* CONFIG_TRACING */
++
++static inline void __assign_disk_name(char *name, struct gendisk *disk)
++{
++	if (disk)
++		memcpy(name, disk->disk_name, DISK_NAME_LEN);
++	else
++		memset(name, 0, DISK_NAME_LEN);
++}
++
++#define nvme_admin_opcode_name(opcode)	{ opcode, #opcode }
++#define show_admin_opcode_name(val)					\
++	__print_symbolic(val,						\
++		nvme_admin_opcode_name(nvme_admin_delete_sq),		\
++		nvme_admin_opcode_name(nvme_admin_create_sq),		\
++		nvme_admin_opcode_name(nvme_admin_get_log_page),	\
++		nvme_admin_opcode_name(nvme_admin_delete_cq),		\
++		nvme_admin_opcode_name(nvme_admin_create_cq),		\
++		nvme_admin_opcode_name(nvme_admin_identify),		\
++		nvme_admin_opcode_name(nvme_admin_abort_cmd),		\
++		nvme_admin_opcode_name(nvme_admin_set_features),	\
++		nvme_admin_opcode_name(nvme_admin_get_features),	\
++		nvme_admin_opcode_name(nvme_admin_async_event),		\
++		nvme_admin_opcode_name(nvme_admin_ns_mgmt),		\
++		nvme_admin_opcode_name(nvme_admin_activate_fw),		\
++		nvme_admin_opcode_name(nvme_admin_download_fw),		\
++		nvme_admin_opcode_name(nvme_admin_ns_attach),		\
++		nvme_admin_opcode_name(nvme_admin_keep_alive),		\
++		nvme_admin_opcode_name(nvme_admin_directive_send),	\
++		nvme_admin_opcode_name(nvme_admin_directive_recv),	\
++		nvme_admin_opcode_name(nvme_admin_dbbuf),		\
++		nvme_admin_opcode_name(nvme_admin_format_nvm),		\
++		nvme_admin_opcode_name(nvme_admin_security_send),	\
++		nvme_admin_opcode_name(nvme_admin_security_recv),	\
++		nvme_admin_opcode_name(nvme_admin_sanitize_nvm))
++
++#define nvme_opcode_name(opcode)	{ opcode, #opcode }
++#define show_nvm_opcode_name(val)				\
++	__print_symbolic(val,					\
++		nvme_opcode_name(nvme_cmd_flush),		\
++		nvme_opcode_name(nvme_cmd_write),		\
++		nvme_opcode_name(nvme_cmd_read),		\
++		nvme_opcode_name(nvme_cmd_write_uncor),		\
++		nvme_opcode_name(nvme_cmd_compare),		\
++		nvme_opcode_name(nvme_cmd_write_zeroes),	\
++		nvme_opcode_name(nvme_cmd_dsm),			\
++		nvme_opcode_name(nvme_cmd_resv_register),	\
++		nvme_opcode_name(nvme_cmd_resv_report),		\
++		nvme_opcode_name(nvme_cmd_resv_acquire),	\
++		nvme_opcode_name(nvme_cmd_resv_release))
++
++#define show_opcode_name(qid, opcode)					\
++	(qid ? show_nvm_opcode_name(opcode) : show_admin_opcode_name(opcode))
++
++#define parse_nvme_cmd(qid, opcode, cdw10) 			\
++	(qid ?							\
++	 nvme_trace_parse_nvm_cmd(p, opcode, cdw10) : 		\
++	 nvme_trace_parse_admin_cmd(p, opcode, cdw10))
++
++#define __print_disk_name(name)				\
++	nvme_trace_disk_name(p, name)
++
++
++#endif	/* TRACE_HEADER_MULTI_READ */
+diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace_core.h
+similarity index 56%
+rename from drivers/nvme/host/trace.h
+rename to drivers/nvme/host/trace_core.h
+index 196d5bd56718..ed60ad6cf634 100644
+--- a/drivers/nvme/host/trace.h
++++ b/drivers/nvme/host/trace_core.h
+@@ -18,79 +18,7 @@
+ #if !defined(_TRACE_NVME_H) || defined(TRACE_HEADER_MULTI_READ)
+ #define _TRACE_NVME_H
+ 
+-#include <linux/nvme.h>
+-#include <linux/tracepoint.h>
+-#include <linux/trace_seq.h>
+-
+-#include "nvme.h"
+-
+-#define nvme_admin_opcode_name(opcode)	{ opcode, #opcode }
+-#define show_admin_opcode_name(val)					\
+-	__print_symbolic(val,						\
+-		nvme_admin_opcode_name(nvme_admin_delete_sq),		\
+-		nvme_admin_opcode_name(nvme_admin_create_sq),		\
+-		nvme_admin_opcode_name(nvme_admin_get_log_page),	\
+-		nvme_admin_opcode_name(nvme_admin_delete_cq),		\
+-		nvme_admin_opcode_name(nvme_admin_create_cq),		\
+-		nvme_admin_opcode_name(nvme_admin_identify),		\
+-		nvme_admin_opcode_name(nvme_admin_abort_cmd),		\
+-		nvme_admin_opcode_name(nvme_admin_set_features),	\
+-		nvme_admin_opcode_name(nvme_admin_get_features),	\
+-		nvme_admin_opcode_name(nvme_admin_async_event),		\
+-		nvme_admin_opcode_name(nvme_admin_ns_mgmt),		\
+-		nvme_admin_opcode_name(nvme_admin_activate_fw),		\
+-		nvme_admin_opcode_name(nvme_admin_download_fw),		\
+-		nvme_admin_opcode_name(nvme_admin_ns_attach),		\
+-		nvme_admin_opcode_name(nvme_admin_keep_alive),		\
+-		nvme_admin_opcode_name(nvme_admin_directive_send),	\
+-		nvme_admin_opcode_name(nvme_admin_directive_recv),	\
+-		nvme_admin_opcode_name(nvme_admin_dbbuf),		\
+-		nvme_admin_opcode_name(nvme_admin_format_nvm),		\
+-		nvme_admin_opcode_name(nvme_admin_security_send),	\
+-		nvme_admin_opcode_name(nvme_admin_security_recv),	\
+-		nvme_admin_opcode_name(nvme_admin_sanitize_nvm))
+-
+-#define nvme_opcode_name(opcode)	{ opcode, #opcode }
+-#define show_nvm_opcode_name(val)				\
+-	__print_symbolic(val,					\
+-		nvme_opcode_name(nvme_cmd_flush),		\
+-		nvme_opcode_name(nvme_cmd_write),		\
+-		nvme_opcode_name(nvme_cmd_read),		\
+-		nvme_opcode_name(nvme_cmd_write_uncor),		\
+-		nvme_opcode_name(nvme_cmd_compare),		\
+-		nvme_opcode_name(nvme_cmd_write_zeroes),	\
+-		nvme_opcode_name(nvme_cmd_dsm),			\
+-		nvme_opcode_name(nvme_cmd_resv_register),	\
+-		nvme_opcode_name(nvme_cmd_resv_report),		\
+-		nvme_opcode_name(nvme_cmd_resv_acquire),	\
+-		nvme_opcode_name(nvme_cmd_resv_release))
+-
+-#define show_opcode_name(qid, opcode)					\
+-	(qid ? show_nvm_opcode_name(opcode) : show_admin_opcode_name(opcode))
+-
+-const char *nvme_trace_parse_admin_cmd(struct trace_seq *p, u8 opcode,
+-		u8 *cdw10);
+-const char *nvme_trace_parse_nvm_cmd(struct trace_seq *p, u8 opcode,
+-		u8 *cdw10);
+-
+-#define parse_nvme_cmd(qid, opcode, cdw10) 			\
+-	(qid ?							\
+-	 nvme_trace_parse_nvm_cmd(p, opcode, cdw10) : 		\
+-	 nvme_trace_parse_admin_cmd(p, opcode, cdw10))
+-
+-const char *nvme_trace_disk_name(struct trace_seq *p, char *name);
+-#define __print_disk_name(name)				\
+-	nvme_trace_disk_name(p, name)
+-
+-#ifndef TRACE_HEADER_MULTI_READ
+-static inline void __assign_disk_name(char *name, struct gendisk *disk)
+-{
+-	if (disk)
+-		memcpy(name, disk->disk_name, DISK_NAME_LEN);
+-	else
+-		memset(name, 0, DISK_NAME_LEN);
+-}
+-#endif
++#include "trace_common.h"
+ 
+ TRACE_EVENT(nvme_setup_cmd,
+ 	    TP_PROTO(struct request *req, struct nvme_command *cmd),
+@@ -189,7 +117,7 @@ TRACE_EVENT(nvme_async_event,
+ #undef TRACE_INCLUDE_PATH
+ #define TRACE_INCLUDE_PATH .
+ #undef TRACE_INCLUDE_FILE
+-#define TRACE_INCLUDE_FILE trace
++#define TRACE_INCLUDE_FILE trace_core
+ 
+ /* This part must be outside protection */
+ #include <trace/define_trace.h>
+-- 
+2.17.1
 
-Best regards,
-Lu Baolu
