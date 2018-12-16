@@ -4,42 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A89C43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 14:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2737BC43444
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 14:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE9821836
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 14:04:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E737821839
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 14:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbeLPOEn (ORCPT
+        id S1730630AbeLPOIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 09:04:43 -0500
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:55152 "EHLO
+        Sun, 16 Dec 2018 09:08:24 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:55222 "EHLO
         saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729822AbeLPOEn (ORCPT
+        with ESMTP id S1729822AbeLPOIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 09:04:43 -0500
+        Sun, 16 Dec 2018 09:08:23 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 3CFDF9E7B45;
-        Sun, 16 Dec 2018 14:04:37 +0000 (GMT)
-Date:   Sun, 16 Dec 2018 14:04:36 +0000
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 930689E747C;
+        Sun, 16 Dec 2018 14:08:19 +0000 (GMT)
+Date:   Sun, 16 Dec 2018 14:08:17 +0000
 From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
         "lars@metafoo.de" <lars@metafoo.de>,
         "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "martink@posteo.de" <martink@posteo.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
         "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "festevam@gmail.com" <festevam@gmail.com>,
         "preid@electromag.com.au" <preid@electromag.com.au>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V6] iio: light: isl29018: add optional vcc regulator
- operation support
-Message-ID: <20181216140436.6f2b37dc@archlinux>
-In-Reply-To: <20181216124413.40c6a63c@archlinux>
-References: <1544681529-22268-1-git-send-email-Anson.Huang@nxp.com>
-        <20181216124413.40c6a63c@archlinux>
+Subject: Re: [PATCH V4 2/2] iio: accell: mma8452: add optional vdd/vddio
+ regulator operation support
+Message-ID: <20181216140817.63b4ca58@archlinux>
+In-Reply-To: <20181216104639.00bb90b6@archlinux>
+References: <1544504839-10958-1-git-send-email-Anson.Huang@nxp.com>
+        <1544504839-10958-2-git-send-email-Anson.Huang@nxp.com>
+        <20181216104639.00bb90b6@archlinux>
 X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -49,178 +58,352 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Dec 2018 12:44:13 +0000
+On Sun, 16 Dec 2018 10:46:39 +0000
 Jonathan Cameron <jic23@kernel.org> wrote:
 
-> On Thu, 13 Dec 2018 06:18:07 +0000
+> On Tue, 11 Dec 2018 05:13:20 +0000
 > Anson Huang <anson.huang@nxp.com> wrote:
 > 
-> > The light sensor's power supply could be controlled by regulator
-> > on some platforms, such as i.MX6Q-SABRESD board, the light sensor
-> > isl29023's power supply is controlled by a GPIO fixed regulator,
-> > need to make sure the regulator is enabled before any operation of
-> > sensor, this patch adds optional vcc regulator operation support.
+> > The accelerometer's power supply could be controlled by regulator
+> > on some platforms, such as i.MX6Q-SABRESD board, the mma8451's
+> > power supply is controlled by a GPIO fixed regulator, need to make
+> > sure the regulator is enabled before any communication with mma8451,
+> > this patch adds optional vdd/vddio regulator operation support.
 > > 
 > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > Acked-by: Martin Kepplinger <martink@posteo.de>  
+> Applied to the togreg branch of iio.git and pushed out as testing
+> for the autobuilders to play with it.
+Sorry again for this.  I was half asleep.  This one isn't
+optional either, it just may not be controllable / queryable.
 
-Sorry, I've been sleep walking through these and missed the big obvious
-thing.
+So please use the non optional regulator request.
+If there is one specified it will wait for it to be available by
+deferring. If not then it'll just provide a stub regulator so that
+the rest of the code doesn't need to care.
 
-These shouldn't be optional regulators at all.  If one isn't specified
-we do want to fall back to a stub regulator.
+Patches dropped for now.
 
-Just because we can't see or control the power supply doesn't mean it
-shouldn't be there.
-
-The exception to this is where we have a regulator providing a voltage
-reference where there is an alternative internal reference.
-In those cases there might be nothing connected to the pin and hence
-it really is 'optional'.  We want to do something else if it's not
-there.  Power supplies are just invisible, not optional and the
-regulator framework has always handled that for us.
+Thanks,
 
 Jonathan
 
+> 
+> Thanks,
+> 
+> Jonathan
+> 
 > > ---
-> > ChangeLog since V5:
-> > 	Since the dt-binding doc states the power supply name is "vdd" and many dts files already using
-> > 	"vcc" as the power supply name, althoug it does NOT match the datasheet which has "vdd", to make
-> > 	it NOT breaking existing dtb files, just use "vcc" as the regulator name.
+> > ChangeLog since V3:
+> > 	- add disabling vdd regulator in vddio error path;
+> > 	- improve regulator enable/disable sequence.
 > > ---
-> >  drivers/iio/light/isl29018.c | 47 +++++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 44 insertions(+), 3 deletions(-)
+> >  drivers/iio/accel/mma8452.c | 186 +++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 176 insertions(+), 10 deletions(-)
 > > 
-> > diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
-> > index b45400f..76c3a48 100644
-> > --- a/drivers/iio/light/isl29018.c
-> > +++ b/drivers/iio/light/isl29018.c
-> > @@ -23,6 +23,7 @@
-> >  #include <linux/mutex.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/regmap.h>
+> > diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+> > index 421a0a8..590a95d 100644
+> > --- a/drivers/iio/accel/mma8452.c
+> > +++ b/drivers/iio/accel/mma8452.c
+> > @@ -31,6 +31,7 @@
+> >  #include <linux/of_device.h>
+> >  #include <linux/of_irq.h>
+> >  #include <linux/pm_runtime.h>
 > > +#include <linux/regulator/consumer.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/iio/iio.h>
-> >  #include <linux/iio/sysfs.h>
-> > @@ -95,6 +96,7 @@ struct isl29018_chip {
-> >  	struct isl29018_scale	scale;
-> >  	int			prox_scheme;
-> >  	bool			suspended;
-> > +	struct regulator	*vcc_reg;
+> >  
+> >  #define MMA8452_STATUS				0x00
+> >  #define  MMA8452_STATUS_DRDY			(BIT(2) | BIT(1) | BIT(0))
+> > @@ -107,6 +108,8 @@ struct mma8452_data {
+> >  	u8 data_cfg;
+> >  	const struct mma_chip_info *chip_info;
+> >  	int sleep_val;
+> > +	struct regulator *vdd_reg;
+> > +	struct regulator *vddio_reg;
 > >  };
 > >  
-> >  static int isl29018_set_integration_time(struct isl29018_chip *chip,
-> > @@ -735,6 +737,19 @@ static int isl29018_probe(struct i2c_client *client,
-> >  
-> >  	mutex_init(&chip->lock);
-> >  
-> > +	chip->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
-> > +	if (!IS_ERR(chip->vcc_reg)) {
-> > +		err = regulator_enable(chip->vcc_reg);
-> > +		if (err) {
-> > +			dev_err(&client->dev, "failed to enable VCC regulator\n");
-> > +			return err;
+> >   /**
+> > @@ -1533,10 +1536,35 @@ static int mma8452_probe(struct i2c_client *client,
+> >  	data->client = client;
+> >  	mutex_init(&data->lock);
+> >  	data->chip_info = match->data;
+> > +	data->vdd_reg = devm_regulator_get_optional(&client->dev, "vdd");
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_enable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(&client->dev, "failed to enable VDD regulator\n");
+> > +			return ret;
 > > +		}
 > > +	} else {
-> > +		err = PTR_ERR(chip->vcc_reg);
-> > +		if (err != -ENODEV)
-> > +			return err;
+> > +		ret = PTR_ERR(data->vdd_reg);
+> > +		if (ret != -ENODEV)
+> > +			return ret;
 > > +	}
 > > +
-> >  	chip->type = dev_id;
-> >  	chip->calibscale = 1;
-> >  	chip->ucalibscale = 0;
-> > @@ -747,12 +762,12 @@ static int isl29018_probe(struct i2c_client *client,
-> >  	if (IS_ERR(chip->regmap)) {
-> >  		err = PTR_ERR(chip->regmap);
-> >  		dev_err(&client->dev, "regmap initialization fails: %d\n", err);
-> > -		return err;
-> > +		goto disable_regulator;
+> > +	data->vddio_reg = devm_regulator_get_optional(&client->dev, "vddio");
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_enable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(&client->dev, "failed to enable VDDIO regulator\n");
+> > +			goto disable_regulator_vdd;
+> > +		}
+> > +	} else {
+> > +		ret = PTR_ERR(data->vddio_reg);
+> > +		if (ret != -ENODEV)
+> > +			goto disable_regulator_vdd;
+> > +	}
+> >  
+> >  	ret = i2c_smbus_read_byte_data(client, MMA8452_WHO_AM_I);
+> >  	if (ret < 0)
+> > -		return ret;
+> > +		goto disable_regulators;
+> >  
+> >  	switch (ret) {
+> >  	case MMA8451_DEVICE_ID:
+> > @@ -1549,7 +1577,8 @@ static int mma8452_probe(struct i2c_client *client,
+> >  			break;
+> >  		/* else: fall through */
+> >  	default:
+> > -		return -ENODEV;
+> > +		ret = -ENODEV;
+> > +		goto disable_regulators;
 > >  	}
 > >  
-> >  	err = isl29018_chip_init(chip);
-> >  	if (err)
-> > -		return err;
-> > +		goto disable_regulator;
+> >  	dev_info(&client->dev, "registering %s accelerometer; ID 0x%x\n",
+> > @@ -1566,13 +1595,13 @@ static int mma8452_probe(struct i2c_client *client,
 > >  
-> >  	indio_dev->info = isl29018_chip_info_tbl[dev_id].indio_info;
-> >  	indio_dev->channels = isl29018_chip_info_tbl[dev_id].channels;
-> > @@ -761,13 +776,22 @@ static int isl29018_probe(struct i2c_client *client,
-> >  	indio_dev->dev.parent = &client->dev;
-> >  	indio_dev->modes = INDIO_DIRECT_MODE;
+> >  	ret = mma8452_reset(client);
+> >  	if (ret < 0)
+> > -		return ret;
+> > +		goto disable_regulators;
 > >  
-> > -	return devm_iio_device_register(&client->dev, indio_dev);
-> > +	err = devm_iio_device_register(&client->dev, indio_dev);
-> > +	if (!err)
-> > +		return 0;  
-> Don't make this change.  It makes the code less readable.  
-> 
-> Right now you don't turn the regulator off in remove at all and
-> you definitely should.
-> 
-> You should not be mixing managed and unmanaged calls.
-> This is because you will end up with race conditions.  Here the
-> regulators are disabled before the automated unwinding calls
-> device unregister.  Hence we have a window in which the power
-> is turned off but the userspace interfaces are still there.
-> 
-> Weird crashes likely to follow!
-> 
-> Two options:
-> 1) For everything after the power on change from devm to non
-> devm and do the unwinding.
-> 2) Use devm_add_action_or_reset to automatically handle
-> the unwinding of the regulator enable.  The result being that
-> it is back in the right place order wise.
-> 
-> 
-> 
+> >  	data->data_cfg = MMA8452_DATA_CFG_FS_2G;
+> >  	ret = i2c_smbus_write_byte_data(client, MMA8452_DATA_CFG,
+> >  					data->data_cfg);
+> >  	if (ret < 0)
+> > -		return ret;
+> > +		goto disable_regulators;
+> >  
+> >  	/*
+> >  	 * By default set transient threshold to max to avoid events if
+> > @@ -1581,7 +1610,7 @@ static int mma8452_probe(struct i2c_client *client,
+> >  	ret = i2c_smbus_write_byte_data(client, MMA8452_TRANSIENT_THS,
+> >  					MMA8452_TRANSIENT_THS_MASK);
+> >  	if (ret < 0)
+> > -		return ret;
+> > +		goto disable_regulators;
+> >  
+> >  	if (client->irq) {
+> >  		int irq2;
+> > @@ -1595,7 +1624,7 @@ static int mma8452_probe(struct i2c_client *client,
+> >  						MMA8452_CTRL_REG5,
+> >  						data->chip_info->all_events);
+> >  			if (ret < 0)
+> > -				return ret;
+> > +				goto disable_regulators;
+> >  
+> >  			dev_dbg(&client->dev, "using interrupt line INT1\n");
+> >  		}
+> > @@ -1604,11 +1633,11 @@ static int mma8452_probe(struct i2c_client *client,
+> >  					MMA8452_CTRL_REG4,
+> >  					data->chip_info->enabled_events);
+> >  		if (ret < 0)
+> > -			return ret;
+> > +			goto disable_regulators;
+> >  
+> >  		ret = mma8452_trigger_setup(indio_dev);
+> >  		if (ret < 0)
+> > -			return ret;
+> > +			goto disable_regulators;
+> >  	}
+> >  
+> >  	data->ctrl_reg1 = MMA8452_CTRL_ACTIVE |
+> > @@ -1661,12 +1690,22 @@ static int mma8452_probe(struct i2c_client *client,
+> >  trigger_cleanup:
+> >  	mma8452_trigger_cleanup(indio_dev);
+> >  
+> > +disable_regulators:
+> > +	if (!IS_ERR(data->vddio_reg))
+> > +		regulator_disable(data->vddio_reg);
 > > +
-> > +disable_regulator:
-> > +	if (!IS_ERR(chip->vcc_reg))
-> > +		regulator_disable(chip->vcc_reg);
+> > +disable_regulator_vdd:
+> > +	if (!IS_ERR(data->vdd_reg))
+> > +		regulator_disable(data->vdd_reg);
 > > +
-> > +	return err;
+> >  	return ret;
 > >  }
 > >  
-> >  #ifdef CONFIG_PM_SLEEP
-> >  static int isl29018_suspend(struct device *dev)
+> >  static int mma8452_remove(struct i2c_client *client)
 > >  {
-> >  	struct isl29018_chip *chip = iio_priv(dev_get_drvdata(dev));
+> >  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> > +	struct mma8452_data *data = iio_priv(indio_dev);
 > > +	int ret;
 > >  
-> >  	mutex_lock(&chip->lock);
+> >  	iio_device_unregister(indio_dev);
 > >  
-> > @@ -777,6 +801,14 @@ static int isl29018_suspend(struct device *dev)
-> >  	 * So we do not have much to do here.
-> >  	 */
-> >  	chip->suspended = true;
-> > +	if (!IS_ERR(chip->vcc_reg)) {
-> > +		ret = regulator_disable(chip->vcc_reg);
+> > @@ -1678,6 +1717,21 @@ static int mma8452_remove(struct i2c_client *client)
+> >  	mma8452_trigger_cleanup(indio_dev);
+> >  	mma8452_standby(iio_priv(indio_dev));
+> >  
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_disable(data->vddio_reg);
 > > +		if (ret) {
-> > +			dev_err(dev, "failed to disable VCC regulator\n");
-> > +			mutex_unlock(&chip->lock);
+> > +			dev_err(&client->dev, "failed to disable VDDIO regulator\n");
 > > +			return ret;
 > > +		}
 > > +	}
-> >  
-> >  	mutex_unlock(&chip->lock);
-> >  
-> > @@ -790,6 +822,15 @@ static int isl29018_resume(struct device *dev)
-> >  
-> >  	mutex_lock(&chip->lock);
-> >  
-> > +	if (!IS_ERR(chip->vcc_reg)) {
-> > +		err = regulator_enable(chip->vcc_reg);
-> > +		if (err) {
-> > +			dev_err(dev, "failed to enable VCC regulator\n");
-> > +			mutex_unlock(&chip->lock);
-> > +			return err;
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_disable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(&client->dev, "failed to disable VDD regulator\n");
+> > +			return ret;
 > > +		}
 > > +	}
 > > +
-> >  	err = isl29018_chip_init(chip);
-> >  	if (!err)
-> >  		chip->suspended = false;  
+> >  	return 0;
+> >  }
+> >  
+> > @@ -1696,6 +1750,21 @@ static int mma8452_runtime_suspend(struct device *dev)
+> >  		return -EAGAIN;
+> >  	}
+> >  
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_disable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VDDIO regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_disable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VDD regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > @@ -1705,6 +1774,23 @@ static int mma8452_runtime_resume(struct device *dev)
+> >  	struct mma8452_data *data = iio_priv(indio_dev);
+> >  	int ret, sleep_val;
+> >  
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_enable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to enable VDD regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_enable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to enable VDDIO regulator\n");
+> > +			if (!IS_ERR(data->vdd_reg))
+> > +				regulator_disable(data->vdd_reg);
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> >  	ret = mma8452_active(data);
+> >  	if (ret < 0)
+> >  		return ret;
+> > @@ -1723,14 +1809,94 @@ static int mma8452_runtime_resume(struct device *dev)
+> >  #ifdef CONFIG_PM_SLEEP
+> >  static int mma8452_suspend(struct device *dev)
+> >  {
+> > -	return mma8452_standby(iio_priv(i2c_get_clientdata(
+> > +	struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
+> > +	struct mma8452_data *data = iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_enable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to enable VDD regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_enable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to enable VDDIO regulator\n");
+> > +			if (!IS_ERR(data->vdd_reg))
+> > +				regulator_disable(data->vdd_reg);
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> > +	ret = mma8452_standby(iio_priv(i2c_get_clientdata(
+> >  		to_i2c_client(dev))));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_disable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VDDIO regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_disable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VDD regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> >  }
+> >  
+> >  static int mma8452_resume(struct device *dev)
+> >  {
+> > -	return mma8452_active(iio_priv(i2c_get_clientdata(
+> > +	struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
+> > +	struct mma8452_data *data = iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_enable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to enable VDD regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_enable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to enable VDDIO regulator\n");
+> > +			if (!IS_ERR(data->vdd_reg))
+> > +				regulator_disable(data->vdd_reg);
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> > +	ret = mma8452_active(iio_priv(i2c_get_clientdata(
+> >  		to_i2c_client(dev))));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (!IS_ERR(data->vddio_reg)) {
+> > +		ret = regulator_disable(data->vddio_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VDDIO regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +	if (!IS_ERR(data->vdd_reg)) {
+> > +		ret = regulator_disable(data->vdd_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VDD regulator\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> >  }
+> >  #endif
+> >    
 > 
 
