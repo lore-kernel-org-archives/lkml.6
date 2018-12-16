@@ -2,182 +2,225 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165DCC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A89C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 14:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB1E21839
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 13:58:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544968701;
-	bh=ebxWRIUNisKL5O5HUQrMw3kK3FhmsrwPNVmhvBKz1l8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=PjLYsHj6O14lndtpf1U4nxr3oOj5SFZahmPMT1ZxIvamDQVOD21nXyj/OHoqtDYVF
-	 qFvZiX7ML0l1L+5B0E9iTW8ZtgTEiHiHZ6VmHbnVgUPdP38aVgyR6NSvWF+CInAXIX
-	 WbuVmZdyrCAA3QXpObkkMXbxHBxFqO7xaPxhdvto=
+	by mail.kernel.org (Postfix) with ESMTP id 7DE9821836
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 14:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730658AbeLPN6V (ORCPT
+        id S1730621AbeLPOEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 08:58:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730382AbeLPN6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 08:58:20 -0500
+        Sun, 16 Dec 2018 09:04:43 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:55152 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729822AbeLPOEn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 09:04:43 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42C51217FA;
-        Sun, 16 Dec 2018 13:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544968699;
-        bh=ebxWRIUNisKL5O5HUQrMw3kK3FhmsrwPNVmhvBKz1l8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kDrMV9NnAzmhNi7Ii5AA4YpEmAwE8ljTcZMPDkFcOm3+YbON7URmVpoo8REf4Zwdx
-         Tz90/7UOFnXyndBb6+ErcO80I64kCK0J7M1HPV1uzVkcj8Q88bjYzfYn4ouRi8hwk9
-         cGgk2ZWnCRylatRQnosAut6l1/erdv6btlPr+eY8=
-Date:   Sun, 16 Dec 2018 13:58:14 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        <stefan.popa@analog.co>
-Subject: Re: [PATCH 11/11] dt-bindings: iio: adc: Add docs for AD7606 ADC
-Message-ID: <20181216135814.79b616f2@archlinux>
-In-Reply-To: <1544705183-13288-12-git-send-email-stefan.popa@analog.com>
-References: <1544705183-13288-1-git-send-email-stefan.popa@analog.com>
-        <1544705183-13288-12-git-send-email-stefan.popa@analog.com>
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 3CFDF9E7B45;
+        Sun, 16 Dec 2018 14:04:37 +0000 (GMT)
+Date:   Sun, 16 Dec 2018 14:04:36 +0000
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "preid@electromag.com.au" <preid@electromag.com.au>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V6] iio: light: isl29018: add optional vcc regulator
+ operation support
+Message-ID: <20181216140436.6f2b37dc@archlinux>
+In-Reply-To: <20181216124413.40c6a63c@archlinux>
+References: <1544681529-22268-1-git-send-email-Anson.Huang@nxp.com>
+        <20181216124413.40c6a63c@archlinux>
 X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 14:46:23 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+On Sun, 16 Dec 2018 12:44:13 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-> Document support for AD7606 Analog to Digital Converter.
->=20
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Will have to wait on this as the MAINTAINERS bit obviously isn't there yet.
-Otherwise I would have just added it now.  Oh well, v2.
+> On Thu, 13 Dec 2018 06:18:07 +0000
+> Anson Huang <anson.huang@nxp.com> wrote:
+> 
+> > The light sensor's power supply could be controlled by regulator
+> > on some platforms, such as i.MX6Q-SABRESD board, the light sensor
+> > isl29023's power supply is controlled by a GPIO fixed regulator,
+> > need to make sure the regulator is enabled before any operation of
+> > sensor, this patch adds optional vcc regulator operation support.
+> > 
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
+Sorry, I've been sleep walking through these and missed the big obvious
+thing.
 
-Thanks,
+These shouldn't be optional regulators at all.  If one isn't specified
+we do want to fall back to a stub regulator.
+
+Just because we can't see or control the power supply doesn't mean it
+shouldn't be there.
+
+The exception to this is where we have a regulator providing a voltage
+reference where there is an alternative internal reference.
+In those cases there might be nothing connected to the pin and hence
+it really is 'optional'.  We want to do something else if it's not
+there.  Power supplies are just invisible, not optional and the
+regulator framework has always handled that for us.
 
 Jonathan
 
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7606.txt     | 65 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7606.=
-txt
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.txt b/D=
-ocumentation/devicetree/bindings/iio/adc/adi,ad7606.txt
-> new file mode 100644
-> index 0000000..d7b6241
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.txt
-> @@ -0,0 +1,65 @@
-> +Analog Devices AD7606 Simultaneous Sampling ADC
-> +
-> +Required properties for the AD7606:
-> +
-> +- compatible: Must be one of
-> +	* "adi,ad7605-4"
-> +	* "adi,ad7606-8"
-> +	* "adi,ad7606-6"
-> +	* "adi,ad7606-4"
-> +- reg: SPI chip select number for the device
-> +- spi-max-frequency: Max SPI frequency to use
-> +	see: Documentation/devicetree/bindings/spi/spi-bus.txt
-> +- spi-cpha: See Documentation/devicetree/bindings/spi/spi-bus.txt
-> +- avcc-supply: phandle to the Avcc power supply
-> +- interrupts: IRQ line for the ADC
-> +	see: Documentation/devicetree/bindings/interrupt-controller/interrupts.=
-txt
-> +- adi,conversion-start-gpios: must be the device tree identifier of the =
-CONVST pin.
-> +		  This logic input is used to initiate conversions on the analog
-> +		  input channels. As the line is active high, it should be marked
-> +		  GPIO_ACTIVE_HIGH.
-> +
-> +Optional properties:
-> +
-> +- reset-gpios: must be the device tree identifier of the RESET pin. If s=
-pecified,
-> +	       it will be asserted during driver probe. As the line is active h=
-igh,
-> +	       it should be marked GPIO_ACTIVE_HIGH.
-> +- standby-gpios: must be the device tree identifier of the STBY pin. Thi=
-s pin is used
-> +		to place the AD7606 into one of two power-down modes, Standby mode or
-> +		Shutdown mode. As the line is active low, it should be marked
-> +		GPIO_ACTIVE_LOW.
-> +- adi,first-data-gpios: must be the device tree identifier of the FRSTDA=
-TA pin.
-> +		    The FRSTDATA output indicates when the first channel, V1, is
-> +		    being read back on either the parallel, byte or serial interface.
-> +		    As the line is active high, it should be marked GPIO_ACTIVE_HIGH.
-> +- adi,range-gpios: must be the device tree identifier of the RANGE pin. =
-The polarity on
-> +	      this pin determines the input range of the analog input channels.=
- If
-> +	      this pin is tied to a logic high, the analog input range is =C2=
-=B110V for
-> +	      all channels. If this pin is tied to a logic low, the analog inpu=
-t range
-> +	      is =C2=B15V for all channels. As the line is active high, it shou=
-ld be marked
-> +	      GPIO_ACTIVE_HIGH.
-> +- adi,oversampling-ratio-gpios: must be the device tree identifier of th=
-e over-sampling
-> +				mode pins. As the line is active high, it should be marked
-> +				GPIO_ACTIVE_HIGH.
-> +
-> +Example:
-> +
-> +	adc@0 {
-> +		compatible =3D "adi,ad7606-8";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <1000000>;
-> +		spi-cpol;
-> +
-> +		avcc-supply =3D <&adc_vref>;
-> +
-> +		interrupts =3D <25 IRQ_TYPE_EDGE_FALLING>;
-> +		interrupt-parent =3D <&gpio>;
-> +
-> +		adi,conversion-start-gpios =3D <&gpio 17 GPIO_ACTIVE_HIGH>;
-> +		reset-gpios =3D <&gpio 27 GPIO_ACTIVE_HIGH>;
-> +		adi,first-data-gpios =3D <&gpio 22 GPIO_ACTIVE_HIGH>;
-> +		adi,oversampling-ratio-gpios =3D <&gpio 18 GPIO_ACTIVE_HIGH
-> +						&gpio 23 GPIO_ACTIVE_HIGH
-> +						&gpio 26 GPIO_ACTIVE_HIGH>;
-> +		standby-gpios =3D <&gpio 24 GPIO_ACTIVE_LOW>;
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7256ce6..798e9a2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -859,6 +859,7 @@ L:	linux-iio@vger.kernel.org
->  W:	http://ez.analog.com/community/linux-device-drivers
->  S:	Supported
->  F:	drivers/iio/adc/ad7606.c
-> +F:	Documentation/devicetree/bindings/iio/adc/ad7606.txt
-> =20
->  ANALOG DEVICES INC AD9389B DRIVER
->  M:	Hans Verkuil <hans.verkuil@cisco.com>
+> > ---
+> > ChangeLog since V5:
+> > 	Since the dt-binding doc states the power supply name is "vdd" and many dts files already using
+> > 	"vcc" as the power supply name, althoug it does NOT match the datasheet which has "vdd", to make
+> > 	it NOT breaking existing dtb files, just use "vcc" as the regulator name.
+> > ---
+> >  drivers/iio/light/isl29018.c | 47 +++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 44 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
+> > index b45400f..76c3a48 100644
+> > --- a/drivers/iio/light/isl29018.c
+> > +++ b/drivers/iio/light/isl29018.c
+> > @@ -23,6 +23,7 @@
+> >  #include <linux/mutex.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/regmap.h>
+> > +#include <linux/regulator/consumer.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/iio/iio.h>
+> >  #include <linux/iio/sysfs.h>
+> > @@ -95,6 +96,7 @@ struct isl29018_chip {
+> >  	struct isl29018_scale	scale;
+> >  	int			prox_scheme;
+> >  	bool			suspended;
+> > +	struct regulator	*vcc_reg;
+> >  };
+> >  
+> >  static int isl29018_set_integration_time(struct isl29018_chip *chip,
+> > @@ -735,6 +737,19 @@ static int isl29018_probe(struct i2c_client *client,
+> >  
+> >  	mutex_init(&chip->lock);
+> >  
+> > +	chip->vcc_reg = devm_regulator_get_optional(&client->dev, "vcc");
+> > +	if (!IS_ERR(chip->vcc_reg)) {
+> > +		err = regulator_enable(chip->vcc_reg);
+> > +		if (err) {
+> > +			dev_err(&client->dev, "failed to enable VCC regulator\n");
+> > +			return err;
+> > +		}
+> > +	} else {
+> > +		err = PTR_ERR(chip->vcc_reg);
+> > +		if (err != -ENODEV)
+> > +			return err;
+> > +	}
+> > +
+> >  	chip->type = dev_id;
+> >  	chip->calibscale = 1;
+> >  	chip->ucalibscale = 0;
+> > @@ -747,12 +762,12 @@ static int isl29018_probe(struct i2c_client *client,
+> >  	if (IS_ERR(chip->regmap)) {
+> >  		err = PTR_ERR(chip->regmap);
+> >  		dev_err(&client->dev, "regmap initialization fails: %d\n", err);
+> > -		return err;
+> > +		goto disable_regulator;
+> >  	}
+> >  
+> >  	err = isl29018_chip_init(chip);
+> >  	if (err)
+> > -		return err;
+> > +		goto disable_regulator;
+> >  
+> >  	indio_dev->info = isl29018_chip_info_tbl[dev_id].indio_info;
+> >  	indio_dev->channels = isl29018_chip_info_tbl[dev_id].channels;
+> > @@ -761,13 +776,22 @@ static int isl29018_probe(struct i2c_client *client,
+> >  	indio_dev->dev.parent = &client->dev;
+> >  	indio_dev->modes = INDIO_DIRECT_MODE;
+> >  
+> > -	return devm_iio_device_register(&client->dev, indio_dev);
+> > +	err = devm_iio_device_register(&client->dev, indio_dev);
+> > +	if (!err)
+> > +		return 0;  
+> Don't make this change.  It makes the code less readable.  
+> 
+> Right now you don't turn the regulator off in remove at all and
+> you definitely should.
+> 
+> You should not be mixing managed and unmanaged calls.
+> This is because you will end up with race conditions.  Here the
+> regulators are disabled before the automated unwinding calls
+> device unregister.  Hence we have a window in which the power
+> is turned off but the userspace interfaces are still there.
+> 
+> Weird crashes likely to follow!
+> 
+> Two options:
+> 1) For everything after the power on change from devm to non
+> devm and do the unwinding.
+> 2) Use devm_add_action_or_reset to automatically handle
+> the unwinding of the regulator enable.  The result being that
+> it is back in the right place order wise.
+> 
+> 
+> 
+> > +
+> > +disable_regulator:
+> > +	if (!IS_ERR(chip->vcc_reg))
+> > +		regulator_disable(chip->vcc_reg);
+> > +
+> > +	return err;
+> >  }
+> >  
+> >  #ifdef CONFIG_PM_SLEEP
+> >  static int isl29018_suspend(struct device *dev)
+> >  {
+> >  	struct isl29018_chip *chip = iio_priv(dev_get_drvdata(dev));
+> > +	int ret;
+> >  
+> >  	mutex_lock(&chip->lock);
+> >  
+> > @@ -777,6 +801,14 @@ static int isl29018_suspend(struct device *dev)
+> >  	 * So we do not have much to do here.
+> >  	 */
+> >  	chip->suspended = true;
+> > +	if (!IS_ERR(chip->vcc_reg)) {
+> > +		ret = regulator_disable(chip->vcc_reg);
+> > +		if (ret) {
+> > +			dev_err(dev, "failed to disable VCC regulator\n");
+> > +			mutex_unlock(&chip->lock);
+> > +			return ret;
+> > +		}
+> > +	}
+> >  
+> >  	mutex_unlock(&chip->lock);
+> >  
+> > @@ -790,6 +822,15 @@ static int isl29018_resume(struct device *dev)
+> >  
+> >  	mutex_lock(&chip->lock);
+> >  
+> > +	if (!IS_ERR(chip->vcc_reg)) {
+> > +		err = regulator_enable(chip->vcc_reg);
+> > +		if (err) {
+> > +			dev_err(dev, "failed to enable VCC regulator\n");
+> > +			mutex_unlock(&chip->lock);
+> > +			return err;
+> > +		}
+> > +	}
+> > +
+> >  	err = isl29018_chip_init(chip);
+> >  	if (!err)
+> >  		chip->suspended = false;  
+> 
 
