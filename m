@@ -2,110 +2,172 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9332C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1600C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9572086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:46:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vax1bIsK"
+	by mail.kernel.org (Postfix) with ESMTP id 773522086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 18:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730781AbeLPSqc (ORCPT
+        id S1730774AbeLPSvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 13:46:32 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40372 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730593AbeLPSqc (ORCPT
+        Sun, 16 Dec 2018 13:51:39 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730593AbeLPSvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 13:46:32 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so10094518wrt.7
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 10:46:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xIKzofoqeGTPdDkQGq7dhoEjCUH4up0PCTOnDtQdS5s=;
-        b=Vax1bIsKfjmR7QT/wusmMeIsgfO0k9dSYApOQUaoNmWdYqsUjSRR0iYeGG2dcSIad6
-         imYwnZmo6k+7+uE+1IpfyRgXQHlT2fi1c1CUtbYcIHcMqsWY18TmTCvhX5ZCXk7q4uBP
-         DvTJjrhN8vrpHkJoc8AMMZ9h75ISBCA2r679s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xIKzofoqeGTPdDkQGq7dhoEjCUH4up0PCTOnDtQdS5s=;
-        b=uDmrczXql8bLFwaVYsx2A2+FWv2mNUKPMEHD0xpHwQj+jXrzM9JVQX5QfhVQYmlTq9
-         omgdJb3Ajfi5zdWJvfcIcO4DtxnwUxAG+JdlNuxC5cNv5+Z4mKyT1zd3723EZ7aeqQbj
-         WRSEzJwct5zKnpAqgTY/5up7BXBR5XSJ6b6zkcRnWLM8qZ/3cm5ZGlfotZjikRwXxuYq
-         zqkd1t3BdesnrxmmlLGancXZ971CoMe/1XgmxiXvS0KnT+rfl8E0GaqT9ArXHHZV3hf1
-         5FhUAJCnvaHc15klSs92IX8hdrbLLmV9CdL9Dyi3Zx6rlp+/CMdepyRcyCNbVZNfse/S
-         kr3A==
-X-Gm-Message-State: AA+aEWY+YyheFLpHcIxwDMJ5puE3ntiHzIE5Hool4B9vxHqLKRfoQOF5
-        C/nA2JkX4NobGdtCdVxp45B+YhQ8bML7/7l3tm1z+Q==
-X-Google-Smtp-Source: AFSGD/UTQSxX+46xmwNQL/qIQQNJSIMeiGVYR7gmrsb2+4kdj0ZYMRTX9NWY3XGd+zQMOtMn4JT68bnLP6W8pc6+VKs=
-X-Received: by 2002:a5d:43d0:: with SMTP id v16mr8931700wrr.67.1544985990117;
- Sun, 16 Dec 2018 10:46:30 -0800 (PST)
+        Sun, 16 Dec 2018 13:51:39 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBGImwGM054698
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 13:51:38 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pdfman2pj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 13:51:38 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sun, 16 Dec 2018 18:51:35 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 16 Dec 2018 18:51:29 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBGIpS2T21692458
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 16 Dec 2018 18:51:28 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9BA53B2065;
+        Sun, 16 Dec 2018 18:51:28 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 62DF6B2064;
+        Sun, 16 Dec 2018 18:51:28 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sun, 16 Dec 2018 18:51:28 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 71C5916C0FD2; Sun, 16 Dec 2018 10:51:30 -0800 (PST)
+Date:   Sun, 16 Dec 2018 10:51:30 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        mathieu.desnoyers@efficios.com,
+        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
+        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Linux: Implement membarrier function
+Reply-To: paulmck@linux.ibm.com
+References: <20181214184344.GW4170@linux.ibm.com>
+ <Pine.LNX.4.44L0.1812141404450.1570-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <20181214211242.9721-1-semen.protsenko@linaro.org>
- <20181214211242.9721-2-semen.protsenko@linaro.org> <20181216163059.i5nadsfzyvcwa4o6@kdev>
-In-Reply-To: <20181216163059.i5nadsfzyvcwa4o6@kdev>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Sun, 16 Dec 2018 20:46:19 +0200
-Message-ID: <CAKaJLVvj2Yv0hOXiRLvJ1Gnm3axOds21LHxmCW5K0YNpx+hk6w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] l2tp: Add Protocol field compression
-To:     Guillaume Nault <g.nault@alphalink.fr>
-Cc:     James Chapman <jchapman@katalix.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1812141404450.1570-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121618-0052-0000-0000-000003683A04
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010237; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01132725; UDB=6.00588778; IPR=6.00912856;
+ MB=3.00024712; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-16 18:51:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121618-0053-0000-0000-00005F213DF4
+Message-Id: <20181216185130.GB4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-16_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=401 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812160176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guillaume,
+On Fri, Dec 14, 2018 at 04:39:34PM -0500, Alan Stern wrote:
+> On Fri, 14 Dec 2018, Paul E. McKenney wrote:
+> 
+> > I would say that sys_membarrier() has zero-sized read-side critical
+> > sections, either comprising a single instruction (as is the case for
+> > synchronize_sched(), actually), preempt-disable regions of code
+> > (which are irrelevant to userspace execution), or the spaces between
+> > consecutive pairs of instructions (as is the case for the newer
+> > IPI-based implementation).
+> > 
+> > The model picks the single-instruction option, and I haven't yet found
+> > a problem with this -- which is no surprise given that, as you say,
+> > an actual implementation makes this same choice.
+> 
+> I believe that for RCU tests the LKMM gives the same results for
+> length-zero critical sections interspersed between all the instructions
+> and length-one critical sections surrounding all instructions (except
+> synchronize_rcu).  But the proof is tricky and I haven't checked it
+> carefully.
 
-On Sun, Dec 16, 2018 at 6:30 PM Guillaume Nault <g.nault@alphalink.fr> wrote:
->
-> On Fri, Dec 14, 2018 at 11:12:42PM +0200, Sam Protsenko wrote:
-> > When Protocol Field Compression (PFC) is enabled, the "Protocol" field
-> > in PPP packet should be transmitted without leading 0x00. See section
-> > 6.5 in RFC 1661 for details. Let's compress protocol field if needed,
-> > the same way it's done in drivers/net/ppp/pptp.c.
-> >
-> > To actually enable PFC, one should issue corresponding ioctl to L2TP
-> > driver from user-space, like this:
-> >
-> >     ioctl(fd, PPPIOCGFLAGS, &flags);
-> >     flags |= SC_COMP_PROT;
-> >     ioctl(fd, PPPIOCSFLAGS, &flags);
-> >
-> > It can be done e.g. from pppol2tp plugin (pppd), when pcomp option was
-> > negotiated with peer.
-> >
-> > Of course, we don't compress Protocol field when sending LCP packets. As
-> > stated in RFC 1661, section 6.5:
-> >
-> >     The Protocol field is never compressed when sending any LCP
-> >     packet.  This rule guarantees unambiguous recognition of LCP
-> >     packets.
-> >
-> Again, I'm sorry, but I must oppose this change. Although I'm lacking
-> time to keep sanitising L2TP, at least I'd like to avoid making the
-> situation worse.
->
-> L2TP's uapi is already messy enough. Please don't add non-L2TP features
-> there.
->
-> Activating PFC should be done on PPP file descriptors, not no L2TP
-> sockets. We certainly don't want L2TP to snoop on PPP data, much less
-> modify them.
+That assertion is completely consistent with my implementation experience,
+give or take the usual caveats about idle and offline execution.
 
-Makes sense. I thought about this, too, just found that it's done that
-way in PPTP code and decided not to be too smart about this. Let me
-try and re-work this one. Will send v2 soon.
+> > > > The other thing that took some time to get used to is the possibility
+> > > > of long delays during sys_membarrier() execution, allowing significant
+> > > > execution and reordering between different CPUs' IPIs.  This was key
+> > > > to my understanding of the six-process example, and probably needs to
+> > > > be clearly called out, including in an example or two.
+> > > 
+> > > In all the examples I'm aware of, no more than one of the IPIs
+> > > generated by each sys_membarrier call really matters.  (Of course,
+> > > there's no way to know in advance which one it will be, so you have to
+> > > send an IPI to every CPU.)  The execution delays and reordering
+> > > between different CPUs' IPIs don't appear to be significant.
+> > 
+> > Well, there are litmus tests that are allowed in which the allowed
+> > execution is more easily explained in terms of delays between different
+> > CPUs' IPIs, so it seems worth keeping track of.
+> > 
+> > There might be a litmus test that can tell the difference between
+> > simultaneous and non-simultaneous IPIs, but I cannot immediately think of
+> > one that matters.  Might be a failure of imagination on my part, though.
+> 
+> 	P0	P1	P2
+> 	Wc=1	[mb01]	Rb=1
+> 	memb	Wa=1	Rc=0
+> 	Ra=0	Wb=1	[mb02]
+> 
+> The IPIs have to appear in the positions shown, which means they cannot
+> be simultaneous.  The test is allowed because P2's reads can be
+> reordered.
 
-Thanks.
+OK, so "simultaneous" IPIs could be emulated in a real implementation by
+having sys_membarrier() send each IPI (but not wait for a response), then
+execute a full memory barrier and set a shared variable.  Each IPI handler
+would spin waiting for the shared variable to be set, then execute a full
+memory barrier and atomically increment yet another shared variable and
+return from interrupt.  When that other shared variable's value reached
+the number of IPIs sent, the sys_membarrier() would execute its final
+(already existing) full memory barrier and return.  Horribly expensive
+and definitely not recommended, but eminently doable.
+
+The difference between current sys_membarrier() and the "simultaneous"
+variant described above is similar to the difference between
+non-multicopy-atomic and multicopy-atomic memory ordering.  So, after
+thinking it through, my guess is that pretty much any litmus test that
+can discern between multicopy-atomic and  non-multicopy-atomic should
+be transformable into something that can distinguish between the current
+and the "simultaneous" sys_membarrier() implementation.
+
+Seem reasonable?
+
+Or alternatively, may I please apply your Signed-off-by to your earlier
+sys_membarrier() patch so that I can queue it?  I will probably also
+change smp_memb() to membarrier() or some such.  Again, within the
+Linux kernel, membarrier() can be emulated with smp_call_function()
+invoking a handler that does smp_mb().
+
+							Thanx, Paul
+
