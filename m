@@ -2,111 +2,132 @@ Return-Path: <SRS0=hDTa=OZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEBDC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6FAC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F54020883
-	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D48820578
+	for <linux-kernel@archiver.kernel.org>; Sun, 16 Dec 2018 23:57:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNV+KDNc"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FveyYHr9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731145AbeLPX5J (ORCPT
+        id S1731185AbeLPX5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 18:57:09 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37780 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730719AbeLPX5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 18:57:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id s12so10079424wrt.4;
-        Sun, 16 Dec 2018 15:57:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LfUSmwDuqBqAikgSwV2pPocAsayQs7nw84OxK0kY2+M=;
-        b=bNV+KDNcg+CKpukYU5YtjqP2UhnVgWM45TDBQMMFZ/0gmaV3a6d8b2uefeFGGhoXfV
-         XoA5G7XZuB49vj/arGPh0a5ejPPBwwc1+j+kEustXG+JHvw/2dP2Ua7GC6DTTZz+Jmtt
-         UCyE7bOqDZOg0e/370+8f64x5MTnoDbi91jvrGYrYxA5NDLxK0b4fCt5EsEERO4RQMyf
-         nTQS6hTF/c0LFbfazWrI/mho4GsujifkKc3hMAo4IINbVYcb5Noaj0j+uQ02u4DFJnA2
-         VtTggorZ/7FdyMtfN1XLu3jt/YjNOjoYhgWeUXv4DNAe57OxvgYo7CqqEqgJYM78jz0k
-         jG2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LfUSmwDuqBqAikgSwV2pPocAsayQs7nw84OxK0kY2+M=;
-        b=Az5waer2Q4Y0pVps09u+fXIU4KnpKEL+LChNXwFErIEHWFAaGd+qvGSa/giugwuI+j
-         KD59S58PTKs+PqF0OLwZPvt5m1wVZpKwvjTCMOuoc/ZrbY8FCt/DmRTjwU9SBsXYh+5g
-         bpZrcROErqCtGPX24mHXCrpA5CRyD3UxEHEyYA2m2027vp8ayJMLrrt4R6HZyFwOTTHp
-         zTBM5eAuPlbQTkStUtr8WRUSWv8jdczhhb1px5a6q5aoBylwHv5lyxr0a7a/nFPGgguj
-         jOTf6W8i1/qIXmL9Vg8McYkXDM8Urrk0MsAosZ44VtBlTQ8XkwKfH8R52j/dDmYCFktk
-         L7bA==
-X-Gm-Message-State: AA+aEWbzw8H1vqnT/O5uq3ClQWXO60CeNL5spt9Dac5vepTZenVRMa3N
-        Ee4hbBJkiicByYOCVn//MwMQ+OfCEkbekKx8KyE=
-X-Google-Smtp-Source: AFSGD/WIA2E4t4PdYBA8MNw8YRnJPmqJw6/r6/dlHqaT+5CLbmAomhRst0bcPa8woHXz70KeaTKJy2n+et72VtG9Z6s=
-X-Received: by 2002:adf:ed46:: with SMTP id u6mr9203577wro.262.1545004627192;
- Sun, 16 Dec 2018 15:57:07 -0800 (PST)
+        Sun, 16 Dec 2018 18:57:19 -0500
+Received: from ozlabs.org ([203.11.71.1]:54901 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730719AbeLPX5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 18:57:18 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43J1Rc0X8Pz9sDN;
+        Mon, 17 Dec 2018 10:57:15 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545004636;
+        bh=Pxcqezk0hlkGO7Is3YFHOdCZsD+6//981F3ztDCEL/M=;
+        h=Date:From:To:Cc:Subject:From;
+        b=FveyYHr9fpNFYHn+wlVHtvapuOS9fGkYY8ESYuCmT8v6bI49YdrWcY+O2fApKhtHW
+         YXrBLxr3oQJcUORROx31xRma7w/eMFV1MR1PTfRiSglkJVs9i7czl6e4taJt2xVQzD
+         YzkeynCLDMJAYxFoXWTtgATJE6dxGnko1ov1RMWFMv6syFV8urB4piV7aSI2hHDArm
+         gG4+yt1Y/uj65MBalZ8BhgVMR2XTi+Jpuap6wlEdf+enUnN4la6zyVT1XqyIaioCrL
+         ZbSiOsAnnLfIoKHGFaYGSNSt4XeWfUhuDCnp1W7jJNzljoDOyjvtpFsKtQemoVHl3c
+         aK+uadcPPOgRg==
+Date:   Mon, 17 Dec 2018 10:57:15 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: linux-next: manual merge of the thermal tree with the kbuild tree
+Message-ID: <20181217105715.5da0b389@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20181020120849.65708-1-houtao1@huawei.com>
-In-Reply-To: <20181020120849.65708-1-houtao1@huawei.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Mon, 17 Dec 2018 00:56:55 +0100
-Message-ID: <CAFLxGvzSiFdVmGs4StKkJDyBv698wmLePBnfZwhF0HnEDSmPKA@mail.gmail.com>
-Subject: Re: [PATCH] jffs2: ensure wbuf_verify is valid before using it.
-To:     houtao1@huawei.com
-Cc:     linux-mtd@lists.infradead.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, boris.brezillon@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WQXhQ.z3uvrgIA0yf=AzGEV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 2:06 PM Hou Tao <houtao1@huawei.com> wrote:
->
-> Now MTD emulated by UBI volumn doesn't allocate wbuf_verify in
-> jffs2_ubivol_setup(), because UBI can do the verifcation itself,
-> so when CONFIG_JFFS2_FS_WBUF_VERIFY is enabled and a MTD device
-> emulated by UBI volumn is used, a Oops will occur as show in the
-> following trace:
->
->     general protection fault: 0000 [#1] SMP KASAN PTI
->     CPU: 6 PID: 404 Comm: kworker/6:1 Not tainted 4.19.0-rc8
->     Workqueue: events_long delayed_wbuf_sync
->     RIP: 0010:ubi_io_read+0x156/0x650
->     Call Trace:
->      ubi_eba_read_leb+0x57d/0xba0
->      ubi_leb_read+0xe5/0x1b0
->      gluebi_read+0x10c/0x1a0
->      mtd_read+0x112/0x340
->      jffs2_verify_write+0xef/0x440
->      __jffs2_flush_wbuf+0x3fa/0x3540
->      jffs2_flush_wbuf_gc+0x1b1/0x2e0
->      process_one_work+0x58b/0x11e0
->      worker_thread+0x8f/0xfe0
->      kthread+0x2ae/0x3a0
->      ret_from_fork+0x35/0x40
->
-> Fix the problem by checking the validity of wbuf_verify before
-> using it in jffs2_verify_write().
->
-> Cc: stable@vger.kernel.org
-> Fixes: 0029da3bf430 ("JFFS2: add UBI support")
-> Signed-off-by: Hou Tao <houtao1@huawei.com>
+--Sig_/WQXhQ.z3uvrgIA0yf=AzGEV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Richard Weinberger <richard@nod.at>
+Hi Zhang,
 
-BTW: Are you actually using glubi? It is on my list of things I'd like
-to kill. :-)
+Today's linux-next merge of the thermal tree got a conflict in:
 
--- 
-Thanks,
-//richard
+  drivers/thermal/Kconfig
+
+between commit:
+
+  17815cc6622c ("treewide: surround Kconfig file paths with double quotes")
+
+from the kbuild tree and commit:
+
+  3e8c4d31f8ed ("drivers: thermal: Move various drivers for intel platforms=
+ into a subdir")
+
+from the thermal tree.
+
+I fixed it up (I used the thermal tree version of this file and added
+the following merge fix patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Dec 2018 10:54:07 +1100
+Subject: [PATCH] drivers: thermal: fixup for Kconfig string parsing tighten=
+ing up
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/thermal/intel/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kconfig
+index 9c06d4ad7c97..2e013eeb4a1d 100644
+--- a/drivers/thermal/intel/Kconfig
++++ b/drivers/thermal/intel/Kconfig
+@@ -55,7 +55,7 @@ config INTEL_QUARK_DTS_THERMAL
+ 	  underlying BIOS/Firmware.
+=20
+ menu "ACPI INT340X thermal drivers"
+-source drivers/thermal/intel/int340x_thermal/Kconfig
++source "drivers/thermal/intel/int340x_thermal/Kconfig"
+ endmenu
+=20
+ config INTEL_BXT_PMIC_THERMAL
+--=20
+2.19.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WQXhQ.z3uvrgIA0yf=AzGEV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwW5lsACgkQAVBC80lX
+0Gx+Wwf+Md4shsec2H6PMWmjwdCEbRfmgXe/a/jQThjPcPMBzrxOUA5uFQRsKhu/
+7AoJFxEpNhBFAEYgS7TZlASPokpN3zbqte0i+KoGCKtFoXNd1spBI0BYT7cqD4EP
++QSEcVOrB2jPvRT+ujhLGmAhgul2jKlQya6btFYk5/ZP1eAdQoZ+r0ugu4qmudzt
+WvEEV+FtmNn7NqPWb5ScAtuyb1Q3SOauGFZqi4OklveZAWd9UfTgcX32eSSLOb1p
+f1KPOQxeR9i8SgNGsrNuHRdOY1gWPNRirAZ+L06jCYwr+QqcnndAc6ij/ORp1Wno
+1gjZSO0xmDjttEUwzPHqXE9mmDM9JQ==
+=7kxA
+-----END PGP SIGNATURE-----
+
+--Sig_/WQXhQ.z3uvrgIA0yf=AzGEV--
