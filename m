@@ -2,174 +2,191 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F530C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D032C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E655A21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:08:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsIyoYi0"
+	by mail.kernel.org (Postfix) with ESMTP id 039B6214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545073720;
+	bh=cr1ptpSKwY/dz1KiayisNq6Hh6//Cex6kdBnmnrZ+mc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UZRqcDOzV/ng8HarcGX+/A6blZxKtD+8MGLAmf44jMJomW9T0wd2kkiQXm6vFLtDQ
+	 p9DpEnPqAz15zLTK4bz3uUj8A3JT8BcQp3VuW+W/HtMecLk5MqXn5LYxWDR+JF3tqt
+	 9Y+GVqKBpXXiTLHlTW3Wv2anMY9EwNSw+AdzfWnk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387470AbeLQTIW (ORCPT
+        id S2387571AbeLQTIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:08:22 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50363 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbeLQTIW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:08:22 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so331800wmd.0;
-        Mon, 17 Dec 2018 11:08:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vrBxUaOzEsCLDxJBcDrF2I/MEmtIm1oVClLGixYZ4bs=;
-        b=gsIyoYi0hPzL5imKjcf05ySNbLKmaeq/WyRBnpGlt+s3q8wuhBVQiAE5Efl8tusYXY
-         IPNZLNv3coG+TlC+mSkJX6zula34GQAddPSe0EAqSwn/cetmPXWlsyBPEDYSL0n6k5Th
-         1Kz0w1JizoKkVbCl9w7cewocOGpbkXP8BTuqWjg+iR0BDjJdyXgGyXlmmdUHaC+VZBtv
-         mpNFDjGNozSy/V6Ygl0WDNE4Y382QUo5Id//7dpV2lLozPaZe7Ky9ym/sJ7HIs3gKl0h
-         y4BhjFETT91JylGJvorRqLCq1f4oune/MdheOwW/Xh5u/cs8BePEjcoVgArw77YPNjMb
-         xkfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vrBxUaOzEsCLDxJBcDrF2I/MEmtIm1oVClLGixYZ4bs=;
-        b=DZc3PcFm5PQdc5p7DVwZZTynvFvu4rvvHTTFOhq30QCossKlPUPY/WIV5x9FfldyEk
-         knzbUGQ+RKxVzxehMRoQl3566753x0nr+0vB58pzwueI/94xo4sSnUjkQuEghvAFW8fC
-         Y/uPnzo4MEof/YNKdNlAFew/lY12ZsTcbW9yNcUH8SSH+IcHbZoBAEpbnPStQaa8yoe3
-         rd8q1OulFBdvlSibfhcsNKWLtdaZetIlI49wRy8J0b0BxSA54cE9k08crVZmRR2ClALV
-         86xfFVUX7PnyT6Sk3J6GLx+szN+Uv9ngu96Gf9I6LD2FbehJLtDAAtxs9ppZYJTflcbW
-         0Kkg==
-X-Gm-Message-State: AA+aEWahkHpXFUkX/NhxX0IaoxRAJ6s8h8P7Nf+R3Mqat6CICWLM5eBL
-        Hy+UVnhfIufHZ9lUVZroVzSeFYZz
-X-Google-Smtp-Source: AFSGD/V8F3GVb6YeJzySD23wSuZqMu7mHWv+FJBvtPYkAlloihIIzinuB+OBFIWHIAad8hVtBNGzNw==
-X-Received: by 2002:a1c:a913:: with SMTP id s19mr330748wme.4.1545073698953;
-        Mon, 17 Dec 2018 11:08:18 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:9098:392c:b017:10bc? (p200300EA8BCFE3009098392CB01710BC.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:9098:392c:b017:10bc])
-        by smtp.googlemail.com with ESMTPSA id g16sm1230227wru.41.2018.12.17.11.08.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 11:08:18 -0800 (PST)
-Subject: Re: A weird problem of Realtek r8168 after resume from S3
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
-        netdev@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
- <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
- <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com>
- <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
-Date:   Mon, 17 Dec 2018 20:08:08 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 17 Dec 2018 14:08:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbeLQTIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:08:38 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABB9221473;
+        Mon, 17 Dec 2018 19:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545073717;
+        bh=cr1ptpSKwY/dz1KiayisNq6Hh6//Cex6kdBnmnrZ+mc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xBflS5p3HI9InaoMn4Pjrd9N0tNkc+ALkMP4Qqa3ZXKSNXnm+wa81xEC5eiTpPPQ9
+         drRS2KWyaef9/MTrh25KOEVsvA/uDwgL8hGQIF0HPiF4JNSJBKs0cAthzpP7VLtdwu
+         AXV86bc+NGMNvXC/WRsc79WXDNa3+rjFHErS5XSY=
+Date:   Mon, 17 Dec 2018 20:08:34 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/88] 4.4.168-stable review
+Message-ID: <20181217190834.GB13773@kroah.com>
+References: <20181214115702.151309521@linuxfoundation.org>
+ <dfd49bfd-359a-7f5e-8332-5e6ad6da21cd@roeck-us.net>
+ <20181215080729.GG10074@kroah.com>
+ <c5862b36-beae-4810-fb33-4b646e96378b@roeck-us.net>
+ <1545004693.19315.66.camel@codethink.co.uk>
+ <20181217090533.GA12938@kroah.com>
+ <ca64083a-158f-7faf-d6e7-566336ad03d0@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca64083a-158f-7faf-d6e7-566336ad03d0@roeck-us.net>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.12.2018 14:25, Chris Chiu wrote:
-> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>
->> On 14.12.2018 04:33, Chris Chiu wrote:
->>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
->>>>
->>>> Hi,
->>>>     We got an acer laptop which has a problem with ethernet networking after
->>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
->>>> follows.
->>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
->>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
->>>>
->> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
->>
-> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
-> (uninitialized): mac_version = 0x2b
-> [   22.365580] libphy: r8169: probed
-> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
-> XID 5c800800, IRQ 38
-> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
-> bytes, tx checksumming: ko]
+On Mon, Dec 17, 2018 at 05:46:01AM -0800, Guenter Roeck wrote:
+> On 12/17/18 1:05 AM, Greg Kroah-Hartman wrote:
+> > On Sun, Dec 16, 2018 at 11:58:13PM +0000, Ben Hutchings wrote:
+> > > On Sat, 2018-12-15 at 07:45 -0800, Guenter Roeck wrote:
+> > > > On 12/15/18 12:07 AM, Greg Kroah-Hartman wrote:
+> > > > > On Fri, Dec 14, 2018 at 06:10:29PM -0800, Guenter Roeck wrote:
+> > > > > > On 12/14/18 3:59 AM, Greg Kroah-Hartman wrote:
+> > > > > > > This is the start of the stable review cycle for the 4.4.168 release.
+> > > > > > > There are 88 patches in this series, all will be posted as a response
+> > > > > > > to this one.  If anyone has any issues with these being applied, please
+> > > > > > > let me know.
+> > > > > > > 
+> > > > > > > Responses should be made by Sun Dec 16 11:56:41 UTC 2018.
+> > > > > > > Anything received after that time might be too late.
+> > > > > > 
+> > > > > > Build results:
+> > > > > > 	total: 170 pass: 145 fail: 25
+> > > > > > Failed builds:
+> > > > > > 	arm:allnoconfig
+> > > > > > 	arm:tinyconfig
+> > > > > > 	arm:efm32_defconfig
+> > > > > > 	blackfin:defconfig
+> > > > > > 	blackfin:BF561-EZKIT-SMP_defconfig
+> > > > > > 	c6x:dsk6455_defconfig
+> > > > > > 	c6x:evmc6457_defconfig
+> > > > > > 	c6x:evmc6678_defconfig
+> > > > > > 	h8300:allnoconfig
+> > > > > > 	h8300:tinyconfig
+> > > > > > 	h8300:edosk2674_defconfig
+> > > > > > 	h8300:h8300h-sim_defconfig
+> > > > > > 	h8300:h8s-sim_defconfig
+> > > > > > 	m68k:allnoconfig
+> > > > > > 	m68k:tinyconfig
+> > > > > > 	m68k:m5272c3_defconfig
+> > > > > > 	m68k:m5307c3_defconfig
+> > > > > > 	m68k:m5249evb_defconfig
+> > > > > > 	m68k:m5407c3_defconfig
+> > > > > > 	microblaze:nommu_defconfig
+> > > > > > 	microblaze:allnoconfig
+> > > > > > 	microblaze:tinyconfig
+> > > > > > 	sh:defconfig
+> > > > > > 	sh:allnoconfig
+> > > > > > 	sh:tinyconfig
+> > > > > > Qemu test results:
+> > > > > > 	total: 288 pass: 288 fail: 0
+> > > > > > 
+> > > > > > mm/nommu.c: In function '__get_user_pages_unlocked':
+> > > > > > mm/nommu.c:211:49: error: 'write' undeclared (first use in this function)
+> > > > > > mm/nommu.c:211:56: error: 'force' undeclared (first use in this function)
+> > > > > > mm/nommu.c:212:9: warning: passing argument 7 of 'get_user_pages' from incompatible pointer type [enabled by default]
+> > > > > > mm/nommu.c:185:6: note: expected 'struct vm_area_struct **' but argument is of type 'struct page **'
+> > > > > > mm/nommu.c:212:9: error: too many arguments to function 'get_user_pages'
+> > > > > > mm/nommu.c:185:6: note: declared here
+> > > > > > 
+> > > > > > Details are available at https://kerneltests.org/builders/.
+> > > > > 
+> > > > > Ugh, I'll dig through this later on today, we must be missing something
+> > > > > with those backports that Ben did...
+> > > > > 
+> > > > 
+> > > > 69ce144e5c3a ("mm: replace get_user_pages() write/force parameters
+> > > > with gup_flags") seems to have missed converting a call of
+> > > > get_user_pages().
+> > > 
+> > > Right.  This was changed earlier upstream in commit cde70140fed8
+> > > "mm/gup: Overload get_user_pages() functions", but I don't think it
+> > > makes sense to apply all of that.  I'm attaching a minimal patch
+> > > (tested with an arm allnoconfig build) which should ideally be inserted
+> > > before mm-replace-get_user_pages-write-force-parameters-with-
+> > > gup_flags.patch.
+> > > 
+> > > Ben.
+> > > 
+> > > -- 
+> > > Ben Hutchings, Software Developer                         Codethink Ltd
+> > > https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+> > >                                       Manchester, M1 2HF, United Kingdom
+> > 
+> > >  From 0d0afe933f60f5736c984e9171214aa34b18764c Mon Sep 17 00:00:00 2001
+> > > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > > Date: Sun, 16 Dec 2018 23:50:08 +0000
+> > > Subject: [PATCH] mm/nommu.c: Switch __get_user_pages_unlocked() to use
+> > >   __get_user_pages()
+> > > 
+> > > Extracted from commit cde70140fed8 "mm/gup: Overload get_user_pages()
+> > > functions".  This is needed before picking commit 768ae309a961
+> > > "mm: replace get_user_pages() write/force parameters with gup_flags".
+> > > 
+> > > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> > > ---
+> > >   mm/nommu.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/mm/nommu.c b/mm/nommu.c
+> > > index fa1560c218d5..2360546db065 100644
+> > > --- a/mm/nommu.c
+> > > +++ b/mm/nommu.c
+> > > @@ -208,8 +208,8 @@ long __get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
+> > >   {
+> > >   	long ret;
+> > >   	down_read(&mm->mmap_sem);
+> > > -	ret = get_user_pages(tsk, mm, start, nr_pages, write, force,
+> > > -			     pages, NULL);
+> > > +	ret = __get_user_pages(tsk, mm, start, nr_pages, gup_flags, pages,
+> > > +			       NULL, NULL);
+> > >   	up_read(&mm->mmap_sem);
+> > >   	return ret;
+> > >   }
+> > 
+> > Thanks for the patch.  I've added it to the queue and pushed out a -rc2
+> > with this in it.
+> > 
+> > Let's see what the builders say :)
+> > 
 > 
-Thanks for the info.
+> v4.4.167-89-g9c558d7fe359 seemed to be happy. v4.4.167-89-g50a0280f2f7e
+> replaced it and will take a while.
 
->>>>     The problem is the ethernet is not accessible after resume. Pinging via
->>>> ethernet always shows the response `Destination Host Unreachable`. However,
->>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
->>>> interface, the networking is back to alive. But it's dead again after
->>>> I stop tcpdump.
->>>> One more thing, if I ping the problematic machine from others, it achieves the
->>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
->>>>
->> You could compare the register dumps (ethtool -d) before and after S3 sleep
->> to find out whether there's a difference.
->>
-> 
-> Actually, I just found I lead the wrong direction. The S3 suspend does
-> help to reproduce,
-> but it's not necessary. All I need to do is ping around 5 mins and the
-> network connection
-> fails.  And I also find one thing interesting, disabling the  MSI-X
-> interrupt like commit
-> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
-> Although I don't
-> understand the root cause. Anything I can do to help?
-> 
-This is indeed very, very weird. You say switching from MSI-X to MSI fixes
-the issue, but also pinging the machine from outside brings back the network.
-Both actions affect totally different corners.
+If I read your site right, it passed everything except one qemu test?
+Is that normal?
 
-The commit and related issue you mention was a workaround in the driver,
-the root cause was a MSI-X-related  issue with certain Intel chipsets deep
-in the PCI core. After this was fixed we removed the workaround again.
-This shouldn't be related to your issue.
+thanks,
 
-Hard to say for now is whether the issue is:
-- a driver issue
-- a hardware issue in the RTL8411
-- an issue with the chipset on your mainboard
-
-According to your description it doesn't take a special scenario to trigger
-the issue, so most likely also other users of Acer notebooks with RTL8411
-should be affected (after briefly checking this should be at least Aspire
-F15, V15, V7). Therefore I wonder why there aren't more reports.
-
-This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
-So you could test this revision and the one before.
-
-Eventually, if the issue really should be caused by a side effect of using
-MSI-X, then the question is whether we need to disable MSI-X for RTL8411
-in general or just for RTL8411 and a certain subsystem id.
-
->>>>     I tried the latest 4.20 rc version but the problem still there. I
->>>> also tried some
->>>> hw_reset or init thing in the resume path but no effect. Any
->>>> suggestion for this?
->>>> Thanks
->>>>
->> Did previous kernel versions work? If it's a regression, a bisect would be
->> appreciated, because with the chip versions I've got I can't reproduce the issue.
->>
->>>> Chris
->>>
->>> Gentle ping. Any additional information required?
->>>
->>> Chris
->>>
->> Heiner
-> 
-
+greg k-h
