@@ -2,94 +2,128 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB50C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159D7C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A12F2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:39:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="w7iZn/Ci";
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="w7iZn/Ci"
+	by mail.kernel.org (Postfix) with ESMTP id E13A320874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:39:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbeLQNjP (ORCPT
+        id S1732992AbeLQNjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:39:15 -0500
-Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:38640 "EHLO
-        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726656AbeLQNjP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:39:15 -0500
-Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
-        by forwardcorp1g.cmail.yandex.net (Yandex) with ESMTP id 8D954202CC;
-        Mon, 17 Dec 2018 16:39:12 +0300 (MSK)
-Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
-        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 9ojair3LNb-dCQWnFG6;
-        Mon, 17 Dec 2018 16:39:12 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1545053952; bh=B3seQixI2CSeLl34u1KeshLhri33S3Gv85wWE+kBH7s=;
-        h=Subject:From:To:Cc:References:Message-ID:Date:In-Reply-To;
-        b=w7iZn/CiYUIpiUQcBfbqsAzsmRqjLpri40wS1pOrcl35TyGwmQ0q2kFgwo+z5YC19
-         hLZ9E3IQPv9vSheyD3Bq27lXoUiT1uBgq/9/CfYwmpiyvcK7uEW5rkAMNF2vc2I1oG
-         Vf0tEQy3UO0rkMuYRKNRWlWD9fgDG6+AyHzX2GxI=
-Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:0:3712::1:90])
-        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 4Wd1QsDFjF-dCAOCQGK;
-        Mon, 17 Dec 2018 16:39:12 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
-        t=1545053952; bh=B3seQixI2CSeLl34u1KeshLhri33S3Gv85wWE+kBH7s=;
-        h=Subject:From:To:Cc:References:Message-ID:Date:In-Reply-To;
-        b=w7iZn/CiYUIpiUQcBfbqsAzsmRqjLpri40wS1pOrcl35TyGwmQ0q2kFgwo+z5YC19
-         hLZ9E3IQPv9vSheyD3Bq27lXoUiT1uBgq/9/CfYwmpiyvcK7uEW5rkAMNF2vc2I1oG
-         Vf0tEQy3UO0rkMuYRKNRWlWD9fgDG6+AyHzX2GxI=
-Authentication-Results: smtpcorp1p.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
-Subject: Re: [PATCH] tools/perf: fix silent build with 'make -s'
-From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-To:     linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>
-References: <154504723398.564691.16359911285545406564.stgit@buzz>
-Message-ID: <1194e461-2385-bea9-dc85-d55d4ad89430@yandex-team.ru>
-Date:   Mon, 17 Dec 2018 16:39:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 17 Dec 2018 08:39:42 -0500
+Received: from mga05.intel.com ([192.55.52.43]:45752 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbeLQNjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 08:39:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 05:39:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
+   d="scan'208";a="302834470"
+Received: from zhangxi4-mobl5.ccr.corp.intel.com (HELO localhost) ([10.249.254.207])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Dec 2018 05:39:30 -0800
+Date:   Mon, 17 Dec 2018 15:39:28 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217133928.GA32706@linux.intel.com>
+References: <20181127085533.GA12247@wind.enjellic.com>
+ <20181127164129.GB4170@linux.intel.com>
+ <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
+ <20181128104941.GA23077@wind.enjellic.com>
+ <20181128192228.GC9023@linux.intel.com>
+ <20181210104908.GA23132@wind.enjellic.com>
+ <20181212180036.GC6333@linux.intel.com>
+ <20181214235917.GA14049@wind.enjellic.com>
+ <20181215000627.GA5799@linux.intel.com>
+ <20181217132859.GA31936@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <154504723398.564691.16359911285545406564.stgit@buzz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217132859.GA31936@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.12.2018 14:47, Konstantin Khlebnikov wrote:
-> tools/perf/Makefile conflicts with option '-j'.
-> The rest options must be passed as is.
+On Mon, Dec 17, 2018 at 03:28:59PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Dec 14, 2018 at 04:06:27PM -0800, Sean Christopherson wrote:
+> > [  504.149548] ------------[ cut here ]------------
+> > [  504.149550] kernel BUG at /home/sean/go/src/kernel.org/linux/mm/mmap.c:669!
+> > [  504.150288] invalid opcode: 0000 [#1] SMP
+> > [  504.150614] CPU: 2 PID: 237 Comm: kworker/u20:2 Not tainted 4.20.0-rc2+ #267
+> > [  504.151165] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+> > [  504.151818] Workqueue: sgx-encl-wq sgx_encl_release_worker
+> > [  504.152267] RIP: 0010:__vma_adjust+0x64a/0x820
+> > [  504.152626] Code: ff 48 89 50 18 e9 6f fc ff ff 4c 8b ab 88 00 00 00 45 31 e4 e9 61 fb ff ff 31 c0 48 83 c4 60 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <0f> 0b 49 89 de 49 83 c6 20 0f 84 06 fe ff ff 49 8d 7e e0 e8 fe ee
+> > [  504.154109] RSP: 0000:ffffc900004ebd60 EFLAGS: 00010206
+> > [  504.154535] RAX: 00007fd92ef7e000 RBX: ffff888467af16c0 RCX: ffff888467af16e0
+> > [  504.155104] RDX: ffff888458fd09e0 RSI: 00007fd954021000 RDI: ffff88846bf9e798
+> > [  504.155673] RBP: ffff888467af1480 R08: ffff88845bea2000 R09: 0000000000000000
+> > [  504.156242] R10: 0000000080000000 R11: fefefefefefefeff R12: 0000000000000000
+> > [  504.156810] R13: ffff88846bf9e790 R14: ffff888467af1b70 R15: ffff888467af1b60
+> > [  504.157378] FS:  0000000000000000(0000) GS:ffff88846f700000(0000) knlGS:0000000000000000
+> > [  504.158021] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  504.158483] CR2: 00007f2c56e99000 CR3: 0000000005009001 CR4: 0000000000360ee0
+> > [  504.159054] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > [  504.159623] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > [  504.160193] Call Trace:
+> > [  504.160406]  __split_vma+0x16f/0x180
+> > [  504.160706]  ? __switch_to_asm+0x40/0x70
+> > [  504.161024]  __do_munmap+0xfb/0x450
+> > [  504.161308]  sgx_encl_release_worker+0x44/0x70
+> > [  504.161675]  process_one_work+0x200/0x3f0
+> > [  504.162004]  worker_thread+0x2d/0x3d0
+> > [  504.162301]  ? process_one_work+0x3f0/0x3f0
+> > [  504.162645]  kthread+0x113/0x130
+> > [  504.162912]  ? kthread_park+0x90/0x90
+> > [  504.163209]  ret_from_fork+0x35/0x40
+> > [  504.163503] Modules linked in: bridge stp llc
+> > [  504.163866] ---[ end trace 83076139fc25e3e0 ]---
 > 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> ---
->   tools/perf/Makefile |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/Makefile b/tools/perf/Makefile
-> index 7902a5681fc8..989c3d2f847b 100644
-> --- a/tools/perf/Makefile
-> +++ b/tools/perf/Makefile
-> @@ -16,7 +16,7 @@
->   #
->   # We don't want to pass along options like -j:
->   #
-> -unexport MAKEFLAGS
-> +MAKEFLAGS := $(filter --j% -j,$(MAKEFLAGS))
->   
->   #
->   # Do a parallel build with multiple jobs, based on the number of CPUs online
-> 
+> There was a race with release and swapping code that I thought I fixed,
+> and this is looks like a race there. Have to recheck what I did not
+> consider. Anyway, though to share this if you have time to look at it.
+> That is the part where something is now unsync most probably.
 
-Oops, this breaks static build because if LDFLAGS=-static is in command line then
-all assignments in makefile are ignored while Makefile.config have a lot of that.
+I think I found it. I was careless to make sgx_encl_release() to use
+sgx_invalidate(), which does not delete pages in the case when enclave
+is already marked as dead. This was after I had fixed the race that I
+had there in the first place. That is why I was puzzled why it suddenly
+reappeared.
+
+Would be nice to use sgx_invalidate() also in release for consistency in
+semantics sake so maybe just delete this:
+
+	if (encl->flags & SGX_ENCL_DEAD)
+		return;
+
+?
+
+/Jarkko
