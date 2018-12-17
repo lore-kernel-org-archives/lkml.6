@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCD5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685BFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C78C2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32D902146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:48:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r6WnmBUG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlaoE5Ac"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387826AbeLQPsN (ORCPT
+        id S2387841AbeLQPsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:48:13 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34230 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387794AbeLQPsJ (ORCPT
+        Mon, 17 Dec 2018 10:48:20 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50868 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727617AbeLQPsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:48:09 -0500
-Received: by mail-io1-f68.google.com with SMTP id w21so10355105ioc.1;
-        Mon, 17 Dec 2018 07:48:08 -0800 (PST)
+        Mon, 17 Dec 2018 10:48:07 -0500
+Received: by mail-it1-f195.google.com with SMTP id z7so19220250iti.0;
+        Mon, 17 Dec 2018 07:48:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZXWaJwC1A+WNGPeFi0U9PbUUrRl71zxhx1AMGSVMKlc=;
-        b=r6WnmBUG0aDC2CDpcY0z7uhTBERCMGdnR1SWEQEHKoVsvCoBaullBGXwm3a9nEZPcN
-         ek79+bdx5oF8GSY1rge8AeEe3TxWThQ4iZR9qYKBjdY7/vIgQsPOV7Xai2HeH4EjGVQr
-         6M9dTecr9Ha1nwDuDryeLAQN5AqBBIqyCyp+L+TA6kLRFD14EhY88E8jA1Bhn+DXNFIL
-         DkQPeQrrri9pkWM6LPfp7OyW4BWMENxlemnjChojcTsMeSKiTLzAyMwSvXHG6yH/sypw
-         ho3MmgVfK90aps4E+fNY4liE5yNo7L2Uy7/LyYYNASoNXb1mbOtEkcA9b0kY1zwCA/Zd
-         sZZg==
+        bh=9I/xPB4Y0cqV12qjFH+ohxJh1d3RR5ieESc8rLL9bh4=;
+        b=DlaoE5AcE15BULt2jv+Zge8SWSW2X3Xe537noFwkIQpWb0msmABxRJZGDtBwxphAxn
+         IGDBYO/Fi/yRYauL4tbgrWJkayKeLyNvsh8U90VhYlcaxBOFqbFS7AiI7FVU5XeLaRyY
+         TjANnlbV59RiHeqZ+/bYeJbuUNyFE0JYMQWS/laJy5IhW35Iot7yPlqdrdhY34hPqQQ1
+         uqpEM1T+RX3qjIs5VAkvZ05tMk9NfYxdA7WzBwVoTPj1A8/0FTU/yCjoguXBijt4RJ32
+         QGONXfU5R+0uP10v9CO9iE7JUoLlNvdwdBJkJqTsEWTAvswMClyKaUmVseMRRdvkKrld
+         MbsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZXWaJwC1A+WNGPeFi0U9PbUUrRl71zxhx1AMGSVMKlc=;
-        b=ss9W25BXaWs8/l1CDds11yg1x2Hkto9e+6anDf8Ztmp4AfQ6NmsLKQ6kJVddYeXIWE
-         q3rqxPoA0af/G/o4XoDoUUzFOeyKqd2mIw4aKJ0czxAqxUqEYi1gh89jBVgQ07xI+V7D
-         ptoJDy5rW+FsBhP8N2Znz6kzEm/uTsPjgdihXyiROe2A+jUL+tiWUsL9y7EmJulzwzUc
-         TmK91iIvSV40bmYr66hmqvokKmkPxnk98eTpg1RQqgPXHnofVGDpEUmaluV+mYCisPw9
-         YYg45F5PsEl5/I0yy+WJp4n7ALu8SBnsQLolla2xwR6xleAD0xqHNf0i4d0gbch0YuDV
-         FWPA==
-X-Gm-Message-State: AA+aEWb1ojWWnv/JZ3yTpTqhzE7BZDWNnXH9sUCLrLafRIz9dUe1xZGd
-        MGDDVrryw5jyvtmwQDGpsuw=
-X-Google-Smtp-Source: AFSGD/XsKRCDo5QatwarDxG8fTqaP63Ds6Fr3M/4qsK87syqeNkfqQW9O2nnBDHNegX6M5QEh2eCJg==
-X-Received: by 2002:a6b:1411:: with SMTP id 17mr11653316iou.252.1545061687925;
-        Mon, 17 Dec 2018 07:48:07 -0800 (PST)
+        bh=9I/xPB4Y0cqV12qjFH+ohxJh1d3RR5ieESc8rLL9bh4=;
+        b=IczBG8rugGnnCV9NHRfcIvDOmcOSA1MNxkGXFPisEZGH/p1uESufvjHdcBwWz1bWm2
+         PzDla9oa75QjxNvlBDw2Pig3DEufkVuu9JhcXeoX2X2CvbsjqJaPaBPYZdoUFodmcGYM
+         asPFWMZSa0zD8/dNbr+TZ4El6zykrteAqx0T99lwLGanxU5J16EvnUOIiYvsqm/fDQx2
+         +ZcZjkjgRo+HSbU9OSwZUZmz9OZ/+CLRLGwnuq95n/50Tl2t5D5TocJIJaRi9QzMGlWR
+         sl0jv/G3XdLPHE1MZSHwADuFGB2lySC9bAMHdw5ahyGAl69odXwxLasDwt1y5PySbMjZ
+         0m+Q==
+X-Gm-Message-State: AA+aEWbXbndPha2LC0EutLHccNuxtKNv7ZRuZHAChng3ouJCyqaLDU9/
+        tBoCambI2t8NEj8/yjuaE1s=
+X-Google-Smtp-Source: AFSGD/WTI1gdCrXK9P9kO0d3KvXp7d7EjzFpNsN4BoVZn33jU5zxH9Chs3js7Z5Wwxov7w18EB8KPA==
+X-Received: by 2002:a24:5493:: with SMTP id t141mr12748457ita.57.1545061686847;
+        Mon, 17 Dec 2018 07:48:06 -0800 (PST)
 Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id y23sm18824174ita.1.2018.12.17.07.48.06
+        by smtp.gmail.com with ESMTPSA id y23sm18824174ita.1.2018.12.17.07.48.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 07:48:07 -0800 (PST)
+        Mon, 17 Dec 2018 07:48:06 -0800 (PST)
 From:   Sven Van Asbroeck <thesven73@gmail.com>
 X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
 To:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
@@ -63,9 +63,9 @@ To:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>
 Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
         devicetree@vger.kernel.org
-Subject: [PATCH v4 3/3] bus: imx-weim: guard against timing configuration conflicts
-Date:   Mon, 17 Dec 2018 10:48:00 -0500
-Message-Id: <20181217154800.7448-4-TheSven73@googlemail.com>
+Subject: [PATCH v4 2/3] bus: imx-weim: support multiple address ranges per child node
+Date:   Mon, 17 Dec 2018 10:47:59 -0500
+Message-Id: <20181217154800.7448-3-TheSven73@googlemail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181217154800.7448-1-TheSven73@googlemail.com>
 References: <20181217154800.7448-1-TheSven73@googlemail.com>
@@ -74,137 +74,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When specifying weim child devices, there is a risk that more than
-one timing setting is specified for the same chip select.
+Ensure that timing values for the child node are applied to
+all chip selects in the child's address ranges.
 
-The driver cannot support such a configuration.
+Note that this does not support multiple timing settings per
+child; this can be added in the future if required.
 
-In case of conflict, this patch will print a warning to the log,
-and will ignore the child node in question.
-
-In this example, node acme@1 will be ignored, as it tries to modify
-timing settings for CS0:
-
+Example:
 &weim {
 	acme@0 {
 		compatible = "acme,whatever";
-		reg = <0 0 0x100>;
-		fsl,weim-cs-timing = <something>;
+		reg = <0 0 0x100>, <0 0x400000 0x800>,
+				<1 0x400000 0x800>;
+		fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
+				0x00000000 0xa0000240 0x00000000>;
 	};
-	acme@1 {
-		compatible = "acme,whatnot";
-		reg = <0 0x500 0x100>;
-		fsl,weim-cs-timing = <something else>;
-	};
-};
-
-However in this example, the driver will be happy:
-
-&weim {
-        acme@0 {
-                compatible = "acme,whatever";
-                reg = <0 0 0x100>;
-                fsl,weim-cs-timing = <something>;
-        };
-        acme@1 {
-                compatible = "acme,whatnot";
-                reg = <0 0x500 0x100>;
-                fsl,weim-cs-timing = <something>;
-        };
 };
 
 Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
 ---
- drivers/bus/imx-weim.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+ drivers/bus/imx-weim.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/bus/imx-weim.c b/drivers/bus/imx-weim.c
-index 1a0e0277a404..db74334ca5ef 100644
+index d84996a4528e..1a0e0277a404 100644
 --- a/drivers/bus/imx-weim.c
 +++ b/drivers/bus/imx-weim.c
-@@ -46,8 +46,18 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
+@@ -46,6 +46,7 @@ static const struct imx_weim_devtype imx51_weim_devtype = {
  };
  
  #define MAX_CS_REGS_COUNT	6
-+#define MAX_CS_COUNT		6
- #define OF_REG_SIZE		3
++#define OF_REG_SIZE		3
  
-+struct cs_timing {
-+	bool is_applied;
-+	u32 regs[MAX_CS_REGS_COUNT];
-+};
-+
-+struct cs_timing_state {
-+	struct cs_timing cs[MAX_CS_COUNT];
-+};
-+
  static const struct of_device_id weim_id_table[] = {
  	/* i.MX1/21 */
- 	{ .compatible = "fsl,imx1-weim", .data = &imx1_weim_devtype, },
-@@ -112,15 +122,20 @@ static int __init imx_weim_gpr_setup(struct platform_device *pdev)
- }
- 
- /* Parse and set the timing for this device. */
--static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
--				    const struct imx_weim_devtype *devtype)
-+static int __init weim_timing_setup(struct device *dev,
-+				    struct device_node *np, void __iomem *base,
-+				    const struct imx_weim_devtype *devtype,
-+				    struct cs_timing_state *ts)
+@@ -116,26 +117,40 @@ static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
  {
  	u32 cs_idx, value[MAX_CS_REGS_COUNT];
  	int i, ret;
- 	int reg_idx, num_regs;
-+	struct cs_timing *cst;
++	int reg_idx, num_regs;
  
  	if (WARN_ON(devtype->cs_regs_count > MAX_CS_REGS_COUNT))
  		return -EINVAL;
-+	if (WARN_ON(devtype->cs_count > MAX_CS_COUNT))
-+		return -EINVAL;
  
- 	ret = of_property_read_u32_array(np, "fsl,weim-cs-timing",
- 					 value, devtype->cs_regs_count);
-@@ -146,10 +161,23 @@ static int __init weim_timing_setup(struct device_node *np, void __iomem *base,
- 		if (cs_idx >= devtype->cs_count)
- 			return -EINVAL;
+-	/* get the CS index from this child node's "reg" property. */
+-	ret = of_property_read_u32(np, "reg", &cs_idx);
++	ret = of_property_read_u32_array(np, "fsl,weim-cs-timing",
++					 value, devtype->cs_regs_count);
+ 	if (ret)
+ 		return ret;
  
-+		/* prevent re-configuring a CS that's already been configured */
-+		cst = &ts->cs[cs_idx];
-+		if (cst->is_applied && memcmp(value, cst->regs,
-+					devtype->cs_regs_count * sizeof(u32))) {
-+			dev_err(dev, "fsl,weim-cs-timing conflict on %pOF", np);
+-	if (cs_idx >= devtype->cs_count)
++	/*
++	 * the child node's "reg" property may contain multiple address ranges,
++	 * extract the chip select for each.
++	 */
++	num_regs = of_property_count_elems_of_size(np, "reg", OF_REG_SIZE);
++	if (num_regs < 0)
++		return num_regs;
++	if (!num_regs)
+ 		return -EINVAL;
++	for (reg_idx = 0; reg_idx < num_regs; reg_idx++) {
++		/* get the CS index from this child node's "reg" property. */
++		ret = of_property_read_u32_index(np, "reg",
++					reg_idx * OF_REG_SIZE, &cs_idx);
++		if (ret)
++			break;
+ 
+-	ret = of_property_read_u32_array(np, "fsl,weim-cs-timing",
+-					 value, devtype->cs_regs_count);
+-	if (ret)
+-		return ret;
++		if (cs_idx >= devtype->cs_count)
 +			return -EINVAL;
-+		}
-+
- 		/* set the timing for WEIM */
- 		for (i = 0; i < devtype->cs_regs_count; i++)
- 			writel(value[i],
- 				base + cs_idx * devtype->cs_stride + i * 4);
-+		if (!cst->is_applied) {
-+			cst->is_applied = true;
-+			memcpy(cst->regs, value,
-+				devtype->cs_regs_count * sizeof(u32));
-+		}
- 	}
+ 
+-	/* set the timing for WEIM */
+-	for (i = 0; i < devtype->cs_regs_count; i++)
+-		writel(value[i], base + cs_idx * devtype->cs_stride + i * 4);
++		/* set the timing for WEIM */
++		for (i = 0; i < devtype->cs_regs_count; i++)
++			writel(value[i],
++				base + cs_idx * devtype->cs_stride + i * 4);
++	}
  
  	return 0;
-@@ -163,6 +191,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
- 	const struct imx_weim_devtype *devtype = of_id->data;
- 	struct device_node *child;
- 	int ret, have_child = 0;
-+	struct cs_timing_state ts = {};
- 
- 	if (devtype == &imx50_weim_devtype) {
- 		ret = imx_weim_gpr_setup(pdev);
-@@ -171,7 +200,7 @@ static int __init weim_parse_dt(struct platform_device *pdev,
- 	}
- 
- 	for_each_available_child_of_node(pdev->dev.of_node, child) {
--		ret = weim_timing_setup(child, base, devtype);
-+		ret = weim_timing_setup(&pdev->dev, child, base, devtype, &ts);
- 		if (ret)
- 			dev_warn(&pdev->dev, "%pOF set timing failed.\n",
- 				child);
+ }
 -- 
 2.17.1
 
