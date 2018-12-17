@@ -2,139 +2,89 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BB8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74F8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 905B721841
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:50:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TRxhdT79"
+	by mail.kernel.org (Postfix) with ESMTP id 888E62080D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbeLQXun (ORCPT
+        id S1726314AbeLQXy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 18:50:43 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41616 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbeLQXun (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 18:50:43 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u6so6875222plm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:50:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=uNFJcBxYzAt3IWV0K1p5fNwSr/rEdiGL+jhGldmIaTw=;
-        b=TRxhdT79r/wI/mvCS2sjPdCRxCGDQIOK8zDIRZ0Wtigfn31UMIFdE1IJ15KnFKtlA0
-         oGQqcD+lxPQzWnmdby1TiR4rRYWnm6jDoUxj2kVqh6TZYI241uKWNUp8kzdoIbbMnHCE
-         GWVBpWiS1xx5Wfnsuq8ab5T823hMCp1bNKWXM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=uNFJcBxYzAt3IWV0K1p5fNwSr/rEdiGL+jhGldmIaTw=;
-        b=hoHRbtV2UnQHNYItHBPKCSSaPIoKpdeoRmncvnM8a6yn0fLg5YBKcyZc7AyvySM+CO
-         T4x3eRGZAe6MDIL4EZY1K1ML1aErjIgAPNOMTW30ic6H3TzhILW1meKIn3indw2krZOx
-         Z+FMbIYgDg+ldduhAYfibjoyjKZXcaSN7IXWQwKp1ZiRljHtSVioZ3nsFyggbqHMsCta
-         m3AjaWE8zGGPW3aJjYU0f/Rl3iwAAu5qR/clkd2QU54zKWvJIK5ZU2bS+K4wIkTC3QA0
-         B16cLSJxtXQPzU9xzpDpp/7390eO1opXILJGeasKJhA64OKHmWono2yHVecga2u+Yp4w
-         JNVQ==
-X-Gm-Message-State: AA+aEWZNtH4KOBL+imXD1A9GRV2PzYi/xcofR5Q+pUyA7QguayH0syeD
-        lg8eQ5TWP9/9kRr4D7k379oSMw==
-X-Google-Smtp-Source: AFSGD/XS4BEwF6X4rT2ixpihNLiDsDy50ejE6oL22uhcGzAUS+DPM0BF4d97lo6nKXeVv+1XdHHnFg==
-X-Received: by 2002:a17:902:2862:: with SMTP id e89mr14652128plb.158.1545090642341;
-        Mon, 17 Dec 2018 15:50:42 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id n70sm19494286pfi.185.2018.12.17.15.50.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 15:50:41 -0800 (PST)
-Date:   Mon, 17 Dec 2018 15:50:40 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Peng Wang <wangpeng15@xiaomi.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Meyer <thomas@m3y3r.de>
-Subject: [GIT PULL] pstore updates for v4.21-rc1
-Message-ID: <20181217235040.GA18678@beast>
+        Mon, 17 Dec 2018 18:54:29 -0500
+Received: from mga05.intel.com ([192.55.52.43]:37398 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbeLQXy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 18:54:29 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 15:54:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="101437461"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga006.jf.intel.com with ESMTP; 17 Dec 2018 15:54:28 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 5C5B7300B49; Mon, 17 Dec 2018 15:54:28 -0800 (PST)
+Date:   Mon, 17 Dec 2018 15:54:28 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
+Message-ID: <20181217235428.GY25620@tassilo.jf.intel.com>
+References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
+ <20181217173900.ygifx7khwmzn2gv2@treble>
+ <20181217180434.GS25620@tassilo.jf.intel.com>
+ <20181217181638.dfexg6mkmbfyzfli@treble>
+ <20181217192938.GF2218@hirez.programming.kicks-ass.net>
+ <20181217213126.lsqhyszoulel6uq6@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181217213126.lsqhyszoulel6uq6@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Dec 17, 2018 at 03:31:26PM -0600, Josh Poimboeuf wrote:
+> On Mon, Dec 17, 2018 at 08:29:38PM +0100, Peter Zijlstra wrote:
+> > On Mon, Dec 17, 2018 at 12:16:38PM -0600, Josh Poimboeuf wrote:
+> > 
+> > > > Yes LTO causes the to be treated like static functions.
+> > > > 
+> > > > I guess noclone is unlikely to be really needed here because these
+> > > > functions are unlikely to be cloned.
+> > > > 
+> > > > So as a workaround it could be removed.
+> > > > 
+> > > > But note we have other noclone functions in the tree (like in KVM)
+> > > > which actually need it.
+> > > 
+> > > How about we just use the __used attribute then?  It seems to have the
+> > > same result of preventing IPA optimizations (without the weird side
+> > > effect of missing frame pointers).
+> > 
+> > AFAIK we don't have any in-tree LTO, so it can all go in the bin.
+> > 
+> > When/if we get the LTO trainwreck sorted -- which very much includes
+> > getting that memory-order-consume fixed -- we can revisit all that.
+> 
+> Ok, then if there are no objections I'll just send a revert of:
+> 
+>   dd3dad0d716d ("ftrace: Mark function tracer test functions noinline/noclone")
 
-Please pull these pstore changes for v4.21-rc1.
+I object to that.
 
-Thanks!
-
--Kees
-
-The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
-
-  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v4.21-rc1
-
-for you to fetch changes up to 8665569e97dd52920713b95675409648986b5b0d:
-
-  pstore/ram: Avoid NULL deref in ftrace merging failure path (2018-12-03 17:11:02 -0800)
-
-----------------------------------------------------------------
-pstore improvements and refactorings
-
-- Improve compression handling
-- Refactor argument handling during initialization
-- Avoid needless locking for saner EFI backend handling
-- Add more kern-doc and improve debugging output
-
-----------------------------------------------------------------
-Joel Fernandes (Google) (3):
-      pstore: Map PSTORE_TYPE_* to strings
-      pstore/ram: Simplify ramoops_get_next_prz() arguments
-      pstore/ram: Do not treat empty buffers as valid
-
-Kees Cook (11):
-      pstore/ram: Correctly calculate usable PRZ bytes
-      Merge branch 'for-linus/pstore' into for-next/pstore
-      pstore: Do not use crash buffer for decompression
-      pstore: Remove needless lock during console writes
-      pstore/ram: Standardize module name in ramoops
-      pstore/ram: Report backend assignments with finer granularity
-      pstore/ram: Add kern-doc for struct persistent_ram_zone
-      pstore: Improve and update some comments and status output
-      pstore: Replace open-coded << with BIT()
-      pstore: Convert buf_lock to semaphore
-      pstore/ram: Avoid NULL deref in ftrace merging failure path
-
-Peng Wang (1):
-      pstore: Avoid duplicate call of persistent_ram_zap()
-
-Thomas Meyer (1):
-      pstore: Fix bool initialization/comparison
-
- arch/powerpc/kernel/nvram_64.c    |   2 -
- drivers/acpi/apei/erst.c          |   3 +-
- drivers/firmware/efi/efi-pstore.c |   4 +-
- fs/pstore/ftrace.c                |   2 +-
- fs/pstore/inode.c                 |  51 +----------
- fs/pstore/platform.c              | 173 +++++++++++++++++++++-----------------
- fs/pstore/ram.c                   |  78 +++++++----------
- fs/pstore/ram_core.c              |  45 ++++++++--
- include/linux/pstore.h            |  39 ++++++---
- include/linux/pstore_ram.h        |  50 ++++++++++-
- 10 files changed, 241 insertions(+), 206 deletions(-)
-
--- 
-Kees Cook
+-Andi
