@@ -2,185 +2,200 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B032DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C78DC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D297204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6962133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qYroXTS4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sDWWZi0O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732778AbeLQNW1 (ORCPT
+        id S1732804AbeLQNXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:22:27 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:54727 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732521AbeLQNW0 (ORCPT
+        Mon, 17 Dec 2018 08:23:34 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55823 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732643AbeLQNXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:22:26 -0500
-Received: by mail-qk1-f201.google.com with SMTP id i37so15200036qkh.21
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 05:22:26 -0800 (PST)
+        Mon, 17 Dec 2018 08:23:34 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y139so12265257wmc.5;
+        Mon, 17 Dec 2018 05:23:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=eChXhE6DxIh/we37Q5Zla+fn+L5z5gFtFhFXKWl5OP4=;
-        b=qYroXTS4U9VE5GtX3yTaETPEPsrB/JqejYfiuxSBDtEPYKsN6G8NJf4LVIBSl9rV5Y
-         j6y+KZSHdcbUkcHJwxrVHBMGFveC5Iu4i+dt6vST5firRTY2lqdzIgK16UMBtGmU9FI5
-         CyAuj8NKRArRrKlYOtDE9CbiyVdrGfbiGCt2hkqWyJkzs800IfG/wDubeUheWJawaznJ
-         7pxTQoX8XOXd8hYPjEh6lxEC7X8gFmxPO+MVwMvlC1iOPARkpRzb8Q2H8dfx2xJ5zi1r
-         GDWpkjChDjG8qShJMb8Fn5zVBrV369FmKlUOoouzuW7APCcO7c+12jQPU2JeOP69J5N5
-         Hd0g==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=o3RKV7a8GfhZBO/bLHPEQHHeePg/FOEC7DCrDXnsRi4=;
+        b=sDWWZi0O2B6Ch+l6acCNEUSIr0xHea6aGXQ7W5gHnID/eGHbByNkFu9KncGa5A9SKo
+         jRzpT8sBt+xGBanO9V6hfMmenrpycwd82adP42rrqUQZ0630TeUhlXcyAHzph/F29NzT
+         2Z2o8Ang6TSwHMRLYQRb5enfY+LMkS0IN9KnUN/X7ZEaOw4nQ4zM+PRlf+OY8a+2wUYx
+         lzC5tARN63kd2w67S5dwRsSnmbcjnMPLefHF7tR9zVNDBt/USBxPRscWDelJSct1mHm6
+         JpSF3QNnhXciU0e7ZvlFHaKl9D1DlHhVJPnwlVKiMHrjfDQG7NQDzQq+79qx8vuLpy3B
+         q7gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=eChXhE6DxIh/we37Q5Zla+fn+L5z5gFtFhFXKWl5OP4=;
-        b=If7+SpDvOpAAF+3kcJ5pXCZws0rZO11eu+JGVr6mGD7M7J5aCvtOZYc2qQnJ3NxREM
-         Ea17XoDmXwoowwNhyH8eqfcX9+KVJmT/hMnylf/cqoZEn+rgq3sI440GF6nMbqp+gPnP
-         Iz1O/jTyN9CgS7Cxzb4kPeZzjsRBQahqijePvwU3bG0VDkH/KUFhFT1AqCj4BTYx7k/I
-         vXkyobVLT2QpXsCvhXKLR/klXkOLbiaarSVFFgXuregLAqPKV+gPWOo4huBHIOQ9/VeF
-         mcfMewN3XHwXF1xCnwHK7jM/Nqvcg8W6p/tr2AxlIXhaZHHr51F5iJH+ODssJu/wVFkR
-         Xzsw==
-X-Gm-Message-State: AA+aEWZFczmrlWE6R7ifJjV5WIa3mNBnws22yFbJf39jMuyhP0UoImFV
-        Vx1uySCFmqs5MpAor+DAfWbf0BOcL3qM
-X-Google-Smtp-Source: AFSGD/VRcKqvreslmIyjADA2vxaI3O882z6uuoupOfvu7A8JPlat6sTdatMJ/fD7wz66ms2m985+uhS6KeST
-X-Received: by 2002:a37:a315:: with SMTP id m21mr14143142qke.30.1545052945663;
- Mon, 17 Dec 2018 05:22:25 -0800 (PST)
-Date:   Mon, 17 Dec 2018 21:22:13 +0800
-Message-Id: <20181217132213.91566-1-kyletso@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
-Subject: [PATCH v3] usb: typec: tcpm: Extend the matching rules on PPS APDO selection
-From:   Kyle Tso <kyletso@google.com>
-To:     linux@roeck-us.net, heikki.krogerus@linux.intel.com,
-        gregkh@linuxfoundation.org, Adam.Thomson.Opensource@diasemi.com
-Cc:     badhri@google.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kyle Tso <kyletso@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o3RKV7a8GfhZBO/bLHPEQHHeePg/FOEC7DCrDXnsRi4=;
+        b=TW1eahWlH28RMBU+LHLLX9L0IKFARXPPK+8XuZAY70r+w+a5jwi+RqAf85ZykQYIjs
+         ILKcIK10/IWrTUsEYQFVsmjIOGw6HlGAMx7SfX2JaCSPQIoSwOx3BdVx7XQKgea0PqY0
+         UcheEuAioL9MuWAWz9huEa/r9N0ZBY9vZJRtmPlgFElOiB6odX/PRJBaicurMGHCqUpe
+         OdvR72/KfPP2TkebHckAP1NA3FBp5CICjvyR4E3k9yPXc6Ybxd+uSXv1fI62GdPZq+M8
+         vVPoky4G73e8yrq9eQMFAIMffuz2tHTPrbu/CL3CycFcUEnuGwz5xWRUnom8Cj9Uagyt
+         zItw==
+X-Gm-Message-State: AA+aEWaZRMVnY7tkn8ToguBHCAK9g1Tl3EIuVX8exw/0hrY7jfVBzrYZ
+        YO9F3LUqT2FYqRaBIjKX++k=
+X-Google-Smtp-Source: AFSGD/XpYLCpZqCdu/rJbiqlAIIo0XqyDblAkAVlhKuUHTFDy1lDYPveNFc54jS3Eo9TTo0a5MWT6Q==
+X-Received: by 2002:a1c:8d49:: with SMTP id p70mr12403337wmd.68.1545053011631;
+        Mon, 17 Dec 2018 05:23:31 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id z17sm332895wrv.2.2018.12.17.05.23.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 05:23:30 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     masonccyang@mxic.com.tw,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
+ <557c8114-2819-7be3-21b8-02918aa89c04@cogentembedded.com>
+ <OFAE786891.A102E46D-ON48258366.002779D7-48258366.002A5C36@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <a4c18176-783b-70db-4668-31cc332705a7@gmail.com>
+Date:   Mon, 17 Dec 2018 14:23:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <OFAE786891.A102E46D-ON48258366.002779D7-48258366.002A5C36@mxic.com.tw>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current matching rules ensure that the voltage range of selected Source
-Capability is entirely within the range defined in one of the Sink
-Capabilities. This is reasonable but not practical because Sink may not
-support wide range of voltage when sinking power while Source could
-advertise its capabilities in relatively wider range. For example, a
-Source PDO advertising 3.3V-11V@3A (9V Prog of Fixed Nominal Voltage)
-will not be selected if the Sink requires 5V-12V@3A PPS power. However,
-the Sink could work well if the requested voltage range in RDOs is
-5V-11V@3A.
+On 12/17/2018 08:42 AM, masonccyang@mxic.com.tw wrote:
+> Hi Sergei,
+> 
+> 
+>> > +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+>> > +            const void *tx_buf, void *rx_buf)
+>> > +{
+>> > +   u32 smenr, smcr, data, pos = 0;
+>> > +   int ret = 0;
+>> > +
+>> > +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+>> > +              RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+>> > +              RPC_CMNCR_BSZ(0));
+>> > +   regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
+>> > +   regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+>> > +   regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+>> > +   regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
+>> > +
+>> > +   if (tx_buf) {
+>> > +      smenr = rpc->smenr;
+>> > +
+>> > +      while (pos < rpc->xferlen) {
+>> > +         u32 nbytes = rpc->xferlen  - pos;
+>> > +
+>> > +         regmap_write(rpc->regmap, RPC_SMWDR0,
+>> > +                 get_unaligned((u32 *)(tx_buf + pos)));
+>> > +
+>> > +         if (nbytes > 4) {
+>> > +            nbytes = 4;
+>> > +            smcr = rpc->smcr |
+>> > +                   RPC_SMCR_SPIE | RPC_SMCR_SSLKP;
+>> > +         } else {
+>> > +            smcr = rpc->smcr | RPC_SMCR_SPIE;
+>> > +         }
+>> > +
+>> > +         regmap_write(rpc->regmap, RPC_SMENR, smenr);
+>> > +         regmap_write(rpc->regmap, RPC_SMCR, smcr);
+>> > +         ret = wait_msg_xfer_end(rpc);
+>> > +         if (ret)
+>> > +            goto out;
+>> > +
+>> > +         pos += nbytes;
+>> > +         smenr = rpc->smenr & ~RPC_SMENR_CDE &
+>> > +                    ~RPC_SMENR_ADE(0xf);
+>> > +      }
+>> > +   } else if (rx_buf) {
+>> > +      while (pos < rpc->xferlen) {
+>> > +         u32 nbytes = rpc->xferlen  - pos;
+>> > +
+>> > +         if (nbytes > 4)
+>> > +            nbytes = 4;
+>> > +
+>> > +         regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+>> > +         regmap_write(rpc->regmap, RPC_SMCR,
+>> > +                 rpc->smcr | RPC_SMCR_SPIE);
+>>
+>>    Hm... our flash chip (Spansion S25FS512S) doesn't get detected; it
+> sends
+>> JEDEC ID bytes 0..3 repeatedly, unless I copy the SSLKP logic from the
+> writing
+>> branch above...
+> 
+> Do you switch the SW1, SW2, SW3, SW13, SW31 and SW10 to on-board QSPI
+> mode ?
+> Because R-Car D3 Draak board default is booting from HyperFlsah.
 
-Currently accepted:
-		|--------- source -----|
-	|----------- sink ---------------|
+So this puts us back to the original discussion -- the driver should
+support HF mode as well IMO.
 
-Currently not accepted:
-			|--------- source -----|
-	|----------- sink ---------------|
+> what follows is my booting log, FYI.
+> ------------------------------------------------------------------
+> [    1.625053] m25p80 spi5.0: s25fl129p1 (16384 Kbytes)
+> [    1.634391] 12 fixed-partitions partitions found on MTD device spi5.0
+> [    1.642198] Creating 12 MTD partitions on "spi5.0":
+> [    1.647598] 0x000000000000-0x000000040000 : "Bank 1 - Boot parameter"
+> [    1.660893] 0x000000040000-0x000000180000 : "Bank 1 - Loader-BL2"
+> [    1.671287] 0x000000180000-0x0000001c0000 : "Bank 1 - Certification"
+> -----------------------------------------------------------------------
+> 
+>>
+>> > +         ret = wait_msg_xfer_end(rpc);
+>> > +         if (ret)
+>> > +            goto out;
+>> > +
+>> > +         regmap_read(rpc->regmap, RPC_SMRDR0, &data);
+>> > +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
+>> > +         pos += nbytes;
+>>
+>>    ... and it skips byte 4 unless I copy the code from the end of the
+> writing
+>> branch, clearing CDE/ADE. But even then the byte 4 reads as 0x03
+> instead of 0.
+> 
+> yup, I think this is some kind of RPC HW limitation,
+> in RPC manual I/O mode, it only could read 4 bytes data w/ one command.
+> 
+> That is, one command + read 4 bytes data + read 4 bytes data + read 4
+> bytes data + ...
+> will get the incorrect data.
+> 
+> That's why RPC in manual I/O mode, driver only could do,
+> one command + read 4 bytes data; one command + read 4 bytes data and so on.
+> 
+> But RPC in external address space read mode(here we call it direct
+> mapping read mode)
+> is ok for one command + read 4 bytes data + read 4 bytes data + ....
 
-	|--------- source -----|
-		|----------- sink ---------------|
+I think the U-Boot driver solves those problems, since it works in both
+RPC and HF mode on all of Gen3 boards , not just D3 in non-standard SPI
+boot configuration. Please take a look.
 
-	|--------- source -----------------|
-		|------ sink -------|
-
-To improve the usability, change the matching rules to what listed
-below:
-a. The Source PDO is selectable if any portion of the voltage range
-   overlaps one of the Sink PDO's voltage range.
-b. The maximum operational voltage will be the lower one between the
-   selected Source PDO and the matching Sink PDO.
-c. The maximum power will be the maximum operational voltage times the
-   maximum current defined in the selected Source PDO
-d. Select the Source PDO with the highest maximum power
-
-Signed-off-by: Kyle Tso <kyletso@google.com>
-
----
-Changelog since v1:
-- updated the commit message as suggested by Guenter Roeck <linux@roeck-us.net>
-
-Changelog since v2:
-- fixed the coding style problems as suggested by Heikki Krogerus
-  <heikki.krogerus@linux.intel.com>
-- Corrected a wrong word in the commit message as suggested by Adam Thomson
-  <Adam.Thomson.Opensource@diasemi.com>
----
- drivers/usb/typec/tcpm/tcpm.c | 35 ++++++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 3620efee2688..4bc29b586698 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -2213,7 +2213,8 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
- 	unsigned int i, j, max_mw = 0, max_mv = 0;
- 	unsigned int min_src_mv, max_src_mv, src_ma, src_mw;
- 	unsigned int min_snk_mv, max_snk_mv;
--	u32 pdo;
-+	unsigned int max_op_mv;
-+	u32 pdo, src, snk;
- 	unsigned int src_pdo = 0, snk_pdo = 0;
- 
- 	/*
-@@ -2263,16 +2264,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
- 					continue;
- 				}
- 
--				if (max_src_mv <= max_snk_mv &&
--				    min_src_mv >= min_snk_mv) {
-+				if (min_src_mv <= max_snk_mv &&
-+				    max_src_mv >= min_snk_mv) {
-+					max_op_mv = min(max_src_mv, max_snk_mv);
-+					src_mw = (max_op_mv * src_ma) / 1000;
- 					/* Prefer higher voltages if available */
- 					if ((src_mw == max_mw &&
--					     min_src_mv > max_mv) ||
-+					     max_op_mv > max_mv) ||
- 					    src_mw > max_mw) {
- 						src_pdo = i;
- 						snk_pdo = j;
- 						max_mw = src_mw;
--						max_mv = max_src_mv;
-+						max_mv = max_op_mv;
- 					}
- 				}
- 			}
-@@ -2285,16 +2288,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
- 	}
- 
- 	if (src_pdo) {
--		pdo = port->source_caps[src_pdo];
--
--		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
--		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
--		port->pps_data.max_curr =
--			min_pps_apdo_current(pdo, port->snk_pdo[snk_pdo]);
--		port->pps_data.out_volt =
--			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
--		port->pps_data.op_curr =
--			min(port->pps_data.max_curr, port->pps_data.op_curr);
-+		src = port->source_caps[src_pdo];
-+		snk = port->snk_pdo[snk_pdo];
-+
-+		port->pps_data.min_volt = max(pdo_pps_apdo_min_voltage(src),
-+					      pdo_pps_apdo_min_voltage(snk));
-+		port->pps_data.max_volt = min(pdo_pps_apdo_max_voltage(src),
-+					      pdo_pps_apdo_max_voltage(snk));
-+		port->pps_data.max_curr = min_pps_apdo_current(src, snk);
-+		port->pps_data.out_volt = min(port->pps_data.max_volt,
-+					      port->pps_data.out_volt);
-+		port->pps_data.op_curr = min(port->pps_data.max_curr,
-+					     port->pps_data.op_curr);
- 	}
- 
- 	return src_pdo;
 -- 
-2.20.0.405.gbc1bbc6f85-goog
-
+Best regards,
+Marek Vasut
