@@ -2,101 +2,153 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3021C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90F9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE82A2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:55:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NzN4oTZi"
+	by mail.kernel.org (Postfix) with ESMTP id 82ED12145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbeLQPzm (ORCPT
+        id S2387979AbeLQPz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:55:42 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39890 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727617AbeLQPzl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:55:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=574+4ZD7Du9DDrY3jcdjsYd7VDFDIpxaJakuUWbr19s=; b=NzN4oTZi6gyJm2aSWquP3ym0d
-        9omamrHx6pqwcZKsaR2e90jn3JJGPgWxUbNtXeKUrfjI47HpoiolK5gTOXYmROfIcTsA4j38T2tS6
-        QwtlKihqL0AwxJKPVt2KhAMOEkNu+c9hCRXVjbXZIp9geLuF9OkitZG5hfKTCJ3BtBmTXjGlrSYI1
-        4TgSqH4hgpz+eFez7W8mmEGlwcbjR5NRugb3gofnJfLixyB/rnj0dIWTg3Trhfze1lT42vr5lqQVB
-        Z5uHM1LAngIidwmkDDiiTrrPgFICAjkZgEEmZ5miFSveGJjArtzaUovOv2s9v6TQNP94sjT0v0yGT
-        oftNPPBHg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYvEu-0000Ca-Vq; Mon, 17 Dec 2018 15:55:29 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7717F20276AC4; Mon, 17 Dec 2018 16:55:25 +0100 (CET)
-Date:   Mon, 17 Dec 2018 16:55:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     gregkh@linuxfoundation.org, tj@kernel.org, lizefan@huawei.com,
-        hannes@cmpxchg.org, axboe@kernel.dk, dennis@kernel.org,
-        dennisszhou@gmail.com, mingo@redhat.com, akpm@linux-foundation.org,
-        corbet@lwn.net, cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 4/6] psi: introduce state_mask to represent stalled psi
- states
-Message-ID: <20181217155525.GC2218@hirez.programming.kicks-ass.net>
-References: <20181214171508.7791-1-surenb@google.com>
- <20181214171508.7791-5-surenb@google.com>
+        Mon, 17 Dec 2018 10:55:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59262 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727833AbeLQPz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:55:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45C8D15AD;
+        Mon, 17 Dec 2018 07:55:56 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 502083F575;
+        Mon, 17 Dec 2018 07:55:54 -0800 (PST)
+Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
+ capability to user space
+To:     Peter Maydell <peter.maydell@linaro.org>
+Cc:     gengdongjiu <gengdongjiu@huawei.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvm-devel <kvm@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>
+References: <1544782537-13377-1-git-send-email-gengdongjiu@huawei.com>
+ <f252e4ca-cdc2-bc42-32a6-5dae7dee51ee@arm.com>
+ <CAFEAcA-ajJ_W0FtC00aEiG=wGgbbU_8OEt+B+B87647gTsSMvQ@mail.gmail.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <1c532d67-104e-2c26-9cf9-289188a1f8b1@arm.com>
+Date:   Mon, 17 Dec 2018 15:55:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214171508.7791-5-surenb@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFEAcA-ajJ_W0FtC00aEiG=wGgbbU_8OEt+B+B87647gTsSMvQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:15:06AM -0800, Suren Baghdasaryan wrote:
-> The psi monitoring patches will need to determine the same states as
-> record_times(). To avoid calculating them twice, maintain a state mask
-> that can be consulted cheaply. Do this in a separate patch to keep the
-> churn in the main feature patch at a minimum.
+Hi Peter,
+
+On 14/12/2018 14:33, Peter Maydell wrote:
+> On Fri, 14 Dec 2018 at 13:56, James Morse <james.morse@arm.com> wrote:
+>> On 14/12/2018 10:15, Dongjiu Geng wrote:
+>>> When user space do memory recovery, it will check whether KVM and
+>>> guest support the error recovery, only when both of them support,
+>>> user space will do the error recovery. This patch exports this
+>>> capability of KVM to user space.
+>>
+>> I can understand user-space only wanting to do the work if host and guest
+>> support the feature. But 'error recovery' isn't a KVM feature, its a Linux
+>> kernel feature.
+>>
+>> KVM will send it's user-space a SIGBUS with MCEERR code whenever its trying to
+>> map a page at stage2 that the kernel-mm code refuses this because its poisoned.
+>> (e.g. check_user_page_hwpoison(), get_user_pages() returns -EHWPOISON)
+>>
+>> This is exactly the same as happens to a normal user-space process.
+>>
+>> I think you really want to know if the host kernel was built with
+>> CONFIG_MEMORY_FAILURE.
 > 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  include/linux/psi_types.h |  3 +++
->  kernel/sched/psi.c        | 29 +++++++++++++++++++----------
->  2 files changed, 22 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/psi_types.h b/include/linux/psi_types.h
-> index 2cf422db5d18..2c6e9b67b7eb 100644
-> --- a/include/linux/psi_types.h
-> +++ b/include/linux/psi_types.h
-> @@ -53,6 +53,9 @@ struct psi_group_cpu {
->  	/* States of the tasks belonging to this group */
->  	unsigned int tasks[NR_PSI_TASK_COUNTS];
->  
-> +	/* Aggregate pressure state derived from the tasks */
-> +	u32 state_mask;
-> +
->  	/* Period time sampling buckets for each state of interest (ns) */
->  	u32 times[NR_PSI_STATES];
->  
+> Does userspace need to care about that? Presumably if the host kernel
+> wasn't built with that support then it will simply never deliver
+> any memory failure events to QEMU, which is fine.
 
-Since we spend so much time counting space in that line, maybe add a
-note to the Changlog about how this fits.
+Aha, I thought this is what you wanted.
+Always being prepared to handle the signals is the best choice.
 
-Also, since I just had to re-count, you might want to add explicit
-numbers to the psi_res and psi_states enums.
 
-> +		if (state_mask & (1 << s))
+> The point I was trying to make in the email Dongjiu references
+> (https://patchwork.codeaurora.org/patch/652261/) is simply that
+> "QEMU gets memory-failure notifications from the host kernel"
+> does not imply "the guest is prepared to receive memory
+> failure notifications", and so the code path which handles
+> the SIGBUS must do some kind of check for whether the guest
 
-We have the BIT() macro, but I'm honestly not sure that will improve
-things.
+> CPU is a type which expects them
+
+I don't understand this bit.
+
+The CPU support is just about barriers for containment and reporting a
+standardised classification to software. Firmware-first replaces all this. It
+doesn't depend on any CPU feature.
+APM-X-Gene has firmware-first support, it uses some kind of external processor
+that takes the error-interrupt from DRAM and generates CPER records, before
+triggering the firmware-first notification.
+
+> and that the board code
+> set up the ACPI tables that it wants to fill in.
+ACPI has some complex stuff around claiming 'platform-wide capabilities'. Qemu
+could use this to know if the guest understands APEI.
+
+Section 6.2.11.2 "Platform-Wide OSPM Capabilities" of ACPI v6.2 describes the
+\_SB._OSC method, which has an APEI support bit. This is used in some kind of
+handshake.
+
+Linux does this during boot if its built with APEI GHES support. Linux seems to
+think the APEI bit enables firmware-first:
+| [   63.804907] GHES: APEI firmware first mode is enabled by APEI bit.
+
+... but its not clear from the spec. (APEI is more than firmware-first)
+
+(where do these things go? Platform AML in the DSDT)
+
+
+I don't think this controls anything on a real system, (we've seen X-Gene
+generate CPER records before Linux started booting), and I don't think it really
+matters as 'what happens if the guest doesn't know' falls out of the way these
+SIGBUS codes map back onto the firmware-first notifications:
+
+For 'AO' signals you can dump CPER records in a NOTIFY_POLLed area. If the guest
+doesn't care, it can avert is eyes. If you used one of the NOTIFY_$(interrupt)
+types, the guest can not-register the interrupt.
+
+The AR signals map to external-abort. On a firmware-first system EL3 takes
+these, generates some extra metadata using CPER records in the agreed location,
+and re-injects an emulated external-abort.
+If Qemu takes an AR signal, this is effectively an external-abort, the page has
+been accessed and the kernel will not map it because the page is poisoned. These
+would have been an external-abort on a real system, its not a problem if the
+guest doesn't know about the extra CPER metadata.
+
+Centriq is an example of a system that does this external-abort+CPER-metadata
+without the v8.2 CPU extensions.
+
+All v8.0 CPUs have synchronous/asynchronous external abort, there is nothing new
+going on here, its just extra metadata. (critically: the physical address of the
+fault)
+
+
+Thanks,
+
+James
