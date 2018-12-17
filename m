@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9E8C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EB4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F02AB217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:37:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CFE320672
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:38:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpkN5UV+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1zxeRf1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731493AbeLQHhv (ORCPT
+        id S1731542AbeLQHiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:37:51 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43018 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbeLQHhu (ORCPT
+        Mon, 17 Dec 2018 02:38:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38793 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeLQHiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:37:50 -0500
-Received: by mail-lj1-f195.google.com with SMTP id 83-v6so10030756ljf.10;
-        Sun, 16 Dec 2018 23:37:48 -0800 (PST)
+        Mon, 17 Dec 2018 02:38:02 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p86so8683796lfg.5;
+        Sun, 16 Dec 2018 23:37:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
         bh=Ee9i0Pf5EL3wAgyVdNMbOnVA/LU9ZoEU3jWh4MH/pzM=;
-        b=TpkN5UV+4R+3lM37Too5v1z/85hmIGavnvKP/gg9I398N19V7mS6+NE23DUx7M/TR5
-         Dh17pzlGEo/ItMWIu8Xe7pvkB2HFUuleGZzYtBJKOA8pwMLIV1/tohVXhZ8VtHWpl5/O
-         rW05YlOAnumFpPmNIqOtPpVFI199qW/72bJQGX35hXFqa0FzMQFE6vePEpnfguK/YH7N
-         EbJceUn8dd0aBKSvv7SqP2FNbdzsKtwkejFz04kpYoHc/sdtOkAQpSC4jcN3m/oZELWG
-         SOh1g2GKvB6L5DSbfIvAIkKiC15I838n6gPs6bxUs+VCQSkbi2hGJchsfqOmFNKAw6v4
-         Dq0w==
+        b=V1zxeRf19ANFZMqxqf5l6CueidMjz+boTLTZzevyKpRwCmwrJsNT72b9LVXfI5hHGk
+         l5SNewACKVHmQ151grYDU6Onl25SNziaNBdVLyjW9M+u0MBwbTHVjM07WiTd3+3ezGB0
+         F/m1dewxxmDQNMf8uSaxD/EQ1bXslNeOXHcqyTHZ8J+vEU3BmJc8no7hq8R28dxGpOT6
+         MSY36Pk0hipZ5B/f4IoNEp0v9CpISPzEU7JPMXPG1gI+gRvbgexcXk4RUWCE08vf1e2t
+         JUwzintB9Nr7B19vvtCeYu8+n2h3iVGdOAympKGJaKz/6P9SwczyElFgs5CkmmZJF+0F
+         8Tuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
         bh=Ee9i0Pf5EL3wAgyVdNMbOnVA/LU9ZoEU3jWh4MH/pzM=;
-        b=Eot+WLGlMPuuT1czzJyq4OxDSKzv4F3g1nytMuo6mmvzUCFzYHKnIrPrnAv5YuFaN7
-         fBd9e4M2k7FEyX45+GE/bf6H9z8MT+Fgg2qP49RMNFSAVzV5ZBMlWXJWk/HxUMHLoock
-         B8snasfMUoyYAhuPR1QiGbkiM/Vc2mvCX7bhPRFk3x7ycfGOqL5YwgGf924UikYHtPRa
-         8KlYMnDSmXpFKOqlebtxXN92KKsrDi1KhNJPgZArV66n8JfYHFZeTH89CmFbnZ66eAfW
-         xS/5G97JR9zIRZAO7F7KcQCenX5LjaLJPj3OWJKAi6VmrhBvjhHMUhQ8DDdUbGFWyI8E
-         KTLA==
-X-Gm-Message-State: AA+aEWYu7daAB+QVIgiIuJEXLSFYHMC+h3kEZzO5KQYdpt5BrPE8A26t
-        8qi9npQmaIScrvNHQ3y7ecIty9VrQDI=
-X-Google-Smtp-Source: AFSGD/Xd3gEh8MoPC33sU5INGlPzmoleEh0KBxXMiLlWGnYsf/90UN++H49Jod8GihpJaUxkOxhayw==
-X-Received: by 2002:a2e:9957:: with SMTP id r23-v6mr6407949ljj.98.1545032267467;
-        Sun, 16 Dec 2018 23:37:47 -0800 (PST)
+        b=NDAAgM0dFbTckQ8eH+QWG75wtOy0OC6TZ/uCB5+sM7tU8t8OQYoX+/MPQgMXKLBWU0
+         uZgiAG37AmBwwKsOqXwW42DzgUXeE+6XA/ED35RT/A0BL54aWe2JgdAaDbyw7CrVLltB
+         zYQuDKfOUJN2KXR5yP4FOl2X+rlQuw58eXPaorJWw0qcTRMckXin8NkuldFPSqENmgmr
+         pQPrOJ9CO1TMIp8uEyfpzzMzVlE1b37UnY3c/KesRyVSnyZuBhNMW9HKkIR9/YIXCrnE
+         h2rLceiUPHLJnS66LgGjYcVJp4ujK0To4nFJVqR2ukBj78XA+PKHwAtbfYOqNi4N5ABv
+         xt1Q==
+X-Gm-Message-State: AA+aEWaItm5qx7ffELfg2BmiDG+ImWRVNuOY89TtiMcUzrzRnq85Fgi3
+        OREG8W0459NhdnPVaI4krdI=
+X-Google-Smtp-Source: AFSGD/VbjHy5dVfDVDlnjf4fnSvfHu1g+9sU6LnBhAgSUDijIicBV9AAkvvoA3gnwwdvixasZ3KQpw==
+X-Received: by 2002:a19:739d:: with SMTP id h29mr7172834lfk.85.1545032278644;
+        Sun, 16 Dec 2018 23:37:58 -0800 (PST)
 Received: from [192.168.0.21] (87-50-154-159-cable.dk.customer.tdc.net. [87.50.154.159])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm2410703ljg.24.2018.12.16.23.37.46
+        by smtp.gmail.com with ESMTPSA id s3-v6sm2412237lje.73.2018.12.16.23.37.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Dec 2018 23:37:47 -0800 (PST)
+        Sun, 16 Dec 2018 23:37:58 -0800 (PST)
 Subject: Re: [PATCH 1/3] 9p/net: implement asynchronous rpc
 To:     Dominique Martinet <asmadeus@codewreck.org>,
         v9fs-developer@lists.sourceforge.net
@@ -112,8 +112,8 @@ Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
  jYpWKYxDTpvsZ0ginUUY993Gb8k/CxjABEMUGVHhQPZ0OzjHIKS6cTzN6ue8bB+CGOLCaQp1
  C0NRT5Tn9zpLxtf5nBExFd/zVENY5vAV2ZbKQdemO54O7j6B9DSgVRrm83GCZxbL4d+qTYBF
  3tSCWw/6SG1F3q9gR9QrSC2YRjCmhijUVEh6FhZwB58TNZ1sEEttrps8TDa5tUd9
-Message-ID: <39a3c5f8-6cb6-c1cf-d10f-674e3244daee@gmail.com>
-Date:   Mon, 17 Dec 2018 08:37:45 +0100
+Message-ID: <0da7d896-0d67-46f6-83f9-b346eba991a9@gmail.com>
+Date:   Mon, 17 Dec 2018 08:37:57 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
