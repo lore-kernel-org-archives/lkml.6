@@ -2,209 +2,117 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E2DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91D5C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA953217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:21:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 909642184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:23:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2TYM9Ra"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbeLQXVa (ORCPT
+        id S1726471AbeLQXXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 18:21:30 -0500
-Received: from mout.gmx.net ([212.227.17.21]:58237 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbeLQXV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 18:21:29 -0500
-Received: from [192.168.123.38] ([84.118.159.3]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LkTSx-1h6z1s0Yvr-00cT36; Tue, 18
- Dec 2018 00:20:35 +0100
-Subject: Re: [tip:efi/urgent] efi: Align 'efi_guid_t' to 64 bits
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Qian Cai <cai@gmx.us>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@surriel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-tip-commits@vger.kernel.org
-References: <20181217180214.9436-3-ard.biesheuvel@linaro.org>
- <tip-793423cf07e51e3185b8680167115813589c057d@git.kernel.org>
- <8cfd64a9-1a66-0ca1-851b-c3fc9a47809d@gmx.de>
- <CAKv+Gu8kZutLz-4Z4QP+C4g5UFavWjGVNfx4340hd15j=fEVtw@mail.gmail.com>
-From:   Heinrich Schuchardt <xypron.glpk@gmx.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=xypron.glpk@gmx.de; prefer-encrypt=mutual; keydata=
- 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 Eg==
-Message-ID: <52f43437-b3a1-4d66-f721-cb46d0dcd922@gmx.de>
-Date:   Tue, 18 Dec 2018 00:20:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 17 Dec 2018 18:23:51 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39716 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726301AbeLQXXv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 18:23:51 -0500
+Received: by mail-qk1-f196.google.com with SMTP id q70so8442332qkh.6;
+        Mon, 17 Dec 2018 15:23:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I1fVBVfy/g93s89oCYn5/KG5kzEYJN7gIMTDDrnaCuI=;
+        b=U2TYM9RaEQXF1NRZzNKh2pzzubSjS0vC+FE18iPHz/dPbr1b+6LrcklIjSfCj+U+w2
+         QLd1556fp3wX1qbWvwWE12PSa1977jcsBfZ+WkNkUQ03bUKIMGMvQKndUO8uKARH2mKE
+         ruiY2kitRMmKIeJ5a9mD1SHx3GE78lhHyVW/hQSUSKjIZjGmIiCSwXIMXDv3Y2KZsUFA
+         x6ORTRBQnJW3Y4TbJBmk1vnu/bwXkwtK2aZyRx8G0zKD2Jb6pmPhR7KmpKhAjy2NTZmn
+         QKRELWIosJLoMH6eXgSpbij4c286+bulS3wj48+xk9e4bKoRAe9XsL8SIKvKKnUYOsVR
+         1i4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I1fVBVfy/g93s89oCYn5/KG5kzEYJN7gIMTDDrnaCuI=;
+        b=VdVIEV1tAasHJ7YZlTwXCEEQHiOKpGPSO00/xDRctqA04yE/wo00+tdDJ4yghJVuDZ
+         ac7mj05uzPjSbWCeDfPctkTXzjMiTC9W2b3mTy6I89W7eb/9c6jlrkYStkJ11NQ52cCl
+         jG8qYQIL74daotj7fjxkIcbW4IIEDX6C925SwX5X1mbQNmSM3fDFrHELA1xo1nnDlpeA
+         KHL/Rl/sKSMo158arv9cMFKGTVN/XLL1xjCgFu/YtagxkaUa/y8XATHuKyuQk1vnJ5Rl
+         JFMmecGOOumLaa7z9MiddV1LB5AuHIxV4bWqARUa12czE7uGdW3+9O7qvCVyHcBX+ifB
+         nH6w==
+X-Gm-Message-State: AA+aEWZxIMV5YUQSqfYGrKcEAT/W+gvNTfxTiK+ptVVoQJqG41BEtksx
+        FKWs3ikjJ0gpesv9o/nvUcle0Yvj9wfArr4Jr84=
+X-Google-Smtp-Source: AFSGD/WjjvTw5Ke1JEDrgx8GojIatroDwhg+XCK7y+DBAYK7idglospM8TOvRv5sloqYs5kHNijlLlR1M9X42oYWo9M=
+X-Received: by 2002:a37:ea0a:: with SMTP id t10mr13769673qkj.273.1545089029875;
+ Mon, 17 Dec 2018 15:23:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8kZutLz-4Z4QP+C4g5UFavWjGVNfx4340hd15j=fEVtw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:XXcQ3eB9qZVL1f76hJxMgAHLkKH1TKan1zHAzwpc/a4xbuS9PFu
- 8uuPDWxKOpu6fT4inRLqDIIA4zUgeXt01MSGYv/T31OnXndVn9nU3Z6xtipPxkLB7jx1AcF
- L7tN1zeNvf/odB0YA2B4kijtKjS/0RHVlf7Wb2T+YRTjfWN/21FjL6DF+o0YujfwfpsqxIa
- VvdKk6egI/jAy6khfFqqQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:bFTemwv+E0o=:zYlNtYf/cEzD2Iix67ITc9
- IgJ3jyanx1sRUaFtpUozU28GzAvTld8Sv9syGgUKCAFpXwMWnxIQWueA9H3zvD3gYfB6MSr2l
- Wm8HS5UeRckDAnYg+/vLxbaqf4h5gc0soMmj72s5SZ/VgPooOiJUqFiAQddsY1u6V1Mbb+290
- ClW0p76QdrYY7FIXIkmnbCMnGKJt+Q6UweT2ICiqPrev/nVQnsRbjGE80DCVkrjq25IDLhwnK
- Btzwra+1L1C8MXJBEiljb5C5dHBeYh7/dOur1KVDzBidDqmcbUhgDgMkO/QAJTr5CVKiTRMma
- U+dc6jtiXPOugo2fZ6B5v+KGmqcNwz+nA4iOOlBBuBGYdIIcTpIwVZ//hMnu+74ThzIvRQmNa
- w8Bt1ok2+aHzT9MDXHLuH4vtsT00KhQmzgjaCADfmQD+gl4IXuYrw5nEnw8r2032MXT6Op0jR
- d6eObx3di6OdCf6xefbGCx8k3NRf7InR6EOwXgF7Z+S5GgX+3uoj4jKGLrg4Fg3GqwnOvme/k
- aOJjN6kRzsLpXfycNCnS/BWmxDTS31ywuzQaroxL6cfa4yNJA/iyIHVnLsfVZMvxfpOXx5gNh
- TL39zZ6DGv2wNjzeoXV8k6WMu4Tzgppg21RwOQYhEtGsl/aUCm4xa6dNErfgE8K+aj4MfADQy
- ZeenrEiX7YClCOToNoPcQFf4yOUpnl09DtMEEztR/pnrvE5Qpfky3a6AVQvl7PepwdctCxK9w
- QYuO/IznJ+HwdvR2g1Ket/6KgpNtipAJS3caQMRTLuOYYv43V2pvKgwaUbXTIAHdK187CRVsJ
- 5MtTWfvz0G8MdbltdLV9ZS0mWqlq82yGrlBaSycSwoNP31dvI7DAQMHxK3YbQ/jicpIPO1uh0
- eIQGdirDtTiFTvIlhpYDdcqtp8BSs3vsQkYVBPg08VIYlzasXuiTJTe2VG6NTm
+References: <20181217160351.27903-1-dennis@kernel.org> <CANQeFDAO5PdMOrZnn0UgFHcHGvXEs7qS9Kqrk1KRCAwgfRzSOg@mail.gmail.com>
+ <20181217212826.GA71824@dennisz-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20181217212826.GA71824@dennisz-mbp.dhcp.thefacebook.com>
+From:   Liu Bo <obuil.liubo@gmail.com>
+Date:   Mon, 17 Dec 2018 15:23:38 -0800
+Message-ID: <CANQeFDCeRk0L2iHu=nTGXV8baP2bUc+JRba3TY6QkpKaQcY+qw@mail.gmail.com>
+Subject: Re: [PATCH v3] block: fix blk-iolatency accounting underflow
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 11:42 PM, Ard Biesheuvel wrote:
-> On Mon, 17 Dec 2018 at 23:33, Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
->>
->> On 12/17/18 7:16 PM, tip-bot for Heinrich Schuchardt wrote:
->>> Commit-ID:  793423cf07e51e3185b8680167115813589c057d
->>> Gitweb:     https://git.kernel.org/tip/793423cf07e51e3185b8680167115813589c057d
->>> Author:     Heinrich Schuchardt <xypron.glpk@gmx.de>
->>> AuthorDate: Mon, 17 Dec 2018 19:02:14 +0100
->>> Committer:  Ingo Molnar <mingo@kernel.org>
->>> CommitDate: Mon, 17 Dec 2018 19:12:48 +0100
->>>
->>> efi: Align 'efi_guid_t' to 64 bits
->>>
->>> The UEFI Specification Version 2.7 Errata A defines:
->>>
->>>   "EFI_GUID
->>>   128-bit buffer containing a unique identifier value.
->>>   Unless otherwise specified, aligned on a 64-bit boundary."
->>>
->>> Before this patch efi_guid_t was only 8-bit aligned.
->>>
->>> Note that this could potentially trigger alignment faults during
->>> EFI runtime services calls on 32-bit ARM, given that it does not
->>> permit load/store double or load/store multiple instructions to
->>> operate on memory addresses that are not 32-bit aligned.
->>>
->>> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
->>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>> Cc: <stable@vger.kernel.org> # v4.9+, or earlier if possible
->>> Cc: Andy Lutomirski <luto@kernel.org>
->>> Cc: Borislav Petkov <bp@alien8.de>
->>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->>> Cc: H. Peter Anvin <hpa@zytor.com>
->>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Qian Cai <cai@gmx.us>
->>> Cc: Rik van Riel <riel@surriel.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: linux-efi@vger.kernel.org
->>> Link: http://lkml.kernel.org/r/20181217180214.9436-3-ard.biesheuvel@linaro.org
->>> Signed-off-by: Ingo Molnar <mingo@kernel.org>
->>> ---
->>>  include/linux/efi.h | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/include/linux/efi.h b/include/linux/efi.h
->>> index 100ce4a4aff6..e6480c805932 100644
->>> --- a/include/linux/efi.h
->>> +++ b/include/linux/efi.h
->>> @@ -48,7 +48,7 @@ typedef u16 efi_char16_t;           /* UNICODE character */
->>>  typedef u64 efi_physical_addr_t;
->>>  typedef void *efi_handle_t;
->>>
->>> -typedef guid_t efi_guid_t;
->>> +
->>>
->>>  #define EFI_GUID(a,b,c,d0,d1,d2,d3,d4,d5,d6,d7) \
->>>       GUID_INIT(a, b, c, d0, d1, d2, d3, d4, d5, d6, d7)
->>>
->>
->> Before rushing this patch in, we should carefully review its side
->> effects, e.g. on 32bit system this changes the size of
->> efi_config_table_32_t from 20 to 24, which is part of the interface to
->> the UEFI firmware.
->>
-> 
-> grmbl.
-> 
-> Thanks for spotting that.
-> 
-> The UEFI spec defines a GUID struct as { UINT32; UINT16; UINT16;
-> UINT8[8]; } so its natural alignment is 32 bits not 64 bits. The
-> alignment issue on ARM would be solved by using __aligned(4) rather
-> than __aligned(8), while not affecting the size of the config table
-> struct (and potentially others) on 32-bit architectures.
-> 
-> Ingo, apologies for the breakage. Do you prefer a replacement patch or
-> a followup patch?
-> 
+On Mon, Dec 17, 2018 at 1:28 PM Dennis Zhou <dennis@kernel.org> wrote:
+>
+> On Mon, Dec 17, 2018 at 11:42:28AM -0800, Liu Bo wrote:
+> > On Mon, Dec 17, 2018 at 8:04 AM Dennis Zhou <dennis@kernel.org> wrote:
+> > >
+> > > The blk-iolatency controller measures the time from rq_qos_throttle() to
+> > > rq_qos_done_bio() and attributes this time to the first bio that needs
+> > > to create the request. This means if a bio is plug-mergeable or
+> > > bio-mergeable, it gets to bypass the blk-iolatency controller.
+> > >
+> >
+> > Hi,
+> >
+> > I have a question about merging in plug list, since plug merges are
+> > done before rq_qos_throttle(), why would plug-mergeable bios bypass
+> > the controller?
+> >
+> > thanks,
+> > liubo
+> >
+>
+> Hi Liubo,
+>
+> BIO_TRACKED is tagging the bio that is responsible for allocating a new
+> request, so that rq_qos controllers can decide whether or not they want
+> to process the bio any part of the way. I should have phrased that a
+> little better in the commit message. It's not that the bio itself is
+> bypassing the blk-iolatency controller, but the blk-iolatency controller
+> deciding to not do anything based on the BIO_TRACKED flag. This doesn't
+> change any of the function calls made on a bio/request.
+>
 
-The UEFI spec explicitly requires EFI_GUID to be 64-bit aligned. On the
-other hand neither EDK2 nor GRUB not U-Boot cared about this requirement
-up to now. So the array of efi_config_table_32_t had 20 byte long
-members at least on Linux, EDK2, GRUB, U-Boot, and possibly on other
-UEFI implementations though the UEFI spec does not mention packing here.
+Thanks for the explanation.
+I see it now, so the mentioned series had associated all bios with a
+blkg if possible so that done_bio() bumps up inflight counter even in
+case a bio has been merged in a previous request.
 
-As the 4.20 kernel release is imminent, please, keep this patch out
-before causing breakage.
+BIO_TRACKED seems to be too generic to use, but otherwise it makes sense to me,
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 
-Best regards
+thanks,
+liubo
 
-Heinrich
+> Thanks,
+> Dennis
