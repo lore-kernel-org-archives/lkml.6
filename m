@@ -2,106 +2,126 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AF8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5601C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2958920874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FDC520874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VXtg/xPy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yvh08xPz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r5LPYNtJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732352AbeLQKIc (ORCPT
+        id S1732362AbeLQKIo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:08:32 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35640 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732281AbeLQKIb (ORCPT
+        Mon, 17 Dec 2018 05:08:44 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52605 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbeLQKIn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:08:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C9B8D602FA; Mon, 17 Dec 2018 10:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545041310;
-        bh=KE7PYNefk9N6+yjB6233SbInKxGLIlikXtbtg1jYK3c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VXtg/xPybcTF0uS+OhyMbBqQ0ix5TUAH1P7TtYdK5G/uhlcw6q/NRp2dEg3J2euol
-         XGgfwuiYchXPv3NJcdqwPrIvmNH6XCiw+3LhPQ5cFovAipw8cwRBLAaumTuAsSWWvj
-         TLAAU/CstIWV1AGvgwW4iAayQEkbf+IcUomvtIF4=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F5D3608C5;
-        Mon, 17 Dec 2018 10:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545041306;
-        bh=KE7PYNefk9N6+yjB6233SbInKxGLIlikXtbtg1jYK3c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yvh08xPzCUBo2Vgx9TpMMrXXT6tCcuDOsGDiH74n8XZvpTuCugPs6ZQuJrJa1z5c9
-         vlUF1OGSWiaXe05B+iGCyJPMv21jPmPDtxYzTR1E3bGzahfVQZHtMAAb4QVsoT47Xi
-         F+BlACu4T3mF4OaHlegx9TysSTvTk4DjRYaiMJO4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F5D3608C5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        dianders@chromium.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
-        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
-        evgreen@chromium.org, briannorris@chromium.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 7/7] arm64: dts: qcom: sdm845: Add shutdown-ack for Q6V5 MSS node
-Date:   Mon, 17 Dec 2018 15:37:24 +0530
-Message-Id: <20181217100724.4593-7-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181217100724.4593-1-sibis@codeaurora.org>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
+        Mon, 17 Dec 2018 05:08:43 -0500
+Received: by mail-it1-f194.google.com with SMTP id g76so17913873itg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PYU3/niVEdCI4A/m0yKlw7r5wxDKAgJQR0NJd9gNFbY=;
+        b=r5LPYNtJDudm1AeWBPk6yECpFJFOZeRj4UULJBSPiYHyCEeTgegG34uMrQEMVBTEcI
+         ecxVDLVI+TbmZfiiunZkjgTPPfJ61UxWjE5XFt42UpTFwB8S/iG4lnTCIe0Y5lN4nJ1Y
+         aynaiikgLL1iKdtm2ap38YZlqKLwCX3BkSAOwzXW9LEzgnl0FnnHh++IWr0F2G891xmf
+         SGZ9PyGv/sNXTfYS4//sCZy0sYZuTuX2n/CDxR2cWI99jx/b6yzHNsJUbFVoXeSQjega
+         EbsdxnDXJ2tVyzAOu4OkIFq67qXNo/REQXQyq89KLtmNxtvkvOKL2GnJG3Ejin8NCWcH
+         YnIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PYU3/niVEdCI4A/m0yKlw7r5wxDKAgJQR0NJd9gNFbY=;
+        b=MrSbE2GHkwmQNaHZ6mW+SLNqHYMSXYodC99/TT7v/FGPAH1pEZgOnCaFnbng0TNE8z
+         YpwKE5por6xxS4MLPyCGPPGA6sY8fOJ/zM+uJxnuo1h3EETad0QK6hPFRxo74SngRNmY
+         SWYL0rEXnndzuFbytfBwbbN35HmmirpVqd9ZDujr7dO63OO35OqzhENcPsM7Z/Uaph5M
+         YWccIzEW7AAR8y2T0YcvhJkLUA3FHuSe8HBREyCl+5WWPwE2XTVsHSgAXTFaZu05yf3V
+         RGKMVt5QWhtestPStw3Ji+DHYgxp8RKHFXHhntmeoqvBBhKC9cWmjK3/bHDRExKKF8Pp
+         LXmg==
+X-Gm-Message-State: AA+aEWbr7+8ErtQOkK/MIFVzLCysUoczCxQCqvA9rZNkzGtO1dJgMh4F
+        Yr4wxE1JKqZAhGChbNH6a6q7m40kjJ7zILKOwsFD1g==
+X-Google-Smtp-Source: AFSGD/VyAwWtIYPKDxHmMir+SVcGHqTJP6OzkPhr8i5SP7sxqgiUkAZvgidCOQ2rHztPb/l7dd+TrWtkBnxNxy8MYRM=
+X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr10255055itl.144.1545041322440;
+ Mon, 17 Dec 2018 02:08:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <00000000000051e9c2057d31a563@google.com> <20181217072144.GQ2217@ZenIV.linux.org.uk>
+In-Reply-To: <20181217072144.GQ2217@ZenIV.linux.org.uk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 17 Dec 2018 11:08:31 +0100
+Message-ID: <CACT4Y+Zeyfd693tMa4eTqSWYCBK+55_Lt3tzk2MckFa2KoFGuw@mail.gmail.com>
+Subject: Re: kernel BUG at fs/inode.c:LINE!
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     syzbot <syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add shutdown-ack smp2p interrupt for Q6V5 MSS node.
+On Mon, Dec 17, 2018 at 8:21 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sun, Dec 16, 2018 at 10:11:04PM -0800, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    d14b746c6c1c Add linux-next specific files for 20181214
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=13706347400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=1da6d2d18f803140
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=5399ed0832693e29f392
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101032b3400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16534063400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
+> >
+> >  slab_pre_alloc_hook mm/slab.h:423 [inline]
+> >  slab_alloc mm/slab.c:3365 [inline]
+> >  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
+> >  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
+> > ------------[ cut here ]------------
+> > kernel BUG at fs/inode.c:1566!
+> >  d_alloc_anon fs/dcache.c:1698 [inline]
+> >  d_make_root+0x43/0xc0 fs/dcache.c:1885
+> >  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
+>
+> Huh?  BUG is in iput(), AFAICS, so the stack trace is rather misreported.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+Yes, it's a known problem that kernel is generally incapable of
+producing parsable crash reports. I think Tetsuo is working on a
+solution, but it takes very large amount of discussions and months of
+time.
 
-This patch depends on:
-https://patchwork.kernel.org/patch/10691213/ - shutdown-ack dt bindings
+> iput() can be called by d_make_root(), provided that dentry allocation
+> fails.  So the most straightforward interpretation would be that we
+> had an allocation failure (injected?), followed by iput() of the inode
+> passed to d_make_root().  Which happened to find I_CLEAR in ->i_state
+> of that inode somehow, which should be impossible short of seriously
+> buggered inode refcounting somewhere - the inode has just been returned
+> by new_inode(), which clears i_state, and it would have to have passed
+> clear_inode() (i.e. has been through inode eviction) since then...
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Yes, there are injected failures in the log.
+And the repro says:
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 56f5f55db9e2..db17216a5bce 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1376,9 +1376,11 @@
- 				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
- 				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
- 				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
--				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
- 			interrupt-names = "wdog", "fatal", "ready",
--					  "handover", "stop-ack";
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
- 
- 			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
- 				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+#{..."fault":true,"fault_call":1,"fault_nth":36 ...}
+mkdir(&(0x7f0000000140)='./file0\x00', 0x0)
+mount(0x0, &(0x7f0000000100)='./file0\x00',
+&(0x7f0000000180)='autofs\x00', 0x0, 0x0)
 
+Since the repro is single-threaded, I would expect that the bug is
+directly on the error handling path of the failure allocation.
