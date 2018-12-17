@@ -2,145 +2,90 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB7FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361B7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F21C2086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99712086C
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:51:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pPbD3A1Z"
+	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="E22wkjxr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732149AbeLQJuK (ORCPT
+        id S1732123AbeLQJvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:50:10 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38947 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732057AbeLQJuK (ORCPT
+        Mon, 17 Dec 2018 04:51:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33640 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732038AbeLQJvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:50:10 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so11552800wra.6;
-        Mon, 17 Dec 2018 01:50:08 -0800 (PST)
+        Mon, 17 Dec 2018 04:51:54 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so4290829wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 01:51:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bx9Et6w1SjqEYzEub4nYhtUsrAopCcmsc6kn8bgGJAw=;
-        b=pPbD3A1ZlHJL4EUblstD9CysdrB9FsoVJXYJASw/ObhC0HTpmNS1eciC1ag4f8RygJ
-         x3jlCvPysx7USRt3DggNm6jIfV0HjppREZiFG8QWJhlUJLI5ss4AjeGgHvv/9OrhywFI
-         mBJ2/+5YVccAxIMUayceeo4+Pi0yUHQJAoK81A1MppV+ZbMIybSV1/ixTVqjipl168Q0
-         ov15WUqmxKNY3oZeSWfE4z1eE6KVJNeVFz81uMgKYhcySdIRuKBh0PXR0TVWmGQlmimX
-         2hBIiYpOm1SD7hSoFh1+YyiMMFhBdVqRaGnshPxzMLLeCKLUNqm7mUJmJX9o9xdakbMu
-         CMkQ==
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sIl+D+RSCNRzf5F3LiIMtk4dGuasREWKnaEe9ZC4r4o=;
+        b=E22wkjxreCEmSbxMUzdHCLNOQ8Guvs1tMBuTAvAG0TjbjGmh+0YHvW+IDRFmCr0tgd
+         cjAvrSQaMAUzGiuJ8KuznMIoFgabqrghozdt5BDfgbgLOQ9zS3fNd1J930ELTxM3iNPU
+         uxG0HE7VDAD5bgWb0reyevil6KTo1WTWoXUEM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bx9Et6w1SjqEYzEub4nYhtUsrAopCcmsc6kn8bgGJAw=;
-        b=IMbs7WRMhlUPujhqhl307LO3Io/IU/Qh4iN5snxElEfMROhigF/dOzw7k7qgw2+PBW
-         0Wm2aw2uXJeSVpvAPztiIFvvj8EmHbQkRS/7AA45SaR12VLP/FfcOlXXimAtwN2/YO6J
-         6mamsiL4IoFpvfCKYug7846yURDZEblqkR1SOkATDqCqZVUnB56yIYPfl0do3X1HB/CY
-         AoiAKBeGXPiiU2gEUQB5JjSFyV9uva8jXueERpt5ibd8FP7mx5OpgJQSNsnDvnUPbBMc
-         mH87AJx40mcM2BZ+MC6+jR7GbsW7bkzpUMz8tT/hA5sLqj0lWRNJcYdVtxcKI7T1IY5j
-         DgiQ==
-X-Gm-Message-State: AA+aEWbkx4LlkuLGfqPpg8Lcv4u0s9GbZcgzgnfClMzGWRTn9l+k9g5l
-        cKHpeeh3dBoUrQvrElk2Li8=
-X-Google-Smtp-Source: AFSGD/VJgzIqv3XUllIhkHhlvp+X2YqTbgS/sNeAmzAMwjqfKwXQK6UfT1VGqoUSMO15ntCpF4JtRA==
-X-Received: by 2002:a5d:4286:: with SMTP id k6mr9839277wrq.225.1545040208092;
-        Mon, 17 Dec 2018 01:50:08 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id y34sm34297562wrd.68.2018.12.17.01.50.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 01:50:06 -0800 (PST)
-Date:   Mon, 17 Dec 2018 10:50:04 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Andreas Bombe <andreas.bombe@gmail.com>
-Cc:     Andreas Henriksson <andreas@fatal.se>,
-        Jaroslav Skarvada <jskarvad@redhat.com>,
-        linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mpluskal@suse.com,
-        base-system@gentoo.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-Subject: Re: Future of dosfstools project (FAT)
-Message-ID: <20181217095004.c6c6itvyfp7cf3ta@pali>
-References: <20180929084038.an6pfhnsd6tblejl@pali>
- <20181002081654.jxesr3kj62snzez5@pali>
- <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
- <20181012091941.o22srnhse4kzqjhf@fatal.se>
- <20181114113341.yx2wlzqku5yh3k4h@pali>
- <CAPXf_qN66-Mi+o+9ENGqCDe-_2tHaf9uM3moRcCGNvmxwH3ExQ@mail.gmail.com>
- <20181206083828.4bp3oypkto2ngobu@pali>
- <20181212135736.xtb57r2eatqsgenb@pali>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sIl+D+RSCNRzf5F3LiIMtk4dGuasREWKnaEe9ZC4r4o=;
+        b=ce2iDn9nohKgp6obdn7yXupCHB/gf30VWkyqaWpZmHZ1J2O8QDw0w43y4quL21yc12
+         WECThx6gHIYgbvo99/86Od3JY9VMhr66bgZkMpjJm68dJgdLJ7sOhVdHGGgMowEr/ius
+         rIqMjdEUnb8NTe8qt2huzvkR7eRQYyyF+fBMk3LjjZxtTE7k9EiGNK0fQLXhCBm0TJ17
+         nQ0TfpPyg7P6GdWJFzQRYPrToTYwm5ZruLqiwjaw1tKAJeKwv37AFe3j4LWtw57kVTQ7
+         6peLnQ21MYFX3AzUIxq/7OnG2Ol0nz50d7Sp23uMACyYZ6ymyoxUqJaULQHYI5KxrSu8
+         Rawg==
+X-Gm-Message-State: AA+aEWa/Ulmqzj+mTOYVsy2v5jVW9lmSLI6zzvmCQKJN8NqDbdmW6bbE
+        SDRw+RCE9C6So5mrvGb19Z4yQg==
+X-Google-Smtp-Source: AFSGD/WCiGrZyo8KuYzrASqWMBK4CRinEzbQCagnDXo90Jg5Cf9go4d+1mzu4Kb3saygeHStyxMpEg==
+X-Received: by 2002:a1c:2643:: with SMTP id m64mr10862519wmm.22.1545040312552;
+        Mon, 17 Dec 2018 01:51:52 -0800 (PST)
+Received: from ?IPv6:2001:470:1f0a:1832::2? (nikaleksandrov-1-pt.tunnel.tserv6.fra1.ipv6.he.net. [2001:470:1f0a:1832::2])
+        by smtp.gmail.com with ESMTPSA id e27sm16623159wra.67.2018.12.17.01.51.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 01:51:52 -0800 (PST)
+Subject: Re: [PATCH net-next] net: bridge: remove unneeded variable 'err'
+To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
+        roopa@cumulusnetworks.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bridge@lists.linux-foundation.org
+References: <20181217094623.32668-1-yuehaibing@huawei.com>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <e9b1e56e-4c37-aff4-b855-2523eae1ef49@cumulusnetworks.com>
+Date:   Mon, 17 Dec 2018 11:51:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="x3uqxugdvepbex5v"
-Content-Disposition: inline
-In-Reply-To: <20181212135736.xtb57r2eatqsgenb@pali>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181217094623.32668-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17/12/2018 11:46, YueHaibing wrote:
+> function br_multicast_toggle now always return 0,
+> so the variable 'err' is unneeded.
+> Also cleanup dead branch in br_changelink.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  net/bridge/br_multicast.c | 3 +--
+>  net/bridge/br_netlink.c   | 4 +---
+>  2 files changed, 2 insertions(+), 5 deletions(-)
+> 
 
---x3uqxugdvepbex5v
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That is correct, but in such case just make it void.
 
-On Wednesday 12 December 2018 14:57:36 Pali Roh=C3=A1r wrote:
-> On Thursday 06 December 2018 09:38:28 Pali Roh=C3=A1r wrote:
-> > On Thursday 06 December 2018 01:53:02 Andreas Bombe wrote:
-> > > Pali Roh=C3=A1r <pali.rohar@gmail.com> schrieb am Mi., 14. Nov. 2018 =
-um
-> > > 12:33 Uhr:
-> > >=20
-> > > > And... has somebody else time to look at those pending patches and =
-do
-> > > > some initial review? I would really appreciate if somebody look and
-> > > > comment them.
-> > > >
-> > > > There are 14 open pull requests:
-> > > > https://github.com/dosfstools/dosfstools/pulls
-> > >=20
-> > >=20
-> > > I'll spend time on this again. It would help if you could make a list=
- of
-> > > higher priority PRs you would like see being looked at first.
-> >=20
-> > So.. here is some list:
-> >=20
-> > https://github.com/dosfstools/dosfstools/pull/92
-> > https://github.com/dosfstools/dosfstools/pull/93
-> > https://github.com/dosfstools/dosfstools/pull/94
-> > https://github.com/dosfstools/dosfstools/pull/101
-> > https://github.com/dosfstools/dosfstools/pull/104
-> > https://github.com/dosfstools/dosfstools/pull/84
->=20
-> Maybe you can start with Year 2038 problem in PR 94:
-> https://github.com/dosfstools/dosfstools/pull/94
 
-Thanks for review of #94! As next you can take #92 from list.
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---x3uqxugdvepbex5v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXBdxSgAKCRCL8Mk9A+RD
-Uu/TAKC3lxIwK06YX7LUd8E8Eidc8HFxtgCcDbigpf+TOKTL8s1SoUscPEYBep0=
-=79uQ
------END PGP SIGNATURE-----
-
---x3uqxugdvepbex5v--
