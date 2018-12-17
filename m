@@ -2,243 +2,556 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E7AC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36F9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64B220675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7437920675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:32:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZD9IER4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733157AbeLQRbI (ORCPT
+        id S1733268AbeLQRcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:31:08 -0500
-Received: from mga09.intel.com ([134.134.136.24]:36143 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbeLQRbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:31:07 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 09:31:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208,223";a="119029061"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga002.jf.intel.com with ESMTP; 17 Dec 2018 09:31:06 -0800
-Date:   Mon, 17 Dec 2018 09:31:06 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "Dr. Greg" <greg@enjellic.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181217173106.GB12491@linux.intel.com>
-References: <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
- <20181128104941.GA23077@wind.enjellic.com>
- <20181128192228.GC9023@linux.intel.com>
- <20181210104908.GA23132@wind.enjellic.com>
- <20181212180036.GC6333@linux.intel.com>
- <20181214235917.GA14049@wind.enjellic.com>
- <20181215000627.GA5799@linux.intel.com>
- <20181217132859.GA31936@linux.intel.com>
- <20181217133928.GA32706@linux.intel.com>
- <20181217140811.GA4601@linux.intel.com>
+        Mon, 17 Dec 2018 12:32:04 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37979 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeLQRcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 12:32:03 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so13141946wrw.5;
+        Mon, 17 Dec 2018 09:32:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5aV86hksqq7H5njVl0GMGphmG/sfCU30G1FoJiZP1Us=;
+        b=NZD9IER4sFVO0uEXRotjaWs4vsDAHC4VRA8c87IQxZzTq4MVHprOxg9rQYLmJ7+wi/
+         jaXfb3f0ZWnE9V7AnasUAlvZoqX9koKmQ/aWxuCHR6HjSqxkg59nKjiXyHiX0ze9tHug
+         nUOCMAuswgsZxUZaFpfEIOwuclOahfFPTaG2jW0jGMV7QKBcv5ZGys62sG6CF5aiW2Yt
+         7j7PCSXz6PhSuKfQHRrqXkmVVh0Pjz13FfyYPqPTREEihf6gkis4q667mH+EM+bSevKs
+         mtaocj6U5VFRp8yhsgnrfJ5whrL/DFV3AzOy+iC4wVuYnWjlbkhP9oq2f6ptL4bHJeDv
+         aWcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5aV86hksqq7H5njVl0GMGphmG/sfCU30G1FoJiZP1Us=;
+        b=UBLcEyXmsMkSCNzPki5FP8jiuhsY378PQrp9Zlc71OTB/PxdaaOujysZmml+tx20vE
+         Rge0DtBbgbEBgnGyTzXhNJ1Ea6eJifAPn3l1/gqWHCZZh+tSVjXXGGyPBRZlKgvI/25C
+         6SkPTgFaowPdPcIHbrK5BMs1/W5FWE/bG/mrew6MWO6kYvoft8Gs271mjNBa72PX/YJG
+         +KM9v4kAMgzqDZfIiDaRoD76FrOrarrfCwQ7bIEA0pKzLNrclDLbVYJCJ3RjEYfYCyoX
+         W9Zh6M4QurjtOD1TCJcPukiASvph7zHzjWnqlOitaKY4ACvvMuPHfuvd1IIDKwe4irjV
+         jQxg==
+X-Gm-Message-State: AA+aEWZDjN/W4Z+wPxdnJfScKEIVqUfEOOGcEBAxu1RdsWR34IMKShMx
+        8FezIfWXARunXXIj19dhCj4=
+X-Google-Smtp-Source: AFSGD/UO+Pne0SPa5ErScKc+tQV8UqnJIXPpN8qIwnVyKx5SSRvIEzxDtFC147pUFKyBJJjb7evLdw==
+X-Received: by 2002:adf:e78f:: with SMTP id n15mr11878584wrm.115.1545067919294;
+        Mon, 17 Dec 2018 09:31:59 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id m4sm237232wmi.3.2018.12.17.09.31.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 09:31:58 -0800 (PST)
+Date:   Mon, 17 Dec 2018 10:31:57 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        Don Brace <don.brace@microsemi.com>,
+        Brian King <brking@us.ibm.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, esc.storagedev@microsemi.com,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] scsi/ata: Use unsigned int for cmd's type in ioctls
+ in scsi_host_template
+Message-ID: <20181217173157.GA32586@flashbox>
+References: <20181019175714.444-1-natechancellor@gmail.com>
+ <20181020050143.589-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217140811.GA4601@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181020050143.589-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Dec 17, 2018 at 04:08:11PM +0200, Jarkko Sakkinen wrote:
-> On Mon, Dec 17, 2018 at 03:39:28PM +0200, Jarkko Sakkinen wrote:
-> > On Mon, Dec 17, 2018 at 03:28:59PM +0200, Jarkko Sakkinen wrote:
-> > > On Fri, Dec 14, 2018 at 04:06:27PM -0800, Sean Christopherson wrote:
-> > > > [  504.149548] ------------[ cut here ]------------
-> > > > [  504.149550] kernel BUG at /home/sean/go/src/kernel.org/linux/mm/mmap.c:669!
-> > > > [  504.150288] invalid opcode: 0000 [#1] SMP
-> > > > [  504.150614] CPU: 2 PID: 237 Comm: kworker/u20:2 Not tainted 4.20.0-rc2+ #267
-> > > > [  504.151165] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-> > > > [  504.151818] Workqueue: sgx-encl-wq sgx_encl_release_worker
-> > > > [  504.152267] RIP: 0010:__vma_adjust+0x64a/0x820
-> > > > [  504.152626] Code: ff 48 89 50 18 e9 6f fc ff ff 4c 8b ab 88 00 00 00 45 31 e4 e9 61 fb ff ff 31 c0 48 83 c4 60 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <0f> 0b 49 89 de 49 83 c6 20 0f 84 06 fe ff ff 49 8d 7e e0 e8 fe ee
-> > > > [  504.154109] RSP: 0000:ffffc900004ebd60 EFLAGS: 00010206
-> > > > [  504.154535] RAX: 00007fd92ef7e000 RBX: ffff888467af16c0 RCX: ffff888467af16e0
-> > > > [  504.155104] RDX: ffff888458fd09e0 RSI: 00007fd954021000 RDI: ffff88846bf9e798
-> > > > [  504.155673] RBP: ffff888467af1480 R08: ffff88845bea2000 R09: 0000000000000000
-> > > > [  504.156242] R10: 0000000080000000 R11: fefefefefefefeff R12: 0000000000000000
-> > > > [  504.156810] R13: ffff88846bf9e790 R14: ffff888467af1b70 R15: ffff888467af1b60
-> > > > [  504.157378] FS:  0000000000000000(0000) GS:ffff88846f700000(0000) knlGS:0000000000000000
-> > > > [  504.158021] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > [  504.158483] CR2: 00007f2c56e99000 CR3: 0000000005009001 CR4: 0000000000360ee0
-> > > > [  504.159054] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > [  504.159623] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > [  504.160193] Call Trace:
-> > > > [  504.160406]  __split_vma+0x16f/0x180
-> > > > [  504.160706]  ? __switch_to_asm+0x40/0x70
-> > > > [  504.161024]  __do_munmap+0xfb/0x450
-> > > > [  504.161308]  sgx_encl_release_worker+0x44/0x70
-> > > > [  504.161675]  process_one_work+0x200/0x3f0
-> > > > [  504.162004]  worker_thread+0x2d/0x3d0
-> > > > [  504.162301]  ? process_one_work+0x3f0/0x3f0
-> > > > [  504.162645]  kthread+0x113/0x130
-> > > > [  504.162912]  ? kthread_park+0x90/0x90
-> > > > [  504.163209]  ret_from_fork+0x35/0x40
-> > > > [  504.163503] Modules linked in: bridge stp llc
-> > > > [  504.163866] ---[ end trace 83076139fc25e3e0 ]---
-> > > 
-> > > There was a race with release and swapping code that I thought I fixed,
-> > > and this is looks like a race there. Have to recheck what I did not
-> > > consider. Anyway, though to share this if you have time to look at it.
-> > > That is the part where something is now unsync most probably.
-> > 
-> > I think I found it. I was careless to make sgx_encl_release() to use
-> > sgx_invalidate(), which does not delete pages in the case when enclave
-> > is already marked as dead. This was after I had fixed the race that I
-> > had there in the first place. That is why I was puzzled why it suddenly
-> > reappeared.
-> > 
-> > Would be nice to use sgx_invalidate() also in release for consistency in
-> > semantics sake so maybe just delete this:
-> > 
-> > 	if (encl->flags & SGX_ENCL_DEAD)
-> > 		return;
-
-This doesn't work as-is.  sgx_encl_release() needs to use sgx_free_page()
-and not __sgx_free_page() so that we get a WARN() if the page can't be
-freed.  sgx_invalidate() needs to use __sgx_free_page() as freeing a page
-can fail due to running concurrently with reclaim.  I'll play around with
-the code a bit, there's probably a fairly clean way to share code between
-the two flows.
-
+On Fri, Oct 19, 2018 at 10:01:44PM -0700, Nathan Chancellor wrote:
+> Clang warns several times in the scsi subsystem (trimmed for brevity):
 > 
-> Updated master, not at this point next.
+> drivers/scsi/hpsa.c:6209:7: warning: overflow converting case value to
+> switch condition type (2147762695 to 18446744071562347015) [-Wswitch]
+>         case CCISS_GETBUSTYPES:
+>              ^
+> drivers/scsi/hpsa.c:6208:7: warning: overflow converting case value to
+> switch condition type (2147762694 to 18446744071562347014) [-Wswitch]
+>         case CCISS_GETHEARTBEAT:
+>              ^
+> 
+> The root cause is that the _IOC macro can generate really large numbers,
+> which don't find into type 'int', which is used for the cmd paremeter in
+> the ioctls in scsi_host_template. My research into how GCC and Clang are
+> handling this at a low level didn't prove fruitful. However, looking at
+> the rest of the kernel tree, all ioctls use an 'unsigned int' for the
+> cmd parameter, which will fit all of the _IOC values in the scsi/ata
+> subsystems.
+> 
+> Make that change because none of the ioctls expect to take a negative
+> value, it brings the ioctls inline with the reset of the kernel, and it
+> removes ambiguity, which is never good when dealing with compilers.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/85
+> Link: https://github.com/ClangBuiltLinux/linux/issues/154
+> Link: https://github.com/ClangBuiltLinux/linux/issues/157
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+> 
+> v1 -> 2:
+> 
+> * Fix build breakage in cxlflash driver from forgetting to update
+>   prototype (thanks to 0day for catching it).
+> 
+>  drivers/ata/libata-scsi.c             |  5 +++--
+>  drivers/scsi/aacraid/aachba.c         |  2 +-
+>  drivers/scsi/aacraid/aacraid.h        |  4 ++--
+>  drivers/scsi/aacraid/commctrl.c       |  2 +-
+>  drivers/scsi/aacraid/linit.c          |  6 ++++--
+>  drivers/scsi/cxlflash/common.h        |  3 ++-
+>  drivers/scsi/cxlflash/superpipe.c     | 12 +++++-------
+>  drivers/scsi/esas2r/esas2r.h          |  4 ++--
+>  drivers/scsi/esas2r/esas2r_ioctl.c    | 13 ++++++-------
+>  drivers/scsi/esas2r/esas2r_main.c     |  2 +-
+>  drivers/scsi/hpsa.c                   | 15 +++++++++------
+>  drivers/scsi/ipr.c                    |  3 ++-
+>  drivers/scsi/libsas/sas_scsi_host.c   |  2 +-
+>  drivers/scsi/scsi_debug.c             |  3 ++-
+>  drivers/scsi/smartpqi/smartpqi_init.c |  3 ++-
+>  include/linux/libata.h                |  5 +++--
+>  include/scsi/libsas.h                 |  3 ++-
+>  include/scsi/scsi_host.h              |  6 ++++--
+>  18 files changed, 52 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index 3d4887d0e84a..6291f1dbf342 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -778,7 +778,7 @@ static int ata_ioc32(struct ata_port *ap)
+>  }
+>  
+>  int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *scsidev,
+> -		     int cmd, void __user *arg)
+> +		     unsigned int cmd, void __user *arg)
+>  {
+>  	unsigned long val;
+>  	int rc = -EINVAL;
+> @@ -829,7 +829,8 @@ int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *scsidev,
+>  }
+>  EXPORT_SYMBOL_GPL(ata_sas_scsi_ioctl);
+>  
+> -int ata_scsi_ioctl(struct scsi_device *scsidev, int cmd, void __user *arg)
+> +int ata_scsi_ioctl(struct scsi_device *scsidev, unsigned int cmd,
+> +		   void __user *arg)
+>  {
+>  	return ata_sas_scsi_ioctl(ata_shost_to_port(scsidev->host),
+>  				scsidev, cmd, arg);
+> diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
+> index bd7f352c28f3..a6399fac3333 100644
+> --- a/drivers/scsi/aacraid/aachba.c
+> +++ b/drivers/scsi/aacraid/aachba.c
+> @@ -3452,7 +3452,7 @@ static int delete_disk(struct aac_dev *dev, void __user *arg)
+>  	}
+>  }
+>  
+> -int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg)
+> +int aac_dev_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg)
+>  {
+>  	switch (cmd) {
+>  	case FSACTL_QUERY_DISK:
+> diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
+> index 39eb415987fc..1965072ab673 100644
+> --- a/drivers/scsi/aacraid/aacraid.h
+> +++ b/drivers/scsi/aacraid/aacraid.h
+> @@ -2705,12 +2705,12 @@ void aac_set_intx_mode(struct aac_dev *dev);
+>  int aac_get_config_status(struct aac_dev *dev, int commit_flag);
+>  int aac_get_containers(struct aac_dev *dev);
+>  int aac_scsi_cmd(struct scsi_cmnd *cmd);
+> -int aac_dev_ioctl(struct aac_dev *dev, int cmd, void __user *arg);
+> +int aac_dev_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg);
+>  #ifndef shost_to_class
+>  #define shost_to_class(shost) &shost->shost_dev
+>  #endif
+>  ssize_t aac_get_serial_number(struct device *dev, char *buf);
+> -int aac_do_ioctl(struct aac_dev * dev, int cmd, void __user *arg);
+> +int aac_do_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg);
+>  int aac_rx_init(struct aac_dev *dev);
+>  int aac_rkt_init(struct aac_dev *dev);
+>  int aac_nark_init(struct aac_dev *dev);
+> diff --git a/drivers/scsi/aacraid/commctrl.c b/drivers/scsi/aacraid/commctrl.c
+> index 25f6600d6c09..fd8a10871598 100644
+> --- a/drivers/scsi/aacraid/commctrl.c
+> +++ b/drivers/scsi/aacraid/commctrl.c
+> @@ -1061,7 +1061,7 @@ static int aac_send_reset_adapter(struct aac_dev *dev, void __user *arg)
+>  	return retval;
+>  }
+>  
+> -int aac_do_ioctl(struct aac_dev * dev, int cmd, void __user *arg)
+> +int aac_do_ioctl(struct aac_dev *dev, unsigned int cmd, void __user *arg)
+>  {
+>  	int status;
+>  
+> diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+> index 2d4e4ddc5ace..cd2efb44f62c 100644
+> --- a/drivers/scsi/aacraid/linit.c
+> +++ b/drivers/scsi/aacraid/linit.c
+> @@ -616,7 +616,8 @@ static struct device_attribute *aac_dev_attrs[] = {
+>  	NULL,
+>  };
+>  
+> -static int aac_ioctl(struct scsi_device *sdev, int cmd, void __user * arg)
+> +static int aac_ioctl(struct scsi_device *sdev, unsigned int cmd,
+> +		     void __user *arg)
+>  {
+>  	struct aac_dev *dev = (struct aac_dev *)sdev->host->hostdata;
+>  	if (!capable(CAP_SYS_RAWIO))
+> @@ -1205,7 +1206,8 @@ static long aac_compat_do_ioctl(struct aac_dev *dev, unsigned cmd, unsigned long
+>  	return ret;
+>  }
+>  
+> -static int aac_compat_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+> +static int aac_compat_ioctl(struct scsi_device *sdev, unsigned int cmd,
+> +			    void __user *arg)
+>  {
+>  	struct aac_dev *dev = (struct aac_dev *)sdev->host->hostdata;
+>  	if (!capable(CAP_SYS_RAWIO))
+> diff --git a/drivers/scsi/cxlflash/common.h b/drivers/scsi/cxlflash/common.h
+> index 8908a20065c8..4d90106fcb37 100644
+> --- a/drivers/scsi/cxlflash/common.h
+> +++ b/drivers/scsi/cxlflash/common.h
+> @@ -334,7 +334,8 @@ int cxlflash_afu_sync(struct afu *afu, ctx_hndl_t c, res_hndl_t r, u8 mode);
+>  void cxlflash_list_init(void);
+>  void cxlflash_term_global_luns(void);
+>  void cxlflash_free_errpage(void);
+> -int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg);
+> +int cxlflash_ioctl(struct scsi_device *sdev, unsigned int cmd,
+> +		   void __user *arg);
+>  void cxlflash_stop_term_user_contexts(struct cxlflash_cfg *cfg);
+>  int cxlflash_mark_contexts_error(struct cxlflash_cfg *cfg);
+>  void cxlflash_term_local_luns(struct cxlflash_cfg *cfg);
+> diff --git a/drivers/scsi/cxlflash/superpipe.c b/drivers/scsi/cxlflash/superpipe.c
+> index acac6152f50b..1a94a469051e 100644
+> --- a/drivers/scsi/cxlflash/superpipe.c
+> +++ b/drivers/scsi/cxlflash/superpipe.c
+> @@ -1924,7 +1924,7 @@ static int cxlflash_disk_verify(struct scsi_device *sdev,
+>   *
+>   * Return: A string identifying the decoded ioctl.
+>   */
+> -static char *decode_ioctl(int cmd)
+> +static char *decode_ioctl(unsigned int cmd)
+>  {
+>  	switch (cmd) {
+>  	case DK_CXLFLASH_ATTACH:
+> @@ -2051,7 +2051,7 @@ static int cxlflash_disk_direct_open(struct scsi_device *sdev, void *arg)
+>   *
+>   * Return: 0 on success, -errno on failure
+>   */
+> -static int ioctl_common(struct scsi_device *sdev, int cmd)
+> +static int ioctl_common(struct scsi_device *sdev, unsigned int cmd)
+>  {
+>  	struct cxlflash_cfg *cfg = shost_priv(sdev->host);
+>  	struct device *dev = &cfg->dev->dev;
+> @@ -2096,7 +2096,7 @@ static int ioctl_common(struct scsi_device *sdev, int cmd)
+>   *
+>   * Return: 0 on success, -errno on failure
+>   */
+> -int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+> +int cxlflash_ioctl(struct scsi_device *sdev, unsigned int cmd, void __user *arg)
+>  {
+>  	typedef int (*sioctl) (struct scsi_device *, void *);
+>  
+> @@ -2179,8 +2179,7 @@ int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+>  	}
+>  
+>  	if (unlikely(copy_from_user(&buf, arg, size))) {
+> -		dev_err(dev, "%s: copy_from_user() fail "
+> -			"size=%lu cmd=%d (%s) arg=%p\n",
+> +		dev_err(dev, "%s: copy_from_user() fail size=%lu cmd=%u (%s) arg=%p\n",
+>  			__func__, size, cmd, decode_ioctl(cmd), arg);
+>  		rc = -EFAULT;
+>  		goto cxlflash_ioctl_exit;
+> @@ -2203,8 +2202,7 @@ int cxlflash_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+>  	rc = do_ioctl(sdev, (void *)&buf);
+>  	if (likely(!rc))
+>  		if (unlikely(copy_to_user(arg, &buf, size))) {
+> -			dev_err(dev, "%s: copy_to_user() fail "
+> -				"size=%lu cmd=%d (%s) arg=%p\n",
+> +			dev_err(dev, "%s: copy_to_user() fail size=%lu cmd=%u (%s) arg=%p\n",
+>  				__func__, size, cmd, decode_ioctl(cmd), arg);
+>  			rc = -EFAULT;
+>  		}
+> diff --git a/drivers/scsi/esas2r/esas2r.h b/drivers/scsi/esas2r/esas2r.h
+> index 858c3b33db78..7f43b95f4e94 100644
+> --- a/drivers/scsi/esas2r/esas2r.h
+> +++ b/drivers/scsi/esas2r/esas2r.h
+> @@ -965,8 +965,8 @@ struct esas2r_adapter {
+>  const char *esas2r_info(struct Scsi_Host *);
+>  int esas2r_write_params(struct esas2r_adapter *a, struct esas2r_request *rq,
+>  			struct esas2r_sas_nvram *data);
+> -int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg);
+> -int esas2r_ioctl(struct scsi_device *dev, int cmd, void __user *arg);
+> +int esas2r_ioctl_handler(void *hostdata, unsigned int cmd, void __user *arg);
+> +int esas2r_ioctl(struct scsi_device *dev, unsigned int cmd, void __user *arg);
+>  u8 handle_hba_ioctl(struct esas2r_adapter *a,
+>  		    struct atto_ioctl *ioctl_hba);
+>  int esas2r_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd);
+> diff --git a/drivers/scsi/esas2r/esas2r_ioctl.c b/drivers/scsi/esas2r/esas2r_ioctl.c
+> index 34bcc8c04ff4..916b9adf4921 100644
+> --- a/drivers/scsi/esas2r/esas2r_ioctl.c
+> +++ b/drivers/scsi/esas2r/esas2r_ioctl.c
+> @@ -1274,7 +1274,7 @@ int esas2r_write_params(struct esas2r_adapter *a, struct esas2r_request *rq,
+>  
+>  
+>  /* This function only cares about ATTO-specific ioctls (atto_express_ioctl) */
+> -int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
+> +int esas2r_ioctl_handler(void *hostdata, unsigned int cmd, void __user *arg)
+>  {
+>  	struct atto_express_ioctl *ioctl = NULL;
+>  	struct esas2r_adapter *a;
+> @@ -1292,7 +1292,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
+>  	ioctl = memdup_user(arg, sizeof(struct atto_express_ioctl));
+>  	if (IS_ERR(ioctl)) {
+>  		esas2r_log(ESAS2R_LOG_WARN,
+> -			   "ioctl_handler access_ok failed for cmd %d, "
+> +			   "ioctl_handler access_ok failed for cmd %u, "
+>  			   "address %p", cmd,
+>  			   arg);
+>  		return PTR_ERR(ioctl);
+> @@ -1493,7 +1493,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
+>  ioctl_done:
+>  
+>  	if (err < 0) {
+> -		esas2r_log(ESAS2R_LOG_WARN, "err %d on ioctl cmd %d", err,
+> +		esas2r_log(ESAS2R_LOG_WARN, "err %d on ioctl cmd %u", err,
+>  			   cmd);
+>  
+>  		switch (err) {
+> @@ -1518,9 +1518,8 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
+>  	err = __copy_to_user(arg, ioctl, sizeof(struct atto_express_ioctl));
+>  	if (err != 0) {
+>  		esas2r_log(ESAS2R_LOG_WARN,
+> -			   "ioctl_handler copy_to_user didn't copy "
+> -			   "everything (err %d, cmd %d)", err,
+> -			   cmd);
+> +			   "ioctl_handler copy_to_user didn't copy everything (err %d, cmd %u)",
+> +			   err, cmd);
+>  		kfree(ioctl);
+>  
+>  		return -EFAULT;
+> @@ -1531,7 +1530,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
+>  	return 0;
+>  }
+>  
+> -int esas2r_ioctl(struct scsi_device *sd, int cmd, void __user *arg)
+> +int esas2r_ioctl(struct scsi_device *sd, unsigned int cmd, void __user *arg)
+>  {
+>  	return esas2r_ioctl_handler(sd->host->hostdata, cmd, arg);
+>  }
+> diff --git a/drivers/scsi/esas2r/esas2r_main.c b/drivers/scsi/esas2r/esas2r_main.c
+> index c07118617d89..25dc8d44ed8e 100644
+> --- a/drivers/scsi/esas2r/esas2r_main.c
+> +++ b/drivers/scsi/esas2r/esas2r_main.c
+> @@ -624,7 +624,7 @@ static int esas2r_proc_major;
+>  long esas2r_proc_ioctl(struct file *fp, unsigned int cmd, unsigned long arg)
+>  {
+>  	return esas2r_ioctl_handler(esas2r_proc_host->hostdata,
+> -				    (int)cmd, (void __user *)arg);
+> +				    cmd, (void __user *)arg);
+>  }
+>  
+>  static void __exit esas2r_exit(void)
+> diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+> index c9cccf35e9d7..c9d41d3b50f1 100644
+> --- a/drivers/scsi/hpsa.c
+> +++ b/drivers/scsi/hpsa.c
+> @@ -251,10 +251,11 @@ static int number_of_controllers;
+>  
+>  static irqreturn_t do_hpsa_intr_intx(int irq, void *dev_id);
+>  static irqreturn_t do_hpsa_intr_msi(int irq, void *dev_id);
+> -static int hpsa_ioctl(struct scsi_device *dev, int cmd, void __user *arg);
+> +static int hpsa_ioctl(struct scsi_device *dev, unsigned int cmd,
+> +		      void __user *arg);
+>  
+>  #ifdef CONFIG_COMPAT
+> -static int hpsa_compat_ioctl(struct scsi_device *dev, int cmd,
+> +static int hpsa_compat_ioctl(struct scsi_device *dev, unsigned int cmd,
+>  	void __user *arg);
+>  #endif
+>  
+> @@ -6123,7 +6124,7 @@ static void cmd_free(struct ctlr_info *h, struct CommandList *c)
+>  
+>  #ifdef CONFIG_COMPAT
+>  
+> -static int hpsa_ioctl32_passthru(struct scsi_device *dev, int cmd,
+> +static int hpsa_ioctl32_passthru(struct scsi_device *dev, unsigned int cmd,
+>  	void __user *arg)
+>  {
+>  	IOCTL32_Command_struct __user *arg32 =
+> @@ -6160,7 +6161,7 @@ static int hpsa_ioctl32_passthru(struct scsi_device *dev, int cmd,
+>  }
+>  
+>  static int hpsa_ioctl32_big_passthru(struct scsi_device *dev,
+> -	int cmd, void __user *arg)
+> +	unsigned int cmd, void __user *arg)
+>  {
+>  	BIG_IOCTL32_Command_struct __user *arg32 =
+>  	    (BIG_IOCTL32_Command_struct __user *) arg;
+> @@ -6197,7 +6198,8 @@ static int hpsa_ioctl32_big_passthru(struct scsi_device *dev,
+>  	return err;
+>  }
+>  
+> -static int hpsa_compat_ioctl(struct scsi_device *dev, int cmd, void __user *arg)
+> +static int hpsa_compat_ioctl(struct scsi_device *dev, unsigned int cmd,
+> +			     void __user *arg)
+>  {
+>  	switch (cmd) {
+>  	case CCISS_GETPCIINFO:
+> @@ -6517,7 +6519,8 @@ static void check_ioctl_unit_attention(struct ctlr_info *h,
+>  /*
+>   * ioctl
+>   */
+> -static int hpsa_ioctl(struct scsi_device *dev, int cmd, void __user *arg)
+> +static int hpsa_ioctl(struct scsi_device *dev, unsigned int cmd,
+> +		      void __user *arg)
+>  {
+>  	struct ctlr_info *h;
+>  	void __user *argp = (void __user *)arg;
+> diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+> index 271990bc065b..97fcc881f9f1 100644
+> --- a/drivers/scsi/ipr.c
+> +++ b/drivers/scsi/ipr.c
+> @@ -6696,7 +6696,8 @@ static int ipr_queuecommand(struct Scsi_Host *shost,
+>   * Return value:
+>   * 	0 on success / other on failure
+>   **/
+> -static int ipr_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+> +static int ipr_ioctl(struct scsi_device *sdev, unsigned int cmd,
+> +		     void __user *arg)
+>  {
+>  	struct ipr_resource_entry *res;
+>  
+> diff --git a/drivers/scsi/libsas/sas_scsi_host.c b/drivers/scsi/libsas/sas_scsi_host.c
+> index 33229348dcb6..4eeaafbe0504 100644
+> --- a/drivers/scsi/libsas/sas_scsi_host.c
+> +++ b/drivers/scsi/libsas/sas_scsi_host.c
+> @@ -805,7 +805,7 @@ void sas_scsi_recover_host(struct Scsi_Host *shost)
+>  		    shost->host_failed, tries);
+>  }
+>  
+> -int sas_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+> +int sas_ioctl(struct scsi_device *sdev, unsigned int cmd, void __user *arg)
+>  {
+>  	struct domain_device *dev = sdev_to_domain_dev(sdev);
+>  
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index 60bcc6df97a9..4c513651c95f 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -836,7 +836,8 @@ static void mk_sense_invalid_opcode(struct scsi_cmnd *scp)
+>  	mk_sense_buffer(scp, ILLEGAL_REQUEST, INVALID_OPCODE, 0);
+>  }
+>  
+> -static int scsi_debug_ioctl(struct scsi_device *dev, int cmd, void __user *arg)
+> +static int scsi_debug_ioctl(struct scsi_device *dev, unsigned int cmd,
+> +			    void __user *arg)
+>  {
+>  	if (sdebug_verbose) {
+>  		if (0x1261 == cmd)
+> diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+> index a25a07a0b7f0..498bdfbbebfa 100644
+> --- a/drivers/scsi/smartpqi/smartpqi_init.c
+> +++ b/drivers/scsi/smartpqi/smartpqi_init.c
+> @@ -5572,7 +5572,8 @@ static int pqi_passthru_ioctl(struct pqi_ctrl_info *ctrl_info, void __user *arg)
+>  	return rc;
+>  }
+>  
+> -static int pqi_ioctl(struct scsi_device *sdev, int cmd, void __user *arg)
+> +static int pqi_ioctl(struct scsi_device *sdev, unsigned int cmd,
+> +		     void __user *arg)
+>  {
+>  	int rc;
+>  	struct pqi_ctrl_info *ctrl_info;
+> diff --git a/include/linux/libata.h b/include/linux/libata.h
+> index 38c95d66ab12..263ca4f05c24 100644
+> --- a/include/linux/libata.h
+> +++ b/include/linux/libata.h
+> @@ -1123,10 +1123,11 @@ extern int ata_host_activate(struct ata_host *host, int irq,
+>  extern void ata_host_detach(struct ata_host *host);
+>  extern void ata_host_init(struct ata_host *, struct device *, struct ata_port_operations *);
+>  extern int ata_scsi_detect(struct scsi_host_template *sht);
+> -extern int ata_scsi_ioctl(struct scsi_device *dev, int cmd, void __user *arg);
+> +extern int ata_scsi_ioctl(struct scsi_device *dev, unsigned int cmd,
+> +			  void __user *arg);
+>  extern int ata_scsi_queuecmd(struct Scsi_Host *h, struct scsi_cmnd *cmd);
+>  extern int ata_sas_scsi_ioctl(struct ata_port *ap, struct scsi_device *dev,
+> -			    int cmd, void __user *arg);
+> +			    unsigned int cmd, void __user *arg);
+>  extern void ata_sas_port_destroy(struct ata_port *);
+>  extern struct ata_port *ata_sas_port_alloc(struct ata_host *,
+>  					   struct ata_port_info *, struct Scsi_Host *);
+> diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
+> index 3de3b10da19a..70461264d6e7 100644
+> --- a/include/scsi/libsas.h
+> +++ b/include/scsi/libsas.h
+> @@ -709,7 +709,8 @@ int sas_eh_target_reset_handler(struct scsi_cmnd *cmd);
+>  
+>  extern void sas_target_destroy(struct scsi_target *);
+>  extern int sas_slave_alloc(struct scsi_device *);
+> -extern int sas_ioctl(struct scsi_device *sdev, int cmd, void __user *arg);
+> +extern int sas_ioctl(struct scsi_device *sdev, unsigned int cmd,
+> +		     void __user *arg);
+>  extern int sas_drain_work(struct sas_ha_struct *ha);
+>  
+>  extern void sas_ssp_task_response(struct device *dev, struct sas_task *task,
+> diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
+> index 5ea06d310a25..5c1df26e1d4f 100644
+> --- a/include/scsi/scsi_host.h
+> +++ b/include/scsi/scsi_host.h
+> @@ -65,7 +65,8 @@ struct scsi_host_template {
+>  	 *
+>  	 * Status: OPTIONAL
+>  	 */
+> -	int (* ioctl)(struct scsi_device *dev, int cmd, void __user *arg);
+> +	int (*ioctl)(struct scsi_device *dev, unsigned int cmd,
+> +		     void __user *arg);
+>  
+>  
+>  #ifdef CONFIG_COMPAT
+> @@ -75,7 +76,8 @@ struct scsi_host_template {
+>  	 *
+>  	 * Status: OPTIONAL
+>  	 */
+> -	int (* compat_ioctl)(struct scsi_device *dev, int cmd, void __user *arg);
+> +	int (*compat_ioctl)(struct scsi_device *dev, unsigned int cmd,
+> +			    void __user *arg);
+>  #endif
+>  
+>  	/*
+> -- 
+> 2.19.1
+> 
 
-Still broken (as Greg's parallel email points out).
+Gentle ping for review, it would be nice to get this into 4.21/5.0 since
+I sent it out almost two months ago.
 
-sgx_encl_release_worker() calls do_unmap() without checking the validity
-of the page tables[1].  As is, the code doesn't even guarantee mm_struct
-itself is valid.
-
-The easiest fix I can think of is to add a SGX_ENCL_MM_RELEASED flag
-that is set along with SGX_ENCL_DEAD in sgx_mmu_notifier_release(), and
-only call do_unmap() if SGX_ENCL_MM_RELEASED is false.  Note that this
-means we cant unregister the mmu_notifier until after do_unmap(), but
-that's true no matter what since we're relying on the mmu_notifier to
-hold a reference to mm_struct.  Patch attached.
-
-[1] https://www.spinics.net/lists/dri-devel/msg186827.html
-
---IJpNTDwzlM2Ie8A6
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-x86-sgx-Do-not-attempt-to-unmap-enclave-VMAs-if-mm_s.patch"
-
-From 7cfdf34ec5b70392216b24853d6b8cc5e3192a92 Mon Sep 17 00:00:00 2001
-From: Sean Christopherson <sean.j.christopherson@intel.com>
-Date: Mon, 17 Dec 2018 09:21:14 -0800
-Subject: [PATCH] x86/sgx: Do not attempt to unmap enclave VMAs if mm_struct is
- defunct
-
-Add a flag, SGX_ENCL_MM_RELEASED, to explicitly track the lifecycle of
-the enclave's associated mm_struct.  Simply ensuring the mm_struct
-itself is valid is not sufficient as the VMAs and page tables can be
-removed after sgx_mmu_notifier_release() is invoked[1].
-
-Note that this means mmu_notifier can't be unregistered until after
-do_unmap(), but that's true no matter what since the mmu_notifier
-holds the enclave's reference to mm_struct, i.e. this also fixes a
-potential use-after-free bug of the mm_struct.
-
-[1] https://www.spinics.net/lists/dri-devel/msg186827.html
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kernel/cpu/sgx/driver/driver.h |  1 +
- arch/x86/kernel/cpu/sgx/driver/encl.c   | 18 ++++++++++--------
- 2 files changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/driver/driver.h b/arch/x86/kernel/cpu/sgx/driver/driver.h
-index 56f45cd433dd..d7c51284ef36 100644
---- a/arch/x86/kernel/cpu/sgx/driver/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver/driver.h
-@@ -89,6 +89,7 @@ enum sgx_encl_flags {
- 	SGX_ENCL_DEBUG		= BIT(1),
- 	SGX_ENCL_SUSPEND	= BIT(2),
- 	SGX_ENCL_DEAD		= BIT(3),
-+	SGX_ENCL_MM_RELEASED	= BIT(4),
- };
- 
- struct sgx_encl {
-diff --git a/arch/x86/kernel/cpu/sgx/driver/encl.c b/arch/x86/kernel/cpu/sgx/driver/encl.c
-index 923e31eb6552..77c5e65533fb 100644
---- a/arch/x86/kernel/cpu/sgx/driver/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/driver/encl.c
-@@ -311,7 +311,7 @@ static void sgx_mmu_notifier_release(struct mmu_notifier *mn,
- 		container_of(mn, struct sgx_encl, mmu_notifier);
- 
- 	mutex_lock(&encl->lock);
--	encl->flags |= SGX_ENCL_DEAD;
-+	encl->flags |= SGX_ENCL_DEAD | SGX_ENCL_MM_RELEASED;
- 	mutex_unlock(&encl->lock);
- }
- 
-@@ -967,10 +967,15 @@ static void sgx_encl_release_worker(struct work_struct *work)
- 	struct sgx_encl *encl = container_of(work, struct sgx_encl, work);
- 	unsigned long backing_size = encl->size + PAGE_SIZE;
- 
--	down_write(&encl->mm->mmap_sem);
--	do_munmap(encl->mm, (unsigned long)encl->backing, backing_size +
--		  (backing_size >> 5), NULL);
--	up_write(&encl->mm->mmap_sem);
-+	if (!(encl->flags & SGX_ENCL_MM_RELEASED)) {
-+		down_write(&encl->mm->mmap_sem);
-+		do_munmap(encl->mm, (unsigned long)encl->backing,
-+			  backing_size + (backing_size >> 5), NULL);
-+		up_write(&encl->mm->mmap_sem);
-+	}
-+
-+	if (encl->mmu_notifier.ops)
-+		mmu_notifier_unregister(&encl->mmu_notifier, encl->mm);
- 
- 	if (encl->tgid)
- 		put_pid(encl->tgid);
-@@ -990,9 +995,6 @@ void sgx_encl_release(struct kref *ref)
- {
- 	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
- 
--	if (encl->mmu_notifier.ops)
--		mmu_notifier_unregister(&encl->mmu_notifier, encl->mm);
--
- 	if (encl->pm_notifier.notifier_call)
- 		unregister_pm_notifier(&encl->pm_notifier);
- 
--- 
-2.19.2
-
-
---IJpNTDwzlM2Ie8A6--
+Nathan
