@@ -2,103 +2,152 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB95C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1094DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4960A21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B0D214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:21:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a8jaAhQD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388244AbeLQRVf (ORCPT
+        id S2388298AbeLQRVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:21:35 -0500
-Received: from smtprelay0008.hostedemail.com ([216.40.44.8]:56945 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727186AbeLQRVe (ORCPT
+        Mon, 17 Dec 2018 12:21:50 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41980 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbeLQRVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:21:34 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 190238368EF8;
-        Mon, 17 Dec 2018 17:21:33 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: act66_2a57bb9961154
-X-Filterd-Recvd-Size: 3109
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 17 Dec 2018 17:21:30 +0000 (UTC)
-Message-ID: <d45ce5f7612ef579a9bc687bab4339f27ee35660.camel@perches.com>
-Subject: Re: [PATCH v1 1/1] MAINTAINERS: update list of qcom drivers
-From:   Joe Perches <joe@perches.com>
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        marc.w.gonzalez@free.fr, bjorn.andersson@linaro.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 17 Dec 2018 09:21:29 -0800
-In-Reply-To: <ced6f6be01195e706ded5548897ff72503780146.1545063166.git.amit.kucheria@linaro.org>
-References: <cover.1545063166.git.amit.kucheria@linaro.org>
-         <ced6f6be01195e706ded5548897ff72503780146.1545063166.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Dec 2018 12:21:50 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u6so6426952plm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:21:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Yzzy5cbsbIfUDrm2/cUff8ZiTSbnfPoPgDNURDr33A8=;
+        b=a8jaAhQD+i6hI83fRC+CDzto8wWTF8OEsorQrb7kniPhJVrnU8SfLbMf0Xn7tivg50
+         Dd5SVxL83lTk0L5TBQVq7NI/6ZMkpy+8B8PXJ6CApfGmcaTwoX6S4o5bSlk8u8qV/dIZ
+         Cg3chmUaZyYosSvogHKE3yi1iVYktWKzRsmQ8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Yzzy5cbsbIfUDrm2/cUff8ZiTSbnfPoPgDNURDr33A8=;
+        b=ViIrTjcIE4vk/fpaWCm9oOQwhVH15WAa342E6VEW2je3rUE3/4PvzcOFz/RtCHkaBa
+         EVnGeh22DEV4sPD00XlrHfy1vndEsiCcM2wOIHBcFe3X0uVPjuR55JroGB8BgZCXAb9S
+         gLX2FeuDDsibN56kOsxgDmDMHodJL7+VNHOxqcxObbGAkwdaA1/BMAqofekv+r6hL98J
+         Fr3xo2vWOdDKnOcRJfTeN4OjBTW2YI7Wuc6p/lc5yCV6Jwrc4VRIJJQXSXKzPIhnDYPs
+         RIEQNmaFwlnv+eUXGmNluSYvHH3y6GPZ1fLVaFWZZZjkBLCFceDZ4oPDN7tIym8UiEQN
+         eJPQ==
+X-Gm-Message-State: AA+aEWZDB5odKVbQPrtsXMK5+i3/k/lckr8ZH7r518jqieM2oR51yPER
+        0f9Fle08Q0YBevyIl/1W2/5q+ShuZ10=
+X-Google-Smtp-Source: AFSGD/XtxLtYNGU6F2etgMtW/QNN4Y30g40zJ4FRuwbT98GtB9DaK6bz/qhHNyHDNZ99mR+gArtWHw==
+X-Received: by 2002:a17:902:bb98:: with SMTP id m24mr13025374pls.71.1545067309406;
+        Mon, 17 Dec 2018 09:21:49 -0800 (PST)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id j6sm20526648pfg.126.2018.12.17.09.21.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Dec 2018 09:21:48 -0800 (PST)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     acme@kernel.org, peterz@infradead.org, gregkh@linuxfoundation.org
+Cc:     mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        suzuki.poulosi@arm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [RESEND PATCH v5 0/6] perf: Add ioctl for PMU driver configuration 
+Date:   Mon, 17 Dec 2018 10:21:40 -0700
+Message-Id: <1545067306-31687-1-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-17 at 21:49 +0530, Amit Kucheria wrote:
-> Several drivers didn't have a specific maintainer (other than the
-> subsystem maintainer). Switch to using the 'qcom' and 'msm' regex
-> patterns to capture all of them and add exceptions to the couple of
-> drivers that contain 'msm' but are not related to qcom hardware.
-> 
-> Thanks to Marc for the idea to use the N regex.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -1929,20 +1929,14 @@ M:	Andy Gross <andy.gross@linaro.org>
->  M:	David Brown <david.brown@linaro.org>
->  L:	linux-arm-msm@vger.kernel.org
->  S:	Maintained
-> -F:	Documentation/devicetree/bindings/soc/qcom/
-> -F:	arch/arm/boot/dts/qcom-*.dts
-> -F:	arch/arm/boot/dts/qcom-*.dtsi
-> -F:	arch/arm/mach-qcom/
-> -F:	arch/arm64/boot/dts/qcom/*
-> +N:	qcom
-> +N:	msm
+In the coresight world there can be more than one sink to aggregate
+trace data generated by CPUs, hence the need for users to select which
+one to use from the perf command line.
 
-It is generally better to use a comprehensive list of F: patterns
-over N: patterns as N: patterns are not used as properly maintained
-entries for files matched by the get_maintainer.pl script.
+Up until now sysfs was used to communicate sink information to the
+kernel but that was never the right way to proceed because it breaks
+when more than one perf session are created at the same time.  The
+situation was manageable when working with per-thread scenarios where
+a single HW trace event is created but in CPU-wide mode a HW trace
+event is created for each CPU that is specified on the perf command
+line, taking us back to the concurrency problem we have when dealing
+with multiple per-thread session.
 
-git history is used by default for the N: entries and that can
-cause whitespace style commit authors to be cc'd on various changes
-to matched files.
+This work fits in a wider scheme to support CPU-wide trace scenarios on
+CoreSight that is available here [1]. The first step in that venture is
+to address sysfs concurrency issues, which this patchset does.
 
-Also msm is a pretty common filename pattern and the X: exclusions
-for various matching but not associated files might need to be added
-to quite often.
+The main difference with V4 is the usage of a CoreSight sink's HW start
+address (u64) to uniquely identify a sink, negating the need to use the
+component's name (char *).
 
-From MAINTAINERS:
+By using a u64 we can theoretically add the sink information to the
+perf_event_attr structure, avoiding the need to add a new perf ioctl().
+On the flip side it would introduce a very specific CoreSight field
+to a structure that is generic.  I have opted for the ioctl() method,
+let me know if you want me to proceed with the latter.
 
-	N: Files and directories with regex patterns.
-	   N:	[^a-z]tegra	all files whose path contains the word tegra
-	   One pattern per line.  Multiple N: lines acceptable.
-	   scripts/get_maintainer.pl has different behavior for files that
-	   match F: pattern and matches of N: patterns.  By default,
- 	   get_maintainer will not look at git log history when an F: pattern
-	   match occurs.  When an N: match occurs, git log history is used
-	   to also notify the people that have git commit signatures.
+Regards,
+Mathieu
 
+# Before this set: 
+
+root@juno:/home/linaro# perf record -e cs_etm/@20070000.etr/ -C 2,3 sleep 1
+failed to mmap with 12 (Cannot allocate memory)
+
+# After this set:
+
+root@juno:/home/linaro# perf record -e cs_etm/@20070000.etr/ -C 2,3 sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 4.145 MB perf.data ]
+
+[1]. https://git.linaro.org/people/mathieu.poirier/coresight.git/log/?h=cpu-wide-coresight
+
+---
+Changes for V5:
+. Went from a char * to a u64 for ioctl argument (GKH).
+. Added a better description of the problem being fixed to
+  the cover letter (GKH).
+
+Changes for V4:
+. Made passing of information between ioctl() and PMU simpler.
+
+Mathieu Poirier (6):
+  perf: Introduce ioctl to communicate driver configuration to kernel
+  perf/core: Use ioctl to communicate driver configuration to kernel
+  perf/aux: Make perf_event accessible to setup_aux()
+  coresight: Use PMU driver configuration for sink selection
+  perf tools: Make perf_evsel accessible to PMU driver configuration
+    code
+  perf tools: Use ioctl function to send sink information to kernel
+
+ arch/s390/kernel/perf_cpum_sf.c                  |  6 +-
+ arch/x86/events/intel/bts.c                      |  4 +-
+ arch/x86/events/intel/pt.c                       |  5 +-
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 80 +++++++++++++++++-----
+ drivers/perf/arm_spe_pmu.c                       |  6 +-
+ include/linux/perf_event.h                       | 40 ++++++++++-
+ include/uapi/linux/perf_event.h                  |  1 +
+ kernel/events/core.c                             | 67 +++++++++++++++++++
+ kernel/events/ring_buffer.c                      |  2 +-
+ tools/include/uapi/linux/perf_event.h            |  1 +
+ tools/perf/arch/arm/util/cs-etm.c                | 84 +++++++++++++++++++++++-
+ tools/perf/arch/arm/util/cs-etm.h                |  3 +-
+ tools/perf/util/drv_configs.c                    | 30 ++-------
+ tools/perf/util/evsel.c                          |  6 ++
+ tools/perf/util/evsel.h                          |  1 +
+ tools/perf/util/pmu.h                            |  3 +-
+ 16 files changed, 287 insertions(+), 52 deletions(-)
+
+-- 
+2.7.4
 
