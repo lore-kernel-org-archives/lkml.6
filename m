@@ -2,125 +2,48 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF06C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE01AC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F982133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EB2D2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbeLQLLp (ORCPT
+        id S1727333AbeLQLMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:11:45 -0500
-Received: from foss.arm.com ([217.140.101.70]:53386 "EHLO foss.arm.com"
+        Mon, 17 Dec 2018 06:12:20 -0500
+Received: from verein.lst.de ([213.95.11.211]:33666 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727009AbeLQLLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:11:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7A2CEBD;
-        Mon, 17 Dec 2018 03:11:38 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 158723F6A8;
-        Mon, 17 Dec 2018 03:11:35 -0800 (PST)
-Date:   Mon, 17 Dec 2018 11:11:33 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, linux-imx@nxp.com,
-        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
-        l.stach@pengutronix.de, Trent Piepho <tpiepho@impinj.com>
-Subject: Re: [PATCH v2 0/3] PCIE support for i.MX8MQ
-Message-ID: <20181217111133.GB14261@e107981-ln.cambridge.arm.com>
-References: <20181206073545.10967-1-andrew.smirnov@gmail.com>
- <20181206121550.GA2725@e107981-ln.cambridge.arm.com>
- <20181214203828.GD20725@google.com>
+        id S1726463AbeLQLLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:11:47 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 7052B68DD3; Mon, 17 Dec 2018 12:11:46 +0100 (CET)
+Date:   Mon, 17 Dec 2018 12:11:46 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     yupeng <yupeng0921@gmail.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Subject: Re: [PATCH v3 2/2] trace nvme submit queue status
+Message-ID: <20181217111146.GA6126@lst.de>
+References: <20181217080605.16867-1-yupeng0921@gmail.com> <20181217080605.16867-2-yupeng0921@gmail.com> <11554384-e0a9-0bde-97e9-228b29e6b641@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181214203828.GD20725@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <11554384-e0a9-0bde-97e9-228b29e6b641@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 02:38:29PM -0600, Bjorn Helgaas wrote:
-> [+cc Trent]
-> 
-> On Thu, Dec 06, 2018 at 12:15:50PM +0000, Lorenzo Pieralisi wrote:
-> > On Wed, Dec 05, 2018 at 11:35:42PM -0800, Andrey Smirnov wrote:
-> > > Everyone:
-> > > 
-> > > This series contains changes I made in order to enable support of PCIE
-> > > IP block on i.MX8MQ SoCs (full tree can be found at [github-v2]).
-> > > 
-> > > NOTE: The last patch have a Kconfig symbol depenency on [imx8mq-kconfig].
-> > > 
-> > > Changes since [v1]:
-> > > 
-> > >  - Driver changed to use single "fsl,controller-id" property to
-> > >    distinguish between two intances of PCIE IP block
-> > > 
-> > >  - All code pertaining to L1SS was dropped to simplify the patch
-> > > 
-> > >  - Documented additions to DT bindings
-> > > 
-> > > Feedback is welcome!
-> > > 
-> > > Thanks,
-> > > Andrey Smirnov
-> > 
-> > Andrey,
-> > 
-> > I have applied the patches, ...
-> 
-> When I merged your pci/dwc branch, I noticed what looks like a merge
-> conflict between these commits:
-> 
->   d123765b58ee ("PCI: dwc: Adjust Kconfig to allow IMX6 PCIe host on IMX7")
->   1a059d994189 ("PCI: imx: Add support for i.MX8MQ")
-> 
-> d123765b58ee added SOC_IMX7D:
-> 
->   -       depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
->   +       depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
-> 
-> and 1a059d994189 added SOC_IMX8MQ but dropped SOC_IMX7D again, which looks
-> like a mistake:
-> 
->   -       depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
->   +       depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
-> 
-> So my "next" branch[1] (current head 7053eeb009e0) is:
-> 
->   config PCI_IMX6
->         bool "Freescale i.MX6/7 PCIe controller"
->         depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
->         depends on PCI_MSI_IRQ_DOMAIN
->         select PCIE_DW_HOST
-> 
-> which I think is wrong.  Lorenzo, if you update your pci/dwc branch,
-> I'll rebuild my "next" branch.
+On Mon, Dec 17, 2018 at 09:33:24AM +0100, Johannes Thumshirn wrote:
+> Is the addition of a trace_pci.h really needed? Why can't you just put
+> it in trace.h?
 
-Sorry about that, I missed it.
-
-I dropped Andrey's patches from pci/dwc waiting for him/Lucas to agree
-on a way forward.
-
-Thanks,
-Lorenzo
-
-> If you want to tweak the switch statements and/or IMX8 checks, you
-> could do that at the same time.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/log/?h=next
+Agreed.  Especially as the concepts actually are generic, so we could
+actually add the trace point to the rdma and fc transports as well
+(not that they would be all that useful, so we probably shouldn't).
