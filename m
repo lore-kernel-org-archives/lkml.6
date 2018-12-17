@@ -2,251 +2,285 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D736C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B048C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1588206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1328D2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbeLQP6i (ORCPT
+        id S2388035AbeLQP7c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:58:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50918 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbeLQP6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:58:37 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8DB38D7936;
-        Mon, 17 Dec 2018 15:58:37 +0000 (UTC)
-Received: from [10.36.112.24] (ovpn-112-24.ams2.redhat.com [10.36.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE6365D744;
-        Mon, 17 Dec 2018 15:58:33 +0000 (UTC)
-Subject: Re: KASAN: use-after-free Read in kvm_put_kvm (caused by: "kvm/x86:
- add coalesced pio support")
-To:     Eric Biggers <ebiggers@kernel.org>, Peng Hao <peng.hao2@zte.com.cn>
-Cc:     syzbot <syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, syzkaller-bugs@googlegroups.com
-References: <000000000000bc23740578abe82c@google.com>
- <3ad5acd8-5c73-1d82-aea5-426e598b15ed@redhat.com>
- <20181216185513.GA691@sol.localdomain>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <5b22a63b-e4c2-58af-8070-5aec20302dfc@redhat.com>
-Date:   Mon, 17 Dec 2018 16:58:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 17 Dec 2018 10:59:32 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57158 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387942AbeLQP7c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:59:32 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHFx3ba029400
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:59:31 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pee61tdc7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:59:30 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Mon, 17 Dec 2018 15:59:28 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Dec 2018 15:59:25 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHFxOHr66388108
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Dec 2018 15:59:24 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3CBCAAE045;
+        Mon, 17 Dec 2018 15:59:24 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA962AE04D;
+        Mon, 17 Dec 2018 15:59:23 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 17 Dec 2018 15:59:23 +0000 (GMT)
+Date:   Mon, 17 Dec 2018 16:59:22 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [-next] lots of messages due to "mm, memory_hotplug: be more verbose
+ for memory offline failures"
 MIME-Version: 1.0
-In-Reply-To: <20181216185513.GA691@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18121715-4275-0000-0000-000002F1CEC3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121715-4276-0000-0000-000037FF0684
+Message-Id: <20181217155922.GC3560@osiris>
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 17 Dec 2018 15:58:37 +0000 (UTC)
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=737 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812170143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/12/18 19:55, Eric Biggers wrote:
-> Hi Peng and Paolo,
-> 
-> On Sun, Oct 21, 2018 at 12:01:55PM +0200, Paolo Bonzini wrote:
->> On 20/10/2018 18:57, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
->>> git tree:       linux-next
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=12d808b5400000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
->>> dashboard link:
->>> https://syzkaller.appspot.com/bug?extid=f87f60bb6f13f39b54e3
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cf2f5e400000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036dcce400000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com
->>
->> Tentative (untested) patch:
->>
->> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
->> index 3710342cf6ad..dc76cc8d24fd 100644
->> --- a/virt/kvm/coalesced_mmio.c
->> +++ b/virt/kvm/coalesced_mmio.c
->> @@ -90,6 +90,7 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
->>  	return 0;
->>  }
->>
->> +/* called with kvm->slots_lock held */
->>  static void coalesced_mmio_destructor(struct kvm_io_device *this)
->>  {
->>  	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
->> diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
->> index b20b751286fc..001e1ef18c8c 100644
->> --- a/virt/kvm/eventfd.c
->> +++ b/virt/kvm/eventfd.c
->> @@ -741,8 +741,8 @@ ioeventfd_write(struct kvm_vcpu *vcpu, struct
->> kvm_io_device *this, gpa_t addr,
->>  }
->>
->>  /*
->> - * This function is called as KVM is completely shutting down.  We do not
->> - * need to worry about locking just nuke anything we have as quickly as
->> possible
->> + * This function is called as KVM is completely shutting down, so there
->> + * are no RCU readers anymore. Called with kvm->slots_lock held.
->>   */
->>  static void
->>  ioeventfd_destructor(struct kvm_io_device *this)
->> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->> index aff1242b7af7..e6f2ae6fedcd 100644
->> --- a/virt/kvm/kvm_main.c
->> +++ b/virt/kvm/kvm_main.c
->> @@ -783,6 +783,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
->>  	list_del(&kvm->vm_list);
->>  	spin_unlock(&kvm_lock);
->>  	kvm_free_irq_routing(kvm);
->> +	mutex_lock(&kvm->slots_lock);
->>  	for (i = 0; i < KVM_NR_BUSES; i++) {
->>  		struct kvm_io_bus *bus = kvm_get_bus(kvm, i);
->>
->> @@ -790,6 +791,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
->>  			kvm_io_bus_destroy(bus);
->>  		kvm->buses[i] = NULL;
->>  	}
->> +	mutex_unlock(&kvm->slots_lock);
->>  	kvm_coalesced_mmio_free(kvm);
->>  #ifdef KVM_DIRTY_LOG_PAGE_OFFSET
->>  	if (kvm->dirty_ring_size)
->>
-> 
-> This is still happening.  Paolo, I don't see how your patch matches this bug, as
-> it has a single threaded reproducer.  I simplified it to:
-> 
-> 	#include <fcntl.h>
-> 	#include <linux/kvm.h>
-> 	#include <sys/ioctl.h>
-> 
-> 	int main(void)
-> 	{
-> 		int kvm, vm;
-> 		struct kvm_coalesced_mmio_zone zone = { 0 };
-> 
-> 		kvm = open("/dev/kvm", O_RDWR);
-> 
-> 		vm = ioctl(kvm, KVM_CREATE_VM, 0);
-> 
-> 		ioctl(vm, KVM_REGISTER_COALESCED_MMIO, &zone);
-> 
-> 		zone.pio = 1;
-> 		ioctl(vm, KVM_UNREGISTER_COALESCED_MMIO, &zone);
-> 	}
-> 
-> The bug is in this commit:
-> 
-> 	commit 0804c849f1df0992d39a37c4fc259f7f8b16f385
-> 	Author: Peng Hao <peng.hao2@zte.com.cn>
-> 	Date:   Sun Oct 14 07:09:55 2018 +0800
-> 
-> 	    kvm/x86 : add coalesced pio support
-> 
-> The problem is that if you register a kvm_coalesced_mmio_zone with '.pio = 0'
-> but then unregister it with '.pio = 1', KVM_UNREGISTER_COALESCED_MMIO will try
-> to unregister it from KVM_PIO_BUS rather than KVM_MMIO_BUS, which is a no-op,
-> but then it frees the kvm_coalesced_mmio_dev anyway.
-> 
-> Here's one possible fix but I don't know what was intended here.  Are you
-> supposed to pass in the same value of '.pio' when unregistering or is it
-> supposed to use the existing value?  Can one of you please point me to the
-> documentation for these ioctls?
-> 
-> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
-> index 3710342cf6ad0..6855cce3e5287 100644
-> --- a/virt/kvm/coalesced_mmio.c
-> +++ b/virt/kvm/coalesced_mmio.c
-> @@ -175,10 +175,14 @@ int kvm_vm_ioctl_unregister_coalesced_mmio(struct kvm *kvm,
->  {
->  	struct kvm_coalesced_mmio_dev *dev, *tmp;
->  
-> +	if (zone->pio != 1 && zone->pio != 0)
-> +		return -EINVAL;
-> +
->  	mutex_lock(&kvm->slots_lock);
->  
->  	list_for_each_entry_safe(dev, tmp, &kvm->coalesced_zones, list)
-> -		if (coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
-> +		if (zone->pio == dev->zone.pio &&
-> +		    coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
->  			kvm_io_bus_unregister_dev(kvm,
->  				zone->pio ? KVM_PIO_BUS : KVM_MMIO_BUS, &dev->dev);
->  			kvm_iodevice_destructor(&dev->dev);
-> 
+Hi Michal,
 
-Yes, this is the fix.  The same range can be registered both with .pio =
-0 and .pio = 1.
+with linux-next as of today on s390 I see tons of messages like
 
-Paolo
+[   20.536664] page dumped because: has_unmovable_pages
+[   20.536792] page:000003d081ff4080 count:1 mapcount:0 mapping:000000008ff88600 index:0x0 compound_mapcount: 0
+[   20.536794] flags: 0x3fffe0000010200(slab|head)
+[   20.536795] raw: 03fffe0000010200 0000000000000100 0000000000000200 000000008ff88600
+[   20.536796] raw: 0000000000000000 0020004100000000 ffffffff00000001 0000000000000000
+[   20.536797] page dumped because: has_unmovable_pages
+[   20.536814] page:000003d0823b0000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
+[   20.536815] flags: 0x7fffe0000000000()
+[   20.536817] raw: 07fffe0000000000 0000000000000100 0000000000000200 0000000000000000
+[   20.536818] raw: 0000000000000000 0000000000000000 ffffffff00000001 0000000000000000
+
+bisect points to b323c049a999 ("mm, memory_hotplug: be more verbose for memory offline failures")
+which is the first commit with which the messages appear.
+
+Note: there is _no_ memory hotplug involved when these messages appear.
+
+I don't know if it helps, but this is the contents of /proc/zoneinfo:
+
+Node 0, zone      DMA
+  per-node stats
+      nr_inactive_anon 8
+      nr_active_anon 8389
+      nr_inactive_file 43418
+      nr_active_file 22655
+      nr_unevictable 0
+      nr_slab_reclaimable 8192
+      nr_slab_unreclaimable 11368
+      nr_isolated_anon 0
+      nr_isolated_file 0
+      workingset_nodes 0
+      workingset_refault 0
+      workingset_activate 0
+      workingset_restore 0
+      workingset_nodereclaim 0
+      nr_anon_pages 7088
+      nr_mapped    16328
+      nr_file_pages 66132
+      nr_dirty     0
+      nr_writeback 0
+      nr_writeback_temp 0
+      nr_shmem     55
+      nr_shmem_hugepages 0
+      nr_shmem_pmdmapped 0
+      nr_anon_transparent_hugepages 4
+      nr_unstable  0
+      nr_vmscan_write 0
+      nr_vmscan_immediate_reclaim 0
+      nr_dirtied   20723
+      nr_written   18227
+      nr_kernel_misc_reclaimable 0
+  pages free     519834
+        min      1899
+        low      2419
+        high     2939
+        spanned  524288
+        present  524288
+        managed  520562
+        protection: (0, 3988, 3988)
+      nr_free_pages 519834
+      nr_zone_inactive_anon 0
+      nr_zone_active_anon 0
+      nr_zone_inactive_file 0
+      nr_zone_active_file 0
+      nr_zone_unevictable 0
+      nr_zone_write_pending 0
+      nr_mlock     0
+      nr_page_table_pages 0
+      nr_kernel_stack 0
+      nr_bounce    0
+      nr_zspages   0
+      nr_free_cma  0
+      numa_hit     40
+      numa_miss    0
+      numa_foreign 0
+      numa_interleave 12
+      numa_local   40
+      numa_other   0
+  pagesets
+    cpu: 0
+              count: 336
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 1
+              count: 60
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 2
+              count: 60
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 3
+              count: 0
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 4
+              count: 62
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 5
+              count: 0
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 6
+              count: 59
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+    cpu: 7
+              count: 0
+              high:  378
+              batch: 63
+  vm stats threshold: 40
+  node_unreclaimable:  0
+  start_pfn:           0
+Node 0, zone   Normal
+  pages free     912587
+        min      3732
+        low      4754
+        high     5776
+        spanned  1048576
+        present  1048576
+        managed  1022150
+        protection: (0, 0, 0)
+      nr_free_pages 912587
+      nr_zone_inactive_anon 8
+      nr_zone_active_anon 8389
+      nr_zone_inactive_file 43418
+      nr_zone_active_file 22655
+      nr_zone_unevictable 0
+      nr_zone_write_pending 0
+      nr_mlock     0
+      nr_page_table_pages 548
+      nr_kernel_stack 3072
+      nr_bounce    0
+      nr_zspages   0
+      nr_free_cma  1024
+      numa_hit     3115288
+      numa_miss    0
+      numa_foreign 0
+      numa_interleave 6865
+      numa_local   3115288
+      numa_other   0
+  pagesets
+    cpu: 0
+              count: 86
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 1
+              count: 80
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 2
+              count: 76
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 3
+              count: 53
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 4
+              count: 81
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 5
+              count: 18
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 6
+              count: 73
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+    cpu: 7
+              count: 63
+              high:  90
+              batch: 15
+  vm stats threshold: 48
+  node_unreclaimable:  0
+  start_pfn:           524288
+Node 0, zone  Movable
+  pages free     0
+        min      0
+        low      0
+        high     0
+        spanned  0
+        present  0
+        managed  0
+        protection: (0, 0, 0)
+
