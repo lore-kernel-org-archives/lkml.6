@@ -2,148 +2,249 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 224B1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56629C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F442133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:52:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JF+EZDJX"
+	by mail.kernel.org (Postfix) with ESMTP id 2360E206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:54:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733130AbeLQOwt (ORCPT
+        id S1733242AbeLQOy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:52:49 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:53662 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbeLQOws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:52:48 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBHEn9b0078812;
-        Mon, 17 Dec 2018 14:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=hR+yS7JHsTZ7GZA3kjfPyEnBr2K3L25i2zeEM0bVZoM=;
- b=JF+EZDJX3nlw/bSi9YlTcSHPoJnLc13t5NcF82XFNmzHvpqd+ef7JIBVWjwzktCSVujP
- O0rja6bQRext5PlccH/3JV5vmqg2jYW/6HLzhFyqWPB4XTeIdOx5dTSvhJ9mB6pmOjSk
- T22BEw4skgcWxe1W1hWaDWJvhuuSzbSeA/rxqjtbZrjnHt07NHidMH1/TbxKTqDt+KFK
- q98+qEEIEvmyxtGglyA5QAovWPsvBxyd3UR2jsT9S51+IzwmYX9JUXksJt57zKsOAPZ9
- TKvTjOMNW2vCB5iJ/2xRXj1xHxE8NeBWG934+Rir6MCLxssGSuXnmMkm+42mqLqU0ygt Ow== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2pct8qny38-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 14:52:35 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBHEqYRU027654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 14:52:35 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBHEqUDV004570;
-        Mon, 17 Dec 2018 14:52:33 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Dec 2018 06:52:30 -0800
-Subject: Re: [Xen-devel] [PATCH v2 2/3] drm/xen-front: Use Xen common shared
- buffer implementation
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>, jgross@suse.com
-Cc:     alsa-devel@alsa-project.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        xen-devel@lists.xenproject.org
-References: <20181130074205.20496-1-andr2000@gmail.com>
- <20181130074205.20496-2-andr2000@gmail.com>
- <3c69d924-11e1-7037-bfa5-276d22b245fe@gmail.com>
- <27491aa5-3548-4c39-13a2-132c738fae14@gmail.com>
- <71920419-f0ef-8489-35ff-ff8375cb7361@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <ce52ec2e-1b22-8a2f-7f99-d90fcfdbfebd@oracle.com>
-Date:   Mon, 17 Dec 2018 09:52:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 17 Dec 2018 09:54:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732252AbeLQOy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:54:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E0C9AAE17;
+        Mon, 17 Dec 2018 14:54:53 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 15:54:52 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+Message-ID: <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
+References: <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+ <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
+ <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
+ <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
+ <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+ <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+ <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+ <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
+ <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
+ <20181213124255.GB3053@tigerII.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <71920419-f0ef-8489-35ff-ff8375cb7361@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9109 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=753
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812170132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213124255.GB3053@tigerII.localdomain>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 5:19 AM, Oleksandr Andrushchenko wrote:
-> Hello, Juergen, Boris!
->
-> As this DRM part of the series is the only one which needs ack/nack
->
-> (and it might take quite some time to complete) could we please
->
-> merge the patches 1 and 3 now that already have ack/r-b?
->
+On Thu 2018-12-13 21:42:55, Sergey Senozhatsky wrote:
+> On (12/13/18 13:18), Petr Mladek wrote:
+> > > Sometimes we want to print a series of printk() messages to consoles
+> > > without being disturbed by concurrent printk() from interrupts and/or
+> > > other threads. But we can't enforce printk() callers to use their local
+> > > buffers because we need to ask them to make too much changes. Also, even
+> > > buffering up to one line inside printk() might cause failing to emit
+> > > an important clue under critical situation.
+> > > 
+> > > Therefore, instead of trying to help buffering, let's try to help
+> > > reconstructing messages by saving caller information as of calling
+> > > log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
+> > > upon printing to consoles.
+> > > 
+> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> 
+> Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> 
+> > From my point of view, the patch is ready to go into
+> > linux-next. Well, I would prefer to keep it there one more
+> > release cycle.
+
+I have pushed the patch into printk.git, for-4.22 branch.
 
 
+Now, I always felt that the "from" name was a bit strange but
+nothing better came to my mind until today.
 
-TBH I am not sure it makes sense to do this without the second patch.
-Refactoring (and IIUIC this series is purely refactoring --- is it not?)
-is done to reduce amount of code, and with only first and third patch we
-end up with quite a significant increase in the number of LoC. (I am
-going purely by diffstat)
+I would like to rename "from" to "caller", see the patch below.
+If you agree, I could push it on top or I could even squash it
+into the original patch.
 
-Of course, the other reason for refactoring is to eliminate code
-duplication, but without second patch that will not happen.
+What do you think about it, please?
 
--boris
+
+From 230cbd8efaf46e6e132a53768cc746b88589c738 Mon Sep 17 00:00:00 2001
+From: Petr Mladek <pmladek@suse.com>
+Date: Mon, 17 Dec 2018 14:12:32 +0100
+Subject: [PATCH] printk: Rename CONFIG_PRINTK_FROM to CONFIG_PRINTK_CALLER
+
+The name printk_from is a bit unusual and I have troubles
+to imagine what it exactly means. For example, @from is used
+also for the iterator parameter in devkmsg_write().
+
+I believe that printk_caller is easier to understand.
+
+This patch does not change the existing behavior except
+for the names related to PRINTK_FROM feature.
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 47 ++++++++++++++++++++++++++---------------------
+ lib/Kconfig.debug      |  2 +-
+ 2 files changed, 27 insertions(+), 22 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index f8fd63254ca3..b6c5128a1a82 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -357,8 +357,8 @@ struct printk_log {
+ 	u8 facility;		/* syslog facility */
+ 	u8 flags:5;		/* internal record flags */
+ 	u8 level:3;		/* syslog level */
+-#ifdef CONFIG_PRINTK_FROM
+-	u32 from_id;            /* thread id or processor id */
++#ifdef CONFIG_PRINTK_CALLER
++	u32 caller_id;            /* thread id or processor id */
+ #endif
+ }
+ #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+@@ -426,7 +426,7 @@ static u64 exclusive_console_stop_seq;
+ static u64 clear_seq;
+ static u32 clear_idx;
+ 
+-#ifdef CONFIG_PRINTK_FROM
++#ifdef CONFIG_PRINTK_CALLER
+ #define PREFIX_MAX		48
+ #else
+ #define PREFIX_MAX		32
+@@ -633,11 +633,11 @@ static int log_store(int facility, int level,
+ 		msg->ts_nsec = ts_nsec;
+ 	else
+ 		msg->ts_nsec = local_clock();
+-#ifdef CONFIG_PRINTK_FROM
++#ifdef CONFIG_PRINTK_CALLER
+ 	if (in_task())
+-		msg->from_id = task_pid_nr(current);
++		msg->caller_id = task_pid_nr(current);
+ 	else
+-		msg->from_id = 0x80000000 + raw_smp_processor_id();
++		msg->caller_id = 0x80000000 + raw_smp_processor_id();
+ #endif
+ 	memset(log_dict(msg) + dict_len, 0, pad_len);
+ 	msg->len = size;
+@@ -702,21 +702,21 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+ 				    struct printk_log *msg, u64 seq)
+ {
+ 	u64 ts_usec = msg->ts_nsec;
+-	char from[18];
+-#ifdef CONFIG_PRINTK_FROM
+-	u32 id = msg->from_id;
++	char caller[18];
++#ifdef CONFIG_PRINTK_CALLER
++	u32 id = msg->caller_id;
+ 
+-	snprintf(from, sizeof(from), ",from=%c%u",
++	snprintf(caller, sizeof(caller), ",caller=%c%u",
+ 		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
+ #else
+-	from[0] = '\0';
++	caller[0] = '\0';
+ #endif
+ 
+ 	do_div(ts_usec, 1000);
+ 
+ 	return scnprintf(buf, size, "%u,%llu,%llu,%c%s;",
+ 			 (msg->facility << 3) | msg->level, seq, ts_usec,
+-			 msg->flags & LOG_CONT ? 'c' : '-', from);
++			 msg->flags & LOG_CONT ? 'c' : '-', caller);
+ }
+ 
+ static ssize_t msg_print_ext_body(char *buf, size_t size,
+@@ -1061,8 +1061,8 @@ void log_buf_vmcoreinfo_setup(void)
+ 	VMCOREINFO_OFFSET(printk_log, len);
+ 	VMCOREINFO_OFFSET(printk_log, text_len);
+ 	VMCOREINFO_OFFSET(printk_log, dict_len);
+-#ifdef CONFIG_PRINTK_FROM
+-	VMCOREINFO_OFFSET(printk_log, from_id);
++#ifdef CONFIG_PRINTK_CALLER
++	VMCOREINFO_OFFSET(printk_log, caller_id);
+ #endif
+ }
+ #endif
+@@ -1266,8 +1266,8 @@ static size_t print_time(u64 ts, char *buf)
+ 		       (unsigned long)ts, rem_nsec / 1000);
+ }
+ 
+-#ifdef CONFIG_PRINTK_FROM
+-static size_t print_from(u32 id, char *buf)
++#ifdef CONFIG_PRINTK_CALLER
++static size_t print_caller(u32 id, char *buf)
+ {
+ 	char from[12];
+ 
+@@ -1275,6 +1275,8 @@ static size_t print_from(u32 id, char *buf)
+ 		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
+ 	return sprintf(buf, "[%6s]", from);
+ }
++#else
++#define print_caller(id, buf) 0
+ #endif
+ 
+ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+@@ -1284,14 +1286,17 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 
+ 	if (syslog)
+ 		len = print_syslog((msg->facility << 3) | msg->level, buf);
++
+ 	if (time)
+ 		len += print_time(msg->ts_nsec, buf + len);
+-#ifdef CONFIG_PRINTK_FROM
+-	len += print_from(msg->from_id, buf + len);
+-#endif
+-	if (IS_ENABLED(CONFIG_PRINTK_FROM) || time)
++
++	len += print_caller(msg->caller_id, buf + len);
++
++	if (IS_ENABLED(CONFIG_PRINTK_CALLER) || time) {
+ 		buf[len++] = ' ';
+-	buf[len] = '\0'; /* For safety in case of accessed as a string. */
++		buf[len] = '\0';
++	}
++
+ 	return len;
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 3e8e69e0b3bb..6b1ecd6b67a6 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -17,7 +17,7 @@ config PRINTK_TIME
+ 	  The behavior is also controlled by the kernel command line
+ 	  parameter printk.time=1. See Documentation/admin-guide/kernel-parameters.rst
+ 
+-config PRINTK_FROM
++config PRINTK_CALLER
+ 	bool "Show caller information on printks"
+ 	depends on PRINTK
+ 	help
+-- 
+2.13.7
+
