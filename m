@@ -2,40 +2,40 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99322C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DACC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65B542145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 165E2206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:11:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="DQIWUNZW"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="H2d1R/yM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388282AbeLQQLb (ORCPT
+        id S2388297AbeLQQLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:11:31 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:65527 "EHLO
+        Mon, 17 Dec 2018 11:11:37 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:65254 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbeLQQL3 (ORCPT
+        with ESMTP id S2388235AbeLQQLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:11:29 -0500
+        Mon, 17 Dec 2018 11:11:16 -0500
 Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id wBHG3bRk008119;
-        Tue, 18 Dec 2018 01:03:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com wBHG3bRk008119
+        by conuserg-07.nifty.com with ESMTP id wBHG3bRd008119;
+        Tue, 18 Dec 2018 01:03:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com wBHG3bRd008119
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545062630;
-        bh=Ncxd2084CDNaDsykqqCM0ja6cXudxZXMCOcG57w78u4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DQIWUNZWUM0NwJM0cC8xuPxPsCtjgGQrOYu0DQxt4dwzfD9gqV2PumQQLjS5Hdv+s
-         7SqvYKdfPxVwNVY5G5zZOU4DJu9pjCDqEAIrf0ZCujiw1Tj0KJIHd+SmmDciqGDFCU
-         vTgNoLKduUZj06nE6KtwKilGdxKeZoA++dsBYDQ/FmxgPAtTRak4paxHyAR16ZBuJi
-         bOLF0f4W8jBdVCngKy5RWgEYmvT1EGWqOhcBGw5hM3kC2kNFKl/YemVi86Kss+WLnz
-         NajeEnKPi8COqXsk4a0GZe3CFgeRrHWnPtBlND5VrLwNU+sLQTt1UAw9zU1wMh69Mn
-         XHnK8NelQmzOA==
+        s=dec2015msa; t=1545062620;
+        bh=mXAOGKoN9nVQj5muokTwBydmcKVF/sl76L2EsO/amDk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=H2d1R/yMkMpGJFlSf98Sf3rlDmcJdv4Hx08zt7v/X0XVWsWT6y1BnI0S7zSmEVB3o
+         IIuz2RfHe0x+40P0XYACCdeRnVK/4lcLSpcPnScxQSjz8NKDgNXeiTx+fjuKnHJrcT
+         crwPMcq5ic6k7riPgy6k+7lcN/elDCkJzPU08KHugllEeGv7UgJGzBWiK1Fe4JGX/4
+         cvN/ZLMocnp5nA+RqHvGV1T1/Hpy4NpRuA45c0+uwt3zYNwQ7MhD4aFd0rV1zjaH/j
+         mDy9qjdPk1Kv9JHcAY0F2jn+oIGtTLInAUPWF9H/P671g7zZCIBKH1+XJ+NFqEfJk+
+         8S1ssmjsiYUQw==
 X-Nifty-SrcIP: [218.220.227.105]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
@@ -49,185 +49,126 @@ Cc:     Richard Biener <rguenther@suse.de>,
         Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        virtualization@lists.linux-foundation.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Alok Kataria <akataria@vmware.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jann Horn <jannh@google.com>, linux-arch@vger.kernel.org,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v3 07/12] Revert "x86/refcount: Work around GCC inlining bug"
-Date:   Tue, 18 Dec 2018 01:03:22 +0900
-Message-Id: <1545062607-8599-8-git-send-email-yamada.masahiro@socionext.com>
+        linux-sparse@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kbuild@vger.kernel.org, Yonghong Song <yhs@fb.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jan Beulich <JBeulich@suse.com>, Nadav Amit <namit@vmware.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/12] x86, kbuild: revert macrofying inline assembly code
+Date:   Tue, 18 Dec 2018 01:03:15 +0900
+Message-Id: <1545062607-8599-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545062607-8599-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1545062607-8599-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 9e1725b410594911cc5981b6c7b4cea4ec054ca8.
+This series reverts the in-kernel workarounds for inlining issues.
 
-The in-kernel workarounds will be replaced with GCC's new
-"asm inline" syntax.
+The commit description of 77b0bf55bc67 mentioned
+"We also hope that GCC will eventually get fixed,..."
 
-Resolved conflicts caused by 288e4521f0f6 ("x86/asm: 'Simplify'
-GEN_*_RMWcc() macros").
+Now, GCC provides a solution.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+explains the new "asm inline" syntax.
 
- arch/x86/include/asm/refcount.h | 81 +++++++++++++++++------------------------
- arch/x86/kernel/macros.S        |  1 -
- 2 files changed, 33 insertions(+), 49 deletions(-)
+The performance issue will be eventually solved.
 
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index a8b5e1e..dbaed55 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -4,41 +4,6 @@
-  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
-  * PaX/grsecurity.
-  */
--
--#ifdef __ASSEMBLY__
--
--#include <asm/asm.h>
--#include <asm/bug.h>
--
--.macro REFCOUNT_EXCEPTION counter:req
--	.pushsection .text..refcount
--111:	lea \counter, %_ASM_CX
--112:	ud2
--	ASM_UNREACHABLE
--	.popsection
--113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
--.endm
--
--/* Trigger refcount exception if refcount result is negative. */
--.macro REFCOUNT_CHECK_LT_ZERO counter:req
--	js 111f
--	REFCOUNT_EXCEPTION counter="\counter"
--.endm
--
--/* Trigger refcount exception if refcount result is zero or negative. */
--.macro REFCOUNT_CHECK_LE_ZERO counter:req
--	jz 111f
--	REFCOUNT_CHECK_LT_ZERO counter="\counter"
--.endm
--
--/* Trigger refcount exception unconditionally. */
--.macro REFCOUNT_ERROR counter:req
--	jmp 111f
--	REFCOUNT_EXCEPTION counter="\counter"
--.endm
--
--#else /* __ASSEMBLY__ */
--
- #include <linux/refcount.h>
- #include <asm/bug.h>
- 
-@@ -50,12 +15,35 @@
-  * central refcount exception. The fixup address for the exception points
-  * back to the regular execution flow in .text.
-  */
-+#define _REFCOUNT_EXCEPTION				\
-+	".pushsection .text..refcount\n"		\
-+	"111:\tlea %[var], %%" _ASM_CX "\n"		\
-+	"112:\t" ASM_UD2 "\n"				\
-+	ASM_UNREACHABLE					\
-+	".popsection\n"					\
-+	"113:\n"					\
-+	_ASM_EXTABLE_REFCOUNT(112b, 113b)
-+
-+/* Trigger refcount exception if refcount result is negative. */
-+#define REFCOUNT_CHECK_LT_ZERO				\
-+	"js 111f\n\t"					\
-+	_REFCOUNT_EXCEPTION
-+
-+/* Trigger refcount exception if refcount result is zero or negative. */
-+#define REFCOUNT_CHECK_LE_ZERO				\
-+	"jz 111f\n\t"					\
-+	REFCOUNT_CHECK_LT_ZERO
-+
-+/* Trigger refcount exception unconditionally. */
-+#define REFCOUNT_ERROR					\
-+	"jmp 111f\n\t"					\
-+	_REFCOUNT_EXCEPTION
- 
- static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
--		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
--		: [counter] "+m" (r->refs.counter)
-+		REFCOUNT_CHECK_LT_ZERO
-+		: [var] "+m" (r->refs.counter)
- 		: "ir" (i)
- 		: "cc", "cx");
- }
-@@ -63,32 +51,31 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
- static __always_inline void refcount_inc(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "incl %0\n\t"
--		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
--		: [counter] "+m" (r->refs.counter)
-+		REFCOUNT_CHECK_LT_ZERO
-+		: [var] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
- 
- static __always_inline void refcount_dec(refcount_t *r)
- {
- 	asm volatile(LOCK_PREFIX "decl %0\n\t"
--		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
--		: [counter] "+m" (r->refs.counter)
-+		REFCOUNT_CHECK_LE_ZERO
-+		: [var] "+m" (r->refs.counter)
- 		: : "cc", "cx");
- }
- 
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--
- 	return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
--					 "REFCOUNT_CHECK_LT_ZERO counter=\"%[var]\"",
-+					 REFCOUNT_CHECK_LT_ZERO,
- 					 r->refs.counter, e, "er", i, "cx");
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
- 	return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
--					"REFCOUNT_CHECK_LT_ZERO counter=\"%[var]\"",
-+					REFCOUNT_CHECK_LT_ZERO,
- 					r->refs.counter, e, "cx");
- }
- 
-@@ -106,8 +93,8 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
- 
- 		/* Did we try to increment from/to an undesirable state? */
- 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
--			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
--				     : : [counter] "m" (r->refs.counter)
-+			asm volatile(REFCOUNT_ERROR
-+				     : : [var] "m" (r->refs.counter)
- 				     : "cc", "cx");
- 			break;
- 		}
-@@ -122,6 +109,4 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
- 	return refcount_add_not_zero(1, r);
- }
- 
--#endif /* __ASSEMBLY__ */
--
- #endif
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index f1fe1d5..cee28c3 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -7,4 +7,3 @@
-  */
- 
- #include <linux/compiler.h>
--#include <asm/refcount.h>
+[About Code cleanups]
+
+I know Nadam Amit is opposed to the full revert.
+He also claims his motivation for macrofying was not only
+performance, but also cleanups.
+
+IIUC, the criticism addresses the code duplication between C and ASM.
+
+If so, I'd like to suggest a different approach for cleanups.
+Please see the last 3 patches.
+IMHO, preprocessor approach is more straight-forward, and readable.
+Basically, this idea should work because it is what we already do for
+__ASM_FORM() etc.
+
+[Quick Test of "asm inline" of GCC 9]
+
+If you want to try "asm inline" feature, the patch is available:
+https://lore.kernel.org/patchwork/patch/1024590/
+
+The number of symbols for arch/x86/configs/x86_64_defconfig:
+
+                            nr_symbols
+  [1]    v4.20-rc7       :   96502
+  [2]    [1]+full revert :   96705   (+203)
+  [3]    [2]+"asm inline":   96568   (-137)
+
+[3]: apply my patch, then replace "asm" -> "asm_inline"
+    for _BUG_FLAGS(), refcount_add(), refcount_inc(), refcount_dec(),
+        annotate_reachable(), annotate_unreachable()
+
+
+Changes in v3:
+  - Split into per-commit revert (per Nadav Amit)
+  - Add some cleanups with preprocessor approach
+
+Changes in v2:
+  - Revive clean-ups made by 5bdcd510c2ac (per Peter Zijlstra)
+  - Fix commit quoting style (per Peter Zijlstra)
+
+Masahiro Yamada (12):
+  Revert "x86/jump-labels: Macrofy inline assembly code to work around
+    GCC inlining bugs"
+  Revert "x86/cpufeature: Macrofy inline assembly code to work around
+    GCC inlining bugs"
+  Revert "x86/extable: Macrofy inline assembly code to work around GCC
+    inlining bugs"
+  Revert "x86/paravirt: Work around GCC inlining bugs when compiling
+    paravirt ops"
+  Revert "x86/bug: Macrofy the BUG table section handling, to work
+    around GCC inlining bugs"
+  Revert "x86/alternatives: Macrofy lock prefixes to work around GCC
+    inlining bugs"
+  Revert "x86/refcount: Work around GCC inlining bug"
+  Revert "x86/objtool: Use asm macros to work around GCC inlining bugs"
+  Revert "kbuild/Makefile: Prepare for using macros in inline assembly
+    code to work around asm() related GCC inlining bugs"
+  linux/linkage: add ASM() macro to reduce duplication between C/ASM
+    code
+  x86/alternatives: consolidate LOCK_PREFIX macro
+  x86/asm: consolidate ASM_EXTABLE_* macros
+
+ Makefile                                  |  9 +--
+ arch/x86/Makefile                         |  7 ---
+ arch/x86/include/asm/alternative-asm.h    | 22 +------
+ arch/x86/include/asm/alternative-common.h | 47 +++++++++++++++
+ arch/x86/include/asm/alternative.h        | 30 +---------
+ arch/x86/include/asm/asm.h                | 46 +++++----------
+ arch/x86/include/asm/bug.h                | 98 +++++++++++++------------------
+ arch/x86/include/asm/cpufeature.h         | 82 +++++++++++---------------
+ arch/x86/include/asm/jump_label.h         | 22 +++++--
+ arch/x86/include/asm/paravirt_types.h     | 56 +++++++++---------
+ arch/x86/include/asm/refcount.h           | 81 +++++++++++--------------
+ arch/x86/kernel/macros.S                  | 16 -----
+ include/asm-generic/bug.h                 |  8 +--
+ include/linux/compiler.h                  | 56 ++++--------------
+ include/linux/linkage.h                   |  8 +++
+ scripts/Kbuild.include                    |  4 +-
+ scripts/mod/Makefile                      |  2 -
+ 17 files changed, 249 insertions(+), 345 deletions(-)
+ create mode 100644 arch/x86/include/asm/alternative-common.h
+ delete mode 100644 arch/x86/kernel/macros.S
+
 -- 
 2.7.4
 
