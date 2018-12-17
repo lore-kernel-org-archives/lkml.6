@@ -2,130 +2,95 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B9CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E675C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5CC5214D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:21:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS++sl+t"
+	by mail.kernel.org (Postfix) with ESMTP id DB084206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389514AbeLQUVl (ORCPT
+        id S2389526AbeLQUV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:21:41 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42903 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbeLQUVl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:21:41 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so6643004plp.9;
-        Mon, 17 Dec 2018 12:21:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=7Lxrxd/hSsekQvS5TNwgf4HJhjrgrc3uztzkOk3jJZI=;
-        b=fS++sl+twua6rKfaqnifxpd414nSQn99YleFwG5ROoUgd4fYh8Gmfgnu5BfX+RGaXQ
-         W9G3f2kmTXon3rFlZopX1f9SUhlISoKyouj9dqGZXzclbN7QgFLO8yz0spFId1MRH3O5
-         dGA4VWecIWUpsE/4lHE5tobsIZ8xLbEqIhVGe/tL0rrjK2CyWS7ZWFSx+xa8g7xLlthx
-         wZs43S1vMMZKIXGIlh0lDrppYZtrUiPm7z4IHL71pM/rBdWYIVldpxLF2JHDfKcVKJO5
-         wQsiKO1oXc2bh3EO8jiOZ2RjNYhyAoO4biwb3t7UFifUoPLKwKkPvbQjI/EIHMCS7gST
-         uHEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=7Lxrxd/hSsekQvS5TNwgf4HJhjrgrc3uztzkOk3jJZI=;
-        b=V5byIZAxQNLRXW3nfyO/bFoWUcg5F8z+KuogW48bsqIA58TSxapOtDcGQaZ5LUd4t6
-         Z6PBcFnt65+bYr1PElzPWGbYdLA8TKNmJm1uis/FNp08CE8yGxJ8K7Yo4J3PDBXYai74
-         wsVIPi1wMXZHBuuvtlzy+Q2axqgWPTPNo2SIMcsnu4rGrHwO5VW8CXxT7EhAWdvLwtTj
-         UPTenO0fhSveP1zmKgyaCFy5jNXRDwpVO/Z/XmD5yKqHvJItnAPqSY7zjLpsH2iZt6F6
-         hygrlCY5UqL9DUFaiDv3LJZVpkaM52uko9vbUfJp46AEXfr2JtqrAxpjTQ+3ovG9lmV+
-         PFug==
-X-Gm-Message-State: AA+aEWbL57/37HZekJI2/Xk3my9GdYghDtHwclcp7piLMiwdW5n1/Pot
-        Nmgcx9ffNJ8P9PxBjyTmkFk=
-X-Google-Smtp-Source: AFSGD/V108bv8qZyoC/yKMg096p+d0DPNRePsdoNXHX5jjToTByi5PogOU3Xk9s+Qh/1UrG/nUuFKA==
-X-Received: by 2002:a17:902:d202:: with SMTP id t2mr14094133ply.193.1545078100797;
-        Mon, 17 Dec 2018 12:21:40 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([103.227.98.208])
-        by smtp.gmail.com with ESMTPSA id i62sm14879081pge.44.2018.12.17.12.21.39
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 12:21:40 -0800 (PST)
-Date:   Tue, 18 Dec 2018 01:55:33 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        pawel@osciak.com, m.szyprowski@samsung.com,
-        kyungmin.park@samsung.com, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v4 7/9] videobuf2/videobuf2-dma-sg.c: Convert to use
- vm_insert_range
-Message-ID: <20181217202533.GA16294@jordon-HP-15-Notebook-PC>
+        Mon, 17 Dec 2018 15:21:59 -0500
+Received: from mga12.intel.com ([192.55.52.136]:51934 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727631AbeLQUV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:21:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 12:21:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="119204881"
+Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Dec 2018 12:21:50 -0800
+Date:   Mon, 17 Dec 2018 22:21:49 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217202149.GA19053@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <20181217184858.GF12491@linux.intel.com>
+ <20181217193322.GA29785@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181217193322.GA29785@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert to use vm_insert_range to map range of kernel memory
-to user vma.
+On Mon, Dec 17, 2018 at 09:33:22PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 17, 2018 at 10:48:58AM -0800, Sean Christopherson wrote:
+> > On Mon, Dec 17, 2018 at 08:43:33PM +0200, Jarkko Sakkinen wrote:
+> > > On Mon, Dec 17, 2018 at 10:36:13AM -0800, Sean Christopherson wrote:
+> > > > I'm pretty sure doing mmget() would result in circular dependencies and
+> > > > a zombie enclave.  In the do_exit() case where a task is abruptly killed:
+> > > >  
+> > > >   - __mmput() is never called because the enclave holds a ref
+> > > >   - sgx_encl_release() is never be called because its VMAs hold refs
+> > > >   - sgx_vma_close() is never called because __mmput()->exit_mmap() is
+> > > >     blocked and the process itself is dead, i.e. won't unmap anything.
+> > > 
+> > > Right, it does, you are absolutely right. Tried it and removed the
+> > > commit already.
+> > > 
+> > > Well, what we came up from your suggestion i.e. setting mm to NULL
+> > > and checking that is very subtle change and does not have any such
+> > > circular dependencies. We'll go with that.
+> > 
+> > We can't set mm to NULL as we need it to unregister the notifier, and
+> > I'm fairly certain attempting to unregister in the release callback
+> > will deadlock.
+> 
+> Noticed that too. mmu_notifier_unregister() requires a valid mm.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <willy@infradead.org>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- drivers/media/common/videobuf2/videobuf2-dma-sg.c | 23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+Both branches updated...
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-index 015e737..898adef 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-@@ -328,28 +328,19 @@ static unsigned int vb2_dma_sg_num_users(void *buf_priv)
- static int vb2_dma_sg_mmap(void *buf_priv, struct vm_area_struct *vma)
- {
- 	struct vb2_dma_sg_buf *buf = buf_priv;
--	unsigned long uaddr = vma->vm_start;
--	unsigned long usize = vma->vm_end - vma->vm_start;
--	int i = 0;
-+	unsigned long page_count = vma_pages(vma);
-+	int err;
- 
- 	if (!buf) {
- 		printk(KERN_ERR "No memory to map\n");
- 		return -EINVAL;
- 	}
- 
--	do {
--		int ret;
--
--		ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
--		if (ret) {
--			printk(KERN_ERR "Remapping memory, error: %d\n", ret);
--			return ret;
--		}
--
--		uaddr += PAGE_SIZE;
--		usize -= PAGE_SIZE;
--	} while (usize > 0);
--
-+	err = vm_insert_range(vma, vma->vm_start, buf->pages, page_count);
-+	if (err) {
-+		printk(KERN_ERR "Remapping memory, error: %d\n", err);
-+		return err;
-+	}
- 
- 	/*
- 	 * Use common vm_area operations to track buffer refcount.
--- 
-1.9.1
-
+/Jarkko
