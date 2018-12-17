@@ -4,68 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B09AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ABFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3637217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FCEE214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:00:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLMLRXvX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UjS9RBKV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388559AbeLQU7T (ORCPT
+        id S2388695AbeLQVA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:59:19 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33209 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeLQU7T (ORCPT
+        Mon, 17 Dec 2018 16:00:26 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54781 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbeLQVA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:59:19 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so15807303qtp.0;
-        Mon, 17 Dec 2018 12:59:17 -0800 (PST)
+        Mon, 17 Dec 2018 16:00:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so581781wmh.4;
+        Mon, 17 Dec 2018 13:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=mRJnJ2GDjoLwTe4Zo1720pJn3jeZ2gHfU0pxtv+yd+w=;
-        b=bLMLRXvXo6TrwejYKQklElPWAyvOKRnMaIt16W5x2GzkvsI1eskYBTt+RC73vbEk8z
-         sfWJVE2zLA064Mf9wiBz+lguxOMzxVCKJyaDNbrZwEBXTw898mreZ0AWSrm9I1EjyRy2
-         DFRXKN7QvJYyKzi6NlIcAET14NGtyceanOsC/TBk2M6VuVcIrtEVDf39wgHO6xqFVA1J
-         yZqiWZepC/I6CQ5+PcPJ9Q06kIe7o6/FYQLh0ITWtoF/Yz2d9eR/d2opJUlL9Mw3vpkp
-         IRJQs8Pv5DDHMJr7TLh8md4zTyYTHOVKXBbHwt+fAuWV/BjV6r7Hs+g9Sst4yMVXgG0C
-         MZ7g==
+        bh=2iR26Anw0q/Shd7x+GZem69iVYECTkyxd8cvDGhgOiw=;
+        b=UjS9RBKVLloqWRlzBEo8d6tbaX7Jw0fqea2bQ71kJBGWx76KyD68wR1VTwK4WajJPU
+         sb5rYniFY732Mr8vq6FqLzEVSPxVzpoSdP69R06jDGUPUC1p/o2MBg/ynQ4OLFUK+rdQ
+         gn8jBPqkSt3OnbQIUm4ggz6BrccbVfrXIDDk/PKWS3wZkYCpBO4nRgIBXQ0aREj6xbbk
+         N3TbSuK2FAnEG8QQIYD8qPBKdkkmKVakeMrp34HF8H4zfLmRTzEHCbyP0S15NDZglZP7
+         DIJMNUSymlOalHEa8PC8T+TBij/Sz5cyzNgIrZAYcGr/oHOMOvbbuwYVZVq+TuSUYg24
+         fWqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mRJnJ2GDjoLwTe4Zo1720pJn3jeZ2gHfU0pxtv+yd+w=;
-        b=f9m7eG4MJsqMS0q3lnfgHxadKjXPXGD1taRgbygWPtP4I9BFkEecAaKYYVlXbB+Dko
-         J62Xdl7D3fdAtnc9mnVwcVy/VUdSNwbxyAL6ZaZOO97RPUINOhhtK75cKJqgLMtoRNeu
-         vrlky4bZHRUBdhBovQ4/NDcDnW5w57Y0AmT+shGtr3I4REmP2jzxA78f4xE7YKQ+398v
-         EOwiqaBwvyEj3SupR0JztNjMw4VNMUe4eFqIrzI6wAEYuQko0WsdGG/0gvi7qEycZhI4
-         s0aW0xDBiA7qpFaNxnLoHjEbp/bF/KCzCmemxUZSoEYHhmljS2mxUM/Nran2bu98Us3k
-         0fmw==
-X-Gm-Message-State: AA+aEWbYW0pulZu85VQZfFfGEryQzVfXLPPQJi4Fid5egfW6Lsg0fNc3
-        8lE5Kb/hPqt/RS+p4LF+MHA=
-X-Google-Smtp-Source: AFSGD/V60l/FOmEK8D5KXFFfCoOqofDTPnb4t4b+epqG5zkYj5xYYLjreEFlrnxJN0MeaMKUxgmSiQ==
-X-Received: by 2002:ac8:88:: with SMTP id c8mr15257104qtg.218.1545080356532;
-        Mon, 17 Dec 2018 12:59:16 -0800 (PST)
-Received: from localhost.localdomain ([168.194.160.142])
-        by smtp.gmail.com with ESMTPSA id w81sm12925454qkg.43.2018.12.17.12.59.15
+        bh=2iR26Anw0q/Shd7x+GZem69iVYECTkyxd8cvDGhgOiw=;
+        b=XkS+OViAKmrAPFxXR2kc/V/sSEt8ej+eC+ZpNLpkFsGzJCHN/35lTBJKWuMWX1NJJH
+         Zba3iT7MAYl6o0SeFXcezFnegCrvgS9HOz2Dgfn5h/LkLLcwpHpLtHdIHxbuqwPf1CDr
+         e+qmi94OglC/EK+nxige8m/T3ip9xsi4FzFni9B0l/lx9LB369wpP4iwMDX2PVB31y9j
+         nb5dnNHgOsGX+/dBVGDouXpm4uur1kVbKqgNh/Lt6jTDFtwBdY6yQt966hOTQgOsTVMA
+         7z/3Y7EvcPVmBIL1Mc476C0F+JQ0mWTtCRJgGi88jy7TuzpPTS+F+MrA88LwAaF0GQ8d
+         3aEQ==
+X-Gm-Message-State: AA+aEWZwJsuGIH8Ea0sYXcswZ3VJ0kg3ftki+xF/wDqHIyxx9P+oOnFq
+        wsBtUv2jrU0H62chlQHAWw==
+X-Google-Smtp-Source: AFSGD/VJUlBRgfomCLATf6fWn80I/5+t9FC3HmsrdYEWecEMB3e6CYQUzUmqyUPe23XKWOYM90yXyQ==
+X-Received: by 2002:a1c:f0e:: with SMTP id 14mr568281wmp.37.1545080424277;
+        Mon, 17 Dec 2018 13:00:24 -0800 (PST)
+Received: from kmo-pixel (p200300EE3F16D700DA69292E3BFD6CE4.dip0.t-ipconnect.de. [2003:ee:3f16:d700:da69:292e:3bfd:6ce4])
+        by smtp.gmail.com with ESMTPSA id l197sm573743wma.44.2018.12.17.13.00.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 12:59:15 -0800 (PST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id C339A180CC4; Mon, 17 Dec 2018 18:59:12 -0200 (-02)
-Date:   Mon, 17 Dec 2018 18:59:12 -0200
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+        Mon, 17 Dec 2018 13:00:23 -0800 (PST)
+Date:   Mon, 17 Dec 2018 16:00:21 -0500
+From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
 Subject: Re: [PATCH 6/7] sctp: Convert to genradix
-Message-ID: <20181217205912.GA9487@localhost.localdomain>
+Message-ID: <20181217210021.GA7144@kmo-pixel>
 References: <20181217131929.11727-1-kent.overstreet@gmail.com>
  <20181217131929.11727-7-kent.overstreet@gmail.com>
  <20181217125001.8e89ac2565417d55ef7a624e@linux-foundation.org>
@@ -105,17 +104,9 @@ On Mon, Dec 17, 2018 at 12:50:01PM -0800, Andrew Morton wrote:
 >  	asoc->strreset_outstanding = !!out + !!in;
 >  
 >  out:
-
-That's because of
-e1e46479847e ("sctp: not increase stream's incnt before sending addstrm_in request")
-https://www.mail-archive.com/netdev@vger.kernel.org/msg255306.html
-and what you did is the right merge fix for this.
-
 > 
 > 
 > We're at 4.20-rc7 and this series is rather large.  I'll merge them all
 > to see what happens, but I don't think it's 4.21-rc1 material?
 
-Would be nice to be conservative here. It's the first time this change
-is being proposed for SCTP stack and testing was probably very
-limited.
+Yeah, agreed. Thanks!
