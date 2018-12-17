@@ -2,222 +2,123 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02553C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939FEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB4C52086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:42:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9Wp1yFw"
+	by mail.kernel.org (Postfix) with ESMTP id 609FF21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545068610;
+	bh=AGs8+igF3bvyZokL4gl3c6/Jwhjir7bOjYuxfmFyY5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KKpeUu8JdczS02+LT6hqCOGBnpLcEE5vkqDIkaSnczaSYI6tk8KwBc7+z9LLAkQ+r
+	 eelMHkKMT6qD5pEKHtO7r2TyA/UGIugJMrMbLIITfnfzAtaYZZuy2yv0Gp0KfRHSkc
+	 tmV6lrijm+2fE4WlYl584fCGH713Vqbs+KKfNrDY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388474AbeLQRmf (ORCPT
+        id S2388301AbeLQRn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:42:35 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53264 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732320AbeLQRme (ORCPT
+        Mon, 17 Dec 2018 12:43:29 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40019 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeLQRn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:42:34 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d15so77499wmb.3;
-        Mon, 17 Dec 2018 09:42:32 -0800 (PST)
+        Mon, 17 Dec 2018 12:43:28 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q26so69424wmf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=3TKUIyB+V+gKRErjhJ7SH490nX9JYjHPpmBbnVCXxJ8=;
-        b=F9Wp1yFwffE297wsKdm7IAMFaB+KPil4bWIUJdaDcu/po6imVTaIY9EBxjnOtqNrou
-         HXgUKx2cvDsm+rx3c5YoQA39pKfP2glg8e4K8FJqZZjzkoc+wOlstdzsr3s78W8qBkUF
-         FvUsnk5XZQXB2VcSqobIAecdlDFsWwWiUrjxBIKJX7mB887AYRbsK3P5foXu6JeU12wQ
-         XoGClD5sZkdN5S6YqpovxRYB0PLKH+1LMHZwg7rXNXx6P1cTlbbRlo9WyRUVHzbc71sy
-         4KiY/RT/kNBPlJ8lebse2Njx6z3gUjgTUc8e+bVAYxcBMkgy6i2TU6008K148T8dylpS
-         2NPQ==
+        bh=qBUTZX5TqEVR3IksZ37nMnFyv96dGt6ygYiZeoeaOfk=;
+        b=Q4KLvt+V/wu+Q8Pw/AlpRF1qhfuVn8f388tImg45IgModPPGL8hPAWcG8rcdcQWeup
+         FGRDmBW+GtMXDK2R4Zrr9wf1aKSv4c2HIQRV/VlzCzqTpkWBUP1m9BlbfmtplD9bwe9J
+         SWqiymo2YHLQOmqrG6XrBazBqcA8FT79coSzkzZ1FL5CKNaFFZoiJ8S512DsH229aE39
+         wheSK6ngP4zoqXESp4YNeD3iP+c4luYXOvyx2Z0CvEOU9KYIbgqFXtcC5Y/JsQMI7Bnj
+         DLT4hThdJCCUdRxqsWCyXuoqBonq3G1BBrzbjpYxG9luKKYF25m0Eq3XfU2fqPnxQzc7
+         74NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3TKUIyB+V+gKRErjhJ7SH490nX9JYjHPpmBbnVCXxJ8=;
-        b=bewO+2xKODflExbyYhMv4R5+Z0kxKgLUpVX0693fUPxJbAApvylJoUigOwO1TIX0Gf
-         OhT33kV73ZgVQQjZgYELoF5Pcp95ceCb/0mgLWFdBM7hxtSir/66l2QWWZ5szIJ0oAq0
-         Kdh9vVi6zAw1JSeRwGPgWwd3hMVWBjjkzHeDdtuD6A4h3eWbcx3mGtZR5ADGezBo9VTF
-         rR+H3t6HaKMxryyVR997fVZK+bBP1HISItin0QV0nPmyM4FbilB5TBLTjIOqEc9/caxK
-         OoJtQVAmqa05lUDwjlnw/LK4nbrB9gNp8uAFxjbu0Ow7spZrV4jGmzlaoKeqpXOuUX6r
-         2enA==
-X-Gm-Message-State: AA+aEWbNcDDxas4QSRvkkS5fnRThQfuuy+PAC4GC45eL908Xr0CzzBYd
-        0ugWjq8H8GhiU33wIhg89H1fwOCLQCXYLQ==
-X-Google-Smtp-Source: AFSGD/VHpfKJIjEgazD4wRNSeMZIqVrZwRqUpbtJ/cjDO8igDDqgmQ20ApCA1UZRkPyuGxCGz+T21Q==
-X-Received: by 2002:a1c:2643:: with SMTP id m64mr99496wmm.22.1545068551537;
-        Mon, 17 Dec 2018 09:42:31 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id c14sm9058457wme.13.2018.12.17.09.42.30
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qBUTZX5TqEVR3IksZ37nMnFyv96dGt6ygYiZeoeaOfk=;
+        b=IKNeTjwdChaQeqrMXraDBzmZVJo3VVDnM0PxSa+0iyyt456wDBW17taPa/F4y2tBrZ
+         Gy3aIk5Mmr5U017XmF0ueSIcrgtxEnQY/hS3xKR5UFPdPaTcv5h0J+MaVAM5odpCw8Ze
+         6cSZ0/mrwWO6KxGclVc4pg8IM/TUeAOQXwNHfkOV6HhZPmbUZ1o5nopt+IxZWLXYmi1C
+         WUUN1q5FmyEWzGhtw/mSbgBHw4LqZZfVhQcToHvQPsj2zbIzZKVAnTzPGkf0MTEXdicD
+         jAoD2B2BCfYSCp3D5zPh95VgoqMCByL9nlhbOlzMCgfXHmKP/Mmz5R/dEwOt2b7EG9sR
+         rRgA==
+X-Gm-Message-State: AA+aEWYDW3SMymOApuXP8nJS1teKlIWjPi9IKZTKMmWt0xfcxt9M04bk
+        FKcchps2Qo6LoeOXP8yBhvU=
+X-Google-Smtp-Source: AFSGD/UPI/uNYgw8/bg8zaAWmXoHCenMDuUBphAkmcovYjdjcrRiw90PVjhnSSgc5wDZAht/8dw6Dg==
+X-Received: by 2002:a1c:9855:: with SMTP id a82mr97047wme.20.1545068607220;
+        Mon, 17 Dec 2018 09:43:27 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v1sm1120264wrr.88.2018.12.17.09.43.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 09:42:30 -0800 (PST)
-Date:   Mon, 17 Dec 2018 10:42:29 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio-mdev/samples: Use u8 instead of char for handle
- functions
-Message-ID: <20181217174229.GB857@flashbox>
-References: <20181019180427.1386-1-natechancellor@gmail.com>
+        Mon, 17 Dec 2018 09:43:26 -0800 (PST)
+Date:   Mon, 17 Dec 2018 18:43:24 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v14 5/5] x86/boot/KASLR: Limit KASLR to extracting kernel
+ in immovable memory
+Message-ID: <20181217174324.GE90818@gmail.com>
+References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+ <20181214093013.13370-6-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181019180427.1386-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181214093013.13370-6-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 11:04:27AM -0700, Nathan Chancellor wrote:
-> Clang warns:
+
+* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+
+> KASLR randomly chooses some positions which may locate in movable
+> memory regions. It will break memory hotplug feature and make the
+> movable memory chosen by KASLR practically immovable.
 > 
-> samples/vfio-mdev/mtty.c:592:39: warning: implicit conversion from 'int'
-> to 'char' changes value from 162 to -94 [-Wconstant-conversion]
->                 *buf = UART_MSR_DSR | UART_MSR_DDSR | UART_MSR_DCD;
->                      ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-> 1 warning generated.
+> The solution is to limit KASLR to choose memory regions in immovable
+> node according to SRAT tables.
+> When CONFIG_EARLY_PARSE_RSDP is enabled, walk through SRAT to get the
+> information of immovable memory so that KASLR knows where should be
+> chosen for randomization.
 > 
-> Turns out that all uses of buf in this function ultimately end up stored
-> or cast to an unsigned type. Just use u8, which has the same number of
-> bits but can store this larger number so Clang no longer warns.
+> Rename process_mem_region() as __process_mem_region() and name new
+> function as process_mem_region().
 > 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 > ---
->  samples/vfio-mdev/mtty.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> index 7abb79d8313d..f6732aa16bb1 100644
-> --- a/samples/vfio-mdev/mtty.c
-> +++ b/samples/vfio-mdev/mtty.c
-> @@ -171,7 +171,7 @@ static struct mdev_state *find_mdev_state_by_uuid(uuid_le uuid)
->  	return NULL;
->  }
->  
-> -void dump_buffer(char *buf, uint32_t count)
-> +void dump_buffer(u8 *buf, uint32_t count)
->  {
->  #if defined(DEBUG)
->  	int i;
-> @@ -250,7 +250,7 @@ static void mtty_create_config_space(struct mdev_state *mdev_state)
->  }
->  
->  static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
-> -				 char *buf, u32 count)
-> +				 u8 *buf, u32 count)
->  {
->  	u32 cfg_addr, bar_mask, bar_index = 0;
->  
-> @@ -304,7 +304,7 @@ static void handle_pci_cfg_write(struct mdev_state *mdev_state, u16 offset,
->  }
->  
->  static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
-> -				u16 offset, char *buf, u32 count)
-> +				u16 offset, u8 *buf, u32 count)
->  {
->  	u8 data = *buf;
->  
-> @@ -475,7 +475,7 @@ static void handle_bar_write(unsigned int index, struct mdev_state *mdev_state,
->  }
->  
->  static void handle_bar_read(unsigned int index, struct mdev_state *mdev_state,
-> -			    u16 offset, char *buf, u32 count)
-> +			    u16 offset, u8 *buf, u32 count)
->  {
->  	/* Handle read requests by guest */
->  	switch (offset) {
-> @@ -650,7 +650,7 @@ static void mdev_read_base(struct mdev_state *mdev_state)
->  	}
->  }
->  
-> -static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
-> +static ssize_t mdev_access(struct mdev_device *mdev, u8 *buf, size_t count,
->  			   loff_t pos, bool is_write)
->  {
->  	struct mdev_state *mdev_state;
-> @@ -698,7 +698,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
->  #if defined(DEBUG_REGS)
->  			pr_info("%s: BAR%d  WR @0x%llx %s val:0x%02x dlab:%d\n",
->  				__func__, index, offset, wr_reg[offset],
-> -				(u8)*buf, mdev_state->s[index].dlab);
-> +				*buf, mdev_state->s[index].dlab);
->  #endif
->  			handle_bar_write(index, mdev_state, offset, buf, count);
->  		} else {
-> @@ -708,7 +708,7 @@ static ssize_t mdev_access(struct mdev_device *mdev, char *buf, size_t count,
->  #if defined(DEBUG_REGS)
->  			pr_info("%s: BAR%d  RD @0x%llx %s val:0x%02x dlab:%d\n",
->  				__func__, index, offset, rd_reg[offset],
-> -				(u8)*buf, mdev_state->s[index].dlab);
-> +				*buf, mdev_state->s[index].dlab);
->  #endif
->  		}
->  		break;
-> @@ -827,7 +827,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
->  		if (count >= 4 && !(*ppos % 4)) {
->  			u32 val;
->  
-> -			ret =  mdev_access(mdev, (char *)&val, sizeof(val),
-> +			ret =  mdev_access(mdev, (u8 *)&val, sizeof(val),
->  					   *ppos, false);
->  			if (ret <= 0)
->  				goto read_err;
-> @@ -839,7 +839,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
->  		} else if (count >= 2 && !(*ppos % 2)) {
->  			u16 val;
->  
-> -			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
->  					  *ppos, false);
->  			if (ret <= 0)
->  				goto read_err;
-> @@ -851,7 +851,7 @@ ssize_t mtty_read(struct mdev_device *mdev, char __user *buf, size_t count,
->  		} else {
->  			u8 val;
->  
-> -			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
->  					  *ppos, false);
->  			if (ret <= 0)
->  				goto read_err;
-> @@ -889,7 +889,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
->  			if (copy_from_user(&val, buf, sizeof(val)))
->  				goto write_err;
->  
-> -			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
->  					  *ppos, true);
->  			if (ret <= 0)
->  				goto write_err;
-> @@ -901,7 +901,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
->  			if (copy_from_user(&val, buf, sizeof(val)))
->  				goto write_err;
->  
-> -			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
->  					  *ppos, true);
->  			if (ret <= 0)
->  				goto write_err;
-> @@ -913,7 +913,7 @@ ssize_t mtty_write(struct mdev_device *mdev, const char __user *buf,
->  			if (copy_from_user(&val, buf, sizeof(val)))
->  				goto write_err;
->  
-> -			ret = mdev_access(mdev, (char *)&val, sizeof(val),
-> +			ret = mdev_access(mdev, (u8 *)&val, sizeof(val),
->  					  *ppos, true);
->  			if (ret <= 0)
->  				goto write_err;
-> -- 
-> 2.19.1
-> 
+>  arch/x86/boot/compressed/kaslr.c | 75 +++++++++++++++++++++++++++-----
+>  1 file changed, 64 insertions(+), 11 deletions(-)
 
-Gentle ping for review.
+Ok, I like this basic approach of automatically detecing memory areas we 
+should not KASLR into - it's far better than earlier iterations.
 
-Thank you,
-Nathan
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -97,6 +97,11 @@ static bool memmap_too_large;
+>  /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+>  static unsigned long long mem_limit = ULLONG_MAX;
+>  
+> +#ifdef CONFIG_EARLY_SRAT_PARSE
+> +/* The immovable memory regions */
+> +extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
+> +#endif
+
+What logic is the maximum size of this array based on?
+
+Thanks,
+
+	Ingo
