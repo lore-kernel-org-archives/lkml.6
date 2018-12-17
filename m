@@ -2,144 +2,141 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5739EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8278CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C64D20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 527A62145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:00:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732303AbeLQM7J (ORCPT
+        id S1732370AbeLQNAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 07:59:09 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:53269 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeLQM7I (ORCPT
+        Mon, 17 Dec 2018 08:00:17 -0500
+Received: from mailgate-2.ics.forth.gr ([139.91.1.5]:41466 "EHLO
+        mailgate-2.ics.forth.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbeLQNAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 07:59:08 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gYsUE-0004Ce-Cp; Mon, 17 Dec 2018 13:59:06 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gYsUD-0002Ou-G0; Mon, 17 Dec 2018 13:59:05 +0100
-Date:   Mon, 17 Dec 2018 13:59:05 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Message-ID: <20181217125905.fwbmipvmx4kahlge@pengutronix.de>
-References: <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de>
- <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
- <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de>
- <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
- <20181203110654.53o3prw3qu3u2uyf@pengutronix.de>
- <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
- <CAMpxmJWAZevmCkDDgLVTY5REGPB3HA5JAtNDtxT0NMt964GQCQ@mail.gmail.com>
- <CAMRc=MdaEPVTx6u0XsLJ8RFH2Kw+8DE1pJMe3H+e3KY2ycETaw@mail.gmail.com>
+        Mon, 17 Dec 2018 08:00:16 -0500
+Received: from av1.ics.forth.gr (av3in [139.91.1.77])
+        by mailgate-2.ics.forth.gr (8.14.4/ICS-FORTH/V10-1.8-GATE) with ESMTP id wBHCxL05031742;
+        Mon, 17 Dec 2018 12:59:23 GMT
+X-AuditID: 8b5b9d4d-8f5ff7000000235c-fc-5c179da8b528
+Received: from enigma.ics.forth.gr (webmail.ics.forth.gr [139.91.1.35])
+        by av1.ics.forth.gr (SMTP Outbound / FORTH / ICS) with SMTP id 23.FB.09052.8AD971C5; Mon, 17 Dec 2018 14:59:21 +0200 (EET)
+Received: from webmail.ics.forth.gr (localhost [127.0.0.1])
+        by enigma.ics.forth.gr (8.15.1//ICS-FORTH/V10.5.0C-EXTNULL-SSL-SASL) with ESMTP id wBHCxJsv024045;
+        Mon, 17 Dec 2018 14:59:19 +0200
+X-ICS-AUTH-INFO: Authenticated user:  at ics.forth.gr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdaEPVTx6u0XsLJ8RFH2Kw+8DE1pJMe3H+e3KY2ycETaw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Date:   Mon, 17 Dec 2018 14:59:19 +0200
+From:   Nick Kossifidis <mick@ics.forth.gr>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] RISC-V: Make BSS section as the last section in
+ vmlinux.lds.S
+Organization: FORTH
+In-Reply-To: <CAAhSdy1danjgviJ2WGGEANQXFkzZzXUdCj+04dZ4eLjcVOt14A@mail.gmail.com>
+References: <20181126060802.19314-1-anup@brainfault.org>
+ <CAAhSdy1danjgviJ2WGGEANQXFkzZzXUdCj+04dZ4eLjcVOt14A@mail.gmail.com>
+Message-ID: <587bbe80f25203e6122dfcc0eadba50b@mailhost.ics.forth.gr>
+X-Sender: mick@mailhost.ics.forth.gr
+User-Agent: Roundcube Webmail/1.1.2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsXSHc2orLtyrniMQdsiVouWD+9YLbb+nsVu
+        sWjFdxaL0xMWMVlc3jWHzWLb5xY2i80TFrA6sHtM/X2GxeNwxxd2j80rtDw2L6n3uNR8nd3j
+        8yY5j/YD3UwB7FFcNimpOZllqUX6dglcGXc3nGMt6Bes2PtsIUsDYy9vFyMnh4SAiURbewNr
+        FyMXh5DAEUaJ+XM3s0M4hxgl5syaxAhRZSoxe28nmM0rIChxcuYTFhCbWcBCYuqV/YwQtrxE
+        89bZzCA2i4CqRP+8lWwgNpuApsT8SwfB6kUEVCSePz0HVT+VSaL1gm0XIweHsECIxMM1YGF+
+        AWGJT3cvsoKEOQUCJe5u1QQJCwnUS/ze8Y0V4gIXiamLHkNdpiLx4fcDdhBbVEBZ4sWJ6awT
+        GIVmITl0FpJDZyE5dAEj8ypGgcQyY73M5GK9tPyikgy99KJNjODImOu7g/HcAvtDjAIcjEo8
+        vJr7xWKEWBPLiitzgcHCwawkwttrCRTiTUmsrEotyo8vKs1JLT7EKM3BoiTOe/hFeJCQQHpi
+        SWp2ampBahFMlomDU6qBMZ6Jz05C29xv8xqvZ//0rfk/e/RNn5KT9GrGZ/GPF87cFs6TiBS7
+        ZRZa9NDkUMW5xd1TUs5Lsz0tzNQROVX75eXhJnsry8Wpv00jlU8eEDoWuiirl4PLeVLRsqnL
+        nz2YGdkvtOnBudiPu45MPTLxvFzX/qUXOnfFtKko85U7b67bZ7/Rt1PjoxJLcUaioRZzUXEi
+        AGJkZLCIAgAA
+X-Greylist: inspected by milter-greylist-4.6.2 (mailgate-2.ics.forth.gr [139.91.1.5]); Mon, 17 Dec 2018 12:59:23 +0000 (GMT) for IP:'139.91.1.77' DOMAIN:'av3in' HELO:'av1.ics.forth.gr' FROM:'mick@ics.forth.gr' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mailgate-2.ics.forth.gr [139.91.1.5]); Mon, 17 Dec 2018 12:59:23 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:32:45AM +0100, Bartosz Golaszewski wrote:
-> śr., 5 gru 2018 o 13:38 Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> napisał(a):
-> >
-> > śr., 5 gru 2018 o 13:20 Linus Walleij <linus.walleij@linaro.org> napisał(a):
-> > >
-> > > On Mon, Dec 3, 2018 at 12:06 PM Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > On Mon, Dec 03, 2018 at 11:57:26AM +0100, Bartosz Golaszewski wrote:
-> > >
-> > > > > It used to live in the gpio-mockup driver and I generalized it
-> > > > > precisely because there was another driver - iio evgen - which was
-> > > > > doing basically the same thing. While I don't know if there'll be more
-> > > > > users (I'd guess it would be useful for testing purposes of other
-> > > > > subsystems) having the same functionality implemented once is better
-> > > > > than twice.
-> > > >
-> > > > The iio testing driver only needs the trigger and relies on an irq that
-> > > > then calls the registerd handler. The iio driver doesn't need to tune
-> > > > the edge sensitivity though and if your mockup driver just only calls
-> > > > the fire routine if the configured sensitivity justifies that,
-> > > > everything should work as expected.
-> > >
-> > > Simulating edges in the generic IRQ simulator codes seems
-> > > generally useful to me, even if there is just one user now.
-> > >
-> > > Certainly for any kind of IRQ testing, it could be interesting to
-> > > throw several low-to-high and high-to-low transitions
-> > > on a driver and see how it reacts.
-> > >
-> > > But it is up to the irqchip maintainers to state whether they
-> > > agree.
-> > >
-> >
-> > All that would be great, but at this point I just want to fix broken
-> > tests in user-space. After that we can think about how to
-> > improve/approach simulating interrupts all we want.
-> >
-> > Marc: is my explanation for using an int instead of bool for
-> > irq_sim_fire_edge() fine? Can Linus pick this up for fixes?
-> >
+Στις 2018-12-17 11:36, Anup Patel έγραψε:
+> On Mon, Nov 26, 2018 at 11:42 AM Anup Patel <anup@brainfault.org> 
+> wrote:
+>> 
+>> The objcopy only emits loadable sections when creating flat kernel
+>> Image. To have minimal possible size of flat kernel Image, we should
+>> have all non-loadable sections after loadable sections.
+>> 
+>> Currently, execption table section (loadable section) is after BSS
+>> section (non-loadable section) in the RISC-V vmlinux.lds.S. This
+>> is not optimal for having minimal flat kernel Image size hence this
+>> patch makes BSS section as the last section in RISC-V vmlinux.lds.S.
+>> 
+>> In addition, we make BSS section aligned to 16byte instead of PAGE
+>> aligned which further reduces flat kernel Image size by few KBs.
+>> 
+>> The flat kernel Image size of Linux-4.20-rc4 using GCC 8.2.0 is
+>> 8819980 bytes with current RISC-V vmlinux.lds.S and it reduces to
+>> 7991740 bytes with this patch applied using GCC 8.2.0. In summary,
+>> this patch reduces Linux-4.20-rc4 flat kernel Image size by 809 KB.
+>> 
+>> Signed-off-by: Anup Patel <anup@brainfault.org>
+>> ---
+>>  arch/riscv/kernel/vmlinux.lds.S | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/arch/riscv/kernel/vmlinux.lds.S 
+>> b/arch/riscv/kernel/vmlinux.lds.S
+>> index 65df1dfdc303..cc99eed44931 100644
+>> --- a/arch/riscv/kernel/vmlinux.lds.S
+>> +++ b/arch/riscv/kernel/vmlinux.lds.S
+>> @@ -74,8 +74,6 @@ SECTIONS
+>>                 *(.sbss*)
+>>         }
+>> 
+>> -       BSS_SECTION(PAGE_SIZE, PAGE_SIZE, 0)
+>> -
+>>         EXCEPTION_TABLE(0x10)
+>>         NOTES
+>> 
+>> @@ -83,6 +81,8 @@ SECTIONS
+>>                 *(.rel.dyn*)
+>>         }
+>> 
+>> +       BSS_SECTION(0x10, 0x10, 0x10)
+>> +
+>>         _end = .;
+>> 
+>>         STABS_DEBUG
+>> --
+>> 2.17.1
+>> 
 > 
-> Ping. We have only this week left to fix the regression - can we get
-> your Ack Marc?
+> Hi All,
+> 
+> Any comment on this patch?
+> 
+> Regards,
+> Anup
+> 
 
-I don't understand the urge. The problem is that libgpiod's test is
-failing. And that is because when userspace requested
-IRQF_TRIGGER_FALLING the mockup driver also fires if the line rised and
-with my change libgpiod now sees that and wonders about it. Apart from
-the test failure both libgpiod and the gpio framework are entirely fine
-(AFAICT).
+Just a note on coding style, you should be using a macro instead of 0x10 
+so that those who read the code can understand what it is and also a few 
+comments since searching through the commit logs to understand why you 
+used it isn't optimal.
 
-The "fix" under discussion is to modify the mockup driver to only report
-a falling irq if the output is set to 0. But it also fires if the value
-is already 0 and is set to 0 again. So the problem isn't addressed
-completely, but only enough to make libgpiod's test suite report
-success.
+Regards,
+Nick
 
-In my eyes this is not how test-driven development works. Tests are
-here to bring breakage into the light. That worked just fine here. And
-now as a test fails, the goal is to fix the breakage, but not to change
-just enough details to get the test to pass and then urge them through
-because "we're already at -rc7 and userspace broke!"
-
-And no, the right fix isn't hard. My concerns were expressed Tuesday
-last week, and the problem wasn't important enough since then to fix the
-patch set.
-
-But maybe it's just me and the Linux development process changed since I
-learned about it and today the demand on quality isn't that high any
-more.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
