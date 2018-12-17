@@ -2,114 +2,106 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6D1C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC06C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E17F9217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545078768;
-	bh=ZS/YRrxPzbXZW/0HoVZrBG2utPuZS6Yo8BFS7nF4NaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=koJ0fCthpa0GDNSIyQOIr42W89Lmbzj68jlOeu95ovhi4ah6nVZjenQ2Sbhzr+O8q
-	 Qij6MgCtrrlzDqNwUIylx30EMxmDyG7OBKEpzHOImo4V9bHyS60Agf5Nv7Vt4LX5zj
-	 acVnGx3ftcaYy2cNYYoDWxrqxpFpS8JIDRhOVrYY=
+	by mail.kernel.org (Postfix) with ESMTP id DA050214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389561AbeLQUcr (ORCPT
+        id S2389573AbeLQUdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:32:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727507AbeLQUcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:32:46 -0500
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89418214D8;
-        Mon, 17 Dec 2018 20:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545078766;
-        bh=ZS/YRrxPzbXZW/0HoVZrBG2utPuZS6Yo8BFS7nF4NaI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P9ZHdXzvRydUjx0Uq3vBKdwLuyGQNV2HjbClHc6qwMz2jn4Ivn6ZUla2v8+iUWKdi
-         7EB1ODH6JwEweMEuqk/N+yn/tlhCEeieg59dQ90LozZqaAfgt1GIsMqABzviZlmbXy
-         O/M/mgjDV3gzC5ugqK0nnfOzGgS3bdJZXmmexi1g=
-Date:   Mon, 17 Dec 2018 14:32:44 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Frederick Lawler <fred@fredlawl.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        ptalbert@redhat.com
-Subject: Re: [PATCH] PCI/ASPM: Remove unused lists from struct pcie_link_state
-Message-ID: <20181217203244.GD28981@google.com>
-References: <20181209224550.18931-1-fred@fredlawl.com>
+        Mon, 17 Dec 2018 15:33:39 -0500
+Received: from mail.windriver.com ([147.11.1.11]:45542 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727719AbeLQUdj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:33:39 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wBHKXZ6B011669
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 17 Dec 2018 12:33:35 -0800 (PST)
+Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
+ 12:33:35 -0800
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mattias Nilsson <mattias.i.nilsson@stericsson.com>
+Subject: [PATCH 04/18] mfd: db8500-prcmu: drop unused MODULE_ tags from non-modular code
+Date:   Mon, 17 Dec 2018 15:31:14 -0500
+Message-ID: <1545078688-21217-5-git-send-email-paul.gortmaker@windriver.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
+References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209224550.18931-1-fred@fredlawl.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 04:45:50PM -0600, Frederick Lawler wrote:
-> ASPM does not make use of the children or link LIST_HEADs declared in
-> struct pcie_link_state and defined in alloc_pcie_link_state(). Therefore,
-> remove these lists.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Frederick Lawler <fred@fredlawl.com>
+The Kconfig currently controlling compilation of this code is:
 
-Applied to pci/aspm for v4.21, thanks, Fred!
+drivers/mfd/Kconfig:config MFD_DB8500_PRCMU
+drivers/mfd/Kconfig:    bool "ST-Ericsson DB8500 Power Reset Control Management Unit"
 
-> ---
->  drivers/pci/pcie/aspm.c | 6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index dcb29cb76dc6..2330ebf6df72 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -53,8 +53,6 @@ struct pcie_link_state {
->  	struct pcie_link_state *root;	/* pointer to the root port link */
->  	struct pcie_link_state *parent;	/* pointer to the parent Link state */
->  	struct list_head sibling;	/* node in link_list */
-> -	struct list_head children;	/* list of child link states */
-> -	struct list_head link;		/* node in parent's children list */
->  
->  	/* ASPM state */
->  	u32 aspm_support:7;		/* Supported ASPM state */
-> @@ -850,8 +848,6 @@ static struct pcie_link_state *alloc_pcie_link_state(struct pci_dev *pdev)
->  		return NULL;
->  
->  	INIT_LIST_HEAD(&link->sibling);
-> -	INIT_LIST_HEAD(&link->children);
-> -	INIT_LIST_HEAD(&link->link);
->  	link->pdev = pdev;
->  	link->downstream = pci_function_0(pdev->subordinate);
->  
-> @@ -877,7 +873,6 @@ static struct pcie_link_state *alloc_pcie_link_state(struct pci_dev *pdev)
->  
->  		link->parent = parent;
->  		link->root = link->parent->root;
-> -		list_add(&link->link, &parent->children);
->  	}
->  
->  	list_add(&link->sibling, &link_list);
-> @@ -1001,7 +996,6 @@ void pcie_aspm_exit_link_state(struct pci_dev *pdev)
->  	/* All functions are removed, so just disable ASPM for the link */
->  	pcie_config_aspm_link(link, 0);
->  	list_del(&link->sibling);
-> -	list_del(&link->link);
->  	/* Clock PM is for endpoint device */
->  	free_link_state(link);
->  
-> -- 
-> 2.17.1
-> 
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the couple traces of modular infrastructure use, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
+
+We replace module.h with init.h and export.h ; the latter since the
+file does export some symbols.
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mattias Nilsson <mattias.i.nilsson@stericsson.com>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/mfd/db8500-prcmu.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
+index aec20e1c7d3d..65666b624ae8 100644
+--- a/drivers/mfd/db8500-prcmu.c
++++ b/drivers/mfd/db8500-prcmu.c
+@@ -1,4 +1,6 @@
+ /*
++ * DB8500 PRCM Unit driver
++ *
+  * Copyright (C) STMicroelectronics 2009
+  * Copyright (C) ST-Ericsson SA 2010
+  *
+@@ -10,7 +12,8 @@
+  * U8500 PRCM Unit interface driver
+  *
+  */
+-#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/export.h>
+ #include <linux/kernel.h>
+ #include <linux/delay.h>
+ #include <linux/errno.h>
+@@ -3188,9 +3191,4 @@ static int __init db8500_prcmu_init(void)
+ {
+ 	return platform_driver_register(&db8500_prcmu_driver);
+ }
+-
+ core_initcall(db8500_prcmu_init);
+-
+-MODULE_AUTHOR("Mattias Nilsson <mattias.i.nilsson@stericsson.com>");
+-MODULE_DESCRIPTION("DB8500 PRCM Unit driver");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
+
