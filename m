@@ -2,216 +2,123 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47232C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04859C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015AF206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5B72206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:35:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7uyTR8I"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eGZ3PG4X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbeLQTfD (ORCPT
+        id S2388321AbeLQTfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:35:03 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34876 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbeLQTfD (ORCPT
+        Mon, 17 Dec 2018 14:35:50 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50443 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727641AbeLQTfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:35:03 -0500
-Received: by mail-wm1-f68.google.com with SMTP id c126so416125wmh.0;
-        Mon, 17 Dec 2018 11:35:01 -0800 (PST)
+        Mon, 17 Dec 2018 14:35:50 -0500
+Received: by mail-it1-f196.google.com with SMTP id z7so659176iti.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:35:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sTAKS+Vyc7ODkqW5h+mrhKCUCTFsO23j0Ib/dkzKqV0=;
-        b=f7uyTR8IpNTJQFDNddjUPpaMlMplz3Lj/Ynio1pZvXo++F9VWslCZXEr4r96cOK5dW
-         KBTtyAWfLgDakyQzoyAQYKtMsyVjcyy22Qd+mD0kjmCDqfTNtWY0k+XHxLFOsy+/jI24
-         a23D3hqw7nXKeSx/1tUmkqk1QFxEuXHqywxhL4yXKyW1Tw4hgSzHl69TF9nItO1BBQ0j
-         sJpHcB8EzKchPyZufOOEtJP8B/Dm/dO2deK6d5jgK78g7seCsPEzVpAUeRBVk7eV1BVV
-         fIQRjlPyIft/wImSpv3sFp1PC9yh1o79FDzSeuKOOVtSO65wkH7WUDWJc9B3o/CSXi/q
-         b6EA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cg/drGNrJvWSVvhwSllUP1bylbyWPMkVlihtmXoDqKE=;
+        b=eGZ3PG4XF/xoPxCtYsXDY+LFzEyLNh854EoG3J5j/7o+oPzU8hywE1h0ZpA7jF2tCw
+         qrn6Z1Lrk+Frhg1JbKkjGyAgGWBR8vcITYaCQfT5vcs2O9RbIPIaO3Fj+pl1xBnoDPWS
+         +50UoS2TX9sOL/CQ6G3/GfFOG5/oWUK6zE4is=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sTAKS+Vyc7ODkqW5h+mrhKCUCTFsO23j0Ib/dkzKqV0=;
-        b=lKOa7iFzOf0rgLDeE96MizlAmcuC4mUsngq1/10GCDdJTkcxc07Q9QTnoA1P9+LLq0
-         NrZXICx/f3DVbXxLnincLNYkDRyYycARSRENi0B+XC4BwVGo5W46HccvD22r1+XHwZNY
-         E3VttJbO5gO8SqLzq/fmXin6U1X/WFFl7Vquf7g5rQDBGuvL1GjcLdDNS6eo5oz/hqpv
-         mIh82+uGgxnrfyD1OkPALPoP8rajOO24HjkXpuVf+zy9Sf4qMxkV30daMyOcERtO+7Wp
-         ++Ft/Lcu6tlHTrftCXedYK2r0AgboygOlX8crQ0bHkFd016pHXJSCi1lvGE23iRYjsQ8
-         RE6A==
-X-Gm-Message-State: AA+aEWb+GTVmE46Mx9EaAPfurgxJDBOdC99EDG8M18OFfDsohZwa91Ik
-        reH2LYkA70RBVyogXM1koDI=
-X-Google-Smtp-Source: AFSGD/UAcrep4XoH8YXIr83xXW3TZH4SWqsJnEACpB2Ui1NxroWxCXcgG7k2+mNbBTM2OAZivNb7AQ==
-X-Received: by 2002:a1c:ce0e:: with SMTP id e14mr389555wmg.53.1545075300306;
-        Mon, 17 Dec 2018 11:35:00 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e9sm716361wro.16.2018.12.17.11.34.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 11:34:59 -0800 (PST)
-Date:   Mon, 17 Dec 2018 12:34:58 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tri Vo <trong@android.com>
-Subject: Re: [PATCH] ARM: Ensure that NEON code always compiles with Clang
-Message-ID: <20181217193458.GA6671@flashbox>
-References: <20181215212304.19390-1-natechancellor@gmail.com>
- <nycvar.YSQ.7.76.1812171318310.3623@knanqh.ubzr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cg/drGNrJvWSVvhwSllUP1bylbyWPMkVlihtmXoDqKE=;
+        b=UNecDdbKtdrEaS7x9rzxB2H062e0xYluwk6FF9BllytrUSH4Nj4K0giCx331rpeio1
+         qFX5gvWzWo+9hQ4fAKBYDnwO/0zuy3eRwgHL/RacnPpV8XcY8jBytaW1bp9r+fGk/h26
+         up2dLfDaMLwE3dlPk3HYJvImGR5796WzFzPZSf4GJZfjgZH5vXrE99mguv5d5YqhEeoc
+         Vb06Ff1S6MVD2aQumOAXha0SXh1QElDwInjlC9m1Da+NksnHPaBRZbPKz83MFtSLDJl6
+         iJBI5CSjp5qRt+TDxyF1yHxVgRGvsQRdBrc26Ki3kRDYEWS0mxILM1ph7tq7N0lYQnvs
+         n/Ng==
+X-Gm-Message-State: AA+aEWbcsSXyZK4g1H2V7J//5agq/0emWK4/43BoyQwueCGxQY52k5M0
+        WuX65TSjzlhWwPhxZEX/eEMdd3y/8JAbVGtb9LYkYHyAr5I=
+X-Google-Smtp-Source: AFSGD/W5EURoufWwTo9bL+iORBnfR9NCtNvOYNvLovxu97To30MklDU5Qzx95PYx15ZBf1hXItxx8rtGklJ3YPQLw9s=
+X-Received: by 2002:a24:edc4:: with SMTP id r187mr437561ith.158.1545075348901;
+ Mon, 17 Dec 2018 11:35:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YSQ.7.76.1812171318310.3623@knanqh.ubzr>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+ <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
+ <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 17 Dec 2018 20:35:37 +0100
+Message-ID: <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
+Subject: Re: [tip:efi/core] x86/efi: Unmap EFI boot services code/data regions
+ from efi_pgd
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>,
+        "bhsharma@redhat.com" <bhsharma@redhat.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
+        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 01:23:52PM -0500, Nicolas Pitre wrote:
-> On Sat, 15 Dec 2018, Nathan Chancellor wrote:
-> 
-> > While building arm32 allyesconfig, I ran into the following errors:
-> > 
-> >   arch/arm/lib/xor-neon.c:17:2: error: You should compile this file with
-> >   '-mfloat-abi=softfp -mfpu=neon'
-> > 
-> >   In file included from lib/raid6/neon1.c:27:
-> >   /home/nathan/cbl/prebuilt/lib/clang/8.0.0/include/arm_neon.h:28:2:
-> >   error: "NEON support not enabled"
-> > 
-> > Building V=1 showed NEON_FLAGS getting passed along to Clang but
-> > __ARM_NEON__ was not getting defined. Ultimately, it boils down to Clang
-> > only defining __ARM_NEON__ when targeting armv7, rather than armv6k,
-> > which is the '-march' value for allyesconfig.
-> > 
-> > From lib/Basic/Targets/ARM.cpp in the Clang source:
-> > 
-> >   // This only gets set when Neon instructions are actually available, unlike
-> >   // the VFP define, hence the soft float and arch check. This is subtly
-> >   // different from gcc, we follow the intent which was that it should be set
-> >   // when Neon instructions are actually available.
-> >   if ((FPU & NeonFPU) && !SoftFloat && ArchVersion >= 7) {
-> >     Builder.defineMacro("__ARM_NEON", "1");
-> >     Builder.defineMacro("__ARM_NEON__");
-> >     // current AArch32 NEON implementations do not support double-precision
-> >     // floating-point even when it is present in VFP.
-> >     Builder.defineMacro("__ARM_NEON_FP",
-> >                         "0x" + Twine::utohexstr(HW_FP & ~HW_FP_DP));
-> >   }
-> > 
-> > Ard Biesheuvel recommended explicitly adding '-march=armv7-a' at the
-> > beginning of the NEON_FLAGS definitions so that __ARM_NEON__ always gets
-> > definined by Clang. This doesn't functionally change anything because
-> > that code will only run where NEON is supported, which is implicitly
-> > armv7.
-> > 
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/287
-> > Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> 
-> Did you test that this doesn't create issues with gcc e.g. complaints 
-> from the linker that objects have incompatible architecture 
-> specifications or similar annoyance? This already happened in the past 
-> but I forget the exact scenario. If you already did, or after you do 
-> validate with gcc as well, then you may add:
-> 
-> Acked-by: Nicolas Pitre <nico@linaro.org>
-> 
-> 
+On Mon, 17 Dec 2018 at 19:42, Prakhya, Sai Praneeth
+<sai.praneeth.prakhya@intel.com> wrote:
+>
+> > > Hi Thomas and Ingo,
+> > >
+> > > I recently noticed that the below commits [1] and [2] are broken when
+> > > kernel command line argument "efi=old_map" is passed. Sorry! I missed
+> > > to test this condition prior to sending these patches to mailing list.
+> > > I am working on a fix and will send it to mailing list as soon as it's ready.
+> > >
+> >
+> > Could you elaborate on the problem please?
+>
+> Sure! My bad..
+>
+> Little bit of history here:
+> Boris with this patch set [1] introduced statically mapping EFI Runtime Services at -4G
+> and also introduced "efi=old_map" to return to previous EFI functionality which used
+> ioremap and __va(pa).
+>
+> [3] and [4] are links to old_map_region()
+>
+> The commit 08cfb38f3ef4 ("x86/efi: Unmap EFI boot services code/data regions from efi_pgd"),
+> unmaps EFI boot services code/data regions *only* from efi_pgd but efi=old_map maps
+> EFI boot services code/data regions into swapper_pgd. Also, efi=old_map  uses either
+> ioremap() or __va(md->phys_addr) to map EFI runtime/boot time services and doesn't use kernel_map_pages_in_pgd().
+>
+> So, we need a different unmapping routine to unmap EFI boot services code/data
+> regions from swapper_pgd if they were mapped using efi=old_map.
+>
 
-Hi Nicolas,
-
-I was 99% sure that I checked GCC before sending this but I just did
-another run to confirm and everything links successfully. We still use
-binutils for assembling/linking the kernel so I assume that I would have
-seen a warning from ld.bfd even with Clang.
-
-Thank you for the review!
-Nathan
-
-> 
-> > ---
-> >  Documentation/arm/kernel_mode_neon.txt | 4 ++--
-> >  arch/arm/lib/Makefile                  | 2 +-
-> >  arch/arm/lib/xor-neon.c                | 2 +-
-> >  lib/raid6/Makefile                     | 2 +-
-> >  4 files changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/Documentation/arm/kernel_mode_neon.txt b/Documentation/arm/kernel_mode_neon.txt
-> > index 525452726d31..b9e060c5b61e 100644
-> > --- a/Documentation/arm/kernel_mode_neon.txt
-> > +++ b/Documentation/arm/kernel_mode_neon.txt
-> > @@ -6,7 +6,7 @@ TL;DR summary
-> >  * Use only NEON instructions, or VFP instructions that don't rely on support
-> >    code
-> >  * Isolate your NEON code in a separate compilation unit, and compile it with
-> > -  '-mfpu=neon -mfloat-abi=softfp'
-> > +  '-march=armv7-a -mfpu=neon -mfloat-abi=softfp'
-> >  * Put kernel_neon_begin() and kernel_neon_end() calls around the calls into your
-> >    NEON code
-> >  * Don't sleep in your NEON code, and be aware that it will be executed with
-> > @@ -87,7 +87,7 @@ instructions appearing in unexpected places if no special care is taken.
-> >  Therefore, the recommended and only supported way of using NEON/VFP in the
-> >  kernel is by adhering to the following rules:
-> >  * isolate the NEON code in a separate compilation unit and compile it with
-> > -  '-mfpu=neon -mfloat-abi=softfp';
-> > +  '-march=armv7-a -mfpu=neon -mfloat-abi=softfp';
-> >  * issue the calls to kernel_neon_begin(), kernel_neon_end() as well as the calls
-> >    into the unit containing the NEON code from a compilation unit which is *not*
-> >    built with the GCC flag '-mfpu=neon' set.
-> > diff --git a/arch/arm/lib/Makefile b/arch/arm/lib/Makefile
-> > index ad25fd1872c7..0bff0176db2c 100644
-> > --- a/arch/arm/lib/Makefile
-> > +++ b/arch/arm/lib/Makefile
-> > @@ -39,7 +39,7 @@ $(obj)/csumpartialcopy.o:	$(obj)/csumpartialcopygeneric.S
-> >  $(obj)/csumpartialcopyuser.o:	$(obj)/csumpartialcopygeneric.S
-> >  
-> >  ifeq ($(CONFIG_KERNEL_MODE_NEON),y)
-> > -  NEON_FLAGS			:= -mfloat-abi=softfp -mfpu=neon
-> > +  NEON_FLAGS			:= -march=armv7-a -mfloat-abi=softfp -mfpu=neon
-> >    CFLAGS_xor-neon.o		+= $(NEON_FLAGS)
-> >    obj-$(CONFIG_XOR_BLOCKS)	+= xor-neon.o
-> >  endif
-> > diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
-> > index a6741a895189..4600b62d845f 100644
-> > --- a/arch/arm/lib/xor-neon.c
-> > +++ b/arch/arm/lib/xor-neon.c
-> > @@ -14,7 +14,7 @@
-> >  MODULE_LICENSE("GPL");
-> >  
-> >  #ifndef __ARM_NEON__
-> > -#error You should compile this file with '-mfloat-abi=softfp -mfpu=neon'
-> > +#error You should compile this file with '-march=armv7-a -mfloat-abi=softfp -mfpu=neon'
-> >  #endif
-> >  
-> >  /*
-> > diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
-> > index 2f8b61dfd9b0..bfec7c87c61e 100644
-> > --- a/lib/raid6/Makefile
-> > +++ b/lib/raid6/Makefile
-> > @@ -25,7 +25,7 @@ endif
-> >  ifeq ($(CONFIG_KERNEL_MODE_NEON),y)
-> >  NEON_FLAGS := -ffreestanding
-> >  ifeq ($(ARCH),arm)
-> > -NEON_FLAGS += -mfloat-abi=softfp -mfpu=neon
-> > +NEON_FLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
-> >  endif
-> >  CFLAGS_recov_neon_inner.o += $(NEON_FLAGS)
-> >  ifeq ($(ARCH),arm64)
-> > -- 
-> > 2.20.1
-> > 
-> > 
+For the short term, could we simply make your changes dependent on efi
+!= old_map? That gives us some time to fix the old_map case properly.
