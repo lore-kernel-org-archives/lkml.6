@@ -7,333 +7,216 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55C6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C0CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A39420578
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 200F8206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:37:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="WNU4cGz2"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="FeQcP6z5";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="E4367Hx/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387709AbeLQPhT (ORCPT
+        id S2387685AbeLQPh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:37:19 -0500
-Received: from mail.nic.cz ([217.31.204.67]:51552 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733263AbeLQPhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:37:14 -0500
-Received: from dellmb.labs.office.nic.cz (unknown [IPv6:2001:1488:fffe:6:cac7:3539:7f1f:463])
-        by mail.nic.cz (Postfix) with ESMTP id 3BEFC61118;
-        Mon, 17 Dec 2018 16:37:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1545061031; bh=KwzSwgcDY34pkxYD7jnhku+2A8Ppcqyt9VkjstDP9LY=;
-        h=From:To:Date;
-        b=WNU4cGz2dHaCpHxVpmK/LF3NID/25qazzR/8dSSp4A1tXueoqXsRTiaVnIueigs3W
-         mXQeMlNoRzNZ5TDCkxFV7dshOVnP6Mn5Zi1m4q0MtYZPLJdJIIMWEXiJIhQbmHGLLi
-         SqNeWQKZWW7fpcOAYafIrGeu1UU0LrdmLeIyoI4c=
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>
-Subject: [PATCH v1 1/3] mailbox: Add support for Armada 37xx rWTM mailbox
-Date:   Mon, 17 Dec 2018 16:37:04 +0100
-Message-Id: <20181217153706.25873-1-marek.behun@nic.cz>
-X-Mailer: git-send-email 2.18.1
+        Mon, 17 Dec 2018 10:37:56 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:43940 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727760AbeLQPh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:37:56 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBHFab31018337;
+        Mon, 17 Dec 2018 07:37:49 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=proofpoint;
+ bh=DoCNLXwKYkhNsxQZhdDQ5uZZ3MLBxxWJs6aInNA8vcU=;
+ b=FeQcP6z5pRC1LWx2GmrRKZz3hES0GxpATX+JtY94etU+23yKAfB2gipNXFE0sqbTgXKe
+ xi0X18cgRJoJJF64tS034Ir6YGueR4W/z/wuoS08XL00kUmw/J5evebRIw9ofnV4ABPy
+ 5PeoC0OPOTl0glvCPidw0SBpF7mWv52JN2oUNmCuiiFoGXKDfHbJEN+cfIKScDQWM+G9
+ u6GX+Q/iSLw88m5JBgC+TPie+ZPVJB67OSSbJEZQ+kw9RRUO0e3vZ6CwD7cFlBwWHsYo
+ naocV57eAKY9qhdVL7Uxj47pOk7loiZOiH3GxK5maJRHiP0NiVNGAKezPDQMnBDUC1tq 2A== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=jank@cadence.com
+Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2055.outbound.protection.outlook.com [104.47.49.55])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2pdbx6f47y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Dec 2018 07:37:48 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DoCNLXwKYkhNsxQZhdDQ5uZZ3MLBxxWJs6aInNA8vcU=;
+ b=E4367Hx/FMPaApMCflJy68w3m+7rYwgcSyOORDcSvnB+QFdI9iWVQvU56Q3q7w0QJTY/Qd50hW92wceCfN4oHUfmLzm+XfmPitXiBjABAdrKBk4wSg2Fm1qGwx9dSP+w3Wo9iY7cDx+JdHxJQHdupWGYnp8tHAGCrZUZEx/afR0=
+Received: from CO2PR07CA0050.namprd07.prod.outlook.com (2603:10b6:100::18) by
+ CY1PR07MB2165.namprd07.prod.outlook.com (2a01:111:e400:59d7::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.22; Mon, 17 Dec
+ 2018 15:37:46 +0000
+Received: from DM3NAM05FT029.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::202) by CO2PR07CA0050.outlook.office365.com
+ (2603:10b6:100::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1425.19 via Frontend
+ Transport; Mon, 17 Dec 2018 15:37:45 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 199.43.4.28 as permitted sender)
+Received: from rmmaillnx1.cadence.com (199.43.4.28) by
+ DM3NAM05FT029.mail.protection.outlook.com (10.152.98.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1446.5 via Frontend Transport; Mon, 17 Dec 2018 15:37:45 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBHFbfob019653
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Mon, 17 Dec 2018 10:37:42 -0500
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Mon, 17 Dec 2018 16:37:42 +0100
+Received: from lvloginb.cadence.com (10.165.177.11) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Mon, 17 Dec 2018 16:37:42 +0100
+Received: from lvloginb.cadence.com (localhost [127.0.0.1])
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBHFbeok023004;
+        Mon, 17 Dec 2018 15:37:40 GMT
+Received: (from jank@localhost)
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBHFbeJJ022998;
+        Mon, 17 Dec 2018 15:37:40 GMT
+From:   Jan Kotas <jank@cadence.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jan Kotas <jank@cadence.com>
+Subject: [PATCH v2 1/2] dt-bindings: gpio: Add bindings for Cadence GPIO
+Date:   Mon, 17 Dec 2018 15:36:51 +0000
+Message-ID: <20181217153652.20056-2-jank@cadence.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20181217153652.20056-1-jank@cadence.com>
+References: <20181217153652.20056-1-jank@cadence.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.99.2 at mail
-X-Virus-Status: Clean
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(2980300002)(36092001)(189003)(199004)(81156014)(106466001)(50466002)(1076002)(76176011)(51416003)(126002)(476003)(8676002)(81166006)(8936002)(186003)(6666004)(2906002)(305945005)(486006)(336012)(26005)(11346002)(446003)(97736004)(50226002)(356004)(107886003)(53936002)(5660300001)(316002)(54906003)(478600001)(69596002)(426003)(2616005)(26826003)(86362001)(4326008)(42186006)(68736007)(87636003)(16586007)(110136005)(47776003)(105596002)(36756003)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2165;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT029;1:SJsQDPfdPt+CfPrBgEoJXruQ2Bd8Y0m4tDM363ifOULQvMc4w89Y5EAoJtYn0f3Sts4AT7TB1j7NbgdV5GB88bOCBwlX8OH0dAanf2ukMjp3KwI21tVdmF+4lW65PB6n
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 189bc1dd-e126-4443-053e-08d66435975e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:CY1PR07MB2165;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;3:A3cB9dLWsJy5cyPt+za1MP5RsEqqmyWs+WjcpIVnoSxoIAlZEWPZEebVuBKVZpXpVT/LL/l4OCEevAegqh/0ApFBloCDQYjfaRqAfhO/l7sWRnSv89NJTYDG7KlfcWrbbHDb/eeYHud5KCqVtNEoOT4GKMz24zWqEx9xp0g7T934p5Rx8EDJul6jd2Thx9FjlNwFBl4jbTELoBsUgXbnrUacYFoFJACjXcGVJwynjHGEGjihSVMEVANLHHyr6FFUY4Z9bQ85m1iS8+jATUe9KST2WWfzjLzm1eA8a87DDhWgKn/RYAd8FJ1vSt6gQkUZObj5WmMfPFA4Mt7/Q3ozCg==;25:8HIJ4o9aSZYix1gXW6T2wafGNgRULdpnT6e6ojVlo7boaerC0omEyPPFW8AQK4Et4D5t315CAoIeG7hpwQ8Ttmn8W0XXQjUWgzEOqCaSJxDMUUEMMjuUGknZCzHqRGk6wLnf3PdtZ/ShkjUxoxbNGmviP/uuulxlG3313/EmuRR9BgdwjhZVzVuBQu0jkADTZF4J38l5uvi3vZzX9ccSOasQDnk3EvIPPZM3z1tW5gzm4dFv7Sc53Uy283l/J00QydrJ2m0k5oLzzv9S/7GzHXat2f+g22lVxAm1yvM78zCSTtcQMZj1RJC+a8NH7YDU04EyyVFnEkShhAfEE9oThpTWRygHzet0u33fClbADek=
+X-MS-TrafficTypeDiagnostic: CY1PR07MB2165:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;31:U7d5ug6Dsw2/4GHIfGEoAfqSmHOd1VwRcC0kOcSWNrSL2Q9F9p2EsFbvJGyD5UTYDBs//bmJWINpcAZZKkQcu48DaRqiGdzBFMffWD5kqrkLhAIDMWswkiXdfXQoPY3ZN+XsFIO/lbjoq+J7+Bt2VRZnUT9K23FD27ce8E8kSKrYMYjBQLCk/a8hoj38xmhXHynYEL0yYlo39+N1wT+uc3bGCQqwyz18cBjUypSfIDw=;20:FInvvMw0MCqv1FN6Vk93pkH5xeMYktRpbotWPRrTrd/QEtv0Be6jr52rDtOUMShr2tPVR+A9SBFUeZ7WHrcAftVdaXz6khciy5w0mu8o153wNwLTSvgS9Ze8wZTLQVi1QgPrMKjifUeGi4bjw0D21tmIeXqrhhr4OzS1E/p6w9EHJr1WPDmfjHaD5OmaZrFNzidDWeXUzvA4q/ftCGiCRM2sw04jyqKaohRCzNi1gEfiJalojMNXR9eK8tx5ANTf7rPVFgYlklhLmNVU5VwHamxWWv0GxDDGoTh2nsG0Qh6kG9GN3tBVDLW70MyRvmsHmWw0M4FGLNyAArDnclRNGQc4Qmif6KlmzuUSkmlsh2I3EK53zfaoq8pcQkQ5M0IQjZ933Tml1lH73UepPf3len+0Lv/cHGcZvpzn6atHBNi2kgfOUliEhGWk9rGh+JG4R0z0b4dmQ1hSNLA2VbChqI+X32RkmtTwQOGhRljUjlSFSivvXTQGbRb2tGbUUjLY
+X-Microsoft-Antispam-PRVS: <CY1PR07MB216566E275200D69A8980511D0BC0@CY1PR07MB2165.namprd07.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93003095)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:CY1PR07MB2165;BCL:0;PCL:0;RULEID:;SRVR:CY1PR07MB2165;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;4:3Ot19waJxODhy64ac+XlmqE8eKCnSbSmgXncPe5FiWbJ0apBk8FNYoUgkXlDdoTWVrFAIPb1zGQBpqBLtZ1yvoYKgh9S5rOnsp0O7J6aBKyOYk16vl0IfhvvYHELNI8Jb1Y0GndGIk99f037/iyXvGt+JoUCv7ODCQFrB1NkK0t+51GONyL34GKPPLH/aO4gyNbJr0Ou/qqQWrm1dvgbVejFsh6C9IO06HeXhyabVZsEBDGr+2rq+mA6+N8RlW7vPH08C31T4x9qXO8aAIGdZg==
+X-Forefront-PRVS: 08897B549D
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR07MB2165;23:nOc8saeOAuiTzFStbhxz+9dwha/4dRjPs7/j975io?=
+ =?us-ascii?Q?Q7UYSV9e89hlQIOcdNVBOHa3qfl59OjJdSBgQKSg4AWf9LkMsS4m+PhwuHEL?=
+ =?us-ascii?Q?KaYARNw5yUvKsl0FvjWZcML/DFNkgf6Yf1YRk0F8wXkerrvqP9TrLac+3b2v?=
+ =?us-ascii?Q?YZ7Abqk8NuqRX04BJyX2jKtPbRgaUWHKS+T5IZKqjZVFOvOzimNFSgvVci99?=
+ =?us-ascii?Q?tv4LbGJqXgz8oKxv9QUdZfJyDNh5wngO1wCFZH0r7qvooS61jkGo8BsMMS1X?=
+ =?us-ascii?Q?3gJAdDXP3L+8HIlfE9UowdPxd0A9jnXG5M8HzR3tOoP421aB0xRu7jK9fJTC?=
+ =?us-ascii?Q?zluJMoZr/rgpe45QbSyrB01WZS95A9rCB5YZTMOYKYpMOoQj7k7zRij9sUL0?=
+ =?us-ascii?Q?AQBG4yx+ZvQYVsU8xa4CNMbFxAnvsy3BI1w4FSev6pP61z4O1jfMUXQOb1B8?=
+ =?us-ascii?Q?R0APrjXWqMGrfzwiby5DZ7hPF83DfNGvPEm7lt8z+G2X5ADoTmTh9KRZk+6e?=
+ =?us-ascii?Q?DlCiLcK1XvFakLIAMPWUtXkmvI6gfhIQqWnmZjpfaEx613can02kLd9REq4j?=
+ =?us-ascii?Q?dXNXDFGpdNvU5yx7m6zAEo3GrpHEULyV9JQ0vgE8qZXdeirMcFRY6GxTLDVw?=
+ =?us-ascii?Q?UNBlWcbbVwrtwseN6asMgANPwZRr23IenHaXdEcj6S6F5CNAJ2G8AdrxiJT5?=
+ =?us-ascii?Q?XbTPtgHFRSmC+nm/0hXbbO/n6dRjBvED6o5tS8a7CjEbN2pZvJOeAJXpQd1Y?=
+ =?us-ascii?Q?MJEKIJXQYDCoe8oar+QAk6QAlr7fdW1hEDblcRfgQw/lrbe3XR44xljwxnTd?=
+ =?us-ascii?Q?fn1nDPybStWKARmtIgG3qvL5FJNCam7wVbyUnqVUuQ+00fITpL/agoVVNrt/?=
+ =?us-ascii?Q?0KKDBUUrwkPzOModZiyvGvbuluZ1PfHqfBcbox5QnAlc3o8yPUnvR+illS5T?=
+ =?us-ascii?Q?npfBVq7LnsrAtMLoniu/C4LyfEXy4sEIm/uFwDO2zD1if5TuWQHfyPE7ooER?=
+ =?us-ascii?Q?b8Nt08dQdIMzmfjWv85vJOwKpXWYb9v6/fI51MXHmiHF40BQyi4+xCqT0kZ0?=
+ =?us-ascii?Q?lyGf3RxEgHZivlF0RHVvLdomwBdbh6+u3l6fUVX7HAgXrtwnfqT5Kq3/Hvjq?=
+ =?us-ascii?Q?uKz6vqP4f93YeILJvAN22dnc6gjDhPqkHS221FzHTkC4kyRmyALnrRsbduya?=
+ =?us-ascii?Q?EMb6w2WhSu9Ewc=3D?=
+X-Microsoft-Antispam-Message-Info: Uin7x5mu9JV027F8s0tiVGZFQu6NHj9bGsd/AfFN2EV5al1gVujc+TGpvS8dqOwgLb1y1sGHJrS5zTbODglVGTn51/v5Q4zV+S848QvU0owQiRDPm6PtCH/X8PcEcQDiquznFB9SvJg00udpjd7uMN/LLDDXq5VOT7smH7VY8BdYBLYvsTq4prlYI7/WoPKIi6GZLzrmcyI/cQpvxgxuzzC9OJeZ/lnC15tpSOKdMblEbpXDcGeyEH8aTVUm0lrHNwaYZmGOx0EPhpRzR0mkJnFHXMcR81wg4UPkl26nm0ehNNwArU9Swf74fGMQ2cLD
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;6:dYb73AnzT4LUoMn0an7yfvq83Zu+9GOkM0pflCzVQRKk0Hm8HRmzXN0Hbl5yV2H+sa+ZO2BLmPR3aIyI+Bv3AVrPXCnahiS4RnxgXnos11FORYLO3TdYbj//MQpCcZ2aIofO7hzco0vmmSbq07VIHkEPyHy0LXOVAIyryLKeQb8vPRpgxH/+HeOrawve4YOfUGMeBxDm5Vv8lIRTkH2429uK5x7Cy3FsfseAYVGe2z1A7ApyxtscmyiZ1+BIedNCoJENEnbe82SzCChqXA75eaL/jvJZqgbjEMiMPe0bjqPtaTC0dSOk0+gGVhA4hqQ7OyqveKnXT/g0hjzWFrBIik5bMq+9Weg4ZNwHwoEY6qa5jjDo98zX6Pv6eBDU4hNaT/3xlcfgdS9GvZdq2CCL29k2hmwGhGY6kkMtSvEWIcnlQF1Ikbz97YABnALxCNrfqrpentPQVyj3ht4oxMurOw==;5:KGTk+k+ASdgcEb1qMx7WqyiNA8ZTOTdKLqN3Elr2Y/jRfQr7Pyb0TRynhoeWtrkSZRMCuNw5DAByYhR+/m8QSYEWh3xJll/AL7eKJAAJEgjd6a8xDM79jrazmATPwzpPBk/u5txQCiSahocmu4SXTBDs4YOAwUhwKgAElRgOHBY=;7:UvptXJMuct8I2RlOEa25PJlejCr50CAxJel1qVYECiDRLxH34Jh62pDchb6jjh5Hf8M9MH7VVei+tPzhfaOG1VmewpQJjPtvafUv1M0Os4cFegRgr+XkKUA5nj24BrAimX8KF0RWOg9dpQa2UfPNRA==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR07MB2165;20:AjgqDG5j0nBA+G0Jsy8tqBwkMEvCSehKXB4qlUfb0oSwA7Yen1KwAJQfrld7TLOBxCJewdHM1PzgFF0Ap7R4m2yVzBQGVXlH5IfIVoxJUfdj3N7IDHVXQuzlE0zbuhH2Yz6FAoNNMjazAeWcpF948yly7CBmtg/3NGPXYpggx8IK39UgCT0wv22tQk7MiS3TVw731hs/tnyH6FL3G9Wpgyz8tszTYjv/I0z9/OocVLfzTm8hFopAYmdjcFIK/SO+
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2018 15:37:45.0850
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 189bc1dd-e126-4443-053e-08d66435975e
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2165
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=520 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812170139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for the mailbox via which the kernel can communicate
-with the firmware running on the secure processor of the Armada 37xx
-SOC.
+This patch adds a DT binding documentation for
+Cadence GPIO controller.
 
-The rWTM secure processor has access to internal eFuses and
-cryptographic circuits, such as the Entropy Bit Generator to generate
-true random numbers.
-
-Signed-off-by: Marek Behún <marek.behun@nic.cz>
+Signed-off-by: Jan Kotas <jank@cadence.com>
 ---
- drivers/mailbox/Kconfig                    |  10 +
- drivers/mailbox/Makefile                   |   2 +
- drivers/mailbox/armada-37xx-rwtm-mailbox.c | 227 +++++++++++++++++++++
- 3 files changed, 239 insertions(+)
- create mode 100644 drivers/mailbox/armada-37xx-rwtm-mailbox.c
+ .../devicetree/bindings/gpio/cdns,gpio.txt         | 44 ++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.txt
 
-diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-index 3eeb12e93e98..939927290ac6 100644
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@ -41,6 +41,16 @@ config PL320_MBOX
- 	  Management Engine, primarily for cpufreq. Say Y here if you want
- 	  to use the PL320 IPCM support.
- 
-+config ARMADA_37XX_RWTM_MBOX
-+	tristate "Armada 37xx rWTM BIU Mailbox"
-+	depends on ARCH_MVEBU || COMPILE_TEST
-+	depends on OF
-+	help
-+	  Mailbox implementation for communication with the the firmware
-+	  running on the Cortex-M3 rWTM secure processor of the Armada 37xx
-+	  SOC. Say Y here if you are building for such a device (for example
-+	  the Turris Mox router).
-+
- config OMAP2PLUS_MBOX
- 	tristate "OMAP2+ Mailbox framework support"
- 	depends on ARCH_OMAP2PLUS
-diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-index c818b5d011ae..792894db6b43 100644
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@ -9,6 +9,8 @@ obj-$(CONFIG_ARM_MHU)	+= arm_mhu.o
- 
- obj-$(CONFIG_IMX_MBOX)	+= imx-mailbox.o
- 
-+obj-$(CONFIG_ARMADA_37XX_RWTM_MBOX)	+= armada-37xx-rwtm-mailbox.o
-+
- obj-$(CONFIG_PLATFORM_MHU)	+= platform_mhu.o
- 
- obj-$(CONFIG_PL320_MBOX)	+= pl320-ipc.o
-diff --git a/drivers/mailbox/armada-37xx-rwtm-mailbox.c b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
+diff --git a/Documentation/devicetree/bindings/gpio/cdns,gpio.txt b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
 new file mode 100644
-index 000000000000..b8b3e8cd49f0
+index 000000000..c87a47827
 --- /dev/null
-+++ b/drivers/mailbox/armada-37xx-rwtm-mailbox.c
-@@ -0,0 +1,227 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * rWTM BIU Mailbox driver for Armada 37xx
-+ *
-+ * Author: Marek Behun <marek.behun@nic.cz>
-+ */
++++ b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
+@@ -0,0 +1,44 @@
++Cadence GPIO controller bindings
 +
-+#include <linux/device.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_controller.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/armada-37xx-rwtm-mailbox.h>
++Required properties:
++- compatible: should be "cdns,gpio-r1p02".
++- reg: the register base address and size.
++- #gpio-cells: should be 2.
++	* first cell is the GPIO number.
++	* second cell specifies the GPIO flags, as defined in
++		<dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH
++		and GPIO_ACTIVE_LOW flags are supported.
++- gpio-controller: marks the device as a GPIO controller.
++- clocks: should contain one entry referencing the peripheral clock driving
++	the GPIO controller.
 +
-+#define DRIVER_NAME	"armada-37xx-rwtm-mailbox"
++Optional properties:
++- ngpios: integer number of gpio lines supported by this controller, up to 32.
++- interrupt-parent: phandle of the parent interrupt controller.
++- interrupts: interrupt specifier for the controllers interrupt.
++- interrupt-controller: marks the device as an interrupt controller. When
++	defined, interrupts, interrupt-parent and #interrupt-cells
++	are required.
++- interrupt-cells: should be 2.
++	* first cell is the GPIO number you want to use as an IRQ source.
++	* second cell specifies the IRQ type, as defined in
++		<dt-bindings/interrupt-controller/irq.h>.
++		Currently only level sensitive IRQs are supported.
 +
-+/* relative to rWTM BIU Mailbox Registers */
-+#define RWTM_MBOX_PARAM(i)		(0x0 + ((i) << 2))
-+#define RWTM_MBOX_COMMAND		0x40
-+#define RWTM_MBOX_RETURN_STATUS		0x80
-+#define RWTM_MBOX_STATUS(i)		(0x84 + ((i) << 2))
-+#define RWTM_MBOX_FIFO_STATUS		0xc4
-+#define FIFO_STS_RDY			0x100
-+#define FIFO_STS_CNTR_MASK		0x7
-+#define FIFO_STS_CNTR_MAX		4
 +
-+#define RWTM_HOST_INT_RESET		0xc8
-+#define RWTM_HOST_INT_MASK		0xcc
-+#define SP_CMD_COMPLETE			BIT(0)
-+#define SP_CMD_QUEUE_FULL_ACCESS	BIT(17)
-+#define SP_CMD_QUEUE_FULL		BIT(18)
++Example:
++	gpio0: gpio-controller@fd060000 {
++		compatible = "cdns,gpio-r1p02";
++		reg =<0xfd060000 0x1000>;
 +
-+struct a37xx_mbox {
-+	struct device *dev;
-+	struct mbox_controller controller;
-+	void __iomem *base;
-+	int irq;
-+};
++		clocks = <&gpio_clk>;
 +
-+static void a37xx_mbox_receive(struct mbox_chan *chan)
-+{
-+	struct a37xx_mbox *mbox = chan->con_priv;
-+	struct armada_37xx_rwtm_rx_msg rx_msg;
-+	int i;
++		interrupt-parent = <&gic>;
++		interrupts = <0 5 IRQ_TYPE_LEVEL_HIGH>;
 +
-+	rx_msg.retval = readl(mbox->base + RWTM_MBOX_RETURN_STATUS);
-+	for (i = 0; i < 16; ++i)
-+		rx_msg.status[i] = readl(mbox->base + RWTM_MBOX_STATUS(i));
++		gpio-controller;
++		#gpio-cells = <2>;
 +
-+	mbox_chan_received_data(chan, &rx_msg);
-+}
-+
-+static irqreturn_t a37xx_mbox_irq_handler(int irq, void *data)
-+{
-+	struct mbox_chan *chan = data;
-+	struct a37xx_mbox *mbox = chan->con_priv;
-+	u32 reg;
-+
-+	reg = readl(mbox->base + RWTM_HOST_INT_RESET);
-+
-+	if (reg & SP_CMD_COMPLETE)
-+		a37xx_mbox_receive(chan);
-+
-+	if (reg & (SP_CMD_QUEUE_FULL_ACCESS | SP_CMD_QUEUE_FULL))
-+		dev_err(mbox->dev, "Secure processor command queue full\n");
-+
-+	writel(reg, mbox->base + RWTM_HOST_INT_RESET);
-+	if (reg)
-+		mbox_chan_txdone(chan, 0);
-+
-+	return reg ? IRQ_HANDLED : IRQ_NONE;
-+}
-+
-+static int a37xx_mbox_send_data(struct mbox_chan *chan, void *data)
-+{
-+	struct a37xx_mbox *mbox = chan->con_priv;
-+	struct armada_37xx_rwtm_tx_msg *msg = data;
-+	int i;
-+	u32 reg;
-+
-+	if (!data)
-+		return -EINVAL;
-+
-+	reg = readl(mbox->base + RWTM_MBOX_FIFO_STATUS);
-+	if (!(reg & FIFO_STS_RDY)) {
-+		dev_err(mbox->dev, "Secure processor not ready\n");
-+		return -EAGAIN;
-+	}
-+
-+	if ((reg & FIFO_STS_CNTR_MASK) >= FIFO_STS_CNTR_MAX) {
-+		dev_err(mbox->dev, "Secure processor command queue full\n");
-+		return -EBUSY;
-+	}
-+
-+	for (i = 0; i < 16; ++i)
-+		writel(msg->args[i], mbox->base + RWTM_MBOX_PARAM(i));
-+	writel(msg->command, mbox->base + RWTM_MBOX_COMMAND);
-+
-+	return 0;
-+}
-+
-+static int a37xx_mbox_startup(struct mbox_chan *chan)
-+{
-+	struct a37xx_mbox *mbox = chan->con_priv;
-+	u32 reg;
-+	int ret;
-+
-+	ret = devm_request_irq(mbox->dev, mbox->irq, a37xx_mbox_irq_handler, 0,
-+			       DRIVER_NAME, chan);
-+	if (ret < 0) {
-+		dev_err(mbox->dev, "Cannot request irq\n");
-+		return ret;
-+	}
-+
-+	/* enable IRQ generation */
-+	reg = readl(mbox->base + RWTM_HOST_INT_MASK);
-+	reg &= ~(SP_CMD_COMPLETE | SP_CMD_QUEUE_FULL_ACCESS | SP_CMD_QUEUE_FULL);
-+	writel(reg, mbox->base + RWTM_HOST_INT_MASK);
-+
-+	return 0;
-+}
-+
-+static void a37xx_mbox_shutdown(struct mbox_chan *chan)
-+{
-+	u32 reg;
-+	struct a37xx_mbox *mbox = chan->con_priv;
-+
-+	/* disable interrupt generation */
-+	reg = readl(mbox->base + RWTM_HOST_INT_MASK);
-+	reg |= SP_CMD_COMPLETE | SP_CMD_QUEUE_FULL_ACCESS | SP_CMD_QUEUE_FULL;
-+	writel(reg, mbox->base + RWTM_HOST_INT_MASK);
-+
-+	devm_free_irq(mbox->dev, mbox->irq, chan);
-+}
-+
-+static const struct mbox_chan_ops a37xx_mbox_ops = {
-+	.send_data	= a37xx_mbox_send_data,
-+	.startup	= a37xx_mbox_startup,
-+	.shutdown	= a37xx_mbox_shutdown,
-+};
-+
-+static int armada_37xx_mbox_probe(struct platform_device *pdev)
-+{
-+	struct a37xx_mbox *mbox;
-+	struct resource *regs;
-+	struct mbox_chan *chans;
-+	int ret;
-+
-+	mbox = devm_kzalloc(&pdev->dev, sizeof(*mbox), GFP_KERNEL);
-+	if (!mbox)
-+		return -ENOMEM;
-+
-+	/* Allocated one channel */
-+	chans = devm_kzalloc(&pdev->dev, sizeof(*chans), GFP_KERNEL);
-+	if (!chans)
-+		return -ENOMEM;
-+
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+
-+	mbox->base = devm_ioremap_resource(&pdev->dev, regs);
-+	if (IS_ERR(mbox->base)) {
-+		dev_err(&pdev->dev, "ioremap failed\n");
-+		return PTR_ERR(mbox->base);
-+	}
-+
-+	mbox->irq = platform_get_irq(pdev, 0);
-+	if (mbox->irq < 0) {
-+		dev_err(&pdev->dev, "Cannot get irq\n");
-+		return mbox->irq;
-+	}
-+
-+	mbox->dev = &pdev->dev;
-+
-+	/* Hardware supports only one channel. */
-+	chans[0].con_priv = mbox;
-+	mbox->controller.dev = mbox->dev;
-+	mbox->controller.num_chans = 1;
-+	mbox->controller.chans = chans;
-+	mbox->controller.ops = &a37xx_mbox_ops;
-+	mbox->controller.txdone_irq = true;
-+
-+	ret = mbox_controller_register(&mbox->controller);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not register mailbox controller\n");
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, mbox);
-+	return ret;
-+}
-+
-+static int armada_37xx_mbox_remove(struct platform_device *pdev)
-+{
-+	struct a37xx_mbox *mbox = platform_get_drvdata(pdev);
-+
-+	if (!mbox)
-+		return -EINVAL;
-+
-+	mbox_controller_unregister(&mbox->controller);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id armada_37xx_mbox_match[] = {
-+	{ .compatible = "marvell,armada-37xx-rwtm-mailbox" },
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, armada_37xx_mbox_match);
-+
-+static struct platform_driver armada_37xx_mbox_driver = {
-+	.probe	= armada_37xx_mbox_probe,
-+	.remove	= armada_37xx_mbox_remove,
-+	.driver	= {
-+		.name		= DRIVER_NAME,
-+		.of_match_table	= armada_37xx_mbox_match,
-+	},
-+};
-+
-+module_platform_driver(armada_37xx_mbox_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("rWTM BIU Mailbox driver for Armada 37xx");
-+MODULE_AUTHOR("Marek Behun <marek.behun@nic.cz>");
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
 -- 
-2.18.1
+2.15.0
 
