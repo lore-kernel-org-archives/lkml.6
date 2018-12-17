@@ -2,111 +2,122 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ABFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E050CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FCEE214D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:00:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B654214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:02:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UjS9RBKV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lA4+iaSn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388695AbeLQVA0 (ORCPT
+        id S2388845AbeLQVC0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:00:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54781 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeLQVA0 (ORCPT
+        Mon, 17 Dec 2018 16:02:26 -0500
+Received: from mail-it1-f202.google.com ([209.85.166.202]:44022 "EHLO
+        mail-it1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388702AbeLQVC0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:00:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so581781wmh.4;
-        Mon, 17 Dec 2018 13:00:25 -0800 (PST)
+        Mon, 17 Dec 2018 16:02:26 -0500
+Received: by mail-it1-f202.google.com with SMTP id 128so686092itw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 13:02:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2iR26Anw0q/Shd7x+GZem69iVYECTkyxd8cvDGhgOiw=;
-        b=UjS9RBKVLloqWRlzBEo8d6tbaX7Jw0fqea2bQ71kJBGWx76KyD68wR1VTwK4WajJPU
-         sb5rYniFY732Mr8vq6FqLzEVSPxVzpoSdP69R06jDGUPUC1p/o2MBg/ynQ4OLFUK+rdQ
-         gn8jBPqkSt3OnbQIUm4ggz6BrccbVfrXIDDk/PKWS3wZkYCpBO4nRgIBXQ0aREj6xbbk
-         N3TbSuK2FAnEG8QQIYD8qPBKdkkmKVakeMrp34HF8H4zfLmRTzEHCbyP0S15NDZglZP7
-         DIJMNUSymlOalHEa8PC8T+TBij/Sz5cyzNgIrZAYcGr/oHOMOvbbuwYVZVq+TuSUYg24
-         fWqQ==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=B+CAsm1YTSnfyOzthHq98oApnuFShmgtKcCoWarGH7U=;
+        b=lA4+iaSnhKAxHl3sM/PcWBc44+4vkkmcF+iya/Ea00QPw6PpEPE2guDnP7oSyAGDWT
+         vRvZMv+2S9LDl9MAIKbOtDcwJYYjpAa9MbJxGye5YBj0FNDxyyeHZ3s2UhyHy8P8y+JM
+         LPb7VzTX4W8mONYqDafaytBq1D+wfiSIqkmQqN5WXtA/9lzK0kXqAwmuN/PZV3SjpXoG
+         /cgrlCUp6YmCPLq8uy9QXvIRhHRyybVjyIybDasLt/Ur60d50B+iflqg1CzPgnfs7fFx
+         ubNX+VN90YKN215c3TkNcseQG6Qk0WR5bMKc9X0rFeDrZmadOZm0sPTe950tFleK4j68
+         ef5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2iR26Anw0q/Shd7x+GZem69iVYECTkyxd8cvDGhgOiw=;
-        b=XkS+OViAKmrAPFxXR2kc/V/sSEt8ej+eC+ZpNLpkFsGzJCHN/35lTBJKWuMWX1NJJH
-         Zba3iT7MAYl6o0SeFXcezFnegCrvgS9HOz2Dgfn5h/LkLLcwpHpLtHdIHxbuqwPf1CDr
-         e+qmi94OglC/EK+nxige8m/T3ip9xsi4FzFni9B0l/lx9LB369wpP4iwMDX2PVB31y9j
-         nb5dnNHgOsGX+/dBVGDouXpm4uur1kVbKqgNh/Lt6jTDFtwBdY6yQt966hOTQgOsTVMA
-         7z/3Y7EvcPVmBIL1Mc476C0F+JQ0mWTtCRJgGi88jy7TuzpPTS+F+MrA88LwAaF0GQ8d
-         3aEQ==
-X-Gm-Message-State: AA+aEWZwJsuGIH8Ea0sYXcswZ3VJ0kg3ftki+xF/wDqHIyxx9P+oOnFq
-        wsBtUv2jrU0H62chlQHAWw==
-X-Google-Smtp-Source: AFSGD/VJUlBRgfomCLATf6fWn80I/5+t9FC3HmsrdYEWecEMB3e6CYQUzUmqyUPe23XKWOYM90yXyQ==
-X-Received: by 2002:a1c:f0e:: with SMTP id 14mr568281wmp.37.1545080424277;
-        Mon, 17 Dec 2018 13:00:24 -0800 (PST)
-Received: from kmo-pixel (p200300EE3F16D700DA69292E3BFD6CE4.dip0.t-ipconnect.de. [2003:ee:3f16:d700:da69:292e:3bfd:6ce4])
-        by smtp.gmail.com with ESMTPSA id l197sm573743wma.44.2018.12.17.13.00.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 13:00:23 -0800 (PST)
-Date:   Mon, 17 Dec 2018 16:00:21 -0500
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Subject: Re: [PATCH 6/7] sctp: Convert to genradix
-Message-ID: <20181217210021.GA7144@kmo-pixel>
-References: <20181217131929.11727-1-kent.overstreet@gmail.com>
- <20181217131929.11727-7-kent.overstreet@gmail.com>
- <20181217125001.8e89ac2565417d55ef7a624e@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217125001.8e89ac2565417d55ef7a624e@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=B+CAsm1YTSnfyOzthHq98oApnuFShmgtKcCoWarGH7U=;
+        b=UqMmSbY4GoEpafFJ2/muwP2nv/TjdZagSeXLh5FK28o4pH+bFWXOUAUKqo38TnEw7w
+         55d3QoLOiDg4eFJYT/Yd9K2iZ5pHmLlILhwM0wpXPFeqaDehq9sEEsa44YSiTJp1zxXt
+         akJ6sX2pAgmJj+vuxZokd4UchkbMTlazbx3yR2cRTAmFyJXmru+qziGdkLYfjZtQLDgh
+         zHTk5DAk/Pz84m+kQWRCDpL2fSR0KPrrPzDxmBxM8IOInEWtek/3qEuGt4H77VJ6rrXq
+         84webHvtTvZt2e5TBlbd4x+ou2XGHRfer5vNjrxCSR6jEb60HZf+bddekNX6Pw2Hj/St
+         vCOQ==
+X-Gm-Message-State: AA+aEWbA4nXkyJ3zXFMqUDqeQDnjhY6sweCRw62/rCXcpRSH01K8cZmS
+        Hd7/B9XLoYbVagcpVbwrFQeGRAACLsW9TQH5Is5YBKieDZuoLdmNtoR5IAahmbhMj7T7u8vWeIu
+        UI3XSEsy19txwvsoax2/IHCkdluDO+5Q0wKhA3WPLzH+N3qJXFrforJriGJX6+Qga+JX0Ziziol
+        MA0A==
+X-Google-Smtp-Source: AFSGD/U2r31mE+jQY/9G2qHUqSuvEj0gUErUDVwlAhxLIFDpwS+ZjfYciMXrmD1QpcbwPxohifGg2gVeICHlBmE=
+X-Received: by 2002:a24:a94:: with SMTP id 142mr528711itw.15.1545080544896;
+ Mon, 17 Dec 2018 13:02:24 -0800 (PST)
+Date:   Mon, 17 Dec 2018 13:02:22 -0800
+Message-Id: <20181217210222.115419-1-astrachan@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
+Subject: [PATCH] media: uvcvideo: Fix 'type' check leading to overflow
+From:   Alistair Strachan <astrachan@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     syzbot <syzkaller@googlegroups.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 12:50:01PM -0800, Andrew Morton wrote:
-> On Mon, 17 Dec 2018 08:19:28 -0500 Kent Overstreet <kent.overstreet@gmail.com> wrote:
-> 
-> > @@ -535,9 +470,6 @@ int sctp_send_add_streams(struct sctp_association *asoc,
-> >  		goto out;
-> >  	}
-> >  
-> > -	stream->incnt = incnt;
-> > -	stream->outcnt = outcnt;
-> > -
-> >  	asoc->strreset_outstanding = !!out + !!in;
-> >  
-> 
-> I'm seeing a reject here for some reason.  Using todays's linux-next,
-> but there are no changes against net/sctp/stream.c in -next.  The
-> assignment to stream->incnt has disappeared.  I did this:
-> 
-> @@ -535,8 +470,6 @@ int sctp_send_add_streams(struct sctp_as
->  		goto out;
->  	}
->  
-> -	stream->outcnt = outcnt;
-> -
->  	asoc->strreset_outstanding = !!out + !!in;
->  
->  out:
-> 
-> 
-> We're at 4.20-rc7 and this series is rather large.  I'll merge them all
-> to see what happens, but I don't think it's 4.21-rc1 material?
+When initially testing the Camera Terminal Descriptor wTerminalType
+field (buffer[4]), no mask is used. Later in the function, the MSB is
+overloaded to store the descriptor subtype, and so a mask of 0x7fff
+is used to check the type.
 
-Yeah, agreed. Thanks!
+If a descriptor is specially crafted to set this overloaded bit in the
+original wTerminalType field, the initial type check will fail (falling
+through, without adjusting the buffer size), but the later type checks
+will pass, assuming the buffer has been made suitably large, causing an
+overflow.
+
+This problem could be resolved in a few different ways, but this fix
+applies the same initial type check as used by UVC_ENTITY_TYPE (once we
+have a 'term' structure.) Such crafted wTerminalType fields will then be
+treated as *generic* Input Terminals, not as CAMERA or
+MEDIA_TRANSPORT_INPUT, avoiding an overflow.
+
+Originally reported here:
+https://groups.google.com/forum/#!topic/syzkaller/Ot1fOE6v1d8
+A similar (non-compiling) patch was provided at that time.
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org
+Cc: kernel-team@android.com
+---
+ drivers/media/usb/uvc/uvc_driver.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index bc369a0934a3..279a967b8264 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1082,11 +1082,11 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+ 		p = 0;
+ 		len = 8;
+ 
+-		if (type == UVC_ITT_CAMERA) {
++		if ((type & 0x7fff) == UVC_ITT_CAMERA) {
+ 			n = buflen >= 15 ? buffer[14] : 0;
+ 			len = 15;
+ 
+-		} else if (type == UVC_ITT_MEDIA_TRANSPORT_INPUT) {
++		} else if ((type & 0x7fff) == UVC_ITT_MEDIA_TRANSPORT_INPUT) {
+ 			n = buflen >= 9 ? buffer[8] : 0;
+ 			p = buflen >= 10 + n ? buffer[9+n] : 0;
+ 			len = 10;
+-- 
+2.20.0.405.gbc1bbc6f85-goog
+
