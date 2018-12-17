@@ -2,170 +2,98 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B91BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F63FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F223B20675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 362AE217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:12:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XdMh4unw"
+	dkim=pass (1024-bit key) header.d=piap.pl header.i=@piap.pl header.b="InK8bBXt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731350AbeLQJLw (ORCPT
+        id S1731651AbeLQJMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:11:52 -0500
-Received: from ozlabs.org ([203.11.71.1]:58279 "EHLO ozlabs.org"
+        Mon, 17 Dec 2018 04:12:20 -0500
+Received: from ni.piap.pl ([195.187.100.4]:43180 "EHLO ni.piap.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbeLQJLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:11:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726323AbeLQJMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 04:12:20 -0500
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43JFlR6Jk1z9sN1;
-        Mon, 17 Dec 2018 20:11:47 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545037908;
-        bh=Xjoc8JKR/wBT/vj+3XoU9gDjk+9UaLNGfNF25lTdsGY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XdMh4unw61LtO4ZFuRBHu75i1UV5AJQlFF7/kgIxMmQF15jzJSQcXDn6PQSBdvM5P
-         fzIJjVHWTflR5aezjJAB4mqnn1VZY9kQAXiJCay0KJyjelKVcsPGhPKQFDAEf94k3C
-         ROCq9uNcKkyWSOyfvvaZgJDglspCTSTh4i5h2RGfwY125cMpvzQr/UHQ12i/S9hlSu
-         gYztgQrhGkwgXecz2iXIfEtWq4JKhvMrJeMjBXV3SPeZaDtWvB8lEqD8lTnxCYn0eu
-         sSeIPrejXXqRUSQUappj8Z2MDYeTwyMibpkJMC/H8zhWWBfntRGv2rOrlmNRYNs0uh
-         CfCiUaL6Ty9MA==
-Date:   Mon, 17 Dec 2018 20:11:46 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Arnd Bergmann <arnd@arndb.de>, Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paulo Alcantara <palcantara@suse.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: linux-next: build failure after merge of the y2038 tree
-Message-ID: <20181217201146.170ca9b4@canb.auug.org.au>
+        by ni.piap.pl (Postfix) with ESMTPSA id 6F371441E45;
+        Mon, 17 Dec 2018 10:12:14 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 6F371441E45
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=piap.pl; s=mail;
+        t=1545037935; bh=9REB8f30WGRuS0Tcl1g6Pqrfjh6KRQ6kdeVVt5jKBBU=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=InK8bBXtAyGN0is62NNooyS8c9LvJvK/7yj/t7jVlxBLDLad1ivUaLjcLI6hnEwyl
+         icA38aJ5QjRIp3NP7aUOByxV0vIznyP2Uiacca0riUd/O3Ak/YNoFXE/vmIc2jgGt3
+         1ozK/4OXm7DEzkAiKawsEL4qdcGV7gsl0o06Whbc=
+From:   khalasa@piap.pl (Krzysztof =?utf-8?Q?Ha=C5=82asa?=)
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list\:ARM\/FREESCALE IMX \/ MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH] ARM i.MX: Fix a kernel panic in i2c_imx_clk_notifier_call().
+References: <m3o9a2hni5.fsf@t19.piap.pl>
+        <CAOMZO5Bhe9t0x0Ke0VJTR3BaeT+ww9vCZBit-8ubyRQjtjM4=Q@mail.gmail.com>
+Date:   Mon, 17 Dec 2018 10:12:14 +0100
+In-Reply-To: <CAOMZO5Bhe9t0x0Ke0VJTR3BaeT+ww9vCZBit-8ubyRQjtjM4=Q@mail.gmail.com>
+        (Fabio Estevam's message of "Mon, 3 Dec 2018 09:21:32 -0200")
+Message-ID: <m3va3sh5zl.fsf@t19.piap.pl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/b9PV77FI4lBcRm.5LYedj1L"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-KLMS-Rule-ID: 1
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Lua-Profiles: 132976 [Dec 17 2018]
+X-KLMS-AntiSpam-Version: 5.8.3.0
+X-KLMS-AntiSpam-Envelope-From: khalasa@piap.pl
+X-KLMS-AntiSpam-Rate: 0
+X-KLMS-AntiSpam-Status: not_detected
+X-KLMS-AntiSpam-Method: none
+X-KLMS-AntiSpam-Info: LuaCore: 227 227 6e72a1529a7b33ae962e5643d747d57d679cf0c7, {Tracking_DKIM, one}, {Tracking_ sender_matches_from}, {Tracking_text_let_digits}, Auth:dkim=pass header.d=piap.pl, DmarcAF: none
+X-KLMS-AntiSpam-Interceptor-Info: scan successful
+X-KLMS-AntiPhishing: Clean, 2018/12/11 14:32:57
+X-KLMS-AntiVirus: Kaspersky Security 8.0 for Linux Mail Server, version 8.0.1.721, bases: 2018/12/17 00:28:00 #9249116
+X-KLMS-AntiVirus-Status: Clean, skipped
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/b9PV77FI4lBcRm.5LYedj1L
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+90ad2cbe88c22d0215225ab9594eeead0eb24fde changed the i.MX I2C bus driver
+to use a notifier whenever the base clock ("ipg" - 66 MHz peripheral
+clock) rate changes.
 
-Hi Arnd,
+Unfortunately one can't use the container_of() macro this way - the
+first argument has to point to a member of the bigger struct (last
+argument). Merely pointing to the same value isn't enough (the clk
+variable which has its address passed to the macro is the clk in
+notifier_block, not the one in imx_i2c_struct, even though both pointers
+point to the same clk struct).
 
-After merging the y2038 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+This bug causes kernel panic when the IPG clock rate changes (e.g. if
+any clock derived from IPG changes).
 
-fs/cifs/dfs_cache.c: In function 'cache_entry_expired':
-fs/cifs/dfs_cache.c:106:7: error: implicit declaration of function 'current=
-_kernel_time64'; did you mean 'core_kernel_text'? [-Werror=3Dimplicit-funct=
-ion-declaration]
-  ts =3D current_kernel_time64();
-       ^~~~~~~~~~~~~~~~~~~~~
-       core_kernel_text
-fs/cifs/dfs_cache.c:106:5: error: incompatible types when assigning to type=
- 'struct timespec64' from type 'int'
-  ts =3D current_kernel_time64();
-     ^
-fs/cifs/dfs_cache.c: In function 'get_expire_time':
-fs/cifs/dfs_cache.c:342:24: error: incompatible type for argument 1 of 'tim=
-espec64_add'
-  return timespec64_add(current_kernel_time64(), ts);
-                        ^~~~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/restart_block.h:10,
-                 from include/linux/thread_info.h:13,
-                 from arch/x86/include/asm/preempt.h:7,
-                 from include/linux/preempt.h:78,
-                 from include/linux/rcupdate.h:40,
-                 from fs/cifs/dfs_cache.c:8:
-include/linux/time64.h:66:66: note: expected 'struct timespec64' but argume=
-nt is of type 'int'
- static inline struct timespec64 timespec64_add(struct timespec64 lhs,
-                                                ~~~~~~~~~~~~~~~~~~^~~
-fs/cifs/dfs_cache.c:343:1: warning: control reaches end of non-void functio=
-n [-Wreturn-type]
- }
- ^
+Signed-off-by: Krzysztof Halasa <khalasa@piap.pl>
 
-Caused by commit
-
-  ccea641b6742 ("timekeeping: remove obsolete time accessors")
-
-interacting with commit
-
-  34a44fb160f9 ("cifs: Add DFS cache routines")
-
-from the cifs tree.
-
-I have applied the following merge fix patch (better versions welcome):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 17 Dec 2018 20:03:28 +1100
-Subject: [PATCH] cifs: update for current_kernel_time64() removal
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/cifs/dfs_cache.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
-index 70f9c9e2175c..d20cc94d7abd 100644
---- a/fs/cifs/dfs_cache.c
-+++ b/fs/cifs/dfs_cache.c
-@@ -103,7 +103,7 @@ static inline bool cache_entry_expired(const struct dfs=
-_cache_entry *ce)
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -510,9 +510,9 @@ static int i2c_imx_clk_notifier_call(struct notifier_block *nb,
+ 				     unsigned long action, void *data)
  {
- 	struct timespec64 ts;
-=20
--	ts =3D current_kernel_time64();
-+	ktime_get_coarse_real_ts64(&ts);
- 	return timespec64_compare(&ts, &ce->ce_etime) >=3D 0;
- }
-=20
-@@ -338,8 +338,10 @@ static inline struct timespec64 get_expire_time(int tt=
-l)
- 		.tv_sec =3D ttl,
- 		.tv_nsec =3D 0,
- 	};
-+	struct timespec64 now;
-=20
--	return timespec64_add(current_kernel_time64(), ts);
-+	ktime_get_coarse_real_ts64(&now);
-+	return timespec64_add(now, ts);
- }
-=20
- /* Allocate a new DFS target */
---=20
-2.19.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/b9PV77FI4lBcRm.5LYedj1L
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwXaFIACgkQAVBC80lX
-0GxqBQgApHUD43yvLCpA7lqOg9JyNZKwi4uYKwFWOolil5QlsEKxxZqyZYYywhQB
-dyGJ2mf9wH6Kq+pnPQINEnJAido1APqtC6h+0veYgMoDE7ea/AgbdwIiXkQikapp
-UQIpLqUR/6aeqKRaWsHIWBdHqg12blIsrdNczJNhQFvLqCFZ7O/Sm9JR70cHb6KU
-xHwRwNPLSG85bM2rN1QGCHPHngomhe6/j8EB5zlBzvoV9JkHHs7MDOvsrIujFksc
-0zmZu+XTvsL8j2EXjq5ssspxQr2f4dqLI0zyopQdYDtcMQxCAI4UlHIrxhxBs/Ml
-cwOY60WgBWGi79XZ3rD15vxhbnQs7g==
-=XT4/
------END PGP SIGNATURE-----
-
---Sig_/b9PV77FI4lBcRm.5LYedj1L--
+ 	struct clk_notifier_data *ndata = data;
+-	struct imx_i2c_struct *i2c_imx = container_of(&ndata->clk,
++	struct imx_i2c_struct *i2c_imx = container_of(nb,
+ 						      struct imx_i2c_struct,
+-						      clk);
++						      clk_change_nb);
+ 
+ 	if (action & POST_RATE_CHANGE)
+ 		i2c_imx_set_clk(i2c_imx, ndata->new_rate);
