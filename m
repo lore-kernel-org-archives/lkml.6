@@ -2,173 +2,110 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7664EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AACA8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD0420874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 800202145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732264AbeLQLf4 (ORCPT
+        id S1732269AbeLQLgu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:35:56 -0500
-Received: from mga06.intel.com ([134.134.136.31]:29924 "EHLO mga06.intel.com"
+        Mon, 17 Dec 2018 06:36:50 -0500
+Received: from ozlabs.org ([203.11.71.1]:39931 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727151AbeLQLfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:35:55 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 03:35:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
-   d="scan'208";a="130593526"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 17 Dec 2018 03:35:52 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 17 Dec 2018 13:35:51 +0200
-Date:   Mon, 17 Dec 2018 13:35:51 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Kyle Tso <kyletso@google.com>
-Cc:     linux@roeck-us.net, gregkh@linuxfoundation.org,
-        Adam.Thomson.Opensource@diasemi.com, badhri@google.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: tcpm: Extend the matching rules on PPS APDO
- selection
-Message-ID: <20181217113551.GA14121@kuha.fi.intel.com>
-References: <20181217024805.122897-1-kyletso@google.com>
+        id S1726965AbeLQLgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:36:50 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43JJyl4Hyhz9sD4;
+        Mon, 17 Dec 2018 22:36:47 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/mm: make NULL pointer deferences explicit on bad page faults.
+In-Reply-To: <276439ce-aad9-e72f-7bc9-c57fb4a59339@c-s.fr>
+References: <42e7e2e9b74af526523fb5a1451fdb29cfe2687a.1539060806.git.christophe.leroy@c-s.fr> <87zht9udqh.fsf@concordia.ellerman.id.au> <276439ce-aad9-e72f-7bc9-c57fb4a59339@c-s.fr>
+Date:   Mon, 17 Dec 2018 22:36:42 +1100
+Message-ID: <87va3stmet.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217024805.122897-1-kyletso@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:48:05AM +0800, Kyle Tso wrote:
-> Current matching rules ensure that the voltage range of selected Source
-> Capability is entirely within the range defined in one of the Sink
-> Capabilities. This is reasonable but not practical because Sink may not
-> support wide range of voltage when sinking power while Source could
-> advertise its capabilities in raletively wider range. For example, a
-> Source PDO advertising 3.3V-11V@3A (9V Prog of Fixed Nominal Voltage)
-> will not be selected if the Sink requires 5V-12V@3A PPS power. However,
-> the Sink could work well if the requested voltage range in RDOs is
-> 5V-11V@3A.
-> 
-> Currently accepted:
-> 		|--------- source -----|
-> 	|----------- sink ---------------|
-> 
-> Currently not accepted:
-> 			|--------- source -----|
-> 	|----------- sink ---------------|
-> 
-> 	|--------- source -----|
-> 		|----------- sink ---------------|
-> 
-> 	|--------- source -----------------|
-> 		|------ sink -------|
-> 
-> To improve the usability, change the matching rules to what listed
-> below:
-> a. The Source PDO is selectable if any portion of the voltage range
->    overlaps one of the Sink PDO's voltage range.
-> b. The maximum operational voltage will be the lower one between the
->    selected Source PDO and the matching Sink PDO.
-> c. The maximum power will be the maximum operational voltage times the
->    maximum current defined in the selected Source PDO
-> d. Select the Source PDO with the highest maximum power
-> 
-> Signed-off-by: Kyle Tso <kyletso@google.com>
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> Hi Michael,
+>
+> Le 14/12/2018 à 01:57, Michael Ellerman a écrit :
+>> Hi Christophe,
+>> 
+>> You know it's the trivial patches that are going to get lots of review
+>> comments :)
+>
+> I'm so happy to get comments.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Haha :)
 
-In case you'll do one more version, I have a minor comment about the
-style below, but no need to resend only because of that.
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>> As several other arches including x86, this patch makes it explicit
+>>> that a bad page fault is a NULL pointer dereference when the fault
+>>> address is lower than PAGE_SIZE
+>> 
+>> I'm being pedantic, but it's not necessarily a NULL pointer dereference.
+>> It might just be a direct access to a low address, eg:
+>> 
+>>   char *p = 0x100;
+>>   *p = 0;
+>> 
+>> That's not a NULL pointer dereference.
+>> 
+>> But other arches do print this so I guess it's OK to add, and in most
+>> cases it will be an actual NULL pointer dereference.
+>> 
+>> I wonder though if we should use 4096 rather than PAGE_SIZE, given
+>> that's the actual value other arches are using. We support 256K pages on
+>> some systems, which is getting quite large.
+>
+> Those invalid accesses are catched because the first page is marked non 
+> present or non accessible in the page table, so I thing using PAGE_SIZE 
+> here is valid regardless of the page size.
 
-> ---
-> Changelog since v1:
-> - updated the commit message as suggested by Guenter Roeck <linux@roeck-us.net>
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 29 +++++++++++++++++------------
->  1 file changed, 17 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 3620efee2688..3001df7bd602 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -2213,7 +2213,8 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  	unsigned int i, j, max_mw = 0, max_mv = 0;
->  	unsigned int min_src_mv, max_src_mv, src_ma, src_mw;
->  	unsigned int min_snk_mv, max_snk_mv;
-> -	u32 pdo;
-> +	unsigned int max_op_mv;
-> +	u32 pdo, src, snk;
->  	unsigned int src_pdo = 0, snk_pdo = 0;
->  
->  	/*
-> @@ -2263,16 +2264,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  					continue;
->  				}
->  
-> -				if (max_src_mv <= max_snk_mv &&
-> -				    min_src_mv >= min_snk_mv) {
-> +				if (min_src_mv <= max_snk_mv &&
-> +				    max_src_mv >= min_snk_mv) {
-> +					max_op_mv = min(max_src_mv, max_snk_mv);
-> +					src_mw = (max_op_mv * src_ma) / 1000;
->  					/* Prefer higher voltages if available */
->  					if ((src_mw == max_mw &&
-> -					     min_src_mv > max_mv) ||
-> +					     max_op_mv > max_mv) ||
->  					    src_mw > max_mw) {
->  						src_pdo = i;
->  						snk_pdo = j;
->  						max_mw = src_mw;
-> -						max_mv = max_src_mv;
-> +						max_mv = max_op_mv;
->  					}
->  				}
->  			}
-> @@ -2285,14 +2288,16 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  	}
->  
->  	if (src_pdo) {
-> -		pdo = port->source_caps[src_pdo];
-> -
-> -		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
-> -		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
-> -		port->pps_data.max_curr =
-> -			min_pps_apdo_current(pdo, port->snk_pdo[snk_pdo]);
-> +		src = port->source_caps[src_pdo];
-> +		snk = port->snk_pdo[snk_pdo];
-> +
-> +		port->pps_data.min_volt = max(pdo_pps_apdo_min_voltage(src),
-> +					      pdo_pps_apdo_min_voltage(snk));
-> +		port->pps_data.max_volt = min(pdo_pps_apdo_max_voltage(src),
-> +					      pdo_pps_apdo_max_voltage(snk));
-> +		port->pps_data.max_curr = min_pps_apdo_current(src, snk);
->  		port->pps_data.out_volt =
-> -			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
-> +			min(port->pps_data.max_volt, port->pps_data.out_volt);
+It's not a question of whether we catch the fault it's what we print
+when we catch it. Most of the time on 64-bit the first few GB of the
+page tables will be empty, so those will all fault, but we don't call
+them NULL pointer deferences.
 
-While here, you could have aligned that like the above lines:
+So I'm just saying that this is a heuristic, ie. an access close to zero
+is probably an access at a small offset from a NULL pointer, but it may
+not be. And so it's kind of arbitrary where we decide to make the cut
+off point between printing that it's a NULL pointer vs a regularly bad
+access.
 
-	port->pps_data.out_volt = min(pdo_pps_apdo_max_voltage(pdo),
-                                      port->pps_data.out_volt);
+Anyway I'm happy to use PAGE_SHIFT for now, if anyone complains we can
+always change it.
 
->  		port->pps_data.op_curr =
->  			min(port->pps_data.max_curr, port->pps_data.op_curr);
->  	}
-> -- 
-> 2.20.0.405.gbc1bbc6f85-goog
+>> What about:
+>> 
+>>    BUG: Unable to handle kernel instruction fetch at 0x00000000
+>
+> I think we still need to make it explicit that we jumped there due to a 
+> NULL function pointer, allthought I don't have a good text idea yet for 
+> this.
 
-thanks,
+Being pedantic again, we don't know that it was a NULL function pointer.
+You might have done a bad setcontext and set your NIP to zero.
 
--- 
-heikki
+But it's probably fine to print it as a hint, and it's probably right
+most of the time.
+
+cheers
