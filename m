@@ -2,104 +2,112 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABC6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6321FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C45B214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36123214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:30:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726324AbeLRC3U (ORCPT
+        id S1726476AbeLRCa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:29:20 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:65258 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726276AbeLRC3U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:29:20 -0500
-X-IronPort-AV: E=Sophos;i="5.56,367,1539619200"; 
-   d="scan'208";a="50025732"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 18 Dec 2018 10:29:18 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 6D6B64B6ED69;
-        Tue, 18 Dec 2018 10:29:14 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 18 Dec 2018 10:29:19 +0800
-Date:   Tue, 18 Dec 2018 10:28:51 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Ingo Molnar <mingo@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v14 3/5] x86/boot: Introduce bios_get_rsdp_addr() to
- search RSDP in memory
-Message-ID: <20181218022851.GD31775@localhost.localdomain>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
- <20181214093013.13370-4-fanc.fnst@cn.fujitsu.com>
- <20181217173837.GC90818@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181217173837.GC90818@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 6D6B64B6ED69.ABB2D
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+        Mon, 17 Dec 2018 21:30:28 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35298 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbeLRCa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 21:30:27 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 18:30:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
+   d="scan'208";a="101465112"
+Received: from aubrey-skl.sh.intel.com ([10.239.53.9])
+  by orsmga006.jf.intel.com with ESMTP; 17 Dec 2018 18:30:25 -0800
+From:   Aubrey Li <aubrey.li@intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
+        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
+Subject: [RESEND PATCH v5 1/3] x86/fpu: track AVX-512 usage of tasks
+Date:   Tue, 18 Dec 2018 03:12:07 +0800
+Message-Id: <20181217191209.6494-1-aubrey.li@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 06:38:37PM +0100, Ingo Molnar wrote:
->
->* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
->
->> +		/* Check the standard checksum */
->> +		if (compute_checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH))
->> +			continue;
->
->Could you please run your patches through checkpatch, does it not 
->complain about this line?
+User space tools which do automated task placement need information
+about AVX-512 usage of tasks, because AVX-512 usage could cause core
+turbo frequency drop and impact the running task on the sibling CPU.
 
-I did,  0 errors, 0 warnings.
-If you mean the useless space, I can drop it.
-But it's from acpi_tb_validate_rsdp() of drivers/acpi/acpica/tbxfroot.c.
->
->> +/* Search RSDP address, based on acpi_find_root_pointer(). */
->> +static acpi_physical_address bios_get_rsdp_addr(void)
->> +{
->> +	u8 *table_ptr;
->> +	u32 address;
->> +	u8 *rsdp;
->> +
->> +	/* Get the location of the Extended BIOS Data Area (EBDA) */
->> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
->> +	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
->
->what? So you take the address of 'u32 address', which turns it into an 
->u32 * - then you cast it to void *, then back to u32 * and then deference 
->it???
+The XSAVE hardware structure has bits that indicate when valid state
+is present in registers unique to AVX-512 use.  Use these bits to
+indicate when AVX-512 has been in use and add per-task AVX-512 state
+timestamp tracking to context switch.
 
-I will clean it, it's from
-#define ACPI_MOVE_16_TO_32(d, s)        *(u32 *)(void *)(d) = *(u16 *)(void *)(s)
-in acpi_find_root_pointer().
-I thought it is safe to use the code existing in kernel.
+Well-written AVX-512 applications are expected to clear the AVX-512
+state when not actively using AVX-512 registers, so the tracking
+mechanism is imprecise and can theoretically miss AVX-512 usage during
+context switch. But it has been measured to be precise enough to be
+useful under real-world workloads like tensorflow and linpack.
 
-Thanks,
-Chao Fan
+If higher precision is required, suggest user space tools to use the
+PMU-based mechanisms in combination.
 
->
->Thanks,
->
->	Ingo
->
->
+Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+---
+ arch/x86/include/asm/fpu/internal.h | 7 +++++++
+ arch/x86/include/asm/fpu/types.h    | 7 +++++++
+ 2 files changed, 14 insertions(+)
 
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index a38bf5a1e37a..8778ac172255 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -411,6 +411,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
+ {
+ 	if (likely(use_xsave())) {
+ 		copy_xregs_to_kernel(&fpu->state.xsave);
++
++		/*
++		 * AVX512 state is tracked here because its use is
++		 * known to slow the max clock speed of the core.
++		 */
++		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
++			fpu->avx512_timestamp = jiffies_64;
+ 		return 1;
+ 	}
+ 
+diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+index 202c53918ecf..81393dabdb46 100644
+--- a/arch/x86/include/asm/fpu/types.h
++++ b/arch/x86/include/asm/fpu/types.h
+@@ -302,6 +302,13 @@ struct fpu {
+ 	 */
+ 	unsigned char			initialized;
+ 
++	/*
++	 * @avx512_timestamp:
++	 *
++	 * Records the timestamp of AVX512 use during last context switch.
++	 */
++	u64				avx512_timestamp;
++
+ 	/*
+ 	 * @state:
+ 	 *
+-- 
+2.17.1
 
