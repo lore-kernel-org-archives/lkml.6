@@ -2,191 +2,130 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D032C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8055C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039B6214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545073720;
-	bh=cr1ptpSKwY/dz1KiayisNq6Hh6//Cex6kdBnmnrZ+mc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UZRqcDOzV/ng8HarcGX+/A6blZxKtD+8MGLAmf44jMJomW9T0wd2kkiQXm6vFLtDQ
-	 p9DpEnPqAz15zLTK4bz3uUj8A3JT8BcQp3VuW+W/HtMecLk5MqXn5LYxWDR+JF3tqt
-	 9Y+GVqKBpXXiTLHlTW3Wv2anMY9EwNSw+AdzfWnk=
+	by mail.kernel.org (Postfix) with ESMTP id C1EEC21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387571AbeLQTIj (ORCPT
+        id S2387650AbeLQTJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54526 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 14:09:35 -0500
+Received: from mga17.intel.com ([192.55.52.151]:62100 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbeLQTIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:08:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABB9221473;
-        Mon, 17 Dec 2018 19:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545073717;
-        bh=cr1ptpSKwY/dz1KiayisNq6Hh6//Cex6kdBnmnrZ+mc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xBflS5p3HI9InaoMn4Pjrd9N0tNkc+ALkMP4Qqa3ZXKSNXnm+wa81xEC5eiTpPPQ9
-         drRS2KWyaef9/MTrh25KOEVsvA/uDwgL8hGQIF0HPiF4JNSJBKs0cAthzpP7VLtdwu
-         AXV86bc+NGMNvXC/WRsc79WXDNa3+rjFHErS5XSY=
-Date:   Mon, 17 Dec 2018 20:08:34 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/88] 4.4.168-stable review
-Message-ID: <20181217190834.GB13773@kroah.com>
-References: <20181214115702.151309521@linuxfoundation.org>
- <dfd49bfd-359a-7f5e-8332-5e6ad6da21cd@roeck-us.net>
- <20181215080729.GG10074@kroah.com>
- <c5862b36-beae-4810-fb33-4b646e96378b@roeck-us.net>
- <1545004693.19315.66.camel@codethink.co.uk>
- <20181217090533.GA12938@kroah.com>
- <ca64083a-158f-7faf-d6e7-566336ad03d0@roeck-us.net>
+        id S1727747AbeLQTJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:09:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:09:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="304560498"
+Received: from dmandrea-mobl.amr.corp.intel.com (HELO [10.254.107.151]) ([10.254.107.151])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 11:09:32 -0800
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <20181217184858.GF12491@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <cf377db5-c702-0a1d-42b3-4caeb14eb6fa@intel.com>
+Date:   Mon, 17 Dec 2018 11:09:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20181217184858.GF12491@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ca64083a-158f-7faf-d6e7-566336ad03d0@roeck-us.net>
-User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 05:46:01AM -0800, Guenter Roeck wrote:
-> On 12/17/18 1:05 AM, Greg Kroah-Hartman wrote:
-> > On Sun, Dec 16, 2018 at 11:58:13PM +0000, Ben Hutchings wrote:
-> > > On Sat, 2018-12-15 at 07:45 -0800, Guenter Roeck wrote:
-> > > > On 12/15/18 12:07 AM, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Dec 14, 2018 at 06:10:29PM -0800, Guenter Roeck wrote:
-> > > > > > On 12/14/18 3:59 AM, Greg Kroah-Hartman wrote:
-> > > > > > > This is the start of the stable review cycle for the 4.4.168 release.
-> > > > > > > There are 88 patches in this series, all will be posted as a response
-> > > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > > let me know.
-> > > > > > > 
-> > > > > > > Responses should be made by Sun Dec 16 11:56:41 UTC 2018.
-> > > > > > > Anything received after that time might be too late.
-> > > > > > 
-> > > > > > Build results:
-> > > > > > 	total: 170 pass: 145 fail: 25
-> > > > > > Failed builds:
-> > > > > > 	arm:allnoconfig
-> > > > > > 	arm:tinyconfig
-> > > > > > 	arm:efm32_defconfig
-> > > > > > 	blackfin:defconfig
-> > > > > > 	blackfin:BF561-EZKIT-SMP_defconfig
-> > > > > > 	c6x:dsk6455_defconfig
-> > > > > > 	c6x:evmc6457_defconfig
-> > > > > > 	c6x:evmc6678_defconfig
-> > > > > > 	h8300:allnoconfig
-> > > > > > 	h8300:tinyconfig
-> > > > > > 	h8300:edosk2674_defconfig
-> > > > > > 	h8300:h8300h-sim_defconfig
-> > > > > > 	h8300:h8s-sim_defconfig
-> > > > > > 	m68k:allnoconfig
-> > > > > > 	m68k:tinyconfig
-> > > > > > 	m68k:m5272c3_defconfig
-> > > > > > 	m68k:m5307c3_defconfig
-> > > > > > 	m68k:m5249evb_defconfig
-> > > > > > 	m68k:m5407c3_defconfig
-> > > > > > 	microblaze:nommu_defconfig
-> > > > > > 	microblaze:allnoconfig
-> > > > > > 	microblaze:tinyconfig
-> > > > > > 	sh:defconfig
-> > > > > > 	sh:allnoconfig
-> > > > > > 	sh:tinyconfig
-> > > > > > Qemu test results:
-> > > > > > 	total: 288 pass: 288 fail: 0
-> > > > > > 
-> > > > > > mm/nommu.c: In function '__get_user_pages_unlocked':
-> > > > > > mm/nommu.c:211:49: error: 'write' undeclared (first use in this function)
-> > > > > > mm/nommu.c:211:56: error: 'force' undeclared (first use in this function)
-> > > > > > mm/nommu.c:212:9: warning: passing argument 7 of 'get_user_pages' from incompatible pointer type [enabled by default]
-> > > > > > mm/nommu.c:185:6: note: expected 'struct vm_area_struct **' but argument is of type 'struct page **'
-> > > > > > mm/nommu.c:212:9: error: too many arguments to function 'get_user_pages'
-> > > > > > mm/nommu.c:185:6: note: declared here
-> > > > > > 
-> > > > > > Details are available at https://kerneltests.org/builders/.
-> > > > > 
-> > > > > Ugh, I'll dig through this later on today, we must be missing something
-> > > > > with those backports that Ben did...
-> > > > > 
-> > > > 
-> > > > 69ce144e5c3a ("mm: replace get_user_pages() write/force parameters
-> > > > with gup_flags") seems to have missed converting a call of
-> > > > get_user_pages().
-> > > 
-> > > Right.  This was changed earlier upstream in commit cde70140fed8
-> > > "mm/gup: Overload get_user_pages() functions", but I don't think it
-> > > makes sense to apply all of that.  I'm attaching a minimal patch
-> > > (tested with an arm allnoconfig build) which should ideally be inserted
-> > > before mm-replace-get_user_pages-write-force-parameters-with-
-> > > gup_flags.patch.
-> > > 
-> > > Ben.
-> > > 
-> > > -- 
-> > > Ben Hutchings, Software Developer                         Codethink Ltd
-> > > https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-> > >                                       Manchester, M1 2HF, United Kingdom
-> > 
-> > >  From 0d0afe933f60f5736c984e9171214aa34b18764c Mon Sep 17 00:00:00 2001
-> > > From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > > Date: Sun, 16 Dec 2018 23:50:08 +0000
-> > > Subject: [PATCH] mm/nommu.c: Switch __get_user_pages_unlocked() to use
-> > >   __get_user_pages()
-> > > 
-> > > Extracted from commit cde70140fed8 "mm/gup: Overload get_user_pages()
-> > > functions".  This is needed before picking commit 768ae309a961
-> > > "mm: replace get_user_pages() write/force parameters with gup_flags".
-> > > 
-> > > Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> > > ---
-> > >   mm/nommu.c | 4 ++--
-> > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/mm/nommu.c b/mm/nommu.c
-> > > index fa1560c218d5..2360546db065 100644
-> > > --- a/mm/nommu.c
-> > > +++ b/mm/nommu.c
-> > > @@ -208,8 +208,8 @@ long __get_user_pages_unlocked(struct task_struct *tsk, struct mm_struct *mm,
-> > >   {
-> > >   	long ret;
-> > >   	down_read(&mm->mmap_sem);
-> > > -	ret = get_user_pages(tsk, mm, start, nr_pages, write, force,
-> > > -			     pages, NULL);
-> > > +	ret = __get_user_pages(tsk, mm, start, nr_pages, gup_flags, pages,
-> > > +			       NULL, NULL);
-> > >   	up_read(&mm->mmap_sem);
-> > >   	return ret;
-> > >   }
-> > 
-> > Thanks for the patch.  I've added it to the queue and pushed out a -rc2
-> > with this in it.
-> > 
-> > Let's see what the builders say :)
-> > 
-> 
-> v4.4.167-89-g9c558d7fe359 seemed to be happy. v4.4.167-89-g50a0280f2f7e
-> replaced it and will take a while.
+On 12/17/18 10:48 AM, Sean Christopherson wrote:
+> We can't set mm to NULL as we need it to unregister the notifier, and
+> I'm fairly certain attempting to unregister in the release callback
+> will deadlock.
 
-If I read your site right, it passed everything except one qemu test?
-Is that normal?
+Suggestion:
 
-thanks,
+It looks like you only expect one VMA per enclave.  Things go bonkers if
+this is not true.  So, instead of storing encl->mm, don't.  You can get
+the mm from vma->vm_mm and you could just store encl->vma instead.
 
-greg k-h
+Doing that, you could even axe encl->base and encl->size, I think
+because you just get those from the VMA itself.
+
+That makes the relationship clearer: 1 VMA per enclave.  We also
+implicitly understand that if you have a VMA, you implicitly have a ref
+to the mm *and* the VMA is immutable.
+
+If there were ever a path where encl->vma wasn't immutable, we'd have a
+bug (or load of bugs) somewhere, right?
