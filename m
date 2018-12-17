@@ -2,156 +2,266 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B547EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE2AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9108C2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F682145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733155AbeLQOGh (ORCPT
+        id S1733162AbeLQOHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:06:37 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55452 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbeLQOGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:06:36 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2DC4320CE3; Mon, 17 Dec 2018 15:06:33 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EDFE820711;
-        Mon, 17 Dec 2018 15:06:22 +0100 (CET)
-Date:   Mon, 17 Dec 2018 15:06:23 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Antoine Tenart <antoine.tenart@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Tony Lindgren <tony@atomide.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Manu Gautam <mgautam@codeaurora.org>
-Subject: Re: [PATCH v3 0/5] phy: core: rework phy_set_mode to accept phy mode
- and submode
-Message-ID: <20181217140623.2zze2kfclup7wjti@flea>
-References: <20181120012424.11802-1-grygorii.strashko@ti.com>
+        Mon, 17 Dec 2018 09:07:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48212 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727341AbeLQOHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:07:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 47B38AD72;
+        Mon, 17 Dec 2018 14:07:01 +0000 (UTC)
+Subject: Re: [PATCH 04/14] mm, compaction: Rename map_pages to split_map_pages
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20181214230310.572-1-mgorman@techsingularity.net>
+ <20181214230310.572-5-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <b9a6574a-6b0c-11bc-06e5-c650b03e06f3@suse.cz>
+Date:   Mon, 17 Dec 2018 15:06:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="553g4on6q5epsg5z"
-Content-Disposition: inline
-In-Reply-To: <20181120012424.11802-1-grygorii.strashko@ti.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181214230310.572-5-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/15/18 12:03 AM, Mel Gorman wrote:
+> It's non-obvious that high-order free pages are split into order-0
+> pages from the function name. Fix it.
 
---553g4on6q5epsg5z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's fine, but looks like the patch has another change squashed into
+it that removes zone parameter from several functions and uses cc->zone
+instead.
 
-Hi Grygorii, Kishon,
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> ---
+>  mm/compaction.c | 60 ++++++++++++++++++++++++++++-----------------------------
+>  1 file changed, 29 insertions(+), 31 deletions(-)
+> 
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index fb4d9f52ed56..3afa4e9188b6 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -66,7 +66,7 @@ static unsigned long release_freepages(struct list_head *freelist)
+>  	return high_pfn;
+>  }
+>  
+> -static void map_pages(struct list_head *list)
+> +static void split_map_pages(struct list_head *list)
+>  {
+>  	unsigned int i, order, nr_pages;
+>  	struct page *page, *next;
+> @@ -644,7 +644,7 @@ isolate_freepages_range(struct compact_control *cc,
+>  	}
+>  
+>  	/* __isolate_free_page() does not map the pages */
+> -	map_pages(&freelist);
+> +	split_map_pages(&freelist);
+>  
+>  	if (pfn < end_pfn) {
+>  		/* Loop terminated early, cleanup. */
+> @@ -1141,7 +1141,7 @@ static void isolate_freepages(struct compact_control *cc)
+>  	}
+>  
+>  	/* __isolate_free_page() does not map the pages */
+> -	map_pages(freelist);
+> +	split_map_pages(freelist);
+>  
+>  	/*
+>  	 * Record where the free scanner will restart next time. Either we
+> @@ -1300,8 +1300,7 @@ static inline bool is_via_compact_memory(int order)
+>  	return order == -1;
+>  }
+>  
+> -static enum compact_result __compact_finished(struct zone *zone,
+> -						struct compact_control *cc)
+> +static enum compact_result __compact_finished(struct compact_control *cc)
+>  {
+>  	unsigned int order;
+>  	const int migratetype = cc->migratetype;
+> @@ -1312,7 +1311,7 @@ static enum compact_result __compact_finished(struct zone *zone,
+>  	/* Compaction run completes if the migrate and free scanner meet */
+>  	if (compact_scanners_met(cc)) {
+>  		/* Let the next compaction start anew. */
+> -		reset_cached_positions(zone);
+> +		reset_cached_positions(cc->zone);
+>  
+>  		/*
+>  		 * Mark that the PG_migrate_skip information should be cleared
+> @@ -1321,7 +1320,7 @@ static enum compact_result __compact_finished(struct zone *zone,
+>  		 * based on an allocation request.
+>  		 */
+>  		if (cc->direct_compaction)
+> -			zone->compact_blockskip_flush = true;
+> +			cc->zone->compact_blockskip_flush = true;
+>  
+>  		if (cc->whole_zone)
+>  			return COMPACT_COMPLETE;
+> @@ -1345,7 +1344,7 @@ static enum compact_result __compact_finished(struct zone *zone,
+>  
+>  	/* Direct compactor: Is a suitable page free? */
+>  	for (order = cc->order; order < MAX_ORDER; order++) {
+> -		struct free_area *area = &zone->free_area[order];
+> +		struct free_area *area = &cc->zone->free_area[order];
+>  		bool can_steal;
+>  
+>  		/* Job done if page is free of the right migratetype */
+> @@ -1391,13 +1390,12 @@ static enum compact_result __compact_finished(struct zone *zone,
+>  	return COMPACT_NO_SUITABLE_PAGE;
+>  }
+>  
+> -static enum compact_result compact_finished(struct zone *zone,
+> -			struct compact_control *cc)
+> +static enum compact_result compact_finished(struct compact_control *cc)
+>  {
+>  	int ret;
+>  
+> -	ret = __compact_finished(zone, cc);
+> -	trace_mm_compaction_finished(zone, cc->order, ret);
+> +	ret = __compact_finished(cc);
+> +	trace_mm_compaction_finished(cc->zone, cc->order, ret);
+>  	if (ret == COMPACT_NO_SUITABLE_PAGE)
+>  		ret = COMPACT_CONTINUE;
+>  
+> @@ -1524,16 +1522,16 @@ bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
+>  	return false;
+>  }
+>  
+> -static enum compact_result compact_zone(struct zone *zone, struct compact_control *cc)
+> +static enum compact_result compact_zone(struct compact_control *cc)
+>  {
+>  	enum compact_result ret;
+> -	unsigned long start_pfn = zone->zone_start_pfn;
+> -	unsigned long end_pfn = zone_end_pfn(zone);
+> +	unsigned long start_pfn = cc->zone->zone_start_pfn;
+> +	unsigned long end_pfn = zone_end_pfn(cc->zone);
+>  	unsigned long last_migrated_pfn;
+>  	const bool sync = cc->mode != MIGRATE_ASYNC;
+>  
+>  	cc->migratetype = gfpflags_to_migratetype(cc->gfp_mask);
+> -	ret = compaction_suitable(zone, cc->order, cc->alloc_flags,
+> +	ret = compaction_suitable(cc->zone, cc->order, cc->alloc_flags,
+>  							cc->classzone_idx);
+>  	/* Compaction is likely to fail */
+>  	if (ret == COMPACT_SUCCESS || ret == COMPACT_SKIPPED)
+> @@ -1546,8 +1544,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+>  	 * Clear pageblock skip if there were failures recently and compaction
+>  	 * is about to be retried after being deferred.
+>  	 */
+> -	if (compaction_restarting(zone, cc->order))
+> -		__reset_isolation_suitable(zone);
+> +	if (compaction_restarting(cc->zone, cc->order))
+> +		__reset_isolation_suitable(cc->zone);
+>  
+>  	/*
+>  	 * Setup to move all movable pages to the end of the zone. Used cached
+> @@ -1559,16 +1557,16 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+>  		cc->migrate_pfn = start_pfn;
+>  		cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
+>  	} else {
+> -		cc->migrate_pfn = zone->compact_cached_migrate_pfn[sync];
+> -		cc->free_pfn = zone->compact_cached_free_pfn;
+> +		cc->migrate_pfn = cc->zone->compact_cached_migrate_pfn[sync];
+> +		cc->free_pfn = cc->zone->compact_cached_free_pfn;
+>  		if (cc->free_pfn < start_pfn || cc->free_pfn >= end_pfn) {
+>  			cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
+> -			zone->compact_cached_free_pfn = cc->free_pfn;
+> +			cc->zone->compact_cached_free_pfn = cc->free_pfn;
+>  		}
+>  		if (cc->migrate_pfn < start_pfn || cc->migrate_pfn >= end_pfn) {
+>  			cc->migrate_pfn = start_pfn;
+> -			zone->compact_cached_migrate_pfn[0] = cc->migrate_pfn;
+> -			zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
+> +			cc->zone->compact_cached_migrate_pfn[0] = cc->migrate_pfn;
+> +			cc->zone->compact_cached_migrate_pfn[1] = cc->migrate_pfn;
+>  		}
+>  
+>  		if (cc->migrate_pfn == start_pfn)
+> @@ -1582,11 +1580,11 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+>  
+>  	migrate_prep_local();
+>  
+> -	while ((ret = compact_finished(zone, cc)) == COMPACT_CONTINUE) {
+> +	while ((ret = compact_finished(cc)) == COMPACT_CONTINUE) {
+>  		int err;
+>  		unsigned long start_pfn = cc->migrate_pfn;
+>  
+> -		switch (isolate_migratepages(zone, cc)) {
+> +		switch (isolate_migratepages(cc->zone, cc)) {
+>  		case ISOLATE_ABORT:
+>  			ret = COMPACT_CONTENDED;
+>  			putback_movable_pages(&cc->migratepages);
+> @@ -1653,7 +1651,7 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+>  			if (last_migrated_pfn < current_block_start) {
+>  				cpu = get_cpu();
+>  				lru_add_drain_cpu(cpu);
+> -				drain_local_pages(zone);
+> +				drain_local_pages(cc->zone);
+>  				put_cpu();
+>  				/* No more flushing until we migrate again */
+>  				last_migrated_pfn = 0;
+> @@ -1678,8 +1676,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+>  		 * Only go back, not forward. The cached pfn might have been
+>  		 * already reset to zone end in compact_finished()
+>  		 */
+> -		if (free_pfn > zone->compact_cached_free_pfn)
+> -			zone->compact_cached_free_pfn = free_pfn;
+> +		if (free_pfn > cc->zone->compact_cached_free_pfn)
+> +			cc->zone->compact_cached_free_pfn = free_pfn;
+>  	}
+>  
+>  	count_compact_events(COMPACTMIGRATE_SCANNED, cc->total_migrate_scanned);
+> @@ -1716,7 +1714,7 @@ static enum compact_result compact_zone_order(struct zone *zone, int order,
+>  	INIT_LIST_HEAD(&cc.freepages);
+>  	INIT_LIST_HEAD(&cc.migratepages);
+>  
+> -	ret = compact_zone(zone, &cc);
+> +	ret = compact_zone(&cc);
+>  
+>  	VM_BUG_ON(!list_empty(&cc.freepages));
+>  	VM_BUG_ON(!list_empty(&cc.migratepages));
+> @@ -1834,7 +1832,7 @@ static void compact_node(int nid)
+>  		INIT_LIST_HEAD(&cc.freepages);
+>  		INIT_LIST_HEAD(&cc.migratepages);
+>  
+> -		compact_zone(zone, &cc);
+> +		compact_zone(&cc);
+>  
+>  		VM_BUG_ON(!list_empty(&cc.freepages));
+>  		VM_BUG_ON(!list_empty(&cc.migratepages));
+> @@ -1976,7 +1974,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+>  
+>  		if (kthread_should_stop())
+>  			return;
+> -		status = compact_zone(zone, &cc);
+> +		status = compact_zone(&cc);
+>  
+>  		if (status == COMPACT_SUCCESS) {
+>  			compaction_defer_reset(zone, cc.order, false);
+> 
 
-On Mon, Nov 19, 2018 at 07:24:19PM -0600, Grygorii Strashko wrote:
-> Thank you for your review.
-> I've not added "Tested-by"/"Acked-by" tags due to code changes in v3.
->=20
-> As was discussed in [1] I'm posting series which introduces rework of
-> phy_set_mode to accept phy mode and submode. I've dropped TI specific pat=
-ches as
-> this change is pretty big by itself.
->=20
-> Patch 1 is cumulative change which refactors PHY framework code to
-> support dual level PHYs mode configuration - PHY mode and PHY submode. It
-> extends .set_mode() callback to support additional parameter "int submode"
-> and converts all corresponding PHY drivers to support new .set_mode()
-> callback declaration.
-> The new extended PHY API
->  int phy_set_mode_ext(struct phy *phy, enum phy_mode mode, int submode)
-> is introduced to support dual level PHYs mode configuration and existing
-> phy_set_mode() API is converted to macros, so PHY framework consumers do
-> not need to be changed (~21 matches).
->=20
-> Patches 2-4: Add new PHY's mode to be used by Ethernet PHY interface driv=
-ers or
-> multipurpose PHYs like serdes and convert ocelot-serdes and mvebu-cp110-c=
-omphy
-> PHY drivers to use recently introduced PHY_MODE_ETHERNET and phy_set_mode=
-_ext().
->=20
-> Patch 5 - removes unused, ethernet specific phy modes from enum phy_mode.
->=20
-> Testing:
->  - series tested on TI am335x/am437x/am5(dra7) paltforms.
->  - other driver build tested.
-
-I realise I'm a bit late to the party, but while working on the D-PHY
-support, I noticed a few things that could be improved.
-
-I guess the main issue is that the sub-mode is completely opaque to
-the generic phy framework now. This might not be a big issue, and I
-assume that it has been done that way because the net framework
-already has a define for the submode it wants.
-
-However, this creates a bunch of drawbacks at the phy framework level:
-
- - phy_set_mode will now pass a submode of 0, all the time. This means
-   that the behaviour is undefined for all the modes not using the
-   submodes at the moment, and phy_interface_t seems to have the value
-   PHY_INTERFACE_MODE_NA matching 0, but I guess this could change in
-   the future (or the guarantee is not documented anywhere).
- - on a similar note, there's no documentation for which value to pass
-   to phy_set_mode_ext when used with something else than a
-   PHY_MODE_ETHERNET.
- - at the provider level, if you're supporting a phy that isn't using
-   the submodes, you have no way to filter out or reject any subnode,
-   since you have no idea what the "no submode" value is.
-
-I guess this can be addressed by:
-
-A) defining a generic phy framework wide unused / invalid phy submode,
-that wouldn't collide with the subnode values (such as -1?), and
-making phy_set_mode_ext use that.
-
-B) moving the phy submodes definition to the generic phy headers. This
-would allow to have a documented, obvious link between a mode and its
-subnodes, for all the actors involved (consumer, provider, and
-framework) without prior knowledge.
-
-C) Document what the submodes expectations are
-
-What do you think?
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---553g4on6q5epsg5z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXBetXwAKCRDj7w1vZxhR
-xeUGAQCR50AQDteX+9l+EKki80/VMKbK438CYL7PPVfr3Qu84AEAjDNV9Y+LVbAp
-XRC0B5OfKDq6wnecuDvlw4UyOlmKWAo=
-=hd40
------END PGP SIGNATURE-----
-
---553g4on6q5epsg5z--
