@@ -2,107 +2,279 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CB2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FCCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D49421836
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:17:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="G8Q6ZTt8"
+	by mail.kernel.org (Postfix) with ESMTP id 527EA20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731608AbeLQIR5 (ORCPT
+        id S1731626AbeLQIT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 03:17:57 -0500
-Received: from ozlabs.org ([203.11.71.1]:34693 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbeLQIR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 03:17:57 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43JDYG2v6nz9sBh;
-        Mon, 17 Dec 2018 19:17:54 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545034674;
-        bh=5Qbj8eSY6BK+H/tUVFNjmPy3YvUik7VE2iiT+3NDq68=;
-        h=Date:From:To:Cc:Subject:From;
-        b=G8Q6ZTt8Gf6xZnzwQFabOmMIw5OhBOABkgKED8LCFxfN8BBYgoxRPN2mYYsjVk/X5
-         Jj99gCugf5cHsWmbKjpQOX6eVV8xIC+cxO7ioBfD/+UO/wrM0kYFS8OmW3CEfeZSE4
-         1c1YEC4Tj0GMa4nbV7QLW2giDaTtGPxlqI0WMe6qy56qOproowtMsiyIniHvsfJd+e
-         L3ZqvRyZobq2+Y4e+LB6VD6rTkzCbvOKoTZqtuL93SMxwmUiISP2U2HLz050pl1prN
-         x9qwaSGf2zuAuixEz3B7Dnrp/jA65w7fVxrx6dSNARSAdgPX0HbHoJ20yfBRsZ2/Hn
-         SbBbSD0YQ76tA==
-Date:   Mon, 17 Dec 2018 19:17:53 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: linux-next: manual merge of the gpio tree with the arm-soc tree
-Message-ID: <20181217191753.172ca200@canb.auug.org.au>
+        Mon, 17 Dec 2018 03:19:29 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37725 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeLQIT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 03:19:28 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y11so8757600lfj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 00:19:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3lXYt53xelRTnHTBNNsnKx9aQZw0kiPnwIkL436al0U=;
+        b=sJh+jGV2T0nhZVZdo5O2i76LchidrOyTEI+ygKrJw+He9b6HZNsIkWh56qaQdJ9L65
+         kbZ3sLyCadtCo/tuZgNdyw22OfKJD/+wQQMvvlf5IW4KOTZAESCZYrEQ+Wb7YFCwo5nn
+         T32AOrpTsxeDHwp54ZB/CDr/OJrIGxJeV73Ab0T/c99BJw4v6hopq9q5KjQXlGfT+CMd
+         dlc5tw6IVvvuRW9B7c3oUj8+FaKfL8JHvlOx8nhQrYY4IGVn92OXeUhg/DNLTTqbk5bV
+         Imzq7bk9eoNGSFUDBf6m7Z/uUlJpyJ2615EWQzGwTVlsxPwe3g8NhIXqJzAJHcQnOrxK
+         dpKQ==
+X-Gm-Message-State: AA+aEWZ8QHVc+eP2tp44bDi0tM6iB8SL5SMIGy4jm4lXD4tSCQ7mL15v
+        5ajV/+y7xVwWuvVeeRVqvD9vGKpL
+X-Google-Smtp-Source: AFSGD/U4aNAgh2Igy70k6U89zniBzfkqzq3zx6kDaP2ZapGheJBPQUPQPe6IAld0u5bhF6WxvvAKIA==
+X-Received: by 2002:a19:1f54:: with SMTP id f81mr6422001lff.153.1545034765111;
+        Mon, 17 Dec 2018 00:19:25 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id o17sm2461951lff.77.2018.12.17.00.19.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 00:19:24 -0800 (PST)
+Date:   Mon, 17 Dec 2018 10:19:12 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181217081912.GA2477@localhost.localdomain>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
+ <20181205082251.GE31204@localhost.localdomain>
+ <20181205172701.GH6205@sirena.org.uk>
+ <20181207075829.GA24940@localhost.localdomain>
+ <20181207131418.GB6510@sirena.org.uk>
+ <20181214135819.GA2735@localhost.localdomain>
+ <20181214172619.GC6467@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CvY/7uXN8E.YOrGdwkkP4B1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214172619.GC6467@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CvY/7uXN8E.YOrGdwkkP4B1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Mark & All,
 
-Hi all,
+On Fri, Dec 14, 2018 at 05:26:19PM +0000, Mark Brown wrote:
+> On Fri, Dec 14, 2018 at 03:58:19PM +0200, Matti Vaittinen wrote:
+> > On Fri, Dec 07, 2018 at 01:14:18PM +0000, Mark Brown wrote:
+> 
+> > I could send an example on how the driver utilizing the original RFC
+> > interface would look like. I am starting to think it was not *that* bad
+> > after all...
+> 
+> That might help, yes.
+> 
+This is what I came up with. I think having the simple mapping arrays
+(bitX_offsets) and REGMAP_IRQ_MAIN_REG_OFFSET macro makes this
+not-so-bad :) I will also send an example on how this would look like
+with the RFC v2 interface.
 
-Today's linux-next merge of the gpio tree got a conflict in:
+#include <linux/i2c.h>
+#include <linux/interrupt.h>
+#include <linux/irq.h>
+#include <linux/mfd/core.h>
+#include <linux/mfd/rohm-bd70528.h>
+#include <linux/module.h>
+#include <linux/of_device.h>
+#include <linux/regmap.h>
+#include <linux/types.h>
 
-  arch/arm/mach-omap1/board-ams-delta.c
+static struct mfd_cell bd70528_mfd_cells[] = {
+	{ .name = "bd70528-pmic", },
+	{ .name = "bd70528-rtc", },
+	{ .name = "bd70528-gpio", },
+	{ .name = "bd70528-led", },
+	{ .name = "bd70528-power", },
+	{ .name = "bd70528-clk", },
+	{ .name = "bd70528-pwrkey", },
+};
 
-between commit:
+static const struct regmap_range bd70528_irq_reg_range = {
+	.range_min = BD70528_REG_INT_MAIN,
+	.range_max = BD70528_REG_INT_OP_FAIL,
+};
 
-  19a2668a8ae3 ("ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED d=
-evice")
+static struct regmap_access_table volatile_regs = {
+	.yes_ranges = &bd70528_irq_reg_range,
+	.n_yes_ranges = 1,
+};
 
-from the arm-soc tree and commit:
+static struct regmap_config bd70528_regmap = {
+	.reg_bits = 8,
+	.val_bits = 8,
+	.volatile_table = &volatile_regs,
+	.max_register = BD70528_MAX_REGISTER,
+	.cache_type = REGCACHE_RBTREE,
+};
+/* bit [0] - Shutdown register */
+unsigned int bit0_offsets[] = {0};
 
-  21abf103818a ("gpio: Pass a flag to gpiochip_request_own_desc()")
+/* bit [1] - Power failure register */
+unsigned int bit1_offsets[] = {1};
 
-from the gpio tree.
+/* bit [2] - VR FAULT register */
+unsigned int bit2_offsets[] = {2};
 
-I fixed it up (the former removed the code updated by the latter, so
-I used that) and can carry the fix as necessary. This is now fixed as
-far as linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+/* bit [3] - PMU register interrupts */
+unsigned int bit3_offsets[] = {3};
 
---=20
-Cheers,
-Stephen Rothwell
+/* bit [4] - Charger 1 and Charger 2 registers */
+unsigned int bit4_offsets[] = {4, 5};
 
---Sig_/CvY/7uXN8E.YOrGdwkkP4B1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+/* bit [5] - RTC register */
+unsigned int bit5_offsets[] = {6};
 
------BEGIN PGP SIGNATURE-----
+/* bit [6] - GPIO register */
+unsigned int bit6_offsets[] = {7};
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwXW7EACgkQAVBC80lX
-0GxrnAf9Hudx1lEWXTwWV/OlWQv+f6TR21Eart36sf/jj2GPbpXVNvDNKSN9f2HO
-Rhu6bU3St4uMWuKXAw+5W9F45A4gynKuHMrFZIu9XAlZpXCSschg16X83GOzuddf
-wStMikfOsGpXbnM0oXD4/z6CO8iTa42flOcomwMujvAomG/+EJ39XCwVGFuuw3pN
-u6wWuSrcDWqDjgzQTGjAJlkocOOgeJDutRAqLS/6Zf5hcML3QIIj8dt9yd6osWZf
-Vf97/GoZvjNVqeBJUPz0zxgvzJwj6GH+brvU8LjqOA1/Mc4ZZuXFY2mOyZGm2dy+
-79kihxZiRgSM6mT5QWa9l5mDkY6Abw==
-=nITP
------END PGP SIGNATURE-----
+/* bit [7] - Invalid operation register */
+unsigned int bit7_offsets[] = {8};
 
---Sig_/CvY/7uXN8E.YOrGdwkkP4B1--
+static struct regmap_irq_sub_irq_map bd70528_sub_irq_offsets[] = {
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit3_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit4_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit5_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit6_offsets),
+	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
+};
+
+static struct regmap_irq bd70528_irqs[] = {
+	REGMAP_IRQ_REG(BD70528_INT_LONGPUSH, 0, BD70528_INT_LONGPUSH_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_WDT, 0, BD70528_INT_WDT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_HWRESET, 0, BD70528_INT_HWRESET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_RSTB_FAULT, 0, BD70528_INT_RSTB_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_VBAT_UVLO, 0, BD70528_INT_VBAT_UVLO_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_TSD, 0, BD70528_INT_TSD_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_RSTIN, 0, BD70528_INT_RSTIN_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FAULT, 1, BD70528_INT_BUCK1_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FAULT, 1, BD70528_INT_BUCK2_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK3_FAULT, 1, BD70528_INT_BUCK3_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LDO1_FAULT, 1, BD70528_INT_LDO1_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LDO2_FAULT, 1, BD70528_INT_LDO2_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LDO3_FAULT, 1, BD70528_INT_LDO3_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LED1_FAULT, 1, BD70528_INT_LED1_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LED2_FAULT, 1, BD70528_INT_LED2_FAULT_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_OCP, 2, BD70528_INT_BUCK1_OCP_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_OCP, 2, BD70528_INT_BUCK2_OCP_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK3_OCP, 2, BD70528_INT_BUCK3_OCP_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LED1_OCP, 2, BD70528_INT_LED1_OCP_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LED2_OCP, 2, BD70528_INT_LED2_OCP_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FULLON, 2, BD70528_INT_BUCK1_FULLON_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FULLON, 2, BD70528_INT_BUCK2_FULLON_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_SHORTPUSH, 3, BD70528_INT_SHORTPUSH_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_AUTO_WAKEUP, 3, BD70528_INT_AUTO_WAKEUP_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_STATE_CHANGE, 3, BD70528_INT_STATE_CHANGE_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_RES, 4, BD70528_INT_BAT_OV_RES_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_DET, 4, BD70528_INT_BAT_OV_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DBAT_DET, 4, BD70528_INT_DBAT_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_RES, 4, BD70528_INT_BATTSD_COLD_RES_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_DET, 4, BD70528_INT_BATTSD_COLD_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_RES, 4, BD70528_INT_BATTSD_HOT_RES_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_DET, 4, BD70528_INT_BATTSD_HOT_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_CHG_TSD, 4, BD70528_INT_CHG_TSD_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BAT_RMV, 5, BD70528_INT_BAT_RMV_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BAT_DET, 5, BD70528_INT_BAT_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_RES, 5, BD70528_INT_DCIN2_OV_RES_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_DET, 5, BD70528_INT_DCIN2_OV_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_RMV, 5, BD70528_INT_DCIN2_RMV_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_DET, 5, BD70528_INT_DCIN2_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DCIN1_RMV, 5, BD70528_INT_DCIN1_RMV_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_DCIN1_DET, 5, BD70528_INT_DCIN1_DET_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_RTC_ALARM, 6, BD70528_INT_RTC_ALARM_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_ELPS_TIM, 6, BD70528_INT_ELPS_TIM_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_GPIO0, 7, BD70528_INT_GPIO0_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_GPIO1, 7, BD70528_INT_GPIO1_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_GPIO2, 7, BD70528_INT_GPIO2_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_GPIO3, 7, BD70528_INT_GPIO3_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_DVS_OPFAIL, 8, BD70528_INT_BUCK1_DVS_OPFAIL_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_DVS_OPFAIL, 8, BD70528_INT_BUCK2_DVS_OPFAIL_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_BUCK3_DVS_OPFAIL, 8, BD70528_INT_BUCK3_DVS_OPFAIL_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LED1_VOLT_OPFAIL, 8, BD70528_INT_LED1_VOLT_OPFAIL_MASK),
+	REGMAP_IRQ_REG(BD70528_INT_LED2_VOLT_OPFAIL, 8, BD70528_INT_LED2_VOLT_OPFAIL_MASK),
+};
+
+static struct regmap_irq_chip bd70528_irq_chip = {
+	.name = "bd70528_irq",
+	.main_status = BD70528_REG_INT_MAIN,
+	.irqs = &bd70528_irqs[0],
+	.num_irqs = ARRAY_SIZE(bd70528_irqs),
+	.status_base = BD70528_REG_INT_SHDN,
+	.mask_base = BD70528_REG_INT_SHDN_MASK,
+	.ack_base = BD70528_REG_INT_SHDN,
+	.init_ack_masked = true,
+	.num_regs = 9,
+	.num_main_regs = 1,
+	.sub_reg_offsets = &bd70528_sub_irq_offsets[0],
+	.num_main_status_bits = 8,
+	.irq_reg_stride = 1,
+};
+
+static int bd70528_i2c_probe(struct i2c_client *i2c,
+			    const struct i2c_device_id *id)
+{
+	struct bd70528 *bd70528;
+	struct regmap_irq_chip_data *irq_data;
+	int ret, i;
+
+	if (!i2c->irq) {
+		dev_err(&i2c->dev, "No IRQ configured\n");
+		return -EINVAL;
+	}
+	bd70528 = devm_kzalloc(&i2c->dev, sizeof(*bd70528), GFP_KERNEL);
+
+	if (!bd70528)
+		return -ENOMEM;
+
+	dev_set_drvdata(&i2c->dev, bd70528);
+
+	bd70528->regmap = devm_regmap_init_i2c(i2c, &bd70528_regmap);
+	if (IS_ERR(bd70528->regmap)) {
+		dev_err(&i2c->dev, "regmap initialization failed\n");
+		return PTR_ERR(bd70528->regmap);
+	}
+
+	ret = devm_regmap_add_irq_chip(&i2c->dev, bd70528->regmap,
+				       i2c->irq, IRQF_ONESHOT, 0,
+				       &bd70528_irq_chip, &irq_data);
+	if (ret) {
+		dev_err(&i2c->dev, "Failed to add irq_chip\n");
+		return ret;
+	}
+	else
+		pr_info("Registered %d irqs for chip\n",
+			bd70528_irq_chip.num_irqs);
+
+	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+				   bd70528_mfd_cells,
+				   ARRAY_SIZE(bd70528_mfd_cells), NULL, 0,
+				   regmap_irq_get_domain(irq_data));
+	if (ret)
+		dev_err(&i2c->dev, "Failed to create subdevices\n");
+
+	return ret;
+}
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
