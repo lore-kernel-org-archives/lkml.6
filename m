@@ -2,147 +2,138 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446F9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33980C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134B62133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:09:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7A4D2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:10:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxC5os3M"
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="TVZYntZi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733184AbeLQOJC (ORCPT
+        id S1733187AbeLQOKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:09:02 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44103 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727664AbeLQOJB (ORCPT
+        Mon, 17 Dec 2018 09:10:09 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:47070 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727583AbeLQOKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:09:01 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so6424838pfh.11;
-        Mon, 17 Dec 2018 06:09:00 -0800 (PST)
+        Mon, 17 Dec 2018 09:10:09 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l9so12375723wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 06:10:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9INxQF6ba+WhvjvlUupOU5hyjZrvqQnqOZkjDUpVdjg=;
-        b=WxC5os3McpR/wAfBbZki8xMmR7AXRcmmrgeE9RoTghG7ekbV9+oSfWN2fRiXq65rC6
-         ij3iI5TvroLzzHZHCocAwjc9wQ4pB7ZzEqU0D7c0hL3SunUP52Lav00fxbQb7m5WOzHW
-         kFzaMdqMEfsmVoNlpgURmx0vFwFoP/bLqKLTSFPm5nBLAJMPUkkC0pAODIHXz9F3wLjk
-         rG5Ak20nX4Hhjn0hWgjBMTkgNdpiMQuchZ/J4UfSt4lyVD5soPtb2InRD4ma3ujocvr/
-         CCID5EQbzsm5gTNfPcD/DTBQ4kENor0eLK6PeOwkUJnH2Q6XXeL9LXFPCW2SmefX9l33
-         Ty9A==
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4Vta0M/fQVRTlBNYE1kAewYSFkDr9n3kHJqgLj7geIk=;
+        b=TVZYntZimXn+8rpLKuR99wNFRZ3iV/ZM4F1BV0W0+VTyzzczUPkC5jRGRDALmfR0Yc
+         40HeZNI8iLEue0A+v4/w5bDvjoUuNufHeTxJ0F6qAI1kQCUV9TxoC1d1zheGBC91cgDl
+         7TzgOB0V7r1R5lf11y3/FN285VYcCbdzaDbcI2zJPSQsfQGUY0yoYHk3M6FAjPvRerY0
+         22aI1Up1BVrNXa6b3VXE1IRypw0wsALEAMEPk5e6n5YTjZ8y55zKXYQxaJ5Tl4i8vFf/
+         2jCnaGYPpFYdFWzDReHf8JGsH7PJBSsQe10Zg2bDfRgCecneOdkW+7Dgo20SzXc2nJpu
+         /95Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9INxQF6ba+WhvjvlUupOU5hyjZrvqQnqOZkjDUpVdjg=;
-        b=Rz8V0qIw0iGRjLBrUzwOROL+LniDIIfB9WOKwfRrf8mXM0v5W3ryPhSzZEFv7AOBem
-         bXNiQrLwSD6ZpYrtUCk0uFhCNyoShhKzGKo9e2O4hrFdlHP7m/cAYNE9akMgNh3zhdvJ
-         +y8tz4BZAj6o5gJdoCghi7yJA7b+PAQmx0ISdPe1d3qTen8Yr2fECWx8cbHJMQnOOklA
-         FPIEJ9x6AFGYOIJ44vhIEsiUzohnLOuxOIGXm9swtXii66Xh+5wCIj7Z01HkmN5C9XOU
-         aP9fy4jLOhE8rl3S8pSOTqYieiMblUtJ2AgNRzamoSmYcNGfHxNKH99Ch8kub+4PaQpM
-         nUdA==
-X-Gm-Message-State: AA+aEWaiIsLIbfECLJbviR+jYcIFqick49FEg8X4uv5DFFLibnujGsaU
-        HzhsAGNC5zCqkeLImjmyTiAXWdWjotIpOz907k0=
-X-Google-Smtp-Source: AFSGD/X0zLV7+9XbcX5OYMMX6JoAI2Z75kXzme+SHNhbFYfDNnLICVfwZSzhssFPSxlmIOVCdLJysMlBpUvUATK7ynQ=
-X-Received: by 2002:a63:6bc1:: with SMTP id g184mr12558929pgc.25.1545055740549;
- Mon, 17 Dec 2018 06:09:00 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4Vta0M/fQVRTlBNYE1kAewYSFkDr9n3kHJqgLj7geIk=;
+        b=RYwwsTJtdmguX+obU+/ZR6wJmK6whb8+GGus6hmLULFliLSZ82fMmQC5M4AHg3B2D1
+         8ytyV4payNZU7H+ncbgn4kUcPXs3RTDxbCx0pQOFC02OwfbGaqPnt3QVXwj1TzeDF0pF
+         7/6xL7eKYEHTySZnpB9EqNhGJaf17piVpyBDiZH7kJdGRuPvOCwum2CKsNeCrBHHTUTu
+         kQNKms0ruZWhptVQCO5VMUcQ4rjL/9XAc+NXU7+MwDxrhLHRe0/ZLbR6N/xg6gSV1bS8
+         1gwndqoRZzVVfnFX+Mv4gn4ioE/C5NL2G5gURRsU0vYX+YolpwlEtwR7yPZKSfQKfttu
+         T3kw==
+X-Gm-Message-State: AA+aEWY2SVJS+5OWrH7KCfb5tmnAWIPcLfUtmszGzLGZBWTDe4XnTyln
+        y/8fMRgtXQP4hs8ISTWEK0T1UA==
+X-Google-Smtp-Source: AFSGD/WGJYFWyZuGXd8rCUpKN/N76S4XsPJydfOnzW0OjhHd/FOJ6eccIlrVCZkhKLFU99tnOOrSXQ==
+X-Received: by 2002:a5d:5351:: with SMTP id t17mr10782496wrv.288.1545055807335;
+        Mon, 17 Dec 2018 06:10:07 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id f66sm13900556wmd.28.2018.12.17.06.10.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 06:10:06 -0800 (PST)
+Date:   Mon, 17 Dec 2018 15:02:33 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Dollar Chen <dollar.chen@wtmec.com>,
+        Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org
+Subject: Re: [PATCH v5 5/6] net: maclorawan: Implement maclorawan class module
+Message-ID: <20181217140233.GG2096@nanopsycho>
+References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
+ <20181216101858.9585-6-starnight@g.ncu.edu.tw>
 MIME-Version: 1.0
-References: <20181206073437.1995-1-Tianyu.Lan@microsoft.com> <eb059d1b-78c9-035d-d601-e397df292212@redhat.com>
-In-Reply-To: <eb059d1b-78c9-035d-d601-e397df292212@redhat.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Mon, 17 Dec 2018 22:08:49 +0800
-Message-ID: <CAOLK0pyv8a2ou3THn9h71BQT2ZXfaRQdzNjZAmMxzs8TYFnw=w@mail.gmail.com>
-Subject: Re: [PATCH V2 1/2] KVM/VMX: Check ept_pointer before flushing ept tlb
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kvm <kvm@vger.kernel.org>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181216101858.9585-6-starnight@g.ncu.edu.tw>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 7:00 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+Sun, Dec 16, 2018 at 11:18:59AM CET, starnight@g.ncu.edu.tw wrote:
+>LoRaWAN defined by LoRa Alliance(TM) is the MAC layer over LoRa devices.
 >
-> On 06/12/18 08:34, lantianyu1986@gmail.com wrote:
-> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> >
-> > This patch is to initialize ept_pointer to INVALID_PAGE and check it
-> > before flushing ept tlb. If ept_pointer is invalid, bypass the flush
-> > request.
-> >
-> > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+>This patch implements part of Class A end-devices SoftMAC defined in
+>LoRaWAN(TM) Specification Ver. 1.0.2:
+>1. End-device receive slot timing
+>2. Only single channel and single data rate for now
+>3. Unconfirmed data up/down message types
 >
-> Can you explain better *why* this patch is needed?
-Yes, hypercall still maybe called when ept_pointers aren't
-initialized. Such case happens
-during guest boot up when BP works at first and APs aren't activated.
-
->  Also, should vmx->ept_pointer be cleared at reset time, rather than vCPU creation?
+>On the other side, it defines the basic interface and operation
+>functions for compatible LoRa device drivers.
 >
-
-Yes, that make sense. Thanks for suggestion.
-
-> Thanks,
+>Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+>---
+>V2:
+>- Split the LoRaWAN class module patch in V1 into LoRaWAN socket and
+>  LoRaWAN Soft MAC modules
+>- Modify for Big/Little-Endian
+>- Use SPDX license identifiers
 >
-> Paolo
+>V3:
+>- Remove the decoration word - inline of the functions
+>- Order local variables from longest to shortest line in the functions
+>- Change the calling mac_cb function to lrw_get_mac_cb macro
 >
-> > ---
-> >  arch/x86/kvm/vmx.c | 13 +++++++++++--
-> >  1 file changed, 11 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> > index c379d0bfdcba..6577ec8cbb0f 100644
-> > --- a/arch/x86/kvm/vmx.c
-> > +++ b/arch/x86/kvm/vmx.c
-> > @@ -1582,11 +1582,18 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
-> >       /*
-> >        * FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE hypercall needs the address of the
-> >        * base of EPT PML4 table, strip off EPT configuration information.
-> > +      * If ept_pointer is invalid pointer, bypass the flush request.
-> >        */
-> >       if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
-> > -             kvm_for_each_vcpu(i, vcpu, kvm)
-> > +             kvm_for_each_vcpu(i, vcpu, kvm) {
-> > +                     u64 ept_pointer = to_vmx(vcpu)->ept_pointer;
-> > +
-> > +                     if (!VALID_PAGE(ept_pointer))
-> > +                             continue;
-> > +
-> >                       ret |= hyperv_flush_guest_mapping(
-> > -                             to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer & PAGE_MASK);
-> > +                             ept_pointer & PAGE_MASK);
-> > +             }
-> >       } else {
-> >               ret = hyperv_flush_guest_mapping(
-> >                               to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
-> > @@ -11614,6 +11621,8 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
-> >       vmx->pi_desc.nv = POSTED_INTR_VECTOR;
-> >       vmx->pi_desc.sn = 1;
-> >
-> > +     vmx->ept_pointer = INVALID_PAGE;
-> > +
-> >       return &vmx->vcpu;
-> >
-> >  free_vmcs:
-> >
+>V4:
+>- Fix the delay period between RX window#1 and window#2
+>- Fix by coding style report from scripts/checkpatch.pl
 >
+>V5:
+>- Initial rx_skb_list when it is allocated with LoRa hardware
+>- Check the sk_buff's data length before access it
+>- Deal FPort field and decrypt payload in lrw_parse_frame function
+>- Drop the recieved frame if parse failed
+>- Fix the bug which passes wrong skb properties from maclorawan to lorawan module
+>
+> net/maclorawan/Kconfig  |  14 +
+> net/maclorawan/Makefile |   2 +
+> net/maclorawan/mac.c    | 555 ++++++++++++++++++++++++++++++++++++
+> net/maclorawan/main.c   | 606 ++++++++++++++++++++++++++++++++++++++++
+> 4 files changed, 1177 insertions(+)
+> create mode 100644 net/maclorawan/Kconfig
+> create mode 100644 net/maclorawan/Makefile
+> create mode 100644 net/maclorawan/mac.c
+> create mode 100644 net/maclorawan/main.c
 
 
--- 
-Best regards
-Tianyu Lan
+I don't get it. In patch "Add LoRaWAN API declaration for LoRa devices"
+you add headers for "API" and here you implement functions. That is just
+weird. Does it mean you can have other implementations?
+
+
+Also, you don't really have any user of this API in the set. Please
+introduce at least 1 driver, preferably more (I see that Andreas has
+multiple ones in his patchset). You cannot push kernel infrastructure
+without kernel user.
