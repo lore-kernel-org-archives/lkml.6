@@ -2,229 +2,126 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A19C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E91C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C110D20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 462E420672
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:13:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b5ZcJ2kD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731710AbeLQIJF (ORCPT
+        id S1726715AbeLQINT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 03:09:05 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52530 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726481AbeLQIJE (ORCPT
+        Mon, 17 Dec 2018 03:13:19 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:57234 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeLQINS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 03:09:04 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBH83XE7136786
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 03:09:03 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pe7f1hkbc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 03:09:03 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sathnaga@linux.vnet.ibm.com>;
-        Mon, 17 Dec 2018 08:09:00 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Dec 2018 08:08:54 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBH88rBq42336288
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Dec 2018 08:08:53 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6D74A4054;
-        Mon, 17 Dec 2018 08:08:53 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 67F40A405C;
-        Mon, 17 Dec 2018 08:08:49 +0000 (GMT)
-Received: from sathnaga86.in.ibm.com (unknown [9.193.110.82])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 17 Dec 2018 08:08:49 +0000 (GMT)
-Date:   Mon, 17 Dec 2018 13:38:46 +0530
-From:   Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Breno Leitao <leitao@debian.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-arch@vger.kernel.org, y2038@lists.linaro.org,
-        linux-kernel@vger.kernel.org, marcin.juszkiewicz@linaro.org,
-        deepa.kernel@gmail.com
-Subject: Re: [PATCH v5 0/5] powerpc: system call table generation support
-Reply-To: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-References: <1544691770-8938-1-git-send-email-firoz.khan@linaro.org>
+        Mon, 17 Dec 2018 03:13:18 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBH8CsXW017358;
+        Mon, 17 Dec 2018 02:12:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1545034374;
+        bh=kA3nlrd108oXtUBsINdK5kdNu3J3i+MpG02lnid5R5U=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=b5ZcJ2kDUwFx4qsehDup858pQszB8CcqhvdPUtcl42L4jbS2CgcXX4iEaMdpaTqXf
+         7OT0RV7TNLl31AaEzXX6JrLMcr1QT5XaWDO6ajhhwyroaolBoLnKdX7RTf4/RvIJv3
+         CGmdAE+e9iTwrV2GhGP3z/oGNIx2nAFFle0r1yOc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBH8Csx9020861
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Dec 2018 02:12:54 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 17
+ Dec 2018 02:12:54 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 17 Dec 2018 02:12:54 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBH8Cotm006498;
+        Mon, 17 Dec 2018 02:12:51 -0600
+Subject: Re: [PATCH v3 0/3] Add driver Support for MMCSD on AM654x
+To:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <adrian.hunter@intel.com>,
+        <michal.simek@xilinx.com>, <kishon@ti.com>
+References: <20181210183507.9617-1-faiz_abbas@ti.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <378ace78-7345-8875-f3e7-7cddcaf5e4bc@ti.com>
+Date:   Mon, 17 Dec 2018 13:45:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544691770-8938-1-git-send-email-firoz.khan@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 18121708-0028-0000-0000-0000032B911E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121708-0029-0000-0000-000023E7E6ED
-Message-Id: <20181217080846.GA28424@sathnaga86.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812170077
+In-Reply-To: <20181210183507.9617-1-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Firoz,
+Hi,
 
-On Thu, Dec 13, 2018 at 02:32:45PM +0530, Firoz Khan wrote:
-> The purpose of this patch series is, we can easily
-> add/modify/delete system call table support by cha-
-> nging entry in syscall.tbl file instead of manually
-> changing many files. The other goal is to unify the 
-> system call table generation support implementation 
-> across all the architectures. 
+On 11/12/18 12:05 AM, Faiz Abbas wrote:
+> The following patches add driver support for MMCSD on TI's AM654
+> platforms.
 > 
-> The system call tables are in different format in 
-> all architecture. It will be difficult to manually
-> add, modify or delete the system calls in the resp-
-> ective files manually. To make it easy by keeping a 
-> script and which'll generate uapi header file and 
-> syscall table file.
+> Previously I had added the support to sdhci-of-arasan driver with
+> a separate phy driver[1]. Since then it has turned out that tuning
+> operation (for HS200, HS400 and SDR104 speed modes) will require
+> configuration of phy registers. This completely breaks the model of
+> the sdhci-of-arasan driver which relies on a separate driver to
+> configure the phy register space.
 > 
-> syscall.tbl contains the list of available system 
-> calls along with system call number and correspond-
-> ing entry point. Add a new system call in this arch-
-> itecture will be possible by adding new entry in 
-> the syscall.tbl file.
+> Because of this, I am creating a new driver with both the sdhci and
+> phy register spaces. This helps me use the phy registers in a future
+> patch that adds tuning support.
 > 
-> Adding a new table entry consisting of:
->         - System call number.
->         - ABI.
->         - System call name.
->         - Entry point name.
-> 	- Compat entry name, if required.
-> 	- spu entry name, if required.
+> DT patches will be posted in a separate series.
 > 
-> ARM, s390 and x86 architecuture does exist the sim-
-> ilar support. I leverage their implementation to 
-> come up with a generic solution.
+> Changes in v3:
+>  1. Removed reference to clk_ahb as its not being used.
+>  2. Added comment for pm_runtime being used for enabling
+>     clocks.
 > 
-> I have done the same support for work for alpha, 
-> ia64, m68k, microblaze, mips, parisc, sh, sparc, 
-> and xtensa. Below mentioned git repository contains
-> more details about the workflow.
+> Changes in v2:
+>  1. Reset OTAP delay back to default value in init.
+>  2. Improved patch description for patch 2.
+>  3. Minor style fixes.
 > 
-> https://github.com/frzkhn/system_call_table_generator/
+> [1] driver and phy patches posted before
+>     https://patchwork.kernel.org/project/linux-mmc/list/?series=26623
 > 
-> Finally, this is the ground work to solve the Y2038
-> issue. We need to add two dozen of system calls to 
-> solve Y2038 issue. So this patch series will help to
-> add new system calls easily by adding new entry in the
-> syscall.tbl.
+> Faiz Abbas (3):
+>   dt-bindings: mmc: sdhci-am654: Document bindings for the host
+>     controllers on TI's AM654 SOCs
+>   dt-bindings: mmc: sdhci-of-arasan: Add deprecated message for am65
+>   mmc: sdhci_am654: Add Initial Support for AM654 SDHCI driver
 > 
-> Changes since v4:
->  - DOTSYM macro removed for ppc32, which was causing
->    the compilation error.
-> 
-> Changes since v3:
->  - split compat syscall table out from native table.
->  - modified the script to add new line in the generated
->    file.
-> 
-> Changes since v2:
->  - modified/optimized the syscall.tbl to avoid duplicate
->    for the spu entries.
->  - updated the syscalltbl.sh to meet the above point.
-> 
-> Changes since v1:
->  - optimized/updated the syscall table generation 
->    scripts.
->  - fixed all mixed indentation issues in syscall.tbl.
->  - added "comments" in syscall_*.tbl.
->  - changed from generic-y to generated-y in Kbuild.
-> 
-> Firoz Khan (5):
->   powerpc: add __NR_syscalls along with NR_syscalls
->   powerpc: move macro definition from asm/systbl.h
->   powerpc: add system call table generation support
->   powerpc: split compat syscall table out from native table
->   powerpc: generate uapi header and system call table files
+>  .../devicetree/bindings/mmc/arasan,sdhci.txt  |   4 +
+>  .../devicetree/bindings/mmc/sdhci-am654.txt   |  37 ++
+>  drivers/mmc/host/Kconfig                      |  12 +
+>  drivers/mmc/host/Makefile                     |   1 +
+>  drivers/mmc/host/sdhci-of-arasan.c            |  46 ---
+>  drivers/mmc/host/sdhci_am654.c                | 374 ++++++++++++++++++
+>  6 files changed, 428 insertions(+), 46 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-am654.txt
+>  create mode 100644 drivers/mmc/host/sdhci_am654.c
 
-Tried to apply on linus "master" and linuxppc-dev(https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git) "merge" branch,
-both failed to apply series.
 
-# git am mbox
-Applying: powerpc: add __NR_syscalls along with NR_syscalls
-Applying: powerpc: move macro definition from asm/systbl.h
-Applying: powerpc: add system call table generation support
-Applying: powerpc: split compat syscall table out from native table
-Applying: powerpc: generate uapi header and system call table files
-error: patch failed: arch/powerpc/include/uapi/asm/Kbuild:1
-error: arch/powerpc/include/uapi/asm/Kbuild: patch does not apply
-Patch failed at 0005 powerpc: generate uapi header and system call table files
-Use 'git am --show-current-patch' to see the failed patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
-
-Then, tried with linuxppc-dev(https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git) "next" branch,
-patch got applied, compiled with ppc64le_defconfig and booted on IBM Power8 box.
-
-# uname -r
-4.20.0-rc2-gdd2690d2c
-
-Looks like patch series needs a rebase against the latest kernel versions.
-
+Gentle ping.
 
 Thanks,
--Satheesh.
-
-> 
->  arch/powerpc/Makefile                       |   3 +
->  arch/powerpc/include/asm/Kbuild             |   4 +
->  arch/powerpc/include/asm/syscall.h          |   3 +-
->  arch/powerpc/include/asm/systbl.h           | 396 --------------------------
->  arch/powerpc/include/asm/unistd.h           |   3 +-
->  arch/powerpc/include/uapi/asm/Kbuild        |   2 +
->  arch/powerpc/include/uapi/asm/unistd.h      | 389 +------------------------
->  arch/powerpc/kernel/Makefile                |  10 -
->  arch/powerpc/kernel/entry_64.S              |   7 +-
->  arch/powerpc/kernel/syscalls/Makefile       |  63 ++++
->  arch/powerpc/kernel/syscalls/syscall.tbl    | 427 ++++++++++++++++++++++++++++
->  arch/powerpc/kernel/syscalls/syscallhdr.sh  |  37 +++
->  arch/powerpc/kernel/syscalls/syscalltbl.sh  |  36 +++
->  arch/powerpc/kernel/systbl.S                |  40 ++-
->  arch/powerpc/kernel/systbl_chk.c            |  60 ----
->  arch/powerpc/kernel/vdso.c                  |   7 +-
->  arch/powerpc/platforms/cell/spu_callbacks.c |  17 +-
->  17 files changed, 606 insertions(+), 898 deletions(-)
->  delete mode 100644 arch/powerpc/include/asm/systbl.h
->  create mode 100644 arch/powerpc/kernel/syscalls/Makefile
->  create mode 100644 arch/powerpc/kernel/syscalls/syscall.tbl
->  create mode 100644 arch/powerpc/kernel/syscalls/syscallhdr.sh
->  create mode 100644 arch/powerpc/kernel/syscalls/syscalltbl.sh
->  delete mode 100644 arch/powerpc/kernel/systbl_chk.c
-> 
-> -- 
-> 1.9.1
-> 
+Faiz
 
