@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8741DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 05:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B40EFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 05:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51642217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 05:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C764217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 05:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545024555;
-	bh=ZoNaJtyPEsEUQ8dr2j1Tf7RvncxmAuS4c8L1eUOgqzE=;
+	s=default; t=1545024684;
+	bh=LLaTC+uYA+88osm+6wwbIKQx4TDGnaLpdUEC+H3TwL8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kHrHWS1SmZc4tQdmBwToskcgM4Yr6pKhp5aw1Hp9ufori1Bve6tkCC2gtjZ0a/pJw
-	 53fxZjrRGRzVL/2Z7WCHgABlHAoexg/F/kyVceUKynrpAasL69th10IZugXFtf9QyW
-	 6qE2mgb8EKxhftero/5W1LaYbcdsb115umVoI+m4=
+	b=idnip6yp/ndupSaff6JvOTDUpJuaG7dXRr6M8DH6i0VKejaUkcaw8ACi2dhFwNOF3
+	 w6jI1rJGxsVR7GWb2o8WAmRyJcScc5xT34147V5IpTwUbAjkieN5m/DXaX58WqG/lp
+	 lnWDrOu9YnFnCfPu2hgFCEKYXiveUvWmMpRIYXcI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbeLQF3O (ORCPT
+        id S1731244AbeLQFbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 00:29:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54432 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 00:31:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbeLQF3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 00:29:13 -0500
+        id S1726318AbeLQFbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 00:31:23 -0500
 Received: from localhost (unknown [171.61.92.201])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 595EE2084A;
-        Mon, 17 Dec 2018 05:29:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C13C92084A;
+        Mon, 17 Dec 2018 05:31:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545024553;
-        bh=ZoNaJtyPEsEUQ8dr2j1Tf7RvncxmAuS4c8L1eUOgqzE=;
+        s=default; t=1545024682;
+        bh=LLaTC+uYA+88osm+6wwbIKQx4TDGnaLpdUEC+H3TwL8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mF10uAYYUdxlK6hBICEv/zmhdu0uelfGYAswpAJ3fqKwtkL2N+zmkIz/GaOKpw2Ee
-         wJlX4JizMsT7UN56H7StGYtzqo/Wd98EdgLVsEy6U051XXupkvSxrJDcCXNU86xwlI
-         ydI7lpA7F1z4leATW0ThCd6N7rHqdE6pFT1jF3oY=
-Date:   Mon, 17 Dec 2018 10:59:03 +0530
+        b=Sm3ai4/IqHScUP7+qW4PdLtoYTlVQpO7W+SI/5KiRnLg3C97KRwkFn6RfldAm4jia
+         X0K0Bk030usx4oQRpC+FhZLwAX95NgtsYYZ+HQTPzMTcjxMXhyfyqx1W1cqZ/Rl5i+
+         lh8PKwiNo75c3ttsbdRdBcvNhnFDdyYPXAwNaD9Q=
+Date:   Mon, 17 Dec 2018 11:01:13 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -49,22 +49,22 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: rcar-dmac: Document R8A774C0 bindings
-Message-ID: <20181217052903.GA2472@vkoul-mobl>
-References: <1544732263-5859-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] dt-bindings: dmaengine: usb-dmac: Add binding for
+ r8a774c0
+Message-ID: <20181217053113.GB2472@vkoul-mobl>
+References: <1544732491-6821-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544732263-5859-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732491-6821-1-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-12-18, 20:17, Fabrizio Castro wrote:
-> Renesas' RZ/G2E (R8A774C0) SoC has DMA controllers compatible
-> with this driver, therefore document RZ/G2E specific bindings.
+On 13-12-18, 20:21, Fabrizio Castro wrote:
+> This patch adds bindings for the r8a774c0 (RZ/G2E).
 
 Applied, thanks
 
