@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9020C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A689C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE0720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:31:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC13820874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="QBfggPIP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="Ii4gsfqz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388923AbeLQVbP (ORCPT
+        id S2388682AbeLQVbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:31:15 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:49265 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388444AbeLQVbL (ORCPT
+        Mon, 17 Dec 2018 16:31:12 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:54419 "EHLO
+        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387725AbeLQVbH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:31:11 -0500
+        Mon, 17 Dec 2018 16:31:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=7+noQaNmQZLgXX6FXMj7bI71bIkfNB8eGdzDmevccQA=; b=QBfggPIPeZEf
-        jCvDWyLCPJXf1U0ORRRpoEMDEim1gpXzXy4HwrjzBOkcwjjVks9F/Kz2ZzStagB3sX+84YneFQkSC
-        cvLwZxLTkQt7Fn9qRy5+nr6O2tzN5fiSvkQ2htZJPAL8Cbs5i6hxwxTs0gj2ITi7g9Vwh8crp/XxW
-        Mbrj70HI5AP/kr9Y0XDH90cYX+LX9CHxH6HG2Kl1mFStrAhPFioLsGV2uiEsP7xTbnmuUuaYEDgfm
-        7Iiu0K3SHrcaMAVzlCNCuecZ+PhcdcbzY+ZSQqgnSwEJrkgzQMgTpp8xspRqz12hYn6TkrtuyE+Qt
-        j2Rw7fkzLSZDOb1h9L/Zrg==;
+        content-type; bh=J0+qUM2Ns8avFk3mJGUr7MMoXSTfHhfzWu4S4aLyKqg=; b=Ii4gsfqzrP8j
+        SK4Tbvl86T6lJdJUBWrrbDU+nAhHmnSCooN5LTxAdzxInLsDqVNuIhDgPRD4Vk65bCoXWbIOiBhxu
+        4eFaRWH2QzTMsnNQLWn0EtLhdmSEqIGmT5GLieFmaXN2oUACdV8HxZVeSBb/JJWyJhrOePD8vozPq
+        8dRUsdOjy3Hx5ll5nbXx+xn+k7B5A/r16dNxSO1tN9r8iM4bN3qP6Fpg3GPYPfqIY62NTInj9kV7t
+        sfcw0+fKzffmfQspk6ftnKJ2t1V8iitcr0nf5wE3v1OROnmwR87i1ziFFQ8eYCTKKae+r/s2FDuQ5
+        ydTKkosDAmsDOpf2AvHg1A==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1gZ0Tc-0001QL-Ff; Mon, 17 Dec 2018 22:31:00 +0100
+        id 1gZ0TU-0003Ce-Ha; Mon, 17 Dec 2018 22:30:53 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 66E1BC0346;
-        Mon, 17 Dec 2018 22:30:58 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 9B415C065E;
+        Mon, 17 Dec 2018 22:30:41 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     peterz@infradead.org
 Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v5 11/15] locking/lockdep: Check data structure consistency
-Date:   Mon, 17 Dec 2018 13:29:58 -0800
-Message-Id: <20181217213002.73776-12-bvanassche@acm.org>
+Subject: [PATCH v5 03/15] locking/lockdep: Reorder struct lock_class members
+Date:   Mon, 17 Dec 2018 13:29:50 -0800
+Message-Id: <20181217213002.73776-4-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
 In-Reply-To: <20181217213002.73776-1-bvanassche@acm.org>
 References: <20181217213002.73776-1-bvanassche@acm.org>
@@ -59,251 +59,74 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00227777730386)
+X-SpamExperts-Outgoing-Evidence: Combined (0.02)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5nnnJMAvAlsDvXB+0xldbeZ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5tSyPtn/+3tnghpW31raVvN602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
  YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORrosWevNWqDqm+1n1tl
- FjrWSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORpSWoiXTcI5BmNCK4XB
+ bJQySNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
  CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
  VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
- Pj+OUYZX3/3Z86X+I1ED1LLv7p/g4HOOdbYb9IXfYGRpVS/0hA4Mwp9kB6JZdl+SJy+nWImyKEy/
- zJE11ZjKQFiKV8EwnkodMjMm/D2rEPnNAuCCnt9B91Ax/uigYcgpQGDKFCrOdd8gr/U0flMcy2Vi
- /IcBgY4aVBKUAPQbBk8nfWT8Lcjyyn9ZSA9YgSwQmLSJwsFnO3lUxpF8dVvwCXY/4mE1q/c/E53d
- gi3vLmcjfrrMypRHn/+vy/sTHEfmnJs0O1QKiWxIq33gjuiJeAJddvhTsq54X1KrFIDnIhhlHDLh
- vRwgYpikjrjEsQHYqzPksYepQjQSeP/rn+UB/EmrduGPxHj/dKsQ+WcgzL7pTOYRE2yEvlBrMyfp
- YuyanAZpMXssfrVwLrD8rqLg0SqQCDr4y/2akvhmaSXCDcpWITXxlFisQvd2QoDZWx6iHemR9Ips
- UzzYhBKQrXFod+WvUUP1Uys1SCu8wQmWlqgUhZKbKdwa/OuO5TcDeKjrEmYPn2IVWRtfdRHps2br
- TOkutpvyrdmtvbYO9ASW9x0dzW2b+IEXgSV5FVT0nNNOs1IDBtijAxf8XG910biZEcomWehz4u8s
- zDg6HYuTCyYgL61SIkBTYSiCBqrB4vMmHpjmx6wTDBzk2EPy497nssgnoMkIb3rMdj8luXC7km26
- QtXP9s02LA==
+ Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
+ f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
+ U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZBFOs
+ w16bJ4PR1Nj8OVOE2mf90rviAynYkcSyRWaJR5GqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
+ LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
+ AQh13vqug5h3DxwyTQ1hRzjl1uZZSDowqxdj7AxwuSNFhP+lqGuwccyjEZIAiDKO1d3jsySf+J0s
+ zc1uD9pAwuLhqtxw5exj8Aw7fqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
+ VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
+ MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
 X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Debugging lockdep data structure inconsistencies is challenging. Add
-disabled code that verifies data structure consistency at runtime.
+This patch does not change any functionality but makes the patch that
+frees lock classes that are no longer in use easier to read.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/locking/lockdep.c | 183 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 183 insertions(+)
+ include/linux/lockdep.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 3a63142d4764..d411660572e1 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -74,6 +74,8 @@ module_param(lock_stat, int, 0644);
- #define lock_stat 0
- #endif
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 71caa1118f4c..b5e6bfe0ae4a 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -76,6 +76,13 @@ struct lock_class {
+ 	 */
+ 	struct list_head		lock_entry;
  
-+static bool check_data_structure_consistency;
++	/*
++	 * These fields represent a directed graph of lock dependencies,
++	 * to every node we attach a list of "forward" and a list of
++	 * "backward" graph nodes.
++	 */
++	struct list_head		locks_after, locks_before;
 +
- /*
-  * lockdep_lock: protects the lockdep graph, the hashes and the
-  *               class/list/hash allocators.
-@@ -760,6 +762,185 @@ static bool assign_lock_key(struct lockdep_map *lock)
- 	return true;
- }
+ 	struct lockdep_subclass_key	*key;
+ 	unsigned int			subclass;
+ 	unsigned int			dep_gen_id;
+@@ -86,13 +93,6 @@ struct lock_class {
+ 	unsigned long			usage_mask;
+ 	struct stack_trace		usage_traces[XXX_LOCK_USAGE_STATES];
  
-+/* Check whether element @e occurs in list @h */
-+static bool in_list(struct list_head *e, struct list_head *h)
-+{
-+	struct list_head *f;
-+
-+	list_for_each(f, h) {
-+		if (e == f)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/*
-+ * Check whether entry @e occurs in any of the locks_after or locks_before
-+ * lists.
-+ */
-+static bool in_any_class_list(struct list_head *e)
-+{
-+	struct lock_class *class;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(lock_classes); i++) {
-+		class = &lock_classes[i];
-+		if (in_list(e, &class->locks_after) ||
-+		    in_list(e, &class->locks_before))
-+			return true;
-+	}
-+	return false;
-+}
-+
-+static bool class_lock_list_valid(struct lock_class *c, struct list_head *h)
-+{
-+	struct lock_list *e;
-+
-+	list_for_each_entry(e, h, entry) {
-+		if (e->links_to != c) {
-+			printk(KERN_INFO "class %s: mismatch for lock entry %ld; class %s <> %s",
-+			       c->name ? : "(?)",
-+			       (unsigned long)(e - list_entries),
-+			       e->links_to && e->links_to->name ?
-+			       e->links_to->name : "(?)",
-+			       e->class && e->class->name ? e->class->name :
-+			       "(?)");
-+			return false;
-+		}
-+	}
-+	return true;
-+}
-+
-+static u16 chain_hlocks[];
-+
-+static bool check_lock_chain_key(struct lock_chain *chain)
-+{
-+#ifdef CONFIG_PROVE_LOCKING
-+	u64 chain_key = 0;
-+	int i;
-+
-+	for (i = chain->base; i < chain->base + chain->depth; i++)
-+		chain_key = iterate_chain_key(chain_key, chain_hlocks[i] + 1);
-+	/*
-+	 * The 'unsigned long long' casts avoid that a compiler warning
-+	 * is reported when building tools/lib/lockdep.
-+	 */
-+	if (chain->chain_key != chain_key)
-+		printk(KERN_INFO "chain %lld: key %#llx <> %#llx\n",
-+		       (unsigned long long)(chain - lock_chains),
-+		       (unsigned long long)chain->chain_key,
-+		       (unsigned long long)chain_key);
-+	return chain->chain_key == chain_key;
-+#else
-+	return true;
-+#endif
-+}
-+
-+static bool list_entry_being_freed(int list_entry_idx)
-+{
-+	struct pending_free *pf;
-+	int i;
-+
-+	for (i = 0, pf = pending_free; i < ARRAY_SIZE(pending_free);
-+	     i++, pf++)
-+		if (test_bit(list_entry_idx, pf->list_entries_being_freed))
-+			return true;
-+
-+	return false;
-+}
-+
-+static bool in_any_zapped_class_list(struct lock_class *class)
-+{
-+	struct pending_free *pf;
-+	int i;
-+
-+	for (i = 0, pf = pending_free; i < ARRAY_SIZE(pending_free);
-+	     i++, pf++)
-+		if (in_list(&class->lock_entry, &pf->zapped_classes))
-+			return true;
-+
-+	return false;
-+}
-+
-+static bool check_data_structures(void)
-+{
-+	struct lock_class *class;
-+	struct lock_chain *chain;
-+	struct hlist_head *head;
-+	struct lock_list *e;
-+	int i;
-+
-+	/* Check whether all classes occur in a lock list. */
-+	for (i = 0; i < ARRAY_SIZE(lock_classes); i++) {
-+		class = &lock_classes[i];
-+		if (!in_list(&class->lock_entry, &all_lock_classes) &&
-+		    !in_list(&class->lock_entry, &free_lock_classes) &&
-+		    !in_any_zapped_class_list(class)) {
-+			printk(KERN_INFO "class %px/%s is not in any class list\n",
-+			       class, class->name ? : "(?)");
-+			return false;
-+			return false;
-+		}
-+	}
-+
-+	/* Check whether all classes have valid lock lists. */
-+	for (i = 0; i < ARRAY_SIZE(lock_classes); i++) {
-+		class = &lock_classes[i];
-+		if (!class_lock_list_valid(class, &class->locks_before))
-+			return false;
-+		if (!class_lock_list_valid(class, &class->locks_after))
-+			return false;
-+	}
-+
-+	/* Check the chain_key of all lock chains. */
-+	for (i = 0; i < ARRAY_SIZE(chainhash_table); i++) {
-+		head = chainhash_table + i;
-+		hlist_for_each_entry_rcu(chain, head, entry) {
-+			if (!check_lock_chain_key(chain))
-+				return false;
-+		}
-+	}
-+
-+	/*
-+	 * Check whether all list entries that are in use occur in a class
-+	 * lock list.
-+	 */
-+	for_each_set_bit(i, list_entries_in_use, ARRAY_SIZE(list_entries)) {
-+		if (list_entry_being_freed(i))
-+			continue;
-+		e = list_entries + i;
-+		if (!in_any_class_list(&e->entry)) {
-+			printk(KERN_INFO "list entry %d is not in any class list; class %s <> %s\n",
-+			       (unsigned int)(e - list_entries),
-+			       e->class->name ? : "(?)",
-+			       e->links_to->name ? : "(?)");
-+			return false;
-+		}
-+	}
-+
-+	/*
-+	 * Check whether all list entries that are not in use do not occur in
-+	 * a class lock list.
-+	 */
-+	for_each_clear_bit(i, list_entries_in_use, ARRAY_SIZE(list_entries)) {
-+		if (WARN_ON_ONCE(list_entry_being_freed(i)))
-+			return false;
-+		e = list_entries + i;
-+		if (in_any_class_list(&e->entry)) {
-+			printk(KERN_INFO "list entry %d occurs in a class list; class %s <> %s\n",
-+			       (unsigned int)(e - list_entries),
-+			       e->class && e->class->name ? e->class->name :
-+			       "(?)",
-+			       e->links_to && e->links_to->name ?
-+			       e->links_to->name : "(?)");
-+			return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
- /*
-  * Initialize the lock_classes[] array elements, the free_lock_classes list
-  * and also the pending_free[] array.
-@@ -4371,6 +4552,8 @@ static void free_zapped_classes(struct rcu_head *ch)
- 	if (!graph_lock())
- 		goto restore_irqs;
- 	pf->scheduled = false;
-+	if (check_data_structure_consistency)
-+		WARN_ON_ONCE(!check_data_structures());
- 	list_for_each_entry(class, &pf->zapped_classes, lock_entry) {
- 		reinit_class(class);
- 	}
+-	/*
+-	 * These fields represent a directed graph of lock dependencies,
+-	 * to every node we attach a list of "forward" and a list of
+-	 * "backward" graph nodes.
+-	 */
+-	struct list_head		locks_after, locks_before;
+-
+ 	/*
+ 	 * Generation counter, when doing certain classes of graph walking,
+ 	 * to ensure that we check one node only once:
 -- 
 2.20.0.405.gbc1bbc6f85-goog
 
