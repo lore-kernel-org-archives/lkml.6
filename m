@@ -3,112 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E978C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16029C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F912133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4DDC214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389104AbeLQSmF (ORCPT
+        id S2389022AbeLQSm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:42:05 -0500
-Received: from mga04.intel.com ([192.55.52.120]:16328 "EHLO mga04.intel.com"
+        Mon, 17 Dec 2018 13:42:26 -0500
+Received: from mga12.intel.com ([192.55.52.136]:42808 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbeLQSmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:42:04 -0500
+        id S1727031AbeLQSm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:42:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:42:04 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:42:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="119044476"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by orsmga002.jf.intel.com with ESMTP; 17 Dec 2018 10:42:04 -0800
-To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, dave.hansen@intel.com, arjan@linux.intel.com,
-        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-References: <20181216185021.16912-1-aubrey.li@intel.com>
- <20181216185021.16912-3-aubrey.li@intel.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
- dvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
-Subject: Re: [PATCH v5 3/3] Documentation/filesystems/proc.txt: add
- AVX512_elapsed_ms
-Message-ID: <18806fca-6fb3-765c-e24f-d714fe215ea8@linux.intel.com>
-Date:   Mon, 17 Dec 2018 10:42:03 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181216185021.16912-3-aubrey.li@intel.com>
-Content-Type: text/plain; charset=utf-8
+   d="scan'208";a="284238657"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2018 10:42:25 -0800
+Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 17 Dec 2018 10:42:24 -0800
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.59]) by
+ ORSMSX113.amr.corp.intel.com ([169.254.9.208]) with mapi id 14.03.0415.000;
+ Mon, 17 Dec 2018 10:42:24 -0800
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     Ingo Molnar <mingo@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>,
+        "bhsharma@redhat.com" <bhsharma@redhat.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
+        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>
+Subject: RE: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
+ regions from efi_pgd
+Thread-Topic: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
+ regions from efi_pgd
+Thread-Index: AQHUiJNT1thRYrJKskifWLlncDcXfqWDUdzAgACK0QD//3p94A==
+Date:   Mon, 17 Dec 2018 18:42:23 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
+References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+ <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
+ <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjhlNDhhY2ItOTk1OS00YThjLWFhMmYtMDNkZjliYTE4N2RiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRXlySDJwM2hXTTNWXC9mWHVXMEY1a0poK2czQUhLZXd3bFNUMW1oSFBCdXg3T0JxMm9SZE11SFh3Q1ArMmZpZUsifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/18 10:50 AM, Aubrey Li wrote:
-
-> @@ -275,6 +276,7 @@ Table 1-2: Contents of the status files (as of 4.8)
-
-Will need to update the "as of 4.8" to the version of kernel this patch is targeted.
-
->   Mems_allowed_list           Same as previous, but in "list format"
->   voluntary_ctxt_switches     number of voluntary context switches
->   nonvoluntary_ctxt_switches  number of non voluntary context switches
-> + AVX512_elapsed_ms           time elapsed since last AVX512 use in millisecond
->  ..............................................................................
->  
->  Table 1-3: Contents of the statm files (as of 2.6.8-rc3)
-> 
-
-Thanks.
-
-Tim
+PiA+IEhpIFRob21hcyBhbmQgSW5nbywNCj4gPg0KPiA+IEkgcmVjZW50bHkgbm90aWNlZCB0aGF0
+IHRoZSBiZWxvdyBjb21taXRzIFsxXSBhbmQgWzJdIGFyZSBicm9rZW4gd2hlbg0KPiA+IGtlcm5l
+bCBjb21tYW5kIGxpbmUgYXJndW1lbnQgImVmaT1vbGRfbWFwIiBpcyBwYXNzZWQuIFNvcnJ5ISBJ
+IG1pc3NlZA0KPiA+IHRvIHRlc3QgdGhpcyBjb25kaXRpb24gcHJpb3IgdG8gc2VuZGluZyB0aGVz
+ZSBwYXRjaGVzIHRvIG1haWxpbmcgbGlzdC4NCj4gPiBJIGFtIHdvcmtpbmcgb24gYSBmaXggYW5k
+IHdpbGwgc2VuZCBpdCB0byBtYWlsaW5nIGxpc3QgYXMgc29vbiBhcyBpdCdzIHJlYWR5Lg0KPiA+
+DQo+IA0KPiBDb3VsZCB5b3UgZWxhYm9yYXRlIG9uIHRoZSBwcm9ibGVtIHBsZWFzZT8NCg0KU3Vy
+ZSEgTXkgYmFkLi4NCg0KTGl0dGxlIGJpdCBvZiBoaXN0b3J5IGhlcmU6DQpCb3JpcyB3aXRoIHRo
+aXMgcGF0Y2ggc2V0IFsxXSBpbnRyb2R1Y2VkIHN0YXRpY2FsbHkgbWFwcGluZyBFRkkgUnVudGlt
+ZSBTZXJ2aWNlcyBhdCAtNEcgDQphbmQgYWxzbyBpbnRyb2R1Y2VkICJlZmk9b2xkX21hcCIgdG8g
+cmV0dXJuIHRvIHByZXZpb3VzIEVGSSBmdW5jdGlvbmFsaXR5IHdoaWNoIHVzZWQgDQppb3JlbWFw
+IGFuZCBfX3ZhKHBhKS4NCg0KWzNdIGFuZCBbNF0gYXJlIGxpbmtzIHRvIG9sZF9tYXBfcmVnaW9u
+KCkNCg0KVGhlIGNvbW1pdCAwOGNmYjM4ZjNlZjQgKCJ4ODYvZWZpOiBVbm1hcCBFRkkgYm9vdCBz
+ZXJ2aWNlcyBjb2RlL2RhdGEgcmVnaW9ucyBmcm9tIGVmaV9wZ2QiKSwgDQp1bm1hcHMgRUZJIGJv
+b3Qgc2VydmljZXMgY29kZS9kYXRhIHJlZ2lvbnMgKm9ubHkqIGZyb20gZWZpX3BnZCBidXQgZWZp
+PW9sZF9tYXAgbWFwcyANCkVGSSBib290IHNlcnZpY2VzIGNvZGUvZGF0YSByZWdpb25zIGludG8g
+c3dhcHBlcl9wZ2QuIEFsc28sIGVmaT1vbGRfbWFwICB1c2VzIGVpdGhlciANCmlvcmVtYXAoKSBv
+ciBfX3ZhKG1kLT5waHlzX2FkZHIpIHRvIG1hcCBFRkkgcnVudGltZS9ib290IHRpbWUgc2Vydmlj
+ZXMgYW5kIGRvZXNuJ3QgdXNlIGtlcm5lbF9tYXBfcGFnZXNfaW5fcGdkKCkuDQoNClNvLCB3ZSBu
+ZWVkIGEgZGlmZmVyZW50IHVubWFwcGluZyByb3V0aW5lIHRvIHVubWFwIEVGSSBib290IHNlcnZp
+Y2VzIGNvZGUvZGF0YSANCnJlZ2lvbnMgZnJvbSBzd2FwcGVyX3BnZCBpZiB0aGV5IHdlcmUgbWFw
+cGVkIHVzaW5nIGVmaT1vbGRfbWFwLg0KDQpbMV0gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTMv
+OS8xOS8yMzUgLSBDb3ZlciBsZXR0ZXIgZm9yIEVGSSBydW50aW1lIHNlcnZpY2VzIHZpcnR1YWwg
+bWFwcGluZw0KWzJdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDEzLzEwLzgvNzc3IC0gVGFsa3Mg
+YWJvdXQgZWZpPW9sZF9tYXANClszXSBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92
+NC4yMC1yYzcvc291cmNlL2FyY2gveDg2L3BsYXRmb3JtL2VmaS9lZmlfNjQuYyNMNDI5DQpbNF0g
+aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjQuMjAtcmM3L3NvdXJjZS9hcmNoL3g4
+Ni9wbGF0Zm9ybS9lZmkvZWZpLmMjTDU4NA0KDQo+IA0KPiA+IE1lYW53aGlsZSwgY291bGQgeW91
+IHBsZWFzZSBkcm9wIHRoZXNlIHBhdGNoZXMgYmVmb3JlIHNlbmRpbmcgcHVsbCByZXF1ZXN0DQo+
+IHRvIExpbnVzPw0KPiA+DQo+ID4gWzFdIENvbW1pdCAwOGNmYjM4ZjNlZjQgKCJ4ODYvZWZpOiBV
+bm1hcCBFRkkgYm9vdCBzZXJ2aWNlcyBjb2RlL2RhdGENCj4gPiByZWdpb25zIGZyb20gZWZpX3Bn
+ZCIpIFsyXSBDb21taXQgN2UwZGFiZDMwMTBkICgieDg2L21tL3BhZ2VhdHRyOg0KPiA+IEludHJv
+ZHVjZSBoZWxwZXIgZnVuY3Rpb24gdG8gdW5tYXAgRUZJIGJvb3Qgc2VydmljZXMiKQ0KPiA+DQo+
+IA0KPiBJJ2QgbGlrZSB0byB1bmRlcnN0YW5kIHdoYXQgdGhlIGlzc3VlIGlzIGJlZm9yZSB3ZSBk
+cm9wIGFueXRoaW5nLg0KDQpSZWdhcmRzLA0KU2FpDQo=
