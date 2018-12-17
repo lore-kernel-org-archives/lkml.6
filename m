@@ -2,817 +2,897 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 932B3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664D7C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 379B2206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:09:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nf3PVohb"
+	by mail.kernel.org (Postfix) with ESMTP id 2CB0F2146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbeLQLJV (ORCPT
+        id S1727178AbeLQLJg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:09:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:47895 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeLQLJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:09:21 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43JJLz4HHNz9sBh;
-        Mon, 17 Dec 2018 22:09:15 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545044955;
-        bh=JdgHpsV8tRnQLoYXvf6ykg+ZOWXk3Na2g9BZOJf5ePw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=nf3PVohbsw92wSdui/Ye5V8k7whArMLEDMMyOBmvE9h4J5EsPP+IB1m/fiuLqjT7K
-         /vZfuwZu2G8joOOi04axM+wQzl5WT+mv6COAwhwNghfK5k7dfu1tpTgiN4se5v8jrm
-         /Tqo9N4SgxvKAsy0fgmrOg8oZ2y0Unqr1BMSdfp3oUC2KJeUsLUeLgeKJML0EGGK6G
-         JfXM4057a2GctW7SBbUZaAQKeO6o8nE/hw4Y59Yxp32GpUnUlwZzkwjQLat59500hi
-         gwHWX5UZ3EmXmRf+ft7hP9rSGLH+/YN6lMcSbYB+yi7VrOCv5G750KpacLpPngQCsr
-         1ESxwj2kYi0og==
-Date:   Mon, 17 Dec 2018 22:09:14 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Dec 17
-Message-ID: <20181217220914.29144a09@canb.auug.org.au>
+        Mon, 17 Dec 2018 06:09:36 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:16143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726692AbeLQLJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:09:35 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E04205E920FE5;
+        Mon, 17 Dec 2018 19:09:29 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
+ 19:09:21 +0800
+Date:   Mon, 17 Dec 2018 11:09:06 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <linux-pci@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "Shaokun Zhang" <zhangshaokun@hisilicon.com>,
+        Will Deacon <will.deacon@arm.com>, <linuxarm@huawei.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alex.umansky@huawei.com>,
+        <Eric.Wehage@huawei.com>
+Subject: Re: [RFC PATCH 2/2] PCI/portdrv Hisilicon PCIe transport layer Port
+ PMU driver.
+Message-ID: <20181217110906.0000003f@huawei.com>
+In-Reply-To: <20181214235505.GI20725@google.com>
+References: <20181214131055.52253-1-Jonathan.Cameron@huawei.com>
+        <20181214131055.52253-3-Jonathan.Cameron@huawei.com>
+        <20181214235505.GI20725@google.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XI=BxLf5rP4=WmQ.mN8d+e_"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/XI=BxLf5rP4=WmQ.mN8d+e_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 14 Dec 2018 17:55:05 -0600
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-Hi all,
+> [+cc Rafael, Len, linux-acpi, linux-kernel]
+Hi Bjorn,
 
-Changes since 20181214:
+> 
+> Thanks a lot for working on this!  I've been hoping somebody would
+> push on the PMU issue because there are some real wrinkles to work
+> out.
 
-New trees: hyperv-fixes, hyperv, auxdisplay
+Indeed! I'm glad this isn't one I'm aiming to 'solve' to a particular
+deadline.
 
-The nfs-anna tree gained a build failure for which I reverted a commit.
+> 
+> On Fri, Dec 14, 2018 at 09:10:55PM +0800, Jonathan Cameron wrote:
+> > The Hip08 SoCs contain relatively detailed performance units for the
+> > PCIe Transport Layer at each port.
+> > 
+> > The support here is a subset of what will come, but is intended to
+> > provide some initial basic functionality.
+> > 
+> > Note that there is a _lot_ more functionality in this hardware unit
+> > so this is the first RFC of several.
+> > 
+> > RFC questions:
+> > 
+> > 1. There is no standard for PCIe PMUs.  However, there are things that
+> >    are elements of the PCIe protocol so any similar PMU is likely to
+> >    support them.  Do we want to have a go at some consistent naming?  
+> 
+> Is this a perf question, i.e., are you asking about the event names
+> from "perf list"?  If so, I have no idea :)  But you're right that the
+> events on the PCIe side are mostly defined by the PCIe spec and I
+> agree it would make a lot of sense to use common names for those
+> things.
 
-The hwmon-staging tree gained a build failure for which I applied a
-merge fix patch.
+Exactly that.  It's nice if users know what they are getting rather than
+having lots of subtly different variants of posted write tlp counters etc.
+Ideally this would be defined by the PCI SIG in a similar fashion to
+architectural counters on Arm, but they aren't yet...
 
-The thermal tree gained a conflict against the kbuild tree.
+I'm far from an expert on PCIe but I can pull in some of our PCI hardware
+people and see if I can sketch out some docs for what a hypothetical
+magic PMU could count, then working out a naming scheme to cover that.
++CC Alex and Eric. 
 
-The rdma tree still had its build failure so I used a supplied patch.
-It also gained a conflict against the net tree.
+We have things like bandwidth estimation and credits statistics to
+potentially consider as well.  Right now I can only find limited precedence
+for handling that sort of a thing in PMUs in general (there are similar
+things in Intel's graphics drivers).
 
-The net-next tree gained conflicts against the net tree and a build
-failure, so I used the version from next-20181214.
+> 
+> > 2. We are using an ACPI DSDT description to find what is basically a
+> >    platform device that is associated with a PCIe device. Is this an
+> >    acceptable thing to do?  
+> 
+> If the PCIe device itself, e.g., a Root Port, consumes address space,
+> it should have a BAR that describes it.
 
-The mfd tree gained a build failure so I used the version from
-next-20181214.
+I agree that would be the ideal / right way. Here we have an oddity because the
+port is in the host SoC. It's not remotely compliant with any standard.
+We are looking at this for future hardware but I don't think there is
+much we can do with this one.
 
-The kvm tree gained a conflict against the tip tree.
+Looking forwards, there isn't a huge amount of flexibility in port definitions
+if we do want to put this in Bar space as only 2 Bars available
+(type 1 config space header)  I have no idea if these are in heavy use or
+not on existing hardware.  Looks like the Switchtec parts use one of
+them.  I know from other activities that people get very defensive of their BAR
+Space, particularly when looking to retrofit in new versions of a long standing
+device.
 
-The gpio tree gained a conflict against the arm-soc tree and a build
-failure so I used the version from next-20181214.
+> 
+> If the Root Complex, which is not a PCIe device and does not have an
+> architected configuration or programming model, consumes address
+> space, it would make sense to describe it via ACPI in the PNP0A03
+> device like other host bridge registers.
+> 
+> From your cover letter, I think you have the latter situation, and if
+> I understand correctly, you have something like this in ACPI:
+> 
+>   PNP0A03       PCI host bridge
+>     HISIxxxx    PMU registers for Root Port 00:1c.0
+>     HISIxxxx    PMU registers for Root Port 00:1c.2
+> 
+> The PNP0A03 _CRS describes the address space it consumes, which
+> comprises (1) the register space that operates the bridge itself,
+> e.g., sets apertures, performs PCI config accesses, etc., and
+> (2) space that is converted to PCI transactions on the downstream
+> side.
 
-The y2038 tree gained a build failure for which I applied a merge fix.
+Pretty much as you describe.  Here, roughly speaking, is the relevant
+DSDT blob.  We have to play the slightly odd trick to get the association
+with the port.  Note this sort of trick is sometimes done for RCiEPs to
+provide for things that aren't quite handled in standard way (stuff
+around resets etc for example - often as a work around for a hardware
+limitation in a particular version).
 
-Non-merge commits (relative to Linus' tree): 9215
- 9687 files changed, 458827 insertions(+), 248116 deletions(-)
+Device (PCI0)
+{
+	Name (_HID, "PNP0A08")
+	Name (_UID, Zero)
+	Name (_CID, "PNP0A03")
+	Name (_SEG, Zero)
+	Name (_BBN, Zero)
+	Name (_CCA, One)
+	Name (_PRT, Package (0x18))
+	Device (BR00) {
+	/* This device has it's class set to be a bridge so binds to portdrv */
+		Name (_HID, "19E5A120")
+		Name (_ADR, 0)
+		Name (_CRS, ResourceTemplate () {
+			QwordMemory(
+ 				ResourceConsumer,
+				PosDecode,
+				MinFixed,
+				MaxFixed,
+				NonCacheable,
+				ReadWrite,
+				0,
+				0x148284000,
+				0x148284FFF,
+				0x0,
+				0x1000)
+		})
+	}
+}
 
-----------------------------------------------------------------------------
+> 
+> So this feels a little strange to me because ACPI says the HISIxxxx
+> devices are below the host bridge, but instead of consuming PCI
+> address space, they consume part of the PNP0A03 register space.
+> But maybe that makes sense in ACPI, I dunno.
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+From a logical point of view, it doesn't really - this should have been
+firmly tied to PCIe.  Note they 'also' provide regular PCIe accesses paths
+as they are standard compliant for their normal role as 'dumb' Root Ports.
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-multi_v7_defconfig for arm and a native build of tools/perf. After
-the final fixups (if any), I do an x86_64 modules_install followed by
-builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-and sparc64 defconfig. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+The lack of any standardization around PMUs basically means that
+people do this sort of nastiness.  To be fair to them, our hardware
+team never thought this one would be exposed in general when they designed
+it.
 
-Below is a summary of the state of the merge.
+The requirements came along later when some of us got fed up with
+internal only tooling to access this stuff.  I also wanted to explore
+the space as it has quite a few impacts on future hardware specifications.
 
-I am currently merging 291 trees (counting Linus' and 69 trees of bug
-fix patches pending for the current merge release).
+> 
+> As far as I can tell, you don't actually need *anything* supplied by
+> portdrv except the pcie_device.port, which you only use to find the
+> ACPI companion device and to hang the devm_ things on.
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
+Pretty much.  The 'obvious' option would have been to just have this as
+an uncore PMU (which are platform devices instantiated from ACPI) but
+then we loose the association with the PCIe topology entirely.
+This is how internal interconnect, cache, memory controllers PMUs
+are handled on most Arm64 platforms for example.  There are ACPI bindings
+that could be used similar to how we associate caches with their
+CPU clusters, but they are (to my mind) less elegant that above. 
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+That also won't work when future hardware does it in the PCIe domain
+either via a BAR or some other approach.
 
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
+> 
+> As written, hisi_pcie_pmu will bind to any Port, including Switch
+> Ports as well as Root Ports.  It has a poor-man's match() built into
+> hisi_pcie_pmu_probe(), which is sort of sub-optimal.  It would be
+> nicer to have a real match() function run by the bus driver.  I know
+> portdrv doesn't give you that, and since portdrv claims every Port
+> itself, there's no good way for other drivers like this to get
+> connected to Ports.
 
---=20
-Cheers,
-Stephen Rothwell
+Agreed.  As it currently stands it is a dirty hack ;)  I wondered about
+putting a standard bus register / match approach in there but wanted
+to get the discussion going before adding non trivial infrastructure
+in portdrv that might scare people off ;). From your comments below
+it sounds like we might want to more radically change how the port
+driver stuff works anyway.
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master (6531e115b7ab Merge branch 'akpm' (patches from Andre=
-w))
-Merging fixes/master (d8c137546ef8 powerpc: tag implicit fall throughs)
-Merging kbuild-current/fixes (ccda4af0f4b9 Linux 4.20-rc2)
-Merging arc-current/for-curr (4c567a448b30 ARC: perf: remove useless ifdefs)
-Merging arm-current/fixes (c2a3831df6dc ARM: 8816/1: dma-mapping: fix poten=
-tial uninitialized return)
-Merging arm64-fixes/for-next/fixes (3238c359acee arm64: dma-mapping: Fix FO=
-RCE_CONTIGUOUS buffer clearing)
-Merging m68k-current/for-linus (58c116fb7dc6 m68k/sun3: Remove is_medusa an=
-d m68k_pgtable_cachemode)
-Merging powerpc-fixes/fixes (a225f1567405 powerpc/ptrace: replace ptrace_re=
-port_syscall() with a tracehook call)
-Merging sparc/master (cf76c364a1e1 Merge tag 'scsi-fixes' of git://git.kern=
-el.org/pub/scm/linux/kernel/git/jejb/scsi)
-Merging fscrypt-current/for-stable (ae64f9bd1d36 Linux 4.15-rc2)
-Merging net/master (8203e2d844d3 net: clear skb->tstamp in forwarding paths)
-Merging bpf/master (8203e2d844d3 net: clear skb->tstamp in forwarding paths)
-Merging ipsec/master (4a135e538962 xfrm_user: fix freeing of xfrm states on=
- acquire)
-Merging netfilter/master (9e69efd45321 Merge branch 'vhost-fixes')
-Merging ipvs/master (feb9f55c33e5 netfilter: nft_dynset: allow dynamic upda=
-tes of non-anonymous set)
-Merging wireless-drivers/master (cddfb283af7e mt76: add entry in MAINTAINER=
-S file)
-Merging mac80211/master (312ca38ddda6 cfg80211: Fix busy loop regression in=
- ieee80211_ie_split_ric())
-Merging rdma-fixes/for-rc (37fbd834b4e4 IB/core: Fix oops in netdev_next_up=
-per_dev_rcu())
-Merging sound-current/for-linus (0bea4cc83835 ALSA: hda/realtek: Enable aud=
-io jacks of ASUS UX433FN/UX333FA with ALC294)
-Merging sound-asoc-fixes/for-linus (9683863aecfe Merge branch 'asoc-4.20' i=
-nto asoc-linus)
-Merging regmap-fixes/for-linus (40e020c129cf Linux 4.20-rc6)
-Merging regulator-fixes/for-linus (a64f26313b02 Merge branch 'regulator-4.2=
-0' into regulator-linus)
-Merging spi-fixes/for-linus (6594150c7db6 Merge branch 'spi-4.20' into spi-=
-linus)
-Merging pci-current/for-linus (1063a5148ac9 PCI/AER: Queue one GHES event, =
-not several uninitialized ones)
-Merging driver-core.current/driver-core-linus (2595646791c3 Linux 4.20-rc5)
-Merging tty.current/tty-linus (40e020c129cf Linux 4.20-rc6)
-Merging usb.current/usb-linus (45f750c16cae xhci: Don't prevent USB2 bus su=
-spend in state check intended for USB3 only)
-Merging usb-gadget-fixes/fixes (069caf5950df USB: omap_udc: fix rejection o=
-f out transfers when DMA is used)
-Merging usb-serial-fixes/usb-linus (28a86092b175 USB: serial: option: add T=
-elit LN940 series)
-Merging usb-chipidea-fixes/ci-for-usb-stable (a930d8bd94d8 usb: chipidea: A=
-lways build ULPI code)
-Merging phy/fixes (c88520db18ba phy: qcom-qusb2: Fix HSTX_TRIM tuning with =
-fused value for SDM845)
-Merging staging.current/staging-linus (40e020c129cf Linux 4.20-rc6)
-Merging char-misc.current/char-misc-linus (55449af1a17a Merge tag 'hyperv-f=
-ixes-4.20-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linu=
-x into char-misc-linus)
-Merging soundwire-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging thunderbolt-fixes/fixes (40e020c129cf Linux 4.20-rc6)
-Merging input-current/for-linus (ca5047286c9c Input: synaptics - enable RMI=
- on ThinkPad T560)
-Merging crypto-current/master (e61efff4ae94 crypto: user - Disable statisti=
-cs interface)
-Merging ide/master (adf040ddd001 ide: Use of_node_name_eq for node name com=
-parisons)
-Merging vfio-fixes/for-linus (0e714d27786c vfio/pci: Fix potential Spectre =
-v1)
-Merging kselftest-fixes/fixes (2bd61abead58 selftests/seccomp: Remove SIGST=
-OP si_pid check)
-Merging modules-fixes/modules-linus (be71eda5383f module: Fix display of wr=
-ong module .text address)
-Merging slave-dma-fixes/fixes (ffe843b18211 dmaengine: dw: Fix FIFO size fo=
-r Intel Merrifield)
-Merging backlight-fixes/for-backlight-fixes (651022382c7f Linux 4.20-rc1)
-Merging mtd-fixes/master (40b412897ccb mtd: nand: Fix memory allocation in =
-nanddev_bbt_init())
-Merging spi-nor-fixes/spi-nor/fixes (7928b2cbe55b Linux 4.16-rc1)
-Merging mfd-fixes/for-mfd-fixes (48a2ca0ee399 Revert "mfd: cros_ec: Use dev=
-m_kzalloc for private data")
-Merging v4l-dvb-fixes/fixes (078ab3ea2c3b media: Add a Kconfig option for t=
-he Request API)
-Merging reset-fixes/reset/fixes (26fce0557fa6 reset: imx7: Fix always writi=
-ng bits as 0)
-Merging mips-fixes/mips-fixes (e8e8d449b9e6 MIPS: BCM63XX: fix switch core =
-reset on BCM6368)
-Merging at91-fixes/at91-fixes (4ab7ca092c3c ARM: dts: at91: sama5d2: use th=
-e divided clock for SMC)
-Merging omap-fixes/fixes (84fb6c7feb14 ARM: dts: Fix OMAP4430 SDP Ethernet =
-startup)
-Merging kvm-fixes/master (fd65d3142f73 kvm: svm: Ensure an IBPB on all affe=
-cted CPUs when freeing a vmcb)
-Merging kvms390-fixes/master (40ebdb8e59df KVM: s390: Make huge pages unava=
-ilable in ucontrol VMs)
-Merging hwmon-fixes/hwmon (2595646791c3 Linux 4.20-rc5)
-Merging nvdimm-fixes/libnvdimm-fixes (2c5357c6a2f2 Merge branch 'for-4.20/d=
-ax-fixes' into libnvdimm-pending)
-Merging btrfs-fixes/next-fixes (72549bc085d6 Merge branch 'misc-4.20' into =
-next-fixes)
-Merging vfs-fixes/fixes (ea5751ccd665 proc/sysctl: don't return ENOMEM on l=
-ookup when a table is unregistering)
-Merging dma-mapping-fixes/for-linus (cb216b84d6ea swiotlb: Skip cache maint=
-enance on map error)
-Merging i3c-fixes/master (651022382c7f Linux 4.20-rc1)
-Merging drivers-x86-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging samsung-krzk-fixes/fixes (651022382c7f Linux 4.20-rc1)
-Merging pinctrl-samsung-fixes/pinctrl-fixes (651022382c7f Linux 4.20-rc1)
-Merging devicetree-fixes/dt/linus (89c38422e072 of, numa: Validate some dis=
-tance map rules)
-Merging scsi-fixes/fixes (61cce6f6eece scsi: sd: use mempool for discard sp=
-ecial page)
-Merging drm-fixes/drm-fixes (1df07a7f2244 Merge branch 'vmwgfx-fixes-4.20' =
-of git://people.freedesktop.org/~thomash/linux into drm-fixes)
-Merging drm-intel-fixes/for-linux-next-fixes (5b2e31201c26 drm/i915: Flush =
-GPU relocs harder for gen3)
-Merging mmc-fixes/fixes (b704441e38f6 mmc: sdhci: fix the timeout check win=
-dow for clock and reset)
-Merging rtc-fixes/rtc-fixes (9bde0afb7a90 rtc: pcf2127: fix a kmemleak caus=
-ed in pcf2127_i2c_gather_write)
-Merging gnss-fixes/gnss-linus (40e020c129cf Linux 4.20-rc6)
-Merging hyperv-fixes/hyperv-fixes (fc96df16a1ce Drivers: hv: vmbus: Return =
--EINVAL for the sys files for unopened channels)
-Merging drm-misc-fixes/for-linux-next-fixes (63238173b2fa Revert "drm/rockc=
-hip: Allow driver to be shutdown on reboot/kexec")
-Merging kbuild/for-next (d411ff4a93d5 Merge branches 'kbuild', 'kbuild2', '=
-kconfig' and 'kconfig2' into for-next)
-Merging compiler-attributes/compiler-attributes (71391bdd2e9a include/linux=
-/compiler_types.h: don't pollute userspace with macro definitions)
-Merging leaks/leaks-next (9f84a0f7f1a6 leaking_addresses: check if file nam=
-e contains address)
-Merging dma-mapping/for-next (664204410afb PCI: Remove unused attr variable=
- in pci_dma_configure)
-CONFLICT (content): Merge conflict in arch/alpha/Kconfig
-Merging asm-generic/master (b7d624ab4312 asm-generic: unistd.h: fixup broke=
-n macro include.)
-Merging arc/for-next (4fbd8d194f06 Linux 4.15-rc1)
-Merging arm/for-next (eb1644e1ec8a Merge branches 'fixes', 'misc', 'sa1100-=
-for-next' and 'spectre' into for-next)
-Merging arm64/for-next/core (12f799c8c739 arm64: kaslr: print PHYS_OFFSET i=
-n dump_kernel_offset())
-CONFLICT (content): Merge conflict in arch/arm64/kernel/cpu_errata.c
-CONFLICT (content): Merge conflict in arch/arm64/Kconfig
-CONFLICT (content): Merge conflict in Documentation/arm64/silicon-errata.txt
-Merging arm-perf/for-next/perf (69c32972d593 drivers/perf: Add Cavium Thund=
-erX2 SoC UNCORE PMU driver)
-Merging arm-soc/for-next (de7cfed01ee4 ARM: Document merges)
-CONFLICT (content): Merge conflict in arch/arm/mach-socfpga/Kconfig
-Merging actions/for-next (fb9c1c1deb5e Merge branch 'v4.20/drivers+s900-sps=
-' into next)
-Merging alpine/alpine/for-next (7928b2cbe55b Linux 4.16-rc1)
-Merging amlogic/for-next (00a067cad396 Merge branch 'v4.21/drivers' into tm=
-p/aml-rebuild)
-Merging aspeed/for-next (f59cffb441bc Merge branch 'dt-for-v4.21' into for-=
-next)
-Merging at91/at91-next (d3d7c4c30eb2 Merge branches 'at91-soc' and 'at91-dt=
-' into at91-next)
-Merging bcm2835/for-next (3c9d403d2fe1 Merge branch 'bcm2835-drivers-next' =
-into for-next)
-Merging imx-mxs/for-next (467e1ec42943 Merge branch 'imx8mq/dt' into for-ne=
-xt)
-Merging keystone/next (a74cab3c7dcb Merge branch 'for_4.20/drivers-soc' int=
-o next)
-Merging mediatek/for-next (c2f7a6c7e1e5 Merge branch 'v4.20-next/soc' into =
-for-next)
-Merging mvebu/for-next (50eba438c55e Merge branch 'mvebu/dt64' into mvebu/f=
-or-next)
-Merging omap/for-next (ace233293086 Merge branch 'omap-for-v4.21/dt' into f=
-or-next)
-Merging reset/reset/next (8a1b9fd55f25 reset: uniphier-glue: Add AHCI reset=
- control support in glue layer)
-CONFLICT (content): Merge conflict in arch/arm/mach-socfpga/socfpga.c
-Merging qcom/for-next (9bf0624f555d Merge tag 'qcom-drivers-for-4.21-2' int=
-o foobar-for-4.21-2)
-Merging renesas/next (7d60a8a48880 Merge branches 'fixes-for-v4.20', 'dt-bi=
-ndings-for-v4.21', 'drivers-for-v4.21', 'soc-for-v4.21', 'arm-defconfig-for=
--v4.21', 'arm-dt-for-v4.21', 'arm64-dt-for-v4.21' and 'arm64-defconfig-for-=
-v4.21' into next)
-Merging rockchip/for-next (70e6e2983473 dt-bindings: arm: Convert Rockchip =
-board/soc bindings to json-schema)
-Merging samsung/for-next (bebc6082da0a Linux 4.14)
-Merging samsung-krzk/for-next (2b911667eeaa Merge branch 'next/dt64' into f=
-or-next)
-Merging sunxi/sunxi/for-next (ef9c186f08d7 Merge branch 'sunxi/dt-for-4.21'=
- into sunxi/for-next)
-Merging tegra/for-next (2731820ce27b Merge branch for-4.21/clk into for-nex=
-t)
-Merging clk/clk-next (b677574bdf29 Merge branch 'clk-imx7ulp' into clk-next)
-Merging clk-samsung/for-next (651022382c7f Linux 4.20-rc1)
-Merging c6x/for-linux-next (8adcc59974b8 Merge branch 'work.misc' of git://=
-git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
-Merging csky/linux-next (252050365823 dt-bindings: timer: gx6605s SOC timer)
-Merging h8300/h8300-next (4bdf61ccbe76 h8300: fix IRQ no)
-Merging ia64/next (c51836246f97 ia64: generate uapi header and system call =
-table files)
-Merging m68k/for-next (005e13a96c0e m68k: Generate uapi header and syscall =
-table header files)
-Merging m68knommu/for-next (40e020c129cf Linux 4.20-rc6)
-Merging microblaze/next (19d111ccce9f microblaze: remove the explicit remov=
-al of system.dtb)
-Merging mips/mips-next (ff4dd232ec45 MIPS: Expand MIPS32 ASIDs to 64 bits)
-CONFLICT (content): Merge conflict in arch/mips/Kconfig
-Merging nds32/next (e2f3f8b4a497 nds32: support hardware prefetcher)
-Merging nios2/for-next (1c286267aedf nios2: update_mmu_cache preload the TL=
-B with the new PTE)
-Merging openrisc/for-next (5600779ea5f3 openrisc: use generic dma_noncohere=
-nt_ops)
-Merging parisc-hd/for-next (930e12992ed3 parisc: syscalls: ignore nfsservct=
-l for other architectures)
-Merging powerpc/next (7c91efce1608 powerpc/mm: dump block address translati=
-on on book3s/32)
-Merging fsl/next (b6ae3550c8e2 powerpc/8xx: add missing header in 8xx_mmu.c)
-Merging risc-v-pjw/for-next (467e050e9760 Merge branch 'i2c/for-current' of=
- git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
-Merging risc-v/for-next (7ac3574ad42f automerging branch "kernel.org-palmer=
--linux/next-tracepoints" into "for-next")
-CONFLICT (modify/delete): Documentation/features/io/sg-chain/arch-support.t=
-xt deleted in HEAD and modified in risc-v/for-next. Version risc-v/for-next=
- of Documentation/features/io/sg-chain/arch-support.txt left in tree.
-$ git rm -f Documentation/features/io/sg-chain/arch-support.txt
-Merging sifive/for-next (467e050e9760 Merge branch 'i2c/for-current' of git=
-://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux)
-Merging s390/features (ec10574d00da Merge tag 'vfio-ccw-20181213' of git://=
-git.kernel.org/pub/scm/linux/kernel/git/kvms390/vfio-ccw into features)
-Merging sparc-next/master (c23b8e7acea3 ALSA: sparc: Use of_node_name_eq fo=
-r node name comparisons)
-CONFLICT (content): Merge conflict in arch/sparc/kernel/ioport.c
-Merging sh/for-next (ac21fc2dcb40 sh: switch to NO_BOOTMEM)
-Merging uml/linux-next (917e2fd2c53e um: Make line/tty semantics use true w=
-rite IRQ)
-Merging xtensa/xtensa-for-next (cf991521b736 Merge branch 'xtensa-cleanups'=
- into xtensa-for-next)
-Merging fscrypt/master (cc0146d0bce0 fscrypt: remove CRYPTO_CTR dependency)
-Merging befs/for-next (55d945e2e4aa fs: befs: btree: Fixed some coding stan=
-dard issues)
-Merging btrfs/next (29dcea88779c Linux 4.17)
-Merging btrfs-kdave/for-next (36d8cb6a9999 Merge branch 'for-next-next-v4.2=
-0-20181213' into for-next-20181213)
-Merging ceph/master (6f9718fe41c3 ceph: make 'nocopyfrom' a default mount o=
-ption)
-Merging cifs/for-next (f6fe32b5127c cifs: Only free DFS target list if we a=
-ctually got one)
-Merging configfs/for-next (cc57c07343bd configfs: fix registered group remo=
-val)
-Merging ecryptfs/next (5dcea554d5ce eCryptfs: fix a couple type promotion b=
-ugs)
-Merging ext3/for_next (8bda6f7815a9 Pull fix for UDF BUG due to corrupted i=
-node.)
-Merging ext4/dev (7d3485c5e875 ext4: avoid declaring fs inconsistent due to=
- invalid file handles)
-Merging f2fs/dev (ac3c962cc168 f2fs: clear PG_writeback if IPU failed)
-CONFLICT (content): Merge conflict in fs/f2fs/dir.c
-Merging fuse/for-next (2e64ff154ce6 fuse: continue to send FUSE_RELEASEDIR =
-when FUSE_OPEN returns ENOSYS)
-Merging jfs/jfs-next (a83722f45c5b jfs: fix spelling mistake, EACCESS -> EA=
-CCES)
-Merging nfs/linux-next (8795358eb42d sunrpc: Be sure to clear XPRT_WRITE_SP=
-ACE when resetting the transport)
-Merging nfs-anna/linux-next (dd6114493d8d SUNRPC discard cr_uid from struct=
- rpc_cred.)
-Merging nfsd/nfsd-next (19f25957be17 nfsd: keep a tally of RECLAIM_COMPLETE=
- operations when using nfsdcld)
-Merging orangefs/for-next (22fc9db296fc orangefs: no need to check for serv=
-ice_operation returns > 0)
-Merging overlayfs/overlayfs-next (ec7ba118b940 Revert "ovl: relax permissio=
-n checking on underlying layers")
-Merging ubifs/linux-next (e58725d51fa8 ubifs: Handle re-linking of inodes c=
-orrectly while recovery)
-CONFLICT (content): Merge conflict in fs/ubifs/Kconfig
-Merging v9fs/9p-next (7373bc7654c1 9p/net: put a lower bound on msize)
-Merging xfs/for-next (8f67b5adc030 iomap: partially revert 4721a601099 (sim=
-ulated directio short read on EFAULT))
-Merging file-locks/locks-next (7bbd1fc0e9f1 fs/locks: remove unnecessary wh=
-ite space.)
-Merging vfs/for-next (d708e87ca399 Merge branch 'work.mount' into for-next)
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in fs/proc/inode.c
-CONFLICT (content): Merge conflict in fs/f2fs/super.c
-CONFLICT (content): Merge conflict in fs/compat_ioctl.c
-CONFLICT (content): Merge conflict in fs/Makefile
-CONFLICT (content): Merge conflict in drivers/vfio/Kconfig
-CONFLICT (content): Merge conflict in drivers/infiniband/Kconfig
-CONFLICT (content): Merge conflict in arch/sparc/kernel/setup_64.c
-Merging printk/for-next (9adcfaffc34d printk: Make printk_emit() local func=
-tion.)
-Merging pci/next (7053eeb009e0 Merge branch 'remotes/lorenzo/pci/mediatek')
-Merging pstore/for-next/pstore (8665569e97dd pstore/ram: Avoid NULL deref i=
-n ftrace merging failure path)
-Merging hid/for-next (11478e44de6f Merge branch 'for-4.21/highres-wheel' in=
-to for-next)
-Merging i2c/i2c/for-next (f30d04f33cc7 Merge branch 'i2c/for-current' into =
-i2c/for-next)
-Merging i3c/i3c/next (25ac3da61ba1 i3c: master: cdns: fix I2C transfers in =
-Cadence I3C master driver)
-Merging dmi/master (57361846b52b Linux 4.19-rc2)
-Merging hwmon-staging/hwmon-next (4f96b0b37e0c hwmon: (ftsteutates) Use per=
-mission specific SENSOR[_DEVICE]_ATTR variants)
-Applying: hwmon: quote the path in Kconfig source statements
-Applying: Revert "nfs: use fmtcheck() in root_nfs_data"
-Merging jc_docs/docs-next (f77af637f29d doc:process: add links where missin=
-g)
-CONFLICT (content): Merge conflict in Documentation/filesystems/index.rst
-Merging v4l-dvb/master (d2b4387f3bdf media: platform: Add Aspeed Video Engi=
-ne driver)
-Applying: media: ddbridge: Move asm includes after linux ones
-Merging v4l-dvb-next/master (76097fe1aee6 media: staging/ipu3-imgu: Add MAI=
-NTAINERS entry)
-Merging fbdev/fbdev-for-next (217188d9f985 video: fbdev: remove redundant '=
-default n' from Kconfig-s)
-Merging pm/linux-next (22683a4c1a6e Merge branches 'pm-cpufreq' and 'pm-opp=
-' into linux-next)
-Merging cpupower/cpupower (901d32bc69f3 cpupower : Auto-completion for cpup=
-ower tool)
-Merging opp/opp/linux-next (ade0c9493e97 Merge branch 'opp/genpd/propagatio=
-n' into opp/linux-next)
-Merging thermal/next (eaaa598c0a28 Merge branches 'for-rc' and 'thermal-cor=
-e' into next)
-CONFLICT (content): Merge conflict in drivers/thermal/Kconfig
-Applying: drivers: thermal: fixup for Kconfig string parsing tightening up
-Merging thermal-soc/next (760eea43f8c6 thermal: da9062/61: Prevent hardware=
- access during system suspend)
-Merging ieee1394/for-next (c820518f6ca1 firewire: Remove depends on HAS_DMA=
- in case of platform dependency)
-Merging dlm/next (3595c559326d dlm: fix invalid cluster name warning)
-Merging swiotlb/linux-next (da689221f952 xen/blkfront: avoid NULL blkfront_=
-info dereference on device removal)
-Merging rdma/for-next (9af3f5cf9d64 RDMA/core: Validate port number in quer=
-y_pkey verb)
-CONFLICT (content): Merge conflict in include/linux/mlx5/mlx5_ifc.h
-Applying: RDMA/mlx5: Delete unreachable handle_atomic code by simplifying S=
-W completion
-Merging net-next/master (ae6750e0a5ef Merge branch 'mlxsw-spectrum_acl-Add-=
-Bloom-filter-support')
-CONFLICT (content): Merge conflict in tools/testing/selftests/bpf/test_veri=
-fier.c
-CONFLICT (content): Merge conflict in net/ipv6/ip6_output.c
-CONFLICT (content): Merge conflict in drivers/net/ethernet/mellanox/mlx5/co=
-re/en_tc.c
-CONFLICT (content): Merge conflict in drivers/crypto/chelsio/chtls/chtls_cm=
-.c
-CONFLICT (content): Merge conflict in arch/mips/include/uapi/asm/inst.h
-CONFLICT (content): Merge conflict in MAINTAINERS
-$ git reset --hard HEAD^
-Merging next-20181214 version of net-next
-CONFLICT (content): Merge conflict in tools/testing/selftests/bpf/test_veri=
-fier.c
-CONFLICT (content): Merge conflict in net/ipv6/ip6_output.c
-CONFLICT (content): Merge conflict in drivers/net/ethernet/mellanox/mlx5/co=
-re/en_tc.c
-CONFLICT (content): Merge conflict in drivers/crypto/chelsio/chtls/chtls_cm=
-.c
-CONFLICT (content): Merge conflict in arch/mips/include/uapi/asm/inst.h
-CONFLICT (content): Merge conflict in MAINTAINERS
-[master c306d86c71c5] next-20181214/net-next
-Merging bpf-next/master (034565da0fe6 Merge branch 'bpf-bpftool-cleanups')
-Merging ipsec-next/master (77990464bb39 xfrm: clean an indentation issue, r=
-emove a space)
-Merging mlx5-next/mlx5-next (4c283e615598 net/mlx5: Fold the modify lag cod=
-e into function)
-Merging netfilter-next/master (00ec3ab06012 netfilter: ipset: replace a str=
-ncpy() with strscpy())
-Merging nfc-next/master (1f008cfec5d5 NFC: fdp: Fix unused variable warning=
-s)
-Merging ipvs-next/master (26a1ccc6c117 bpf: test: fix spelling mistake "REU=
-SEEPORT" -> "REUSEPORT")
-Merging wireless-drivers-next/master (30ed3c6c0922 Merge tag 'iwlwifi-next-=
-for-kalle-2018-12-14' of git://git.kernel.org/pub/scm/linux/kernel/git/iwlw=
-ifi/iwlwifi-next)
-Merging bluetooth/master (addb0679839a Merge git://git.kernel.org/pub/scm/l=
-inux/kernel/git/bpf/bpf-next)
-Merging mac80211-next/master (f6c7f03f69f7 mac80211: fix deauth TX when we =
-disconnect)
-Merging gfs2/for-next (27a2660f1ef9 gfs2: Dump nrpages for inodes and their=
- glocks)
-Merging mtd/mtd/next (7677ea0e8843 MAINTAINERS: Update my email address)
-Merging nand/nand/next (cafb56dd741e mtd: rawnand: marvell: prevent timeout=
-s on a loaded machine)
-Merging spi-nor/spi-nor/next (b422847877e3 mtd: spi-nor: Add support for is=
-25lp016d)
-Merging crypto/master (00c9fe37a7f2 crypto: adiantum - fix leaking referenc=
-e to hash algorithm)
-Merging drm/drm-next (272c1a9b4939 Merge tag 'exynos-drm-next-for-v4.21-v2'=
- of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos into d=
-rm-next)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glu=
-e.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/msm/msm_drv.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/meson/meson_crtc.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_workaround=
-s.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_workaround=
-s.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_ringbuffer=
-.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_lrc.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_engine_cs.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_gem.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_drv.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/dc/dce110=
-/dce110_hw_sequencer.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/display/amdgpu_dm=
-/amdgpu_dm.c
-Merging drm-intel/for-linux-next (cb6f4c2c3478 Merge tag 'gvt-next-2018-12-=
-07' of https://github.com/intel/gvt-linux into drm-intel-next-fixes)
-Merging drm-tegra/drm/tegra/for-next (180b46ecdc9f drm/tegra: sor: Reset th=
-e SOR if possible)
-Merging drm-misc/for-linux-next (0b258ed1a219 drm: revert "expand replace_f=
-ence to support timeline point v2")
-Merging drm-msm/msm-next (ba0ede185ef4 drm/msm/dpu: Fix clock issue after b=
-ind failure)
-Merging hdlcd/for-upstream/hdlcd (d664b851eb2b drm/arm/hdlcd: Reject atomic=
- commits that disable only the plane)
-Merging mali-dp/for-upstream/mali-dp (fd99bd8b805c drm: malidp: Add the siz=
-e of the superblocks when calculating total size for AFBC buffers)
-Merging imx-drm/imx-drm/next (6cec571b70ec drm/imx: ipuv3-plane: add functi=
-on to query atomic update status)
-Merging etnaviv/etnaviv/next (dea492e0cfcb drm/etnaviv: remove lastctx memb=
-er from gpu struct)
-CONFLICT (content): Merge conflict in drivers/gpu/drm/etnaviv/etnaviv_drv.c
-Merging kconfig/for-next (bebc6082da0a Linux 4.14)
-Merging regmap/for-next (51a29ded00da Merge remote-tracking branch 'regmap/=
-topic/irq' into regmap-next)
-Merging sound/for-next (40906ebe3af6 ALSA: hda: add mute LED support for HP=
- EliteBook 840 G4)
-Merging sound-asoc/for-next (ba26f635bf72 Merge branch 'asoc-4.21' into aso=
-c-next)
-Merging modules/modules-next (93d77e7f1410 ARM: module: Fix function kallsy=
-ms on Thumb-2)
-Merging input/next (0832e93632c6 Input: rotary-encoder - don't log EPROBE_D=
-EFER to kernel log)
-Merging block/for-next (757bd94dad07 Merge branch 'for-4.21/block' into for=
--next)
-CONFLICT (content): Merge conflict in drivers/scsi/sd.c
-Merging device-mapper/for-next (7bdbba78481e Merge branch 'dm-4.20' into dm=
--next)
-Merging pcmcia/pcmcia-next (95691e3eddc4 pcmcia: Implement CLKRUN protocol =
-disabling for Ricoh bridges)
-Merging mmc/next (de149e85e2ac mmc: sdhci-omap: Workaround errata regarding=
- SDR104/HS200 tuning failures (i929))
-Merging kgdb/kgdb-next (3bd67b37e350 kdb: print real address of pointers in=
-stead of hashed addresses)
-Merging md/for-next (cac09f066f0f md: remvoe redundant condition check)
-Merging mfd/for-mfd-next (05ba643fa2ce mfd: tps65218: Use devm_regmap_add_i=
-rq_chip and clean up error path in probe())
-$ git reset --hard HEAD^
-Merging next-20181214 version of mfd
-Merging backlight/for-backlight-next (3cee7a7d05b1 backlight: 88pm860x_bl: =
-Use of_node_name_eq for node name comparisons)
-Merging battery/for-next (fb4d49448026 power: supply: gpio-charger: Do not =
-use deprecated POWER_SUPPLY_TYPE_USB_*)
-Merging regulator/for-next (f55ce893b979 Merge remote-tracking branch 'regu=
-lator/topic/coupled' into regulator-next)
-Merging security/next-testing (088f908006c5 Merge branch 'next-smack' into =
-next-testing)
-Merging apparmor/apparmor-next (43aa09fee2f0 apparmor: Fix warning about un=
-used function apparmor_ipv6_postroute)
-Merging integrity/next-integrity (eed9de3b4f47 ima: Use inode_is_open_for_w=
-rite)
-Merging selinux/next (ee1a84fdfeed selinux: overhaul sidtab to fix bug and =
-improve performance)
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-Merging tpmdd/next (8f82ffbc5b0b tpm: add support for partial reads)
-Merging watchdog/master (31eb42bd9353 watchdog: w83627hf_wdt: Add quirk for=
- Inves system)
-Merging iommu/next (30045592fe54 Merge branches 'arm/renesas', 'arm/mediate=
-k', 'arm/tegra', 'arm/omap', 'arm/smmu', 'x86/vt-d', 'x86/amd' and 'core' i=
-nto next)
-Merging dwmw2-iommu/master (d8a5b80568a9 Linux 4.15)
-Merging vfio/next (9422f5871d5d vfio/mdev: add static modifier to add_mdev_=
-supported_type)
-Merging trivial/for-next (75a24b822d38 kfifo: fix inaccurate comment)
-Merging audit/next (d406db524c32 audit: remove duplicated include from audi=
-t.c)
-Merging devicetree/for-next (acc2038738bd Merge branch 'yaml-bindings-for-v=
-4.21' into dt/next)
-Merging mailbox/mailbox-for-next (e2affdbef2ac mailbox: bcm2835: Switch to =
-SPDX identifier)
-Merging spi/for-next (b72514463f44 Merge remote-tracking branches 'spi/topi=
-c/mem' and 'spi/topic/mtd' into spi-next)
-Merging tip/auto-latest (f56a4affd145 Merge branch 'x86/urgent')
-CONFLICT (content): Merge conflict in net/bridge/br_multicast.c
-CONFLICT (content): Merge conflict in net/bridge/br_mdb.c
-CONFLICT (content): Merge conflict in drivers/hwmon/k10temp.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/cpu/resctrl/rdtgroup.c
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging clockevents/clockevents/next (ded414ebcd58 clocksource/drivers/fttm=
-r010: Fix invalid interrupt register access)
-Merging edac-amd/for-next (bd4473541822 EDAC, i5000: Remove set but not use=
-d local variables)
-Merging irqchip/irq/irqchip-next (893b0aff9a7a irqchip/irq-imx-gpcv2: Silen=
-ce "fall through" warning)
-Merging ftrace/for-next (dbc3f042fbc8 selftests/ftrace: Add testcases for d=
-ynamic event)
-Merging rcu/rcu/next (06aa5694f870 Merge LKMM and RCU commits)
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/runlitmush=
-ist.sh
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/parseargs.=
-sh
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/newlitmush=
-ist.sh
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/judgelitmu=
-s.sh
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/initlitmus=
-hist.sh
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/checklitmu=
-shist.sh
-CONFLICT (add/add): Merge conflict in tools/memory-model/scripts/checkghlit=
-mus.sh
-Merging kvm/linux-next (5132411985e1 kvm: selftests: ucall: improve ucall p=
-lacement in memory, fix unsigned comparison)
-CONFLICT (modify/delete): arch/x86/kvm/vmx.c deleted in kvm/linux-next and =
-modified in HEAD. Version HEAD of arch/x86/kvm/vmx.c left in tree.
-$ git rm -f arch/x86/kvm/vmx.c
-Applying: update to "x86: Fix various typos in comments"
-Merging kvm-arm/next (e4e11cc0f81e KVM: arm64: Safety check PSTATE when ent=
-ering guest and handle IL)
-Merging kvm-ppc/kvm-ppc-next (651022382c7f Linux 4.20-rc1)
-Merging kvms390/next (ed3054a30258 Merge branch 'apv11' of git://git.kernel=
-.org/pub/scm/linux/kernel/git/kvms390/linux into kernelorgnext)
-Merging xen-tip/linux-next (716ff017a39e KVM: x86: Allow Qemu/KVM to use PV=
-H entry point)
-Merging percpu/for-next (ad19ef010db1 Merge branch 'for-4.19-fixes' into fo=
-r-next)
-Merging workqueues/for-next (87915adc3f0a workqueue: re-add lockdep depende=
-ncies for flushing)
-Merging drivers-x86/for-next (fb7255a92311 platform/x86: mlx-platform: Conv=
-ert to use SPDX identifier)
-Merging chrome-platform/for-next (2a70a4cda0da MAINTAINERS: platform/chrome=
-: Add Enric as a maintainer)
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging hsi/for-next (3a658e09a215 HSI: omap_ssi: Change to use DEFINE_SHOW=
-_ATTRIBUTE macro)
-Merging leds/for-next (8146aace60c7 led: triggers: Initialize LED_INIT_DEFA=
-ULT_TRIGGER if trigger is brought after class)
-Merging ipmi/for-next (5e6ddecfc90b ipmi:ssif: Change some pr_xxx to dev_xx=
-x calls)
-Merging driver-core/driver-core-next (df44b479654f kobject: return error co=
-de if writing /sys/.../uevent fails)
-CONFLICT (content): Merge conflict in drivers/base/platform.c
-Merging usb/usb-next (eaf3074e0a8c usb: renesas_usbhs: mark PM functions as=
- __maybe_unused)
-Merging usb-gadget/next (4fe4f9fecc36 usb: dwc2: Fix disable all EP's on di=
-sconnect)
-Merging usb-serial/usb-next (01688a6d66b5 USB: serial: mos7840: remove set =
-but not used variables 'number, serial')
-Merging usb-chipidea-next/ci-for-usb-next (59739131e0ca usb: chipidea: Fix =
-otg event handler)
-Merging phy-next/next (2e38c2e7026a phy: qcom-qmp: Expose provided clocks t=
-o DT)
-Merging tty/tty-next (9c96f401e91a Merge 4.20-rc6 into tty-next)
-Merging char-misc/char-misc-next (2701e804f00f Merge tag 'extcon-next-for-4=
-.21' of git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon into c=
-har-misc-next)
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging extcon/extcon-next (a2dc50914744 extcon: max8997: Fix lack of path =
-setting in USB device mode)
-Merging soundwire/next (b1635596860d soundwire: intel: constify snd_soc_dai=
-_ops structures)
-Merging thunderbolt/next (dcc3c9e37fbd thunderbolt: Export IOMMU based DMA =
-protection support to userspace)
-Merging staging/staging-next (c6cbcdea7ab9 Merge tag 'iio-for-4.21b' of git=
-://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio into staging-next)
-CONFLICT (content): Merge conflict in drivers/staging/vboxvideo/vbox_ttm.c
-CONFLICT (content): Merge conflict in drivers/staging/media/tegra-vde/tegra=
--vde.c
-Merging mux/for-next (a1ad5ff63944 Merge branch 'i2c-mux/for-next' into for=
--next)
-Merging icc/icc-next (f8325633fbae MAINTAINERS: add a maintainer for the in=
-terconnect API)
-Merging slave-dma/next (8fc4a3d104a3 Merge branch 'topic/fsl' into next)
-Merging cgroup/for-next (87f902fab430 Merge branch 'for-4.21' into for-next)
-Merging scsi/for-next (dd94e7f59f63 Merge branch 'misc' into for-next)
-Merging scsi-mkp/for-next (6c8d5f051251 scsi: ufs: Fix platform_no_drv_owne=
-r.cocci warnings)
-Merging target-updates/for-next (1c130ae00b76 iscsi-target: make sure to wa=
-ke up sleeping login worker)
-Merging target-bva/for-next (60cc43fc8884 Linux 4.17-rc1)
-Merging vhost/linux-next (37d1246af2d5 virtio_net: bulk free tx skbs)
-Merging rpmsg/for-next (9099a252d44c Merge branches 'hwspinlock-next', 'rpm=
-sg-next' and 'rproc-next' into for-next)
-Merging gpio/for-next (589b5bd78cdc Merge branch 'devel' into for-next)
-CONFLICT (content): Merge conflict in arch/arm/mach-omap1/board-ams-delta.c
-$ git reset --hard HEAD^
-Merging next-20181214 version of gpio
-Merging pinctrl/for-next (a0d2f28f58d3 Merge branch 'devel' into for-next)
-Merging pinctrl-samsung/for-next (651022382c7f Linux 4.20-rc1)
-Merging pwm/for-next (46275577b86a pwm: bcm2835: Switch to SPDX identifier)
-Merging userns/for-next (1e9c75fb9c47 mnt: fix __detach_mounts infinite loo=
-p)
-Merging ktest/for-next (6cd110a91f52 ktest: Take submenu into account for g=
-rub2 menus)
-Merging random/dev (05cbbb6f9ed5 drivers/char/random.c: make primary_crng s=
-tatic)
-Merging kselftest/next (6edf2e3710f4 fix dma-buf/udmabuf selftest)
-Merging y2038/y2038 (ccea641b6742 timekeeping: remove obsolete time accesso=
-rs)
-Applying: cifs: update for current_kernel_time64() removal
-Merging livepatching/for-next (c72a7f515329 Merge branch 'for-4.18/upstream=
-' into for-next)
-Merging coresight/next (7ff8957175d6 coresight: Use of_node_name_eq for nod=
-e name comparisons)
-Merging rtc/rtc-next (fc979933bcf1 rtc: pcf85363: Add support for NXP pcf85=
-263 rtc)
-Merging nvdimm/libnvdimm-for-next (594861215c83 acpi, nfit: Further restric=
-t userspace ARS start requests)
-Merging at24/at24/for-next (37cf28d3b5bc eeprom: at24: add support for 24c2=
-048)
-Merging ntb/ntb-next (d9842b39e9ec ntb_hw_switchtec: Added support of >=3D4=
-G memory windows)
-Merging kspp/for-next/kspp (be1944712d8e Merge branch 'for-next/gcc-plugin/=
-arm-stackprotector' into for-next/kspp)
-Merging init_task/init_task (e1e871aff3de Expand INIT_STRUCT_PID and remove)
-Merging cisco/for-next (84a401a27506 Merge branch 'for-x86' into for-next)
-CONFLICT (content): Merge conflict in arch/x86/kernel/setup.c
-Merging gnss/gnss-next (2595646791c3 Linux 4.20-rc5)
-Merging fsi/master (d20810530b71 fsi: fsi-scom.c: Remove duplicate header)
-Merging siox/siox/next (1e4b044d2251 Linux 4.18-rc4)
-Merging slimbus/for-next (39a577fe6163 slimbus: ngd: fix spelling mistake "=
-exeeds" -> "exceeds")
-Merging nvmem/for-next (5035d66cc629 nvmem: meson-efuse: add peripheral clo=
-ck)
-CONFLICT (content): Merge conflict in include/linux/nvmem-provider.h
-Merging xarray/xarray (48483614de97 XArray: Fix xa_alloc when id exceeds ma=
-x)
-Merging hyperv/hyperv-next (651022382c7f Linux 4.20-rc1)
-Merging auxdisplay/auxdisplay (40e020c129cf Linux 4.20-rc6)
-Merging akpm-current/current (78d626e0374e ipc: conserve sequence numbers i=
-n extended IPCMNI mode)
-CONFLICT (content): Merge conflict in mm/page_io.c
-CONFLICT (content): Merge conflict in arch/arm64/mm/proc.S
-CONFLICT (content): Merge conflict in arch/arm64/mm/mmu.c
-CONFLICT (content): Merge conflict in arch/arm64/include/asm/memory.h
-$ git checkout -b akpm remotes/origin/akpm/master
-Applying: scripts/atomic/check-atomics.sh: don't assume that scripts are ex=
-ecutable
-Applying: mm: treewide: remove unused address argument from pte_alloc funct=
-ions
-Applying: mm: speed up mremap by 20x on large regions
-Applying: mm/mremap: fix 'move_normal_pmd' unused function warning
-Applying: mm: select HAVE_MOVE_PMD on x86 for faster mremap
-Applying: kernel/async.c: remove some duplicated includes
-Applying: kernel/signal.c: remove some duplicated includes
-Applying: locking/atomics: build atomic headers as required
-Applying: mm: balloon: update comment about isolation/migration/compaction
-Applying: mm: convert PG_balloon to PG_offline
-Applying: mm-convert-pg_balloon-to-pg_offline-fix
-Applying: kexec: export PG_offline to VMCOREINFO
-Applying: xen/balloon: mark inflated pages PG_offline
-Applying: hv_balloon: mark inflated pages PG_offline
-Applying: vmw_balloon: mark inflated pages PG_offline
-Applying: vmw_balloon-mark-inflated-pages-pg_offline-v2
-Applying: PM/Hibernate: use pfn_to_online_page()
-Applying: PM/Hibernate: exclude all PageOffline() pages
-Applying: pm-hibernate-exclude-all-pageoffline-pages-v2
-Applying: kernel/locking/mutex.c: remove caller signal_pending branch predi=
-ctions
-Applying: kernel/sched/: remove caller signal_pending branch predictions
-Applying: arch/arc/mm/fault.c: remove caller signal_pending_branch predicti=
-ons
-Applying: mm/: remove caller signal_pending branch predictions
-Applying: fs/: remove caller signal_pending branch predictions
-Applying: fs-remove-caller-signal_pending-branch-predictions-fix
-Applying: include/linux/sched/signal.h: replace `tsk' with `task'
-Applying: fs: don't open code lru_to_page()
-Applying: drivers/base/platform.c: kmemleak ignore a known leak
-Applying: drivers/media/platform/sti/delta/delta-ipc.c: fix read buffer ove=
-rflow
-Merging akpm/master (53cb0e56f828 drivers/media/platform/sti/delta/delta-ip=
-c.c: fix read buffer overflow)
+> 
+> Do you have a hotplug strategy yet?  PMUs in Switches below the Root
+> Ports sound like a useful thing.  Since you bind to every Port, you
+> will bind to hot-added Switch Ports, but unless you use ACPI hotplug,
+> you won't have a chance to add ACPI companion devices for them.
 
---Sig_/XI=BxLf5rP4=WmQ.mN8d+e_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The ACPI hack is very much because our hardware doesn't do it 'right'.
+This particular root port is always in the host anyway so we are fine here.
 
------BEGIN PGP SIGNATURE-----
+You certainly couldn't pull this trick with switches out in the fabric,
+but then they hopefully don't provide a non PCI backdoor to read their
+PMUs anyway.  PCI hotplug is causing me enough headaches elsewhere
+that I hope it'll just work with anything we do here!
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwXg9oACgkQAVBC80lX
-0GyINAf+IMsxAWTeXdPeKxP2CfvhxEvKDEhc3Xbnkj3Xa700KPa2IAXwsc7w2fHS
-UI17iuTdM+T/rOzQloi0+VkGGfXZoITdA3UJ0syGkeHC3DRB69D19Ztp/hIMEvd0
-I+s1NVhtFSXBovx1/+sdWvIs79qvS697q2tvM4yMCTPsRczKjq86pl1+c0SB65W2
-qhuD4lca4uqq8axziysvagRXMaO2+PR9dxAONsBXkfIfErw6scfBQomjMXcK5Ulp
-E8iX2B+wv1BcHy+GdsLUb+2RBGn/qckjtuSZTi9uoW+fp7LZtdjpkD4D+shaOpb+
-HX9AVja+E0aD+5eSO3EOVW//pA/IEw==
-=MOQU
------END PGP SIGNATURE-----
+> 
+> > Not yet fully established.
+> > 
+> > 1. I haven't done enough testing with high performance devices to
+> >    establish the 'minimum' frequency of the high resolution timer.
+> >    It may be that we just end up dropping some of the counters
+> >    because the load is too high to sample them often enough.
+> >    Once the basic approach is established I'll run the numbers
+> >    on this. These are up to Gen4x16 ports so things go pretty quick.
+> > 
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > ---
+> >  drivers/pci/pcie/Kconfig         |   9 +
+> >  drivers/pci/pcie/Makefile        |   2 +
+> >  drivers/pci/pcie/hisi_pcie_pmu.c | 528 +++++++++++++++++++++++++++++++
+> >  include/linux/cpuhotplug.h       |   1 +
+> >  4 files changed, 540 insertions(+)  
+> 
+> This looks like a nice piece of work, but I'm not sure where to put
+> it.  It really doesn't feel like part of the PCI core in the sense
+> that the PCI specs don't help you write it, and it doesn't provide any
+> PCI services used by other parts of the kernel.  It feels more like
+> just another driver for a device that happens to be on a PCI bus.
+> 
+> Granted, it currently requires portdrv, but I think the only reason
+> for that is to resolve the "multiple drivers need the same device"
+> problem.  I don't think portdrv is a good solution for that.
+> 
+> The other portdrv services (AER, hotplug, DPC, etc) are all defined in
+> the spec, and they're related in strange ways like sharing interrupts.
+> I would *like* to see those services moved into the PCI core directly
+> so they're not *drivers*, they're just optional features like MSI,
+> IOV, etc.
+> 
+> Then the Ports would by default not have a driver bound to them and
+> device-specific drivers like this could directly bind to the Port PCI
+> device.
+> 
 
---Sig_/XI=BxLf5rP4=WmQ.mN8d+e_--
+So the alternative is to just treat them as generic PMU drivers
+and put them in drivers/perf.  That is fine but I would worry that would
+lose the 'generalization' aspect because they weren't falling under
+the scope of PCI.  I suppose we could just make it clear that any such
+driver needs review from the PCI side as well as the perf side before being
+merged.
+
+However, we really are measuring things that are defined in the PCIe spec
+even if we aren't doing it via PCI SIG defined methods (as there aren't
+any currently), so it's a bit of a gray area to my mind.
+
+Of course we don't have to get it right first time anyway as moving
+drivers later is easy if it's just about where the code sits.  So we can
+park this question until the more fundamental stuff is sorted!
+
+Jonathan
+
+> Bjorn
+> 
+> > diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> > index 44742b2e1126..983783c42cf0 100644
+> > --- a/drivers/pci/pcie/Kconfig
+> > +++ b/drivers/pci/pcie/Kconfig
+> > @@ -47,6 +47,15 @@ config PCIEAER_INJECT
+> >  	  gotten from:
+> >  	     http://www.kernel.org/pub/linux/utils/pci/aer-inject/
+> >  
+> > +config PCIE_HISI_PMU
+> > +       tristate "PCI Express Root Port Performance Monitoring for Hisilicon Hip08"
+> > +       depends on PCIEPORTBUS
+> > +       help
+> > +	 The hisilicon Hip08 platform has root ports with integrated
+> > +	 transport layer performance measurement units. These are
+> > +	 exposed within the memory map, so resources must be provided
+> > +	 via ACPI DSDT.
+> > + 
+> >  #
+> >  # PCI Express ECRC
+> >  #
+> > diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> > index ab514083d5d4..67435abef29d 100644
+> > --- a/drivers/pci/pcie/Makefile
+> > +++ b/drivers/pci/pcie/Makefile
+> > @@ -12,3 +12,5 @@ obj-$(CONFIG_PCIEAER_INJECT)	+= aer_inject.o
+> >  obj-$(CONFIG_PCIE_PME)		+= pme.o
+> >  obj-$(CONFIG_PCIE_DPC)		+= dpc.o
+> >  obj-$(CONFIG_PCIE_PTM)		+= ptm.o
+> > +
+> > +obj-$(CONFIG_PCIE_HISI_PMU)     += hisi_pcie_pmu.o
+> > diff --git a/drivers/pci/pcie/hisi_pcie_pmu.c b/drivers/pci/pcie/hisi_pcie_pmu.c
+> > new file mode 100644
+> > index 000000000000..ddd2885a2b17
+> > --- /dev/null
+> > +++ b/drivers/pci/pcie/hisi_pcie_pmu.c
+> > @@ -0,0 +1,528 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Provide performance monitoring for Hisilicon PCIe root ports
+> > + *
+> > + * Copyright (C) 2018 Hisilicon
+> > + */
+> > +
+> > +#include <linux/acpi.h>
+> > +#include <linux/bitmap.h>
+> > +#include <linux/cpuhotplug.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/device.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/perf_event.h>
+> > +
+> > +#include "portdrv.h"
+> > +
+> > +#define HISI_PP_TL_CNT_CTRL_REG 0x96C
+> > +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN BIT(0)
+> > +#define   HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN BIT(1)
+> > +#define   HISI_PP_TL_CNT_CTRL_TX_NAT_CPL_CNT_EN BIT(2)
+> > +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_FUN_EN BIT(3)
+> > +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_TIME_MASK 0xFFF0
+> > +
+> > +#define HISI_MAX_PERIOD(nr) (BIT_ULL(nr) - 1)
+> > +
+> > +#define HISI_PP_TIMER_PERIOD_NS 10000000
+> > +
+> > +enum hisi_pci_counts {
+> > +	TX_MEM_RD,
+> > +	TX_MEM_WR,
+> > +	TX_CFG_RD,
+> > +	TX_CFG_WR,
+> > +	TX_IO_RD,
+> > +	TX_IO_WR,
+> > +	TX_MSG,
+> > +	TX_CPL,
+> > +	TX_CCIX,
+> > +	TX_ATOMIC,
+> > +	TX_P2P,
+> > +	TX_TLP,
+> > +	TX_PAYLOAD,
+> > +	TX_DW,
+> > +
+> > +	RX_TOTAL_TLP,
+> > +	RX_TOTAL_TR,
+> > +	RX_DROP,
+> > +	RX_POSTED,
+> > +	RX_NONPOSTED,
+> > +	RX_CPL,
+> > +	HISI_PP_EVENTS,
+> > +};
+> > +
+> > +static struct hisi_pcie_cnt {
+> > +	u64 reg_offset;
+> > +	u8 bits;
+> > +} hisi_pcie_cnt_info[HISI_PP_EVENTS] = {
+> > +	[TX_MEM_RD]		= { 0x908, 16 },
+> > +	[TX_MEM_WR]		= { 0x90c, 16 },
+> > +	[TX_CFG_RD]		= { 0x910, 16 },
+> > +	[TX_CFG_WR]		= { 0x914, 16 },
+> > +	[TX_IO_RD]		= { 0x918, 16 },
+> > +	[TX_IO_WR]		= { 0x91C, 16 },
+> > +	[TX_MSG]		= { 0x924, 16 },
+> > +	[TX_CPL]		= { 0x930, 16 },
+> > +	[TX_CCIX]		= { 0x934, 16 },
+> > +	[TX_ATOMIC]		= { 0x938, 16 },
+> > +	[TX_P2P]		= { 0x93C, 16 },
+> > +	[TX_TLP]		= { 0x940, 32 },
+> > +	[TX_PAYLOAD]		= { 0x944, 32 },
+> > +	[TX_DW]			= { 0x948, 32 },
+> > +
+> > +	[RX_TOTAL_TLP]		= { 0xb38, 16 },
+> > +	[RX_TOTAL_TR]		= { 0xb3c, 16 },
+> > +	[RX_DROP]		= { 0xb40, 16 },
+> > +	[RX_POSTED]		= { 0xb44, 16 },
+> > +	[RX_NONPOSTED]		= { 0xb48, 16 },
+> > +	[RX_CPL]		= { 0xb4c, 16 },
+> > +};
+> > +
+> > +struct hisi_event_list {
+> > +	struct list_head list;
+> > +	struct perf_event *event;
+> > +};
+> > +
+> > +struct hisi_pcie_pmu {
+> > +	struct pmu pmu;
+> > +	void __iomem *regs;
+> > +	cpumask_t associated_cpus;
+> > +	int on_cpu;
+> > +	struct hlist_node node;
+> > +	DECLARE_BITMAP(pmu_events, HISI_PP_EVENTS);
+> > +	struct hisi_event_list events[HISI_PP_EVENTS];
+> > +	struct hrtimer timer;
+> > +	struct list_head event_list;
+> > +};
+> > +
+> > +#define to_hisi_pcie_pmu(p) container_of((p), struct hisi_pcie_pmu, pmu)
+> > +
+> > +int hisi_pcie_pmu_online_cpu(unsigned int cpu, struct hlist_node *node)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = hlist_entry_safe(node,
+> > +							 struct hisi_pcie_pmu,
+> > +							 node);
+> > +
+> > +	cpumask_set_cpu(cpu, &dev_info->associated_cpus);
+> > +	/* If another CPU is already managing this PMU, simply return. */
+> > +	if (dev_info->on_cpu != -1)
+> > +		return 0;
+> > +
+> > +	/* Use this CPU in cpumask for event counting */
+> > +	dev_info->on_cpu = cpu;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +int hisi_pcie_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = hlist_entry_safe(node,
+> > +							 struct hisi_pcie_pmu,
+> > +							 node);
+> > +	cpumask_t pmu_online_cpus;
+> > +	unsigned int target;
+> > +
+> > +	if (!cpumask_test_and_clear_cpu(cpu, &dev_info->associated_cpus))
+> > +		return 0;
+> > +
+> > +	if (dev_info->on_cpu != cpu)
+> > +		return 0;
+> > +
+> > +	/* Give up ownership of the PMU */
+> > +	dev_info->on_cpu = -1;
+> > +
+> > +	/* Choose a new CPU to migrate ownership of the PMU to */
+> > +	cpumask_and(&pmu_online_cpus, &dev_info->associated_cpus,
+> > +		    cpu_online_mask);
+> > +	target = cpumask_any_but(&pmu_online_cpus, cpu);
+> > +	if (target >= nr_cpu_ids)
+> > +		return 0;
+> > +
+> > +	/* Use this CPU for event counting */
+> > +	dev_info->on_cpu = target;
+> > +	perf_pmu_migrate_context(&dev_info->pmu, cpu, target);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +void hisi_pcie_pmu_event_update(struct perf_event *event)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +	u64 delta, prev_raw_count, new_raw_count;
+> > +	u64 offset = hisi_pcie_cnt_info[hwc->config_base].reg_offset;
+> > +	u8 period = hisi_pcie_cnt_info[hwc->config_base].bits;
+> > +
+> > +	do {
+> > +		new_raw_count = readl(dev_info->regs + offset);
+> > +		prev_raw_count = local64_read(&hwc->prev_count);
+> > +	} while (local64_cmpxchg(&hwc->prev_count, prev_raw_count,
+> > +				 new_raw_count) != prev_raw_count);
+> > +
+> > +	delta = (new_raw_count - prev_raw_count) & HISI_MAX_PERIOD(period);
+> > +	local64_add(delta, &event->count);
+> > +}
+> > +
+> > +static enum hrtimer_restart event_read(struct hrtimer *timer)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info =
+> > +		container_of(timer, struct hisi_pcie_pmu, timer);
+> > +	struct hisi_event_list *hevent;
+> > +
+> > +	list_for_each_entry(hevent, &dev_info->event_list, list)
+> > +		hisi_pcie_pmu_event_update(hevent->event);
+> > +	hrtimer_forward_now(timer, HISI_PP_TIMER_PERIOD_NS);
+> > +
+> > +	return HRTIMER_RESTART;
+> > +}
+> > +
+> > +int hisi_pcie_pmu_event_init(struct perf_event *event)
+> > +{
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> > +
+> > +	if (event->attr.type != event->pmu->type)
+> > +		return -ENOENT;
+> > +
+> > +	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	if (event->attr.exclude_user	||
+> > +	    event->attr.exclude_kernel	||
+> > +	    event->attr.exclude_host	||
+> > +	    event->attr.exclude_guest	||
+> > +	    event->attr.exclude_hv	||
+> > +	    event->attr.exclude_idle)
+> > +		return -EINVAL;
+> > +
+> > +	if (event->cpu < 0)
+> > +		return -EINVAL;
+> > +
+> > +	hwc->idx = -1;
+> > +	hwc->config_base = event->attr.config;
+> > +
+> > +	dev_info->events[hwc->config_base].event = event;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +void hisi_pcie_pmu_enable(struct pmu *pmu)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(pmu);
+> > +	u32 val;
+> > +
+> > +	if (bitmap_empty(dev_info->pmu_events, HISI_PP_EVENTS))
+> > +		return;
+> > +
+> > +	val = readl(dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> > +	/* Disable time period based flow counting */
+> > +	val &= ~HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_TIME_MASK;
+> > +	val |= HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN |
+> > +		HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN;
+> > +	writel(val, dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> > +}
+> > +
+> > +void hisi_pcie_pmu_disable(struct pmu *pmu)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(pmu);
+> > +	u32 val;
+> > +	u32 new_raw_count;
+> > +
+> > +	new_raw_count = readl(dev_info->regs + 0x908);
+> > +
+> > +	val = readl(dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> > +	val &= ~(HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN |
+> > +		 HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN);
+> > +	writel(val, dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> > +}
+> > +
+> > +void hisi_pcie_pmu_enable_event(struct perf_event *event)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +	u64 offset = hisi_pcie_cnt_info[hwc->config_base].reg_offset;
+> > +
+> > +	/* Register is write to clear */
+> > +	local64_set(&hwc->prev_count, 0);
+> > +	writel(0, dev_info->regs + offset);
+> > +}
+> > +
+> > +void hisi_pcie_pmu_start(struct perf_event *event, int flags)
+> > +{
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +
+> > +	if (WARN_ON_ONCE(!(hwc->state & PERF_HES_STOPPED)))
+> > +		return;
+> > +
+> > +	WARN_ON_ONCE(!(hwc->state & PERF_HES_UPTODATE));
+> > +	hwc->state = 0;
+> > +
+> > +	hisi_pcie_pmu_enable_event(event);
+> > +	perf_event_update_userpage(event);
+> > +}
+> > +
+> > +void hisi_pcie_pmu_stop(struct perf_event *event, int flags)
+> > +{
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +
+> > +	WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
+> > +	hwc->state |= PERF_HES_STOPPED;
+> > +
+> > +	if (hwc->state & PERF_HES_UPTODATE)
+> > +		return;
+> > +
+> > +	/* Read hardware counter and update the perf counter statistics */
+> > +	hisi_pcie_pmu_event_update(event);
+> > +	hwc->state |= PERF_HES_UPTODATE;
+> > +}
+> > +
+> > +int hisi_pcie_pmu_add(struct perf_event *event, int flags)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +	bool prev_empty;
+> > +
+> > +	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
+> > +	set_bit(hwc->config_base, dev_info->pmu_events);
+> > +	if (flags & PERF_EF_START)
+> > +		hisi_pcie_pmu_start(event, PERF_EF_RELOAD);
+> > +	prev_empty = list_empty(&dev_info->event_list);
+> > +	list_add(&dev_info->events[hwc->config_base].list,
+> > +		 &dev_info->event_list);
+> > +	if (prev_empty)
+> > +		hrtimer_start(&dev_info->timer, HISI_PP_TIMER_PERIOD_NS,
+> > +			      HRTIMER_MODE_REL);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +
+> > +void hisi_pcie_pmu_del(struct perf_event *event, int flags)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> > +	struct hw_perf_event *hwc = &event->hw;
+> > +
+> > +	list_del(&dev_info->events[hwc->config_base].list);
+> > +	if (list_empty(&dev_info->event_list))
+> > +		hrtimer_cancel(&dev_info->timer);
+> > +	hisi_pcie_pmu_stop(event, PERF_EF_UPDATE);
+> > +	clear_bit(hwc->config_base, dev_info->pmu_events);
+> > +	perf_event_update_userpage(event);
+> > +}
+> > +
+> > +ssize_t hisi_event_sysfs_show(struct device *dev,
+> > +			      struct device_attribute *attr, char *page)
+> > +{
+> > +	struct dev_ext_attribute *eattr;
+> > +
+> > +	eattr = container_of(attr, struct dev_ext_attribute, attr);
+> > +
+> > +	return sprintf(page, "config=0x%lx\n", (unsigned long)eattr->var);
+> > +}
+> > +
+> > +void hisi_pcie_pmu_read(struct perf_event *event)
+> > +{
+> > +	hisi_pcie_pmu_event_update(event);
+> > +}
+> > +
+> > +ssize_t hisi_cpumask_sysfs_show(struct device *dev,
+> > +				struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct pmu *pmu = dev_get_drvdata(dev);
+> > +	struct hisi_pcie_pmu *dev_info =
+> > +		container_of(pmu, struct hisi_pcie_pmu, pmu);
+> > +
+> > +	return sprintf(buf, "%d\n", dev_info->on_cpu);
+> > +}
+> > +
+> > +static DEVICE_ATTR(cpumask, 0444, hisi_cpumask_sysfs_show, NULL);
+> > +
+> > +static struct attribute *hisi_pcie_pmu_cpumask_attrs[] = {
+> > +	&dev_attr_cpumask.attr,
+> > +	NULL,
+> > +};
+> > +
+> > +static const struct attribute_group hisi_pcie_pmu_cpumask_attr_group = {
+> > +	.attrs = hisi_pcie_pmu_cpumask_attrs,
+> > +};
+> > +
+> > +#define HISI_PP_ATTR(_name, _func, _config)			\
+> > +	(&((struct dev_ext_attribute[]) {				\
+> > +		{ __ATTR(_name, 0444, _func, NULL), (void *)_config }   \
+> > +	})[0].attr.attr)
+> > +
+> > +#define HISI_PP_EVENT_ATTR(_name, _config)		\
+> > +	HISI_PP_ATTR(_name, hisi_event_sysfs_show, (unsigned long)_config)
+> > +
+> > +static struct attribute *hisi_pcie_pmu_events_attr[] = {
+> > +	HISI_PP_EVENT_ATTR(tx_mem_rd, TX_MEM_RD),
+> > +	HISI_PP_EVENT_ATTR(tx_mem_wr, TX_MEM_WR),
+> > +	HISI_PP_EVENT_ATTR(tx_cfg_rd, TX_CFG_RD),
+> > +	HISI_PP_EVENT_ATTR(tx_cfg_wr, TX_CFG_WR),
+> > +	HISI_PP_EVENT_ATTR(tx_io_rd, TX_IO_RD),
+> > +	HISI_PP_EVENT_ATTR(tx_io_wr, TX_IO_WR),
+> > +	HISI_PP_EVENT_ATTR(tx_msg, TX_MSG),
+> > +
+> > +	HISI_PP_EVENT_ATTR(tx_tlp, TX_TLP),
+> > +	HISI_PP_EVENT_ATTR(tx_payload, TX_PAYLOAD),
+> > +	HISI_PP_EVENT_ATTR(tx_dw, TX_DW),
+> > +
+> > +	HISI_PP_EVENT_ATTR(tx_cpl, TX_CPL),
+> > +	HISI_PP_EVENT_ATTR(tx_ccix_tlp, TX_CCIX),
+> > +	HISI_PP_EVENT_ATTR(tx_atomic_tlp, TX_ATOMIC),
+> > +	HISI_PP_EVENT_ATTR(tx_p2p_tlp, TX_P2P),
+> > +
+> > +	HISI_PP_EVENT_ATTR(rx_tlp, RX_TOTAL_TLP),
+> > +	HISI_PP_EVENT_ATTR(rx_tr_tlp, RX_TOTAL_TR),
+> > +	HISI_PP_EVENT_ATTR(rx_posted_tlp, RX_POSTED),
+> > +	HISI_PP_EVENT_ATTR(rx_nonposted_tlp, RX_NONPOSTED),
+> > +	HISI_PP_EVENT_ATTR(rx_cpl_tlp, RX_CPL),
+> > +	NULL,
+> > +};
+> > +
+> > +static struct attribute_group hisi_pcie_pmu_events_group = {
+> > +	.name = "events",
+> > +	.attrs = hisi_pcie_pmu_events_attr,
+> > +};
+> > +
+> > +static const struct attribute_group *hisi_pcie_pmu_attr_groups[] = {
+> > +	&hisi_pcie_pmu_events_group,
+> > +	&hisi_pcie_pmu_cpumask_attr_group,
+> > +	NULL,
+> > +};
+> > +
+> > +static int hisi_pcie_pmu_probe(struct pcie_device *dev)
+> > +{
+> > +	struct pci_dev *pdev = dev->port;
+> > +	struct acpi_device *acpi_dev;
+> > +	struct resource_entry *entry;
+> > +	resource_size_t regs_start, regs_size;
+> > +	struct hisi_pcie_pmu *dev_info;
+> > +	struct list_head list;
+> > +	char *name;
+> > +	int ret;
+> > +
+> > +	INIT_LIST_HEAD(&list);
+> > +
+> > +	if (pdev->vendor != PCI_VENDOR_ID_HUAWEI)
+> > +		return -ENODEV;
+> > +
+> > +	acpi_dev = ACPI_COMPANION(&pdev->dev);
+> > +	if (!acpi_dev)
+> > +		return -ENODEV;
+> > +
+> > +	ret = acpi_dev_get_resources(acpi_dev, &list, NULL, NULL);
+> > +	if (ret < 0) {
+> > +		pr_err("Failed to get PMU resources, ret=%d\n", ret);
+> > +		return ret;
+> > +	}
+> > +	entry = list_first_entry(&list, struct resource_entry, node);
+> > +	if (entry) {
+> > +		regs_start = entry->res->start;
+> > +		regs_size = resource_size(entry->res);
+> > +		ret = 0;
+> > +	} else
+> > +		ret = -EINVAL;
+> > +	acpi_dev_free_resource_list(&list);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	dev_info = devm_kzalloc(&pdev->dev, sizeof(*dev_info), GFP_KERNEL);
+> > +	if (!dev_info)
+> > +		return -ENOMEM;
+> > +
+> > +	hrtimer_init(&dev_info->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> > +	dev_info->timer.function = event_read;
+> > +
+> > +	INIT_LIST_HEAD(&dev_info->event_list);
+> > +	dev_info->regs = devm_ioremap_nocache(&pdev->dev, regs_start,
+> > +					      regs_size);
+> > +	if (!dev_info->regs)
+> > +		return -EINVAL;
+> > +	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "hisi_pcie_port%04x_%02x",
+> > +			      pdev->bus->number,
+> > +			      PCI_SLOT(pdev->devfn));
+> > +	if (!name)
+> > +		return -ENOMEM;
+> > +
+> > +	dev_info->pmu = (struct pmu) {
+> > +		.name = name,
+> > +		.task_ctx_nr = perf_invalid_context,
+> > +		.event_init = hisi_pcie_pmu_event_init,
+> > +		.pmu_enable = hisi_pcie_pmu_enable,
+> > +		.pmu_disable = hisi_pcie_pmu_disable,
+> > +		.add = hisi_pcie_pmu_add,
+> > +		.del = hisi_pcie_pmu_del,
+> > +		.start = hisi_pcie_pmu_start,
+> > +		.stop = hisi_pcie_pmu_stop,
+> > +		.read = hisi_pcie_pmu_read,
+> > +		.attr_groups = hisi_pcie_pmu_attr_groups,
+> > +		.capabilities = PERF_PMU_CAP_NO_INTERRUPT,
+> > +	};
+> > +
+> > +
+> > +	ret = cpuhp_state_add_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> > +				       &dev_info->node);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Error %d registering hotplug;\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = perf_pmu_register(&dev_info->pmu, name, -1);
+> > +	if (ret) {
+> > +		cpuhp_state_remove_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> > +					    &dev_info->node);
+> > +
+> > +		return ret;
+> > +	}
+> > +
+> > +	dev_set_drvdata(&pdev->dev, dev_info);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void hisi_pcie_pmu_remove(struct pcie_device *dev)
+> > +{
+> > +	struct hisi_pcie_pmu *dev_info = dev_get_drvdata(&dev->port->dev);
+> > +
+> > +	perf_pmu_unregister(&dev_info->pmu);
+> > +	cpuhp_state_remove_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> > +				    &dev_info->node);
+> > +}
+> > +
+> > +static struct pcie_port_service_driver hisi_pcie_pmu = {
+> > +	.name = "hisi_pcie_root_port_pmu",
+> > +	.port_type = PCIE_ANY_PORT,
+> > +	.service = PCIE_PORT_SERVICE_PMU,
+> > +	.probe = hisi_pcie_pmu_probe,
+> > +	.remove = hisi_pcie_pmu_remove,
+> > +};
+> > +
+> > +static int __init hisi_pcie_service_init(void)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = cpuhp_setup_state_multi(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> > +				      "AP_PERF_ARM_HISI_PCIE_ONLINE",
+> > +				      hisi_pcie_pmu_online_cpu,
+> > +				      hisi_pcie_pmu_offline_cpu);
+> > +	if (ret) {
+> > +		pr_err("PCIE PMU: setup hotplug, ret = %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	pcie_port_service_register(&hisi_pcie_pmu);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void hisi_pcie_service_remove(void)
+> > +{
+> > +	pcie_port_service_unregister(&hisi_pcie_pmu);
+> > +	cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE);
+> > +}
+> > +module_init(hisi_pcie_service_init);
+> > +module_exit(hisi_pcie_service_remove);
+> > +MODULE_LICENSE("GPL");
+> > diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> > index e0cd2baa8380..73f2bc8a7201 100644
+> > --- a/include/linux/cpuhotplug.h
+> > +++ b/include/linux/cpuhotplug.h
+> > @@ -161,6 +161,7 @@ enum cpuhp_state {
+> >  	CPUHP_AP_PERF_ARM_HISI_DDRC_ONLINE,
+> >  	CPUHP_AP_PERF_ARM_HISI_HHA_ONLINE,
+> >  	CPUHP_AP_PERF_ARM_HISI_L3_ONLINE,
+> > +	CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> >  	CPUHP_AP_PERF_ARM_L2X0_ONLINE,
+> >  	CPUHP_AP_PERF_ARM_QCOM_L2_ONLINE,
+> >  	CPUHP_AP_PERF_ARM_QCOM_L3_ONLINE,
+> > -- 
+> > 2.19.1
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel  
+
+
