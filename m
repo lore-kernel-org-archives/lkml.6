@@ -2,49 +2,49 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2334BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFCDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 000532146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1686920675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388768AbeLQSWg (ORCPT
+        id S2388780AbeLQSWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:22:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35025 "EHLO
+        Mon, 17 Dec 2018 13:22:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51859 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLQSWg (ORCPT
+        with ESMTP id S1726887AbeLQSWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:22:36 -0500
+        Mon, 17 Dec 2018 13:22:48 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHILDnt2561256
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHIMOD82561342
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 10:21:13 -0800
+        Mon, 17 Dec 2018 10:22:24 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHILCrQ2561253;
-        Mon, 17 Dec 2018 10:21:12 -0800
-Date:   Mon, 17 Dec 2018 10:21:12 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHIMOdt2561339;
+        Mon, 17 Dec 2018 10:22:24 -0800
+Date:   Mon, 17 Dec 2018 10:22:24 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-ecc729f1f47142ad31741549f400b611435c1af7@git.kernel.org>
-Cc:     peterz@infradead.org, riel@surriel.com,
-        torvalds@linux-foundation.org, bp@alien8.de, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        dave.hansen@linux.intel.com, luto@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          dave.hansen@linux.intel.com, luto@kernel.org, riel@surriel.com,
-          peterz@infradead.org, torvalds@linux-foundation.org,
-          bp@alien8.de, hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <20181203171043.162771364@infradead.org>
-References: <20181203171043.162771364@infradead.org>
+Message-ID: <tip-98bfc9b038cde1ce108f69a50720e394fe774cb7@git.kernel.org>
+Cc:     dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org,
+        peterz@infradead.org, riel@surriel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, bp@alien8.de
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, bp@alien8.de, torvalds@linux-foundation.org,
+          hpa@zytor.com, luto@kernel.org, dave.hansen@linux.intel.com,
+          peterz@infradead.org, riel@surriel.com
+In-Reply-To: <20181203171043.295174892@infradead.org>
+References: <20181203171043.295174892@infradead.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Add ARRAY and PAGES_ARRAY selftests
-Git-Commit-ID: ecc729f1f47142ad31741549f400b611435c1af7
+Subject: [tip:x86/mm] x86/mm/cpa: Make cpa_data::vaddr invariant
+Git-Commit-ID: 98bfc9b038cde1ce108f69a50720e394fe774cb7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,17 +58,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ecc729f1f47142ad31741549f400b611435c1af7
-Gitweb:     https://git.kernel.org/tip/ecc729f1f47142ad31741549f400b611435c1af7
+Commit-ID:  98bfc9b038cde1ce108f69a50720e394fe774cb7
+Gitweb:     https://git.kernel.org/tip/98bfc9b038cde1ce108f69a50720e394fe774cb7
 Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 3 Dec 2018 18:03:45 +0100
+AuthorDate: Mon, 3 Dec 2018 18:03:47 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 18:54:22 +0100
+CommitDate: Mon, 17 Dec 2018 18:54:24 +0100
 
-x86/mm/cpa: Add ARRAY and PAGES_ARRAY selftests
+x86/mm/cpa: Make cpa_data::vaddr invariant
 
-The current pageattr-test code only uses the regular range interface,
-add code that also tests the array and pages interface.
+Currently __change_page_attr_set_clr() will modify cpa->vaddr when
+!(CPA_ARRAY | CPA_PAGES_ARRAY), whereas in the array cases it will
+increment cpa->curpage.
+
+Change __cpa_addr() such that its @idx argument also works in the
+!array case and use cpa->curpage increments for all cases.
+
+NOTE: since cpa_data::numpages is 'unsigned long' so should cpa_data::curpage be.
+NOTE: after this only cpa->numpages is still modified.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -81,75 +88,75 @@ Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tom.StDenis@amd.com
 Cc: dave.hansen@intel.com
-Link: http://lkml.kernel.org/r/20181203171043.162771364@infradead.org
+Link: http://lkml.kernel.org/r/20181203171043.295174892@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pageattr-test.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ arch/x86/mm/pageattr.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/mm/pageattr-test.c b/arch/x86/mm/pageattr-test.c
-index 08f8f76a4852..b6b6468530f1 100644
---- a/arch/x86/mm/pageattr-test.c
-+++ b/arch/x86/mm/pageattr-test.c
-@@ -23,7 +23,8 @@
- static __read_mostly int print = 1;
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 6e6900ebea30..ce8af3f08628 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -35,11 +35,11 @@ struct cpa_data {
+ 	pgprot_t	mask_set;
+ 	pgprot_t	mask_clr;
+ 	unsigned long	numpages;
+-	int		flags;
++	unsigned long	curpage;
+ 	unsigned long	pfn;
+-	unsigned	force_split		: 1,
++	unsigned int	flags;
++	unsigned int	force_split		: 1,
+ 			force_static_prot	: 1;
+-	int		curpage;
+ 	struct page	**pages;
+ };
  
- enum {
--	NTEST			= 400,
-+	NTEST			= 3 * 100,
-+	NPAGES			= 100,
- #ifdef CONFIG_X86_64
- 	LPS			= (1 << PMD_SHIFT),
- #elif defined(CONFIG_X86_PAE)
-@@ -110,6 +111,9 @@ static int print_split(struct split_state *s)
- static unsigned long addr[NTEST];
- static unsigned int len[NTEST];
+@@ -228,7 +228,7 @@ static bool __cpa_pfn_in_highmap(unsigned long pfn)
  
-+static struct page *pages[NPAGES];
-+static unsigned long addrs[NPAGES];
-+
- /* Change the global bit on random pages in the direct mapping */
- static int pageattr_test(void)
+ #endif
+ 
+-static unsigned long __cpa_addr(struct cpa_data *cpa, int idx)
++static unsigned long __cpa_addr(struct cpa_data *cpa, unsigned long idx)
  {
-@@ -137,7 +141,7 @@ static int pageattr_test(void)
- 		unsigned long pfn = prandom_u32() % max_pfn_mapped;
+ 	if (cpa->flags & CPA_PAGES_ARRAY) {
+ 		struct page *page = cpa->pages[idx];
+@@ -242,7 +242,7 @@ static unsigned long __cpa_addr(struct cpa_data *cpa, int idx)
+ 	if (cpa->flags & CPA_ARRAY)
+ 		return cpa->vaddr[idx];
  
- 		addr[i] = (unsigned long)__va(pfn << PAGE_SHIFT);
--		len[i] = prandom_u32() % 100;
-+		len[i] = prandom_u32() % NPAGES;
- 		len[i] = min_t(unsigned long, len[i], max_pfn_mapped - pfn - 1);
+-	return *cpa->vaddr;
++	return *cpa->vaddr + idx * PAGE_SIZE;
+ }
  
- 		if (len[i] == 0)
-@@ -167,14 +171,30 @@ static int pageattr_test(void)
- 				break;
- 			}
- 			__set_bit(pfn + k, bm);
-+			addrs[k] = addr[i] + k*PAGE_SIZE;
-+			pages[k] = pfn_to_page(pfn + k);
- 		}
- 		if (!addr[i] || !pte || !k) {
- 			addr[i] = 0;
- 			continue;
- 		}
+ /*
+@@ -1581,6 +1581,7 @@ static int cpa_process_alias(struct cpa_data *cpa)
+ 		alias_cpa = *cpa;
+ 		alias_cpa.vaddr = &laddr;
+ 		alias_cpa.flags &= ~(CPA_PAGES_ARRAY | CPA_ARRAY);
++		alias_cpa.curpage = 0;
  
--		test_addr = addr[i];
--		err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
-+		switch (i % 3) {
-+		case 0:
-+			test_addr = addr[i];
-+			err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
-+			break;
-+
-+		case 1:
-+			err = change_page_attr_set(addrs, len[1], PAGE_CPA_TEST, 1);
-+			break;
-+
-+		case 2:
-+			err = cpa_set_pages_array(pages, len[i], PAGE_CPA_TEST);
-+			break;
-+		}
-+
-+
- 		if (err < 0) {
- 			printk(KERN_ERR "CPA %d failed %d\n", i, err);
- 			failed++;
+ 		ret = __change_page_attr_set_clr(&alias_cpa, 0);
+ 		if (ret)
+@@ -1600,6 +1601,7 @@ static int cpa_process_alias(struct cpa_data *cpa)
+ 		alias_cpa = *cpa;
+ 		alias_cpa.vaddr = &temp_cpa_vaddr;
+ 		alias_cpa.flags &= ~(CPA_PAGES_ARRAY | CPA_ARRAY);
++		alias_cpa.curpage = 0;
+ 
+ 		/*
+ 		 * The high mapping range is imprecise, so ignore the
+@@ -1648,11 +1650,7 @@ static int __change_page_attr_set_clr(struct cpa_data *cpa, int checkalias)
+ 		 */
+ 		BUG_ON(cpa->numpages > numpages || !cpa->numpages);
+ 		numpages -= cpa->numpages;
+-		if (cpa->flags & (CPA_PAGES_ARRAY | CPA_ARRAY))
+-			cpa->curpage++;
+-		else
+-			*cpa->vaddr += cpa->numpages * PAGE_SIZE;
+-
++		cpa->curpage += cpa->numpages;
+ 	}
+ 	return 0;
+ }
