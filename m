@@ -2,99 +2,111 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAFBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CF8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D062920874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AhLXP7nc"
+	by mail.kernel.org (Postfix) with ESMTP id 7B68920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545072623;
+	bh=tVfjD/YFP7/GSA3T0AdtRBS/9baRBHn7uKjVqetKrzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=MCef9emwaTXc+1L4Qcq1vKi6tm6YgF+V0WihEaL3NbUUZMkhn95hgyWyfgzZ8aTsy
+	 VF27T3dGbL/IoS8L76/fEc8DLYiOQ1cp7olBKLy56mqbfuqqHLFgfdmQo/DkCUiisb
+	 0xX88O6qdsOHNeu8Rzf+PBnhueYrRV+Txv0TPoFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbeLQSuU (ORCPT
+        id S2389237AbeLQSuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:50:20 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36603 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727819AbeLQSuU (ORCPT
+        Mon, 17 Dec 2018 13:50:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53494 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbeLQSuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Dec 2018 13:50:20 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g11-v6so11971683ljk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:50:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hUCDd1qVR7zra0gSo/zsbGu0tuzqW9bjcUU103oLgIw=;
-        b=AhLXP7nc+oqTGaEt2DtKQyFN9pPdd63bF0SeX9hPGdzqoLVSGib4VXXJ+aTIztLOlQ
-         ZrBDjsSbgKb9G1dNBOk4O7Ps6K9qJHnQFy/1NsK2j76fjR/fxixUrfJuna9/AK7mdCZ/
-         gizOWY37n5WoZDP9IA0rzmXoVn/MEN78JQcWA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hUCDd1qVR7zra0gSo/zsbGu0tuzqW9bjcUU103oLgIw=;
-        b=W9a+N3hugET4bRiKPPWzF+/0IgrJkUIyup/vZGKZdeQuJdnM1ygiYuUdXNr04NBTX2
-         kLiSOks4jBwQ49tSgOHV9ELtv2dDCem5s2NCxt0t9plP4B7bAqIdyZ3QO7l21ff9Y7nx
-         5AruWZGRCXuTDJ5lrfrHaI+mQTqZcdAXZMTj2lrAjlo1ohW+oQuij/3HLBQz0Ltp9caK
-         jerR/G7odTM9m8jtehPxPSynMuQoWMVH9voEatqS76QUTU8cYPoVGx9G4Uu004T4ylEI
-         Kb+3MLi/1ZNhYfwOgWSQ3jql1eahxPo7uSYLZp9qBnlDm1w7hCBRofpeBYhwW4VJpj2m
-         zTEA==
-X-Gm-Message-State: AA+aEWYSVrH5PuaeO6oimfIP1w3wrjuXwKe3UL734XLsKaPfDc5rpZ6J
-        CRCwgvhMfhHOUJAexmCzFs2KNMN3Vko=
-X-Google-Smtp-Source: AFSGD/Wgj5CQNkqWCL9wYxyrthIJ79dlUUVyXYJ6A92NpAATiwFTYIK2ciXCmDjYSccMBvLjT1fvrA==
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr8261272ljj.9.1545072617810;
-        Mon, 17 Dec 2018 10:50:17 -0800 (PST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id m77sm2807596lfg.3.2018.12.17.10.50.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 10:50:16 -0800 (PST)
-Received: by mail-lj1-f170.google.com with SMTP id t9-v6so11950923ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:50:16 -0800 (PST)
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr8985170lji.133.1545072616266;
- Mon, 17 Dec 2018 10:50:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tVfjD/YFP7/GSA3T0AdtRBS/9baRBHn7uKjVqetKrzY=; b=jeuIqFUB3tq7CF1zzVUOkUCHK
+        68v4cPoLcNW3oSd/IciUcHJffBaoCWscIACY1376vyGvzdznVw8xMoakCcjLZNwVuPy0GwNY5uDrA
+        zIzRL+9ViDfG386cZkS0suEGqROUtwaeEVkslKpQlMQK6qKrKzdc9gxwEk+1Ka/OQ4zuI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gYxy2-0003Cs-Qt; Mon, 17 Dec 2018 18:50:14 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 350CB112593C; Mon, 17 Dec 2018 18:50:14 +0000 (GMT)
+Date:   Mon, 17 Dec 2018 18:50:14 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181217185014.GH27909@sirena.org.uk>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
+ <20181205082251.GE31204@localhost.localdomain>
+ <20181205172701.GH6205@sirena.org.uk>
+ <20181207075829.GA24940@localhost.localdomain>
+ <20181207131418.GB6510@sirena.org.uk>
+ <20181214135819.GA2735@localhost.localdomain>
+ <20181214172619.GC6467@sirena.org.uk>
+ <20181217081912.GA2477@localhost.localdomain>
 MIME-Version: 1.0
-References: <20181128232019.GC131170@gmail.com> <20181217181244.220052-1-ebiggers@kernel.org>
- <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Dec 2018 10:49:59 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
-Message-ID: <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
-Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
-To:     ebiggers@kernel.org, James Morris James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+Z7/5fzWRHDJ0o7Q"
+Content-Disposition: inline
+In-Reply-To: <20181217081912.GA2477@localhost.localdomain>
+X-Cookie: Cold hands, no gloves.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:43 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Or maybe just remove it entirely, since it's clearly entirely
-> incorrect from the very start.
 
-.. or another alternative: remove the "Opt_err = -1" entirely.
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Again, this seems to be a buggy pattern exclusive to the security
-code. Nobody else does it, and using that negative value is basically
-the source of those two bugs. It seems pointless and wrong.
+On Mon, Dec 17, 2018 at 10:19:12AM +0200, Matti Vaittinen wrote:
+> On Fri, Dec 14, 2018 at 05:26:19PM +0000, Mark Brown wrote:
+> > On Fri, Dec 14, 2018 at 03:58:19PM +0200, Matti Vaittinen wrote:
+> > > On Fri, Dec 07, 2018 at 01:14:18PM +0000, Mark Brown wrote:
 
-So the *simplest* fix would seem to be to literally remove all those
-"= -1" for the Opt_err initialization.  Making the code smaller,
-simpler, and fixing the bug in the process.
+> > > I could send an example on how the driver utilizing the original RFC
+> > > interface would look like. I am starting to think it was not *that* bad
+> > > after all...
 
-Hmm?
+> > That might help, yes.
 
-                 Linus
+> This is what I came up with. I think having the simple mapping arrays
+> (bitX_offsets) and REGMAP_IRQ_MAIN_REG_OFFSET macro makes this
+> not-so-bad :) I will also send an example on how this would look like
+> with the RFC v2 interface.
+
+I think your approach is fine - there's not much difference really.
+
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwX7+UACgkQJNaLcl1U
+h9BsbAf/QzVfLbwHJE7W0GpUJM0Na0+hSe7nclxpz2vLLdyiavi2QYS79OpbSutD
+Jp17hZbetnLpnA7R/wjwN4/aReP4+kDD5GTDpLuOMMaaMu86WIRwtAOKXOuYeoAI
+xmv4qhz70+lwv0rF5T4s0IqkxQIzzjT13d/b3qP3BfUTgubHU5k4rnKCEAinW+ab
+D9p7MslRhYw3Fq0dppLoxnAEUBBFuqLwj37YMDyj/DgEJ7nH0RXEQ0TVjc5ZBp97
+9dIeyMHv5DjdJD1wHyEbVO3O6Tqr8dVTFDZzOm+EgF1CLa+eUOIJbO84S/LmgSIb
+wnTYBq7vpFHvKvv3ApiLXiUZ1Gc5WQ==
+=WKSI
+-----END PGP SIGNATURE-----
+
+--+Z7/5fzWRHDJ0o7Q--
