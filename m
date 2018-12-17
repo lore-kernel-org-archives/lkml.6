@@ -2,173 +2,122 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DACC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9C5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165E2206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:11:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="H2d1R/yM"
+	by mail.kernel.org (Postfix) with ESMTP id 9E1AD2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388297AbeLQQLh (ORCPT
+        id S2388199AbeLQQNC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:11:37 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:65254 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388235AbeLQQLQ (ORCPT
+        Mon, 17 Dec 2018 11:13:02 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:56502 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727727AbeLQQNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:11:16 -0500
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id wBHG3bRd008119;
-        Tue, 18 Dec 2018 01:03:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com wBHG3bRd008119
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545062620;
-        bh=mXAOGKoN9nVQj5muokTwBydmcKVF/sl76L2EsO/amDk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=H2d1R/yMkMpGJFlSf98Sf3rlDmcJdv4Hx08zt7v/X0XVWsWT6y1BnI0S7zSmEVB3o
-         IIuz2RfHe0x+40P0XYACCdeRnVK/4lcLSpcPnScxQSjz8NKDgNXeiTx+fjuKnHJrcT
-         crwPMcq5ic6k7riPgy6k+7lcN/elDCkJzPU08KHugllEeGv7UgJGzBWiK1Fe4JGX/4
-         cvN/ZLMocnp5nA+RqHvGV1T1/Hpy4NpRuA45c0+uwt3zYNwQ7MhD4aFd0rV1zjaH/j
-         mDy9qjdPk1Kv9JHcAY0F2jn+oIGtTLInAUPWF9H/P671g7zZCIBKH1+XJ+NFqEfJk+
-         8S1ssmjsiYUQw==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     Richard Biener <rguenther@suse.de>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        virtualization@lists.linux-foundation.org,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Alok Kataria <akataria@vmware.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>, linux-arch@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kbuild@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jan Beulich <JBeulich@suse.com>, Nadav Amit <namit@vmware.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/12] x86, kbuild: revert macrofying inline assembly code
-Date:   Tue, 18 Dec 2018 01:03:15 +0900
-Message-Id: <1545062607-8599-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 17 Dec 2018 11:13:02 -0500
+Received: (qmail 2063 invoked by uid 2102); 17 Dec 2018 11:13:01 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 Dec 2018 11:13:01 -0500
+Date:   Mon, 17 Dec 2018 11:13:01 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Paul Elder <paul.elder@ideasonboard.com>
+cc:     laurent.pinchart@ideasonboard.com,
+        <kieran.bingham@ideasonboard.com>, <b-liu@ti.com>, <rogerq@ti.com>,
+        <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/6] usb: gadget: add mechanism to specify an explicit
+ status stage
+In-Reply-To: <20181217060216.26368-5-paul.elder@ideasonboard.com>
+Message-ID: <Pine.LNX.4.44L0.1812171107290.1630-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series reverts the in-kernel workarounds for inlining issues.
+On Mon, 17 Dec 2018, Paul Elder wrote:
 
-The commit description of 77b0bf55bc67 mentioned
-"We also hope that GCC will eventually get fixed,..."
+> A usb gadget function driver may or may not want to delay the status
+> stage of a control OUT request. An instance it might want to is to
+> asynchronously validate the data of a class-specific request.
+> 
+> A function driver that wants an explicit status stage should set the
+> newly added explicit_status flag of the usb_request corresponding to the
+> data stage. Later on the function driver can explicitly complete the
+> status stage by enqueueing a usb_request also with the explicit_status
+> flag set, and with the zero flag set to 1 for ACK, or 0 for STALL.
 
-Now, GCC provides a solution.
+This last part seems awkward.  Why not have the function driver call
+usb_ep_set_halt() to indicate ep0 should send a STALL?  That's already 
+part of the API; no need to add another way of doing the same thing.
 
-https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
-explains the new "asm inline" syntax.
+> To support both explicit and implicit status stages, a UDC driver must
+> call the newly added usb_gadget_control_complete function right after
+> calling usb_gadget_giveback_request. To support the explicit status
+> stage, it might then check what stage the usb_request was queued in, or
+> the explicit_status flag, and the zero flag for what status to send.
+> 
+> Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> Changes from v1:
+> 
+> Complete change of API. Now we use a flag that should be set in the
+> usb_request that is queued for the data stage to signal to the UDC that
+> we want to delay the status stage (as opposed to setting a flag in the
+> UDC itself, that persists across all requests). We now also provide a
+> function for UDC drivers to very easily allow implicit status stages, to
+> mitigate the need to convert all function drivers to this new API at
+> once, and to make it easier for UDC drivers to convert.
+> 
+>  drivers/usb/gadget/udc/core.c | 33 +++++++++++++++++++++++++++++++++
+>  include/linux/usb/gadget.h    | 10 ++++++++++
+>  2 files changed, 43 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> index af88b48c1cea..e99481ef9147 100644
+> --- a/drivers/usb/gadget/udc/core.c
+> +++ b/drivers/usb/gadget/udc/core.c
+> @@ -894,6 +894,39 @@ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
+>  
+>  /* ------------------------------------------------------------------------- */
+>  
+> +/**
+> + * usb_gadget_control_complete - complete the status stage of a control
+> + *	request, or delay it
+> + * Context: in_interrupt()
+> + *
+> + * @gadget: gadget whose control request's status stage should be completed
+> + * @explicit_status: true to delay status stage, false to complete here
+> + *
+> + * This is called by device controller drivers after returning the completed
+> + * request back to the gadget layer, to either complete or delay the status
+> + * stage.
+> + */
+> +void usb_gadget_control_complete(struct usb_gadget *gadget,
+> +		unsigned int explicit_status)
 
-The performance issue will be eventually solved.
+This signature is incomplete.  You also need to know the status of the 
+request that was just given back...
 
-[About Code cleanups]
+> +{
+> +	struct usb_request *req;
+> +
+> +	if (explicit_status)
+> +		return;
+> +
+> +	/* Send an implicit status-stage request for ep0 */
+> +	req = usb_ep_alloc_request(gadget->ep0, GFP_ATOMIC);
 
-I know Nadam Amit is opposed to the full revert.
-He also claims his motivation for macrofying was not only
-performance, but also cleanups.
+... because none of this should happen if the previous request
+completed unsuccessfully.
 
-IIUC, the criticism addresses the code duplication between C and ASM.
-
-If so, I'd like to suggest a different approach for cleanups.
-Please see the last 3 patches.
-IMHO, preprocessor approach is more straight-forward, and readable.
-Basically, this idea should work because it is what we already do for
-__ASM_FORM() etc.
-
-[Quick Test of "asm inline" of GCC 9]
-
-If you want to try "asm inline" feature, the patch is available:
-https://lore.kernel.org/patchwork/patch/1024590/
-
-The number of symbols for arch/x86/configs/x86_64_defconfig:
-
-                            nr_symbols
-  [1]    v4.20-rc7       :   96502
-  [2]    [1]+full revert :   96705   (+203)
-  [3]    [2]+"asm inline":   96568   (-137)
-
-[3]: apply my patch, then replace "asm" -> "asm_inline"
-    for _BUG_FLAGS(), refcount_add(), refcount_inc(), refcount_dec(),
-        annotate_reachable(), annotate_unreachable()
-
-
-Changes in v3:
-  - Split into per-commit revert (per Nadav Amit)
-  - Add some cleanups with preprocessor approach
-
-Changes in v2:
-  - Revive clean-ups made by 5bdcd510c2ac (per Peter Zijlstra)
-  - Fix commit quoting style (per Peter Zijlstra)
-
-Masahiro Yamada (12):
-  Revert "x86/jump-labels: Macrofy inline assembly code to work around
-    GCC inlining bugs"
-  Revert "x86/cpufeature: Macrofy inline assembly code to work around
-    GCC inlining bugs"
-  Revert "x86/extable: Macrofy inline assembly code to work around GCC
-    inlining bugs"
-  Revert "x86/paravirt: Work around GCC inlining bugs when compiling
-    paravirt ops"
-  Revert "x86/bug: Macrofy the BUG table section handling, to work
-    around GCC inlining bugs"
-  Revert "x86/alternatives: Macrofy lock prefixes to work around GCC
-    inlining bugs"
-  Revert "x86/refcount: Work around GCC inlining bug"
-  Revert "x86/objtool: Use asm macros to work around GCC inlining bugs"
-  Revert "kbuild/Makefile: Prepare for using macros in inline assembly
-    code to work around asm() related GCC inlining bugs"
-  linux/linkage: add ASM() macro to reduce duplication between C/ASM
-    code
-  x86/alternatives: consolidate LOCK_PREFIX macro
-  x86/asm: consolidate ASM_EXTABLE_* macros
-
- Makefile                                  |  9 +--
- arch/x86/Makefile                         |  7 ---
- arch/x86/include/asm/alternative-asm.h    | 22 +------
- arch/x86/include/asm/alternative-common.h | 47 +++++++++++++++
- arch/x86/include/asm/alternative.h        | 30 +---------
- arch/x86/include/asm/asm.h                | 46 +++++----------
- arch/x86/include/asm/bug.h                | 98 +++++++++++++------------------
- arch/x86/include/asm/cpufeature.h         | 82 +++++++++++---------------
- arch/x86/include/asm/jump_label.h         | 22 +++++--
- arch/x86/include/asm/paravirt_types.h     | 56 +++++++++---------
- arch/x86/include/asm/refcount.h           | 81 +++++++++++--------------
- arch/x86/kernel/macros.S                  | 16 -----
- include/asm-generic/bug.h                 |  8 +--
- include/linux/compiler.h                  | 56 ++++--------------
- include/linux/linkage.h                   |  8 +++
- scripts/Kbuild.include                    |  4 +-
- scripts/mod/Makefile                      |  2 -
- 17 files changed, 249 insertions(+), 345 deletions(-)
- create mode 100644 arch/x86/include/asm/alternative-common.h
- delete mode 100644 arch/x86/kernel/macros.S
-
--- 
-2.7.4
+Alan Stern
 
