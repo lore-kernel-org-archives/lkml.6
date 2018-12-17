@@ -2,153 +2,148 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A05AC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC217C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6F92084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:56:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77E9320672
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545037441;
+	bh=1GRTqhANb+vlOZqJ/eEBmuA/nkIB5SSiGK2Zwr46VWY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=t6698GFi4VgGSm5SOijd8czmnPI1HjIqZ2Zj7Y0zUwyeXmTj/7A3L1jG6Vx97fGy8
+	 vL3jezDMugvfvYj7dI9mOK1Cg6cSl5uW68p8gmOD1rkfzb6q+E6Wr9MhcjcCT2Jj3c
+	 A3/rWIEj8fjjrtih7uVoHwJh/jLPvzTJ+yLyfNJI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732005AbeLQI45 (ORCPT
+        id S1731893AbeLQJEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 03:56:57 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59432 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731986AbeLQI44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 03:56:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 81024ACC5;
-        Mon, 17 Dec 2018 08:56:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 64C101E1475; Mon, 17 Dec 2018 09:56:53 +0100 (CET)
-Date:   Mon, 17 Dec 2018 09:56:53 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>, david <david@fromorbit.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181217085653.GB28270@quack2.suse.cz>
-References: <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181212215931.GG5037@redhat.com>
- <20181213005119.GD29416@dastard>
- <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
- <CAPcyv4jyG3YTtghyr04wws_hcSBAmPBpnCm0tFcKgz9VwrV=ow@mail.gmail.com>
- <01cf4e0c-b2d6-225a-3ee9-ef0f7e53684d@nvidia.com>
- <CAPcyv4hrbA9H20bi+QMpKNi7r=egstt61MdQSD5Fb293W1btaw@mail.gmail.com>
+        Mon, 17 Dec 2018 04:04:00 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43908 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbeLQJEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 04:04:00 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so9553880oie.10;
+        Mon, 17 Dec 2018 01:03:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ar9EHeJFcD9rATmrgIwKA5WQ7ycjP1iBPQ1neYg3G80=;
+        b=jMAheF5VSVkoPrOqS76Mibqtrmn+muHI+SSLprcyjKLQiDRqpSyl4afP8FiUgQF4oY
+         sUNYxCKFZE4hgFm/PkK/OAwDl6RQo5wa7xOlrosusi+rCKGjPpCu00nTmAtnaryeqgUI
+         95fiHNSCkj7faa+ekGMCWSKfd1+3LVULkeSMmLcSJmeGsBXkkvqV9ImAIEhBHH87WPPf
+         TXWkSVBbSdRZ/dhFEl/mBZQJsS6Lc+DOuG+K7wwm8XqxK+Gv0kWdqVsl3djAeI21QL2Z
+         JVsDamFXXial7kot+slfY3Dz/VWFjw5gUsT8V3RCvx8vk/oUyEig+sjlIS6hn9juWeui
+         5UvQ==
+X-Gm-Message-State: AA+aEWYRsNBbDEW166CgRrTHIUegEUsQuR+gjN5nzaVSXMsVSgyqxK3M
+        /EAz0vfHB9pf4ZV0ifXfFgiFymUAXOU3MRmrPVRvgg==
+X-Google-Smtp-Source: AFSGD/XcJGF3ouG9c460vh44ZncLvhC5F77MOeIje5rIUJSdUAxAkuBF2sb+VUSvEqxi4YXWk3EQxdgPzfNU9xj1ZB4=
+X-Received: by 2002:aca:368a:: with SMTP id d132mr5139285oia.193.1545037438834;
+ Mon, 17 Dec 2018 01:03:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hrbA9H20bi+QMpKNi7r=egstt61MdQSD5Fb293W1btaw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1545013184-2487-1-git-send-email-shunyong.yang@hxt-semitech.com>
+In-Reply-To: <1545013184-2487-1-git-send-email-shunyong.yang@hxt-semitech.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Mon, 17 Dec 2018 10:03:46 +0100
+Message-ID: <CAJZ5v0gnmnP1UUisS-4L=gzu3KHbbK8y4Wh_4dqfgmm775=ZkQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / tables: table upgrade from built-in initrd
+To:     shunyong.yang@hxt-semitech.com
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        yu.zheng@hxt-semitech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 14-12-18 11:38:59, Dan Williams wrote:
-> On Thu, Dec 13, 2018 at 10:11 PM John Hubbard <jhubbard@nvidia.com> wrote:
-> >
-> > On 12/13/18 9:21 PM, Dan Williams wrote:
-> > > On Thu, Dec 13, 2018 at 7:53 PM John Hubbard <jhubbard@nvidia.com> wrote:
-> > >>
-> > >> On 12/12/18 4:51 PM, Dave Chinner wrote:
-> > >>> On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
-> > >>>> On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
-> > >>>>> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
-> > >>>>>> On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> > >>>>>>> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> > >>>>>>> So this approach doesn't look like a win to me over using counter in struct
-> > >>>>>>> page and I'd rather try looking into squeezing HMM public page usage of
-> > >>>>>>> struct page so that we can fit that gup counter there as well. I know that
-> > >>>>>>> it may be easier said than done...
-> > >>>>>>
-> > >>
-> > >> Agreed. After all the discussion this week, I'm thinking that the original idea
-> > >> of a per-struct-page counter is better. Fortunately, we can do the moral equivalent
-> > >> of that, unless I'm overlooking something: Jerome had another proposal that he
-> > >> described, off-list, for doing that counting, and his idea avoids the problem of
-> > >> finding space in struct page. (And in fact, when I responded yesterday, I initially
-> > >> thought that's where he was going with this.)
-> > >>
-> > >> So how about this hybrid solution:
-> > >>
-> > >> 1. Stay with the basic RFC approach of using a per-page counter, but actually
-> > >> store the counter(s) in the mappings instead of the struct page. We can use
-> > >> !PageAnon and page_mapping to look up all the mappings, stash the dma_pinned_count
-> > >> there. So the total pinned count is scattered across mappings. Probably still need
-> > >> a PageDmaPinned bit.
-> > >
-> > > How do you safely look at page->mapping from the get_user_pages_fast()
-> > > path? You'll be racing invalidation disconnecting the page from the
-> > > mapping.
-> > >
-> >
-> > I don't have an answer for that, so maybe the page->mapping idea is dead already.
-> >
-> > So in that case, there is still one more way to do all of this, which is to
-> > combine ZONE_DEVICE, HMM, and gup/dma information in a per-page struct, and get
-> > there via basically page->private, more or less like this:
-> 
-> If we're going to allocate something new out-of-line then maybe we
-> should go even further to allow for a page "proxy" object to front a
-> real struct page. This idea arose from Dave Hansen as I explained to
-> him the dax-reflink problem, and dovetails with Dave Chinner's
-> suggestion earlier in this thread for dax-reflink.
-> 
-> Have get_user_pages() allocate a proxy object that gets passed around
-> to drivers. Something like a struct page pointer with bit 0 set. This
-> would add a conditional branch and pointer chase to many page
-> operations, like page_to_pfn(), I thought something like it would be
-> unacceptable a few years ago, but then HMM went and added similar
-> overhead to put_page() and nobody balked.
-> 
-> This has the additional benefit of catching cases that might be doing
-> a get_page() on a get_user_pages() result and should instead switch to
-> a "ref_user_page()" (opposite of put_user_page()) as the API to take
-> additional references on a get_user_pages() result.
-> 
-> page->index and page->mapping could be overridden by similar
-> attributes in the proxy, and allow an N:1 relationship of proxy
-> instances to actual pages. Filesystems could generate dynamic proxies
-> as well.
-> 
-> The auxiliary information (dev_pagemap, hmm_data, etc...) moves to the
-> proxy and stops polluting the base struct page which remains the
-> canonical location for dirty-tracking and dma operations.
-> 
-> The difficulties are reconciling the source of the proxies as both
-> get_user_pages() and filesystem may want to be the source of the
-> allocation. In the get_user_pages_fast() path we may not be able to
-> ask the filesystem for the proxy, at least not without destroying the
-> performance expectations of get_user_pages_fast().
+On Mon, Dec 17, 2018 at 3:40 AM Shunyong Yang
+<shunyong.yang@hxt-semitech.com> wrote:
+>
+> In some scenario, we need to build initrd with kernel in a single image.
+> This can simplify system deployment process by downloading the whole system
+> once, such as in IC verification.
+>
+> This patch adds support to upgrade ACPI tables from built-in initrd.
 
-What you describe here sounds almost like page_ext mechanism we already
-have? Or do you really aim at per-pin allocated structure?
+What do you mean by "upgrade"?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> ---
+>  drivers/acpi/Kconfig   |  9 +++++++++
+>  drivers/acpi/tables.c  | 12 ++++++++++--
+>  include/linux/initrd.h |  3 +++
+>  3 files changed, 22 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index 7cea769c37df..30976496fe77 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -357,6 +357,15 @@ config ACPI_TABLE_UPGRADE
+>           initrd, therefore it's safe to say Y.
+>           See Documentation/acpi/initrd_table_override.txt for details
+>
+> +config ACPI_TABLE_UPGRADE_VIA_BUILTIN_INITRD
+> +       bool "Upgrade ACPI tables from built-in initrd"
+> +       depends on ACPI_TABLE_UPGRADE
+> +       depends on INITRAMFS_SOURCE!="" && INITRAMFS_COMPRESSION=""
+> +       def_bool n
+> +       help
+> +         This option provides functionality to upgrade arbitrary ACPI tables
+> +         from built-in uncompressed initrd.
+> +
+>  config ACPI_DEBUG
+>         bool "Debug Statements"
+>         help
+> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> index 61203eebf3a1..88e3a34443da 100644
+> --- a/drivers/acpi/tables.c
+> +++ b/drivers/acpi/tables.c
+> @@ -473,14 +473,22 @@ static u8 __init acpi_table_checksum(u8 *buffer, u32 length)
+>
+>  void __init acpi_table_upgrade(void)
+>  {
+> -       void *data = (void *)initrd_start;
+> -       size_t size = initrd_end - initrd_start;
+> +       void *data;
+> +       size_t size;
+>         int sig, no, table_nr = 0, total_offset = 0;
+>         long offset = 0;
+>         struct acpi_table_header *table;
+>         char cpio_path[32] = "kernel/firmware/acpi/";
+>         struct cpio_data file;
+>
+> +       if (IS_ENABLED(CONFIG_ACPI_TABLE_UPGRADE_VIA_BUILTIN_INITRD)) {
+> +               data = __initramfs_start;
+> +               size = __initramfs_size;
+> +       } else {
+> +               data = (void *)initrd_start;
+> +               size = initrd_end - initrd_start;
+> +       }
+> +
+>         if (data == NULL || size == 0)
+>                 return;
+>
+> diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+> index 84b423044088..02d94aae54c7 100644
+> --- a/include/linux/initrd.h
+> +++ b/include/linux/initrd.h
+> @@ -22,3 +22,6 @@
+>  extern void free_initrd_mem(unsigned long, unsigned long);
+>
+>  extern unsigned int real_root_dev;
+> +
+> +extern char __initramfs_start[];
+> +extern unsigned long __initramfs_size;
+> --
+> 1.8.3.1
+>
