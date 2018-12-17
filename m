@@ -2,157 +2,134 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D174C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC269C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C372133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545067517;
-	bh=AI5AXkTeiFKa3BBmUxvtw4VNgubrdNomju84JTX3lUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kavu9gaUQ6zHI7VEoTi5RK2G1V9pfJ0DN7h7BtuJnvFOc/+R6104oMUOi3lU/yn2h
-	 mHuK7a2Mo+SEvFUeSP8LrzlsKXND1mMasHuc6lHPZPLz6Y6jgcBWv0GVhnvy03GR6F
-	 KMA7kYqaHScjP3KFEBn/f+Vs7BHRcfmL8wl9ToHg=
+	by mail.kernel.org (Postfix) with ESMTP id A3A9C20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732415AbeLQRZQ (ORCPT
+        id S1732878AbeLQR1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:25:16 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35007 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbeLQRZP (ORCPT
+        Mon, 17 Dec 2018 12:27:42 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37973 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeLQR1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:25:15 -0500
-Received: by mail-wm1-f67.google.com with SMTP id c126so45056wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:25:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RzxeQAeBcfwjWd6uRZ79gUXOJyj8m1rfDRi0Z4NzHnc=;
-        b=Y3K4lJPo2d/PpKtyDTN9GytUB2KdzsCYAmGqxsApTUifb8Q2ymHapx+EX+oKauIvta
-         /E0KzVnZRel836q2mmO9C9NYKa2tlYodDIJma32CDGf64zP6hswr8apsjmbkSz/QgrQF
-         zThZvPnRJec4yedJNsidXHS29SJvy8UKV4ABK/NiP8LhQFtPj8ep3iSPchxc8y7F/qvv
-         uon+WaGLHs677hR2tD6jFUjTygwGpb9qytC1YzvV/sD8Q3LoMdr+aZJhoYStq21x+HHp
-         FSt59xSP1phRR/4u9EqVWcHBntVGchHtpvD71djlZOPsKYVP/NlOM51yvRe/+TPqLpoI
-         uRWw==
+        Mon, 17 Dec 2018 12:27:42 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so6699261pfi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:27:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RzxeQAeBcfwjWd6uRZ79gUXOJyj8m1rfDRi0Z4NzHnc=;
-        b=YjDaiAMIUp+uabx7+XqPswdgGU5asfDX93TeyGWGQE1Vu8HdJtVMyqLPh0wuHhG4t9
-         jCfdDBZ4jorXFUGz3kZ4OxGyXrhUKX6kdt/CEfxOY0BPtQuciIbbF+8ex2e/EdFsqF6g
-         wncm0Y5TOJR+jnE8ans2yrm/PG2FEnn6so9dSwIE52c3Jl8K+5x8rbJf6JDAnLFATpaB
-         4/uo1tU/taND1V/IKc+fusUfKaWmNaDF8NBA/h6BYtuIAFSa0lXVoA9I+8TTalmlT6jS
-         rXtXDm0aEovUvX+ZACvbjwBPVmoqYT5scDlNUVNYVu5kkkrXP091aghs/tR7WyFcP/TV
-         vdzA==
-X-Gm-Message-State: AA+aEWZHyarG9cH35C9FWaLzQI1x7H5otcyuvlknLoqaRv/D77wphw1I
-        BiFRkQPZgKTVEykITni6HnY=
-X-Google-Smtp-Source: AFSGD/Wg6slAut0g7TXncoLxbtmCUUKBRX1quFRFO2FFPkKkRytE5eUqemz4/pX87rmW2uIItWTUfA==
-X-Received: by 2002:a1c:df46:: with SMTP id w67mr696wmg.51.1545067513716;
-        Mon, 17 Dec 2018 09:25:13 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id a12sm1101627wro.18.2018.12.17.09.25.12
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=823vNceqOZW1qhO1NubhUnPzY9PiHcOak7MQZp1+gtg=;
+        b=MH+DSScZNizEIxEDyB+05OpuP6a0SfXVEo8V7ocxYSr5m0gVs9sCUdd+rPbd8MaRLX
+         lGvq+RsZwdmpOQKpZ01Afbe1UGIUbaVaXIEBFzVTXVbGPkyMpFnkYbEfamWzy+mNXCw+
+         E12vB2B62rbsxHm+GrIA40UR2NR8+KjwLuIewd8Au2koo6HsQDrRRag1qIPkPqN4hJm/
+         FbZjK581y/Ff7kNbMuGFhtu2dxR6vFcZY/7rosWeIIwIVlO5dbzlm189sduyXLfx0VlB
+         XKwFweEIw7ofmGmeS4I2PyNT4OZ9Rc4uWG/RUWvfivhg4PQzE7M9R44/XToZw/5qhmpD
+         wRtA==
+X-Gm-Message-State: AA+aEWZVA5wm3FhBj45+2DgGw+QtzyjUlVasb1GP5imIshhMtbWxyF31
+        /xafmPINUY1jThIVEl4xe9Y=
+X-Google-Smtp-Source: AFSGD/UMeh/+NcwiHAvk6yZ4DUDFFJJYKQO95uvQw+ViJM9zubLef6Zw2WzZrpyWSDm3Bh34eZlvfQ==
+X-Received: by 2002:a62:3811:: with SMTP id f17mr13863166pfa.206.1545067660861;
+        Mon, 17 Dec 2018 09:27:40 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id a18sm15778264pgj.30.2018.12.17.09.27.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 09:25:13 -0800 (PST)
-Date:   Mon, 17 Dec 2018 18:25:10 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v14 1/5] x86/boot: Introduce get_acpi_rsdp() to parse
- RSDP in cmdline from KEXEC
-Message-ID: <20181217172510.GA90818@gmail.com>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
- <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 17 Dec 2018 09:27:39 -0800 (PST)
+Message-ID: <1545067657.185366.433.camel@acm.org>
+Subject: Re: [LKP] [locking/lockdep] 15693f040b:
+ WARNING:at_kernel/locking/lockdep.c:#lockdep_free_key_range
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     kernel test robot <rong.a.chen@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@sandisk.com>, lkp@01.org
+Date:   Mon, 17 Dec 2018 09:27:37 -0800
+In-Reply-To: <20181217084128.GE23332@shao2-debian>
+References: <20181217084128.GE23332@shao2-debian>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-12-17 at 16:41 +-0800, kernel test robot wrote:
++AD4 FYI, we noticed the following commit (built with gcc-4.9):
++AD4 
++AD4 commit: 15693f040b149ffff598cc048c2697b258d3901c (+ACI-locking/lockdep: Free lock classes that are no longer in use+ACI)
++AD4 https://github.com/bvanassche/linux for-next
++AD4 
++AD4 in testcase: locktorture
++AD4 with following parameters:
++AD4 
++AD4 	runtime: 300s
++AD4 	test: cpuhotplug
++AD4 
++AD4 test-description: This torture test consists of creating a number of kernel threads which acquire the lock and hold it for specific amount of time, thus simulating different critical region
++AD4 behaviors.
++AD4 test-url: https://www.kernel.org/doc/Documentation/locking/locktorture.txt
++AD4 
++AD4 
++AD4 on test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 512M
++AD4 
++AD4 caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
++AD4 
++AD4 
++AD4 +--------------------------------------------------------------+-------------+-------------+-
++AD4 +AD4                                                             +AHw b7001c6cce +AHw 15693f040b +AHw
++AD4 
++AD4 +--------------------------------------------------------------+-------------+-------------+-
++AD4 +AD4 boot+AF8-successes                                              +AHw 0          +AHw 0          +AHw
++AD4 +AD4 boot+AF8-failures                                               +AHw 394        +AHw 396        +AHw
++AD4 +AD4 WARNING:at+AF8-lib/debugobjects.c:+ACMAXwBf-debug+AF8-object+AF8-init          +AHw 394        +AHw 396        +AHw
++AD4 +AD4 EIP:+AF8AXw-debug+AF8-object+AF8-init                                     +AHw 394        +AHw 396        +AHw
++AD4 +AD4 WARNING:possible+AF8-circular+AF8-locking+AF8-dependency+AF8-detected       +AHw 370        +AHw 375        +AHw
++AD4 +AD4 WARNING:at+AF8-kernel/locking/lockdep.c:+ACM-lock+AF8-downgrade         +AHw 145        +AHw 159        +AHw
++AD4 +AD4 EIP:lock+AF8-downgrade                                          +AHw 145        +AHw 159        +AHw
++AD4 +AD4 BUG:soft+AF8-lockup-CPU+ACMAIw-stuck+AF8-for+ACM-s                            +AHw 24         +AHw 21         +AHw
++AD4 +AD4 EIP:thread+AF8-lookup+AF8-test                                      +AHw 12         +AHw 9          +AHw
++AD4 +AD4 Kernel+AF8-panic-not+AF8-syncing:softlockup:hung+AF8-tasks              +AHw 24         +AHw 21         +AHw
++AD4 +AD4 EIP:memcmp                                                  +AHw 3          +AHw 3          +AHw
++AD4 +AD4 EIP:threadfunc                                              +AHw 4          +AHw 2          +AHw
++AD4 +AD4 EIP:lock+AF8-acquire                                            +AHw 3          +AHw 1          +AHw
++AD4 +AD4 EIP:lock+AF8-is+AF8-held+AF8-type                                       +AHw 2          +AHw 2          +AHw
++AD4 +AD4 WARNING:at+AF8-net/sched/sch+AF8-generic.c:+ACM-dev+AF8-watchdog            +AHw 1          +AHw            +AHw
++AD4 +AD4 EIP:dev+AF8-watchdog                                            +AHw 1          +AHw            +AHw
++AD4 +AD4 WARNING:at+AF8-kernel/locking/lockdep.c:+ACM-lockdep+AF8-free+AF8-key+AF8-range +AHw 0          +AHw 22         +AHw
++AD4 +AD4 EIP:lockdep+AF8-free+AF8-key+AF8-range                                  +AHw 0          +AHw 22         +AHw
++AD4 +AD4 EIP:lock+AF8-release                                            +AHw 0          +AHw 2          +AHw
++AD4 +AD4 EIP:rht+AF8-deferred+AF8-worker                                     +AHw 0          +AHw 2          +AHw
++AD4 
++AD4 +--------------------------------------------------------------+-------------+-------------+-
 
-* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+The WARNING:at+AF8-kernel/locking/lockdep.c:+ACM-lockdep+AF8-free+AF8-key+AF8-range warnings were caused by the
+following code:
 
-> Memory information in SRAT is necessary to fix the conflict between
-> KASLR and memory-hotremove.
-> 
-> ACPI SRAT (System/Static Resource Affinity Table) shows the details
-> about memory ranges, including ranges of memory provided by hot-added
-> memory devices. SRAT is introduced by Root System Description
-> Pointer(RSDP), so RSDP should be found firstly.
-> 
-> When booting form KEXEC/EFI/BIOS, the methods to find RSDP
-> are different. When booting from KEXEC, 'acpi_rsdp' may have been
-> added to cmdline, so parse cmdline to find RSDP.
+	pf +AD0 get+AF8-pending+AF8-free+AF8-lock(+ACY-flags)+ADs
+	if (WARN+AF8-ON+AF8-ONCE(+ACE-pf))
+		return+ADs
 
-What is the nature of the basic conflict? Should the kernel only allow 
-hot-removing memory ranges that are explicitly marked as such in the 
-SRAT? I presume that's already so, correct? Or should the kernel avoiding 
-KASLR-randomizing into hot-removable memory areas?
+Before this report was produced I had already pushed out a new version of my lockdep patch
+series to the for-next branch of my github repository in which that code had been modified
+into the following:
 
-Some minor nits:
+	pf +AD0 get+AF8-pending+AF8-free+AF8-lock(+ACY-flags)+ADs
+	if (+ACE-pf)
+		return+ADs
 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 arch/x86/boot/compressed/acpi.c
-> 
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> new file mode 100644
-> index 000000000000..44f19546c169
-> --- /dev/null
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#define BOOT_CTYPE_H
-> +#include "misc.h"
-> +#include "error.h"
-> +
-> +#include <linux/efi.h>
-> +#include <linux/numa.h>
-> +#include <linux/acpi.h>
-> +#include <asm/efi.h>
-> +
-> +/* Max length of 64-bit hex address string is 18, prefix "0x" + 16 hex digits */
-> +#define MAX_ADDRESS_LENGTH 18
+Since the above report refers to a WARN+AF8-ON+AF8-ONCE() statement that has been removed, I think
+that this report can be ignored.
 
-I'd suggest adding the +1 for the string termination \0 as well, and use 
-that below.
+Bart.
 
-Also, 'max address length' is way too generic (and hence pretty 
-meaningless) - how about MAX_HEX_ADDRESS_STRING_LEN or so?
-
-> +
-> +static acpi_physical_address get_acpi_rsdp(void)
-> +{
-> +#ifdef CONFIG_KEXEC
-> +	char val[MAX_ADDRESS_LENGTH+1];
-> +	unsigned long long res;
-> +	int len;
-> +
-> +	len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
-> +	if (len > 0) {
-> +		char *e;
-> +
-> +		val[len] = '\0';
-> +		return (acpi_physical_address)simple_strtoull(val, &e, 16);
-
-'return' is not a function - no need for the parenthesis.
-
-Thanks,
-
-	Ingo
