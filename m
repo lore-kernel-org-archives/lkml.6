@@ -2,133 +2,107 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB4BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61EEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A955214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8217D2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:02:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tU3iBHQx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeLQVyo (ORCPT
+        id S1728313AbeLQWCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:54:44 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.222]:24400 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727289AbeLQVyn (ORCPT
+        Mon, 17 Dec 2018 17:02:11 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:33447 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbeLQWCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:54:43 -0500
-X-Greylist: delayed 1206 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Dec 2018 16:54:43 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id D9D8A1F31C
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:34:36 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Z0X6gpzZz90onZ0X6gOPeA; Mon, 17 Dec 2018 15:34:36 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=48868 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZ0X1-004EAc-PV; Mon, 17 Dec 2018 15:34:36 -0600
-Date:   Mon, 17 Dec 2018 15:34:30 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] gpiolib: Fix potential Spectre v1 vulnerabilities
-Message-ID: <20181217213430.GA28450@embeddedor>
+        Mon, 17 Dec 2018 17:02:09 -0500
+Received: by mail-yb1-f195.google.com with SMTP id c67so5721034ybf.0;
+        Mon, 17 Dec 2018 14:02:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2ZqpNEpuI8vbIc9YMk/n8mRpLnpM5M4LUAnws93ADdA=;
+        b=tU3iBHQxVnVH9jQl6dnTm6JjHwULQUiQl3RZFXwiu9PvwxwMtL6z0Fm5ET736l4F8p
+         6jD1F9KKg3nern0rVZod9kD5Ft3Yu7JxDq8MWnXIYx/QMTH6OS/J+C1bYesfWFFteByk
+         jpbtv7XRzmBo1IrDu7jMF83FK1ssJX49pb1Lv8Z19sROQEMeR8oCP+yQDrWXHwG5asde
+         DNkMk7S+DhetYdUUSvVFTX6sAX04+S7xz9uNoDkICZui7b6cSnDq1ZnUmiei2Wi3W8eA
+         BhWZP6Lza1UAFV7NO4XfjBWraELHVORVeKmc6p5up8MkjRvvJ4zynhKWaNIany6VKvuI
+         y/AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2ZqpNEpuI8vbIc9YMk/n8mRpLnpM5M4LUAnws93ADdA=;
+        b=p0d7N2vk2KJNN3zr7548CawHhH63n+esSh40mxX3CmCmBjSeS74g3xbQROfK+fTMxj
+         /lRaV+jX74paNldLFrklTLAx735dDcssa/BiOrdHwl1VokyDKHCYSxEf2R+A1S+bJCGG
+         qRos1QV3/rKXm1d9dTl4hzVD++Mz67wkVZUoWJ4GSAbDIuzSif2XJFstZBALsnEglF1y
+         T//fpA03s6cgFSJYcul2qUEtvgJhFqyoO0Fub05fJhaWrH89k2XtFOX4pmfYXInFbXfc
+         RTkXqrZ8nAkMQlJxKb9mFHOFfXMIwhfnlEnHm1PZyGDUpw2tyyxFgPAz+bEgvVfSp86y
+         vKzQ==
+X-Gm-Message-State: AA+aEWZl5BAIEjeVAM67CyKwXZvrPkNv07hJ1aBITjhu4q26YScy2IHj
+        qMk6XK/qVqc3cbIg6aHPvuu2WSPG5w2z8Veyvlw=
+X-Google-Smtp-Source: AFSGD/UiZLCQFXZL8GKHo1Cbj/6jLuHaKVTLHoYsdouGGRJppYycKZuSnaVCZ4Zb3vPMD7sbiOe2FbQ9pqSUXAL+x3c=
+X-Received: by 2002:a25:418d:: with SMTP id o135mr14625749yba.166.1545084128797;
+ Mon, 17 Dec 2018 14:02:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZ0X1-004EAc-PV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.44]:48868
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20181217112546.4e400eb3@canb.auug.org.au> <CALzJLG_g3QcYLM+ZXwfpu5E71nUOrG=KA4X2uR-WGeYAOYcsLg@mail.gmail.com>
+In-Reply-To: <CALzJLG_g3QcYLM+ZXwfpu5E71nUOrG=KA4X2uR-WGeYAOYcsLg@mail.gmail.com>
+From:   Or Gerlitz <gerlitz.or@gmail.com>
+Date:   Tue, 18 Dec 2018 00:01:57 +0200
+Message-ID: <CAJ3xEMjvoNZLaCWk8KydUTKH-fmqnF1Vgbu42u0ame_s-Cj3UQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+To:     Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Eli Britstein <elibr@mellanox.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-offset and lineinfo.line_offset are indirectly controlled by user-space,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+On Mon, Dec 17, 2018 at 11:29 PM Saeed Mahameed
+<saeedm@dev.mellanox.co.il> wrote:
+> On Sun, Dec 16, 2018 at 4:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-This issue was detected with the help of Smatch:
+> > I fixed it up (see below) and can carry the fix as necessary. This
 
-drivers/gpio/gpiolib.c:580 linehandle_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
-drivers/gpio/gpiolib.c:927 lineevent_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
-drivers/gpio/gpiolib.c:1053 gpio_ioctl() warn: potential spectre issue 'gdev->descs' [r] (local cap)
+> Looks good to me.
 
-Fix this by sanitizing both offset and lineinfo.line_offset before
-using them to index gdev->descs.
+here too
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> > Today's linux-next merge of the net-next tree got a conflict in:
+> >   drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+> > between commit:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpio/gpiolib.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> >   154e62abe9cd ("net/mlx5e: Properly initialize flow attributes for slow path eswitch rule deletion")
+> > from the net tree and commit:
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index fc36dc358716..73a0a550162e 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -29,6 +29,8 @@
- #include <linux/timekeeping.h>
- #include <uapi/linux/gpio.h>
- 
-+#include <linux/nospec.h>
-+
- #include "gpiolib.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -576,6 +578,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
- 			ret = -EINVAL;
- 			goto out_free_descs;
- 		}
-+		offset = array_index_nospec(offset, gdev->ngpio);
- 
- 		desc = &gdev->descs[offset];
- 		ret = gpiod_request(desc, lh->label);
-@@ -910,6 +913,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
- 		ret = -EINVAL;
- 		goto out_free_label;
- 	}
-+	offset = array_index_nospec(offset, gdev->ngpio);
- 
- 	/* Return an error if a unknown flag is set */
- 	if ((lflags & ~GPIOHANDLE_REQUEST_VALID_FLAGS) ||
-@@ -1049,6 +1053,8 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			return -EFAULT;
- 		if (lineinfo.line_offset >= gdev->ngpio)
- 			return -EINVAL;
-+		lineinfo.line_offset = array_index_nospec(lineinfo.line_offset,
-+							  gdev->ngpio);
- 
- 		desc = &gdev->descs[lineinfo.line_offset];
- 		if (desc->name) {
--- 
-2.19.2
+> >   e88afe759a49 ("net/mlx5e: Err if asked to mirror a goto chain tc eswitch rule")
+> >   e85e02bad29e ("net/mlx5: E-Switch, Rename esw attr mirror count field")
+> > from the net-next tree.
 
+Just a note,
+
+e88afe759a49  ("net/mlx5e: Err if asked to mirror a goto chain tc
+eswitch rule")i
+
+s from net  and not net-next
+
+see it here [1] among the top 10 patches
+
+https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/log/?qt=grep&q=mlx5
