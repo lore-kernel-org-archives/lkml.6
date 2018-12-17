@@ -2,180 +2,64 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E65C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC45C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD4E2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:14:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jB5HVnru";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XbDspo2H"
+	by mail.kernel.org (Postfix) with ESMTP id 14F2920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387484AbeLQOOM (ORCPT
+        id S2387499AbeLQOOQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:14:12 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48104 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387469AbeLQOOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:14:10 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A76A160985; Mon, 17 Dec 2018 14:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545056049;
-        bh=TkMRL+TDThM6lIVxkus75WMUfrvshcOf3gkyZU5Z2II=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jB5HVnruutCtKhJJa9R8LNGTz6yS0LFw3xOQLlMOrNIe/0HfpZH/jQor8kxGLz13N
-         UKALgtBiTmSLgDIFjHwysmS5qvOUef/kRwviSeWrzV+6aA9ofCKnpKsW7tVzDwtELs
-         T4GQbk5MK62g2xhxBl52W5ym/tDbzd8dbohkElfk=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3290F6098B;
-        Mon, 17 Dec 2018 14:13:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545056043;
-        bh=TkMRL+TDThM6lIVxkus75WMUfrvshcOf3gkyZU5Z2II=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XbDspo2HybpaUZ/ulvlsTtQJfYtCUyCwqQOtpfwtcFLSC+J1658BW72xUh+RE+pL3
-         /yKzjYyObpySJDiNootw+iSG1spu8+bZlWzznyi4UsJQLd9Mbn4JEqeZ4cBpC/7wIi
-         AllIJLfKvyzq3BOVYO3ocHZbq2Aw9PDZ3AZ58Lo4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3290F6098B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v4 5/5] Bluetooth: btqca: inject command complete event during fw download
-Date:   Mon, 17 Dec 2018 19:43:30 +0530
-Message-Id: <20181217141330.6294-6-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181217141330.6294-1-bgodavar@codeaurora.org>
-References: <20181217141330.6294-1-bgodavar@codeaurora.org>
+        Mon, 17 Dec 2018 09:14:16 -0500
+Received: from mga01.intel.com ([192.55.52.88]:11513 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732120AbeLQOOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:14:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 06:14:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
+   d="scan'208";a="260130501"
+Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.251.10.185]) ([10.251.10.185])
+  by orsmga004.jf.intel.com with ESMTP; 17 Dec 2018 06:14:13 -0800
+Subject: Re: WARNING in __rcu_read_unlock
+To:     paulmck@linux.ibm.com, Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        netdev <netdev@vger.kernel.org>
+References: <0000000000005e47a2057d0edc49@google.com>
+ <20181216190412.GE4170@linux.ibm.com>
+ <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
+ <20181217112916.GG4170@linux.ibm.com>
+From:   Arjan van de Ven <arjan@linux.intel.com>
+Message-ID: <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
+Date:   Mon, 17 Dec 2018 06:14:13 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181217112916.GG4170@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Latest qualcomm chips are not sending an command complete event for
-every firmware packet sent to chip. They only respond with a vendor
-specific event for the last firmware packet. This optimization will
-decrease the BT ON time. Due to this we are seeing a timeout error
-message logs on the console during firmware download. Now we are
-injecting a command complete event once we receive an vendor specific
-event for the last RAM firmware packet.
+On 12/17/2018 3:29 AM, Paul E. McKenney wrote:
+> As does this sort of report on a line that contains simple integer
+> arithmetic and boolean operations.;-)
+> 
+> Any chance of a bisection?
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
-v4:
-  * intial patch.
-
----
- drivers/bluetooth/btqca.c | 39 ++++++++++++++++++++++++++++++++++++++-
- drivers/bluetooth/btqca.h |  3 +++
- 2 files changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index ec9e03a6b778..0b533f65f652 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct rome_config *config,
- 		 * In case VSE is skipped, only the last segment is acked.
- 		 */
- 		config->dnld_mode = tlv_patch->download_mode;
-+		config->dnld_type = config->dnld_mode;
- 
- 		BT_DBG("Total Length           : %d bytes",
- 		       le32_to_cpu(tlv_patch->total_size));
-@@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
- 	return err;
- }
- 
-+static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
-+{
-+	struct hci_event_hdr *hdr;
-+	struct hci_ev_cmd_complete *evt;
-+	struct sk_buff *skb;
-+
-+	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
-+	if (!skb)
-+		return -ENOMEM;
-+
-+	hdr = skb_put(skb, sizeof(*hdr));
-+	hdr->evt = HCI_EV_CMD_COMPLETE;
-+	hdr->plen = sizeof(*evt) + 1;
-+
-+	evt = skb_put(skb, sizeof(*evt));
-+	evt->ncmd = 1;
-+	evt->opcode = HCI_OP_NOP;
-+
-+	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
-+
-+	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
-+
-+	return hci_recv_frame(hdev, skb);
-+}
-+
- static int qca_download_firmware(struct hci_dev *hdev,
- 				  struct rome_config *config)
- {
-@@ -297,11 +323,22 @@ static int qca_download_firmware(struct hci_dev *hdev,
- 		ret = qca_tlv_send_segment(hdev, segsize, segment,
- 					    config->dnld_mode);
- 		if (ret)
--			break;
-+			goto out;
- 
- 		segment += segsize;
- 	}
- 
-+	/* Latest qualcomm chipsets are not sending a command complete event
-+	 * for every fw packet sent. They only respond with a vendor specific
-+	 * event for the last packet. This optimization in the chip will
-+	 * decrease the BT in initialization time. Here we will inject a command
-+	 * complete event to avoid a command timeout error message.
-+	 */
-+	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
-+	    config->dnld_type == ROME_SKIP_EVT_VSE))
-+		return qca_inject_cmd_complete_event(hdev);
-+
-+out:
- 	release_firmware(fw);
- 
- 	return ret;
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index 0c01f375fe83..5c8fc54133e3 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -40,6 +40,8 @@
- #define QCA_WCN3990_POWERON_PULSE	0xFC
- #define QCA_WCN3990_POWEROFF_PULSE	0xC0
- 
-+#define QCA_HCI_CC_SUCCESS		0x00
-+
- enum qca_bardrate {
- 	QCA_BAUDRATE_115200 	= 0,
- 	QCA_BAUDRATE_57600,
-@@ -81,6 +83,7 @@ struct rome_config {
- 	char fwname[64];
- 	uint8_t user_baud_rate;
- 	enum rome_tlv_dnld_mode dnld_mode;
-+	enum rome_tlv_dnld_mode dnld_type;
- };
- 
- struct edl_event_hdr {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+btw this looks like something caused a stack overflow and thus all the weirdness that then happens
 
