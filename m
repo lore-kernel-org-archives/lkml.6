@@ -2,137 +2,127 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87D6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2559EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 866B52133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="UgUMEmDJ"
+	by mail.kernel.org (Postfix) with ESMTP id EAF102133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388443AbeLQTsL (ORCPT
+        id S2388501AbeLQTsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:48:11 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42050 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726660AbeLQTsI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:48:08 -0500
-Received: by mail-ed1-f65.google.com with SMTP id y20so5657193edw.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:48:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iQkrog+vb9Zo11bWvBko2zaFnQCAnh4XM6dFqZhRm9A=;
-        b=UgUMEmDJQYveHj+Jciy4klehxYubIVTs6qkUiYBFqXZdK8rEw+2s4lujN2pZFytvkT
-         iKpKCGlolyV4M6EOGCAQbzcmFna1S90Q6ycXWBD7WzdcvFRSgw1dRdtgVqURXzQeYkV0
-         Yg1FoJTDd6d+bszveT2DBELSr6EXGtcDfEx7k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=iQkrog+vb9Zo11bWvBko2zaFnQCAnh4XM6dFqZhRm9A=;
-        b=DD0aOyJ3wfGvh02WLbU4BmAs8spKoNv0AQplLucQCV4G6/qQQzSUUwtp4u3GlShUq1
-         +VYS1rNz2oJ1wgkaKv8Fh35zYYPud0I4zmr0sAA5RXxRNawZr6SVq+V65kOqPZYFNKZz
-         mkng1R1+tFtcl7D6DjzxiyGxhxBg30er0jAnNKTTTUq5SOblVx2CW2+ls6eTrRgppdBe
-         DgU2DUpdcY1BuBC38ZymjsPWT1eHoo/V9qtu8GSMxvl1ilLFkT4GIuy0m0O80YUIvY9/
-         u0Y34AKb6HYKwfg6Eqsxke4/NOpt+yf5aQTNO/6AsKk+lJY01J+zsc+G4mItxJIF3pJV
-         2aMg==
-X-Gm-Message-State: AA+aEWZPX5REiu12hPXDSROoV19pWltPF1fLHwDL2GfqqMbV1MCTemRE
-        F3GutAHL0DFKL7Bm/KctqizCTg==
-X-Google-Smtp-Source: AFSGD/UFtvaQ8kWZdgb+cgHQyqNbljwoNnG6BA69zyDfZb3OymFNrBAGFGrkoeXISddjomkSOMuBjA==
-X-Received: by 2002:a50:8e95:: with SMTP id w21mr13598462edw.198.1545076087341;
-        Mon, 17 Dec 2018 11:48:07 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id w56sm4044343edb.72.2018.12.17.11.48.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 11:48:06 -0800 (PST)
-Date:   Mon, 17 Dec 2018 20:48:04 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ramalingam.c@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
-Message-ID: <20181217194804.GJ21184@phenom.ffwll.local>
-Mail-Followup-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, ramalingam.c@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
- <CAJZ5v0jkE=Rt2ozwcTxRdUN++Sr4HXULksDeMx4jEWj1jVDcyA@mail.gmail.com>
- <20181213095814.GC21184@phenom.ffwll.local>
- <CAJZ5v0iWshem3kuurF53gutVJ8jFm_caAbetK2CiSCpyc6ReeQ@mail.gmail.com>
- <CAKMK7uF7noCEgwE0QYZWQFx-OPxipAF1MojUZ8KTo_SXfQW8+w@mail.gmail.com>
- <CAJZ5v0g+-R8tbbJscL-3s23UPhyNX1v1Lj3aC=QdUBzdSCrspw@mail.gmail.com>
- <CAKMK7uHACB5-ak0b_BT-HoAmXHZ9EaCNTt7WuqckNWKQM-g2fQ@mail.gmail.com>
- <CAJZ5v0hOiL1oWGCmFv2N8-0UvCibXz02DhdFMyUQsQZ1hDjV=w@mail.gmail.com>
+        Mon, 17 Dec 2018 14:48:16 -0500
+Received: from mga06.intel.com ([134.134.136.31]:7846 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726660AbeLQTsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:48:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:48:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="108094230"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Dec 2018 11:48:08 -0800
+Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 17 Dec 2018 11:48:08 -0800
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.59]) by
+ ORSMSX157.amr.corp.intel.com ([169.254.9.206]) with mapi id 14.03.0415.000;
+ Mon, 17 Dec 2018 11:48:08 -0800
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     Ingo Molnar <mingo@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>,
+        "bhsharma@redhat.com" <bhsharma@redhat.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
+        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>
+Subject: RE: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
+ regions from efi_pgd
+Thread-Topic: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
+ regions from efi_pgd
+Thread-Index: AQHUiJNT1thRYrJKskifWLlncDcXfqWDUdzAgACK0QD//3p94IAAnSqA//97RiA=
+Date:   Mon, 17 Dec 2018 19:48:07 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F486046A9@ORSMSX114.amr.corp.intel.com>
+References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+ <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
+ <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
+ <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
+ <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmQwNzFkNTYtYmUwZi00MGQ3LTk2Y2QtMDU4ZTZiZmE1NjQxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRno3V09aeThtUG1PemNTTFg1UFE4cjV1Q29aYkpvM2EyTXoxYXN1RGdiS0wxdWwwaW5OV01yNWk4NlVvTnA2VSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hOiL1oWGCmFv2N8-0UvCibXz02DhdFMyUQsQZ1hDjV=w@mail.gmail.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 07:09:15PM +0100, Rafael J. Wysocki wrote:
-> On Thu, Dec 13, 2018 at 5:25 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> >
-> > On Thu, Dec 13, 2018 at 5:18 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Thu, Dec 13, 2018 at 1:36 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> 
-> [cut]
-> 
-> > > > I can do the old code exactly, but afaict the non-NULL parent just
-> > > > takes care of the parent bus locking for us, instead of hand-rolling
-> > > > it in the caller. But if I missed something, I can easily undo that
-> > > > part.
-> > >
-> > > It is different if device links are present, but I'm not worried about
-> > > that case honestly. :-)
-> >
-> > What would change with device links? We have some cleanup plans to
-> > remove our usage for early/late s/r hooks with a device link, to make
-> > sure i915 resumes before snd_hda_intel. Digging more into the code I
-> > only see the temporary dropping of the parent's device_lock, but I
-> > have no idea what that even implies ...
-> 
-> That's just it (which is why I said I was not worried).
-> 
-> Running device_links_unbind_consumers() with the parent lock held may
-> deadlock if another child of the same parent also is a consumer of the
-> current device (which really is a corner case), but the current code
-> has this problem - it goes away with your change.
-> 
-> But dev->bus->need_parent_lock checks are missing in there AFAICS, let
-> me cut a patch to fix that.
-
-With your patch before this one, are you ok with mine? Or want me to
-respin with a different flavour?
-
-btw threading somehow broke apart, Chris Wilson r-b stamped this one on
-intel-gfx:
-
-https://patchwork.freedesktop.org/patch/267220/
-
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+PiA+ID4gPiBIaSBUaG9tYXMgYW5kIEluZ28sDQo+ID4gPiA+DQo+ID4gPiA+IEkgcmVjZW50bHkg
+bm90aWNlZCB0aGF0IHRoZSBiZWxvdyBjb21taXRzIFsxXSBhbmQgWzJdIGFyZSBicm9rZW4NCj4g
+PiA+ID4gd2hlbiBrZXJuZWwgY29tbWFuZCBsaW5lIGFyZ3VtZW50ICJlZmk9b2xkX21hcCIgaXMg
+cGFzc2VkLiBTb3JyeSENCj4gPiA+ID4gSSBtaXNzZWQgdG8gdGVzdCB0aGlzIGNvbmRpdGlvbiBw
+cmlvciB0byBzZW5kaW5nIHRoZXNlIHBhdGNoZXMgdG8gbWFpbGluZyBsaXN0Lg0KPiA+ID4gPiBJ
+IGFtIHdvcmtpbmcgb24gYSBmaXggYW5kIHdpbGwgc2VuZCBpdCB0byBtYWlsaW5nIGxpc3QgYXMg
+c29vbiBhcyBpdCdzIHJlYWR5Lg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IENvdWxkIHlvdSBlbGFi
+b3JhdGUgb24gdGhlIHByb2JsZW0gcGxlYXNlPw0KPiA+DQo+ID4gU3VyZSEgTXkgYmFkLi4NCj4g
+Pg0KPiA+IExpdHRsZSBiaXQgb2YgaGlzdG9yeSBoZXJlOg0KPiA+IEJvcmlzIHdpdGggdGhpcyBw
+YXRjaCBzZXQgWzFdIGludHJvZHVjZWQgc3RhdGljYWxseSBtYXBwaW5nIEVGSQ0KPiA+IFJ1bnRp
+bWUgU2VydmljZXMgYXQgLTRHIGFuZCBhbHNvIGludHJvZHVjZWQgImVmaT1vbGRfbWFwIiB0byBy
+ZXR1cm4gdG8NCj4gPiBwcmV2aW91cyBFRkkgZnVuY3Rpb25hbGl0eSB3aGljaCB1c2VkIGlvcmVt
+YXAgYW5kIF9fdmEocGEpLg0KPiA+DQo+ID4gWzNdIGFuZCBbNF0gYXJlIGxpbmtzIHRvIG9sZF9t
+YXBfcmVnaW9uKCkNCj4gPg0KPiA+IFRoZSBjb21taXQgMDhjZmIzOGYzZWY0ICgieDg2L2VmaTog
+VW5tYXAgRUZJIGJvb3Qgc2VydmljZXMgY29kZS9kYXRhDQo+ID4gcmVnaW9ucyBmcm9tIGVmaV9w
+Z2QiKSwgdW5tYXBzIEVGSSBib290IHNlcnZpY2VzIGNvZGUvZGF0YSByZWdpb25zDQo+ID4gKm9u
+bHkqIGZyb20gZWZpX3BnZCBidXQgZWZpPW9sZF9tYXAgbWFwcyBFRkkgYm9vdCBzZXJ2aWNlcyBj
+b2RlL2RhdGENCj4gPiByZWdpb25zIGludG8gc3dhcHBlcl9wZ2QuIEFsc28sIGVmaT1vbGRfbWFw
+ICB1c2VzIGVpdGhlcg0KPiA+IGlvcmVtYXAoKSBvciBfX3ZhKG1kLT5waHlzX2FkZHIpIHRvIG1h
+cCBFRkkgcnVudGltZS9ib290IHRpbWUgc2VydmljZXMgYW5kDQo+IGRvZXNuJ3QgdXNlIGtlcm5l
+bF9tYXBfcGFnZXNfaW5fcGdkKCkuDQo+ID4NCj4gPiBTbywgd2UgbmVlZCBhIGRpZmZlcmVudCB1
+bm1hcHBpbmcgcm91dGluZSB0byB1bm1hcCBFRkkgYm9vdCBzZXJ2aWNlcw0KPiA+IGNvZGUvZGF0
+YSByZWdpb25zIGZyb20gc3dhcHBlcl9wZ2QgaWYgdGhleSB3ZXJlIG1hcHBlZCB1c2luZyBlZmk9
+b2xkX21hcC4NCj4gPg0KPiANCj4gRm9yIHRoZSBzaG9ydCB0ZXJtLCBjb3VsZCB3ZSBzaW1wbHkg
+bWFrZSB5b3VyIGNoYW5nZXMgZGVwZW5kZW50IG9uIGVmaSAhPQ0KPiBvbGRfbWFwPyBUaGF0IGdp
+dmVzIHVzIHNvbWUgdGltZSB0byBmaXggdGhlIG9sZF9tYXAgY2FzZSBwcm9wZXJseS4NCg0KWWVz
+LCBJIHRoaW5rIHdlIGNvdWxkIGFuZCBpdCBzaG91bGQgd29yayBidXQgSSBoZXNpdGF0ZWQgdG8g
+cHJvcG9zZSBpdCBiZWNhdXNlIA0KKGFzIHlvdSBhbHJlYWR5IG5vdGVkKSBpdCdzIGEgc2hvcnQg
+dGVybSBmaXggYW5kIG5vdCB0aGUgcmlnaHQgZml4Lg0KDQpBbHRlcm5hdGl2ZWx5LCB3ZSBjb3Vs
+ZCBhbHNvIGV2YWx1YXRlIGlmIHdlIG5lZWQgdG8gc3VwcG9ydCBlZmk9b2xkX21hcCBjYXNlIGdv
+aW5nIGZ1cnRoZXIuDQpJIHRob3VnaHQgZHJvcHBpbmcgaXQgd291bGQgYmUgYSBiYWQgaWRlYSBi
+ZWNhdXNlIGl0IGNoYW5nZXMga2VybmVsIHVzZXIgdmlzaWJsZSBpbnRlcmZhY2UgDQooYmVjYXVz
+ZSBpdCdzIGEga2VybmVsIGNvbW1hbmQgbGluZSBhcmd1bWVudCkgYW5kIG5ldmVyIGJyb3VnaHQg
+aXQgdXAuDQpOb3Qgc3VyZSB3aGF0IFRob21hcywgSW5nbyBvciBMaW51cyBtaWdodCB0aGluayBh
+Ym91dCBkcm9wcGluZyBhIGtlcm5lbCBjb21tYW5kIGxpbmUgDQphcmd1bWVudC4NCg0KUmVnYXJk
+cywNClNhaQ0K
