@@ -2,129 +2,130 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3670C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B9CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD23206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5CC5214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:21:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS++sl+t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389502AbeLQUVS (ORCPT
+        id S2389514AbeLQUVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:21:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60210 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726969AbeLQUVR (ORCPT
+        Mon, 17 Dec 2018 15:21:41 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42903 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727631AbeLQUVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:21:17 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHKJT8w104571
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:21:16 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pegr7w4x6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:21:16 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 17 Dec 2018 20:21:14 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Dec 2018 20:21:10 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHKL9vn58065012
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Dec 2018 20:21:09 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 22FDBA4057;
-        Mon, 17 Dec 2018 20:21:09 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0BCCCA4051;
-        Mon, 17 Dec 2018 20:21:08 +0000 (GMT)
-Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Dec 2018 20:21:07 +0000 (GMT)
-Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ebiggers@kernel.org, James Morris James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Date:   Mon, 17 Dec 2018 15:21:07 -0500
-In-Reply-To: <CAHk-=wjsMJeEkJbE3QhM3SY-DT9VsnMWNQKMNsG9TetnjREWDQ@mail.gmail.com>
-References: <20181128232019.GC131170@gmail.com>
-         <20181217181244.220052-1-ebiggers@kernel.org>
-         <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
-         <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
-         <CAHk-=wjsMJeEkJbE3QhM3SY-DT9VsnMWNQKMNsG9TetnjREWDQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121720-0016-0000-0000-00000237DB18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121720-0017-0000-0000-00003290274C
-Message-Id: <1545078067.10804.13.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=804 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812170179
+        Mon, 17 Dec 2018 15:21:41 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so6643004plp.9;
+        Mon, 17 Dec 2018 12:21:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=7Lxrxd/hSsekQvS5TNwgf4HJhjrgrc3uztzkOk3jJZI=;
+        b=fS++sl+twua6rKfaqnifxpd414nSQn99YleFwG5ROoUgd4fYh8Gmfgnu5BfX+RGaXQ
+         W9G3f2kmTXon3rFlZopX1f9SUhlISoKyouj9dqGZXzclbN7QgFLO8yz0spFId1MRH3O5
+         dGA4VWecIWUpsE/4lHE5tobsIZ8xLbEqIhVGe/tL0rrjK2CyWS7ZWFSx+xa8g7xLlthx
+         wZs43S1vMMZKIXGIlh0lDrppYZtrUiPm7z4IHL71pM/rBdWYIVldpxLF2JHDfKcVKJO5
+         wQsiKO1oXc2bh3EO8jiOZ2RjNYhyAoO4biwb3t7UFifUoPLKwKkPvbQjI/EIHMCS7gST
+         uHEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=7Lxrxd/hSsekQvS5TNwgf4HJhjrgrc3uztzkOk3jJZI=;
+        b=V5byIZAxQNLRXW3nfyO/bFoWUcg5F8z+KuogW48bsqIA58TSxapOtDcGQaZ5LUd4t6
+         Z6PBcFnt65+bYr1PElzPWGbYdLA8TKNmJm1uis/FNp08CE8yGxJ8K7Yo4J3PDBXYai74
+         wsVIPi1wMXZHBuuvtlzy+Q2axqgWPTPNo2SIMcsnu4rGrHwO5VW8CXxT7EhAWdvLwtTj
+         UPTenO0fhSveP1zmKgyaCFy5jNXRDwpVO/Z/XmD5yKqHvJItnAPqSY7zjLpsH2iZt6F6
+         hygrlCY5UqL9DUFaiDv3LJZVpkaM52uko9vbUfJp46AEXfr2JtqrAxpjTQ+3ovG9lmV+
+         PFug==
+X-Gm-Message-State: AA+aEWbL57/37HZekJI2/Xk3my9GdYghDtHwclcp7piLMiwdW5n1/Pot
+        Nmgcx9ffNJ8P9PxBjyTmkFk=
+X-Google-Smtp-Source: AFSGD/V108bv8qZyoC/yKMg096p+d0DPNRePsdoNXHX5jjToTByi5PogOU3Xk9s+Qh/1UrG/nUuFKA==
+X-Received: by 2002:a17:902:d202:: with SMTP id t2mr14094133ply.193.1545078100797;
+        Mon, 17 Dec 2018 12:21:40 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([103.227.98.208])
+        by smtp.gmail.com with ESMTPSA id i62sm14879081pge.44.2018.12.17.12.21.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Dec 2018 12:21:40 -0800 (PST)
+Date:   Tue, 18 Dec 2018 01:55:33 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH v4 7/9] videobuf2/videobuf2-dma-sg.c: Convert to use
+ vm_insert_range
+Message-ID: <20181217202533.GA16294@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-17 at 11:06 -0800, Linus Torvalds wrote:
-> On Mon, Dec 17, 2018 at 10:49 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > So the *simplest* fix would seem to be to literally remove all those
-> > "= -1" for the Opt_err initialization.  Making the code smaller,
-> > simpler, and fixing the bug in the process.
-> 
-> Something like this
-> 
->     git  grep -l 'Opt_err = -1' | xargs sed -i 's/Opt_err = -1/Opt_err/'
-> 
-> would do it, but I also notice that
-> security/integrity/ima/ima_policy.c then has some truly funky code
-> that plays around with the enum numbers , ie
-> 
->   #define pt(token)     policy_tokens[token + Opt_err].pattern
+Convert to use vm_insert_range to map range of kernel memory
+to user vma.
 
-Yikes!
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ drivers/media/common/videobuf2/videobuf2-dma-sg.c | 23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
 
-> which actually depends on the ordering of policy_tokens[], and depends
-> on the exact values, ie it literally (and quite insanely) sets Opt_err
-> to -1, and then Opt_measure to 1, and leaves 0 unused. That code
-> seriously makes no sense at all, and is fundamentally broken.
-> 
-> It would be better to use
-> 
->     #define pt(token)     policy_tokens[token - Opt_measure].pattern
-> 
-> instead, but even then you should have a huge comment about how the
-> policy_tokens[] array absolutely has to be properly ordered.
-
-Will do.
-
-> 
-> Honestly, for being about "security", all of this code seems to be
-> doing some really questionable things with all those Opt_xyz enums.
-
-It's being used for parsing and displaying the policy, which do need
-to be in sync.
-
-Mimi
+diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+index 015e737..898adef 100644
+--- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
++++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
+@@ -328,28 +328,19 @@ static unsigned int vb2_dma_sg_num_users(void *buf_priv)
+ static int vb2_dma_sg_mmap(void *buf_priv, struct vm_area_struct *vma)
+ {
+ 	struct vb2_dma_sg_buf *buf = buf_priv;
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long usize = vma->vm_end - vma->vm_start;
+-	int i = 0;
++	unsigned long page_count = vma_pages(vma);
++	int err;
+ 
+ 	if (!buf) {
+ 		printk(KERN_ERR "No memory to map\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	do {
+-		int ret;
+-
+-		ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
+-		if (ret) {
+-			printk(KERN_ERR "Remapping memory, error: %d\n", ret);
+-			return ret;
+-		}
+-
+-		uaddr += PAGE_SIZE;
+-		usize -= PAGE_SIZE;
+-	} while (usize > 0);
+-
++	err = vm_insert_range(vma, vma->vm_start, buf->pages, page_count);
++	if (err) {
++		printk(KERN_ERR "Remapping memory, error: %d\n", err);
++		return err;
++	}
+ 
+ 	/*
+ 	 * Use common vm_area operations to track buffer refcount.
+-- 
+1.9.1
 
