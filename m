@@ -2,108 +2,121 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9DDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558E4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35D8206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:41:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOAt/Oks"
+	by mail.kernel.org (Postfix) with ESMTP id 245582133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387648AbeLQPlB (ORCPT
+        id S2387704AbeLQPnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:41:01 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46626 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727798AbeLQPlB (ORCPT
+        Mon, 17 Dec 2018 10:43:14 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:56636 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbeLQPnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:41:01 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w7so6278445pgp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:41:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HtzbcogXkn682rdMDuWIbGFkOdQutURvhNqQPBQ8O5s=;
-        b=dOAt/Oks50Yun0A1UFtcQn9emktvZee9bL/6Ml4rLqDRaiMBQZMvQjJWJx+FaECP4b
-         x+058dZVHQo27Dxxbtrz0oSIGHQqqYU9dfM7JbGyf35NeArURiOxYIOIswrszb/5jEkG
-         jd7JyBNzTOW5+v33vNqnHKhM5UC0mIUzyo8NUd1nN+uvTJ21BAT++tCAV/0ab8tKPwoy
-         NcSgST1wGDZUf0ggICORx3bjq3UYSAPZSm4Wy2Pj/ELQzFITOrFlh7sr0sIj54DWoHGi
-         YmghP3pzZ71rnJASSN9VWQJs6GDRPtWFeigi5rLKHeyRhP3gCs3PEiOF6YHOAzptb1fa
-         +fsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HtzbcogXkn682rdMDuWIbGFkOdQutURvhNqQPBQ8O5s=;
-        b=gqb2BF85pUrEvJBZfYAbHiN/V4Izh//vslTh8SSmlZyMcaX74X9ozDBIHO6AyhdivD
-         rPB9gXDuPLE2jvz6ZlNR1n3Zgp6lK5WIxGZrhbknDuYbzDUJ+4M/BAuoIOWtKFqXR0lZ
-         x1jomdz553/vOelcJ0wj+y0OV/LOgt7zt+Vyjt3oYcgUN/4rnooH6XrrBQSWfB5Gwn4r
-         9H+B36fEE/K1CJg9o1bIh0zQekuCxqG1iO0btl1qc91iEFS/4MM63YcLXYQTEiZlYMs9
-         8RPh3RqyG/8LL0GLd476wJYNHkmNRq2drztdUfTkWLEzPv4ZF6DIpDGifOFBTCN3cDZ6
-         ha1Q==
-X-Gm-Message-State: AA+aEWY97k4zIcFPssGFVEn38HNmbqkCgb6u3r2BTJYO2ZZmW8BpnJGZ
-        BXKe3u+acFfkhRPt61cAdnU=
-X-Google-Smtp-Source: AFSGD/UbUTe/qfQTh6StD+gMzTIOHOSyjt8BKF1NrEueitYi/Ot4jpjXiFcXbNdUpQZBRBcPPy2Cjw==
-X-Received: by 2002:a63:1258:: with SMTP id 24mr12430982pgs.114.1545061260119;
-        Mon, 17 Dec 2018 07:41:00 -0800 (PST)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id h8sm18528356pfo.162.2018.12.17.07.40.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 07:40:59 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Tue, 18 Dec 2018 00:40:56 +0900
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181217154056.GA515@tigerII.localdomain>
-References: <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
- <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
- <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
- <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
- <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
- <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
- <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
- <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
- <20181213124255.GB3053@tigerII.localdomain>
- <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
+        Mon, 17 Dec 2018 10:43:13 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 43JQR0671kz1r02K;
+        Mon, 17 Dec 2018 16:43:08 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 43JQR046XTz1qvRX;
+        Mon, 17 Dec 2018 16:43:08 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 69dz0lGJFhtE; Mon, 17 Dec 2018 16:43:07 +0100 (CET)
+X-Auth-Info: uCA/xwTQNCN29wazrd7eps4Mp/jltM6c4caImNMwyI4=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 17 Dec 2018 16:43:07 +0100 (CET)
+Subject: Re: [PATCH] Revert "serial: 8250: Fix clearing FIFOs in RS485 mode
+ again"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Burton <paul.burton@mips.com>
+Cc:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        Daniel Jedrychowski <avistel@gmail.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+References: <20181213174834.kxdy6fphaeoivqgh@pburton-laptop>
+ <20181216200833.27928-1-paul.burton@mips.com>
+ <f5a76d73-862f-3ebc-cd07-effc5c432103@denx.de>
+ <20181216213133.kwe24pif3v4wcgwp@pburton-laptop>
+ <949fdd3d-535e-d235-f406-d5bde4658c5e@denx.de>
+ <CAAEAJfAad75bHX39ETCdVv9vP0dF7PLz2vvFLLqgtyikPHqJyA@mail.gmail.com>
+ <20181216222411.5jkexuaqxpfudj7b@pburton-laptop>
+ <CAAEAJfAQ9=B6sm=Ard+YTDN5g5r03o=t9xU3Nu2QaKrXXZ4pGw@mail.gmail.com>
+ <20181216223510.hxsdotf332ousinh@pburton-laptop>
+ <20181217151851.GA21564@kroah.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <52a4b322-5710-1ac0-fa3e-11ed6ef2236d@denx.de>
+Date:   Mon, 17 Dec 2018 16:43:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181217151851.GA21564@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/17/18 15:54), Petr Mladek wrote:
-> Now, I always felt that the "from" name was a bit strange but
-> nothing better came to my mind until today.
+On 12/17/2018 04:18 PM, Greg Kroah-Hartman wrote:
+> On Sun, Dec 16, 2018 at 10:35:12PM +0000, Paul Burton wrote:
+>> Hi Ezequiel,
+>>
+>> On Sun, Dec 16, 2018 at 07:28:22PM -0300, Ezequiel Garcia wrote:
+>>> On Sun, 16 Dec 2018 at 19:24, Paul Burton <paul.burton@mips.com> wrote:
+>>>> This helps, but it only addresses one part of one of the 4 reasons I
+>>>> listed as motivation for my revert. For example serial8250_do_shutdown()
+>>>> also clearly intends to disable the FIFOs.
+>>>>
+>>>
+>>> OK. So, let's fix that :-)
+>>
+>> I already did, or at least tried to, on Thursday [1].
+>>
+>>> By all means, it would be really nice to push forward and fix the garbage
+>>> issue on JZ4780, as well as the transmission issue on AM335x.
+>>>
+>>> AM335x is a wildly popular platform, and it's not funny to break it.
+>>
+>> Well, clearly not if it was broken in v4.10 & only just fixed..? And
+>> from Marek's commit message the patch in v4.10 doesn't break the whole
+>> system just RS485.
+>>
+>>> So, let's please stop discussing which board we'll break and just fix both.
+>>
+>> I completely agree that would be ideal and I wrote a patch hoping to do
+>> that on Thursday, but didn't get any response on testing. It's late in
+>> the cycle hence a revert made sense. Simple as that.
+> 
+> A revert makes sense now, I'll go queue this up, thanks.
 
-Could be printk_caller, could be printk_origin. I don't have strong
-preferences.
+I don't like this for multiple reasons.
+1) There is a better patch posted which doesn't break the AM335x and
+   clearly identifies and fixes the problem on the JZ4780 / CI20
+2) The JZ4780 8250 core is not a standard 8250 core, since it has extra
+   bits in the FCR register (like the UME bit, which disables the whole
+   UART block), so the revert IMO would break that core too, it just
+   hides the breakage. I'm still trying to understand the implications
+   of that in detail, but the discussion wasn't quite constructive.
 
-> I would like to rename "from" to "caller", see the patch below.
-> If you agree, I could push it on top or I could even squash it
-> into the original patch.
+I'd much rather see Ezequiel's patch applied, since that's far less
+destructive approach to fixing the problem than the revert.
 
-Can we please squash or, better yet, ask Tetsuo to resend a new, renamed
-version? An immediate follow up patch that completely renames a just added
-feature feels like as if we failed to communicate it the usual way.
-
-	-ss
+-- 
+Best regards,
+Marek Vasut
