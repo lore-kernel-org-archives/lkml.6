@@ -2,123 +2,124 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9399C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E43C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6E7920874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4667920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvJOy9y2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4uLftQh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387848AbeLQPDu (ORCPT
+        id S2387854AbeLQPEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:03:50 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37738 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387831AbeLQPDr (ORCPT
+        Mon, 17 Dec 2018 10:04:06 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42212 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387560AbeLQPCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:03:47 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y11so9695388lfj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:03:46 -0800 (PST)
+        Mon, 17 Dec 2018 10:02:25 -0500
+Received: by mail-ed1-f66.google.com with SMTP id y20so4863719edw.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:02:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=dN14FaNhOIxVXbKsJ6vs+2KaYqUA+chJtAj2u7CutYc=;
-        b=LvJOy9y2Go7qYo1zQghvDl7WyeMx+2/VIo/MqiQDBKw1hDrMD9XLtLIXbWL7j3o/Mw
-         7GhKPqdPuTGZHR878zB2AGGh74vWIBqETITG0YSF4A7SSMrfeTwvBM0FcQYzDbHJAEXn
-         JrvapPkgKE3TRFfdItkQwbixQ/fDNDMvRHL//aISNV3DTlziiNdUFlH/2boRg5ZSRXIB
-         PP9n889bLqGDDUsyTGJCRoaWIJIpCvNPxlv1YLEe1dt5bDuY21zc9waa2TlsDTxPb0OX
-         ngCeDiiBydKa57xDw6k4/+VtVblXRc2PJTS+HlL66k+UnF85whsOZsiIlSeI2dJB/rYR
-         /hNQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=c64JU9MvidVPDFDYNeElkdLKByLupaWXGImYY9YcBxc=;
+        b=K4uLftQhNasIyFPtH3dGCGPRDxY99YHxEoKv2RJURxoPrme5Cgmj7XWYW3sVr5qiVG
+         OAz1N2xbHsJxG6kCHecfKRALAQsc06QCoIKaUiqtNe9ApCFL82KMHHrpDiyhVrmjAQdA
+         Wo+QB3qOPiBSGNT4nFaTHrD09V/vGOINNXGWXiJWun+138KmhfOJlNGovSdf1n+/HKFR
+         3l2XTPz0+nvrtzXghAtvwakx5zTRIWxePFaqR9+/aJINHO+kZ53DnNT47Gw9DpubNwnT
+         TjzAv4ITH6xg57i1OpbuwoVyKhTMDF8SC+qxzMWMCGJ6vbGCSLZoXr78qKcjvhImPlgR
+         0SqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=dN14FaNhOIxVXbKsJ6vs+2KaYqUA+chJtAj2u7CutYc=;
-        b=PcjzsefyswVrQgDcc9fIc0y03t2giyYzH421XcSHwd+2Dge1F642/tqU3puMeV0acX
-         i2wrpbwIZusCLjpVFcb0O+OTN3YlG53XssIwCw5qY96jUXOUKY2zkANBDdNcl+HjYVAI
-         Iax2S9aeZ//kxtXWEi788PWI1+Y4iWWgN5SpcGLmkQJA9CI1zSFJ1vXJb24v+p+ikAM1
-         dSVvVZPK4SQ4hI4k6I1rnoesT1AA+x6Van0T83+0zqViPWHad1JsEN6Qfrkjlcy1qzfP
-         4zLlncRKWTXU512b0NTrQyFn/wZHXTOb0euHJqzNpjVI0OagKdsvImKZFDxeNhXwOtKR
-         ihpQ==
-X-Gm-Message-State: AA+aEWa3uCGXLCZSBYehhR5fO/2gWznFWTphz1mbfTL17/Dv4f2G9zGG
-        IPuDb0uB2D4ixMGmwxnkSGo=
-X-Google-Smtp-Source: AFSGD/UO7EA0ArIDYylBWBkVOE7HHm+Xg1eTpQ/7LVyz1+qGBWwd2Hb5q7YxkbEAqEyPNvIxlMwB6A==
-X-Received: by 2002:a19:9508:: with SMTP id x8mr7868719lfd.112.1545059025007;
-        Mon, 17 Dec 2018 07:03:45 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id x204sm2705527lfa.5.2018.12.17.07.03.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 07:03:44 -0800 (PST)
-Subject: Re: [Xen-devel] [PATCH v2 2/3] drm/xen-front: Use Xen common shared
- buffer implementation
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>, jgross@suse.com
-Cc:     alsa-devel@alsa-project.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        xen-devel@lists.xenproject.org
-References: <20181130074205.20496-1-andr2000@gmail.com>
- <20181130074205.20496-2-andr2000@gmail.com>
- <3c69d924-11e1-7037-bfa5-276d22b245fe@gmail.com>
- <27491aa5-3548-4c39-13a2-132c738fae14@gmail.com>
- <71920419-f0ef-8489-35ff-ff8375cb7361@gmail.com>
- <ce52ec2e-1b22-8a2f-7f99-d90fcfdbfebd@oracle.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <686a8b1e-3588-32bc-abc7-79221dc9c74e@gmail.com>
-Date:   Mon, 17 Dec 2018 17:03:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=c64JU9MvidVPDFDYNeElkdLKByLupaWXGImYY9YcBxc=;
+        b=X7Q1WhkziYkh+zhngf+OV+lCFBEKSBIUFMJJVMsUhOKJzoX4+x5w+zzo4wkLw7PkUi
+         Rub4YVdjRfI/NO1e4O2OpFlYs3FK1yNnXs8X57WES9O1HNMAb2GcVdH5DN5SwAfrhSV5
+         Hxu+ewvs5GHl1E4w6JSn+wxuieNCR4J62GIqxmExNlo2m4Odz9rgAWDkGE0dfqqJRFNm
+         wfjd+EHUw149buxnKEeTFSmUHijLcj757KgiDH5dZwU/8IJCN1V88G+Eti2tOeD+8La4
+         OV1t280Lr8P4+arrdHImxwXDmzdkcB1//H6EJsDeNkIFY7yd+AhjwZ9oGpsk7VeTgELL
+         7aIg==
+X-Gm-Message-State: AA+aEWbIfQnIWVE5yRTwq8zXBAY70/PpFKPQr+HIxb9UrdJNhzgXp/Qz
+        /sRMYTnGBwYxYtUrfDo9/M4QIBT8
+X-Google-Smtp-Source: AFSGD/Uf1U6X3Hx/zB60E+rI7Cle0glbM+p4NmgzVfI0ljX08UpZPOA6Uq94UqMUwZSXATKmxj5sBg==
+X-Received: by 2002:a50:a4fc:: with SMTP id x57mr12832462edb.229.1545058943080;
+        Mon, 17 Dec 2018 07:02:23 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id g40sm3773289edg.39.2018.12.17.07.02.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 07:02:22 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH v2 02/19] mailbox: arm-mhu: Use device-managed registration API
+Date:   Mon, 17 Dec 2018 16:02:00 +0100
+Message-Id: <20181217150217.32435-3-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181217150217.32435-1-thierry.reding@gmail.com>
+References: <20181217150217.32435-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ce52ec2e-1b22-8a2f-7f99-d90fcfdbfebd@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 4:52 PM, Boris Ostrovsky wrote:
-> On 12/17/18 5:19 AM, Oleksandr Andrushchenko wrote:
->> Hello, Juergen, Boris!
->>
->> As this DRM part of the series is the only one which needs ack/nack
->>
->> (and it might take quite some time to complete) could we please
->>
->> merge the patches 1 and 3 now that already have ack/r-b?
->>
->
->
-> TBH I am not sure it makes sense to do this without the second patch.
-> Refactoring (and IIUIC this series is purely refactoring --- is it not?)
-> is done to reduce amount of code, and with only first and third patch we
-> end up with quite a significant increase in the number of LoC. (I am
-> going purely by diffstat)
->
-> Of course, the other reason for refactoring is to eliminate code
-> duplication, but without second patch that will not happen.
+From: Thierry Reding <treding@nvidia.com>
 
-Agree, but this is the basis for the new pv camera frontend
+Get rid of some boilerplate driver removal code by using the newly added
+device-managed registration API.
 
-I am working on now [1], so even if we do not remove the code from DRM
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/mailbox/arm_mhu.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-then we at least do not add it to the camera driver
-
-> -boris
-
-Thank you,
-
-Oleksandr
-
-[1] 
-https://github.com/andr2000/linux/blob/camera_front_v1/drivers/media/xen/Kconfig#L6
+diff --git a/drivers/mailbox/arm_mhu.c b/drivers/mailbox/arm_mhu.c
+index 99befa76e37c..64d85c6a2bdf 100644
+--- a/drivers/mailbox/arm_mhu.c
++++ b/drivers/mailbox/arm_mhu.c
+@@ -152,7 +152,7 @@ static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	amba_set_drvdata(adev, mhu);
+ 
+-	err = mbox_controller_register(&mhu->mbox);
++	err = devm_mbox_controller_register(dev, &mhu->mbox);
+ 	if (err) {
+ 		dev_err(dev, "Failed to register mailboxes %d\n", err);
+ 		return err;
+@@ -162,15 +162,6 @@ static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
+ 	return 0;
+ }
+ 
+-static int mhu_remove(struct amba_device *adev)
+-{
+-	struct arm_mhu *mhu = amba_get_drvdata(adev);
+-
+-	mbox_controller_unregister(&mhu->mbox);
+-
+-	return 0;
+-}
+-
+ static struct amba_id mhu_ids[] = {
+ 	{
+ 		.id	= 0x1bb098,
+@@ -186,7 +177,6 @@ static struct amba_driver arm_mhu_driver = {
+ 	},
+ 	.id_table	= mhu_ids,
+ 	.probe		= mhu_probe,
+-	.remove		= mhu_remove,
+ };
+ module_amba_driver(arm_mhu_driver);
+ 
+-- 
+2.19.1
 
