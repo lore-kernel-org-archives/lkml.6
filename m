@@ -2,160 +2,189 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D61C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B58F0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5371220874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E63220874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p7n4cSGv"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mv/GYjvD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oYFOsx7p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389109AbeLQSmi (ORCPT
+        id S2389119AbeLQSmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:42:38 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42068 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727031AbeLQSmh (ORCPT
+        Mon, 17 Dec 2018 13:42:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44954 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727150AbeLQSmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:42:37 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBHIcoEs075359;
-        Mon, 17 Dec 2018 18:42:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=5NQAwKI6BPkMli61v3/BbXZPUF3F0B7MFFmBnQFNKgk=;
- b=p7n4cSGvtMxSsCu0np6uk2cEH/1hNoZqvzlZyW/kxapIA5jSmEYNcsxrfbYjm+P7urFx
- N6YJjNSezMu7OPBdvgWZ4lF4b3Z6UHwnzu55UUK2WehLPEEtI4bJV7bVmbMm4fRivz85
- OdV3Zsnk0b6WxVvBvbJkwOw+Ur5ybJq3RX+lV/ZNmqeEHIpHna/PbmHI6robD5neWMLS
- zRmJJfckiWNUBUJeI1oBBEqQNla/4jUE1Gnf5RtjVdRvby6n7tpvDXcCg3UKBjMq043A
- 6ANYmBND/7zgaJJWxsj7pIeUtc4KYX9TnxafZPG9+kjbGIH2IalKMG7Gyi3kt24K8tlu AQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2pct8qq5jk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 18:42:24 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBHIgM0o005317
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 18:42:22 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBHIgJug003501;
-        Mon, 17 Dec 2018 18:42:19 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Dec 2018 10:42:19 -0800
-Subject: Re: [PATCH 2/3] hugetlbfs: Use i_mmap_rwsem to fix page
- fault/truncate race
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-References: <20181203200850.6460-1-mike.kravetz@oracle.com>
- <20181203200850.6460-3-mike.kravetz@oracle.com>
- <27f8893b-57b3-088d-2d48-9e8acc5987bd@linux.ibm.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <f6fd9491-4b3d-16ca-f606-025c78756936@oracle.com>
-Date:   Mon, 17 Dec 2018 10:42:17 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 17 Dec 2018 13:42:38 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 68B5B607CA; Mon, 17 Dec 2018 18:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545072157;
+        bh=a1x+f5gH3ExJyZ1XM437NykmuZbrOosHSkWmguBgSBk=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=Mv/GYjvDu9NpKf6j94iHCqy6udFMAwHQQgKD62EoQ5vdGU5wNQLHFp4PXIB5pyvAw
+         CBW6HjrFWSw5HaYxZqin2hcKVNhj+wWJ0a0r6gd+ihG+UUxUdHAYzjyRqTG8+t22uI
+         HZ04KTk2u6/xCA2BgCcN3/xxUDLzAYVsQf8lUHCg=
+Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lmark@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 076E4601D7;
+        Mon, 17 Dec 2018 18:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545072156;
+        bh=a1x+f5gH3ExJyZ1XM437NykmuZbrOosHSkWmguBgSBk=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=oYFOsx7pCOJ2sTFUDFnlfioqORzvQK6iOa/ghQelAm9e5Ktk/AcucMKUHhN6RWRu2
+         5LGYdmfmE8TKMdC3SqnfiIrOhEvUnFrAhkm0JHBROeS6J/nzRDC1h51jgfbejnINjt
+         hYxB721ROnuqqgAXb7UVEn+gbpIf1ZDSEKOv2S3U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 076E4601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
+Date:   Mon, 17 Dec 2018 10:42:35 -0800 (PST)
+From:   Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To:     Alexey Skidanov <alexey.skidanov@intel.com>
+cc:     Laura Abbott <labbott@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, tkjos@android.com, rve@android.com,
+        linux-kernel@vger.kernel.org, maco@android.com,
+        sumit.semwal@linaro.org
+Subject: Re: [PATCH v3] staging: android: ion: Add implementation of dma_buf_vmap
+ and dma_buf_vunmap
+In-Reply-To: <67f288db-d9ea-2d45-ddcf-a15dbff316f5@intel.com>
+Message-ID: <alpine.DEB.2.10.1812171036080.23226@lmark-linux.qualcomm.com>
+References: <1517400222-2854-1-git-send-email-alexey.skidanov@intel.com> <20180131130047.GA22917@kroah.com> <89be45dd-ac0e-4efb-2b21-e6c07b0cd66e@intel.com> <bf909d75-21a4-9d6d-2f72-887492821252@redhat.com> <7d836085-cd8d-300b-56be-e8db4ff37afc@intel.com>
+ <alpine.DEB.2.10.1812152119130.2951@lmark-linux.qualcomm.com> <67f288db-d9ea-2d45-ddcf-a15dbff316f5@intel.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <27f8893b-57b3-088d-2d48-9e8acc5987bd@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9110 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812170163
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 2:25 AM, Aneesh Kumar K.V wrote:
-> On 12/4/18 1:38 AM, Mike Kravetz wrote:
->> hugetlbfs page faults can race with truncate and hole punch operations.
->> Current code in the page fault path attempts to handle this by 'backing
->> out' operations if we encounter the race.  One obvious omission in the
->> current code is removing a page newly added to the page cache.  This is
->> pretty straight forward to address, but there is a more subtle and
->> difficult issue of backing out hugetlb reservations.  To handle this
->> correctly, the 'reservation state' before page allocation needs to be
->> noted so that it can be properly backed out.  There are four distinct
->> possibilities for reservation state: shared/reserved, shared/no-resv,
->> private/reserved and private/no-resv.  Backing out a reservation may
->> require memory allocation which could fail so that needs to be taken
->> into account as well.
->>
->> Instead of writing the required complicated code for this rare
->> occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
->> mode for the duration of page fault processing.  Hold i_mmap_rwsem
->> longer in truncation and hold punch code to cover the call to
->> remove_inode_hugepages.
->>
->> Cc: <stable@vger.kernel.org>
->> Fixes: ebed4bfc8da8 ("hugetlb: fix absurd HugePages_Rsvd")
->> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
->> ---
->>   fs/hugetlbfs/inode.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
->> index 32920a10100e..3244147fc42b 100644
->> --- a/fs/hugetlbfs/inode.c
->> +++ b/fs/hugetlbfs/inode.c
->> @@ -505,8 +505,8 @@ static int hugetlb_vmtruncate(struct inode *inode, loff_t
->> offset)
->>       i_mmap_lock_write(mapping);
->>       if (!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root))
->>           hugetlb_vmdelete_list(&mapping->i_mmap, pgoff, 0);
->> -    i_mmap_unlock_write(mapping);
->>       remove_inode_hugepages(inode, offset, LLONG_MAX);
->> +    i_mmap_unlock_write(mapping);
->>       return 0;
->>   }
+On Sun, 16 Dec 2018, Alexey Skidanov wrote:
+
 > 
 > 
-> We used to do remove_inode_hugepages()
+> On 12/16/18 7:20 AM, Liam Mark wrote:
+> > On Tue, 6 Feb 2018, Alexey Skidanov wrote:
+> > 
+> >>
+> >>
+> >> On 02/07/2018 01:56 AM, Laura Abbott wrote:
+> >>> On 01/31/2018 10:10 PM, Alexey Skidanov wrote:
+> >>>>
+> >>>> On 01/31/2018 03:00 PM, Greg KH wrote:
+> >>>>> On Wed, Jan 31, 2018 at 02:03:42PM +0200, Alexey Skidanov wrote:
+> >>>>>> Any driver may access shared buffers, created by ion, using
+> >>>>>> dma_buf_vmap and
+> >>>>>> dma_buf_vunmap dma-buf API that maps/unmaps previosuly allocated
+> >>>>>> buffers into
+> >>>>>> the kernel virtual address space. The implementation of these API is
+> >>>>>> missing in
+> >>>>>> the current ion implementation.
+> >>>>>>
+> >>>>>> Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
+> >>>>>> ---
+> >>>>>
+> >>>>> No review from any other Intel developers? :(
+> >>>> Will add.
+> >>>>>
+> >>>>> Anyway, what in-tree driver needs access to these functions?
+> >>>> I'm not sure that there are the in-tree drivers using these functions
+> >>>> and ion as> buffer exporter because they are not implemented in ion :)
+> >>>> But there are some in-tre> drivers using these APIs (gpu drivers) with
+> >>>> other buffer exporters.
+> >>>
+> >>> It's still not clear why you need to implement these APIs.
+> >> How the importing kernel module may access the content of the buffer? :)
+> >> With the current ion implementation it's only possible by dma_buf_kmap,
+> >> mapping one page at a time. For pretty large buffers, it might have some
+> >> performance impact.
+> >> (Probably, the page by page mapping is the only way to access large
+> >> buffers on 32 bit systems, where the vmalloc range is very small. By the
+> >> way, the current ion dma_map_kmap doesn't really map only 1 page at a
+> >> time - it uses the result of vmap() that might fail on 32 bit systems.)
+> >>
+> >>> Are you planning to use Ion with GPU drivers? I'm especially
+> >>> interested in this if you have a non-Android use case.
+> >> Yes, my use case is the non-Android one. But not with GPU drivers.
+> >>>
+> >>> Thanks,
+> >>> Laura
+> >>
+> >> Thanks,
+> >> Alexey
+> > 
+> > I was wondering if we could re-open the discussion on adding support to 
+> > ION for dma_buf_vmap.
+> > It seems like the patch was not taken as the reviewers wanted more 
+> > evidence of an upstream use case.
+> > 
+> > Here would be my upstream usage argument for including dma_buf_vmap 
+> > support in ION.
+> > 
+> > Currently all calls to ion_dma_buf_begin_cpu_access result in the creation 
+> > of a kernel mapping for the buffer, unfortunately the resulting call to 
+> > alloc_vmap_area can be quite expensive and this has caused a performance 
+> > regression for certain clients when they have moved to the new version of 
+> > ION.
+> > 
+> > The kernel mapping is not actually needed in ion_dma_buf_begin_cpu_access, 
+> > and generally isn't needed by clients. So if we remove the creation of the 
+> > kernel mapping in ion_dma_buf_begin_cpu_access and only create it when 
+> > needed we can speed up the calls to ion_dma_buf_begin_cpu_access.
+> > 
+> > An additional benefit of removing the creation of kernel mappings from 
+> > ion_dma_buf_begin_cpu_access is that it makes the ION code more secure.
+> > Currently a malicious client could call the DMA_BUF_IOCTL_SYNC IOCTL with 
+> > flags DMA_BUF_SYNC_END multiple times to cause the ION buffer kmap_cnt to 
+> > go negative which could lead to undesired behavior.
+> > 
+> > One disadvantage of the above change is that a kernel mapping is not 
+> > already created when a client calls dma_buf_kmap. So the following 
+> > dma_buf_kmap contract can't be satisfied.
+> > 
+> > /**
+> > * dma_buf_kmap - Map a page of the buffer object into kernel address 
+> > space. The
+> > * same restrictions as for kmap and friends apply.
+> > * @dmabuf:	[in]	buffer to map page from.
+> > * @page_num:	[in]	page in PAGE_SIZE units to map.
+> > *
+> > * This call must always succeed, any necessary preparations that might 
+> > fail
+> > * need to be done in begin_cpu_access.
+> > */
+> > 
+> > But hopefully we can work around this by moving clients to dma_buf_vmap.
+> I think the problem is with the contract. We can't ensure that the call
+> is always succeeds regardless the implementation - any mapping might
+> fail. Probably this is why  *all* clients of dma_buf_kmap() check the
+> return value (so it's safe to return NULL in case of failure).
 > 
->     mutex_lock(&hugetlb_fault_mutex_table[hash]);
->     i_mmap_lock_write(mapping);
->     hugetlb_vmdelete_list(&mapping->i_mmap,
->     i_mmap_unlock_write(mapping);
-> 
-> did we change the lock ordering with this patch?
 
-Thanks for taking a look.
+I think currently the call to dma_buf_kmap will always succeed since the 
+DMA-Buf contract requires that the client first successfully call 
+dma_buf_begin_cpu_access(), and if dma_buf_begin_cpu_access() succeeds 
+then dma_buf_kmap will succeed.
 
-Yes, we did take locks in that order in the 'if (unlikely(page_mapped(page)))'
-case within remove_inode_hugepages.  That ordering was important as the
-fault_mutex prevented faults while unmapping the page in all potential
-mappings.
+> I would suggest to fix the contract and to keep the dma_buf_kmap()
+> support in ION.
 
-With the change above, we will be holding i_mmap_rwsem in write mode while
-calling remove_inode_hugepages.  The page fault code (modified in previous
-patch) acquires i_mmap_rwsem in read mode.  Therefore, no page faults can
-occur and, that 'if (unlikely(page_mapped(page)))' case within
-remove_inode_hugepages will never happen.  The now dead code is removed in
-the subsequent patch.
+I will leave it to the DMA-Buf maintainers as to whether they want to 
+change their contract.
 
-As you suggested in a comment to the subsequent patch, it would be better to
-combine the patches and remove the dead code when it becomes dead.  I will
-work on that.  Actually some of the code in patch 3 applies to patch 1 and
-some applies to patch 2.  So, it will not be simply combining patch 2 and 3.
+Liam
 
--- 
-Mike Kravetz
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
