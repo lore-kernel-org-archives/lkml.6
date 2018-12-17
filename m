@@ -2,116 +2,87 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A34C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB0DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3786B2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E45D8206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RPrX/uK5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFkhdaLa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732938AbeLQOek (ORCPT
+        id S1732998AbeLQOep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:34:40 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52617 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732843AbeLQOej (ORCPT
+        Mon, 17 Dec 2018 09:34:45 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36954 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732843AbeLQOel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:34:39 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m1so12590331wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 06:34:38 -0800 (PST)
+        Mon, 17 Dec 2018 09:34:41 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e5-v6so11163469lja.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 06:34:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=SKuXzIBi+yiiIFMkUfS0RrbPDR1u+s//VaBjVaNDxsc=;
-        b=RPrX/uK5MZCtJXLIxsj6/UuxBPMnpf1pZrm4G1vjJYwYt2Su0/W37BJ5dLBpHq6p/P
-         R+e+ydEpG/ugB+C/Mv8NyD03bvXrZZ6hRTUnEk/BVB/Tejmsrh82mwiDqv5cHSaZDGkN
-         7ZW0RFy28+giVkt/cH+6rjW9fSrjlXUZ4QefI=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2fnpxwydDvAj68RDMnuzjUKTngPjaUu1Gr5ZSIsieWg=;
+        b=EFkhdaLasFqYoAK0oTRicblRLC3jUaxl0x49bXNa3FAI4Tk8BF4MJvOwmqvSfca0eG
+         1f/IcSkSJot/dZrssiXIzs6ucJp1YZNc6DJaD/tg0xU561onCXVPSI1efE953SKbcosu
+         oHrkw3cREvoRM2kUaLj1SRFzNE9kIqDMkCSMQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=SKuXzIBi+yiiIFMkUfS0RrbPDR1u+s//VaBjVaNDxsc=;
-        b=HT6CO5xC3I28fjiemvGnhoaTHqMQwCFJmb16XDyCACY2zQrZFNEfJRnC51l7VGh2+T
-         qf21sKwYRUwB81PoH3SFYRJXP5mHQkNoB30Y+inXy6xMDIJlOYwLuI9Da8Z3pRTJHCaN
-         8wKr/SP5yJPuIYWXwbRpnGLOjTKEdqjA93QVf52C7rnFhsxIGagBiMs+j5cEL9GzbCoO
-         jFiwDtglAOFaewyv8QqRudo9aL1bSqhQ8xCh0SIDrbbzE724341ENQ1TY3S4qvJTTjxD
-         AhQjkxdRi1uC9YM0NFsKcATs9R0+BxkhD+iIsbzj2UXjmQ0pakvbNOeh1TzSJKe/XLOA
-         mREg==
-X-Gm-Message-State: AA+aEWZXYXVu3EQAaERo0AlzTBmdmeEjYDJYVDs/UJoO/EhNFgKHiUl5
-        h0zhTL4F0SFNY6xS9nIWBRTBFw==
-X-Google-Smtp-Source: AFSGD/UAFRNrsgj1Yjqe1ceBm54QhcNxo9K2Fim2R0syx3cE7SB+3aJrvHY46eyULMwM6Ba4jRvOSg==
-X-Received: by 2002:a1c:9692:: with SMTP id y140mr12321167wmd.67.1545057277874;
-        Mon, 17 Dec 2018 06:34:37 -0800 (PST)
-Received: from dell ([95.149.164.119])
-        by smtp.gmail.com with ESMTPSA id j8sm431231wrt.40.2018.12.17.06.34.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 06:34:37 -0800 (PST)
-Date:   Mon, 17 Dec 2018 14:34:35 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "J, KEERTHY" <j-keerthy@ti.com>
-Cc:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] tps65218.c: fix IRQ resource leak in tps65218_probe()
-Message-ID: <20181217143435.GC4497@dell>
-References: <1544090279-26762-1-git-send-email-Christian.Hohnstaedt@wago.com>
- <20181214122559.GV4497@dell>
- <20181214122619.GW4497@dell>
- <f584aab6-374c-5a53-51c5-61098f8bb792@ti.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2fnpxwydDvAj68RDMnuzjUKTngPjaUu1Gr5ZSIsieWg=;
+        b=fRLic6bF69bNjxOeX+MqCFelYxBkf/Ra1Bn30WukBlRrF3gHbUTnPY7ZFqeFiGthpk
+         paT9ReHNO9AbN2gOk5rhTSuD1Jqya/ALYYfNARVSfa+jII5OXyPzmesqttW6P+ovRwj9
+         +rmbP62LB9daE8IFZF8qM9/b9FsP9egwBXL2tUiHAWXKyLDsflnJHOnbCi9wz3wCoVjp
+         tnWrUTKCP9t/2FfkKO0tZd+ZoqWuw0juR9buiPDnnqVtkKThVS5mw1Kfwpxjvhfg7a2Z
+         RugnzukqV8n+T4VVtXuBSon1IANOYQmiLGgR72Y/Shfq5O8UXgrVX4CkUVTz5hBWjBLG
+         W3WQ==
+X-Gm-Message-State: AA+aEWbkHgVF2It8nTmGm21DrCeZExNa1fR3Ppes2SnFuMtjzUDvnh3A
+        VbPLFAuxJ2EWLBVoH4uDBaATk25qk7vc06Hw695tcw==
+X-Google-Smtp-Source: AFSGD/WwgSzhWdbfSXnShmWd1N2baE8ee/QYaOHj0bIuQ6U2L/dbJFwvVRXQVZYdJ5smVA4YF7UZtcazhdFyDaUpyLE=
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr7685457ljj.9.1545057278601;
+ Mon, 17 Dec 2018 06:34:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f584aab6-374c-5a53-51c5-61098f8bb792@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 17 Dec 2018 15:34:26 +0100
+Message-ID: <CACRpkdaCUg9pgS3bsuXpdzi3zTB5YYF-R0Be0w4QbaiHspw9gA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774c0 (RZ/G2E) support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018, J, KEERTHY wrote:
+On Thu, Dec 13, 2018 at 9:18 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
 
-> 
-> 
-> On 12/14/2018 5:56 PM, Lee Jones wrote:
-> > On Fri, 14 Dec 2018, Lee Jones wrote:
-> > 
-> > > On Thu, 06 Dec 2018, Christian Hohnstaedt wrote:
-> > > 
-> > > > Free allocated IRQ if reading the device ID fails.
-> > > 
-> > > The patch is fine.  However, in future please submit patches using the
-> > > format set (by precedent) by the subsystem.  I will fix the subject
-> > > for you this time.
-> > > 
-> > > To check the format, you can do:
-> > > 
-> > >    `git log --oneline -- <subsystem>`
-> > 
-> > Patch applied, by the way.
-> 
-> This would no longer be needed as the bigger clean up is here:
-> 
-> https://lkml.org/lkml/2018/12/9/86
-> 
-> As both are applied it results in a compilation issue.
-> 
-> Lee Jones,
-> 
-> Do you want me to submit a fix patch? Or you can revert this patch?
-> Anything fine by me.
+> Document Renesas' RZ/G2E (R8A774C0) GPIO blocks compatibility within the
+> relevant dt-bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-I have removed this patch from the MFD tree now.  Thanks.
+Patch applied with Geert's and Simon's ACKs!
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Yours,
+Linus Walleij
