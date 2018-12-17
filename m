@@ -2,97 +2,129 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881FCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2D9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587502146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:41:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GCD1mTQf"
+	by mail.kernel.org (Postfix) with ESMTP id ECB452133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732649AbeLQOlL (ORCPT
+        id S1732746AbeLQOl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:41:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37580 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLQOlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:41:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nZZ4uT7zaATupA8MtYGiN52I8EDHkuRogXWMUDrqNP8=; b=GCD1mTQf4iesza7o2dkc2JY2u
-        /1sQKjL2HsK8PcKHTCneirvS5eCkh0QV4ljbr7hax77lC21b9q8HdtWO18LihRq8tskytX8ckursp
-        72a3pyNBO3h3ZZAuEsGvf3xC6WkzCckcTftXWkLNrNAyLZUmXg50Q0MIXmRaI8fAeBMhYwvdo0AE4
-        SoTCAREaPY/W/nqbCwJA7hAez49AscrYDIWnt2hqABJlAodZeOktDAfdkLPmY/3IUchX/jmOqWbbW
-        IoiG7EZanbeojlGqGkgO1G6Ihx1sKD4o4WgtCsX2c74wu1pQkUXGhuxZ5tFOCA5KzuZAkb7oETFpx
-        VlDhyEtig==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYu4r-0005Z5-Ud; Mon, 17 Dec 2018 14:41:01 +0000
-Date:   Mon, 17 Dec 2018 06:41:01 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Hou Tao <houtao1@huawei.com>, phillip@squashfs.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
- in mem alloc
-Message-ID: <20181217144101.GN10600@bombadil.infradead.org>
-References: <20181204020840.49576-1-houtao1@huawei.com>
- <20181215143824.GJ10600@bombadil.infradead.org>
- <69457a5a-79c9-4950-37ae-eff7fa4f949a@huawei.com>
- <20181217035157.GK10600@bombadil.infradead.org>
- <20181217093337.GC30879@dhcp22.suse.cz>
- <00ff5d2d-a50f-4730-db8a-cea3d7a3eef7@I-love.SAKURA.ne.jp>
- <20181217122546.GL10600@bombadil.infradead.org>
- <20181217141044.GP30879@dhcp22.suse.cz>
+        Mon, 17 Dec 2018 09:41:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57782 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726803AbeLQOl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:41:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAACFA78;
+        Mon, 17 Dec 2018 06:41:55 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22D323F575;
+        Mon, 17 Dec 2018 06:41:53 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] irqchip: add driver for imx-irqsteer controller
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org, patchwork-lst@pengutronix.de,
+        Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20181214102244.21509-1-l.stach@pengutronix.de>
+ <20181214102244.21509-3-l.stach@pengutronix.de>
+ <86r2ejaztt.wl-marc.zyngier@arm.com> <1545041393.5874.1.camel@pengutronix.de>
+ <98217822-208a-9a92-e80b-b0b73111e527@arm.com>
+ <1545054740.5874.6.camel@pengutronix.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <6a863d56-de66-c00e-ebb0-cf00fda2773f@arm.com>
+Date:   Mon, 17 Dec 2018 14:41:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217141044.GP30879@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1545054740.5874.6.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:10:44PM +0100, Michal Hocko wrote:
-> On Mon 17-12-18 04:25:46, Matthew Wilcox wrote:
-> > It's worth noticing that squashfs _is_ in fact holding a page locked in
-> > squashfs_copy_cache() when it calls grab_cache_page_nowait().  I'm not
-> > sure if this will lead to trouble or not because I'm insufficiently
-> > familiar with the reclaim path.
+On 17/12/2018 13:52, Lucas Stach wrote:
+> Am Montag, den 17.12.2018, 10:32 +0000 schrieb Marc Zyngier:
+> [...]
+>> OK, this is now making sense, thanks for that. I'm wondering if it'd
+>> make sense to expose both IRQs in the DT for each irqsteer, and use
+>> fsl,channel as the selector? It doesn't change much in the driver, but
+>> seems to describe the HW in a more complete way.
+>>
+>> I don't care much either way, and I'll leave it for you and the DT folks
+>> to decide.
 > 
-> Hmm, this is more interesting then. If there is any memcg accounted
-> allocation down that path _and_ the squashfs writeout can lock more
-> pages and mark them writeback before they are really sent to the storage
-> then we have a problem. See [1]
+> At least according to the preliminary documentation available about the
+> i.MX8QM not all of the channels are routed to an upstream IRQ which is
+> visible to the Linux system. Some of them may also go to the Cortex-M
+> subsystem, so for your suggestion to work I would need a scheme to
+> describe the output interrupts with holes in between them.
 > 
-> [1] http://lkml.kernel.org/r/20181213092221.27270-1-mhocko@kernel.org
+> I guess that complicates things a bit too much for little gain, as I
+> don't see us switching the controller between different channels at
+> runtime (which is the only thing I could imagine which would benefit
+> from this more complete HW description). The current binding can deal
+> with having some channels which route to something invisible to the
+> Linux system just fine, so I'm leaning toward keeping things as they
+> are now.
 
-Squashfs is read only, so it'll never have dirty pages and never do
-writeout.
+Fair enough. I'll freeze the tree tomorrow, so if you want this into
+4.21, now is the time.
 
-But ... maybe the GFP flags being used for grab_cache_page_nowait() are
-wrong.  It does, after all, say "nowait".  Perhaps it shouldn't be trying
-direct reclaim at all, but rather fail earlier.  Like this:
+Thanks,
 
-+++ b/mm/filemap.c
-@@ -1550,6 +1550,8 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
-                        gfp_mask |= __GFP_WRITE;
-                if (fgp_flags & FGP_NOFS)
-                        gfp_mask &= ~__GFP_FS;
-+               if (fgp_flags & FGP_NOWAIT)
-+                       gfp_mask &= ~__GFP_DIRECT_RECLAIM;
- 
-                page = __page_cache_alloc(gfp_mask);
-                if (!page)
-
+	M.
+-- 
+Jazz is not dead. It just smells funny...
