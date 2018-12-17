@@ -2,172 +2,108 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D57DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EFFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 537DE20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51CFB20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S6ZIz/2U"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QW3q71Ok"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389356AbeLQUBY (ORCPT
+        id S2389360AbeLQUCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:01:24 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60614 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbeLQUBY (ORCPT
+        Mon, 17 Dec 2018 15:02:24 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45365 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388591AbeLQUCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:01:24 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBHJx4FN177533;
-        Mon, 17 Dec 2018 20:00:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=9auT+FtOWgb6Yx8EGzlPT+/JKTkvAgjRm54+hTSR+UU=;
- b=S6ZIz/2UU4BVK8NDXgpLUC4+BykOlX2N07BKHnTHYqvtcdOHYyu3QBsih0sBYMEsY9Cd
- 1yGlJ/RXO7ebbLQpQskEXOg8D+UZyHwfrdwaTrw4GwlvN8IkhYjZYx/4VGXuoWyMM8mK
- jxl8FoCGNS6TTQ9zYk7EDVR5kWRhCPP3PWMb2e6TJTUCsSlnYgIdLP9lknxzYfc60TB8
- 9C4t3T4g4M5QMqmZ2QgcikEMlugCJslDYQhkbTVFFrGLYlHCR491QtyyKIS2+54ptV+s
- kTnc9i05NSY0O6i+yGbk8g6959GgUw+aC41BEUaDhRmK1h4xg8jIoR/Lh3xI3EBOmg6w Vw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2pcs1tfkqw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 20:00:43 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBHK0ghX015041
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 20:00:42 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBHK0fBL000381;
-        Mon, 17 Dec 2018 20:00:41 GMT
-Received: from localhost (/10.145.178.58)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Dec 2018 12:00:40 -0800
-Date:   Mon, 17 Dec 2018 12:00:39 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181217200039.GD8111@magnolia>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
- <20181212091406.GA31723@infradead.org>
- <20181212202609.GA193967@gmail.com>
- <20181213202249.GA3797@infradead.org>
- <20181214044802.GA681@sol.localdomain>
+        Mon, 17 Dec 2018 15:02:24 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s5-v6so12115527ljd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 12:02:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Id803VgeqNGTOf+bYN9Bt7zLdpkyRWR5JR5dcOykPok=;
+        b=QW3q71OkW/Fyy1QhQyq1ysovFnFQEy6uAILDyDjOIxTj/BJ6uvCbZXxjilYJz86jcN
+         rpNh10Cfh+jy5rOHIwcyMD4ns2Wp4pqDb00wKj1LUpm+f7G6L0+IUmvuTxblUa27+/CP
+         g9qy4Wwja1zWA8opIcDBJzFWD4pci6xOslYQg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Id803VgeqNGTOf+bYN9Bt7zLdpkyRWR5JR5dcOykPok=;
+        b=H2fHMDXPi4V97I9UpqbwMDDYo+vJ76ZFu64tx/iF0ZdzWxYX7w9qMwMSxXM0YqCerK
+         AO/EZ+js2LHlXnGyJqZT7QsjoFsUyDQ0fsR9I67YcZw/9fFO2N1v0NlcMM15gCAJNhx0
+         SJ+8aZhvdmfslF4TiPc/isHwPte7pU0fu+9jIFeUqCu8us818sfiBZCwrj8ANyrZ2cKE
+         0MJoGgzRvofIcBEnoQ5dQ71mVIYhEND2u46QmQwFTRI4D/WmTuYaN74es6/7mr+fzdIA
+         6reAKV5I2/w3q6H/OZ0C+/u30w3H3ix3tijUtiXjSBDpUC2TuUlCFvXER+jUnBw/QLvl
+         jyzA==
+X-Gm-Message-State: AA+aEWZC6tmi6ewX43+rmrEHMa98MqsuxA6hyJFmbo+uqHsFG7fw+Zf5
+        11iVg7yOZctdu985pbtmmnBJGC8ufjY=
+X-Google-Smtp-Source: AFSGD/UiH+bW1QVM/7VW4T0tpJ+bQkxfUBiK0J6pxFxUrWzUblhNFn5G4ctVXw/KOw2lfHePuOabHw==
+X-Received: by 2002:a2e:9e95:: with SMTP id f21-v6mr8359819ljk.128.1545076941423;
+        Mon, 17 Dec 2018 12:02:21 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id n8-v6sm3005301lji.90.2018.12.17.12.02.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 12:02:18 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id u89-v6so1446569lje.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 12:02:18 -0800 (PST)
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr9121271lji.133.1545076938018;
+ Mon, 17 Dec 2018 12:02:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214044802.GA681@sol.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9110 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812170176
+References: <20181128232019.GC131170@gmail.com> <20181217181244.220052-1-ebiggers@kernel.org>
+ <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
+ <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
+ <CAHk-=wjsMJeEkJbE3QhM3SY-DT9VsnMWNQKMNsG9TetnjREWDQ@mail.gmail.com>
+ <CAHk-=wgGYebCEE-M-6Dnbn5MpC8BD8SLjgw8iPGrgy8zETrdJg@mail.gmail.com> <1545076260.2878.15.camel@HansenPartnership.com>
+In-Reply-To: <1545076260.2878.15.camel@HansenPartnership.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 Dec 2018 12:02:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjPhKNKRq24wXL3wvqUgfyriDjYNXUPCumbH=64ZMXrSw@mail.gmail.com>
+Message-ID: <CAHk-=wjPhKNKRq24wXL3wvqUgfyriDjYNXUPCumbH=64ZMXrSw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     ebiggers@kernel.org, James Morris James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:48:03PM -0800, Eric Biggers wrote:
-> Hi Christoph,
-> 
-> On Thu, Dec 13, 2018 at 12:22:49PM -0800, Christoph Hellwig wrote:
-> > On Wed, Dec 12, 2018 at 12:26:10PM -0800, Eric Biggers wrote:
-> > > > As this apparently got merged despite no proper reviews from VFS
-> > > > level persons:
-> > > 
-> > > fs-verity has been out for review since August, and Cc'ed to all relevant
-> > > mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
-> > > linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
-> > > documentation (since v2), and a userspace tool.  It's also been presented at
-> > > multiple conferences, and has been covered by LWN multiple times.  If more
-> > > people want to review it, then they should do so; there's nothing stopping them.
-> > 
-> > But you did not got a review from someone like Al, Linus, Andrew or me,
-> > did you?
-> 
-> Sure, those specific people (modulo you just now) haven't responded to the
-> fs-verity patches yet.  But again, the patches have been out for review for
-> months.  Of course, we always prefer more reviews over fewer, and we strongly
-> encourage anyone interested to review fs-verity!  (The Documentation/ file may
-> be a good place to start.)  But ultimately we cannot force reviews, and as you
-> know kernel reviews can be very hard to come by.  Yet, people still need
-> fs-verity anyway; it isn't just some toy.  And we're committed to maintaining
-> it, similar to fscrypt.  The ext4 and f2fs maintainers are also satisfied with
-> the current approach to storing the verity metadata past EOF; in fact it was
-> even originally Ted's idea, I think.
-> 
-> > 
-> > > Can you elaborate on the actual problems you think the current solution has, and
-> > > exactly what solution you'd prefer instead?  Keep in mind that (1) for large
-> > > files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
-> > > file streams, and (3) when fs-verity is combined with fscrypt, it's important
-> > > that the hashes be encrypted, so as to not leak information about the plaintext.
-> > 
-> > Given that you alread use an ioctl as the interface what is the problem
-> > of passing this data through the ioctl?
-> 
-> Do you mean pass the verity metadata in a buffer?  That cannot work in general,
-> because it may be too large to fit into memory.
-> 
-> Or do you mean pass it via a second file descriptor?  That could work, but it
-> doesn't seem better than the current approach.  It would force every filesystem
-> to move the metadata around, whereas currently ext4 and f2fs can simply leave it
-> in place.  If you meant this, are there advantages you have in mind that would
-> outweigh this?
+On Mon, Dec 17, 2018 at 11:51 AM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> If this is to replace Eric's patch, didn't you want to set token_mask
+> to (1<<Opt_err)?
 
-FWIW, if I were (hypothetically) working on an xfs implementation, I
-likely would have settled on passing a reference to a merkle tree
-through a (fd, length) pair, because that allows us plenty of options
-on the back end:
+No, let's not add any extra code that is trying to be subtle. Subtle
+interactions was where the bug came from.
 
-b) we could remap the tree into a new inode fork for merkle trees, or
-a) remap it as posteof blocks like ext4/f2fs does, or
-c) remap the blocks into the attribute fork as an (unusually large)
-extended attribute value.
+The code already checks the actual Opt_xyz for errors in a switch
+statement. The token_mask should be _purely_ about duplicate options
+(or conflicting ones).
 
-If the merkle_fd isn't on the same filesystem as the fd we could at
-least use generic_copy_file_range (i.e. page cache copying) to land the
-merkle tree wherever we want.
+Talking about the conflicting ones: Opt_hash checks that
+Opt_policydigest isn't set. But Opt_policydigest doesn't check that
+Opt_hash isn't set, so you can mix the two if you just do it in the
+right order.
 
-Granted, it's not like we can't do any of those three things given the
-current interface.  I gather most of the grumbling has to do with
-feeling like we're associating the on-disk format to the ioctl interface
-too closely?
+But that's a separate bug, and doesn't seem to be a huge deal.
 
-I certainly can see why you'd want to avoid having to run a whole bunch
-of SWAPEXT operations to set up a verity file, though.
+But it *is* an example of how bogus all of this stuff is. Clearly
+people weren't really paying attention when writing any of this code.
 
-Anyhow, that's just my 2 cents.  :)
-
---D
-
-> We also considered generating the Merkle tree in the kernel, in which case
-> FS_IOC_ENABLE_VERITY would just take a small structure similar to the current
-> fsverity_descriptor.  But that would add extra complexity to the kernel, and
-> generating a Merkle tree over a large file is the type of parallelizable, CPU
-> intensive work that really should be done in userspace.  Also, having userspace
-> provide the Merkle tree allows for it to be pre-generated and distributed with
-> the file, e.g. provided in a package to be installed on many systems.
-> 
-> But please do let us know if you have any better ideas.
-> 
-> Thanks!
-> 
-> - Eric
+                        Linus
