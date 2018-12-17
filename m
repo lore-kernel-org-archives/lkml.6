@@ -6,52 +6,55 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33D3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF10C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CCCD2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 590CB206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732371AbeLQLny (ORCPT
+        id S1732387AbeLQLo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:43:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55092 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726949AbeLQLnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:43:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 15032ACE3;
-        Mon, 17 Dec 2018 11:43:52 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 12:43:51 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-cc:     Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>, Petr Mladek <pmladek@suse.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] livepatch: check kzalloc return values
-In-Reply-To: <1544806570-21299-2-git-send-email-hofrat@osadl.org>
-Message-ID: <alpine.LSU.2.21.1812171243160.3087@pobox.suse.cz>
-References: <1544806570-21299-1-git-send-email-hofrat@osadl.org> <1544806570-21299-2-git-send-email-hofrat@osadl.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 17 Dec 2018 06:44:26 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56060 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeLQLoZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:44:25 -0500
+Received: from 79.184.255.25.ipv4.supernova.orange.pl (79.184.255.25) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id b0a42346165929a2; Mon, 17 Dec 2018 12:44:23 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cpufreq: nforce2: Remove meaningless return
+Date:   Mon, 17 Dec 2018 12:44:00 +0100
+Message-ID: <4562223.GN38KlamCS@aspire.rjw.lan>
+In-Reply-To: <20181206042025.njiw3rzmgmzb6ki4@vireshk-i7>
+References: <20181205155751.15945-1-tiny.windzz@gmail.com> <20181206042025.njiw3rzmgmzb6ki4@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Dec 2018, Nicholas Mc Guire wrote:
-
-> kzalloc() return should always be checked - notably in example code
-> where this may be seen as reference. On failure of allocation in
-> livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
-> allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
-> catching this) and NULL returned.
+On Thursday, December 6, 2018 5:20:25 AM CET Viresh Kumar wrote:
+> On 05-12-18, 10:57, Yangtao Li wrote:
+> > Delete a line of meaningless return and some useless blank lines. In a function
+> > whose return type is void, returning on the last line is not required.
+> > 
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> > Changes in v2:
+> > -revert modify of MODULE_
+> > -delete some blank lines
+> > ---
+> >  drivers/cpufreq/cpufreq-nforce2.c | 3 ---
+> >  1 file changed, 3 deletions(-)
 > 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+Patch applied, thanks!
 
-M
