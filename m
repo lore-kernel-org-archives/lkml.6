@@ -2,83 +2,101 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F3EC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD422C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2929B206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CCA20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545075554;
+	bh=A4k7LNbfEQH1Cid16589iwNCBJ8lF84JWvNasE0gFMQ=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=BPLRnvz4iRZonr+K03r3Jc++FRTgdRAVvnbL/PugGLePPPlFJYp7BiP3lhPTzikUo
+	 zIzXsOC/zVOClTCXNNbJSQGpxnrwvkDCkMZenyHfx/lnYO3ZUNbRp2bDHbwGQO1lxH
+	 8wnlPWlZGlELlS9pc3NGlCnMtHS1RV2wRT3CIg5o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbeLQTiH (ORCPT
+        id S1732918AbeLQTjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:38:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:21708 "EHLO mga04.intel.com"
+        Mon, 17 Dec 2018 14:39:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbeLQTiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:38:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:38:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="304566235"
-Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 11:37:59 -0800
-Date:   Mon, 17 Dec 2018 21:37:58 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181217193758.GC29785@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <20181217184858.GF12491@linux.intel.com>
- <cf377db5-c702-0a1d-42b3-4caeb14eb6fa@intel.com>
+        id S1726598AbeLQTjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:39:13 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53F2E206A2;
+        Mon, 17 Dec 2018 19:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545075552;
+        bh=A4k7LNbfEQH1Cid16589iwNCBJ8lF84JWvNasE0gFMQ=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=y2tgScXUkNoymC6vkN2czyHr9bhB/Fk3EYeFEmIpBxBR/SB4fHug95sBU0GA6b3E3
+         cPPmZGWS874ZUat2AMr6jZJQ00zLw0C2wyLbZoQM+BBLrar9MEtmiI92O24gaYJw4u
+         RNnnnX4Q2s+//7EA39dpVjsyVwqUlCt+d8OCL/eM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf377db5-c702-0a1d-42b3-4caeb14eb6fa@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1545039990-19984-11-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: Re: [PATCH 10/13] arm64: dts: qcom: qcs404: Add HFPLL node
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        jassisinghbrar@gmail.com, jorge.ramirez-ortiz@linaro.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1545039990-19984-11-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Message-ID: <154507555157.19322.2712807405425817338@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Date:   Mon, 17 Dec 2018 11:39:11 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:09:33AM -0800, Dave Hansen wrote:
-> On 12/17/18 10:48 AM, Sean Christopherson wrote:
-> > We can't set mm to NULL as we need it to unregister the notifier, and
-> > I'm fairly certain attempting to unregister in the release callback
-> > will deadlock.
-> 
-> Suggestion:
-> 
-> It looks like you only expect one VMA per enclave.  Things go bonkers if
-> this is not true.  So, instead of storing encl->mm, don't.  You can get
-> the mm from vma->vm_mm and you could just store encl->vma instead.
+Quoting Jorge Ramirez-Ortiz (2018-12-17 01:46:27)
+> The high frequency pll functionality is required to enable CPU
+> frequency scaling operation.
+>=20
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs404.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/q=
+com/qcs404.dtsi
+> index 4594fea7..ec3f6c7 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> @@ -375,6 +375,15 @@
+>                         #mbox-cells =3D <1>;
+>                 };
+> =20
+> +               apcs_hfpll: clock-controller@0b016000 {
 
-The code actually supports having multiple VMAs per enclave.
+Drop leading 0 on unit address please.
 
-/Jarkko
+> +                       compatible =3D "qcom,hfpll";
+> +                       reg =3D <0x0b016000 0x30>;
+
+Wow that is small!
+
+> +                       #clock-cells =3D <0>;
+> +                       clock-output-names =3D "apcs_hfpll";
+> +                       clocks =3D <&xo_board>;
+> +                       clock-names =3D "xo";
+> +               };
+> +
