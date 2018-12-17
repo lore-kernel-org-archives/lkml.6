@@ -2,148 +2,125 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F933C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1771C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B2C22133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:25:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEGSYSuP"
+	by mail.kernel.org (Postfix) with ESMTP id 87A42214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:31:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeLQWZ4 (ORCPT
+        id S1731500AbeLQWbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 17:25:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38626 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730992AbeLQWZ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 17:25:56 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so7062660pfi.5;
-        Mon, 17 Dec 2018 14:25:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ceZm7S8yafV6cnS09VkfG2vqMdlLccr/B/nge3GEWKw=;
-        b=WEGSYSuPtB9LkuBxEFfj/YU1EV2vRsr6T/JYQXvjGa0ZeyLaffcG2aNTLx2fpFzCJM
-         gUZqh1GHE+gdQe9HaLdZQecqoUw1d/tkRzOngiHniQ63HYSubrfgp05FsqJugBFNmFZ9
-         nxJ5n3xNCh1R7gRrYdpqnn7GoRE/yranvDVEiYBpJg0DZU0flgRTnHNm5GdT2K19yO8u
-         PStpSZv2Qc2zGNEPT9ZfFMNkmJdiLxT+omPor9AEPVp0SeuT75M4Pbj3ng+19TuVilKp
-         oVZuxeFDgxH3o0kbyq+clCkJ1sHtn2aNmJmyROBWlqGjzYcsxIU1lXpVIglvwUQofgrm
-         FOtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ceZm7S8yafV6cnS09VkfG2vqMdlLccr/B/nge3GEWKw=;
-        b=pLQPAGRgPKEFEBoFFihkMNjE84jga0SokzirSXgncN/l8LUeFPp+a4gzcCuujMtrEW
-         tZdVIbjmd7ymFmoXQrSbODsgRyRUcRZIO1j2IT8rLrzvcJitp7EIa0oAX+5K1oFse+Vn
-         TpDJx+lGdij2g9FYnvYVQlfIBdKSq8NlgQ4A7L3CW5tpjDRx/h/Tz4QTkwIjiubXiREC
-         iaPzg7qxvv7AjmReRQFUXrV67QpeOqw7x4dt+wMHF5ROjAAwv/p6v0okih7wmOsQMiYH
-         a9xVXdUptxr4W13vvt07CPFwZAp1wAGJ+F+d6pXLaekSRvHhhZ4GHs18wOMykqlmAivK
-         bw7w==
-X-Gm-Message-State: AA+aEWaXwU05xFukr8sy6bUTA8CorLqAVi7773rX4j1Y+eG4yx16+EJq
-        NCmlUxxitmQcT9lkbEaAazOR9nBbA9RYHt8HwvY=
-X-Google-Smtp-Source: AFSGD/WhobW1ZpVuMhsqZlUzUw1xPKTSLWmW6/OA2i4od+Xs/NiAa88004ro2/XPTUTI69IWLEJ1Ll3TAZXU6egRKKU=
-X-Received: by 2002:a62:2b8b:: with SMTP id r133mr14375900pfr.246.1545085554735;
- Mon, 17 Dec 2018 14:25:54 -0800 (PST)
+        Mon, 17 Dec 2018 17:31:25 -0500
+Received: from sauhun.de ([88.99.104.3]:41640 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731302AbeLQWbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 17:31:25 -0500
+Received: from localhost (p54B3357B.dip0.t-ipconnect.de [84.179.53.123])
+        by pokefinder.org (Postfix) with ESMTPSA id BC7E62E3656;
+        Mon, 17 Dec 2018 23:31:22 +0100 (CET)
+Date:   Mon, 17 Dec 2018 23:31:22 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>
+Cc:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Peter Rosin <peda@axentia.se>,
+        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+Subject: Re: [PATCH v2] i2c: axxia: support sequence command mode
+Message-ID: <20181217223122.ye5as5dn5f7rm2a4@ninjato>
+References: <20181211200435.abk3jdsmltz7c26w@ninjato>
+ <20181213120926.GA10479@localhost.localdomain>
 MIME-Version: 1.0
-References: <20181217201146.170ca9b4@canb.auug.org.au> <CAK8P3a3LaRt8Gszbj2QYJhERKS=T3u=fzPTXaELW4a=BJDNnzA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3LaRt8Gszbj2QYJhERKS=T3u=fzPTXaELW4a=BJDNnzA@mail.gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 17 Dec 2018 16:25:43 -0600
-Message-ID: <CAH2r5mtzWrJqj6uVXO=QrY=WwrKAWfrwqf-3yz1PcLm27r0XMg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the y2038 tree
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paulo Alcantara <palcantara@suse.de>,
-        =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5cfywihpu4wl3i6q"
+Content-Disposition: inline
+In-Reply-To: <20181213120926.GA10479@localhost.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pushed to cifs-2.6.git for-next (after minor commit description text
-cleanup and adding acked-by and reviewed-by)
 
-Paulo/Aurelien,
-Let me know your thoughts about Arnd's additional comments which were
-interesting.
+--5cfywihpu4wl3i6q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 17, 2018 at 6:49 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Dec 17, 2018 at 10:11 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> > I have applied the following merge fix patch (better versions welcome):
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 17 Dec 2018 20:03:28 +1100
-> > Subject: [PATCH] cifs: update for current_kernel_time64() removal
-> >
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
->
-> Your patch looks correct, and the conflict should be easy to
-> resolve by Steve merging this into his tree, as
-> ktime_get_coarse_real_ts64() is readily available in mainline
-> kernels.
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
->
-> >  fs/cifs/dfs_cache.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
-> > index 70f9c9e2175c..d20cc94d7abd 100644
-> > --- a/fs/cifs/dfs_cache.c
-> > +++ b/fs/cifs/dfs_cache.c
-> > @@ -103,7 +103,7 @@ static inline bool cache_entry_expired(const struct dfs_cache_entry *ce)
-> >  {
-> >         struct timespec64 ts;
-> >
-> > -       ts = current_kernel_time64();
-> > +       ktime_get_coarse_real_ts64(&ts);
-> >         return timespec64_compare(&ts, &ce->ce_etime) >= 0;
-> >  }
-> >
-> > @@ -338,8 +338,10 @@ static inline struct timespec64 get_expire_time(int ttl)
-> >                 .tv_sec = ttl,
-> >                 .tv_nsec = 0,
-> >         };
-> > +       struct timespec64 now;
-> >
-> > -       return timespec64_add(current_kernel_time64(), ts);
-> > +       ktime_get_coarse_real_ts64(&now);
-> > +       return timespec64_add(now, ts);
-> >  }
->
-> In case efficiency is a concern: using ktime_t with
-> ktime_get_coarse_real() may be much faster if we decide to
-> abandon the coarse-grained timespec64 accessors in the future.
->
-> Also, I wonder if the expiration here has to use CLOCK_REALTIME,
-> since that is affected by leap second adjustment and
-> clock_settime().
->
-> In other modules, we usually concluded that it should be either
-> CLOCK_MONOTONIC or CLOCK_BOOTTIME, depending on whether
-> you want the expiration timer to keep ticking during suspend.
->
->         Arnd
+On Thu, Dec 13, 2018 at 12:09:38PM +0000, Adamski, Krzysztof (Nokia - PL/Wr=
+oclaw) wrote:
+> In order to comply with SMBus specification, the Axxia I=C2=B2C module wi=
+ll
+> abort the multi message transfer if the delay between finishing sending
+> one message and starting another is longer than 25ms. Unfortunately it
+> isn't that hard to trigger this situation on a busy system. In order to
+> fix this problem, we should make sure hardware does whole transaction
+> without waiting for software to fill some data.
+>=20
+> Fortunately, in addition to Manual mode that is currently used by the
+> driver to perform I=C2=B2C transfers, the module supports also so called
+> Sequence mode. In this mode, the module automatically performs
+> predefined sequence of operations - it sends a slave address, transmits
+> specified number of bytes from the FIFO, changes transfer direction,
+> resends the slave address and then reads specified number of bytes to
+> FIFO. While very inflexible, this does fit a most common case of multi
+> message transfer - the one where you first write a register number you
+> want to read and then read it.
+>=20
+> To use this mode effectively, a number of conditions must be met to
+> ensure the transaction does fit the predefined sequence. In case this is
+> not the case, a fallback to manual mode is used.
+>=20
+> The initialization of this mode is very similar to Manual mode. The most
+> notable difference is different bit in the Master Interrupt Status
+> designating finishing of transaction. Also some of the errors, like TSS,
+> cannot happen in this mode.
+>=20
+> While it is possible to support transactions requesting a read of any
+> size (RFL interrupt will be generated when FIFO size is not enough) the
+> TFL interrupt is not available in this mode, thus the write part of the
+> transaction cannot exceed FIFO_SIZE (8).
+>=20
+> Note that in case of a NAK during transaction, the NA/ND status bits
+> will be set before STOP command is generated, triggering an interrupt
+> while the controller is still busy. Current solution for this problem is
+> to actively wait for this command to stop before leaving xfer callback.
+>=20
+> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+
+Fixed this 'checkpatch --strict' warning:
+
+CHECK: braces {} should be used on all arms of this statement
+#201: FILE: drivers/i2c/busses/i2c-axxia.c:422:
+
+=2E.. and applied to for-next, thanks!
 
 
+--5cfywihpu4wl3i6q
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-Steve
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwYI7oACgkQFA3kzBSg
+KbZnOg//fknrJkrD8oAQjJXYZWDOT+dRPDoXmYCuMydzDz4h+SWVXZBQwJOZ3W7K
+B7QlvKQhMl17s+l7AjraJ6+9nZVOtxGye+3L8jLc/CNB0c1pR6siJ1+ju8ZKJVG+
+LxwDsSozGK4Cb+mDTwe41fsuWqmYeEPlaBkqCY8o8K2t6YxyKY70Y0yyujTitJ7/
+NJp5uLEZDy1cIonhHEWf43mWB4dYBEe+iGaAxGDfYs6IBLSDXxUblTpa6HSQB11a
+xa+D7DEOB+7E2ZnxODf9SQmAH0raTclTW07wE+6DpipKrSqHAY2sW1EZZNF6pwaA
+gjPhyirYlin0TFHmBxjvFNoli50HOYdpCA2YQDcdSyBrkrUtwCy9z8eJ9cDzB9tm
+nVfwidOj6NhbKokFGpa7p2mUU/353lWybIMkuCzplUOJAIBHwmpfmyYi66chGLwO
+HR9ufr9IxlFnH9+OitpsRWPag5R/Q5jH4kua8MbSQzdAFJ4XESvCk2l2mofGNeq8
+Z052sjVBnfbJuHv4iRdIwzlFw+HdR09bS1q0ztQglKYcHxfmw5Nld+Ik22q5tk6r
+A/bNlUfQNGx+sJKNT1Bs9YGwdbw9fkSjtkLHAKLzO3dNxrq3L90bVXsBGC0ggyn9
+GxIPRxMi21TLRt7FqCZf7M7kToyv/2OdWw484m4QoHRBIV76mqM=
+=3MFY
+-----END PGP SIGNATURE-----
+
+--5cfywihpu4wl3i6q--
