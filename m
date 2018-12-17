@@ -2,131 +2,130 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CE0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E808AC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20364206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:56:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHp/XKhf"
+	by mail.kernel.org (Postfix) with ESMTP id B88082146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:58:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545055117;
+	bh=fMAJHnfi5IG4Ruj4T3wXEl4IsIwZe6gAaTaAQFNacZ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=joTOj3CMQRD7Uw8Ayh8gaAdZMIoSwoMP+4isiFIQcHiDprhKW/mSsGsrT2cv6pHq1
+	 0/qOwJLUBoDBXXYOljRUiSu53wwQUc56FDaYymram+vRrFNQQeDZjr8UvDlKn2YAAu
+	 31wPXiOJyugrzuU6+JFAS1NyYYmoRSWdnzYIo7V4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732810AbeLQN4h (ORCPT
+        id S1732909AbeLQN6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:56:37 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40939 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732187AbeLQN4g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:56:36 -0500
-Received: by mail-io1-f68.google.com with SMTP id v12so6410635iop.7
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 05:56:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=RFb7liArRYYdHEiLLH1H1p5O47yr8gfAj4Sf2ve1XvE=;
-        b=iHp/XKhf9ycFQPgKz+H/zGa36oOT/ftU9QWxG8ijQfY1IItwHaaUKNTN9f7zJwngFJ
-         CPxik4UanF0f8o67zzJje75SFkdK6Vrw7BsWa25njMIWRi5IdmRpnIfWzgX1i5BuDIto
-         ejZBKyXBp7REgzgukyth8/qmSA2nqDGRu0yWU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=RFb7liArRYYdHEiLLH1H1p5O47yr8gfAj4Sf2ve1XvE=;
-        b=IMpFk7+dNUoBAo93G9974DZ96aIwN0cWg28H3tS4N1W5deTi3CyHMrWZB7GmfcpoQL
-         Z59ioRtOJNfwM8P3TVJaEnzzgiY8fDH92Y0kSmCg2zmbIHoqXVhqKThd8JKS4BD5c/Av
-         rXWLDzrlSFYZXkeS/FRnAUD1CnTs3kBNhLTYEFyWFKBCOs5EWzJ2EL3VkMxAfoh85zhF
-         ohCY63oFPHKqVmBu3al2XF69qLWL2jWwWQolag3DbKM37NjpCt/jU98+dKecAugZHZU/
-         IgEHpF01j37FwIgV7DNAnWWNRdMPF6qXWKTYBcqaMWUpmOCVX73a3XVDehi+z+knaEAd
-         KAFQ==
-X-Gm-Message-State: AA+aEWYUaonfEdn4nkJAwiPDaPPxIo1keZX1g0/l3he2mi0uqGUdbvwW
-        ZMdVC+8DKJL/j5fnyxSZ1MWSGQ==
-X-Google-Smtp-Source: AFSGD/WM+R35koRxxwwRKK2U3AfYR4ZTNwlKcM/bo4oFx+soIG7w7hN6mf2qtjlBUnzZJ743+84/Cg==
-X-Received: by 2002:a6b:2b07:: with SMTP id r7mr11048524ior.169.1545054994152;
-        Mon, 17 Dec 2018 05:56:34 -0800 (PST)
-Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id p198sm7472998itb.30.2018.12.17.05.56.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 05:56:33 -0800 (PST)
-Date:   Mon, 17 Dec 2018 07:56:32 -0600
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 4.19 000/142] 4.19.10-stable review
-Message-ID: <20181217135632.fisfyfkt4473q7ze@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-References: <20181214115747.053633987@linuxfoundation.org>
- <20181215170102.es7drxdtiz7gzaib@xps.therub.org>
- <20181215171145.GA2086@kroah.com>
+        Mon, 17 Dec 2018 08:58:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727651AbeLQN6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 08:58:36 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B0282133F;
+        Mon, 17 Dec 2018 13:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545055115;
+        bh=fMAJHnfi5IG4Ruj4T3wXEl4IsIwZe6gAaTaAQFNacZ4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MIC4UmgFCJhAASGPwQ/R2JehEu2jCJ92mdSwyM6IM8o6/CSwqPcpfwolKflSUM0hk
+         V88ifYAgrUgP1iIamyzKZt8igCCvW8aWslmUwQtH/eq9+OVHfES6DGsePBfPfcFI9m
+         VsOaWTNvt0nsG/UvXozjweEkDCP05izvsR5TMcK0=
+Date:   Mon, 17 Dec 2018 07:58:33 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 3/3] PCI: imx6: Make fallthrough comments more consistent
+Message-ID: <20181217135833.GJ20725@google.com>
+References: <20181216230916.22982-1-andrew.smirnov@gmail.com>
+ <20181216230916.22982-4-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181215171145.GA2086@kroah.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181216230916.22982-4-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 06:11:45PM +0100, Greg Kroah-Hartman wrote:
-> On Sat, Dec 15, 2018 at 11:01:02AM -0600, Dan Rue wrote:
-> > On Fri, Dec 14, 2018 at 12:58:05PM +0100, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 4.19.10 release.
-> > > There are 142 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Sun Dec 16 11:57:12 UTC 2018.
-> > > Anything received after that time might be too late.
-> > 
-> > Results from Linaro’s test farm.
-> > Regressions detected.
+On Sun, Dec 16, 2018 at 03:09:16PM -0800, Andrey Smirnov wrote:
+> Convert all fallthrough comments to say "fall through", as well as
+> modify their placement to the point where the "break" would normally
+> be.
 > 
-> They were?
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
 
-My mistake. There were some false regressions that showed up and I was a
-bit distracted when sending the reports and missed that.
+I didn't make it very clear, but my suggestion was really to remove
+the annotation completely; see below.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 59658577e81d..a0510e185d44 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -362,7 +362,8 @@ static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
+>  
+>  	switch (imx6_pcie->variant) {
+>  	case IMX7D:
+> -	case IMX8MQ: /* FALLTHROUGH */
+> +		/* fall through */
+> +	case IMX8MQ:
+>  		reset_control_assert(imx6_pcie->pciephy_reset);
+>  		reset_control_assert(imx6_pcie->apps_reset);
+>  		break;
 
-> 
-> > 
-> > Summary
-> > ------------------------------------------------------------------------
-> > 
-> > kernel: 4.19.10-rc1
-> > git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > git branch: linux-4.19.y
-> > git commit: 4875bf1f86d7bdc8dbf3222ab4028239446fab3f
-> > git describe: v4.19.9-143-g4875bf1f86d7
-> > Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.9-143-g4875bf1f86d7
-> > 
-> > No regressions (compared to build v4.19.9)
-> > 
-> > No fixes (compared to build v4.19.9)
-> > 
-> > Ran 18346 total tests in the following environments and test suites.
-> 
-> This said there were no regressions.
-> 
-> confused,
-> 
-> greg k-h
+IMO this use of "fall through" is superfluous and unusual in the Linux
+source.
+
+A "fall through" comment would be useful if the IMX7D case had
+executable code but no "break".  Then the comment shows that the
+intent was to execute *both* the IMX7D code and the IMX8MQ code and
+the lack of a "break" was intentional.
+
+In this case, the intent is to treat IMX7D and IMX8MQ the same, and
+there's no executable code specifically for the IMX7D.  I think it's
+easiest to read that when the list of identical cases is all together
+without the comment in the middle, i.e., as
+
+>  	case IMX7D:
+> 	case IMX8MQ:
+>  		reset_control_assert(imx6_pcie->pciephy_reset);
+
+rather than this:
+
+>  	case IMX7D:
+> 		/* fall through */
+> 	case IMX8MQ:
+>  		reset_control_assert(imx6_pcie->pciephy_reset);
