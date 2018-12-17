@@ -2,257 +2,177 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93275C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F25C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FA920874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:31:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87F1120874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="awquR0/b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="beKm2o94"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389551AbeLQVb4 (ORCPT
+        id S2389582AbeLQVcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:31:56 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:46509 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388307AbeLQVbJ (ORCPT
+        Mon, 17 Dec 2018 16:32:04 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41983 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388057AbeLQVbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:31:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=lAs740oTc6wt5Os+Qt5DSgOUrjHtbG5D7YXk1ph3kFQ=; b=awquR0/bTSWd
-        pdV4HLlHBE3JeHZgy3uyliXbbJ4yjD95IPoruSDlJmBf+P7y0D3xNJJfZr3P3wJbag6zaNWxZFu7Q
-        RTQIsLassnDX2WviWB7ZchqD7OaqUwWYJamiTIGxVrJKw4WU/VcVF53M63JRDUvc5SeldN2Sv9MqE
-        OigXCBclYFYAuELnsWZYSVZ+oTKi+r6EzXikpzH9tV9PD78jEbMfL0QjR1LvfQQr1ubCQguxaElug
-        9DWEjG+UJxEYgGFlmWrF/Er5Iq31f0wZ0ekmt3rBo1bCUPjL4ZFepHclhfNrCv1NVuT4oVVpKhnpe
-        IzeKA3sQqNhNwMM6UP1iHg==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1gZ0Ta-0001P5-Lc; Mon, 17 Dec 2018 22:30:58 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 90B83C0346;
-        Mon, 17 Dec 2018 22:30:54 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v5 10/15] locking/lockdep: Reuse lock chains that have been freed
-Date:   Mon, 17 Dec 2018 13:29:57 -0800
-Message-Id: <20181217213002.73776-11-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
-In-Reply-To: <20181217213002.73776-1-bvanassche@acm.org>
-References: <20181217213002.73776-1-bvanassche@acm.org>
+        Mon, 17 Dec 2018 16:31:08 -0500
+Received: by mail-io1-f68.google.com with SMTP id s22so11153512ioc.8;
+        Mon, 17 Dec 2018 13:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AKxcgbmVgrnYzOEvNC+E0VaiE1aK1XC9JnB0F71H8a8=;
+        b=beKm2o94nusHOf6fuMk/dauO0FrlUl7LM/3Drezp3v1GQhUZH5f4n9A9JZKPhqd3qc
+         /XNps1Bu6IEMf5blDX3ugwz/vFqQeTYvTZgV/BaJ8xCoKXMy8vaMrcgccVH5lNtTg/gp
+         DnvXE9gXhjfH9f7lQOXRGEVqH1/nP8zKuVM2bNLbSX3eToXX/sXk7lU8yho3p6FxtQbq
+         Xn7/UL1rx+6mtBkvsxa3hrM4dIdpq5N10pyDlX8dD1oAh3hdooxw44Cv/rZjsw+aqKDS
+         a85MyEDGXmK57zKwBkxhn+7ns0IRnJS14U+27BkZWRreHJ8mZPP2lLeh97qqSARBv7kR
+         nvgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AKxcgbmVgrnYzOEvNC+E0VaiE1aK1XC9JnB0F71H8a8=;
+        b=cVgbFA1Le4EuZ8x9ed5U0HxqnJ/pDyIg6N4CgROC6VMfjC8i6DMzsYLOP59SDKxuXv
+         fZbge8weX0sggCwIBFoy03RMffNyug5NN3sWg0kgBF38q7qr40WY0Vn50LXuRjwaf5Ms
+         YSehapbp4wkV6iy7XhvYZgaHsILf1ZldoYm+AMuxn8WuDU2Bw9Grs31rJ4B4ctVZnJcs
+         JDQoi3IHRTS7BnaP1VBfeIPu4SsAYrcWm+Uf/Vpa4eAlR8NINfEwmtkt/AOxFbKiYt9z
+         bqQBFRprV8A5ScKfldMK/OPTOFyz1r3sxofQiZUxRDfwd/pv6l4w775yWA1RK5y4FzWI
+         TLNw==
+X-Gm-Message-State: AA+aEWYGETsFqKnHMvQSGPUqPRGcqFaSw6DB2XGsS4IrDVuhXKa2RwDw
+        cKos65LNu7f5FllzlA5+GHxW7nzzPKUP9w==
+X-Google-Smtp-Source: AFSGD/UZdGT5gkouOL6y7vpIq/HvUXFiYe+4BEwGGz8TgkXyNI5BHxU1OKUHuarTBLuq4xnaj5OCtQ==
+X-Received: by 2002:a5e:8c12:: with SMTP id n18mr11551649ioj.231.1545082266686;
+        Mon, 17 Dec 2018 13:31:06 -0800 (PST)
+Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
+        by smtp.gmail.com with ESMTPSA id c102sm213008itd.38.2018.12.17.13.31.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 13:31:06 -0800 (PST)
+Date:   Mon, 17 Dec 2018 14:30:59 -0700
+From:   Jeremy Fertic <jeremyfertic@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/11] staging: iio: adt7316: fix dac_bits assignment
+Message-ID: <20181217213059.GA11856@r2700x.localdomain>
+References: <20181212005503.28054-1-jeremyfertic@gmail.com>
+ <20181212005503.28054-4-jeremyfertic@gmail.com>
+ <20181216113756.70d76d0a@archlinux>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.159
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00507120926594)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5uKNkgU9knqpVBmD8P7utzx602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
- AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
- YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORqTiU5oB4Ndd75FCv6b
- TVZ/SNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
- CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
- VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
- Pj+OUYZX3/3Z86X+I1ED1LLv7p/g4HOOdbYb9IXfYGRpVS/0hA4Mwp9kB6JZdl+SJy+nWImyKEy/
- zJE11ZjKQFiKV8EwnkodMjMm/D2rEPnNAuCCnt9B91Ax/uigYcgpQGDKFCrOdd8gr/U0flMcy2Vi
- /IcBgY4aVBKUAPQbBk8nfWT8Lcjyyn9ZSA9YgSwQmLSJwsFnO3lUxpF8dVvwCXY/4mE1q/c/E53d
- gi3vLmcjfrrMypRHn/aJFK/8oll08SnFkhTuVtrYAojYHP/zdSkyK1JXVGZNX1KrFIDnIhhlHDLh
- vRwgYpikjrjEsQHYqzPksYepQjQSeP/rn+UB/EmrduGPxHj/dKsQ+WcgzL7pTOYRE2yEvlBrMyfp
- YuyanAZpMXssfrVwLrD8rqLg0SqQCDr4y/2aF8Vs4y4qMy/YWGLIlk48CAcH/2Lv1OAdLXJs7Q1A
- 9IrYhBKQrXFod+WvUUP1Uys1SCu8wQmWlqgUhZKbKdwa/OuO5TcDeKjrEmYPn2IVWRtfdRHps2br
- TOkutpvyrdmtvbYO9ASW9x0dzW2b+IEXgSV5FVT0nNNOs1IDBtijAxf8XG910biZEcomWehz4u8s
- zDg6HYuTCyYgL61SIkBTYSiCBqrB4vMmHpjmx6wTDBzk2EPy497nssgnoMkIb3rMdj8luXC7km26
- QtXP9s02LA==
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181216113756.70d76d0a@archlinux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A previous patch introduced a lock chain leak. Fix that leak by reusing
-lock chains that have been freed.
+On Sun, Dec 16, 2018 at 11:37:56AM +0000, Jonathan Cameron wrote:
+> On Tue, 11 Dec 2018 17:54:55 -0700
+> Jeremy Fertic <jeremyfertic@gmail.com> wrote:
+> 
+> > The only assignment to dac_bits is in adt7316_store_da_high_resolution().
+> > This function enables or disables 10 bit dac resolution for the adt7316/7
+> > and adt7516/7 when they're set to output voltage proportional to
+> > temperature. Remove these assignments since they're unnecessary for the
+> > dac high resolution functionality.
+> > 
+> > Instead, assign a value to dac_bits in adt7316_probe() since the number
+> > of dac bits might be needed as soon as the device is registered and
+> > available to userspace.
+> > 
+> > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+> 
+> I'm a little confused as it seems to me that in the orignal code
+> if we were setting high resolution 'off' we would fall back to 8
+> bits for either type of device.  Now you just have a check on the
+> device type?
+> 
+> The result will be that we read more bytes than we want to
+> in show_DAC.
+> 
+> I'd need a pretty strong argument to persuade me it is worth
+> supporting the 8 bit mode at all btw on devices that will go
+> higher.  It adds interface complexity and the number of usecases
+> where the saving in bus traffic is worthwhile are probably fairly
+> few!
+> 
+> Jonathan
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- kernel/locking/lockdep.c | 61 ++++++++++++++++++++++------------------
- 1 file changed, 33 insertions(+), 28 deletions(-)
+Thanks for the feedback Jonathan, and sorry for the confusion on this one.
+My commit message should have been clearer. This is not a general purpose
+option to change the dac resolution. It is specific to an optional feature
+where one or two of the four dacs can be set to output voltage proportional
+to temperature. If the user chooses to set dac a and/or dac b to ouput
+voltage proportional to temperature, this da_high_resolution attribute can
+optionally be enabled to use 10 bit resolution rather than the default 8
+bits. It is only available on the 10 and 12 bit dac devices. If the user
+attempts to read or write dacs a or b under these settings, the driver's
+current behaviour is to return an error. The dacs c and d continue to
+operate normally under these conditions.
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index a71ca42978c2..3a63142d4764 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -299,6 +299,7 @@ static struct pending_free {
- 	struct rcu_head	 rcu_head;
- 	bool		 scheduled;
- 	DECLARE_BITMAP(list_entries_being_freed, MAX_LOCKDEP_ENTRIES);
-+	DECLARE_BITMAP(lock_chains_being_freed, MAX_LOCKDEP_CHAINS);
- } pending_free[2];
- static DECLARE_WAIT_QUEUE_HEAD(rcu_cb);
- 
-@@ -2097,8 +2098,8 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
- 	return 0;
- }
- 
--static unsigned long nr_lock_chains;
- struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
-+static DECLARE_BITMAP(lock_chains_in_use, MAX_LOCKDEP_CHAINS);
- int nr_chain_hlocks;
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
- 
-@@ -2237,12 +2238,25 @@ static int check_no_collision(struct task_struct *curr,
-  */
- long lockdep_next_lockchain(long i)
- {
--	return i + 1 < nr_lock_chains ? i + 1 : -2;
-+	i = find_next_bit(lock_chains_in_use, ARRAY_SIZE(lock_chains), i + 1);
-+	return i < ARRAY_SIZE(lock_chains) ? i : -2;
- }
- 
- unsigned long lock_chain_count(void)
- {
--	return nr_lock_chains;
-+	return bitmap_weight(lock_chains_in_use, ARRAY_SIZE(lock_chains));
-+}
-+
-+/* Must be called with the graph lock held. */
-+static struct lock_chain *alloc_lock_chain(void)
-+{
-+	int idx = find_first_zero_bit(lock_chains_in_use,
-+				      ARRAY_SIZE(lock_chains));
-+
-+	if (unlikely(idx >= ARRAY_SIZE(lock_chains)))
-+		return NULL;
-+	__set_bit(idx, lock_chains_in_use);
-+	return lock_chains + idx;
- }
- 
- /*
-@@ -2261,20 +2275,8 @@ static inline int add_chain_cache(struct task_struct *curr,
- 	struct lock_chain *chain;
- 	int i, j;
- 
--	/*
--	 * Allocate a new chain entry from the static array, and add
--	 * it to the hash:
--	 */
--
--	/*
--	 * We might need to take the graph lock, ensure we've got IRQs
--	 * disabled to make this an IRQ-safe lock.. for recursion reasons
--	 * lockdep won't complain about its own locking errors.
--	 */
--	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
--		return 0;
--
--	if (unlikely(nr_lock_chains >= MAX_LOCKDEP_CHAINS)) {
-+	chain = alloc_lock_chain();
-+	if (!chain) {
- 		if (!debug_locks_off_graph_unlock())
- 			return 0;
- 
-@@ -2282,7 +2284,6 @@ static inline int add_chain_cache(struct task_struct *curr,
- 		dump_stack();
- 		return 0;
- 	}
--	chain = lock_chains + nr_lock_chains++;
- 	chain->chain_key = chain_key;
- 	chain->irq_context = hlock->irq_context;
- 	i = get_first_held_lock(curr, hlock);
-@@ -4219,7 +4220,8 @@ void lockdep_reset(void)
- }
- 
- /* Remove a class from a lock chain. Must be called with the graph lock held. */
--static void remove_class_from_lock_chain(struct lock_chain *chain,
-+static void remove_class_from_lock_chain(struct pending_free *pf,
-+					 struct lock_chain *chain,
- 					 struct lock_class *class)
- {
- #ifdef CONFIG_PROVE_LOCKING
-@@ -4257,6 +4259,7 @@ static void remove_class_from_lock_chain(struct lock_chain *chain,
- 	 * hlist_for_each_entry_rcu() loop is safe.
- 	 */
- 	hlist_del_rcu(&chain->entry);
-+	__set_bit(chain - lock_chains, pf->lock_chains_being_freed);
- 	if (chain->depth == 0)
- 		return;
- 	/*
-@@ -4265,22 +4268,19 @@ static void remove_class_from_lock_chain(struct lock_chain *chain,
- 	 */
- 	if (lookup_chain_cache(chain_key))
- 		return;
--	if (WARN_ON_ONCE(nr_lock_chains >= MAX_LOCKDEP_CHAINS)) {
-+	new_chain = alloc_lock_chain();
-+	if (WARN_ON_ONCE(!new_chain)) {
- 		debug_locks_off();
- 		return;
- 	}
--	/*
--	 * Leak *chain because it is not safe to reinsert it before an RCU
--	 * grace period has expired.
--	 */
--	new_chain = lock_chains + nr_lock_chains++;
- 	*new_chain = *chain;
- 	hlist_add_head_rcu(&new_chain->entry, chainhashentry(chain_key));
- #endif
- }
- 
- /* Must be called with the graph lock held. */
--static void remove_class_from_lock_chains(struct lock_class *class)
-+static void remove_class_from_lock_chains(struct pending_free *pf,
-+					  struct lock_class *class)
- {
- 	struct lock_chain *chain;
- 	struct hlist_head *head;
-@@ -4289,7 +4289,7 @@ static void remove_class_from_lock_chains(struct lock_class *class)
- 	for (i = 0; i < ARRAY_SIZE(chainhash_table); i++) {
- 		head = chainhash_table + i;
- 		hlist_for_each_entry_rcu(chain, head, entry) {
--			remove_class_from_lock_chain(chain, class);
-+			remove_class_from_lock_chain(pf, chain, class);
- 		}
- 	}
- }
-@@ -4329,7 +4329,7 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 			  class->name);
- 	}
- 
--	remove_class_from_lock_chains(class);
-+	remove_class_from_lock_chains(pf, class);
- }
- 
- static void reinit_class(struct lock_class *class)
-@@ -4378,6 +4378,11 @@ static void free_zapped_classes(struct rcu_head *ch)
- 	bitmap_andnot(list_entries_in_use, list_entries_in_use,
- 		      pf->list_entries_being_freed, ARRAY_SIZE(list_entries));
- 	bitmap_clear(pf->list_entries_being_freed, 0, ARRAY_SIZE(list_entries));
-+#ifdef CONFIG_PROVE_LOCKING
-+	bitmap_andnot(lock_chains_in_use, lock_chains_in_use,
-+		      pf->lock_chains_being_freed, ARRAY_SIZE(lock_chains));
-+	bitmap_clear(pf->lock_chains_being_freed, 0, ARRAY_SIZE(lock_chains));
-+#endif
- 	graph_unlock();
- restore_irqs:
- 	raw_local_irq_restore(flags);
--- 
-2.20.0.405.gbc1bbc6f85-goog
+With the above in mind, dac_bits should have never been assigned to in this
+da_high_resolution attribute. Before this patch, if the user didn't write
+to this optional attribute, dac_bits would be 0 since it was never assigned
+to anywhere else. This would result in incorrect calculations in show_DAC
+and store_DAC.
 
+Jeremy
+
+> > ---
+> >  drivers/staging/iio/addac/adt7316.c | 18 +++++++++---------
+> >  1 file changed, 9 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
+> > index e5e1f9d6357f..a9990e7f2a4d 100644
+> > --- a/drivers/staging/iio/addac/adt7316.c
+> > +++ b/drivers/staging/iio/addac/adt7316.c
+> > @@ -651,17 +651,10 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
+> >  	u8 config3;
+> >  	int ret;
+> >  
+> > -	chip->dac_bits = 8;
+> > -
+> > -	if (buf[0] == '1') {
+> > +	if (buf[0] == '1')
+> >  		config3 = chip->config3 | ADT7316_DA_HIGH_RESOLUTION;
+> > -		if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
+> > -			chip->dac_bits = 12;
+> > -		else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
+> > -			chip->dac_bits = 10;
+> > -	} else {
+> > +	else
+> >  		config3 = chip->config3 & (~ADT7316_DA_HIGH_RESOLUTION);
+> > -	}
+> >  
+> >  	ret = chip->bus.write(chip->bus.client, ADT7316_CONFIG3, config3);
+> >  	if (ret)
+> > @@ -2123,6 +2116,13 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+> >  	else
+> >  		return -ENODEV;
+> >  
+> > +	if (chip->id == ID_ADT7316 || chip->id == ID_ADT7516)
+> > +		chip->dac_bits = 12;
+> > +	else if (chip->id == ID_ADT7317 || chip->id == ID_ADT7517)
+> > +		chip->dac_bits = 10;
+> > +	else
+> > +		chip->dac_bits = 8;
+> > +
+> >  	chip->ldac_pin = devm_gpiod_get_optional(dev, "adi,ldac", GPIOD_OUT_LOW);
+> >  	if (IS_ERR(chip->ldac_pin)) {
+> >  		ret = PTR_ERR(chip->ldac_pin);
+> 
