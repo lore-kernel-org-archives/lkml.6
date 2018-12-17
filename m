@@ -2,129 +2,101 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D56C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3194C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 038092133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C36742145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:48:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eDrvYVZc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFtlb/Gk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387781AbeLQPrR (ORCPT
+        id S2387788AbeLQPsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:47:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33380 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727617AbeLQPrR (ORCPT
+        Mon, 17 Dec 2018 10:48:06 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52314 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727617AbeLQPsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:47:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c14so12803163wrr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:47:16 -0800 (PST)
+        Mon, 17 Dec 2018 10:48:05 -0500
+Received: by mail-it1-f196.google.com with SMTP id g76so19207605itg.2;
+        Mon, 17 Dec 2018 07:48:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mdJO9dRdcc14vQPI4d+nrweP3nkAcrM4cEjxwBUibnc=;
-        b=eDrvYVZcaHZfvHG4Rkr95qlPNvV+SsRYQ+mXtCo5Ozsrm0FfXTY7MXHZ9fA5ubmRHG
-         tE62cqbu7EWVferRgbu96b5LsjnNirIZwXiVy6Prmp72WIsQpGMlnL7AG8muDnx58FPO
-         wHjJLjOViYdeMTFsuw5JLkNHCetxjqepvm4lkvpTrm5vCeQ3Wr7b5oBmXpSIdZsLSANp
-         eifu6wRd/cc2kVSvgOFDSEm3PX+ZGATMru17qiYLCxhE06R8qFMldUc6sXzRdoOX6ThT
-         9QuHHHjQrNXQmPCBQrFF0rHPfd8BgSvI0ji4NAZhik3ngTCCRU5mkDmKXw5TpCmdIXW+
-         qVPQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=nRL881EZCrOKRb05Wl4QjpBn6LXEs3V0EvcAYsmQNm4=;
+        b=UFtlb/Gkx19LXTXO+rz1iw2ZhJEYBvSLb+ObXr3cRwZtN/urYKiKkyr9rtIBIpz0BN
+         vccu9vr3S4eCqfuM9hZtJkQL/gAVyowU+ndkXEYpq6R2rEwxH7Ba4EdpqlHLQzYEWoiX
+         NbHJTgm3hjFIkKQNLDW/IOwFzmj1xqxG7O6ApL6b6vsYjK1J0uxtGkgti6D7s5/Zvu9J
+         It73AOGNliL5eKZYK54kH+QekoDmIP0YcY8EKyGFs6sNzkCVKgHYBhljE5KxcQALOJNv
+         9JyqRyLNA0bYkXO156TyeWQz3kIlQ1zc/iRhaH21AGCiYUQWlV5yOhD0nYIsN9XnHCxP
+         U6pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mdJO9dRdcc14vQPI4d+nrweP3nkAcrM4cEjxwBUibnc=;
-        b=FtKfw54jR+WqbUQm4gCcnf7EoGxyYtGVSwYPjCr86vE1CVBOINLftioha8gTq1XV2U
-         vKhuGzGfOh6rDFT1JLaw8mcHQUzlr2BpQmOoub3VhZ4MIgxRfxDlM74uaNe1iTl+4kTR
-         GOWRzXS+uYnyjTWm+AqvFZG2xVhgTvhROE5gL/VEzcnMhGsVLS8yH+q/AXPitH+u0oJ5
-         DcDR57BJbG4TrOQ2rPHlnrBo5kDmpRNQc9HvHL5j6/U3G5EpMHOXqmPaJeeiwYvR9nTp
-         wmekHbEA8RMQvr5vPXDtvULwE2KrWMSSRcmYS/mUMQBfe578K1vqlQn45qmbJNDpszIj
-         SgEw==
-X-Gm-Message-State: AA+aEWbq3yy+tRpiMyqwmdqnpFWOydMZvOIIbF6l7EWx8a5hd5Ano91X
-        iRutArK8WB6xcEyR5KrG1Q==
-X-Google-Smtp-Source: AFSGD/XvJeYgUOBAa8+3SJgvq3nopnu7FP1OHf3ZJ1oRRb3sIlXOquEaPWv+5lG7UV3vAx9+nAgJ8w==
-X-Received: by 2002:a5d:528e:: with SMTP id c14mr10942910wrv.236.1545061635383;
-        Mon, 17 Dec 2018 07:47:15 -0800 (PST)
-Received: from localhost (host171-129-dynamic.1-87-r.retail.telecomitalia.it. [87.1.129.171])
-        by smtp.gmail.com with ESMTPSA id y12sm10262661wmi.7.2018.12.17.07.47.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 07:47:14 -0800 (PST)
-Date:   Mon, 17 Dec 2018 16:47:13 +0100
-From:   Andrea Righi <righi.andrea@gmail.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Yonghong Song <yhs@fb.com>, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] x86: kprobes: Show correct blaclkist in debugfs
-Message-ID: <20181217154713.GA1308@Dell>
-References: <154503482486.26176.6224515860220847638.stgit@devbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154503482486.26176.6224515860220847638.stgit@devbox>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nRL881EZCrOKRb05Wl4QjpBn6LXEs3V0EvcAYsmQNm4=;
+        b=t5NNNyH+1j92ybEsOmhDTgR3g3g6WXpdbohA4Lm8JSmzwDdjYTjUcEdjw2XArIYk89
+         B5ZxGUehEk/reHijSFU9e2Q8f5y32cr4OqzQNaXsY7Yj7oMNeA5/Rkz+UmzMHxbtGtkQ
+         9FyRD8fqnK9JKMOOrU0OGRFwZ3rDlP0UvKKcFs6da0EyxNrIv0LtDidrckJuwtSlO4bY
+         gtSQlriqXYYwgzIEH7lfSJk2kMzYRapYXdy0IYqK4bFxCwSNMnnUns/lkIHEylxOVBAN
+         AawL+ogqebota5WS1XjCDZWwhP6Ec3wSPU5BToQUuI6L82Fc4KGql31jMuBNBGBHhzsc
+         z1zw==
+X-Gm-Message-State: AA+aEWZcVJ6aa3Bb79ztXYLDalzNsZ2yx7F9pEmtfsPjPSGu5kUm8eSQ
+        n62AoUX4H3dEYGl2BFk3tsJXnYIgd6A=
+X-Google-Smtp-Source: AFSGD/U2q01UjijA34ihHhkqN6N46oz3M79mgjdV80OrpbttrmXhKaVFpJdVKiWKKDD0tB+r+sMNKw==
+X-Received: by 2002:a02:9a01:: with SMTP id b1mr12631230jal.18.1545061685036;
+        Mon, 17 Dec 2018 07:48:05 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id y23sm18824174ita.1.2018.12.17.07.48.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 07:48:04 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
+To:     TheSven73@googlemail.com, Shawn Guo <shawnguo@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 0/3] bus: imx-weim
+Date:   Mon, 17 Dec 2018 10:47:57 -0500
+Message-Id: <20181217154800.7448-1-TheSven73@googlemail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 05:20:25PM +0900, Masami Hiramatsu wrote:
-> This is v2 series for showing correct kprobe blacklist in
-> debugfs.
-> 
-> v1 is here:
-> 
->  https://lkml.org/lkml/2018/12/7/517
-> 
-> I splitted the RFC v1 patch into x86 and generic parts,
-> also added a patch to remove unneeded arch-specific
-> blacklist check function (because those have been added
-> to the generic blacklist.)
-> 
-> If this style is good, I will make another series for the
-> archs which have own arch_within_kprobe_blacklist(), and
-> eventually replace that with arch_populate_kprobe_blacklist()
-> so that user can get the correct kprobe blacklist in debugfs.
-> 
-> Thank you,
+Support multiple address ranges per child node on imx-weim.
+While we're at it, insert some code which guards against common config
+conflicts.
 
-Looks good to me. Thanks!
+v4:
+	pick up patch after one-week delay
+	Shawn Guo:
+	changed devicetree patch position in the set
+	clarified a confusing #define'd constant name
+	minor coding style fixes
 
-Tested-by: Andrea Righi <righi.andrea@gmail.com>
+v3:
+	added devicetree binding docs
 
-Side question: there are certain symbols in arch/x86/xen that should be
-blacklisted explicitly, because they're non-attachable.
+v2:
+	corrected acme@... in commit message example
 
-More exactly, all functions defined in arch/x86/xen/spinlock.c,
-arch/x86/xen/time.c and arch/x86/xen/irq.c.
+Sven Van Asbroeck (3):
+  dt-bindings: bus: imx-weim: document multiple address ranges per child
+    node
+  bus: imx-weim: support multiple address ranges per child node
+  bus: imx-weim: guard against timing configuration conflicts
 
-The reason is that these files are compiled without -pg to allow the
-usage of ftrace within a Xen domain apparently (from
-arch/x86/xen/Makefile):
+ .../devicetree/bindings/bus/imx-weim.txt      | 32 ++++++++-
+ drivers/bus/imx-weim.c                        | 70 +++++++++++++++----
+ 2 files changed, 86 insertions(+), 16 deletions(-)
 
- ifdef CONFIG_FUNCTION_TRACER
- # Do not profile debug and lowlevel utilities
- CFLAGS_REMOVE_spinlock.o = -pg
- CFLAGS_REMOVE_time.o = -pg
- CFLAGS_REMOVE_irq.o = -pg
- endif
+-- 
+2.17.1
 
-Do you see a nice and clean way to blacklist all these functions
-(something like arch_populate_kprobe_blacklist()), or should we just
-flag all of them explicitly with NOKPROBE_SYMBOL()?
-
-Thanks,
--Andrea
