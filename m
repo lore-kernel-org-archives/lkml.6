@@ -2,84 +2,102 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBCEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5BEC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A2A204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:37:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G/iAKWlp"
+	by mail.kernel.org (Postfix) with ESMTP id 88D5B2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732083AbeLQLhk (ORCPT
+        id S1732281AbeLQLis (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:37:40 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:52640 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726965AbeLQLhk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:37:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ypto5pGNyOfQlEOm+YoX2DZmroFPlTLVGI1R7JIUX/0=; b=G/iAKWlpOg1A87j0TS05WwRCM
-        JQRP2MPW0FlGK5N4lJrudIH1rajpTK2YtwkuoW0B7OxfLHjui5eOkhwNZtCn4rRcJ2LIsuP6ZrSpw
-        0NdLlXHtpRmjLaWBVdxjvjYb3ZUgBthYukDT4gJQarTJZX98X/6za8vQf1Smt/0SGQnizPhuwOg+n
-        2/neZnzCVG8kbj4FApFbs+QH1dWaL7Qw8Uvgs7SIsr4icyw/do61uAo3Lnb7GxXU2+6Eonw5XDVy7
-        EBod6cE8oQ3+RK1rMatNwk5hyF89smB9YvhpHzdaebxack0gEP9I/DLgvhvOX6ozhvs2pPBRra4Hm
-        Uf2s8DKZA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYrD9-0008Uo-81; Mon, 17 Dec 2018 11:37:23 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EA9E7984437; Mon, 17 Dec 2018 12:37:18 +0100 (CET)
-Date:   Mon, 17 Dec 2018 12:37:18 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yongji Xie <elohimes@gmail.com>
-Cc:     dave@stgolabs.net, mingo@redhat.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, Xie Yongji <xieyongji@baidu.com>,
-        zhangyu31@baidu.com, liuqi16@baidu.com, yuanlinsi01@baidu.com,
-        nixun@baidu.com, lilin24@baidu.com, longman@redhat.com,
-        andrea.parri@amarulasolutions.com
-Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
- reader waiter to nil
-Message-ID: <20181217113718.GB4900@worktop.programming.kicks-ass.net>
-References: <5598cd71-c3c8-d6ef-eb30-777cf901a2ef@redhat.com>
- <20181129160627.GU2131@hirez.programming.kicks-ass.net>
- <8cc45695-b325-a219-8b46-d5da6ddfdd63@redhat.com>
- <20181129172700.GA11632@hirez.programming.kicks-ass.net>
- <20181129180828.GA11650@hirez.programming.kicks-ass.net>
- <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
- <20181129213017.v3eljor54lfpoug2@linux-r8p5>
- <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
- <20181129221714.GF11632@hirez.programming.kicks-ass.net>
- <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
+        Mon, 17 Dec 2018 06:38:48 -0500
+Received: from ozlabs.org ([203.11.71.1]:51617 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726965AbeLQLis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:38:48 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43JK10123Yz9s2P;
+        Mon, 17 Dec 2018 22:38:44 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        David Hildenbrand <david@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v1 3/9] powerpc/vdso: don't clear PG_reserved
+In-Reply-To: <20181214111014.15672-4-david@redhat.com>
+References: <20181214111014.15672-1-david@redhat.com> <20181214111014.15672-4-david@redhat.com>
+Date:   Mon, 17 Dec 2018 22:38:39 +1100
+Message-ID: <87pnu0tmbk.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 11:12:52PM +0800, Yongji Xie wrote:
-> Hi Peter,
-> 
-> Please let me know If there is any progress on this issue. Thank you!
+David Hildenbrand <david@redhat.com> writes:
 
-Right, sorry, my brain was filled with snot and didn't want to make
-sense of things.
+> The VDSO is part of the kernel image and therefore the struct pages are
+> marked as reserved during boot.
+>
+> As we install a special mapping, the actual struct pages will never be
+> exposed to MM via the page tables. We can therefore leave the pages
+> marked as reserved.
+>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/powerpc/kernel/vdso.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-I've put some patches here:
+Thanks.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/core
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Could you have a look?
+cheers
+
+> diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
+> index 65b3bdb99f0b..d59dc2e9a695 100644
+> --- a/arch/powerpc/kernel/vdso.c
+> +++ b/arch/powerpc/kernel/vdso.c
+> @@ -795,7 +795,6 @@ static int __init vdso_init(void)
+>  	BUG_ON(vdso32_pagelist == NULL);
+>  	for (i = 0; i < vdso32_pages; i++) {
+>  		struct page *pg = virt_to_page(vdso32_kbase + i*PAGE_SIZE);
+> -		ClearPageReserved(pg);
+>  		get_page(pg);
+>  		vdso32_pagelist[i] = pg;
+>  	}
+> @@ -809,7 +808,6 @@ static int __init vdso_init(void)
+>  	BUG_ON(vdso64_pagelist == NULL);
+>  	for (i = 0; i < vdso64_pages; i++) {
+>  		struct page *pg = virt_to_page(vdso64_kbase + i*PAGE_SIZE);
+> -		ClearPageReserved(pg);
+>  		get_page(pg);
+>  		vdso64_pagelist[i] = pg;
+>  	}
+> -- 
+> 2.17.2
