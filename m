@@ -5,66 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B3CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBAFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33760206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0578021473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:22:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSZkZtXB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uUpc9hwq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389537AbeLQUWU (ORCPT
+        id S2389535AbeLQUWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:22:20 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38084 "EHLO
+        Mon, 17 Dec 2018 15:22:54 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43532 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbeLQUWT (ORCPT
+        with ESMTP id S1726653AbeLQUWx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:22:19 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so6919772pfi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 12:22:19 -0800 (PST)
+        Mon, 17 Dec 2018 15:22:53 -0500
+Received: by mail-pf1-f194.google.com with SMTP id w73so6908785pfk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 12:22:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=w2N1lFnP7lwgyibZCv3zxC5CB8Y6AOTQeCb4v428osI=;
-        b=YSZkZtXBTHutf0Vc6xE9hpWLdTQiV0LBpPh7E+tGHV4rn+ag0zPdwRG7EhkmCvu5/6
-         yTflbIXQRwtDKRjaheKdvZczHREL9dDm0/E0PPXryDAWVQ1dDjNVkODJXONGFs+RsHmZ
-         9HNE6lVp8ggq9J6oHg936hoELYz6z8wtqRf81Vvy/bMDI8ExoKDF7l1o68npz7cPk2Sy
-         YC9Ch92Pwljml8KoQEwsMqimggKvRDSIjrVepRbxWARIW1NHzU1UMUrU/n5ktuoTHkdV
-         BQryqdLvLjclBgcR19werYAe9q9hfgE3vV0axOgnsZFNEWZaRjI5QsFda/Y7dZWG1030
-         9uvA==
+        bh=5oYSW/GvpO5Jr2lAVUEKxgPmdiaC90t9yQ4KohCOQbY=;
+        b=uUpc9hwqBACC1ZZmRW2aJsERMSJYQSVWUZFU0pgyeaJfu045oCUzYU8kMbaQ6ZcswG
+         cFnF7lbG8tboEYSgWHBixo5XTCn6nKmuO3d8msyYCleyVTR2qX22tayUeQ1wmuMoVRwJ
+         VrbmiaIaYzoTlf4ZGENyW19EFsqEHXYXe9bvt3o4HL03lfBc/25uinXGuzEpMxuGiNNb
+         vP/QGj4O7JdWYnb4pQ4Sp++kzTjEym3CCaLCMzy2ECrFxoW1FDGtTK/6IYn2AuBSNMJr
+         bJ9VX56znbPJzTEv4tUW1S/bmY7fT2QSIaDklkp7DHN7svgrhsUTgRGVzN5ZtM0wLrV0
+         GX7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=w2N1lFnP7lwgyibZCv3zxC5CB8Y6AOTQeCb4v428osI=;
-        b=rpFgzLUceXML6Xnjqm/VP2JDSOc3Qj8TdW0l5o0tEQAPgIaMRhgoa/Ujki95RqmK4h
-         99vVtzs4P2L7eL21BorpbsEAu75LcLBXwNeQs9y79h0bcPgk5I+eP0BdFUI8AzzMVWoJ
-         v8i3sP/KrrrdZheVsKzKHW6s5IzjFBlAjA3jSqtY1kYc4KjFzTVSCc25Fs5hj4Gfzdhl
-         USlcby8vKrXR7QcMPq+o9PCmaQnFAeLRd13k8L1iAurzt/jWL3S7RfPUjewPIQqAYGX3
-         eT5WqYxDmwKmpUpu5AU09mPNgFMoFl93AeCcQ8+9DV71xrGiIFNTyyQ+/1Xtg236MXcg
-         N6yQ==
-X-Gm-Message-State: AA+aEWaHXaiohvQMD/6s8Fj9gfxN0KI+POBFAMhqg9JCZ/K2WbAEg16e
-        m9MpNb6V5jaZIBQqjoJnAZc=
-X-Google-Smtp-Source: AFSGD/X+TrNR9f9V81XBDJgY79N2l38Sd7IjU/SS/fpnE4vfFVwlgbpFPPLma7Xyy+Ak6jm6z2ZBzw==
-X-Received: by 2002:a63:62c4:: with SMTP id w187mr9217308pgb.230.1545078139265;
-        Mon, 17 Dec 2018 12:22:19 -0800 (PST)
+        bh=5oYSW/GvpO5Jr2lAVUEKxgPmdiaC90t9yQ4KohCOQbY=;
+        b=Y6A6rosx20er65SPBa5VqomZ62Owyo5lguEcbgSG5RHWiuGHb2wpQUVmaVNqgXnwYu
+         ZDp/izPDqb2WIHBcQdb7GN0g234v3tUKcTh52s1GWgbP5yCeRK53eex4UB/xX9UzWWmm
+         /4K4GJNl6AoHI4qGu2q+DRc7g8rMJ1tq36XT7xQqGvShqh2j1/mswwKx6jbQwVS+G+Ai
+         56vYsJG+ae1jYaagUiGdn/y6mVNyFiFGeh0ia7tTqpAsNLbXyx0fcdpyGYrSO5ThD6TF
+         DrP+AJqG27bEAVFc0mKo1K12jHUFZ/g1Ron6wH0XbeEgPYFttVbFEDrocshiDti3ILec
+         FgoQ==
+X-Gm-Message-State: AA+aEWY6qfshk3ZdJOK8pjRXTuwPy/ofGsR2LxKUiICXL5F6We0+YUDk
+        4nv1VZwtI7sXRBi2lwqFQZ7vn6mc
+X-Google-Smtp-Source: AFSGD/UQwbbHHDgaOIDkqKpoGY4JfB62/5kRzA0kZTM7mwQtu/OWvxDxGYC44oQHanjoZ9eudkvANg==
+X-Received: by 2002:a62:5f07:: with SMTP id t7mr6183800pfb.108.1545078172823;
+        Mon, 17 Dec 2018 12:22:52 -0800 (PST)
 Received: from jordon-HP-15-Notebook-PC ([103.227.98.208])
-        by smtp.gmail.com with ESMTPSA id h79sm24507341pfj.186.2018.12.17.12.22.17
+        by smtp.gmail.com with ESMTPSA id b68sm21581385pfg.160.2018.12.17.12.22.51
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 12:22:18 -0800 (PST)
-Date:   Tue, 18 Dec 2018 01:56:11 +0530
+        Mon, 17 Dec 2018 12:22:51 -0800 (PST)
+Date:   Tue, 18 Dec 2018 01:56:44 +0530
 From:   Souptick Joarder <jrdr.linux@gmail.com>
 To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
         boris.ostrovsky@oracle.com, jgross@suse.com
 Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH v4 8/9] xen/gntdev.c: Convert to use vm_insert_range
-Message-ID: <20181217202611.GA18060@jordon-HP-15-Notebook-PC>
+Subject: [PATCH v4 9/9] xen/privcmd-buf.c: Convert to use vm_insert_range
+Message-ID: <20181217202644.GA19376@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -81,38 +80,28 @@ Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 Reviewed-by: Matthew Wilcox <willy@infradead.org>
 Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 ---
- drivers/xen/gntdev.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/xen/privcmd-buf.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index b0b02a5..430d4cb 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -1084,7 +1084,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 	int index = vma->vm_pgoff;
- 	int count = vma_pages(vma);
- 	struct gntdev_grant_map *map;
--	int i, err = -EINVAL;
-+	int err = -EINVAL;
- 
- 	if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
- 		return -EINVAL;
-@@ -1145,12 +1145,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 		goto out_put_map;
- 
- 	if (!use_ptemod) {
--		for (i = 0; i < count; i++) {
--			err = vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
--				map->pages[i]);
--			if (err)
--				goto out_put_map;
+diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
+index df1ed37..d31b837 100644
+--- a/drivers/xen/privcmd-buf.c
++++ b/drivers/xen/privcmd-buf.c
+@@ -180,12 +180,8 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (vma_priv->n_pages != count)
+ 		ret = -ENOMEM;
+ 	else
+-		for (i = 0; i < vma_priv->n_pages; i++) {
+-			ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
+-					     vma_priv->pages[i]);
+-			if (ret)
+-				break;
 -		}
-+		err = vm_insert_range(vma, vma->vm_start, map->pages, count);
-+		if (err)
-+			goto out_put_map;
- 	} else {
- #ifdef CONFIG_X86
- 		/*
++		ret = vm_insert_range(vma, vma->vm_start, vma_priv->pages,
++					vma_priv->n_pages);
+ 
+ 	if (ret)
+ 		privcmd_buf_vmapriv_free(vma_priv);
 -- 
 1.9.1
 
