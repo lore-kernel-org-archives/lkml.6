@@ -2,187 +2,127 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B72C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E42BC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D83206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B7B214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:34:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="pc9XzfGS"
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="Kk1vkqh9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389665AbeLQVcb (ORCPT
+        id S2387719AbeLQVeh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:32:31 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:50023 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387719AbeLQVbG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:31:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=zuZfgW3B5GKaSTaOF4T7pbTbVIHfXdcnHMC0entZ6dY=; b=pc9XzfGSI1L0
-        ztsfz0CN+NxMlJR/Q8kzvd19weF5vg88oaJwLEOJQz03pBXT2/JuKYIDSu4PHh22v3D/5PW4/pNgZ
-        I1z+uxejrhlkVbaxkUtNJvG1x64L6Kbu65dKAP6OUr0kf0KHsaUsmJVEpNKA+8whQArHnKl4GLoF/
-        X+wCeHpuzIXn5hltfXDmSgoK0IDXxRrgBJxKB7bO5ZLTCNvqpu8CMG6wNVgA4vw7C5wldg2HLTYKI
-        AuPU9imGvDAu62+LeC/jdqcpO2lsQaqOuH9ZKuEJt0gH/TPvS1EHRW1u7ERBu22AI9wBPnvPMvxDH
-        hk5vbs2PWx9jvFwgrWNo7g==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1gZ0TX-0003D3-D7; Mon, 17 Dec 2018 22:30:55 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 3E50BC00A8;
-        Mon, 17 Dec 2018 22:30:53 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v5 09/15] locking/lockdep: Introduce lockdep_next_lockchain() and lock_chain_count()
-Date:   Mon, 17 Dec 2018 13:29:56 -0800
-Message-Id: <20181217213002.73776-10-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
-In-Reply-To: <20181217213002.73776-1-bvanassche@acm.org>
-References: <20181217213002.73776-1-bvanassche@acm.org>
+        Mon, 17 Dec 2018 16:34:37 -0500
+Received: from mail.nic.cz ([217.31.204.67]:59894 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726955AbeLQVeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 16:34:36 -0500
+Received: from localhost (unknown [172.20.6.233])
+        by mail.nic.cz (Postfix) with ESMTPS id CEE55601FB;
+        Mon, 17 Dec 2018 22:34:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1545082473; bh=8d7f2T8gmoGdbmbuVrMD+gAx0cbRgRHlQgbYUy0eDeg=;
+        h=Date:From:To;
+        b=Kk1vkqh9c7p2YKhLb/jMnRyee7n1OBuyEsOAtLaPjb5MTL907NUo7Qgf9dYWcF/dY
+         +uz30UiTJ9Rs4WzKSuSlURbTylK8KcSS6VsbTsVjz3mUtTuvvTT3ky50sNwRAmvRDh
+         ZW7GXyq19o8YLUiXTyVnnjJ0jQmpJOwYZvJA8yLg=
+Date:   Mon, 17 Dec 2018 22:34:30 +0100
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Nadav Haklai <nadavh@marvell.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v2 03/12] PCI: aardvark: Add PHY support
+Message-ID: <20181217223430.182d01d8@nic.cz>
+In-Reply-To: <20181217170724.58421a29@xps13>
+References: <20181212102142.16053-1-miquel.raynal@bootlin.com>
+        <20181212102142.16053-4-miquel.raynal@bootlin.com>
+        <20181214014701.373b220b@nic.cz>
+        <20181214015712.31f749ea@nic.cz>
+        <20181217170724.58421a29@xps13>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.159
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.01)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5vksR/ib4XPBuBU9IBJXi1l602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
- AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
- YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORp2XccJRnO323mWpOMF
- 7hofSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
- CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
- VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
- Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
- f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
- U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZreeC
- 00sPfXPEO3LEyKzxLAk397FvmHq6nMKhYN3AsEWqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
- LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
- AQh13vqug5h3DxwJVP5MWRi+OCzlSBVWGhGnoXCRxFGtJ1TazU3cdW4SwZIAiDKO1d3jsySf+J0s
- zc1uD9pAwuLhqtxw5exj8Aw7fqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
- VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
- MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.99.2 at mail
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch does not change any functionality but makes the next patch in
-this series easier to read.
+Miquel,
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- kernel/locking/lockdep.c           | 16 +++++++++++++++-
- kernel/locking/lockdep_internals.h |  3 ++-
- kernel/locking/lockdep_proc.c      | 12 ++++++------
- 3 files changed, 23 insertions(+), 8 deletions(-)
+I tried the patches and they are working, with the exception of Compex
+WLE900X card, but we know that this card is problematic.
+I am interesting if there is a known way to turn of the comphy on
+A3720, or at least change the SGMII mode from 1Gbps to 2.5Gbps and
+back. Marvell documentation does not provide this information and the
+code in ATF providing the SMC calls does not do this either.
+Do you know how this can be achieved?
+Thanks,
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 287dc022d27a..a71ca42978c2 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -2097,7 +2097,7 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
- 	return 0;
- }
- 
--unsigned long nr_lock_chains;
-+static unsigned long nr_lock_chains;
- struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
- int nr_chain_hlocks;
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
-@@ -2231,6 +2231,20 @@ static int check_no_collision(struct task_struct *curr,
- 	return 1;
- }
- 
-+/*
-+ * Given an index that is >= -1, return the index of the next lock chain.
-+ * Return -2 if there is no next lock chain.
-+ */
-+long lockdep_next_lockchain(long i)
-+{
-+	return i + 1 < nr_lock_chains ? i + 1 : -2;
-+}
-+
-+unsigned long lock_chain_count(void)
-+{
-+	return nr_lock_chains;
-+}
-+
- /*
-  * Adds a dependency chain into chain hashtable. And must be called with
-  * graph_lock held.
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 88c847a41c8a..ba8a4ac7bd04 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -96,7 +96,8 @@ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
- 
- extern unsigned long nr_lock_classes;
- extern unsigned long nr_list_entries;
--extern unsigned long nr_lock_chains;
-+long lockdep_next_lockchain(long i);
-+unsigned long lock_chain_count(void);
- extern int nr_chain_hlocks;
- extern unsigned long nr_stack_trace_entries;
- 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 3d31f9b0059e..9c49ec645d8b 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -104,18 +104,18 @@ static const struct seq_operations lockdep_ops = {
- #ifdef CONFIG_PROVE_LOCKING
- static void *lc_start(struct seq_file *m, loff_t *pos)
- {
-+	if (*pos < 0)
-+		return NULL;
-+
- 	if (*pos == 0)
- 		return SEQ_START_TOKEN;
- 
--	if (*pos - 1 < nr_lock_chains)
--		return lock_chains + (*pos - 1);
--
--	return NULL;
-+	return lock_chains + (*pos - 1);
- }
- 
- static void *lc_next(struct seq_file *m, void *v, loff_t *pos)
- {
--	(*pos)++;
-+	*pos = lockdep_next_lockchain(*pos - 1) + 1;
- 	return lc_start(m, pos);
- }
- 
-@@ -268,7 +268,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 
- #ifdef CONFIG_PROVE_LOCKING
- 	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
--			nr_lock_chains, MAX_LOCKDEP_CHAINS);
-+			lock_chain_count(), MAX_LOCKDEP_CHAINS);
- 	seq_printf(m, " dependency chain hlocks:       %11d [max: %lu]\n",
- 			nr_chain_hlocks, MAX_LOCKDEP_CHAIN_HLOCKS);
- #endif
--- 
-2.20.0.405.gbc1bbc6f85-goog
+Marek
+
+On Mon, 17 Dec 2018 17:07:24 +0100
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+
+> Hi Marek,
+>=20
+> Marek Behun <marek.behun@nic.cz> wrote on Fri, 14 Dec 2018 01:57:12
+> +0100:
+>=20
+> > On Fri, 14 Dec 2018 01:47:01 +0100
+> > Marek Behun <marek.behun@nic.cz> wrote:
+> >  =20
+> > > Hi Miquel,
+> > > are there already patches for the A37xx comphy driver?   =20
+>=20
+> Please try the latest patches on top of phy -next (with PHY interface
+> mode), available there [1]. You can pick only the COMPHY patches, but
+> keep them over the phy -next branch.
+>=20
+> Please note that for the SMC calls to succeed you must use a recent
+> ATF. Personally I used to work with the 'atf-v1.5-devel' branch of
+> Marvell's misl-atf repository but it is not available anymore. If you
+> already have a clone, then you are good to go, otherwise it might be
+> great if someone from Marvell could share a public Github link?
+>=20
+> > Never mind, I found them. I shall test this on Turris Mox.
+> > Is the comphy driver supposed to be able to change eth mode from
+> > 1000BASE-X to 2500BASE-X and back without reboot? =20
+>=20
+> In theory yes, unfortunately I am working on an EspressoBin which uses
+> the SATA, PCIe and SATA configurations of the COMPHY, but not the
+> Ethernet ones (SGMII/1000BASE-X and HS_SGMII/2500BASE-X). So the
+> support is ready to be tested!
+>=20
+> >=20
+> > This would be cool for our SFP cage module of Turris Mox, just to
+> > add support for comphy into mvneta.
+> >=20
+> > Marek =20
+>=20
+> [1] https://github.com/miquelraynal/linux.git branch
+> marvell/phy-next/pm
+>=20
+>=20
+> Thanks,
+> Miqu=C3=A8l
 
