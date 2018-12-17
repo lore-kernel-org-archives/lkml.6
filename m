@@ -8,61 +8,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6890DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08274C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3725E2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:02:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA1EA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgNrwO/4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1ihEl42"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387721AbeLQPC6 (ORCPT
+        id S2387732AbeLQPDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:02:58 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33137 "EHLO
+        Mon, 17 Dec 2018 10:03:01 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45456 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLQPC4 (ORCPT
+        with ESMTP id S2387405AbeLQPC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:02:56 -0500
-Received: by mail-ed1-f68.google.com with SMTP id p6so11037119eds.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:02:54 -0800 (PST)
+        Mon, 17 Dec 2018 10:02:57 -0500
+Received: by mail-ed1-f68.google.com with SMTP id d39so10969973edb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:02:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1IuluRVsrA/thWWKsP6WmiXoXw4TYsiV79YbWUKBM3c=;
-        b=KgNrwO/4kcN5pAroqaykups8LzZgz+nZ/2UkFVSrxUC+YJqrEoXsYccLCB/UO8Q1Qd
-         cruQO93H8s0LxZO5Js4conDa4EVwF8IOZ/N5+ggFHU0ZBqodZ62hJrkUzj1mG0DElH/j
-         aeY2rbui4081p0okFJBXKfzFxQPKLCU31lyZVb9jy/BPqDPJ2Kcvo6Fr7N7oEefPnsim
-         va5fzYF53jshbswIzq7xm0bGvjpREXPppGjaPomjlqn8CbqmYhYJ06gj7Jp+IJG3YK3/
-         ZEYm3eJXuZCXykEjJ+zULRvdNVSiPY17LrCS8M360SLXBY7jFKKBAI8yx9Rzgfgs4ZZW
-         4taw==
+        bh=YepPy6as3jukggX9s7UBN1QkOSHdCi3CElLuLrebsDg=;
+        b=K1ihEl42cHdNPn7uBM6gJn0FHaUlvipHmQ6tAAaoFYwMkURpm1SUAcO1a7LipoiHId
+         NfTTVC2JfHJ7Q8riKkQj1h8JMWVlBew2KaULTQfO+XhsxSP2x4PNOUjO44arzyDf42q3
+         iCGBnQ5cMYKu3ldKGwMUWVh6kU/FGzb55mZScxI1oRnIPusj9ZwT+HQl6hbTrBMzXAS6
+         BdMrIwdvilb27Up35bKzavvUM+1gVj/rnX9tTshuIoRXEG6mn3qp7CfhXOSn/7WgsbLe
+         hLFdXTcZ58nncKW9oSjyKdjesdWNpeIFLEyejJL/+5IA3fGTzr8m0zefh9TC3EdpK34f
+         38wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1IuluRVsrA/thWWKsP6WmiXoXw4TYsiV79YbWUKBM3c=;
-        b=TkpuWf0n073qOczQ13dwy1jWyLQdeSUSrc0847zq3dOIXLnLEJ0P4u+yX0WmnKt0Zz
-         H74TNvTyxkKRGY4ERFgYa/qroGoJK+WSm91Fc0nG0KqYg1CYowIbS/RBTDetNfgiwyad
-         8eeZ/t0erT3gJKPVWzuq/QojZjbQSI3cFXP1fDpw0eR6MUdON8/qdv+RzIQA/2lVKp2v
-         aDgIwB70Q9I1HqvpFDccBMTOMoWTiYT1/WYCljD9lenyxnZbClhN9JJziuiCepHC4MpH
-         AZeNz+P2QPya/1WaCNO9Z7qO3dfvjUP8Jyw30kTJQQ6Umvg7KoaxmlHJtRr0A7Juj4Rd
-         e2DA==
-X-Gm-Message-State: AA+aEWZ/1T/UWKQ+a5xId3M9NCWt5etQMsLj70PK23dz8pptIu6FvRjP
-        6vasyqreIuAh5+qFqgdNAV4=
-X-Google-Smtp-Source: AFSGD/U0KQr0fNCqhAQLbYNJm7wj5EJBN0FLsbcNfINhzOo87cF0xbsY/Vh+9ywsVrc15lamSNevxg==
-X-Received: by 2002:a50:c408:: with SMTP id v8mr6086986edf.144.1545058973697;
-        Mon, 17 Dec 2018 07:02:53 -0800 (PST)
+        bh=YepPy6as3jukggX9s7UBN1QkOSHdCi3CElLuLrebsDg=;
+        b=dgpJ6UZvsGvKN6Us+MRjZt4T9+dscA10Pml2NDjpxceFOZLX3C84wwJ+mw6O7TpxKk
+         37oLauQY8sBsfTDT1aqN97dgiEMMthb5gxm4UHUvfxSANJDgym79TXcneKYpwLjOR2Ya
+         fTIlSU7m8xfnK5dK/nVbCWC62aw2bsr9u7X1GP6LLA1VTmkBG6SEoHYyoMaOYCN35BpT
+         3b2lJhJ3JhxEJCVIXaJidw+zJAbJiAvgqqme1E6ZHBh0fkr4SQI9uwVq3QWhR0Rwj9Ad
+         90dXD0VNX1oCkpQ10FSoRadEFepP72oKjDLSiK8zdBRbItHkbzQ37MGeBqgRgudDrSGy
+         gx5w==
+X-Gm-Message-State: AA+aEWZZ0a1jCfJ+4zW6pL8ED4fxZ2axhMj7v9507h6FTxwbwBDUK7wg
+        qHH4STeG6y87CYPFh+OqOBXOp4Pl
+X-Google-Smtp-Source: AFSGD/W60IrJB824hXsv5E9sVkFiXVbkGyoZOOGEB/u/4xr4YZXIIpuclIEBedgYumIK+HeHyB5CkQ==
+X-Received: by 2002:a17:906:b1b:: with SMTP id u27-v6mr5948109ejg.67.1545058975612;
+        Mon, 17 Dec 2018 07:02:55 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id 97sm3839350edq.45.2018.12.17.07.02.45
+        by smtp.gmail.com with ESMTPSA id k32sm3903843edb.42.2018.12.17.07.02.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 07:02:48 -0800 (PST)
+        Mon, 17 Dec 2018 07:02:54 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 10/19] mailbox: sti: Use device-managed registration API
-Date:   Mon, 17 Dec 2018 16:02:08 +0100
-Message-Id: <20181217150217.32435-11-thierry.reding@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Duc Dang <dhdang@apm.com>,
+        Feng Kan <fkan@apm.com>
+Subject: [PATCH v2 11/19] mailbox: xgene-slimpro: Use device-managed registration API
+Date:   Mon, 17 Dec 2018 16:02:09 +0100
+Message-Id: <20181217150217.32435-12-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181217150217.32435-1-thierry.reding@gmail.com>
 References: <20181217150217.32435-1-thierry.reding@gmail.com>
@@ -78,52 +79,49 @@ From: Thierry Reding <treding@nvidia.com>
 Get rid of some boilerplate driver removal code by using the newly added
 device-managed registration API.
 
-Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Duc Dang <dhdang@apm.com>
+Cc: Feng Kan <fkan@apm.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mailbox/mailbox-sti.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/mailbox/mailbox-xgene-slimpro.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox-sti.c b/drivers/mailbox/mailbox-sti.c
-index 779d41262ef0..adf82b85dbb2 100644
---- a/drivers/mailbox/mailbox-sti.c
-+++ b/drivers/mailbox/mailbox-sti.c
-@@ -462,7 +462,7 @@ static int sti_mbox_probe(struct platform_device *pdev)
- 	mbox->chans		= chans;
- 	mbox->num_chans		= STI_MBOX_CHAN_MAX;
+diff --git a/drivers/mailbox/mailbox-xgene-slimpro.c b/drivers/mailbox/mailbox-xgene-slimpro.c
+index b8b2b3533f46..8f397da1150b 100644
+--- a/drivers/mailbox/mailbox-xgene-slimpro.c
++++ b/drivers/mailbox/mailbox-xgene-slimpro.c
+@@ -224,7 +224,7 @@ static int slimpro_mbox_probe(struct platform_device *pdev)
+ 	ctx->mb_ctrl.ops = &slimpro_mbox_ops;
+ 	ctx->mb_ctrl.num_chans = i;
  
--	ret = mbox_controller_register(mbox);
-+	ret = devm_mbox_controller_register(&pdev->dev, mbox);
- 	if (ret)
- 		return ret;
- 
-@@ -480,7 +480,6 @@ static int sti_mbox_probe(struct platform_device *pdev)
- 					IRQF_ONESHOT, mdev->name, mdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Can't claim IRQ %d\n", irq);
--		mbox_controller_unregister(mbox);
- 		return -EINVAL;
- 	}
- 
-@@ -489,18 +488,8 @@ static int sti_mbox_probe(struct platform_device *pdev)
+-	rc = mbox_controller_register(&ctx->mb_ctrl);
++	rc = devm_mbox_controller_register(&pdev->dev, &ctx->mb_ctrl);
+ 	if (rc) {
+ 		dev_err(&pdev->dev,
+ 			"APM X-Gene SLIMpro MailBox register failed:%d\n", rc);
+@@ -235,14 +235,6 @@ static int slimpro_mbox_probe(struct platform_device *pdev)
  	return 0;
  }
  
--static int sti_mbox_remove(struct platform_device *pdev)
+-static int slimpro_mbox_remove(struct platform_device *pdev)
 -{
--	struct sti_mbox_device *mdev = platform_get_drvdata(pdev);
+-	struct slimpro_mbox *smb = platform_get_drvdata(pdev);
 -
--	mbox_controller_unregister(mdev->mbox);
--
+-	mbox_controller_unregister(&smb->mb_ctrl);
 -	return 0;
 -}
 -
- static struct platform_driver sti_mbox_driver = {
- 	.probe = sti_mbox_probe,
--	.remove = sti_mbox_remove,
- 	.driver = {
- 		.name = "sti-mailbox",
- 		.of_match_table = sti_mailbox_match,
+ static const struct of_device_id slimpro_of_match[] = {
+ 	{.compatible = "apm,xgene-slimpro-mbox" },
+ 	{ },
+@@ -259,7 +251,6 @@ MODULE_DEVICE_TABLE(acpi, slimpro_acpi_ids);
+ 
+ static struct platform_driver slimpro_mbox_driver = {
+ 	.probe	= slimpro_mbox_probe,
+-	.remove = slimpro_mbox_remove,
+ 	.driver	= {
+ 		.name = "xgene-slimpro-mbox",
+ 		.of_match_table = of_match_ptr(slimpro_of_match),
 -- 
 2.19.1
 
