@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894A7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCB8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5697820675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D28620675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QetYrpog"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="et20Z1Nv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732271AbeLQJrF (ORCPT
+        id S1732282AbeLQJrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:47:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53902 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732238AbeLQJrC (ORCPT
+        Mon, 17 Dec 2018 04:47:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38586 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732208AbeLQJq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:47:02 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y1so11589940wmi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 01:47:01 -0800 (PST)
+        Mon, 17 Dec 2018 04:46:56 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so11530919wrw.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 01:46:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7zUfQ5k1UaGNLQZWqXUVxUrsnDmZIr72/O/z7L/p8XE=;
-        b=QetYrpogRHsbPuvIb1lnhOHGRCb5X9owoV/AIv0hvqBsfvxhCRXjPEGrdGgYn5v1Mc
-         HDpWdDIMxrVXmwqNDPiKsFQTZ2a3O7LCK+kRPiAVQeN0rDu653kusvLwkrVNLaTx+X0T
-         qCry9q5eEfUmIK4pOEKIOKe3nD8pUN+sIxWUQ=
+        bh=frYLNG9WBBqiLZuXMzbyk9zPbudi5BcqFSN9a29J878=;
+        b=et20Z1Nvhy4cU7BaSDu0Rr0o8eprDB52wxTtNTCZZIeVJB+REqsCz5LohKL6+c4bHc
+         BBu8BsOZf02tVrTWV/4iNqxH5Xrryxvc8gCF4HXIhoB0FggKGUUPonfUccV/BjaAqgJ8
+         V3bJfXiHcaCkhPVmE/5R33wu/PxiebX04HaEY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7zUfQ5k1UaGNLQZWqXUVxUrsnDmZIr72/O/z7L/p8XE=;
-        b=YTBgxU78kROr1OtQ/X9lLAMZd2LZWovVuXv6dzaLc9syG4Nlh6VXQZFSWvPzURj37X
-         QgFMsR6aJjpkCyH1ty12gE3BVhK+RHwDg4FPKHMPgA+KGslOSFgcWq+87RfTVF+8Zbby
-         B6MJ/37YB6y7gRU9sn+E8ntscrVN2Thvu04TwQwya6jwftkq+JecJ0yqWU8fp3qOpWgx
-         jNAC+BPv+I7/2g++9RfkTtaVO1sy12FbTA0iSbxlGZxMI0/06CdwrOJWYPvSFXxfCMAu
-         B4ubRNQhqHgZIgcWfURvo2Tr/YOEMroUjnfEEZlXcxFXQWF0Y3u5k0Gum3N21/LrejOv
-         NGPw==
-X-Gm-Message-State: AA+aEWZyD2rYU+FHSuDRHktk2xQ79HFPVH7s2RpciOdWWzRARypEszil
-        MjWFI1+VVVck7xCFIxWbWG3fqg==
-X-Google-Smtp-Source: AFSGD/W7AfI98CnyZ0p8vcdpfYDXkTB7x6OrV/CwFqF8fuIpp5WZTRDIcwA7oulJja30ZZ/F4hIh8w==
-X-Received: by 2002:a1c:2884:: with SMTP id o126mr11386163wmo.17.1545040020936;
-        Mon, 17 Dec 2018 01:47:00 -0800 (PST)
+        bh=frYLNG9WBBqiLZuXMzbyk9zPbudi5BcqFSN9a29J878=;
+        b=fKQkhqM4ILBShFWpf/MTYW75CNCyaCCojRD6rWip9zR4bh3gncjadeuU9AvfoCMCiI
+         bKxmkv7MRYOOReqicvthq0VO4AllRk3XtJPOwbrVoHlGntADJOJmdff1aX0E2zp2HdGg
+         TlrJgkKqvvV20cJhSrXfCbNJU1wHZP3zm/inourQUa4PFyR2twN1qpWLNMUrqMfnkyYV
+         ISGtX/sF/x8CKVU9p6n+NilWOblEIHGxgH82wGBFNsKiwTZxmjZM7i4wI34l0F999SjB
+         DqhgCyKa7OPa5UtMWvZrroO71bEs5x0lLZ0KT9BfmKS3p++AL90fx/h3kj+P/++xXQuL
+         z8Jg==
+X-Gm-Message-State: AA+aEWbqs+3fS0SJ0DxNJ2D8i/c8Y9rZojUAlfsgU2nTaVVBlC69Tf6o
+        0nm0taQNOYkLVPCyuQzlatbznQ==
+X-Google-Smtp-Source: AFSGD/Wm89lY5AWabPhjL97+zfhBn8ec4Izasd9Vo+Ys9CWY1kITyl9TwTkkjUL9dy/zq4p2/3eK4w==
+X-Received: by 2002:a5d:4512:: with SMTP id s18mr10609352wrq.182.1545040015164;
+        Mon, 17 Dec 2018 01:46:55 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.59
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:47:00 -0800 (PST)
+        Mon, 17 Dec 2018 01:46:54 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -65,9 +65,9 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 13/13] arm64: defconfig: Enable HFPLL
-Date:   Mon, 17 Dec 2018 10:46:30 +0100
-Message-Id: <1545039990-19984-14-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 10/13] arm64: dts: qcom: qcs404: Add HFPLL node
+Date:   Mon, 17 Dec 2018 10:46:27 +0100
+Message-Id: <1545039990-19984-11-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -76,28 +76,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The high frequency pll is required on compatible Qualcomm SoCs to
-support the CPU frequency scaling feature.
+The high frequency pll functionality is required to enable CPU
+frequency scaling operation.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5c2b1f6..da390aa 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -615,6 +615,7 @@ CONFIG_MSM_MMCC_8996=y
- CONFIG_MSM_GCC_8998=y
- CONFIG_QCS_GCC_404=y
- CONFIG_SDM_GCC_845=y
-+CONFIG_QCOM_HFPLL=y
- CONFIG_HWSPINLOCK=y
- CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_ARM_MHU=y
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index 4594fea7..ec3f6c7 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -375,6 +375,15 @@
+ 			#mbox-cells = <1>;
+ 		};
+ 
++		apcs_hfpll: clock-controller@0b016000 {
++			compatible = "qcom,hfpll";
++			reg = <0x0b016000 0x30>;
++			#clock-cells = <0>;
++			clock-output-names = "apcs_hfpll";
++			clocks = <&xo_board>;
++			clock-names = "xo";
++		};
++
+ 		timer@b120000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
 -- 
 2.7.4
 
