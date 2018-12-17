@@ -3,105 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CB6C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC38C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 692CB2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 236722146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:14:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bE2hQJ5V"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="WExSAj2f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732891AbeLQRL1 (ORCPT
+        id S1732945AbeLQROD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:11:27 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38739 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbeLQRL1 (ORCPT
+        Mon, 17 Dec 2018 12:14:03 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45082 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbeLQROD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:11:27 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so13068917wrw.5;
-        Mon, 17 Dec 2018 09:11:25 -0800 (PST)
+        Mon, 17 Dec 2018 12:14:03 -0500
+Received: by mail-qt1-f194.google.com with SMTP id e5so14874803qtr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:14:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/ZY5abb5RJfKSZwIuefMoxZ8yU6NpVNydtn2GiM4hyg=;
-        b=bE2hQJ5VNOfh1ytM66ct3zjSi/JsfqigkAoclkdGTispgNcAEBXfdwfVzWtfVf6nce
-         bPXUMnUNhUs+DTNOx42ARgRrOxntgkYiU1c+JG2uirmSEBqLgg1hclY97DOIRB5xNZna
-         d/1W4qUW1VL2iipDMCfhDgtNnJspUv6GMWF8KVskOEYRt5GT9Oa63l/jt4ZMiWz6BNUu
-         1/vpJObiJ/zmY6RKTIlkid53cDewhOiX1akjx3k7KJsABTTuh5nQYb5CcWhgPEAfsYF1
-         EGcNBQkgSWasDceiWVum3EOmiNicsT/DgKeAbQ69CrYKqQ8g4vh2qVFtOvamVvxUdfN5
-         i5Mg==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2ILbHKpZz/Vfxxba49MQaUviJO+oVjIR/iaCOroSFRE=;
+        b=WExSAj2fWNIb50lovFGdzbiHglNPHpTw7L7SfUU8lcSRy2jNzaJwF1lsy90ZWkEQC8
+         Ucjlx1yI+gxS2JcqR4uSQa8E4pC3JDC6ZP214K0vfBwno9iGbbWmc3iAot+tyiZh2ia2
+         txBvkt2jDMxbuTZxGCFeKl4+bkcKSgDxn/dxLJoPX0zhqYBl4jC/pgDzMiR9aASagUgc
+         8IOdKrQzErcDIyz7KDhsvVlwGq3h1RnrxLTY+KIBL13yZNYbI+l9gw51qpMJFMAXGCV4
+         pPt5ZYX3cougxhp2pKTEMs64TG8kjrpIxOPgKamZlWw4e9KYlvTKBTsu5vMps6O9X4fX
+         t7SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/ZY5abb5RJfKSZwIuefMoxZ8yU6NpVNydtn2GiM4hyg=;
-        b=NxSSKbCp8YTygohuT3Hh4uq479i3NImEh0/VCXxrikJyt2DJLjjsyBIwVzl/tfC80W
-         jZWBOfy+URWZYLeXge8qfxSgJowDq/a1rcJJxBwL9vsAl4hNVeVjs4Pj0+ad3KxIvLlf
-         DJGxpVeTEFXQQG5YwNvYj/lWm6BIzaoVo3ow8nw79o/cN5ESGCOd2fKSpKQl0Rn1s3JI
-         9X92XNNi1TIfBUYYFYKe34bci790tw1wA8CQ4ksWd5YS/x1z867ow15LjZC/zs3QA6ax
-         Opx2WLPUci7pmbdWYby+kzu48wSbVaJTurL0k/ZHhLfa9PVUeI34Pdt7CSum/bLwtLsE
-         OGuQ==
-X-Gm-Message-State: AA+aEWaFUrgoulOeM3K22QsNuizuMPQqbcE1lLONRZLjIXT+Ji53gWIc
-        Imal6vX9rvsn3ZKBGMcK6Ozl3DwdfRXdwTJpAFg=
-X-Google-Smtp-Source: AFSGD/XElLSSUsi/CjNXXV69Ucpm1nJRDdp2hbTudva9JuEPERBBb4MaDH9moukhIcpeZbFIF/HY8JBtm2dFva2MeH0=
-X-Received: by 2002:a05:6000:51:: with SMTP id k17mr10814319wrx.259.1545066685084;
- Mon, 17 Dec 2018 09:11:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20181216230916.22982-1-andrew.smirnov@gmail.com>
- <20181216230916.22982-3-andrew.smirnov@gmail.com> <VI1PR04MB5533AAAEA69A54F1CF01D44CEEBC0@VI1PR04MB5533.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB5533AAAEA69A54F1CF01D44CEEBC0@VI1PR04MB5533.eurprd04.prod.outlook.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 17 Dec 2018 09:11:13 -0800
-Message-ID: <CAHQ1cqEo86-B0mw8edqr0fr9834YRziFJPJbssqoutYnfroyog@mail.gmail.com>
-Subject: Re: [PATCH 2/3] PCI: imx6: Invert checks in imx6_pcie_reset_phy() and imx6_setup_phy_mpll()
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2ILbHKpZz/Vfxxba49MQaUviJO+oVjIR/iaCOroSFRE=;
+        b=aZd7n2YKtjwNywE7YWSl5U+9H0KWk9V+A6Elaetlrfr3zJvFKVjdAz0ooY8nB76361
+         yA1yjC7KnilcLxGKoF7QBrGKyb8f02POcmr4uSIQbXFtDzP94CHE9rWszHCiuVBmvesn
+         mBHFUXsx49gcPOE33OuAWhuXaulgMcir7l2/ZNJzjrKgbuCQM1Jof5ZxWpIfuj0qNcAF
+         rz9Ey8CWyeYcmM81fVEuFOcUwWojkyCULYq3d7wlcPXnov3ENRgeQWv9HErwFpu3RDzH
+         x8qmaBax6Z4p3uhUpRQc3gUhKQNUZit5EcsRHAPpkfyE02SFEeGB8qD83i6uGNsSSHlx
+         KYgQ==
+X-Gm-Message-State: AA+aEWZsYIWxgaF7gEgXkrzhw+IoCRXzz44qJqh5eguM+uu6Yn1Vucyd
+        4+ziz3rR/xt2cf84wLP6kcdlHw==
+X-Google-Smtp-Source: AFSGD/V99XxA94G0umbBkD1xgsw5zqf5t0C5vdJ8GW9t0+C8206dcKevBvi9S9jcd2zn3XPKYjaSZQ==
+X-Received: by 2002:ac8:2353:: with SMTP id b19mr13973026qtb.187.1545066841798;
+        Mon, 17 Dec 2018 09:14:01 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id k6sm11313139qkk.60.2018.12.17.09.14.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 09:14:01 -0800 (PST)
+Message-ID: <1545066839.18411.17.camel@lca.pw>
+Subject: Re: [PATCH] kbuild: error for CONFIG_ORC_UNWINDER is too much
+From:   Qian Cai <cai@lca.pw>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        mingo@kernel.org, bp@alien8.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Date:   Mon, 17 Dec 2018 12:13:59 -0500
+In-Reply-To: <20181217170305.chni6e5vmev7hp4r@treble>
+References: <869bc700-1d6d-b950-76c7-5d0fc589152c@lca.pw>
+         <20181217161728.6875-1-cai@lca.pw> <20181217170305.chni6e5vmev7hp4r@treble>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 2:24 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
->
-> On 12/17/2018 1:09 AM, Andrey Smirnov wrote:
-> > In order to avoid having potentially ever growing list of variants
-> > that don't support methods implemented in imx6_pcie_reset_phy() and
-> > imx6_setup_phy_mpll(), change logical checks in the to check for SoC's
-> > that _do_ support what they implement. While at it, share the code via
-> > a small helper function.
-> >
-> > +static bool imx6_pcie_has_imx6_phy(struct imx6_pcie *imx6_pcie)
-> > +{
-> > +     return imx6_pcie->variant == IMX6Q ||
-> > +            imx6_pcie->variant == IMX6SX ||
-> > +            imx6_pcie->variant == IMX6QP;
-> > +}
->
-> This would be an ideal match for adding a field inside drvdata, sadly
-> that was part of a series which stalled:
->
-> https://patchwork.kernel.org/patch/10712261/
+On Mon, 2018-12-17 at 11:03 -0600, Josh Poimboeuf wrote:
+> On Mon, Dec 17, 2018 at 11:17:28AM -0500, Qian Cai wrote:
+> > Since ifdef will be evaluated immediately in the first phrase of the
+> > Makefile read-in, there is no guarantee that the value for
+> > CONFIG_ORC_UNWINDER will be up-to-date until in the second phrase that
+> > this recipe is ran.
+> > 
+> > include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
+> > 	$(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
+> > 
+> > Hence, change error to warning as this is essentially a best guess. The
+> > original bug can be reproduced this way,
+> 
+> But this still doesn't fix the root of the problem, that the check
+> relies on a stale auto.conf.
+> 
 
-OK, I can pick up that individual patch into this series.
+Yes, but it at least let people to be able to continue compiling kernel without
+prematurely being terminated incorrectly. The good thing is that that check will
+be triggered again to print out the right message once auto.conf has been synced
+up.
 
-Thanks,
-Andrey Smirnov
+# make
+Makefile:966: "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please
+install libelf-dev, libelf-devel or elfutils-libelf-devel"
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTLD  scripts/kconfig/conf
+scripts/kconfig/conf  --syncconfig Kconfig
+Makefile:968: "Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev,
+libelf-devel or elfutils-libelf-devel"
