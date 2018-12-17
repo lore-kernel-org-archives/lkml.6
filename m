@@ -2,252 +2,74 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27D2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3D4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44202133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B18F20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:25:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WbTAbZmy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388891AbeLQSZM (ORCPT
+        id S2388904AbeLQSZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:25:12 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54501 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeLQSZM (ORCPT
+        Mon, 17 Dec 2018 13:25:25 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38520 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727760AbeLQSZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:25:12 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHIOmc12563266
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 10:24:49 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHIOm4A2563263;
-        Mon, 17 Dec 2018 10:24:48 -0800
-Date:   Mon, 17 Dec 2018 10:24:48 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-fe0937b24ff5d7b343b9922201e469f9a6009d9d@git.kernel.org>
-Cc:     peterz@infradead.org, dave.hansen@linux.intel.com,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        tglx@linutronix.de, luto@kernel.org, riel@surriel.com,
-        bp@alien8.de, linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: bp@alien8.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          dave.hansen@linux.intel.com, torvalds@linux-foundation.org,
-          mingo@kernel.org, peterz@infradead.org, riel@surriel.com,
-          tglx@linutronix.de, luto@kernel.org
-In-Reply-To: <20181203171043.559855600@infradead.org>
-References: <20181203171043.559855600@infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Fold cpa_flush_range() and
- cpa_flush_array() into a single cpa_flush() function
-Git-Commit-ID: fe0937b24ff5d7b343b9922201e469f9a6009d9d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 17 Dec 2018 13:25:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3gnHnu/b7X8Z/EqkilLx4vCcIK24VR9A6tqq49rKRGU=; b=WbTAbZmyXpc17Hx3eTWkRkWP0
+        eUXe63grA4wO6KU6DZPKonkqAq4jj6WDcLYpfUKWhT1YiUIOxB/fdB0ZXyCzvaYNWUiBoWsQDFQBv
+        EN6SxsauVDt6oH8F0jYaOANoosugcsH1apQuQIMMNC7DL/UJNIfnndpt5N+xpkNKUMe15LsQSMwGs
+        xfUl0M6Offaf7NnXuz/XOFEKupAZOmsuCcnO1xPn7dKIqgKCL2jLvW3LaINxtTIAcMpKiQgNqyjJw
+        zvcdPgyl3wRfT+C6cWJSxKa5B/e0qbwUObfSvWpp8Akg5Cp2+Oj+GGImxW6qjAQ4ANkzVkpWrLeks
+        +d1B5zDqg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gYxZw-0003iV-Ar; Mon, 17 Dec 2018 18:25:20 +0000
+Date:   Mon, 17 Dec 2018 10:25:20 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] irqchip: sifive-plic: Pre-compute context hart
+ base and enable base
+Message-ID: <20181217182520.GB7086@infradead.org>
+References: <20181130080207.20505-1-anup@brainfault.org>
+ <20181130080207.20505-2-anup@brainfault.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181130080207.20505-2-anup@brainfault.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fe0937b24ff5d7b343b9922201e469f9a6009d9d
-Gitweb:     https://git.kernel.org/tip/fe0937b24ff5d7b343b9922201e469f9a6009d9d
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 3 Dec 2018 18:03:51 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 18:54:28 +0100
+On Fri, Nov 30, 2018 at 01:32:02PM +0530, Anup Patel wrote:
+> This patch does following optimizations:
+> 1. Pre-compute hart base for each context handler
+> 2. Pre-compute enable base for each context handler
+> 3. Have enable lock for each context handler instead
+> of global plic_toggle_lock
 
-x86/mm/cpa: Fold cpa_flush_range() and cpa_flush_array() into a single cpa_flush() function
-
-Note that the cache flush loop in cpa_flush_*() is identical when we
-use __cpa_addr(); further observe that flush_tlb_kernel_range() is a
-special case of to the cpa_flush_array() TLB invalidation code.
-
-This then means the two functions are virtually identical. Fold these
-two functions into a single cpa_flush() call.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom.StDenis@amd.com
-Cc: dave.hansen@intel.com
-Link: http://lkml.kernel.org/r/20181203171043.559855600@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/pageattr.c | 92 ++++++++++----------------------------------------
- 1 file changed, 18 insertions(+), 74 deletions(-)
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 12b69263e501..85ef53b86fa0 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -304,51 +304,7 @@ static void cpa_flush_all(unsigned long cache)
- 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
- }
- 
--static bool __inv_flush_all(int cache)
--{
--	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
--
--	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
--		cpa_flush_all(cache);
--		return true;
--	}
--
--	return false;
--}
--
--static void cpa_flush_range(unsigned long start, int numpages, int cache)
--{
--	unsigned int i, level;
--	unsigned long addr;
--
--	WARN_ON(PAGE_ALIGN(start) != start);
--
--	if (__inv_flush_all(cache))
--		return;
--
--	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
--
--	if (!cache)
--		return;
--
--	/*
--	 * We only need to flush on one CPU,
--	 * clflush is a MESI-coherent instruction that
--	 * will cause all other CPUs to flush the same
--	 * cachelines:
--	 */
--	for (i = 0, addr = start; i < numpages; i++, addr += PAGE_SIZE) {
--		pte_t *pte = lookup_address(addr, &level);
--
--		/*
--		 * Only flush present addresses:
--		 */
--		if (pte && (pte_val(*pte) & _PAGE_PRESENT))
--			clflush_cache_range((void *) addr, PAGE_SIZE);
--	}
--}
--
--void __cpa_flush_array(void *data)
-+void __cpa_flush_tlb(void *data)
- {
- 	struct cpa_data *cpa = data;
- 	unsigned int i;
-@@ -357,33 +313,31 @@ void __cpa_flush_array(void *data)
- 		__flush_tlb_one_kernel(__cpa_addr(cpa, i));
- }
- 
--static void cpa_flush_array(struct cpa_data *cpa, int cache)
-+static void cpa_flush(struct cpa_data *data, int cache)
- {
-+	struct cpa_data *cpa = data;
- 	unsigned int i;
- 
--	if (cpa_check_flush_all(cache))
-+	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
-+
-+	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
-+		cpa_flush_all(cache);
- 		return;
-+	}
- 
- 	if (cpa->numpages <= tlb_single_page_flush_ceiling)
--		on_each_cpu(__cpa_flush_array, cpa, 1);
-+		on_each_cpu(__cpa_flush_tlb, cpa, 1);
- 	else
- 		flush_tlb_all();
- 
- 	if (!cache)
- 		return;
- 
--	/*
--	 * We only need to flush on one CPU,
--	 * clflush is a MESI-coherent instruction that
--	 * will cause all other CPUs to flush the same
--	 * cachelines:
--	 */
- 	for (i = 0; i < cpa->numpages; i++) {
- 		unsigned long addr = __cpa_addr(cpa, i);
- 		unsigned int level;
--		pte_t *pte;
- 
--		pte = lookup_address(addr, &level);
-+		pte_t *pte = lookup_address(addr, &level);
- 
- 		/*
- 		 * Only flush present addresses:
-@@ -1698,7 +1652,6 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
- {
- 	struct cpa_data cpa;
- 	int ret, cache, checkalias;
--	unsigned long baddr = 0;
- 
- 	memset(&cpa, 0, sizeof(cpa));
- 
-@@ -1732,11 +1685,6 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
- 			 */
- 			WARN_ON_ONCE(1);
- 		}
--		/*
--		 * Save address for cache flush. *addr is modified in the call
--		 * to __change_page_attr_set_clr() below.
--		 */
--		baddr = make_addr_canonical_again(*addr);
- 	}
- 
- 	/* Must avoid aliasing mappings in the highmem code */
-@@ -1784,11 +1732,7 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
- 		goto out;
- 	}
- 
--	if (cpa.flags & (CPA_PAGES_ARRAY | CPA_ARRAY))
--		cpa_flush_array(&cpa, cache);
--	else
--		cpa_flush_range(baddr, numpages, cache);
--
-+	cpa_flush(&cpa, cache);
- out:
- 	return ret;
- }
-@@ -2097,18 +2041,18 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
- 	/*
- 	 * Before changing the encryption attribute, we need to flush caches.
- 	 */
--	cpa_flush_range(addr, numpages, 1);
-+	cpa_flush(&cpa, 1);
- 
- 	ret = __change_page_attr_set_clr(&cpa, 1);
- 
- 	/*
--	 * After changing the encryption attribute, we need to flush TLBs
--	 * again in case any speculative TLB caching occurred (but no need
--	 * to flush caches again).  We could just use cpa_flush_all(), but
--	 * in case TLB flushing gets optimized in the cpa_flush_range()
--	 * path use the same logic as above.
-+	 * After changing the encryption attribute, we need to flush TLBs again
-+	 * in case any speculative TLB caching occurred (but no need to flush
-+	 * caches again).  We could just use cpa_flush_all(), but in case TLB
-+	 * flushing gets optimized in the cpa_flush() path use the same logic
-+	 * as above.
- 	 */
--	cpa_flush_range(addr, numpages, 0);
-+	cpa_flush(&cpa, 0);
- 
- 	return ret;
- }
+All of which is pretty obvious from reading the patch.  The big question
+that needs to be answered in the changelog is why you do that.
