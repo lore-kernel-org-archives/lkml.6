@@ -2,105 +2,130 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862FEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A804CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54322217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7687A20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:02:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R6qYykyD"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iqtCUAhm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731446AbeLQGB5 (ORCPT
+        id S1731468AbeLQGCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 01:01:57 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47556 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbeLQGB4 (ORCPT
+        Mon, 17 Dec 2018 01:02:51 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53866 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeLQGCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 01:01:56 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBH61tAV093951;
-        Mon, 17 Dec 2018 00:01:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545026515;
-        bh=AqLnCKPttMMoVBVoWmkxLk6XSMtMBNQrUYiUrZ36+ys=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=R6qYykyDDj/REs7GlcL3eIimzjturCvnphdC8NJ+QB3YEDc0muGD8n9hTO0LOppk5
-         JjyiX7RAPUmq+3R+nbHSEQ3jiugP46xoR6U4QCFUNOYBIPg0Ljv7LEQbOwHHFLqT6y
-         28NHiXLOIbyWexP/N8VlG38nPy6mrpeDQPR6YgTo=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBH61tdS094274
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Dec 2018 00:01:55 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 17
- Dec 2018 00:01:55 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 17 Dec 2018 00:01:55 -0600
-Received: from [172.22.216.133] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBH61pjP020195;
-        Mon, 17 Dec 2018 00:01:53 -0600
-Subject: Re: [PATCH] tps65218.c: fix IRQ resource leak in tps65218_probe()
-To:     Lee Jones <lee.jones@linaro.org>,
-        Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-References: <1544090279-26762-1-git-send-email-Christian.Hohnstaedt@wago.com>
- <20181214122559.GV4497@dell> <20181214122619.GW4497@dell>
-From:   "J, KEERTHY" <j-keerthy@ti.com>
-Message-ID: <f584aab6-374c-5a53-51c5-61098f8bb792@ti.com>
-Date:   Mon, 17 Dec 2018 11:31:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 17 Dec 2018 01:02:50 -0500
+Received: from localhost.localdomain (unknown [96.44.9.229])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4A54A59;
+        Mon, 17 Dec 2018 07:02:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1545026568;
+        bh=0OOX/rzescZnJqqMIxSzABXvBip+rdAQFRVSoOgbO/c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iqtCUAhmXB5oMqfieJEgp5e1WSqLTZhIOzUpEL4YL1sE5PKNThweTLxL65bXpBizb
+         CAjbIgyyVAW1LEKkSUiKlvzbk34JyFQGc2YTWxIgMFiL7O9Srs8DeMlkHQAdVqZrwO
+         Zl5QbKBivQAmCQT5jChXpKJCkrumLy9evLanPqTo=
+From:   Paul Elder <paul.elder@ideasonboard.com>
+To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
+        stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] usb: gadget: add mechanism to asynchronously validate data stage of ctrl out request
+Date:   Mon, 17 Dec 2018 01:02:10 -0500
+Message-Id: <20181217060216.26368-1-paul.elder@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20181214122619.GW4497@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series adds a mechanism to allow asynchronously validating
+the data stage of a control OUT request, and for stalling or suceeding
+the request accordingly. This mechanism is implemented for MUSB, and is
+used by UVC. At the same time, UVC packages the setup stage and data
+stage data together to send to userspace to save on a pair of context
+switches per control out request.
 
+This patch series does change the userspace API. We however believe that
+it is justified because the current API is broken, and because it isn't
+being used (because it's broken).
 
-On 12/14/2018 5:56 PM, Lee Jones wrote:
-> On Fri, 14 Dec 2018, Lee Jones wrote:
-> 
->> On Thu, 06 Dec 2018, Christian Hohnstaedt wrote:
->>
->>> Free allocated IRQ if reading the device ID fails.
->>
->> The patch is fine.  However, in future please submit patches using the
->> format set (by precedent) by the subsystem.  I will fix the subject
->> for you this time.
->>
->> To check the format, you can do:
->>
->>    `git log --oneline -- <subsystem>`
-> 
-> Patch applied, by the way.
+The current API is broken such that it is subject to race conditions
+that cause fatal errors with a high frequency. This is actually what
+motivated this patch series in the first place. In the current API, not
+only is there no way to asynchronously validate the data stage of a
+control OUT request, but an empty buffer is expected to be provided to
+hold the data stage data -- which is more likely than not to be late.
+There is even a warning in musb_g_ep0_queue:
 
-This would no longer be needed as the bigger clean up is here:
+/* else for sequence #2 (OUT), caller provides a buffer
+ * before the next packet arrives.  deferred responses
+ * (after SETUP is acked) are racey.
+ */
 
-https://lkml.org/lkml/2018/12/9/86
+This problem has never been reported in years, which is a sign that the
+API isn't used. Furthermore, the vendor kernels that we have seen using
+the UVC gadget driver (such as QC and Huawei) are heavily patched with
+local changes to the API. This corroborates the suspicion that the
+current mainline API is not being used.
 
-As both are applied it results in a compilation issue.
+Additionally, this API isn't meant to be used by generic applications,
+but by a dedicated userspace helper. uvc-gadget is one such example, but
+it has bitrotten and isn't compatible with the current kernel API. The
+fact that nobody has submitted patches nor complained for a long time
+again shows that it isn't being used.
 
-Lee Jones,
+The conclusion is that since the API hasn't been used for a long time,
+it is safe to fix it.
 
-Do you want me to submit a fix patch? Or you can revert this patch?
-Anything fine by me.
+Changes in v2:
 
-Let me know.
+Overhaul of status stage delay mechanism/API. Now if a function driver
+desires an explicit/delayed status stage, it specifies so in a flag in
+the usb_request that is queued for the data stage. The function driver
+later enqueues another usb_request for the status stage, also with the
+explicit_status flag set, and with the zero flag acting as the status.
+If a function driver does not desire an explicit status stage, then it
+can set (or ignore) the explicit_status flag in the usb_request that
+is queued for the data stage.
 
-Thanks,
-Keerthy
-> 
+To allow the optional explicit status stage, a UDC driver should call
+the newly added usb_gadget_control_complete right after
+usb_gadget_giveback_request, and in its queue function should check if
+the usb_request is for the status stage and if it has been requested to
+be explicit, and if so check the status that should be sent. (See 5/6
+"usb: musb: gadget: implement optional explicit status stage" for an
+implementation for MUSB)
+
+Paul Elder (6):
+  usb: uvc: include videodev2.h in g_uvc.h
+  usb: gadget: uvc: enqueue usb request in setup handler for control OUT
+  usb: gadget: uvc: package setup and data for control OUT requests
+  usb: gadget: add mechanism to specify an explicit status stage
+  usb: musb: gadget: implement optional explicit status stage
+  usb: gadget: uvc: allow ioctl to send response in status stage
+
+ drivers/usb/gadget/function/f_uvc.c    | 32 ++++++++++++++++++-------
+ drivers/usb/gadget/function/uvc.h      |  1 +
+ drivers/usb/gadget/function/uvc_v4l2.c | 20 ++++++++++++++++
+ drivers/usb/gadget/udc/core.c          | 33 ++++++++++++++++++++++++++
+ drivers/usb/musb/musb_gadget.c         |  1 +
+ drivers/usb/musb/musb_gadget_ep0.c     | 28 ++++++++++++++++++++++
+ include/linux/usb/gadget.h             | 10 ++++++++
+ include/uapi/linux/usb/g_uvc.h         |  4 +++-
+ 8 files changed, 120 insertions(+), 9 deletions(-)
+
+-- 
+2.19.2
+
