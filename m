@@ -2,171 +2,271 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15BBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F35C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8958320874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHCJW2xJ"
+	by mail.kernel.org (Postfix) with ESMTP id 0768C20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389251AbeLQSum (ORCPT
+        id S1732192AbeLQSzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:50:42 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43154 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733216AbeLQSul (ORCPT
+        Mon, 17 Dec 2018 13:55:20 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:59500 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728163AbeLQSzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:50:41 -0500
-Received: by mail-qt1-f194.google.com with SMTP id i7so15271239qtj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:50:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IfIvJIC3raK4elOnbWTRrM6e7WEtzAL+9UOrTsakOjY=;
-        b=CHCJW2xJmqTkw7l+NbgbyD+oHO4cSeGbUvWqtrISdReE8mkzv2Flo5JX3AJdpJUU+i
-         QnkMIMKxteeTOxlia3cnnoG3aW8iIOxCIoRZFD2YJ5NIH1/DC57M+FjkDbpmu0H+kP7k
-         XaiVVJ5Zcvfv72MZ33xg8/EIp6vU06Vxm5VXE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IfIvJIC3raK4elOnbWTRrM6e7WEtzAL+9UOrTsakOjY=;
-        b=tqmA8uSR0/BZdB1STuV83ck/Iy5siM+LsAZM2RMbVHqKyzKDR8AaH858U8btDKJWmg
-         fqO0QWJxTIbmvM4ndEylRh/Za7Wn/0owt5VcugMvOWYFyaWdsGVaXvEbFkNjXRRrGHzI
-         bC5scuwbmWXsm7mtxgwOhjLoGwq6L6qcx0J8U/tnLHLwpRc+iwDZjbH/OUSsHXq49r76
-         pPLV4KPf8OtW6gL4SFXNvt88JF51q9vl8r0SyOtQV3QjUcBDc9vgsS9rX0ksGj16+emQ
-         U8nqVDrMVjQqUY5dRZINd9ehrrizp/YYvoumKJNS1rGCO/3Co75ShaPk534YRVDD5MlY
-         F5aA==
-X-Gm-Message-State: AA+aEWa6m3pNRDpgDWjY31QAXaETJwOxE3ljC+VL6IsKtH6HWXpH4Vc5
-        x/2M6/L0GCyEEKwALdY0sWX8f6XDuLTbz9snVNDTfA==
-X-Google-Smtp-Source: AFSGD/VUE0lsnwTvhpiIFqp1ETiHNQr9yS2noDdzST+hW4A8n1LFGYgcf1VbBaG2pZB+Uls7vpbSeiV3A0ICWJ4+nzo=
-X-Received: by 2002:ac8:203:: with SMTP id k3mr15019645qtg.64.1545072640286;
- Mon, 17 Dec 2018 10:50:40 -0800 (PST)
+        Mon, 17 Dec 2018 13:55:19 -0500
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id D6vD1z00R3XaVaC016vDK1; Mon, 17 Dec 2018 19:55:16 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gYy2r-00045Q-D1; Mon, 17 Dec 2018 19:55:13 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gYy2r-0005zV-Ai; Mon, 17 Dec 2018 19:55:13 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Trond Myklebust <trondmy@hammerspace.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-nfs@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
+Date:   Mon, 17 Dec 2018 19:55:06 +0100
+Message-Id: <20181217185506.22976-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <f322eb9ee0cac75f98d188b46843c2df00485f35.camel@hammerspace.com>
+References: <f322eb9ee0cac75f98d188b46843c2df00485f35.camel@hammerspace.com>
 MIME-Version: 1.0
-References: <cover.1545063166.git.amit.kucheria@linaro.org>
- <ced6f6be01195e706ded5548897ff72503780146.1545063166.git.amit.kucheria@linaro.org>
- <d45ce5f7612ef579a9bc687bab4339f27ee35660.camel@perches.com>
-In-Reply-To: <d45ce5f7612ef579a9bc687bab4339f27ee35660.camel@perches.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Tue, 18 Dec 2018 00:20:28 +0530
-Message-ID: <CAP245DWOSoZ4qXQ-CgUPdRQhHyg6X_7i9h0ctwafGXYS2yZLZQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] MAINTAINERS: update list of qcom drivers
-To:     joe@perches.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>, marc.w.gonzalez@free.fr,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        nicolas.ferre@microchip.com, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:51 PM Joe Perches <joe@perches.com> wrote:
->
-> On Mon, 2018-12-17 at 21:49 +0530, Amit Kucheria wrote:
-> > Several drivers didn't have a specific maintainer (other than the
-> > subsystem maintainer). Switch to using the 'qcom' and 'msm' regex
-> > patterns to capture all of them and add exceptions to the couple of
-> > drivers that contain 'msm' but are not related to qcom hardware.
+	Hi Trond,
+
+(For the newly added CCs, first message was
+https://lore.kernel.org/lkml/CAMuHMdVJr0PwvJg3FeTCy7vxuyY1=S1tPLHO7hPsoZX4wZ+-cQ@mail.gmail.com/)
+
+> On Mon, Dec 17, 2018 at 3:51 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
+> > On Mon, 2018-12-17 at 15:03 +0100, Geert Uytterhoeven wrote:
+> > > On Wed, Dec 5, 2018 at 3:47 PM Geert Uytterhoeven <
+> > > geert@linux-m68k.org> wrote:
+> > > > On Wed, Dec 5, 2018 at 2:45 PM Trond Myklebust <
+> > > > trondmy@hammerspace.com> wrote:
+> > > > > On Wed, 2018-12-05 at 14:41 +0100, Geert Uytterhoeven wrote:
+> > > > > > On Wed, Dec 5, 2018 at 2:11 PM Atsushi Nemoto <
+> > > > > > anemo@mba.ocn.ne.jp>
+> > > > > > wrote:
+> > > > > > > On Tue, 4 Dec 2018 14:53:07 +0100, Geert Uytterhoeven <
+> > > > > > > geert@linux-m68k.org> wrote:
+> > > > > > > > I found similar crashes in a report from 2006, but of
+> > > > > > > > course the
+> > > > > > > > code
+> > > > > > > > has changed too much to apply the solution proposed there
+> > > > > > > > (
+> > > > > > > > https://www.linux-mips.org/archives/linux-mips/2006-09/msg00169.html
+> > > > > > > > ).
+> > > > > > > >
+> > > > > > > > Userland is Debian 8 (the last release supporting "old"
+> > > > > > > > MIPS).
+> > > > > > > > My kernel is based on v4.20.0-rc5, but the issue happens
+> > > > > > > > with
+> > > > > > > > v4.20-rc1,
+> > > > > > > > too.
+> > > > > > > >
+> > > > > > > > However, I noticed it works in v4.19! Hence I've bisected
+> > > > > > > > this,
+> > > > > > > > to commit
+> > > > > > > > 277e4ab7d530bf28 ("SUNRPC: Simplify TCP receive code by
+> > > > > > > > switching
+> > > > > > > > to using
+> > > > > > > > iterators").
+> > > > > > > >
+> > > > > > > > Dropping the ",tcp" part from the nfsroot parameter also
+> > > > > > > > fixes
+> > > > > > > > the issue.
+> > > > > > > >
+> > > > > > > > Given RBTX4927 is little endian, just like my arm/arm64
+> > > > > > > > boards,
+> > > > > > > > it's probably
+> > > > > > > > not an endianness issue.  Sparse didn't show anything
+> > > > > > > > suspicious
+> > > > > > > > before/after
+> > > > > > > > the guilty commit.
+> > > > > > > >
+> > > > > > > > Do you have a clue?
+> > > > > > >
+> > > > > > > If it was a cache issue, disabling i-cache or d-cache
+> > > > > > > completely
+> > > > > > > might
+> > > > > > > help understanding the problem.  I added TXx9 specific
+> > > > > > > "icdisable"
+> > > > > > > and
+> > > > > > > "dcdisable" kernel options for debugging long ago.
+> > > > > > >
+> > > > > > > I hope these options still works correctly with recent kernel
+> > > > > > > but
+> > > > > > > not
+> > > > > > > sure.
+> > > > > > >
+> > > > > > > Also, disabling i-cache makes your board VERY slow, of
+> > > > > > > course.
+> > > > > >
+> > > > > > Thanks!
+> > > > > >
+> > > > > > When using these options, I do see a slowdown in early boot,
+> > > > > > but the
+> > > > > > issue
+> > > > > > is still there.
+> > > > > >
+> > > > > > My next guess is an unaligned access not using
+> > > > > > {get,put}_unaligned(),
+> > > > > > which
+> > > > > > doesn't seem to work on tx4927, but doesn't cause an exception
+> > > > > > neither.
+> > > > >
+> > > > > Can you try my linux-next branch on git.linux-nfs.org? It
+> > > > > contains a
+> > > > > fixes for a hang that results from the above commit.
+> > > > >
+> > > > > git pull git://git.linux-nfs.org/projects/trondmy/linux-nfs.git
+> > > > > linux-next
+> > > >
+> > > > Thanks for the suggestion, but unfortunately it doesn't help.
+> > >
+> > > In the mean time, I tried your newer linux-next, no change.
+> > > I tried several other things:
+> > >   - remove the packed attribute (why did you add that?),
 > >
-> > Thanks to Marc for the idea to use the N regex.
-> []
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> []
-> > @@ -1929,20 +1929,14 @@ M:    Andy Gross <andy.gross@linaro.org>
-> >  M:   David Brown <david.brown@linaro.org>
-> >  L:   linux-arm-msm@vger.kernel.org
-> >  S:   Maintained
-> > -F:   Documentation/devicetree/bindings/soc/qcom/
-> > -F:   arch/arm/boot/dts/qcom-*.dts
-> > -F:   arch/arm/boot/dts/qcom-*.dtsi
-> > -F:   arch/arm/mach-qcom/
-> > -F:   arch/arm64/boot/dts/qcom/*
-> > +N:   qcom
-> > +N:   msm
->
-> It is generally better to use a comprehensive list of F: patterns
-> over N: patterns as N: patterns are not used as properly maintained
-> entries for files matched by the get_maintainer.pl script.
+> > The packed attribute allows us to avoid a series of copy operations
+> > when decoding the first three elements of a RPC over TCP header (which
+> > is why they are all declared as big endian). The alternative would be
+> > to have a 12 byte buffer there for temporary storage, and then a
+> > duplicate set of 3 32-bit words into which we copy the buffer contents
+> > after extracting them from the (non-blocking) socket.
+> >
+> > >   - verify (at runtime) that all accesses to fraghdr, xid, and
+> > > calldir
+> > > are aligned,
+> > >   - enable RPC_DEBUG_DATA, nothing fishy seen at first sight.
+> > >
+> > > Is anyone else seeing this on MIPS, or any other platform?
+> > > Does mounting NFS with -o nfsvers=3,tcp work on other MIPS platforms?
+> >
+> > I have no access to any MIPS hardware for the purposes of testing so
+> > that would be a question for the community.
+> >
+> > One thing that I have noticed is that unlike the old code, the bvec
+> > 'generic' code does appear to fail to call flush_dcache_page(). Could
+> > that be causing the problem here? If so, why would that not be a
+> > problem in the context of regular block I/O?
 
-I did start with something like the following before the suggestion to use N:
+Thanks for the hint!
 
-diff --git i/MAINTAINERS w/MAINTAINERS
-index 3318f30903b2..a04479053570 100644
---- i/MAINTAINERS
-+++ w/MAINTAINERS
-@@ -1930,16 +1930,38 @@ M: David Brown <david.brown@linaro.org>
- L: linux-arm-msm@vger.kernel.org
- S: Maintained
- F: Documentation/devicetree/bindings/soc/qcom/
-+F: Documentation/devicetree/bindings/*/qcom*
- F: arch/arm/boot/dts/qcom-*.dts
- F: arch/arm/boot/dts/qcom-*.dtsi
- F: arch/arm/mach-qcom/
- F: arch/arm64/boot/dts/qcom/*
-+F: drivers/edac/qcom*
-+F: drivers/firmware/qcom*
-+F: drivers/iio/adc/qcom*
-+F: drivers/iommu/qcom*
- F: drivers/i2c/busses/i2c-qup.c
-+F: drivers/irqchip/qcom*
-+F: drivers/cpufreq/qcom*
- F: drivers/clk/qcom/
-+F: drivers/crypto/qcom-*
- F: drivers/dma/qcom/
-+F: drivers/hwspinlock/qcom_*
-+F: drivers/media/platform/qcom/
-+F: drivers/mfd/qcom-*
-+F: drivers/mailbox/qcom-*
-+F: drivers/misc/qcom-*
-+F: drivers/mtd/*/qcom*
-+F: drivers/perf/qcom*
-+F: drivers/power/*/qcom*
-+F: drivers/regulator/qcom*
-+F: drivers/remoteproc/qcom*
-+F: drivers/rpmsg/qcom*
-+F: drivers/slimbus/qcom*
- F: drivers/soc/qcom/
- F: drivers/spi/spi-qup.c
- F: drivers/tty/serial/msm_serial.c
-+F: drivers/tty/serial/qcom*
-+F: drivers/watchdog/qcom*
- F: drivers/*/pm8???-*
- F: drivers/mfd/ssbi.c
- F: drivers/firmware/qcom_scm*
+It wasn't clear to me where exactly the old code called
+flush_dcache_page(), but as rpcrdma_inline_fixup() calls it in between
+copying to a page, and unmapping the page, I added a call to
+flush_dcache_page() to all functions in lib/iov_iter.c that map a page
+and copy to it, cfr. the patch below.
 
-> git history is used by default for the N: entries and that can
-> cause whitespace style commit authors to be cc'd on various changes
-> to matched files.
+And suddenly NFS root over TCP is working again!
 
-Is that by design? Or can we fix get_maintainer.pl to be less
-sensitive to whitespace authorship?
+Note that I have no idea if it affects regular block I/O, as my RBTX4927
+does not have block devices.
 
-> Also msm is a pretty common filename pattern and the X: exclusions
-> for various matching but not associated files might need to be added
-> to quite often.
->
-> From MAINTAINERS:
->
->         N: Files and directories with regex patterns.
->            N:   [^a-z]tegra     all files whose path contains the word tegra
->            One pattern per line.  Multiple N: lines acceptable.
->            scripts/get_maintainer.pl has different behavior for files that
->            match F: pattern and matches of N: patterns.  By default,
->            get_maintainer will not look at git log history when an F: pattern
->            match occurs.  When an N: match occurs, git log history is used
->            to also notify the people that have git commit signatures.
->
->
+Also note that this platform does not use highmem.
+
+So, where's the proper place to fix this?
+Thanks in advance!
+
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 54c248526b55fc49..5be62db33414d3f9 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -277,6 +277,7 @@ static size_t copy_page_from_iter_iovec(struct page *page, size_t offset, size_t
+ 			to += copy;
+ 			bytes -= copy;
+ 		}
++		flush_dcache_page(page);
+ 		if (likely(!bytes)) {
+ 			kunmap_atomic(kaddr);
+ 			goto done;
+@@ -463,6 +464,7 @@ static void memcpy_to_page(struct page *page, size_t offset, const char *from, s
+ {
+ 	char *to = kmap_atomic(page);
+ 	memcpy(to + offset, from, len);
++	flush_dcache_page(page);
+ 	kunmap_atomic(to);
+ }
+ 
+@@ -470,6 +472,7 @@ static void memzero_page(struct page *page, size_t offset, size_t len)
+ {
+ 	char *addr = kmap_atomic(page);
+ 	memset(addr + offset, 0, len);
++	flush_dcache_page(page);
+ 	kunmap_atomic(addr);
+ }
+ 
+@@ -580,6 +583,7 @@ static size_t csum_and_copy_to_pipe_iter(const void *addr, size_t bytes,
+ 		char *p = kmap_atomic(pipe->bufs[idx].page);
+ 		next = csum_partial_copy_nocheck(addr, p + r, chunk, 0);
+ 		sum = csum_block_add(sum, next, off);
++		flush_dcache_page(pipe->bufs[idx].page);
+ 		kunmap_atomic(p);
+ 		i->idx = idx;
+ 		i->iov_offset = r + chunk;
+@@ -628,6 +632,7 @@ static unsigned long memcpy_mcsafe_to_page(struct page *page, size_t offset,
+ 
+ 	to = kmap_atomic(page);
+ 	ret = memcpy_mcsafe(to + offset, from, len);
++	flush_dcache_page(page);
+ 	kunmap_atomic(to);
+ 
+ 	return ret;
+@@ -894,6 +899,7 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+ 	if (i->type & (ITER_BVEC|ITER_KVEC)) {
+ 		void *kaddr = kmap_atomic(page);
+ 		size_t wanted = _copy_from_iter(kaddr + offset, bytes, i);
++		flush_dcache_page(page);
+ 		kunmap_atomic(kaddr);
+ 		return wanted;
+ 	} else
+@@ -958,6 +964,7 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
+ 				 v.bv_offset, v.bv_len),
+ 		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
+ 	)
++	flush_dcache_page(page);
+ 	kunmap_atomic(kaddr);
+ 	return bytes;
+ }
+@@ -1494,6 +1501,7 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, __wsum *csum,
+ 		next = csum_partial_copy_nocheck((from += v.bv_len) - v.bv_len,
+ 						 p + v.bv_offset,
+ 						 v.bv_len, 0);
++		flush_dcache_page(v.bv_page);
+ 		kunmap_atomic(p);
+ 		sum = csum_block_add(sum, next, off);
+ 		off += v.bv_len;
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
