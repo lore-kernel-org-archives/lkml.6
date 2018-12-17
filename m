@@ -2,200 +2,134 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C78DC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E61C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F6962133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:23:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sDWWZi0O"
+	by mail.kernel.org (Postfix) with ESMTP id BC2EF2146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732804AbeLQNXe (ORCPT
+        id S1732826AbeLQNYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:23:34 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55823 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732643AbeLQNXe (ORCPT
+        Mon, 17 Dec 2018 08:24:03 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46374 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732530AbeLQNYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:23:34 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so12265257wmc.5;
-        Mon, 17 Dec 2018 05:23:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=o3RKV7a8GfhZBO/bLHPEQHHeePg/FOEC7DCrDXnsRi4=;
-        b=sDWWZi0O2B6Ch+l6acCNEUSIr0xHea6aGXQ7W5gHnID/eGHbByNkFu9KncGa5A9SKo
-         jRzpT8sBt+xGBanO9V6hfMmenrpycwd82adP42rrqUQZ0630TeUhlXcyAHzph/F29NzT
-         2Z2o8Ang6TSwHMRLYQRb5enfY+LMkS0IN9KnUN/X7ZEaOw4nQ4zM+PRlf+OY8a+2wUYx
-         lzC5tARN63kd2w67S5dwRsSnmbcjnMPLefHF7tR9zVNDBt/USBxPRscWDelJSct1mHm6
-         JpSF3QNnhXciU0e7ZvlFHaKl9D1DlHhVJPnwlVKiMHrjfDQG7NQDzQq+79qx8vuLpy3B
-         q7gQ==
+        Mon, 17 Dec 2018 08:24:02 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y20so13930324qtm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 05:24:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=o3RKV7a8GfhZBO/bLHPEQHHeePg/FOEC7DCrDXnsRi4=;
-        b=TW1eahWlH28RMBU+LHLLX9L0IKFARXPPK+8XuZAY70r+w+a5jwi+RqAf85ZykQYIjs
-         ILKcIK10/IWrTUsEYQFVsmjIOGw6HlGAMx7SfX2JaCSPQIoSwOx3BdVx7XQKgea0PqY0
-         UcheEuAioL9MuWAWz9huEa/r9N0ZBY9vZJRtmPlgFElOiB6odX/PRJBaicurMGHCqUpe
-         OdvR72/KfPP2TkebHckAP1NA3FBp5CICjvyR4E3k9yPXc6Ybxd+uSXv1fI62GdPZq+M8
-         vVPoky4G73e8yrq9eQMFAIMffuz2tHTPrbu/CL3CycFcUEnuGwz5xWRUnom8Cj9Uagyt
-         zItw==
-X-Gm-Message-State: AA+aEWaZRMVnY7tkn8ToguBHCAK9g1Tl3EIuVX8exw/0hrY7jfVBzrYZ
-        YO9F3LUqT2FYqRaBIjKX++k=
-X-Google-Smtp-Source: AFSGD/XpYLCpZqCdu/rJbiqlAIIo0XqyDblAkAVlhKuUHTFDy1lDYPveNFc54jS3Eo9TTo0a5MWT6Q==
-X-Received: by 2002:a1c:8d49:: with SMTP id p70mr12403337wmd.68.1545053011631;
-        Mon, 17 Dec 2018 05:23:31 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id z17sm332895wrv.2.2018.12.17.05.23.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 05:23:30 -0800 (PST)
-Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     masonccyang@mxic.com.tw,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
-References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
- <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
- <557c8114-2819-7be3-21b8-02918aa89c04@cogentembedded.com>
- <OFAE786891.A102E46D-ON48258366.002779D7-48258366.002A5C36@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <a4c18176-783b-70db-4668-31cc332705a7@gmail.com>
-Date:   Mon, 17 Dec 2018 14:23:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uOv5Io6KYEbf8p+mXxSQp+4uYFaT+3H5awjSceyRG6Q=;
+        b=sreIH71RTDik1ihPepqCoQnIbfyO5yv6lDA+wPa4YhZycrEhSvLWnoC2aqoh3Zh+h2
+         nC5hEpO9Z+5ZlN+A+rXI7cXyAXyd25VspB9M8rgno4xDVNfN5em0Uo5XabidbFcSLd1t
+         Er/+dhJzVlJVrR2pjjN5hSv1f7O3RqEaXlWLSU+/Klny+HOne2oZL0LQ8gKQuve3zhn4
+         SeYecQAgBY15eYqy0kHMZKL+vT2QMCnwJEgi9akkl9Hg+Km96u/K43BF9WyWhvP2ib9b
+         6zzgC8YOteEd0lft0v3B9VA0jXJetfNxnaIVpAyfVrrvlDGfg9jKS7GGmig90q95slFZ
+         vfVA==
+X-Gm-Message-State: AA+aEWYPW94kUch1SmaNMNxyO8YI6PFXgpvBLVpUlyugaaK1zal+gbQ6
+        rBSiSvGfv3g5+aeXwFoSoHL5H34w02kSU0sHvoGFCg==
+X-Google-Smtp-Source: AFSGD/XTnsKbZaWpv0Yli+zb5W9+2r30aXlnZ3F9Rz5twLtXoTQNpGd7CmfgSwmqZd5hsDGoIazFWYgw653A2KzjNtE=
+X-Received: by 2002:a0c:96c9:: with SMTP id b9mr12454644qvd.238.1545053041470;
+ Mon, 17 Dec 2018 05:24:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <OFAE786891.A102E46D-ON48258366.002779D7-48258366.002A5C36@mxic.com.tw>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181216155319.GA17189@arks.localdomain>
+In-Reply-To: <20181216155319.GA17189@arks.localdomain>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 17 Dec 2018 14:23:49 +0100
+Message-ID: <CAO-hwJ+L_D98q5byOvYFiOxYgFEgJZ8s2xTe3Mb7R2UW8mhyOQ@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: asus: Add support for the ASUS T101HA keyboard dock
+To:     kernelrocks@gmail.com
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, mbrugger@suse.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/2018 08:42 AM, masonccyang@mxic.com.tw wrote:
-> Hi Sergei,
-> 
-> 
->> > +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
->> > +            const void *tx_buf, void *rx_buf)
->> > +{
->> > +   u32 smenr, smcr, data, pos = 0;
->> > +   int ret = 0;
->> > +
->> > +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
->> > +              RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
->> > +              RPC_CMNCR_BSZ(0));
->> > +   regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
->> > +   regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
->> > +   regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
->> > +   regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
->> > +
->> > +   if (tx_buf) {
->> > +      smenr = rpc->smenr;
->> > +
->> > +      while (pos < rpc->xferlen) {
->> > +         u32 nbytes = rpc->xferlen  - pos;
->> > +
->> > +         regmap_write(rpc->regmap, RPC_SMWDR0,
->> > +                 get_unaligned((u32 *)(tx_buf + pos)));
->> > +
->> > +         if (nbytes > 4) {
->> > +            nbytes = 4;
->> > +            smcr = rpc->smcr |
->> > +                   RPC_SMCR_SPIE | RPC_SMCR_SSLKP;
->> > +         } else {
->> > +            smcr = rpc->smcr | RPC_SMCR_SPIE;
->> > +         }
->> > +
->> > +         regmap_write(rpc->regmap, RPC_SMENR, smenr);
->> > +         regmap_write(rpc->regmap, RPC_SMCR, smcr);
->> > +         ret = wait_msg_xfer_end(rpc);
->> > +         if (ret)
->> > +            goto out;
->> > +
->> > +         pos += nbytes;
->> > +         smenr = rpc->smenr & ~RPC_SMENR_CDE &
->> > +                    ~RPC_SMENR_ADE(0xf);
->> > +      }
->> > +   } else if (rx_buf) {
->> > +      while (pos < rpc->xferlen) {
->> > +         u32 nbytes = rpc->xferlen  - pos;
->> > +
->> > +         if (nbytes > 4)
->> > +            nbytes = 4;
->> > +
->> > +         regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
->> > +         regmap_write(rpc->regmap, RPC_SMCR,
->> > +                 rpc->smcr | RPC_SMCR_SPIE);
->>
->>    Hm... our flash chip (Spansion S25FS512S) doesn't get detected; it
-> sends
->> JEDEC ID bytes 0..3 repeatedly, unless I copy the SSLKP logic from the
-> writing
->> branch above...
-> 
-> Do you switch the SW1, SW2, SW3, SW13, SW31 and SW10 to on-board QSPI
-> mode ?
-> Because R-Car D3 Draak board default is booting from HyperFlsah.
+On Sun, Dec 16, 2018 at 4:52 PM Aleix Roca Nonell <kernelrocks@gmail.com> wrote:
+>
+> The ASUS T101HA keyboard dock generates HID events using the ASUS vendor
+> specific UsagePage 0xff31. In consequence, some multimedia keys such as
+> brightness up and down are not working with hid-generic.
+>
+> This commit adds the T101HA dock into the supported device list of the
+> hid-asus driver. It also prevents the dock's integrated touchpad to be
+> bound with hid-asus given that it is already working fine with
+> hid-multitouch.
+>
+> Signed-off-by: Aleix Roca Nonell <kernelrocks@gmail.com>
+> ---
+>
+> Changes in v2:
+> - use the report descriptor's application usage to identify the dock's
+>   touchpad instead of the usb interface id
 
-So this puts us back to the original discussion -- the driver should
-support HF mode as well IMO.
+Thanks for the quick respin.
 
-> what follows is my booting log, FYI.
-> ------------------------------------------------------------------
-> [    1.625053] m25p80 spi5.0: s25fl129p1 (16384 Kbytes)
-> [    1.634391] 12 fixed-partitions partitions found on MTD device spi5.0
-> [    1.642198] Creating 12 MTD partitions on "spi5.0":
-> [    1.647598] 0x000000000000-0x000000040000 : "Bank 1 - Boot parameter"
-> [    1.660893] 0x000000040000-0x000000180000 : "Bank 1 - Loader-BL2"
-> [    1.671287] 0x000000180000-0x0000001c0000 : "Bank 1 - Certification"
-> -----------------------------------------------------------------------
-> 
->>
->> > +         ret = wait_msg_xfer_end(rpc);
->> > +         if (ret)
->> > +            goto out;
->> > +
->> > +         regmap_read(rpc->regmap, RPC_SMRDR0, &data);
->> > +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
->> > +         pos += nbytes;
->>
->>    ... and it skips byte 4 unless I copy the code from the end of the
-> writing
->> branch, clearing CDE/ADE. But even then the byte 4 reads as 0x03
-> instead of 0.
-> 
-> yup, I think this is some kind of RPC HW limitation,
-> in RPC manual I/O mode, it only could read 4 bytes data w/ one command.
-> 
-> That is, one command + read 4 bytes data + read 4 bytes data + read 4
-> bytes data + ...
-> will get the incorrect data.
-> 
-> That's why RPC in manual I/O mode, driver only could do,
-> one command + read 4 bytes data; one command + read 4 bytes data and so on.
-> 
-> But RPC in external address space read mode(here we call it direct
-> mapping read mode)
-> is ok for one command + read 4 bytes data + read 4 bytes data + ....
+Pushed into 4.21/hid-asus.
 
-I think the U-Boot driver solves those problems, since it works in both
-RPC and HF mode on all of Gen3 boards , not just D3 in non-standard SPI
-boot configuration. Please take a look.
+Cheers,
+Benjamin
 
--- 
-Best regards,
-Marek Vasut
+>
+> drivers/hid/hid-asus.c | 8 ++++++++
+> drivers/hid/hid-ids.h  | 1 +
+> 2 files changed, 9 insertions(+)
+>
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index ab8bd40a77ed..951bb17ae8b2 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -70,6 +70,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>  #define QUIRK_T100_KEYBOARD            BIT(6)
+>  #define QUIRK_T100CHI                  BIT(7)
+>  #define QUIRK_G752_KEYBOARD            BIT(8)
+> +#define QUIRK_T101HA_DOCK              BIT(9)
+>
+>  #define I2C_KEYBOARD_QUIRKS                    (QUIRK_FIX_NOTEBOOK_REPORT | \
+>                                                  QUIRK_NO_INIT_REPORTS | \
+> @@ -699,6 +700,11 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>                 return ret;
+>         }
+>
+> +       /* use hid-multitouch for T101HA touchpad */
+> +       if (id->driver_data & QUIRK_T101HA_DOCK &&
+> +           hdev->collection->usage == HID_GD_MOUSE)
+> +               return -ENODEV;
+> +
+>         ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+>         if (ret) {
+>                 hid_err(hdev, "Asus hw start failed: %d\n", ret);
+> @@ -830,6 +836,8 @@ static const struct hid_device_id asus_devices[] = {
+>         { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>                 USB_DEVICE_ID_ASUSTEK_T100TAF_KEYBOARD),
+>           QUIRK_T100_KEYBOARD | QUIRK_NO_CONSUMER_USAGES },
+> +       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> +               USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD), QUIRK_T101HA_DOCK },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_ASUS_AK1D) },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_TURBOX, USB_DEVICE_ID_ASUS_MD_5110) },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_JESS, USB_DEVICE_ID_ASUS_MD_5112) },
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 4206428c0ba2..f1eee2778b70 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -184,6 +184,7 @@
+>  #define USB_DEVICE_ID_ASUSTEK_T100TA_KEYBOARD  0x17e0
+>  #define USB_DEVICE_ID_ASUSTEK_T100TAF_KEYBOARD 0x1807
+>  #define USB_DEVICE_ID_ASUSTEK_T100CHI_KEYBOARD 0x8502
+> +#define USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD  0x183d
+>  #define USB_DEVICE_ID_ASUSTEK_T304_KEYBOARD    0x184a
+>  #define USB_DEVICE_ID_ASUSTEK_I2C_KEYBOARD     0x8585
+>  #define USB_DEVICE_ID_ASUSTEK_I2C_TOUCHPAD     0x0101
+> --
+> 2.20.0
+>
