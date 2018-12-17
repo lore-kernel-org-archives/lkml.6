@@ -2,94 +2,189 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F880C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC57CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF50420874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:42:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcqPXBJN"
+	by mail.kernel.org (Postfix) with ESMTP id C385C2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:43:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732130AbeLQKmt (ORCPT
+        id S1732176AbeLQKn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:42:49 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42259 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbeLQKmt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:42:49 -0500
-Received: by mail-io1-f68.google.com with SMTP id x6so9599128ioa.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:42:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Da/nKj92LiTLzN6gmOjFat553E3Faps1ywC2IU+ZEuY=;
-        b=hcqPXBJNPp0cw3G3qIdDYDrTqI5e33m0PsPlNlh59Rx4G5v3B9zffIJDNXtYgMWKgd
-         eCDWB8nm1GIsRU61ArryN3fk4V59JXAu8GxEmscEG9ziLpJfFL9Qah3SmQNBNdeqIP7p
-         Si4mF0GCHe+ME8cg9bIrF0tDWc4wmOFvlS34w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Da/nKj92LiTLzN6gmOjFat553E3Faps1ywC2IU+ZEuY=;
-        b=TOOVZFjQgRoxTvxzP7HwvVuD/w+Eghpe/w7/xBGHcjd6PtX4QoxBsHMUnedAmqIq1S
-         5ZaHnRt5LLs9p5axnBU6k728B5RlQbwNWOdr0O2RcnhL5oaw4aKVPZ1egLpk78yb/DGm
-         tpikcnmO9onlEpcHU/HNz/q5ff9ojFrnxOvcq8JwTv6VaL19Ny0bPcCmCKdHwYJCO38f
-         OcOKw6ltfzx6KReQl855r48icHvnD4Enh9bX3NwBibBsAlW9+XX9NGt8w1yWyKe10V1a
-         50fQcDN+9jIZm176JlcGB1jwiFB236VSMt83q67lKufLcrzkR1+hS4Lxl0tnZR8KktMD
-         OEzA==
-X-Gm-Message-State: AA+aEWYRGz7vN72PsBsxsQels+JCUdHlrKC6neJtii6WlL6p2Z8UCzzj
-        C9f8gFBm8Uy6b+05lin5A5avlAPG+LPlGLjoIgJcdw==
-X-Google-Smtp-Source: AFSGD/W/CyGsIm3JnHJ8Dm/5ZX0mKF10fQWtRwEhQJPJkvan2c0DCuxa2C9sboIoz9FjOr9wQ2SB4txgIsaZYRbvjNA=
-X-Received: by 2002:a6b:6919:: with SMTP id e25mr10270672ioc.119.1545043368209;
- Mon, 17 Dec 2018 02:42:48 -0800 (PST)
+        Mon, 17 Dec 2018 05:43:26 -0500
+Received: from ozlabs.org ([203.11.71.1]:51325 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726706AbeLQKn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 05:43:26 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43JHn75cNrz9sBh;
+        Mon, 17 Dec 2018 21:43:23 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     frowand.list@gmail.com, robh+dt@kernel.org,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] of: of_node_get()/of_node_put() nodes held in phandle cache
+In-Reply-To: <1545033396-24485-2-git-send-email-frowand.list@gmail.com>
+References: <1545033396-24485-1-git-send-email-frowand.list@gmail.com> <1545033396-24485-2-git-send-email-frowand.list@gmail.com>
+Date:   Mon, 17 Dec 2018 21:43:19 +1100
+Message-ID: <874lbcv3g8.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-References: <1544691770-8938-1-git-send-email-firoz.khan@linaro.org>
- <20181217080846.GA28424@sathnaga86.in.ibm.com> <877eg8v40t.fsf@concordia.ellerman.id.au>
-In-Reply-To: <877eg8v40t.fsf@concordia.ellerman.id.au>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Mon, 17 Dec 2018 16:12:37 +0530
-Message-ID: <CALxhOnh5a86pBi4rD1YzhVGq7KPs56du9+G8vkt7zVAqbGkLEw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/5] powerpc: system call table generation support
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Breno Leitao <leitao@debian.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+Hi Frank,
 
-On Mon, 17 Dec 2018 at 16:01, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> No it's fine if it applies on next.
+frowand.list@gmail.com writes:
+> From: Frank Rowand <frank.rowand@sony.com>
 >
-> I can also fix up minor merge conflicts if there are any.
+> The phandle cache contains struct device_node pointers.  The refcount
+> of the pointers was not incremented while in the cache, allowing use
+> after free error after kfree() of the node.  Add the proper increment
+> and decrement of the use count.
+>
+> Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
 
-Ohh. I already rebased and sent v6.
+Can we also add:
 
-Thanks
-Firoz
+Cc: stable@vger.kernel.org # v4.17+
+
+
+This and the next patch solve WARN_ONs and other problems for us on some
+systems so I think they meet the criteria for a stable backport.
+
+Rest of the patch LGTM, I'm not able to test it unfortunately, I have to
+defer to mwb for that.
+
+cheers
+
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 09692c9b32a7..6c33d63361b8 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -116,9 +116,6 @@ int __weak of_node_to_nid(struct device_node *np)
+>  }
+>  #endif
+>  
+> -static struct device_node **phandle_cache;
+> -static u32 phandle_cache_mask;
+> -
+>  /*
+>   * Assumptions behind phandle_cache implementation:
+>   *   - phandle property values are in a contiguous range of 1..n
+> @@ -127,6 +124,44 @@ int __weak of_node_to_nid(struct device_node *np)
+>   *   - the phandle lookup overhead reduction provided by the cache
+>   *     will likely be less
+>   */
+> +
+> +static struct device_node **phandle_cache;
+> +static u32 phandle_cache_mask;
+> +
+> +/*
+> + * Caller must hold devtree_lock.
+> + */
+> +static void __of_free_phandle_cache(void)
+> +{
+> +	u32 cache_entries = phandle_cache_mask + 1;
+> +	u32 k;
+> +
+> +	if (!phandle_cache)
+> +		return;
+> +
+> +	for (k = 0; k < cache_entries; k++)
+> +		of_node_put(phandle_cache[k]);
+> +
+> +	kfree(phandle_cache);
+> +	phandle_cache = NULL;
+> +}
+> +
+> +int of_free_phandle_cache(void)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +
+> +	__of_free_phandle_cache();
+> +
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +
+> +	return 0;
+> +}
+> +#if !defined(CONFIG_MODULES)
+> +late_initcall_sync(of_free_phandle_cache);
+> +#endif
+> +
+>  void of_populate_phandle_cache(void)
+>  {
+>  	unsigned long flags;
+> @@ -136,8 +171,7 @@ void of_populate_phandle_cache(void)
+>  
+>  	raw_spin_lock_irqsave(&devtree_lock, flags);
+>  
+> -	kfree(phandle_cache);
+> -	phandle_cache = NULL;
+> +	__of_free_phandle_cache();
+>  
+>  	for_each_of_allnodes(np)
+>  		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+> @@ -155,30 +189,15 @@ void of_populate_phandle_cache(void)
+>  		goto out;
+>  
+>  	for_each_of_allnodes(np)
+> -		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
+> +		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL) {
+> +			of_node_get(np);
+>  			phandle_cache[np->phandle & phandle_cache_mask] = np;
+> +		}
+>  
+>  out:
+>  	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+>  }
+>  
+> -int of_free_phandle_cache(void)
+> -{
+> -	unsigned long flags;
+> -
+> -	raw_spin_lock_irqsave(&devtree_lock, flags);
+> -
+> -	kfree(phandle_cache);
+> -	phandle_cache = NULL;
+> -
+> -	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> -
+> -	return 0;
+> -}
+> -#if !defined(CONFIG_MODULES)
+> -late_initcall_sync(of_free_phandle_cache);
+> -#endif
+> -
+>  void __init of_core_init(void)
+>  {
+>  	struct device_node *np;
+> @@ -1195,8 +1214,11 @@ struct device_node *of_find_node_by_phandle(phandle handle)
+>  	if (!np) {
+>  		for_each_of_allnodes(np)
+>  			if (np->phandle == handle) {
+> -				if (phandle_cache)
+> +				if (phandle_cache) {
+> +					/* will put when removed from cache */
+> +					of_node_get(np);
+>  					phandle_cache[masked_handle] = np;
+> +				}
+>  				break;
+>  			}
+>  	}
+> -- 
+> Frank Rowand <frank.rowand@sony.com>
