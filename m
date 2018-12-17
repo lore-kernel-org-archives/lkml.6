@@ -2,261 +2,312 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2381BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 04:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B2EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 04:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE64C20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 04:26:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D5F72084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 04:30:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="i2D/WPKH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbeLQE0a (ORCPT
+        id S1731430AbeLQEae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 23:26:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34310 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726363AbeLQE0a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 23:26:30 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBH4IvQQ081829
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 23:26:29 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pe20a552r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 23:26:28 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 17 Dec 2018 04:26:27 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Dec 2018 04:26:22 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBH4QLEj19857568
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Dec 2018 04:26:21 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1841DB2065;
-        Mon, 17 Dec 2018 04:26:21 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4CD3B2067;
-        Mon, 17 Dec 2018 04:26:20 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Dec 2018 04:26:20 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 4F3B916C3492; Sun, 16 Dec 2018 20:26:23 -0800 (PST)
-Date:   Sun, 16 Dec 2018 20:26:23 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     "Zhang, Jun" <jun.zhang@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
-        "Bai, Jie A" <jie.a.bai@intel.com>,
-        "Sun, Yi J" <yi.j.sun@intel.com>,
-        "Chang, Junxiao" <junxiao.chang@intel.com>,
-        "Mei, Paul" <paul.mei@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <88DC34334CA3444C85D647DBFA962C2735AD5F9E@SHSMSX104.ccr.corp.intel.com>
- <20181213044020.GA19765@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A197EC@SHSMSX104.ccr.corp.intel.com>
- <20181213181136.GL4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A198C7@SHSMSX104.ccr.corp.intel.com>
- <20181214021527.GR4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A19939@SHSMSX104.ccr.corp.intel.com>
- <20181214051011.GS4170@linux.ibm.com>
- <20181214053841.GA16100@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A1A280@SHSMSX104.ccr.corp.intel.com>
+        Sun, 16 Dec 2018 23:30:34 -0500
+Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:27795
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726318AbeLQEad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Dec 2018 23:30:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TVM/u1SwPjPXikn42aSuXDo2KeXYHUiAdeznFL7qiT4=;
+ b=i2D/WPKHPTQptUFu0SizuvSndYfvu4IzDXVgOj5PAgqJERWxkogeP0KsPlFT9VjJbCVsa5A0+iuH3rgHu7Srv4045CoQfOSegR831qB/q86Oe/LC/E/PJvQWt4LN2QxkAMRSInym+0Wzu/xNuMzJb7zo1eL0/P0D23PSMNtoboY=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5475.eurprd04.prod.outlook.com (20.178.113.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Mon, 17 Dec 2018 04:30:26 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::9125:e806:7303:d8e6]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::9125:e806:7303:d8e6%6]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
+ 04:30:26 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "cphealy@gmail.com" <cphealy@gmail.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v3 3/3] reset: imx7: Add support for i.MX8MQ IP block
+ variant
+Thread-Topic: [PATCH v3 3/3] reset: imx7: Add support for i.MX8MQ IP block
+ variant
+Thread-Index: AQHUlbGpZLhb5vhy5kOlQw0ltavusqWCViBQ
+Date:   Mon, 17 Dec 2018 04:30:26 +0000
+Message-ID: <AM0PR04MB42114239FC75F5514554B55280BC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20181217023827.7947-1-andrew.smirnov@gmail.com>
+ <20181217023827.7947-4-andrew.smirnov@gmail.com>
+In-Reply-To: <20181217023827.7947-4-andrew.smirnov@gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5475;6:3oT5cCfjrkckT75W/FsusYX1LXpGNsonESi4sSTuZdKlLADJ/kbg/qgGoSQ7B7xc530qiqeIlY6q39ZLKuBy/NKBsJZ68E73qH+hm+NTsrTTXAdIPlZPzrYznAB2HUSIQKl5MXCnCea4zX77ZEW43b0BoSe9hHIKvKr0MV+f6YBuxkmRtK2LwEOEaH2KGT13mtmeeuRebVBOxjFh3vY0xF7iSSpFkHyN8L6wOpJocF782mhBmC/bqrHEilPFNvn/WRiDk814mziGBuRCSS5OfSiU2SWqsovOzVSyaGCc0TEpffh74pyrVAL0hoSR0lQgIMvPvUFG19+MqNVXHWUriZiIGbp1LsCd3qm1UgJ610HkSRZWQQjqpRjXQAQTjj0MDPQcNwiffcDuEwc5E/2EG6h3Ux7DsPYmAJRLWzJAvfEIR3FzbLZJP6f7R4DhzJWlhm7xJVo/ifcgICgVynorUw==;5:nVQKLDn46Y9Vk8xlhBIIY8uj4fVb/63yq3WlproBmwxkc2dFafSXO430v/2ogyIYp/ZIOdY/CQMgPE49PoTMTfgJ4Rkl5urV04Xv8fHeVlOIKCT54TYR0gFX7LtjFVPfqfIEyGD7wtsOZGIo6LoqVaQbIjL+q3RbVtymENRriB4=;7:tK8+oZ7v92Vt8VtmvBlpufYap8g8XjJvVYe2opr/yXOJI3e34KKJCQq1oMRY+HUj37ElDvS+VZYOY6+zKPVOEP+8ELmQczFnAYY1892pkyWP3l9Buc3ar1f8+96PUuiwrAhxfnrA82eBkgTh6SnczA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 5a48f20a-9ee0-4dbe-f5da-08d663d85e74
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5475;
+x-ms-traffictypediagnostic: AM0PR04MB5475:
+x-microsoft-antispam-prvs: <AM0PR04MB5475B117682619B8454AD14D80BC0@AM0PR04MB5475.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(93006095)(93001095)(10201501046)(3231475)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5475;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5475;
+x-forefront-prvs: 08897B549D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(396003)(39860400002)(366004)(199004)(189003)(13464003)(2501003)(33656002)(81166006)(11346002)(8676002)(97736004)(5660300001)(66066001)(55016002)(6246003)(53936002)(74316002)(71190400001)(2906002)(9686003)(6116002)(14454004)(39060400002)(99286004)(4326008)(25786009)(305945005)(478600001)(8936002)(14444005)(6436002)(71200400001)(3846002)(86362001)(53546011)(105586002)(229853002)(106356001)(486006)(44832011)(446003)(316002)(81156014)(110136005)(68736007)(26005)(7736002)(7696005)(186003)(76176011)(6506007)(54906003)(476003)(256004)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5475;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: H2rdqHO9VW7TFTLERac0aeRnHAw09CzItj4NspFYMbC4fzLuLpJDTZQ5oVoGKQjjE0yQyvlP8W8yb/Vkuf/7+GZsbl2cipLZ0/HVtOueH3++rrYeGYPdaFS8Le5Ub00Yu2IqojU4DeFUmPy7ndeMrqJVwN4WCKv6ByNmERm+QRVWr+7SXQeCGlo6ZjmGh3bTrJuPgl6n83/h2E8a0eNGKbA3EUdX1BxqSRxEvoI9y7UpDFCnwE897GVgrk708hOykHn88jWf6bEJ/SjFFc+G0oEfYx1zKwbpR7Km7DloBPex/TtgQNrtXl7nJ2WlYe9l
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A1A280@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121704-2213-0000-0000-0000032C0BAA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010239; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01132908; UDB=6.00588893; IPR=6.00913047;
- MB=3.00024714; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-17 04:26:25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121704-2214-0000-0000-00005CA18A50
-Message-Id: <20181217042623.GF4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812170040
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a48f20a-9ee0-4dbe-f5da-08d663d85e74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 04:30:26.7422
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5475
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:15:42AM +0000, He, Bo wrote:
-> for double confirm the issue is not reproduce after 90 hours, we tried only add the enclosed patch on the easy reproduced build, the issue is not reproduced after 63 hours in the whole weekend on 16 boards.
-> so current conclusion is the debug patch has extreme  effect on the rcu issue.
+> -----Original Message-----
+> From: Andrey Smirnov [mailto:andrew.smirnov@gmail.com]
+> Sent: Monday, December 17, 2018 10:38 AM
+> To: linux-kernel@vger.kernel.org
+> Cc: Andrey Smirnov <andrew.smirnov@gmail.com>; p.zabel@pengutronix.de;
+> Fabio Estevam <fabio.estevam@nxp.com>; cphealy@gmail.com;
+> l.stach@pengutronix.de; Leonard Crestez <leonard.crestez@nxp.com>; Aishen=
+g
+> Dong <aisheng.dong@nxp.com>; Richard Zhu <hongxing.zhu@nxp.com>; Rob
+> Herring <robh@kernel.org>; devicetree@vger.kernel.org; dl-linux-imx
+> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org
+> Subject: [PATCH v3 3/3] reset: imx7: Add support for i.MX8MQ IP block var=
+iant
+>=20
+> Add bits and pieces needed to support IP block variant found on i.MX8MQ
+> SoCs.
+>=20
+> Cc: p.zabel@pengutronix.de
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: cphealy@gmail.com
+> Cc: l.stach@pengutronix.de
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  drivers/reset/Kconfig      |   2 +-
+>  drivers/reset/reset-imx7.c | 106
+> +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 107 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig index
+> c21da9fe51ec..4909aab7401b 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -50,7 +50,7 @@ config RESET_HSDK
+>  config RESET_IMX7
+>  	bool "i.MX7 Reset Driver" if COMPILE_TEST
+>  	depends on HAS_IOMEM
+> -	default SOC_IMX7D
+> +	default SOC_IMX7D || SOC_IMX8MQ
 
-This is not a surprise.  (Please see the end of this email for a
-replacement patch that won't suppress the bug.)
+SOC_IMX8MQ has been removed in Shawn's tree.
+I'd suggest simply using ARCH_MXC.
 
-To see why this is not a surprise, let's take a closer look at your patch,
-in light of the comment header for wait_event_idle_timeout_exclusive():
+Regards
+Dong Aisheng
 
- * Returns:
- * 0 if the @condition evaluated to %false after the @timeout elapsed,
- * 1 if the @condition evaluated to %true after the @timeout elapsed,
- * or the remaining jiffies (at least 1) if the @condition evaluated
- * to %true before the @timeout elapsed.
-
-The situation we are seeing is that the RCU_GP_FLAG_INIT is set, but
-the rcu_preempt task does not wake up.  This would correspond to
-the second case above, that is, a return value of 1.  Looking now
-at your patch, with comments interspersed below:
-
-------------------------------------------------------------------------
-
-From e8b583aa685b3b4f304f72398a80461bba09389c Mon Sep 17 00:00:00 2001
-From: "he, bo" <bo.he@intel.com>
-Date: Sun, 9 Dec 2018 18:11:33 +0800
-Subject: [PATCH] rcu: detect the preempt_rcu hang for triage jing's board
-
-Change-Id: I2ffceec2ae4847867753609e45c99afc66956003
-Tracked-On:
-Signed-off-by: he, bo <bo.he@intel.com>
----
- kernel/rcu/tree.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 78c0cf2..d6de363 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2192,8 +2192,13 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 	int ret;
- 	struct rcu_state *rsp = arg;
- 	struct rcu_node *rnp = rcu_get_root(rsp);
-+	pid_t rcu_preempt_pid;
- 
- 	rcu_bind_gp_kthread();
-+	if(!strcmp(rsp->name, "rcu_preempt")) {
-+		rcu_preempt_pid = rsp->gp_kthread->pid;
-+	}
-+
- 	for (;;) {
- 
- 		/* Handle grace-period start. */
-@@ -2202,8 +2207,19 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 					       READ_ONCE(rsp->gp_seq),
- 					       TPS("reqwait"));
- 			rsp->gp_state = RCU_GP_WAIT_GPS;
--			swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
--						     RCU_GP_FLAG_INIT);
-+			if (current->pid != rcu_preempt_pid) {
-+				swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-+						RCU_GP_FLAG_INIT);
-+			} else {
-+				ret = swait_event_idle_timeout_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-+						RCU_GP_FLAG_INIT, 2*HZ);
-+
-+				if(!ret) {
-
-We get here if ret==0.  Therefore, the above "if" statement needs to
-instead be "if (ret == 1) {".
-
-In addition, in order to get event traces dumped, we also need:
-
-					rcu_ftrace_dump(DUMP_ALL);
-
-+					show_rcu_gp_kthreads();
-+					panic("hung_task: blocked in rcu_gp_kthread init");
-+				}
-+			}
-+
- 			rsp->gp_state = RCU_GP_DONE_GPS;
- 			/* Locking provides needed memory barrier. */
- 			if (rcu_gp_init(rsp))
--- 
-2.7.4
-
-------------------------------------------------------------------------
-
-So, again, please change the "if(!ret) {" to "if (ret == 1) {", and
-please add "rcu_ftrace_dump(DUMP_ALL);" right after this "if" statement,
-as shown above.
-
-With that change, I bet that you will again see failures.
-
-> Compared with the swait_event_idle_timeout_exclusive will do 3 times to check the condition, while swait_event_idle_ exclusive will do 2 times check the condition.
-> 
-> so today I will do another experiment, only change as below:
-> -			swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-> -						     RCU_GP_FLAG_INIT);
-> +			ret = swait_event_idle_timeout_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-> +					RCU_GP_FLAG_INIT, MAX_SCHEDULE_TIMEOUT);
+>  	select MFD_SYSCON
+>  	help
+>  	  This enables the reset controller driver for i.MX7 SoCs.
+> diff --git a/drivers/reset/reset-imx7.c b/drivers/reset/reset-imx7.c inde=
+x
+> 3a36d5863891..bb826935db6d 100644
+> --- a/drivers/reset/reset-imx7.c
+> +++ b/drivers/reset/reset-imx7.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/reset-controller.h>
+>  #include <linux/regmap.h>
+>  #include <dt-bindings/reset/imx7-reset.h>
+> +#include <dt-bindings/reset/imx8mq-reset.h>
+>=20
+>  struct imx7_src_signal {
+>  	unsigned int offset, bit;
+> @@ -113,6 +114,110 @@ static const struct imx7_src_variant variant_imx7 =
+=3D
+> {
+>  	.prepare =3D imx7_src_prepare,
+>  };
+>=20
+> +enum imx8mq_src_registers {
+> +	SRC_A53RCR0		=3D 0x0004,
+> +	SRC_HDMI_RCR		=3D 0x0030,
+> +	SRC_DISP_RCR		=3D 0x0034,
+> +	SRC_GPU_RCR		=3D 0x0040,
+> +	SRC_VPU_RCR		=3D 0x0044,
+> +	SRC_PCIE2_RCR		=3D 0x0048,
+> +	SRC_MIPIPHY1_RCR	=3D 0x004c,
+> +	SRC_MIPIPHY2_RCR	=3D 0x0050,
+> +	SRC_DDRC2_RCR		=3D 0x1004,
+> +};
 > +
-> 
-> Can you get some clues from the experiment?
-
-Again, please instead make the changes that I called out above, with
-the replacement for your patch 0001 shown below.
-
-							Thanx, Paul
-
-PS.  I have been testing for quite some time, but am still unable
-     to reproduce this.  So we must depend on you to reproduce it.
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 0b760c1369f7..86152af1a580 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2153,8 +2153,13 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 	int ret;
- 	struct rcu_state *rsp = arg;
- 	struct rcu_node *rnp = rcu_get_root(rsp);
-+	pid_t rcu_preempt_pid;
- 
- 	rcu_bind_gp_kthread();
-+	if(!strcmp(rsp->name, "rcu_preempt")) {
-+		rcu_preempt_pid = rsp->gp_kthread->pid;
-+	}
-+
- 	for (;;) {
- 
- 		/* Handle grace-period start. */
-@@ -2163,8 +2168,20 @@ static int __noreturn rcu_gp_kthread(void *arg)
- 					       READ_ONCE(rsp->gp_seq),
- 					       TPS("reqwait"));
- 			rsp->gp_state = RCU_GP_WAIT_GPS;
--			swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
--						     RCU_GP_FLAG_INIT);
-+			if (current->pid != rcu_preempt_pid) {
-+				swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-+						RCU_GP_FLAG_INIT);
-+			} else {
-+				ret = swait_event_idle_timeout_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-+						RCU_GP_FLAG_INIT, 2*HZ);
-+
-+				if (ret == 1) {
-+					rcu_ftrace_dump(DUMP_ALL);
-+					show_rcu_gp_kthreads();
-+					panic("hung_task: blocked in rcu_gp_kthread init");
-+				}
-+			}
-+
- 			rsp->gp_state = RCU_GP_DONE_GPS;
- 			/* Locking provides needed memory barrier. */
- 			if (rcu_gp_init(rsp))
+> +static const struct imx7_src_signal
+> imx8mq_src_signals[IMX8MQ_RESET_NUM] =3D {
+> +	[IMX8MQ_RESET_A53_CORE_POR_RESET0]	=3D { SRC_A53RCR0, BIT(0) },
+> +	[IMX8MQ_RESET_A53_CORE_POR_RESET1]	=3D { SRC_A53RCR0, BIT(1) },
+> +	[IMX8MQ_RESET_A53_CORE_POR_RESET2]	=3D { SRC_A53RCR0, BIT(2) },
+> +	[IMX8MQ_RESET_A53_CORE_POR_RESET3]	=3D { SRC_A53RCR0, BIT(3) },
+> +	[IMX8MQ_RESET_A53_CORE_RESET0]		=3D { SRC_A53RCR0, BIT(4) },
+> +	[IMX8MQ_RESET_A53_CORE_RESET1]		=3D { SRC_A53RCR0, BIT(5) },
+> +	[IMX8MQ_RESET_A53_CORE_RESET2]		=3D { SRC_A53RCR0, BIT(6) },
+> +	[IMX8MQ_RESET_A53_CORE_RESET3]		=3D { SRC_A53RCR0, BIT(7) },
+> +	[IMX8MQ_RESET_A53_DBG_RESET0]		=3D { SRC_A53RCR0, BIT(8) },
+> +	[IMX8MQ_RESET_A53_DBG_RESET1]		=3D { SRC_A53RCR0, BIT(9) },
+> +	[IMX8MQ_RESET_A53_DBG_RESET2]		=3D { SRC_A53RCR0, BIT(10) },
+> +	[IMX8MQ_RESET_A53_DBG_RESET3]		=3D { SRC_A53RCR0, BIT(11) },
+> +	[IMX8MQ_RESET_A53_ETM_RESET0]		=3D { SRC_A53RCR0, BIT(12) },
+> +	[IMX8MQ_RESET_A53_ETM_RESET1]		=3D { SRC_A53RCR0, BIT(13) },
+> +	[IMX8MQ_RESET_A53_ETM_RESET2]		=3D { SRC_A53RCR0, BIT(14) },
+> +	[IMX8MQ_RESET_A53_ETM_RESET3]		=3D { SRC_A53RCR0, BIT(15) },
+> +	[IMX8MQ_RESET_A53_SOC_DBG_RESET]	=3D { SRC_A53RCR0, BIT(20) },
+> +	[IMX8MQ_RESET_A53_L2RESET]		=3D { SRC_A53RCR0, BIT(21) },
+> +	[IMX8MQ_RESET_SW_NON_SCLR_M4C_RST]	=3D { SRC_M4RCR, BIT(0) },
+> +	[IMX8MQ_RESET_OTG1_PHY_RESET]		=3D { SRC_USBOPHY1_RCR,
+> BIT(0) },
+> +	[IMX8MQ_RESET_OTG2_PHY_RESET]		=3D { SRC_USBOPHY2_RCR,
+> BIT(0) },
+> +	[IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N]	=3D { SRC_MIPIPHY_RCR,
+> BIT(1) },
+> +	[IMX8MQ_RESET_MIPI_DSI_RESET_N]		=3D { SRC_MIPIPHY_RCR,
+> BIT(2) },
+> +	[IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N]	=3D { SRC_MIPIPHY_RCR,
+> BIT(3) },
+> +	[IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N]	=3D { SRC_MIPIPHY_RCR,
+> BIT(4) },
+> +	[IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N]	=3D { SRC_MIPIPHY_RCR,
+> BIT(5) },
+> +	[IMX8MQ_RESET_PCIEPHY]			=3D { SRC_PCIEPHY_RCR,
+> +						    BIT(2) | BIT(1) },
+> +	[IMX8MQ_RESET_PCIEPHY_PERST]		=3D { SRC_PCIEPHY_RCR,
+> BIT(3) },
+> +	[IMX8MQ_RESET_PCIE_CTRL_APPS_EN]	=3D { SRC_PCIEPHY_RCR,
+> BIT(6) },
+> +	[IMX8MQ_RESET_PCIE_CTRL_APPS_TURNOFF]	=3D { SRC_PCIEPHY_RCR,
+> BIT(11) },
+> +	[IMX8MQ_RESET_HDMI_PHY_APB_RESET]	=3D { SRC_HDMI_RCR, BIT(0) },
+> +	[IMX8MQ_RESET_DISP_RESET]		=3D { SRC_DISP_RCR, BIT(0) },
+> +	[IMX8MQ_RESET_GPU_RESET]		=3D { SRC_GPU_RCR, BIT(0) },
+> +	[IMX8MQ_RESET_VPU_RESET]		=3D { SRC_VPU_RCR, BIT(0) },
+> +	[IMX8MQ_RESET_PCIEPHY2]			=3D { SRC_PCIE2_RCR,
+> +						    BIT(2) | BIT(1) },
+> +	[IMX8MQ_RESET_PCIEPHY2_PERST]		=3D { SRC_PCIE2_RCR, BIT(3) },
+> +	[IMX8MQ_RESET_PCIE2_CTRL_APPS_EN]	=3D { SRC_PCIE2_RCR, BIT(6) },
+> +	[IMX8MQ_RESET_PCIE2_CTRL_APPS_TURNOFF]	=3D { SRC_PCIE2_RCR,
+> BIT(11) },
+> +	[IMX8MQ_RESET_MIPI_CSI1_CORE_RESET]	=3D { SRC_MIPIPHY1_RCR,
+> BIT(0) },
+> +	[IMX8MQ_RESET_MIPI_CSI1_PHY_REF_RESET]	=3D { SRC_MIPIPHY1_RCR,
+> BIT(1) },
+> +	[IMX8MQ_RESET_MIPI_CSI1_ESC_RESET]	=3D { SRC_MIPIPHY1_RCR,
+> BIT(2) },
+> +	[IMX8MQ_RESET_MIPI_CSI2_CORE_RESET]	=3D { SRC_MIPIPHY2_RCR,
+> BIT(0) },
+> +	[IMX8MQ_RESET_MIPI_CSI2_PHY_REF_RESET]	=3D { SRC_MIPIPHY2_RCR,
+> BIT(1) },
+> +	[IMX8MQ_RESET_MIPI_CSI2_ESC_RESET]	=3D { SRC_MIPIPHY2_RCR,
+> BIT(2) },
+> +	[IMX8MQ_RESET_DDRC1_PRST]		=3D { SRC_DDRC_RCR, BIT(0) },
+> +	[IMX8MQ_RESET_DDRC1_CORE_RESET]		=3D { SRC_DDRC_RCR,
+> BIT(1) },
+> +	[IMX8MQ_RESET_DDRC1_PHY_RESET]		=3D { SRC_DDRC_RCR, BIT(2) },
+> +	[IMX8MQ_RESET_DDRC2_PHY_RESET]		=3D { SRC_DDRC2_RCR, BIT(0) },
+> +	[IMX8MQ_RESET_DDRC2_CORE_RESET]		=3D { SRC_DDRC2_RCR,
+> BIT(1) },
+> +	[IMX8MQ_RESET_DDRC2_PRST]		=3D { SRC_DDRC2_RCR, BIT(2) },
+> +};
+> +
+> +static unsigned int
+> +imx8mq_src_prepare(struct imx7_src *imx7src, unsigned long id, bool
+> +assert) {
+> +	const unsigned int bit =3D imx7src->variant->signals[id].bit;
+> +	unsigned int value =3D assert ? bit : 0;
+> +
+> +	switch (id) {
+> +	case IMX8MQ_RESET_PCIEPHY:
+> +	case IMX8MQ_RESET_PCIEPHY2: /* fallthrough */
+> +		/*
+> +		 * wait for more than 10us to release phy g_rst and
+> +		 * btnrst
+> +		 */
+> +		if (!assert)
+> +			udelay(10);
+> +		break;
+> +
+> +	case IMX8MQ_RESET_PCIE_CTRL_APPS_EN:
+> +	case IMX8MQ_RESET_PCIE2_CTRL_APPS_EN:	/* fallthrough */
+> +	case IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N:	/* fallthrough */
+> +	case IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N:	/* fallthrough */
+> +	case IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N:	/* fallthrough */
+> +	case IMX8MQ_RESET_MIPI_DSI_RESET_N:	/* fallthrough */
+> +	case IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N:	/* fallthrough */
+> +		value =3D assert ? 0 : bit;
+> +		break;
+> +	}
+> +
+> +	return value;
+> +}
+> +
+> +static const struct imx7_src_variant variant_imx8mq =3D {
+> +	.signals =3D imx8mq_src_signals,
+> +	.signals_num =3D ARRAY_SIZE(imx8mq_src_signals),
+> +	.prepare =3D imx8mq_src_prepare,
+> +};
+> +
+>  static struct imx7_src *to_imx7_src(struct reset_controller_dev *rcdev) =
+ {
+>  	return container_of(rcdev, struct imx7_src, rcdev); @@ -175,6 +280,7
+> @@ static int imx7_reset_probe(struct platform_device *pdev)
+>=20
+>  static const struct of_device_id imx7_reset_dt_ids[] =3D {
+>  	{ .compatible =3D "fsl,imx7d-src", .data =3D &variant_imx7 },
+> +	{ .compatible =3D "fsl,imx8mq-src", .data =3D &variant_imx8mq },
+>  	{ /* sentinel */ },
+>  };
+>=20
+> --
+> 2.19.1
 
