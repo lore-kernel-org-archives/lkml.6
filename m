@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB36FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51D9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97812133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2D9B2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:41:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZJ0PUMZ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hmXcmuaD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbeLQKlX (ORCPT
+        id S1732394AbeLQKla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:41:23 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34195 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbeLQKlW (ORCPT
+        Mon, 17 Dec 2018 05:41:30 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40569 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbeLQKl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:41:22 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w4so5954927plz.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:41:22 -0800 (PST)
+        Mon, 17 Dec 2018 05:41:29 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so5929722pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:41:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XJq1AFUaGxDCB6jFqaj05hzzcUKv19kg30xJpzrgoLo=;
-        b=LZJ0PUMZgwY1ciUTFaX7gsA3e2I0WwOiC7BvY6QLw5snWHh56g46LL3yRXFINvI8ic
-         o+V7UjqxEU+Q78V+Io6IWK1o7ebT2/WStAUysb3NH/l7Txc+xz3WOYWVApn4aYRbVodS
-         9NnEHZWEOtmmWVDmfP3ZpoTOq5mhh188hJ8F4=
+        bh=qjj0KbdPyGPLhWFi0hQxVzhzwcqRrlCgAX7ybTH+ePE=;
+        b=hmXcmuaDhZ0CcAlynyVIpsXJsLvTnfV0Qt0XU0uZhAH2WL/hrBusGX151JiPMw2ViG
+         5/rzLUz41dcdHYEmFfMEmyGe4IAyZIfaLg/JbzndcP+2H1aIEojBM9jvvNVqtbkCCfoM
+         0qNn6/c/iJgmb4TgsDVmRR/jyvadAn7lLXmlQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XJq1AFUaGxDCB6jFqaj05hzzcUKv19kg30xJpzrgoLo=;
-        b=KBKNM4h38JyXpIr7KVi/FSZyK2ASCMO1V2/3Z5rac94qPbLzoNM4n5GStEZ26pKpCa
-         GrYvKoF8sbIhJFkJoAq+iVS/i8y3vb+ezDWSVJqN9tdYVHlwEFqciM3y6LqvzMOlhj1H
-         nzIM8ZOoIYJcZO6IsMZR5+lZDQUeWTRZv5ZfpnxMbP+D1sGcIESS5bryFxg2TmW64VR7
-         7f3o0gfgRAOCO3lN2yXq7qhPM1yOZ7appFHWZBYy4CZhS3bsHksP8ywlZBEU7A40FLQ5
-         N+GHPiHehcbJNtuZkCgppJf/18mMMF14B82rReEL1E0y9v4zGiU9xhg41AKd6pTmHxlc
-         6scg==
-X-Gm-Message-State: AA+aEWZYjDeREUjFmkvDlNMnfFYgDydm7M8ZjRWGNCmmLxQeP32ny8Os
-        OKYpxr6xBlqlS79s+MDQXlT5KA==
-X-Google-Smtp-Source: AFSGD/XTcxTt+L6eowfaDC4tb62nkOiq/talI4ku41aRYafntKlYhwggd6pmx6cg3vDM7ztEXbtocw==
-X-Received: by 2002:a17:902:848d:: with SMTP id c13mr12309944plo.257.1545043282112;
-        Mon, 17 Dec 2018 02:41:22 -0800 (PST)
+        bh=qjj0KbdPyGPLhWFi0hQxVzhzwcqRrlCgAX7ybTH+ePE=;
+        b=lw1iY6oQ3fYlA0qyvvbUEnvJrzsc11bffUpj+kONkqBtpyy9QM/IxrZewFs75mP9ny
+         Rv4RHjNp9w/nxgquOCVZQDa1HtDuABobIm8MyNN+N//FehJHuEiOIxtUBKUWm8VEQ7Ht
+         N9yE0sfwJi53IQO7F5JSh8A9oaJkk7bB/Li6zB93+TDpFPDzf076VljQdKMrA4Mue3VZ
+         /msJGY2oyCl+Wn5U9mkRm5CZyMb8YFfkgdIzHw12YuqBmO7gV2a8zxMW9N9igH/XnQ3Y
+         +Al1fpvKrKyP0CbEa/hvNiihsftQeYtsIbXcpamV769uMhPdxdPYVZ+5zmMhU9511qmU
+         Qrjg==
+X-Gm-Message-State: AA+aEWZua7slt+BQ0UDeX3yXIxGuXTJxzrWIULqnFk0ZB5XzxeOlvZ2S
+        4XdtTeEozWQvIkeT6J1EPLKPtw==
+X-Google-Smtp-Source: AFSGD/W9a860LsyGGAHNX80o9Wz9NQ2390cYNt81ClIdchniC+cAXy4DvyDCb5I3xZYQ0hdPY0paOA==
+X-Received: by 2002:a63:8e43:: with SMTP id k64mr11656442pge.346.1545043288598;
+        Mon, 17 Dec 2018 02:41:28 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id b27sm17224826pfh.113.2018.12.17.02.41.15
+        by smtp.gmail.com with ESMTPSA id b27sm17224826pfh.113.2018.12.17.02.41.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 02:41:21 -0800 (PST)
+        Mon, 17 Dec 2018 02:41:28 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linuxppc-dev@lists.ozlabs.org, sathnaga@linux.vnet.ibm.com,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
@@ -70,9 +70,9 @@ To:     linuxppc-dev@lists.ozlabs.org, sathnaga@linux.vnet.ibm.com,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v6 1/5] powerpc: add __NR_syscalls along with NR_syscalls
-Date:   Mon, 17 Dec 2018 16:10:32 +0530
-Message-Id: <1545043236-11649-2-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v6 2/5] powerpc: move macro definition from asm/systbl.h
+Date:   Mon, 17 Dec 2018 16:10:33 +0530
+Message-Id: <1545043236-11649-3-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545043236-11649-1-git-send-email-firoz.khan@linaro.org>
 References: <1545043236-11649-1-git-send-email-firoz.khan@linaro.org>
@@ -81,76 +81,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NR_syscalls macro holds the number of system call exist
-in powerpc architecture. We have to change the value of
-NR_syscalls, if we add or delete a system call.
+Move the macro definition for compat_sys_sigsuspend from
+asm/systbl.h to the file which it is getting included.
 
-One of the patch in this patch series has a script which
-will generate a uapi header based on syscall.tbl file.
-The syscall.tbl file contains the number of system call
-information. So we have two option to update NR_syscalls
-value.
+One of the patch in this patch series is generating uapi
+header and syscall table files. In order to come up with
+a common implimentation across all architecture, we need
+to do this change.
 
-1. Update NR_syscalls in asm/unistd.h manually by count-
-   ing the no.of system calls. No need to update NR_sys-
-   calls until we either add a new system call or delete
-   existing system call.
-
-2. We can keep this feature in above mentioned script,
-   that will count the number of syscalls and keep it in
-   a generated file. In this case we don't need to expli-
-   citly update NR_syscalls in asm/unistd.h file.
-
-The 2nd option will be the recommended one. For that, I
-added the __NR_syscalls macro in uapi/asm/unistd.h along
-with NR_syscalls asm/unistd.h. The macro __NR_syscalls
-also added for making the name convention same across all
-architecture. While __NR_syscalls isn't strictly part of
-the uapi, having it as part of the generated header to
-simplifies the implementation. We also need to enclose
-this macro with #ifdef __KERNEL__ to avoid side effects.
+This change will simplify the implementation of system
+call table generation script and help to come up a common
+implementation across all architecture.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/powerpc/include/asm/unistd.h      | 3 +--
- arch/powerpc/include/uapi/asm/unistd.h | 5 ++++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ arch/powerpc/include/asm/systbl.h | 1 -
+ arch/powerpc/kernel/systbl.S      | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
-index b0de85b..a3c35e6 100644
---- a/arch/powerpc/include/asm/unistd.h
-+++ b/arch/powerpc/include/asm/unistd.h
-@@ -11,8 +11,7 @@
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index 01b5171..c4321b9 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -76,7 +76,6 @@
+ SYSCALL_SPU(ssetmask)
+ SYSCALL_SPU(setreuid)
+ SYSCALL_SPU(setregid)
+-#define compat_sys_sigsuspend sys_sigsuspend
+ SYS32ONLY(sigsuspend)
+ SYSX(sys_ni_syscall,compat_sys_sigpending,sys_sigpending)
+ SYSCALL_SPU(sethostname)
+diff --git a/arch/powerpc/kernel/systbl.S b/arch/powerpc/kernel/systbl.S
+index 919a327..9ff1913 100644
+--- a/arch/powerpc/kernel/systbl.S
++++ b/arch/powerpc/kernel/systbl.S
+@@ -47,4 +47,5 @@
+ .globl sys_call_table
+ sys_call_table:
  
- #include <uapi/asm/unistd.h>
- 
--
--#define NR_syscalls		389
-+#define NR_syscalls	__NR_syscalls
- 
- #define __NR__exit __NR_exit
- 
-diff --git a/arch/powerpc/include/uapi/asm/unistd.h b/arch/powerpc/include/uapi/asm/unistd.h
-index 985534d..7195868 100644
---- a/arch/powerpc/include/uapi/asm/unistd.h
-+++ b/arch/powerpc/include/uapi/asm/unistd.h
-@@ -10,7 +10,6 @@
- #ifndef _UAPI_ASM_POWERPC_UNISTD_H_
- #define _UAPI_ASM_POWERPC_UNISTD_H_
- 
--
- #define __NR_restart_syscall	  0
- #define __NR_exit		  1
- #define __NR_fork		  2
-@@ -401,4 +400,8 @@
- #define __NR_rseq		387
- #define __NR_io_pgetevents	388
- 
-+#ifdef __KERNEL__
-+#define __NR_syscalls		389
-+#endif
-+
- #endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
++#define compat_sys_sigsuspend	sys_sigsuspend
+ #include <asm/systbl.h>
 -- 
 1.9.1
 
