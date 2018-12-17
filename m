@@ -2,133 +2,164 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98374C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B75FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686CA2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBBC12133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388342AbeLQTxa (ORCPT
+        id S2388558AbeLQTyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:53:30 -0500
-Received: from mga04.intel.com ([192.55.52.120]:23097 "EHLO mga04.intel.com"
+        Mon, 17 Dec 2018 14:54:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41768 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbeLQTxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:53:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:53:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="304570680"
-Received: from dmandrea-mobl.amr.corp.intel.com (HELO [10.254.107.151]) ([10.254.107.151])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 11:53:28 -0800
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
- <20181217194913.GD29785@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <16fdd37a-b9cc-1045-1497-2cfff6af176a@intel.com>
-Date:   Mon, 17 Dec 2018 11:53:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726989AbeLQTyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:54:15 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E14E84025D;
+        Mon, 17 Dec 2018 19:54:13 +0000 (UTC)
+Received: from redhat.com (ovpn-125-170.rdu2.redhat.com [10.10.125.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B338060123;
+        Mon, 17 Dec 2018 19:54:10 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 14:54:08 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181217195408.GC3341@redhat.com>
+References: <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+ <20181217194759.GB3341@redhat.com>
+ <20181217195150.GP10600@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20181217194913.GD29785@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181217195150.GP10600@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 17 Dec 2018 19:54:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 11:49 AM, Jarkko Sakkinen wrote:
->> Yeah, the code is built to have one VMA and only one VMA per enclave.
->> You need to go over the origin of this restriction and what enforces this.
-> It is before ECREATE but after that you can split it with mprotect().
+On Mon, Dec 17, 2018 at 11:51:51AM -0800, Matthew Wilcox wrote:
+> On Mon, Dec 17, 2018 at 02:48:00PM -0500, Jerome Glisse wrote:
+> > On Mon, Dec 17, 2018 at 10:34:43AM -0800, Matthew Wilcox wrote:
+> > > On Mon, Dec 17, 2018 at 01:11:50PM -0500, Jerome Glisse wrote:
+> > > > On Mon, Dec 17, 2018 at 08:58:19AM +1100, Dave Chinner wrote:
+> > > > > Sure, that's a possibility, but that doesn't close off any race
+> > > > > conditions because there can be DMA into the page in progress while
+> > > > > the page is being bounced, right? AFAICT this ext3+DIF/DIX case is
+> > > > > different in that there is no 3rd-party access to the page while it
+> > > > > is under IO (ext3 arbitrates all access to it's metadata), and so
+> > > > > nothing can actually race for modification of the page between
+> > > > > submission and bouncing at the block layer.
+> > > > > 
+> > > > > In this case, the moment the page is unlocked, anyone else can map
+> > > > > it and start (R)DMA on it, and that can happen before the bio is
+> > > > > bounced by the block layer. So AFAICT, block layer bouncing doesn't
+> > > > > solve the problem of racing writeback and DMA direct to the page we
+> > > > > are doing IO on. Yes, it reduces the race window substantially, but
+> > > > > it doesn't get rid of it.
+> > > > 
+> > > > So the event flow is:
+> > > >     - userspace create object that match a range of virtual address
+> > > >       against a given kernel sub-system (let's say infiniband) and
+> > > >       let's assume that the range is an mmap() of a regular file
+> > > >     - device driver do GUP on the range (let's assume it is a write
+> > > >       GUP) so if the page is not already map with write permission
+> > > >       in the page table than a page fault is trigger and page_mkwrite
+> > > >       happens
+> > > >     - Once GUP return the page to the device driver and once the
+> > > >       device driver as updated the hardware states to allow access
+> > > >       to this page then from that point on hardware can write to the
+> > > >       page at _any_ time, it is fully disconnected from any fs event
+> > > >       like write back, it fully ignore things like page_mkclean
+> > > > 
+> > > > This is how it is to day, we allowed people to push upstream such
+> > > > users of GUP. This is a fact we have to live with, we can not stop
+> > > > hardware access to the page, we can not force the hardware to follow
+> > > > page_mkclean and force a page_mkwrite once write back ends. This is
+> > > > the situation we are inheriting (and i am personnaly not happy with
+> > > > that).
+> > > > 
+> > > > >From my point of view we are left with 2 choices:
+> > > >     [C1] break all drivers that do not abide by the page_mkclean and
+> > > >          page_mkwrite
+> > > >     [C2] mitigate as much as possible the issue
+> > > > 
+> > > > For [C2] the idea is to keep track of GUP per page so we know if we
+> > > > can expect the page to be written to at any time. Here is the event
+> > > > flow:
+> > > >     - driver GUP the page and program the hardware, page is mark as
+> > > >       GUPed
+> > > >     ...
+> > > >     - write back kicks in on the dirty page, lock the page and every
+> > > >       thing as usual , sees it is GUPed and inform the block layer to
+> > > >       use a bounce page
+> > > 
+> > > No.  The solution John, Dan & I have been looking at is to take the
+> > > dirty page off the LRU while it is pinned by GUP.  It will never be
+> > > found for writeback.
+> > > 
+> > > That's not the end of the story though.  Other parts of the kernel (eg
+> > > msync) also need to be taught to stay away from pages which are pinned
+> > > by GUP.  But the idea is that no page gets written back to storage while
+> > > it's pinned by GUP.  Only when the last GUP ends is the page returned
+> > > to the list of dirty pages.
+> > > 
+> > > >     - block layer copy the page to a bounce page effectively creating
+> > > >       a snapshot of what is the content of the real page. This allows
+> > > >       everything in block layer that need stable content to work on
+> > > >       the bounce page (raid, stripping, encryption, ...)
+> > > >     - once write back is done the page is not marked clean but stays
+> > > >       dirty, this effectively disable things like COW for filesystem
+> > > >       and other feature that expect page_mkwrite between write back.
+> > > >       AFAIK it is believe that it is something acceptable
+> > > 
+> > > So none of this is necessary.
+> > 
+> > With the solution you are proposing we loose GUP fast and we have to
+> > allocate a structure for each page that is under GUP, and the LRU
+> > changes too. Moreover by not writing back there is a greater chance
+> > of data loss.
 > 
-> Lets take an example. I'm not sure how we would acquire mm efficiently
-> in sgx_encl_page_reclaim() otherwise than having it as a field in encl.
+> Why can't you store the hmm_data in a side data structure?  Why does it
+> have to be in struct page?
 
-You're effectively rebuilding reverse-mapping infrastructure here.  It's
-a frequent thing for the core VM to need to go from 'struct page' back
-to the page tables mapping it.  For that we go (logically)
-page->{anon_vma,mapping}->vma->vm_mm->pagetable.
+hmm_data is not even the issue here, we can have a pincount without
+moving things around. So i do not see the need to complexify any of
+the existing code to add new structure and consume more memory for
+no good reasons. I do not see any benefit in that.
 
-This, on the other hand, is trying to do page->encl->mm->pagetable.  You
-could very easily have a VMA analog in there instead of jumping straight
-to the mm.
+Cheers,
+Jérôme
