@@ -2,183 +2,137 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA0AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93A9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338C920874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pPiK0E/5"
+	by mail.kernel.org (Postfix) with ESMTP id BB8AA20578
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387867AbeLQPET (ORCPT
+        id S2387577AbeLQPHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:04:19 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39830 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387560AbeLQPES (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:04:18 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f81so12903483wmd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 07:04:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sevAS5LNOMR8FVz9MSsTnddIESqKP7Dg4RXLgGAR6bY=;
-        b=pPiK0E/5m8eAUi2te+hHDY05dAR8AB88jj5LkX4TDD2DmATAL+8ouP5hqE6Q6TAFh/
-         8cioC50RDIJDeZyDXTyN1SVxiq/byWzQBrdQCVwOwNF3jvb7GkJgDkyETVLUERWz8KGr
-         PA/0arj6IinOjJbeF7CQetCwlsFmCBCTb+MMIcTC1euijbK1DSxN+yC4D9s+8jFnr/e+
-         GkQSCrj6xPvc4+jwCvXX7iRfqW61ZIVh2uEY+9jF4/gJPyftiSkcHFpUhaAobDfVRLMK
-         zphOPuFwuncDEmcq02ib/XHFSWj1qMp0lxuUtrf3wkKi+TyVC3mxJFF0fEvwxE08QlVG
-         ysvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sevAS5LNOMR8FVz9MSsTnddIESqKP7Dg4RXLgGAR6bY=;
-        b=G1xHdsg5xxeSkRnofhb8yspH8Vwc+1Zs6kAHl6qHZa5/cRbX6hpw8kr/TqjmYhqpRv
-         h8FIhJVI7HgbXvInBMKtT1Acnxuu4/ZUkO3pJM7jkfyo85XPQ2UNSLviexlZkrEDJepc
-         YwJmSLK7PE6G9bEV8mwWYiKgtxxMQjdy1P4p4JMQKbK+y2nCAcNXftDlXfXodgiISWxC
-         VGDWrgPYl1HbUwfLqQMy/XiFMGr03jgTKMXzxEyyBuDL11fsMOA11fokYiaAcmn9nTO0
-         IApnbCdddVIq5OPY4F4Qy8epSGheNfxAo6h5fNS8garWhtxRJ8vs/brOILHM8PiEpKCW
-         Qy3A==
-X-Gm-Message-State: AA+aEWbLAGDRp8bd3JAcc/EZcv8rTJIeRrFDd1I7Y/Hw5h4QIFhE7jJ3
-        OOJizSFEO0jIsyAFS01Alh8ESVR3PMo+wQ==
-X-Google-Smtp-Source: AFSGD/XhYW3jGbYMu9BU4kIn/wBL85ZTzO6hCTCnkqAitmS8BCcMsSwMkxotEDR22zwzy9pi6eQrKQ==
-X-Received: by 2002:a1c:9183:: with SMTP id t125mr11521841wmd.79.1545059055660;
-        Mon, 17 Dec 2018 07:04:15 -0800 (PST)
-Received: from ?IPv6:2a01:cb1d:4ce:ea00:a5f8:3197:dbfa:c157? ([2a01:cb1d:4ce:ea00:a5f8:3197:dbfa:c157])
-        by smtp.gmail.com with ESMTPSA id c7sm639203wre.64.2018.12.17.07.04.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 07:04:15 -0800 (PST)
-Subject: Re: [PATCH v2 15/19] mailbox: platform-mhu: Use device-managed
- registration API
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-References: <20181217150217.32435-1-thierry.reding@gmail.com>
- <20181217150217.32435-16-thierry.reding@gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <fba6daf5-270f-fc91-2900-02662b71896d@baylibre.com>
-Date:   Mon, 17 Dec 2018 16:04:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181217150217.32435-16-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Dec 2018 10:07:21 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:37891 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbeLQPHV (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Mon, 17 Dec 2018 10:07:21 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Mon, 17 Dec 2018 16:07:19 +0100
+Received: from d104.suse.de (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (NOT encrypted); Mon, 17 Dec 2018 15:07:00 +0000
+From:   Oscar Salvador <osalvador@suse.de>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, vbabka@suse.cz, rppt@linux.vnet.ibm.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: [PATCH] mm, page_alloc: Fix has_unmovable_pages for HugePages
+Date:   Mon, 17 Dec 2018 16:06:51 +0100
+Message-Id: <20181217150651.16176-1-osalvador@suse.de>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/12/2018 16:02, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Get rid of some boilerplate driver removal code by using the newly added
-> device-managed registration API.
-> 
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/mailbox/platform_mhu.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
-> 
-> diff --git a/drivers/mailbox/platform_mhu.c b/drivers/mailbox/platform_mhu.c
-> index e13201a5cec6..d2502c5be130 100644
-> --- a/drivers/mailbox/platform_mhu.c
-> +++ b/drivers/mailbox/platform_mhu.c
-> @@ -163,7 +163,7 @@ static int platform_mhu_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, mhu);
->  
-> -	err = mbox_controller_register(&mhu->mbox);
-> +	err = devm_mbox_controller_register(dev, &mhu->mbox);
->  	if (err) {
->  		dev_err(dev, "Failed to register mailboxes %d\n", err);
->  		return err;
-> @@ -173,15 +173,6 @@ static int platform_mhu_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static int platform_mhu_remove(struct platform_device *pdev)
-> -{
-> -	struct platform_mhu *mhu = platform_get_drvdata(pdev);
-> -
-> -	mbox_controller_unregister(&mhu->mbox);
-> -
-> -	return 0;
-> -}
-> -
->  static const struct of_device_id platform_mhu_dt_ids[] = {
->  	{ .compatible = "amlogic,meson-gxbb-mhu", },
->  	{ /* sentinel */ },
-> @@ -190,7 +181,6 @@ MODULE_DEVICE_TABLE(of, platform_mhu_dt_ids);
->  
->  static struct platform_driver platform_mhu_driver = {
->  	.probe	= platform_mhu_probe,
-> -	.remove	= platform_mhu_remove,
->  	.driver = {
->  		.name = "platform-mhu",
->  		.of_match_table	= platform_mhu_dt_ids,
-> 
+While playing with gigantic hugepages and memory_hotplug, I triggered
+the following #PF when "cat memoryX/removable":
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+<---
+kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+kernel: #PF error: [normal kernel read fault]
+kernel: PGD 0 P4D 0
+kernel: Oops: 0000 [#1] SMP PTI
+kernel: CPU: 1 PID: 1481 Comm: cat Tainted: G            E     4.20.0-rc6-mm1-1-default+ #18
+kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+kernel: RIP: 0010:has_unmovable_pages+0x154/0x210
+kernel: Code: 1b ff ff ff eb 32 48 8b 45 00 bf 00 10 00 00 a9 00 00 01 00 74 07 0f b6 4d 51 48 d3 e7 e8 c4 81 05 00 48 85 c0 49 89 c1 75 7e <41> 8b 41 08 83 f8 09 74 41 83 f8 1b 74 3c 4d 2b 64 24 58 49 81 ec
+kernel: RSP: 0018:ffffc90000a1fd30 EFLAGS: 00010246
+kernel: RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000009
+kernel: RDX: ffffffff82aed4f0 RSI: 0000000000001000 RDI: 0000000000001000
+kernel: RBP: ffffea0001800000 R08: 0000000000200000 R09: 0000000000000000
+kernel: R10: 0000000000001000 R11: 0000000000000003 R12: ffff88813ffd45c0
+kernel: R13: 0000000000060000 R14: 0000000000000001 R15: ffffea0000000000
+kernel: FS:  00007fd71d9b3500(0000) GS:ffff88813bb00000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000000000000008 CR3: 00000001371c2002 CR4: 00000000003606e0
+kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kernel: Call Trace:
+kernel:  is_mem_section_removable+0x7d/0x100
+kernel:  removable_show+0x90/0xb0
+kernel:  dev_attr_show+0x1c/0x50
+kernel:  sysfs_kf_seq_show+0xca/0x1b0
+kernel:  seq_read+0x133/0x380
+kernel:  __vfs_read+0x26/0x180
+kernel:  vfs_read+0x89/0x140
+kernel:  ksys_read+0x42/0x90
+kernel:  do_syscall_64+0x5b/0x180
+kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+kernel: RIP: 0033:0x7fd71d4c8b41
+kernel: Code: fe ff ff 48 8d 3d 27 9e 09 00 48 83 ec 08 e8 96 02 02 00 66 0f 1f 44 00 00 8b 05 ea fc 2c 00 48 63 ff 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 f3 c3 0f 1f 44 00 00 55 53 48 89 d5 48 89
+kernel: RSP: 002b:00007ffeab5f6448 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+kernel: RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fd71d4c8b41
+kernel: RDX: 0000000000020000 RSI: 00007fd71d809000 RDI: 0000000000000003
+kernel: RBP: 0000000000020000 R08: ffffffffffffffff R09: 0000000000000000
+kernel: R10: 000000000000038b R11: 0000000000000246 R12: 00007fd71d809000
+kernel: R13: 0000000000000003 R14: 00007fd71d80900f R15: 0000000000020000
+kernel: Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) drm_kms_helper(E) drm(E) aesni_intel(E) virtio_net(E) syscopyarea(E) net_failover(E) sysfillrect(E) failover(E) aes_x86_64(E) crypto_simd(E) sysimgblt(E) cryptd(E) pcspkr(E) glue_helper(E) parport_pc(E) fb_sys_fops(E) i2c_piix4(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) serio_raw(E) crc32c_intel(E) virtio_pci(E) virtio_ring(E) virtio(E) libata(E) sg(E) scsi_mod(E) autofs4(E)
+kernel: CR2: 0000000000000008
+kernel: ---[ end trace 49cade81474e40e7 ]---
+kernel: RIP: 0010:has_unmovable_pages+0x154/0x210
+kernel: Code: 1b ff ff ff eb 32 48 8b 45 00 bf 00 10 00 00 a9 00 00 01 00 74 07 0f b6 4d 51 48 d3 e7 e8 c4 81 05 00 48 85 c0 49 89 c1 75 7e <41> 8b 41 08 83 f8 09 74 41 83 f8 1b 74 3c 4d 2b 64 24 58 49 81 ec
+kernel: RSP: 0018:ffffc90000a1fd30 EFLAGS: 00010246
+kernel: RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000009
+kernel: RDX: ffffffff82aed4f0 RSI: 0000000000001000 RDI: 0000000000001000
+kernel: RBP: ffffea0001800000 R08: 0000000000200000 R09: 0000000000000000
+kernel: R10: 0000000000001000 R11: 0000000000000003 R12: ffff88813ffd45c0
+kernel: R13: 0000000000060000 R14: 0000000000000001 R15: ffffea0000000000
+kernel: FS:  00007fd71d9b3500(0000) GS:ffff88813bb00000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000000000000008 CR3: 00000001371c2002 CR4: 00000000003606e0
+kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+--->
+
+The reason is we do not pass the Head to page_hstate(), and so,
+the call to compound_order() in page_hstate() returns 0, so
+we end up checking all hstates's size to match PAGE_SIZE.
+
+Obviously, we do not find any hstate matching that size, and we
+return NULL.
+Then, we dereference that NULL pointer in hugepage_migration_supported()
+and we got the #PF from above.
+
+Fix that by getting the head page before calling page_hstate().
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+---
+ mm/page_alloc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a6e7bfd18cde..18d41e85f672 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8038,11 +8038,12 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+ 		 * handle each tail page individually in migration.
+ 		 */
+ 		if (PageHuge(page)) {
++			struct page *head = compound_head(page);
+ 
+-			if (!hugepage_migration_supported(page_hstate(page)))
++			if (!hugepage_migration_supported(page_hstate(head)))
+ 				goto unmovable;
+ 
+-			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
++			iter = round_up(iter + 1, 1<<compound_order(head)) - 1;
+ 			continue;
+ 		}
+ 
+-- 
+2.13.7
+
