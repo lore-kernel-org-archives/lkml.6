@@ -2,149 +2,157 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1A8C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 238DBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8139C206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA15921783
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGyPRsWD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388973AbeLQUPu (ORCPT
+        id S2389388AbeLQUPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:15:50 -0500
-Received: from mga03.intel.com ([134.134.136.65]:43880 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388083AbeLQUPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:15:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 12:15:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="304576636"
-Received: from dmandrea-mobl.amr.corp.intel.com (HELO [10.254.107.151]) ([10.254.107.151])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 12:15:47 -0800
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
- <20181217194913.GD29785@linux.intel.com>
- <16fdd37a-b9cc-1045-1497-2cfff6af176a@intel.com>
- <CALCETrUhVDxMAtpyn5ahsTFwhJkzWxKa5Ur8q4FuVaKLmSyYHQ@mail.gmail.com>
- <826f6a5a-fdf6-e7e5-d2d8-bcdc57c016fe@intel.com>
- <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <18800fdc-a2e1-39a3-9ee5-0065865ea052@intel.com>
-Date:   Mon, 17 Dec 2018 12:15:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 17 Dec 2018 15:15:55 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46490 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388083AbeLQUPx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:15:53 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so6630102ply.13;
+        Mon, 17 Dec 2018 12:15:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=3vyqNF2AY3a98If6IXFQYuTsTHWXYSwI0xNLA0HcJhQ=;
+        b=fGyPRsWDJn6Kj0Fg0NK2CHb8lm2wpyJMPu69HAivJuYK13NTR/Fm7RG4BGWJRgANwN
+         gqRaCCrlzg1HzxTnTO+mVE35R6zDT9HfArCP2PgcSIIpHCoVIQXu08QiSoaPOq4Kr/1H
+         S4zhEkJ18wFGfdMipkVsQB9Q0iqB+paWWQ3FAQqCuZF4g9XpwJqNutc5OkaNi/21rzn7
+         Z9h7IMPC7m2mUXOUlD5FxSEBkCRbYJfkPWwLwC7KVn+bOEBPWF47xpQVjstuw1u3EbnK
+         4lUBPSqwiu4dYr91tYfWcSXSsKiowwIsgen2M8nfGYTCk8AN+KF9diFAXrSa0zOu7MON
+         BkEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=3vyqNF2AY3a98If6IXFQYuTsTHWXYSwI0xNLA0HcJhQ=;
+        b=oayw9Q5qr3cvNJQ38g7cWGE23lHpgmm9NQyyam9yLEIjt2NcX9zKGRHtOajB19llZY
+         Xt39+z92XfCLPO5dqnSsBVbuwrC3APnaxvuBAwQ2YRNKyL0zVN1E+9uEgIPIk9zZn/gu
+         UOghd0hg7jok9Aa6g/tMXlvG413PqCZKkSyyvRAG5SCJ3EgujviG75NRolkeNN+wqPxH
+         2RyGpyx4v5oamSz0i++TstoVuHRtjdOJcRRSslurDpbgkgWCrAnxaT0AxK1/bXOLhihX
+         EydRn2tVfb9v019Vy7U9D6P/ew2G/cYlKDmW4AnObRE/BMpg9V9sLTXCtpq8PqyKdjbV
+         Q24A==
+X-Gm-Message-State: AA+aEWYz1TuMO5U3DnauhoWVtihgG9UcCMjPAr9+7AGWs3zvXOME8o5A
+        Ghn3KrJvLM1zV6MOgfraQ1RvHx2r
+X-Google-Smtp-Source: AFSGD/UwgNW1q7B1Tl/WOz2n048Sng10rkAssfluJ7vJAib6KbxfmhOWdEj5Pb0Em8FBTBItR70xVw==
+X-Received: by 2002:a17:902:bd86:: with SMTP id q6mr13486898pls.16.1545077751326;
+        Mon, 17 Dec 2018 12:15:51 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([103.227.98.208])
+        by smtp.gmail.com with ESMTPSA id b68sm21569889pfg.160.2018.12.17.12.15.49
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Dec 2018 12:15:50 -0800 (PST)
+Date:   Tue, 18 Dec 2018 01:49:42 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
+        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
+        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Subject: [PATCH v4 0/9] Use vm_insert_range
+Message-ID: <20181217201942.GA31335@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 12:10 PM, Andy Lutomirski wrote:
->> There's no 'struct page' for enclave memory as it stands.  That means no
->> page cache, and that means there's no 'struct address_space *mapping' in
->> the first place.
->>
->> Basically, the choice was made a long time ago to have SGX's memory
->> management live outside the core VM.  I've waffled back and forth on it,
->> but I do still think this is the right way to do it.
-> AFAICS a lack of struct page isn't a problem.  The core code seems to
-> understand that address_space objects might cover non-struct-page
-> memory.  Morally, enclave memory is a lot like hot-unpluggable PCI
-> space.
+Previouly drivers have their own way of mapping range of
+kernel pages/memory into user vma and this was done by
+invoking vm_insert_page() within a loop.
 
-Yeah, this is true.  The existing code seems to make it all the way from
-unmap_mapping_range() down to zap_page_range() without 'struct page'.
+As this pattern is common across different drivers, it can
+be generalized by creating a new function and use it across
+the drivers.
 
-Overall, I think what Andy is saying here is that an open(/dev/sgx)
-should give you a "unique" enclave fd.  That fd can end up mapped into
-one or more processes either via fork() or the other ways fds end up
-getting handed around.  mmap() of this fd would be *required* to be
-MAP_SHARED.  That means you don't need to support COW, and the semantics
-are the same as any other MAP_SHARED mapping: children and parents and
-anybody mmap()'ing it must all coordinate.
+vm_insert_range is the new API which will be used to map a
+range of kernel memory/pages to user vma.
 
-This sounds interesting at least.  It might lead to an unholy mess in
-the driver, or it might be a great cleanup.  But, it does sound like
-something that would both potentially simplify the semantics and the
-implementation.
+All the applicable places are converted to use new vm_insert_range
+in this patch series.
+
+v1 -> v2:
+        Address review comment on mm/memory.c. Add EXPORT_SYMBOL
+        for vm_insert_range and corrected the documentation part
+        for this API.
+
+        In drivers/gpu/drm/xen/xen_drm_front_gem.c, replace err
+        with ret as suggested.
+
+        In drivers/iommu/dma-iommu.c, handle the scenario of partial
+        mmap() of large buffer by passing *pages + vma->vm_pgoff* to
+        vm_insert_range().
+
+v2 -> v3:
+        Declaration of vm_insert_range() moved to include/linux/mm.h
+
+v3 -> v4:
+	Address review comments.
+	
+	In mm/memory.c. Added error check.
+
+	In arch/arm/mm/dma-mapping.c, remove part of error check as the
+	similar is checked inside vm_insert_range.
+
+	In rockchip/rockchip_drm_gem.c, vma->vm_pgoff is respected as
+	this might be passed as non zero value considering partial
+	mapping of large buffer.
+
+	In iommu/dma-iommu.c, count is modifed as (count - vma->vm_pgoff)
+	to handle partial mapping scenario in v2.
+
+Souptick Joarder (9):
+  mm: Introduce new vm_insert_range API
+  arch/arm/mm/dma-mapping.c: Convert to use vm_insert_range
+  drivers/firewire/core-iso.c: Convert to use vm_insert_range
+  drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+  drm/xen/xen_drm_front_gem.c: Convert to use vm_insert_range
+  iommu/dma-iommu.c: Convert to use vm_insert_range
+  videobuf2/videobuf2-dma-sg.c: Convert to use vm_insert_range
+  xen/gntdev.c: Convert to use vm_insert_range
+  xen/privcmd-buf.c: Convert to use vm_insert_range
+
+ arch/arm/mm/dma-mapping.c                         | 21 ++++--------
+ drivers/firewire/core-iso.c                       | 15 ++-------
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c       | 19 ++---------
+ drivers/gpu/drm/xen/xen_drm_front_gem.c           | 20 ++++-------
+ drivers/iommu/dma-iommu.c                         | 13 ++-----
+ drivers/media/common/videobuf2/videobuf2-dma-sg.c | 23 ++++---------
+ drivers/xen/gntdev.c                              | 11 +++---
+ drivers/xen/privcmd-buf.c                         |  8 ++---
+ include/linux/mm.h                                |  2 ++
+ mm/memory.c                                       | 41 +++++++++++++++++++++++
+ mm/nommu.c                                        |  7 ++++
+ 11 files changed, 83 insertions(+), 97 deletions(-)
+
+-- 
+1.9.1
+
