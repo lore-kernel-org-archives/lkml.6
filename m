@@ -2,99 +2,97 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D44C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FF4C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2190206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 325BA206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbeLQTgz (ORCPT
+        id S2388335AbeLQThF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:36:55 -0500
-Received: from namei.org ([65.99.196.166]:52224 "EHLO namei.org"
+        Mon, 17 Dec 2018 14:37:05 -0500
+Received: from mga01.intel.com ([192.55.52.88]:42828 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeLQTgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:36:55 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBHJaovd029954;
-        Mon, 17 Dec 2018 19:36:50 GMT
-Date:   Tue, 18 Dec 2018 06:36:50 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [GIT PULL] seccomp updates for next (part2)
-In-Reply-To: <CAGXu5jKw8sZp8PjkSG+KZVaMdb3ryLPOAgRdOxBRPiZJF3PGtQ@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1812180636390.29218@namei.org>
-References: <20181214162556.GA7944@beast> <CAGXu5jKw8sZp8PjkSG+KZVaMdb3ryLPOAgRdOxBRPiZJF3PGtQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726758AbeLQThF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:37:05 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:37:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="304565982"
+Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 11:36:57 -0800
+Date:   Mon, 17 Dec 2018 21:36:56 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217193656.GB29785@linux.intel.com>
+References: <20181214235917.GA14049@wind.enjellic.com>
+ <20181215000627.GA5799@linux.intel.com>
+ <20181217132859.GA31936@linux.intel.com>
+ <20181217133928.GA32706@linux.intel.com>
+ <20181217140811.GA4601@linux.intel.com>
+ <20181217173106.GB12491@linux.intel.com>
+ <20181217174935.GA12617@linux.intel.com>
+ <20181217180957.GC12491@linux.intel.com>
+ <20181217182319.GA13288@linux.intel.com>
+ <20181217184625.GE12491@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217184625.GE12491@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018, Kees Cook wrote:
+On Mon, Dec 17, 2018 at 10:46:25AM -0800, Sean Christopherson wrote:
+> On Mon, Dec 17, 2018 at 08:23:19PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Dec 17, 2018 at 10:09:57AM -0800, Sean Christopherson wrote:
+> > > No, EREMOVE should never fail if the enclave is being released, i.e. all
+> > > references to the enclave are gone.  And failure during sgx_encl_release()
+> > > means we leaked an EPC page, which warrants a WARN.
+> > 
+> > Right that what I was suspecting as swapper should hold a ref to the
+> > enclave while it is working on it. It is a programming error when this
+> > happens.
+> > 
+> > Maybe change the boolean parameter to flags parameter have a flag to
+> > use sgx_free_page()?
+> 
+> I tried that approach when I first split it to __sgx_free_page() and
+> sgx_free_page(), but IMO the code is more difficult to read and harder
+> to maintain since sgx_free_page() should be used except under special
+> circumstances, e.g. race with reclaim or the freeing is "untrusted",
+> i.e. requested by userspace via sgx_ioc_enclave_remove_pages().
 
-> On Fri, Dec 14, 2018 at 8:26 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> >
-> > Hi James,
-> >
-> > Please pull these seccomp fixes for -next.
-> >
-> > Thanks!
-> 
-> Friendly ping: James, can you pick this up for -next?
-> 
+I mean inside sgx_invalidate() call either __sgx_free_page() or
+sgx_free_page() depending on a flag.
 
-Pulled to next-seccomp and next-testing.
-
-
-> -Kees
-> 
-> >
-> > -Kees
-> >
-> > The following changes since commit fec7b6690541b8128663a13c9586b1daf42b0a6c:
-> >
-> >   samples: add an example of seccomp user trap (2018-12-11 16:32:11 -0800)
-> >
-> > are available in the Git repository at:
-> >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-next-part2
-> >
-> > for you to fetch changes up to 4fc96ee9085d39ceeaa7b60cd475d0a474e7062f:
-> >
-> >   seccomp, s390: fix build for syscall type change (2018-12-13 16:51:01 -0800)
-> >
-> > ----------------------------------------------------------------
-> > seccomp fixes for sparse warnings and s390 build (Tycho)
-> >
-> > ----------------------------------------------------------------
-> > Tycho Andersen (2):
-> >       seccomp: fix poor type promotion
-> >       seccomp, s390: fix build for syscall type change
-> >
-> >  arch/s390/kernel/compat_wrapper.c | 2 +-
-> >  kernel/seccomp.c                  | 3 +--
-> >  2 files changed, 2 insertions(+), 3 deletions(-)
-> >
-> > --
-> > Kees Cook
-> 
-> 
-> 
-> 
-
--- 
-James Morris
-<jmorris@namei.org>
-
+/Jarkko
