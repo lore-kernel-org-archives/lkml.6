@@ -2,114 +2,92 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AA3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54104C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651902133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A3882133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388303AbeLQQki (ORCPT
+        id S2388324AbeLQQl1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:40:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34729 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387905AbeLQQki (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:40:38 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHGdvnh2536264
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 08:39:57 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHGdvMq2536260;
-        Mon, 17 Dec 2018 08:39:57 -0800
-Date:   Mon, 17 Dec 2018 08:39:57 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com, tglx@linutronix.de,
-        john.stultz@linaro.org, linux-kernel@vger.kernel.org
-Reply-To: john.stultz@linaro.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
-          torvalds@linux-foundation.org, peterz@infradead.org
-In-Reply-To: <alpine.DEB.2.21.1812171328050.1880@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1812171328050.1880@nanos.tec.linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] posix-timers: Fix division by zero bug
-Git-Commit-ID: 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 17 Dec 2018 11:41:27 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:32896 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388223AbeLQQl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:41:26 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5ADF4207B2; Mon, 17 Dec 2018 17:41:24 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0601420723;
+        Mon, 17 Dec 2018 17:41:13 +0100 (CET)
+Date:   Mon, 17 Dec 2018 17:41:14 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20181217174114.24196d17@xps13>
+In-Reply-To: <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181118204324.373ca9cc@bbrezillon>
+        <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181119090246.49060019@bbrezillon>
+        <BN6PR02MB2610C7D048E4A192E041BE14AFD90@BN6PR02MB2610.namprd02.prod.outlook.com>
+        <20181120120244.7d2442b5@bbrezillon>
+        <20181120133624.3fa4742d@xps13>
+        <MWHPR02MB26238A2271B33470ABFA1023AFD40@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <MWHPR02MB26239C2B2A7050310BEF1E9CAFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212091135.1d0cc9a6@xps13>
+        <MWHPR02MB26236CEF8A2110B20C825198AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212100931.149b0cac@xps13>
+        <MWHPR02MB2623EDA15BE59304795F3034AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212141825.69711c57@xps13>
+        <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94
-Gitweb:     https://git.kernel.org/tip/0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 17 Dec 2018 13:31:05 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 17:35:45 +0100
+Hi Naga,
 
-posix-timers: Fix division by zero bug
+[...]
 
-The signal delivery path of posix-timers can try to rearm the timer even if
-the interval is zero. That's handled for the common case (hrtimer) but not
-for alarm timers. In that case the forwarding function raises a division by
-zero exception.
+> Inserted biterror @ 48/7
+> Successfully corrected 25 bit errors per subpage
+> Inserted biterror @ 50/7
+> ECC failure, invalid data despite read success
+> root@xilinx-zc1751-dc2-2018_1:~#
+> 
+> But even in this case also, driver is saying ECC failure but read success.
+> That means controller is able to detect errors on read page up to 24 bit only.
+> After that there is no way to say to the upper layers that the page is bad because of the limitation in the controller.
 
-The handling for hrtimer based posix timers is wrong because it marks the
-timer as active despite the fact that it is stopped.
+This is more than a "limitation", the design is broken. I am not sure
+how to support such controller, and I am not sure if we even want to.
 
-Move the check from common_hrtimer_rearm() to posixtimer_rearm() to cure
-both issues.
+> Could you please suggest any alternative to report the errors in that case?
 
-Reported-by: syzbot+9d38bedac9cc77b8ad5e@syzkaller.appspotmail.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: sboyd@kernel.org
-Cc: stable@vger.kernel.org
-Cc: syzkaller-bugs@googlegroups.com
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1812171328050.1880@nanos.tec.linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/time/posix-timers.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Shall we support the controller without the hw ECC engine? Boris, any
+thoughts?
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index bd62b5eeb5a0..31f49ae80f43 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -289,9 +289,6 @@ static void common_hrtimer_rearm(struct k_itimer *timr)
- {
- 	struct hrtimer *timer = &timr->it.real.timer;
- 
--	if (!timr->it_interval)
--		return;
--
- 	timr->it_overrun += hrtimer_forward(timer, timer->base->get_time(),
- 					    timr->it_interval);
- 	hrtimer_restart(timer);
-@@ -317,7 +314,7 @@ void posixtimer_rearm(struct kernel_siginfo *info)
- 	if (!timr)
- 		return;
- 
--	if (timr->it_requeue_pending == info->si_sys_private) {
-+	if (timr->it_interval && timr->it_requeue_pending == info->si_sys_private) {
- 		timr->kclock->timer_rearm(timr);
- 
- 		timr->it_active = 1;
+
+Thanks,
+Miquèl
