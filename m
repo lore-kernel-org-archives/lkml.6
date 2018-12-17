@@ -2,135 +2,564 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A11FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270F8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C969E217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:06:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TADvunuP"
+	by mail.kernel.org (Postfix) with ESMTP id C31C021473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545080906;
+	bh=nbv7zRPVmXIu3vdbjLBRGlA7vpJoqLt5jr1jMeJb+ns=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=tGkg8FOxT5s+xLpV3Cle/Hr4Ho8/rk6kT+NkX78bEHUynKxbYtnAcn6/SwcxDuwU1
+	 ElxwJAW+2PHBQCeBRb8dLVyr3p7ZCjrE0WO+/uxTOvvKLln508Wbh5zEFTjmnMNpEl
+	 5DWVWzegxIryjnGgkddKE3pLQ1sZ91CfbH37D93k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389490AbeLQVGV (ORCPT
+        id S1732120AbeLQVIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:06:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58332 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726969AbeLQVGV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:06:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:In-Reply-To:MIME-Version:
-        Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=F5eDz++z/FQJ213bay0vdKfK1MgxKX+eXhxMIAA31Go=; b=TADvunuPcx9nhwIyhivs69EW4
-        ETFO94vFVgZjs1BNj9rLk72dTLsV6+ckzW4b7REeEIFMx7xHY/XFVfmHHgxoIROC8v1JyRoJHZloc
-        FrH9cdDaj5DVrT4GnZx/lne23boVEwlGbDlGE+yNf7xRyI4C32mx33FQOKqVjo7IEavuXiqvVpfFW
-        v16fTnIQJjiYPGEApg8IxLE+YNXwvysMcvN7JmJnCkFXPxJ/f89cx926q3OlZb88ZKvsuWgAqE13u
-        nLYYgzYOeq/P3jxVGpAx5pS+/zpMu57NC+E/admts7MPRZjmynWtlj17SC4pj+FenWGTgipNf32oO
-        zuhUqdlPw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZ05j-0003ww-4y; Mon, 17 Dec 2018 21:06:19 +0000
-Subject: Re: [PATCH 0/1] RFC: Revamp admin-guide/tainted-kernels.rst to make
- it more comprehensible
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-Cc:     linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181217152043.9989-1-linux@leemhuis.info>
- <20181217112437.5fe868eb@lwn.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org>
-Date:   Mon, 17 Dec 2018 13:06:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 17 Dec 2018 16:08:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726969AbeLQVIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 16:08:24 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2077E21473;
+        Mon, 17 Dec 2018 21:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545080902;
+        bh=nbv7zRPVmXIu3vdbjLBRGlA7vpJoqLt5jr1jMeJb+ns=;
+        h=Date:From:To:Cc:Subject:From;
+        b=126b9gOIcysR5vrSIA96y9kaIrPozfD+bJaD9K5W8WAqRZxUP52gCyprnlGXdS1K4
+         OcTPgq9N5gSBdYTQxX/4EwZsAw8Dd1LqsR/3EObDB3MxfHF9KkpwBmMyc/mZOK5kP/
+         4zy5x7kQCutG6S73JxqpYOZdx2mZEm5gyiRGPcVs=
+Date:   Mon, 17 Dec 2018 22:08:19 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.4.168
+Message-ID: <20181217210819.GA3249@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20181217112437.5fe868eb@lwn.net>
-Content-Type: multipart/mixed;
- boundary="------------6BBD015C4CD1538B71FF8F14"
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Disposition: inline
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------6BBD015C4CD1538B71FF8F14
+
+--TB36FDmn/VVEgNH/
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/17/18 10:24 AM, Jonathan Corbet wrote:
-> Here's an idea if you feel like improving this: rather than putting an
-> inscrutable program inline, add a taint_status script to scripts/ that
-> prints out the status in fully human-readable form, with the explanation
-> for every set bit.
+I'm announcing the release of the 4.4.168 kernel.
+
+All users of the 4.4 kernel series must upgrade.
+
+The updated 4.4.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.4.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/Makefile                                            |    3=
+=20
+ Documentation/networking/Makefile                                 |    1=
+=20
+ Documentation/networking/timestamping/.gitignore                  |    3=
+=20
+ Documentation/networking/timestamping/Makefile                    |   14=
+=20
+ Documentation/networking/timestamping/hwtstamp_config.c           |  134 -
+ Documentation/networking/timestamping/timestamping.c              |  528 -=
+------
+ Documentation/networking/timestamping/txtimestamp.c               |  549 -=
+------
+ Makefile                                                          |    2=
+=20
+ arch/arm/mach-omap1/board-ams-delta.c                             |    3=
+=20
+ arch/arm/mach-omap2/prm44xx.c                                     |    2=
+=20
+ arch/cris/arch-v32/drivers/cryptocop.c                            |    4=
+=20
+ arch/ia64/kernel/err_inject.c                                     |    2=
+=20
+ arch/mips/mm/gup.c                                                |    2=
+=20
+ arch/s390/kernel/perf_cpum_cf.c                                   |    2=
+=20
+ arch/s390/mm/gup.c                                                |    2=
+=20
+ arch/sh/mm/gup.c                                                  |    3=
+=20
+ arch/sparc/mm/gup.c                                               |    3=
+=20
+ arch/x86/include/asm/kvm_host.h                                   |    2=
+=20
+ arch/x86/include/asm/uaccess.h                                    |   64=
+=20
+ arch/x86/include/asm/uaccess_32.h                                 |   26=
+=20
+ arch/x86/include/asm/uaccess_64.h                                 |   94 -
+ arch/x86/kernel/cpu/common.c                                      |    3=
+=20
+ arch/x86/kvm/cpuid.c                                              |   31=
+=20
+ arch/x86/kvm/cpuid.h                                              |   40=
+=20
+ arch/x86/kvm/lapic.c                                              |    2=
+=20
+ arch/x86/kvm/svm.c                                                |  143 +
+ arch/x86/kvm/vmx.c                                                |  741 +=
+++++-----
+ arch/x86/kvm/x86.c                                                |   14=
+=20
+ arch/x86/lib/usercopy_32.c                                        |   20=
+=20
+ arch/x86/mm/gup.c                                                 |    2=
+=20
+ arch/x86/mm/mpx.c                                                 |    3=
+=20
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c                           |    6=
+=20
+ drivers/gpu/drm/ast/ast_mode.c                                    |   36=
+=20
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c                           |    3=
+=20
+ drivers/gpu/drm/i915/i915_gem_userptr.c                           |    6=
+=20
+ drivers/gpu/drm/radeon/radeon_ttm.c                               |    2=
+=20
+ drivers/gpu/drm/via/via_dmablit.c                                 |    4=
+=20
+ drivers/hwmon/ina2xx.c                                            |    2=
+=20
+ drivers/hwmon/w83795.c                                            |    2=
+=20
+ drivers/infiniband/core/umem.c                                    |    6=
+=20
+ drivers/infiniband/core/umem_odp.c                                |    7=
+=20
+ drivers/infiniband/hw/mthca/mthca_memfree.c                       |    4=
+=20
+ drivers/infiniband/hw/qib/qib_user_pages.c                        |    3=
+=20
+ drivers/infiniband/hw/usnic/usnic_uiom.c                          |    5=
+=20
+ drivers/media/dvb-frontends/ascot2e.c                             |    4=
+=20
+ drivers/media/dvb-frontends/cxd2841er.c                           |    4=
+=20
+ drivers/media/dvb-frontends/horus3a.c                             |    4=
+=20
+ drivers/media/dvb-frontends/itd1000.c                             |    5=
+=20
+ drivers/media/dvb-frontends/mt312.c                               |    5=
+=20
+ drivers/media/dvb-frontends/stb0899_drv.c                         |    3=
+=20
+ drivers/media/dvb-frontends/stb6100.c                             |    6=
+=20
+ drivers/media/dvb-frontends/stv0367.c                             |    4=
+=20
+ drivers/media/dvb-frontends/stv090x.c                             |    4=
+=20
+ drivers/media/dvb-frontends/stv6110x.c                            |    4=
+=20
+ drivers/media/dvb-frontends/zl10039.c                             |    4=
+=20
+ drivers/media/pci/ivtv/ivtv-udma.c                                |    3=
+=20
+ drivers/media/pci/ivtv/ivtv-yuv.c                                 |    8=
+=20
+ drivers/media/platform/omap/omap_vout.c                           |    2=
+=20
+ drivers/media/v4l2-core/videobuf-dma-sg.c                         |    7=
+=20
+ drivers/media/v4l2-core/videobuf2-memops.c                        |    6=
+=20
+ drivers/misc/mic/scif/scif_rma.c                                  |    3=
+=20
+ drivers/misc/sgi-gru/grufault.c                                   |    2=
+=20
+ drivers/net/ethernet/cavium/thunder/nic_main.c                    |    3=
+=20
+ drivers/net/ethernet/hisilicon/hip04_eth.c                        |    4=
+=20
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c                     |    4=
+=20
+ drivers/net/ethernet/realtek/8139cp.c                             |    5=
+=20
+ drivers/net/ethernet/rocker/rocker.c                              |   24=
+=20
+ drivers/net/phy/phy_device.c                                      |   19=
+=20
+ drivers/net/tun.c                                                 |    6=
+=20
+ drivers/net/wireless/ath/wil6210/wmi.c                            |    8=
+=20
+ drivers/scsi/sr_ioctl.c                                           |   21=
+=20
+ drivers/scsi/st.c                                                 |    5=
+=20
+ drivers/staging/rdma/hfi1/user_pages.c                            |    2=
+=20
+ drivers/staging/rdma/ipath/ipath_user_pages.c                     |    2=
+=20
+ drivers/staging/speakup/kobjects.c                                |    4=
+=20
+ drivers/usb/gadget/udc/omap_udc.c                                 |   87 -
+ drivers/video/fbdev/matrox/matroxfb_Ti3026.c                      |    2=
+=20
+ drivers/video/fbdev/pvr2fb.c                                      |    2=
+=20
+ drivers/virt/fsl_hypervisor.c                                     |    4=
+=20
+ drivers/xen/xlate_mmu.c                                           |    1=
+=20
+ fs/btrfs/send.c                                                   |   11=
+=20
+ fs/cachefiles/rdwr.c                                              |    3=
+=20
+ fs/exec.c                                                         |    9=
+=20
+ fs/exportfs/expfs.c                                               |    2=
+=20
+ fs/fscache/object.c                                               |    3=
+=20
+ fs/hfs/btree.c                                                    |    3=
+=20
+ fs/hfsplus/btree.c                                                |    3=
+=20
+ fs/hugetlbfs/inode.c                                              |   30=
+=20
+ fs/ocfs2/export.c                                                 |    2=
+=20
+ fs/ocfs2/move_extents.c                                           |   47=
+=20
+ fs/proc/base.c                                                    |   19=
+=20
+ fs/pstore/platform.c                                              |    4=
+=20
+ fs/sysv/inode.c                                                   |    2=
+=20
+ include/linux/mm.h                                                |   15=
+=20
+ include/linux/posix-timers.h                                      |    4=
+=20
+ include/net/neighbour.h                                           |   28=
+=20
+ include/sound/pcm.h                                               |    2=
+=20
+ kernel/bpf/verifier.c                                             |   98 +
+ kernel/events/uprobes.c                                           |    4=
+=20
+ kernel/time/posix-cpu-timers.c                                    |    2=
+=20
+ kernel/time/posix-timers.c                                        |   29=
+=20
+ kernel/trace/bpf_trace.c                                          |    8=
+=20
+ lib/debugobjects.c                                                |    3=
+=20
+ lib/swiotlb.c                                                     |   20=
+=20
+ mm/frame_vector.c                                                 |    9=
+=20
+ mm/gup.c                                                          |   42=
+=20
+ mm/hugetlb.c                                                      |   12=
+=20
+ mm/memory.c                                                       |   18=
+=20
+ mm/mempolicy.c                                                    |    2=
+=20
+ mm/nommu.c                                                        |   42=
+=20
+ mm/process_vm_access.c                                            |    6=
+=20
+ mm/util.c                                                         |    2=
+=20
+ net/ceph/pagevec.c                                                |    2=
+=20
+ net/core/rtnetlink.c                                              |    3=
+=20
+ net/ipv4/tcp_output.c                                             |   12=
+=20
+ net/ipv6/ip6_output.c                                             |   42=
+=20
+ net/sched/sch_netem.c                                             |    3=
+=20
+ security/tomoyo/domain.c                                          |    3=
+=20
+ sound/core/pcm_lib.c                                              |    2=
+=20
+ sound/core/pcm_native.c                                           |    6=
+=20
+ sound/soc/omap/omap-dmic.c                                        |    9=
+=20
+ sound/soc/omap/omap-mcpdm.c                                       |   43=
+=20
+ sound/soc/soc-core.c                                              |    1=
+=20
+ tools/testing/selftests/networking/timestamping/.gitignore        |    3=
+=20
+ tools/testing/selftests/networking/timestamping/Makefile          |    8=
+=20
+ tools/testing/selftests/networking/timestamping/hwtstamp_config.c |  134 +
+ tools/testing/selftests/networking/timestamping/timestamping.c    |  528 +=
+++++++
+ tools/testing/selftests/networking/timestamping/txtimestamp.c     |  549 +=
+++++++
+ virt/kvm/async_pf.c                                               |    2=
+=20
+ virt/kvm/kvm_main.c                                               |   11=
+=20
+ 130 files changed, 2649 insertions(+), 2005 deletions(-)
+
+Aaro Koskinen (4):
+      USB: omap_udc: use devm_request_irq()
+      USB: omap_udc: fix crashes on probe error and module removal
+      USB: omap_udc: fix omap_udc_start() on 15xx machines
+      USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
+
+Alexei Starovoitov (2):
+      bpf: support 8-byte metafield access
+      bpf: Prevent memory disambiguation attack
+
+Arnd Bergmann (2):
+      media: dvb-frontends: fix i2c access helpers for KASAN
+      rocker: fix rocker_tlv_put_* functions for KASAN
+
+Ashok Raj (1):
+      KVM/x86: Add IBPB support
+
+Ben Hutchings (3):
+      bpf/verifier: Add spi variable to check_stack_write()
+      bpf/verifier: Pass instruction index to check_mem_access() and check_=
+xadd()
+      mm/nommu.c: Switch __get_user_pages_unlocked() to use __get_user_page=
+s()
+
+Borislav Petkov (1):
+      x86/speculation: Use synthetic bits for IBRS/IBPB/STIBP
+
+Christoph Paasch (1):
+      net: Prevent invalid access to skb->prev in __qdisc_drop_all
+
+Colin Ian King (1):
+      fscache, cachefiles: remove redundant variable 'cache'
+
+Dan Williams (3):
+      x86: Introduce __uaccess_begin_nospec() and uaccess_try_nospec
+      x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
+      x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+
+David Matlack (1):
+      KVM: nVMX: mark vmcs12 pages dirty on L2 exit
+
+Eric Dumazet (1):
+      rtnetlink: ndo_dflt_fdb_dump() only work for ARPHRD_ETHER devices
+
+Greg Kroah-Hartman (1):
+      Linux 4.4.168
+
+Guenter Roeck (1):
+      staging: speakup: Replace strncpy with memcpy
+
+Heiner Kallweit (1):
+      net: phy: don't allow __set_phy_supported to add unsupported modes
+
+Huacai Chen (1):
+      hwmon: (w83795) temp4_type has writable permission
+
+Janusz Krzysztofik (1):
+      ARM: OMAP1: ams-delta: Fix possible use of uninitialized field
+
+Jens Axboe (1):
+      sr: pass down correctly sized SCSI sense buffer
+
+Jim Mattson (1):
+      KVM: nVMX: Eliminate vmcs02 pool
+
+Josh Elsasser (1):
+      ixgbe: recognize 1000BaseLX SFP modules as 1Gbps
+
+KarimAllah Ahmed (3):
+      KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
+      KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+      KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
+
+Kees Cook (1):
+      swiotlb: clean up reporting
+
+Konrad Rzeszutek Wilk (2):
+      x86/bugs, KVM: Support the combination of guest and host IBRS
+      x86/KVM/VMX: Expose SPEC_CTRL Bit(2) to the guest
+
+Larry Chen (1):
+      ocfs2: fix deadlock caused by ocfs2_defrag_extent()
+
+Linus Torvalds (3):
+      x86: reorganize SMAP handling in user space accesses
+      x86: fix SMAP in 32-bit environments
+      proc: don't use FOLL_FORCE for reading cmdline and environment
+
+Lior David (1):
+      wil6210: missing length check in wmi_set_ie
+
+Lorenzo Bianconi (1):
+      net: thunderx: fix NULL pointer dereference in nic_remove
+
+Lorenzo Stoakes (8):
+      mm: remove write/force parameters from __get_user_pages_locked()
+      mm: remove write/force parameters from __get_user_pages_unlocked()
+      mm: replace get_user_pages_unlocked() write/force parameters with gup=
+_flags
+      mm: replace get_user_pages_locked() write/force parameters with gup_f=
+lags
+      mm: replace get_vaddr_frames() write/force parameters with gup_flags
+      mm: replace get_user_pages() write/force parameters with gup_flags
+      mm: replace __access_remote_vm() write parameter with gup_flags
+      mm: replace access_remote_vm() write parameter with gup_flags
+
+Martynas Pumputis (1):
+      bpf: fix check of allowed specifiers in bpf_trace_printk
+
+Mike Kravetz (4):
+      mm/hugetlb.c: don't call region_abort if region_chg fails
+      hugetlbfs: fix offset overflow in hugetlbfs mmap
+      hugetlbfs: check for pgoff value overflow
+      hugetlbfs: fix bug in pgoff overflow checking
+
+Namhyung Kim (1):
+      pstore: Convert console write to use ->write_buf
+
+Nathan Chancellor (1):
+      ARM: OMAP2+: prm44xx: Fix section annotation on omap44xx_prm_enable_i=
+o_wakeup
+
+NeilBrown (1):
+      fscache: fix race between enablement and dropping of object
+
+Nicolas Dichtel (1):
+      tun: forbid iface creation with rtnl ops
+
+Nicolin Chen (1):
+      hwmon: (ina2xx) Fix current value calculation
+
+Pan Bian (5):
+      exportfs: do not read dentry after free
+      net: hisilicon: remove unexpected free_netdev
+      hfs: do not free node before using
+      hfsplus: do not free node before using
+      ocfs2: fix potential use after free
+
+Paolo Bonzini (3):
+      KVM: VMX: introduce alloc_loaded_vmcs
+      KVM: VMX: make MSR bitmaps per-VCPU
+      KVM/x86: Remove indirect MSR op calls from SPEC_CTRL
+
+Peter Ujfalusi (2):
+      ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CP=
+U_IDLE
+      ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
+
+Qian Cai (1):
+      debugobjects: avoid recursive calls with kmemleak
+
+Radim Kr=C4=8Dm=C3=A1=C5=99 (1):
+      KVM: nVMX: fix msr bitmaps to prevent L2 from accessing L0 x2APIC
+
+Robbie Ko (1):
+      Btrfs: send, fix infinite loop due to directory rename dependencies
+
+Shuah Khan (1):
+      selftests: Move networking/timestamping from Documentation
+
+Srikanth Boddepalli (1):
+      xen: xlate_mmu: add missing header to fix 'W=3D1' warning
+
+Stefano Brivio (2):
+      ipv6: Check available headroom in ip6_xmit() even without options
+      neighbour: Avoid writing before skb->head in neigh_hh_output()
+
+Su Yanjun (1):
+      net: 8139cp: fix a BUG triggered by changing mtu with network traffic
+
+Sudip Mukherjee (1):
+      matroxfb: fix size of memcpy
+
+Takashi Sakamoto (1):
+      ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command
+
+Thomas Gleixner (3):
+      KVM: SVM: Move spec control call after restore of GS
+      x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
+      posix-timers: Sanitize overrun handling
+
+Thomas Richter (1):
+      s390/cpum_cf: Reject request for sampling in event initialization
+
+Tom Lendacky (1):
+      KVM: SVM: Implement VIRT_SPEC_CTRL support for SSBD
+
+Tzung-Bi Shih (1):
+      ASoC: dapm: Recalculate audio map forcely when card instantiated
+
+Willy Tarreau (1):
+      proc: do not access cmdline nor environ from file-backed areas
+
+Y.C. Chen (1):
+      drm/ast: fixed reading monitor EDID not stable issue
+
+Yi Wang (1):
+      KVM: x86: fix empty-body warnings
+
+Yuchung Cheng (1):
+      tcp: fix NULL ref in tail loss probe
+
+YueHaibing (1):
+      sysv: return 'err' instead of 0 in __sysv_write_inode
 
 
-And some people prefer not adding tools that use python, perl, etc.
+--TB36FDmn/VVEgNH/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-E.g., I use this shell script (named 'chktaint', which could probably
-be done better):
+-----BEGIN PGP SIGNATURE-----
 
-(see attachment)
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlwYED8ACgkQONu9yGCS
+aT4ytw//XWyLZ7zbQr4Qwm4X5H/Hv/skayOxsaeo3pCVwOT6+IYWR62mzQ6jr6kY
+fKb+rCJnuJ3jogpR2WOHYIr8zz1Mn0RIrwbLXXoAJvq1tlUMKNQaSJW8zhUKAFut
+GNdhTK8zsDxjtgpssDhjduWLv3mQnpO8MCkL6vBiDJH+7qbKxazElbKOR4L6z63i
+FH4BoP6gQ3qPwC1Id8wfLSiOsowZfDT/Uvx5/wCL0txCI8kFv8xKLMdeTQlVetGH
+sbPJKn3UQ0tAXAdlbf8RK/0E3SydwjTXikMv2WGDZMV20C2oCKD1OGsGxJc7kx4G
+UtzLX95CQ9xaW+FOIpcjWsZ0jOvtwkG5uZv15bqKriV5PXDA2qxEBa8669Zon8Ie
+STImVDLfDGQDvAcxCxdUe84lAyySUm72+MjnR+1kcUaix3KfDihm2lBXrqxY7cWc
+SYPJ6HhcoXcvgubEorTWHTs/9qx2msl7U3Gj8Rq/1fLfZ0DzINwYw1G8oy8VKCcU
+QckeIddM441BwLEV7eAD9q/kkZMg1tTg/TMIFZFq2f9l6kQEDK/liQolCJALDUxA
+cVqro/MlPWk/2GG6nV5aeXkZ9DYnYVtPV/cqcSPOUR+FJE6lPBhWNRUmADYMA81k
+Li6pbbNLfN7BCvUxitNEV6CFKb4kqHrIYVQcxOJi+yniDD57a+s=
+=7xgi
+-----END PGP SIGNATURE-----
 
--- 
-~Randy
-
---------------6BBD015C4CD1538B71FF8F14
-Content-Type: text/plain; charset=UTF-8;
- name="chktaint"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="chktaint"
-
-IyEgL2Jpbi9zaAojIEdQTCB2Mi4KIyBSYW5keSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFkZWFk
-Lm9yZz4KClRBSU5URklMRT0iL3Byb2Mvc3lzL2tlcm5lbC90YWludGVkIgoKaWYgWyAhIC1y
-ICRUQUlOVEZJTEUgXTsgdGhlbgoJZWNobyAiTm8gZmlsZTogJFRBSU5URklMRSIKCWV4aXQK
-ZmkKCnRhaW50PWBjYXQgJFRBSU5URklMRWAKaWYgWyAkdGFpbnQgLWVxIDAgXTsgdGhlbgoJ
-ZWNobyAiS2VybmVsIG5vdCBUYWludGVkIgoJZXhpdApmaQoKZWNobyAiUmF3IFRhaW50IHZh
-bHVlOiAkdGFpbnQiClQ9JHRhaW50Cm91dD0KCmFkZG91dCgpIHsKCW91dD0kb3V0JDEKfQoK
-aWYgWyBgZXhwciAkVCAlIDJgIC1lcSAwIF07IHRoZW4KCWFkZG91dCAiRyIKZWxzZQoJYWRk
-b3V0ICJQIgkjIFByb3ByaWV0YXJ5IG1vZHVsZSB3YXMgbG9hZGVkCmZpCgpUPWBleHByICRU
-IC8gMmAKaWYgWyBgZXhwciAkVCAlIDJgIC1lcSAwIF07IHRoZW4KCWFkZG91dCAiICIKZWxz
-ZQoJYWRkb3V0ICJGIgkjIG1vZHVsZSB3YXMgZm9yY2UgbG9hZGVkCmZpCgpUPWBleHByICRU
-IC8gMmAKaWYgWyBgZXhwciAkVCAlIDJgIC1lcSAwIF07IHRoZW4KCWFkZG91dCAiICIKZWxz
-ZQoJYWRkb3V0ICJTIgkjIG9vcHMgb24gbm9uLXN1cHBvcnRlZCBTTVAgaGFyZHdhcmUKZmkK
-ClQ9YGV4cHIgJFQgLyAyYAppZiBbIGBleHByICRUICUgMmAgLWVxIDAgXTsgdGhlbgoJYWRk
-b3V0ICIgIgplbHNlCglhZGRvdXQgIlIiCSMgbW9kdWxlIHdhcyBmb3JjZSB1bmxvYWRlZApm
-aQoKVD1gZXhwciAkVCAvIDJgCmlmIFsgYGV4cHIgJFQgJSAyYCAtZXEgMCBdOyB0aGVuCglh
-ZGRvdXQgIiAiCmVsc2UKCWFkZG91dCAiTSIJIyBNYWNoaW5lIENoZWNrIGV4Y2VwdGlvbgpm
-aQoKVD1gZXhwciAkVCAvIDJgCmlmIFsgYGV4cHIgJFQgJSAyYCAtZXEgMCBdOyB0aGVuCglh
-ZGRvdXQgIiAiCmVsc2UKCWFkZG91dCAiQiIJIyBCYWQgUGFnZSByZWZlcmVuY2UKZmkKClQ9
-YGV4cHIgJFQgLyAyYAppZiBbIGBleHByICRUICUgMmAgLWVxIDAgXTsgdGhlbgoJYWRkb3V0
-ICIgIgplbHNlCglhZGRvdXQgIlUiCSMgVXNlciB0YWludCByZXF1ZXN0ZWQKZmkKClQ9YGV4
-cHIgJFQgLyAyYAppZiBbIGBleHByICRUICUgMmAgLWVxIDAgXTsgdGhlbgoJYWRkb3V0ICIg
-IgplbHNlCglhZGRvdXQgIkQiCSMga2VybmVsIERpZWQsIE9vcHMsIG9yIEJ1ZwpmaQoKVD1g
-ZXhwciAkVCAvIDJgCmlmIFsgYGV4cHIgJFQgJSAyYCAtZXEgMCBdOyB0aGVuCglhZGRvdXQg
-IiAiCmVsc2UKCWFkZG91dCAiQSIJIyBBQ1BJIHRhYmxlIG92ZXJyaWRkZW4KZmkKClQ9YGV4
-cHIgJFQgLyAyYAppZiBbIGBleHByICRUICUgMmAgLWVxIDAgXTsgdGhlbgoJYWRkb3V0ICIg
-IgplbHNlCglhZGRvdXQgIlciCSMgcHJldmlvdXMgV2FybmluZyB3YXMgaXNzdWVkCmZpCgpU
-PWBleHByICRUIC8gMmAKaWYgWyBgZXhwciAkVCAlIDJgIC1lcSAwIF07IHRoZW4KCWFkZG91
-dCAiICIKZWxzZQoJYWRkb3V0ICJDIgkjIFN0YWdpbmcgKENyYXApIG1vZHVsZSB3YXMgbG9h
-ZGVkCmZpCgpUPWBleHByICRUIC8gMmAKaWYgWyBgZXhwciAkVCAlIDJgIC1lcSAwIF07IHRo
-ZW4KCWFkZG91dCAiICIKZWxzZQoJYWRkb3V0ICJJIgkjIGZpcm13YXJlIGJ1ZyB3b3JrYXJv
-dW5kCmZpCgpUPWBleHByICRUIC8gMmAKaWYgWyBgZXhwciAkVCAlIDJgIC1lcSAwIF07IHRo
-ZW4KCWFkZG91dCAiICIKZWxzZQoJYWRkb3V0ICJPIgkjIG91dC1vZi10cmVlIG1vZHVsZSBs
-b2FkZWQKZmkKClQ9YGV4cHIgJFQgLyAyYAppZiBbIGBleHByICRUICUgMmAgLWVxIDAgXTsg
-dGhlbgoJYWRkb3V0ICIgIgplbHNlCglhZGRvdXQgIkUiCSMgdW5zaWduZWQgbW9kdWxlIGxv
-YWRlZCBpbiBrZXJuZWwgd2l0aCBzaWduaW5nCmZpCgpUPWBleHByICRUIC8gMmAKaWYgWyBg
-ZXhwciAkVCAlIDJgIC1lcSAwIF07IHRoZW4KCWFkZG91dCAiICIKZWxzZQoJYWRkb3V0ICJM
-IgkjIHNvZnQgbG9ja3VwIHJlcG9ydGVkCmZpCgpUPWBleHByICRUIC8gMmAKaWYgWyBgZXhw
-ciAkVCAlIDJgIC1lcSAwIF07IHRoZW4KCWFkZG91dCAiICIKZWxzZQoJYWRkb3V0ICJLIgkj
-IGtlcm5lbCBoYXMgYmVlbiBsaXZlLXBhdGNoZWQKZmkKClQ9YGV4cHIgJFQgLyAyYAppZiBb
-IGBleHByICRUICUgMmAgLWVxIDAgXTsgdGhlbgoJYWRkb3V0ICIgIgplbHNlCglhZGRvdXQg
-IlgiCSMgYXV4aWxpYXJ5IHRhaW50LCB1c2VkIGJ5IGRpc3Ryb3MKZmkKClQ9YGV4cHIgJFQg
-LyAyYAppZiBbIGBleHByICRUICUgMmAgLWVxIDAgXTsgdGhlbgoJYWRkb3V0ICIgIgplbHNl
-CglhZGRvdXQgIlQiCSMgc3RydWN0IHJhbmRvbWl6YXRpb24gcGx1Z2luIHdhcyB1c2VkCmZp
-CgplY2hvICJLZXJuZWwgVGFpbnQ6ICRvdXQiCiNFT0YjCg==
---------------6BBD015C4CD1538B71FF8F14--
+--TB36FDmn/VVEgNH/--
