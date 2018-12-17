@@ -3,116 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C91D5C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2818DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909642184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2BE921473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:36:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2TYM9Ra"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kdh/lVY4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbeLQXXv (ORCPT
+        id S1726338AbeLQXgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 18:23:51 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39716 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbeLQXXv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 18:23:51 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q70so8442332qkh.6;
-        Mon, 17 Dec 2018 15:23:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I1fVBVfy/g93s89oCYn5/KG5kzEYJN7gIMTDDrnaCuI=;
-        b=U2TYM9RaEQXF1NRZzNKh2pzzubSjS0vC+FE18iPHz/dPbr1b+6LrcklIjSfCj+U+w2
-         QLd1556fp3wX1qbWvwWE12PSa1977jcsBfZ+WkNkUQ03bUKIMGMvQKndUO8uKARH2mKE
-         ruiY2kitRMmKIeJ5a9mD1SHx3GE78lhHyVW/hQSUSKjIZjGmIiCSwXIMXDv3Y2KZsUFA
-         x6ORTRBQnJW3Y4TbJBmk1vnu/bwXkwtK2aZyRx8G0zKD2Jb6pmPhR7KmpKhAjy2NTZmn
-         QKRELWIosJLoMH6eXgSpbij4c286+bulS3wj48+xk9e4bKoRAe9XsL8SIKvKKnUYOsVR
-         1i4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I1fVBVfy/g93s89oCYn5/KG5kzEYJN7gIMTDDrnaCuI=;
-        b=VdVIEV1tAasHJ7YZlTwXCEEQHiOKpGPSO00/xDRctqA04yE/wo00+tdDJ4yghJVuDZ
-         ac7mj05uzPjSbWCeDfPctkTXzjMiTC9W2b3mTy6I89W7eb/9c6jlrkYStkJ11NQ52cCl
-         jG8qYQIL74daotj7fjxkIcbW4IIEDX6C925SwX5X1mbQNmSM3fDFrHELA1xo1nnDlpeA
-         KHL/Rl/sKSMo158arv9cMFKGTVN/XLL1xjCgFu/YtagxkaUa/y8XATHuKyuQk1vnJ5Rl
-         JFMmecGOOumLaa7z9MiddV1LB5AuHIxV4bWqARUa12czE7uGdW3+9O7qvCVyHcBX+ifB
-         nH6w==
-X-Gm-Message-State: AA+aEWZxIMV5YUQSqfYGrKcEAT/W+gvNTfxTiK+ptVVoQJqG41BEtksx
-        FKWs3ikjJ0gpesv9o/nvUcle0Yvj9wfArr4Jr84=
-X-Google-Smtp-Source: AFSGD/WjjvTw5Ke1JEDrgx8GojIatroDwhg+XCK7y+DBAYK7idglospM8TOvRv5sloqYs5kHNijlLlR1M9X42oYWo9M=
-X-Received: by 2002:a37:ea0a:: with SMTP id t10mr13769673qkj.273.1545089029875;
- Mon, 17 Dec 2018 15:23:49 -0800 (PST)
+        Mon, 17 Dec 2018 18:36:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:60603 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbeLQXgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 18:36:54 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43Jcxb3RKLz9s2P;
+        Tue, 18 Dec 2018 10:36:51 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545089811;
+        bh=9D0kxCmxEPsOtphjPXkZHbypTpjaAJv+tIS/zx49t2k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=kdh/lVY4cVtb2wOHCd4Dn5IVnz6xrrgF7ZqXrEsapqu4RPEa2F1uR/S+4UWFwjNAS
+         4MrHfSpO5sV3/MLemEUQg/WwVPPT+xwbs76JQ+1WoBRofKJLuBzc5xAcMm3OrAnxLU
+         uHpBxOpXOfDX/Nuv9A2F6e6EpFmvMgnmIc52bt62Wcz+1IjUOYdXADak1GLyCa+SHL
+         yZ6aeU4uxz6QsUqF2UzYgKqJO5mF4Jghwfc0rj9cA+VEr5P/AK3YpMbtIwmmuQpK7/
+         YdonFY2xVRmctaJ/+9ePvdH7/9WpNDNdzw8NQc45aZKeJT7f8k2rlNotdwjKUEb7km
+         waQtqrDGSsG6g==
+Date:   Tue, 18 Dec 2018 10:36:50 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: manual merge of the vfs tree with the fscrypt tree
+Message-ID: <20181218103650.6b1d79be@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20181217160351.27903-1-dennis@kernel.org> <CANQeFDAO5PdMOrZnn0UgFHcHGvXEs7qS9Kqrk1KRCAwgfRzSOg@mail.gmail.com>
- <20181217212826.GA71824@dennisz-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20181217212826.GA71824@dennisz-mbp.dhcp.thefacebook.com>
-From:   Liu Bo <obuil.liubo@gmail.com>
-Date:   Mon, 17 Dec 2018 15:23:38 -0800
-Message-ID: <CANQeFDCeRk0L2iHu=nTGXV8baP2bUc+JRba3TY6QkpKaQcY+qw@mail.gmail.com>
-Subject: Re: [PATCH v3] block: fix blk-iolatency accounting underflow
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GtBjbh0pu_fBDE94CCWbl=2"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 1:28 PM Dennis Zhou <dennis@kernel.org> wrote:
->
-> On Mon, Dec 17, 2018 at 11:42:28AM -0800, Liu Bo wrote:
-> > On Mon, Dec 17, 2018 at 8:04 AM Dennis Zhou <dennis@kernel.org> wrote:
-> > >
-> > > The blk-iolatency controller measures the time from rq_qos_throttle() to
-> > > rq_qos_done_bio() and attributes this time to the first bio that needs
-> > > to create the request. This means if a bio is plug-mergeable or
-> > > bio-mergeable, it gets to bypass the blk-iolatency controller.
-> > >
-> >
-> > Hi,
-> >
-> > I have a question about merging in plug list, since plug merges are
-> > done before rq_qos_throttle(), why would plug-mergeable bios bypass
-> > the controller?
-> >
-> > thanks,
-> > liubo
-> >
->
-> Hi Liubo,
->
-> BIO_TRACKED is tagging the bio that is responsible for allocating a new
-> request, so that rq_qos controllers can decide whether or not they want
-> to process the bio any part of the way. I should have phrased that a
-> little better in the commit message. It's not that the bio itself is
-> bypassing the blk-iolatency controller, but the blk-iolatency controller
-> deciding to not do anything based on the BIO_TRACKED flag. This doesn't
-> change any of the function calls made on a bio/request.
->
+--Sig_/GtBjbh0pu_fBDE94CCWbl=2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the explanation.
-I see it now, so the mentioned series had associated all bios with a
-blkg if possible so that done_bio() bumps up inflight counter even in
-case a bio has been merged in a previous request.
+Hi all,
 
-BIO_TRACKED seems to be too generic to use, but otherwise it makes sense to me,
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+Today's linux-next merge of the vfs tree got a conflict in:
 
-thanks,
-liubo
+  include/linux/fs.h
 
-> Thanks,
-> Dennis
+between commit:
+
+  a2bd7d2fc32c ("fs-verity: add setup code, UAPI, and Kconfig")
+
+from the fscrypt tree and commit:
+
+  013c7af575e5 ("vfs: Implement a filesystem superblock creation/configurat=
+ion context")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/fs.h
+index b2f9913eee10,169ca472d16a..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -62,8 -61,8 +62,10 @@@ struct workqueue_struct
+  struct iov_iter;
+  struct fscrypt_info;
+  struct fscrypt_operations;
+ +struct fsverity_info;
+ +struct fsverity_operations;
++ struct fs_context;
++ struct fs_parameter_description;
+ =20
+  extern void __init inode_init(void);
+  extern void __init inode_init_early(void);
+
+--Sig_/GtBjbh0pu_fBDE94CCWbl=2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYMxIACgkQAVBC80lX
+0Gw0+Af9HSMH5V6xVdbu9aJ24NXfK9WxHeT3jPT5397i3ia2QbPkIfNfmmSq4dTV
+RmAkbv5llYsXGTWA4VBts0qcG56aXGwarI4sQ87w/eBcHGYjmOcX3cWTAfeqg39W
+ZqRG0kC2J3SZNt7jGROiuH5Iq7xsCkuAeng8h7dyRr89FnDp76tOFijViAQSy4PA
+NKdbXR3+k1aCQywF/f4Nu9xBfD+UPcA07tgvcrIXEEubIfRgsGOvRMvBcfIEl59N
+c4LN9okNAGcCTIRCrHpUw4R22PObxcymej5RcZfOupy3VzcvdtlgvJx44b3eAVXC
+yQ52Ug4TrfdPEk4kprAbRXneWUSnFg==
+=zeBu
+-----END PGP SIGNATURE-----
+
+--Sig_/GtBjbh0pu_fBDE94CCWbl=2--
