@@ -3,133 +3,263 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C6AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6C7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C842145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2A720874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731666AbeLQKwg (ORCPT
+        id S1727192AbeLQKxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:52:36 -0500
-Received: from ozlabs.org ([203.11.71.1]:53115 "EHLO ozlabs.org"
+        Mon, 17 Dec 2018 05:53:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36680 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbeLQKwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:52:35 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726657AbeLQKxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 05:53:52 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43JHzj23Kwz9sBh;
-        Mon, 17 Dec 2018 21:52:33 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     frowand.list@gmail.com, robh+dt@kernel.org,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Juliet Kim <minkim@us.ibm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] of: __of_detach_node() - remove node from phandle cache
-In-Reply-To: <1545033396-24485-3-git-send-email-frowand.list@gmail.com>
-References: <1545033396-24485-1-git-send-email-frowand.list@gmail.com> <1545033396-24485-3-git-send-email-frowand.list@gmail.com>
-Date:   Mon, 17 Dec 2018 21:52:28 +1100
-Message-ID: <871s6gv30z.fsf@concordia.ellerman.id.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4EFDBC049582;
+        Mon, 17 Dec 2018 10:53:51 +0000 (UTC)
+Received: from [10.36.117.250] (ovpn-117-250.ams2.redhat.com [10.36.117.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CAC6F5C1B5;
+        Mon, 17 Dec 2018 10:53:46 +0000 (UTC)
+Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
+ capabilities
+To:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        miklos@szeredi.hu, sweil@redhat.com, swhiteho@redhat.com
+References: <20181210171318.16998-1-vgoyal@redhat.com>
+ <20181210171318.16998-19-vgoyal@redhat.com>
+ <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
+ <20181213091320.GA2313@work-vm>
+ <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
+ <20181213100058.GC2313@work-vm>
+ <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+ <20181213121548.GN2313@work-vm>
+ <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+ <20181213133823.2272736b.cohuck@redhat.com>
+ <20181214134434.GA3882@stefanha-x1.localdomain>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <cf910f77-203c-8efd-fed1-6b041b078d63@redhat.com>
+Date:   Mon, 17 Dec 2018 11:53:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181214134434.GA3882@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 17 Dec 2018 10:53:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Frank,
+On 14.12.18 14:44, Stefan Hajnoczi wrote:
+> On Thu, Dec 13, 2018 at 01:38:23PM +0100, Cornelia Huck wrote:
+>> On Thu, 13 Dec 2018 13:24:31 +0100
+>> David Hildenbrand <david@redhat.com> wrote:
+>>
+>>> On 13.12.18 13:15, Dr. David Alan Gilbert wrote:
+>>>> * David Hildenbrand (david@redhat.com) wrote:  
+>>>>> On 13.12.18 11:00, Dr. David Alan Gilbert wrote:  
+>>>>>> * David Hildenbrand (david@redhat.com) wrote:  
+>>>>>>> On 13.12.18 10:13, Dr. David Alan Gilbert wrote:  
+>>>>>>>> * David Hildenbrand (david@redhat.com) wrote:  
+>>>>>>>>> On 10.12.18 18:12, Vivek Goyal wrote:  
+>>>>>>>>>> Instead of assuming we had the fixed bar for the cache, use the
+>>>>>>>>>> value from the capabilities.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+>>>>>>>>>> ---
+>>>>>>>>>>  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
+>>>>>>>>>>  1 file changed, 17 insertions(+), 15 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+>>>>>>>>>> index 60d496c16841..55bac1465536 100644
+>>>>>>>>>> --- a/fs/fuse/virtio_fs.c
+>>>>>>>>>> +++ b/fs/fuse/virtio_fs.c
+>>>>>>>>>> @@ -14,11 +14,6 @@
+>>>>>>>>>>  #include <uapi/linux/virtio_pci.h>
+>>>>>>>>>>  #include "fuse_i.h"
+>>>>>>>>>>  
+>>>>>>>>>> -enum {
+>>>>>>>>>> -	/* PCI BAR number of the virtio-fs DAX window */
+>>>>>>>>>> -	VIRTIO_FS_WINDOW_BAR = 2,
+>>>>>>>>>> -};
+>>>>>>>>>> -
+>>>>>>>>>>  /* List of virtio-fs device instances and a lock for the list */
+>>>>>>>>>>  static DEFINE_MUTEX(virtio_fs_mutex);
+>>>>>>>>>>  static LIST_HEAD(virtio_fs_instances);
+>>>>>>>>>> @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+>>>>>>>>>>  	struct dev_pagemap *pgmap;
+>>>>>>>>>>  	struct pci_dev *pci_dev;
+>>>>>>>>>>  	phys_addr_t phys_addr;
+>>>>>>>>>> -	size_t len;
+>>>>>>>>>> +	size_t bar_len;
+>>>>>>>>>>  	int ret;
+>>>>>>>>>>  	u8 have_cache, cache_bar;
+>>>>>>>>>>  	u64 cache_offset, cache_len;
+>>>>>>>>>> @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+>>>>>>>>>>          }
+>>>>>>>>>>  
+>>>>>>>>>>  	/* TODO handle case where device doesn't expose BAR? */  
+>>>>>>>>>
+>>>>>>>>> For virtio-pmem we decided to not go via BARs as this would effectively
+>>>>>>>>> make it only usable for virtio-pci implementers. Instead, we are going
+>>>>>>>>> to export the applicable physical device region directly (e.g.
+>>>>>>>>> phys_start, phys_size in virtio config), so it is decoupled from PCI
+>>>>>>>>> details. Doing the same for virtio-fs would allow e.g. also virtio-ccw
+>>>>>>>>> to make eventually use of this.  
+>>>>>>>>
+>>>>>>>> That makes it a very odd looking PCI device;  I can see that with
+>>>>>>>> virtio-pmem it makes some sense, given that it's job is to expose
+>>>>>>>> arbitrary chunks of memory.
+>>>>>>>>
+>>>>>>>> Dave  
+>>>>>>>
+>>>>>>> Well, the fact that your are
+>>>>>>>
+>>>>>>> - including <uapi/linux/virtio_pci.h>
+>>>>>>> - adding pci related code
+>>>>>>>
+>>>>>>> in/to fs/fuse/virtio_fs.c
+>>>>>>>
+>>>>>>> tells me that these properties might be better communicated on the
+>>>>>>> virtio layer, not on the PCI layer.
+>>>>>>>
+>>>>>>> Or do you really want to glue virtio-fs to virtio-pci for all eternity?  
+>>>>>>
+>>>>>> No, these need cleaning up; and the split within the bar
+>>>>>> is probably going to change to be communicated via virtio layer
+>>>>>> rather than pci capabilities.  However, I don't want to make our PCI
+>>>>>> device look odd, just to make portability to non-PCI devices - so it's
+>>>>>> right to make the split appropriately, but still to use PCI bars
+>>>>>> for what they were designed for.
+>>>>>>
+>>>>>> Dave  
+>>>>>
+>>>>> Let's discuss after the cleanup. In general I am not convinced this is
+>>>>> the right thing to do. Using virtio-pci for anything else than pure
+>>>>> transport smells like bad design to me (well, I am no virtio expert
+>>>>> after all ;) ). No matter what PCI bars were designed for. If we can't
+>>>>> get the same running with e.g. virtio-ccw or virtio-whatever, it is
+>>>>> broken by design (or an addon that is tightly glued to virtio-pci, if
+>>>>> that is the general idea).  
+>>>>
+>>>> I'm sure we can find alternatives for virtio-*, so I wouldn't expect
+>>>> it to be glued to virtio-pci.
+>>>>
+>>>> Dave  
+>>>
+>>> As s390x does not have the concept of memory mapped io (RAM is RAM,
+>>> nothing else), this is not architectured. vitio-ccw can therefore not
+>>> define anything similar like that. However, in virtual environments we
+>>> can do whatever we want on top of the pure transport (e.g. on the virtio
+>>> layer).
+>>>
+>>> Conny can correct me if I am wrong.
+>>
+>> I don't think you're wrong, but I haven't read the code yet and I'm
+>> therefore not aware of the purpose of this BAR.
+>>
+>> Generally, if there is a memory location shared between host and guest,
+>> we need a way to communicate its location, which will likely differ
+>> between transports. For ccw, I could imagine a new channel command
+>> dedicated to exchanging configuration information (similar to what
+>> exists today to communicate the locations of virtqueues), but I'd
+>> rather not go down this path.
+>>
+>> Without reading the code/design further, can we use one of the
+>> following instead of a BAR:
+>> - a virtqueue;
+>> - something in config space?
+>> That would be implementable by any virtio transport.
+> 
+> The way I think about this is that we wish to extend the VIRTIO device
+> model with the concept of shared memory.  virtio-fs, virtio-gpu, and
+> virtio-vhost-user all have requirements for shared memory.
+> 
+> This seems like a transport-level issue to me.  PCI supports
+> memory-mapped I/O and that's the right place to do it.  If you try to
+> put it into config space or the virtqueue, you'll end up with something
+> that cannot be realized as a PCI device because it bypasses PCI bus
+> address translation.
+> 
+> If CCW needs a side-channel, that's fine.  But that side-channel is a
+> CCW-specific mechanism and probably doesn't apply to all other
+> transports.
+> 
+> Stefan
+> 
 
-frowand.list@gmail.com writes:
-> From: Frank Rowand <frank.rowand@sony.com>
->
-> Non-overlay dynamic devicetree node removal may leave the node in
-> the phandle cache.  Subsequent calls to of_find_node_by_phandle()
-> will incorrectly find the stale entry.  Remove the node from the
-> cache.
->
-> Add paranoia checks in of_find_node_by_phandle() as a second level
-> of defense (do not return cached node if detached, do not add node
-> to cache if detached).
->
-> Reported-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-> ---
+I think the problem is more fundamental. There is no iommu. Whatever
+shared region you want to indicate, you want it to be assigned a memory
+region in guest physical memory. Like a DIMM/NVDIMM. And this should be
+different to the concept of a BAR. Or am I missing something?
 
-Similarly here can we add:
+I am ok with using whatever other channel to transport such information.
+But I believe this is different to a typical BAR. (I wish I knew more
+about PCI internals ;) ).
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-Cc: stable@vger.kernel.org # v4.17+
+I would also like to know how shared memory works as of now for e.g.
+virtio-gpu.
 
+-- 
 
-Thanks for doing this series.
+Thanks,
 
-Some minor comments below.
-
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 6c33d63361b8..ad71864cecf5 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -162,6 +162,27 @@ int of_free_phandle_cache(void)
->  late_initcall_sync(of_free_phandle_cache);
->  #endif
->  
-> +/*
-> + * Caller must hold devtree_lock.
-> + */
-> +void __of_free_phandle_cache_entry(phandle handle)
-> +{
-> +	phandle masked_handle;
-> +
-> +	if (!handle)
-> +		return;
-
-We could fold the phandle_cache check into that if and return early for
-both cases couldn't we?
-
-> +	masked_handle = handle & phandle_cache_mask;
-> +
-> +	if (phandle_cache) {
-
-Meaning this wouldn't be necessary.
-
-> +		if (phandle_cache[masked_handle] &&
-> +		    handle == phandle_cache[masked_handle]->phandle) {
-> +			of_node_put(phandle_cache[masked_handle]);
-> +			phandle_cache[masked_handle] = NULL;
-> +		}
-
-A temporary would help the readability here I think, eg:
-
-	struct device_node *np;
-        np = phandle_cache[masked_handle];
-
-	if (np && handle == np->phandle) {
-		of_node_put(np);
-		phandle_cache[masked_handle] = NULL;
-	}
-
-> @@ -1209,11 +1230,18 @@ struct device_node *of_find_node_by_phandle(phandle handle)
->  		if (phandle_cache[masked_handle] &&
->  		    handle == phandle_cache[masked_handle]->phandle)
->  			np = phandle_cache[masked_handle];
-> +		if (np && of_node_check_flag(np, OF_DETACHED)) {
-> +			WARN_ON(1);
-> +			of_node_put(np);
-
-Do we really want to do the put here?
-
-We're here because something has gone wrong, possibly even memory
-corruption such that np is not even pointing at a device node anymore.
-So it seems like it would be safer to just leave the ref count alone,
-possibly leak a small amount of memory, and NULL out the reference.
-
-
-cheers
+David / dhildenb
