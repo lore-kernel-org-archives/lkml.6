@@ -2,96 +2,101 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4F1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3021C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3805D2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE82A2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:55:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NzN4oTZi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387955AbeLQPy4 (ORCPT
+        id S2387964AbeLQPzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:54:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387737AbeLQPyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:54:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B71AFACE5;
-        Mon, 17 Dec 2018 15:54:53 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 16:54:53 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 08/11] livepatch: Remove Nop structures when unused
-Message-ID: <20181217155453.nr34ooxmriik2cln@pathway.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-9-pmladek@suse.com>
- <20181213230045.2xgi2pyewkjbou22@treble>
+        Mon, 17 Dec 2018 10:55:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39890 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727617AbeLQPzl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:55:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=574+4ZD7Du9DDrY3jcdjsYd7VDFDIpxaJakuUWbr19s=; b=NzN4oTZi6gyJm2aSWquP3ym0d
+        9omamrHx6pqwcZKsaR2e90jn3JJGPgWxUbNtXeKUrfjI47HpoiolK5gTOXYmROfIcTsA4j38T2tS6
+        QwtlKihqL0AwxJKPVt2KhAMOEkNu+c9hCRXVjbXZIp9geLuF9OkitZG5hfKTCJ3BtBmTXjGlrSYI1
+        4TgSqH4hgpz+eFez7W8mmEGlwcbjR5NRugb3gofnJfLixyB/rnj0dIWTg3Trhfze1lT42vr5lqQVB
+        Z5uHM1LAngIidwmkDDiiTrrPgFICAjkZgEEmZ5miFSveGJjArtzaUovOv2s9v6TQNP94sjT0v0yGT
+        oftNPPBHg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gYvEu-0000Ca-Vq; Mon, 17 Dec 2018 15:55:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7717F20276AC4; Mon, 17 Dec 2018 16:55:25 +0100 (CET)
+Date:   Mon, 17 Dec 2018 16:55:25 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     gregkh@linuxfoundation.org, tj@kernel.org, lizefan@huawei.com,
+        hannes@cmpxchg.org, axboe@kernel.dk, dennis@kernel.org,
+        dennisszhou@gmail.com, mingo@redhat.com, akpm@linux-foundation.org,
+        corbet@lwn.net, cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH 4/6] psi: introduce state_mask to represent stalled psi
+ states
+Message-ID: <20181217155525.GC2218@hirez.programming.kicks-ass.net>
+References: <20181214171508.7791-1-surenb@google.com>
+ <20181214171508.7791-5-surenb@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213230045.2xgi2pyewkjbou22@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181214171508.7791-5-surenb@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-12-13 17:00:45, Josh Poimboeuf wrote:
-> On Thu, Nov 29, 2018 at 10:44:28AM +0100, Petr Mladek wrote:
-> > +static void __klp_free_funcs(struct klp_object *obj, bool free_all)
-> >  {
-> > -	struct klp_func *func;
-> > +	struct klp_func *func, *tmp_func;
-> > +
-> > +	klp_for_each_func_safe(obj, func, tmp_func) {
-> > +		if (!free_all && !func->nop)
-> > +			continue;
+On Fri, Dec 14, 2018 at 09:15:06AM -0800, Suren Baghdasaryan wrote:
+> The psi monitoring patches will need to determine the same states as
+> record_times(). To avoid calculating them twice, maintain a state mask
+> that can be consulted cheaply. Do this in a separate patch to keep the
+> churn in the main feature patch at a minimum.
 > 
-> I suspect that changing 'free_all" to 'nops_only' (and inverting the
-> condition) would make the code more readable.
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  include/linux/psi_types.h |  3 +++
+>  kernel/sched/psi.c        | 29 +++++++++++++++++++----------
+>  2 files changed, 22 insertions(+), 10 deletions(-)
 > 
-> And a similar suggestion for __klp_free_objects().
+> diff --git a/include/linux/psi_types.h b/include/linux/psi_types.h
+> index 2cf422db5d18..2c6e9b67b7eb 100644
+> --- a/include/linux/psi_types.h
+> +++ b/include/linux/psi_types.h
+> @@ -53,6 +53,9 @@ struct psi_group_cpu {
+>  	/* States of the tasks belonging to this group */
+>  	unsigned int tasks[NR_PSI_TASK_COUNTS];
+>  
+> +	/* Aggregate pressure state derived from the tasks */
+> +	u32 state_mask;
+> +
+>  	/* Period time sampling buckets for each state of interest (ns) */
+>  	u32 times[NR_PSI_STATES];
+>  
 
-I am not super happy with the negative check as well. The problem is
-that in __klp_free_objects() it would look like:
+Since we spend so much time counting space in that line, maybe add a
+note to the Changlog about how this fits.
 
-		if (nops_only && !obj->dynamic)
-			continue;
+Also, since I just had to re-count, you might want to add explicit
+numbers to the psi_res and psi_states enums.
 
-By other words, "free_all" works better with both "nops" and "dynamic".
+> +		if (state_mask & (1 << s))
 
-That said, I do not mind about it. Tell me what you prefer and I'll
-change it.
-
-
-> > +
-> > +		/*
-> > +		 * Avoid double free. It would be tricky to wait for kobject
-> > +		 * callbacks when only NOPs are handled.
-> > +		 */
-> > +		list_del(&func->node);
-> 
-> I've read this comment several times but I still have no idea how it
-> relates to the code :-)
-
-I wrote this comment when I was lost in thoughts how to make freeing
-safe. Especially I wondered whether we would need to wait until
-the structures are freed.
-
-You are right that this is needed to remove the freed nops/dynamic
-structures in general.
-
-I will remove the comment.
-
-Best Regards,
-Petr
+We have the BIT() macro, but I'm honestly not sure that will improve
+things.
