@@ -2,162 +2,157 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6462C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D174C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 867D42133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:24:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+FB6nQb"
+	by mail.kernel.org (Postfix) with ESMTP id 36C372133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545067517;
+	bh=AI5AXkTeiFKa3BBmUxvtw4VNgubrdNomju84JTX3lUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kavu9gaUQ6zHI7VEoTi5RK2G1V9pfJ0DN7h7BtuJnvFOc/+R6104oMUOi3lU/yn2h
+	 mHuK7a2Mo+SEvFUeSP8LrzlsKXND1mMasHuc6lHPZPLz6Y6jgcBWv0GVhnvy03GR6F
+	 KMA7kYqaHScjP3KFEBn/f+Vs7BHRcfmL8wl9ToHg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbeLQRYH (ORCPT
+        id S1732415AbeLQRZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:24:07 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33788 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeLQRYG (ORCPT
+        Mon, 17 Dec 2018 12:25:16 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35007 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbeLQRZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:24:06 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so5238096wmh.0;
-        Mon, 17 Dec 2018 09:24:04 -0800 (PST)
+        Mon, 17 Dec 2018 12:25:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c126so45056wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:25:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=7LX8zkJ55ucDSuOlduiKG9DRTub6ofiKcrVx45LdZZA=;
-        b=f+FB6nQbgVHJRUo06ueF+3puLuoN2e/pBiqEiizsMZxq5QH0gMc9st25ZF7VxmUsUO
-         UU1VQX2NSMnxfQwxBR4LLEUVvEeuxXK/9B8rxuzav0N15+7MFF2e5ZNVbVzJs78zkx6/
-         CuEF252kLfdctMzMXIC35T/6VQveK/ZQY9Vm8zy5AbfRtYIyYWG9BNtABYlRuGEOeo5W
-         pha/VAjVGKw2dvwAneBbvRh5OxsuSO4u48pIp6vwo10hkSH7mmZQRuNtbcfVVvEBmkjW
-         RRB5L3lMy4VV7XywRMNuh6NMgyczgrLuoAbBm80LpJ8mu8nwQaXetPvoawruqCVfrsLk
-         9ayw==
+        bh=RzxeQAeBcfwjWd6uRZ79gUXOJyj8m1rfDRi0Z4NzHnc=;
+        b=Y3K4lJPo2d/PpKtyDTN9GytUB2KdzsCYAmGqxsApTUifb8Q2ymHapx+EX+oKauIvta
+         /E0KzVnZRel836q2mmO9C9NYKa2tlYodDIJma32CDGf64zP6hswr8apsjmbkSz/QgrQF
+         zThZvPnRJec4yedJNsidXHS29SJvy8UKV4ABK/NiP8LhQFtPj8ep3iSPchxc8y7F/qvv
+         uon+WaGLHs677hR2tD6jFUjTygwGpb9qytC1YzvV/sD8Q3LoMdr+aZJhoYStq21x+HHp
+         FSt59xSP1phRR/4u9EqVWcHBntVGchHtpvD71djlZOPsKYVP/NlOM51yvRe/+TPqLpoI
+         uRWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7LX8zkJ55ucDSuOlduiKG9DRTub6ofiKcrVx45LdZZA=;
-        b=ka2rv0hVzyNV3G6+pEScYSSXGiK+pqbN4p++eGUE+RzPRDQPlIlQYjwbcM2TAVMgzF
-         05x9JwS1Hia+Ujs42Y+zdpLjihyoW1Xj+JxGWpG0A23DWjZwRYSDkE4nCWyW/tVjnIh4
-         p0X5tZrXtoC+Sfo2ChKXQ8a2Zj3c2ihK135EAcQ6A3Oc9QdiJzA4yG/KH9Wxn6bGoX1m
-         e9TlkDRwFlXShf3N4WwVUuojQR0Dg09nAFALyGmuV6vgDESmgdUfXMWx+gJ4G7WWzzS1
-         dsONmwNR1Yjr9RVVJHLqNNjmVGFA5PTltBDTL5NCzSVTNiEl56G5H4NwUfk8bRYzRFsW
-         WdpA==
-X-Gm-Message-State: AA+aEWbe/Kj9388cEFkxZwbPoIQEUrGwZbqv+kUMvccZvXUioEDedQxN
-        yhgy8/06i8HfVxA4HK1Uzkw=
-X-Google-Smtp-Source: AFSGD/USouePAPffhJ4eFfUEMz7SWiCzOaJoRPIFPRvssk+vIjL4l/jD714xkXSrqRan2Ctc2a4Dfw==
-X-Received: by 2002:a1c:400b:: with SMTP id n11mr12708174wma.85.1545067443531;
-        Mon, 17 Dec 2018 09:24:03 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id a12sm1098379wro.18.2018.12.17.09.24.02
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RzxeQAeBcfwjWd6uRZ79gUXOJyj8m1rfDRi0Z4NzHnc=;
+        b=YjDaiAMIUp+uabx7+XqPswdgGU5asfDX93TeyGWGQE1Vu8HdJtVMyqLPh0wuHhG4t9
+         jCfdDBZ4jorXFUGz3kZ4OxGyXrhUKX6kdt/CEfxOY0BPtQuciIbbF+8ex2e/EdFsqF6g
+         wncm0Y5TOJR+jnE8ans2yrm/PG2FEnn6so9dSwIE52c3Jl8K+5x8rbJf6JDAnLFATpaB
+         4/uo1tU/taND1V/IKc+fusUfKaWmNaDF8NBA/h6BYtuIAFSa0lXVoA9I+8TTalmlT6jS
+         rXtXDm0aEovUvX+ZACvbjwBPVmoqYT5scDlNUVNYVu5kkkrXP091aghs/tR7WyFcP/TV
+         vdzA==
+X-Gm-Message-State: AA+aEWZHyarG9cH35C9FWaLzQI1x7H5otcyuvlknLoqaRv/D77wphw1I
+        BiFRkQPZgKTVEykITni6HnY=
+X-Google-Smtp-Source: AFSGD/Wg6slAut0g7TXncoLxbtmCUUKBRX1quFRFO2FFPkKkRytE5eUqemz4/pX87rmW2uIItWTUfA==
+X-Received: by 2002:a1c:df46:: with SMTP id w67mr696wmg.51.1545067513716;
+        Mon, 17 Dec 2018 09:25:13 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id a12sm1101627wro.18.2018.12.17.09.25.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 09:24:02 -0800 (PST)
-Date:   Mon, 17 Dec 2018 10:24:01 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>
-Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] drbd: Avoid Clang warning about pointless switch
- statment
-Message-ID: <20181217172401.GA30635@flashbox>
-References: <20181002171447.10765-1-natechancellor@gmail.com>
- <20181004200912.32348-1-natechancellor@gmail.com>
+        Mon, 17 Dec 2018 09:25:13 -0800 (PST)
+Date:   Mon, 17 Dec 2018 18:25:10 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v14 1/5] x86/boot: Introduce get_acpi_rsdp() to parse
+ RSDP in cmdline from KEXEC
+Message-ID: <20181217172510.GA90818@gmail.com>
+References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+ <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181004200912.32348-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 04, 2018 at 01:09:13PM -0700, Nathan Chancellor wrote:
-> There are several warnings from Clang about no case statement matching
-> the constant 0:
+
+* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+
+> Memory information in SRAT is necessary to fix the conflict between
+> KASLR and memory-hotremove.
 > 
-> In file included from drivers/block/drbd/drbd_receiver.c:48:
-> In file included from drivers/block/drbd/drbd_int.h:48:
-> In file included from ./include/linux/drbd_genl_api.h:54:
-> In file included from ./include/linux/genl_magic_struct.h:236:
-> ./include/linux/drbd_genl.h:321:1: warning: no case matching constant
-> switch condition '0'
-> GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
-> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
-> 'GENL_struct'
->         switch (0) {
->                 ^
+> ACPI SRAT (System/Static Resource Affinity Table) shows the details
+> about memory ranges, including ranges of memory provided by hot-added
+> memory devices. SRAT is introduced by Root System Description
+> Pointer(RSDP), so RSDP should be found firstly.
 > 
-> Silence this warning by adding a 'case 0:' statement. Additionally,
-> adjust the alignment of the statements in the ct_assert_unique macro to
-> avoid a checkpatch warning.
-> 
-> This solution was originally sent by Arnd Bergmann with a default case
-> statement: https://lore.kernel.org/patchwork/patch/756723/
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/43
-> Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> When booting form KEXEC/EFI/BIOS, the methods to find RSDP
+> are different. When booting from KEXEC, 'acpi_rsdp' may have been
+> added to cmdline, so parse cmdline to find RSDP.
+
+What is the nature of the basic conflict? Should the kernel only allow 
+hot-removing memory ranges that are explicitly marked as such in the 
+SRAT? I presume that's already so, correct? Or should the kernel avoiding 
+KASLR-randomizing into hot-removable memory areas?
+
+Some minor nits:
+
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 > ---
+>  arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/acpi.c
 > 
-> Since this is not the same as Arnd's patch, I took authorship for it
-> while leaving a link to the original patch in the commit message. If
-> this is not how it should have been done, please let me know.
-> 
->  include/linux/genl_magic_struct.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
-> index 5972e4969197..eeae59d3ceb7 100644
-> --- a/include/linux/genl_magic_struct.h
-> +++ b/include/linux/genl_magic_struct.h
-> @@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
->  {
->  	switch (0) {
->  #include GENL_MAGIC_INCLUDE_FILE
-> +	case 0:
->  		;
->  	}
->  }
-> @@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
->  {
->  	switch (0) {
->  #include GENL_MAGIC_INCLUDE_FILE
-> +	case 0:
->  		;
->  	}
->  }
-> @@ -218,7 +220,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
->  static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
->  {									\
->  	switch (0) {							\
-> -		s_fields						\
-> +	s_fields							\
-> +	case 0:								\
->  			;						\
->  	}								\
->  }
-> -- 
-> 2.19.0
-> 
+> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+> new file mode 100644
+> index 000000000000..44f19546c169
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/acpi.c
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define BOOT_CTYPE_H
+> +#include "misc.h"
+> +#include "error.h"
+> +
+> +#include <linux/efi.h>
+> +#include <linux/numa.h>
+> +#include <linux/acpi.h>
+> +#include <asm/efi.h>
+> +
+> +/* Max length of 64-bit hex address string is 18, prefix "0x" + 16 hex digits */
+> +#define MAX_ADDRESS_LENGTH 18
 
-Hi Lars and Philipp,
+I'd suggest adding the +1 for the string termination \0 as well, and use 
+that below.
 
-Could you please make sure that this patch and the other one I sent make
-it into 4.21/5.0? I am not sure when you were planning on sending the
-pull request to Jens that you mentioned in the other thread but I've
-noticed most maintainers typically send their requests for the impending
-merge window around -rc7 or so and I wanted to make sure it was on your
-radar.
+Also, 'max address length' is way too generic (and hence pretty 
+meaningless) - how about MAX_HEX_ADDRESS_STRING_LEN or so?
 
-Thank you,
-Nathan
+> +
+> +static acpi_physical_address get_acpi_rsdp(void)
+> +{
+> +#ifdef CONFIG_KEXEC
+> +	char val[MAX_ADDRESS_LENGTH+1];
+> +	unsigned long long res;
+> +	int len;
+> +
+> +	len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
+> +	if (len > 0) {
+> +		char *e;
+> +
+> +		val[len] = '\0';
+> +		return (acpi_physical_address)simple_strtoull(val, &e, 16);
+
+'return' is not a function - no need for the parenthesis.
+
+Thanks,
+
+	Ingo
