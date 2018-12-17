@@ -2,71 +2,122 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEDBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09702C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46B4A206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:51:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545054683;
-	bh=pPLO1iL8gYpLHb3ERWd4aIXuuz6YlwoxIM4Epdg0Pvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=unpzg8vIxPF9/kiLl2ylOBBBmGG/6aXjffK8lUy1+L/3f2sy8s+8DFcass6cfQY+j
-	 yt1Z05bCp6wBVAGdnBngcgHHdpKVKRLFvmgjr9EOoJlCpl1RvvXplYcR+6hUche5J4
-	 6sh6Y4wL5IkSKFqQIx8dGvx6Za29aGGoiP06FouU=
+	by mail.kernel.org (Postfix) with ESMTP id D35E52146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732759AbeLQNvW (ORCPT
+        id S1732764AbeLQNwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:51:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbeLQNvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:51:21 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDCA6206A2;
-        Mon, 17 Dec 2018 13:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545054681;
-        bh=pPLO1iL8gYpLHb3ERWd4aIXuuz6YlwoxIM4Epdg0Pvk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NBJcKwZm7uCu3lypDr81Fi6DHbMfwWxaBB0+qFcJQrJYIlhLaXckImcJslI/RP7LR
-         l5mFK1avnfDBiHQU74qkdm1wY+mv/LAPSlOb6ujrEIdwRJiO04wGDAqReV8jECQGOc
-         PjPFDQu5VFVIegtuk54kwhuTjNwKn4feaJ2XJ43Y=
-Date:   Mon, 17 Dec 2018 14:51:18 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/9] staging: rtl8188eu: convert unsigned char arrays to
- u8
-Message-ID: <20181217135118.GB28400@kroah.com>
-References: <20181215164616.2643-1-straube.linux@gmail.com>
- <20181215164616.2643-4-straube.linux@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181215164616.2643-4-straube.linux@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Mon, 17 Dec 2018 08:52:25 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36471 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbeLQNwZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 08:52:25 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gYtJk-0002Lb-PU; Mon, 17 Dec 2018 14:52:20 +0100
+Message-ID: <1545054740.5874.6.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/2] irqchip: add driver for imx-irqsteer controller
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org, patchwork-lst@pengutronix.de,
+        Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Mon, 17 Dec 2018 14:52:20 +0100
+In-Reply-To: <98217822-208a-9a92-e80b-b0b73111e527@arm.com>
+References: <20181214102244.21509-1-l.stach@pengutronix.de>
+         <20181214102244.21509-3-l.stach@pengutronix.de>
+         <86r2ejaztt.wl-marc.zyngier@arm.com>
+         <1545041393.5874.1.camel@pengutronix.de>
+         <98217822-208a-9a92-e80b-b0b73111e527@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 05:46:11PM +0100, Michael Straube wrote:
-> Covert unsigned char arrays to u8 and make them static and/or const
-> where possible.
+Am Montag, den 17.12.2018, 10:32 +0000 schrieb Marc Zyngier:
+[...]
+> > > > > > +	/* steer all IRQs into configured channel */
+> > > > +	writel_relaxed(BIT(data->channel), data->regs + CHANCTRL);
+> > > 
+> > > Could you explain what this channel is exactly?
+> > 
+> > I've tired in the cover letter, but seems I still failed, so let me try
+> > again. ;)
+> > 
+> > Each irqsteer instance can be connected to multiple upstream IRQ lines,
+> > but only one of them can be used at runtime. This register controls
+> > which output IRQ line will be used by this controller instance. With
+> > multiple controller instances in the system it's a way to offload the
+> > decision of the IRQ routing from the hardware to the software guys.
+> > 
+> > Let's try to add an example: Suppose there are 2 instances of the
+> > irqsteer controller. Both are connected to upstream GIC IRQs 20 and 21.
+> > The channel controls which of those IRQs are used by each instance, so
+> > there are 2 valid DT configurations in this scenario:
+> > 
+> > This is valid:
+> > 
+> > irqsteer@0 {
+> > 	interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>
+> > 	fsl,channel = <0>;
+> > };
+> > 
+> > irqsteer@1 {
+> > 	interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>
+> > 	fsl,channel = <1>;
+> > };
+> > 
+> > As well as this:
+> > 
+> > irqsteer@0 {
+> > 	interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>
+> > 	fsl,channel = <1>;
+> > };
+> > 
+> > irqsteer@1 {
+> > 	interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>
+> > 	fsl,channel = <0>;
+> > };
+> 
+> OK, this is now making sense, thanks for that. I'm wondering if it'd
+> make sense to expose both IRQs in the DT for each irqsteer, and use
+> fsl,channel as the selector? It doesn't change much in the driver, but
+> seems to describe the HW in a more complete way.
+> 
+> I don't care much either way, and I'll leave it for you and the DT folks
+> to decide.
 
-You are also moving things around here from different .h files in
-different places.  Always say exactly what you are doing.
+At least according to the preliminary documentation available about the
+i.MX8QM not all of the channels are routed to an upstream IRQ which is
+visible to the Linux system. Some of them may also go to the Cortex-M
+subsystem, so for your suggestion to work I would need a scheme to
+describe the output interrupts with holes in between them.
 
-And this too needs to be broken up into smaller pieces, don't make
-things static/const when you change the type.
+I guess that complicates things a bit too much for little gain, as I
+don't see us switching the controller between different channels at
+runtime (which is the only thing I could imagine which would benefit
+from this more complete HW description). The current binding can deal
+with having some channels which route to something invisible to the
+Linux system just fine, so I'm leaning toward keeping things as they
+are now.
 
-thanks,
-
-greg k-h
+Regards,
+Lucas
