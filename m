@@ -2,97 +2,137 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839C9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879BBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50259206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:37:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49E9D2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:39:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="he/2rpV0"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="5W6/mXjP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbeLQOhK (ORCPT
+        id S1732251AbeLQOjY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:37:10 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46966 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeLQOhJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:37:09 -0500
-Received: by mail-io1-f66.google.com with SMTP id v10so10085641ios.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 06:37:09 -0800 (PST)
+        Mon, 17 Dec 2018 09:39:24 -0500
+Received: from mail-eopbgr800052.outbound.protection.outlook.com ([40.107.80.52]:63504
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726891AbeLQOjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:39:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3q6P5RehYoQytdTA+RoUcbFi6HQhV44fDiOGvIzUx7c=;
-        b=he/2rpV0eUhH66VHjFgksJpefZ97b4EoPPsXDMFHGlteLbTNNqpcxeF3XVIJ/uOWW4
-         yT4D7vF1s37KGMkngO55Np+Pvqt+YdCuwGq2rVVZ7Q3/HOMHQDgrXbnEWxHNyX49bYWC
-         h2rjGYdHd4rzQV7IrKXd0nB5cFB5Uu+gPNJeL9VuNy93SJH4E5Nao73/tozIlWfKv18u
-         MHwEBM5FShw8iTggbeGO5qQzYy4vd9tP8ltb4+N3WPbEi7TvsGYXiRXUJD/W7ebK25XP
-         0W4R346YXlr1nNu2am4YQywYX3Ud25l7tZt5z5ps1PX4VfbwdheLK7h2DZ3SHzO4RFHT
-         NDTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3q6P5RehYoQytdTA+RoUcbFi6HQhV44fDiOGvIzUx7c=;
-        b=dTq+v/hUmIIquM4CQyHahxNpBsQzx2rZY7Uq+rAP020rdIMizjgWhjPXO/yi1gpzJj
-         6DPk3i7yw0FwEPpHBU/j+xViL+XCHADCgfoQANDEEbYW3/26otRMWm3wrRja8KAN9I1b
-         Ni5mRlpyLNksk9NJwtxOoTwI7lPY94uWRsISVh3LWF9wdW1akfgJGUNt0jYHvLn5zfiZ
-         nRfFSbTwN+GKFY5ryE9R+BtFW3SD/0bgpNd6D6Lm/cWTjNa+zBhB9sz4fK5cEDtQmp5A
-         rLixQxjeQD2OA6htQ5L4rl0E2VND+EL4izjw+A93/asuSaTHqahcEyWnoIDmV56Qf2+N
-         n18A==
-X-Gm-Message-State: AA+aEWawFAXwLDjUkESPmQS7d3isfjMJe+KQZh6C/tUi96kYob+UfkSH
-        nb7EN+r7C61j+55CWpNWngqNjiY8hoFIVau4aJs=
-X-Google-Smtp-Source: AFSGD/UfEBEwkeda+pE3xmM9vL01OBZBgQmdhZ6+QnXM2pokwhISsPU4Bc8x57HrGszTiBJdVEoShe8ppFhwAyrPpC4=
-X-Received: by 2002:a6b:a0d:: with SMTP id z13mr8326411ioi.57.1545057428626;
- Mon, 17 Dec 2018 06:37:08 -0800 (PST)
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ozm29GQPMAk3amybCq4gCNvVNYkMAQn3r5adCcyFBIw=;
+ b=5W6/mXjPTBizPTTIKlX52yOukNfF4X4JS9WcpDejCGGhx4tnFPEjzdY2AXE90uiUtB+uIjYVou0a1gY9Wghn/uz36aBg73Ecgf+/cRhIPfVPlqp72q4GbRIvIEjsRIpS6lIXwh36uFf6tYb14zD5t+2A9HzVURj5osCDKwWPGE0=
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
+ SN1PR12MB0560.namprd12.prod.outlook.com (10.162.4.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Mon, 17 Dec 2018 14:39:18 +0000
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
+ 14:39:17 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: [RESEND PATCH] kernel/dma/direct: Do not include SME mask in the DMA
+ supported check
+Thread-Topic: [RESEND PATCH] kernel/dma/direct: Do not include SME mask in the
+ DMA supported check
+Thread-Index: AQHUlhZJ5CmG449nwUWjXmZkfFTmrw==
+Date:   Mon, 17 Dec 2018 14:39:16 +0000
+Message-ID: <8e875df2cf082ec6eeaf5e713bf9fa987325308d.1545057470.git.thomas.lendacky@amd.com>
+References: <20181213225110.6567.69313.stgit@tlendack-t1.amdoffice.net>
+In-Reply-To: <20181213225110.6567.69313.stgit@tlendack-t1.amdoffice.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 1.9.1
+x-clientproxiedby: SN4PR0501CA0077.namprd05.prod.outlook.com
+ (2603:10b6:803:22::15) To SN1PR12MB0175.namprd12.prod.outlook.com
+ (2a01:111:e400:5143::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR12MB0560;20:no1sTenOtG11Y0pwCBtojZ6l6gqv0nenW94B8G/QSO3LlDVXlTE5LJXIEzyxvwwwmKcyld9fVWYndSbHpj/YhgPWDfgVycar45lQ1P7V+8PtkyJuCr7h5FdUAqrM4pOfe7aMYIvIf/hZ6lW1EvXnMdUz5p6OBNW7HiAkBUtnZhyquMGn5y+35xBiqpfsnTLW5eO/IMLlka9qL+gRzo7rJwLx45MGLMlmcnH4gGtKFuWcZgXfWckBU2qj7HQWRsn9
+x-ms-office365-filtering-correlation-id: b9b291b4-0cd7-4486-1adc-08d6642d5204
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0560;
+x-ms-traffictypediagnostic: SN1PR12MB0560:
+x-microsoft-antispam-prvs: <SN1PR12MB0560EEF895E74C91F0BCB7BDECBC0@SN1PR12MB0560.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231475)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0560;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0560;
+x-forefront-prvs: 08897B549D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(396003)(376002)(366004)(189003)(199004)(36756003)(6506007)(118296001)(72206003)(97736004)(1730700003)(8676002)(68736007)(14454004)(316002)(81156014)(81166006)(5660300001)(71190400001)(71200400001)(6916009)(8936002)(2351001)(50226002)(54906003)(86362001)(575784001)(486006)(186003)(256004)(14444005)(478600001)(7736002)(25786009)(66066001)(6116002)(106356001)(3846002)(11346002)(446003)(2906002)(53936002)(102836004)(99286004)(6512007)(105586002)(476003)(305945005)(2616005)(2501003)(4326008)(39060400002)(76176011)(52116002)(6486002)(5640700003)(386003)(6436002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0560;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: c8iMMKZ2IdTCnh+9v1ma/lf4Aes0iKVv+HMS9ebKZL6YQHu8rC8b8IIsJ0ZpxEy4ZDHulD817mme2L3P/YFyrXTe9RnqlPv4f6PFCDW4ug8zxoua71oyX8/wh1nUErQVPpBpYru41WIRIapXEPhgZp2WrgbPKIu/9TO10B4oA8BCQSgtAVQd/btZdBI720Y+8N2Q9sv4g9lmI/rLYAF0YD8kFDFFhXYmtAbf61uz+2JUfi4udCL+ECUDXvanhm0NHENDHHvnpx0lBseq0oLZN5mhJplGzBoaL5Bs7+64VTPGtp2ZomaMsVqjWolHtqZs
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181121145429.7582-1-thierry.reding@gmail.com>
- <CABb+yY3G3VQGcEHaSZq3bUYrJUToP4oQOCns92q3S0Nr9W_09A@mail.gmail.com> <20181217143506.GA29853@ulmo>
-In-Reply-To: <20181217143506.GA29853@ulmo>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Mon, 17 Dec 2018 08:36:57 -0600
-Message-ID: <CABb+yY1reX7dgkz6bfnbU3TFSkG=UYNpCjQcvAbEad=2=rwS-Q@mail.gmail.com>
-Subject: Re: [PATCH 00/19] mailbox: Device-managed registration
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9b291b4-0cd7-4486-1adc-08d6642d5204
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 14:39:16.8067
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0560
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 8:35 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Tue, Dec 11, 2018 at 10:34:59PM +0530, Jassi Brar wrote:
-> > On Wed, Nov 21, 2018 at 8:24 PM Thierry Reding <thierry.reding@gmail.com> wrote:
-> > >
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
-> > > Hi,
-> > >
-> > > This series of patches adds device-managed registration functions for
-> > > mailbox controllers. A number of drivers can be simplified by making use
-> > > of this new API both in the error cleanup paths in their probe functions
-> > > and in the driver remove implementation.
-> > >
-> > > In addition to adding the new API this series converts all drivers to
-> > > use it. There is also an additional cleanup patch for the mtk-cmdq
-> > > driver that removes some calls to devm_kfree() that are not needed.
-> > >
-> > Any  Acked/Reviewed/Tested-by would have been great, but I see no
-> > driver author is CC'ed. Do you want to loop in authors too?
->
-> I didn't think that was necessary because it's a pretty mechanical
-> change. But I can resend with all the authors in Cc.
->
-Yes please. The authors should atleast be notified of the change, if
-not asked for review.
+The dma_direct_supported() function intends to check the DMA mask against
+specific values. However, the phys_to_dma() function includes the SME
+encryption mask, which defeats the intended purpose of the check. This
+results in drivers that support less than 48-bit DMA (SME encryption mask
+is bit 47) from being able to set the DMA mask successfully when SME is
+active, which results in the driver failing to initialize.
 
-Thanks.
+Change the function used to check the mask from phys_to_dma() to
+__phys_to_dma() so that the SME encryption mask is not part of the check.
+
+Fixes: c1d0af1a1d5d ("kernel/dma/direct: take DMA offset into account in dm=
+a_direct_supported")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+---
+ kernel/dma/direct.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 22a12ab..375c77e 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -309,7 +309,12 @@ int dma_direct_supported(struct device *dev, u64 mask)
+=20
+ 	min_mask =3D min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
+=20
+-	return mask >=3D phys_to_dma(dev, min_mask);
++	/*
++	 * This check needs to be against the actual bit mask value, so
++	 * use __phys_to_dma() here so that the SME encryption mask isn't
++	 * part of the check.
++	 */
++	return mask >=3D __phys_to_dma(dev, min_mask);
+ }
+=20
+ int dma_direct_mapping_error(struct device *dev, dma_addr_t dma_addr)
+--=20
+1.9.1
+
