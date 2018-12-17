@@ -2,152 +2,138 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C76C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A0DC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9CDE20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:22:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WYxsJrP4"
+	by mail.kernel.org (Postfix) with ESMTP id 985E320874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388205AbeLQQWi (ORCPT
+        id S2387943AbeLQQYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:22:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50524 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbeLQQWh (ORCPT
+        Mon, 17 Dec 2018 11:24:36 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:33928 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbeLQQYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:22:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GzJw5OfqZmFeF3p28QfnsLekp01V+WlkztoA/o5MB54=; b=WYxsJrP404KuAZ2ACEgEdDK7l
-        nkBSRImFxKA13t+MK5lTOYQiicpZuZKazn7bmwDj+2IlsDtct6CC1Uw6WDTGajnKe5y94U5mlc5op
-        JB5tGoD4ja81ENX8kijklOQiBBew9EGn9tWwQH4/eh4vrLwfKl7UQX2NM92rUYee5AtGc7+UQbwfL
-        2ViuXTBIbTq2flLaf1pz23VW7S8tAqbSk2oQIVIiaADY1FRuVqUPMslUQo7uYouhCVkKPxIWKf3QZ
-        DOMqiWnScFsyY5gLOn1x4AtB1AMkSGsHZkPzq9fn/ETXvXZ5v/0mkje5LQSEN6aA7Qc4adrteE2di
-        lnJN8TOyQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYvez-0002p8-7C; Mon, 17 Dec 2018 16:22:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9126B20276ABC; Mon, 17 Dec 2018 17:22:23 +0100 (CET)
-Date:   Mon, 17 Dec 2018 17:22:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     gregkh@linuxfoundation.org, tj@kernel.org, lizefan@huawei.com,
-        hannes@cmpxchg.org, axboe@kernel.dk, dennis@kernel.org,
-        dennisszhou@gmail.com, mingo@redhat.com, akpm@linux-foundation.org,
-        corbet@lwn.net, cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 6/6] psi: introduce psi monitor
-Message-ID: <20181217162223.GD2218@hirez.programming.kicks-ass.net>
-References: <20181214171508.7791-1-surenb@google.com>
- <20181214171508.7791-7-surenb@google.com>
+        Mon, 17 Dec 2018 11:24:35 -0500
+Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 18 Dec 2018
+ 00:24:49 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v8 0/4] clk: meson: add a sub EMMC clock controller support
+Date:   Tue, 18 Dec 2018 00:24:06 +0800
+Message-ID: <1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214171508.7791-7-surenb@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:15:08AM -0800, Suren Baghdasaryan wrote:
-> +ssize_t psi_trigger_parse(char *buf, size_t nbytes, enum psi_res res,
-> +	enum psi_states *state, u32 *threshold_us, u32 *win_sz_us)
-> +{
-> +	bool some;
-> +	bool threshold_pct;
-> +	u32 threshold;
-> +	u32 win_sz;
-> +	char *p;
-> +
-> +	p = strsep(&buf, " ");
-> +	if (p == NULL)
-> +		return -EINVAL;
-> +
-> +	/* parse type */
-> +	if (!strcmp(p, "some"))
-> +		some = true;
-> +	else if (!strcmp(p, "full"))
-> +		some = false;
-> +	else
-> +		return -EINVAL;
-> +
-> +	switch (res) {
-> +	case (PSI_IO):
-> +		*state = some ? PSI_IO_SOME : PSI_IO_FULL;
-> +		break;
-> +	case (PSI_MEM):
-> +		*state = some ? PSI_MEM_SOME : PSI_MEM_FULL;
-> +		break;
-> +	case (PSI_CPU):
-> +		if (!some)
-> +			return -EINVAL;
-> +		*state = PSI_CPU_SOME;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	while (isspace(*buf))
-> +		buf++;
-> +
-> +	p = strsep(&buf, "%");
-> +	if (p == NULL)
-> +		return -EINVAL;
-> +
-> +	if (buf == NULL) {
-> +		/* % sign was not found, threshold is specified in us */
-> +		buf = p;
-> +		p = strsep(&buf, " ");
-> +		if (p == NULL)
-> +			return -EINVAL;
-> +
-> +		threshold_pct = false;
-> +	} else
-> +		threshold_pct = true;
-> +
-> +	/* parse threshold */
-> +	if (kstrtouint(p, 0, &threshold))
-> +		return -EINVAL;
-> +
-> +	while (isspace(*buf))
-> +		buf++;
-> +
-> +	p = strsep(&buf, " ");
-> +	if (p == NULL)
-> +		return -EINVAL;
-> +
-> +	/* Parse window size */
-> +	if (kstrtouint(p, 0, &win_sz))
-> +		return -EINVAL;
-> +
-> +	/* Check window size */
-> +	if (win_sz < PSI_TRIG_MIN_WIN_US || win_sz > PSI_TRIG_MAX_WIN_US)
-> +		return -EINVAL;
-> +
-> +	if (threshold_pct)
-> +		threshold = (threshold * win_sz) / 100;
-> +
-> +	/* Check threshold */
-> +	if (threshold == 0 || threshold > win_sz)
-> +		return -EINVAL;
-> +
-> +	*threshold_us = threshold;
-> +	*win_sz_us = win_sz;
-> +
-> +	return 0;
-> +}
+This driver will add a MMC clock controller driver support.
+The original idea about adding a clock controller is during the
+discussion in the NAND driver mainline effort[1].
 
-How well has this thing been fuzzed? Custom string parser, yay!
+This driver is tested in the S400 board (AXG platform) with NAND driver.
+
+Changes since v7 [8]
+ - move meson_clk_get_phase_delay_data() from header to driver
+ - CONFIG sclk-div with COMMON_CLK_AMLOGIC instead of COMMON_CLK_AMLOGIC_AUDIO
+ - remove onecell date and ID for internal MUX clk
+ - use helper for functions for ONE_BASED in sclk-div
+ - add ONE_BASED support for duty cycle
+
+Changes since v6 [7]:
+ - add one based support for sclk divier
+ - alloc sclk in probe for multiple instance
+ - fix coding styles
+
+Changes since v5 [6]:
+ - remove divider ops with .init and use sclk_div instead
+ - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+ - drop the useless type cast 
+
+Changes since v4 [5]:
+ - use struct parm in phase delay driver
+ - remove 0 delay releted part in phase delay driver
+ - don't rebuild the parent name once again
+ - add divider ops with .init
+
+Changes since v3 [4]:
+ - separate clk-phase-delay driver
+ - replace clk_get_rate() with clk_hw_get_rate()
+ - collect Rob's R-Y
+ - drop 'meson-' prefix from compatible string
+
+ Changes since v2 [3]:
+ - squash dt-binding clock-id patch
+ - update license
+ - fix alignment
+ - construct a clk register helper() function
+
+Changes since v1 [2]:
+ - implement phase clock
+ - update compatible name
+ - adjust file name
+ - divider probe() into small functions, and re-use them
+
+[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+[5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+[6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+[7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+[8] https://lkml.kernel.org/r/1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com
+
+Jianxin Pan (1):
+  clk: meson: add one based divider support for sclk divider
+
+Yixun Lan (3):
+  clk: meson: add emmc sub clock phase delay driver
+  clk: meson: add DT documentation for emmc clock controller
+  clk: meson: add sub MMC clock controller driver
+
+ .../devicetree/bindings/clock/amlogic,mmc-clkc.txt |  39 +++
+ drivers/clk/meson/Kconfig                          |   9 +
+ drivers/clk/meson/Makefile                         |   5 +-
+ drivers/clk/meson/clk-phase-delay.c                |  70 +++++
+ drivers/clk/meson/clkc-audio.h                     |   8 -
+ drivers/clk/meson/clkc.h                           |  17 +-
+ drivers/clk/meson/mmc-clkc.c                       | 304 +++++++++++++++++++++
+ drivers/clk/meson/sclk-div.c                       |  59 ++--
+ include/dt-bindings/clock/amlogic,mmc-clkc.h       |  17 ++
+ 9 files changed, 498 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+ create mode 100644 drivers/clk/meson/clk-phase-delay.c
+ create mode 100644 drivers/clk/meson/mmc-clkc.c
+ create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+
+-- 
+1.9.1
+
