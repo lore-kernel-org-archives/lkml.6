@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A459C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA771C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D4A217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98C9A217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545028900;
-	bh=0xtxfZtFdIUmaXPj2hBVcHLm0ZupOdVKMg42UdHhv0E=;
+	s=default; t=1545028929;
+	bh=QM7XOsAU0i1KQFQo/n6k/OXJ89dL3NSEi3PjGHYFhXQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EttvFYUASEGEHOAiyYk9bMbExE1wq8vVdS7dJuUWI93T/KdKaV9wXGqJ9eYMVZVvL
-	 lOR0ehzWoWsLOtbooHzotf3glUAX//X+Foo2TQRoSq69C10p2HU3tSEKVPSMtMcvpk
-	 KM31b74GAgWnpIF/EaaC+Spw/V3pNzqEVoCWRIGU=
+	b=Vkt/SxRVUvb/MRzXd3tSFzxrYDR8SOOb0YC+PjhKhgSEHVpYgqengdymzogEQoyHi
+	 daLKKUucm4Ntrddp06xb9EoYS4eFxRBJicvz7nR6fRQMNO/+LlUZRW0ogYmEzMOzdR
+	 d86TH5FK0muIKyoTEeNHEPYxeShRfNVfWdDrmRME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731634AbeLQGlj (ORCPT
+        id S1731643AbeLQGmI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 01:41:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42970 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 01:42:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726349AbeLQGli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 01:41:38 -0500
+        id S1726349AbeLQGmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 01:42:07 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4591820675;
-        Mon, 17 Dec 2018 06:41:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC63320675;
+        Mon, 17 Dec 2018 06:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545028898;
-        bh=0xtxfZtFdIUmaXPj2hBVcHLm0ZupOdVKMg42UdHhv0E=;
+        s=default; t=1545028927;
+        bh=QM7XOsAU0i1KQFQo/n6k/OXJ89dL3NSEi3PjGHYFhXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q7XHocSnVx+0Xra04NV3H5XEkQO0w0dGwg7DW9YnHqDAH4+2kQHIXXJA7bu6l906K
-         b1UDTnU8XZA1ooJNxsoSwFFGgdJ7cHSOTEQyh1fr1UdIN+MeZoUJroxWFFwpVwzGRq
-         8eRdPK6OVNR90BgNON2fBzS5NoU59EpJxQo2NEr4=
+        b=R78kjiVvc77VsubODTNB185MrmewUu7OIUJ/TRBZIQbH4rKuixQLTrMi97hRKryph
+         9FYcX/d7ivZ4tIchQjqNSJKbtEK986h3ON2A0u+nyUqbMycAZEAjvdC8X+5jMvrpMr
+         FbacDQ9/ysMneVNvKeyBfiuQxkaSN8RCvsLIcPiU=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
@@ -46,9 +46,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
         "David A . Long" <dave.long@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/3] arm64: kprobes: Remove unneeded RODATA check
-Date:   Mon, 17 Dec 2018 15:41:15 +0900
-Message-Id: <154502887509.30629.17754148993239954461.stgit@devbox>
+Subject: [PATCH 3/3] arm64: kprobes: Move exception_text check in blacklist
+Date:   Mon, 17 Dec 2018 15:41:43 +0900
+Message-Id: <154502890363.30629.6071608188122836265.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154502881646.30629.9938335052821665530.stgit@devbox>
 References: <154502881646.30629.9938335052821665530.stgit@devbox>
@@ -61,40 +61,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded RODATA check from arch_prepare_kprobe().
+Move exception/irqentry text address check in blacklist,
+since those are symbol based rejection.
 
-Since check_kprobe_address_safe() already ensured that
-the probe address is in kernel text, we don't need to
-check whether the address in RODATA or not. That must
-be always false.
+If we prohibit probing on the symbols in exception_text,
+those should be blacklisted.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c |    6 ------
- 1 file changed, 6 deletions(-)
+ arch/arm64/kernel/probes/kprobes.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index b2d4b7428ebc..1dae500d0a81 100644
+index 1dae500d0a81..b9e9758b6534 100644
 --- a/arch/arm64/kernel/probes/kprobes.c
 +++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -91,8 +91,6 @@ static void __kprobes arch_simulate_insn(struct kprobe *p, struct pt_regs *regs)
- int __kprobes arch_prepare_kprobe(struct kprobe *p)
- {
- 	unsigned long probe_addr = (unsigned long)p->addr;
--	extern char __start_rodata[];
--	extern char __end_rodata[];
+@@ -98,9 +98,6 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
+ 	/* copy instruction */
+ 	p->opcode = le32_to_cpu(*p->addr);
  
- 	if (probe_addr & 0x3)
- 		return -EINVAL;
-@@ -106,10 +104,6 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
+-	if (in_exception_text(probe_addr))
+-		return -EINVAL;
+-
  	if (search_exception_tables(probe_addr))
  		return -EINVAL;
  
--	if (probe_addr >= (unsigned long) __start_rodata &&
--	    probe_addr <= (unsigned long) __end_rodata)
--		return -EINVAL;
--
- 	/* decode instruction */
- 	switch (arm_kprobe_decode_insn(p->addr, &p->ainsn)) {
- 	case INSN_REJECTED:	/* insn not supported */
+@@ -475,7 +472,8 @@ bool arch_within_kprobe_blacklist(unsigned long addr)
+ 	    (addr >= (unsigned long)__entry_text_start &&
+ 	    addr < (unsigned long)__entry_text_end) ||
+ 	    (addr >= (unsigned long)__idmap_text_start &&
+-	    addr < (unsigned long)__idmap_text_end))
++	    addr < (unsigned long)__idmap_text_end) ||
++	    in_exception_text(addr))
+ 		return true;
+ 
+ 	if (!is_kernel_in_hyp_mode()) {
 
