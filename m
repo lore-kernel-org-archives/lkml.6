@@ -2,237 +2,135 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB0DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6969C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9FE20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:47:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MhVqX5L3"
+	by mail.kernel.org (Postfix) with ESMTP id B055320874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:52:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731882AbeLQKrH (ORCPT
+        id S1727281AbeLQKwN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:47:07 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38404 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbeLQKrH (ORCPT
+        Mon, 17 Dec 2018 05:52:13 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:65353 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbeLQKwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:47:07 -0500
-Received: by mail-it1-f194.google.com with SMTP id h65so19217377ith.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:47:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P+5DbTP2RWkQ4pB8QfuEGvck4FWJW764sKmkco2yZGA=;
-        b=MhVqX5L3qJZCfLg8yK9GoaQMw1E2NMkIaxhycUPjSuWjSf/b9RWF/XuSMGEs+kzXip
-         HTruEvAunPiUr9dkaRzF0pAMZ5/pgNlTjutDuTLbX7tNUIq4lRTZq48i7Q6YX/wsMG86
-         ZFUH/F1qYdH2CEW8KuWPFeJA+jOg5KkafarSihalHJSefjqdGnYNpQsoY6vzYsXN0EHI
-         +rEXLqB19v8jJAc06JHkoeuct+zkF4Qp71C3t+dK5lphYq/u8dYud3BhiSGjG2zNqF9D
-         cVlq2S1pVvIUlYatNBwusIdJ7idIfj8mIdgHvtLs3KoZM9jmo0ansunoZPrZ5GwGShft
-         XTzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P+5DbTP2RWkQ4pB8QfuEGvck4FWJW764sKmkco2yZGA=;
-        b=AdNni/BSMMke/KPuorkccxysw4QTpQUMb9L+BFfUNB+om7sr0zmzaxqwoDJTvw8Ccl
-         ximwJKHCBMTnMKplE8cC3F65XminpnJdFlXQD3Bub1H/v3y/q8uabQd9y/WmkXRJbBLm
-         dINgC3W+Gl0PVMJbYOrJa8enaEXETJZnQgwxfCiOb8CirtQNA/EP+Bt0D7FAusfCkqP/
-         NyEVXFweckphgakCR81T7C5ma+EMco4QtiMmBNfqNbJUnVDVeQKjfLWNuWERHmdKY1z/
-         JbY9A4/N5m7hDKUj268Av3+6hFCh2Z1VEPLagbO7H0CMcmt94O4MdcQUg21hacWANffd
-         5l4g==
-X-Gm-Message-State: AA+aEWYdk5SGmLrwnZN2CZajnzXMaXN3jEjt932d+J4/NvwVyYioq+uN
-        K9MwN9yV+cVs5gdRDuOcCfcpNnvAQrZ3JxLYc0twgQ==
-X-Google-Smtp-Source: AFSGD/V12Q26oJXhUsIpWurRuGbbsMWLu0BYehrmZyodEJKwhQkTquGIPy7uH1o0bVl5NmySY+MsAhZTF2pycSwhUXs=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr10836415iti.166.1545043625770;
- Mon, 17 Dec 2018 02:47:05 -0800 (PST)
+        Mon, 17 Dec 2018 05:52:13 -0500
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBHApWsQ055613;
+        Mon, 17 Dec 2018 19:51:32 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Mon, 17 Dec 2018 19:51:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBHApSOk055586
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 17 Dec 2018 19:51:32 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
+ in mem alloc
+To:     Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Hou Tao <houtao1@huawei.com>, phillip@squashfs.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20181204020840.49576-1-houtao1@huawei.com>
+ <20181215143824.GJ10600@bombadil.infradead.org>
+ <69457a5a-79c9-4950-37ae-eff7fa4f949a@huawei.com>
+ <20181217035157.GK10600@bombadil.infradead.org>
+ <20181217093337.GC30879@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <00ff5d2d-a50f-4730-db8a-cea3d7a3eef7@I-love.SAKURA.ne.jp>
+Date:   Mon, 17 Dec 2018 19:51:27 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <000000000000064bcf057a59e3b9@google.com> <00000000000058055a057d14a1f4@google.com>
- <CAOQ4uxgcxGXcCiC02UJrvwkCjiXERJxuNvoG_mfLga7Am3c5GA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgcxGXcCiC02UJrvwkCjiXERJxuNvoG_mfLga7Am3c5GA@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 17 Dec 2018 11:46:54 +0100
-Message-ID: <CACT4Y+YHK0rOtYZEDzzVLjNP6XHOiG=SXHMR7SicU01Vu_ivtA@mail.gmail.com>
-Subject: Re: WARNING in ovl_instantiate
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181217093337.GC30879@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 6:00 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Sat, Dec 15, 2018 at 9:34 PM syzbot
-> <syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com> wrote:
-> >
-> > syzbot has found a reproducer for the following crash on:
-> >
-> > HEAD commit:    d14b746c6c1c Add linux-next specific files for 20181214
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=143f9a15400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=1da6d2d18f803140
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=9c69c282adc4edd2b540
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a6e543400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com
-> >
-> > overlayfs: filesystem on './file0' not supported as upperdir
-> > overlayfs: filesystem on './file0' not supported as upperdir
-> > overlayfs: filesystem on './file0' not supported as upperdir
-> > overlayfs: filesystem on './file0' not supported as upperdir
-> > overlayfs: filesystem on './file0' not supported as upperdir
-> > WARNING: CPU: 1 PID: 28918 at fs/overlayfs/dir.c:263
-> > ovl_instantiate+0x369/0x400 fs/overlayfs/dir.c:263
->
-> Looks like some corner case race when using same dir as upper and lower.
-> Doesn't look like a critical issue, I just don't know how to explain
-> getting to this
-> state. Couldn't reproduce on my target machine.
->
-> It would have been interesting for me to see the strace of the repro threads
-> when that WARN happens. I wonder if anyone else has already asked for it and
-> how hard would it be to make that information available with the bug report.
+On 2018/12/17 18:33, Michal Hocko wrote:
+> On Sun 16-12-18 19:51:57, Matthew Wilcox wrote:
+> [...]
+>> Ah, yes, that makes perfect sense.  Thank you for the explanation.
+>>
+>> I wonder if the correct fix, however, is not to move the check for
+>> GFP_NOFS in out_of_memory() down to below the check whether to kill
+>> the current task.  That would solve your problem, and I don't _think_
+>> it would cause any new ones.  Michal, you touched this code last, what
+>> do you think?
+> 
+> What do you mean exactly? Whether we kill a current task or something
+> else doesn't change much on the fact that NOFS is a reclaim restricted
+> context and we might kill too early. If the fs can do GFP_FS then it is
+> obviously a better thing to do because FS metadata can be reclaimed as
+> well and therefore there is potentially less memory pressure on
+> application data.
+> 
 
-Hi Amir,
+I interpreted "to move the check for GFP_NOFS in out_of_memory() down to
+below the check whether to kill the current task" as
 
-By strace you mean return values of syscalls, or something else?
+@@ -1077,15 +1077,6 @@ bool out_of_memory(struct oom_control *oc)
+ 	}
+ 
+ 	/*
+-	 * The OOM killer does not compensate for IO-less reclaim.
+-	 * pagefault_out_of_memory lost its gfp context so we have to
+-	 * make sure exclude 0 mask - all other users should have at least
+-	 * ___GFP_DIRECT_RECLAIM to get here.
+-	 */
+-	if (oc->gfp_mask && !(oc->gfp_mask & __GFP_FS))
+-		return true;
+-
+-	/*
+ 	 * Check if there were limitations on the allocation (only relevant for
+ 	 * NUMA and memcg) that may require different handling.
+ 	 */
+@@ -1104,6 +1095,19 @@ bool out_of_memory(struct oom_control *oc)
+ 	}
+ 
+ 	select_bad_process(oc);
++
++	/*
++	 * The OOM killer does not compensate for IO-less reclaim.
++	 * pagefault_out_of_memory lost its gfp context so we have to
++	 * make sure exclude 0 mask - all other users should have at least
++	 * ___GFP_DIRECT_RECLAIM to get here.
++	 */
++	if ((oc->gfp_mask && !(oc->gfp_mask & __GFP_FS)) && oc->chosen &&
++	    oc->chosen != (void *)-1UL && oc->chosen != current) {
++		put_task_struct(oc->chosen);
++		return true;
++	}
++
+ 	/* Found nothing?!?! */
+ 	if (!oc->chosen) {
+ 		dump_header(oc, NULL);
 
-We had only 1 strace-related request, and it was related to better
-static decoding of inputs rather then dynamic behavior:
-https://github.com/google/syzkaller/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+strace
+which is prefixed by "the correct fix is not".
 
-I don't immediately see how to capture runtime behavior. It would work
-if we dump everything onto console right away. But this will produce
-tons of output (really lots). And that output will be intermixed
-across parallel processes. And it will be hard to understand which
-exactly syscalls participated in the process that provoked the crash.
-Or maybe it's exactly syscalls from several processes interacted. Lots
-of output can also slow down and perturb execution.
-Capturing return values in memory and then printing for crashed
-program is also problematic. First, once the kernel has crashed we
-can't really do anything (print return values). Second, it's
-impossible to detect which exactly process triggered a kernel crash.
-Crashes can be in interrupts executed on behalf of some processes, on
-kernel threads, and again interactions between several processes.
+Behaving like sysctl_oom_kill_allocating_task == 1 if __GFP_FS is not used
+will not be the correct fix. But ...
 
-But meanwhile I was able to reproduce this on the first run within 4
-minutes. Maybe you need to wait longer, it does not happen
-immediately. Once you can reproduce it, you can do any amount of
-custom instrumentation and printing for debugging.
+Hou Tao wrote:
+> There is no need to disable __GFP_FS in ->readpage:
+> * It's a read-only fs, so there will be no dirty/writeback page and
+>   there will be no deadlock against the caller's locked page
 
-root@syzkaller:~# ./syz-execprog -repeat=0 -procs=6 ovl
-2018/12/17 10:20:24 parsed 1 programs
-[   37.279031] overlayfs: filesystem on './file0' not supported as upperdir
-[   37.280611] overlayfs: filesystem on './file0' not supported as upperdir
-[   37.292983] overlayfs: filesystem on './file0' not supported as upperdir
-[   37.321756] overlayfs: filesystem on './file0' not supported as upperdir
-[   37.350428] overlayfs: filesystem on './file0' not supported as upperdir
-[   37.422091] overlayfs: filesystem on './file0' not supported as upperdir
-...
-[  256.420482] overlayfs: filesystem on './file0' not supported as upperdir
-[  256.426182] overlayfs: filesystem on './file0' not supported as upperdir
-[  256.508980] overlayfs: filesystem on './file0' not supported as upperdir
-[  256.515183] WARNING: CPU: 1 PID: 28156 at fs/overlayfs/dir.c:263
-ovl_instantiate+0x369/0x400
-[  256.516468] Kernel panic - not syncing: panic_on_warn set ...
-[  256.517312] CPU: 1 PID: 28156 Comm: syz-executor Not tainted
-4.20.0-rc6-next-20181214 #5
-[  256.518455] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.10.2-1 04/01/2014
-[  256.519624] Call Trace:
-[  256.519995]  dump_stack+0x244/0x39d
-[  256.520518]  ? dump_stack_print_info.cold.1+0x20/0x20
+is read-only filesystem sufficient for safe to use __GFP_FS?
 
-[M es sa2ge5 f6ro.m520635] kobject: 'loop4' (00000000e9855b9a):
-kobject_uevent_env
-[  256.521244]  panic+0x2ad/0x632
- sy[sl og d@2sy5zk6al.l522732] kobject: 'loop4' (00000000e9855b9a):
-fill_kobj_path: path = '/devices/virtual/block/loop4'
-[  256.523137]  ? add_taint.cold.5+0x16/0x16
-er a[t   D2e5c6 .1572 150:766]  ? __warn.cold.8+0x5/0x4f
-54:0[6   .2.5.6
-2 6k5e1r1]  ? __warn+0xe8/0x1d0
-n[e l :2[5 6 .25526.751262467]  ? ovl_instantiate+0x369/0x400
-8[]  Ke rn2el5 p6a.n5i2c 8046]  __warn.cold.8+0x20/0x4f
-[  256.528727]  ? rcu_softirq_qs+0x20/0x20
-- n[o t  2sy5nc6in.g:5 p29285]  ? ovl_instantiate+0x369/0x400
-ani[c _ on2_w5ar6n .se5t30050]  report_bug+0x254/0x2d0
-5[. . .2
-.530716]  do_error_trap+0x11b/0x200
-[  256.531371]  do_invalid_op+0x36/0x40
-[  256.531897]  ? ovl_instantiate+0x369/0x400
-[  256.532496]  invalid_op+0x14/0x20
-[  256.532981] RIP: 0010:ovl_instantiate+0x369/0x400
-[  256.533675] Code: c3 89 c6 e8 89 35 ed fe 85 db 0f 85 9e 00 00 00
-e8 6c 34 ed fe 4c 89 e7 45 31 f6 e8 a1 b1 44 ff e9 ec fe ff ff e8 57
-34 ed fe <0f> 0b e9 e0 fe ff ff e8 4b 34 ed fe 0f 0b e9 63 ff ff ff e8
-ef 88
-[  256.536308] RSP: 0018:ffff888050ecf9a8 EFLAGS: 00010293
-[  256.537056] RAX: ffff888051030380 RBX: ffff888050ecfa40 RCX: ffffffff8292cd44
-[  256.538109] RDX: 0000000000000000 RSI: ffffffff8292cec9 RDI: 0000000000000007
-[  256.539116] RBP: ffff888050ecfa68 R08: ffff888051030380 R09: ffffed100a1d9ee8
-[  256.540115] R10: ffffed100a1d9ee8 R11: 0000000000000003 R12: ffff88804d0884a0
-[  256.541108] R13: ffff888050ecf9e0 R14: ffffffffffffff8c R15: 0000000000000000
-[  256.542126]  ? ovl_instantiate+0x1e4/0x400
-[  256.542714]  ? ovl_instantiate+0x369/0x400
-[  256.543304]  ? ovl_instantiate+0x369/0x400
-[  256.543895]  ? ovl_set_opaque_xerr+0x80/0x80
-[  256.544512]  ovl_create_or_link+0xad6/0x1560
-[  256.545144]  ? ovl_unlink+0x20/0x20
-[  256.545659]  ? ovl_create_object+0x22f/0x3a0
-[  256.546270]  ? lock_downgrade+0x900/0x900
-[  256.546852]  ? __sanitizer_cov_trace_const_cmp4+0x16/0x20
-[  256.547602]  ? kasan_check_read+0x11/0x20
-[  256.548163]  ? do_raw_spin_unlock+0xa7/0x330
-[  256.548781]  ? do_raw_spin_trylock+0x270/0x270
-[  256.549423]  ? ovl_fill_inode+0x32a/0x6f0
-[  256.550002]  ? debug_lockdep_rcu_enabled+0x77/0x90
-[  256.550688]  ovl_create_object+0x2e9/0x3a0
-[  256.551278]  ? ovl_create_or_link+0x1560/0x1560
-[  256.551926]  ? security_inode_permission+0xd2/0x100
-[  256.552636]  ovl_symlink+0x24/0x30
-[  256.553132]  vfs_symlink+0x37a/0x5d0
-[  256.553659]  do_symlinkat+0x242/0x2d0
-[  256.554194]  ? __ia32_sys_unlink+0x50/0x50
-[  256.554795]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  256.555543]  ? trace_hardirqs_off_caller+0x310/0x310
-[  256.556254]  __x64_sys_symlink+0x59/0x80
-[  256.556823]  do_syscall_64+0x1b9/0x820
-[  256.557375]  ? entry_SYSCALL_64_after_hwframe+0x3e/0xbe
-[  256.558123]  ? syscall_return_slowpath+0x5e0/0x5e0
-[  256.558807]  ? trace_hardirqs_on_caller+0x310/0x310
-[  256.559504]  ? prepare_exit_to_usermode+0x3b0/0x3b0
-[  256.559964] overlayfs: filesystem on './file0' not supported as upperdir
-[  256.560200]  ? post_copy_siginfo_from_user.isra.25.part.26+0x250/0x250
-[  256.560213]  ? __switch_to_asm+0x40/0x70
-[  256.562831]  ? __switch_to_asm+0x34/0x70
-[  256.563390]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[  256.564048]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  256.564743] RIP: 0033:0x4570d9
-[  256.565208] Code: 5d af fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66
-90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b af fb ff c3 66 2e 0f 1f 84 00 00
-00 00
-[  256.567790] RSP: 002b:00007fca039f7c88 EFLAGS: 00000246 ORIG_RAX:
-0000000000000058
-[  256.568852] RAX: ffffffffffffffda RBX: 000000000071bf00 RCX: 00000000004570d9
-[  256.569904] RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000020000040
-[  256.570933] RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000000
-[  256.571976] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fca039f86d4
-[  256.572993] R13: 00000000004ac640 R14: 00000000006ec840 R15: 00000000ffffffff
-[  256.574406] Kernel Offset: disabled
-[  256.574982] Rebooting in 86400 seconds..
+Isn't "whether it is safe to use __GFP_FS" depends on "whether fs locks
+are held or not" rather than "whether fs has dirty/writeback page or not" ?
+
