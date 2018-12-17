@@ -2,103 +2,84 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DEFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F7CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B25420874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545072486;
-	bh=4wdQJIeRBldxOvVZbdMFSE8oFjBPshEgUnTAYnu8hSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1pBqzzqWaKnD4knru+fXyIyit0L1YLuVsz+yadADBKIewF+F/sBpQFGQSblkTOCcz
-	 fhWXEKedmCRu4La/shtarwz6L0QshoVhDgBU7kkdPYS/2hjOoTMWiA9ZccPH930b9/
-	 JXeQeTjCajF3+uLFFXA/wY/OzD022oEqXNuKQzjw=
+	by mail.kernel.org (Postfix) with ESMTP id 5861F20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389196AbeLQSsF (ORCPT
+        id S2389211AbeLQStA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:48:05 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45685 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeLQSsF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:48:05 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t6so13203534wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:48:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=n2cC8Nq9eAri5YjBZ4emSGU52KnmqGpS1CtezMIx04w=;
-        b=mFmmKbV6YhYRY2j1Dn7oGxsAuSRbf8vMiZJbqr3Vc3jeF4nffojI2JHqRmD8n6PGfM
-         No95kMtGanTdtO8s71lW5SWWKEDwVj0saiAD1x5QZozYnDRZukHg6nmfYi725EgnzTZ3
-         Z58rGzRpBDExs4evt4UVvPYUFdcmJyShQkIHKrtrnrt4hLV/36MJeNOwl/cnoAvuEUS6
-         neLbPOEprAHeAgBfLsjQELuKzKh2d4lfUGjPRkccn88iCWNLOw8VeWz+kU6srRIWB5O6
-         FFsbZy4E/m7sXKJIN1B48S8DBTx/w0aACYXGxr7buI3KZ1bc9Ppmv1njnOpRdkFixKq9
-         Weig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n2cC8Nq9eAri5YjBZ4emSGU52KnmqGpS1CtezMIx04w=;
-        b=ih/WgvkzjIW/VXXGLmDT9bAxvw75dvJchuAufvQtLNp0pCextdvwa/pmF2E0z8cnB+
-         v2l2S/dol6j1bYuIDuJndNvilJePZHXgTThi9PsVZA12wabK3N506K8/ATyzs8pHzNe4
-         6uotNdm3AQEW8BylvwiXuu97VW3Ne9iNKkrir1vwL+WFp8x4SEWwK8LzXa6/wFopxqQ1
-         iMR7MMDOSGHIiChfZcFCWAKEw7gRKKYlc8XRxQM3P4NjkcdqPSkcspya1xfmKqdUN45K
-         U8X8qGRwqiNW30nO5NOQZoFgdMfcohaZnKGM14/Sqa7BEXwZZRxqvcrWa6Q/n1Nr3EKu
-         mw3w==
-X-Gm-Message-State: AA+aEWYVEiKNpJr8hftnZF5QoaBMNpyi+Bh2IXkWVry7AQIMU/jBo1Yn
-        rq08gQHJkwVIAKQ/dpbI8HU=
-X-Google-Smtp-Source: AFSGD/V40Z1IwJPRCOLonh3nD9NlCf2P31ZsdhA3C1D2K4JTD1p8YkD0yP+eXJzKR1uA5SEf+uUwVA==
-X-Received: by 2002:adf:ed92:: with SMTP id c18mr11979554wro.194.1545072482991;
-        Mon, 17 Dec 2018 10:48:02 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id q185sm63712wmg.14.2018.12.17.10.48.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 10:48:02 -0800 (PST)
-Date:   Mon, 17 Dec 2018 19:48:00 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, bp@alien8.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v14 1/5] x86/boot: Introduce get_acpi_rsdp() to parse
- RSDP in cmdline from KEXEC
-Message-ID: <20181217184800.GA60403@gmail.com>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
- <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
- <20181217172510.GA90818@gmail.com>
- <alpine.DEB.2.21.1812171930280.1660@nanos.tec.linutronix.de>
+        Mon, 17 Dec 2018 13:49:00 -0500
+Received: from mga04.intel.com ([192.55.52.120]:16971 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726628AbeLQSs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:48:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:48:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="119045611"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga002.jf.intel.com with ESMTP; 17 Dec 2018 10:48:58 -0800
+Date:   Mon, 17 Dec 2018 10:48:58 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217184858.GF12491@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812171930280.1660@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181217184333.GA26920@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> On Mon, 17 Dec 2018, Ingo Molnar wrote:
-> > * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
-> > > +		val[len] = '\0';
-> > > +		return (acpi_physical_address)simple_strtoull(val, &e, 16);
-> > 
-> > 'return' is not a function - no need for the parenthesis.
+On Mon, Dec 17, 2018 at 08:43:33PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 17, 2018 at 10:36:13AM -0800, Sean Christopherson wrote:
+> > I'm pretty sure doing mmget() would result in circular dependencies and
+> > a zombie enclave.  In the do_exit() case where a task is abruptly killed:
+> >  
+> >   - __mmput() is never called because the enclave holds a ref
+> >   - sgx_encl_release() is never be called because its VMAs hold refs
+> >   - sgx_vma_close() is never called because __mmput()->exit_mmap() is
+> >     blocked and the process itself is dead, i.e. won't unmap anything.
 > 
-> It's a typecast which better has parenthesis....
+> Right, it does, you are absolutely right. Tried it and removed the
+> commit already.
+> 
+> Well, what we came up from your suggestion i.e. setting mm to NULL
+> and checking that is very subtle change and does not have any such
+> circular dependencies. We'll go with that.
 
-Yeah, see my followup to the other reply where I withdraw the objection 
-and point out the ugliness of the various typecasts.
-
-Thanks,
-
-	Ingo
+We can't set mm to NULL as we need it to unregister the notifier, and
+I'm fairly certain attempting to unregister in the release callback
+will deadlock.
