@@ -2,78 +2,142 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E91BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCA6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E94206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD7C206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545062636;
-	bh=G9Xog0YEw6CvIMQ31u10PkHB8AhK6/zCFr0C53wQzrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=akBPtNdiyttWKCN1A+p37vLQl46gAH4r3ArIMJB42C94yKvxipChb1D7I9C+WRlF7
-	 THdxPWLouIJUSPmr9Kcu5isF19MiYyzRjqZDPeXYt3gf54eDRaru5vtZDk0nPASIxz
-	 5WX7HqGzSoIzI4EkHtZszgfL5oYmIAGHwFXR/ikM=
+	s=default; t=1545062640;
+	bh=g1cipyX/ml4CsEO/LzIRh5/VHCQ/oKWBZNNrqN2IJCY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=q8h8V5XO5LdxOWLSQWvMUb0SZ+ky5NsSGXx2zliD+v0JOlsNc2yNLiqfMRqB9lD57
+	 IOx1ycofQsqIpg7jYlKLFg/7gTrodIwFPZz9SF26jgypPc1TLQGajcmgzgNV+nWaG+
+	 4KBLbz1bEzhNPuynlrYcCu8wh9lJaejf8i8y1MH8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388036AbeLQQDz (ORCPT
+        id S2388044AbeLQQD7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:03:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39068 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727833AbeLQQDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:03:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 55AFDAF17;
-        Mon, 17 Dec 2018 16:03:52 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 17:03:50 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [-next] lots of messages due to "mm, memory_hotplug: be more
- verbose for memory offline failures"
-Message-ID: <20181217160350.GV30879@dhcp22.suse.cz>
-References: <20181217155922.GC3560@osiris>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217155922.GC3560@osiris>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 17 Dec 2018 11:03:59 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41015 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbeLQQD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:03:57 -0500
+Received: by mail-yw1-f65.google.com with SMTP id f65so5365164ywc.8;
+        Mon, 17 Dec 2018 08:03:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=L5rGZCuzin7GjzYmFJwbDOmDQPDvurbU8ESwuOCO24c=;
+        b=bea8MrlXnfd+yUZRDAbrVjszV486fIdELfmrRLq5X7fvxHfDASRuWnYO7SqlM8mo+w
+         5sSzcXWuObnk4lzDQvJ/iLZ5vtg8meyHFvUDF/kXs3XDQszb2YuVItQD6ilL3VFUIwyg
+         YbL02Qu41eQK8kVbFjGsvio4NHcTpK7SjeOmLcCb+ylUOxbajfAdHlLFQYmfxjXGGtQR
+         5obZ5OfslaiQauH2zwGBkzQQ8na/VGQu8VE5zgfjDgTDAgHdG/2SdIdakJ6zcKbV41UC
+         THtZeZ5sv+KLx8w6ud799ld6OHa+cGU5aak0XpVQXQGBes6tSl3sbEgS2N020SUItJgd
+         8FHw==
+X-Gm-Message-State: AA+aEWaj4oezgcCrZLc4YRp08StT2xrNYlKrQSh8k/c+dMKW3vrUA6A0
+        +xyUikUxH2pwdk1H/UWT3aDIXR/g
+X-Google-Smtp-Source: AFSGD/UFUPjAM5mtxlSqOVBxqstFvWl+qNgT2c1VtEdmY0Hzg7cqbprmNRcTCgaXG6pGSPE/Qi0nEQ==
+X-Received: by 2002:a81:7242:: with SMTP id n63mr13774603ywc.495.1545062635218;
+        Mon, 17 Dec 2018 08:03:55 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id x82sm4525642ywb.34.2018.12.17.08.03.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Dec 2018 08:03:54 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH v3] block: fix blk-iolatency accounting underflow
+Date:   Mon, 17 Dec 2018 11:03:51 -0500
+Message-Id: <20181217160351.27903-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 17-12-18 16:59:22, Heiko Carstens wrote:
-> Hi Michal,
-> 
-> with linux-next as of today on s390 I see tons of messages like
-> 
-> [   20.536664] page dumped because: has_unmovable_pages
-> [   20.536792] page:000003d081ff4080 count:1 mapcount:0 mapping:000000008ff88600 index:0x0 compound_mapcount: 0
-> [   20.536794] flags: 0x3fffe0000010200(slab|head)
-> [   20.536795] raw: 03fffe0000010200 0000000000000100 0000000000000200 000000008ff88600
-> [   20.536796] raw: 0000000000000000 0020004100000000 ffffffff00000001 0000000000000000
-> [   20.536797] page dumped because: has_unmovable_pages
-> [   20.536814] page:000003d0823b0000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
-> [   20.536815] flags: 0x7fffe0000000000()
-> [   20.536817] raw: 07fffe0000000000 0000000000000100 0000000000000200 0000000000000000
-> [   20.536818] raw: 0000000000000000 0000000000000000 ffffffff00000001 0000000000000000
-> 
-> bisect points to b323c049a999 ("mm, memory_hotplug: be more verbose for memory offline failures")
-> which is the first commit with which the messages appear.
+The blk-iolatency controller measures the time from rq_qos_throttle() to
+rq_qos_done_bio() and attributes this time to the first bio that needs
+to create the request. This means if a bio is plug-mergeable or
+bio-mergeable, it gets to bypass the blk-iolatency controller.
 
-I would bet this is CMA allocator. How much is tons? Maybe we want a
-rate limit or the other user is not really interested in them at all?
+The recent series [1], to tag all bios w/ blkgs undermined how iolatency
+was determining which bios it was charging and should process in
+rq_qos_done_bio(). Because all bios are being tagged, this caused the
+atomic_t for the struct rq_wait inflight count to underflow and result
+in a stall.
+
+This patch adds a new flag BIO_TRACKED to let controllers know that a
+bio is going through the rq_qos path. blk-iolatency now checks if this
+flag is set to see if it should process the bio in rq_qos_done_bio().
+
+Overloading BLK_QUEUE_ENTERED works, but makes the flag rules confusing.
+BIO_THROTTLED was another candidate, but the flag is set for all bios
+that have gone through blk-throttle code. Overloading a flag comes with
+the burden of making sure that when either implementation changes, a
+change in setting rules for one doesn't cause a bug in the other. So
+here, we unfortunately opt for adding a new flag.
+
+[1] https://lore.kernel.org/lkml/20181205171039.73066-1-dennis@kernel.org/
+
+Fixes: 5cdf2e3fea5e ("blkcg: associate blkg when associating a device")
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>
+---
+ block/blk-iolatency.c     | 2 +-
+ block/blk-rq-qos.h        | 5 +++++
+ include/linux/blk_types.h | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index bee092727cad..fc714ef402a6 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -593,7 +593,7 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
+ 	bool enabled = false;
+ 
+ 	blkg = bio->bi_blkg;
+-	if (!blkg)
++	if (!blkg || !bio_flagged(bio, BIO_TRACKED))
+ 		return;
+ 
+ 	iolat = blkg_to_lat(bio->bi_blkg);
+diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
+index fd8a0c5debd3..58f62483b537 100644
+--- a/block/blk-rq-qos.h
++++ b/block/blk-rq-qos.h
+@@ -170,6 +170,11 @@ static inline void rq_qos_done_bio(struct request_queue *q, struct bio *bio)
+ 
+ static inline void rq_qos_throttle(struct request_queue *q, struct bio *bio)
+ {
++	/*
++	 * BIO_TRACKED lets controllers know that a bio went through the
++	 * normal rq_qos path.
++	 */
++	bio_set_flag(bio, BIO_TRACKED);
+ 	if (q->rq_qos)
+ 		__rq_qos_throttle(q->rq_qos, bio);
+ }
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 46c005d601ac..fc99474ac968 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -228,6 +228,7 @@ struct bio {
+ #define BIO_TRACE_COMPLETION 10	/* bio_endio() should trace the final completion
+ 				 * of this bio. */
+ #define BIO_QUEUE_ENTERED 11	/* can use blk_queue_enter_live() */
++#define BIO_TRACKED 12		/* set if bio goes through the rq_qos path */
+ 
+ /* See BVEC_POOL_OFFSET below before adding new flags */
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
