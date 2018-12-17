@@ -2,217 +2,123 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1C3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A69C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5072133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:14:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I0FyCN4e"
+	by mail.kernel.org (Postfix) with ESMTP id 7F84D2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:15:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbeLQVOj (ORCPT
+        id S1733169AbeLQVPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:14:39 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58372 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727676AbeLQVOi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:14:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xv9R1Asq4kEgfFCTtrXG0S4Xh7eOlzNzos1JZWNF1H8=; b=I0FyCN4eVCfx2zW9cAgqtLF7AY
-        5R13wuEY3TxpTT1OYPMt/2iWjzARcGhZnElO8i9Onvm5RLye7ECxNDP3CJuGgak4KEu4ukYDFBjCI
-        yC8QPtQpgIh6UqeKGIOe+4CgxCRkxWoD8yjpzlQfAAQOvhmSdQF1Lgpc7lM0nMuitH59NNMumjqwc
-        FE7HGJkrpX/Myk4cSC+4OZr+fUfaS69jyxv5PGCW97h4A0ijMSWvZt4pxhYgJ07xGn4kM4Gk5lDTT
-        uwK6lkE2bThI7BPae09KHbjvRMhUQVfKAlDk0DGWaqQRXP4rRo0c9aHT9VU1HflNJdOgEnLmMtKY7
-        NmEGU0nA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZ0DZ-0003yF-R8; Mon, 17 Dec 2018 21:14:26 +0000
-Subject: Re: [PATCH 1/1] docs: Revamp tainted-kernels.rst to make it more
- comprehensible
-To:     Thorsten Leemhuis <linux@leemhuis.info>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181217152043.9989-1-linux@leemhuis.info>
- <20181217152043.9989-2-linux@leemhuis.info>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b834144e-b95d-4513-4bc4-1114e1facdc9@infradead.org>
-Date:   Mon, 17 Dec 2018 13:14:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 17 Dec 2018 16:15:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727798AbeLQVPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 16:15:40 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CD1939F754;
+        Mon, 17 Dec 2018 21:15:38 +0000 (UTC)
+Received: from redhat.com (ovpn-125-170.rdu2.redhat.com [10.10.125.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2186600C9;
+        Mon, 17 Dec 2018 21:15:35 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 16:15:33 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181217211533.GE3341@redhat.com>
+References: <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+ <20181217194759.GB3341@redhat.com>
+ <20181217195150.GP10600@bombadil.infradead.org>
+ <20181217195408.GC3341@redhat.com>
+ <20181217195922.GQ10600@bombadil.infradead.org>
+ <20181217205500.GD3341@redhat.com>
+ <20181217210358.GR10600@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20181217152043.9989-2-linux@leemhuis.info>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181217210358.GR10600@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 17 Dec 2018 21:15:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 7:20 AM, Thorsten Leemhuis wrote:
+On Mon, Dec 17, 2018 at 01:03:58PM -0800, Matthew Wilcox wrote:
+> On Mon, Dec 17, 2018 at 03:55:01PM -0500, Jerome Glisse wrote:
+> > On Mon, Dec 17, 2018 at 11:59:22AM -0800, Matthew Wilcox wrote:
+> > > On Mon, Dec 17, 2018 at 02:54:08PM -0500, Jerome Glisse wrote:
+> > > > On Mon, Dec 17, 2018 at 11:51:51AM -0800, Matthew Wilcox wrote:
+> > > > > On Mon, Dec 17, 2018 at 02:48:00PM -0500, Jerome Glisse wrote:
+> > > > > > On Mon, Dec 17, 2018 at 10:34:43AM -0800, Matthew Wilcox wrote:
+> > > > > > > No.  The solution John, Dan & I have been looking at is to take the
+> > > > > > > dirty page off the LRU while it is pinned by GUP.  It will never be
+> > > > > > > found for writeback.
+> > > > > > 
+> > > > > > With the solution you are proposing we loose GUP fast and we have to
+> > > > > > allocate a structure for each page that is under GUP, and the LRU
+> > > > > > changes too. Moreover by not writing back there is a greater chance
+> > > > > > of data loss.
+> > > > > 
+> > > > > Why can't you store the hmm_data in a side data structure?  Why does it
+> > > > > have to be in struct page?
+> > > > 
+> > > > hmm_data is not even the issue here, we can have a pincount without
+> > > > moving things around. So i do not see the need to complexify any of
+> > > > the existing code to add new structure and consume more memory for
+> > > > no good reasons. I do not see any benefit in that.
+> > > 
+> > > You said "we have to allocate a structure for each page that is under
+> > > GUP".  The only reason to do that is if we want to keep hmm_data in
+> > > struct page.  If we ditch hmm_data, there's no need to allocate a
+> > > structure, and we don't lose GUP fast either.
+> > 
+> > And i have propose a way that do not need to ditch hmm_data nor
+> > needs to remove page from the lru. What is it you do not like
+> > with that ?
 > 
-> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
-> ---
->  Documentation/admin-guide/tainted-kernels.rst | 105 ++++++++++++++++--
->  1 file changed, 96 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
-> index 28a869c509a0..aabd307a178a 100644
-> --- a/Documentation/admin-guide/tainted-kernels.rst
-> +++ b/Documentation/admin-guide/tainted-kernels.rst
-> @@ -1,10 +1,102 @@
->  Tainted kernels
->  ---------------
->  
-> -Some oops reports contain the string **'Tainted: '** after the program
-> -counter. This indicates that the kernel has been tainted by some
-> -mechanism.  The string is followed by a series of position-sensitive
-> -characters, each representing a particular tainted value.
-> +The kernel will mark itself as 'tainted' when something occurs that
-> +might be relevant later when investigating problems. Don't worry
-> +yourself too much about this, most of the time it's not a problem to run
-> +a tainted kernel; the information is mainly of interest once someone
-> +wants to investigate some problem, as its real cause might be the event
-> +that got the kernel tainted. That's why the kernel will remain tainted
-> +even after you undo what caused the taint (i.e. unload a proprietary
-> +kernel module), to indicate the kernel remains not trustworthy. That's
-> +also why the kernel will print the tainted state when it noticed
+> I don't like bounce buffering.  I don't like "end of writeback doesn't
+> mark page as clean".  I don't like pages being on the LRU that aren't
+> actually removable.  I don't like writing pages back which we know we're
+> going to have to write back again.
 
-                                                            notices
+And my solution allow to pick at which ever point ... you can decide to
+abort write back if you feel it is better, you can remove from LRU on
+first write back abort ... So you can do everything you want in my solution
+it is as flexible. Right now i am finishing couple patchset once i am
+done i will do an RFC on that, in my RFC i will keep write back and
+bounce but it can easily be turn into no write back and remove from
+LRU. My feeling is that not writing back means data loss, at the same
+time if the page is on continuous write one can argue that what ever
+snapshot we write back might be pointless. I do not see any strong
+argument either ways.
 
-> +ainternal problem (a 'kernel bug'), a recoverable error ('kernel oops')
-
-   an internal
-
-> +or a nonrecoverable error ('kernel panic') and writes debug information
-> +about this to the logs ``dmesg`` outputs. It's also possible to check
-> +the tainted state at runtime through a file in ``/proc/``.
-> +
-> +
-> +Tainted flag in bugs, oops or panics messages
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +You find the tainted state near the top after the list of loaded
-> +modules.  The state is part of the line that begins with mentioning CPU
-> +('CPU:'), Process ID ('PID:'), and a shorted name of the executed
-
-                                        shortened
-
-> +command ('Comm:') that triggered the event. When followed by **'Not
-> +tainted: '** the kernel was not tainted at the time of the event; if it
-> +was, then it will print **'Tainted: '** and characters either letters or
-> +blanks. The meaning of those characters is explained in below table. The
-
-                                                        in the table below. The
-
-> +output for example might state '``Tainted: P   WO``' when the kernel got
-> +tainted earlier because a proprietary Module (``P``) was loaded, a
-> +warning occurred (``W``), and an externally-built module was loaded
-> +(``O``). To decode other letters use below table.
-
-                                    use the table below.
-
-> +
-> +
-> +Decoding tainted state at runtime
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +At runtime, you can query the tainted state by reading
-> +``/proc/sys/kernel/tainted``. If that returns ``0``, the kernel is not
-> +tainted; any other number indicates the reasons why it is. You might
-> +find that number in below table if there was only one reason that got
-
-                    in the table below                          for the
-
-> +the kernel tainted. If there were multiple reasons you need to decode
-
-   kernel to be tainted.                      reasons,
-
-> +the number, as it is a bitfield, where each bit indicates the absence or
-> +presence of a particular type of taint. You can use the following python
-> +command to decode::
-> +
-> +	$ python3 -c 'from pprint import pprint; from itertools import zip_longest; pprint(list(zip_longest(range(1,17), reversed(bin(int(open("/proc/sys/kernel/tainted").read()))[2:]),fillvalue="0")))'
-> +	[(1, '1'),
-> +	 (2, '0'),
-> +	 (3, '0'),
-> +	 (4, '0'),
-> +	 (5, '0'),
-> +	 (6, '0'),
-> +	 (7, '0'),
-> +	 (8, '0'),
-> +	 (9, '0'),
-> +	 (10, '1'),
-> +	 (11, '0'),
-> +	 (12, '0'),
-> +	 (13, '1'),
-> +	 (14, '0'),
-> +	 (15, '0'),
-> +	 (16, '0')]
-> +
-> +In this case ``/proc/sys/kernel/tainted`` contained ``4609``, as the
-> +kernel got tainted because a proprietary Module (Bit 1) got loaded, a
-> +warning occurred (Bit 10), and an externally-built module got loaded
-> +(Bit 13). To decode other bits use below table.
-
-                                  use the table below.
-
-> +
-> +
-> +Table for decoding tainted state
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +===  ===  ======  ========================================================
-> +Bit  Log     Int  Reason that got the kernel tainted
-> +===  ===  ======  ========================================================
-> + 1)  G/P       0  proprietary module got loaded
-> + 2)  _/F       2  module was force loaded
-> + 3)  _/S       4  SMP kernel oops on a officially SMP incapable processor
-> + 4)  _/R       8  module was force unloaded
-> + 5)  _/M      16  processor reported a Machine Check Exception (MCE)
-> + 6)  _/B      32  bad page referenced or some unexpected page flags
-> + 7)  _/U      64  taint requested by userspace application
-> + 8)  _/D     128  kernel died recently, i.e. there was an OOPS or BUG
-> + 9)  _/A     256  ACPI table overridden by user
-> +10)  _/W     512  kernel issued warning
-> +11)  _/C    1024  staging driver got loaded
-> +12)  _/I    2048  workaround for bug in platform firmware in use
-> +13)  _/O    4096  externally-built ("out-of-tree") module got loaded
-> +14)  _/E    8192  unsigned module was loaded
-> +15)  _/L   16384  soft lockup occurred
-> +16)  _/K   32768  Kernel live patched
-> +===  ===  ======  ========================================================
-> +
-> +Note: To make reading easier ``_`` is representing a blank in this
-> +table.
-> +
-> +More detailed explanation for tainting
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  
->   1)  ``G`` if all modules loaded have a GPL or compatible license, ``P`` if
->       any proprietary module has been loaded.  Modules without a
-> @@ -52,8 +144,3 @@ characters, each representing a particular tainted value.
->  
->   16) ``K`` if the kernel has been live patched.
->  
-> -The primary reason for the **'Tainted: '** string is to tell kernel
-> -debuggers if this is a clean kernel or if anything unusual has
-> -occurred.  Tainting is permanent: even if an offending module is
-> -unloaded, the tainted value remains to indicate that the kernel is not
-> -trustworthy.
-> 
-
-thanks for the update.
-
--- 
-~Randy
+Cheers.
+Jérôme
