@@ -6,43 +6,40 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D6CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADA8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F5E2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:22:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E92882133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbeLQWWm (ORCPT
+        id S1731181AbeLQWWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 17:22:42 -0500
-Received: from sauhun.de ([88.99.104.3]:41536 "EHLO pokefinder.org"
+        Mon, 17 Dec 2018 17:22:51 -0500
+Received: from sauhun.de ([88.99.104.3]:41552 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730992AbeLQWWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 17:22:41 -0500
+        id S1730992AbeLQWWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 17:22:51 -0500
 Received: from localhost (p54B3357B.dip0.t-ipconnect.de [84.179.53.123])
-        by pokefinder.org (Postfix) with ESMTPSA id AB4622E3656;
-        Mon, 17 Dec 2018 23:22:39 +0100 (CET)
-Date:   Mon, 17 Dec 2018 23:22:39 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id 85C662E4004;
+        Mon, 17 Dec 2018 23:22:49 +0100 (CET)
+Date:   Mon, 17 Dec 2018 23:22:49 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Rosin <peda@axentia.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: i2c: sh_mobile: Add r8a774c0 support
-Message-ID: <20181217222239.djwackpdkn7dv4qe@ninjato>
-References: <1544776907-17845-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] i2c: sh_mobile: Add support for r8a774c0 (RZ/G2E)
+Message-ID: <20181217222248.odzccpo2urkk6wnb@ninjato>
+References: <1544732554-7140-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6vw7cy44rgrxdwoz"
+        protocol="application/pgp-signature"; boundary="llngqmbapkg2emg6"
 Content-Disposition: inline
-In-Reply-To: <1544776907-17845-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732554-7140-1-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,38 +47,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---6vw7cy44rgrxdwoz
+--llngqmbapkg2emg6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 14, 2018 at 08:41:47AM +0000, Fabrizio Castro wrote:
-> Document RZ/G2E (R8A774C0) SoC bindings.
+On Thu, Dec 13, 2018 at 08:22:34PM +0000, Fabrizio Castro wrote:
+> Similarly to R-Car E3, RZ/G2E doesn't come with automatic
+> transmission registers, as such it is not considered compatible
+> with the existing fallback bindings.
+>=20
+> Add SoC specific binding compatibility to allow for later
+> support for automatic transmission.
 >=20
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->=20
 
 Applied to for-next, thanks!
 
 
---6vw7cy44rgrxdwoz
+--llngqmbapkg2emg6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwYIa8ACgkQFA3kzBSg
-KbaR+A/6A5sIJpSrElqX8AP/F1lKn7uOpQHbkFXBAWi1Vo4w1CELOe1ipxqlPk5+
-kIJyjN5Ud9gm8C2fiesUlSDJCeysIoh+k5RjWQIjHzh7LLuY2t1ex7M2O7VfePL0
-5LtvBgFHNVNu1yohnpRV4+X/SDlN4AH4DYIjk8x1yef6NNhIHH9Fj0HsXA7BgMVa
-g7uZ2Ar9+z7vLYaNCzpN8lwz+AbD3mb4ZX/2TrGUgn8iymFq9PfTTYVQCX3YisuP
-LBcrUhPgNQm6TAkSwywY+ZbwQbhRA+dbJ56gIzxGFxMT9RzObFJnRC5gOJvN/7Wq
-8P73MzTs9OHrz1hqI20z1AZd1DAl50TyS71UltWKq0ZsHmiTZ0MdWHZeeTlj2/Hg
-/utqaz736vZJM+3ae3PpBH8y49G9IutVtfiHUE2CiZW84c8a861ncgSMBcHvSsZ6
-vdZjGthnRd3abjdcYpD9zOHiCRzgUkMoAy8JonlKSpDPnTQBTSsEBuaSp9eezE/+
-XJ2miCkoXpNzNQZeQYFbEIYUmLRsLJTxqnjPy25FfQkUAiBogRXCy67WWVr1llbz
-MjFi7BgzLuAKFrZRTPLhErhNEbb0e6G12624L6rH3MkhUmq0/bP4omx8euOy8/jA
-yd06dha4rR750DgIVXCZbSWAaVk8w0B5Oe2uOVyc9AaMWc+VkrU=
-=lbQT
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwYIbgACgkQFA3kzBSg
+Kbbu2RAAr24frCyoUFovlqSEY8uzc6kXNhKbAqAwDmPbT06Jy7zQ2+o46VqmcQxV
+fvUqH09qO/9tF17qRje825rCG/Ss2Qa7Yl6nh8TNFZbSZlGD6JjM54ircLROfXIX
+fRcejTZ4uNorbYMkLYGvAmPHm/yottIoEEeJnvvW/p3whHGc7t0GMu7ZMycmWoGl
+We2DG1FGbO/hLNPSYJLyKL6DAmtldem5X9cV2pfD9iD/DrGOHhYUpYk2CogEshkD
+VTy1XsZ2jaS91QPx82yfrVRNzZpBE4u7n9YLEDy6PvKGFg45qs30HVU1ungMuT9z
+lSAhJF0uSZhQGARRHxDSR1ZHrejAWGzclCeeCtA6F1bV6lQgMAv2xu36kiJP+Lb3
++342VSzEIZW2lDSL4X/Beqfdmmy3jcShwh+ppTHa5VAxG4s3yULh93n34p/BDH1T
+r4Wu+ED/ujm51PstV6p53QSEpO0zFDOu8ZEOhDQt6bo/89QLQMGJByGVqFCje7s1
+aY+l40Gxr7QYna1T8UXMmaEcxmWE9TVkPRuWJeIVqPmfjAQB9qLheeP67SmE4agq
+ZFmHck2P2EeOHsfzLiDW3RHE2yREprKP6XCeCIxbL/ijCN2BcX3HS/qi80JK6YCo
+ahbBjj8Bj9mQJAc/GNB8CRnkDwfZiGzobzOqyC0o8zRK3/RzZuo=
+=64Ct
 -----END PGP SIGNATURE-----
 
---6vw7cy44rgrxdwoz--
+--llngqmbapkg2emg6--
