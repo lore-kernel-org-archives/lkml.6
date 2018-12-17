@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4C2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8ABC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB169217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B92A217FB
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545027082;
-	bh=/CDqt09FMDW1xOQRXU9+PfOH+T75U8HnKaWz3ofSx9o=;
+	s=default; t=1545027113;
+	bh=u4A09XcDOVMZ0y5Pr91zR92XJOw2lvqlgsjkj8vZBoM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CO7BkugGDvuZhz0kITtfJR1bfstTomHkVuLx62fPIapftr8nkLwqls9WTPKcia16U
-	 llfSlRj3retkq7Kso5uBLTRL8Xw0dMCZgx9lubiFzRBqdLLu9SHxtR7QTWvBxlk7pi
-	 NJE5SFT2asbuOeehHIr8lvm3IrmxiuH57JCNCt7Y=
+	b=cE7BUZPT+y5RpOoKeZy7mUzigk2EIgTSXCnHIh0X108reBw1eaPx+bxen6+MKNdJ5
+	 z2zRDkgxa4UkD1yT8bxGmhPvhDN/y0kyuh1iZUwO2pg8P2zi03smo6+WMA8S956NH2
+	 s+XtrY9V3kkKBRsgoB7zJHsjemgpl4i+I+szMy+w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731559AbeLQGLV (ORCPT
+        id S1731585AbeLQGLw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 01:11:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52654 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 01:11:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbeLQGLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 01:11:20 -0500
+        id S1726327AbeLQGLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 01:11:52 -0500
 Received: from localhost (unknown [171.61.92.201])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BA8120675;
-        Mon, 17 Dec 2018 06:11:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2769217F4;
+        Mon, 17 Dec 2018 06:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545027079;
-        bh=/CDqt09FMDW1xOQRXU9+PfOH+T75U8HnKaWz3ofSx9o=;
+        s=default; t=1545027111;
+        bh=u4A09XcDOVMZ0y5Pr91zR92XJOw2lvqlgsjkj8vZBoM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P4Dvj/lCPCjLiXDk4ZZntRFVsbABns3P64eGkMOomLiwrPKe7Nx9CVsJQW4mg5mt/
-         YpVjuyiOHZ98QraDDZOXnMdkgXOx25Q9zzhNzAVFiQxTYrmvN9LUvFKKmBCacMhJPA
-         yVLHWneurdI8trlAf5uHC8T0ESuVDTFmJ5cV9IRw=
-Date:   Mon, 17 Dec 2018 11:41:10 +0530
+        b=YfdMjumLt6yCZAdQYNK3X/VCb+6wdKYVDpfa8tFUOSho6GT9g1W13Kr7uUFl9MlYE
+         V3c6tMX67N+NgM+MRJfjiGF1sUEt/YQdb9tUj3xAiB+rR0ag7YeUYvObBAhvaXeBtZ
+         COTSjgEkij3NrQe/nQJbfPxy0cMNxxjE/cPrBW6k=
+Date:   Mon, 17 Dec 2018 11:41:42 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     iommu@lists.linux-foundation.org,
@@ -55,14 +55,14 @@ Cc:     iommu@lists.linux-foundation.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         dmaengine@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 1/6] driver core: Introduce device_iommu_mapped() function
-Message-ID: <20181217061110.GC2472@vkoul-mobl>
+Subject: Re: [PATCH 6/6] dmaengine: sh: rcar-dmac: Use device_iommu_mapped()
+Message-ID: <20181217061142.GD2472@vkoul-mobl>
 References: <20181211134343.10664-1-joro@8bytes.org>
- <20181211134343.10664-2-joro@8bytes.org>
+ <20181211134343.10664-7-joro@8bytes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211134343.10664-2-joro@8bytes.org>
+In-Reply-To: <20181211134343.10664-7-joro@8bytes.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -72,9 +72,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 11-12-18, 14:43, Joerg Roedel wrote:
 > From: Joerg Roedel <jroedel@suse.de>
 > 
-> Some places in the kernel check the iommu_group pointer in
-> 'struct device' in order to find ot whether a device is
-                                   ^^
-Typo
+> Use Use device_iommu_mapped() to check if the device is
+> already mapped by an IOMMU.
+
+Acked-by: Vinod Koul <vkoul@kernel.org>
+
 -- 
 ~Vinod
