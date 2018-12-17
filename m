@@ -2,93 +2,74 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A764C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6578C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22AE42133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:46:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="fzhP/+On"
+	by mail.kernel.org (Postfix) with ESMTP id 7D1BC2146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:46:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387752AbeLQPp7 (ORCPT
+        id S2387768AbeLQPqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:45:59 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37210 "EHLO mail.skyhub.de"
+        Mon, 17 Dec 2018 10:46:53 -0500
+Received: from foss.arm.com ([217.140.101.70]:58974 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727617AbeLQPp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:45:59 -0500
-Received: from zn.tnic (p200300EC2BC8CE00C4C70519B169D9D7.dip0.t-ipconnect.de [IPv6:2003:ec:2bc8:ce00:c4c7:519:b169:d9d7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 94EF01EC040F;
-        Mon, 17 Dec 2018 16:45:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1545061557;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=QA0vHWjI5u1277fwGrBmFsolGzwwOvCY9AD7CFaIK4o=;
-        b=fzhP/+OnFTN7doBHJ7PTnWGg+4UrwTOfYFQ1xvv/+LuYCnJck9YAJq6B7m1SELjgpOXgYE
-        5ElmIMt7lDBP2i58qi0MbdBHhAQmvBM/w6Kcp9tSfef7zC4NbO5D6FSh2BHgf/YWoMJisp
-        9gjFUkLwuTSm6SBopcsDK26MeStSz3w=
-Date:   Mon, 17 Dec 2018 16:45:51 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, keescook@chromium.org, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
- directory instead of simple_strtoull()
-Message-ID: <20181217154551.GF12165@zn.tnic>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
- <20181212041218.GA28286@localhost.localdomain>
- <20181212080312.GP17340@MiWiFi-R3L-srv>
- <20181213132603.GD25287@zn.tnic>
- <20181217012728.GA31775@localhost.localdomain>
+        id S1727617AbeLQPqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:46:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC437A78;
+        Mon, 17 Dec 2018 07:46:52 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A215A3F575;
+        Mon, 17 Dec 2018 07:46:50 -0800 (PST)
+Date:   Mon, 17 Dec 2018 15:46:45 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Jianjun Wang <jianjun.wang@mediatek.com>, ryder.lee@mediatek.com,
+        robh+dt@kernel.org, matthias.bgg@gmail.com,
+        linux-pci@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, youlin.pei@mediatek.com,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        honghui.zhang@mediatek.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
+Message-ID: <20181217154645.GA24864@e107981-ln.cambridge.arm.com>
+References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
+ <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
+ <20181213145517.GB4701@google.com>
+ <1545034779.8528.8.camel@mhfsdcap03>
+ <20181217143247.GK20725@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217012728.GA31775@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181217143247.GK20725@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 09:27:28AM +0800, Chao Fan wrote:
-> Oops, I thought you agree with what Baoquan said, so I send the new version
-> and use simple_strtoull() back.
+On Mon, Dec 17, 2018 at 08:32:47AM -0600, Bjorn Helgaas wrote:
+> On Mon, Dec 17, 2018 at 04:19:39PM +0800, Jianjun Wang wrote:
+> > On Thu, 2018-12-13 at 08:55 -0600, Bjorn Helgaas wrote:
+> > > On Thu, Dec 06, 2018 at 09:09:13AM +0800, Jianjun Wang wrote:
+> > > > The read value of BAR0 is 0xffff_ffff, it's size will be calculated as 4GB
+> > > > in arm64 but bogus alignment values at arm32, the pcie device and devices
+> > > > behind this bridge will not be enabled. Fix it's BAR0 resource size to
+> > > > guarantee the pcie devices will be enabled correctly.
+> > > 
+> > > So this is a hardware erratum?  Per spec, a memory BAR has bit 0 hardwired
+> > > to 0, and an IO BAR has bit 1 hardwired to 0.
+> > 
+> > Yes, it only works properly on 64bit platform.
+> 
+> I don't understand.  BARs are supposed to work the same regardless of
+> whether it's a 32- or 64-bit platform.  If this is a workaround for a
+> hardware defect, please just say that explicitly.
 
-I could've misunderstood him. Lemme repeat what I mean:
+I do not understand this either. First thing to do is to describe the
+problem properly so that we can actually find a solution to it.
 
-- we should make kstrtoull() work because it is the right function to
-use. Which means, include this too:
-
-https://lkml.kernel.org/r/20181216203113.GA23823@zn.tnic
-
-- we should gradually start replacing simple_strtoull() in
-arch/x86/boot/ and eventually get rid of it. But that's for the TODO
-list, to take care of later.
-
-- Take our time and stop with the hurrying and do the whole thing nice
-and clean.
-
-Ok?
-
-Or have I forgotten something?
-
-If not, I'll continue looking at your v13.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Lorenzo
