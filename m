@@ -2,179 +2,89 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99287C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB409C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9D120675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:23:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8820620675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:23:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388799AbeLQSXY (ORCPT
+        id S2388814AbeLQSX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:23:24 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51101 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLQSXX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:23:23 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHIN0wY2561412
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 10:23:00 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHIN0HP2561409;
-        Mon, 17 Dec 2018 10:23:00 -0800
-Date:   Mon, 17 Dec 2018 10:23:00 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-5fe26b7a8f4693d532c7a3c3632e47e7d7016238@git.kernel.org>
-Cc:     riel@surriel.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        luto@kernel.org, dave.hansen@linux.intel.com, hpa@zytor.com,
-        torvalds@linux-foundation.org, bp@alien8.de, mingo@kernel.org,
-        peterz@infradead.org
-Reply-To: peterz@infradead.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, luto@kernel.org, riel@surriel.com,
-          tglx@linutronix.de, dave.hansen@linux.intel.com,
-          mingo@kernel.org, torvalds@linux-foundation.org, bp@alien8.de
-In-Reply-To: <20181203171043.366619025@infradead.org>
-References: <20181203171043.366619025@infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Simplify the code after making cpa->vaddr
- invariant
-Git-Commit-ID: 5fe26b7a8f4693d532c7a3c3632e47e7d7016238
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 17 Dec 2018 13:23:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18278 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726887AbeLQSX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:23:28 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:23:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="110156293"
+Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Dec 2018 10:23:20 -0800
+Date:   Mon, 17 Dec 2018 20:23:19 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217182319.GA13288@linux.intel.com>
+References: <20181210104908.GA23132@wind.enjellic.com>
+ <20181212180036.GC6333@linux.intel.com>
+ <20181214235917.GA14049@wind.enjellic.com>
+ <20181215000627.GA5799@linux.intel.com>
+ <20181217132859.GA31936@linux.intel.com>
+ <20181217133928.GA32706@linux.intel.com>
+ <20181217140811.GA4601@linux.intel.com>
+ <20181217173106.GB12491@linux.intel.com>
+ <20181217174935.GA12617@linux.intel.com>
+ <20181217180957.GC12491@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181217180957.GC12491@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5fe26b7a8f4693d532c7a3c3632e47e7d7016238
-Gitweb:     https://git.kernel.org/tip/5fe26b7a8f4693d532c7a3c3632e47e7d7016238
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 3 Dec 2018 18:03:48 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 18:54:25 +0100
+On Mon, Dec 17, 2018 at 10:09:57AM -0800, Sean Christopherson wrote:
+> No, EREMOVE should never fail if the enclave is being released, i.e. all
+> references to the enclave are gone.  And failure during sgx_encl_release()
+> means we leaked an EPC page, which warrants a WARN.
 
-x86/mm/cpa: Simplify the code after making cpa->vaddr invariant
+Right that what I was suspecting as swapper should hold a ref to the
+enclave while it is working on it. It is a programming error when this
+happens.
 
-Since cpa->vaddr is invariant, this means we can remove all
-workarounds that deal with it changing.
+Maybe change the boolean parameter to flags parameter have a flag to
+use sgx_free_page()?
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom.StDenis@amd.com
-Cc: dave.hansen@intel.com
-Link: http://lkml.kernel.org/r/20181203171043.366619025@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/pageattr-test.c |  7 ++-----
- arch/x86/mm/pageattr.c      | 13 ++++---------
- 2 files changed, 6 insertions(+), 14 deletions(-)
+> That makes sense.
 
-diff --git a/arch/x86/mm/pageattr-test.c b/arch/x86/mm/pageattr-test.c
-index b6b6468530f1..facce271e8b9 100644
---- a/arch/x86/mm/pageattr-test.c
-+++ b/arch/x86/mm/pageattr-test.c
-@@ -124,7 +124,6 @@ static int pageattr_test(void)
- 	unsigned int level;
- 	int i, k;
- 	int err;
--	unsigned long test_addr;
- 
- 	if (print)
- 		printk(KERN_INFO "CPA self-test:\n");
-@@ -181,8 +180,7 @@ static int pageattr_test(void)
- 
- 		switch (i % 3) {
- 		case 0:
--			test_addr = addr[i];
--			err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
-+			err = change_page_attr_set(&addr[i], len[i], PAGE_CPA_TEST, 0);
- 			break;
- 
- 		case 1:
-@@ -226,8 +224,7 @@ static int pageattr_test(void)
- 			failed++;
- 			continue;
- 		}
--		test_addr = addr[i];
--		err = change_page_attr_clear(&test_addr, len[i], PAGE_CPA_TEST, 0);
-+		err = change_page_attr_clear(&addr[i], len[i], PAGE_CPA_TEST, 0);
- 		if (err < 0) {
- 			printk(KERN_ERR "CPA reverting failed: %d\n", err);
- 			failed++;
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index ce8af3f08628..afa98b7b6050 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -1908,15 +1908,13 @@ EXPORT_SYMBOL_GPL(set_memory_array_wt);
- int _set_memory_wc(unsigned long addr, int numpages)
- {
- 	int ret;
--	unsigned long addr_copy = addr;
- 
- 	ret = change_page_attr_set(&addr, numpages,
- 				   cachemode2pgprot(_PAGE_CACHE_MODE_UC_MINUS),
- 				   0);
- 	if (!ret) {
--		ret = change_page_attr_set_clr(&addr_copy, numpages,
--					       cachemode2pgprot(
--						_PAGE_CACHE_MODE_WC),
-+		ret = change_page_attr_set_clr(&addr, numpages,
-+					       cachemode2pgprot(_PAGE_CACHE_MODE_WC),
- 					       __pgprot(_PAGE_CACHE_MASK),
- 					       0, 0, NULL);
- 	}
-@@ -2064,7 +2062,6 @@ int set_memory_global(unsigned long addr, int numpages)
- static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
- {
- 	struct cpa_data cpa;
--	unsigned long start;
- 	int ret;
- 
- 	/* Nothing to do if memory encryption is not active */
-@@ -2075,8 +2072,6 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
- 	if (WARN_ONCE(addr & ~PAGE_MASK, "misaligned address: %#lx\n", addr))
- 		addr &= PAGE_MASK;
- 
--	start = addr;
--
- 	memset(&cpa, 0, sizeof(cpa));
- 	cpa.vaddr = &addr;
- 	cpa.numpages = numpages;
-@@ -2091,7 +2086,7 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
- 	/*
- 	 * Before changing the encryption attribute, we need to flush caches.
- 	 */
--	cpa_flush_range(start, numpages, 1);
-+	cpa_flush_range(addr, numpages, 1);
- 
- 	ret = __change_page_attr_set_clr(&cpa, 1);
- 
-@@ -2102,7 +2097,7 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
- 	 * in case TLB flushing gets optimized in the cpa_flush_range()
- 	 * path use the same logic as above.
- 	 */
--	cpa_flush_range(start, numpages, 0);
-+	cpa_flush_range(addr, numpages, 0);
- 
- 	return ret;
- }
+What do you think of Dave's proposal?
+
+/Jarkko
