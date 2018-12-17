@@ -2,76 +2,67 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC212C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE10C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88632217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A29302084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbeLQJSq (ORCPT
+        id S1731897AbeLQJUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:18:46 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55733 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726776AbeLQJSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:18:45 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0CF1AD0D63FA8;
-        Mon, 17 Dec 2018 17:18:43 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
- 17:18:37 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <laurent.pinchart@ideasonboard.com>,
-        <kieran.bingham+renesas@ideasonboard.com>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] drm/shmob: Fix return value check in shmob_drm_probe
-Date:   Mon, 17 Dec 2018 17:18:30 +0800
-Message-ID: <20181217091830.32624-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Mon, 17 Dec 2018 04:20:08 -0500
+Received: from 8bytes.org ([81.169.241.247]:54470 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbeLQJUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 04:20:08 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 093AF730; Mon, 17 Dec 2018 10:20:06 +0100 (CET)
+Date:   Mon, 17 Dec 2018 10:20:04 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        CK Hu <ck.hu@mediatek.com>, Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH] Revert "iommu/io-pgtable-arm: Check for v7s-incapable
+ systems"
+Message-ID: <20181217092004.3s2nwcuwus3wdljs@8bytes.org>
+References: <1544692788-24427-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544692788-24427-1-git-send-email-yong.wu@mediatek.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check should
-be replaced with IS_ERR().
+On Thu, Dec 13, 2018 at 05:19:48PM +0800, Yong Wu wrote:
+> This reverts commit 82db33dc5e49fb625262d81125625d07a0d6184e.
+> 
+> After the commit 29859aeb8a6e ("iommu/io-pgtable-arm-v7s: Abort
+> allocation when table address overflows the PTE"), v7s will return fail
+> if the page table allocation isn't expected. this PHYS_OFFSET check
+> is unnecessary now.
+> 
+> And this check may lead to fail. For example, If CONFIG_RANDOMIZE_BASE
+> is enabled, the "memstart_addr" will be updated randomly, then the
+> PHYS_OFFSET may be random.
+> 
+> Reported-by: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+>  drivers/iommu/io-pgtable-arm-v7s.c | 4 ----
+>  1 file changed, 4 deletions(-)
 
-Fixes: 8f1597c8f1a5 ("drm: shmobile: Perform initialization/cleanup at probe/remove time")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/shmobile/shmob_drm_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-index 8554102..f2cfd16 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-@@ -229,8 +229,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
--	if (sdev->mmio == NULL)
--		return -ENOMEM;
-+	if (IS_ERR(sdev->mmio))
-+		return PTR_ERR(sdev->mmio);
- 
- 	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
- 	if (ret < 0)
--- 
-2.7.0
-
-
+Applied to iommu/fixes, thanks.
