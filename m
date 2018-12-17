@@ -2,126 +2,172 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB05C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E31C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE352084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:51:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WQN5Bn7F"
+	by mail.kernel.org (Postfix) with ESMTP id 3A4362084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeLQHvp (ORCPT
+        id S1731575AbeLQHvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:51:45 -0500
-Received: from mail-eopbgr30063.outbound.protection.outlook.com ([40.107.3.63]:6336
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726349AbeLQHvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:51:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tHEmSQ3zv7fBp05BnwpYlDl0fWBb+EAKamPsa0X26EU=;
- b=WQN5Bn7FA9MagFQqkAy+CbdL9LYYYXtUcFo78m9o+UgNmJssYZgi4bLKP+ITLEh9BqPdAHp6Vihlt/5QGEJytSCFccOzslMbJrOFlWK6TvT32KFzdGYTZQkAXHpozOqe91FcEh7OSdG/QFML2pjrJn+uXywDggQIHz5MJcqnZBo=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.148.143) by
- AM0PR04MB4769.eurprd04.prod.outlook.com (20.176.215.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.22; Mon, 17 Dec 2018 07:51:41 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::5507:f6c1:df5d:ba18]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::5507:f6c1:df5d:ba18%3]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
- 07:51:41 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] irqchip: gic-v3: remove dead code in gic_iterate_rdists
-Thread-Topic: [PATCH] irqchip: gic-v3: remove dead code in gic_iterate_rdists
-Thread-Index: AQHUld1Z4nCDCNy8lkywCFiFN/Ga+A==
-Date:   Mon, 17 Dec 2018 07:51:41 +0000
-Message-ID: <20181217080040.6790-1-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.14.1
-x-clientproxiedby: HK0PR03CA0050.apcprd03.prod.outlook.com
- (2603:1096:203:52::14) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:73::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.121.68.129]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4769;6:k3lJ7q5oqQSeU7JdBuJAHMRRFpqD5xmcfTqX6N36clmFi0F/5ZQKpjg8G9IJ+AJC3JbTxdYW0TToJr60tvEkITFvgMmo0lPal9tVExvyFl5N0pJnrALxf1FlaDBvbsfu28ZCrf54SrSfKyjmhs8BN/53A8aKgLES0C0gsdN+MK4a/lOFFoCxFqyOKQ6YcQVh4hquj/CQz4ZaQ0ktBctuH6FAoLshnZgWke/bBC15m88WArFf6c3F9EeS2gOHJAe6d9E2swAAYPJW9qHUBHUMGZ/DNWbduIfO1qlytOr2hDI9z4xv8i5j8Vh43PJzFjgeTfnMvHHa4aYIdJn/nAO2pFBgGKoWKS0HVdLORgS/sQK4myENaySaPK3AsdGb7Rn8ciLfbrxwelDSPM2tqVnC9Vyf4qjpYi7y0t/PEgKulkoJbdlEyLU/0OqY7/KwtlyBCSS4OOucJayjADkHkBq1ng==;5:TfNi3NH8ucZ1gCqtsEWU4cm7kORo2eL5hoGVOdLJKayoGSscr99fQq7Fnkjn4jdOx1nSKaFaHswMElA7u+j9LkA+b2OX8Eklzgcwt3rKImSnSBmSg1D5SqVIOQtdca4U2kD2BiJzBSxUcIasJaPApmqmpJ0R5Dwc3uq1WqimVpQ=;7:Q8IPBpsoAfuk0UAVtV9Id64mmK0pkxwB7FpmOqTY07a9Q4y/jgpiIwl1LTXqFhkctdmKX/Bbg+DhYjPcpuHSFCQra+UknzuMlR/QgMe/6oqddKO6rhdM+bCuoP56KvIlEzjzFwiD1uzWUeZPouVtBw==
-x-ms-office365-filtering-correlation-id: bf3b949c-cf0b-4436-0877-08d663f47b6b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4769;
-x-ms-traffictypediagnostic: AM0PR04MB4769:
-x-microsoft-antispam-prvs: <AM0PR04MB4769BBFA89C66C8F29093B0888BC0@AM0PR04MB4769.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4769;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4769;
-x-forefront-prvs: 08897B549D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(396003)(136003)(346002)(189003)(199004)(105586002)(3846002)(68736007)(106356001)(52116002)(4326008)(54906003)(6486002)(8676002)(81166006)(81156014)(25786009)(6506007)(8936002)(386003)(6436002)(256004)(1076002)(14454004)(186003)(26005)(110136005)(316002)(2501003)(50226002)(99286004)(102836004)(2906002)(5660300001)(2201001)(71190400001)(71200400001)(44832011)(6512007)(476003)(486006)(36756003)(97736004)(66066001)(2616005)(86362001)(478600001)(53936002)(7736002)(305945005)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4769;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: HL2j0duIRqIDm1LLl/52rE7+v+wklLLY6Uuvk059vQFYuPr9NxmBR2Xqr+Mym8Gvj2OutHu0RPlzkZHFcm8CEOqrJgjHv4RaNRo+g35kOPxLnAWqKYq0OUV2vP4lI1wS9+UvBMvcryJhSjXGADo/Q4oOYe8kZ7EdJM0FazQn8ehDRjTFSrM4Q/Z3zZs+X3nXqF48qqrEuAU3PfCaqUe4MMwNqc3Cg8xRZUTVLvTuCbXQ839+9EXYy0gWVF2bQk0gZ2a+UeHQO67o5md+VZcRCPcVV5EIrYt04eo9fPWe3UhnlE8HgXnj7LQzBYbX4Pc3
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Dec 2018 02:51:51 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:25400 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726349AbeLQHvv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 02:51:51 -0500
+X-UUID: bdb691a0b0aa4f0fa123f24077a02d34-20181217
+X-UUID: bdb691a0b0aa4f0fa123f24077a02d34-20181217
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <jianjun.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1042510100; Mon, 17 Dec 2018 15:51:44 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 17 Dec
+ 2018 15:51:42 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 17 Dec 2018 15:51:42 +0800
+Message-ID: <1545033102.8528.2.camel@mhfsdcap03>
+Subject: Re: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
+From:   Jianjun Wang <jianjun.wang@mediatek.com>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+CC:     <bhelgaas@google.com>, <robh+dt@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <matthias.bgg@gmail.com>,
+        <linux-pci@vger.kernel.org>, <mark.rutland@arm.com>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>
+Date:   Mon, 17 Dec 2018 15:51:42 +0800
+In-Reply-To: <1544672356.26338.4.camel@mtkswgap22>
+References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
+         <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
+         <1544672356.26338.4.camel@mtkswgap22>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf3b949c-cf0b-4436-0877-08d663f47b6b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 07:51:41.8219
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4769
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In gic_iterate_rdists, ret will never be 0 when `ret ? -ENODEV : 0` at
-the end of function, so let's directly return -ENODEV.
+On Thu, 2018-12-13 at 11:39 +0800, Ryder Lee wrote:
+> Hi,
+> 
+> On Thu, 2018-12-06 at 09:09 +0800, Jianjun Wang wrote:
+> > MT7629 is an arm platform SoC which has the same PCIe IP with MT7622.
+> > 
+> > The read value of BAR0 is 0xffff_ffff, it's size will be calculated as 4GB
+> > in arm64 but bogus alignment values at arm32, the pcie device and devices
+> > behind this bridge will not be enabled. Fix it's BAR0 resource size to
+> > guarantee the pcie devices will be enabled correctly.
+> > 
+> > The HW default value of its device id is invalid, fix it's device id to
+> > match the hardware implementation.
+> > 
+> > Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek.c | 26 ++++++++++++++++++++++++++
+> >  include/linux/pci_ids.h                |  1 +
+> >  2 files changed, 27 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > index d20cf461ba00..f8937cc3c87c 100644
+> > --- a/drivers/pci/controller/pcie-mediatek.c
+> > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > @@ -73,6 +73,7 @@
+> >  #define PCIE_MSI_VECTOR		0x0c0
+> >  
+> >  #define PCIE_CONF_VEND_ID	0x100
+> > +#define PCIE_CONF_DEVICE_ID	0x102
+> >  #define PCIE_CONF_CLASS_ID	0x106
+> >  
+> >  #define PCIE_INT_MASK		0x420
+> > @@ -135,12 +136,14 @@ struct mtk_pcie_port;
+> >  /**
+> >   * struct mtk_pcie_soc - differentiate between host generations
+> >   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
+> > + * @need_fix_device_id: whether this host's device ID needed to be fixed or not
+> >   * @ops: pointer to configuration access functions
+> >   * @startup: pointer to controller setting functions
+> >   * @setup_irq: pointer to initialize IRQ functions
+> >   */
+> >  struct mtk_pcie_soc {
+> >  	bool need_fix_class_id;
+> > +	bool need_fix_device_id;
+> >  	struct pci_ops *ops;
+> >  	int (*startup)(struct mtk_pcie_port *port);
+> >  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
+> > @@ -692,6 +695,11 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> >  		writew(val, port->base + PCIE_CONF_CLASS_ID);
+> >  	}
+> >  
+> > +	if (soc->need_fix_device_id) {
+> > +		val = PCI_DEVICE_ID_MEDIATEK_7629;
+> 
+> <just_checking>
+>   Could we have a generic way to fix it? It's better not to add SoC
+> specific settings in shared function.
+> </just_checking>
+> 
+Yes, I will modify the code in next patch, thanks.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/irqchip/irq-gic-v3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > +		writew(val, port->base + PCIE_CONF_DEVICE_ID);
+> > +	}
+> > +
+> >  	/* 100ms timeout value should be enough for Gen1/2 training */
+> >  	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
+> >  				 !!(val & PCIE_PORT_LINKUP_V2), 20,
+> > @@ -1238,11 +1246,29 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
+> >  	.setup_irq = mtk_pcie_setup_irq,
+> >  };
+> >  
+> > +static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
+> > +	.need_fix_class_id = true,
+> > +	.need_fix_device_id = true,
+> > +	.ops = &mtk_pcie_ops_v2,
+> > +	.startup = mtk_pcie_startup_port_v2,
+> > +	.setup_irq = mtk_pcie_setup_irq,
+> > +};
+> > +
+> > +static void mtk_fixup_bar_size(struct pci_dev *dev)
+> > +{
+> > +	struct resource *dev_res = &dev->resource[0];
+> > +	/* 32bit resource length will calculate size to 0, set it smaller */
+> > +	dev_res->end = 0xfffffffe;
+> > +}
+> > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MEDIATEK, PCI_DEVICE_ID_MEDIATEK_7629,
+> > +			 mtk_fixup_bar_size);
+> > +
+> >  static const struct of_device_id mtk_pcie_ids[] = {
+> >  	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
+> >  	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
+> >  	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
+> >  	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_mt7622 },
+> > +	{ .compatible = "mediatek,mt7629-pcie", .data = &mtk_pcie_soc_mt7629 },
+> >  	{},
+> >  };
+> >  
+> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> > index 69f0abe1ba1a..77b278bac3a8 100644
+> > --- a/include/linux/pci_ids.h
+> > +++ b/include/linux/pci_ids.h
+> > @@ -2126,6 +2126,7 @@
+> >  #define PCI_VENDOR_ID_MYRICOM		0x14c1
+> >  
+> >  #define PCI_VENDOR_ID_MEDIATEK		0x14c3
+> > +#define PCI_DEVICE_ID_MEDIATEK_7629	0x7629
+> >  
+> >  #define PCI_VENDOR_ID_TITAN		0x14D2
+> >  #define PCI_DEVICE_ID_TITAN_010L	0x8001
+> 
+> 
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 8f87f40c9460..9d6e802e29ce 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -425,7 +425,7 @@ static void __init gic_dist_init(void)
-=20
- static int gic_iterate_rdists(int (*fn)(struct redist_region *, void __iom=
-em *))
- {
--	int ret =3D -ENODEV;
-+	int ret;
- 	int i;
-=20
- 	for (i =3D 0; i < gic_data.nr_redist_regions; i++) {
-@@ -459,7 +459,7 @@ static int gic_iterate_rdists(int (*fn)(struct redist_r=
-egion *, void __iomem *))
- 		} while (!(typer & GICR_TYPER_LAST));
- 	}
-=20
--	return ret ? -ENODEV : 0;
-+	return -ENODEV;
- }
-=20
- static int __gic_populate_rdist(struct redist_region *region, void __iomem=
- *ptr)
---=20
-2.14.1
 
