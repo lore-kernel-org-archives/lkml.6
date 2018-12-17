@@ -2,122 +2,195 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0BFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9161C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C77FB217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:25:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D10D20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeLQHZo convert rfc822-to-8bit (ORCPT
+        id S1731321AbeLQHey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:25:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53134 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeLQHZo (ORCPT
+        Mon, 17 Dec 2018 02:34:54 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50723 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeLQHey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:25:44 -0500
-Received: from mail-pl1-f199.google.com ([209.85.214.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gYnHZ-0007qp-AH
-        for linux-kernel@vger.kernel.org; Mon, 17 Dec 2018 07:25:41 +0000
-Received: by mail-pl1-f199.google.com with SMTP id 12so8482357plb.18
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 23:25:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Ha3gGYYBMVrIoysS22ljTOnYxHCUFyUGxwr9PdR60Jc=;
-        b=gKNC0VY09NQl/Z3Qa4r785H/k2ha+ZNsM60FQNpl5RDpMpIMlVZO8sdUmDqMFD3KBK
-         8VNu2M44W2Gd0HMsrU1d/DGTGaNJhXivqFn/CGzibFCZeN+t4fju/Bzv2SN0r6PgwFO5
-         rzk7Og7deROVMHJo+++fkipBkCBRx0AcTouGb2oIxfQ2YXmJ+wfBl3lJpqXOseE5k7LB
-         DwYkKhS69yDzZFbrqkOp+ooGpVAsnGd72XipvGnhb4mbYdTUGb0Qb+3mUha5aVdfzEpZ
-         85suFqh1Vm+B1vUS/7K42aTA+NzFjUdMRp9Y7Z8K+FVzYvMrfRdybMJ7b210jBlANfVE
-         upmw==
-X-Gm-Message-State: AA+aEWaZweQA8FPGV2vL7NMDu1D6Gol562MKk4oWWfIUxqsj31BfmsBY
-        4otAp+VKZ5GsfqUyoFcYb2Q2pGs3h66+sbQkgM1WuCG4GIgvUtJ9aSRjYJXWnx+tWC0MEQTutWQ
-        gcXS9Bpy8Q2CLjKql5f0mB6i7+d2mw+OiqMMxciXS/Q==
-X-Received: by 2002:a17:902:765:: with SMTP id 92mr11781210pli.242.1545031540019;
-        Sun, 16 Dec 2018 23:25:40 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/XO7cXQVKlFtiVBZG57ce1pXAhSgIY2ajXCZ9REWenYWog/iSyqaJmw053Wri0IBjaDBHuQhA==
-X-Received: by 2002:a17:902:765:: with SMTP id 92mr11781195pli.242.1545031539636;
-        Sun, 16 Dec 2018 23:25:39 -0800 (PST)
-Received: from 2001-b011-380f-3f3d-8925-558c-514a-091c.dynamic-ip6.hinet.net (2001-b011-380f-3f3d-8925-558c-514a-091c.dynamic-ip6.hinet.net. [2001:b011:380f:3f3d:8925:558c:514a:91c])
-        by smtp.gmail.com with ESMTPSA id x26sm16514763pfn.50.2018.12.16.23.25.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Dec 2018 23:25:38 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: Elantech SMBus support regression
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAO-hwJ+fshPj7xbJoBvK8uGrhfKCdFSmzicmmOyMJS0cdzAapQ@mail.gmail.com>
-Date:   Mon, 17 Dec 2018 15:25:36 +0800
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <A67BA4A8-7A32-4B80-AF90-B9D99E7D5582@canonical.com>
-References: <6E2F161C-046B-4D5F-B831-B1308A554C40@canonical.com>
- <CAO-hwJ+fshPj7xbJoBvK8uGrhfKCdFSmzicmmOyMJS0cdzAapQ@mail.gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 17 Dec 2018 02:34:54 -0500
+Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <o.rempel@pengutronix.de>)
+        id 1gYnQS-00078o-Nw; Mon, 17 Dec 2018 08:34:52 +0100
+Subject: Re: [PATCH] mailbox: imx: Fix clk handling in imx_mu_probe()
+To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+References: <1544914904-3809-1-git-send-email-khoroshilov@ispras.ru>
+ <20181217060111.hsay6vhqpxyfdbiu@pengutronix.de>
+ <3ccce5b6-75a5-da94-08e3-985880382d00@ispras.ru>
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <a508d43a-deed-1060-8b15-cbdad60f810e@pengutronix.de>
+Date:   Mon, 17 Dec 2018 08:34:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <3ccce5b6-75a5-da94-08e3-985880382d00@ispras.ru>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-> On Dec 12, 2018, at 22:25, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
+
+On 17.12.18 08:24, Alexey Khoroshilov wrote:
+> Hi Oleksij,
 > 
-> Hi,
+> By chance I took a look at another implementations:
 > 
-> sorry for the late reply. I was always meaning to fix this the proper
-> way but couldn't dedicate a full day of work to go to the bottom of
-> elan_i2c.
+> arch/arm/mach-ep93xx/clock.c#L266
 > 
-> Meanwhile, I am thinking at simply having a blacklist of devices that
-> we know are not working well (P52, L480, L580 and P72).
+> int clk_enable(struct clk *clk)
+> {
+> 	unsigned long flags;
 > 
-> Could you get the value of /sys/bus/serio/devices/serio1/firmware_id
-> from all of these laptops?
-> I know the P52 is LEN2131, but I don't seem to find the other PNPIds.
-
-These are feedbacks from the users:
-
-L480:
-cat /sys/bus/serio/devices/serio1/firmware_id
-PNP: LEN2036 PNP0f13
-
-P52:
-"cat /sys/bus/serio/devices/serio1/firmware_id":
-PNP: LEN2132 PNP0f13
-
-So looks like it’s different to LEN2131.
-
-Kai-Heng
-
+> 	if (!clk)
+> 		return -EINVAL;
+> ...
 > 
-> Cheers,
-> Benjamin
+> arch/c6x/platforms/pll.c#L48
 > 
-> On Thu, Nov 22, 2018 at 5:22 AM Kai Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
->> 
->> Hi Benjamin,
->> 
->> It appears the Elantech SMBus support breaks some users’ touchpad.
->> 
->> Please have a look at [1] [2], thanks!
->> 
->> [1] https://bugs.launchpad.net/bugs/1803600
->> [2] https://bugs.archlinux.org/task/59714
->> 
->> Kai-Heng
+> int clk_enable(struct clk *clk)
+> {
+> 	unsigned long flags;
+> 
+> 	if (clk == NULL || IS_ERR(clk))
+> 		return -EINVAL;
+> 
+> So, I am not sure the NULL resistance is a part of the clk_enable()
+> contract?
 
+Main framework is always preferred. If some local code provide 
+replacement of a functions already provided by the clk framework and not 
+follow same rules, then this code should be fixed. If this code is even 
+exporting this function for global use, then it is probably buggy.
+And if i see it correctly:
+1d81eedb8f6c1 (Lennert Buytenhek  2006-06-24 10:33:02 +0100 266) int 
+clk_enable(struct clk *clk)
+
+It is ancient code... it just can't be correct.
+
+> --
+> Alexey
+> 
+> 
+> On 17.12.2018 9:01, Oleksij Rempel wrote:
+>> Hi Alexey,
+>>
+>> On Sun, Dec 16, 2018 at 02:01:44AM +0300, Alexey Khoroshilov wrote:
+>>> Handling of devm_clk_get() suggests that the driver should support
+>>> lack of priv->clk. But imx_mu_probe() fails on clk_prepare_enable(NULL)
+>>> in that case.
+>>>
+>>> The patch removes the try to enable absent clk and adds error handling
+>>> for mbox_controller_register().
+>>>
+>>> Found by Linux Driver Verification project (linuxtesting.org).
+>>>
+>>> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+>>> ---
+>>>   drivers/mailbox/imx-mailbox.c | 18 +++++++++++++-----
+>>>   1 file changed, 13 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+>>> index 363d35d5e49d..ddde398f576e 100644
+>>> --- a/drivers/mailbox/imx-mailbox.c
+>>> +++ b/drivers/mailbox/imx-mailbox.c
+>>> @@ -292,10 +292,12 @@ static int imx_mu_probe(struct platform_device *pdev)
+>>>   		priv->clk = NULL;
+>>>   	}
+>>>   
+>>> -	ret = clk_prepare_enable(priv->clk);
+>>> -	if (ret) {
+>>> -		dev_err(dev, "Failed to enable clock\n");
+>>> -		return ret;
+>>> +	if (priv->clk) {
+>>> +		ret = clk_prepare_enable(priv->clk);
+>>> +		if (ret) {
+>>> +			dev_err(dev, "Failed to enable clock\n");
+>>> +			return ret;
+>>> +		}
+>>>   	}
+>>>   
+>>>   	for (i = 0; i < IMX_MU_CHANS; i++) {
+>>> @@ -324,7 +326,13 @@ static int imx_mu_probe(struct platform_device *pdev)
+>>>   
+>>>   	imx_mu_init_generic(priv);
+>>>   
+>>> -	return mbox_controller_register(&priv->mbox);
+>>> +	ret = mbox_controller_register(&priv->mbox);
+>>> +	if (ret) {
+>>> +		clk_disable_unprepare(priv->clk);
+>>> +		return ret;
+>>> +	}
+>>> +
+>>> +	return 0;
+>>>   }
+>>>   
+>>>   static int imx_mu_remove(struct platform_device *pdev)
+>>> -- 
+>>> 2.7.4
+>>>
+>>>
+>>
+>> NACK for this patch.
+>>
+>> Here are code snippets from clk framework:
+>> ============================================================================
+>> /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+>> static inline int clk_prepare_enable(struct clk *clk)
+>> {
+>> 	int ret;
+>>
+>> 	ret = clk_prepare(clk);
+>> 	if (ret)
+>> 		return ret;
+>> 	ret = clk_enable(clk);
+>> 	if (ret)
+>> 		clk_unprepare(clk);
+>>
+>> 	return ret;
+>> }
+>>
+>> int clk_prepare(struct clk *clk)
+>> {
+>> 	if (!clk)
+>> 		return 0;
+>>
+>> 	return clk_core_prepare_lock(clk->core);
+>> }
+>>
+>> int clk_enable(struct clk *clk)
+>> {
+>> 	if (!clk)
+>> 		return 0;
+>>
+>> 	return clk_core_enable_lock(clk->core);
+>> }
+>> ============================================================================
+>>
+>> As you can see, complete code path is NULL resistant. Are you trying to
+>> fix some real issue, or it is a theoretical work?
+>>
+> 
+> 
