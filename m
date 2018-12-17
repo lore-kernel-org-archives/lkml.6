@@ -2,162 +2,115 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37868C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3BCC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31452133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79F2A2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YY+hfB0m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3J5kLXL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732989AbeLQRQM (ORCPT
+        id S1732189AbeLQRSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:16:12 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45483 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeLQRQM (ORCPT
+        Mon, 17 Dec 2018 12:18:48 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52496 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbeLQRSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:16:12 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y78so7752740qka.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:16:10 -0800 (PST)
+        Mon, 17 Dec 2018 12:18:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so14290wml.2;
+        Mon, 17 Dec 2018 09:18:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4/lB1yINtkBrV2oTAzQ8ZOCMd3eQiPRpf88y7Zf3G74=;
-        b=YY+hfB0mRR45Vp0IjD8AXRbg1/hBdqxqw5hqwBb/qU3HIq2DbNRNYCHNS+VpYXwCil
-         oSvngzVjj7n3WOtRvqLcSlcnyqlreDGBVtyFbr3CPsmCP6+yRcIdACZXrcsX0+yxU3zo
-         0sTzi1qZv6nYupo3XBrfVg2LfzQ3ad7r5As8VmNoAxKfYH0qqwsI6s5GIjpW+LGq4Rbu
-         zbR6hvNZJCbnMMRHSnqIWWl1dJH43xMk1Qveo4zqxigbiBR1I+a4brFH4wFzkUVA+dvG
-         8jasOlGdn3jeWUdiOEejeiUk6kGw4py29YjNm5aysLHkb8xI1KMU+FBuCaJ7nf2NW3x6
-         lp4Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kvrFg58Xr7iAG870iC1XAuJqs0RSBPPYSssQ5mYZXxo=;
+        b=h3J5kLXLyG4YEqNDrWlYKIgTR7jr1V+sRY12WOWpzfeRJrS6riohdYo1B9ljvFfg3y
+         PNENQkDoXNPA74fP/K8Lm8ozH9iWDXXLDNfiv1YsW3kDyZMPgBNxmQnoz2DKq3KKOIfV
+         BcoDAMkpZjDgQfzUCwwl1Gz5lnL71Wqf3WPQn5pzVmXZqhCBl4+575YBpubSzvwGu905
+         KrO9f1Twm/4HV7j/rvwJ/1l++hsQBxPW2Fl9AR/Wyc2SLefir1bauY5/m+i9xsmjnIvw
+         w+ADBoTZinP585lTbGg4M7diXewzqugyuOlq8jHiP2jAa4zMhyXdoHOS9q3YyNh5hBlT
+         u3LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4/lB1yINtkBrV2oTAzQ8ZOCMd3eQiPRpf88y7Zf3G74=;
-        b=DVlpvLy5p4ooaFNlw8Vo9zrjSRUfeoBMGYy6wlMAKJCbsswHHHbAvuNRziXzsAcqWj
-         iSfPfXGZCh3FAIaC+UtEhiuuGalSRxgCusUbyDSh8LEv3ophQPU0A1PwYPlIZP4YvjmK
-         Pqt491MZtxVjR0xTVUvBPdCQrZQeuAFuPe7KYqguDqXUZ6b/OuSFTYSDbjaPkCMR8zVN
-         3EcwFiprVg9qjDF42y3dyoCqktiaz/EYsa4sN+PKU6tBcjVysRveushREqWfUGP9xi35
-         EbTanq2NDDpOPho5Hd2HFRNs8qjelSPh6WoEQRQxCfPtb37NsBCszxJbrfs1C/plT+8G
-         5SfQ==
-X-Gm-Message-State: AA+aEWa9Enm8Lu2JQhNwIP50PhwS837McahYt+/YLfj34lDOOT5jamSw
-        yiXdgnf14X1k5rOVu8K0Mg==
-X-Google-Smtp-Source: AFSGD/WuFQdToL8UrpDNszJIhXbytFUp7F5nBKG/euvpiW6ntbXb1XytAQpmkBcpkAV6u6bFMJuHYw==
-X-Received: by 2002:a37:be02:: with SMTP id o2mr13194712qkf.133.1545066969713;
-        Mon, 17 Dec 2018 09:16:09 -0800 (PST)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id f14sm8388960qka.18.2018.12.17.09.16.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 09:16:09 -0800 (PST)
-Date:   Mon, 17 Dec 2018 12:16:05 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v13 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20181217171604.pr6o4dy3guqmoo3i@gabell>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-4-fanc.fnst@cn.fujitsu.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kvrFg58Xr7iAG870iC1XAuJqs0RSBPPYSssQ5mYZXxo=;
+        b=txLD6/CiyKHU/llT2VZ/6uzqLEhtXtJouHHUHK0kCcrEBWaXo90gsZbO1H/SdE4aB/
+         wk0RFHbJuqEgRlkwnfdxhr2QvXleiMFT3tQAGHvoF4kj+uPDMutXPpyf+DT9m/GMmEvO
+         WyL/Yg+9SjcFzcxsg3ErRttp+7g9iFbVTZE7KuTr12hrO2gPOSfmckMbzNnD7IpN6mtG
+         seGpt+GOilTIiIg+I1hA6xlS10xcMXMgElLExhZorwzz0DJJOXtDNjyBk+CBk8EdL3ua
+         wyqtJj0GcLgU5bl4PvSzaYUNByglWXpvnqO+GJgGKctsokv8KrXvKheyxHD/HwiKHrrU
+         zqyQ==
+X-Gm-Message-State: AA+aEWazfXWeH1KIfkHpBgj5bLGEXNqPSHYwGYkiI0pWLi2WDlWjrvxD
+        chGukytO4FxcKRGaW4tZaGXy+lQuwL/1xA3kvk0=
+X-Google-Smtp-Source: AFSGD/UKs/hdAbRBRBaOpV1wODw4xv0GWd5eBW79CPX2dWIkg7rWWmPQpVgmnHx+ftNSuxNfbkf3B5NZcoBqQyxsPLs=
+X-Received: by 2002:a1c:c10f:: with SMTP id r15mr12584685wmf.27.1545067125966;
+ Mon, 17 Dec 2018 09:18:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212031053.1815-4-fanc.fnst@cn.fujitsu.com>
-User-Agent: NeoMutt/20180716
+References: <20181216230916.22982-1-andrew.smirnov@gmail.com> <20181217110028.GA14261@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20181217110028.GA14261@e107981-ln.cambridge.arm.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 17 Dec 2018 09:18:34 -0800
+Message-ID: <CAHQ1cqGoMV1EF2kpATvdp=bYueYM5MRSV+Lstf+gv-SZDEWRYw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Fixes for "PCIE support for i.MX8MQ"
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 11:10:50AM +0800, Chao Fan wrote:
-> Memory information in SRAT is necessary to fix the conflict between
-> KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
-> 
-> When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
-> are different. When booting from EFI, EFI table points to RSDP.
-> So parse the EFI table and find the RSDP.
-> 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/boot/compressed/acpi.c | 79 +++++++++++++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
-> 
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> index cad15686f82c..c96008712ec9 100644
-> --- a/arch/x86/boot/compressed/acpi.c
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -28,3 +28,82 @@ static acpi_physical_address get_acpi_rsdp(void)
->  	return 0;
->  #endif
->  }
-> +
-> +/* Search EFI table for RSDP. */
-> +static acpi_physical_address efi_get_rsdp_addr(void)
-> +{
-> +#ifdef CONFIG_EFI
-> +	acpi_physical_address rsdp_addr = 0;
-> +	efi_system_table_t *systab;
-> +	struct efi_info *e;
-> +	bool efi_64;
-> +	char *sig;
-> +	int size;
-> +	int i;
-> +
-> +	e = &boot_params->efi_info;
-> +	sig = (char *)&e->efi_loader_signature;
-> +
-> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
-> +		efi_64 = true;
-> +	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
-> +		efi_64 = false;
-> +	else {
-> +		debug_putstr("Wrong EFI loader signature.\n");
-> +		return 0;
-> +	}
-> +
-> +	/* Get systab from boot params. Based on efi_init(). */
-> +#ifdef CONFIG_X86_64
-> +	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
-> +#else
-> +	if (e->efi_systab_hi || e->efi_memmap_hi) {
-> +		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-> +		return 0;
-> +	}
-> +	systab = (efi_system_table_t *)e->efi_systab;
-> +#endif
-> +
-> +	if (!systab)
-> +		return 0;
-> +
-> +	/*
-> +	 * Get EFI tables from systab. Based on efi_config_init() and
-> +	 * efi_config_parse_tables().
-> +	 */
-> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
-> +			sizeof(efi_config_table_32_t);
-> +
-> +	for (i = 0; i < systab->nr_tables; i++) {
-> +		void *config_tables;
+On Mon, Dec 17, 2018 at 3:01 AM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Sun, Dec 16, 2018 at 03:09:13PM -0800, Andrey Smirnov wrote:
+> > Lorenzo:
+> >
+> > These are patches fixing things pointed out by Bjorn in [1] and [2] as
+> > well as something I noticed while giving pci/next branch a try (#endif
+> > placement). Hopefully this is at least somewhat helpful.
+> >
+> > Thanks,
+> > Andrey Smirnov
+> >
+> > [1] lkml.kernel.org/r/20181214203828.GD20725@google.com
+> > [2] lkml.kernel.org/r/20181214203042.GC20725@google.com
+> >
+> > Andrey Smirnov (3):
+> >   PCI: imx6: Fixup Kconfig and #endif placement
+> >   PCI: imx6: Invert checks in imx6_pcie_reset_phy() and
+> >     imx6_setup_phy_mpll()
+> >   PCI: imx6: Make fallthrough comments more consistent
+> >
+> >  drivers/pci/controller/dwc/Kconfig    |  4 ++--
+> >  drivers/pci/controller/dwc/pci-imx6.c | 29 ++++++++++++++++++---------
+> >  2 files changed, 21 insertions(+), 12 deletions(-)
+>
+> Andrey,
+>
+> please follow-up Lucas' remarks and submit a self-consistent patchset
+> that I can apply on top of my pci/dwc branch (where I removed your
+> previously queued patches).
+>
 
-> +		unsigned long table;
-
-		u64 table;
-
-Otherwise, the following build warning happen in ARCH=i386.
-===
-arch/x86/boot/compressed/acpi.c:96:44: warning: right shift count >= width of type [-Wshift-count-overflow]
-    if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
-===
+Sure, will do.
 
 Thanks,
-Masa
+Andrey Smirnov
