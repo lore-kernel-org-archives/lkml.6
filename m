@@ -2,171 +2,207 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102F6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2A4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3412146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:29:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="NFFkOO+K"
+	by mail.kernel.org (Postfix) with ESMTP id 2A56C20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:30:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545067839;
+	bh=jDdWS/zpA9QS2ny+5AMwiq3xIv9iVjjGt3hN3L+uYOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZSCcP1d79cRMCHbZTvmw+5HngBAubyFekuQwrPHrZeES5Z27W9GrD+BWm2uHGGowk
+	 +Kl6PMiX48AfHJzRDZ5K5keXJzOqy6iqJAHmRvx1+TDZssyiWN/B9KK+sdlp5deI3l
+	 QFnYKa9uB/g12uUfJUcGLMEL6Rsz9SYJgV+qdaMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732975AbeLQR3n (ORCPT
+        id S1733039AbeLQRai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:29:43 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41566 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeLQR3m (ORCPT
+        Mon, 17 Dec 2018 12:30:38 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40088 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeLQRah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:29:42 -0500
-Received: by mail-io1-f66.google.com with SMTP id s22so10591193ioc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:29:41 -0800 (PST)
+        Mon, 17 Dec 2018 12:30:37 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so13147953wrt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:30:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zDIKAUw2yxp3jOxvHDtRHBErp1NASLNXA9NXDsqqVPE=;
-        b=NFFkOO+Kje5vD3F+RRLx/8xrvr7CCD60rOcCBriu8tF0W11p5AuKxPL0reMfR40UMd
-         pEPmgqpsLStGjZfNdqLfUARSVYczKqR3xIqlgCcYMqCjLSDZfFvwDq+/mzmqnJ7z8RFL
-         g/FkQWa4VGyINaOL/9zuJqAQp/u5TQyLlZsobAmbWxeQc7WpyU0vn7NnX/Jfh2Zdpp+9
-         2d6a+sTtAWXQIA+AVPA2qiM1NR+5ZVcqMEUfw76QRUI0AQu1QQLMdG+LCntD/XeqxGUz
-         S+KWPSRCdXAs0JcGBGtuCryH2KV11D4eTgLmR08cLMgUaVy0X6QGwS0x6+bIBoxukHct
-         KwDg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2pn2NUv7AFl9S+xqnD43IhIce7wOhxIipvzh826JbBU=;
+        b=bxVCIclo5mkmry0orufSnKtEJYmlwuQHljC/ORcNc7sZERC/MQ5asx3/k7a6NvNrbi
+         U494xQcyqfmHY3/n1/UIs5fM3lLzSGpVanSmtZ3j2C8U5oLc4bIKq1v/u1JjANQF4dp9
+         Gla6RFpRycsnRD4PzsKfCJjlRZy6m0zKOxKGtzpEIv+aLuttC1fwNBeC2V4bWcmAUSXF
+         FO2DVNwN0nQwuP/WrafVuDPCynO0it7OoQu7u9Yzd0aIbQ5/EVpJvCW58oRBpkTxl6k8
+         UgZMeZC2dEOA1pOI9TQ55mOezFnekj7LTn+oUGz1MHNjuCQRxnYlVOt9xEFFpbHFF9Pn
+         CR3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zDIKAUw2yxp3jOxvHDtRHBErp1NASLNXA9NXDsqqVPE=;
-        b=XPwkAq1XcpQ/hKpmqrRn1l2lifSv48VeZi2bnv5Bny+uFPH7r9xyKrCfMToBHmVYTS
-         FzVr9zWk82BoD/s5bdWPW6Njdiw4wu3IZEscQcy0Qhvf2vEgIFiib9G5wSYB7nlDP3t5
-         1XySojHwYgTg+CAGuAJod1rb9xhRR4567qaR5VHJRuKrCb3r6M42JVqjw6hl6PPcMql1
-         2dlil/Yp9QzdxalABV00mdAmpxUxcddE0OUM5m602IKAO9jrx1c2ppjJFM/9dg3wdbcp
-         6bozDtM96LGtwUj1Bw06Q/OFqm26BsSNJa+stdrJJceY9sRB3Psmy8gcVuLTjdw0htDX
-         4wqg==
-X-Gm-Message-State: AA+aEWYvagsXCJYhTVaunzaMAhMTqMlc/n5cQ0bJ7jkibk230SrEQfLE
-        f/Xzn8bP4LpYDviucEZKUl6L9Q==
-X-Google-Smtp-Source: AFSGD/VbBKGmJfdQ3wQtwYzBnRD8ZPKcowqzhpRY+aB6a0oVGpGq17w5LEiPFRj3/NKsWEVv5FkhJQ==
-X-Received: by 2002:a5e:d702:: with SMTP id v2mr11119403iom.224.1545067781252;
-        Mon, 17 Dec 2018 09:29:41 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id j14sm5849643ioa.5.2018.12.17.09.29.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 09:29:40 -0800 (PST)
-Subject: Re: [PATCH v2] drbd: Avoid Clang warning about pointless switch
- statment
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>
-Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>
-References: <20181002171447.10765-1-natechancellor@gmail.com>
- <20181004200912.32348-1-natechancellor@gmail.com>
- <20181217172401.GA30635@flashbox>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0110d874-7595-1786-77e3-e2b0daec2327@kernel.dk>
-Date:   Mon, 17 Dec 2018 10:29:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2pn2NUv7AFl9S+xqnD43IhIce7wOhxIipvzh826JbBU=;
+        b=UceivRYY+14XABaWgu3b5jZlmzy9uz6iTJR3Mif1LIaKU2HPu0thQLEJTtQXVlhn+j
+         uHfc6kCNqsFeImc3VnQC3cUqJ60NMe/5Wv77Vg9G66oAbBJ6YB60pFjJ0pfENwSVU1hF
+         4fPyzCeWQ1+MnWB1NZZIaPZzdk0JF/jfbHWaxrGGxFQOPdfD2rUHJt8wlvq5zg9Sn4fl
+         qFOgKAzBaRXyIg4oBPlQpW0IHSD0/KhM6DV/3SqrvqikkJmVriyRBlqD+FhNMg9GpUTr
+         du2Ly0L9LnUfvpUBpENmEEcJcHXJfjEuu+K1En5wThKGL9+yOqAW8UacUjPiAdPwQW5t
+         MFUQ==
+X-Gm-Message-State: AA+aEWaEBfnqh04xcfmE7OTYgxWIlkf3IAFvBvOGey3r4ACP2tNxZl3b
+        CXgCNXoQeJA5EMk6LBODbOk=
+X-Google-Smtp-Source: AFSGD/WIkIK3KNThjdVJTQWfXA4Ht6Ak3HPWoNfoHPpRj74URr3D/pAdmjGLqd0sBBvb+IZ2laezYw==
+X-Received: by 2002:adf:e3d0:: with SMTP id k16mr12129445wrm.223.1545067835924;
+        Mon, 17 Dec 2018 09:30:35 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id h17sm660907wrt.59.2018.12.17.09.30.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 09:30:35 -0800 (PST)
+Date:   Mon, 17 Dec 2018 18:30:32 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v14 2/5] x86/boot: Introduce efi_get_rsdp_addr() to find
+ RSDP from EFI table
+Message-ID: <20181217173032.GB90818@gmail.com>
+References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+ <20181214093013.13370-3-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <20181217172401.GA30635@flashbox>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214093013.13370-3-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/18 10:24 AM, Nathan Chancellor wrote:
-> On Thu, Oct 04, 2018 at 01:09:13PM -0700, Nathan Chancellor wrote:
->> There are several warnings from Clang about no case statement matching
->> the constant 0:
->>
->> In file included from drivers/block/drbd/drbd_receiver.c:48:
->> In file included from drivers/block/drbd/drbd_int.h:48:
->> In file included from ./include/linux/drbd_genl_api.h:54:
->> In file included from ./include/linux/genl_magic_struct.h:236:
->> ./include/linux/drbd_genl.h:321:1: warning: no case matching constant
->> switch condition '0'
->> GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
->> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> ./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
->> 'GENL_struct'
->>         switch (0) {
->>                 ^
->>
->> Silence this warning by adding a 'case 0:' statement. Additionally,
->> adjust the alignment of the statements in the ct_assert_unique macro to
->> avoid a checkpatch warning.
->>
->> This solution was originally sent by Arnd Bergmann with a default case
->> statement: https://lore.kernel.org/patchwork/patch/756723/
->>
->> Link: https://github.com/ClangBuiltLinux/linux/issues/43
->> Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
->> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->> ---
->>
->> Since this is not the same as Arnd's patch, I took authorship for it
->> while leaving a link to the original patch in the commit message. If
->> this is not how it should have been done, please let me know.
->>
->>  include/linux/genl_magic_struct.h | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
->> index 5972e4969197..eeae59d3ceb7 100644
->> --- a/include/linux/genl_magic_struct.h
->> +++ b/include/linux/genl_magic_struct.h
->> @@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
->>  {
->>  	switch (0) {
->>  #include GENL_MAGIC_INCLUDE_FILE
->> +	case 0:
->>  		;
->>  	}
->>  }
->> @@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
->>  {
->>  	switch (0) {
->>  #include GENL_MAGIC_INCLUDE_FILE
->> +	case 0:
->>  		;
->>  	}
->>  }
->> @@ -218,7 +220,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
->>  static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
->>  {									\
->>  	switch (0) {							\
->> -		s_fields						\
->> +	s_fields							\
->> +	case 0:								\
->>  			;						\
->>  	}								\
->>  }
->> -- 
->> 2.19.0
->>
+
+* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+
+> Memory information in SRAT is necessary to fix the conflict between
+> KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
 > 
-> Hi Lars and Philipp,
+> When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
+> are different. When booting from EFI, EFI table points to RSDP.
+> So parse the EFI table and find the RSDP.
 > 
-> Could you please make sure that this patch and the other one I sent make
-> it into 4.21/5.0? I am not sure when you were planning on sending the
-> pull request to Jens that you mentioned in the other thread but I've
-> noticed most maintainers typically send their requests for the impending
-> merge window around -rc7 or so and I wanted to make sure it was on your
-> radar.
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/acpi.c | 79 +++++++++++++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+> index 44f19546c169..4151881d8713 100644
+> --- a/arch/x86/boot/compressed/acpi.c
+> +++ b/arch/x86/boot/compressed/acpi.c
+> @@ -28,3 +28,82 @@ static acpi_physical_address get_acpi_rsdp(void)
+>  #endif
+>  	return 0;
+>  }
+> +
+> +/* Search EFI table for RSDP. */
+> +static acpi_physical_address efi_get_rsdp_addr(void)
+> +{
+> +	acpi_physical_address rsdp_addr = 0;
+> +#ifdef CONFIG_EFI
+> +	efi_system_table_t *systab;
+> +	struct efi_info *e;
 
-It needs to get here now, but drbd hasn't really sent anything in for
-about a year, so I'm starting to doubt how maintained it is at this
-point.
+'e' is pretty meaningless, the canonical name for efi_info local 
+variables is typically 'ei' (although this is not consistent across the 
+code).
 
--- 
-Jens Axboe
+> +	bool efi_64;
 
+Is this a flag that shows whether the EFI loader is 64-bit?
+
+> +	char *sig;
+> +	int size;
+> +	int i;
+> +
+> +	e = &boot_params->efi_info;
+> +	sig = (char *)&e->efi_loader_signature;
+> +
+> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4)) {
+> +		efi_64 = true;
+> +	} else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4)) {
+> +		efi_64 = false;
+> +	} else {
+> +		debug_putstr("Wrong EFI loader signature.\n");
+> +		return 0;
+> +	}
+> +
+> +	/* Get systab from boot params. Based on efi_init(). */
+> +#ifdef CONFIG_X86_64
+> +	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
+> +#else
+> +	if (e->efi_systab_hi || e->efi_memmap_hi) {
+> +		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
+> +		return 0;
+> +	}
+> +	systab = (efi_system_table_t *)e->efi_systab;
+> +#endif
+> +
+> +	if (!systab)
+> +		return 0;
+
+Is it normal that EFI provides no 'systab'?
+
+> +	/*
+> +	 * Get EFI tables from systab. Based on efi_config_init() and
+> +	 * efi_config_parse_tables().
+> +	 */
+> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
+> +			sizeof(efi_config_table_32_t);
+> +
+> +	for (i = 0; i < systab->nr_tables; i++) {
+> +		void *config_tables;
+> +		unsigned long table;
+> +		efi_guid_t guid;
+> +
+> +		config_tables = (void *)(systab->tables + size * i);
+> +		if (efi_64) {
+> +			efi_config_table_64_t *tmp_table;
+> +
+> +			tmp_table = (efi_config_table_64_t *)config_tables;
+
+Since 'config_tables' is a void * there's no need to cast the type.
+
+> +			guid = tmp_table->guid;
+> +			table = tmp_table->table;
+> +
+> +			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
+> +				debug_putstr("Error getting RSDP address: EFI config table located above 4GB.\n");
+> +				return 0;
+> +			}
+> +		} else {
+> +			efi_config_table_32_t *tmp_table;
+> +
+> +			tmp_table = (efi_config_table_32_t *)config_tables;
+
+Ditto.
+
+> +			guid = tmp_table->guid;
+> +			table = tmp_table->table;
+> +		}
+
+So it looks like 
+
+> +
+> +		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
+> +			rsdp_addr = (acpi_physical_address)table;
+> +		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
+> +			return (acpi_physical_address)table;
+
+'return' is not a function.
+
+Thanks,
+
+	Ingo
