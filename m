@@ -2,138 +2,251 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA26C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D736C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B3A206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:58:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m3Yh4CgF"
+	by mail.kernel.org (Postfix) with ESMTP id D1588206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388016AbeLQP6N (ORCPT
+        id S2388028AbeLQP6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:58:13 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:32998 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727752AbeLQP6N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:58:13 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBHFraso134939;
-        Mon, 17 Dec 2018 15:57:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=FDDNNagfTuJRzmsoNXzKeiQz+lg9/KrDMiZXVAfiMSw=;
- b=m3Yh4CgFD77Q4rBRDaRaT8SGmTN0vNdWZka8nfZO/Zu6ld3GMdtEb2y76rFzHBdIKQow
- 5h8Szrh1yaFB/C3yGmxXVC5/tpU8bjvTltWjHawh6Z2pVE/XzYFfp7+xv8fxPLU9WVEr
- sKXj53P7tIq29OuTCGlnxFDSrU0yfRMqQpD2VpzHI37J80zUnlmc06nG3w7EvF5gB5Nz
- wfz7AHd1JPMo7AoU+m/6DfRxoSz0DTdC8ESiGI/zy/pZU9smmOh3RT9ULTwtgeeKawN9
- I15krrH+CJgyA+kq1xWswHhiI9R2yCpMaRauqLAQHrO6JmzvfV0N73s0MJ90foMSuhbf Rw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pct8qpays-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 15:57:42 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBHFvaP4004892
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Dec 2018 15:57:36 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBHFvZdh009526;
-        Mon, 17 Dec 2018 15:57:35 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Dec 2018 07:57:35 -0800
-Subject: Re: [PATCH] kprobes/x86/xen: blacklist non-attachable xen interrupt
- functions
-To:     Andrea Righi <righi.andrea@gmail.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20181210151256.GA1977@Dell>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+        Mon, 17 Dec 2018 10:58:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726667AbeLQP6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:58:37 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8DB38D7936;
+        Mon, 17 Dec 2018 15:58:37 +0000 (UTC)
+Received: from [10.36.112.24] (ovpn-112-24.ams2.redhat.com [10.36.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BE6365D744;
+        Mon, 17 Dec 2018 15:58:33 +0000 (UTC)
+Subject: Re: KASAN: use-after-free Read in kvm_put_kvm (caused by: "kvm/x86:
+ add coalesced pio support")
+To:     Eric Biggers <ebiggers@kernel.org>, Peng Hao <peng.hao2@zte.com.cn>
+Cc:     syzbot <syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rkrcmar@redhat.com, syzkaller-bugs@googlegroups.com
+References: <000000000000bc23740578abe82c@google.com>
+ <3ad5acd8-5c73-1d82-aea5-426e598b15ed@redhat.com>
+ <20181216185513.GA691@sol.localdomain>
+From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <88c20ba0-2528-e309-34d5-01fb16d2e5ac@oracle.com>
-Date:   Mon, 17 Dec 2018 10:57:25 -0500
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <5b22a63b-e4c2-58af-8070-5aec20302dfc@redhat.com>
+Date:   Mon, 17 Dec 2018 16:58:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181210151256.GA1977@Dell>
+In-Reply-To: <20181216185513.GA691@sol.localdomain>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9110 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812170142
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 17 Dec 2018 15:58:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/18 10:12 AM, Andrea Righi wrote:
-> Blacklist symbols in Xen probe-prohibited areas, so that user can see
-> these prohibited symbols in debugfs.
->
-> See also: a50480cb6d61.
->
-> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+On 16/12/18 19:55, Eric Biggers wrote:
+> Hi Peng and Paolo,
+> 
+> On Sun, Oct 21, 2018 at 12:01:55PM +0200, Paolo Bonzini wrote:
+>> On 20/10/2018 18:57, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
+>>> git tree:       linux-next
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12d808b5400000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
+>>> dashboard link:
+>>> https://syzkaller.appspot.com/bug?extid=f87f60bb6f13f39b54e3
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cf2f5e400000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1036dcce400000
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+f87f60bb6f13f39b54e3@syzkaller.appspotmail.com
+>>
+>> Tentative (untested) patch:
+>>
+>> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+>> index 3710342cf6ad..dc76cc8d24fd 100644
+>> --- a/virt/kvm/coalesced_mmio.c
+>> +++ b/virt/kvm/coalesced_mmio.c
+>> @@ -90,6 +90,7 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
+>>  	return 0;
+>>  }
+>>
+>> +/* called with kvm->slots_lock held */
+>>  static void coalesced_mmio_destructor(struct kvm_io_device *this)
+>>  {
+>>  	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+>> diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+>> index b20b751286fc..001e1ef18c8c 100644
+>> --- a/virt/kvm/eventfd.c
+>> +++ b/virt/kvm/eventfd.c
+>> @@ -741,8 +741,8 @@ ioeventfd_write(struct kvm_vcpu *vcpu, struct
+>> kvm_io_device *this, gpa_t addr,
+>>  }
+>>
+>>  /*
+>> - * This function is called as KVM is completely shutting down.  We do not
+>> - * need to worry about locking just nuke anything we have as quickly as
+>> possible
+>> + * This function is called as KVM is completely shutting down, so there
+>> + * are no RCU readers anymore. Called with kvm->slots_lock held.
+>>   */
+>>  static void
+>>  ioeventfd_destructor(struct kvm_io_device *this)
+>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>> index aff1242b7af7..e6f2ae6fedcd 100644
+>> --- a/virt/kvm/kvm_main.c
+>> +++ b/virt/kvm/kvm_main.c
+>> @@ -783,6 +783,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>>  	list_del(&kvm->vm_list);
+>>  	spin_unlock(&kvm_lock);
+>>  	kvm_free_irq_routing(kvm);
+>> +	mutex_lock(&kvm->slots_lock);
+>>  	for (i = 0; i < KVM_NR_BUSES; i++) {
+>>  		struct kvm_io_bus *bus = kvm_get_bus(kvm, i);
+>>
+>> @@ -790,6 +791,7 @@ static void kvm_destroy_vm(struct kvm *kvm)
+>>  			kvm_io_bus_destroy(bus);
+>>  		kvm->buses[i] = NULL;
+>>  	}
+>> +	mutex_unlock(&kvm->slots_lock);
+>>  	kvm_coalesced_mmio_free(kvm);
+>>  #ifdef KVM_DIRTY_LOG_PAGE_OFFSET
+>>  	if (kvm->dirty_ring_size)
+>>
+> 
+> This is still happening.  Paolo, I don't see how your patch matches this bug, as
+> it has a single threaded reproducer.  I simplified it to:
+> 
+> 	#include <fcntl.h>
+> 	#include <linux/kvm.h>
+> 	#include <sys/ioctl.h>
+> 
+> 	int main(void)
+> 	{
+> 		int kvm, vm;
+> 		struct kvm_coalesced_mmio_zone zone = { 0 };
+> 
+> 		kvm = open("/dev/kvm", O_RDWR);
+> 
+> 		vm = ioctl(kvm, KVM_CREATE_VM, 0);
+> 
+> 		ioctl(vm, KVM_REGISTER_COALESCED_MMIO, &zone);
+> 
+> 		zone.pio = 1;
+> 		ioctl(vm, KVM_UNREGISTER_COALESCED_MMIO, &zone);
+> 	}
+> 
+> The bug is in this commit:
+> 
+> 	commit 0804c849f1df0992d39a37c4fc259f7f8b16f385
+> 	Author: Peng Hao <peng.hao2@zte.com.cn>
+> 	Date:   Sun Oct 14 07:09:55 2018 +0800
+> 
+> 	    kvm/x86 : add coalesced pio support
+> 
+> The problem is that if you register a kvm_coalesced_mmio_zone with '.pio = 0'
+> but then unregister it with '.pio = 1', KVM_UNREGISTER_COALESCED_MMIO will try
+> to unregister it from KVM_PIO_BUS rather than KVM_MMIO_BUS, which is a no-op,
+> but then it frees the kvm_coalesced_mmio_dev anyway.
+> 
+> Here's one possible fix but I don't know what was intended here.  Are you
+> supposed to pass in the same value of '.pio' when unregistering or is it
+> supposed to use the existing value?  Can one of you please point me to the
+> documentation for these ioctls?
+> 
+> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+> index 3710342cf6ad0..6855cce3e5287 100644
+> --- a/virt/kvm/coalesced_mmio.c
+> +++ b/virt/kvm/coalesced_mmio.c
+> @@ -175,10 +175,14 @@ int kvm_vm_ioctl_unregister_coalesced_mmio(struct kvm *kvm,
+>  {
+>  	struct kvm_coalesced_mmio_dev *dev, *tmp;
+>  
+> +	if (zone->pio != 1 && zone->pio != 0)
+> +		return -EINVAL;
+> +
+>  	mutex_lock(&kvm->slots_lock);
+>  
+>  	list_for_each_entry_safe(dev, tmp, &kvm->coalesced_zones, list)
+> -		if (coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
+> +		if (zone->pio == dev->zone.pio &&
+> +		    coalesced_mmio_in_range(dev, zone->addr, zone->size)) {
+>  			kvm_io_bus_unregister_dev(kvm,
+>  				zone->pio ? KVM_PIO_BUS : KVM_MMIO_BUS, &dev->dev);
+>  			kvm_iodevice_destructor(&dev->dev);
+> 
 
-Applied to for-linus-4.21
+Yes, this is the fix.  The same range can be registered both with .pio =
+0 and .pio = 1.
 
--boris
-
-
+Paolo
