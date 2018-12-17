@@ -2,48 +2,80 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE01AC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A00C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB2D2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3797E2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeLQLMU (ORCPT
+        id S1727244AbeLQLRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:12:20 -0500
-Received: from verein.lst.de ([213.95.11.211]:33666 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbeLQLLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:11:47 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 7052B68DD3; Mon, 17 Dec 2018 12:11:46 +0100 (CET)
-Date:   Mon, 17 Dec 2018 12:11:46 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     yupeng <yupeng0921@gmail.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Subject: Re: [PATCH v3 2/2] trace nvme submit queue status
-Message-ID: <20181217111146.GA6126@lst.de>
-References: <20181217080605.16867-1-yupeng0921@gmail.com> <20181217080605.16867-2-yupeng0921@gmail.com> <11554384-e0a9-0bde-97e9-228b29e6b641@suse.de>
+        Mon, 17 Dec 2018 06:17:00 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41523 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727087AbeLQLQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:16:59 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E7022A541EC3F;
+        Mon, 17 Dec 2018 19:16:56 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
+ 19:16:56 +0800
+Subject: Re: [PATCH net-next] net: bridge: remove unneeded variable 'err'
+To:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        <davem@davemloft.net>, <roopa@cumulusnetworks.com>
+References: <20181217094623.32668-1-yuehaibing@huawei.com>
+ <e9b1e56e-4c37-aff4-b855-2523eae1ef49@cumulusnetworks.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <bridge@lists.linux-foundation.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <d0c9ac6a-5c23-84dc-f45f-28bc2a3d20fe@huawei.com>
+Date:   Mon, 17 Dec 2018 19:16:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11554384-e0a9-0bde-97e9-228b29e6b641@suse.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <e9b1e56e-4c37-aff4-b855-2523eae1ef49@cumulusnetworks.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 09:33:24AM +0100, Johannes Thumshirn wrote:
-> Is the addition of a trace_pci.h really needed? Why can't you just put
-> it in trace.h?
+On 2018/12/17 17:51, Nikolay Aleksandrov wrote:
+> On 17/12/2018 11:46, YueHaibing wrote:
+>> function br_multicast_toggle now always return 0,
+>> so the variable 'err' is unneeded.
+>> Also cleanup dead branch in br_changelink.
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  net/bridge/br_multicast.c | 3 +--
+>>  net/bridge/br_netlink.c   | 4 +---
+>>  2 files changed, 2 insertions(+), 5 deletions(-)
+>>
+> 
+> That is correct, but in such case just make it void.
 
-Agreed.  Especially as the concepts actually are generic, so we could
-actually add the trace point to the rdma and fc transports as well
-(not that they would be all that useful, so we probably shouldn't).
+In net/bridge/br_sysfs_br.c:
+
+static ssize_t multicast_snooping_store(struct device *d,
+                                        struct device_attribute *attr,
+                                        const char *buf, size_t len)
+{
+        return store_bridge_parm(d, buf, len, br_multicast_toggle);
+}
+
+and store_bridge_parm need the returned err.
+
+> 
+> 
+> 
+> 
+
