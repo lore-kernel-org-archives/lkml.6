@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4F9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966C1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B72620578
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6930C21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545073640;
-	bh=aE86JEauYOPNVF2BTjvbhZ4ivG8vE7/EX6BTQ77GVy4=;
+	s=default; t=1545073643;
+	bh=230Z3lqgf3/CNlHSCeLWbvangMgWkIDlJsK3Vc7tS6Y=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Ws/vQ2PWCxdHywx4rzeXsThXYaK5b8Br80uiLKlm3MwmYhP5EWKo7R/yrWYAMq0qH
-	 zZmyWW1bRgJQYXwmphdypqXIt2trVr2bgkH4DAnej70yHGpQt5moxH6DH8+DEPenUC
-	 23RXKgZPGwSLqDGcyoMlvyV5NtHTTXG4zxGaI9uE=
+	b=sOkRndQOiSsE/vL/DDwqLICQf+Ql03rA5nAW8uCOY18GPePOcBPfS1gckZbpNkX9y
+	 4Lu6Lhesgvlfgqe5aYdmCb7FEPJpnj6dXuLyRkom9Lz1qIvRQKi5ZZLtUl+Ngo/y1P
+	 WhyxZSOJvw02itMXCI/DnUwTN+VAg+fL4R9lzDBE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387478AbeLQTHS (ORCPT
+        id S2387643AbeLQTHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:07:18 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53752 "EHLO
+        Mon, 17 Dec 2018 14:07:22 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53786 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732616AbeLQTHS (ORCPT
+        with ESMTP id S2387410AbeLQTHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:07:18 -0500
+        Mon, 17 Dec 2018 14:07:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=yYs/JPZ9IxclGWbNgS82oo799wAoJN15hkxfiE1jYuM=; b=MJ3pXcRHmkyR
-        Z1HF/ISb0Zq05QFUrwqtKE0UH/PRS0MfSqZsedJggISXYgn0HQ8Mw4j+LWKatp/RnO3mjqW+ppzwz
-        boLNRYt9JE+gRlUSlGB1hXMEyC+jaP+C/voYc6jnlgNfazwH+Px/zmKG2rRwctrYjGMBLwX4KhSeM
-        rOECo=;
+        List-Archive; bh=+fqBmQGUIbO+nNkD25Jx/aCedIYwfA9stlxr1FuSXhY=; b=jWmCsP8JrKcR
+        qJ6G2WrTH+R/ACCM9z7IGrcYz18wYAl9hGozLH8cR2qn0cOvDVVvY0CpGWb0BnnMZCgm1tXG1MZEA
+        ouDRDv8jHvfUyhKcSPy5GZcZvoP15vZgAo1eERNuDn0h+HwiBVXw3Hsg0TZyrySh1YIVo5gZtd6fP
+        cxbTA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gYyEV-0003F4-O9; Mon, 17 Dec 2018 19:07:15 +0000
+        id 1gYyEX-0003FA-9U; Mon, 17 Dec 2018 19:07:17 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 50B8F112593C; Mon, 17 Dec 2018 19:07:15 +0000 (GMT)
+        id EDA52112593C; Mon, 17 Dec 2018 19:07:16 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Yangtao Li <tiny.windzz@gmail.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE" to the regmap tree
+Subject: Applied "regmap: rbtree: convert to DEFINE_SHOW_ATTRIBUTE" to the regmap tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181217190715.50B8F112593C@debutante.sirena.org.uk>
-Date:   Mon, 17 Dec 2018 19:07:15 +0000 (GMT)
+Message-Id: <20181217190716.EDA52112593C@debutante.sirena.org.uk>
+Date:   Mon, 17 Dec 2018 19:07:16 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE
+   regmap: rbtree: convert to DEFINE_SHOW_ATTRIBUTE
 
 has been applied to the regmap tree at
 
@@ -84,42 +84,42 @@ to this mail.
 Thanks,
 Mark
 
-From 580d48573c43211fe51f411d484dbb693cc93f7c Mon Sep 17 00:00:00 2001
+From 32fa7b852feaf838a145ac0408ad0a14d24d2eec Mon Sep 17 00:00:00 2001
 From: Yangtao Li <tiny.windzz@gmail.com>
-Date: Sat, 15 Dec 2018 03:41:19 -0500
-Subject: [PATCH] regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE
+Date: Sat, 15 Dec 2018 03:38:37 -0500
+Subject: [PATCH] regmap: rbtree: convert to DEFINE_SHOW_ATTRIBUTE
 
 Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/regmap-debugfs.c | 12 +-----------
+ drivers/base/regmap/regcache-rbtree.c | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
-index 87b562e49a43..19eb454f26c3 100644
---- a/drivers/base/regmap/regmap-debugfs.c
-+++ b/drivers/base/regmap/regmap-debugfs.c
-@@ -435,17 +435,7 @@ static int regmap_access_show(struct seq_file *s, void *ignored)
+diff --git a/drivers/base/regmap/regcache-rbtree.c b/drivers/base/regmap/regcache-rbtree.c
+index b1e9aae9a5d0..2e8f0144f9ab 100644
+--- a/drivers/base/regmap/regcache-rbtree.c
++++ b/drivers/base/regmap/regcache-rbtree.c
+@@ -177,17 +177,7 @@ static int rbtree_show(struct seq_file *s, void *ignored)
  	return 0;
  }
  
--static int access_open(struct inode *inode, struct file *file)
+-static int rbtree_open(struct inode *inode, struct file *file)
 -{
--	return single_open(file, regmap_access_show, inode->i_private);
+-	return single_open(file, rbtree_show, inode->i_private);
 -}
 -
--static const struct file_operations regmap_access_fops = {
--	.open		= access_open,
+-static const struct file_operations rbtree_fops = {
+-	.open		= rbtree_open,
 -	.read		= seq_read,
 -	.llseek		= seq_lseek,
 -	.release	= single_release,
 -};
-+DEFINE_SHOW_ATTRIBUTE(regmap_access);
++DEFINE_SHOW_ATTRIBUTE(rbtree);
  
- static ssize_t regmap_cache_only_write_file(struct file *file,
- 					    const char __user *user_buf,
+ static void rbtree_debugfs_init(struct regmap *map)
+ {
 -- 
 2.19.0.rc2
 
