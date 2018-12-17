@@ -2,151 +2,275 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78581C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE49C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CF2C2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD9B22084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="n4ArLINE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731490AbeLQHxe (ORCPT
+        id S1731536AbeLQH4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:53:34 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52353 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeLQHxd (ORCPT
+        Mon, 17 Dec 2018 02:56:20 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:42861 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbeLQH4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:53:33 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gYniN-0000bW-FO; Mon, 17 Dec 2018 08:53:23 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gYniL-0000uu-UU; Mon, 17 Dec 2018 08:53:21 +0100
-Date:   Mon, 17 Dec 2018 08:53:21 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
-        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-Message-ID: <20181217075321.k45vhgnszeqs3tea@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
- <20181212220922.18759-16-paul@crapouillou.net>
- <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
- <1544709795.18952.1@crapouillou.net>
- <20181213204219.onem3q6dcmakusl2@pengutronix.de>
- <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
- <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
- <1544969932.1649.1@crapouillou.net>
+        Mon, 17 Dec 2018 02:56:19 -0500
+Received: by mail-ua1-f65.google.com with SMTP id d21so4097902uap.9
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 23:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=guaaEgX8Iocv0fqjxPzxlpLywwiMHn5P7BspHXdJw4s=;
+        b=n4ArLINE56WXhrhOEnFBySDb968o76jLlrny1QuuvpzPCxQR0kbaEAlKVJB5z616jz
+         GAokCpIL6kvcFd3TISzyI1WL+OzaX93flAQuxJuHEsJYXwrmMxs1lCqPX6ODjJ29sMA1
+         2kr7B86TiTeEu4pdBsYNmLWGtXFCCsQNGPcs/4HWtwKPoICj6MjPSTP4m/RO6rAi1zLB
+         lQoRuuPpN/RVlhvoeIakkP/SyPFraE73Sdhmaqf+oL6BhjEtdWTVtPgoNTL3hYSucG+w
+         Tfwh/UKhYD2ludHmWfaQ1FnKmuPpONrcS/WjdIme+IxPQkf1DMhkYt8mvOyJZtOSClPN
+         Xlzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=guaaEgX8Iocv0fqjxPzxlpLywwiMHn5P7BspHXdJw4s=;
+        b=D3bri6ogOB6hVTjRTmvTbqUqzMZjX9LEfVYGKQzkqDjqYqLVwMnq73R86FTm8G6dvG
+         FxQIN8aYgqsUvs6oD0ay9mVIlT+4jgB6Wc7MTtrM+WBqjKO+x3Itx3zoPBcAj/NPbq8B
+         RfpRU5/A1OdYHvwQTgKoi1PVY/6OHOgioEdulNyrBfCtgRLUe5TaKdyb8MhtZeAAw8RZ
+         e18DPV0TiBTzX+axNO2V6ju0ZNEz3x+iZgweVjaVXaOGPsDXXLBu0qGNfhaPIRmAdKc4
+         p/nqNoZvbVhUp80Jl9E6LlWe5osxk4ivifzNsxwZNCAWoAyu8MSwgftzg7RDIVPd39jo
+         GsRg==
+X-Gm-Message-State: AA+aEWZyxba5HHratwFAJQge5wS4dzElovruFT8ny0WaU8fX8RtfJMFk
+        4b8GNyCVIN1ud/JbVRyp6FIh5wDlbZl+mOyrZMZ1tQ==
+X-Google-Smtp-Source: AFSGD/Vne0Ax8f77zIyO7NN621G7wbH8TcCTQquuFgNxAcJRqgSb0JTxmfvqz+xaHC8IVrGxbfc8XLXLgud9ekP7nl8=
+X-Received: by 2002:ab0:2417:: with SMTP id f23mr5902317uan.129.1545033377792;
+ Sun, 16 Dec 2018 23:56:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544969932.1649.1@crapouillou.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <1544760624-12874-1-git-send-email-tdas@codeaurora.org> <1544760624-12874-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1544760624-12874-2-git-send-email-tdas@codeaurora.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Mon, 17 Dec 2018 13:26:04 +0530
+Message-ID: <CAHLCerNZawU4Qexi5gdYLHDY90HNO5Tox0EVPWyy2L2QtUOX0g@mail.gmail.com>
+Subject: Re: [PATCH v13 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
+ Firmware bindings
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        evgreen@google.com, Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 03:18:52PM +0100, Paul Cercueil wrote:
-> Hi,
-> 
-> Le ven. 14 déc. 2018 à 15:26, Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> a écrit :
-> > Hello,
-> > 
-> > On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
-> > > On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > [Adding Linus Walleij to Cc:]
-> > > > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
-> > > > > Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> a écrit :
-> > > > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
-> > > > > > >  The PWM in the JZ4725B works the same as in the JZ4740,
-> > > > > > >  except that it only has 6 channels available instead of
-> > > > > > >  8.
-> > > > > >
-> > > > > > this driver is probed only from device tree? If yes, it
-> > > > > > might be sensible to specify the number of PWMs there and
-> > > > > > get it from there.
-> > > > > > There doesn't seem to be a generic binding for that, but there are
-> > > > > > several drivers that could benefit from it. (This is a bigger project
-> > > > > > though and shouldn't stop your patch. Still more as it already got
-> > > > > > Thierry's ack.)
-> > > > >
-> > > > > I think there needs to be a proper guideline, as there doesn't seem to be
-> > > > > a consensus about this. I learned from emails with Rob and  Linus (Walleij)
-> > > > > that I should not have in devicetree what I can deduce from the compatible
-> > > > > string.
-> > > >
-> > > > I understood them a bit differently. It is ok to deduce things from the
-> > > > compatible string. But if you define a generic property (say) "num-pwms"
-> > > > that is used uniformly in most bindings this is ok, too. (And then the
-> > > > two different devices could use the same compatible.)
-> > > >
-> > > > An upside of the generic "num-pwms" property is that the pwm core could
-> > > > sanity check pwm phandles before passing them to the hardware drivers.
-> > > 
-> > >  I don't know if this helps, but in GPIO we have "ngpios" which is
-> > >  used to augment an existing block as to the number of lines actually
-> > >  used with it.
-> > > 
-> > >  The typical case is that an ASIC engineer synthesize a block for
-> > >  32 GPIOs but only 12 of them are routed to external pads. So
-> > >  we augment the behaviour of that driver to only use 12 of the
-> > >  32 lines.
-> > > 
-> > >  I guess using the remaining 20 lines "works" in a sense but they
-> > >  have no practical use and will just bias electrons in the silicon
-> > >  for no use.
-> > 
-> > This looks very similar to the case under discussion.
-> > 
-> > >  So if the PWM case is something similar, then by all means add
-> > >  num-pwms.
-> > 
-> > .. or "npwms" to use the same nomenclature as the gpio binding?
-> 
-> If we're going to do something like this, should it be the drivers or
-> the core (within pwmchip_add) that checks for this "npwms" property?
+On Fri, Dec 14, 2018 at 9:40 AM Taniya Das <tdas@codeaurora.org> wrote:
+>
+> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+> SoCs. This is required for managing the cpu frequency transitions which are
+> controlled by the hardware engine.
+>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-Of course this should be done in the core. The driver than can rely on
-the validity of the index. But as I wrote before, this shouldn't stop
-your patch from going in.
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-But if Thierry agrees that this npmws (or num-pwms) is a good idea, it
-would be great to start early to convert drivers.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> ---
+>  .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 172 +++++++++++++++++++++
+>  1 file changed, 172 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+>
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+> new file mode 100644
+> index 0000000..33856947
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+> @@ -0,0 +1,172 @@
+> +Qualcomm Technologies, Inc. CPUFREQ Bindings
+> +
+> +CPUFREQ HW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
+> +SoCs to manage frequency in hardware. It is capable of controlling frequency
+> +for multiple clusters.
+> +
+> +Properties:
+> +- compatible
+> +       Usage:          required
+> +       Value type:     <string>
+> +       Definition:     must be "qcom,cpufreq-hw".
+> +
+> +- clocks
+> +       Usage:          required
+> +       Value type:     <phandle> From common clock binding.
+> +       Definition:     clock handle for XO clock and GPLL0 clock.
+> +
+> +- clock-names
+> +       Usage:          required
+> +       Value type:     <string> From common clock binding.
+> +       Definition:     must be "xo", "alternate".
+> +
+> +- reg
+> +       Usage:          required
+> +       Value type:     <prop-encoded-array>
+> +       Definition:     Addresses and sizes for the memory of the HW bases in
+> +                       each frequency domain.
+> +- reg-names
+> +       Usage:          Optional
+> +       Value type:     <string>
+> +       Definition:     Frequency domain name i.e.
+> +                       "freq-domain0", "freq-domain1".
+> +
+> +- #freq-domain-cells:
+> +       Usage:          required.
+> +       Definition:     Number of cells in a freqency domain specifier.
+> +
+> +* Property qcom,freq-domain
+> +Devices supporting freq-domain must set their "qcom,freq-domain" property with
+> +phandle to a cpufreq_hw followed by the Domain ID(0/1) in the CPU DT node.
+> +
+> +
+> +Example:
+> +
+> +Example 1: Dual-cluster, Quad-core per cluster. CPUs within a cluster switch
+> +DCVS state together.
+> +
+> +/ {
+> +       cpus {
+> +               #address-cells = <2>;
+> +               #size-cells = <0>;
+> +
+> +               CPU0: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x0>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_0>;
+> +                       qcom,freq-domain = <&cpufreq_hw 0>;
+> +                       L2_0: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                               L3_0: l3-cache {
+> +                                     compatible = "cache";
+> +                               };
+> +                       };
+> +               };
+> +
+> +               CPU1: cpu@100 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x100>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_100>;
+> +                       qcom,freq-domain = <&cpufreq_hw 0>;
+> +                       L2_100: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +
+> +               CPU2: cpu@200 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x200>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_200>;
+> +                       qcom,freq-domain = <&cpufreq_hw 0>;
+> +                       L2_200: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +
+> +               CPU3: cpu@300 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x300>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_300>;
+> +                       qcom,freq-domain = <&cpufreq_hw 0>;
+> +                       L2_300: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +
+> +               CPU4: cpu@400 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x400>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_400>;
+> +                       qcom,freq-domain = <&cpufreq_hw 1>;
+> +                       L2_400: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +
+> +               CPU5: cpu@500 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x500>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_500>;
+> +                       qcom,freq-domain = <&cpufreq_hw 1>;
+> +                       L2_500: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +
+> +               CPU6: cpu@600 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x600>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_600>;
+> +                       qcom,freq-domain = <&cpufreq_hw 1>;
+> +                       L2_600: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +
+> +               CPU7: cpu@700 {
+> +                       device_type = "cpu";
+> +                       compatible = "qcom,kryo385";
+> +                       reg = <0x0 0x700>;
+> +                       enable-method = "psci";
+> +                       next-level-cache = <&L2_700>;
+> +                       qcom,freq-domain = <&cpufreq_hw 1>;
+> +                       L2_700: l2-cache {
+> +                               compatible = "cache";
+> +                               next-level-cache = <&L3_0>;
+> +                       };
+> +               };
+> +       };
+> +
+> + soc {
+> +       cpufreq_hw: cpufreq@17d43000 {
+> +               compatible = "qcom,cpufreq-hw";
+> +               reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
+> +               reg-names = "freq-domain0", "freq-domain1";
+> +
+> +               clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
+> +               clock-names = "xo", "alternate";
+> +
+> +               #freq-domain-cells = <1>;
+> +       };
+> +}
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+>
