@@ -2,79 +2,304 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE649C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EFEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 873A42086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545035406;
-	bh=AaI1oZgBia5YR5WLbkbv6JoOLqaWMfWN0K0WQybw9s4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bCKL4CwINEDWF+1u23BdPGO8V4zFa3vMglamJbSxExCc+1UEJeUJuh3O0g2O9R3nE
-	 zBJ6Autkt6q+WyFAgr2FuxNTwY/brdvPGfxK9Jk4Z0DEAhcuU1H2HYOE+MckB3LiUC
-	 BHrY4ccYJimGe1f9IfEWN5qUVm/NqpgELXIrk29o=
+	by mail.kernel.org (Postfix) with ESMTP id 7B3EC217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 08:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731808AbeLQIaF (ORCPT
+        id S1731816AbeLQIam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 03:30:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbeLQIaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 03:30:05 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 364AC2084D;
-        Mon, 17 Dec 2018 08:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545035404;
-        bh=AaI1oZgBia5YR5WLbkbv6JoOLqaWMfWN0K0WQybw9s4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eLi0CEqiHYvd6rWCRmmpLEN4P++zGPgdHVE6UWc8G2uWJH5EcSu1akEidfkUE0zB8
-         kcvXs3SAuJAFNxlU5eEask6jWe2G8DxGOmIaRAwJ3Ik9QfdOg8eH7WtPlB40pr5Dhq
-         Ob5wN5fYDEMTUQ+bUcG90IdBpBQG4a+NDom7wINM=
-Date:   Mon, 17 Dec 2018 09:30:02 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kyuho Choi <chlrbgh0@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, Wei Li <liwei213@huawei.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 009/118] scsi: ufs: Fix hynix ufs bug with quirk on
- hi36xx SoC
-Message-ID: <20181217083002.GA5244@kroah.com>
-References: <20181211151644.216668863@linuxfoundation.org>
- <20181211151644.599741132@linuxfoundation.org>
- <CAP2JTQJyOad9Tbc8t_K-Xp8q5EpdgeQbaDfTAJgkYUWWpw=TRg@mail.gmail.com>
+        Mon, 17 Dec 2018 03:30:42 -0500
+Received: from mail-lj1-f176.google.com ([209.85.208.176]:41167 "EHLO
+        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeLQIal (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 03:30:41 -0500
+Received: by mail-lj1-f176.google.com with SMTP id k15-v6so10173307ljc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 00:30:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zwN7Hm/TQGWYQaLLO6BeSEPiD9Q1K5pfX3PgW4vkaZE=;
+        b=TwmQtZ1ZjafSpyoZqEmhJuWhrMaXIbFmMx8CAnRvezcHo/DQZReL+XuKHr+EiWoew/
+         jzrz5Vbo9vTdw3w4qZnWcCs0Crwz943IBae78ZAoQamISEqf9Zep63kMJShPMw17ryDu
+         hY4nx7WWMV/K/Pe2OFniDJyvvYJq/h81h+p3lBN3++I08fU0eI5E3oyvbh4WoMLXW5VQ
+         A4y62vO6wDkdMTBfMdoN7hNC6sxwIlAOnr39X2P1rLmOlKrR7oXDNOAmYBrZOgQkTcg5
+         vaaME9nxHCvtTgwDE43XxU7CWpWYbjQVR4y6qTY6wJA/GdtCcuaT8ojKGWprFSdchalo
+         4N5Q==
+X-Gm-Message-State: AA+aEWa4QcCvOXsOJ+4bNGpVztTf/ImRqAhE6YMEXtf1J5jKZjkW0l9f
+        i5Qnx2AYs46sLMm/vGMHVOpwAuN1
+X-Google-Smtp-Source: AFSGD/X3vgHcZZd9Wv/Gi8DzNDmLo+kApqj6fs4EjIDtFYdUHSfzHZAcMnTEYiVq4cWnTPmXkrVVBQ==
+X-Received: by 2002:a2e:93d7:: with SMTP id p23-v6mr6245824ljh.22.1545035438735;
+        Mon, 17 Dec 2018 00:30:38 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id b81-v6sm2448286ljb.7.2018.12.17.00.30.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 00:30:38 -0800 (PST)
+Date:   Mon, 17 Dec 2018 10:30:35 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, mazziesaccount@gmail.com,
+        matti.vaittinen@fi.rohmeurope.com
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181217083035.GB2477@localhost.localdomain>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
+ <20181205082251.GE31204@localhost.localdomain>
+ <20181205172701.GH6205@sirena.org.uk>
+ <20181207075829.GA24940@localhost.localdomain>
+ <20181207131418.GB6510@sirena.org.uk>
+ <20181214135819.GA2735@localhost.localdomain>
+ <20181214172619.GC6467@sirena.org.uk>
+ <20181217081912.GA2477@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAP2JTQJyOad9Tbc8t_K-Xp8q5EpdgeQbaDfTAJgkYUWWpw=TRg@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181217081912.GA2477@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 05:24:38PM +0900, Kyuho Choi wrote:
-> Hi Greg,
+On Mon, Dec 17, 2018 at 10:19:12AM +0200, Matti Vaittinen wrote:
+> Hello Mark & All,
 > 
-> About Hinyx's "hB8aL1" ufs device. For support Kirin AP series, they
-> are need to apply below VS_DebugSaveConfigTime expand patch.
+> On Fri, Dec 14, 2018 at 05:26:19PM +0000, Mark Brown wrote:
+> > On Fri, Dec 14, 2018 at 03:58:19PM +0200, Matti Vaittinen wrote:
+> > > On Fri, Dec 07, 2018 at 01:14:18PM +0000, Mark Brown wrote:
+> > 
+> > > I could send an example on how the driver utilizing the original RFC
+> > > interface would look like. I am starting to think it was not *that* bad
+> > > after all...
+> > 
+> > That might help, yes.
+> > 
+> This is what I came up with. I think having the simple mapping arrays
+> (bitX_offsets) and REGMAP_IRQ_MAIN_REG_OFFSET macro makes this
+> not-so-bad :) I will also send an example on how this would look like
+> with the RFC v2 interface.
 
-I am sorry, I do not understand at all.  What needs to be done on the
-4.19.y stable tree?  Is a specific patch needed that is already in
-Linus's tree?  If so, what is the git commit id?
+I decided to go with diff between RFC v1 and RFC v2 driver interfaces:
 
-thanks,
-
-greg k-h
+diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
+index b270cdad1db6..abb0cff8d1c2 100644
+--- a/drivers/mfd/rohm-bd70528.c
++++ b/drivers/mfd/rohm-bd70528.c
+@@ -41,92 +41,114 @@ static struct regmap_config bd70528_regmap = {
+ 	.max_register = BD70528_MAX_REGISTER,
+ 	.cache_type = REGCACHE_RBTREE,
+ };
+-/* bit [0] - Shutdown register */
+-unsigned int bit0_offsets[] = {0};
+-/* bit [1] - Power failure register */
+-unsigned int bit1_offsets[] = {1};
+-/* bit [2] - VR FAULT register */
+-unsigned int bit2_offsets[] = {2};
+-/* bit [3] - PMU register interrupts */
+-unsigned int bit3_offsets[] = {3};
+-/* bit [4] - Charger 1 and Charger 2 registers */
+-unsigned int bit4_offsets[] = {4,5};
+-/* bit [5] - RTC register */
+-unsigned int bit5_offsets[] = {6};
+-/* bit [6] - GPIO register */
+-unsigned int bit6_offsets[] = {7};
+-/* bit [7] - Invalid operation register */
+-unsigned int bit7_offsets[] = {8};
+-
+-static struct regmap_irq_sub_irq_map bd70528_sub_irq_offsets[] = {
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit3_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit4_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit5_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit6_offsets),
+-	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
+-};
+ 
+ static struct regmap_irq bd70528_irqs[] = {
+-	REGMAP_IRQ_REG(BD70528_INT_LONGPUSH, 0, BD70528_INT_LONGPUSH_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_WDT, 0, BD70528_INT_WDT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_HWRESET, 0, BD70528_INT_HWRESET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_RSTB_FAULT, 0, BD70528_INT_RSTB_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_VBAT_UVLO, 0, BD70528_INT_VBAT_UVLO_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_TSD, 0, BD70528_INT_TSD_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_RSTIN, 0, BD70528_INT_RSTIN_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FAULT, 1, BD70528_INT_BUCK1_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FAULT, 1, BD70528_INT_BUCK2_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK3_FAULT, 1, BD70528_INT_BUCK3_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LDO1_FAULT, 1, BD70528_INT_LDO1_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LDO2_FAULT, 1, BD70528_INT_LDO2_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LDO3_FAULT, 1, BD70528_INT_LDO3_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LED1_FAULT, 1, BD70528_INT_LED1_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LED2_FAULT, 1, BD70528_INT_LED2_FAULT_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK1_OCP, 2, BD70528_INT_BUCK1_OCP_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK2_OCP, 2, BD70528_INT_BUCK2_OCP_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK3_OCP, 2, BD70528_INT_BUCK3_OCP_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LED1_OCP, 2, BD70528_INT_LED1_OCP_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LED2_OCP, 2, BD70528_INT_LED2_OCP_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FULLON, 2, BD70528_INT_BUCK1_FULLON_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FULLON, 2, BD70528_INT_BUCK2_FULLON_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_SHORTPUSH, 3, BD70528_INT_SHORTPUSH_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_AUTO_WAKEUP, 3, BD70528_INT_AUTO_WAKEUP_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_STATE_CHANGE, 3, BD70528_INT_STATE_CHANGE_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_RES, 4, BD70528_INT_BAT_OV_RES_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_DET, 4, BD70528_INT_BAT_OV_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DBAT_DET, 4, BD70528_INT_DBAT_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_RES, 4, BD70528_INT_BATTSD_COLD_RES_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_DET, 4, BD70528_INT_BATTSD_COLD_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_RES, 4, BD70528_INT_BATTSD_HOT_RES_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_DET, 4, BD70528_INT_BATTSD_HOT_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_CHG_TSD, 4, BD70528_INT_CHG_TSD_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BAT_RMV, 5, BD70528_INT_BAT_RMV_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BAT_DET, 5, BD70528_INT_BAT_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_RES, 5, BD70528_INT_DCIN2_OV_RES_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_DET, 5, BD70528_INT_DCIN2_OV_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DCIN2_RMV, 5, BD70528_INT_DCIN2_RMV_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DCIN2_DET, 5, BD70528_INT_DCIN2_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DCIN1_RMV, 5, BD70528_INT_DCIN1_RMV_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_DCIN1_DET, 5, BD70528_INT_DCIN1_DET_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_RTC_ALARM, 6, BD70528_INT_RTC_ALARM_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_ELPS_TIM, 6, BD70528_INT_ELPS_TIM_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_GPIO0, 7, BD70528_INT_GPIO0_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_GPIO1, 7, BD70528_INT_GPIO1_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_GPIO2, 7, BD70528_INT_GPIO2_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_GPIO3, 7, BD70528_INT_GPIO3_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK1_DVS_OPFAIL, 8, BD70528_INT_BUCK1_DVS_OPFAIL_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK2_DVS_OPFAIL, 8, BD70528_INT_BUCK2_DVS_OPFAIL_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_BUCK3_DVS_OPFAIL, 8, BD70528_INT_BUCK3_DVS_OPFAIL_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LED1_VOLT_OPFAIL, 8, BD70528_INT_LED1_VOLT_OPFAIL_MASK),
+-	REGMAP_IRQ_REG(BD70528_INT_LED2_VOLT_OPFAIL, 8, BD70528_INT_LED2_VOLT_OPFAIL_MASK),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LONGPUSH, 0, BD70528_INT_LONGPUSH_MASK,
++			    0, 1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_WDT, 0, BD70528_INT_WDT_MASK, 0, 1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_HWRESET, 0, BD70528_INT_HWRESET_MASK, 0,
++			    1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_RSTB_FAULT, 0,
++			    BD70528_INT_RSTB_FAULT_MASK, 0, 1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_VBAT_UVLO, 0,
++			    BD70528_INT_VBAT_UVLO_MASK, 0, 1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_TSD, 0, BD70528_INT_TSD_MASK, 0, 1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_RSTIN, 0, BD70528_INT_RSTIN_MASK, 0, 1),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK1_FAULT, 1,
++			    BD70528_INT_BUCK1_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK2_FAULT, 1,
++			    BD70528_INT_BUCK2_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK3_FAULT, 1,
++			    BD70528_INT_BUCK3_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LDO1_FAULT, 1,
++			    BD70528_INT_LDO1_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LDO2_FAULT, 1,
++			    BD70528_INT_LDO2_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LDO3_FAULT, 1,
++			    BD70528_INT_LDO3_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LED1_FAULT, 1,
++			    BD70528_INT_LED1_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LED2_FAULT, 1,
++			    BD70528_INT_LED2_FAULT_MASK, 0, 2),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK1_OCP, 2,
++			    BD70528_INT_BUCK1_OCP_MASK, 0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK2_OCP, 2,
++			    BD70528_INT_BUCK2_OCP_MASK, 0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK3_OCP, 2,
++			    BD70528_INT_BUCK3_OCP_MASK, 0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LED1_OCP, 2, BD70528_INT_LED1_OCP_MASK,
++			    0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LED2_OCP, 2, BD70528_INT_LED2_OCP_MASK,
++			    0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK1_FULLON, 2,
++			    BD70528_INT_BUCK1_FULLON_MASK, 0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK2_FULLON, 2,
++			    BD70528_INT_BUCK2_FULLON_MASK, 0, 3),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_SHORTPUSH, 3,
++			    BD70528_INT_SHORTPUSH_MASK, 0, 4),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_AUTO_WAKEUP, 3,
++			    BD70528_INT_AUTO_WAKEUP_MASK, 0, 4),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_STATE_CHANGE, 3,
++			    BD70528_INT_STATE_CHANGE_MASK, 0, 4),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BAT_OV_RES, 4,
++			    BD70528_INT_BAT_OV_RES_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BAT_OV_DET, 4,
++			    BD70528_INT_BAT_OV_DET_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DBAT_DET, 4, BD70528_INT_DBAT_DET_MASK,
++			    0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BATTSD_COLD_RES, 4,
++			    BD70528_INT_BATTSD_COLD_RES_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BATTSD_COLD_DET, 4,
++			    BD70528_INT_BATTSD_COLD_DET_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BATTSD_HOT_RES, 4,
++			    BD70528_INT_BATTSD_HOT_RES_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BATTSD_HOT_DET, 4,
++			    BD70528_INT_BATTSD_HOT_DET_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_CHG_TSD, 4,
++			    BD70528_INT_CHG_TSD_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BAT_RMV, 5, BD70528_INT_BAT_RMV_MASK,
++			    0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BAT_DET, 5, BD70528_INT_BAT_DET_MASK, 0,
++			    5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DCIN2_OV_RES, 5,
++			    BD70528_INT_DCIN2_OV_RES_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DCIN2_OV_DET, 5,
++			    BD70528_INT_DCIN2_OV_DET_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DCIN2_RMV, 5,
++			    BD70528_INT_DCIN2_RMV_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DCIN2_DET, 5,
++			    BD70528_INT_DCIN2_DET_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DCIN1_RMV, 5,
++			    BD70528_INT_DCIN1_RMV_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_DCIN1_DET, 5,
++			    BD70528_INT_DCIN1_DET_MASK, 0, 5),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_RTC_ALARM, 6,
++			    BD70528_INT_RTC_ALARM_MASK, 0, 6),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_ELPS_TIM, 6, BD70528_INT_ELPS_TIM_MASK,
++			    0, 6),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_GPIO0, 7, BD70528_INT_GPIO0_MASK, 0, 7),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_GPIO1, 7, BD70528_INT_GPIO1_MASK, 0, 7),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_GPIO2, 7, BD70528_INT_GPIO2_MASK, 0, 7),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_GPIO3, 7, BD70528_INT_GPIO3_MASK, 0, 7),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK1_DVS_OPFAIL, 8,
++			    BD70528_INT_BUCK1_DVS_OPFAIL_MASK, 0, 8),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK2_DVS_OPFAIL, 8,
++			    BD70528_INT_BUCK2_DVS_OPFAIL_MASK, 0, 8),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_BUCK3_DVS_OPFAIL, 8,
++			    BD70528_INT_BUCK3_DVS_OPFAIL_MASK, 0, 8),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LED1_VOLT_OPFAIL, 8,
++			    BD70528_INT_LED1_VOLT_OPFAIL_MASK, 0, 8),
++	REGMAP_IRQ_REG_MAIN(BD70528_INT_LED2_VOLT_OPFAIL, 8,
++			    BD70528_INT_LED2_VOLT_OPFAIL_MASK, 0, 8),
++};
++
++static struct regmap_main_status main_irq_reg = {
++	.main_status = BD70528_REG_INT_MAIN,
++	.num_main_regs = 1,
+ };
+ 
+ static struct regmap_irq_chip bd70528_irq_chip = {
+ 	.name = "bd70528_irq",
+-	.main_status = BD70528_REG_INT_MAIN,
+ 	.irqs = &bd70528_irqs[0],
+ 	.num_irqs = ARRAY_SIZE(bd70528_irqs),
+ 	.status_base = BD70528_REG_INT_SHDN,
+@@ -135,11 +157,9 @@ static struct regmap_irq_chip bd70528_irq_chip = {
+ 	.type_base = BD70528_GPIO1_IN_REG,
+ 	.init_ack_masked = true,
+ 	.num_regs = 9,
+-	.num_main_regs = 1,
+ 	.num_type_reg = 4,
+-	.sub_reg_offsets = &bd70528_sub_irq_offsets[0],
+-	.num_main_status_bits = 8,
+ 	.irq_reg_stride = 1,
++	.main_reg = &main_irq_reg,
+ };
+ 
+Br,
+	Matti Vaittinen
