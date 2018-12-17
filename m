@@ -2,132 +2,162 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6F1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6462C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3E22133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:22:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867D42133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:24:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+FB6nQb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388416AbeLQRW2 (ORCPT
+        id S1728034AbeLQRYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:22:28 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:47153 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388301AbeLQRV4 (ORCPT
+        Mon, 17 Dec 2018 12:24:07 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33788 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbeLQRYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:21:56 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43JScv0FWdz1r4vb;
-        Mon, 17 Dec 2018 18:21:50 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43JSct5hvqz1qvRN;
-        Mon, 17 Dec 2018 18:21:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id EkGWAJdMhQO8; Mon, 17 Dec 2018 18:21:49 +0100 (CET)
-X-Auth-Info: zgkidFemLB6LopVG1HQXvKD6gxsi6d2hF8K5PLo8UjU=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 17 Dec 2018 18:21:49 +0100 (CET)
-From:   Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH] Revert "serial: 8250: Fix clearing FIFOs in RS485 mode
- again"
-To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Paul Burton <paul.burton@mips.com>
-Cc:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        Daniel Jedrychowski <avistel@gmail.com>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-References: <20181213174834.kxdy6fphaeoivqgh@pburton-laptop>
- <20181216200833.27928-1-paul.burton@mips.com>
- <f5a76d73-862f-3ebc-cd07-effc5c432103@denx.de>
- <20181216213133.kwe24pif3v4wcgwp@pburton-laptop>
- <949fdd3d-535e-d235-f406-d5bde4658c5e@denx.de>
- <CAAEAJfAad75bHX39ETCdVv9vP0dF7PLz2vvFLLqgtyikPHqJyA@mail.gmail.com>
- <20181216222411.5jkexuaqxpfudj7b@pburton-laptop>
- <CAAEAJfAQ9=B6sm=Ard+YTDN5g5r03o=t9xU3Nu2QaKrXXZ4pGw@mail.gmail.com>
- <20181216223510.hxsdotf332ousinh@pburton-laptop>
- <CAAEAJfDHvGTPN9u4zwWRFvK1WmpLmz87CjsjzmyhcExTGHQPmA@mail.gmail.com>
-Message-ID: <61a3177f-4e8d-fc51-1e81-95af3baab3a8@denx.de>
-Date:   Mon, 17 Dec 2018 18:20:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 17 Dec 2018 12:24:06 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so5238096wmh.0;
+        Mon, 17 Dec 2018 09:24:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7LX8zkJ55ucDSuOlduiKG9DRTub6ofiKcrVx45LdZZA=;
+        b=f+FB6nQbgVHJRUo06ueF+3puLuoN2e/pBiqEiizsMZxq5QH0gMc9st25ZF7VxmUsUO
+         UU1VQX2NSMnxfQwxBR4LLEUVvEeuxXK/9B8rxuzav0N15+7MFF2e5ZNVbVzJs78zkx6/
+         CuEF252kLfdctMzMXIC35T/6VQveK/ZQY9Vm8zy5AbfRtYIyYWG9BNtABYlRuGEOeo5W
+         pha/VAjVGKw2dvwAneBbvRh5OxsuSO4u48pIp6vwo10hkSH7mmZQRuNtbcfVVvEBmkjW
+         RRB5L3lMy4VV7XywRMNuh6NMgyczgrLuoAbBm80LpJ8mu8nwQaXetPvoawruqCVfrsLk
+         9ayw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7LX8zkJ55ucDSuOlduiKG9DRTub6ofiKcrVx45LdZZA=;
+        b=ka2rv0hVzyNV3G6+pEScYSSXGiK+pqbN4p++eGUE+RzPRDQPlIlQYjwbcM2TAVMgzF
+         05x9JwS1Hia+Ujs42Y+zdpLjihyoW1Xj+JxGWpG0A23DWjZwRYSDkE4nCWyW/tVjnIh4
+         p0X5tZrXtoC+Sfo2ChKXQ8a2Zj3c2ihK135EAcQ6A3Oc9QdiJzA4yG/KH9Wxn6bGoX1m
+         e9TlkDRwFlXShf3N4WwVUuojQR0Dg09nAFALyGmuV6vgDESmgdUfXMWx+gJ4G7WWzzS1
+         dsONmwNR1Yjr9RVVJHLqNNjmVGFA5PTltBDTL5NCzSVTNiEl56G5H4NwUfk8bRYzRFsW
+         WdpA==
+X-Gm-Message-State: AA+aEWbe/Kj9388cEFkxZwbPoIQEUrGwZbqv+kUMvccZvXUioEDedQxN
+        yhgy8/06i8HfVxA4HK1Uzkw=
+X-Google-Smtp-Source: AFSGD/USouePAPffhJ4eFfUEMz7SWiCzOaJoRPIFPRvssk+vIjL4l/jD714xkXSrqRan2Ctc2a4Dfw==
+X-Received: by 2002:a1c:400b:: with SMTP id n11mr12708174wma.85.1545067443531;
+        Mon, 17 Dec 2018 09:24:03 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id a12sm1098379wro.18.2018.12.17.09.24.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 09:24:02 -0800 (PST)
+Date:   Mon, 17 Dec 2018 10:24:01 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>
+Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] drbd: Avoid Clang warning about pointless switch
+ statment
+Message-ID: <20181217172401.GA30635@flashbox>
+References: <20181002171447.10765-1-natechancellor@gmail.com>
+ <20181004200912.32348-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAEAJfDHvGTPN9u4zwWRFvK1WmpLmz87CjsjzmyhcExTGHQPmA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181004200912.32348-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/2018 05:30 PM, Ezequiel Garcia wrote:
-> On Sun, 16 Dec 2018 at 19:35, Paul Burton <paul.burton@mips.com> wrote:
->>
->> Hi Ezequiel,
->>
->> On Sun, Dec 16, 2018 at 07:28:22PM -0300, Ezequiel Garcia wrote:
->>> On Sun, 16 Dec 2018 at 19:24, Paul Burton <paul.burton@mips.com> wrote:
->>>> This helps, but it only addresses one part of one of the 4 reasons I
->>>> listed as motivation for my revert. For example serial8250_do_shutdown()
->>>> also clearly intends to disable the FIFOs.
->>>>
->>>
->>> OK. So, let's fix that :-)
->>
->> I already did, or at least tried to, on Thursday [1].
->>
->>> By all means, it would be really nice to push forward and fix the garbage
->>> issue on JZ4780, as well as the transmission issue on AM335x.
->>>
->>> AM335x is a wildly popular platform, and it's not funny to break it.
->>
->> Well, clearly not if it was broken in v4.10 & only just fixed..? And
->> from Marek's commit message the patch in v4.10 doesn't break the whole
->> system just RS485.
->>
+On Thu, Oct 04, 2018 at 01:09:13PM -0700, Nathan Chancellor wrote:
+> There are several warnings from Clang about no case statement matching
+> the constant 0:
 > 
-> Careful here. It's naive to consider v4.10 as old in this context.
+> In file included from drivers/block/drbd/drbd_receiver.c:48:
+> In file included from drivers/block/drbd/drbd_int.h:48:
+> In file included from ./include/linux/drbd_genl_api.h:54:
+> In file included from ./include/linux/genl_magic_struct.h:236:
+> ./include/linux/drbd_genl.h:321:1: warning: no case matching constant
+> switch condition '0'
+> GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
+> ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
+> 'GENL_struct'
+>         switch (0) {
+>                 ^
 > 
-> AM335x is used in hundreds of thousands of products, probably
-> "industrial" products.
-> Manufacturers don't always follow the kernel, and it's entirely
-> likely that they notice a regression only when developing a new product,
-> or when rebasing on top of a newer longterm kernel.
+> Silence this warning by adding a 'case 0:' statement. Additionally,
+> adjust the alignment of the statements in the ct_assert_unique macro to
+> avoid a checkpatch warning.
 > 
-> Then again, I don't have any details about what is Marek's original fix
-> actually fixing.
+> This solution was originally sent by Arnd Bergmann with a default case
+> statement: https://lore.kernel.org/patchwork/patch/756723/
 > 
-> Marek: could you please post the test case that you used to validate your fix?
-> I can't find that anywhere.
+> Link: https://github.com/ClangBuiltLinux/linux/issues/43
+> Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+> 
+> Since this is not the same as Arnd's patch, I took authorship for it
+> while leaving a link to the original patch in the commit message. If
+> this is not how it should have been done, please let me know.
+> 
+>  include/linux/genl_magic_struct.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
+> index 5972e4969197..eeae59d3ceb7 100644
+> --- a/include/linux/genl_magic_struct.h
+> +++ b/include/linux/genl_magic_struct.h
+> @@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
+>  {
+>  	switch (0) {
+>  #include GENL_MAGIC_INCLUDE_FILE
+> +	case 0:
+>  		;
+>  	}
+>  }
+> @@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
+>  {
+>  	switch (0) {
+>  #include GENL_MAGIC_INCLUDE_FILE
+> +	case 0:
+>  		;
+>  	}
+>  }
+> @@ -218,7 +220,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
+>  static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
+>  {									\
+>  	switch (0) {							\
+> -		s_fields						\
+> +	s_fields							\
+> +	case 0:								\
+>  			;						\
+>  	}								\
+>  }
+> -- 
+> 2.19.0
+> 
 
-I can't share the testcase itself because it has no license and I didn't
-write it, but I can tell you what it's doing. (I'll check if I can share
-the testcase verbatim too, I just sent an email to the author)
+Hi Lars and Philipp,
 
-The test spawns two threads, one sending , one receiving. The sending
-thread sends 8 bytes of data from /dev/ttyS4 , the receiving thread
-receives the data on /dev/ttyS2 and compares the pattern. The port
-settings is B1000000 8N1 with rs485conf.flags set to SER_RS485_ENABLED
-and SER_RS485_RTS_AFTER_SEND. Sometimes the received data do not match
-the sent data, but rather look as if one character was left over from
-the previous transmission in the FIFO.
+Could you please make sure that this patch and the other one I sent make
+it into 4.21/5.0? I am not sure when you were planning on sending the
+pull request to Jens that you mentioned in the other thread but I've
+noticed most maintainers typically send their requests for the impending
+merge window around -rc7 or so and I wanted to make sure it was on your
+radar.
 
-Those two UARTs are connected together by two wires, without any real
-RS485 hardware to minimize the hardware complexity (it's easy to
-implement that on the pocketbeagle, which is the cheap option here).
-
--- 
-Best regards,
-Marek Vasut
+Thank you,
+Nathan
