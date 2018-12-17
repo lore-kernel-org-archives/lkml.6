@@ -2,111 +2,127 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D11C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A80DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7470E20675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545068324;
-	bh=/l9I2cK4UGgS8qmiufKHDyayT7j9sYtHwkPA5XnsZdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KGD2sAYcWkzcC9I8DCb8rE+quWR8zR6e8bvDbeqaz/4ElPCqSQIwZDkEjcBLt2i2x
-	 i9kFzfNJ4LzC+VFdgPUMGdZQe+wuQwfyUxD1o6ahorG4R0Lqven37JEF2FwFMF5ylD
-	 PaKgYIT2a0pAtDKOkuofJh+WlYlxkTJ77vG5BuVk=
+	by mail.kernel.org (Postfix) with ESMTP id D9BFC20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:39:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388413AbeLQRin (ORCPT
+        id S2388440AbeLQRjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:38:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52304 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727954AbeLQRim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:38:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m1so72492wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:38:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QI32N1/Ik+sjU8OtrfnB3GuwjuycitfojzmO7vI7aNM=;
-        b=kn2DzdN7pSpkz4+jklu1degMcB4hKAFRNLliBXxvTV71qtxwyXC21CfnRvbdL2Io7q
-         EVLRTFn8Si1b9Di/p7sXHHtZJx7Da+7T6jo8RUh3ak1D/YxeBVuceZE0wzXgRTDeHLQQ
-         iRdIroxJhhELrV6CXTPICqPvgDghmeG6RXaJWc4JX82rnSMDmNWOuO0eT524ZNvTta6Q
-         iiH1MmNvsrYbUXQ43vHuCGURPRJeyuPUfbA8HE197k6Ra1Ybe/QKPceBQ7zdhhFxr5h0
-         4hLONUqR5i+Vt0W+Acj8+yeSLy7xsU50pG1yDFRt78S+e+AIVC2AtPShiGlAZFRs4hRg
-         Pbgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QI32N1/Ik+sjU8OtrfnB3GuwjuycitfojzmO7vI7aNM=;
-        b=M/diD8j1ly/1iyYHI+3F16SFvA6GFZ9dtciaox4XZSofladNLKTI9YwjgnCSlZWQtT
-         UQPajqB+xKuxqN45sxAX+qAMnNmPe7395RmBLxyaoxSONbre+nUTjOFW9UfYodaTwzdQ
-         fM+kQe3D1WEtkN/hsgrzn0zH5AH01KLsWIjloM+S/eOcK4w//GQOW92OmQxGVqvqiUwj
-         YvrGqVL/8Rk68+rMeiiePeTivevFbu24DkycsekAJHcjtkudlWZzw1NqhXTDgzMONHSg
-         KufKxwUmF/G04uXKtkGJT7ZKiU/OG7gJM0blOdadJk3vfdibRXVPCV5APyzPYtni6OPJ
-         ulmg==
-X-Gm-Message-State: AA+aEWbjtixIlyrcM2n7nl+cItYI2Mv7ekrypylC7lvEBPjnrLMsTXRl
-        dFfcClalaVX3O/G9TxhU34o=
-X-Google-Smtp-Source: AFSGD/Vw2Jp44szAO6I5exHGC96CIFy0ejbxKjoLJU33oHK9e2XFMTbsPl3Ms74shO5rlfYeaJimng==
-X-Received: by 2002:a1c:a895:: with SMTP id r143mr30527wme.95.1545068320379;
-        Mon, 17 Dec 2018 09:38:40 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id n5sm969654wrr.94.2018.12.17.09.38.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 09:38:39 -0800 (PST)
-Date:   Mon, 17 Dec 2018 18:38:37 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v14 3/5] x86/boot: Introduce bios_get_rsdp_addr() to
- search RSDP in memory
-Message-ID: <20181217173837.GC90818@gmail.com>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
- <20181214093013.13370-4-fanc.fnst@cn.fujitsu.com>
+        Mon, 17 Dec 2018 12:39:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727401AbeLQRjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 12:39:05 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F371C811DC;
+        Mon, 17 Dec 2018 17:39:04 +0000 (UTC)
+Received: from treble (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C4A3B1019630;
+        Mon, 17 Dec 2018 17:39:02 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 11:39:00 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
+Message-ID: <20181217173900.ygifx7khwmzn2gv2@treble>
+References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181214093013.13370-4-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 17 Dec 2018 17:39:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 16, 2018 at 07:33:11PM +0100, Arnd Bergmann wrote:
+> Hi Josh,
+> 
+> In randconfig tests with gcc-8.1, I get this warning every
+> few hundred builds, tried it on both next/master and 4.19.y-stable:
+> 
+> kernel/trace/trace_selftest_dynamic.o: warning: objtool:
+> trace_selftest_dynamic_test_func()+0x5: call without frame pointer
+> save/setup
+> kernel/trace/trace_selftest_dynamic.o: warning: objtool:
+> trace_selftest_dynamic_test_func2()+0x5: call without frame pointer
+> save/setup
+> 
+> $ objdump -dr build/x86/0x90C84554_defconfig/kernel/trace/trace_selftest_dynamic.o
+> 
+> build/x86/0x90C84554_defconfig/kernel/trace/trace_selftest_dynamic.o:
+>    file format elf64-x86-64
+> 
+> Disassembly of section .text:
+> 
+> 0000000000000000 <trace_selftest_dynamic_test_func>:
+>    0:    e8 00 00 00 00           callq  5
+> <trace_selftest_dynamic_test_func+0x5>
+>             1: R_X86_64_PC32    __fentry__-0x4
+>    5:    e8 00 00 00 00           callq  a
+> <trace_selftest_dynamic_test_func+0xa>
+>             6: R_X86_64_PC32    __sanitizer_cov_trace_pc-0x4
+>    a:    31 c0                    xor    %eax,%eax
+>    c:    c3                       retq
+>    d:    0f 1f 00                 nopl   (%rax)
+> 
+> 0000000000000010 <trace_selftest_dynamic_test_func2>:
+>   10:    e8 00 00 00 00           callq  15
+> <trace_selftest_dynamic_test_func2+0x5>
+>             11: R_X86_64_PC32    __fentry__-0x4
+>   15:    e8 00 00 00 00           callq  1a
+> <trace_selftest_dynamic_test_func2+0xa>
+>             16: R_X86_64_PC32    __sanitizer_cov_trace_pc-0x4
+>   1a:    31 c0                    xor    %eax,%eax
+>   1c:    c3                       retq
+> 
+> I found this reported in
+> http://kisskb.ellerman.id.au/kisskb/buildresult/13499139/, but could
+> not find an existing fix or analysis.
 
-* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+Thanks for reporting this Arnd.
 
-> +		/* Check the standard checksum */
-> +		if (compute_checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH))
-> +			continue;
+The problem is that, for some reason, __noclone is preventing GCC from
+creating frame pointers for these functions.  Miroslav said that
+__noclone is not recommended by GCC developers, and that __used can be
+used instead for the same purpose:
 
-Could you please run your patches through checkpatch, does it not 
-complain about this line?
+  https://lkml.kernel.org/r/alpine.LSU.2.21.1812171256390.3087@pobox.suse.cz
 
-> +/* Search RSDP address, based on acpi_find_root_pointer(). */
-> +static acpi_physical_address bios_get_rsdp_addr(void)
-> +{
-> +	u8 *table_ptr;
-> +	u32 address;
-> +	u8 *rsdp;
-> +
-> +	/* Get the location of the Extended BIOS Data Area (EBDA) */
-> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
-> +	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
+Andi,
 
-what? So you take the address of 'u32 address', which turns it into an 
-u32 * - then you cast it to void *, then back to u32 * and then deference 
-it???
+is __noclone really needed here, since the functions aren't static?  Or
+does LTO cause them to be treated like static functions?
 
-Thanks,
+Or if it is really needed, would __used be sufficient instead?
 
-	Ingo
+noinline __noclone int DYN_FTRACE_TEST_NAME(void)
+{
+	/* used to call mcount */
+	return 0;
+}
+
+noinline __noclone int DYN_FTRACE_TEST_NAME2(void)
+{
+	/* used to call mcount */
+	return 0;
+}
+
+-- 
+Josh
