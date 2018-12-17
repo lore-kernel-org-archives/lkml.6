@@ -8,65 +8,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A146BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4E4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A4C2146E
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 012422145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tngTwcvc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7OYBACI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732832AbeLQNUB (ORCPT
+        id S1732860AbeLQNUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:20:01 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37272 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732760AbeLQNTv (ORCPT
+        Mon, 17 Dec 2018 08:20:15 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41533 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbeLQNTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:19:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id s12so11807398wrt.4;
-        Mon, 17 Dec 2018 05:19:47 -0800 (PST)
+        Mon, 17 Dec 2018 08:19:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x10so12231915wrs.8;
+        Mon, 17 Dec 2018 05:19:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MhoVGZhQI5ubACgByDgIY3ZaaMKZNNij7zzM5NcyL1w=;
-        b=tngTwcvc8TDpaMXaw37A7gS/4xBS6OVnp/BKkpWWNLnY0ykB4MPe1LFvCBy0/ekD/K
-         J68qmwSJte87FD7D+q7/yWtbsKs4ykbhLZf2Ls1MnyUYs9uzkGHW1CrcINB2MqjQpsKn
-         nsvr75oG1AkED3l+06UrZtleFGXBp0gL9n18hmbI61jJxS9z7QsjAoRsWeKRC0D0LnAw
-         MLgJck2I9HDJ8qQtf9rKNbxOfIZPT6D0pzlf+8N2KejiXYJpXgtvKQI05Jf2nSdi+FYq
-         VN9piCQJshZ1PIdtlSYTSIF5xeZF7MOldylKV8ES1XdEvBY+IFSA+Yfi7m5LlIHLHNg3
-         wYcQ==
+        bh=YquMkg1TqdY2GtzLZyFc5MKg3xORVzW2lm+TNYyciQ0=;
+        b=c7OYBACIt6py6KEPUlAzLJBmro7VoG0qieexN/5YG1+DMblCbrYg4aAXszyS2pjyJJ
+         FwHcweXzVn4Wu9v1nzjH7WnV7yMeAqYVK7txRDa/2PR54e7uhvdsEocPeVFmnOFN6UPh
+         9E70sEmuMki2QT4m9AWrV1plWoft7iiCl5ym6WJaYLUJvT0sZhI2SKBZ1qQo8ecjtR5l
+         YQ/1PUHdEpUv1o3We+4VCc0tTO2Dh5HRcaRM2UXT1/hpCiM09+jAkUjkOS/jfiAK2AS0
+         SlnLOQqAAQpOqG0TdH0tJt6AaYzf0pfwAni61XPih9Up9ClW11xxfhBOiRbppQciSvCu
+         C7yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MhoVGZhQI5ubACgByDgIY3ZaaMKZNNij7zzM5NcyL1w=;
-        b=gybXy5XXpPNUpcvOKylgXdHl6Aep/z56E+K+PbTxbti4T6Q9S/AEYDlb5DYYrOeSA1
-         Oki020NbWtyDAOOSV2x3Xp6FhFPBkIDJGJ3dljqrffSYkOv1toD2dUCR04odi22/Tzrq
-         kfqgRcqD785Tsq4nD2CRLrKXJgt1WD0SGGjA1OejsRRyPkh8ys3t1j52/j3BwRXXrBmq
-         6zbqAtJxP0j1CxvzecGGseYF1b5XqOQwiZAZ/gAMxHaHdrvLoSwnYy5raeDASedOvMgJ
-         XioHgXtKQZzLM/WSWnwa5NPA/VfOrzs+ToM/qfW990VjwHdRNFASOaDfTFE+SeGXDW6u
-         aMcg==
-X-Gm-Message-State: AA+aEWZGK/Ucjte9AY14SzuHljIicJpFmBSZ78J7/iFovP8H25YAHFcW
-        Z7y+plfdPczAOlLDl6mhqA==
-X-Google-Smtp-Source: AFSGD/XNm1WSFd+RfKtQKAUEXPuRdQA0WoEUOo+uM5vq0P26E6J0haUnSyYnRLkZ1vowW4j013WGTA==
-X-Received: by 2002:a5d:6907:: with SMTP id t7mr10353874wru.226.1545052787059;
-        Mon, 17 Dec 2018 05:19:47 -0800 (PST)
+        bh=YquMkg1TqdY2GtzLZyFc5MKg3xORVzW2lm+TNYyciQ0=;
+        b=prU30/4n+uZDdT7GyxzgjosNBmTxUHXeQVwvnjxgzLE09Z8yUjS+jwG7mdgSGgZs0Y
+         U91RW4oWaFXtcTdAXihZbmm6DfQFhTiiOZ0HVUy5YaLDf7eNhKR1jqozSOy4dnw4S2LM
+         xX62jwNlYwUTEW21UHPd6gkYCAUC1tJdUw1Phh/Nx7nFAXTwISe0IG9PvTxuOU+nTr/i
+         EsSePu1zhZfhzccqYeyzNK90CqvSQpTi4JTExoDGDcPFo9YQLIwTR2AsZtDsbyLbSS/z
+         fMF+z0odizOD+6aM74P/GgGrekzuDhXVk6aBZxF0Xabv9GiADFwdI6vQ29rNpwzlENjl
+         hBcA==
+X-Gm-Message-State: AA+aEWaix0DhtfErjxQQWf472Pv+pl9U7ZAtvlK6qoidaMSU9Z6g5RIh
+        RuANEzMd1q8Uy8dWjeZSYQ==
+X-Google-Smtp-Source: AFSGD/VtPruNFCDIDFOU28ANzBXu+lS6eXsFc8M7XwHnzmK6QX9Jzv5Gl2xG85EU/FZ+TDRe9vKhLQ==
+X-Received: by 2002:adf:8068:: with SMTP id 95mr10597725wrk.181.1545052780560;
+        Mon, 17 Dec 2018 05:19:40 -0800 (PST)
 Received: from kmo-pixel.syslink.intern ([93.240.4.121])
-        by smtp.gmail.com with ESMTPSA id x20sm20406120wme.6.2018.12.17.05.19.45
+        by smtp.gmail.com with ESMTPSA id x20sm20406120wme.6.2018.12.17.05.19.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 05:19:46 -0800 (PST)
+        Mon, 17 Dec 2018 05:19:39 -0800 (PST)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Subject: [PATCH 6/7] sctp: Convert to genradix
-Date:   Mon, 17 Dec 2018 08:19:28 -0500
-Message-Id: <20181217131929.11727-7-kent.overstreet@gmail.com>
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 2/7] md: convert to kvmalloc
+Date:   Mon, 17 Dec 2018 08:19:24 -0500
+Message-Id: <20181217131929.11727-3-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181217131929.11727-1-kent.overstreet@gmail.com>
 References: <20181217131929.11727-1-kent.overstreet@gmail.com>
@@ -77,265 +75,215 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This also makes sctp_stream_alloc_(out|in) saner, in that they no longer
-allocate new flex_arrays/genradixes, they just preallocate more
-elements.
-
-This code does however have a suspicious lack of locking.
+The code really just wants a big flat buffer, so just do that.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Vlad Yasevich <vyasevich@gmail.com>
-Cc: Neil Horman <nhorman@tuxdriver.com>
-Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: linux-sctp@vger.kernel.org
+Cc: Shaohua Li <shli@kernel.org>
+Cc: linux-raid@vger.kernel.org
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
 ---
- include/net/sctp/structs.h   |  15 ++---
- net/sctp/stream.c            | 106 +++++++----------------------------
- net/sctp/stream_interleave.c |   2 +-
- 3 files changed, 28 insertions(+), 95 deletions(-)
+ drivers/md/raid5-ppl.c |  6 +--
+ drivers/md/raid5.c     | 87 +++++++++++++++++++-----------------------
+ drivers/md/raid5.h     |  9 +++--
+ 3 files changed, 46 insertions(+), 56 deletions(-)
 
-diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
-index a11f937904..ee606e0fff 100644
---- a/include/net/sctp/structs.h
-+++ b/include/net/sctp/structs.h
-@@ -48,6 +48,7 @@
- #define __sctp_structs_h__
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index 3a7c363265..0b096ddc9c 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -16,7 +16,6 @@
+ #include <linux/blkdev.h>
+ #include <linux/slab.h>
+ #include <linux/crc32c.h>
+-#include <linux/flex_array.h>
+ #include <linux/async_tx.h>
+ #include <linux/raid/md_p.h>
+ #include "md.h"
+@@ -165,7 +164,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+ 		       struct dma_async_tx_descriptor *tx)
+ {
+ 	int disks = sh->disks;
+-	struct page **srcs = flex_array_get(percpu->scribble, 0);
++	struct page **srcs = percpu->scribble;
+ 	int count = 0, pd_idx = sh->pd_idx, i;
+ 	struct async_submit_ctl submit;
  
- #include <linux/ktime.h>
-+#include <linux/generic-radix-tree.h>
- #include <linux/rhashtable-types.h>
- #include <linux/socket.h>	/* linux/in.h needs this!!    */
- #include <linux/in.h>		/* We get struct sockaddr_in. */
-@@ -57,7 +58,6 @@
- #include <linux/atomic.h>		/* This gets us atomic counters.  */
- #include <linux/skbuff.h>	/* We need sk_buff_head. */
- #include <linux/workqueue.h>	/* We need tq_struct.	 */
--#include <linux/flex_array.h>	/* We need flex_array.   */
- #include <linux/sctp.h>		/* We need sctp* header structs.  */
- #include <net/sctp/auth.h>	/* We need auth specific structs */
- #include <net/ip.h>		/* For inet_skb_parm */
-@@ -1441,8 +1441,9 @@ struct sctp_stream_in {
- };
+@@ -196,8 +195,7 @@ ops_run_partial_parity(struct stripe_head *sh, struct raid5_percpu *percpu,
+ 	}
  
- struct sctp_stream {
--	struct flex_array *out;
--	struct flex_array *in;
-+	GENRADIX(struct sctp_stream_out) out;
-+	GENRADIX(struct sctp_stream_in)	in;
+ 	init_async_submit(&submit, ASYNC_TX_FENCE|ASYNC_TX_XOR_ZERO_DST, tx,
+-			  NULL, sh, flex_array_get(percpu->scribble, 0)
+-			  + sizeof(struct page *) * (sh->disks + 2));
++			  NULL, sh, (void *) (srcs + sh->disks + 2));
+ 
+ 	if (count == 1)
+ 		tx = async_memcpy(sh->ppl_page, srcs[0], 0, 0, PAGE_SIZE,
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 4990f0319f..c92e26fbcd 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -54,7 +54,6 @@
+ #include <linux/slab.h>
+ #include <linux/ratelimit.h>
+ #include <linux/nodemask.h>
+-#include <linux/flex_array.h>
+ 
+ #include <trace/events/block.h>
+ #include <linux/list_sort.h>
+@@ -1394,22 +1393,16 @@ static void ops_complete_compute(void *stripe_head_ref)
+ }
+ 
+ /* return a pointer to the address conversion region of the scribble buffer */
+-static addr_conv_t *to_addr_conv(struct stripe_head *sh,
+-				 struct raid5_percpu *percpu, int i)
++static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
+ {
+-	void *addr;
+-
+-	addr = flex_array_get(percpu->scribble, i);
+-	return addr + sizeof(struct page *) * (sh->disks + 2);
++	return percpu->scribble + i * percpu->scribble_obj_size;
+ }
+ 
+ /* return a pointer to the address conversion region of the scribble buffer */
+-static struct page **to_addr_page(struct raid5_percpu *percpu, int i)
++static addr_conv_t *to_addr_conv(struct stripe_head *sh,
++				 struct raid5_percpu *percpu, int i)
+ {
+-	void *addr;
+-
+-	addr = flex_array_get(percpu->scribble, i);
+-	return addr;
++	return (void *) (to_addr_page(percpu, i) + sh->disks + 2);
+ }
+ 
+ static struct dma_async_tx_descriptor *
+@@ -2238,21 +2231,23 @@ static int grow_stripes(struct r5conf *conf, int num)
+  * calculate over all devices (not just the data blocks), using zeros in place
+  * of the P and Q blocks.
+  */
+-static struct flex_array *scribble_alloc(int num, int cnt, gfp_t flags)
++static int scribble_alloc(struct raid5_percpu *percpu,
++			  int num, int cnt, gfp_t flags)
+ {
+-	struct flex_array *ret;
+-	size_t len;
++	size_t obj_size =
++		sizeof(struct page *) * (num+2) +
++		sizeof(addr_conv_t) * (num+2);
++	void *scribble;
+ 
+-	len = sizeof(struct page *) * (num+2) + sizeof(addr_conv_t) * (num+2);
+-	ret = flex_array_alloc(len, cnt, flags);
+-	if (!ret)
+-		return NULL;
+-	/* always prealloc all elements, so no locking is required */
+-	if (flex_array_prealloc(ret, 0, cnt, flags)) {
+-		flex_array_free(ret);
+-		return NULL;
+-	}
+-	return ret;
++	scribble = kvmalloc_array(cnt, obj_size, flags);
++	if (!scribble)
++		return -ENOMEM;
 +
- 	__u16 outcnt;
- 	__u16 incnt;
- 	/* Current stream being sent, if any */
-@@ -1465,17 +1466,17 @@ struct sctp_stream {
- };
- 
- static inline struct sctp_stream_out *sctp_stream_out(
--	const struct sctp_stream *stream,
-+	struct sctp_stream *stream,
- 	__u16 sid)
- {
--	return flex_array_get(stream->out, sid);
-+	return genradix_ptr(&stream->out, sid);
++	kvfree(percpu->scribble);
++
++	percpu->scribble = scribble;
++	percpu->scribble_obj_size = obj_size;
++	return 0;
  }
  
- static inline struct sctp_stream_in *sctp_stream_in(
--	const struct sctp_stream *stream,
-+	struct sctp_stream *stream,
- 	__u16 sid)
- {
--	return flex_array_get(stream->in, sid);
-+	return genradix_ptr(&stream->in, sid);
- }
+ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
+@@ -2270,23 +2265,18 @@ static int resize_chunks(struct r5conf *conf, int new_disks, int new_sectors)
+ 		return 0;
+ 	mddev_suspend(conf->mddev);
+ 	get_online_cpus();
++
+ 	for_each_present_cpu(cpu) {
+ 		struct raid5_percpu *percpu;
+-		struct flex_array *scribble;
  
- #define SCTP_SO(s, i) sctp_stream_out((s), (i))
-diff --git a/net/sctp/stream.c b/net/sctp/stream.c
-index ffb940d3b5..09b9c7dc59 100644
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -37,53 +37,6 @@
- #include <net/sctp/sm.h>
- #include <net/sctp/stream_sched.h>
- 
--static struct flex_array *fa_alloc(size_t elem_size, size_t elem_count,
--				   gfp_t gfp)
--{
--	struct flex_array *result;
--	int err;
+ 		percpu = per_cpu_ptr(conf->percpu, cpu);
+-		scribble = scribble_alloc(new_disks,
+-					  new_sectors / STRIPE_SECTORS,
+-					  GFP_NOIO);
 -
--	result = flex_array_alloc(elem_size, elem_count, gfp);
--	if (result) {
--		err = flex_array_prealloc(result, 0, elem_count, gfp);
--		if (err) {
--			flex_array_free(result);
--			result = NULL;
+-		if (scribble) {
+-			flex_array_free(percpu->scribble);
+-			percpu->scribble = scribble;
+-		} else {
+-			err = -ENOMEM;
++		err = scribble_alloc(percpu, new_disks,
++				     new_sectors / STRIPE_SECTORS,
++				     GFP_NOIO);
++		if (err)
+ 			break;
 -		}
--	}
--
--	return result;
--}
--
--static void fa_free(struct flex_array *fa)
--{
--	if (fa)
--		flex_array_free(fa);
--}
--
--static void fa_copy(struct flex_array *fa, struct flex_array *from,
--		    size_t index, size_t count)
--{
--	void *elem;
--
--	while (count--) {
--		elem = flex_array_get(from, index);
--		flex_array_put(fa, index, elem, 0);
--		index++;
--	}
--}
--
--static void fa_zero(struct flex_array *fa, size_t index, size_t count)
--{
--	void *elem;
--
--	while (count--) {
--		elem = flex_array_get(fa, index);
--		memset(elem, 0, fa->element_size);
--		index++;
--	}
--}
--
- /* Migrates chunks from stream queues to new stream queues if needed,
-  * but not across associations. Also, removes those chunks to streams
-  * higher than the new max.
-@@ -138,46 +91,32 @@ static void sctp_stream_outq_migrate(struct sctp_stream *stream,
- static int sctp_stream_alloc_out(struct sctp_stream *stream, __u16 outcnt,
- 				 gfp_t gfp)
- {
--	struct flex_array *out;
--	size_t elem_size = sizeof(struct sctp_stream_out);
--
--	out = fa_alloc(elem_size, outcnt, gfp);
--	if (!out)
--		return -ENOMEM;
--
--	if (stream->out) {
--		fa_copy(out, stream->out, 0, min(outcnt, stream->outcnt));
--		fa_free(stream->out);
--	}
-+	int ret;
- 
--	if (outcnt > stream->outcnt)
--		fa_zero(out, stream->outcnt, (outcnt - stream->outcnt));
-+	if (outcnt <= stream->outcnt)
-+		return 0;
- 
--	stream->out = out;
-+	ret = genradix_prealloc(&stream->out, outcnt, gfp);
-+	if (ret)
-+		return ret;
- 
-+	stream->outcnt = outcnt;
- 	return 0;
- }
- 
- static int sctp_stream_alloc_in(struct sctp_stream *stream, __u16 incnt,
- 				gfp_t gfp)
- {
--	struct flex_array *in;
--	size_t elem_size = sizeof(struct sctp_stream_in);
--
--	in = fa_alloc(elem_size, incnt, gfp);
--	if (!in)
--		return -ENOMEM;
--
--	if (stream->in) {
--		fa_copy(in, stream->in, 0, min(incnt, stream->incnt));
--		fa_free(stream->in);
--	}
-+	int ret;
- 
--	if (incnt > stream->incnt)
--		fa_zero(in, stream->incnt, (incnt - stream->incnt));
-+	if (incnt <= stream->incnt)
-+		return 0;
- 
--	stream->in = in;
-+	ret = genradix_prealloc(&stream->in, incnt, gfp);
-+	if (ret)
-+		return ret;
- 
-+	stream->incnt = incnt;
- 	return 0;
- }
- 
-@@ -204,7 +143,6 @@ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
- 	if (ret)
- 		goto out;
- 
--	stream->outcnt = outcnt;
- 	for (i = 0; i < stream->outcnt; i++)
- 		SCTP_SO(stream, i)->state = SCTP_STREAM_OPEN;
- 
-@@ -218,14 +156,11 @@ int sctp_stream_init(struct sctp_stream *stream, __u16 outcnt, __u16 incnt,
- 	ret = sctp_stream_alloc_in(stream, incnt, gfp);
- 	if (ret) {
- 		sched->free(stream);
--		fa_free(stream->out);
--		stream->out = NULL;
-+		genradix_free(&stream->out);
- 		stream->outcnt = 0;
- 		goto out;
  	}
- 
--	stream->incnt = incnt;
--
- out:
- 	return ret;
- }
-@@ -250,8 +185,8 @@ void sctp_stream_free(struct sctp_stream *stream)
- 	sched->free(stream);
- 	for (i = 0; i < stream->outcnt; i++)
- 		kfree(SCTP_SO(stream, i)->ext);
--	fa_free(stream->out);
--	fa_free(stream->in);
-+	genradix_free(&stream->out);
-+	genradix_free(&stream->in);
- }
- 
- void sctp_stream_clear(struct sctp_stream *stream)
-@@ -282,8 +217,8 @@ void sctp_stream_update(struct sctp_stream *stream, struct sctp_stream *new)
- 
- 	sched->sched_all(stream);
- 
--	new->out = NULL;
--	new->in  = NULL;
-+	new->out.tree.root = NULL;
-+	new->in.tree.root  = NULL;
- 	new->outcnt = 0;
- 	new->incnt  = 0;
- }
-@@ -535,9 +470,6 @@ int sctp_send_add_streams(struct sctp_association *asoc,
- 		goto out;
- 	}
- 
--	stream->incnt = incnt;
--	stream->outcnt = outcnt;
--
- 	asoc->strreset_outstanding = !!out + !!in;
- 
- out:
-diff --git a/net/sctp/stream_interleave.c b/net/sctp/stream_interleave.c
-index 0a78cdf864..afada93d9f 100644
---- a/net/sctp/stream_interleave.c
-+++ b/net/sctp/stream_interleave.c
-@@ -101,7 +101,7 @@ static void sctp_chunk_assign_mid(struct sctp_chunk *chunk)
- 
- static bool sctp_validate_data(struct sctp_chunk *chunk)
++
+ 	put_online_cpus();
+ 	mddev_resume(conf->mddev);
+ 	if (!err) {
+@@ -6738,25 +6728,26 @@ raid5_size(struct mddev *mddev, sector_t sectors, int raid_disks)
+ static void free_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
  {
--	const struct sctp_stream *stream;
-+	struct sctp_stream *stream;
- 	__u16 sid, ssn;
+ 	safe_put_page(percpu->spare_page);
+-	if (percpu->scribble)
+-		flex_array_free(percpu->scribble);
+ 	percpu->spare_page = NULL;
++	kvfree(percpu->scribble);
+ 	percpu->scribble = NULL;
+ }
  
- 	if (chunk->chunk_hdr->type != SCTP_CID_DATA)
+ static int alloc_scratch_buffer(struct r5conf *conf, struct raid5_percpu *percpu)
+ {
+-	if (conf->level == 6 && !percpu->spare_page)
++	if (conf->level == 6 && !percpu->spare_page) {
+ 		percpu->spare_page = alloc_page(GFP_KERNEL);
+-	if (!percpu->scribble)
+-		percpu->scribble = scribble_alloc(max(conf->raid_disks,
+-						      conf->previous_raid_disks),
+-						  max(conf->chunk_sectors,
+-						      conf->prev_chunk_sectors)
+-						   / STRIPE_SECTORS,
+-						  GFP_KERNEL);
+-
+-	if (!percpu->scribble || (conf->level == 6 && !percpu->spare_page)) {
++		if (!percpu->spare_page)
++			return -ENOMEM;
++	}
++
++	if (scribble_alloc(percpu,
++			   max(conf->raid_disks,
++			       conf->previous_raid_disks),
++			   max(conf->chunk_sectors,
++			       conf->prev_chunk_sectors)
++			   / STRIPE_SECTORS,
++			   GFP_KERNEL)) {
+ 		free_scratch_buffer(conf, percpu);
+ 		return -ENOMEM;
+ 	}
+diff --git a/drivers/md/raid5.h b/drivers/md/raid5.h
+index 8474c22412..cf991f1340 100644
+--- a/drivers/md/raid5.h
++++ b/drivers/md/raid5.h
+@@ -638,10 +638,11 @@ struct r5conf {
+ 	/* per cpu variables */
+ 	struct raid5_percpu {
+ 		struct page	*spare_page; /* Used when checking P/Q in raid6 */
+-		struct flex_array *scribble;   /* space for constructing buffer
+-					      * lists and performing address
+-					      * conversions
+-					      */
++		void		*scribble;  /* space for constructing buffer
++					     * lists and performing address
++					     * conversions
++					     */
++		int scribble_obj_size;
+ 	} __percpu *percpu;
+ 	int scribble_disks;
+ 	int scribble_sectors;
 -- 
 2.20.1
 
