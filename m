@@ -2,140 +2,129 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BAAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 02:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE59C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 02:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F32820883
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 02:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9745020896
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 02:43:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1JLes0T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731325AbeLQCkk (ORCPT
+        id S1731170AbeLQCn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 16 Dec 2018 21:40:40 -0500
-Received: from [38.106.11.25] ([38.106.11.25]:56168 "EHLO
-        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726260AbeLQCkj (ORCPT
+        Sun, 16 Dec 2018 21:43:29 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42587 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbeLQCn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Dec 2018 21:40:39 -0500
-X-Greylist: delayed 1190 seconds by postgrey-1.27 at vger.kernel.org; Sun, 16 Dec 2018 21:40:38 EST
-X-ASG-Debug-ID: 1545013239-107606139f07bd0001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net (localhost [10.128.0.14]) by barracuda02.hxt-semitech.com with ESMTP id E05lSFeLqCQCjHd9 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Mon, 17 Dec 2018 10:20:39 +0800 (CST)
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-Received: from y.localdomain (10.5.21.109) by HXTBJIDCEMVIW01.hxtcorp.net
- (10.128.0.14) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 17 Dec
- 2018 10:19:43 +0800
-From:   Shunyong Yang <shunyong.yang@hxt-semitech.com>
-To:     <rjw@rjwysocki.net>
-CC:     <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: [PATCH] ACPI / tables: table upgrade from built-in initrd
-Date:   Mon, 17 Dec 2018 10:19:44 +0800
-X-ASG-Orig-Subj: [PATCH] ACPI / tables: table upgrade from built-in initrd
-Message-ID: <1545013184-2487-1-git-send-email-shunyong.yang@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sun, 16 Dec 2018 21:43:28 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so5353390pga.9;
+        Sun, 16 Dec 2018 18:43:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=M8+ummLCtRqGGD8qCTL9INcTH4UiAYtPFKbsoKJo8KU=;
+        b=s1JLes0TitLirAJe510U8q5Fb3cIFdcrLMnqYcF82S19osHkxxD9rOgJnmP+kJMDHS
+         kYh2UU73qP4nP8JH3tLwKsPsB6O10y9u/JtE7fQ1amvuZlCOU0VC4olleRIXgnLBvefm
+         yTnVjq4Nu/vbcAezT1s5yt+xD717nybyh8WU59fUY7pk1DFddBneKYeYnAmKE44d0SM0
+         QauInP14/d267wcVmhOfW3Ei1t5ovWXNp6k6/pC/WbFIIdcbNTNeVrXUtdZMVU0yuAkQ
+         K4MDBZtCUrFwB7zFVj2scWuW/nZqjV0raqy1l9RKl2AEpajSEP63gatteC9qWpomEov7
+         BQEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=M8+ummLCtRqGGD8qCTL9INcTH4UiAYtPFKbsoKJo8KU=;
+        b=EhLb/Bm6/0im71LxvIrJbl/SIhOr1dA778mSEdtJOzeqolQcSY/c626xR0YRjOiAyP
+         ZeFzakDfBULQn1WCXg+vdkvbSEOmYnxmlLQlOh9+MVNzM4ccfg/07z9TSSbKeZWJrkl+
+         OLH0TtFF77Qg/5aY7gaZmwItQ+PXGVB3LhzzgSeN2C6UWygylbTYfijl4lYVJ+1WTiAx
+         gqCHhfKlrfZ6T9+7+F/xaMTlKp4jQfPJbxTAIVssPLZ9reNETiOyxHvkyRrNhaS6gX8N
+         uUjpmIAAk11tklTK4pj2afKFVyK0qClzzu42DLQ8rZMkxnulIYr/LviGO4QP8MIsYNOP
+         Lq4Q==
+X-Gm-Message-State: AA+aEWYsr+kHYr+sHJOwTRKaekZZqfU1YrTrVh8Z5uUic37+r7BbBsHP
+        4vKwwRxpE2r9l3Ir122M5t8zUYa0
+X-Google-Smtp-Source: AFSGD/Xo+u9J9RmVMGCm7CW8KKLtreC6u8eTGNaQVC9kBYRIbUHpCWYu78VPenqCrAWUiFokr5BGdQ==
+X-Received: by 2002:a62:55c4:: with SMTP id j187mr7164226pfb.129.1545014607625;
+        Sun, 16 Dec 2018 18:43:27 -0800 (PST)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id k191sm13088466pgd.9.2018.12.16.18.43.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 16 Dec 2018 18:43:27 -0800 (PST)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] KVM: X86: Fix NULL deref in vcpu_scan_ioapic
+Date:   Mon, 17 Dec 2018 10:43:23 +0800
+Message-Id: <1545014603-4109-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.109]
-X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
-X-Barracuda-Connect: localhost[10.128.0.14]
-X-Barracuda-Start-Time: 1545013239
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
-X-Barracuda-Scan-Msg-Size: 2473
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.8061 1.0000 2.2786
-X-Barracuda-Spam-Score: 2.28
-X-Barracuda-Spam-Status: No, SCORE=2.28 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63913
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some scenario, we need to build initrd with kernel in a single image.
-This can simplify system deployment process by downloading the whole system
-once, such as in IC verification.
+From: Wanpeng Li <wanpengli@tencent.com>
 
-This patch adds support to upgrade ACPI tables from built-in initrd.
+Reported by syzkaller:
 
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+    CPU: 1 PID: 5962 Comm: syz-executor118 Not tainted 4.20.0-rc6+ #374
+    Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+    RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
+    RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7449 [inline]
+    RIP: 0010:vcpu_enter_guest arch/x86/kvm/x86.c:7602 [inline]
+    RIP: 0010:vcpu_run arch/x86/kvm/x86.c:7874 [inline]
+    RIP: 0010:kvm_arch_vcpu_ioctl_run+0x5296/0x7320 arch/x86/kvm/x86.c:8074
+    Call Trace:
+	 kvm_vcpu_ioctl+0x5c8/0x1150 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2596
+	 vfs_ioctl fs/ioctl.c:46 [inline]
+	 file_ioctl fs/ioctl.c:509 [inline]
+	 do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+	 ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+	 __do_sys_ioctl fs/ioctl.c:720 [inline]
+	 __se_sys_ioctl fs/ioctl.c:718 [inline]
+	 __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+	 do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+	 entry_SYSCALL_64_after_hwframe+0x49/0xbe 
+
+The reason is that the testcase writes hyperv synic HV_X64_MSR_SINT14 msr
+and triggers scan ioapic logic to load synic vectors into EOI exit bitmap.
+However, irqchip is not initialized by this simple testcase, ioapic/apic
+objects should not be accessed.
+
+This patch fixes it by also considering whether or not apic is present.
+
+Reported-by: syzbot+39810e6c400efadfef71@syzkaller.appspotmail.com
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- drivers/acpi/Kconfig   |  9 +++++++++
- drivers/acpi/tables.c  | 12 ++++++++++--
- include/linux/initrd.h |  3 +++
- 3 files changed, 22 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 7cea769c37df..30976496fe77 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -357,6 +357,15 @@ config ACPI_TABLE_UPGRADE
- 	  initrd, therefore it's safe to say Y.
- 	  See Documentation/acpi/initrd_table_override.txt for details
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 4f786fc..c7c1197 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7510,7 +7510,7 @@ void kvm_make_scan_ioapic_request(struct kvm *kvm)
  
-+config ACPI_TABLE_UPGRADE_VIA_BUILTIN_INITRD
-+	bool "Upgrade ACPI tables from built-in initrd"
-+	depends on ACPI_TABLE_UPGRADE
-+	depends on INITRAMFS_SOURCE!="" && INITRAMFS_COMPRESSION=""
-+	def_bool n
-+	help
-+	  This option provides functionality to upgrade arbitrary ACPI tables
-+	  from built-in uncompressed initrd.
-+
- config ACPI_DEBUG
- 	bool "Debug Statements"
- 	help
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index 61203eebf3a1..88e3a34443da 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -473,14 +473,22 @@ static u8 __init acpi_table_checksum(u8 *buffer, u32 length)
- 
- void __init acpi_table_upgrade(void)
+ static void vcpu_scan_ioapic(struct kvm_vcpu *vcpu)
  {
--	void *data = (void *)initrd_start;
--	size_t size = initrd_end - initrd_start;
-+	void *data;
-+	size_t size;
- 	int sig, no, table_nr = 0, total_offset = 0;
- 	long offset = 0;
- 	struct acpi_table_header *table;
- 	char cpio_path[32] = "kernel/firmware/acpi/";
- 	struct cpio_data file;
- 
-+	if (IS_ENABLED(CONFIG_ACPI_TABLE_UPGRADE_VIA_BUILTIN_INITRD)) {
-+		data = __initramfs_start;
-+		size = __initramfs_size;
-+	} else {
-+		data = (void *)initrd_start;
-+		size = initrd_end - initrd_start;
-+	}
-+
- 	if (data == NULL || size == 0)
+-	if (!kvm_apic_hw_enabled(vcpu->arch.apic))
++	if (!kvm_apic_present(vcpu))
  		return;
  
-diff --git a/include/linux/initrd.h b/include/linux/initrd.h
-index 84b423044088..02d94aae54c7 100644
---- a/include/linux/initrd.h
-+++ b/include/linux/initrd.h
-@@ -22,3 +22,6 @@
- extern void free_initrd_mem(unsigned long, unsigned long);
- 
- extern unsigned int real_root_dev;
-+
-+extern char __initramfs_start[];
-+extern unsigned long __initramfs_size;
+ 	bitmap_zero(vcpu->arch.ioapic_handled_vectors, 256);
 -- 
-1.8.3.1
+2.7.4
 
