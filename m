@@ -2,279 +2,96 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB225C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29128C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA0A214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ig4rz2eh"
+	by mail.kernel.org (Postfix) with ESMTP id ED62920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389089AbeLQSqV (ORCPT
+        id S2389170AbeLQSq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:46:21 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11364 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeLQSqU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:46:20 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c17eef50000>; Mon, 17 Dec 2018 10:46:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 17 Dec 2018 10:46:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 17 Dec 2018 10:46:18 -0800
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 17 Dec
- 2018 18:46:17 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Mon, 17 Dec 2018 18:46:17 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c17eef90000>; Mon, 17 Dec 2018 10:46:17 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V3] mmc: tegra: HW Command Queue Support for Tegra SDMMC
-Date:   Mon, 17 Dec 2018 10:46:13 -0800
-Message-ID: <1545072373-6562-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Mon, 17 Dec 2018 13:46:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:20171 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726628AbeLQSqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:46:25 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:46:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="99422877"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga007.jf.intel.com with ESMTP; 17 Dec 2018 10:46:25 -0800
+Date:   Mon, 17 Dec 2018 10:46:25 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217184625.GE12491@linux.intel.com>
+References: <20181212180036.GC6333@linux.intel.com>
+ <20181214235917.GA14049@wind.enjellic.com>
+ <20181215000627.GA5799@linux.intel.com>
+ <20181217132859.GA31936@linux.intel.com>
+ <20181217133928.GA32706@linux.intel.com>
+ <20181217140811.GA4601@linux.intel.com>
+ <20181217173106.GB12491@linux.intel.com>
+ <20181217174935.GA12617@linux.intel.com>
+ <20181217180957.GC12491@linux.intel.com>
+ <20181217182319.GA13288@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545072373; bh=pAbh9kF/hKIQUKcFf9x0My5iflBXsdukeXVbB8fPQTc=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Ig4rz2ehYlGc8YdTwkfjTE+FKTKN6x7B0XMKPY9zIumEetSHNihtZ/kq/V+x9eWFL
-         +VHOgrUPTxepH48RhcOhuhLm95YK8ykicY1qwq0lPi7LRI/Fb3hpjFF9O/SXCYNbW5
-         eo9iyfTo7MSbke3kQF5+kP9l1aanQlorPQ3hV6Lr7SLa3eSriuj5ETEEtLod8Y/8xQ
-         r17uNBppeRP0m5Dz7YbZILxsLwY5URcbdEAESgRLHtT1wBWDW2f1q4VQF41rnKRTiV
-         D7zw85ITzkJi76X4w4BgTbPeytyupoaVJKGSO0rlguE+U6TwkcoLyY+k7u/Y6RWqMW
-         M0gHylbO3fF/Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217182319.GA13288@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds HW Command Queue for supported Tegra SDMMC
-controllers.
+On Mon, Dec 17, 2018 at 08:23:19PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 17, 2018 at 10:09:57AM -0800, Sean Christopherson wrote:
+> > No, EREMOVE should never fail if the enclave is being released, i.e. all
+> > references to the enclave are gone.  And failure during sgx_encl_release()
+> > means we leaked an EPC page, which warrants a WARN.
+> 
+> Right that what I was suspecting as swapper should hold a ref to the
+> enclave while it is working on it. It is a programming error when this
+> happens.
+> 
+> Maybe change the boolean parameter to flags parameter have a flag to
+> use sgx_free_page()?
 
-Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
-use of 64_BIT DMA to disable 64-bit addressing mode access to the
-system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
-for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
+I tried that approach when I first split it to __sgx_free_page() and
+sgx_free_page(), but IMO the code is more difficult to read and harder
+to maintain since sgx_free_page() should be used except under special
+circumstances, e.g. race with reclaim or the freeing is "untrusted",
+i.e. requested by userspace via sgx_ioc_enclave_remove_pages().
 
-CQE need to use ADMA3 as it need to fetch task descriptor along
-with transfer descriptor, so this patch forces DMA Select to be
-ADMA3 for CQE.
-
-Note that this patch depends on below patches
-[0] DMA Config prior to CQE
-    https://lkml.org/lkml/2018/12/14/1062
-[1] SDMMC address range
-    https://lkml.org/lkml/2018/12/14/1323
-[2] Fix sdhci_do_enable_v4_mode
-    https://lkml.org/lkml/2018/12/14/72
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/Kconfig       |  1 +
- drivers/mmc/host/sdhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci.c       |  3 +-
- 3 files changed, 91 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 1b58739d9744..5aa2de2c7609 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
- 	depends on ARCH_TEGRA
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_CQHCI
- 	help
- 	  This selects the Tegra SD/MMC controller. If you have a Tegra
- 	  platform with SD or MMC devices, say Y or M here.
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 7b95d088fdef..ba8bd72ec59a 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -33,6 +33,7 @@
- #include <linux/ktime.h>
- 
- #include "sdhci-pltfm.h"
-+#include "cqhci.h"
- 
- /* Tegra SDHOST controller vendor register definitions */
- #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
-@@ -89,6 +90,10 @@
- #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
- #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
- 
-+/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-+#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-+
-+
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
- 	u32 nvquirks;
-@@ -128,6 +133,7 @@ struct sdhci_tegra {
- 	u32 default_tap;
- 	u32 default_trim;
- 	u32 dqs_trim;
-+	bool enable_hwcq;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -836,6 +842,30 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
- 		tegra_host->pad_calib_required = true;
- }
- 
-+static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-+{
-+	sdhci_dumpregs(mmc_priv(mmc));
-+}
-+
-+static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
-+
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
-+
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+
-+	return 0;
-+}
-+
-+static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
-+	.enable	= sdhci_cqe_enable,
-+	.disable = sdhci_cqe_disable,
-+	.dumpregs = sdhci_tegra_dumpregs,
-+};
-+
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
-@@ -989,6 +1019,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
- 	.voltage_switch = tegra_sdhci_voltage_switch,
- 	.get_max_clock = tegra_sdhci_get_max_clock,
-+	.irq = sdhci_tegra_cqhci_irq,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-@@ -1030,6 +1061,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
- 
-+static int sdhci_tegra_add_host(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct cqhci_host *cq_host;
-+	bool dma64;
-+	int ret;
-+
-+	if (!tegra_host->enable_hwcq)
-+		return sdhci_add_host(host);
-+
-+	host->v4_mode = true;
-+
-+	ret = sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-+
-+	cq_host = devm_kzalloc(host->mmc->parent,
-+				sizeof(*cq_host), GFP_KERNEL);
-+	if (!cq_host) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
-+	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-+	cq_host->ops = &sdhci_tegra_cqhci_ops;
-+
-+	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-+	if (dma64)
-+		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-+
-+	ret = cqhci_init(cq_host, host->mmc, dma64);
-+	if (ret)
-+		goto cleanup;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto cleanup;
-+
-+	return 0;
-+
-+cleanup:
-+	sdhci_cleanup_host(host);
-+	return ret;
-+
-+}
-+
- static int sdhci_tegra_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
-@@ -1039,6 +1119,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	struct sdhci_tegra *tegra_host;
- 	struct clk *clk;
- 	int rc;
-+	struct resource *iomem;
- 
- 	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
- 	if (!match)
-@@ -1056,6 +1137,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	tegra_host->pad_control_available = false;
- 	tegra_host->soc_data = soc_data;
- 
-+	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
-+		tegra_host->enable_hwcq = true;
-+	else
-+		tegra_host->enable_hwcq = false;
-+
- 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
- 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
- 		if (rc == 0)
-@@ -1117,7 +1204,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 
- 	usleep_range(2000, 4000);
- 
--	rc = sdhci_add_host(host);
-+	rc = sdhci_tegra_add_host(host);
- 	if (rc)
- 		goto err_add_host;
- 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 99bdae53fa2e..87375fbfca30 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3308,7 +3308,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
- 
- 	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
- 	ctrl &= ~SDHCI_CTRL_DMA_MASK;
--	if (host->flags & SDHCI_USE_64_BIT_DMA)
-+	if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
-+			(host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
- 		ctrl |= SDHCI_CTRL_ADMA64;
- 	else
- 		ctrl |= SDHCI_CTRL_ADMA32;
--- 
-2.7.4
-
+> 
+> > That makes sense.
+> 
+> What do you think of Dave's proposal?
+> 
+> /Jarkko
