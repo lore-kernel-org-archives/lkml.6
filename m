@@ -3,102 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C969C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A87DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540CB2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75B812133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 15:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387879AbeLQPtA convert rfc822-to-8bit (ORCPT
+        id S2387893AbeLQPtK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 10:49:00 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:41596 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387609AbeLQPs7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 10:48:59 -0500
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 8248867A867;
-        Mon, 17 Dec 2018 16:48:56 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 17 Dec
- 2018 16:48:56 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 17 Dec 2018 16:48:56 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>
-CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Schrempf Frieder" <frieder.schrempf@kontron.de>
-Subject: [PATCH 0/3] mtd: rawnand: Support bad block markers in first, second
- or last page
-Thread-Topic: [PATCH 0/3] mtd: rawnand: Support bad block markers in first,
- second or last page
-Thread-Index: AQHUliAEJkxnuayTuEK0ie4z0SeQIw==
-Date:   Mon, 17 Dec 2018 15:48:56 +0000
-Message-ID: <1545061693-29216-1-git-send-email-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 17 Dec 2018 10:49:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59712 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387609AbeLQPtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 10:49:10 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D151D20733; Mon, 17 Dec 2018 16:49:07 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6E48A20726;
+        Mon, 17 Dec 2018 16:48:57 +0100 (CET)
+Date:   Mon, 17 Dec 2018 16:48:57 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Evan Wang <xswang@marvell.com>
+Subject: Re: [PATCH v4 3/7] phy: add A3700 COMPHY support
+Message-ID: <20181217164857.68df3f84@xps13>
+In-Reply-To: <20181213083908.14180-4-miquel.raynal@bootlin.com>
+References: <20181213083908.14180-1-miquel.raynal@bootlin.com>
+        <20181213083908.14180-4-miquel.raynal@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 8248867A867.AB83D
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        miquel.raynal@bootlin.com, richard@nod.at
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+Hello,
 
-Currently supported bad block marker positions within the block are:
-* in first page only
-* in last page only
-* in first or second page
+[...]
 
-Some ESMT NANDs are known to have been shipped by the manufacturer
-with bad block markers in the first or last page, instead of the
-first or second page.
+> +
+> +static int mvebu_a3700_comphy_smc(unsigned long function, unsigned long lane,
+> +				  unsigned long mode)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_smc(function, lane, mode, 0, 0, 0, 0, 0, &res);
 
-Also the datasheets for Cypress/Spansion/AMD NANDs claim that the
-first, second *and* last page needs to be checked.
+I received the following bug report because I added a dependency on
+COMPILE_TEST in Kconfig:
 
-Therefore we make it possible to set NAND_BBT_SCAN2NDPAGE and
-NAND_BBT_SCANLASTPAGE at the same time to scan/set all three pages.
+        config: i386-allmodconfig (attached as .config) compiler:
+        gcc-7 (Debian 7.3.0-1) 7.3.0 reproduce:
+                # save the attached .config to linux build tree
+                make ARCH=i386 
 
-This series also contains patches for AMD/Spansion/Cypress and ESMT
-chips to enable both flags at the same time.
+        All errors (new ones prefixed by >>):
 
-Frieder Schrempf (3):
-  mtd: rawnand: Support bad block markers in first, second or last page
-  mtd: rawnand: ESMT: Also use the last page for bad block markers
-  mtd: rawnand: AMD: Also use the last page for bad block markers
+        >> ERROR: "__arm_smccc_smc" [drivers/phy/marvell/phy-mvebu-a3700-comphy.ko] undefined!  
 
- drivers/mtd/nand/raw/internals.h |  1 +
- drivers/mtd/nand/raw/nand_amd.c  |  8 +++-
- drivers/mtd/nand/raw/nand_base.c | 72 ++++++++++++++++++++++++++---------
- drivers/mtd/nand/raw/nand_bbt.c  | 30 +++++++--------
- drivers/mtd/nand/raw/nand_esmt.c |  9 ++++-
- 5 files changed, 83 insertions(+), 37 deletions(-)
+Unless someone complains, I will drop the dependency on COMPILE_TEST in
+Kconfig.
 
--- 
-2.7.4
+> +
+> +	return res.a0;
+> +}
+
+
+Thanks,
+Miquèl
