@@ -2,110 +2,90 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492F9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55358C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D2E206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CFB7206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:36:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJea2A6L"
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="WIJsPTM9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732880AbeLQMbd (ORCPT
+        id S1732592AbeLQMgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 07:31:33 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34008 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732543AbeLQMbc (ORCPT
+        Mon, 17 Dec 2018 07:36:52 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41811 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbeLQMgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 07:31:32 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so4855170pga.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 04:31:32 -0800 (PST)
+        Mon, 17 Dec 2018 07:36:52 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u6so6071068plm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 04:36:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=m88e+fJTH87Dgp9XoTMMrMqHMwEQRIMQZVABal1lspU=;
-        b=EJea2A6LUKNvDt3CNoSycglVFIcdN32XOxpk4ODeSctcD5VrwvptkUxLai7p5JYAmy
-         1c83CXEIYXu3bJ2zEfuSTG3SnWGq5r0ASgy4FL4qfHATMZuWQzcgdahrWUPEZTzHpv8+
-         0kkcUcJ8/pIB1rq8X01GV+aGDGNCXRAmQyzww=
+        bh=yvZd4QS47o0MtYrlsPolllIUJzYSe4t5Zo47uispF5s=;
+        b=WIJsPTM9LyQQOrYzgX4jE7MiJb5ygXrs10N6ZF4J8Y1Z4Sjw71eQusgzmu2IIW4TRM
+         VJhFrEJe7H9aQ3DhiAWRqDbRSnyg7fNdFISqd8CuSGrlq83Zd2LeNdeNcleg84a5oLpE
+         RBFikn0QHlejQasPCGD/sDpDMNaT696l/dgN1kes+JqhUm+mlm4b2EHlahGAevYuO2Ud
+         holm2iqZUz+s0thIijnaX/EzYpObalshOimFscXEg6WFDMkTHW2ELsbUC2pLApyTSLn/
+         PZ5suBh8QlB5VYn+J5pewlFg4ZzrXs9uysPNhcuNlbB5bBQXRsg2yY/W5UXF75fndkyN
+         7q+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m88e+fJTH87Dgp9XoTMMrMqHMwEQRIMQZVABal1lspU=;
-        b=oG/eznmRW1ExP7T2QOyT5woHHdspLI5X2R2yz7+dn+Wb6ZfPCUnZdO9dBjcz396foa
-         ajclKBetFTp+JWwKojRofqXJp+fi07Qya1PPGjn3Kff3DRmjH/EpV/ixHcSEh7UYatMh
-         RIzSzoLTMPACw4U+Z9HvfMFQhTQU/BOsXa0MM/uNMaXrre+WlHl2k3hNIUkototeaDkq
-         RVRhvVHsMD85HpcqUs1jOD5C9n0OCU6jZivH6xu42mD89RjtMuurB4YU7yqMJARZxgYi
-         ABMQccxFH71aHDytbxChXCVf1Kk+QfF5hvJKvcf8pLS07lcrBO38CUQUJywB49AHpwoJ
-         HKYA==
-X-Gm-Message-State: AA+aEWaMwN3M+PZ9EINvTmvEl9JviEj/LRtDjO8PhgvclsexWLrRIXED
-        /yJPwlRQ9VIjDggNSVZWNUat
-X-Google-Smtp-Source: AFSGD/XSbZzmBkc39kr1fUxLbwYlpMftXTA+k931Y4WN/VhF6on1mZkLrPth3OH5NxEwJPK2d3L4xA==
-X-Received: by 2002:a62:a510:: with SMTP id v16mr12622918pfm.18.1545049891626;
-        Mon, 17 Dec 2018 04:31:31 -0800 (PST)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id r2sm17089873pgo.18.2018.12.17.04.31.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 04:31:31 -0800 (PST)
-Date:   Mon, 17 Dec 2018 18:01:24 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] irqchip: irq-rda-intc: Fix return value check in
- rda8810_intc_init()
-Message-ID: <20181217123123.GA26530@mani>
-References: <1545047898-153890-1-git-send-email-weiyongjun1@huawei.com>
+        bh=yvZd4QS47o0MtYrlsPolllIUJzYSe4t5Zo47uispF5s=;
+        b=hskUBD6lCIpZivHP7RgWA7IKk+PrknJoHbjuqWdkHVZ/HuXrpl37wWpDGJFbEtXqrJ
+         1E9TZra4yeXaM7aopE7dvE/B1UqgaNGiScSTcYd6HlY9GeMHGgLu/VH7ezatdHm+kFHd
+         WlS4+InhmDjLjAgukWzj2GV6q3qs//CzTzvb+CBxnkx1AotqHTkG3fQVMOKBdi8b5VdA
+         Yi+CW4Xq70EnQOjpTDMUegSC2JTNdcj2c4wlslNTuSlIMBOF6XJ1qOQhFSLx9EQ1fTz3
+         isJHHEOa5dFOm5tKT+wnOEBRgmLP+wapmc23Xo12lL4u1xhEZCAM+Gw1EYKyUEwlXL0T
+         ErmQ==
+X-Gm-Message-State: AA+aEWZRUAY0hiV3tIaX43euxnwOuaqzdWwxQ53gc3KHSDf8jQ74VJom
+        1wRXNg86G6MyHOdc5OuzgTxEqg==
+X-Google-Smtp-Source: AFSGD/VtTibbTVrLwvZa7eSMtOPO/E52osIZihmJdc38Mjqtn23XADP7YpCrAKTeFw9++OLuqvWWwg==
+X-Received: by 2002:a17:902:8541:: with SMTP id d1mr12849486plo.205.1545050211762;
+        Mon, 17 Dec 2018 04:36:51 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
+        by smtp.gmail.com with ESMTPSA id v191sm32066029pgb.77.2018.12.17.04.36.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 04:36:50 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id F41C4300316; Mon, 17 Dec 2018 15:36:45 +0300 (+03)
+Date:   Mon, 17 Dec 2018 15:36:45 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mike.kravetz@oracle.com, jglisse@redhat.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Remove __hugepage_set_anon_rmap()
+Message-ID: <20181217123645.vblqlndn7qh5co5l@kshutemo-mobl1>
+References: <154504875359.30235.6237926369392564851.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545047898-153890-1-git-send-email-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <154504875359.30235.6237926369392564851.stgit@localhost.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:58:18AM +0000, Wei Yongjun wrote:
-> In case of error, the function of_io_request_and_map() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
+On Mon, Dec 17, 2018 at 03:13:51PM +0300, Kirill Tkhai wrote:
+> This function is identical to __page_set_anon_rmap()
+> since the time, when it was introduced (8 years ago).
+> The patch removes the function, and makes its users
+> to use __page_set_anon_rmap() instead.
 > 
-> Fixes: d852e62ad689 ("irqchip: Add RDA8810PL interrupt driver")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Thanks,
-Mani
-
-> ---
->  drivers/irqchip/irq-rda-intc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-rda-intc.c b/drivers/irqchip/irq-rda-intc.c
-> index 1176291..9601683 100644
-> --- a/drivers/irqchip/irq-rda-intc.c
-> +++ b/drivers/irqchip/irq-rda-intc.c
-> @@ -85,8 +85,8 @@ static int __init rda8810_intc_init(struct device_node *node,
->  				    struct device_node *parent)
->  {
->  	rda_intc_base = of_io_request_and_map(node, 0, "rda-intc");
-> -	if (!rda_intc_base)
-> -		return -ENXIO;
-> +	if (IS_ERR(rda_intc_base))
-> +		return PTR_ERR(rda_intc_base);
->  
->  	/* Mask all interrupt sources */
->  	writel_relaxed(RDA_IRQ_MASK_ALL, rda_intc_base + RDA_INTC_MASK_CLR);
-> 
-> 
-> 
+-- 
+ Kirill A. Shutemov
