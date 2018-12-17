@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4599C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2334BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBCF2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 000532146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:22:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388766AbeLQSWL (ORCPT
+        id S2388768AbeLQSWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:22:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34717 "EHLO
+        Mon, 17 Dec 2018 13:22:36 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35025 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLQSWL (ORCPT
+        with ESMTP id S1726887AbeLQSWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:22:11 -0500
+        Mon, 17 Dec 2018 13:22:36 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHILljW2561307
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHILDnt2561256
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 10:21:47 -0800
+        Mon, 17 Dec 2018 10:21:13 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHILlM62561304;
-        Mon, 17 Dec 2018 10:21:47 -0800
-Date:   Mon, 17 Dec 2018 10:21:47 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHILCrQ2561253;
+        Mon, 17 Dec 2018 10:21:12 -0800
+Date:   Mon, 17 Dec 2018 10:21:12 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-16ebf031e8ab73779a382c9f2b097891da6af923@git.kernel.org>
-Cc:     tglx@linutronix.de, luto@kernel.org, torvalds@linux-foundation.org,
-        bp@alien8.de, dave.hansen@linux.intel.com, mingo@kernel.org,
-        riel@surriel.com, peterz@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Reply-To: torvalds@linux-foundation.org, bp@alien8.de, mingo@kernel.org,
-          dave.hansen@linux.intel.com, riel@surriel.com,
-          peterz@infradead.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de, luto@kernel.org
-In-Reply-To: <20181203171043.229119497@infradead.org>
-References: <20181203171043.229119497@infradead.org>
+Message-ID: <tip-ecc729f1f47142ad31741549f400b611435c1af7@git.kernel.org>
+Cc:     peterz@infradead.org, riel@surriel.com,
+        torvalds@linux-foundation.org, bp@alien8.de, hpa@zytor.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        dave.hansen@linux.intel.com, luto@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          dave.hansen@linux.intel.com, luto@kernel.org, riel@surriel.com,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          bp@alien8.de, hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <20181203171043.162771364@infradead.org>
+References: <20181203171043.162771364@infradead.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Add __cpa_addr() helper
-Git-Commit-ID: 16ebf031e8ab73779a382c9f2b097891da6af923
+Subject: [tip:x86/mm] x86/mm/cpa: Add ARRAY and PAGES_ARRAY selftests
+Git-Commit-ID: ecc729f1f47142ad31741549f400b611435c1af7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,17 +58,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  16ebf031e8ab73779a382c9f2b097891da6af923
-Gitweb:     https://git.kernel.org/tip/16ebf031e8ab73779a382c9f2b097891da6af923
+Commit-ID:  ecc729f1f47142ad31741549f400b611435c1af7
+Gitweb:     https://git.kernel.org/tip/ecc729f1f47142ad31741549f400b611435c1af7
 Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 3 Dec 2018 18:03:46 +0100
+AuthorDate: Mon, 3 Dec 2018 18:03:45 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 18:54:23 +0100
+CommitDate: Mon, 17 Dec 2018 18:54:22 +0100
 
-x86/mm/cpa: Add __cpa_addr() helper
+x86/mm/cpa: Add ARRAY and PAGES_ARRAY selftests
 
-The code to compute the virtual address of a cpa_data is duplicated;
-introduce a helper before more copies happen.
+The current pageattr-test code only uses the regular range interface,
+add code that also tests the array and pages interface.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -81,72 +81,75 @@ Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tom.StDenis@amd.com
 Cc: dave.hansen@intel.com
-Link: http://lkml.kernel.org/r/20181203171043.229119497@infradead.org
+Link: http://lkml.kernel.org/r/20181203171043.162771364@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pageattr.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ arch/x86/mm/pageattr-test.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index a1bcde35db4c..6e6900ebea30 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -228,6 +228,23 @@ static bool __cpa_pfn_in_highmap(unsigned long pfn)
+diff --git a/arch/x86/mm/pageattr-test.c b/arch/x86/mm/pageattr-test.c
+index 08f8f76a4852..b6b6468530f1 100644
+--- a/arch/x86/mm/pageattr-test.c
++++ b/arch/x86/mm/pageattr-test.c
+@@ -23,7 +23,8 @@
+ static __read_mostly int print = 1;
  
- #endif
+ enum {
+-	NTEST			= 400,
++	NTEST			= 3 * 100,
++	NPAGES			= 100,
+ #ifdef CONFIG_X86_64
+ 	LPS			= (1 << PMD_SHIFT),
+ #elif defined(CONFIG_X86_PAE)
+@@ -110,6 +111,9 @@ static int print_split(struct split_state *s)
+ static unsigned long addr[NTEST];
+ static unsigned int len[NTEST];
  
-+static unsigned long __cpa_addr(struct cpa_data *cpa, int idx)
-+{
-+	if (cpa->flags & CPA_PAGES_ARRAY) {
-+		struct page *page = cpa->pages[idx];
++static struct page *pages[NPAGES];
++static unsigned long addrs[NPAGES];
 +
-+		if (unlikely(PageHighMem(page)))
-+			return 0;
-+
-+		return (unsigned long)page_address(page);
-+	}
-+
-+	if (cpa->flags & CPA_ARRAY)
-+		return cpa->vaddr[idx];
-+
-+	return *cpa->vaddr;
-+}
-+
- /*
-  * Flushing functions
-  */
-@@ -1476,15 +1493,7 @@ static int __change_page_attr(struct cpa_data *cpa, int primary)
- 	unsigned int level;
- 	pte_t *kpte, old_pte;
+ /* Change the global bit on random pages in the direct mapping */
+ static int pageattr_test(void)
+ {
+@@ -137,7 +141,7 @@ static int pageattr_test(void)
+ 		unsigned long pfn = prandom_u32() % max_pfn_mapped;
  
--	if (cpa->flags & CPA_PAGES_ARRAY) {
--		struct page *page = cpa->pages[cpa->curpage];
--		if (unlikely(PageHighMem(page)))
--			return 0;
--		address = (unsigned long)page_address(page);
--	} else if (cpa->flags & CPA_ARRAY)
--		address = cpa->vaddr[cpa->curpage];
--	else
--		address = *cpa->vaddr;
-+	address = __cpa_addr(cpa, cpa->curpage);
- repeat:
- 	kpte = _lookup_address_cpa(cpa, address, &level);
- 	if (!kpte)
-@@ -1565,16 +1574,7 @@ static int cpa_process_alias(struct cpa_data *cpa)
- 	 * No need to redo, when the primary call touched the direct
- 	 * mapping already:
- 	 */
--	if (cpa->flags & CPA_PAGES_ARRAY) {
--		struct page *page = cpa->pages[cpa->curpage];
--		if (unlikely(PageHighMem(page)))
--			return 0;
--		vaddr = (unsigned long)page_address(page);
--	} else if (cpa->flags & CPA_ARRAY)
--		vaddr = cpa->vaddr[cpa->curpage];
--	else
--		vaddr = *cpa->vaddr;
--
-+	vaddr = __cpa_addr(cpa, cpa->curpage);
- 	if (!(within(vaddr, PAGE_OFFSET,
- 		    PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT)))) {
+ 		addr[i] = (unsigned long)__va(pfn << PAGE_SHIFT);
+-		len[i] = prandom_u32() % 100;
++		len[i] = prandom_u32() % NPAGES;
+ 		len[i] = min_t(unsigned long, len[i], max_pfn_mapped - pfn - 1);
  
+ 		if (len[i] == 0)
+@@ -167,14 +171,30 @@ static int pageattr_test(void)
+ 				break;
+ 			}
+ 			__set_bit(pfn + k, bm);
++			addrs[k] = addr[i] + k*PAGE_SIZE;
++			pages[k] = pfn_to_page(pfn + k);
+ 		}
+ 		if (!addr[i] || !pte || !k) {
+ 			addr[i] = 0;
+ 			continue;
+ 		}
+ 
+-		test_addr = addr[i];
+-		err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
++		switch (i % 3) {
++		case 0:
++			test_addr = addr[i];
++			err = change_page_attr_set(&test_addr, len[i], PAGE_CPA_TEST, 0);
++			break;
++
++		case 1:
++			err = change_page_attr_set(addrs, len[1], PAGE_CPA_TEST, 1);
++			break;
++
++		case 2:
++			err = cpa_set_pages_array(pages, len[i], PAGE_CPA_TEST);
++			break;
++		}
++
++
+ 		if (err < 0) {
+ 			printk(KERN_ERR "CPA %d failed %d\n", i, err);
+ 			failed++;
