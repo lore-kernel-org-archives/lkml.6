@@ -2,127 +2,148 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A80DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8577C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9BFC20675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8503C20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545068516;
+	bh=9bgdd06jclrn5HMIoq9X1Omn+9qG4+HLZ/rpcyny2LY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AaHWlMITzSRPCPpozqnylkCKyiOYks6YkxtVLSCj5Jtl6GLbZdhTalxa8LwfZrULk
+	 WxjfwRMjX10usXJcOHeEGwTWQAbRTx1t6dbULVs6gogOFPbWfJTHsK7qf/0oAiewTc
+	 URgUy4lsNwtc6Dz4mAPm09Qog2SVKa4onBde3f9M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388440AbeLQRjF (ORCPT
+        id S1728158AbeLQRlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:39:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46710 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727401AbeLQRjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:39:05 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F371C811DC;
-        Mon, 17 Dec 2018 17:39:04 +0000 (UTC)
-Received: from treble (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C4A3B1019630;
-        Mon, 17 Dec 2018 17:39:02 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 11:39:00 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
-Message-ID: <20181217173900.ygifx7khwmzn2gv2@treble>
-References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
+        Mon, 17 Dec 2018 12:41:55 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33041 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLQRlz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 12:41:55 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so5274120wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uUtlUa7KEK5mVLEjR7vxpI30DgHQ+D9dG4DxVa1XAQ0=;
+        b=o5tox0Z2Lme4wNm3ewC+uTeXaXu/Jt4NAfEirshYbG5YbLnD3kfdc6eyxLgI/8tEOq
+         cHgoXfHA+i1TUWr2W/tJJDI9+Qs98oJ3M5+Qk5w1G5QSCUZYSDiH76GCCf/lkJqk7oLJ
+         GM5OmD5ORxEYJypaH1kSRk2JTBVmQqnPc7GjX7ReYdiqbvYwAzpcbJqqXouCRnPUbpGi
+         vZnOxSkOr0fz7NZXAH1uA/34zr5vxuaAAHGEd7ISjbZ4FKNQWwLAvUCHfhp4ABskNJm3
+         okrBydtOTtO7hbLFdYfR2BVvbgl8aeZRkoxpYeMuzuHrFZhClsLMKMsrqeHWB8J/NItx
+         pplg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uUtlUa7KEK5mVLEjR7vxpI30DgHQ+D9dG4DxVa1XAQ0=;
+        b=PokD/XaVjCdYlOv5FGtOTKuPt6tENLtGSfDvWDPonFxg9qyUOUNXhouS+dQKQDcXX5
+         TmheX6Bu0621dZugCZ90/Yv8wFjLsUDL+xCvPETQx4HgPO6qIc3ATm+qiK9wDMdwutvR
+         Wp9g22qJLmpyQAfd3cGn8IL1T3xieTvhrJTanFHnwuHv0wYt1kyS13Y1koMxdNfgKN9j
+         KiMYtwzoGx4OsF3K9IL4fctSArB6BOz7oZp6wdSHxzBpruS5my1Cso7Q4kESJFuo570V
+         nFPZ8QIdIzyF1LDMVfGlMw1jErOhy1eqa0qY3wmuUDkgwFMgzHY6XtWo2Hqgrds4m0rr
+         7ufg==
+X-Gm-Message-State: AA+aEWYyt7sXFQ5jCY0ifU1hpCfibP/B0VaUSW0iEdB8MctnhVZ6t1hI
+        qoAa7pvKY/SE2bvzEuPZI9Q=
+X-Google-Smtp-Source: AFSGD/XYJNCAmx/9qW+co+jHMfoyR1mEC5+kV2g0Z2EqJ7oW4W43MAxVyXVsDZ1huC+bZxTQ+0BCfw==
+X-Received: by 2002:a1c:8095:: with SMTP id b143mr49800wmd.63.1545068512789;
+        Mon, 17 Dec 2018 09:41:52 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id o17sm20873617wmg.35.2018.12.17.09.41.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 09:41:52 -0800 (PST)
+Date:   Mon, 17 Dec 2018 18:41:49 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v14 4/5] x86/boot: Parse SRAT address from RSDP and store
+ immovable memory
+Message-ID: <20181217174149.GD90818@gmail.com>
+References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+ <20181214093013.13370-5-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 17 Dec 2018 17:39:05 +0000 (UTC)
+In-Reply-To: <20181214093013.13370-5-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 07:33:11PM +0100, Arnd Bergmann wrote:
-> Hi Josh,
+
+* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+
+> SRAT should be parsed by RSDP to fix the conflict between KASLR
+> and memory-hotremove, then find the immovable memory regions and store
+> them in an array called immovable_mem[]. With immovable_mem[], KASLR
+> can avoid to extract kernel to specific regions.
 > 
-> In randconfig tests with gcc-8.1, I get this warning every
-> few hundred builds, tried it on both next/master and 4.19.y-stable:
+> Since 'RANDOMIZE_BASE' && 'MEMORY_HOTREMOVE' is needed, introduce
+> 'CONFIG_EARLY_PARSE_RSDP' to make ifdeffery clear.
 > 
-> kernel/trace/trace_selftest_dynamic.o: warning: objtool:
-> trace_selftest_dynamic_test_func()+0x5: call without frame pointer
-> save/setup
-> kernel/trace/trace_selftest_dynamic.o: warning: objtool:
-> trace_selftest_dynamic_test_func2()+0x5: call without frame pointer
-> save/setup
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/Kconfig                  |  12 +++
+>  arch/x86/boot/compressed/Makefile |   2 +
+>  arch/x86/boot/compressed/acpi.c   | 128 ++++++++++++++++++++++++++++++
+>  arch/x86/boot/compressed/kaslr.c  |   4 -
+>  arch/x86/boot/compressed/misc.h   |  19 +++++
+>  5 files changed, 161 insertions(+), 4 deletions(-)
 > 
-> $ objdump -dr build/x86/0x90C84554_defconfig/kernel/trace/trace_selftest_dynamic.o
-> 
-> build/x86/0x90C84554_defconfig/kernel/trace/trace_selftest_dynamic.o:
->    file format elf64-x86-64
-> 
-> Disassembly of section .text:
-> 
-> 0000000000000000 <trace_selftest_dynamic_test_func>:
->    0:    e8 00 00 00 00           callq  5
-> <trace_selftest_dynamic_test_func+0x5>
->             1: R_X86_64_PC32    __fentry__-0x4
->    5:    e8 00 00 00 00           callq  a
-> <trace_selftest_dynamic_test_func+0xa>
->             6: R_X86_64_PC32    __sanitizer_cov_trace_pc-0x4
->    a:    31 c0                    xor    %eax,%eax
->    c:    c3                       retq
->    d:    0f 1f 00                 nopl   (%rax)
-> 
-> 0000000000000010 <trace_selftest_dynamic_test_func2>:
->   10:    e8 00 00 00 00           callq  15
-> <trace_selftest_dynamic_test_func2+0x5>
->             11: R_X86_64_PC32    __fentry__-0x4
->   15:    e8 00 00 00 00           callq  1a
-> <trace_selftest_dynamic_test_func2+0xa>
->             16: R_X86_64_PC32    __sanitizer_cov_trace_pc-0x4
->   1a:    31 c0                    xor    %eax,%eax
->   1c:    c3                       retq
-> 
-> I found this reported in
-> http://kisskb.ellerman.id.au/kisskb/buildresult/13499139/, but could
-> not find an existing fix or analysis.
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index ba7e3464ee92..333c383478b7 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2149,6 +2149,18 @@ config X86_NEED_RELOCS
+>  	def_bool y
+>  	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
+>  
+> +config EARLY_SRAT_PARSE
+> +	bool "Early SRAT table parsing"
+> +	def_bool y
+> +	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
+> +	help
+> +	  This option enables early SRAT parsing in compressed boot stage
+> +	  so that memory hot-remove ranges do not overlap with KASLR
+> +	  chosen ranges. Kernel won't be extracted in hot-removable
+> +	  memory, so that make sure memory-hotremove works well with
+> +	  KASLR enabled.
+> +	  Say Y if you want to use both KASLR and memory-hotremove.
 
-Thanks for reporting this Arnd.
+So why would we want to make this a config option, instead of enabling it 
+unconditionally?
 
-The problem is that, for some reason, __noclone is preventing GCC from
-creating frame pointers for these functions.  Miroslav said that
-__noclone is not recommended by GCC developers, and that __used can be
-used instead for the same purpose:
+How reliable are the hot-removable memory markings in various firmware 
+versions?
 
-  https://lkml.kernel.org/r/alpine.LSU.2.21.1812171256390.3087@pobox.suse.cz
+> +/* Compute SRAT table from RSDP. */
+> +static struct acpi_table_header *get_acpi_srat_table(void)
+> +{
+> +	acpi_physical_address acpi_table;
+> +	acpi_physical_address root_table;
+> +	struct acpi_table_header *header;
+> +	struct acpi_table_rsdp *rsdp;
+> +	u32 num_entries;
+> +	char arg[10];
 
-Andi,
+The '10' is just a magic number attached to a meaningless local variable 
+name. Please explain the limit in the code, and the role of the variable 
+if it's non-obvious from the name. Or better, try to find a more obvious 
+name?
 
-is __noclone really needed here, since the functions aren't static?  Or
-does LTO cause them to be treated like static functions?
+Thanks,
 
-Or if it is really needed, would __used be sufficient instead?
-
-noinline __noclone int DYN_FTRACE_TEST_NAME(void)
-{
-	/* used to call mcount */
-	return 0;
-}
-
-noinline __noclone int DYN_FTRACE_TEST_NAME2(void)
-{
-	/* used to call mcount */
-	return 0;
-}
-
--- 
-Josh
+	Ingo
