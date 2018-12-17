@@ -2,97 +2,99 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49306C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30729C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EEC420874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CC62133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:07:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bSYbHRsZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bSYbHRsZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732021AbeLQKGz convert rfc822-to-8bit (ORCPT
+        id S1732156AbeLQKHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:06:55 -0500
-Received: from [38.106.11.25] ([38.106.11.25]:40944 "EHLO
-        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726706AbeLQKGz (ORCPT
+        Mon, 17 Dec 2018 05:07:46 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34576 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLQKHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:06:55 -0500
-X-ASG-Debug-ID: 1545041210-107606139f0a400001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (localhost [10.128.0.15]) by barracuda02.hxt-semitech.com with ESMTP id AeENQf04z983sViF (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Mon, 17 Dec 2018 18:06:50 +0800 (CST)
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 17 Dec 2018 18:05:55 +0800
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1]) by
- HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1%12]) with mapi id
- 15.00.1395.000; Mon, 17 Dec 2018 18:05:55 +0800
-From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-CC:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "ACPI Devel Maling List" <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
-Subject: Re: [PATCH] ACPI / tables: table upgrade from built-in initrd
-Thread-Topic: [PATCH] ACPI / tables: table upgrade from built-in initrd
-X-ASG-Orig-Subj: Re: [PATCH] ACPI / tables: table upgrade from built-in initrd
-Thread-Index: AQHUla75pLHf4djd9EmmRCWXKkRMKA==
-Date:   Mon, 17 Dec 2018 10:05:54 +0000
-Message-ID: <2866d2b19d604155b690f1a08df0a4ab@HXTBJIDCEMVIW01.hxtcorp.net>
-References: <1545013184-2487-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <CAJZ5v0gnmnP1UUisS-4L=gzu3KHbbK8y4Wh_4dqfgmm775=ZkQ@mail.gmail.com>
- <36fdf717ba5345e2956e48645f6667e6@HXTBJIDCEMVIW01.hxtcorp.net>
- <CAJZ5v0jWROTTSRT1FFQWXpWn2M=uMRw5SKbwu0doKaeMjSOEnA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.6.186]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 17 Dec 2018 05:07:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B39B76076A; Mon, 17 Dec 2018 10:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545041264;
+        bh=urdmC+5c+zRZyhEvPeOqyU+igtd3kHISA4C53YHNTXc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bSYbHRsZ69aAdQ/9D0FzIXZ4ZYz9Z3ZV4tUoOWJYVOYsIonMTsZ+wboz7o+8jhKgz
+         6r2MaZ+PvU1PyjAn7Rsd9GShvJai9lSzyDbAxGTwMGwLhQggT87/8tb76VQPFsK+aH
+         8R7D9a+QdMK9HhurD4IvFbmECr0kaZ2vGzEd+CBE=
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 657A9606FC;
+        Mon, 17 Dec 2018 10:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545041264;
+        bh=urdmC+5c+zRZyhEvPeOqyU+igtd3kHISA4C53YHNTXc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bSYbHRsZ69aAdQ/9D0FzIXZ4ZYz9Z3ZV4tUoOWJYVOYsIonMTsZ+wboz7o+8jhKgz
+         6r2MaZ+PvU1PyjAn7Rsd9GShvJai9lSzyDbAxGTwMGwLhQggT87/8tb76VQPFsK+aH
+         8R7D9a+QdMK9HhurD4IvFbmECr0kaZ2vGzEd+CBE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 657A9606FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        dianders@chromium.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
+        evgreen@chromium.org, briannorris@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 1/7] dt-bindings: soc: qcom: Add remote-pid binding for GLINK SMEM
+Date:   Mon, 17 Dec 2018 15:37:18 +0530
+Message-Id: <20181217100724.4593-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-Barracuda-Connect: localhost[10.128.0.15]
-X-Barracuda-Start-Time: 1545041210
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
-X-Barracuda-Scan-Msg-Size: 616
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.3682 1.0000 -0.0915
-X-Barracuda-Spam-Score: -0.09
-X-Barracuda-Spam-Status: No, SCORE=-0.09 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63927
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Rafael,
+Add missing qcom,remote-pid dt binding required for GLINK SMEM
+which specifies the remote endpoint of the GLINK edge.
 
-  OK. I will update the description and document.
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks.
-Shunyong.
-
-On 2018/12/17 17:31, Rafael J. Wysocki wrote:
-> On Mon, Dec 17, 2018 at 10:18 AM Yang, Shunyong
-> <shunyong.yang@hxt-semitech.com> wrote:
->>
->> Hi, Rafael,
->>   I think "override" is more accurate. I just follow the existing
->> description of "ACPI_TABLE_UPGRADE" in drivers/acpi/Kconfig.
->>   Should I change all upgrade/UPGRADE to "override/OVERRIDE" in this patch?
-> 
-> I think that this would be better.
-> 
-> Also, there is some documentation regarding this feature in the kernel
-> tree.  Should it be updated by your patch?
-> 
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+index 0b8cc533ca83..59ae603ba520 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+@@ -21,6 +21,11 @@ edge.
+ 	Definition: should specify the IRQ used by the remote processor to
+ 		    signal this processor about communication related events
+ 
++- qcom,remote-pid:
++	Usage: required for glink-smem
++	Value type: <u32>
++	Definition: specifies the identfier of the remote endpoint of this edge
++
+ - qcom,rpm-msg-ram:
+ 	Usage: required for glink-rpm
+ 	Value type: <prop-encoded-array>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
