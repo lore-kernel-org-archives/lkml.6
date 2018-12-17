@@ -2,99 +2,83 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CBCC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F29C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501042145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA000206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388147AbeLQQHi convert rfc822-to-8bit (ORCPT
+        id S2388161AbeLQQHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:07:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60472 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727866AbeLQQHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:07:38 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 499682072D; Mon, 17 Dec 2018 17:07:35 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D8C2A20723;
-        Mon, 17 Dec 2018 17:07:24 +0100 (CET)
-Date:   Mon, 17 Dec 2018 17:07:24 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Marek Behun <marek.behun@nic.cz>, Nadav Haklai <nadavh@marvell.com>
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH v2 03/12] PCI: aardvark: Add PHY support
-Message-ID: <20181217170724.58421a29@xps13>
-In-Reply-To: <20181214015712.31f749ea@nic.cz>
-References: <20181212102142.16053-1-miquel.raynal@bootlin.com>
- <20181212102142.16053-4-miquel.raynal@bootlin.com>
- <20181214014701.373b220b@nic.cz>
- <20181214015712.31f749ea@nic.cz>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 17 Dec 2018 11:07:53 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44862 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbeLQQHu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:07:50 -0500
+Received: by mail-vs1-f68.google.com with SMTP id g68so8005159vsd.11;
+        Mon, 17 Dec 2018 08:07:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TEmt9UQL888+1tOfiArcrhyu/Q4JRD75G78ZJLqzNGI=;
+        b=H9mZclj6vI6fsjOmgeeJVKuPRksmjaz+uCKILM6e8fGEM5NKVmOFdWFZRFgMZfhr/5
+         ysXUpfAsCXsf22aQ/q6V9ZswreHHqF+axBbDZE8QC7DVOyUrOVCi/EqfZS6GDNz4pWf8
+         8mDwLfLUME35IwKPRSg7kK8UsH08+M+Jq8ET9yfBRGFkGLL8AbdKfXydHbnH5Qy2lk8D
+         Kh2CtEM8Cwh+l2EOf92ieNLnRetGBjp75awHzj7IsjgNY6/EiQVWDzckI0sm1p4uDC1D
+         Dj1fR646qcUtdjkTUQEpJp1RHGuK5StA49HA4/ivkOkyoJC3qupHcMNs2TQieTDK3Lz6
+         Fnww==
+X-Gm-Message-State: AA+aEWZ2efUkSAGw8v5KGKeDblM0e+wRtPh7OlBnpg9gHie8wedOU+dN
+        2tTx9Mxv8BjLMDY0e3Y3OQ/wrsWiMa9TT3+mkzg=
+X-Google-Smtp-Source: AFSGD/U/4u48KlbYVfsqNL0eznJmiQ9JwTkJrUmR5mKJTVmjDJz9oIvTw+kx1rWHq5t3cdHxmypcYqKSXiHN3u9MfuU=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr6060818vsj.11.1545062869420;
+ Mon, 17 Dec 2018 08:07:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544778613-24279-9-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544778613-24279-9-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 17 Dec 2018 17:07:37 +0100
+Message-ID: <CAMuHMdUW7Ji+amR93HoNJjTu_+HdMrtJOUMcZ-cQGBPaMnPeZw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a774c0: Add watchdog support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
+On Fri, Dec 14, 2018 at 10:10 AM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Add watchdog support to the RZ/G2E (a.k.a. R8A774C0) SoC
+> specific device tree.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Marek Behun <marek.behun@nic.cz> wrote on Fri, 14 Dec 2018 01:57:12
-+0100:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> On Fri, 14 Dec 2018 01:47:01 +0100
-> Marek Behun <marek.behun@nic.cz> wrote:
-> 
-> > Hi Miquel,
-> > are there already patches for the A37xx comphy driver?  
+Gr{oetje,eeting}s,
 
-Please try the latest patches on top of phy -next (with PHY interface
-mode), available there [1]. You can pick only the COMPHY patches, but
-keep them over the phy -next branch.
+                        Geert
 
-Please note that for the SMC calls to succeed you must use a recent
-ATF. Personally I used to work with the 'atf-v1.5-devel' branch of
-Marvell's misl-atf repository but it is not available anymore. If you
-already have a clone, then you are good to go, otherwise it might be
-great if someone from Marvell could share a public Github link?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> Never mind, I found them. I shall test this on Turris Mox.
-> Is the comphy driver supposed to be able to change eth mode from
-> 1000BASE-X to 2500BASE-X and back without reboot?
-
-In theory yes, unfortunately I am working on an EspressoBin which uses
-the SATA, PCIe and SATA configurations of the COMPHY, but not the
-Ethernet ones (SGMII/1000BASE-X and HS_SGMII/2500BASE-X). So the
-support is ready to be tested!
-
-> 
-> This would be cool for our SFP cage module of Turris Mox, just to add
-> support for comphy into mvneta.
-> 
-> Marek
-
-[1] https://github.com/miquelraynal/linux.git branch marvell/phy-next/pm
-
-
-Thanks,
-Miquèl
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
