@@ -2,133 +2,173 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16FBC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7664EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D0F2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:35:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="e7kdVqWs"
+	by mail.kernel.org (Postfix) with ESMTP id 4FD0420874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732240AbeLQLfp (ORCPT
+        id S1732264AbeLQLf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:35:45 -0500
-Received: from mail-eopbgr70044.outbound.protection.outlook.com ([40.107.7.44]:58342
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727151AbeLQLfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:35:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BLQA0AAM74hZZMXm1BJ70SKssFHccJdkxW3Ti3ufHUg=;
- b=e7kdVqWsI1U8R5v3zVQiSzitOQmFPlURC0z0+NjEiXkHomWuIUc1b2koM9vXlud6CfuRdm/atIa8Y/hrp/2EjFMfcOa1Kzxw/coAyv935UPxLCcdAHse3tgSq0HkqyYwfDisEUZjLN9WxjTszD987MNTeGc9hSRyGXSWyOy/kzc=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Mon, 17 Dec 2018 11:35:40 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::55a5:d113:d738:e0c9]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::55a5:d113:d738:e0c9%4]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
- 11:35:40 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Aisheng Dong <aisheng.dong@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 0/3] clk: imx: Make all the parent_names arrays be const
- pointers
-Thread-Topic: [PATCH 0/3] clk: imx: Make all the parent_names arrays be const
- pointers
-Thread-Index: AQHUk8HlzY+WhQB2ck6/TH6/+MaDIqV+utiAgAQW6YA=
-Date:   Mon, 17 Dec 2018 11:35:40 +0000
-Message-ID: <20181217113539.nfwp4knbx3luxoqn@fsr-ub1664-175>
-References: <1544801400-18951-1-git-send-email-abel.vesa@nxp.com>
- <154482171780.19322.123667425822315496@swboyd.mtv.corp.google.com>
-In-Reply-To: <154482171780.19322.123667425822315496@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3911;6:GoWtoe2PHhCj9YhgpY0UhD3UuDDvq3O7D7OTRYW/FMAvbwSSUoWWEgLz1ST/9KfR+LMLsUJWuXj5S+1CAuG3uPgLnt25FM3aZqwkH2M0gFeg1bwl52OPTjg5GwMBgN+dbfq3id1iXgtaw795+L+gtuhse6VWgzQ2lw8CQzkl0PLnjY0nF6Epi1CQqNqduwY2ngOibWLnabdw6VFrbCxgmNyPImu384jQ+j8MJMDUo4u1S2eDvMqPOAcy48XeurExq7S1JH+j+JZlo07HqFe9Mzbiny6OHznvdAmx+27xbj+lqqED+0N0XFFyynrN71AUlAt/BoRNyYSnCMlsh/rvxkfw0QADFZR03IXvIomqIGmAFEdCHNDGGGyNQiJpaxngwE9LZUalYWKag82El/KkG8nbQ691g4oylbS4Cdp6gOqrm38svJk2kn5IHnGXiCZ2myR/KZ456PfAvTXKv+e8iw==;5:fx3QjBT/TdZ7UPqiEaUPNSQ7lLHgqjybgxmNj5CjpgwnIm/yU9JNhohF09VlSij6FUDKEB+KrdDRUx9l1/kh7ov9HRkpVsoUcHVvs7e5wKQDlpoCaa84iS4i2sKVz3g2clS3Iv1s/KtiK2Gx6CFV8u7tnVglv/mhDb78wvhqEdY=;7:U69oOeYP28iwfitNNRIAFVnEN6w4L1I4NFJlc/3f5elJb16l03NN6Y1aXWecmhzQaazp/l7HrMUx8sZr+ZXhTJyqFsyR7oeYGB8l46nUXCzd5XekVu/gN6F/kuYa2DMWIxI9aymmvtOhK60N9srp+Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 833786eb-e0f2-47bc-cde0-08d66413c5d5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3911;
-x-ms-traffictypediagnostic: AM6PR0402MB3911:
-x-microsoft-antispam-prvs: <AM6PR0402MB3911811B9C657D7B09A4C5AFF6BC0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3911;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3911;
-x-forefront-prvs: 08897B549D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(39860400002)(366004)(346002)(376002)(136003)(199004)(189003)(9686003)(81156014)(81166006)(11346002)(6486002)(256004)(14444005)(229853002)(446003)(6512007)(25786009)(71200400001)(71190400001)(68736007)(6436002)(478600001)(106356001)(476003)(486006)(7736002)(105586002)(305945005)(66066001)(54906003)(44832011)(33896004)(97736004)(6916009)(99286004)(76176011)(316002)(186003)(1076002)(6506007)(6116002)(3846002)(26005)(102836004)(53546011)(2906002)(4001150100001)(6246003)(4326008)(8936002)(86362001)(33716001)(5660300001)(8676002)(14454004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3911;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: nHyBCzhroq34QKMFcs/jgLndceVGbH8YTk2HZn8jVDNuIhCndI2u8Xtp5ZYaFzmDyL4GRVI1W0fYZ5NPVWTZWFQ/MnfaRGNbLfEcx+2/ZJfMSfEA4FJmYhQh9qyMh0wrTpcFWj8OfkYItLD5NVX6Nutq8/eaAJF77D/IRbNbTzcoJkgaCDFwCDbiBuLoJW/6BUlNZ4u4Fd7feHRvb366jjaMdx2XBnIbHfZtTQHTW2FahmG8r8HIbPQGDBcZU9756AW1sE58KzLxa32jWgc/jM97kZLT+6mFjywNOzfJj7Ks7DszuKQSJ5pguuE+PxSB
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F6D47A4708134C4DB5BCC6B52E479160@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Dec 2018 06:35:56 -0500
+Received: from mga06.intel.com ([134.134.136.31]:29924 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727151AbeLQLfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:35:55 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 03:35:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
+   d="scan'208";a="130593526"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 17 Dec 2018 03:35:52 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 17 Dec 2018 13:35:51 +0200
+Date:   Mon, 17 Dec 2018 13:35:51 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Kyle Tso <kyletso@google.com>
+Cc:     linux@roeck-us.net, gregkh@linuxfoundation.org,
+        Adam.Thomson.Opensource@diasemi.com, badhri@google.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpm: Extend the matching rules on PPS APDO
+ selection
+Message-ID: <20181217113551.GA14121@kuha.fi.intel.com>
+References: <20181217024805.122897-1-kyletso@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 833786eb-e0f2-47bc-cde0-08d66413c5d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 11:35:40.5314
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3911
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217024805.122897-1-kyletso@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-12-14 13:08:37, Stephen Boyd wrote:
-> Quoting Abel Vesa (2018-12-14 07:30:08)
-> > This is mainly to shut up the checkpatch.pl script warnings about the
-> > "static const char *" needing to be "static const char * const".
-> >=20
-> > Abel Vesa (3):
-> >   clk: imx: Make parent_names const pointer in composite-8m
-> >   clk: imx: Make parents const pointer in mux wrappers
-> >   clk: imx8mq: Make parent names arrays const pointers
-> >=20
->=20
-> I still see warnings though so there seems to be some more work to do.
->=20
-> drivers/clk/imx/clk-imx8mq.c:401:89: warning: passing argument 5 of 'imx_=
-clk_mux2' discards 'const' qualifier from pointer target type [-Wdiscarded-=
-qualifiers]
->   clks[IMX8MQ_CLK_GPU_SHADER_SRC] =3D imx_clk_mux2("gpu_shader_src", base=
- + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_sel=
-s));
->=20
-Hmm, I guess you applied this on top of clk-imx8mq, right ?
-This change is against linux-next. The actual problem is the imx_clk_mux2
-which looks like this on branch clk-imx8mq:
+On Mon, Dec 17, 2018 at 10:48:05AM +0800, Kyle Tso wrote:
+> Current matching rules ensure that the voltage range of selected Source
+> Capability is entirely within the range defined in one of the Sink
+> Capabilities. This is reasonable but not practical because Sink may not
+> support wide range of voltage when sinking power while Source could
+> advertise its capabilities in raletively wider range. For example, a
+> Source PDO advertising 3.3V-11V@3A (9V Prog of Fixed Nominal Voltage)
+> will not be selected if the Sink requires 5V-12V@3A PPS power. However,
+> the Sink could work well if the requested voltage range in RDOs is
+> 5V-11V@3A.
+> 
+> Currently accepted:
+> 		|--------- source -----|
+> 	|----------- sink ---------------|
+> 
+> Currently not accepted:
+> 			|--------- source -----|
+> 	|----------- sink ---------------|
+> 
+> 	|--------- source -----|
+> 		|----------- sink ---------------|
+> 
+> 	|--------- source -----------------|
+> 		|------ sink -------|
+> 
+> To improve the usability, change the matching rules to what listed
+> below:
+> a. The Source PDO is selectable if any portion of the voltage range
+>    overlaps one of the Sink PDO's voltage range.
+> b. The maximum operational voltage will be the lower one between the
+>    selected Source PDO and the matching Sink PDO.
+> c. The maximum power will be the maximum operational voltage times the
+>    maximum current defined in the selected Source PDO
+> d. Select the Source PDO with the highest maximum power
+> 
+> Signed-off-by: Kyle Tso <kyletso@google.com>
 
-static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,=
- =20
-                u8 shift, u8 width, const char **parents, int num_parents) =
- =20
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-but it looks like this on linux-next (which is exactly the same on clk-next=
-):
+In case you'll do one more version, I have a minor comment about the
+style below, but no need to resend only because of that.
 
-static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,=
- =20
-                        u8 shift, u8 width, const char * const *parents,   =
- =20
-                        int num_parents)                                   =
- =20
+> ---
+> Changelog since v1:
+> - updated the commit message as suggested by Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 29 +++++++++++++++++------------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 3620efee2688..3001df7bd602 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -2213,7 +2213,8 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+>  	unsigned int i, j, max_mw = 0, max_mv = 0;
+>  	unsigned int min_src_mv, max_src_mv, src_ma, src_mw;
+>  	unsigned int min_snk_mv, max_snk_mv;
+> -	u32 pdo;
+> +	unsigned int max_op_mv;
+> +	u32 pdo, src, snk;
+>  	unsigned int src_pdo = 0, snk_pdo = 0;
+>  
+>  	/*
+> @@ -2263,16 +2264,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+>  					continue;
+>  				}
+>  
+> -				if (max_src_mv <= max_snk_mv &&
+> -				    min_src_mv >= min_snk_mv) {
+> +				if (min_src_mv <= max_snk_mv &&
+> +				    max_src_mv >= min_snk_mv) {
+> +					max_op_mv = min(max_src_mv, max_snk_mv);
+> +					src_mw = (max_op_mv * src_ma) / 1000;
+>  					/* Prefer higher voltages if available */
+>  					if ((src_mw == max_mw &&
+> -					     min_src_mv > max_mv) ||
+> +					     max_op_mv > max_mv) ||
+>  					    src_mw > max_mw) {
+>  						src_pdo = i;
+>  						snk_pdo = j;
+>  						max_mw = src_mw;
+> -						max_mv = max_src_mv;
+> +						max_mv = max_op_mv;
+>  					}
+>  				}
+>  			}
+> @@ -2285,14 +2288,16 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+>  	}
+>  
+>  	if (src_pdo) {
+> -		pdo = port->source_caps[src_pdo];
+> -
+> -		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
+> -		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
+> -		port->pps_data.max_curr =
+> -			min_pps_apdo_current(pdo, port->snk_pdo[snk_pdo]);
+> +		src = port->source_caps[src_pdo];
+> +		snk = port->snk_pdo[snk_pdo];
+> +
+> +		port->pps_data.min_volt = max(pdo_pps_apdo_min_voltage(src),
+> +					      pdo_pps_apdo_min_voltage(snk));
+> +		port->pps_data.max_volt = min(pdo_pps_apdo_max_voltage(src),
+> +					      pdo_pps_apdo_max_voltage(snk));
+> +		port->pps_data.max_curr = min_pps_apdo_current(src, snk);
+>  		port->pps_data.out_volt =
+> -			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
+> +			min(port->pps_data.max_volt, port->pps_data.out_volt);
+
+While here, you could have aligned that like the above lines:
+
+	port->pps_data.out_volt = min(pdo_pps_apdo_max_voltage(pdo),
+                                      port->pps_data.out_volt);
+
+>  		port->pps_data.op_curr =
+>  			min(port->pps_data.max_curr, port->pps_data.op_curr);
+>  	}
+> -- 
+> 2.20.0.405.gbc1bbc6f85-goog
+
+thanks,
+
+-- 
+heikki
