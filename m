@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71007C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894A7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E26B217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5697820675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FoJRxte5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QetYrpog"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732259AbeLQJrE (ORCPT
+        id S1732271AbeLQJrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:47:04 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36245 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732223AbeLQJrB (ORCPT
+        Mon, 17 Dec 2018 04:47:05 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53902 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732238AbeLQJrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:47:01 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u4so10567223wrp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 01:46:59 -0800 (PST)
+        Mon, 17 Dec 2018 04:47:02 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y1so11589940wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 01:47:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=trBOZeUZ42tXHraYvTz2rphVlhKTWLVThNKSv6QZHLQ=;
-        b=FoJRxte5GxIjPmcVqIEkGM+x/BCDOU1h6ZYf63+VJDb0xLs7ryQZiUSVsBlpThKX4v
-         PfyLuqhwQ6UN1N4rbF/rM5NLdCLQ6rat3x8M7claAyBkDAxKuY9R6FhHE2KAhflZaF1D
-         6sPl5ernAuDWw9WtWPeZVPzpwnpQ/nYk27+hQ=
+        bh=7zUfQ5k1UaGNLQZWqXUVxUrsnDmZIr72/O/z7L/p8XE=;
+        b=QetYrpogRHsbPuvIb1lnhOHGRCb5X9owoV/AIv0hvqBsfvxhCRXjPEGrdGgYn5v1Mc
+         HDpWdDIMxrVXmwqNDPiKsFQTZ2a3O7LCK+kRPiAVQeN0rDu653kusvLwkrVNLaTx+X0T
+         qCry9q5eEfUmIK4pOEKIOKe3nD8pUN+sIxWUQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=trBOZeUZ42tXHraYvTz2rphVlhKTWLVThNKSv6QZHLQ=;
-        b=VPlAuZNt/vc2xS2QT5IanQh0yKyk3JhV5/TEtycISkcd/dFED3i6XOmTW3H/wySWwO
-         83ZiNVIi1DPc8tJVIGDgoa/qOExpv5br2GGo5NX9FNSi/EFQwTi0X4rj39eLxg63TKXt
-         HkziKF5SUXrp+RQlcihjA3d4pbno9pmJAMYt2Hs19l0+IxfhRfU+1y8+/MlRC1TMqtyF
-         OVZexxXrJE6OcaOA66VzkUzMkRcwuKRg0WqEjvQKJzLuhp+LmsRL2GwHTPbmgUiG50p/
-         2StYx0BCHIaWhx2HqUwEbAeSuP6BRvNWBYVCxitw4Fmeek8u7+yNXP3Sl65I7WQtwIVC
-         LEFw==
-X-Gm-Message-State: AA+aEWZjswvdcghWq+fVm6u89ocCgBMRYngNn2Ft03f32zt2K6BjT77K
-        opLBVZLkh4d7X4AaqN3rbjs6Pw==
-X-Google-Smtp-Source: AFSGD/UzwOvBjMk5OAnuhTgTLtekacbChin6HSwst6mWBMEinLXT29f0XoEfR9M5MgMwW7wd8+Vh2g==
-X-Received: by 2002:a5d:488f:: with SMTP id g15mr9993063wrq.15.1545040019026;
-        Mon, 17 Dec 2018 01:46:59 -0800 (PST)
+        bh=7zUfQ5k1UaGNLQZWqXUVxUrsnDmZIr72/O/z7L/p8XE=;
+        b=YTBgxU78kROr1OtQ/X9lLAMZd2LZWovVuXv6dzaLc9syG4Nlh6VXQZFSWvPzURj37X
+         QgFMsR6aJjpkCyH1ty12gE3BVhK+RHwDg4FPKHMPgA+KGslOSFgcWq+87RfTVF+8Zbby
+         B6MJ/37YB6y7gRU9sn+E8ntscrVN2Thvu04TwQwya6jwftkq+JecJ0yqWU8fp3qOpWgx
+         jNAC+BPv+I7/2g++9RfkTtaVO1sy12FbTA0iSbxlGZxMI0/06CdwrOJWYPvSFXxfCMAu
+         B4ubRNQhqHgZIgcWfURvo2Tr/YOEMroUjnfEEZlXcxFXQWF0Y3u5k0Gum3N21/LrejOv
+         NGPw==
+X-Gm-Message-State: AA+aEWZyD2rYU+FHSuDRHktk2xQ79HFPVH7s2RpciOdWWzRARypEszil
+        MjWFI1+VVVck7xCFIxWbWG3fqg==
+X-Google-Smtp-Source: AFSGD/W7AfI98CnyZ0p8vcdpfYDXkTB7x6OrV/CwFqF8fuIpp5WZTRDIcwA7oulJja30ZZ/F4hIh8w==
+X-Received: by 2002:a1c:2884:: with SMTP id o126mr11386163wmo.17.1545040020936;
+        Mon, 17 Dec 2018 01:47:00 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.57
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:58 -0800 (PST)
+        Mon, 17 Dec 2018 01:47:00 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -65,9 +65,9 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 12/13] arm64: dts: qcom: qcs404: Add cpufreq support
-Date:   Mon, 17 Dec 2018 10:46:29 +0100
-Message-Id: <1545039990-19984-13-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 13/13] arm64: defconfig: Enable HFPLL
+Date:   Mon, 17 Dec 2018 10:46:30 +0100
+Message-Id: <1545039990-19984-14-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -76,55 +76,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support CPU frequency scaling on qcs404.
+The high frequency pll is required on compatible Qualcomm SoCs to
+support the CPU frequency scaling feature.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 2d9e70e..5a14887 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -30,6 +30,8 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		CPU1: cpu@101 {
-@@ -38,6 +40,8 @@
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		CPU2: cpu@102 {
-@@ -46,6 +50,8 @@
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		CPU3: cpu@103 {
-@@ -54,6 +60,8 @@
- 			reg = <0x103>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		L2_0: l2-cache {
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5c2b1f6..da390aa 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -615,6 +615,7 @@ CONFIG_MSM_MMCC_8996=y
+ CONFIG_MSM_GCC_8998=y
+ CONFIG_QCS_GCC_404=y
+ CONFIG_SDM_GCC_845=y
++CONFIG_QCOM_HFPLL=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_QCOM=y
+ CONFIG_ARM_MHU=y
 -- 
 2.7.4
 
