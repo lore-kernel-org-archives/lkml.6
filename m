@@ -2,91 +2,74 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2D9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDADC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB452133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94E32133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:43:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMSK6tqk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732746AbeLQOl5 (ORCPT
+        id S1732802AbeLQOm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:41:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57782 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726803AbeLQOl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:41:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAACFA78;
-        Mon, 17 Dec 2018 06:41:55 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22D323F575;
-        Mon, 17 Dec 2018 06:41:53 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] irqchip: add driver for imx-irqsteer controller
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        linux-kernel@vger.kernel.org, patchwork-lst@pengutronix.de,
-        Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20181214102244.21509-1-l.stach@pengutronix.de>
- <20181214102244.21509-3-l.stach@pengutronix.de>
- <86r2ejaztt.wl-marc.zyngier@arm.com> <1545041393.5874.1.camel@pengutronix.de>
- <98217822-208a-9a92-e80b-b0b73111e527@arm.com>
- <1545054740.5874.6.camel@pengutronix.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <6a863d56-de66-c00e-ebb0-cf00fda2773f@arm.com>
-Date:   Mon, 17 Dec 2018 14:41:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 17 Dec 2018 09:42:59 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54846 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbeLQOm7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:42:59 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so12598256wmh.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 06:42:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iPxGzNvUbpYdaGSMVmTlfEnk5MteCI7PrIFhmPFOTcs=;
+        b=EMSK6tqkxYJ4tFea5J7R6n7kYsK3tOxhuRWVlsDvANbFJrpdi9M6seTsNF/HieNAhu
+         iQ+gzyEB8EhrZXeol0b4rRCYaiglzTM6YxBmSp8Id8a1Rh4UklAlJT4wgLThxVePD6oM
+         SRjb8JkNLx/R1UgtMmveNhVcLLZkNJtrDdzVzjX1BTTm6utRQSad8gNA+nteYKbKDVNn
+         RhB7Xk+9UvTaJZVlTpmGavX3DZxvsTeywRtlm+gzAPQHYoVcYQPBz9rf77bVZgWXvRkl
+         3JRaf4vQzufbF14anljBwwMCpHDIt0BSNHZoAMngSPEY6BvCsRh19aA+g0ykn1MT/ltG
+         vpfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iPxGzNvUbpYdaGSMVmTlfEnk5MteCI7PrIFhmPFOTcs=;
+        b=H5hCcKHUNtCkUrMnp25jJMWmn3fTmT33EPYvs52VQXJ5Iuae/b8ld7Cm81FM1fB6Bj
+         mAht4nTvlOAEBGp8s+cuWfpGKDnsdXMgCZKNeQ4XHnEWXTZWa2BWpkvQkTFH3LqITeQq
+         +25cQDx/NKnneCzKUeQ+uiSBSArfWBq+/4dagW0C4I859QjYQEtY8wVJ06nspmjjHiJ4
+         ABkQiZN8sU4sb9mgRP0azjmyTk1j7M1z+t+zCMMD2r6lJt4AsMh3jkkRPCWkT5gU/3UL
+         iFQLPz8wjvpFNYOvbDDbuWnWby1gi8i1AeqbuVz5KoY7rRPA2H37E5Bm9fFc9IGwebO+
+         9p+A==
+X-Gm-Message-State: AA+aEWbx0abvhjbv1hXSFWcd99QNv9HqU3fszlFeW+iyaVEcgBdLqyy3
+        J47rXs4jthMuB3ZcxO+qMjc=
+X-Google-Smtp-Source: AFSGD/UQeYZjmxpDQm8ef+XtsYM0PLt8PS2tll9PxXriI1njZGqKwJqDb2gdR+zgQxsTCeFOvuRCzw==
+X-Received: by 2002:a1c:58ce:: with SMTP id m197mr12506247wmb.31.1545057775817;
+        Mon, 17 Dec 2018 06:42:55 -0800 (PST)
+Received: from [192.168.8.147] (76.42.136.77.rev.sfr.net. [77.136.42.76])
+        by smtp.gmail.com with ESMTPSA id f130sm11705291wme.41.2018.12.17.06.42.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 06:42:54 -0800 (PST)
+Subject: Re: [PATCH] iov_iter: optimize page_copy_sane()
+To:     Eric Dumazet <edumazet@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20181208133735.245799-1-edumazet@google.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <0d6058b9-8123-6d8c-0571-6ea9a5cd822d@gmail.com>
+Date:   Mon, 17 Dec 2018 06:42:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1545054740.5874.6.camel@pengutronix.de>
+In-Reply-To: <20181208133735.245799-1-edumazet@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -95,36 +78,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/12/2018 13:52, Lucas Stach wrote:
-> Am Montag, den 17.12.2018, 10:32 +0000 schrieb Marc Zyngier:
-> [...]
->> OK, this is now making sense, thanks for that. I'm wondering if it'd
->> make sense to expose both IRQs in the DT for each irqsteer, and use
->> fsl,channel as the selector? It doesn't change much in the driver, but
->> seems to describe the HW in a more complete way.
->>
->> I don't care much either way, and I'll leave it for you and the DT folks
->> to decide.
+
+
+On 12/08/2018 05:37 AM, Eric Dumazet wrote:
+> Avoid cache line miss dereferencing struct page if we can.
 > 
-> At least according to the preliminary documentation available about the
-> i.MX8QM not all of the channels are routed to an upstream IRQ which is
-> visible to the Linux system. Some of them may also go to the Cortex-M
-> subsystem, so for your suggestion to work I would need a scheme to
-> describe the output interrupts with holes in between them.
+> page_copy_sane() mostly deals with order-0 pages.
 > 
-> I guess that complicates things a bit too much for little gain, as I
-> don't see us switching the controller between different channels at
-> runtime (which is the only thing I could imagine which would benefit
-> from this more complete HW description). The current binding can deal
-> with having some channels which route to something invisible to the
-> Linux system just fine, so I'm leaning toward keeping things as they
-> are now.
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  lib/iov_iter.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 54c248526b55fc498c996f2a5ea651262fcc7f61..2a1e282c3d38e2d03b075f54b7f9313e48b90289 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -854,8 +854,18 @@ EXPORT_SYMBOL(_copy_from_iter_full_nocache);
+>  
+>  static inline bool page_copy_sane(struct page *page, size_t offset, size_t n)
+>  {
+> -	struct page *head = compound_head(page);
+> -	size_t v = n + offset + page_address(page) - page_address(head);
+> +	struct page *head;
+> +	size_t v = n + offset;
+> +
+> +	/*
+> +	 * Fast path if this is an order-0 page,
+> +	 * or if the copied area fits the first page of a compound one.
+> +	 */
+> +	if (likely(n <= v && v <= PAGE_SIZE))
+> +		return true;
+> +
+> +	head = compound_head(page);
+> +	v += (page - head) << PAGE_SHIFT;
+>  
+>  	if (likely(n <= v && v <= (PAGE_SIZE << compound_order(head))))
+>  		return true;
+> 
 
-Fair enough. I'll freeze the tree tomorrow, so if you want this into
-4.21, now is the time.
+Hi Alexander !
 
-Thanks,
+Any news on this patch ?
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks !
