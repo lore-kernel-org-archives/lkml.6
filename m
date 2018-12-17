@@ -2,60 +2,121 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88075C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7160EC43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60EEF2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C5312133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbeLQNUb (ORCPT
+        id S1732914AbeLQNUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:20:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40976 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727464AbeLQNUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:20:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11C07ABE6;
-        Mon, 17 Dec 2018 13:20:29 +0000 (UTC)
-Subject: Re: [PATCH 02/14] mm, compaction: Rearrange compact_control
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20181214230310.572-1-mgorman@techsingularity.net>
- <20181214230310.572-3-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <85aad977-efdd-91ff-8e71-4f17b4695cf2@suse.cz>
-Date:   Mon, 17 Dec 2018 14:20:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Mon, 17 Dec 2018 08:20:38 -0500
+Received: from mga14.intel.com ([192.55.52.115]:9259 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732878AbeLQNUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 08:20:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 05:20:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
+   d="scan'208";a="119477509"
+Received: from zhangxi4-mobl5.ccr.corp.intel.com (HELO localhost) ([10.249.254.207])
+  by orsmga001.jf.intel.com with ESMTP; 17 Dec 2018 05:20:34 -0800
+Date:   Mon, 17 Dec 2018 15:20:33 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     jmorris@namei.org
+Cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] tpmdd updates for Linux v4.21
+Message-ID: <20181217132033.GA31729@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181214230310.572-3-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/18 12:02 AM, Mel Gorman wrote:
-> compact_control spans two cache lines with write-intensive lines on
-> both. Rearrange so the most write-intensive fields are in the same
-> cache line. This has a negligible impact on the overall performance of
-> compaction and is more a tidying exercise than anything.
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Hi James,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+v4.21 updates:
+
+* Support for partial reads of /dev/tpm0.
+* Clean up for TPM 1.x code: move the commands to tpm1-cmd.c and make
+  everything to use the same data structure for building TPM commands
+  i.e. struct tpm_buf.
+
+/Jarkko
+
+The following changes since commit 26b76320a8a550472bbb8f42257df83fcb8d8df6:
+
+  Merge tag 'v4.20-rc2' into next-general (2018-11-12 09:07:41 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20181217
+
+for you to fetch changes up to 9488585b21bef0df1217e510c7134905d1d376a7:
+
+  tpm: add support for partial reads (2018-12-17 13:45:10 +0200)
+
+----------------------------------------------------------------
+tpmdd updates for Linux v4.21
+
+----------------------------------------------------------------
+Tadeusz Struk (1):
+      tpm: add support for partial reads
+
+Tomas Winkler (24):
+      tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
+      tpm2: add new tpm2 commands according to TCG 1.36
+      tpm: sort objects in the Makefile
+      tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
+      tpm: add tpm_calc_ordinal_duration() wrapper
+      tpm: factor out tpm_get_timeouts()
+      tpm: move tpm1_pcr_extend to tpm1-cmd.c
+      tpm: move tpm_getcap to tpm1-cmd.c
+      tpm: factor out tpm1_get_random into tpm1-cmd.c
+      tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
+      tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
+      tpm: factor out tpm_startup function
+      tpm: add tpm_auto_startup() into tpm-interface.c
+      tpm: tpm-interface.c drop unused macros
+      tpm: tpm-space.c remove unneeded semicolon
+      tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
+      tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+      tpm1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
+      tpm1: reimplement SAVESTATE using tpm_buf
+      tpm1: reimplement tpm1_continue_selftest() using tpm_buf
+      tpm: use u32 instead of int for PCR index
+      tpm: tpm_try_transmit() refactor error flow.
+      tpm: fix kdoc for tpm2_flush_context_cmd()
+      tpm: tpm_ibmvtpm: fix kdoc warnings
+
+ drivers/char/tpm/Makefile            |  16 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-chip.c          |  11 +-
+ drivers/char/tpm/tpm-dev-common.c    |  52 ++-
+ drivers/char/tpm/tpm-dev.h           |   5 +-
+ drivers/char/tpm/tpm-interface.c     | 832 +++--------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  52 +--
+ drivers/char/tpm/tpm.h               |  97 ++--
+ drivers/char/tpm/tpm1-cmd.c          | 781 ++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 308 +++++++------
+ drivers/char/tpm/tpm2-space.c        |   2 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  11 +-
+ drivers/char/tpm/tpm_ibmvtpm.c       |   6 +-
+ drivers/char/tpm/tpm_tis_core.c      |  10 +-
+ include/linux/tpm.h                  |  11 +-
+ security/integrity/ima/ima_crypto.c  |   5 +-
+ 16 files changed, 1133 insertions(+), 1068 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
