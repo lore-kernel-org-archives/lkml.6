@@ -2,90 +2,115 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9FAC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E42C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF25D2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54BA21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbeLQTtV (ORCPT
+        id S2388515AbeLQTuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:49:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:25774 "EHLO mga07.intel.com"
+        Mon, 17 Dec 2018 14:50:01 -0500
+Received: from mga03.intel.com ([134.134.136.65]:41532 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727060AbeLQTtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:49:21 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726647AbeLQTuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:50:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:49:20 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:50:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="101389785"
-Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
-  by orsmga006.jf.intel.com with ESMTP; 17 Dec 2018 11:49:14 -0800
-Date:   Mon, 17 Dec 2018 21:49:13 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181217194913.GD29785@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
+   d="scan'208";a="101389927"
+Received: from skyhawk.jf.intel.com (HELO [10.54.51.81]) ([10.54.51.81])
+  by orsmga006.jf.intel.com with ESMTP; 17 Dec 2018 11:50:00 -0800
+Subject: Re: [Potential Spoof] Re: [PATCH 1/4] ARM: dts: aspeed: Add sensors
+ devices for Facebook
+To:     Vijay Khemka <vijaykhemka@fb.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <E3F1FFD7-1C5A-43DE-BCA6-5B50EEEF577F@fb.com>
+From:   James Feist <james.feist@linux.intel.com>
+Message-ID: <024aee07-0444-cdaf-d274-b07244aec7b2@linux.intel.com>
+Date:   Mon, 17 Dec 2018 11:50:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <E3F1FFD7-1C5A-43DE-BCA6-5B50EEEF577F@fb.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:17:49AM -0800, Dave Hansen wrote:
-> On 12/17/18 11:12 AM, Andy Lutomirski wrote:
-> > So I'm not saying that you shouldn't do it the way you are now, but I
-> > do think that the changelog or at least some emails should explain
-> > *why* the enclave needs to keep a pointer to the creating process's
-> > mm.  And, if you do keep the current model, it would be nice to
-> > understand what happens if you do something awful like mremap()ing an
-> > enclave, or calling madvise on it, or otherwise abusing the vma.  Or
-> > doing fork(), for that matter.
+On 12/17/18 11:39 AM, Vijay Khemka wrote:
 > 
-> Yeah, the code is built to have one VMA and only one VMA per enclave.
-> You need to go over the origin of this restriction and what enforces this.
+> 
+> ﻿On 12/14/18, 12:42 PM, "Linux-aspeed on behalf of Vijay Khemka" <linux-aspeed-bounces+vijaykhemka=fb.com@lists.ozlabs.org on behalf of vijaykhemka@fb.com> wrote:
+> 
+>      
+>      
+>      On 12/14/18, 11:22 AM, "openbmc on behalf of Jae Hyun Yoo" <openbmc-bounces+vijaykhemka=fb.com@lists.ozlabs.org on behalf of jae.hyun.yoo@linux.intel.com> wrote:
+>      
+>          Hi Vijay,
+>          
+>          On 12/14/2018 10:11 AM, Vijay Khemka wrote:
+>          > On 12/13/18, 2:56 PM, "Joel Stanley" <joel@jms.id.au> wrote:
+>          
+>          <snip>
+>          
+>          >      > +               oemname0 = "MB_P3V3";
+>          >      > +               oemname1 = "MB_P5V";
+>          >      > +               oemname2 = "MB_P12V";
+>          >      > +               oemname3 = "MB_P1V05";
+>          >      > +               oemname4 = "MB_PVNN_PCH_STBY";
+>          >      > +               oemname5 = "MB_P3V3_STBY";
+>          >      > +               oemname6 = "MB_P5V_STBY";
+>          >
+>          >      "oemname" isn't part of the upstream bindings. Is this something you
+>          >      have patches for?
+>          > This is a workaround field used by dbus-sensors application to avoid overlay for dynamic detection of devices based on json file definition.
+>          >
+>          > Can you please also review other 3 patches in this series.
+>          >
+>          >
+>          
+>          These oemname settings should not be added into here. You can add these
+>          information into configuration of entity manager which uses overlay
+>          templates for dbus-sensors. Also, as Joel said, "oemname" isn't part of
+>          the upstream bindings.
+>      
+>      Overlay templates from entity manager is not working for fan and adc sensors that's why it is a workaround suggested by James Feist (Author of dbus-sensors).
+> 
+> @james.feist@linux.intel.com,
+> Please comment on above patch, please advise if I need to fix this.
 
-It is before ECREATE but after that you can split it with mprotect().
+Yes, this is a workaround. It should not be added to your device tree. 
+This has already been fixed for the fans, someone just needs to spend a 
+little bit of time to fix the ADCs then it won't be needed.
 
-Lets take an example. I'm not sure how we would acquire mm efficiently
-in sgx_encl_page_reclaim() otherwise than having it as a field in encl.
+Thanks,
 
-/Jarkko
+James
+
+
+>          
+>          Cheers,
+>          Jae
+>          
+>      
+>      
+> 
