@@ -2,288 +2,129 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC788C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B81FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F892133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C7C3214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:56:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DpcFu3fP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389324AbeLQT41 (ORCPT
+        id S2389336AbeLQT4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:56:27 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56272 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387549AbeLQT41 (ORCPT
+        Mon, 17 Dec 2018 14:56:50 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45107 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387549AbeLQT4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:56:27 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHJsTmm058075
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 14:56:25 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pej10gxj0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 14:56:25 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 17 Dec 2018 19:56:23 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Dec 2018 19:56:20 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHJuKd618415624
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Dec 2018 19:56:20 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7D46B206B;
-        Mon, 17 Dec 2018 19:56:19 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1AA2B2065;
-        Mon, 17 Dec 2018 19:56:19 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Dec 2018 19:56:19 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C709416C3492; Mon, 17 Dec 2018 11:56:22 -0800 (PST)
-Date:   Mon, 17 Dec 2018 11:56:22 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Stefano Brivio <sbrivio@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: WARNING in __rcu_read_unlock
-Reply-To: paulmck@linux.ibm.com
-References: <0000000000005e47a2057d0edc49@google.com>
- <20181216190412.GE4170@linux.ibm.com>
- <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
- <20181217112916.GG4170@linux.ibm.com>
- <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
- <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
- <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com>
- <20181217162421.6d636ee5@redhat.com>
- <20181217192121.64f34511@redhat.com>
- <CACT4Y+ZU3F=AyyuNyVia7gT22Z71JKM-K4uap0J-iumF=NjH9A@mail.gmail.com>
+        Mon, 17 Dec 2018 14:56:49 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so13333917ota.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:56:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rY3JHuP97CIYyZS4kuijAocWK9rgl4HZoG3hE9ljoy4=;
+        b=DpcFu3fPFYCoR7KCeCGkEDXgKx/sFQOT3oo7iCWH/D9Ax2/dYvX4Gl4bX59DFfC8/k
+         s/oRNparh/q0PB/2u+148NRtj+6SWogSEShn6LhLy1DIxXBTKZxwakUMynosV5srjQGe
+         2gucRtGN9tkflEBHQtByPfsP2wZNSzSWE795axNwlam/LKyJyFR3Fq1QwNeFGJEFaQdK
+         cmv5qpz96tYVmbNR4sgystRwThHyB/5V6uRqz8aeXro3j7htNNRoIiKbpyU31ek0AGzl
+         tD3DFTulA/5QIKgavwAEFtpp0wnJsCq6+flx2rxZyFFiwyD/Uas/kOIZ0E5c9sRLw8yg
+         GY2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rY3JHuP97CIYyZS4kuijAocWK9rgl4HZoG3hE9ljoy4=;
+        b=rdQ4kxci9Cl+muiDowCojxUMbrPm/RvWuC2G4x7a+Sm+ZLXb9+XIZOhlp5pCR9ORT8
+         nlhqqx+HHbGM7i1qW5RVam5tBLGPeJrbSG75iBBbvasetgYc9r2fzJwb25eFMDVIpFmP
+         rRIjSVAGeV6zLms4SiJF0B532aOcFyfKtohhKBHfKvy1X4kqxZBmCcfBpfTjxT7lu72f
+         Ore9bKDtvuhJlwRGP5U5U0AzmwnlqUOc5EqYqs4DMDLKAWPAw+1seH1GalwYNabtABWt
+         jFHEDpyHoGVcoO9YjaBBn30DJffdnXXvT3G16QFYyfNfhPEp5Xnm6UbwNnmeYChkGJU+
+         vA+A==
+X-Gm-Message-State: AA+aEWYI71O0WykVKXXCGEPPISFTXnx2uo+NML40S60ApZwlHEpa2jmc
+        5LnMy12D1pLNLa0Dm7SQPh0AdhowctanG9WUhL3qtQ==
+X-Google-Smtp-Source: AFSGD/U9/klKnGqvw8nEuWdud3OYFFCP6X9Z/L/sDYP/J0IaHgQC7IsQSZaTSGAdXUqaFTBo/bnSkQP6icO07BLF7rM=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr10562963oti.367.1545076608698;
+ Mon, 17 Dec 2018 11:56:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZU3F=AyyuNyVia7gT22Z71JKM-K4uap0J-iumF=NjH9A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121719-0052-0000-0000-00000368B80A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010241; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01133178; UDB=6.00589071; IPR=6.00913346;
- MB=3.00024721; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-17 19:56:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121719-0053-0000-0000-00005F242A49
-Message-Id: <20181217195622.GM4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812170175
+References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154483852617.1672629.2068988045031389440.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181216124335.GB30212@rapoport-lnx>
+In-Reply-To: <20181216124335.GB30212@rapoport-lnx>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 17 Dec 2018 11:56:36 -0800
+Message-ID: <CAPcyv4hXPm4GnBheTZ5WN6s5Kiw02MW1aWA-s2qC8BqfthT3Yg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 07:45:58PM +0100, Dmitry Vyukov wrote:
-> On Mon, Dec 17, 2018 at 12:29 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > Any chance of a bisection?
-> 
-> Better later then never. Bisection also needs testing :)
+On Sun, Dec 16, 2018 at 4:43 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Fri, Dec 14, 2018 at 05:48:46PM -0800, Dan Williams wrote:
+> > Randomization of the page allocator improves the average utilization of
+> > a direct-mapped memory-side-cache. Memory side caching is a platform
+> > capability that Linux has been previously exposed to in HPC
+> > (high-performance computing) environments on specialty platforms. In
+> > that instance it was a smaller pool of high-bandwidth-memory relative to
+> > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+> > be found on general purpose server platforms where DRAM is a cache in
+> > front of higher latency persistent memory [1].
+[..]
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index 185bfd4e87bb..fd617928ccc1 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -834,8 +834,16 @@ int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
+> >               return ret;
+> >
+> >       for (i = start_rgn; i < end_rgn; i++) {
+> > -             type->regions[i].cache_size = cache_size;
+> > -             type->regions[i].direct_mapped = direct_mapped;
+> > +             struct memblock_region *r = &type->regions[i];
+> > +
+> > +             r->cache_size = cache_size;
+> > +             r->direct_mapped = direct_mapped;
+>
+> I think this change can be merged into the previous patch
 
-Well, it looks like it did pass the test, arriving at the same commit
-that Eric called out.  ;-)
+Ok, will do.
 
-							Thanx, Paul
+> > +             /*
+> > +              * Enable randomization for amortizing direct-mapped
+> > +              * memory-side-cache conflicts.
+> > +              */
+> > +             if (r->size > r->cache_size && r->direct_mapped)
+> > +                     page_alloc_shuffle_enable();
+>
+> It seems that this is the only use for ->direct_mapped in the memblock
+> code. Wouldn't cache_size != 0 suffice? I.e., in the code that sets the
+> memblock region attributes, the cache_size can be set to 0 for the non
+> direct mapped caches, isn't it?
+>
 
-> syz-bisect -config bisect.cfg -crash dda626cdbd87eafe9a755acbbe102e2b6096b256
-> searching for guilty commit starting from 2aa55dccf83d
-> building syzkaller on 7624ddd6
-> testing commit 2aa55dccf83d7ca9f1da59ae005426c44fbeb890 with gcc (GCC) 8.1.0
-> run #0: crashed: KASAN: slab-out-of-bounds in tick_sched_handle
-> run #1: crashed: KASAN: slab-out-of-bounds in tick_sched_handle
-> run #2: crashed: BUG: Bad page map
-> run #3: crashed: BUG: Bad page map
-> run #4: crashed: PANIC: double fault in __udp4_lib_err
-> run #5: crashed: general protection fault in __bfs
-> run #6: crashed: KASAN: stack-out-of-bounds Read in __handle_mm_fault
-> run #7: crashed: no output from test machine
-> testing release v4.19
-> testing commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect start 2aa55dccf83d v4.19
-> Bisecting: 7955 revisions left to test after this (roughly 13 steps)
-> [f8cab69be0a8a756a7409f6d2bd1e6e96ce46482] Merge tag
-> 'linux-kselftest-4.20-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
-> testing commit f8cab69be0a8a756a7409f6d2bd1e6e96ce46482 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good f8cab69be0a8a756a7409f6d2bd1e6e96ce46482
-> Bisecting: 3957 revisions left to test after this (roughly 12 steps)
-> [b3491d8430dd25f0a4e00c33d60da22a9bd9d052] Merge tag 'media/v4.20-2'
-> of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
-> testing commit b3491d8430dd25f0a4e00c33d60da22a9bd9d052 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good b3491d8430dd25f0a4e00c33d60da22a9bd9d052
-> Bisecting: 1978 revisions left to test after this (roughly 11 steps)
-> [40df309e4166c69600968c93846aa0b1821e83f0] octeontx2-af: Support to
-> enable/disable default MCAM entries
-> testing commit 40df309e4166c69600968c93846aa0b1821e83f0 with gcc (GCC) 8.1.0
-> run #0: crashed: general protection fault in __bfs
-> run #1: crashed: KASAN: stack-out-of-bounds Read in copy_page_range
-> run #2: crashed: general protection fault in __bfs
-> run #3: crashed: KASAN: slab-out-of-bounds Read in vma_compute_subtree_gap
-> run #4: crashed: general protection fault in corrupted
-> run #5: crashed: general protection fault in corrupted
-> run #6: crashed: BUG: unable to handle kernel paging request in corrupted
-> run #7: crashed: KASAN: stack-out-of-bounds Read in inet6_fill_ifla6_attrs
-> # git bisect bad 40df309e4166c69600968c93846aa0b1821e83f0
-> Bisecting: 989 revisions left to test after this (roughly 10 steps)
-> [a13511dfa836c8305a737436eed3ba9a8e74a826] Merge
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-> testing commit a13511dfa836c8305a737436eed3ba9a8e74a826 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good a13511dfa836c8305a737436eed3ba9a8e74a826
-> Bisecting: 521 revisions left to test after this (roughly 9 steps)
-> [9ff01193a20d391e8dbce4403dd5ef87c7eaaca6] Linux 4.20-rc3
-> testing commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6
-> Bisecting: 260 revisions left to test after this (roughly 8 steps)
-> [47e3e53ceadc568c038e457661d836f2259ed774] ice: Destroy scheduler tree
-> in reset path
-> testing commit 47e3e53ceadc568c038e457661d836f2259ed774 with gcc (GCC) 8.1.0
-> run #0: crashed: KASAN: slab-out-of-bounds Read in tick_sched_handle
-> run #1: crashed: KASAN: stack-out-of-bounds in __fget_light
-> run #2: crashed: BUG: unable to handle kernel paging request in corrupted
-> run #3: crashed: KASAN: stack-out-of-bounds in anon_vma_interval_tree_remove
-> run #4: crashed: general protection fault in __udp4_lib_err
-> run #5: crashed: KASAN: stack-out-of-bounds Read in free_pgd_range
-> run #6: crashed: general protection fault in change_protection
-> run #7: crashed: INFO: trying to register non-static key in corrupted
-> # git bisect bad 47e3e53ceadc568c038e457661d836f2259ed774
-> Bisecting: 129 revisions left to test after this (roughly 7 steps)
-> [52358cb5a310990ea5069f986bdab3620e01181f] Merge branch 's390-qeth-next'
-> testing commit 52358cb5a310990ea5069f986bdab3620e01181f with gcc (GCC) 8.1.0
-> run #0: crashed: BUG: unable to handle kernel paging request in corrupted
-> run #1: crashed: general protection fault in vma_interval_tree_insert
-> run #2: crashed: KASAN: stack-out-of-bounds Read in __call_rcu
-> run #3: crashed: BUG: unable to handle kernel paging request in corrupted
-> run #4: crashed: general protection fault in __bfs
-> run #5: crashed: BUG: unable to handle kernel paging request in
-> __cgroup_account_cputime_field
-> run #6: crashed: WARNING in anon_vma_interval_tree_verify
-> run #7: crashed: general protection fault in rb_first
-> # git bisect bad 52358cb5a310990ea5069f986bdab3620e01181f
-> Bisecting: 65 revisions left to test after this (roughly 6 steps)
-> [2e7ad56aa54778de863998579fc6b5ff52838571] net/wan/fsl_ucc_hdlc: add BQL support
-> testing commit 2e7ad56aa54778de863998579fc6b5ff52838571 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good 2e7ad56aa54778de863998579fc6b5ff52838571
-> Bisecting: 32 revisions left to test after this (roughly 5 steps)
-> [b592843c6723a850be70bf9618578082f3b73851] net: sched: add an offload
-> dump helper
-> testing commit b592843c6723a850be70bf9618578082f3b73851 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good b592843c6723a850be70bf9618578082f3b73851
-> Bisecting: 16 revisions left to test after this (roughly 4 steps)
-> [a07966447f39fe43e37d05c9bfc92b1493267a59] geneve: ICMP error lookup handler
-> testing commit a07966447f39fe43e37d05c9bfc92b1493267a59 with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good a07966447f39fe43e37d05c9bfc92b1493267a59
-> Bisecting: 8 revisions left to test after this (roughly 3 steps)
-> [04087d9a89bef97998c71c21e3ecfca0cc7c52f3] openvswitch: remove BUG_ON
-> from get_dpdev
-> testing commit 04087d9a89bef97998c71c21e3ecfca0cc7c52f3 with gcc (GCC) 8.1.0
-> run #0: crashed: WARNING: kernel stack regs has bad 'bp' value
-> run #1: crashed: BUG: unable to handle kernel paging request in corrupted
-> run #2: crashed: general protection fault in corrupted
-> run #3: crashed: general protection fault in __bfs
-> run #4: crashed: general protection fault in corrupted
-> run #5: crashed: general protection fault in rb_insert_color
-> run #6: crashed: BUG: corrupted list in __pagevec_lru_add_fn
-> run #7: crashed: general protection fault in validate_mm
-> # git bisect bad 04087d9a89bef97998c71c21e3ecfca0cc7c52f3
-> Bisecting: 3 revisions left to test after this (roughly 2 steps)
-> [e7cc082455cb49ea937a3ec4ab3d001b0b5f137b] udp: Support for error
-> handlers of tunnels with arbitrary destination port
-> testing commit e7cc082455cb49ea937a3ec4ab3d001b0b5f137b with gcc (GCC) 8.1.0
-> all runs: OK
-> # git bisect good e7cc082455cb49ea937a3ec4ab3d001b0b5f137b
-> Bisecting: 1 revision left to test after this (roughly 1 step)
-> [56fd865f46b894681dd7e7f83761243add7a71a3] selftests: pmtu: Introduce
-> FoU and GUE PMTU exceptions tests
-> testing commit 56fd865f46b894681dd7e7f83761243add7a71a3 with gcc (GCC) 8.1.0
-> run #0: crashed: WARNING in unlink_anon_vmas
-> run #1: crashed: BUG: unable to handle kernel NULL pointer dereference
-> in corrupted
-> run #2: crashed: BUG: unable to handle kernel NULL pointer dereference
-> in corrupted
-> run #3: crashed: KASAN: stack-out-of-bounds Read in update_min_vruntime
-> run #4: crashed: BUG: unable to handle kernel paging request in corrupted
-> run #5: crashed: PANIC: double fault in corrupted
-> run #6: crashed: WARNING in unlink_anon_vmas
-> run #7: crashed: WARNING in unlink_anon_vmas
-> # git bisect bad 56fd865f46b894681dd7e7f83761243add7a71a3
-> Bisecting: 0 revisions left to test after this (roughly 0 steps)
-> [b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e] fou, fou6: ICMP error
-> handlers for FoU and GUE
-> testing commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e with gcc (GCC) 8.1.0
-> run #0: crashed: kernel BUG at include/linux/swapops.h:LINE!
-> run #1: crashed: general protection fault in __bfs
-> run #2: crashed: INFO: trying to register non-static key in corrupted
-> run #3: crashed: lost connection to test machine
-> run #4: crashed: BUG: unable to handle kernel NULL pointer dereference
-> in corrupted
-> run #5: crashed: kernel BUG at include/linux/swapops.h:LINE!
-> run #6: crashed: no output from test machine
-> run #7: crashed: lost connection to test machine
-> # git bisect bad b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
-> b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e is the first bad commit
-> commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
-> Author: Stefano Brivio <sbrivio@redhat.com>
-> Date:   Thu Nov 8 12:19:23 2018 +0100
-> 
->     fou, fou6: ICMP error handlers for FoU and GUE
-> 
->     As the destination port in FoU and GUE receiving sockets doesn't
->     necessarily match the remote destination port, we can't associate errors
->     to the encapsulating tunnels with a socket lookup -- we need to blindly
->     try them instead. This means we don't even know if we are handling errors
->     for FoU or GUE without digging into the packets.
-> 
->     Hence, implement a single handler for both, one for IPv4 and one for IPv6,
->     that will check whether the packet that generated the ICMP error used a
->     direct IP encapsulation or if it had a GUE header, and send the error to
->     the matching protocol handler, if any.
-> 
->     Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
->     Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
-> 
-> :040000 040000 cabdcb7779c24a357486aae139cb31cdd625bc53
-> 6bc9db712d9698330234b7c8c934dcfc71cfb657 M net
-> revisions tested: 16, total time: 3h25m25.893971693s (build:
-> 1h23m29.053198068s, test: 1h59m23.409063298s)
-> first bad commit: b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e fou, fou6:
-> ICMP error handlers for FoU and GUE
-> cc: ["sbrivio@redhat.com" "sd@queasysnail.net"]
-> 
+The HMAT specification allows for other cache-topologies, so it's not
+sufficient to just look for non-zero size when a platform implements a
+set-associative cache. The expectation is that a set-associative cache
+would not need the kernel to perform memory randomization to improve
+the cache utilization.
 
+The check for memory size > cache-size is a sanity check for a
+platform BIOS or system configuration that mis-reports or mis-sizes
+the cache.
