@@ -2,92 +2,91 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54104C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE8BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A3882133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 351B5206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:42:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgF2Jn5J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388324AbeLQQl1 convert rfc822-to-8bit (ORCPT
+        id S2388329AbeLQQm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:41:27 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:32896 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388223AbeLQQl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:41:26 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5ADF4207B2; Mon, 17 Dec 2018 17:41:24 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0601420723;
-        Mon, 17 Dec 2018 17:41:13 +0100 (CET)
-Date:   Mon, 17 Dec 2018 17:41:14 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
-        Michal Simek <michals@xilinx.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-Message-ID: <20181217174114.24196d17@xps13>
-In-Reply-To: <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181118204324.373ca9cc@bbrezillon>
-        <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181119090246.49060019@bbrezillon>
-        <BN6PR02MB2610C7D048E4A192E041BE14AFD90@BN6PR02MB2610.namprd02.prod.outlook.com>
-        <20181120120244.7d2442b5@bbrezillon>
-        <20181120133624.3fa4742d@xps13>
-        <MWHPR02MB26238A2271B33470ABFA1023AFD40@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <MWHPR02MB26239C2B2A7050310BEF1E9CAFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181212091135.1d0cc9a6@xps13>
-        <MWHPR02MB26236CEF8A2110B20C825198AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181212100931.149b0cac@xps13>
-        <MWHPR02MB2623EDA15BE59304795F3034AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181212141825.69711c57@xps13>
-        <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 17 Dec 2018 11:42:58 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35606 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbeLQQm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:42:57 -0500
+Received: by mail-wm1-f66.google.com with SMTP id c126so13289981wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 08:42:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=KNJiciN4Z5HdYmPVHnsvuK/wmO67+z/RGnkWjVK6wa0=;
+        b=bgF2Jn5JVjdLeyomVyQS5SzHzSkStrfolSOHunxhMg6j4/yLX2F5KnJMa04RYmqdo0
+         KkgoBohCprxUMCNiR6ouP6jESXq6t+G4Mu2dpGZFsk9ZiPPp4kkUagfE3ol/oYSHF/Eg
+         P4LqTvIPqGEx38q/vs3kJV1LwlyO9EjzzJ11E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=KNJiciN4Z5HdYmPVHnsvuK/wmO67+z/RGnkWjVK6wa0=;
+        b=d6mlo/KhDD77zQ+Xl9OjnSmfru3R3E9UyvuwXCxXmx+ZSC5rbBQ7r2jZ6L6opkjruT
+         DEZx6rAopIOeq0nP5l7/Z+GyGsQKojsPtXMuJ2/ixmTBS9jg+ERPlM0a8500gwFGFT5g
+         8HytJvzzPOrhTT9limdK45pQzuCsprXbvjqc1dE9ptYcFgvwUf7/0AqynkOM7Wng27Gk
+         wM4eT7DE+imXtq4O16E1nnf3UriOvjvO/MKNVZzK1Hec+6NeUt13+3L6rL8m3y7iTw6U
+         xunDMx0kHo7dkv5eNrkh9xcR/yvwMWShiGrD+y0wcLIRPQN1xwGV/cfer6NGwYEVemKd
+         npKw==
+X-Gm-Message-State: AA+aEWajex/oh6/YOnqdjAieImayJydELRVnDYzrmKfUzBA6u0ZVrdQR
+        WA2Sx0NI3IIwUIhKAFzAnNBC1/QEI/FmuA==
+X-Google-Smtp-Source: AFSGD/XM29Vhj8To1W7os27+oFNjScIgH+yxwKtph7ldTvp41kg/iufl5FPDkXG03A2DBEEwtvuDbA==
+X-Received: by 2002:a1c:c583:: with SMTP id v125mr136864wmf.132.1545064976156;
+        Mon, 17 Dec 2018 08:42:56 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id g188sm11796134wmf.32.2018.12.17.08.42.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 08:42:55 -0800 (PST)
+Date:   Mon, 17 Dec 2018 16:42:53 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        kgdb-bugreport@lists.sourceforge.net
+Subject: linux-next: Add secondary kgdb tree
+Message-ID: <20181217164253.5ficzs4zr4dxbemu@holly.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
+Hi Stephen
 
-[...]
+Is there any change you could add my kgdb tree to the roster for
+linux-next :
 
-> Inserted biterror @ 48/7
-> Successfully corrected 25 bit errors per subpage
-> Inserted biterror @ 50/7
-> ECC failure, invalid data despite read success
-> root@xilinx-zc1751-dc2-2018_1:~#
-> 
-> But even in this case also, driver is saying ECC failure but read success.
-> That means controller is able to detect errors on read page up to 24 bit only.
-> After that there is no way to say to the upper layers that the page is bad because of the limitation in the controller.
+https://git.kernel.org/pub/scm/linux/kernel/git/danielt/linux.git kgdb/for-next
 
-This is more than a "limitation", the design is broken. I am not sure
-how to support such controller, and I am not sure if we even want to.
+I'm currently collecting kgdb patches for v4.21 together and at the
+moment it looks like the PR for kgdb will come from my tree this dev
+cycle.
 
-> Could you please suggest any alternative to report the errors in that case?
-
-Shall we support the controller without the hw ECC engine? Boris, any
-thoughts?
+This will leave you with two kgdb trees in this list which I assume
+isn't great for you (although Jason's tree isn't really changing much
+at the moment so I guess merging it is a nop). Anyhow I've made a diary
+note to follow this up in two kernel cycles time and decide which one
+we want to keep on the roster. Is that OK for you?
 
 
-Thanks,
-Miquèl
+Daniel.
