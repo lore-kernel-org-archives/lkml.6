@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08488C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BF6C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB064206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063E7206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbeLQQF7 (ORCPT
+        id S2388054AbeLQQGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:05:59 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34934 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387877AbeLQQF6 (ORCPT
+        Mon, 17 Dec 2018 11:06:21 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:46315 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727788AbeLQQGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:05:58 -0500
-Received: by mail-vs1-f68.google.com with SMTP id e7so8026442vsc.2;
-        Mon, 17 Dec 2018 08:05:57 -0800 (PST)
+        Mon, 17 Dec 2018 11:06:20 -0500
+Received: by mail-vs1-f67.google.com with SMTP id n10so7984793vso.13;
+        Mon, 17 Dec 2018 08:06:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KLk+ODEh+YX19xbTxwTZeBqbrmECH0wG3ea+UOaK1pQ=;
-        b=pdTjT77T8bRlxN8SQhiZXmGteY/EIX53NoDB0oZmniNsDwOMju3UiK08JbUck1EY5m
-         68Rws6WCOvF1OL/ADE8RcCu08S5pY3vd7WvtOizG/GV8ZqdaFCEizneAVnSeQejM+Z6f
-         Z5KzQcz8gn9/xrYNetwsrSamasFx+EXxEVKHeCk9Wz2tE46zbSutJ0F+b+E1At2FfSLP
-         dH222cY/lkSjxQWZ8xLeCnq+MOoHppA6fq5YoYb6HGwKOHcb2CDI75xSFACrEOQgXEw5
-         pmlTbmKJ7JxkglbNlqgSq7cc86LUaWN2dUeqxIRp3qpvUW25XW7KpJ9aTM9BcTGZt95F
-         iPzw==
-X-Gm-Message-State: AA+aEWa75DR1JHVoIcqQ8Q66uiRYpUepZh/Ud07MEkbRe8Ua1FiFN1EU
-        EsWMGc1hNbEmFYRQxebslu+vdRoTyCmxj1W47j4=
-X-Google-Smtp-Source: AFSGD/VIGIQj1947yxRhEiwhh8LN5jUMNQ3qaxsxovc6VXsWCi57T0OE1PtENIt+QDTwq1suCE+7a0l8hKc914UgBSg=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr5776992vsi.96.1545062757371;
- Mon, 17 Dec 2018 08:05:57 -0800 (PST)
+        bh=HFXOXiq6mQ59zPBKpWaKSBAGfi5aX5ZW0Jrp6oBICs4=;
+        b=X2mQUTdPUH9A5Tgk6wm9J02pQHbrLtf3+YJD1JT90lHM4tcPy8msxqDzdngZ9/Jjvq
+         wvhyk3ANxp+UXZzkakKSZQD+4MWMqgrSyBlrzhKXvBYVa94L+1zPmPH7jXwBx5Ley7sO
+         4Fn4uQL5awJbZJr5SErlir5W1dKbGnztPSu6aaRypq6P+Ddf5RFtOISYZwokbGG//cp4
+         zSuiS5CJOhulzVi1bq8TbvuJ/0Q//7HiBp4IC+wqh1ZCdp/1FyJW4cqSMV4s6bWwz1qG
+         kc+Sr4vpajsShPSgTBxA/SZ+e7ChXfoY2BZawbsAN5c+q9aZqaOnbGranGedQzHoc3x4
+         5LKg==
+X-Gm-Message-State: AA+aEWZ9u1TE3oXIW68TALAJBTDKByVWGuqHTvPwMP7E5nZG/44p8Ngr
+        Zd7nBP8KQuhutH5P1e3nBA5lc5KiXU2A0RNwgT8=
+X-Google-Smtp-Source: AFSGD/W9ZIjSQ7at6OCD/+slRap87o/EvbOjfK6JCB4X2hsa9DQ4ORv+iUvn8cZ3TEBPJGfALzTlRJuXXGq9VthQ5Bk=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr6241170vsi.63.1545062779322;
+ Mon, 17 Dec 2018 08:06:19 -0800 (PST)
 MIME-Version: 1.0
-References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544778613-24279-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544778613-24279-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544778613-24279-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544778613-24279-5-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 17:05:45 +0100
-Message-ID: <CAMuHMdXp3AD+t3yuF4RXKN2dX7wHc7de-B=k4T8KAmDdng1ZCQ@mail.gmail.com>
-Subject: Re: [PATCH 3/9] arm64: dts: renesas: r8a774c0: Add SCIF and HSCIF nodes
+Date:   Mon, 17 Dec 2018 17:06:06 +0100
+Message-ID: <CAMuHMdWZm1ArZij+QPgG5qLk3AfRgegO-rD=H8YLW9jTZ6qR0Q@mail.gmail.com>
+Subject: Re: [PATCH 4/9] arm64: dts: renesas: r8a774c0: Add INTC-EX device node
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Simon Horman <horms@verge.net.au>,
@@ -63,21 +63,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
-
 On Fri, Dec 14, 2018 at 10:10 AM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Add the device nodes for all RZ/G2E SCIF and HSCIF serial ports,
-> including clocks, power domains and DMAs.
-> According to the HW user manual, SCIF[015] and HSCIF[012] are
-> connected to both SYS-DMAC1 and SYS-DMAC2, while SCIF[34] and
-> HSCIF[34] are connected to SYS-DMAC0.
+> Add support for the Interrupt Controller for External Devices
+> (INTC-EX) on RZ/G2E.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Let's hope SCIF2 DMA will be documented soon, too ;-)
 
 Gr{oetje,eeting}s,
 
