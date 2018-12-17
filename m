@@ -2,110 +2,156 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E76E5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC416C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0A2214D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:35:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="RuE8Du49"
+	by mail.kernel.org (Postfix) with ESMTP id A452F214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387753AbeLQUff (ORCPT
+        id S2389175AbeLQUfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:35:35 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34786 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbeLQUfe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:35:34 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h3so6949485pfg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 12:35:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6AgDmzoxlwfYO3E3FfNbM/qMUiM2v65TmXBk7SuPY7I=;
-        b=RuE8Du49uLfmRj0sjDzWf6vAd3GD+ThkejmeSWVi0ycwQWwvpYXVCyzQZT4U3M5Wts
-         KBeMSqXKroR3bN5Y7g9TVHxugvW3/5eFN2YGkTijUBLYv1XwIyNLGVfKr39jOqXFbx81
-         2Jmsa0F0aL6hBscT3o/9NWcQoFaN1yZIwtNmfZFD6/waDkRtFzVgsNnX6rKdxTXam1Tn
-         QcnxeqnXTP6DIvy4XZo2KnNQAXoW/6I+Oeg41Wn05FZwg4a+z5sJ6dRnMpvxR8uuyHFc
-         1Qb1Iu43OdKxGT4Oh6fGCW2uCsCshwEVc8CGbekMxnHTBK4mrGEIGF09DyMRl8KFtZM0
-         lHAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6AgDmzoxlwfYO3E3FfNbM/qMUiM2v65TmXBk7SuPY7I=;
-        b=n6lgxyZMuPg/bJavVOQrN8cDAG3ttXkza/5WqKTP8J226IXDBEE86P5K+8dluvg3Ob
-         lsRQCNerzu7Ii/BMVUSbimaVvZ0VHwsDBAZIHdsf3yG4+3MSEcnl7k8JlhRmRifjseTZ
-         lNW+zS/baebInTGXfJqecZ3NETtu58/02pFAy+lY5l8sz4HKVtJ93wd43R4DADYxO2vJ
-         cXVc1NbLk3rvzwa78z+0Jbqk6Uq4945yN2JGojXg21qcD/ODeP4dEhXHuZAn0Ylw0zCp
-         CvcVT+FRdKLbacWItzJTx0Hk/Z0jdXJ/lhRrRvIO3YkE3Lu4bZP2nLr2RGK25h6O1459
-         J1Ig==
-X-Gm-Message-State: AA+aEWYvTyHLoQkf2GPsPqI1MRwnsC2ao/JXI3t1oivA1GWFJtKfQfcO
-        BcB2qX6bIUCVq8ijMYoIF4EshA==
-X-Google-Smtp-Source: AFSGD/VYczsxtVzc1IHnhRUqVEs6Wb+LJ/euAxF0Zptj+Yg7SljAPl66mFkseAi3YdavqRtN1ZXhAQ==
-X-Received: by 2002:a63:cf48:: with SMTP id b8mr13541348pgj.17.1545078933761;
-        Mon, 17 Dec 2018 12:35:33 -0800 (PST)
-Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id j21sm18531113pfn.175.2018.12.17.12.35.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 12:35:33 -0800 (PST)
-Date:   Mon, 17 Dec 2018 12:35:31 -0800
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     "'olaf@aepfle.de'" <olaf@aepfle.de>,
-        "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "'apw@canonical.com'" <apw@canonical.com>,
-        "'devel@linuxdriverproject.org'" <devel@linuxdriverproject.org>,
-        vkuznets <vkuznets@redhat.com>,
-        "'jasowang@redhat.com'" <jasowang@redhat.com>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Return -EINVAL for the sys files
- for unopened channels
-Message-ID: <20181217123531.71a4f3d4@xeon-e3>
-In-Reply-To: <PU1P153MB0169F16082CBD9FD9F0457B1BFBC0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <PU1P153MB0169DDAA2CBC2901505AE692BFA00@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-        <20181217091518.5004d4c7@xeon-e3>
-        <PU1P153MB0169725E468897F135F2155BBFBC0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-        <20181217101703.78e8bb3f@xeon-e3>
-        <PU1P153MB016981FD2D1CF90635DCE562BFBC0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-        <PU1P153MB0169F16082CBD9FD9F0457B1BFBC0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+        Mon, 17 Dec 2018 15:35:44 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:42778 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbeLQUfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:35:44 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBHKYMBP030343
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 17 Dec 2018 12:35:02 -0800
+Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
+ 12:34:42 -0800
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: [PATCH 10/18] mfd: tps65090: Make it explicitly non-modular
+Date:   Mon, 17 Dec 2018 15:31:20 -0500
+Message-ID: <1545078688-21217-11-git-send-email-paul.gortmaker@windriver.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
+References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 18:44:12 +0000
-Dexuan Cui <decui@microsoft.com> wrote:
+The Kconfig currently controlling compilation of this code is:
 
-> > From: devel <driverdev-devel-bounces@linuxdriverproject.org> On Behalf Of
-> > Dexuan Cui
-> > Sent: Monday, December 17, 2018 10:31 AM  
-> > > From: Stephen Hemminger <stephen@networkplumber.org>
-> > >
-> > > The old code was risky because it would silently return stack garbage.
-> > > Having an error check in get_debuginfo would eliminate that.  
-> > 
-> > OK, then let me make another patch based on the latest char-misc-linus.
-> > 
-> > -- Dexuan  
-> 
-> Hi Stephen, your patch can apply cleanly. Let me rebase your patch to
-> char-misc-linus, do a test, and then post it with your Signed-off-by and mine: 
-> I assume you're Ok with this. Please let me know in case it's not. :-)
-> 
-> Thanks,
-> -- Dexuan
+drivers/mfd/Kconfig:config MFD_TPS65090
+drivers/mfd/Kconfig:    bool "TI TPS65090 Power Management chips"
 
-Sure.
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We explicitly disallow a driver unbind, since that doesn't have a
+sensible use case anyway, and it allows us to drop the ".remove"
+code for non-modular drivers.
+
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
+
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Venu Byravarasu <vbyravarasu@nvidia.com>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/mfd/tps65090.c | 30 +++++-------------------------
+ 1 file changed, 5 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index f13e4cd06e89..6968df4d7828 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -2,7 +2,9 @@
+  * Core driver for TI TPS65090 PMIC family
+  *
+  * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+-
++ *
++ * Author: Venu Byravarasu <vbyravarasu@nvidia.com>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -19,7 +21,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+ #include <linux/i2c.h>
+@@ -171,7 +173,6 @@ static const struct of_device_id tps65090_of_match[] = {
+ 	{ .compatible = "ti,tps65090",},
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, tps65090_of_match);
+ #endif
+ 
+ static int tps65090_i2c_probe(struct i2c_client *client,
+@@ -236,30 +237,19 @@ static int tps65090_i2c_probe(struct i2c_client *client,
+ 	return ret;
+ }
+ 
+-static int tps65090_i2c_remove(struct i2c_client *client)
+-{
+-	struct tps65090 *tps65090 = i2c_get_clientdata(client);
+-
+-	mfd_remove_devices(tps65090->dev);
+-	if (client->irq)
+-		regmap_del_irq_chip(client->irq, tps65090->irq_data);
+-
+-	return 0;
+-}
+ 
+ static const struct i2c_device_id tps65090_id_table[] = {
+ 	{ "tps65090", 0 },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(i2c, tps65090_id_table);
+ 
+ static struct i2c_driver tps65090_driver = {
+ 	.driver	= {
+ 		.name	= "tps65090",
++		.suppress_bind_attrs = true,
+ 		.of_match_table = of_match_ptr(tps65090_of_match),
+ 	},
+ 	.probe		= tps65090_i2c_probe,
+-	.remove		= tps65090_i2c_remove,
+ 	.id_table	= tps65090_id_table,
+ };
+ 
+@@ -268,13 +258,3 @@ static int __init tps65090_init(void)
+ 	return i2c_add_driver(&tps65090_driver);
+ }
+ subsys_initcall(tps65090_init);
+-
+-static void __exit tps65090_exit(void)
+-{
+-	i2c_del_driver(&tps65090_driver);
+-}
+-module_exit(tps65090_exit);
+-
+-MODULE_DESCRIPTION("TPS65090 core driver");
+-MODULE_AUTHOR("Venu Byravarasu <vbyravarasu@nvidia.com>");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
+
