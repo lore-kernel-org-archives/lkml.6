@@ -2,112 +2,131 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66372C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAE9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4100220874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3105C20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:11:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PBSWepjt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbeLQSJ6 (ORCPT
+        id S2388607AbeLQSLL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:09:58 -0500
-Received: from mga12.intel.com ([192.55.52.136]:39979 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbeLQSJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:09:58 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:09:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="102212968"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga008.jf.intel.com with ESMTP; 17 Dec 2018 10:09:57 -0800
-Date:   Mon, 17 Dec 2018 10:09:57 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "Dr. Greg" <greg@enjellic.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181217180957.GC12491@linux.intel.com>
-References: <20181128192228.GC9023@linux.intel.com>
- <20181210104908.GA23132@wind.enjellic.com>
- <20181212180036.GC6333@linux.intel.com>
- <20181214235917.GA14049@wind.enjellic.com>
- <20181215000627.GA5799@linux.intel.com>
- <20181217132859.GA31936@linux.intel.com>
- <20181217133928.GA32706@linux.intel.com>
- <20181217140811.GA4601@linux.intel.com>
- <20181217173106.GB12491@linux.intel.com>
- <20181217174935.GA12617@linux.intel.com>
+        Mon, 17 Dec 2018 13:11:11 -0500
+Received: from mail-io1-f45.google.com ([209.85.166.45]:43991 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732263AbeLQSLL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:11:11 -0500
+Received: by mail-io1-f45.google.com with SMTP id l3so10679016ioc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:11:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RtTtww2J+GCnUCdOOfNCDZywfZrp26+t2LoIbv9W3/w=;
+        b=PBSWepjtdhOkOuXXkRyafBYBnFtcmnG4Ry5qumN25JpFGmpOCp66379L9MU1I63HYO
+         ZthhNX/m4KDplzzfZ+3xFmjQccl/Q29uewHEr1Qd5UyfK4HZJy0nWWKhiC81Whg1fO/D
+         SFPIf1+UkIerXxbZ32h58I01tAP8giom9ZFys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RtTtww2J+GCnUCdOOfNCDZywfZrp26+t2LoIbv9W3/w=;
+        b=ATSu98b2wiOqgRgbwvbDxDzubg/pg+YagZlcHwK03odI6QEirLfGvXOIB1NIDjtrwT
+         YanoaNWH1R6ETHMMAF2YWvpcbAMSkgtIqQF4Jz9APjazRwu2F3itOiqiar0yT0VrAI4c
+         XjiaSRI7UNvmxpITQvts4f7BtXmATuvN5/ci+93haZ0R43FHJs70Dw4kq+Lq+MdtP9xb
+         5GPGLscu5rauuxtN6IJeVGZykgZjiQvMCVCVAKiGOTZDfSAC02hD6mbROU0y7diDMcxr
+         QhC9oxeU1ttDkBWwi3bTBTj3MPmAecrYeCxAsUngmqzLggjkYe3y4l7bHrSltm43OXb3
+         Y+wg==
+X-Gm-Message-State: AA+aEWbOTXL7PmYXkqhrWfLCpAPBd8Q5ajtuCd5lhSE0SN6T7pc7nE6d
+        d4TQwH7rIDx45DtDpDjZMy8/wyf+aQ2yj+XznaLi22FVetI=
+X-Google-Smtp-Source: AFSGD/UbS8AHfTAvFp+0/UyY7FkNFm073wdmFKg6Q9As639fuMMRJJm+k80v9/qepWHpx9E85iCR6Yp4hYpduKM8nNs=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr11468580iob.170.1545070269491;
+ Mon, 17 Dec 2018 10:11:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217174935.GA12617@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
+ <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org> <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 17 Dec 2018 19:10:58 +0100
+Message-ID: <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
+Subject: Re: [tip:efi/core] x86/efi: Unmap EFI boot services code/data regions
+ from efi_pgd
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+        "julien.thierry@arm.com" <julien.thierry@arm.com>,
+        "bhsharma@redhat.com" <bhsharma@redhat.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
+        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 07:49:35PM +0200, Jarkko Sakkinen wrote:
-> On Mon, Dec 17, 2018 at 09:31:06AM -0800, Sean Christopherson wrote:
-> > This doesn't work as-is.  sgx_encl_release() needs to use sgx_free_page()
-> > and not __sgx_free_page() so that we get a WARN() if the page can't be
-> > freed.  sgx_invalidate() needs to use __sgx_free_page() as freeing a page
-> > can fail due to running concurrently with reclaim.  I'll play around with
-> > the code a bit, there's probably a fairly clean way to share code between
-> > the two flows.
-> 
-> Hmm... but why issue a warning in that case? It should be legit
-> behaviour.
+On Mon, 17 Dec 2018 at 19:06, Prakhya, Sai Praneeth
+<sai.praneeth.prakhya@intel.com> wrote:
+>
+> > Commit-ID:  08cfb38f3ef49cfd1bba11a00401451606477d80
+> > Gitweb:
+> > https://git.kernel.org/tip/08cfb38f3ef49cfd1bba11a00401451606477d80
+> > Author:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> > AuthorDate: Thu, 29 Nov 2018 18:12:24 +0100
+> > Committer:  Ingo Molnar <mingo@kernel.org>
+> > CommitDate: Fri, 30 Nov 2018 09:10:30 +0100
+> >
+> > x86/efi: Unmap EFI boot services code/data regions from efi_pgd
+> >
+> > efi_free_boot_services(), as the name suggests, frees EFI boot services
+> > code/data regions but forgets to unmap these regions from efi_pgd. This means
+> > that any code that's running in efi_pgd address space (e.g:
+> > any EFI runtime service) would still be able to access these regions but the
+> > contents of these regions would have long been over written by someone else.
+> > So, it's important to unmap these regions. Hence, introduce efi_unmap_pages()
+> > to unmap these regions from efi_pgd.
+> >
+> > After unmapping EFI boot services code/data regions, any illegal access by
+> > buggy firmware to these regions would result in page fault which will be handled
+> > by EFI specific fault handler.
+>
+> Hi Thomas and Ingo,
+>
+> I recently noticed that the below commits [1] and [2] are broken when kernel command line
+> argument "efi=old_map" is passed. Sorry! I missed to test this condition prior to sending
+> these patches to mailing list. I am working on a fix and will send it to mailing list as
+> soon as it's ready.
+>
 
-No, EREMOVE should never fail if the enclave is being released, i.e. all
-references to the enclave are gone.  And failure during sgx_encl_release()
-means we leaked an EPC page, which warrants a WARN.
+Could you elaborate on the problem please?
 
-The only legitimate reason __sgx_free_page() can fail in sgx_invalidate()
-is because a page might be in the process of being reclaimed.  We could
-theoretically WARN on EREMOVE failure in that case, but it'd make the code
-a little fragile and it's not "fatal" in the sense that we get a second
-chance to free the page during sgx_encl_release().
+> Meanwhile, could you please drop these patches before sending pull request to Linus?
+>
+> [1] Commit 08cfb38f3ef4 ("x86/efi: Unmap EFI boot services code/data regions from efi_pgd")
+> [2] Commit 7e0dabd3010d ("x86/mm/pageattr: Introduce helper function to unmap EFI boot services")
+>
 
-And unless I missed something, using sgx_invalidate() means were' leaking
-all sgx_encl_page structs as well as the radix tree entries.
- 
-> > sgx_encl_release_worker() calls do_unmap() without checking the validity
-> > of the page tables[1].  As is, the code doesn't even guarantee mm_struct
-> > itself is valid.
-> > 
-> > The easiest fix I can think of is to add a SGX_ENCL_MM_RELEASED flag
-> > that is set along with SGX_ENCL_DEAD in sgx_mmu_notifier_release(), and
-> > only call do_unmap() if SGX_ENCL_MM_RELEASED is false.  Note that this
-> > means we cant unregister the mmu_notifier until after do_unmap(), but
-> > that's true no matter what since we're relying on the mmu_notifier to
-> > hold a reference to mm_struct.  Patch attached.
-> 
-> OK, the fix change makes sense but I'm thinking that would it be a
-> better idea just to set mm NULL and check that instead?
-
-That makes sense.
+I'd like to understand what the issue is before we drop anything.
