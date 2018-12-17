@@ -2,148 +2,133 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8577C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A597C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:42:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8503C20675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:41:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545068516;
-	bh=9bgdd06jclrn5HMIoq9X1Omn+9qG4+HLZ/rpcyny2LY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AaHWlMITzSRPCPpozqnylkCKyiOYks6YkxtVLSCj5Jtl6GLbZdhTalxa8LwfZrULk
-	 WxjfwRMjX10usXJcOHeEGwTWQAbRTx1t6dbULVs6gogOFPbWfJTHsK7qf/0oAiewTc
-	 URgUy4lsNwtc6Dz4mAPm09Qog2SVKa4onBde3f9M=
+	by mail.kernel.org (Postfix) with ESMTP id 226D9214D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 17:42:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bni42YmZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeLQRlz (ORCPT
+        id S2388447AbeLQRmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 12:41:55 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33041 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeLQRlz (ORCPT
+        Mon, 17 Dec 2018 12:42:00 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50631 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLQRmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 12:41:55 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so5274120wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:41:53 -0800 (PST)
+        Mon, 17 Dec 2018 12:42:00 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n190so93698wmd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:41:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=uUtlUa7KEK5mVLEjR7vxpI30DgHQ+D9dG4DxVa1XAQ0=;
-        b=o5tox0Z2Lme4wNm3ewC+uTeXaXu/Jt4NAfEirshYbG5YbLnD3kfdc6eyxLgI/8tEOq
-         cHgoXfHA+i1TUWr2W/tJJDI9+Qs98oJ3M5+Qk5w1G5QSCUZYSDiH76GCCf/lkJqk7oLJ
-         GM5OmD5ORxEYJypaH1kSRk2JTBVmQqnPc7GjX7ReYdiqbvYwAzpcbJqqXouCRnPUbpGi
-         vZnOxSkOr0fz7NZXAH1uA/34zr5vxuaAAHGEd7ISjbZ4FKNQWwLAvUCHfhp4ABskNJm3
-         okrBydtOTtO7hbLFdYfR2BVvbgl8aeZRkoxpYeMuzuHrFZhClsLMKMsrqeHWB8J/NItx
-         pplg==
+        bh=NHgL4UdnOpy77EV1tf+PwJUW7xiwZDXTyWHuuGcwaDQ=;
+        b=bni42YmZYsEYoR5Aw5ulAeFPXk/ZhHYsRSine6QPSgu0x5V3O8WxH70nb7clz/dInr
+         A/q525w+G5HVVXl6kvGN6n0R7YeRkfeDOmAIuAWi/4HltgKBmQh5qQfT0ecaIbvcBAwt
+         SpQRgh3xWquMFz0X7E5rbg6DqcDc08cPEhLgyWukyFxBANdgoYm0uDva8GILqww6tflg
+         oHEFmwxBLnLGSg+AA3b+FH2m8/8rRqf4Hl+j89fcnnkjzciz4C48LHtEjpJyMl8k/4vN
+         7PtBGqgbNMCMF/aCtlGBSIyoEh7ghS/7WDShET31Y03lxmtDy/PfoyWuy8o4HeRRKm3J
+         OE7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uUtlUa7KEK5mVLEjR7vxpI30DgHQ+D9dG4DxVa1XAQ0=;
-        b=PokD/XaVjCdYlOv5FGtOTKuPt6tENLtGSfDvWDPonFxg9qyUOUNXhouS+dQKQDcXX5
-         TmheX6Bu0621dZugCZ90/Yv8wFjLsUDL+xCvPETQx4HgPO6qIc3ATm+qiK9wDMdwutvR
-         Wp9g22qJLmpyQAfd3cGn8IL1T3xieTvhrJTanFHnwuHv0wYt1kyS13Y1koMxdNfgKN9j
-         KiMYtwzoGx4OsF3K9IL4fctSArB6BOz7oZp6wdSHxzBpruS5my1Cso7Q4kESJFuo570V
-         nFPZ8QIdIzyF1LDMVfGlMw1jErOhy1eqa0qY3wmuUDkgwFMgzHY6XtWo2Hqgrds4m0rr
-         7ufg==
-X-Gm-Message-State: AA+aEWYyt7sXFQ5jCY0ifU1hpCfibP/B0VaUSW0iEdB8MctnhVZ6t1hI
-        qoAa7pvKY/SE2bvzEuPZI9Q=
-X-Google-Smtp-Source: AFSGD/XYJNCAmx/9qW+co+jHMfoyR1mEC5+kV2g0Z2EqJ7oW4W43MAxVyXVsDZ1huC+bZxTQ+0BCfw==
-X-Received: by 2002:a1c:8095:: with SMTP id b143mr49800wmd.63.1545068512789;
-        Mon, 17 Dec 2018 09:41:52 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id o17sm20873617wmg.35.2018.12.17.09.41.51
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NHgL4UdnOpy77EV1tf+PwJUW7xiwZDXTyWHuuGcwaDQ=;
+        b=lQh+h9MPcQzeOd3boaXjonFRQirM2k03fINwyueWcD3B7FXVj5e1qZWiqn8rQq8M4d
+         1UG4/CKiSt3U4/RufsDbSAp+JghqVFRE/kLMWs+PIjI5RQVJi9VOYhGqubOjcskBbgSH
+         rVgym2JYMfA8joiC408bZsyA6dkaMFE78gFQmmQp/O3TKvLfoZVnJIZSZQSS+xxet8BO
+         +9v7dDAbQpirC1OfudS+NIvGL5ZWW804juBjS8KdY37knp835bzH9dSW/26xNrQ5Fis3
+         BXBDCRdR5k7qwNtbI6tQUCTb3Vq3NM+OlYzkH5+wPZ3SJLVMynvNSc7V1PCuDKtSKVMK
+         Yq9g==
+X-Gm-Message-State: AA+aEWaEiqJ2ICDDV8QiHToDhE+QtW9IkqxfuFnfu7oAuqlxZ1flknju
+        /xDcWzDCpNTtBIHq6G92Z+k=
+X-Google-Smtp-Source: AFSGD/WP5htQxZWYIlFfcSdup+nQZiRd7zJ1kfAgRrkiS3fnovpOo8j4a0CJsT8NbFCv6M2kN1zLIg==
+X-Received: by 2002:a1c:35ca:: with SMTP id c193mr66251wma.146.1545068517755;
+        Mon, 17 Dec 2018 09:41:57 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id n127sm13549516wmd.20.2018.12.17.09.41.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 09:41:52 -0800 (PST)
-Date:   Mon, 17 Dec 2018 18:41:49 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v14 4/5] x86/boot: Parse SRAT address from RSDP and store
- immovable memory
-Message-ID: <20181217174149.GD90818@gmail.com>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
- <20181214093013.13370-5-fanc.fnst@cn.fujitsu.com>
+        Mon, 17 Dec 2018 09:41:57 -0800 (PST)
+Date:   Mon, 17 Dec 2018 10:41:55 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [PATCH] drm/i915: Disable -Wuninitialized for intel_breadcrumbs.o
+Message-ID: <20181217174155.GA857@flashbox>
+References: <20181025193601.11746-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181214093013.13370-5-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181025193601.11746-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
-
-> SRAT should be parsed by RSDP to fix the conflict between KASLR
-> and memory-hotremove, then find the immovable memory regions and store
-> them in an array called immovable_mem[]. With immovable_mem[], KASLR
-> can avoid to extract kernel to specific regions.
+On Thu, Oct 25, 2018 at 12:36:01PM -0700, Nathan Chancellor wrote:
+> This warning is disabled by default in scripts/Makefile.extrawarn when
+> W= is not provided but this Makefile adds -Wall after this warning is
+> disabled so it shows up in the build when it shouldn't:
 > 
-> Since 'RANDOMIZE_BASE' && 'MEMORY_HOTREMOVE' is needed, introduce
-> 'CONFIG_EARLY_PARSE_RSDP' to make ifdeffery clear.
+> In file included from drivers/gpu/drm/i915/intel_breadcrumbs.c:895:
+> drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c:350:34: error:
+> variable 'wq' is uninitialized when used within its own initialization
+> [-Werror,-Wuninitialized]
+>         DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+>                                         ^~
+> ./include/linux/wait.h:74:63: note: expanded from macro
+> 'DECLARE_WAIT_QUEUE_HEAD_ONSTACK'
+>         struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
+>                                ~~~~                                  ^~~~
+> ./include/linux/wait.h:72:33: note: expanded from macro
+> '__WAIT_QUEUE_HEAD_INIT_ONSTACK'
+>         ({ init_waitqueue_head(&name); name; })
+>                                        ^~~~
+> 1 error generated.
 > 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> This warning looks to be a false positive given that init_waitqueue_head
+> initializes name before it is used. Rather than disable the warning for
+> the full folder like commit 46e2068081e9 ("drm/i915: Disable some extra
+> clang warnings"), just disable it for the one problematic file because
+> it could be a useful warning for other cases.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/220
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
->  arch/x86/Kconfig                  |  12 +++
->  arch/x86/boot/compressed/Makefile |   2 +
->  arch/x86/boot/compressed/acpi.c   | 128 ++++++++++++++++++++++++++++++
->  arch/x86/boot/compressed/kaslr.c  |   4 -
->  arch/x86/boot/compressed/misc.h   |  19 +++++
->  5 files changed, 161 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/i915/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index ba7e3464ee92..333c383478b7 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2149,6 +2149,18 @@ config X86_NEED_RELOCS
->  	def_bool y
->  	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
+> diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
+> index 1c2857f13ad4..f36c420afb99 100644
+> --- a/drivers/gpu/drm/i915/Makefile
+> +++ b/drivers/gpu/drm/i915/Makefile
+> @@ -26,6 +26,7 @@ subdir-ccflags-$(CONFIG_DRM_I915_WERROR) += -Werror
 >  
-> +config EARLY_SRAT_PARSE
-> +	bool "Early SRAT table parsing"
-> +	def_bool y
-> +	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
-> +	help
-> +	  This option enables early SRAT parsing in compressed boot stage
-> +	  so that memory hot-remove ranges do not overlap with KASLR
-> +	  chosen ranges. Kernel won't be extracted in hot-removable
-> +	  memory, so that make sure memory-hotremove works well with
-> +	  KASLR enabled.
-> +	  Say Y if you want to use both KASLR and memory-hotremove.
+>  # Fine grained warnings disable
+>  CFLAGS_i915_pci.o = $(call cc-disable-warning, override-init)
+> +CFLAGS_intel_breadcrumbs.o = $(call cc-disable-warning, uninitialized)
+>  CFLAGS_intel_fbdev.o = $(call cc-disable-warning, override-init)
+>  
+>  subdir-ccflags-y += \
+> -- 
+> 2.19.1
+> 
 
-So why would we want to make this a config option, instead of enabling it 
-unconditionally?
+Gentle ping for review.
 
-How reliable are the hot-removable memory markings in various firmware 
-versions?
-
-> +/* Compute SRAT table from RSDP. */
-> +static struct acpi_table_header *get_acpi_srat_table(void)
-> +{
-> +	acpi_physical_address acpi_table;
-> +	acpi_physical_address root_table;
-> +	struct acpi_table_header *header;
-> +	struct acpi_table_rsdp *rsdp;
-> +	u32 num_entries;
-> +	char arg[10];
-
-The '10' is just a magic number attached to a meaningless local variable 
-name. Please explain the limit in the code, and the role of the variable 
-if it's non-obvious from the name. Or better, try to find a more obvious 
-name?
-
-Thanks,
-
-	Ingo
+Nathan
