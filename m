@@ -2,114 +2,329 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2D2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6587DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B0E21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:04:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QOOyLc8z"
+	by mail.kernel.org (Postfix) with ESMTP id 271E521849
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:05:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389353AbeLQVEI (ORCPT
+        id S2389372AbeLQVFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:04:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59152 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387998AbeLQVEH (ORCPT
+        Mon, 17 Dec 2018 16:05:12 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57013 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728246AbeLQVFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:04:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N5zIuCp4vvOYwuaKImmLczO3tHUmBz2ALswZn3Fhzo4=; b=QOOyLc8zQo2qmESULrg0f6Em6
-        DCCWDpjzVPrHWwEg5ibQWpzkdDtYSJ5JSzhgT9HkUP1K+qimTpkgVygQNCvzBS2Cs2AoyOzYz5OYE
-        K9fOa/If85Pk67vS0711aXHAD/esBhizkIzsAGRF25twAXwsL6V32kEzVKR8C1GJAg3tZvq6TkiBM
-        4+9O9Qyi4gdl32e9o9PsDBdS1Zl+MNA0TUWY3nsCuDR+SINTq+vj4HPJp8AwFj0L6r3ruDV8NuFUD
-        BI9+sY8FanepYjI5aJd5p4zHKVvShL9xrNeYPNdpdKrV9f1d94/k9Oj0Hq9wpI3XzXscKqWhII20+
-        BX7dMJNkg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZ03S-0005q2-QE; Mon, 17 Dec 2018 21:03:58 +0000
-Date:   Mon, 17 Dec 2018 13:03:58 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
+        Mon, 17 Dec 2018 16:05:11 -0500
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBHL58j2098349;
+        Tue, 18 Dec 2018 06:05:08 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Tue, 18 Dec 2018 06:05:08 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBHL57IC098343
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 18 Dec 2018 06:05:08 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181217210358.GR10600@bombadil.infradead.org>
-References: <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
- <20181217183443.GO10600@bombadil.infradead.org>
- <20181217194759.GB3341@redhat.com>
- <20181217195150.GP10600@bombadil.infradead.org>
- <20181217195408.GC3341@redhat.com>
- <20181217195922.GQ10600@bombadil.infradead.org>
- <20181217205500.GD3341@redhat.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
+ <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
+ <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
+ <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
+ <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+ <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+ <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+ <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
+ <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
+ <20181213124255.GB3053@tigerII.localdomain>
+ <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
+Date:   Tue, 18 Dec 2018 06:05:04 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217205500.GD3341@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:55:01PM -0500, Jerome Glisse wrote:
-> On Mon, Dec 17, 2018 at 11:59:22AM -0800, Matthew Wilcox wrote:
-> > On Mon, Dec 17, 2018 at 02:54:08PM -0500, Jerome Glisse wrote:
-> > > On Mon, Dec 17, 2018 at 11:51:51AM -0800, Matthew Wilcox wrote:
-> > > > On Mon, Dec 17, 2018 at 02:48:00PM -0500, Jerome Glisse wrote:
-> > > > > On Mon, Dec 17, 2018 at 10:34:43AM -0800, Matthew Wilcox wrote:
-> > > > > > No.  The solution John, Dan & I have been looking at is to take the
-> > > > > > dirty page off the LRU while it is pinned by GUP.  It will never be
-> > > > > > found for writeback.
-> > > > > 
-> > > > > With the solution you are proposing we loose GUP fast and we have to
-> > > > > allocate a structure for each page that is under GUP, and the LRU
-> > > > > changes too. Moreover by not writing back there is a greater chance
-> > > > > of data loss.
-> > > > 
-> > > > Why can't you store the hmm_data in a side data structure?  Why does it
-> > > > have to be in struct page?
-> > > 
-> > > hmm_data is not even the issue here, we can have a pincount without
-> > > moving things around. So i do not see the need to complexify any of
-> > > the existing code to add new structure and consume more memory for
-> > > no good reasons. I do not see any benefit in that.
-> > 
-> > You said "we have to allocate a structure for each page that is under
-> > GUP".  The only reason to do that is if we want to keep hmm_data in
-> > struct page.  If we ditch hmm_data, there's no need to allocate a
-> > structure, and we don't lose GUP fast either.
+On 2018/12/17 23:54, Petr Mladek wrote:
+> On Thu 2018-12-13 21:42:55, Sergey Senozhatsky wrote:
+>> On (12/13/18 13:18), Petr Mladek wrote:
+>>>> Sometimes we want to print a series of printk() messages to consoles
+>>>> without being disturbed by concurrent printk() from interrupts and/or
+>>>> other threads. But we can't enforce printk() callers to use their local
+>>>> buffers because we need to ask them to make too much changes. Also, even
+>>>> buffering up to one line inside printk() might cause failing to emit
+>>>> an important clue under critical situation.
+>>>>
+>>>> Therefore, instead of trying to help buffering, let's try to help
+>>>> reconstructing messages by saving caller information as of calling
+>>>> log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
+>>>> upon printing to consoles.
+>>>>
+>>> Reviewed-by: Petr Mladek <pmladek@suse.com>
+>>
+>> Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+>>
+>>> From my point of view, the patch is ready to go into
+>>> linux-next. Well, I would prefer to keep it there one more
+>>> release cycle.
 > 
-> And i have propose a way that do not need to ditch hmm_data nor
-> needs to remove page from the lru. What is it you do not like
-> with that ?
+> I have pushed the patch into printk.git, for-4.22 branch.
 
-I don't like bounce buffering.  I don't like "end of writeback doesn't
-mark page as clean".  I don't like pages being on the LRU that aren't
-actually removable.  I don't like writing pages back which we know we're
-going to have to write back again.
+Thank you.
+
+> 
+> 
+> Now, I always felt that the "from" name was a bit strange but
+> nothing better came to my mind until today.
+> 
+> I would like to rename "from" to "caller", see the patch below.
+> If you agree, I could push it on top or I could even squash it
+> into the original patch.
+> 
+> What do you think about it, please?
+
+No problem. Squashed version attached.
+
+> -	char from[18];
+> -#ifdef CONFIG_PRINTK_FROM
+> -	u32 id = msg->from_id;
+> +	char caller[18];
+> +#ifdef CONFIG_PRINTK_CALLER
+> +	u32 id = msg->caller_id;
+>  
+> -	snprintf(from, sizeof(from), ",from=%c%u",
+> +	snprintf(caller, sizeof(caller), ",caller=%c%u",
+>  		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
+
+Updated to [20] in case memory corruption like
+
+  CPU: 0 PID: -2035180937 Comm:  L ����� Not tainted 4.20.0-rc6+ #344
+
+happened.
+
+
+
+From 91f85d2bd494df2f73c605d8b4747e8cc0a61ae2 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 18 Dec 2018 05:53:04 +0900
+Subject: [PATCH] printk: Add caller information to printk() output.
+
+Sometimes we want to print a series of printk() messages to consoles
+without being disturbed by concurrent printk() from interrupts and/or
+other threads. But we can't enforce printk() callers to use their local
+buffers because we need to ask them to make too much changes. Also, even
+buffering up to one line inside printk() might cause failing to emit
+an important clue under critical situation.
+
+Therefore, instead of trying to help buffering, let's try to help
+reconstructing messages by saving caller information as of calling
+log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
+upon printing to consoles.
+
+Some examples for console output:
+
+  [    1.222773][    T1] x86: Booting SMP configuration:
+  [    2.779635][    T1] pci 0000:00:01.0: PCI bridge to [bus 01]
+  [    5.069193][  T268] Fusion MPT base driver 3.04.20
+  [    9.316504][    C2] random: fast init done
+  [   13.413336][ T3355] Initialized host personality
+
+Some examples for /dev/kmsg output:
+
+  6,496,1222773,-,caller=T1;x86: Booting SMP configuration:
+  6,968,2779635,-,caller=T1;pci 0000:00:01.0: PCI bridge to [bus 01]
+   SUBSYSTEM=pci
+   DEVICE=+pci:0000:00:01.0
+  6,1353,5069193,-,caller=T268;Fusion MPT base driver 3.04.20
+  5,1526,9316504,-,caller=C2;random: fast init done
+  6,1575,13413336,-,caller=T3355;Initialized host personality
+
+Note that this patch changes max length of messages which can be printed
+by printk() or written to /dev/kmsg interface from 992 bytes to 976 bytes,
+based on an assumption that userspace won't try to write messages hitting
+that border line to /dev/kmsg interface.
+
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++----
+ lib/Kconfig.debug      | 17 ++++++++++++++++
+ 2 files changed, 68 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1306fe0..7eb79702 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -356,6 +356,9 @@ struct printk_log {
+ 	u8 facility;		/* syslog facility */
+ 	u8 flags:5;		/* internal record flags */
+ 	u8 level:3;		/* syslog level */
++#ifdef CONFIG_PRINTK_CALLER
++	u32 caller_id;            /* thread id or processor id */
++#endif
+ }
+ #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+ __packed __aligned(4)
+@@ -422,7 +425,11 @@ __packed __aligned(4)
+ static u64 clear_seq;
+ static u32 clear_idx;
+ 
++#ifdef CONFIG_PRINTK_CALLER
++#define PREFIX_MAX		48
++#else
+ #define PREFIX_MAX		32
++#endif
+ #define LOG_LINE_MAX		(1024 - PREFIX_MAX)
+ 
+ #define LOG_LEVEL(v)		((v) & 0x07)
+@@ -625,6 +632,12 @@ static int log_store(int facility, int level,
+ 		msg->ts_nsec = ts_nsec;
+ 	else
+ 		msg->ts_nsec = local_clock();
++#ifdef CONFIG_PRINTK_CALLER
++	if (in_task())
++		msg->caller_id = task_pid_nr(current);
++	else
++		msg->caller_id = 0x80000000 + raw_smp_processor_id();
++#endif
+ 	memset(log_dict(msg) + dict_len, 0, pad_len);
+ 	msg->len = size;
+ 
+@@ -688,12 +701,21 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+ 				    struct printk_log *msg, u64 seq)
+ {
+ 	u64 ts_usec = msg->ts_nsec;
++	char caller[20];
++#ifdef CONFIG_PRINTK_CALLER
++	u32 id = msg->caller_id;
++
++	snprintf(caller, sizeof(caller), ",caller=%c%u",
++		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
++#else
++	caller[0] = '\0';
++#endif
+ 
+ 	do_div(ts_usec, 1000);
+ 
+-	return scnprintf(buf, size, "%u,%llu,%llu,%c;",
+-		       (msg->facility << 3) | msg->level, seq, ts_usec,
+-		       msg->flags & LOG_CONT ? 'c' : '-');
++	return scnprintf(buf, size, "%u,%llu,%llu,%c%s;",
++			 (msg->facility << 3) | msg->level, seq, ts_usec,
++			 msg->flags & LOG_CONT ? 'c' : '-', caller);
+ }
+ 
+ static ssize_t msg_print_ext_body(char *buf, size_t size,
+@@ -1038,6 +1060,9 @@ void log_buf_vmcoreinfo_setup(void)
+ 	VMCOREINFO_OFFSET(printk_log, len);
+ 	VMCOREINFO_OFFSET(printk_log, text_len);
+ 	VMCOREINFO_OFFSET(printk_log, dict_len);
++#ifdef CONFIG_PRINTK_CALLER
++	VMCOREINFO_OFFSET(printk_log, caller_id);
++#endif
+ }
+ #endif
+ 
+@@ -1236,10 +1261,23 @@ static size_t print_time(u64 ts, char *buf)
+ {
+ 	unsigned long rem_nsec = do_div(ts, 1000000000);
+ 
+-	return sprintf(buf, "[%5lu.%06lu] ",
++	return sprintf(buf, "[%5lu.%06lu]",
+ 		       (unsigned long)ts, rem_nsec / 1000);
+ }
+ 
++#ifdef CONFIG_PRINTK_CALLER
++static size_t print_caller(u32 id, char *buf)
++{
++	char from[12];
++
++	snprintf(from, sizeof(from), "%c%u",
++		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
++	return sprintf(buf, "[%6s]", from);
++}
++#else
++#define print_caller(id, buf) 0
++#endif
++
+ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 			   bool time, char *buf)
+ {
+@@ -1247,8 +1285,17 @@ static size_t print_prefix(const struct printk_log *msg, bool syslog,
+ 
+ 	if (syslog)
+ 		len = print_syslog((msg->facility << 3) | msg->level, buf);
++
+ 	if (time)
+ 		len += print_time(msg->ts_nsec, buf + len);
++
++	len += print_caller(msg->caller_id, buf + len);
++
++	if (IS_ENABLED(CONFIG_PRINTK_CALLER) || time) {
++		buf[len++] = ' ';
++		buf[len] = '\0';
++	}
++
+ 	return len;
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 9638656..608c355 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -17,6 +17,23 @@ config PRINTK_TIME
+ 	  The behavior is also controlled by the kernel command line
+ 	  parameter printk.time=1. See Documentation/admin-guide/kernel-parameters.rst
+ 
++config PRINTK_CALLER
++	bool "Show caller information on printks"
++	depends on PRINTK
++	help
++	  Selecting this option causes "thread id" (if in task context) or
++	  "processor id" (if not in task context) of the printk() messages
++	  to be added.
++
++	  This option is intended for environments where multiple threads
++	  concurrently call printk() for many times, for it is difficult to
++	  interpret without knowing where these lines (or sometimes individual
++	  line which was divided into multiple lines due to race) came from.
++
++	  Since toggling after boot makes the code racy, currently there is
++	  no option to enable/disable at the kernel command line parameter or
++	  sysfs interface.
++
+ config CONSOLE_LOGLEVEL_DEFAULT
+ 	int "Default console loglevel (1-15)"
+ 	range 1 15
+-- 
+1.8.3.1
