@@ -2,104 +2,99 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22138C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAFBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9FCB20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545072576;
-	bh=1LAXWjcHYZ8EvLqf9+8NBvcCE1AAWmOlR6IS1g416hY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gcag8ZL7H8HAf8QJi1xOPEDJsPJhoqZQqmoYqvfjHKKfe+CpdpdZ/lcTeQmjPtWUS
-	 Z2/zorY7G69wtvpLBSRYSWzAGayJfzSd12ismR0Z5ADRXQYXHrlrOgPUsPNX4ICONU
-	 4dD2gl3Pb+cyjJUVIaIdUdAcx56rKiLr/sTsonds=
+	by mail.kernel.org (Postfix) with ESMTP id D062920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:50:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AhLXP7nc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389177AbeLQSte (ORCPT
+        id S2389225AbeLQSuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:49:34 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36508 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733216AbeLQSte (ORCPT
+        Mon, 17 Dec 2018 13:50:20 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36603 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727819AbeLQSuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:49:34 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u4so12419063wrp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:49:33 -0800 (PST)
+        Mon, 17 Dec 2018 13:50:20 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g11-v6so11971683ljk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:50:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3f7EJWzVIGQxQ6cpNYOs/P1bT2u1rBcPQqwnZrC04Cc=;
-        b=b9k64H2g3vBNikosoT4LCdq0Smg96k2IMdUWtC+Aa+6LWsJ8XEq11EGIQQA6LaEqwV
-         YUyJWIjMC+IhBqfj6hUhODshbrnqSGmPblCjGLgFEU2LLW1H9xLAISMMq8DR7PUGGpG4
-         gE9WzXgAUZyi2tTOZ0MNHgTY1HNMmJS25tpMKxuLE83X4hQFfEMvPatrwoG3Sx2EI9G9
-         xSV3gB8AeuwfJNB9m8N/WxzBvzVgaNKQbFmbFuWHc5XOCbzQ50/VJSsrKdb8gHOGwaz4
-         o1BDibfHs81EI8Fl41zq4OWbH9vtyrSFUdJjLT7QRA6shWV19quelEGHyg1MliR9HVhS
-         3KqA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hUCDd1qVR7zra0gSo/zsbGu0tuzqW9bjcUU103oLgIw=;
+        b=AhLXP7nc+oqTGaEt2DtKQyFN9pPdd63bF0SeX9hPGdzqoLVSGib4VXXJ+aTIztLOlQ
+         ZrBDjsSbgKb9G1dNBOk4O7Ps6K9qJHnQFy/1NsK2j76fjR/fxixUrfJuna9/AK7mdCZ/
+         gizOWY37n5WoZDP9IA0rzmXoVn/MEN78JQcWA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3f7EJWzVIGQxQ6cpNYOs/P1bT2u1rBcPQqwnZrC04Cc=;
-        b=dqzyxB8cIenEFGGlwYhrDuHyBUG1Ill/CJJlcdn1wSLtSEckGhf0SA77NsBKVa4u17
-         wW/moWT1Av51eJDbSX1TalHD0UmsFhbBJ20Jlr6qI0pE/4UyKJLS1EcZmvm0NHnt3b28
-         pN035iKtsykJN9kGqac8piAZcfAH9HkhUNwvf8QHaX/ha499KoUq3AEY3A+/zBX3Be8A
-         3Vt7HkqOmy/udS7GK3s1IScdzWUvfLzRRqDsHqfAGcN1pvPVK2Nzr6/FIeESPr3F68xl
-         AZkGTOnmqqlxsT3yTLTFjuH/RxTc0Z5POhmyjlP/sUhWJAnQGLTWhosKYbWk0EsxOWzR
-         d4Iw==
-X-Gm-Message-State: AA+aEWbfMb5fNEWVIG60SDrKn0AlVR6+ZXgx/9lqdBdjbJaA8S8Er5gw
-        LFoXFaGjxdDJ0ejHXEvQaHI=
-X-Google-Smtp-Source: AFSGD/W/wyBIwvY3V2mWz8ulSkpUGbtwwD63QQ5LvgnAaRMKdKghvHaACIqQ/fYgSyk0R+KMylYqrA==
-X-Received: by 2002:adf:fdc2:: with SMTP id i2mr12218201wrs.117.1545072572415;
-        Mon, 17 Dec 2018 10:49:32 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id r12sm1542058wrq.3.2018.12.17.10.49.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 10:49:31 -0800 (PST)
-Date:   Mon, 17 Dec 2018 19:49:29 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, bp@alien8.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v14 2/5] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20181217184929.GB60403@gmail.com>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
- <20181214093013.13370-3-fanc.fnst@cn.fujitsu.com>
- <20181217173032.GB90818@gmail.com>
- <alpine.DEB.2.21.1812171932020.1660@nanos.tec.linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hUCDd1qVR7zra0gSo/zsbGu0tuzqW9bjcUU103oLgIw=;
+        b=W9a+N3hugET4bRiKPPWzF+/0IgrJkUIyup/vZGKZdeQuJdnM1ygiYuUdXNr04NBTX2
+         kLiSOks4jBwQ49tSgOHV9ELtv2dDCem5s2NCxt0t9plP4B7bAqIdyZ3QO7l21ff9Y7nx
+         5AruWZGRCXuTDJ5lrfrHaI+mQTqZcdAXZMTj2lrAjlo1ohW+oQuij/3HLBQz0Ltp9caK
+         jerR/G7odTM9m8jtehPxPSynMuQoWMVH9voEatqS76QUTU8cYPoVGx9G4Uu004T4ylEI
+         Kb+3MLi/1ZNhYfwOgWSQ3jql1eahxPo7uSYLZp9qBnlDm1w7hCBRofpeBYhwW4VJpj2m
+         zTEA==
+X-Gm-Message-State: AA+aEWYSVrH5PuaeO6oimfIP1w3wrjuXwKe3UL734XLsKaPfDc5rpZ6J
+        CRCwgvhMfhHOUJAexmCzFs2KNMN3Vko=
+X-Google-Smtp-Source: AFSGD/Wgj5CQNkqWCL9wYxyrthIJ79dlUUVyXYJ6A92NpAATiwFTYIK2ciXCmDjYSccMBvLjT1fvrA==
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr8261272ljj.9.1545072617810;
+        Mon, 17 Dec 2018 10:50:17 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id m77sm2807596lfg.3.2018.12.17.10.50.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 10:50:16 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id t9-v6so11950923ljh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:50:16 -0800 (PST)
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr8985170lji.133.1545072616266;
+ Mon, 17 Dec 2018 10:50:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1812171932020.1660@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181128232019.GC131170@gmail.com> <20181217181244.220052-1-ebiggers@kernel.org>
+ <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 Dec 2018 10:49:59 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
+Message-ID: <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
+To:     ebiggers@kernel.org, James Morris James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 17, 2018 at 10:43 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Or maybe just remove it entirely, since it's clearly entirely
+> incorrect from the very start.
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+.. or another alternative: remove the "Opt_err = -1" entirely.
 
-> On Mon, 17 Dec 2018, Ingo Molnar wrote:
-> > * Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
-> > > +		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
-> > > +			return (acpi_physical_address)table;
-> > 
-> > 'return' is not a function.
-> 
-> It's still a typecast :)
+Again, this seems to be a buggy pattern exclusive to the security
+code. Nobody else does it, and using that negative value is basically
+the source of those two bugs. It seems pointless and wrong.
 
-Yeah, see my followup from an hour ago:
+So the *simplest* fix would seem to be to literally remove all those
+"= -1" for the Opt_err initialization.  Making the code smaller,
+simpler, and fixing the bug in the process.
 
-  Message-ID: <20181217173605.GA14613@gmail.com>
+Hmm?
 
-Thanks,
-
-	Ingo
+                 Linus
