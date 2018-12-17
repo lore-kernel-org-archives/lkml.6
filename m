@@ -2,96 +2,93 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F69C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E8CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4BF21783
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:14:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EC6821783
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbeLQXOe (ORCPT
+        id S1726705AbeLQXOv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 18:14:34 -0500
-Received: from sauhun.de ([88.99.104.3]:42230 "EHLO pokefinder.org"
+        Mon, 17 Dec 2018 18:14:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42654 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726420AbeLQXOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 18:14:34 -0500
-Received: from localhost (p54B3357B.dip0.t-ipconnect.de [84.179.53.123])
-        by pokefinder.org (Postfix) with ESMTPSA id BE1512E3656;
-        Tue, 18 Dec 2018 00:06:29 +0100 (CET)
-Date:   Tue, 18 Dec 2018 00:06:29 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Qii Wang <qii.wang@mediatek.com>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        leilk.liu@mediatek.com, ryder.lee@mediatek.com
-Subject: Re: [PATCH 4/5] dt-bindings: i2c: Add Mediatek MT8183 i2c binding
-Message-ID: <20181217230629.i7i3kbreurgt7u73@ninjato>
-References: <1543843974-4054-1-git-send-email-qii.wang@mediatek.com>
- <1543843974-4054-5-git-send-email-qii.wang@mediatek.com>
- <20181211202931.xav4gzi7rzh2scgx@ninjato>
- <1544693547.11699.40.camel@mhfsdcap03>
+        id S1726397AbeLQXOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 18:14:51 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E5A1F7FDE8;
+        Mon, 17 Dec 2018 23:14:50 +0000 (UTC)
+Received: from epycfail.redhat.com (ovpn-200-20.brq.redhat.com [10.40.200.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0BC4F5D6A6;
+        Mon, 17 Dec 2018 23:14:46 +0000 (UTC)
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH net-next] fou: Prevent unbounded recursion in GUE error handler
+Date:   Tue, 18 Dec 2018 00:13:17 +0100
+Message-Id: <4d5bd8cb8d2b22cd6332a71428278eea6a091326.1545088026.git.sbrivio@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gph3bc2aynqejfb4"
-Content-Disposition: inline
-In-Reply-To: <1544693547.11699.40.camel@mhfsdcap03>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 17 Dec 2018 23:14:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Handling exceptions for direct UDP encapsulation in GUE (that is,
+UDP-in-UDP) leads to unbounded recursion in the GUE exception handler,
+syzbot reported.
 
---gph3bc2aynqejfb4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+While draft-ietf-intarea-gue-06 doesn't explicitly forbid direct
+encapsulation of UDP in GUE, it probably doesn't make sense to set up GUE
+this way, and it's currently not even possible to configure this.
 
+Skip exception handling if the GUE proto/ctype field is set to the UDP
+protocol number. Should we need to handle exceptions for UDP-in-GUE one
+day, we might need to either explicitly set a bound for recursion, or
+implement a special iterative handling for these cases.
 
-> > What is "multi-user"? Why can't you add this offset to the reg-property
-> > directly?
+Reported-and-tested-by: syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com
+Fixes: b8a51b38e4d4 ("fou, fou6: ICMP error handlers for FoU and GUE")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+---
+ net/ipv4/fou.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-=2E..
+diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
+index 0d0ad19ecb87..0c9f171fb085 100644
+--- a/net/ipv4/fou.c
++++ b/net/ipv4/fou.c
+@@ -1061,6 +1061,13 @@ static int gue_err(struct sk_buff *skb, u32 info)
+ 	if (validate_gue_flags(guehdr, optlen))
+ 		return -EINVAL;
+ 
++	/* Handling exceptions for direct UDP encapsulation in GUE would lead to
++	 * recursion. Besides, this kind of encapsulation can't even be
++	 * configured currently. Discard this.
++	 */
++	if (guehdr->proto_ctype == IPPROTO_UDP)
++		return -EOPNOTSUPP;
++
+ 	skb_set_transport_header(skb, -(int)sizeof(struct icmphdr));
+ 	ret = gue_err_proto_handler(guehdr->proto_ctype, skb, info);
+ 
+-- 
+2.19.2
 
-> MT8183 doesn't need to support muti-user according to the latest project
-> information, and I'll remove this feature from patches.
-
-Okay. It will be dropped then, thanks for the heads up!
-
-> > > +  - mediatek,share-i3c: i3c controller can share i2c function.
-> >=20
-> > Please explain in more detail? Is this an I3C controller?
->=20
-> Yes, it is a i3c controller, and it is compatible with i2c. I only use
-> the feature of i2c, so I need a flag to do some extra settings.
-
-Can't you derive this from the compatible? If it is
-"mediatek,mt8183-i2c", then you know you need these extra settings?
-
-
---gph3bc2aynqejfb4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwYK/UACgkQFA3kzBSg
-Kbae4A/+MilZ2mxtZBN5/KQAX4PI8TwMRQpdfTOFfHZL1U1qxKqJm5ojSZvI3Dle
-BxpSYHyWhFGblcmMckmfTHFSVfPu12UB7ma0h3A/h/6gXTemtuS1LXMolzhA6rIx
-ShCNSsmji6Wk4AH0Bjok+uaO+0dP6SzWX978UmQdNPRAXg12Txf39t8cFzdwkh6t
-/kN6UcNP9aUgVXASp/FXlDfGUQEQvN5opoae8JzBJYvmO7/hbECqRykVlQ1S5p4e
-cwuRjPohrvKGkAwvWuyL7IoZVFotwtd9NEFE56xpykuDKMHstnmqbUS9vYKboWmZ
-oLA0B075zO/iAYhAjKmbD25NAGGIucaTXpB0OsgRdRuQMs6K0rdyUZ9j81iry27N
-zU5wKtoim8klrsgqQTHu+pZ1gYYgKP+M0lu7Hc1P4AYGE/qiEx4KSTX8ZBB7xXPm
-JndAI+ElJracuCTvxDBPZfx5YlQnqOngKwGSwLInVGClA3sm7gRZu8TY8/5jlx7r
-f8evwPSN6A7bSTSLJi5RbKe9PkmXA3XFMa7FWamrluxeVdf1jAmXC39VAF+mIvVi
-ncoTmAmoVIo88lSX7qUNjZVGS6syFgQ3WYZ6lxu0b7lbx7j2PggOZl2l3dc9d+vP
-GbV9jZYhcSF/57+zDFY0TIvfKT/JxyU9FZCuEHTdGcS3zosRL4E=
-=FiE4
------END PGP SIGNATURE-----
-
---gph3bc2aynqejfb4--
