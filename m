@@ -2,153 +2,94 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECE6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77677C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A63342146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4623F2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:21:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388742AbeLQSVE (ORCPT
+        id S2388757AbeLQSVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:21:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60995 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeLQSVE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:21:04 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHIKcYZ2561019
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 10:20:39 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHIKcWR2561016;
-        Mon, 17 Dec 2018 10:20:38 -0800
-Date:   Mon, 17 Dec 2018 10:20:38 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-721066dfd4d5c0fee5772c777d6930d0f423b4eb@git.kernel.org>
-Cc:     dave.hansen@linux.intel.com, riel@surriel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com, Tom.StDenis@amd.com,
-        bp@alien8.de, mingo@kernel.org, luto@kernel.org
-Reply-To: luto@kernel.org, mingo@kernel.org, Tom.StDenis@amd.com,
-          bp@alien8.de, linux-kernel@vger.kernel.org, riel@surriel.com,
-          tglx@linutronix.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-          torvalds@linux-foundation.org, peterz@infradead.org
-In-Reply-To: <20181203171043.089868285@infradead.org>
-References: <20181203171043.089868285@infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Fix cpa_flush_array() TLB invalidation
-Git-Commit-ID: 721066dfd4d5c0fee5772c777d6930d0f423b4eb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 17 Dec 2018 13:21:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44564 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732671AbeLQSVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:21:31 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E23D564100;
+        Mon, 17 Dec 2018 18:21:30 +0000 (UTC)
+Received: from localhost (ovpn-200-20.brq.redhat.com [10.40.200.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F3F9A6B8E4;
+        Mon, 17 Dec 2018 18:21:26 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 19:21:21 +0100
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: WARNING in __rcu_read_unlock
+Message-ID: <20181217192121.64f34511@redhat.com>
+In-Reply-To: <20181217162421.6d636ee5@redhat.com>
+References: <0000000000005e47a2057d0edc49@google.com>
+        <20181216190412.GE4170@linux.ibm.com>
+        <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
+        <20181217112916.GG4170@linux.ibm.com>
+        <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
+        <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
+        <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com>
+        <20181217162421.6d636ee5@redhat.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 17 Dec 2018 18:21:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  721066dfd4d5c0fee5772c777d6930d0f423b4eb
-Gitweb:     https://git.kernel.org/tip/721066dfd4d5c0fee5772c777d6930d0f423b4eb
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 3 Dec 2018 18:03:44 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 18:48:09 +0100
+On Mon, 17 Dec 2018 16:24:21 +0100
+Stefano Brivio <sbrivio@redhat.com> wrote:
 
-x86/mm/cpa: Fix cpa_flush_array() TLB invalidation
+> On Mon, 17 Dec 2018 06:57:35 -0800
+> Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> 
+> > Might be cause by commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
+> > fou, fou6: ICMP error handlers for FoU and GUE  
+> 
+> This:
+> 
+> diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
+> index 0d0ad19ecb87..20a6de26d146 100644
+> --- a/net/ipv4/fou.c
+> +++ b/net/ipv4/fou.c
+> @@ -1008,6 +1008,9 @@ static int gue_err_proto_handler(int proto, struct sk_buff *skb, u32 info)
+>  {
+>         const struct net_protocol *ipprot = rcu_dereference(inet_protos[proto]);
+>  
+> +       if (ipprot == IPPROTO_UDP)
+              ^^^ proto, of course
 
-In commit:
+> +               return -EINVAL;
+> +
+>         if (ipprot && ipprot->err_handler) {
+>                 if (!ipprot->err_handler(skb, info))
+>                         return 0;
+> 
 
-  a7295fd53c39 ("x86/mm/cpa: Use flush_tlb_kernel_range()")
-
-I misread the CAP array code and incorrectly used
-tlb_flush_kernel_range(), resulting in missing TLB flushes and
-consequent failures.
-
-Instead do a full invalidate in this case -- for now.
-
-Reported-by: StDenis, Tom <Tom.StDenis@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dave.hansen@intel.com
-Fixes: a7295fd53c39 ("x86/mm/cpa: Use flush_tlb_kernel_range()")
-Link: http://lkml.kernel.org/r/20181203171043.089868285@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/pageattr.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index db7a10082238..a1bcde35db4c 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -285,20 +285,16 @@ static void cpa_flush_all(unsigned long cache)
- 	on_each_cpu(__cpa_flush_all, (void *) cache, 1);
- }
- 
--static bool __cpa_flush_range(unsigned long start, int numpages, int cache)
-+static bool __inv_flush_all(int cache)
- {
- 	BUG_ON(irqs_disabled() && !early_boot_irqs_disabled);
- 
--	WARN_ON(PAGE_ALIGN(start) != start);
--
- 	if (cache && !static_cpu_has(X86_FEATURE_CLFLUSH)) {
- 		cpa_flush_all(cache);
- 		return true;
- 	}
- 
--	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
--
--	return !cache;
-+	return false;
- }
- 
- static void cpa_flush_range(unsigned long start, int numpages, int cache)
-@@ -306,7 +302,14 @@ static void cpa_flush_range(unsigned long start, int numpages, int cache)
- 	unsigned int i, level;
- 	unsigned long addr;
- 
--	if (__cpa_flush_range(start, numpages, cache))
-+	WARN_ON(PAGE_ALIGN(start) != start);
-+
-+	if (__inv_flush_all(cache))
-+		return;
-+
-+	flush_tlb_kernel_range(start, start + PAGE_SIZE * numpages);
-+
-+	if (!cache)
- 		return;
- 
- 	/*
-@@ -332,7 +335,12 @@ static void cpa_flush_array(unsigned long baddr, unsigned long *start,
- {
- 	unsigned int i, level;
- 
--	if (__cpa_flush_range(baddr, numpages, cache))
-+	if (__inv_flush_all(cache))
-+		return;
-+
-+	flush_tlb_all();
-+
-+	if (!cache)
- 		return;
- 
- 	/*
+-- 
+Stefano
