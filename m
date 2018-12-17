@@ -2,180 +2,148 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF88C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D717C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED0220874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 202FB2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QeJbusUm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CjWzzksW"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="QESDq/r2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387404AbeLQONx (ORCPT
+        id S2387424AbeLQON5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:13:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46792 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733287AbeLQONu (ORCPT
+        Mon, 17 Dec 2018 09:13:57 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:38545 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733287AbeLQONy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:13:50 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6F2D0608C5; Mon, 17 Dec 2018 14:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545056029;
-        bh=Z9AzNi3YKqqdAJBgM1++QbNbKJwNMf9aceZsEy8Hqc0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeJbusUmGQ9ysq5SvbzbkdSsfW7kJkOU2Z+johy7q/ZuQFzZ4aZ9+2xvfChLnHWvO
-         gYT0s5xteSgjJ+3lgVIGmuvWIJXLoIkIlMSpnI1bKt16d3s/4KiXDNK1/QBWFwI9pa
-         g0BiU4sObFb6fOjngOunOfPYEdUyppnbfkHHYvKg=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 961C56074E;
-        Mon, 17 Dec 2018 14:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545056028;
-        bh=Z9AzNi3YKqqdAJBgM1++QbNbKJwNMf9aceZsEy8Hqc0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CjWzzksWoLJZhdu/dxY4GWMT/6eJ4peuXyd/cG0SSy+p4mfq6l91FNFqghgsUDTuk
-         JMzl7q+iyCKHVar6iAIYA0xGm0vOmQwiaw0/N/bySP0zqI+D5hhrp4jXLrDxOAEG+o
-         MbY/NBkyb1OlIYnt+T69chLVAg9N7/Xlipfnxe7o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 961C56074E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v4 1/5] Bluetooth: hci_qca: use wait_until_sent() for power pulses
-Date:   Mon, 17 Dec 2018 19:43:26 +0530
-Message-Id: <20181217141330.6294-2-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181217141330.6294-1-bgodavar@codeaurora.org>
-References: <20181217141330.6294-1-bgodavar@codeaurora.org>
+        Mon, 17 Dec 2018 09:13:54 -0500
+X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
+   d="scan'208";a="24462328"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 17 Dec 2018 07:13:53 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 17 Dec 2018 07:13:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1/jkLcqWaHllnls9ZlExlDdmmrsn65dPM/sYdupYrjU=;
+ b=QESDq/r2Mvx7XdZxmR1s7jFyQxTXKhiF9LF/7weKp1dKz79CdInGHc0k5KsE/BWbT8bGdDorAmYAbpf3+V8QMjdqzdMaOd/r1sNt4zWtwQ5IFDZZj443C4EBllW7qW+iHPxOYwu6B2nRSU37YS1k+O3vEEIntd+4COzGt6OCFCE=
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
+ BY2PR11MB0584.namprd11.prod.outlook.com (10.163.159.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Mon, 17 Dec 2018 14:13:50 +0000
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::cd88:53bd:589a:ab7f]) by BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::cd88:53bd:589a:ab7f%2]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
+ 14:13:50 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <thierry.reding@gmail.com>, <robh@kernel.org>, <corbet@lwn.net>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>
+CC:     <linux-pwm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <Claudiu.Beznea@microchip.com>
+Subject: [PATCH v7 4/6] pwm: add push-pull mode support
+Thread-Topic: [PATCH v7 4/6] pwm: add push-pull mode support
+Thread-Index: AQHUlhK7NNxUrpqG30KBDgyJqVCMRA==
+Date:   Mon, 17 Dec 2018 14:13:50 +0000
+Message-ID: <1545055999-23950-5-git-send-email-claudiu.beznea@microchip.com>
+References: <1545055999-23950-1-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1545055999-23950-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0015.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:800:d0::25) To BY2PR11MB0744.namprd11.prod.outlook.com
+ (2a01:111:e400:52de::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR11MB0584;6:3AdtupeoP6JlYANA/DXLBj9q+9rqt5eMmrYao9wwtZnMhbwWv5CjL8GWufZZJPvoYnZ1IfbyW61iy9etotqKHcRpTh5f0MpM5WwUdFoRqMzOn7hYxqVAe8SNUk0LBDH8qeJrKDs1c3BCM+FW1HjegfMkgGQ+feLs33cRrpUo+FuYJo0IqaJmN1jHvnw/ugsvOu42tu91MeCBHeSTaPUMdjVScOJVNuATNPqwlQsJpconk9Fr42fkg6J51/ijoYSMK0MPh610wQ/TCU7VqL7N3zRE/AuZ8ik7KUHEdGHPzR3m8h8TkdaoAHUk+DCgfh73kX2dXW5L77/9z4QGCf83PNGwL+0hjlNJADRgM9QIuM1pjdlvp0XGBjFWUl1FcbA+FlJuTozRIbhij5l9C3VVa7JYLB+Z/HK8rSsQWR8HhwJhF84sziyKlzWgfTgZcg23N7m/UYHZ6U8Xy1SPjeNxhA==;5:MPFL1DJLVaTDXmtlWnQQxbt18W7pUrWZ+zg41TmcmUaXZEUjPl80dzuwmTuPyvVkpj52+HsUoPdU+kflI2h/ggDH+7TdOS7i0Nxa5frAvxDIYqH9/kU0CKDh6pSrKerFMrFVl+jqpX0vjI7PyXn/0dHeTg2eJb6ONTuPHzgOVSU=;7:fezMoWv9DiMGNekMSl6FmoVvdHZ/ayltRpgbNlAIHrLeI7YPoRKyMoDSuYc1+W88Rx6BCqDaaknzRVcdk9wuSJV09rVVgSvkjR6d4TRwGsic7wXMQMGfGUTLuZ1nqpXnQvdCsmoc9IAiJOm/zdDgcg==
+x-ms-office365-filtering-correlation-id: edf7b881-225e-41da-2a0f-08d66429ddef
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0584;
+x-ms-traffictypediagnostic: BY2PR11MB0584:
+x-microsoft-antispam-prvs: <BY2PR11MB058486842F8AF419B239B10487BC0@BY2PR11MB0584.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0584;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0584;
+x-forefront-prvs: 08897B549D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(366004)(199004)(189003)(8676002)(25786009)(68736007)(6506007)(386003)(6116002)(102836004)(5660300001)(6436002)(66066001)(3846002)(39060400002)(478600001)(107886003)(71190400001)(2501003)(72206003)(256004)(305945005)(71200400001)(6486002)(7736002)(186003)(97736004)(26005)(52116002)(316002)(54906003)(476003)(4326008)(2201001)(99286004)(14454004)(11346002)(2616005)(446003)(2906002)(76176011)(6512007)(36756003)(53936002)(110136005)(86362001)(6636002)(8936002)(81156014)(486006)(81166006)(105586002)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0584;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: HQN+ExOls/wfupbcwFtzp9Vx1nDKcT8j4l+4u27JluXsItZkayh/2oKCkQfPUCCDFaNM+EOIqL7UG9X0wJVEtDtf8sbL8f6FTCRqIuqG3AS6r3Ed33HBYrRDe5Cg0poJOVyMkl65Fu6sw+/mKk71onclpw9AZh0W4tSRUo9ektzJryMIAJbrVsql/EhmLUZRcgkNFJn2i4jL31aA0K3eMpgtzFZcZ14u/0PZfUE42nIXnk9APNZzqcXChYSUlw4oE6f7FPCEtAgN7Cbf8moa+5mAW6Y3CFxaZdp60eEtpW25MTwtj74cQW8bj6Xo/5/l
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: edf7b881-225e-41da-2a0f-08d66429ddef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 14:13:50.3442
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0584
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wcn3990 requires a power pulse to turn ON/OFF along with
-regulators. Sometimes we are observing the power pulses are sent
-out with some time delay, due to queuing these commands. This is
-causing synchronization issues with chip, which intern delay the
-chip setup or may end up with communication issues.
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Add push-pull mode support. In push-pull mode the channels' outputs have
+same polarities and the edges are complementary delayed for one period.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
-v4:
- * used serdev_device_write_buf() instead of serdev_device_write()
+ drivers/pwm/core.c  | 3 +++
+ include/linux/pwm.h | 3 +++
+ 2 files changed, 6 insertions(+)
 
-v3:
-  * no change.
-v2: 
-  * Updated function qca_send_power_pulse()
-  * addressed reviewer comments.
-
-v1:
- * initial patch
-
----
- drivers/bluetooth/hci_qca.c | 37 +++++++++++++------------------------
- 1 file changed, 13 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f036c8f98ea3..d8bc77c8c9b9 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
- 		hci_uart_set_baudrate(hu, speed);
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index eb444ee8d486..f182d1eb564e 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -328,6 +328,9 @@ const char *pwm_get_mode_name(unsigned long modebit)
+ 	if (modebit =3D=3D PWM_MODE_BIT(COMPLEMENTARY))
+ 		return "complementary";
+=20
++	if (modebit =3D=3D PWM_MODE_BIT(PUSH_PULL))
++		return "push-pull";
++
+ 	return "normal";
  }
- 
--static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
-+static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
- {
--	struct hci_uart *hu = hci_get_drvdata(hdev);
--	struct qca_data *qca = hu->priv;
--	struct sk_buff *skb;
-+	int ret;
- 
- 	/* These power pulses are single byte command which are sent
- 	 * at required baudrate to wcn3990. On wcn3990, we have an external
-@@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
- 	 * save power. Disabling hardware flow control is mandatory while
- 	 * sending power pulses to SoC.
- 	 */
--	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
--
--	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
--	if (!skb)
--		return -ENOMEM;
--
-+	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
- 	hci_uart_set_flow_control(hu, true);
-+	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
-+	if (ret < 0) {
-+		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
-+			   cmd);
-+		return ret;
-+	}
- 
--	skb_put_u8(skb, cmd);
--	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
--
--	skb_queue_tail(&qca->txq, skb);
--	hci_uart_tx_wakeup(hu);
-+	serdev_device_wait_until_sent(hu->serdev, 0);
- 
- 	/* Wait for 100 uS for SoC to settle down */
- 	usleep_range(100, 200);
-@@ -1116,7 +1111,6 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 
- static int qca_wcn3990_init(struct hci_uart *hu)
- {
--	struct hci_dev *hdev = hu->hdev;
- 	struct qca_serdev *qcadev;
- 	int ret;
- 
-@@ -1139,12 +1133,12 @@ static int qca_wcn3990_init(struct hci_uart *hu)
- 
- 	/* Forcefully enable wcn3990 to enter in to boot mode. */
- 	host_set_baudrate(hu, 2400);
--	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
-+	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
- 	if (ret)
- 		return ret;
- 
- 	qca_set_speed(hu, QCA_INIT_SPEED);
--	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWERON_PULSE);
-+	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWERON_PULSE);
- 	if (ret)
- 		return ret;
- 
-@@ -1274,13 +1268,8 @@ static const struct qca_vreg_data qca_soc_data = {
- 
- static void qca_power_shutdown(struct hci_uart *hu)
- {
--	struct serdev_device *serdev = hu->serdev;
--	unsigned char cmd = QCA_WCN3990_POWEROFF_PULSE;
--
- 	host_set_baudrate(hu, 2400);
--	hci_uart_set_flow_control(hu, true);
--	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
--	hci_uart_set_flow_control(hu, false);
-+	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
- 	qca_power_setup(hu, false);
- }
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+=20
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index abe189d891af..cce29733d44e 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -32,11 +32,14 @@ enum pwm_polarity {
+  * PWM modes capabilities
+  * @PWM_MODE_NORMAL: PWM has one output
+  * @PWM_MODE_COMPLEMENTARY: PWM has 2 outputs with opposite polarities
++ * @PWM_MODE_PUSH_PULL: PWM has 2 outputs with same polarities and the edg=
+es
++ * are complementary delayed for one period
+  * @PWM_MODE_CNT: PWM modes count
+  */
+ enum pwm_mode {
+ 	PWM_MODE_NORMAL,
+ 	PWM_MODE_COMPLEMENTARY,
++	PWM_MODE_PUSH_PULL,
+ 	PWM_MODE_CNT,
+ };
+=20
+--=20
+2.7.4
 
