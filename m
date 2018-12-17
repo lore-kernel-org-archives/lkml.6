@@ -2,97 +2,131 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41750C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CE0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0791B206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20364206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 13:56:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHp/XKhf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732382AbeLQNze (ORCPT
+        id S1732810AbeLQN4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:55:34 -0500
-Received: from mga03.intel.com ([134.134.136.65]:8003 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbeLQNzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:55:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 05:55:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
-   d="scan'208";a="99357328"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by orsmga007.jf.intel.com with ESMTP; 17 Dec 2018 05:55:31 -0800
-Subject: Re: [PATCH] xhci: fix 'broken_suspend' placement in struct xchi_hcd
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     oneukum@suse.com, sandeep.singh@amd.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181217133740.5342-1-nsaenzjulienne@suse.de>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <7ea44e0c-5268-b898-4d27-048921eaab69@linux.intel.com>
-Date:   Mon, 17 Dec 2018 15:59:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 17 Dec 2018 08:56:37 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40939 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732187AbeLQN4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 08:56:36 -0500
+Received: by mail-io1-f68.google.com with SMTP id v12so6410635iop.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 05:56:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RFb7liArRYYdHEiLLH1H1p5O47yr8gfAj4Sf2ve1XvE=;
+        b=iHp/XKhf9ycFQPgKz+H/zGa36oOT/ftU9QWxG8ijQfY1IItwHaaUKNTN9f7zJwngFJ
+         CPxik4UanF0f8o67zzJje75SFkdK6Vrw7BsWa25njMIWRi5IdmRpnIfWzgX1i5BuDIto
+         ejZBKyXBp7REgzgukyth8/qmSA2nqDGRu0yWU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=RFb7liArRYYdHEiLLH1H1p5O47yr8gfAj4Sf2ve1XvE=;
+        b=IMpFk7+dNUoBAo93G9974DZ96aIwN0cWg28H3tS4N1W5deTi3CyHMrWZB7GmfcpoQL
+         Z59ioRtOJNfwM8P3TVJaEnzzgiY8fDH92Y0kSmCg2zmbIHoqXVhqKThd8JKS4BD5c/Av
+         rXWLDzrlSFYZXkeS/FRnAUD1CnTs3kBNhLTYEFyWFKBCOs5EWzJ2EL3VkMxAfoh85zhF
+         ohCY63oFPHKqVmBu3al2XF69qLWL2jWwWQolag3DbKM37NjpCt/jU98+dKecAugZHZU/
+         IgEHpF01j37FwIgV7DNAnWWNRdMPF6qXWKTYBcqaMWUpmOCVX73a3XVDehi+z+knaEAd
+         KAFQ==
+X-Gm-Message-State: AA+aEWYUaonfEdn4nkJAwiPDaPPxIo1keZX1g0/l3he2mi0uqGUdbvwW
+        ZMdVC+8DKJL/j5fnyxSZ1MWSGQ==
+X-Google-Smtp-Source: AFSGD/WM+R35koRxxwwRKK2U3AfYR4ZTNwlKcM/bo4oFx+soIG7w7hN6mf2qtjlBUnzZJ743+84/Cg==
+X-Received: by 2002:a6b:2b07:: with SMTP id r7mr11048524ior.169.1545054994152;
+        Mon, 17 Dec 2018 05:56:34 -0800 (PST)
+Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
+        by smtp.gmail.com with ESMTPSA id p198sm7472998itb.30.2018.12.17.05.56.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 05:56:33 -0800 (PST)
+Date:   Mon, 17 Dec 2018 07:56:32 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux@roeck-us.net
+Subject: Re: [PATCH 4.19 000/142] 4.19.10-stable review
+Message-ID: <20181217135632.fisfyfkt4473q7ze@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux@roeck-us.net
+References: <20181214115747.053633987@linuxfoundation.org>
+ <20181215170102.es7drxdtiz7gzaib@xps.therub.org>
+ <20181215171145.GA2086@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20181217133740.5342-1-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181215171145.GA2086@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.12.2018 15:37, Nicolas Saenz Julienne wrote:
-> As commented in the struct's definition there shouldn't be anything
-> underneath it's 'priv[0]' member as it would break some macros.
+On Sat, Dec 15, 2018 at 06:11:45PM +0100, Greg Kroah-Hartman wrote:
+> On Sat, Dec 15, 2018 at 11:01:02AM -0600, Dan Rue wrote:
+> > On Fri, Dec 14, 2018 at 12:58:05PM +0100, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 4.19.10 release.
+> > > There are 142 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Sun Dec 16 11:57:12 UTC 2018.
+> > > Anything received after that time might be too late.
+> > 
+> > Results from Linaro’s test farm.
+> > Regressions detected.
 > 
-> The patch converts the broken_suspend into a bit-field and relocates it
-> next to to the rest of bit-fields.
+> They were?
+
+My mistake. There were some false regressions that showed up and I was a
+bit distracted when sending the reports and missed that.
+
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
 > 
-> Fixes: a7d57abcc8a5 ("xhci: workaround CSS timeout on AMD SNPS 3.0 xHC")
-> Reported-by: Oliver Neukum  <oneukum@suse.com>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> ---
->   drivers/usb/host/xhci.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > Summary
+> > ------------------------------------------------------------------------
+> > 
+> > kernel: 4.19.10-rc1
+> > git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > git branch: linux-4.19.y
+> > git commit: 4875bf1f86d7bdc8dbf3222ab4028239446fab3f
+> > git describe: v4.19.9-143-g4875bf1f86d7
+> > Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/build/v4.19.9-143-g4875bf1f86d7
+> > 
+> > No regressions (compared to build v4.19.9)
+> > 
+> > No fixes (compared to build v4.19.9)
+> > 
+> > Ran 18346 total tests in the following environments and test suites.
 > 
-> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> index c3515bad5dbb..011dd45f8718 100644
-> --- a/drivers/usb/host/xhci.h
-> +++ b/drivers/usb/host/xhci.h
-> @@ -1863,6 +1863,8 @@ struct xhci_hcd {
->   	unsigned		sw_lpm_support:1;
->   	/* support xHCI 1.0 spec USB2 hardware LPM */
->   	unsigned		hw_lpm_support:1;
-> +	/* Broken Suspend flag for SNPS Suspend resume issue */
-> +	unsigned		broken_suspend:1;
->   	/* cached usb2 extened protocol capabilites */
->   	u32                     *ext_caps;
->   	unsigned int            num_ext_caps;
-> @@ -1880,8 +1882,6 @@ struct xhci_hcd {
->   	void			*dbc;
->   	/* platform-specific data -- must come last */
->   	unsigned long		priv[0] __aligned(sizeof(s64));
-> -	/* Broken Suspend flag for SNPS Suspend resume issue */
-> -	u8			broken_suspend;
->   };
->   
->   /* Platform specific overrides to generic XHCI hc_driver ops */
+> This said there were no regressions.
 > 
-
-Thanks, not sure how I missed that.
-
-Greg, in case you want to pick this simple fix to 4.20 still:
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-
-Or prefer me to resend it?
-
--Mathias
+> confused,
+> 
+> greg k-h
