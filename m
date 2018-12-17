@@ -2,175 +2,149 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C357C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1A8C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4F021473
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:12:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="M8TXnCxz"
+	by mail.kernel.org (Postfix) with ESMTP id 8139C206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:15:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388984AbeLQUMd (ORCPT
+        id S2388973AbeLQUPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:12:33 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:36794 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbeLQUMd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:12:33 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id EAE1224E27BE;
-        Mon, 17 Dec 2018 12:12:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1545077553; bh=mov5V4V9PrRPxOkNxmZs7m6p9hogr2tW63ajosGBWj0=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=M8TXnCxzYTugTCO6WETVORCJqSzPXzD2KsHc8kJdDAgWlJFF2Q1B7h3HAcSyB58kg
-         WDJiBPF15WRQiSfTWQnqiJmSaW4ZYiNYo7mceYzyMMZA94oGzSFcRY66qeTml6CzJ5
-         ccRBAVRTCZhfWkpcnfX7TXmmF4DyGu98D3wFO0I7c4Vo3Fe6npLW/EwaoIMfgkUIEC
-         keoHIqWhjpUq1vq1rL8tUOKcaq2coyTcZpR8IBodM6hkCIekV0HjAb1/0xZvjXuJpd
-         C+NWaZ/8/qEKkbHTiQnXhKL9G8/ki73CuxmWbE3yE+X9YgNB7gDu2QJ72g2FOQuhiF
-         J8m5v3Q8mTYgA==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9D5D63CC7;
-        Mon, 17 Dec 2018 12:12:32 -0800 (PST)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
- US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0415.000; Mon, 17 Dec 2018 12:12:32 -0800
-From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
-To:     "Zengtao (B)" <prime.zeng@hisilicon.com>,
-        Thinh Nguyen <thinh.nguyen@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>
-CC:     liangshengjun <liangshengjun@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: dwc3: gadget: fix miss isoc issue introduced by
- IRQ latency
-Thread-Topic: [PATCH] usb: dwc3: gadget: fix miss isoc issue introduced by
- IRQ latency
-Thread-Index: AQHUk4c4aTEJCOLnsUKRaItzQg17Vw==
-Date:   Mon, 17 Dec 2018 20:12:31 +0000
-Message-ID: <30102591E157244384E984126FC3CB4F639AAB35@us01wembx1.internal.synopsys.com>
-References: <1544805179-2248-1-git-send-email-prime.zeng@hisilicon.com>
- <87efaklcd1.fsf@linux.intel.com>
- <678F3D1BB717D949B966B68EAEB446ED24E20BE5@dggemm526-mbx.china.huawei.com>
- <878t0sl5br.fsf@linux.intel.com>
- <30102591E157244384E984126FC3CB4F639AA2A3@us01wembx1.internal.synopsys.com>
- <678F3D1BB717D949B966B68EAEB446ED24E217B3@dggemm526-mbx.china.huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.20]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Dec 2018 15:15:50 -0500
+Received: from mga03.intel.com ([134.134.136.65]:43880 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388083AbeLQUPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:15:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 12:15:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="304576636"
+Received: from dmandrea-mobl.amr.corp.intel.com (HELO [10.254.107.151]) ([10.254.107.151])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 12:15:47 -0800
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
+ <20181217194913.GD29785@linux.intel.com>
+ <16fdd37a-b9cc-1045-1497-2cfff6af176a@intel.com>
+ <CALCETrUhVDxMAtpyn5ahsTFwhJkzWxKa5Ur8q4FuVaKLmSyYHQ@mail.gmail.com>
+ <826f6a5a-fdf6-e7e5-d2d8-bcdc57c016fe@intel.com>
+ <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <18800fdc-a2e1-39a3-9ee5-0065865ea052@intel.com>
+Date:   Mon, 17 Dec 2018 12:15:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zengtao,=0A=
-=0A=
-On 12/16/2018 5:45 PM, Zengtao (B) wrote:=0A=
->>>>>> If it's a busy system, some times when we start an isoc transfer,=0A=
->>>>>> the framenumber get from the event buffer may be already elasped,=0A=
->>>>>> in this case, we will get all the packets dropped due to miss isoc.=
-=0A=
->>>>>> And we turn into transfer nothing, to fix this issue, we need to=0A=
->>>>>> fix the framenumber to make sure that it's not out of date.=0A=
->>>>>>=0A=
->>>>>> Signed-off-by: Liang Shengjun <liangshengjun@hisilicon.com>=0A=
->>>>>> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>=0A=
->>>>> There's a patch going upstream already doing this:=0A=
->>>>>=0A=
->>>>>=0A=
->> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_pu=
-b_scm_linux_kernel_git_balbi_usb.git_commit&d=3DDwIGaQ&c=3DDPL6_X_6JkXFx7AX=
-WqB0tg&r=3Du9FYoxKtyhjrGFcyixFYqTjw1ZX0VsG2d8FCmzkTY-w&m=3DyGrN_JnamczN1G0w=
-Y4Th67vAfxSJEouaUgJdu0u6Av8&s=3Dv4xeWOLyCSNoHxHS6kI8_bJfHgddFsPkqzgLFTJZOG8=
-&e=3D=0A=
->>>>> /?h=0A=
->>>>> =3Dnext&id=3Dd53701067f048b8b11635e964b6d3bd9a248c622=0A=
->>>>>=0A=
->>>> Sorry, I think I missed to update to the latest version. But I think=
-=0A=
->>>> my patch is more efficient. Because I just sync the frame from the=0A=
->>>> HW, it  won't fail and there is no need to extra tries.=0A=
->>>>=0A=
->>>> What do you think about it?=0A=
->>> the 14 bits you use for your check is not representative of the actual=
-=0A=
->>> micro-frame you're currently in. Thinh explained that in the=0A=
->>> discussion we had until we came to the patch I pointed you to above.=0A=
->>> Please look at the mailing list archives for details.=0A=
->>>=0A=
->> There are several issues with this patch.=0A=
->> 1) Your frame elapsed time check is not based on interval but statically=
-=0A=
->> DWC3_EVENT_PRAM_SOFFN / 2. That's about 1 second. So it doesn't=0A=
->> account for isoc transfers with large service interval of 1 sec or more.=
-=0A=
->=0A=
-> This is just for checking whether the Frame number is overflow or not. So=
-=0A=
-> 1 second should a reason value.=0A=
-=0A=
-Why when there's another way to solve this issue without creating a new=0A=
-logic that only works within 1 second limit.=0A=
-=0A=
->=0A=
->> 2) This function __dwc3_gadget_target_frame_elapsed() should have=0A=
->> comments for what it does. The name implies that this function checks=0A=
->> for eframe > cframe, and not eframe > cframe + 1s.=0A=
-> eframe > cframe + 1s is used to deal with the Frame number overflow.=0A=
-=0A=
-Right. You need to provide comments for that. It's not obvious that=0A=
-DWC3_EVENT_PRAM_SOFFN / 2 is around 1 second.=0A=
-=0A=
->=0A=
->> 3) If this check fails, then it will do DWC3_ALIGN_FRAME() at least twic=
-e.=0A=
->> The isoc transfer will start 1 more interval into the future than it nee=
-ds to.=0A=
->>=0A=
-> If the interval is one, 1 more interval should be more reasonable because=
- the=0A=
-> core always fetch the trb one frame ahead.=0A=
-=0A=
-Did it fail with your setup when you test with interval of 1? It didn't=0A=
-fail from my testing setup. Your check applies for all intervals and not=0A=
-just interval of 1. Also, the databook doesn't mention this limitation=0A=
-that you have to do 2 intervals into the future if the service interval=0A=
-is 1.=0A=
-=0A=
-Regardless, if the __dwc3_gadget_target_frame_elapsed() passes for=0A=
-service interval of 1, then you'd only do DWC3_ALIGN_FRAME() once. This=0A=
-is different than what you said/wanted to do.=0A=
-=0A=
->=0A=
->> Also, I think the role of this check should be from the controller as it=
- has=0A=
->> more information and its own logic to decide if the selected future ufra=
-me=0A=
->> has elapsed.=0A=
-> Yes, agree, but I think if the sw can be used to do the same thing and mo=
-re=0A=
-> effective, Why not? =0A=
->=0A=
-=0A=
-No. The SW cannot do the same thing. As Felipe mentioned previously,=0A=
-__dwc3_gadget_get_frame() can only get a 14-bit frame number. The=0A=
-controller keeps track of the frame number with at least 16 bits. It has=0A=
-more information and can work with larger service intervals.=0A=
-=0A=
-Can you test with Felipe's patches to see if they work for you? We can=0A=
-come back and review if there are still issues.=0A=
-=0A=
-Thanks,=0A=
-Thinh=0A=
+On 12/17/18 12:10 PM, Andy Lutomirski wrote:
+>> There's no 'struct page' for enclave memory as it stands.  That means no
+>> page cache, and that means there's no 'struct address_space *mapping' in
+>> the first place.
+>>
+>> Basically, the choice was made a long time ago to have SGX's memory
+>> management live outside the core VM.  I've waffled back and forth on it,
+>> but I do still think this is the right way to do it.
+> AFAICS a lack of struct page isn't a problem.  The core code seems to
+> understand that address_space objects might cover non-struct-page
+> memory.  Morally, enclave memory is a lot like hot-unpluggable PCI
+> space.
+
+Yeah, this is true.  The existing code seems to make it all the way from
+unmap_mapping_range() down to zap_page_range() without 'struct page'.
+
+Overall, I think what Andy is saying here is that an open(/dev/sgx)
+should give you a "unique" enclave fd.  That fd can end up mapped into
+one or more processes either via fork() or the other ways fds end up
+getting handed around.  mmap() of this fd would be *required* to be
+MAP_SHARED.  That means you don't need to support COW, and the semantics
+are the same as any other MAP_SHARED mapping: children and parents and
+anybody mmap()'ing it must all coordinate.
+
+This sounds interesting at least.  It might lead to an unholy mess in
+the driver, or it might be a great cleanup.  But, it does sound like
+something that would both potentially simplify the semantics and the
+implementation.
