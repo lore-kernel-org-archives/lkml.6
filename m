@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EF0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BDFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B5F214D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B765214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388210AbeLQUgm (ORCPT
+        id S1732905AbeLQUhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:36:42 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:42820 "EHLO mail5.wrs.com"
+        Mon, 17 Dec 2018 15:37:16 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:42836 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726727AbeLQUgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:36:40 -0500
+        id S1727155AbeLQUhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:37:15 -0500
 Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBHKYMBU030343
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBHKaDBZ030388
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 17 Dec 2018 12:35:38 -0800
+        Mon, 17 Dec 2018 12:36:28 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
- 12:35:08 -0800
+ 12:36:02 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Graeme Gregory <gg@slimlogic.co.uk>,
-        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        <linux-omap@vger.kernel.org>
-Subject: [PATCH 11/18] mfd: tps65910: Make it explicitly non-modular
-Date:   Mon, 17 Dec 2018 15:31:21 -0500
-Message-ID: <1545078688-21217-12-git-send-email-paul.gortmaker@windriver.com>
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 15/18] mfd: wm831x-core: drop unused module infrastructure from non-modular code
+Date:   Mon, 17 Dec 2018 15:31:25 -0500
+Message-ID: <1545078688-21217-16-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
@@ -49,88 +47,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_TPS65910
-drivers/mfd/Kconfig-    bool "TI TPS65910 Power Management chip"
+drivers/mfd/Kconfig:config MFD_WM831X
+drivers/mfd/Kconfig:    bool
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the modular code that is essentially orphaned, so that
+Lets remove the couple traces of modular infrastructure use, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
+We delete the MODULE_LICENSE tag etc. since all that information
+is already contained at the top of the file in the comments.
 
-We don't replace module.h with init.h since the file already has that.
-We do delete an unused moduleparam.h include though.
+Previous demodularizaion work has made wm831x_device_exit() no longer
+used, so it is also removed from the 831x core code.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Tony Lindgren <tony@atomide.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Graeme Gregory <gg@slimlogic.co.uk>
-Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
-Cc: linux-omap@vger.kernel.org
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: patches@opensource.cirrus.com
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- drivers/mfd/tps65910.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+ drivers/mfd/wm831x-core.c       | 15 ++-------------
+ include/linux/mfd/wm831x/core.h |  1 -
+ 2 files changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index bf16cbe6fd88..aa3d472a10ff 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -1,5 +1,5 @@
- /*
-- * tps65910.c  --  TI TPS6591x
-+ * tps65910.c  --  TI TPS6591x chip family multi-function driver
-  *
-  * Copyright 2010 Texas Instruments Inc.
-  *
-@@ -13,8 +13,6 @@
-  *
+diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
+index e70d35ef5c6d..25fbbaf39cb9 100644
+--- a/drivers/mfd/wm831x-core.c
++++ b/drivers/mfd/wm831x-core.c
+@@ -13,7 +13,8 @@
   */
  
+ #include <linux/kernel.h>
 -#include <linux/module.h>
--#include <linux/moduleparam.h>
- #include <linux/init.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-@@ -374,7 +372,6 @@ static const struct of_device_id tps65910_of_match[] = {
- 	{ .compatible = "ti,tps65911", .data = (void *)TPS65911},
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, tps65910_of_match);
- 
- static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
- 						unsigned long *chip_id)
-@@ -527,8 +524,6 @@ static const struct i2c_device_id tps65910_i2c_id[] = {
-        { "tps65911", TPS65911 },
-        { }
- };
--MODULE_DEVICE_TABLE(i2c, tps65910_i2c_id);
--
- 
- static struct i2c_driver tps65910_i2c_driver = {
- 	.driver = {
-@@ -545,14 +540,3 @@ static int __init tps65910_i2c_init(void)
++#include <linux/init.h>
++#include <linux/export.h>
+ #include <linux/bcd.h>
+ #include <linux/delay.h>
+ #include <linux/mfd/core.h>
+@@ -1892,14 +1893,6 @@ int wm831x_device_init(struct wm831x *wm831x, int irq)
+ 	return ret;
  }
- /* init early so consumer devices can complete system boot */
- subsys_initcall(tps65910_i2c_init);
--
--static void __exit tps65910_i2c_exit(void)
+ 
+-void wm831x_device_exit(struct wm831x *wm831x)
 -{
--	i2c_del_driver(&tps65910_i2c_driver);
+-	wm831x_otp_exit(wm831x);
+-	mfd_remove_devices(wm831x->dev);
+-	free_irq(wm831x_irq(wm831x, WM831X_IRQ_AUXADC_DATA), wm831x);
+-	wm831x_irq_exit(wm831x);
 -}
--module_exit(tps65910_i2c_exit);
 -
--MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
--MODULE_AUTHOR("Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>");
--MODULE_DESCRIPTION("TPS6591x chip family multi-function driver");
+ int wm831x_device_suspend(struct wm831x *wm831x)
+ {
+ 	int reg, mask;
+@@ -1944,7 +1937,3 @@ void wm831x_device_shutdown(struct wm831x *wm831x)
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(wm831x_device_shutdown);
+-
+-MODULE_DESCRIPTION("Core support for the WM831X AudioPlus PMIC");
 -MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Mark Brown");
+diff --git a/include/linux/mfd/wm831x/core.h b/include/linux/mfd/wm831x/core.h
+index b49fa67612f1..6fcb8eb00282 100644
+--- a/include/linux/mfd/wm831x/core.h
++++ b/include/linux/mfd/wm831x/core.h
+@@ -418,7 +418,6 @@ int wm831x_bulk_read(struct wm831x *wm831x, unsigned short reg,
+ 		     int count, u16 *buf);
+ 
+ int wm831x_device_init(struct wm831x *wm831x, int irq);
+-void wm831x_device_exit(struct wm831x *wm831x);
+ int wm831x_device_suspend(struct wm831x *wm831x);
+ void wm831x_device_shutdown(struct wm831x *wm831x);
+ int wm831x_irq_init(struct wm831x *wm831x, int irq);
 -- 
 2.7.4
 
