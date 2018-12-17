@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6F6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4829FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F4C2084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16BE42084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:57:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqHNmOrv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsSxbB6w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbeLQH46 (ORCPT
+        id S1731636AbeLQH5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:56:58 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34819 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeLQH4z (ORCPT
+        Mon, 17 Dec 2018 02:57:02 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34517 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731576AbeLQH44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:56:55 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p8so5748765plo.2;
-        Sun, 16 Dec 2018 23:56:55 -0800 (PST)
+        Mon, 17 Dec 2018 02:56:56 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so5972681pfg.1;
+        Sun, 16 Dec 2018 23:56:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IjwDbTS/z4KBFIXquKZ/wO5Kv02klbSOetli+9vOaNc=;
-        b=KqHNmOrvGwcJtyxcs+bLRIXLWzVX36HkNJGLRrfUR3CEKBqXsklbYR8C/KA3IZlnWc
-         FhT2iZq68uXcJra2JRQaCR/mofFsGze1c2WyGlMnVsWOYCo4Wcs1px01cXn7jc65rK0r
-         vUUkqslHiEp2qW0jnK3exTlgppFkm+6Ef8gjP2dlsWvh7PtMAdgKML5jRGUFQ1+AAQiY
-         qX64KCYho5j38we+2uf1hPVAo+CrPmCGBC49ZG4I28MFDJ4IMGOUiXB+tjZS4gABlODB
-         TleAV3VEoo5GNiyJ8W7bTz/JLFcBuXoM3L0YgfaH8DRx1qOno+A9wSYov+WbgxISo3Yu
-         97nw==
+        bh=au8EiM8byvG0y1Hv7QLp0mVhGQvk710Vc9STgbc0N48=;
+        b=PsSxbB6wTE0H5YQel8vnGmdkBREnOOdX8oEXQV5qc4BPK9ICS3ZUIkqSzgfXDJWA9g
+         P7zC+UyxG+QZb1UZXKBYY6kvIHG+2VJZY1OOc1dGLe0ImXR4Dx/huuuFSdCTaZspGQ9u
+         Otqq8R0osb9hgOmUdLad3l200yl25gE5KIWQPVz/Hdbtqlrogx2nYoXkRaVOJ9wjCEyl
+         JkvDF17KCT8l4v+F7TDAe7qkHLA37awgSAUUslMdCKROfYlH8v7Vpf+eYBq9xy9U17Iv
+         MCZMPUb+PDDg1TiTWOuLJvB3H5qotK6oj/Y245vK/u6kpxd+e/vk60Irnv3BfbPs78xl
+         hwVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IjwDbTS/z4KBFIXquKZ/wO5Kv02klbSOetli+9vOaNc=;
-        b=n5M5vVOxB90TNTBg0g9fyyv4xjbHcbkgWzyWTO+ODS4TKtLqCN+obVCYKXBfI3gBnU
-         4hRvshAQFY/DHH5Ew6FDyXWve++p8Omeyj/2PBDsJIMFyEhmF/whlpdcYjPLd0Bpz0Qu
-         QsODOOMSS03Lw3Jq21mx0A3TRF6v/PiShlKMD5+4jDNl+48kh923CA/WT/70hXWN73Oc
-         j0f8A1M97D85WlLhVheTfc5WB5TIVjodmn2hMONq9It9CpD0cnC5yO9vZYTh6twV3ggR
-         V3Do2H4Kwjr+oTmC6e0O3PQ1b+8y0SLC7LGOWVJDvSL2BEbUpqRLtwZI0iUsI4ZpWjME
-         h21w==
-X-Gm-Message-State: AA+aEWZWAOBz9DGe9Y9PXgvnG3ZH7nNZyuwqLVS+Txrs1SRZtsjmmUpW
-        gNmwJm795UjorB17f0TJWXU=
-X-Google-Smtp-Source: AFSGD/VzadQ7KllZWniZ0SFntweMpX+J7hhizCMBCQ81Z8FIwynVKUz+AnTwbjeju7NabFGK7OQK1g==
-X-Received: by 2002:a17:902:724a:: with SMTP id c10mr12061675pll.51.1545033414561;
-        Sun, 16 Dec 2018 23:56:54 -0800 (PST)
+        bh=au8EiM8byvG0y1Hv7QLp0mVhGQvk710Vc9STgbc0N48=;
+        b=F3KwuHgtZ694Y45Yfi+lRWwBHzevEnaDREIlLr7WpHGTCXx7uraaDyUZYR3btaMpJv
+         WsoVsaI3iaxBqbgTspmPy13oaix4IHI5DEBHHDAYWhtcLyX2YUiibQfdEGfMGo8UtDG+
+         fY9Ibg6dsCsX2rM4QiWiNfSbfdRrll4wqKqCizMQNdvl4WtB4LVOGqlkx9kNjnbSCAh8
+         zAkUC5JP9FweeZ5EKmK90j21lWAENNfTScO9UbJSql2am1SQ5YT87SR/RjMMqjPlEKiT
+         /ejsgnl6fOAGWN21V/pCPFIs25lPZzQSrElm8mmKdHLzcb1wdrU0VR0qBjIPKu5el1Bw
+         8ZCg==
+X-Gm-Message-State: AA+aEWbH2ziyotvguVdM2MF9M7vNhxiOg2TfBNhp3HzuzjIkKa68zQKt
+        hCNBtmxmBfLVQsNCjA1eS6vSBTSe
+X-Google-Smtp-Source: AFSGD/VITzx/iT2E843sYjhHKQvhXFgUaF/GLt0spXhxUmG9dVpChMUCC1mF6fbGF5mDYuwFW11zVA==
+X-Received: by 2002:a62:220d:: with SMTP id i13mr11892705pfi.162.1545033415905;
+        Sun, 16 Dec 2018 23:56:55 -0800 (PST)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id r8sm14216610pgr.48.2018.12.16.23.56.53
+        by smtp.gmail.com with ESMTPSA id r8sm14216610pgr.48.2018.12.16.23.56.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 16 Dec 2018 23:56:54 -0800 (PST)
+        Sun, 16 Dec 2018 23:56:55 -0800 (PST)
 From:   frowand.list@gmail.com
 To:     robh+dt@kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
         linuxppc-dev@lists.ozlabs.org
@@ -64,9 +64,9 @@ Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
         Juliet Kim <minkim@us.ibm.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] of: of_node_get()/of_node_put() nodes held in phandle cache
-Date:   Sun, 16 Dec 2018 23:56:35 -0800
-Message-Id: <1545033396-24485-2-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v2 2/2] of: __of_detach_node() - remove node from phandle cache
+Date:   Sun, 16 Dec 2018 23:56:36 -0800
+Message-Id: <1545033396-24485-3-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1545033396-24485-1-git-send-email-frowand.list@gmail.com>
 References: <1545033396-24485-1-git-send-email-frowand.list@gmail.com>
@@ -77,138 +77,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-The phandle cache contains struct device_node pointers.  The refcount
-of the pointers was not incremented while in the cache, allowing use
-after free error after kfree() of the node.  Add the proper increment
-and decrement of the use count.
+Non-overlay dynamic devicetree node removal may leave the node in
+the phandle cache.  Subsequent calls to of_find_node_by_phandle()
+will incorrectly find the stale entry.  Remove the node from the
+cache.
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
+Add paranoia checks in of_find_node_by_phandle() as a second level
+of defense (do not return cached node if detached, do not add node
+to cache if detached).
 
+Reported-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
 
-changes since v1
-  - make __of_free_phandle_cache() static
+changes since v1:
+  - add WARN_ON(1) for unexpected condition in of_find_node_by_phandle()
 
- drivers/of/base.c | 70 ++++++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 46 insertions(+), 24 deletions(-)
+ drivers/of/base.c       | 30 +++++++++++++++++++++++++++++-
+ drivers/of/dynamic.c    |  3 +++
+ drivers/of/of_private.h |  4 ++++
+ 3 files changed, 36 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 09692c9b32a7..6c33d63361b8 100644
+index 6c33d63361b8..ad71864cecf5 100644
 --- a/drivers/of/base.c
 +++ b/drivers/of/base.c
-@@ -116,9 +116,6 @@ int __weak of_node_to_nid(struct device_node *np)
- }
+@@ -162,6 +162,27 @@ int of_free_phandle_cache(void)
+ late_initcall_sync(of_free_phandle_cache);
  #endif
  
--static struct device_node **phandle_cache;
--static u32 phandle_cache_mask;
--
- /*
-  * Assumptions behind phandle_cache implementation:
-  *   - phandle property values are in a contiguous range of 1..n
-@@ -127,6 +124,44 @@ int __weak of_node_to_nid(struct device_node *np)
-  *   - the phandle lookup overhead reduction provided by the cache
-  *     will likely be less
-  */
-+
-+static struct device_node **phandle_cache;
-+static u32 phandle_cache_mask;
-+
 +/*
 + * Caller must hold devtree_lock.
 + */
-+static void __of_free_phandle_cache(void)
++void __of_free_phandle_cache_entry(phandle handle)
 +{
-+	u32 cache_entries = phandle_cache_mask + 1;
-+	u32 k;
++	phandle masked_handle;
 +
-+	if (!phandle_cache)
++	if (!handle)
 +		return;
 +
-+	for (k = 0; k < cache_entries; k++)
-+		of_node_put(phandle_cache[k]);
++	masked_handle = handle & phandle_cache_mask;
 +
-+	kfree(phandle_cache);
-+	phandle_cache = NULL;
++	if (phandle_cache) {
++		if (phandle_cache[masked_handle] &&
++		    handle == phandle_cache[masked_handle]->phandle) {
++			of_node_put(phandle_cache[masked_handle]);
++			phandle_cache[masked_handle] = NULL;
++		}
++	}
 +}
-+
-+int of_free_phandle_cache(void)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&devtree_lock, flags);
-+
-+	__of_free_phandle_cache();
-+
-+	raw_spin_unlock_irqrestore(&devtree_lock, flags);
-+
-+	return 0;
-+}
-+#if !defined(CONFIG_MODULES)
-+late_initcall_sync(of_free_phandle_cache);
-+#endif
 +
  void of_populate_phandle_cache(void)
  {
  	unsigned long flags;
-@@ -136,8 +171,7 @@ void of_populate_phandle_cache(void)
- 
- 	raw_spin_lock_irqsave(&devtree_lock, flags);
- 
--	kfree(phandle_cache);
--	phandle_cache = NULL;
-+	__of_free_phandle_cache();
- 
- 	for_each_of_allnodes(np)
- 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
-@@ -155,30 +189,15 @@ void of_populate_phandle_cache(void)
- 		goto out;
- 
- 	for_each_of_allnodes(np)
--		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
-+		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL) {
-+			of_node_get(np);
- 			phandle_cache[np->phandle & phandle_cache_mask] = np;
+@@ -1209,11 +1230,18 @@ struct device_node *of_find_node_by_phandle(phandle handle)
+ 		if (phandle_cache[masked_handle] &&
+ 		    handle == phandle_cache[masked_handle]->phandle)
+ 			np = phandle_cache[masked_handle];
++		if (np && of_node_check_flag(np, OF_DETACHED)) {
++			WARN_ON(1);
++			of_node_put(np);
++			phandle_cache[masked_handle] = NULL;
++			np = NULL;
 +		}
+ 	}
  
- out:
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- }
- 
--int of_free_phandle_cache(void)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&devtree_lock, flags);
--
--	kfree(phandle_cache);
--	phandle_cache = NULL;
--
--	raw_spin_unlock_irqrestore(&devtree_lock, flags);
--
--	return 0;
--}
--#if !defined(CONFIG_MODULES)
--late_initcall_sync(of_free_phandle_cache);
--#endif
--
- void __init of_core_init(void)
- {
- 	struct device_node *np;
-@@ -1195,8 +1214,11 @@ struct device_node *of_find_node_by_phandle(phandle handle)
  	if (!np) {
  		for_each_of_allnodes(np)
- 			if (np->phandle == handle) {
--				if (phandle_cache)
-+				if (phandle_cache) {
-+					/* will put when removed from cache */
-+					of_node_get(np);
- 					phandle_cache[masked_handle] = np;
-+				}
- 				break;
- 			}
+-			if (np->phandle == handle) {
++			if (np->phandle == handle &&
++			    !of_node_check_flag(np, OF_DETACHED)) {
+ 				if (phandle_cache) {
+ 					/* will put when removed from cache */
+ 					of_node_get(np);
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index f4f8ed9b5454..ecea92f68c87 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -268,6 +268,9 @@ void __of_detach_node(struct device_node *np)
  	}
+ 
+ 	of_node_set_flag(np, OF_DETACHED);
++
++	/* race with of_find_node_by_phandle() prevented by devtree_lock */
++	__of_free_phandle_cache_entry(np->phandle);
+ }
+ 
+ /**
+diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+index 5d1567025358..24786818e32e 100644
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -84,6 +84,10 @@ static inline void __of_detach_node_sysfs(struct device_node *np) {}
+ int of_resolve_phandles(struct device_node *tree);
+ #endif
+ 
++#if defined(CONFIG_OF_DYNAMIC)
++void __of_free_phandle_cache_entry(phandle handle);
++#endif
++
+ #if defined(CONFIG_OF_OVERLAY)
+ void of_overlay_mutex_lock(void);
+ void of_overlay_mutex_unlock(void);
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
