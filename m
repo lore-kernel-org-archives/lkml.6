@@ -2,150 +2,179 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45052C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38C4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7F82133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5B612133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733124AbeLQOD4 (ORCPT
+        id S1732614AbeLQOEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:03:56 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:42561 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbeLQODz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:03:55 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d21so4443964uap.9;
-        Mon, 17 Dec 2018 06:03:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IyySPFQR501jnuyrqlTBkAENA+JvMUdw4OsdFoys3rU=;
-        b=ZLx2lP6ZNkZHfLcxs0BEYB4a1NX8wUvppf1brWcbDWHPe7VfGonHfEpNbv835nDvO9
-         JdFnX+tyiTQEDorFjm9UM6iAVn/h7bAotMCDNMWHsQLm9Z/IFZSDmvm3NmJrJt6xWa00
-         eOmANSrFMU/xKhnwdsJz2mDhrDBeSp0pTWxyGz7DAa5OVbrEzn5E8G74FgSyfMfUe+JP
-         HEthYp0JwGXQKnRjNcyuv3Iwq18+s9E9RTlJMPeoS1Y5VpvRWHIHal8oEA0eK0M0K6AM
-         f8nF+VgtPI8cAh4HHCYfziC1Qec7XMeCajTcJE+uNFLNIP7NLb61/1qbvQn5cVMU4tUc
-         JA+Q==
-X-Gm-Message-State: AA+aEWb9dh4LUhAlewiW9DE/cVdoZPYDTFs4RjPTslbJ7Ej8VIrXtS7G
-        dM/d7Gf+nSMhNutXvsBs9YkGoU5HraKHi45ECUA=
-X-Google-Smtp-Source: AFSGD/XHOkyPl9wjRgjxJqbMLdZ4TZbyrFYS7eEaqX7VHMXvZ4gtNEhnWD/TynJ6lmJHKoWWwt/iZWaJAgP5cJngddQ=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr6327048ual.20.1545055428920;
- Mon, 17 Dec 2018 06:03:48 -0800 (PST)
+        Mon, 17 Dec 2018 09:04:36 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56864 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727068AbeLQOEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:04:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19F8EA78;
+        Mon, 17 Dec 2018 06:04:35 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB8FF3F59C;
+        Mon, 17 Dec 2018 06:04:34 -0800 (PST)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 1E0856802BC; Mon, 17 Dec 2018 14:04:33 +0000 (GMT)
+Date:   Mon, 17 Dec 2018 14:04:33 +0000
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Ayan Halder <Ayan.Halder@arm.com>
+Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "corbet@lwn.net" <corbet@lwn.net>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        nd <nd@arm.com>, "sean@poorly.run" <sean@poorly.run>
+Subject: Re: [RFC AFBC 06/12] drm/arm/malidp:- Added support for new YUV
+ formats for DP500, DP550 and DP650
+Message-ID: <20181217140433.GA988@e110455-lin.cambridge.arm.com>
+References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
+ <1543836703-8491-7-git-send-email-ayan.halder@arm.com>
+ <20181204165746.GN988@e110455-lin.cambridge.arm.com>
+ <20181214141222.GC19564@arm.com>
 MIME-Version: 1.0
-References: <CAMuHMdVJr0PwvJg3FeTCy7vxuyY1=S1tPLHO7hPsoZX4wZ+-cQ@mail.gmail.com>
- <20181205.221146.969453990167463340.anemo@mba.ocn.ne.jp> <CAMuHMdU9zXXSaPHKvfG3A73h3CTsb9H2RT_gWt-Ne=qQ+HKShQ@mail.gmail.com>
- <92ce4b8c2b2d53e27ed5bc0e5af3fee4bc17b4dc.camel@hammerspace.com> <CAMuHMdXyfEVOWoBOx0Ywm6vw5oQ6eHNXFhQBKTfRSBOmPYGM6Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdXyfEVOWoBOx0Ywm6vw5oQ6eHNXFhQBKTfRSBOmPYGM6Q@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 15:03:35 +0100
-Message-ID: <CAMuHMdXT_25_64w88KTnAYDwmLnMACua=s2PgAxDv=1ZaBmB7A@mail.gmail.com>
-Subject: Re: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
-To:     trondmy@hammerspace.com
-Cc:     Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181214141222.GC19564@arm.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Trond,
-
-On Wed, Dec 5, 2018 at 3:47 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Wed, Dec 5, 2018 at 2:45 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
-> > On Wed, 2018-12-05 at 14:41 +0100, Geert Uytterhoeven wrote:
-> > > On Wed, Dec 5, 2018 at 2:11 PM Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-> > > wrote:
-> > > > On Tue, 4 Dec 2018 14:53:07 +0100, Geert Uytterhoeven <
-> > > > geert@linux-m68k.org> wrote:
-> > > > > I found similar crashes in a report from 2006, but of course the
-> > > > > code
-> > > > > has changed too much to apply the solution proposed there
-> > > > > (
-> > > > > https://www.linux-mips.org/archives/linux-mips/2006-09/msg00169.html
-> > > > > ).
-> > > > >
-> > > > > Userland is Debian 8 (the last release supporting "old" MIPS).
-> > > > > My kernel is based on v4.20.0-rc5, but the issue happens with
-> > > > > v4.20-rc1,
-> > > > > too.
-> > > > >
-> > > > > However, I noticed it works in v4.19! Hence I've bisected this,
-> > > > > to commit
-> > > > > 277e4ab7d530bf28 ("SUNRPC: Simplify TCP receive code by switching
-> > > > > to using
-> > > > > iterators").
-> > > > >
-> > > > > Dropping the ",tcp" part from the nfsroot parameter also fixes
-> > > > > the issue.
-> > > > >
-> > > > > Given RBTX4927 is little endian, just like my arm/arm64 boards,
-> > > > > it's probably
-> > > > > not an endianness issue.  Sparse didn't show anything suspicious
-> > > > > before/after
-> > > > > the guilty commit.
-> > > > >
-> > > > > Do you have a clue?
-> > > >
-> > > > If it was a cache issue, disabling i-cache or d-cache completely
-> > > > might
-> > > > help understanding the problem.  I added TXx9 specific "icdisable"
-> > > > and
-> > > > "dcdisable" kernel options for debugging long ago.
-> > > >
-> > > > I hope these options still works correctly with recent kernel but
-> > > > not
-> > > > sure.
-> > > >
-> > > > Also, disabling i-cache makes your board VERY slow, of course.
-> > >
-> > > Thanks!
-> > >
-> > > When using these options, I do see a slowdown in early boot, but the
-> > > issue
-> > > is still there.
-> > >
-> > > My next guess is an unaligned access not using {get,put}_unaligned(),
-> > > which
-> > > doesn't seem to work on tx4927, but doesn't cause an exception
-> > > neither.
+On Fri, Dec 14, 2018 at 02:12:23PM +0000, Ayan Halder wrote:
+> On Tue, Dec 04, 2018 at 04:57:46PM +0000, Liviu Dudau wrote:
+> 
+> Hi Liviu,
+> > On Mon, Dec 03, 2018 at 11:32:00AM +0000, Ayan Halder wrote:
+> > > We have added some new formats to be supported on DP500/DP550/DP650.
+> > 
+> > Make a bit more descriptive commit message here, please!
 > >
-> > Can you try my linux-next branch on git.linux-nfs.org? It contains a
-> > fixes for a hang that results from the above commit.
-> >
-> > git pull git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
->
-> Thanks for the suggestion, but unfortunately it doesn't help.
+> I will keep the following commit message :-
+> 
+> ""We have added support for some AFBC only pixel formats like :-
+> DRM_FORMAT_YUV420_8BIT (single plane YUV 420 8 bit format)
+> DRM_FORMAT_VUY888 (single plane YUV 444 8 bit format)
+> DRM_FORMAT_VUY101010 (single plane YUV 444 10 bit format)
+> DRM_FORMAT_YUV420_10BIT (single plane YUV 420 10 bit format)
+> 
+> Generally, these formats are supported by our hardware using the same hw-ids as
+> the equivalent multi plane pixel formats.
+> 
+> Also we have added support for XYUV 444 8 and 10 bit formats.""
+> 
+> Let me know if this looks fine.
 
-In the mean time, I tried your newer linux-next, no change.
-I tried several other things:
-  - remove the packed attribute (why did you add that?),
-  - verify (at runtime) that all accesses to fraghdr, xid, and calldir
-are aligned,
-  - enable RPC_DEBUG_DATA, nothing fishy seen at first sight.
+Yes, LGTM.
 
-Is anyone else seeing this on MIPS, or any other platform?
-Does mounting NFS with -o nfsvers=3,tcp work on other MIPS platforms?
+Best regards,
+Liviu
 
-Thanks!
+> 
+> Thanks,
+> Ayan Kumar halder
+> > > 
+> > > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+> > > 
+> > > Depends on :- https://patchwork.kernel.org/patch/10460063/
+> > 
+> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> > 
+> > Best regards,
+> > Liviu
+> > 
+> > > ---
+> > >  drivers/gpu/drm/arm/malidp_hw.c | 22 +++++++++++++++++++++-
+> > >  1 file changed, 21 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+> > > index 55d379b..25ac5890 100644
+> > > --- a/drivers/gpu/drm/arm/malidp_hw.c
+> > > +++ b/drivers/gpu/drm/arm/malidp_hw.c
+> > > @@ -49,6 +49,12 @@ static const struct malidp_format_id malidp500_de_formats[] = {
+> > >  	{ DRM_FORMAT_YUYV, DE_VIDEO1, 13 },
+> > >  	{ DRM_FORMAT_NV12, DE_VIDEO1 | SE_MEMWRITE, 14 },
+> > >  	{ DRM_FORMAT_YUV420, DE_VIDEO1, 15 },
+> > > +	{ DRM_FORMAT_XYUV8888, DE_VIDEO1, 16 },
+> > > +	/* These are supported with AFBC only */
+> > > +	{ DRM_FORMAT_YUV420_8BIT, DE_VIDEO1, 14 },
+> > > +	{ DRM_FORMAT_VUY888, DE_VIDEO1, 16 },
+> > > +	{ DRM_FORMAT_VUY101010, DE_VIDEO1, 17 },
+> > > +	{ DRM_FORMAT_YUV420_10BIT, DE_VIDEO1, 18 }
+> > >  };
+> > >  
+> > >  #define MALIDP_ID(__group, __format) \
+> > > @@ -74,11 +80,25 @@ static const struct malidp_format_id malidp500_de_formats[] = {
+> > >  	{ DRM_FORMAT_ABGR1555, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 1) }, \
+> > >  	{ DRM_FORMAT_RGB565, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 2) }, \
+> > >  	{ DRM_FORMAT_BGR565, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(4, 3) }, \
+> > > +	/* This is only supported with linear modifier */	\
+> > > +	{ DRM_FORMAT_XYUV8888, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 0) },\
+> > > +	/* This is only supported with AFBC modifier */		\
+> > > +	{ DRM_FORMAT_VUY888, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 0) }, \
+> > >  	{ DRM_FORMAT_YUYV, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 2) },	\
+> > > +	/* This is only supported with linear modifier */ \
+> > >  	{ DRM_FORMAT_UYVY, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 3) },	\
+> > >  	{ DRM_FORMAT_NV12, DE_VIDEO1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(5, 6) },	\
+> > > +	/* This is only supported with AFBC modifier */ \
+> > > +	{ DRM_FORMAT_YUV420_8BIT, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 6) }, \
+> > >  	{ DRM_FORMAT_YUV420, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 7) }, \
+> > > -	{ DRM_FORMAT_X0L2, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 6)}
+> > > +	/* This is only supported with linear modifier */ \
+> > > +	{ DRM_FORMAT_XVYU2101010, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 0)}, \
+> > > +	/* This is only supported with AFBC modifier */ \
+> > > +	{ DRM_FORMAT_VUY101010, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 0)}, \
+> > > +	{ DRM_FORMAT_X0L2, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 6)}, \
+> > > +	/* This is only supported with AFBC modifier */ \
+> > > +	{ DRM_FORMAT_YUV420_10BIT, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 7)}, \
+> > > +	{ DRM_FORMAT_P010, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 7)}
+> > >  
+> > >  static const struct malidp_format_id malidp550_de_formats[] = {
+> > >  	MALIDP_COMMON_FORMATS,
+> > > -- 
+> > > 2.7.4
+> > > 
+> > 
+> > -- 
+> > ====================
+> > | I would like to |
+> > | fix the world,  |
+> > | but they're not |
+> > | giving me the   |
+> >  \ source code!  /
+> >   ---------------
+> >     ??\_(???)_/??
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
