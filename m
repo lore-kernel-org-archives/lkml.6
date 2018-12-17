@@ -1,90 +1,158 @@
-Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08935C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E618C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42EA21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:59:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02925217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:00:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KwkymQCU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbeLQX7v (ORCPT
+        id S1726395AbeLRAAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 18:59:51 -0500
-Received: from mga17.intel.com ([192.55.52.151]:22794 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbeLQX7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 18:59:51 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 15:59:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="119624247"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga001.jf.intel.com with ESMTP; 17 Dec 2018 15:59:50 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id A6E53300B49; Mon, 17 Dec 2018 15:59:50 -0800 (PST)
-Date:   Mon, 17 Dec 2018 15:59:50 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
-Message-ID: <20181217235950.GZ25620@tassilo.jf.intel.com>
-References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
- <20181217173900.ygifx7khwmzn2gv2@treble>
- <20181217180434.GS25620@tassilo.jf.intel.com>
- <20181217181638.dfexg6mkmbfyzfli@treble>
- <20181217192938.GF2218@hirez.programming.kicks-ass.net>
- <20181217205535.GT25620@tassilo.jf.intel.com>
- <20181217223524.GH2218@hirez.programming.kicks-ass.net>
+        Mon, 17 Dec 2018 19:00:03 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35419 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbeLRAAC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 19:00:02 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e7so8908318vsc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:00:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eaVvu34d0qaD97yOqEh3I+K8VrRLlvxcuACvAqx7jlY=;
+        b=KwkymQCUbl+iLWZDNn7TCTYriTJpa5IzzthK3UE8zCwWVLQYvwBDbq2yMZhxoINEFA
+         GF7hsuEpXEKsqrZtW0AGxqDAimSGRG8/ZSme91aeq+691Du33FoFGLqfLlgUuIGXL5C0
+         aHS3yNUNWMJ1PorBTHQqq9q9gsC6VG2tSVYuU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eaVvu34d0qaD97yOqEh3I+K8VrRLlvxcuACvAqx7jlY=;
+        b=Z7Tiv6U0XFU4ixqKDQxEMOJzo2YonIYckZzG5tLNwbQBhyjWznN5al1TuGbkzyOBWy
+         IBfAcqEoxg1iDKPrAvRT8Ad/CF6nWXP6ibPtGfgv7l47SHCquSeIba8s785oLX/+lPJr
+         Ah83DECHwgp1I7f1YrFKIKbAFNXIHruwfFyn65Z9gU/nKgcQbKw0kFGdN2TIUpfb7H1w
+         0SSE422Iwuf5HU1wjVXncFZj1LZb3kkjbJEIK2SKUnLFzzTK/775ROxD56Fwn46xCqFY
+         HEMAIxKU0i+SvCyb7XNMwrh/4Bbb9btxjrmegaUkCvIBq6v6ZYUbTdFbnrPqlONyHi7E
+         8t1g==
+X-Gm-Message-State: AA+aEWYzrSTrNdsJ+pI5LDzsFdr/OmvPIwIOpiM0fU40+LD4ea2AoxPy
+        gToZ8AgBKmPndGhbe4/yeVW7SBhCP2g=
+X-Google-Smtp-Source: AFSGD/VIlbLzDSUaS5PVB/MUoeot7CjP+UD0KqTNcKtxg7FzI4QiAA1qZZlPGa8FbzvU5vfwwG9PHg==
+X-Received: by 2002:a67:c01d:: with SMTP id v29mr7478363vsi.124.1545091199927;
+        Mon, 17 Dec 2018 15:59:59 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id n15sm5761455vsi.5.2018.12.17.15.59.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 15:59:59 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id p9so5094883uaa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:59:59 -0800 (PST)
+X-Received: by 2002:ab0:1c12:: with SMTP id a18mr6799230uaj.15.1545091198708;
+ Mon, 17 Dec 2018 15:59:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217223524.GH2218@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-2-sibis@codeaurora.org>
+In-Reply-To: <20181217100724.4593-2-sibis@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 17 Dec 2018 15:59:47 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com>
+Message-ID: <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: remoteproc: qcom: Add clock bindings
+ for Q6V5
+To:     sibis@codeaurora.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:35:24PM +0100, Peter Zijlstra wrote:
-> On Mon, Dec 17, 2018 at 12:55:35PM -0800, Andi Kleen wrote:
-> > On Mon, Dec 17, 2018 at 08:29:38PM +0100, Peter Zijlstra wrote:
-> > > When/if we get the LTO trainwreck sorted -- which very much includes
-> > > getting that memory-order-consume fixed -- we can revisit all that.
-> > 
-> > What do you mean? I'm not aware of any LTO problems with memory-order-consume?
-> 
-> The compiler is basically allowed to break RCU (and anything else that
-> depends on read-read dependencies). LTO makes it _far_ more likely this
-> happens.
-> 
-> We need guarantees (and possible switches) from the compiler folks that
-> this will not happen before I'll retract my NAK from any LTO enabling.
+Hi,
 
-Are you really saying that the current RCU code depends on cross file inlining
-not happening?
+On Mon, Dec 17, 2018 at 2:07 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> Add missing clock bindings for Q6V5 MSS on SDM845 SoCs.
+>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt       | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-If that is true it's quite bad. Of course it would be a untolerable
-situation because all kinds of changes can break it, and there would
-be likely already plenty of broken code in tree.
+Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
+on msm8996")
+Fixes: fb22022ff63d ("dt-bindings: remoteproc: Add Q6v5 Modem PIL
+binding for SDM845")
 
-I have a hard time believing it though. Do you have a concrete
-example or is this just FUD?
+...it probably doesn't matter too much but if we wanted to be really
+careful we could split into two patches, one for the msm8996 and one
+for sdm845.  I don't think people care that much about stable
+backports of bindings though (someone can feel free to correct me)...
 
-BTW I have a user base for LTO and so far noone has reported any issues
-like this.
 
--Andi
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 9ff5b0309417..780adc043b37 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> @@ -39,13 +39,17 @@ on the Qualcomm Hexagon core.
+>  - clocks:
+>         Usage: required
+>         Value type: <phandle>
+> -       Definition: reference to the iface, bus and mem clocks to be held on
+> -                   behalf of the booting of the Hexagon core
+> +       Definition: reference to the list of 4 clocks for the modem sub-system
+> +                   reference to the list of 8 clocks for the modem sub-system
+> +                   on SDM845 SoCs
+
+The above is confusing because you don't list the SoCs that are
+supposed to use the 4 clocks.  How about instead:
+
+Definition: reference to the clocks that match clock-names
+
+
+>  - clock-names:
+>         Usage: required
+>         Value type: <stringlist>
+> -       Definition: must be "iface", "bus", "mem"
+> +       Definition: must be "iface", "bus", "mem", "xo" for the modem sub-system
+> +                   must be "iface", "bus", "mem", "gpll0_mss", "snoc_axi",
+> +                   "mnoc_axi", "prng", "xo" for the modem sub-system on SDM845
+> +                   SoCs
+
+Same here where it's confusing.  ...but also, it it correct?  As far
+as I can tell you're missing msm8996.  It's better to just be explicit
+and list each one, ideally without all the prose.
+
+Definition: The clocks needed depend on the compatible string:
+
+qcom,sdm845-mss-pil: "xo", "prng", "iface", "snoc_axi", "bus", "mem",
+"gpll0_mss", "mnoc_axi"
+qcom,msm8996-mss-pil: "xo", "pnoc", "iface", "bus", "mem", "gpll0_mss_clk"
+qcom,msm8974-mss-pil: "xo", "iface", "bus", "mem"
+qcom,msm8916-mss-pil: "xo", "iface", "bus", "mem"
+qcom,q6v5-pil: "xo", "iface", "bus", "mem"
+
+...as far as I can tell this binding is supposed to account for
+"qcom,ipq8074-wcss-pil" too but it seems that one doesn't have
+clock-names.
+
+
+-Doug
