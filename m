@@ -2,94 +2,159 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F541C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76937C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5068D2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:44:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EfRHe5vU"
+	by mail.kernel.org (Postfix) with ESMTP id 3BF162133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732769AbeLQTob (ORCPT
+        id S1733256AbeLQTsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:44:31 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44011 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbeLQToa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:44:30 -0500
-Received: by mail-lf1-f66.google.com with SMTP id u18so10377574lff.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:44:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1FfC7IuS1OaUBS/umSG/oOBAF4rXMrEKQvY3C4my1so=;
-        b=EfRHe5vUzkJDtFWT7OqNel24Lb7X0e3IoT24frs0qG07mxPszF+0LH13+VzAOyeUhV
-         NkLz6v20Ukg38Y0m9XBQ8nbjfmPaHxVr2yZUS2KX0oGMSzoAYw9cg+DyXj7A9rLbkux1
-         KNONxNKm0O75FihvtvjJIKGhvVpRhWtB5OYqI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1FfC7IuS1OaUBS/umSG/oOBAF4rXMrEKQvY3C4my1so=;
-        b=cwnw+conqB+mzONJQ+5Dt7Hm/q4G5PEaQZBSgAliSyBpq3Obdi+D/1F5oIWrB+ui9Q
-         ygMXEoPtEQSWaZQX6Sie8aSVoCVF54woQojplqkNQqUzieI4LCHrUpCUIshv0Wnl85SP
-         ia7EKIbR7tAXwveO0d/MZZMIVmpiz5u+2A2T/+gdkPIYxTSZrABhTKvqNB9+fOSHZB36
-         Po1fiTmGc4+rOTPt7bvd0BWuhmE/IFwkk43OSvVGiH3R+mQTYitt5jWTJpdwOGNWDnB9
-         r/x6VK5qwZOl2LS1FDW4rhvWPr9OESszf9RN6V4wKu2c6FWK5PH80JsvSAaxyu+CohT2
-         rnGw==
-X-Gm-Message-State: AA+aEWbp3QKxWAyEmTLhH2Y/wpBqzybhiLl2KQyDGVm0Y92vxX70VT+5
-        FjAiLEnXg7G8ARPVuYBU+4HRxVA6bMI=
-X-Google-Smtp-Source: AFSGD/Xe+nfjW3EtY0A4BYww4+ocDfCWyM93ogxSGiQ5nZ2WrbptAlw2qLKMiHu82JRIAw9qBk/Ekw==
-X-Received: by 2002:a19:3809:: with SMTP id f9mr7807779lfa.148.1545075867365;
-        Mon, 17 Dec 2018 11:44:27 -0800 (PST)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id e94sm2869718lfi.23.2018.12.17.11.44.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 11:44:26 -0800 (PST)
-Received: by mail-lj1-f180.google.com with SMTP id v1-v6so12125584ljd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:44:25 -0800 (PST)
-X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr524006ljj.120.1545075865555;
- Mon, 17 Dec 2018 11:44:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1544738377-3848-1-git-send-email-longman@redhat.com> <20181217181712.GA5114@gmail.com>
-In-Reply-To: <20181217181712.GA5114@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Dec 2018 11:44:09 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjhqBYmzOyg7LPjvZhoXr3Tr+k9+caG2ScdCtZeO6oJcQ@mail.gmail.com>
-Message-ID: <CAHk-=wjhqBYmzOyg7LPjvZhoXr3Tr+k9+caG2ScdCtZeO6oJcQ@mail.gmail.com>
-Subject: Re: [PATCH v2] debugobjects: Move printk out of db lock critical sections
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 17 Dec 2018 14:48:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56336 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726660AbeLQTsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:48:06 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 312C346263;
+        Mon, 17 Dec 2018 19:48:05 +0000 (UTC)
+Received: from redhat.com (ovpn-125-170.rdu2.redhat.com [10.10.125.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 390741001F50;
+        Mon, 17 Dec 2018 19:48:02 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 14:48:00 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        yang.shi@linux.alibaba.com, Arnd Bergmann <arnd@arndb.de>,
-        sergey.senozhatsky.work@gmail.com, dima@arista.com, bp@alien8.de
-Content-Type: text/plain; charset="UTF-8"
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181217194759.GB3341@redhat.com>
+References: <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181217183443.GO10600@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 17 Dec 2018 19:48:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:17 AM Ingo Molnar <mingo@kernel.org> wrote:
->
-> We should rename printk() to syslog() or so, and rename early_printk() to
-> printk(), and be done with this.
+On Mon, Dec 17, 2018 at 10:34:43AM -0800, Matthew Wilcox wrote:
+> On Mon, Dec 17, 2018 at 01:11:50PM -0500, Jerome Glisse wrote:
+> > On Mon, Dec 17, 2018 at 08:58:19AM +1100, Dave Chinner wrote:
+> > > Sure, that's a possibility, but that doesn't close off any race
+> > > conditions because there can be DMA into the page in progress while
+> > > the page is being bounced, right? AFAICT this ext3+DIF/DIX case is
+> > > different in that there is no 3rd-party access to the page while it
+> > > is under IO (ext3 arbitrates all access to it's metadata), and so
+> > > nothing can actually race for modification of the page between
+> > > submission and bouncing at the block layer.
+> > > 
+> > > In this case, the moment the page is unlocked, anyone else can map
+> > > it and start (R)DMA on it, and that can happen before the bio is
+> > > bounced by the block layer. So AFAICT, block layer bouncing doesn't
+> > > solve the problem of racing writeback and DMA direct to the page we
+> > > are doing IO on. Yes, it reduces the race window substantially, but
+> > > it doesn't get rid of it.
+> > 
+> > So the event flow is:
+> >     - userspace create object that match a range of virtual address
+> >       against a given kernel sub-system (let's say infiniband) and
+> >       let's assume that the range is an mmap() of a regular file
+> >     - device driver do GUP on the range (let's assume it is a write
+> >       GUP) so if the page is not already map with write permission
+> >       in the page table than a page fault is trigger and page_mkwrite
+> >       happens
+> >     - Once GUP return the page to the device driver and once the
+> >       device driver as updated the hardware states to allow access
+> >       to this page then from that point on hardware can write to the
+> >       page at _any_ time, it is fully disconnected from any fs event
+> >       like write back, it fully ignore things like page_mkclean
+> > 
+> > This is how it is to day, we allowed people to push upstream such
+> > users of GUP. This is a fact we have to live with, we can not stop
+> > hardware access to the page, we can not force the hardware to follow
+> > page_mkclean and force a page_mkwrite once write back ends. This is
+> > the situation we are inheriting (and i am personnaly not happy with
+> > that).
+> > 
+> > >From my point of view we are left with 2 choices:
+> >     [C1] break all drivers that do not abide by the page_mkclean and
+> >          page_mkwrite
+> >     [C2] mitigate as much as possible the issue
+> > 
+> > For [C2] the idea is to keep track of GUP per page so we know if we
+> > can expect the page to be written to at any time. Here is the event
+> > flow:
+> >     - driver GUP the page and program the hardware, page is mark as
+> >       GUPed
+> >     ...
+> >     - write back kicks in on the dirty page, lock the page and every
+> >       thing as usual , sees it is GUPed and inform the block layer to
+> >       use a bounce page
+> 
+> No.  The solution John, Dan & I have been looking at is to take the
+> dirty page off the LRU while it is pinned by GUP.  It will never be
+> found for writeback.
+> 
+> That's not the end of the story though.  Other parts of the kernel (eg
+> msync) also need to be taught to stay away from pages which are pinned
+> by GUP.  But the idea is that no page gets written back to storage while
+> it's pinned by GUP.  Only when the last GUP ends is the page returned
+> to the list of dirty pages.
+> 
+> >     - block layer copy the page to a bounce page effectively creating
+> >       a snapshot of what is the content of the real page. This allows
+> >       everything in block layer that need stable content to work on
+> >       the bounce page (raid, stripping, encryption, ...)
+> >     - once write back is done the page is not marked clean but stays
+> >       dirty, this effectively disable things like COW for filesystem
+> >       and other feature that expect page_mkwrite between write back.
+> >       AFAIK it is believe that it is something acceptable
+> 
+> So none of this is necessary.
 
-No.
+With the solution you are proposing we loose GUP fast and we have to
+allocate a structure for each page that is under GUP, and the LRU
+changes too. Moreover by not writing back there is a greater chance
+of data loss.
 
-As already pointed out, the syslog part isn't the issue. The printing
-part is the issue.
+I will do patches with the mapcount solution that require very little
+change and people will be able to choose which solution they prefer.
 
-So thinking that early_printk is any better is just puting your head
-in the sand.
+Personaly i prefer the mapcount solution as it is less invasive.
 
-              Linus
+Cheers,
+Jérôme
