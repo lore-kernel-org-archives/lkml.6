@@ -2,131 +2,130 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAE9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF015C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3105C20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D48620874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:11:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PBSWepjt"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Ux+xI2SJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388607AbeLQSLL (ORCPT
+        id S2388610AbeLQSL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:11:11 -0500
-Received: from mail-io1-f45.google.com ([209.85.166.45]:43991 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732263AbeLQSLL (ORCPT
+        Mon, 17 Dec 2018 13:11:58 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42186 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733062AbeLQSL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:11:11 -0500
-Received: by mail-io1-f45.google.com with SMTP id l3so10679016ioc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:11:10 -0800 (PST)
+        Mon, 17 Dec 2018 13:11:57 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d19so15120676qtq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:11:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RtTtww2J+GCnUCdOOfNCDZywfZrp26+t2LoIbv9W3/w=;
-        b=PBSWepjtdhOkOuXXkRyafBYBnFtcmnG4Ry5qumN25JpFGmpOCp66379L9MU1I63HYO
-         ZthhNX/m4KDplzzfZ+3xFmjQccl/Q29uewHEr1Qd5UyfK4HZJy0nWWKhiC81Whg1fO/D
-         SFPIf1+UkIerXxbZ32h58I01tAP8giom9ZFys=
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CNH8ATIus5G0n9jvZwP7TFvr5uaIx9b/5ttb279alu0=;
+        b=Ux+xI2SJQggLV8kCMlEkEgsF43N0kHlHg7RWmZ1/7nlarCAZ02NPHJT8gfQrKKhpCf
+         d8aTbajB3IMWEr7HyqfViVnXsZ2XWcEnwFQads/f8uMzKwbtqTzaHMX2vBFNfsqAjmIh
+         HLCLZaqawpMbP12IaUgYaeUw1+W9rUbhRgmvJfvC6M9ad2DQWp5UGfYasEJ2rsOM11ye
+         bYXk3y61+0UQQT2TEcEg3sBSD/u4qTwyH7Qn0cL9VjDZ5w3/XB1SlpMYoHPq3YqjiOt8
+         FSEKtKJRIyPqCMyyBzWikDb/T1CbMKun8Ne1hDUyzsS1rjCZhkSLWqRlh7nVoopIT/JS
+         FvwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RtTtww2J+GCnUCdOOfNCDZywfZrp26+t2LoIbv9W3/w=;
-        b=ATSu98b2wiOqgRgbwvbDxDzubg/pg+YagZlcHwK03odI6QEirLfGvXOIB1NIDjtrwT
-         YanoaNWH1R6ETHMMAF2YWvpcbAMSkgtIqQF4Jz9APjazRwu2F3itOiqiar0yT0VrAI4c
-         XjiaSRI7UNvmxpITQvts4f7BtXmATuvN5/ci+93haZ0R43FHJs70Dw4kq+Lq+MdtP9xb
-         5GPGLscu5rauuxtN6IJeVGZykgZjiQvMCVCVAKiGOTZDfSAC02hD6mbROU0y7diDMcxr
-         QhC9oxeU1ttDkBWwi3bTBTj3MPmAecrYeCxAsUngmqzLggjkYe3y4l7bHrSltm43OXb3
-         Y+wg==
-X-Gm-Message-State: AA+aEWbOTXL7PmYXkqhrWfLCpAPBd8Q5ajtuCd5lhSE0SN6T7pc7nE6d
-        d4TQwH7rIDx45DtDpDjZMy8/wyf+aQ2yj+XznaLi22FVetI=
-X-Google-Smtp-Source: AFSGD/UbS8AHfTAvFp+0/UyY7FkNFm073wdmFKg6Q9As639fuMMRJJm+k80v9/qepWHpx9E85iCR6Yp4hYpduKM8nNs=
-X-Received: by 2002:a6b:5d01:: with SMTP id r1mr11468580iob.170.1545070269491;
- Mon, 17 Dec 2018 10:11:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
- <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org> <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 17 Dec 2018 19:10:58 +0100
-Message-ID: <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
-Subject: Re: [tip:efi/core] x86/efi: Unmap EFI boot services code/data regions
- from efi_pgd
-To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>,
-        "bhsharma@redhat.com" <bhsharma@redhat.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
-        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CNH8ATIus5G0n9jvZwP7TFvr5uaIx9b/5ttb279alu0=;
+        b=hxzzqhkWCk53S6zVsX7WpBm8sxzmci3rH4XLAC7N3/uK0nQl+9aVGQyvNVCeqPJH9K
+         bPX6tfewUOKbG78bKWsFamET3RqkHiYDbZwJuVLxsELsEsbEnj6P1sL/gOY1b2SeHsrm
+         /uXJgctDYUf44rK0ALU81tx6AcIyuI7fs4bvjzXR+wXao9bs7c1n99jjUrslO0a3wmhJ
+         35DbuzOP6hpnxCGZT/EfRrJE1fVZ66dCG92D4gSbLUkTJ7pwrT29Fwde/vu82WolrJqO
+         Y/wYNHkJT40+ngDRrf4CpcGbCp87Uge42ESzT0JoZCgrogulXosh/xuk5yGmj6paNe7Z
+         dAEw==
+X-Gm-Message-State: AA+aEWYqC8LwnU2hBLx/7LH3+LmXM+z2XeoVcfUx6uMnjoKuIUsvo1je
+        68a6oJQU6jprzltRN8AKyYmsJg==
+X-Google-Smtp-Source: AFSGD/XIDcBPqdvC5aE5va9TtCfgmhAbG/ONl61AQJuEnsn5W1KTEIzNIBHt028DqmYA4nqSHrKzFw==
+X-Received: by 2002:a0c:8ae3:: with SMTP id 32mr14079695qvw.27.1545070316322;
+        Mon, 17 Dec 2018 10:11:56 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id z30sm8608780qtz.26.2018.12.17.10.11.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 10:11:55 -0800 (PST)
+Message-ID: <1545070314.18411.19.camel@lca.pw>
+Subject: Re: [PATCH] kbuild: error for CONFIG_ORC_UNWINDER is too much
+From:   Qian Cai <cai@lca.pw>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        mingo@kernel.org, bp@alien8.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Date:   Mon, 17 Dec 2018 13:11:54 -0500
+In-Reply-To: <20181217174936.ouhelssdkshclrr6@treble>
+References: <869bc700-1d6d-b950-76c7-5d0fc589152c@lca.pw>
+         <20181217161728.6875-1-cai@lca.pw> <20181217170305.chni6e5vmev7hp4r@treble>
+         <1545066839.18411.17.camel@lca.pw> <20181217174936.ouhelssdkshclrr6@treble>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 at 19:06, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
->
-> > Commit-ID:  08cfb38f3ef49cfd1bba11a00401451606477d80
-> > Gitweb:
-> > https://git.kernel.org/tip/08cfb38f3ef49cfd1bba11a00401451606477d80
-> > Author:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> > AuthorDate: Thu, 29 Nov 2018 18:12:24 +0100
-> > Committer:  Ingo Molnar <mingo@kernel.org>
-> > CommitDate: Fri, 30 Nov 2018 09:10:30 +0100
-> >
-> > x86/efi: Unmap EFI boot services code/data regions from efi_pgd
-> >
-> > efi_free_boot_services(), as the name suggests, frees EFI boot services
-> > code/data regions but forgets to unmap these regions from efi_pgd. This means
-> > that any code that's running in efi_pgd address space (e.g:
-> > any EFI runtime service) would still be able to access these regions but the
-> > contents of these regions would have long been over written by someone else.
-> > So, it's important to unmap these regions. Hence, introduce efi_unmap_pages()
-> > to unmap these regions from efi_pgd.
-> >
-> > After unmapping EFI boot services code/data regions, any illegal access by
-> > buggy firmware to these regions would result in page fault which will be handled
-> > by EFI specific fault handler.
->
-> Hi Thomas and Ingo,
->
-> I recently noticed that the below commits [1] and [2] are broken when kernel command line
-> argument "efi=old_map" is passed. Sorry! I missed to test this condition prior to sending
-> these patches to mailing list. I am working on a fix and will send it to mailing list as
-> soon as it's ready.
->
+On Mon, 2018-12-17 at 11:49 -0600, Josh Poimboeuf wrote:
+> On Mon, Dec 17, 2018 at 12:13:59PM -0500, Qian Cai wrote:
+> > On Mon, 2018-12-17 at 11:03 -0600, Josh Poimboeuf wrote:
+> > > On Mon, Dec 17, 2018 at 11:17:28AM -0500, Qian Cai wrote:
+> > > > Since ifdef will be evaluated immediately in the first phrase of the
+> > > > Makefile read-in, there is no guarantee that the value for
+> > > > CONFIG_ORC_UNWINDER will be up-to-date until in the second phrase that
+> > > > this recipe is ran.
+> > > > 
+> > > > include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
+> > > > 	$(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
+> > > > 
+> > > > Hence, change error to warning as this is essentially a best guess. The
+> > > > original bug can be reproduced this way,
+> > > 
+> > > But this still doesn't fix the root of the problem, that the check
+> > > relies on a stale auto.conf.
+> > > 
+> > 
+> > Yes, but it at least let people to be able to continue compiling kernel
+> > without
+> > prematurely being terminated incorrectly. The good thing is that that check
+> > will
+> > be triggered again to print out the right message once auto.conf has been
+> > synced
+> > up.
+> > 
+> > # make
+> > Makefile:966: "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y,
+> > please
+> > install libelf-dev, libelf-devel or elfutils-libelf-devel"
+> >   HOSTCC  scripts/kconfig/conf.o
+> >   HOSTLD  scripts/kconfig/conf
+> > scripts/kconfig/conf  --syncconfig Kconfig
+> > Makefile:968: "Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-
+> > dev,
+> > libelf-devel or elfutils-libelf-devel"
+> 
+> Instead of giving false (or silent) warnings, why not just fix the real
+> problem?
 
-Could you elaborate on the problem please?
+The purpose of this patch here is to fix or revert the regression introduced by
+3dd40cb320f (objtool: Upgrade libelf-devel warning to error for
+CONFIG_ORC_UNWINDER).
 
-> Meanwhile, could you please drop these patches before sending pull request to Linus?
->
-> [1] Commit 08cfb38f3ef4 ("x86/efi: Unmap EFI boot services code/data regions from efi_pgd")
-> [2] Commit 7e0dabd3010d ("x86/mm/pageattr: Introduce helper function to unmap EFI boot services")
->
+> 
+> Also the error exists for a reason: if the user misses the warning then
+> the ORC unwinder is broken and oops stack dumps are much less useful.
+> 
 
-I'd like to understand what the issue is before we drop anything.
+This is a separate issue. I am all ears if anyone has a better ideal to fix both
+issues at the same time.
