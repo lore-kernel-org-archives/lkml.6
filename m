@@ -2,422 +2,125 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66758C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 944C6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BAA820874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D5452133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbeLQQYy (ORCPT
+        id S2388107AbeLQQ1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:24:54 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:33928 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388123AbeLQQYu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:24:50 -0500
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 18 Dec 2018
- 00:24:50 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 4/4] clk: meson: add sub MMC clock controller driver
-Date:   Tue, 18 Dec 2018 00:24:10 +0800
-Message-ID: <1545063850-21504-5-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com>
+        Mon, 17 Dec 2018 11:27:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60828 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727814AbeLQQ1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:27:35 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A8F46EB8D;
+        Mon, 17 Dec 2018 16:27:35 +0000 (UTC)
+Received: from treble (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6899E5C66B;
+        Mon, 17 Dec 2018 16:27:31 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 10:27:29 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 10/11] livepatch: Remove ordering and refuse loading
+ conflicting patches
+Message-ID: <20181217162729.orxq6i53m4kgekp3@treble>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-11-pmladek@suse.com>
+ <20181213230652.e2vn27qvqhumtaog@treble>
+ <20181217160709.vnbxjo4mimy3dmm7@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181217160709.vnbxjo4mimy3dmm7@pathway.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 17 Dec 2018 16:27:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+On Mon, Dec 17, 2018 at 05:07:09PM +0100, Petr Mladek wrote:
+> On Thu 2018-12-13 17:06:52, Josh Poimboeuf wrote:
+> > On Thu, Nov 29, 2018 at 10:44:30AM +0100, Petr Mladek wrote:
+> > > The atomic replace and cumulative patches were introduced as a more secure
+> > > way to handle dependent patches. They simplify the logic:
+> > > 
+> > >   + Any new cumulative patch is supposed to take over shadow variables
+> > >     and changes made by callbacks from previous livepatches.
+> > > 
+> > >   + All replaced patches are discarded and the modules can be unloaded.
+> > >     As a result, there is only one scenario when a cumulative livepatch
+> > >     gets disabled.
+> > > 
+> > > The different handling of "normal" and cumulative patches might cause
+> > > confusion. It would make sense to keep only one mode. On the other hand,
+> > > it would be rude to enforce using the cumulative livepatches even for
+> > > trivial and independent (hot) fixes.
+> > > 
+> > > This patch removes the stack of patches. The list of enabled patches
+> > > is still needed but the ordering is not longer enforced.
+> > > 
+> > > Note that it is not possible to catch all possible dependencies. It is
+> > > the responsibility of the livepatch authors to decide.
+> > > 
+> > > Nevertheless this patch prevents having two patches for the same function
+> > > enabled at the same time after the transition finishes. It might help
+> > > to catch obvious mistakes. But more importantly, we do not need to
+> > > handle situation when a patch in the middle of the function stack
+> > > (ops->func_stack) is being removed.
+> > 
+> > I'm not sure about this patch.  I like the removal of the stacking.  But
+> > do we really want to enforce no dependencies between non-cumulative
+> > patches?  It can be done correctly if the user is careful.
+> > 
+> > Maybe we should just let users do it if they want to.  And then that
+> > also would mean less code for us to maintain.
+> > 
+> > And as usual, I apologize if I'm either contradicting or repeating past
+> > versions of myself. :-)
+> 
+> This patch was actually motivated by you. On some conference, we
+> discussed how to automatize the creation of livepatches. You wanted
+> to make livepatching more safe in general (by tools, by checks, ...).
+> Also you always wanted to make things easier and reduce possible
+> scenarios. I thought that this might be in line with your wishes.
+> 
+> The problem with this patch is that it forces people to use
+> cumulative patches. I am not sure if everyone is ready for it.
+> 
+> I do not resist on it. But I still think that it makes sense.
 
-The patch will add a MMC clock controller driver which used by MMC or NAND,
-It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+I do remember suggesting the removal of the stacking.  I think that's a
+good idea.
 
-Two clocks are provided as the parent of MMC clock controller from
-upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
+I don't remember suggesting the other part: trying to detect and prevent
+dependencies for non-replace users.  If I did suggest that, which is
+very possible, I apologize for being wishy-washy :-)
 
-To specify which clock the MMC or NAND driver may consume,
-the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
-can be used in the device tree sources.
+The way I currently see it, there are two classes of users: cumulative
+and non-cumulative.  IMO we should accept both as reasonable
+possiblities.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- drivers/clk/meson/Kconfig    |   9 ++
- drivers/clk/meson/Makefile   |   1 +
- drivers/clk/meson/mmc-clkc.c | 304 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 314 insertions(+)
- create mode 100644 drivers/clk/meson/mmc-clkc.c
+Cumulative users will use 'replace'.  Non-cumulative users will do
+whatever they want, and we shouldn't try to restrict them.
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index efaa70f..c84b0f7 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -15,6 +15,15 @@ config COMMON_CLK_MESON_AO
- 	select COMMON_CLK_REGMAP_MESON
- 	select RESET_CONTROLLER
- 
-+config COMMON_CLK_MMC_MESON
-+	tristate "Meson MMC Sub Clock Controller Driver"
-+	select MFD_SYSCON
-+	select COMMON_CLK_AMLOGIC
-+	help
-+	  Support for the MMC sub clock controller on Amlogic Meson Platform,
-+	  which include S905 (GXBB, GXL), A113D/X (AXG) devices.
-+	  Say Y if you want this clock enabled.
-+
- config COMMON_CLK_REGMAP_MESON
- 	bool
- 	select REGMAP
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index d59620d..54416a2 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -12,4 +12,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
- obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
-+obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
- obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-new file mode 100644
-index 0000000..2582a98
---- /dev/null
-+++ b/drivers/clk/meson/mmc-clkc.c
-@@ -0,0 +1,304 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Amlogic Meson MMC Sub Clock Controller Driver
-+ *
-+ * Copyright (c) 2017 Baylibre SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Yixun Lan <yixun.lan@amlogic.com>
-+ * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/amlogic,mmc-clkc.h>
-+
-+#include "clkc.h"
-+
-+/* clock ID used by internal driver */
-+
-+#define SD_EMMC_CLOCK		0
-+#define CLK_DELAY_STEP_PS	200
-+#define MUX_CLK_NUM_PARENTS	2
-+#define MMC_MAX_CLKS		4
-+
-+struct mmc_clkc_data {
-+	struct meson_clk_phase_delay_data tx;
-+	struct meson_clk_phase_delay_data rx;
-+};
-+
-+static struct clk_regmap_mux_data mmc_clkc_mux_data = {
-+	.offset = SD_EMMC_CLOCK,
-+	.mask   = 0x3,
-+	.shift  = 6,
-+};
-+
-+static const struct meson_sclk_div_data mmc_clkc_div_data = {
-+	.div = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.width   = 6,
-+	},
-+	.flags = CLK_DIVIDER_ONE_BASED,
-+};
-+
-+static struct meson_clk_phase_data mmc_clkc_core_phase = {
-+	.ph = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.shift   = 8,
-+		.width   = 2,
-+	}
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_gx_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 10,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 16,
-+			.width   = 4,
-+		},
-+		.delay_step_ps = CLK_DELAY_STEP_PS,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 12,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 20,
-+			.width   = 4,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS,
-+	},
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_axg_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 10,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 16,
-+			.width   = 6,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 12,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 22,
-+			.width   = 6,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS,
-+	},
-+};
-+
-+static const struct of_device_id mmc_clkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,gx-mmc-clkc",
-+		.data		= &mmc_clkc_gx_data
-+	},
-+	{
-+		.compatible	= "amlogic,axg-mmc-clkc",
-+		.data		= &mmc_clkc_axg_data
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-+		      struct clk_init_data *init,
-+		      const char *suffix, void *data)
-+{
-+	struct clk_regmap *clk;
-+	char *name;
-+	int ret;
-+
-+	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-+	if (!name)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init->name = name;
-+	clk->map = map;
-+	clk->data = data;
-+	clk->hw.init = init;
-+	ret = devm_clk_hw_register(dev, &clk->hw);
-+	if (ret)
-+		clk = ERR_PTR(ret);
-+
-+	kfree(name);
-+	return clk;
-+}
-+
-+static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-+						struct regmap *map)
-+{
-+	const char *parent_names[MUX_CLK_NUM_PARENTS];
-+	struct clk_init_data init;
-+	struct clk_regmap *mux;
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-+		char name[8];
-+
-+		snprintf(name, sizeof(name), "clkin%d", i);
-+		clk = devm_clk_get(dev, name);
-+		if (IS_ERR(clk)) {
-+			if (clk != ERR_PTR(-EPROBE_DEFER))
-+				dev_err(dev, "Missing clock %s\n", name);
-+			return ERR_CAST(clk);
-+		}
-+
-+		parent_names[i] = __clk_get_name(clk);
-+	}
-+
-+	init.ops = &clk_regmap_mux_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = parent_names;
-+	init.num_parents = MUX_CLK_NUM_PARENTS;
-+
-+	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
-+	if (IS_ERR(mux))
-+		dev_err(dev, "Mux clock registration failed\n");
-+
-+	return mux;
-+}
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
-+				  char *suffix, const struct clk_hw *hw,
-+				  unsigned long flags,
-+				  const struct clk_ops *ops, void *data)
-+{
-+	struct clk_init_data init;
-+	struct clk_regmap *clk;
-+	const char *parent_name = clk_hw_get_name(hw);
-+
-+	init.ops = ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
-+	if (IS_ERR(clk))
-+		dev_err(dev, "%s clock registration failed\n", suffix);
-+
-+	return clk;
-+}
-+
-+static int mmc_clkc_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *onecell_data;
-+	struct device *dev = &pdev->dev;
-+	struct mmc_clkc_data *data;
-+	struct regmap *map;
-+	struct clk_regmap *clk, *core;
-+	struct meson_sclk_div_data *div_data;
-+
-+	/*cast to drop the const in match->data*/
-+	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "could not find mmc clock controller\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
-+				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
-+				    GFP_KERNEL);
-+	if (!onecell_data)
-+		return -ENOMEM;
-+
-+	clk = mmc_clkc_register_mux(dev, map);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	div_data = devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
-+	if (!div_data)
-+		return -ENOMEM;
-+
-+	memcpy(div_data, &mmc_clkc_div_data, sizeof(*div_data));
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
-+						&clk->hw,
-+						CLK_SET_RATE_PARENT,
-+						&meson_sclk_div_ops,
-+						div_data);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_DIV] = &clk->hw,
-+
-+	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
-+						 &clk->hw,
-+						 CLK_SET_RATE_PARENT,
-+						 &meson_clk_phase_ops,
-+						 &mmc_clkc_core_phase);
-+	if (IS_ERR(core))
-+		return PTR_ERR(core);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_CORE] = &core->hw,
-+
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						&data->rx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_RX] = &clk->hw,
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						&data->tx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_TX] = &clk->hw,
-+	onecell_data->num = MMC_MAX_CLKS;
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   onecell_data);
-+}
-+
-+static struct platform_driver mmc_clkc_driver = {
-+	.probe		= mmc_clkc_probe,
-+	.driver		= {
-+		.name	= "meson-mmc-clkc",
-+		.of_match_table = of_match_ptr(mmc_clkc_match_table),
-+	},
-+};
-+
-+module_platform_driver(mmc_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
-+MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
-+MODULE_LICENSE("GPL v2");
+So I would propose that we remove the stacking, and not try to enforce
+patch dependencies in any way.
+
 -- 
-1.9.1
-
+Josh
