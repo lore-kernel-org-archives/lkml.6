@@ -2,1538 +2,171 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97646C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75060C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4614F2133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C918206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:51:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="dqmtMSXd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbeLQOtt (ORCPT
+        id S1733220AbeLQOvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:49:49 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35082 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732641AbeLQOtt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:49:49 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHEiP0G054785
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:49:43 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pedhx91gj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:49:42 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 17 Dec 2018 14:49:42 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Dec 2018 14:49:38 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHEnbev6160530
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Dec 2018 14:49:37 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7AB6BB2066;
-        Mon, 17 Dec 2018 14:49:37 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21E9BB2064;
-        Mon, 17 Dec 2018 14:49:36 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Dec 2018 14:49:35 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 17AAB16C359F; Mon, 17 Dec 2018 06:49:39 -0800 (PST)
-Date:   Mon, 17 Dec 2018 06:49:39 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Arjan van de Ven <arjan@linux.intel.com>,
-        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: WARNING in __rcu_read_unlock
-Reply-To: paulmck@linux.ibm.com
-References: <0000000000005e47a2057d0edc49@google.com>
- <20181216190412.GE4170@linux.ibm.com>
- <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
- <20181217112916.GG4170@linux.ibm.com>
- <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
- <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
+        Mon, 17 Dec 2018 09:51:53 -0500
+Received: from mail-eopbgr760120.outbound.protection.outlook.com ([40.107.76.120]:59931
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727605AbeLQOvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:51:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lX8eZvEgGszksL+g8S+qm6gTb14bmsY4VOKPbuEs3xk=;
+ b=dqmtMSXdoQMCYhxPSOtLoBr7bhyyrULaD1AHheeQt4QuGjI1I1exmEfoQyvJim/RW0bTkdS7VM6KUCtwD7rOK24NQdXq5vfActMd/39dA3Dli1uIeNd0P9cl/ckjVZkPRpQ6NcfaNvnWuNVDEpUyAMUXP7ruAHJzUTTA6nb6V70=
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
+ SN6PR13MB2239.namprd13.prod.outlook.com (52.135.93.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.14; Mon, 17 Dec 2018 14:51:47 +0000
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::25d2:c29b:5dfa:e85f]) by SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::25d2:c29b:5dfa:e85f%4]) with mapi id 15.20.1446.015; Mon, 17 Dec 2018
+ 14:51:47 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "geert@linux-m68k.org" <geert@linux-m68k.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "anemo@mba.ocn.ne.jp" <anemo@mba.ocn.ne.jp>
+Subject: Re: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
+Thread-Topic: NFS/TCP crashes on MIPS/RBTX4927 in v4.20-rcX (bisected)
+Thread-Index: AQHUi9i5PIVFqTXGUkaECw8346+eJ6VwIHQAgAAITgCAAAEhAIAAEWKAgBLPo4CAAA11gA==
+Date:   Mon, 17 Dec 2018 14:51:47 +0000
+Message-ID: <f322eb9ee0cac75f98d188b46843c2df00485f35.camel@hammerspace.com>
+References: <CAMuHMdVJr0PwvJg3FeTCy7vxuyY1=S1tPLHO7hPsoZX4wZ+-cQ@mail.gmail.com>
+         <20181205.221146.969453990167463340.anemo@mba.ocn.ne.jp>
+         <CAMuHMdU9zXXSaPHKvfG3A73h3CTsb9H2RT_gWt-Ne=qQ+HKShQ@mail.gmail.com>
+         <92ce4b8c2b2d53e27ed5bc0e5af3fee4bc17b4dc.camel@hammerspace.com>
+         <CAMuHMdXyfEVOWoBOx0Ywm6vw5oQ6eHNXFhQBKTfRSBOmPYGM6Q@mail.gmail.com>
+         <CAMuHMdXT_25_64w88KTnAYDwmLnMACua=s2PgAxDv=1ZaBmB7A@mail.gmail.com>
+In-Reply-To: <CAMuHMdXT_25_64w88KTnAYDwmLnMACua=s2PgAxDv=1ZaBmB7A@mail.gmail.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-originating-ip: [68.40.189.247]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR13MB2239;6:vRuNN45HQmWgbBa0uqlzwk718GgvZgkCPh8+n1HnSK/+Ra6RCdPuLxmazwQHoTV/cii7sATLkFBx+vtSbYLoca64ACMxJqxwx8ezdGiqxiaHL3KFJPiVCcsqhuvM5pZEKJpQ5U0quHsCmL1fiwZbMB0+6LJ4ZDeb3HzU7/Nj2wl0ASYjSeXNKUF7eaNLAeXF1QDlk1fZDwOCcqpTE48yawioO/kf/Ub/xuTTAhYw0CXTN4Tc+wy8IZdLFVath5QhXahi0nNoaiN/UN+/wu5HN0OSTmpUU8XP1Mbrkr8Sa6Ks7pd4D27wcfzynWo1mPTIv9hBC/SRUjAZ5csC+gWr/QOCkLHU+GPq/rW60GHkDNQKN8KCKqf/K2pP3jOhxdxH3G9j8vCNdN5kmRXfpfA4BRlJd3XgEYG342pwa/EFTvSQ/fUCSFJSaMbaBiLitqDhtvc/xnbV6PB8TpWTZVUHqQ==;5:4K6sCcrT+MYlhxL5VYeKolilewcm5Y7ZVx2o3G+sxsAGSE6pIefbB7YB5Vetfao2dRPIddDK3Peh2BgkJg5t47HbmuNJf5iXfPGzXS1eiGPIn43vgpiFi6lM8HOvUg9az+zk9yUB9n2oBlkfzkg4UwM4y3qi2EmCZpx5nBmPH7o=;7:rVMMmxk2ZlwQINzOg0IJaw75LVe42zPy2EpicN0WgCP10xTjZvNnpookHsp9HefcqV2hUa2gGAQOnccP4O1H/dxjQwELHik2hChHRijDyrd87Ue9gdvlmEyRH2r/uUV7Nhx0OkFW3nOgfiG3a0giTA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3e9d8c7b-2a76-442b-c46b-08d6642f2b7a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2239;
+x-ms-traffictypediagnostic: SN6PR13MB2239:
+x-microsoft-antispam-prvs: <SN6PR13MB22396EFFED9CCF8143BB799DB8BC0@SN6PR13MB2239.namprd13.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR13MB2239;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2239;
+x-forefront-prvs: 08897B549D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39830400003)(136003)(346002)(199004)(189003)(51914003)(2501003)(26005)(186003)(118296001)(5640700003)(7736002)(305945005)(68736007)(4326008)(81166006)(8936002)(8676002)(81156014)(1730700003)(6246003)(97736004)(6512007)(6306002)(71190400001)(5660300001)(4001150100001)(53936002)(71200400001)(14444005)(256004)(36756003)(2906002)(6486002)(229853002)(3846002)(54906003)(6116002)(66066001)(6436002)(6916009)(25786009)(14454004)(105586002)(76176011)(53546011)(446003)(11346002)(93886005)(476003)(2351001)(99286004)(106356001)(966005)(2616005)(486006)(316002)(102836004)(86362001)(6506007)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2239;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: iZls+sV0uci+72l8r12nijSZvlsU08Se2cU+pIlugP7hC/1G4Re5P6igtr9t/7DgQKRmoDJmFmC34dW+aijEv+eQWt1H4cDC5coR01Tek5vBd+4DxeFUM7ZqTjFajzUsdf+CXhWNy5/6qm+mw0/xXguhKDhDc5BC/7Dly9ZtKaIZiLqScHLXEqbfbOMAv/hQ2q3hec92e/Z6PYNNqun1RMBTOhfiXgJs3q+KwSbt6Ewu47DZh42Dh1WOWC/Bhu0c4DhtsiAxQdRthYPBnfId7Q3XUkP8xGZLQDm+QxvohCjkA8yPbaknC+LNf1MsfHzP
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9E816BBD2342394998F717DD2359BAE9@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121714-0060-0000-0000-000002E562DE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010240; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01133081; UDB=6.00589010; IPR=6.00913244;
- MB=3.00024718; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-17 14:49:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121714-0061-0000-0000-000047921FF6
-Message-Id: <20181217144939.GI4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812170131
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e9d8c7b-2a76-442b-c46b-08d6642f2b7a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 14:51:47.2308
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2239
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:40:06PM +0100, Dmitry Vyukov wrote:
-> On Mon, Dec 17, 2018 at 3:14 PM Arjan van de Ven <arjan@linux.intel.com> wrote:
-> >
-> > On 12/17/2018 3:29 AM, Paul E. McKenney wrote:
-> > > As does this sort of report on a line that contains simple integer
-> > > arithmetic and boolean operations.;-)
-> > >
-> > > Any chance of a bisection?
-> >
-> > btw this looks like something caused a stack overflow and thus all the weirdness that then happens
-> 
-> Yup, without KASAN/KCOV but with VMAP_STACK I got:
-
-Mutually assured recursion, looks like.  ;-)
-
-							Thanx, Paul
-
-> [   28.233646] BUG: stack guard page was hit at 0000000022cb8581
-> (stack is 00000000da05d4f9..00000000faf1d802)
-> [   28.237814] kernel stack overflow (double-fault): 0000 [#1] PREEMPT SMP
-> [   28.240489] CPU: 3 PID: 7307 Comm: syz-executor Not tainted 4.20.0-rc6+ #7
-> [   28.243250] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS 1.10.2-1 04/01/2014
-> [   28.246254] RIP: 0010:__lock_is_held+0x17/0xa0
-> [   28.248132] Code: 4c 89 f8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 45 31
-> ff eb e5 55 48 89 e5 41 57 45 31 ff 41 56 49 89 fe 41 55 41 54 53 48
-> 83 ec 08 <89> 75 d4 65 4c 8b 24 25 40 5e 01 00 41 8b 84 24 78 08 00 00
-> 4d 8d
-> [   28.253129] RSP: 0018:ffffc900023cbff8 EFLAGS: 00010092
-> [   28.254934] RAX: 0000000000000286 RBX: ffff8880683ae040 RCX: 0000000000000000
-> [   28.257739] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: ffffffff83ac8480
-> [   28.260421] RBP: ffffc900023cc028 R08: ffff8880683b7d40 R09: 000000000000000b
-> [   28.263125] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000286
-> [   28.265812] R13: 0000000000000000 R14: ffffffff83ac8480 R15: 0000000000000000
-> [   28.268723] FS:  00007fd529f84700(0000) GS:ffff88807db80000(0000)
-> knlGS:0000000000000000
-> [   28.271745] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   28.273061] BUG: stack guard page was hit at 00000000d4fbb259
-> (stack is 00000000e1a66146..0000000085659f15)
-> [   28.273427] CR2: ffffc900023cbfe8 CR3: 0000000068371003 CR4: 00000000001606e0
-> [   28.273432] Call Trace:
-> [   28.279078]  ? lock_is_held_type+0x4e/0x90
-> [   28.280441]  ? rcu_read_lock_held+0x54/0x60
-> [   28.281869]  ? gue_err_proto_handler+0x55/0x90
-> [   28.282865]  ? gue_err+0xed/0x190
-> [   28.283520]  ? gue_err_proto_handler+0x90/0x90
-> [   28.283793] BUG: stack guard page was hit at 0000000062cbafbc
-> (stack is 00000000f3170459..000000003ae1141b)
-> [   28.284355]  ? __udp4_lib_err+0x32e/0x440
-> [   28.284359]  ? udp_err+0x10/0x20
-> [   28.287550]  ? gue_err_proto_handler+0x45/0x90
-> [   28.288441]  ? gue_err+0xed/0x190
-> [   28.289086]  ? gue_err_proto_handler+0x90/0x90
-> [   28.290026]  ? __udp4_lib_err+0x32e/0x440
-> [   28.290812]  ? udp_err+0x10/0x20
-> [   28.291462]  ? gue_err_proto_handler+0x45/0x90
-> [   28.292332]  ? gue_err+0xed/0x190
-> [   28.292989]  ? gue_err_proto_handler+0x90/0x90
-> [   28.293828]  ? __udp4_lib_err+0x32e/0x440
-> [   28.294621]  ? udp_err+0x10/0x20
-> [   28.295256]  ? gue_err_proto_handler+0x45/0x90
-> [   28.296082]  ? gue_err+0xed/0x190
-> [   28.296754]  ? gue_err_proto_handler+0x90/0x90
-> [   28.297760]  ? __udp4_lib_err+0x32e/0x440
-> [   28.298563]  ? udp_err+0x10/0x20
-> [   28.299207]  ? gue_err_proto_handler+0x45/0x90
-> [   28.300075]  ? gue_err+0xed/0x190
-> [   28.300753]  ? gue_err_proto_handler+0x90/0x90
-> [   28.301586]  ? __udp4_lib_err+0x32e/0x440
-> [   28.302331]  ? udp_err+0x10/0x20
-> [   28.302947]  ? gue_err_proto_handler+0x45/0x90
-> [   28.303840]  ? gue_err+0xed/0x190
-> [   28.304526]  ? gue_err_proto_handler+0x90/0x90
-> [   28.305413]  ? __udp4_lib_err+0x32e/0x440
-> [   28.306194]  ? udp_err+0x10/0x20
-> [   28.306843]  ? gue_err_proto_handler+0x45/0x90
-> [   28.310631]  ? gue_err+0xed/0x190
-> [   28.311236]  ? gue_err_proto_handler+0x90/0x90
-> [   28.312048]  ? __udp4_lib_err+0x32e/0x440
-> [   28.312781]  ? udp_err+0x10/0x20
-> [   28.313381]  ? gue_err_proto_handler+0x45/0x90
-> [   28.314191]  ? gue_err+0xed/0x190
-> [   28.314798]  ? gue_err_proto_handler+0x90/0x90
-> [   28.315624]  ? __udp4_lib_err+0x32e/0x440
-> [   28.316352]  ? udp_err+0x10/0x20
-> [   28.316943]  ? gue_err_proto_handler+0x45/0x90
-> [   28.317747]  ? gue_err+0xed/0x190
-> [   28.318342]  ? gue_err_proto_handler+0x90/0x90
-> [   28.319149]  ? __udp4_lib_err+0x32e/0x440
-> [   28.319893]  ? udp_err+0x10/0x20
-> [   28.320464]  ? gue_err_proto_handler+0x45/0x90
-> [   28.321203]  ? gue_err+0xed/0x190
-> [   28.321777]  ? gue_err_proto_handler+0x90/0x90
-> [   28.322569]  ? __udp4_lib_err+0x32e/0x440
-> [   28.323301]  ? udp_err+0x10/0x20
-> [   28.323988]  ? gue_err_proto_handler+0x45/0x90
-> [   28.324794]  ? gue_err+0xed/0x190
-> [   28.325392]  ? gue_err_proto_handler+0x90/0x90
-> [   28.326193]  ? __udp4_lib_err+0x32e/0x440
-> [   28.326913]  ? udp_err+0x10/0x20
-> [   28.327504]  ? gue_err_proto_handler+0x45/0x90
-> [   28.328295]  ? gue_err+0xed/0x190
-> [   28.328905]  ? gue_err_proto_handler+0x90/0x90
-> [   28.329725]  ? __udp4_lib_err+0x32e/0x440
-> [   28.330455]  ? udp_err+0x10/0x20
-> [   28.331037]  ? gue_err_proto_handler+0x45/0x90
-> [   28.331849]  ? gue_err+0xed/0x190
-> [   28.332450]  ? gue_err_proto_handler+0x90/0x90
-> [   28.333245]  ? __udp4_lib_err+0x32e/0x440
-> [   28.333971]  ? udp_err+0x10/0x20
-> [   28.334548]  ? gue_err_proto_handler+0x45/0x90
-> [   28.335329]  ? gue_err+0xed/0x190
-> [   28.335916]  ? gue_err_proto_handler+0x90/0x90
-> [   28.336691]  ? __udp4_lib_err+0x32e/0x440
-> [   28.337421]  ? udp_err+0x10/0x20
-> [   28.338018]  ? gue_err_proto_handler+0x45/0x90
-> [   28.338916]  ? gue_err+0xed/0x190
-> [   28.339685]  ? gue_err_proto_handler+0x90/0x90
-> [   28.341270]  ? __udp4_lib_err+0x32e/0x440
-> [   28.342748]  ? udp_err+0x10/0x20
-> [   28.343973]  ? gue_err_proto_handler+0x45/0x90
-> [   28.345814]  ? gue_err+0xed/0x190
-> [   28.347150]  ? gue_err_proto_handler+0x90/0x90
-> [   28.348939]  ? __udp4_lib_err+0x32e/0x440
-> [   28.350543]  ? udp_err+0x10/0x20
-> [   28.351849]  ? gue_err_proto_handler+0x45/0x90
-> [   28.353617]  ? gue_err+0xed/0x190
-> [   28.354942]  ? gue_err_proto_handler+0x90/0x90
-> [   28.356704]  ? __udp4_lib_err+0x32e/0x440
-> [   28.358253]  ? udp_err+0x10/0x20
-> [   28.359623]  ? gue_err_proto_handler+0x45/0x90
-> [   28.361503]  ? gue_err+0xed/0x190
-> [   28.362891]  ? gue_err_proto_handler+0x90/0x90
-> [   28.364730]  ? __udp4_lib_err+0x32e/0x440
-> [   28.366325]  ? udp_err+0x10/0x20
-> [   28.367633]  ? gue_err_proto_handler+0x45/0x90
-> [   28.369430]  ? gue_err+0xed/0x190
-> [   28.370834]  ? gue_err_proto_handler+0x90/0x90
-> [   28.372707]  ? __udp4_lib_err+0x32e/0x440
-> [   28.374311]  ? udp_err+0x10/0x20
-> [   28.375580]  ? gue_err_proto_handler+0x45/0x90
-> [   28.376928]  ? gue_err+0xed/0x190
-> [   28.377759]  ? gue_err_proto_handler+0x90/0x90
-> [   28.378865]  ? __udp4_lib_err+0x32e/0x440
-> [   28.379627]  ? udp_err+0x10/0x20
-> [   28.380262]  ? gue_err_proto_handler+0x45/0x90
-> [   28.381152]  ? gue_err+0xed/0x190
-> [   28.381796]  ? gue_err_proto_handler+0x90/0x90
-> [   28.382650]  ? __udp4_lib_err+0x32e/0x440
-> [   28.383442]  ? udp_err+0x10/0x20
-> [   28.384060]  ? gue_err_proto_handler+0x45/0x90
-> [   28.384900]  ? gue_err+0xed/0x190
-> [   28.385571]  ? gue_err_proto_handler+0x90/0x90
-> [   28.386429]  ? __udp4_lib_err+0x32e/0x440
-> [   28.387193]  ? udp_err+0x10/0x20
-> [   28.388130]  ? gue_err_proto_handler+0x45/0x90
-> [   28.388976]  ? gue_err+0xed/0x190
-> [   28.389625]  ? gue_err_proto_handler+0x90/0x90
-> [   28.390467]  ? __udp4_lib_err+0x32e/0x440
-> [   28.391260]  ? udp_err+0x10/0x20
-> [   28.391911]  ? gue_err_proto_handler+0x45/0x90
-> [   28.392797]  ? gue_err+0xed/0x190
-> [   28.393466]  ? gue_err_proto_handler+0x90/0x90
-> [   28.394303]  ? __udp4_lib_err+0x32e/0x440
-> [   28.395048]  ? udp_err+0x10/0x20
-> [   28.395672]  ? gue_err_proto_handler+0x45/0x90
-> [   28.396523]  ? gue_err+0xed/0x190
-> [   28.397161]  ? gue_err_proto_handler+0x90/0x90
-> [   28.398054]  ? __udp4_lib_err+0x32e/0x440
-> [   28.398839]  ? udp_err+0x10/0x20
-> [   28.399443]  ? gue_err_proto_handler+0x45/0x90
-> [   28.400252]  ? gue_err+0xed/0x190
-> [   28.400867]  ? gue_err_proto_handler+0x90/0x90
-> [   28.401677]  ? __udp4_lib_err+0x32e/0x440
-> [   28.402410]  ? udp_err+0x10/0x20
-> [   28.403008]  ? gue_err_proto_handler+0x45/0x90
-> [   28.404473]  ? gue_err+0xed/0x190
-> [   28.405710]  ? gue_err_proto_handler+0x90/0x90
-> [   28.406771]  ? __udp4_lib_err+0x32e/0x440
-> [   28.408105]  ? udp_err+0x10/0x20
-> [   28.408902]  ? gue_err_proto_handler+0x45/0x90
-> [   28.410104]  ? gue_err+0xed/0x190
-> [   28.410767]  ? gue_err_proto_handler+0x90/0x90
-> [   28.411704]  ? __udp4_lib_err+0x32e/0x440
-> [   28.412439]  ? udp_err+0x10/0x20
-> [   28.413032]  ? gue_err_proto_handler+0x45/0x90
-> [   28.413851]  ? gue_err+0xed/0x190
-> [   28.414465]  ? gue_err_proto_handler+0x90/0x90
-> [   28.415295]  ? __udp4_lib_err+0x32e/0x440
-> [   28.416039]  ? udp_err+0x10/0x20
-> [   28.416635]  ? gue_err_proto_handler+0x45/0x90
-> [   28.417451]  ? gue_err+0xed/0x190
-> [   28.418025]  ? gue_err_proto_handler+0x90/0x90
-> [   28.418816]  ? __udp4_lib_err+0x32e/0x440
-> [   28.419734]  ? udp_err+0x10/0x20
-> [   28.420686]  ? gue_err_proto_handler+0x45/0x90
-> [   28.422251]  ? gue_err+0xed/0x190
-> [   28.422977]  ? gue_err_proto_handler+0x90/0x90
-> [   28.423926]  ? __udp4_lib_err+0x32e/0x440
-> [   28.424784]  ? udp_err+0x10/0x20
-> [   28.425470]  ? gue_err_proto_handler+0x45/0x90
-> [   28.426473]  ? gue_err+0xed/0x190
-> [   28.427289]  ? gue_err_proto_handler+0x90/0x90
-> [   28.428158]  ? __udp4_lib_err+0x32e/0x440
-> [   28.428999]  ? udp_err+0x10/0x20
-> [   28.429755]  ? gue_err_proto_handler+0x45/0x90
-> [   28.430655]  ? gue_err+0xed/0x190
-> [   28.431334]  ? gue_err_proto_handler+0x90/0x90
-> [   28.432245]  ? __udp4_lib_err+0x32e/0x440
-> [   28.433036]  ? udp_err+0x10/0x20
-> [   28.433921]  ? gue_err_proto_handler+0x45/0x90
-> [   28.435099]  ? gue_err+0xed/0x190
-> [   28.435727]  ? gue_err_proto_handler+0x90/0x90
-> [   28.436536]  ? __udp4_lib_err+0x32e/0x440
-> [   28.437272]  ? udp_err+0x10/0x20
-> [   28.437873]  ? gue_err_proto_handler+0x45/0x90
-> [   28.438660]  ? gue_err+0xed/0x190
-> [   28.439279]  ? gue_err_proto_handler+0x90/0x90
-> [   28.440093]  ? __udp4_lib_err+0x32e/0x440
-> [   28.440821]  ? udp_err+0x10/0x20
-> [   28.441416]  ? gue_err_proto_handler+0x45/0x90
-> [   28.442225]  ? gue_err+0xed/0x190
-> [   28.442849]  ? gue_err_proto_handler+0x90/0x90
-> [   28.443996]  ? __udp4_lib_err+0x32e/0x440
-> [   28.444957]  ? udp_err+0x10/0x20
-> [   28.446096]  ? gue_err_proto_handler+0x45/0x90
-> [   28.447725]  ? gue_err+0xed/0x190
-> [   28.448806]  ? gue_err_proto_handler+0x90/0x90
-> [   28.450192]  ? __udp4_lib_err+0x32e/0x440
-> [   28.451482]  ? udp_err+0x10/0x20
-> [   28.452423]  ? gue_err_proto_handler+0x45/0x90
-> [   28.453527]  ? gue_err+0xed/0x190
-> [   28.454160]  ? gue_err_proto_handler+0x90/0x90
-> [   28.455008]  ? __udp4_lib_err+0x32e/0x440
-> [   28.455833]  ? udp_err+0x10/0x20
-> [   28.456465]  ? gue_err_proto_handler+0x45/0x90
-> [   28.457324]  ? gue_err+0xed/0x190
-> [   28.457975]  ? gue_err_proto_handler+0x90/0x90
-> [   28.458834]  ? __udp4_lib_err+0x32e/0x440
-> [   28.459607]  ? udp_err+0x10/0x20
-> [   28.460234]  ? gue_err_proto_handler+0x45/0x90
-> [   28.461077]  ? gue_err+0xed/0x190
-> [   28.461737]  ? gue_err_proto_handler+0x90/0x90
-> [   28.462613]  ? __udp4_lib_err+0x32e/0x440
-> [   28.463418]  ? udp_err+0x10/0x20
-> [   28.464045]  ? gue_err_proto_handler+0x45/0x90
-> [   28.464923]  ? gue_err+0xed/0x190
-> [   28.465553]  ? gue_err_proto_handler+0x90/0x90
-> [   28.466357]  ? __udp4_lib_err+0x32e/0x440
-> [   28.467078]  ? udp_err+0x10/0x20
-> [   28.467680]  ? gue_err_proto_handler+0x45/0x90
-> [   28.468447]  ? gue_err+0xed/0x190
-> [   28.469053]  ? gue_err_proto_handler+0x90/0x90
-> [   28.469891]  ? __udp4_lib_err+0x32e/0x440
-> [   28.470618]  ? udp_err+0x10/0x20
-> [   28.471213]  ? gue_err_proto_handler+0x45/0x90
-> [   28.472838]  ? gue_err+0xed/0x190
-> [   28.474277]  ? gue_err_proto_handler+0x90/0x90
-> [   28.476153]  ? __udp4_lib_err+0x32e/0x440
-> [   28.477181]  ? udp_err+0x10/0x20
-> [   28.478281]  ? gue_err_proto_handler+0x45/0x90
-> [   28.480108]  ? gue_err+0xed/0x190
-> [   28.481509]  ? gue_err_proto_handler+0x90/0x90
-> [   28.482980]  ? __udp4_lib_err+0x32e/0x440
-> [   28.483904]  ? udp_err+0x10/0x20
-> [   28.484559]  ? gue_err_proto_handler+0x45/0x90
-> [   28.485422]  ? gue_err+0xed/0x190
-> [   28.486072]  ? gue_err_proto_handler+0x90/0x90
-> [   28.486958]  ? __udp4_lib_err+0x32e/0x440
-> [   28.487767]  ? udp_err+0x10/0x20
-> [   28.488468]  ? gue_err_proto_handler+0x45/0x90
-> [   28.489338]  ? gue_err+0xed/0x190
-> [   28.489991]  ? gue_err_proto_handler+0x90/0x90
-> [   28.490860]  ? __udp4_lib_err+0x32e/0x440
-> [   28.491641]  ? udp_err+0x10/0x20
-> [   28.492234]  ? gue_err_proto_handler+0x45/0x90
-> [   28.493048]  ? gue_err+0xed/0x190
-> [   28.493654]  ? gue_err_proto_handler+0x90/0x90
-> [   28.494446]  ? __udp4_lib_err+0x32e/0x440
-> [   28.495172]  ? udp_err+0x10/0x20
-> [   28.496076]  ? gue_err_proto_handler+0x45/0x90
-> [   28.497892]  ? gue_err+0xed/0x190
-> [   28.499259]  ? gue_err_proto_handler+0x90/0x90
-> [   28.501108]  ? __udp4_lib_err+0x32e/0x440
-> [   28.502784]  ? udp_err+0x10/0x20
-> [   28.503992]  ? gue_err_proto_handler+0x45/0x90
-> [   28.504895]  ? gue_err+0xed/0x190
-> [   28.505566]  ? gue_err_proto_handler+0x90/0x90
-> [   28.506461]  ? __udp4_lib_err+0x32e/0x440
-> [   28.507285]  ? udp_err+0x10/0x20
-> [   28.511487]  ? gue_err_proto_handler+0x45/0x90
-> [   28.512404]  ? gue_err+0xed/0x190
-> [   28.513094]  ? gue_err_proto_handler+0x90/0x90
-> [   28.514002]  ? __udp4_lib_err+0x32e/0x440
-> [   28.514745]  ? udp_err+0x10/0x20
-> [   28.515341]  ? gue_err_proto_handler+0x45/0x90
-> [   28.516169]  ? gue_err+0xed/0x190
-> [   28.516777]  ? gue_err_proto_handler+0x90/0x90
-> [   28.517571]  ? __udp4_lib_err+0x32e/0x440
-> [   28.518332]  ? udp_err+0x10/0x20
-> [   28.518960]  ? gue_err_proto_handler+0x45/0x90
-> [   28.519778]  ? gue_err+0xed/0x190
-> [   28.520385]  ? gue_err_proto_handler+0x90/0x90
-> [   28.521168]  ? __udp4_lib_err+0x32e/0x440
-> [   28.522033]  ? udp_err+0x10/0x20
-> [   28.522662]  ? gue_err_proto_handler+0x45/0x90
-> [   28.523473]  ? gue_err+0xed/0x190
-> [   28.524079]  ? gue_err_proto_handler+0x90/0x90
-> [   28.524881]  ? __udp4_lib_err+0x32e/0x440
-> [   28.525610]  ? udp_err+0x10/0x20
-> [   28.526202]  ? gue_err_proto_handler+0x45/0x90
-> [   28.527010]  ? gue_err+0xed/0x190
-> [   28.527628]  ? gue_err_proto_handler+0x90/0x90
-> [   28.528425]  ? __udp4_lib_err+0x32e/0x440
-> [   28.529167]  ? udp_err+0x10/0x20
-> [   28.529765]  ? gue_err_proto_handler+0x45/0x90
-> [   28.530568]  ? gue_err+0xed/0x190
-> [   28.531171]  ? gue_err_proto_handler+0x90/0x90
-> [   28.531993]  ? __udp4_lib_err+0x32e/0x440
-> [   28.532718]  ? udp_err+0x10/0x20
-> [   28.533312]  ? gue_err_proto_handler+0x45/0x90
-> [   28.534118]  ? gue_err+0xed/0x190
-> [   28.534726]  ? gue_err_proto_handler+0x90/0x90
-> [   28.535774]  ? __udp4_lib_err+0x32e/0x440
-> [   28.537428]  ? udp_err+0x10/0x20
-> [   28.538646]  ? gue_err_proto_handler+0x45/0x90
-> [   28.540449]  ? gue_err+0xed/0x190
-> [   28.541423]  ? gue_err_proto_handler+0x90/0x90
-> [   28.542609]  ? __udp4_lib_err+0x32e/0x440
-> [   28.543488]  ? udp_err+0x10/0x20
-> [   28.544167]  ? gue_err_proto_handler+0x45/0x90
-> [   28.545293]  ? gue_err+0xed/0x190
-> [   28.546016]  ? gue_err_proto_handler+0x90/0x90
-> [   28.546920]  ? __udp4_lib_err+0x32e/0x440
-> [   28.547755]  ? udp_err+0x10/0x20
-> [   28.548417]  ? gue_err_proto_handler+0x45/0x90
-> [   28.549227]  ? gue_err+0xed/0x190
-> [   28.549856]  ? gue_err_proto_handler+0x90/0x90
-> [   28.550700]  ? __udp4_lib_err+0x32e/0x440
-> [   28.551467]  ? udp_err+0x10/0x20
-> [   28.552073]  ? gue_err_proto_handler+0x45/0x90
-> [   28.552913]  ? gue_err+0xed/0x190
-> [   28.553566]  ? gue_err_proto_handler+0x90/0x90
-> [   28.554446]  ? __udp4_lib_err+0x32e/0x440
-> [   28.555230]  ? udp_err+0x10/0x20
-> [   28.555876]  ? gue_err_proto_handler+0x45/0x90
-> [   28.556707]  ? gue_err+0xed/0x190
-> [   28.557358]  ? gue_err_proto_handler+0x90/0x90
-> [   28.558229]  ? __udp4_lib_err+0x32e/0x440
-> [   28.558981]  ? udp_err+0x10/0x20
-> [   28.559607]  ? gue_err_proto_handler+0x45/0x90
-> [   28.560440]  ? gue_err+0xed/0x190
-> [   28.561076]  ? gue_err_proto_handler+0x90/0x90
-> [   28.561953]  ? __udp4_lib_err+0x32e/0x440
-> [   28.562769]  ? udp_err+0x10/0x20
-> [   28.563459]  ? gue_err_proto_handler+0x45/0x90
-> [   28.564304]  ? gue_err+0xed/0x190
-> [   28.564901]  ? gue_err_proto_handler+0x90/0x90
-> [   28.565686]  ? __udp4_lib_err+0x32e/0x440
-> [   28.566394]  ? udp_err+0x10/0x20
-> [   28.566973]  ? gue_err_proto_handler+0x45/0x90
-> [   28.567786]  ? gue_err+0xed/0x190
-> [   28.568392]  ? gue_err_proto_handler+0x90/0x90
-> [   28.569151]  ? __udp4_lib_err+0x32e/0x440
-> [   28.569876]  ? udp_err+0x10/0x20
-> [   28.570464]  ? gue_err_proto_handler+0x45/0x90
-> [   28.571268]  ? gue_err+0xed/0x190
-> [   28.571882]  ? gue_err_proto_handler+0x90/0x90
-> [   28.572678]  ? __udp4_lib_err+0x32e/0x440
-> [   28.573421]  ? udp_err+0x10/0x20
-> [   28.574006]  ? gue_err_proto_handler+0x45/0x90
-> [   28.574803]  ? gue_err+0xed/0x190
-> [   28.575426]  ? gue_err_proto_handler+0x90/0x90
-> [   28.576232]  ? __udp4_lib_err+0x32e/0x440
-> [   28.576968]  ? udp_err+0x10/0x20
-> [   28.577555]  ? gue_err_proto_handler+0x45/0x90
-> [   28.578365]  ? gue_err+0xed/0x190
-> [   28.578950]  ? gue_err_proto_handler+0x90/0x90
-> [   28.579857]  ? __udp4_lib_err+0x32e/0x440
-> [   28.580584]  ? udp_err+0x10/0x20
-> [   28.581176]  ? gue_err_proto_handler+0x45/0x90
-> [   28.581983]  ? gue_err+0xed/0x190
-> [   28.582593]  ? gue_err_proto_handler+0x90/0x90
-> [   28.583412]  ? __udp4_lib_err+0x32e/0x440
-> [   28.584146]  ? udp_err+0x10/0x20
-> [   28.584747]  ? gue_err_proto_handler+0x45/0x90
-> [   28.585555]  ? gue_err+0xed/0x190
-> [   28.586154]  ? gue_err_proto_handler+0x90/0x90
-> [   28.586942]  ? __udp4_lib_err+0x32e/0x440
-> [   28.587677]  ? udp_err+0x10/0x20
-> [   28.588259]  ? gue_err_proto_handler+0x45/0x90
-> [   28.589019]  ? gue_err+0xed/0x190
-> [   28.589643]  ? gue_err_proto_handler+0x90/0x90
-> [   28.590470]  ? __udp4_lib_err+0x32e/0x440
-> [   28.591195]  ? udp_err+0x10/0x20
-> [   28.591795]  ? gue_err_proto_handler+0x45/0x90
-> [   28.592595]  ? gue_err+0xed/0x190
-> [   28.593199]  ? gue_err_proto_handler+0x90/0x90
-> [   28.594009]  ? __udp4_lib_err+0x32e/0x440
-> [   28.594748]  ? udp_err+0x10/0x20
-> [   28.595344]  ? gue_err_proto_handler+0x45/0x90
-> [   28.597287]  ? gue_err+0xed/0x190
-> [   28.598715]  ? gue_err_proto_handler+0x90/0x90
-> [   28.600546]  ? __udp4_lib_err+0x32e/0x440
-> [   28.602196]  ? udp_err+0x10/0x20
-> [   28.603567]  ? gue_err_proto_handler+0x45/0x90
-> [   28.605416]  ? gue_err+0xed/0x190
-> [   28.606717]  ? gue_err_proto_handler+0x90/0x90
-> [   28.608485]  ? __udp4_lib_err+0x32e/0x440
-> [   28.610100]  ? udp_err+0x10/0x20
-> [   28.611390]  ? gue_err_proto_handler+0x45/0x90
-> [   28.613218]  ? gue_err+0xed/0x190
-> [   28.614587]  ? gue_err_proto_handler+0x90/0x90
-> [   28.616443]  ? __udp4_lib_err+0x32e/0x440
-> [   28.618140]  ? udp_err+0x10/0x20
-> [   28.619164]  ? gue_err_proto_handler+0x45/0x90
-> [   28.620832]  ? gue_err+0xed/0x190
-> [   28.621758]  ? gue_err_proto_handler+0x90/0x90
-> [   28.623433]  ? __udp4_lib_err+0x32e/0x440
-> [   28.625036]  ? udp_err+0x10/0x20
-> [   28.626001]  ? gue_err_proto_handler+0x45/0x90
-> [   28.626986]  ? gue_err+0xed/0x190
-> [   28.627662]  ? gue_err_proto_handler+0x90/0x90
-> [   28.628513]  ? __udp4_lib_err+0x32e/0x440
-> [   28.629355]  ? udp_err+0x10/0x20
-> [   28.630287]  ? gue_err_proto_handler+0x45/0x90
-> [   28.631550]  ? gue_err+0xed/0x190
-> [   28.632884]  ? gue_err_proto_handler+0x90/0x90
-> [   28.634306]  ? __udp4_lib_err+0x32e/0x440
-> [   28.636121]  ? udp_err+0x10/0x20
-> [   28.637050]  ? gue_err_proto_handler+0x45/0x90
-> [   28.638605]  ? gue_err+0xed/0x190
-> [   28.639954]  ? gue_err_proto_handler+0x90/0x90
-> [   28.641208]  ? __udp4_lib_err+0x32e/0x440
-> [   28.642208]  ? udp_err+0x10/0x20
-> [   28.642912]  ? gue_err_proto_handler+0x45/0x90
-> [   28.643998]  ? gue_err+0xed/0x190
-> [   28.644982]  ? gue_err_proto_handler+0x90/0x90
-> [   28.645944]  ? __udp4_lib_err+0x32e/0x440
-> [   28.647435]  ? udp_err+0x10/0x20
-> [   28.648541]  ? gue_err_proto_handler+0x45/0x90
-> [   28.649955]  ? gue_err+0xed/0x190
-> [   28.650962]  ? gue_err_proto_handler+0x90/0x90
-> [   28.652811]  ? __udp4_lib_err+0x32e/0x440
-> [   28.653694]  ? udp_err+0x10/0x20
-> [   28.654390]  ? icmp_socket_deliver+0x7f/0xf0
-> [   28.655738]  ? icmp_redirect+0x3c/0x80
-> [   28.657247]  ? icmp_rcv+0x190/0x4c0
-> [   28.658063]  ? ip_protocol_deliver_rcu+0x2b/0x290
-> [   28.659066]  ? ip_local_deliver_finish+0x94/0x130
-> [   28.659963]  ? ip_local_deliver+0x180/0x220
-> [   28.660764]  ? ip_protocol_deliver_rcu+0x290/0x290
-> [   28.661678]  ? ip_rcv_finish+0x88/0xb0
-> [   28.662419]  ? ip_rcv+0x56/0x200
-> [   28.663065]  ? ip_rcv_finish_core.isra.18+0x600/0x600
-> [   28.664083]  ? __netif_receive_skb_one_core+0x52/0x70
-> [   28.665076]  ? __netif_receive_skb+0x13/0x60
-> [   28.665939]  ? netif_receive_skb_internal+0x72/0x380
-> [   28.666905]  ? napi_gro_frags+0x387/0x440
-> [   28.667715]  ? tun_get_user+0xda2/0x1200
-> [   28.668492]  ? tun_chr_write_iter+0x46/0x69
-> [   28.669324]  ? do_iter_readv_writev+0x12d/0x1a0
-> [   28.670228]  ? do_iter_write+0x81/0x190
-> [   28.670987]  ? vfs_writev+0xa2/0xf0
-> [   28.671724]  ? __fget+0xf7/0x1d0
-> [   28.672348]  ? do_writev+0x5e/0xf0
-> [   28.672971]  ? __x64_sys_writev+0x17/0x20
-> [   28.673701]  ? do_syscall_64+0x6e/0x1c0
-> [   28.674398]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [   28.675350] Modules linked in:
-> [   28.675936] ---[ end trace 3c20e02f8428d132 ]---
-> [   28.675943] kernel stack overflow (double-fault): 0000 [#2] PREEMPT SMP
-> [   28.676781] RIP: 0010:__lock_is_held+0x17/0xa0
-> [   28.678109] CPU: 1 PID: 7358 Comm: syz-executor Tainted: G      D
->         4.20.0-rc6+ #7
-> [   28.678927] Code: 4c 89 f8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 45 31
-> ff eb e5 55 48 89 e5 41 57 45 31 ff 41 56 49 89 fe 41 55 41 54 53 48
-> 83 ec 08 <89> 75 d4 65 4c 8b 24 25 40 5e 01 00 41 8b 84 24 78 08 00 00
-> 4d 8d
-> [   28.680596] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS 1.10.2-1 04/01/2014
-> [   28.683994] RSP: 0018:ffffc900023cbff8 EFLAGS: 00010092
-> [   28.685527] RIP: 0010:__udp4_lib_err+0x7f/0x440
-> [   28.685534] Code: b0 80 05 00 00 74 0c 41 f6 44 24 3c 80 0f 85 dd
-> 00 00 00 44 8b 88 08 01 00 00 44 0f b7 03 41 8b 4d 0c 0f b7 53 02 41
-> 8b 75 10 <6a> 00 ff 75 d0 57 4c 89 f7 e8 83 fb ff ff 48 83 c4 18 48 85
-> c0 49
-> [   28.686498] RAX: 0000000000000286 RBX: ffff8880683ae040 RCX: 0000000000000000
-> [   28.687343] RSP: 0018:ffffc9000263c000 EFLAGS: 00010246
-> [   28.690693] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: ffffffff83ac8480
-> [   28.692053] RAX: ffff888077264000 RBX: ffff8880748cf7aa RCX: 00000000aa1423ac
-> [   28.692058] RDX: 0000000000000000 RSI: 00000000001414ac RDI: 0000000000000000
-> [   28.693025] RBP: ffffc900023cc028 R08: ffff8880683b7d40 R09: 000000000000000b
-> [   28.693029] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000286
-> [   28.694427] RBP: ffffc9000263c048 R08: 0000000000000040 R09: 000000000000000b
-> [   28.695753] R13: 0000000000000000 R14: ffffffff83ac8480 R15: 0000000000000000
-> [   28.695758] FS:  00007fd529f84700(0000) GS:ffff88807db80000(0000)
-> knlGS:0000000000000000
-> [   28.697108] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88807724dd00
-> [   28.697113] R13: ffff8880748cf7aa R14: ffff888074038080 R15: 0000000000000005
-> [   28.698502] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   28.698506] CR2: ffffc900023cbfe8 CR3: 0000000068371003 CR4: 00000000001606e0
-> [   28.699906] FS:  00007f27bab30700(0000) GS:ffff88807da80000(0000)
-> knlGS:0000000000000000
-> [   28.699911] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   28.701193] Kernel panic - not syncing: Fatal exception in interrupt
-> [   28.702551] CR2: ffffc9000263bff8 CR3: 0000000068af4003 CR4: 00000000001606e0
-> [   28.702558] Call Trace:
-> [   28.715105]  udp_err+0x10/0x20
-> [   28.715700]  gue_err_proto_handler+0x45/0x90
-> [   28.716521]  gue_err+0xed/0x190
-> [   28.717123]  ? gue_err_proto_handler+0x90/0x90
-> [   28.717956]  __udp4_lib_err+0x32e/0x440
-> [   28.718667]  udp_err+0x10/0x20
-> [   28.719251]  gue_err_proto_handler+0x45/0x90
-> [   28.720079]  gue_err+0xed/0x190
-> [   28.720680]  ? gue_err_proto_handler+0x90/0x90
-> [   28.721518]  __udp4_lib_err+0x32e/0x440
-> [   28.722247]  udp_err+0x10/0x20
-> [   28.722831]  gue_err_proto_handler+0x45/0x90
-> [   28.723647]  gue_err+0xed/0x190
-> [   28.724248]  ? gue_err_proto_handler+0x90/0x90
-> [   28.725120]  __udp4_lib_err+0x32e/0x440
-> [   28.725850]  udp_err+0x10/0x20
-> [   28.726432]  gue_err_proto_handler+0x45/0x90
-> [   28.727238]  gue_err+0xed/0x190
-> [   28.727897]  ? gue_err_proto_handler+0x90/0x90
-> [   28.728738]  __udp4_lib_err+0x32e/0x440
-> [   28.729462]  udp_err+0x10/0x20
-> [   28.730050]  gue_err_proto_handler+0x45/0x90
-> [   28.730908]  gue_err+0xed/0x190
-> [   28.731560]  ? gue_err_proto_handler+0x90/0x90
-> [   28.732482]  __udp4_lib_err+0x32e/0x440
-> [   28.733288]  udp_err+0x10/0x20
-> [   28.733934]  gue_err_proto_handler+0x45/0x90
-> [   28.734810]  gue_err+0xed/0x190
-> [   28.735487]  ? gue_err_proto_handler+0x90/0x90
-> [   28.736329]  __udp4_lib_err+0x32e/0x440
-> [   28.737059]  udp_err+0x10/0x20
-> [   28.737661]  gue_err_proto_handler+0x45/0x90
-> [   28.738471]  gue_err+0xed/0x190
-> [   28.739101]  ? gue_err_proto_handler+0x90/0x90
-> [   28.739969]  __udp4_lib_err+0x32e/0x440
-> [   28.740700]  udp_err+0x10/0x20
-> [   28.741317]  gue_err_proto_handler+0x45/0x90
-> [   28.742116]  gue_err+0xed/0x190
-> [   28.742714]  ? gue_err_proto_handler+0x90/0x90
-> [   28.743630]  __udp4_lib_err+0x32e/0x440
-> [   28.744385]  udp_err+0x10/0x20
-> [   28.744979]  gue_err_proto_handler+0x45/0x90
-> [   28.745783]  gue_err+0xed/0x190
-> [   28.746384]  ? gue_err_proto_handler+0x90/0x90
-> [   28.747223]  __udp4_lib_err+0x32e/0x440
-> [   28.747964]  udp_err+0x10/0x20
-> [   28.748547]  gue_err_proto_handler+0x45/0x90
-> [   28.749352]  gue_err+0xed/0x190
-> [   28.749955]  ? gue_err_proto_handler+0x90/0x90
-> [   28.750789]  __udp4_lib_err+0x32e/0x440
-> [   28.751582]  udp_err+0x10/0x20
-> [   28.752203]  gue_err_proto_handler+0x45/0x90
-> [   28.753010]  gue_err+0xed/0x190
-> [   28.753611]  ? gue_err_proto_handler+0x90/0x90
-> [   28.754447]  __udp4_lib_err+0x32e/0x440
-> [   28.755171]  udp_err+0x10/0x20
-> [   28.755764]  gue_err_proto_handler+0x45/0x90
-> [   28.756565]  gue_err+0xed/0x190
-> [   28.757172]  ? gue_err_proto_handler+0x90/0x90
-> [   28.758008]  __udp4_lib_err+0x32e/0x440
-> [   28.758734]  udp_err+0x10/0x20
-> [   28.759322]  gue_err_proto_handler+0x45/0x90
-> [   28.760184]  gue_err+0xed/0x190
-> [   28.760839]  ? gue_err_proto_handler+0x90/0x90
-> [   28.761757]  __udp4_lib_err+0x32e/0x440
-> [   28.762471]  udp_err+0x10/0x20
-> [   28.763051]  gue_err_proto_handler+0x45/0x90
-> [   28.763843]  gue_err+0xed/0x190
-> [   28.764408]  ? gue_err_proto_handler+0x90/0x90
-> [   28.765228]  __udp4_lib_err+0x32e/0x440
-> [   28.765941]  udp_err+0x10/0x20
-> [   28.766521]  gue_err_proto_handler+0x45/0x90
-> [   28.767320]  gue_err+0xed/0x190
-> [   28.767922]  ? gue_err_proto_handler+0x90/0x90
-> [   28.768743]  __udp4_lib_err+0x32e/0x440
-> [   28.769506]  udp_err+0x10/0x20
-> [   28.770151]  gue_err_proto_handler+0x45/0x90
-> [   28.771007]  gue_err+0xed/0x190
-> [   28.771675]  ? gue_err_proto_handler+0x90/0x90
-> [   28.772553]  __udp4_lib_err+0x32e/0x440
-> [   28.773338]  udp_err+0x10/0x20
-> [   28.773919]  gue_err_proto_handler+0x45/0x90
-> [   28.774729]  gue_err+0xed/0x190
-> [   28.775332]  ? gue_err_proto_handler+0x90/0x90
-> [   28.776185]  __udp4_lib_err+0x32e/0x440
-> [   28.776896]  udp_err+0x10/0x20
-> [   28.777479]  gue_err_proto_handler+0x45/0x90
-> [   28.778269]  gue_err+0xed/0x190
-> [   28.778858]  ? gue_err_proto_handler+0x90/0x90
-> [   28.779828]  __udp4_lib_err+0x32e/0x440
-> [   28.780660]  udp_err+0x10/0x20
-> [   28.781263]  gue_err_proto_handler+0x45/0x90
-> [   28.782063]  gue_err+0xed/0x190
-> [   28.782649]  ? gue_err_proto_handler+0x90/0x90
-> [   28.783496]  __udp4_lib_err+0x32e/0x440
-> [   28.784231]  udp_err+0x10/0x20
-> [   28.784825]  gue_err_proto_handler+0x45/0x90
-> [   28.785655]  gue_err+0xed/0x190
-> [   28.786259]  ? gue_err_proto_handler+0x90/0x90
-> [   28.787103]  __udp4_lib_err+0x32e/0x440
-> [   28.787850]  udp_err+0x10/0x20
-> [   28.788443]  gue_err_proto_handler+0x45/0x90
-> [   28.789252]  gue_err+0xed/0x190
-> [   28.789836]  ? gue_err_proto_handler+0x90/0x90
-> [   28.790679]  __udp4_lib_err+0x32e/0x440
-> [   28.791373]  udp_err+0x10/0x20
-> [   28.791963]  gue_err_proto_handler+0x45/0x90
-> [   28.792767]  gue_err+0xed/0x190
-> [   28.793371]  ? gue_err_proto_handler+0x90/0x90
-> [   28.794242]  __udp4_lib_err+0x32e/0x440
-> [   28.794972]  udp_err+0x10/0x20
-> [   28.795628]  gue_err_proto_handler+0x45/0x90
-> [   28.796427]  gue_err+0xed/0x190
-> [   28.797027]  ? gue_err_proto_handler+0x90/0x90
-> [   28.797862]  __udp4_lib_err+0x32e/0x440
-> [   28.798580]  udp_err+0x10/0x20
-> [   28.799145]  gue_err_proto_handler+0x45/0x90
-> [   28.800001]  gue_err+0xed/0x190
-> [   28.800621]  ? gue_err_proto_handler+0x90/0x90
-> [   28.801444]  __udp4_lib_err+0x32e/0x440
-> [   28.802115]  udp_err+0x10/0x20
-> [   28.802682]  gue_err_proto_handler+0x45/0x90
-> [   28.803486]  gue_err+0xed/0x190
-> [   28.804082]  ? gue_err_proto_handler+0x90/0x90
-> [   28.804926]  __udp4_lib_err+0x32e/0x440
-> [   28.805683]  udp_err+0x10/0x20
-> [   28.806259]  gue_err_proto_handler+0x45/0x90
-> [   28.807074]  gue_err+0xed/0x190
-> [   28.807694]  ? gue_err_proto_handler+0x90/0x90
-> [   28.808528]  __udp4_lib_err+0x32e/0x440
-> [   28.809237]  udp_err+0x10/0x20
-> [   28.809823]  gue_err_proto_handler+0x45/0x90
-> [   28.810596]  gue_err+0xed/0x190
-> [   28.811183]  ? gue_err_proto_handler+0x90/0x90
-> [   28.812193]  __udp4_lib_err+0x32e/0x440
-> [   28.812958]  udp_err+0x10/0x20
-> [   28.813544]  gue_err_proto_handler+0x45/0x90
-> [   28.814352]  gue_err+0xed/0x190
-> [   28.814971]  ? gue_err_proto_handler+0x90/0x90
-> [   28.815829]  __udp4_lib_err+0x32e/0x440
-> [   28.816550]  udp_err+0x10/0x20
-> [   28.817125]  gue_err_proto_handler+0x45/0x90
-> [   28.817917]  gue_err+0xed/0x190
-> [   28.818529]  ? gue_err_proto_handler+0x90/0x90
-> [   28.819340]  __udp4_lib_err+0x32e/0x440
-> [   28.820837]  udp_err+0x10/0x20
-> [   28.821993]  gue_err_proto_handler+0x45/0x90
-> [   28.823530]  gue_err+0xed/0x190
-> [   28.824657]  ? gue_err_proto_handler+0x90/0x90
-> [   28.826157]  __udp4_lib_err+0x32e/0x440
-> [   28.827461]  udp_err+0x10/0x20
-> [   28.828450]  gue_err_proto_handler+0x45/0x90
-> [   28.829336]  gue_err+0xed/0x190
-> [   28.829922]  ? gue_err_proto_handler+0x90/0x90
-> [   28.830771]  __udp4_lib_err+0x32e/0x440
-> [   28.831514]  udp_err+0x10/0x20
-> [   28.832101]  gue_err_proto_handler+0x45/0x90
-> [   28.832953]  gue_err+0xed/0x190
-> [   28.833537]  ? gue_err_proto_handler+0x90/0x90
-> [   28.834378]  __udp4_lib_err+0x32e/0x440
-> [   28.835088]  udp_err+0x10/0x20
-> [   28.835673]  gue_err_proto_handler+0x45/0x90
-> [   28.836505]  gue_err+0xed/0x190
-> [   28.837099]  ? gue_err_proto_handler+0x90/0x90
-> [   28.837911]  __udp4_lib_err+0x32e/0x440
-> [   28.838628]  udp_err+0x10/0x20
-> [   28.839204]  gue_err_proto_handler+0x45/0x90
-> [   28.840012]  gue_err+0xed/0x190
-> [   28.840606]  ? gue_err_proto_handler+0x90/0x90
-> [   28.841479]  __udp4_lib_err+0x32e/0x440
-> [   28.842207]  udp_err+0x10/0x20
-> [   28.842794]  gue_err_proto_handler+0x45/0x90
-> [   28.843960]  gue_err+0xed/0x190
-> [   28.844800]  ? gue_err_proto_handler+0x90/0x90
-> [   28.845760]  __udp4_lib_err+0x32e/0x440
-> [   28.846580]  udp_err+0x10/0x20
-> [   28.847246]  gue_err_proto_handler+0x45/0x90
-> [   28.848233]  gue_err+0xed/0x190
-> [   28.848888]  ? gue_err_proto_handler+0x90/0x90
-> [   28.849724]  __udp4_lib_err+0x32e/0x440
-> [   28.850448]  udp_err+0x10/0x20
-> [   28.851037]  gue_err_proto_handler+0x45/0x90
-> [   28.851848]  gue_err+0xed/0x190
-> [   28.852454]  ? gue_err_proto_handler+0x90/0x90
-> [   28.853274]  __udp4_lib_err+0x32e/0x440
-> [   28.853982]  udp_err+0x10/0x20
-> [   28.854562]  gue_err_proto_handler+0x45/0x90
-> [   28.855379]  gue_err+0xed/0x190
-> [   28.855982]  ? gue_err_proto_handler+0x90/0x90
-> [   28.856805]  __udp4_lib_err+0x32e/0x440
-> [   28.857515]  udp_err+0x10/0x20
-> [   28.858098]  gue_err_proto_handler+0x45/0x90
-> [   28.858896]  gue_err+0xed/0x190
-> [   28.859635]  ? gue_err_proto_handler+0x90/0x90
-> [   28.860479]  __udp4_lib_err+0x32e/0x440
-> [   28.861199]  udp_err+0x10/0x20
-> [   28.861766]  gue_err_proto_handler+0x45/0x90
-> [   28.862558]  gue_err+0xed/0x190
-> [   28.863152]  ? gue_err_proto_handler+0x90/0x90
-> [   28.863995]  __udp4_lib_err+0x32e/0x440
-> [   28.864700]  udp_err+0x10/0x20
-> [   28.865286]  gue_err_proto_handler+0x45/0x90
-> [   28.866096]  gue_err+0xed/0x190
-> [   28.866704]  ? gue_err_proto_handler+0x90/0x90
-> [   28.867561]  __udp4_lib_err+0x32e/0x440
-> [   28.868294]  udp_err+0x10/0x20
-> [   28.868881]  gue_err_proto_handler+0x45/0x90
-> [   28.869722]  gue_err+0xed/0x190
-> [   28.870355]  ? gue_err_proto_handler+0x90/0x90
-> [   28.871214]  __udp4_lib_err+0x32e/0x440
-> [   28.871944]  udp_err+0x10/0x20
-> [   28.872534]  gue_err_proto_handler+0x45/0x90
-> [   28.873348]  gue_err+0xed/0x190
-> [   28.873941]  ? gue_err_proto_handler+0x90/0x90
-> [   28.874789]  __udp4_lib_err+0x32e/0x440
-> [   28.875537]  udp_err+0x10/0x20
-> [   28.876117]  gue_err_proto_handler+0x45/0x90
-> [   28.876902]  gue_err+0xed/0x190
-> [   28.877494]  ? gue_err_proto_handler+0x90/0x90
-> [   28.878327]  __udp4_lib_err+0x32e/0x440
-> [   28.879037]  udp_err+0x10/0x20
-> [   28.879615]  gue_err_proto_handler+0x45/0x90
-> [   28.880413]  gue_err+0xed/0x190
-> [   28.881013]  ? gue_err_proto_handler+0x90/0x90
-> [   28.881945]  __udp4_lib_err+0x32e/0x440
-> [   28.883670]  udp_err+0x10/0x20
-> [   28.884379]  gue_err_proto_handler+0x45/0x90
-> [   28.885923]  gue_err+0xed/0x190
-> [   28.886669]  ? gue_err_proto_handler+0x90/0x90
-> [   28.887624]  __udp4_lib_err+0x32e/0x440
-> [   28.888336]  udp_err+0x10/0x20
-> [   28.889024]  gue_err_proto_handler+0x45/0x90
-> [   28.889966]  gue_err+0xed/0x190
-> [   28.890629]  ? gue_err_proto_handler+0x90/0x90
-> [   28.891592]  __udp4_lib_err+0x32e/0x440
-> [   28.892401]  udp_err+0x10/0x20
-> [   28.893038]  gue_err_proto_handler+0x45/0x90
-> [   28.893866]  gue_err+0xed/0x190
-> [   28.894438]  ? gue_err_proto_handler+0x90/0x90
-> [   28.895252]  __udp4_lib_err+0x32e/0x440
-> [   28.896052]  udp_err+0x10/0x20
-> [   28.896706]  gue_err_proto_handler+0x45/0x90
-> [   28.897616]  gue_err+0xed/0x190
-> [   28.898289]  ? gue_err_proto_handler+0x90/0x90
-> [   28.899114]  __udp4_lib_err+0x32e/0x440
-> [   28.899855]  udp_err+0x10/0x20
-> [   28.900438]  gue_err_proto_handler+0x45/0x90
-> [   28.901314]  gue_err+0xed/0x190
-> [   28.902000]  ? gue_err_proto_handler+0x90/0x90
-> [   28.902926]  __udp4_lib_err+0x32e/0x440
-> [   28.903766]  udp_err+0x10/0x20
-> [   28.904417]  gue_err_proto_handler+0x45/0x90
-> [   28.905329]  gue_err+0xed/0x190
-> [   28.906005]  ? gue_err_proto_handler+0x90/0x90
-> [   28.906942]  __udp4_lib_err+0x32e/0x440
-> [   28.907750]  udp_err+0x10/0x20
-> [   28.908386]  gue_err_proto_handler+0x45/0x90
-> [   28.909253]  gue_err+0xed/0x190
-> [   28.909838]  ? gue_err_proto_handler+0x90/0x90
-> [   28.910652]  __udp4_lib_err+0x32e/0x440
-> [   28.911381]  udp_err+0x10/0x20
-> [   28.912041]  gue_err_proto_handler+0x45/0x90
-> [   28.912866]  gue_err+0xed/0x190
-> [   28.913487]  ? gue_err_proto_handler+0x90/0x90
-> [   28.914318]  __udp4_lib_err+0x32e/0x440
-> [   28.915051]  udp_err+0x10/0x20
-> [   28.915635]  gue_err_proto_handler+0x45/0x90
-> [   28.916433]  gue_err+0xed/0x190
-> [   28.917050]  ? gue_err_proto_handler+0x90/0x90
-> [   28.917889]  __udp4_lib_err+0x32e/0x440
-> [   28.918584]  udp_err+0x10/0x20
-> [   28.919163]  gue_err_proto_handler+0x45/0x90
-> [   28.919975]  gue_err+0xed/0x190
-> [   28.920573]  ? gue_err_proto_handler+0x90/0x90
-> [   28.921412]  __udp4_lib_err+0x32e/0x440
-> [   28.922134]  udp_err+0x10/0x20
-> [   28.922717]  gue_err_proto_handler+0x45/0x90
-> [   28.923529]  gue_err+0xed/0x190
-> [   28.924131]  ? gue_err_proto_handler+0x90/0x90
-> [   28.924965]  __udp4_lib_err+0x32e/0x440
-> [   28.925687]  udp_err+0x10/0x20
-> [   28.926269]  gue_err_proto_handler+0x45/0x90
-> [   28.927079]  gue_err+0xed/0x190
-> [   28.928022]  ? gue_err_proto_handler+0x90/0x90
-> [   28.929659]  __udp4_lib_err+0x32e/0x440
-> [   28.930560]  udp_err+0x10/0x20
-> [   28.931205]  gue_err_proto_handler+0x45/0x90
-> [   28.932114]  gue_err+0xed/0x190
-> [   28.932715]  ? gue_err_proto_handler+0x90/0x90
-> [   28.933548]  __udp4_lib_err+0x32e/0x440
-> [   28.934254]  udp_err+0x10/0x20
-> [   28.934825]  gue_err_proto_handler+0x45/0x90
-> [   28.935632]  gue_err+0xed/0x190
-> [   28.936293]  ? gue_err_proto_handler+0x90/0x90
-> [   28.937165]  __udp4_lib_err+0x32e/0x440
-> [   28.937891]  udp_err+0x10/0x20
-> [   28.938465]  gue_err_proto_handler+0x45/0x90
-> [   28.939375]  gue_err+0xed/0x190
-> [   28.940099]  ? gue_err_proto_handler+0x90/0x90
-> [   28.940942]  __udp4_lib_err+0x32e/0x440
-> [   28.941674]  udp_err+0x10/0x20
-> [   28.942268]  gue_err_proto_handler+0x45/0x90
-> [   28.943081]  gue_err+0xed/0x190
-> [   28.943726]  ? gue_err_proto_handler+0x90/0x90
-> [   28.944661]  __udp4_lib_err+0x32e/0x440
-> [   28.945448]  udp_err+0x10/0x20
-> [   28.946034]  gue_err_proto_handler+0x45/0x90
-> [   28.946832]  gue_err+0xed/0x190
-> [   28.947438]  ? gue_err_proto_handler+0x90/0x90
-> [   28.948275]  __udp4_lib_err+0x32e/0x440
-> [   28.949001]  udp_err+0x10/0x20
-> [   28.949580]  gue_err_proto_handler+0x45/0x90
-> [   28.950378]  gue_err+0xed/0x190
-> [   28.950971]  ? gue_err_proto_handler+0x90/0x90
-> [   28.951846]  __udp4_lib_err+0x32e/0x440
-> [   28.952656]  udp_err+0x10/0x20
-> [   28.953238]  gue_err_proto_handler+0x45/0x90
-> [   28.954039]  gue_err+0xed/0x190
-> [   28.955430]  ? gue_err_proto_handler+0x90/0x90
-> [   28.956269]  __udp4_lib_err+0x32e/0x440
-> [   28.956989]  udp_err+0x10/0x20
-> [   28.957576]  gue_err_proto_handler+0x45/0x90
-> [   28.958357]  gue_err+0xed/0x190
-> [   28.958909]  ? gue_err_proto_handler+0x90/0x90
-> [   28.959735]  __udp4_lib_err+0x32e/0x440
-> [   28.960435]  udp_err+0x10/0x20
-> [   28.961006]  gue_err_proto_handler+0x45/0x90
-> [   28.961768]  gue_err+0xed/0x190
-> [   28.962332]  ? gue_err_proto_handler+0x90/0x90
-> [   28.963144]  __udp4_lib_err+0x32e/0x440
-> [   28.963839]  udp_err+0x10/0x20
-> [   28.964379]  gue_err_proto_handler+0x45/0x90
-> [   28.965137]  gue_err+0xed/0x190
-> [   28.965707]  ? gue_err_proto_handler+0x90/0x90
-> [   28.966497]  __udp4_lib_err+0x32e/0x440
-> [   28.967164]  udp_err+0x10/0x20
-> [   28.967823]  gue_err_proto_handler+0x45/0x90
-> [   28.968627]  gue_err+0xed/0x190
-> [   28.969197]  ? gue_err_proto_handler+0x90/0x90
-> [   28.969986]  __udp4_lib_err+0x32e/0x440
-> [   28.970671]  udp_err+0x10/0x20
-> [   28.971219]  gue_err_proto_handler+0x45/0x90
-> [   28.971982]  gue_err+0xed/0x190
-> [   28.972544]  ? gue_err_proto_handler+0x90/0x90
-> [   28.973318]  __udp4_lib_err+0x32e/0x440
-> [   28.973994]  udp_err+0x10/0x20
-> [   28.974544]  gue_err_proto_handler+0x45/0x90
-> [   28.975289]  gue_err+0xed/0x190
-> [   28.975865]  ? gue_err_proto_handler+0x90/0x90
-> [   28.976672]  __udp4_lib_err+0x32e/0x440
-> [   28.977344]  udp_err+0x10/0x20
-> [   28.977886]  gue_err_proto_handler+0x45/0x90
-> [   28.978626]  gue_err+0xed/0x190
-> [   28.979177]  ? gue_err_proto_handler+0x90/0x90
-> [   28.979952]  __udp4_lib_err+0x32e/0x440
-> [   28.980610]  udp_err+0x10/0x20
-> [   28.981140]  gue_err_proto_handler+0x45/0x90
-> [   28.981872]  gue_err+0xed/0x190
-> [   28.982414]  ? gue_err_proto_handler+0x90/0x90
-> [   28.983173]  __udp4_lib_err+0x32e/0x440
-> [   28.983978]  udp_err+0x10/0x20
-> [   28.984508]  gue_err_proto_handler+0x45/0x90
-> [   28.985239]  gue_err+0xed/0x190
-> [   28.985780]  ? gue_err_proto_handler+0x90/0x90
-> [   28.986552]  __udp4_lib_err+0x32e/0x440
-> [   28.987233]  udp_err+0x10/0x20
-> [   28.987791]  gue_err_proto_handler+0x45/0x90
-> [   28.988563]  gue_err+0xed/0x190
-> [   28.989125]  ? gue_err_proto_handler+0x90/0x90
-> [   28.989910]  __udp4_lib_err+0x32e/0x440
-> [   28.990592]  udp_err+0x10/0x20
-> [   28.991139]  gue_err_proto_handler+0x45/0x90
-> [   28.991904]  gue_err+0xed/0x190
-> [   28.992449]  ? gue_err_proto_handler+0x90/0x90
-> [   28.993235]  __udp4_lib_err+0x32e/0x440
-> [   28.993895]  udp_err+0x10/0x20
-> [   28.994423]  gue_err_proto_handler+0x45/0x90
-> [   28.995151]  gue_err+0xed/0x190
-> [   28.995712]  ? gue_err_proto_handler+0x90/0x90
-> [   28.996474]  __udp4_lib_err+0x32e/0x440
-> [   28.997113]  udp_err+0x10/0x20
-> [   28.997620]  gue_err_proto_handler+0x45/0x90
-> [   28.998339]  gue_err+0xed/0x190
-> [   28.998886]  ? gue_err_proto_handler+0x90/0x90
-> [   28.999970]  __udp4_lib_err+0x32e/0x440
-> [   29.001304]  udp_err+0x10/0x20
-> [   29.002350]  gue_err_proto_handler+0x45/0x90
-> [   29.003782]  gue_err+0xed/0x190
-> [   29.004916]  ? gue_err_proto_handler+0x90/0x90
-> [   29.006578]  __udp4_lib_err+0x32e/0x440
-> [   29.007944]  udp_err+0x10/0x20
-> [   29.009052]  gue_err_proto_handler+0x45/0x90
-> [   29.010490]  gue_err+0xed/0x190
-> [   29.011577]  ? gue_err_proto_handler+0x90/0x90
-> [   29.013040]  __udp4_lib_err+0x32e/0x440
-> [   29.014317]  udp_err+0x10/0x20
-> [   29.015341]  gue_err_proto_handler+0x45/0x90
-> [   29.016772]  gue_err+0xed/0x190
-> [   29.017841]  ? gue_err_proto_handler+0x90/0x90
-> [   29.019389]  __udp4_lib_err+0x32e/0x440
-> [   29.020849]  udp_err+0x10/0x20
-> [   29.022034]  icmp_socket_deliver+0x7f/0xf0
-> [   29.023682]  icmp_redirect+0x3c/0x80
-> [   29.025103]  icmp_rcv+0x190/0x4c0
-> [   29.026410]  ip_protocol_deliver_rcu+0x2b/0x290
-> [   29.028194]  ip_local_deliver_finish+0x94/0x130
-> [   29.029973]  ip_local_deliver+0x180/0x220
-> [   29.031583]  ? ip_protocol_deliver_rcu+0x290/0x290
-> [   29.033471]  ip_rcv_finish+0x88/0xb0
-> [   29.034890]  ip_rcv+0x56/0x200
-> [   29.036122]  ? ip_rcv_finish_core.isra.18+0x600/0x600
-> [   29.038001]  __netif_receive_skb_one_core+0x52/0x70
-> [   29.039032]  __netif_receive_skb+0x13/0x60
-> [   29.039787]  netif_receive_skb_internal+0x72/0x380
-> [   29.040669]  napi_gro_frags+0x387/0x440
-> [   29.041416]  tun_get_user+0xda2/0x1200
-> [   29.042122]  tun_chr_write_iter+0x46/0x69
-> [   29.042832]  do_iter_readv_writev+0x12d/0x1a0
-> [   29.043604]  do_iter_write+0x81/0x190
-> [   29.044306]  vfs_writev+0xa2/0xf0
-> [   29.044945]  ? __fget+0xf7/0x1d0
-> [   29.045567]  do_writev+0x5e/0xf0
-> [   29.046214]  __x64_sys_writev+0x17/0x20
-> [   29.046945]  do_syscall_64+0x6e/0x1c0
-> [   29.047646]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [   29.048573] RIP: 0033:0x456f91
-> [   29.049753] Code: 75 14 b8 14 00 00 00 0f 05 48 3d 01 f0 ff ff 0f
-> 83 94 b0 fb ff c3 48 83 ec 08 e8 ba 14 00 00 48 89 04 24 b8 14 00 00
-> 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 03 15 00 00 48 89 d0 48 83 c4 08 48
-> 3d 01
-> [   29.053264] RSP: 002b:00007f27bab2fbc0 EFLAGS: 00000293 ORIG_RAX:
-> 0000000000000014
-> [   29.054686] RAX: ffffffffffffffda RBX: 000000000000006a RCX: 0000000000456f91
-> [   29.055990] RDX: 0000000000000001 RSI: 00007f27bab2fc10 RDI: 00000000000000f0
-> [   29.057283] RBP: 00000000200000c0 R08: 00000000000000f0 R09: 0000000000000000
-> [   29.058565] R10: 00007f27bab309d0 R11: 0000000000000293 R12: 00007f27bab306d4
-> [   29.059854] R13: 00000000004ac690 R14: 00000000006ec930 R15: 00000000ffffffff
-> [   29.061148] Modules linked in:
-> [   29.061748] ---[ end trace 3c20e02f8428d133 ]---
-> [   29.061756] kernel stack overflow (double-fault): 0000 [#3] PREEMPT SMP
-> [   29.062640] RIP: 0010:__lock_is_held+0x17/0xa0
-> [   29.063946] CPU: 0 PID: 7361 Comm: syz-executor Tainted: G      D
->         4.20.0-rc6+ #7
-> [   29.064741] Code: 4c 89 f8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 45 31
-> ff eb e5 55 48 89 e5 41 57 45 31 ff 41 56 49 89 fe 41 55 41 54 53 48
-> 83 ec 08 <89> 75 d4 65 4c 8b 24 25 40 5e 01 00 41 8b 84 24 78 08 00 00
-> 4d 8d
-> [   29.066282] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS 1.10.2-1 04/01/2014
-> [   29.069581] RSP: 0018:ffffc900023cbff8 EFLAGS: 00010092
-> [   29.071172] RIP: 0010:__udp4_lib_err+0x7f/0x440
-> [   29.072145] RAX: 0000000000000286 RBX: ffff8880683ae040 RCX: 0000000000000000
-> [   29.073013] Code: b0 80 05 00 00 74 0c 41 f6 44 24 3c 80 0f 85 dd
-> 00 00 00 44 8b 88 08 01 00 00 44 0f b7 03 41 8b 4d 0c 0f b7 53 02 41
-> 8b 75 10 <6a> 00 ff 75 d0 57 4c 89 f7 e8 83 fb ff ff 48 83 c4 18 48 85
-> c0 49
-> [   29.074229] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: ffffffff83ac8480
-> [   29.078806] RSP: 0018:ffffc9000265c000 EFLAGS: 00010246
-> [   29.080111] RBP: ffffc900023cc028 R08: ffff8880683b7d40 R09: 000000000000000b
-> [   29.081131] RAX: ffff8880773bc000 RBX: ffff888067c77daa RCX: 00000000aa1423ac
-> [   29.081136] RDX: 0000000000000000 RSI: 00000000001414ac RDI: 0000000000000000
-> [   29.082425] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000286
-> [   29.083762] RBP: ffffc9000265c048 R08: 0000000000000040 R09: 000000000000000b
-> [   29.083766] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888078e4a700
-> [   29.085013] R13: 0000000000000000 R14: ffffffff83ac8480 R15: 0000000000000000
-> [   29.085018] FS:  00007f27bab30700(0000) GS:ffff88807da80000(0000)
-> knlGS:0000000000000000
-> [   29.086343] R13: ffff888067c77daa R14: ffff888077038200 R15: 0000000000000005
-> [   29.086348] FS:  00007f0a51837700(0000) GS:ffff88807da00000(0000)
-> knlGS:0000000000000000
-> [   29.087713] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   29.087718] CR2: ffffc9000263bff8 CR3: 0000000068af4003 CR4: 00000000001606e0
-> [   29.089037] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   29.089042] CR2: ffffc9000265bff8 CR3: 0000000067c05005 CR4: 00000000001606f0
-> [   29.099391] Call Trace:
-> [   29.099924]  udp_err+0x10/0x20
-> [   29.100575]  gue_err_proto_handler+0x45/0x90
-> [   29.101460]  gue_err+0xed/0x190
-> [   29.102089]  ? gue_err_proto_handler+0x90/0x90
-> [   29.102931]  __udp4_lib_err+0x32e/0x440
-> [   29.103674]  udp_err+0x10/0x20
-> [   29.104307]  gue_err_proto_handler+0x45/0x90
-> [   29.105169]  gue_err+0xed/0x190
-> [   29.105773]  ? gue_err_proto_handler+0x90/0x90
-> [   29.106605]  __udp4_lib_err+0x32e/0x440
-> [   29.107331]  udp_err+0x10/0x20
-> [   29.107966]  gue_err_proto_handler+0x45/0x90
-> [   29.108760]  gue_err+0xed/0x190
-> [   29.109352]  ? gue_err_proto_handler+0x90/0x90
-> [   29.110246]  __udp4_lib_err+0x32e/0x440
-> [   29.111056]  udp_err+0x10/0x20
-> [   29.111701]  gue_err_proto_handler+0x45/0x90
-> [   29.112597]  gue_err+0xed/0x190
-> [   29.113270]  ? gue_err_proto_handler+0x90/0x90
-> [   29.114212]  __udp4_lib_err+0x32e/0x440
-> [   29.115015]  udp_err+0x10/0x20
-> [   29.115671]  gue_err_proto_handler+0x45/0x90
-> [   29.116560]  gue_err+0xed/0x190
-> [   29.117232]  ? gue_err_proto_handler+0x90/0x90
-> [   29.118150]  __udp4_lib_err+0x32e/0x440
-> [   29.118968]  udp_err+0x10/0x20
-> [   29.119634]  gue_err_proto_handler+0x45/0x90
-> [   29.120484]  gue_err+0xed/0x190
-> [   29.121069]  ? gue_err_proto_handler+0x90/0x90
-> [   29.121912]  __udp4_lib_err+0x32e/0x440
-> [   29.122632]  udp_err+0x10/0x20
-> [   29.123220]  gue_err_proto_handler+0x45/0x90
-> [   29.124152]  gue_err+0xed/0x190
-> [   29.124771]  ? gue_err_proto_handler+0x90/0x90
-> [   29.125606]  __udp4_lib_err+0x32e/0x440
-> [   29.126319]  udp_err+0x10/0x20
-> [   29.126908]  gue_err_proto_handler+0x45/0x90
-> [   29.127731]  gue_err+0xed/0x190
-> [   29.128335]  ? gue_err_proto_handler+0x90/0x90
-> [   29.129156]  __udp4_lib_err+0x32e/0x440
-> [   29.129873]  udp_err+0x10/0x20
-> [   29.130409]  gue_err_proto_handler+0x45/0x90
-> [   29.131192]  gue_err+0xed/0x190
-> [   29.131839]  ? gue_err_proto_handler+0x90/0x90
-> [   29.132698]  __udp4_lib_err+0x32e/0x440
-> [   29.133486]  udp_err+0x10/0x20
-> [   29.134140]  gue_err_proto_handler+0x45/0x90
-> [   29.135050]  gue_err+0xed/0x190
-> [   29.135724]  ? gue_err_proto_handler+0x90/0x90
-> [   29.136605]  __udp4_lib_err+0x32e/0x440
-> [   29.137369]  udp_err+0x10/0x20
-> [   29.137974]  gue_err_proto_handler+0x45/0x90
-> [   29.138762]  gue_err+0xed/0x190
-> [   29.139342]  ? gue_err_proto_handler+0x90/0x90
-> [   29.140220]  __udp4_lib_err+0x32e/0x440
-> [   29.140938]  udp_err+0x10/0x20
-> [   29.141521]  gue_err_proto_handler+0x45/0x90
-> [   29.142322]  gue_err+0xed/0x190
-> [   29.142933]  ? gue_err_proto_handler+0x90/0x90
-> [   29.143753]  __udp4_lib_err+0x32e/0x440
-> [   29.144477]  udp_err+0x10/0x20
-> [   29.145052]  gue_err_proto_handler+0x45/0x90
-> [   29.145850]  gue_err+0xed/0x190
-> [   29.146444]  ? gue_err_proto_handler+0x90/0x90
-> [   29.147269]  __udp4_lib_err+0x32e/0x440
-> [   29.148010]  udp_err+0x10/0x20
-> [   29.148591]  gue_err_proto_handler+0x45/0x90
-> [   29.149392]  gue_err+0xed/0x190
-> [   29.149998]  ? gue_err_proto_handler+0x90/0x90
-> [   29.150835]  __udp4_lib_err+0x32e/0x440
-> [   29.151855]  udp_err+0x10/0x20
-> [   29.153214]  gue_err_proto_handler+0x45/0x90
-> [   29.154698]  gue_err+0xed/0x190
-> [   29.155362]  ? gue_err_proto_handler+0x90/0x90
-> [   29.157105]  __udp4_lib_err+0x32e/0x440
-> [   29.158838]  udp_err+0x10/0x20
-> [   29.160248]  gue_err_proto_handler+0x45/0x90
-> [   29.162191]  gue_err+0xed/0x190
-> [   29.163581]  ? gue_err_proto_handler+0x90/0x90
-> [   29.165661]  __udp4_lib_err+0x32e/0x440
-> [   29.167500]  udp_err+0x10/0x20
-> [   29.169012]  gue_err_proto_handler+0x45/0x90
-> [   29.171107]  gue_err+0xed/0x190
-> [   29.172719]  ? gue_err_proto_handler+0x90/0x90
-> [   29.174821]  __udp4_lib_err+0x32e/0x440
-> [   29.176701]  udp_err+0x10/0x20
-> [   29.178190]  gue_err_proto_handler+0x45/0x90
-> [   29.180315]  gue_err+0xed/0x190
-> [   29.181938]  ? gue_err_proto_handler+0x90/0x90
-> [   29.183608]  __udp4_lib_err+0x32e/0x440
-> [   29.184658]  udp_err+0x10/0x20
-> [   29.185633]  gue_err_proto_handler+0x45/0x90
-> [   29.187729]  gue_err+0xed/0x190
-> [   29.189197]  ? gue_err_proto_handler+0x90/0x90
-> [   29.190763]  __udp4_lib_err+0x32e/0x440
-> [   29.191977]  udp_err+0x10/0x20
-> [   29.192904]  gue_err_proto_handler+0x45/0x90
-> [   29.193966]  gue_err+0xed/0x190
-> [   29.195523]  ? gue_err_proto_handler+0x90/0x90
-> [   29.197692]  __udp4_lib_err+0x32e/0x440
-> [   29.198741]  udp_err+0x10/0x20
-> [   29.200077]  gue_err_proto_handler+0x45/0x90
-> [   29.201512]  gue_err+0xed/0x190
-> [   29.202194]  ? gue_err_proto_handler+0x90/0x90
-> [   29.203168]  __udp4_lib_err+0x32e/0x440
-> [   29.203995]  udp_err+0x10/0x20
-> [   29.204654]  gue_err_proto_handler+0x45/0x90
-> [   29.205562]  gue_err+0xed/0x190
-> [   29.206238]  ? gue_err_proto_handler+0x90/0x90
-> [   29.207185]  __udp4_lib_err+0x32e/0x440
-> [   29.208062]  udp_err+0x10/0x20
-> [   29.208719]  gue_err_proto_handler+0x45/0x90
-> [   29.209631]  gue_err+0xed/0x190
-> [   29.210308]  ? gue_err_proto_handler+0x90/0x90
-> [   29.211781]  __udp4_lib_err+0x32e/0x440
-> [   29.213632]  udp_err+0x10/0x20
-> [   29.215073]  gue_err_proto_handler+0x45/0x90
-> [   29.217565]  gue_err+0xed/0x190
-> [   29.219050]  ? gue_err_proto_handler+0x90/0x90
-> [   29.221157]  __udp4_lib_err+0x32e/0x440
-> [   29.223052]  udp_err+0x10/0x20
-> [   29.224454]  gue_err_proto_handler+0x45/0x90
-> [   29.226359]  gue_err+0xed/0x190
-> [   29.227810]  ? gue_err_proto_handler+0x90/0x90
-> [   29.229791]  __udp4_lib_err+0x32e/0x440
-> [   29.231531]  udp_err+0x10/0x20
-> [   29.232872]  gue_err_proto_handler+0x45/0x90
-> [   29.234821]  gue_err+0xed/0x190
-> [   29.236310]  ? gue_err_proto_handler+0x90/0x90
-> [   29.238360]  __udp4_lib_err+0x32e/0x440
-> [   29.240152]  udp_err+0x10/0x20
-> [   29.242002]  gue_err_proto_handler+0x45/0x90
-> [   29.244009]  gue_err+0xed/0x190
-> [   29.245542]  ? gue_err_proto_handler+0x90/0x90
-> [   29.247734]  __udp4_lib_err+0x32e/0x440
-> [   29.249269]  udp_err+0x10/0x20
-> [   29.250518]  gue_err_proto_handler+0x45/0x90
-> [   29.252240]  gue_err+0xed/0x190
-> [   29.253566]  ? gue_err_proto_handler+0x90/0x90
-> [   29.255354]  __udp4_lib_err+0x32e/0x440
-> [   29.256898]  udp_err+0x10/0x20
-> [   29.258149]  gue_err_proto_handler+0x45/0x90
-> [   29.259879]  gue_err+0xed/0x190
-> [   29.261262]  ? gue_err_proto_handler+0x90/0x90
-> [   29.263109]  __udp4_lib_err+0x32e/0x440
-> [   29.264647]  udp_err+0x10/0x20
-> [   29.265914]  gue_err_proto_handler+0x45/0x90
-> [   29.267675]  gue_err+0xed/0x190
-> [   29.268906]  ? gue_err_proto_handler+0x90/0x90
-> [   29.270706]  __udp4_lib_err+0x32e/0x440
-> [   29.272288]  udp_err+0x10/0x20
-> [   29.273539]  gue_err_proto_handler+0x45/0x90
-> [   29.275245]  gue_err+0xed/0x190
-> [   29.276559]  ? gue_err_proto_handler+0x90/0x90
-> [   29.278410]  __udp4_lib_err+0x32e/0x440
-> [   29.280028]  udp_err+0x10/0x20
-> [   29.281327]  gue_err_proto_handler+0x45/0x90
-> [   29.283015]  gue_err+0xed/0x190
-> [   29.284277]  ? gue_err_proto_handler+0x90/0x90
-> [   29.286061]  __udp4_lib_err+0x32e/0x440
-> [   29.287626]  udp_err+0x10/0x20
-> [   29.289040]  gue_err_proto_handler+0x45/0x90
-> [   29.291000]  gue_err+0xed/0x190
-> [   29.292500]  ? gue_err_proto_handler+0x90/0x90
-> [   29.294590]  __udp4_lib_err+0x32e/0x440
-> [   29.296386]  udp_err+0x10/0x20
-> [   29.297737]  gue_err_proto_handler+0x45/0x90
-> [   29.299616]  gue_err+0xed/0x190
-> [   29.301455]  ? gue_err_proto_handler+0x90/0x90
-> [   29.303523]  __udp4_lib_err+0x32e/0x440
-> [   29.305292]  udp_err+0x10/0x20
-> [   29.306610]  gue_err_proto_handler+0x45/0x90
-> [   29.308626]  gue_err+0xed/0x190
-> [   29.310086]  ? gue_err_proto_handler+0x90/0x90
-> [   29.312219]  __udp4_lib_err+0x32e/0x440
-> [   29.313999]  udp_err+0x10/0x20
-> [   29.315494]  gue_err_proto_handler+0x45/0x90
-> [   29.317529]  gue_err+0xed/0x190
-> [   29.319057]  ? gue_err_proto_handler+0x90/0x90
-> [   29.321578]  __udp4_lib_err+0x32e/0x440
-> [   29.323458]  udp_err+0x10/0x20
-> [   29.324901]  gue_err_proto_handler+0x45/0x90
-> [   29.326951]  gue_err+0xed/0x190
-> [   29.328488]  ? gue_err_proto_handler+0x90/0x90
-> [   29.330509]  __udp4_lib_err+0x32e/0x440
-> [   29.332292]  udp_err+0x10/0x20
-> [   29.333658]  gue_err_proto_handler+0x45/0x90
-> [   29.335646]  gue_err+0xed/0x190
-> [   29.337046]  ? gue_err_proto_handler+0x90/0x90
-> [   29.339097]  __udp4_lib_err+0x32e/0x440
-> [   29.340973]  udp_err+0x10/0x20
-> [   29.342450]  gue_err_proto_handler+0x45/0x90
-> [   29.344431]  gue_err+0xed/0x190
-> [   29.346029]  ? gue_err_proto_handler+0x90/0x90
-> [   29.348182]  __udp4_lib_err+0x32e/0x440
-> [   29.349972]  udp_err+0x10/0x20
-> [   29.351363]  gue_err_proto_handler+0x45/0x90
-> [   29.353394]  gue_err+0xed/0x190
-> [   29.354847]  ? gue_err_proto_handler+0x90/0x90
-> [   29.356908]  __udp4_lib_err+0x32e/0x440
-> [   29.358716]  udp_err+0x10/0x20
-> [   29.359794]  gue_err_proto_handler+0x45/0x90
-> [   29.360645]  gue_err+0xed/0x190
-> [   29.361272]  ? gue_err_proto_handler+0x90/0x90
-> [   29.362161]  __udp4_lib_err+0x32e/0x440
-> [   29.363000]  udp_err+0x10/0x20
-> [   29.363847]  gue_err_proto_handler+0x45/0x90
-> [   29.364697]  gue_err+0xed/0x190
-> [   29.365379]  ? gue_err_proto_handler+0x90/0x90
-> [   29.367149]  __udp4_lib_err+0x32e/0x440
-> [   29.368685]  udp_err+0x10/0x20
-> [   29.369910]  gue_err_proto_handler+0x45/0x90
-> [   29.371621]  gue_err+0xed/0x190
-> [   29.372546]  ? gue_err_proto_handler+0x90/0x90
-> [   29.373587]  __udp4_lib_err+0x32e/0x440
-> [   29.374325]  udp_err+0x10/0x20
-> [   29.374939]  gue_err_proto_handler+0x45/0x90
-> [   29.375901]  gue_err+0xed/0x190
-> [   29.376534]  ? gue_err_proto_handler+0x90/0x90
-> [   29.377433]  __udp4_lib_err+0x32e/0x440
-> [   29.378203]  udp_err+0x10/0x20
-> [   29.378817]  gue_err_proto_handler+0x45/0x90
-> [   29.379840]  gue_err+0xed/0x190
-> [   29.380492]  ? gue_err_proto_handler+0x90/0x90
-> [   29.381389]  __udp4_lib_err+0x32e/0x440
-> [   29.382163]  udp_err+0x10/0x20
-> [   29.382825]  gue_err_proto_handler+0x45/0x90
-> [   29.383698]  gue_err+0xed/0x190
-> [   29.384343]  ? gue_err_proto_handler+0x90/0x90
-> [   29.385241]  __udp4_lib_err+0x32e/0x440
-> [   29.386012]  udp_err+0x10/0x20
-> [   29.386634]  gue_err_proto_handler+0x45/0x90
-> [   29.387502]  gue_err+0xed/0x190
-> [   29.388085]  ? gue_err_proto_handler+0x90/0x90
-> [   29.388886]  __udp4_lib_err+0x32e/0x440
-> [   29.389573]  udp_err+0x10/0x20
-> [   29.390134]  gue_err_proto_handler+0x45/0x90
-> [   29.390887]  gue_err+0xed/0x190
-> [   29.391474]  ? gue_err_proto_handler+0x90/0x90
-> [   29.392279]  __udp4_lib_err+0x32e/0x440
-> [   29.392981]  udp_err+0x10/0x20
-> [   29.393577]  gue_err_proto_handler+0x45/0x90
-> [   29.394353]  gue_err+0xed/0x190
-> [   29.394933]  ? gue_err_proto_handler+0x90/0x90
-> [   29.396070]  __udp4_lib_err+0x32e/0x440
-> [   29.396938]  udp_err+0x10/0x20
-> [   29.397618]  gue_err_proto_handler+0x45/0x90
-> [   29.398501]  gue_err+0xed/0x190
-> [   29.399147]  ? gue_err_proto_handler+0x90/0x90
-> [   29.400052]  __udp4_lib_err+0x32e/0x440
-> [   29.400749]  udp_err+0x10/0x20
-> [   29.401317]  gue_err_proto_handler+0x45/0x90
-> [   29.402091]  gue_err+0xed/0x190
-> [   29.402678]  ? gue_err_proto_handler+0x90/0x90
-> [   29.403536]  __udp4_lib_err+0x32e/0x440
-> [   29.404373]  udp_err+0x10/0x20
-> [   29.404967]  gue_err_proto_handler+0x45/0x90
-> [   29.405738]  gue_err+0xed/0x190
-> [   29.406316]  ? gue_err_proto_handler+0x90/0x90
-> [   29.407112]  __udp4_lib_err+0x32e/0x440
-> [   29.407817]  udp_err+0x10/0x20
-> [   29.408373]  gue_err_proto_handler+0x45/0x90
-> [   29.409150]  gue_err+0xed/0x190
-> [   29.409748]  ? gue_err_proto_handler+0x90/0x90
-> [   29.410557]  __udp4_lib_err+0x32e/0x440
-> [   29.411269]  udp_err+0x10/0x20
-> [   29.412408]  gue_err_proto_handler+0x45/0x90
-> [   29.413276]  gue_err+0xed/0x190
-> [   29.413900]  ? gue_err_proto_handler+0x90/0x90
-> [   29.414843]  __udp4_lib_err+0x32e/0x440
-> [   29.415696]  udp_err+0x10/0x20
-> [   29.416351]  gue_err_proto_handler+0x45/0x90
-> [   29.417206]  gue_err+0xed/0x190
-> [   29.417828]  ? gue_err_proto_handler+0x90/0x90
-> [   29.418707]  __udp4_lib_err+0x32e/0x440
-> [   29.419496]  udp_err+0x10/0x20
-> [   29.420132]  gue_err_proto_handler+0x45/0x90
-> [   29.421027]  gue_err+0xed/0x190
-> [   29.421689]  ? gue_err_proto_handler+0x90/0x90
-> [   29.422600]  __udp4_lib_err+0x32e/0x440
-> [   29.423794]  udp_err+0x10/0x20
-> [   29.425068]  gue_err_proto_handler+0x45/0x90
-> [   29.426841]  gue_err+0xed/0x190
-> [   29.428173]  ? gue_err_proto_handler+0x90/0x90
-> [   29.430031]  __udp4_lib_err+0x32e/0x440
-> [   29.431662]  udp_err+0x10/0x20
-> [   29.432763]  gue_err_proto_handler+0x45/0x90
-> [   29.433622]  gue_err+0xed/0x190
-> [   29.434294]  ? gue_err_proto_handler+0x90/0x90
-> [   29.435417]  __udp4_lib_err+0x32e/0x440
-> [   29.436194]  udp_err+0x10/0x20
-> [   29.436823]  gue_err_proto_handler+0x45/0x90
-> [   29.437700]  gue_err+0xed/0x190
-> [   29.438349]  ? gue_err_proto_handler+0x90/0x90
-> [   29.439272]  __udp4_lib_err+0x32e/0x440
-> [   29.440008]  udp_err+0x10/0x20
-> [   29.440571]  gue_err_proto_handler+0x45/0x90
-> [   29.441347]  gue_err+0xed/0x190
-> [   29.441924]  ? gue_err_proto_handler+0x90/0x90
-> [   29.442737]  __udp4_lib_err+0x32e/0x440
-> [   29.443449]  udp_err+0x10/0x20
-> [   29.444011]  gue_err_proto_handler+0x45/0x90
-> [   29.444771]  gue_err+0xed/0x190
-> [   29.445361]  ? gue_err_proto_handler+0x90/0x90
-> [   29.446166]  __udp4_lib_err+0x32e/0x440
-> [   29.446872]  udp_err+0x10/0x20
-> [   29.447525]  gue_err_proto_handler+0x45/0x90
-> [   29.448325]  gue_err+0xed/0x190
-> [   29.448913]  ? gue_err_proto_handler+0x90/0x90
-> [   29.449719]  __udp4_lib_err+0x32e/0x440
-> [   29.450408]  udp_err+0x10/0x20
-> [   29.450966]  gue_err_proto_handler+0x45/0x90
-> [   29.451758]  gue_err+0xed/0x190
-> [   29.452334]  ? gue_err_proto_handler+0x90/0x90
-> [   29.453161]  __udp4_lib_err+0x32e/0x440
-> [   29.453875]  udp_err+0x10/0x20
-> [   29.454443]  gue_err_proto_handler+0x45/0x90
-> [   29.455203]  gue_err+0xed/0x190
-> [   29.455774]  ? gue_err_proto_handler+0x90/0x90
-> [   29.456549]  __udp4_lib_err+0x32e/0x440
-> [   29.457230]  udp_err+0x10/0x20
-> [   29.457781]  gue_err_proto_handler+0x45/0x90
-> [   29.458544]  gue_err+0xed/0x190
-> [   29.459107]  ? gue_err_proto_handler+0x90/0x90
-> [   29.460034]  __udp4_lib_err+0x32e/0x440
-> [   29.460720]  udp_err+0x10/0x20
-> [   29.461286]  gue_err_proto_handler+0x45/0x90
-> [   29.462057]  gue_err+0xed/0x190
-> [   29.462615]  ? gue_err_proto_handler+0x90/0x90
-> [   29.463411]  __udp4_lib_err+0x32e/0x440
-> [   29.464100]  udp_err+0x10/0x20
-> [   29.464650]  gue_err_proto_handler+0x45/0x90
-> [   29.465404]  gue_err+0xed/0x190
-> [   29.465973]  ? gue_err_proto_handler+0x90/0x90
-> [   29.466755]  __udp4_lib_err+0x32e/0x440
-> [   29.467449]  udp_err+0x10/0x20
-> [   29.468063]  gue_err_proto_handler+0x45/0x90
-> [   29.468841]  gue_err+0xed/0x190
-> [   29.469415]  ? gue_err_proto_handler+0x90/0x90
-> [   29.470200]  __udp4_lib_err+0x32e/0x440
-> [   29.470899]  udp_err+0x10/0x20
-> [   29.471453]  gue_err_proto_handler+0x45/0x90
-> [   29.472221]  gue_err+0xed/0x190
-> [   29.472803]  ? gue_err_proto_handler+0x90/0x90
-> [   29.473615]  __udp4_lib_err+0x32e/0x440
-> [   29.474325]  udp_err+0x10/0x20
-> [   29.474898]  gue_err_proto_handler+0x45/0x90
-> [   29.475703]  gue_err+0xed/0x190
-> [   29.476275]  ? gue_err_proto_handler+0x90/0x90
-> [   29.477059]  __udp4_lib_err+0x32e/0x440
-> [   29.477741]  udp_err+0x10/0x20
-> [   29.478319]  gue_err_proto_handler+0x45/0x90
-> [   29.479089]  gue_err+0xed/0x190
-> [   29.479828]  ? gue_err_proto_handler+0x90/0x90
-> [   29.480883]  __udp4_lib_err+0x32e/0x440
-> [   29.481696]  udp_err+0x10/0x20
-> [   29.482328]  gue_err_proto_handler+0x45/0x90
-> [   29.483244]  gue_err+0xed/0x190
-> [   29.483897]  ? gue_err_proto_handler+0x90/0x90
-> [   29.484798]  __udp4_lib_err+0x32e/0x440
-> [   29.485573]  udp_err+0x10/0x20
-> [   29.486195]  gue_err_proto_handler+0x45/0x90
-> [   29.487085]  gue_err+0xed/0x190
-> [   29.487727]  ? gue_err_proto_handler+0x90/0x90
-> [   29.488618]  __udp4_lib_err+0x32e/0x440
-> [   29.489402]  udp_err+0x10/0x20
-> [   29.490036]  gue_err_proto_handler+0x45/0x90
-> [   29.490904]  gue_err+0xed/0x190
-> [   29.491563]  ? gue_err_proto_handler+0x90/0x90
-> [   29.492456]  __udp4_lib_err+0x32e/0x440
-> [   29.493247]  udp_err+0x10/0x20
-> [   29.493882]  gue_err_proto_handler+0x45/0x90
-> [   29.494752]  gue_err+0xed/0x190
-> [   29.495405]  ? gue_err_proto_handler+0x90/0x90
-> [   29.496295]  __udp4_lib_err+0x32e/0x440
-> [   29.497051]  udp_err+0x10/0x20
-> [   29.497673]  gue_err_proto_handler+0x45/0x90
-> [   29.498538]  gue_err+0xed/0x190
-> [   29.499185]  ? gue_err_proto_handler+0x90/0x90
-> [   29.500100]  __udp4_lib_err+0x32e/0x440
-> [   29.500876]  udp_err+0x10/0x20
-> [   29.501504]  gue_err_proto_handler+0x45/0x90
-> [   29.502372]  gue_err+0xed/0x190
-> [   29.503017]  ? gue_err_proto_handler+0x90/0x90
-> [   29.503936]  __udp4_lib_err+0x32e/0x440
-> [   29.504719]  udp_err+0x10/0x20
-> [   29.505371]  gue_err_proto_handler+0x45/0x90
-> [   29.506227]  gue_err+0xed/0x190
-> [   29.506885]  ? gue_err_proto_handler+0x90/0x90
-> [   29.507807]  __udp4_lib_err+0x32e/0x440
-> [   29.508594]  udp_err+0x10/0x20
-> [   29.509229]  gue_err_proto_handler+0x45/0x90
-> [   29.510093]  gue_err+0xed/0x190
-> [   29.510758]  ? gue_err_proto_handler+0x90/0x90
-> [   29.511685]  __udp4_lib_err+0x32e/0x440
-> [   29.512470]  udp_err+0x10/0x20
-> [   29.513099]  gue_err_proto_handler+0x45/0x90
-> [   29.513967]  gue_err+0xed/0x190
-> [   29.514620]  ? gue_err_proto_handler+0x90/0x90
-> [   29.515535]  __udp4_lib_err+0x32e/0x440
-> [   29.516295]  udp_err+0x10/0x20
-> [   29.516910]  icmp_socket_deliver+0x7f/0xf0
-> [   29.517730]  icmp_redirect+0x3c/0x80
-> [   29.518443]  icmp_rcv+0x190/0x4c0
-> [   29.519107]  ip_protocol_deliver_rcu+0x2b/0x290
-> [   29.520027]  ip_local_deliver_finish+0x94/0x130
-> [   29.520937]  ip_local_deliver+0x180/0x220
-> [   29.521747]  ? ip_protocol_deliver_rcu+0x290/0x290
-> [   29.522714]  ip_rcv_finish+0x88/0xb0
-> [   29.523481]  ip_rcv+0x56/0x200
-> [   29.524135]  ? ip_rcv_finish_core.isra.18+0x600/0x600
-> [   29.525137]  __netif_receive_skb_one_core+0x52/0x70
-> [   29.526122]  __netif_receive_skb+0x13/0x60
-> [   29.526950]  netif_receive_skb_internal+0x72/0x380
-> [   29.527912]  napi_gro_frags+0x387/0x440
-> [   29.528690]  tun_get_user+0xda2/0x1200
-> [   29.529438]  tun_chr_write_iter+0x46/0x69
-> [   29.530246]  do_iter_readv_writev+0x12d/0x1a0
-> [   29.531132]  do_iter_write+0x81/0x190
-> [   29.531887]  vfs_writev+0xa2/0xf0
-> [   29.532575]  ? __fget+0xf7/0x1d0
-> [   29.533235]  do_writev+0x5e/0xf0
-> [   29.533899]  __x64_sys_writev+0x17/0x20
-> [   29.534643]  do_syscall_64+0x6e/0x1c0
-> [   29.535391]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [   29.536420] RIP: 0033:0x456f91
-> [   29.537050] Code: 75 14 b8 14 00 00 00 0f 05 48 3d 01 f0 ff ff 0f
-> 83 94 b0 fb ff c3 48 83 ec 08 e8 ba 14 00 00 48 89 04 24 b8 14 00 00
-> 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 03 15 00 00 48 89 d0 48 83 c4 08 48
-> 3d 01
-> [   29.540606] RSP: 002b:00007f0a51836bc0 EFLAGS: 00000293 ORIG_RAX:
-> 0000000000000014
-> [   29.541950] RAX: ffffffffffffffda RBX: 000000000000006a RCX: 0000000000456f91
-> [   29.543230] RDX: 0000000000000001 RSI: 00007f0a51836c10 RDI: 00000000000000f0
-> [   29.544594] RBP: 00000000200000c0 R08: 00000000000000f0 R09: 0000000000000000
-> [   29.546022] R10: 00007f0a518379d0 R11: 0000000000000293 R12: 00007f0a518376d4
-> [   29.547449] R13: 00000000004ac690 R14: 00000000006ec930 R15: 00000000ffffffff
-> [   29.548893] Modules linked in:
-> [   29.549501] ---[ end trace 3c20e02f8428d134 ]---
-> [   29.550326] RIP: 0010:__lock_is_held+0x17/0xa0
-> [   29.551123] Code: 4c 89 f8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 45 31
-> ff eb e5 55 48 89 e5 41 57 45 31 ff 41 56 49 89 fe 41 55 41 54 53 48
-> 83 ec 08 <89> 75 d4 65 4c 8b 24 25 40 5e 01 00 41 8b 84 24 78 08 00 00
-> 4d 8d
-> [   29.554409] RSP: 0018:ffffc900023cbff8 EFLAGS: 00010092
-> [   29.555340] RAX: 0000000000000286 RBX: ffff8880683ae040 RCX: 0000000000000000
-> [   29.556746] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: ffffffff83ac8480
-> [   29.558195] RBP: ffffc900023cc028 R08: ffff8880683b7d40 R09: 000000000000000b
-> [   29.559676] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000286
-> [   29.561087] R13: 0000000000000000 R14: ffffffff83ac8480 R15: 0000000000000000
-> [   29.562488] FS:  00007f0a51837700(0000) GS:ffff88807da00000(0000)
-> knlGS:0000000000000000
-> [   29.564074] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   29.565233] CR2: ffffc9000265bff8 CR3: 0000000067c05005 CR4: 00000000001606f0
-> [   29.791591] Shutting down cpus with NMI
-> [   29.792809] Kernel Offset: disabled
-> [   29.793536] Rebooting in 86400 seconds..
-> 
-
+SGkgR2VlcnQsDQoNCk9uIE1vbiwgMjAxOC0xMi0xNyBhdCAxNTowMyArMDEwMCwgR2VlcnQgVXl0
+dGVyaG9ldmVuIHdyb3RlOg0KPiBIaSBUcm9uZCwNCj4gDQo+IE9uIFdlZCwgRGVjIDUsIDIwMTgg
+YXQgMzo0NyBQTSBHZWVydCBVeXR0ZXJob2V2ZW4gPA0KPiBnZWVydEBsaW51eC1tNjhrLm9yZz4g
+d3JvdGU6DQo+ID4gT24gV2VkLCBEZWMgNSwgMjAxOCBhdCAyOjQ1IFBNIFRyb25kIE15a2xlYnVz
+dCA8DQo+ID4gdHJvbmRteUBoYW1tZXJzcGFjZS5jb20+IHdyb3RlOg0KPiA+ID4gT24gV2VkLCAy
+MDE4LTEyLTA1IGF0IDE0OjQxICswMTAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+ID4g
+PiA+IE9uIFdlZCwgRGVjIDUsIDIwMTggYXQgMjoxMSBQTSBBdHN1c2hpIE5lbW90byA8DQo+ID4g
+PiA+IGFuZW1vQG1iYS5vY24ubmUuanA+DQo+ID4gPiA+IHdyb3RlOg0KPiA+ID4gPiA+IE9uIFR1
+ZSwgNCBEZWMgMjAxOCAxNDo1MzowNyArMDEwMCwgR2VlcnQgVXl0dGVyaG9ldmVuIDwNCj4gPiA+
+ID4gPiBnZWVydEBsaW51eC1tNjhrLm9yZz4gd3JvdGU6DQo+ID4gPiA+ID4gPiBJIGZvdW5kIHNp
+bWlsYXIgY3Jhc2hlcyBpbiBhIHJlcG9ydCBmcm9tIDIwMDYsIGJ1dCBvZg0KPiA+ID4gPiA+ID4g
+Y291cnNlIHRoZQ0KPiA+ID4gPiA+ID4gY29kZQ0KPiA+ID4gPiA+ID4gaGFzIGNoYW5nZWQgdG9v
+IG11Y2ggdG8gYXBwbHkgdGhlIHNvbHV0aW9uIHByb3Bvc2VkIHRoZXJlDQo+ID4gPiA+ID4gPiAo
+DQo+ID4gPiA+ID4gPiBodHRwczovL3d3dy5saW51eC1taXBzLm9yZy9hcmNoaXZlcy9saW51eC1t
+aXBzLzIwMDYtMDkvbXNnMDAxNjkuaHRtbA0KPiA+ID4gPiA+ID4gKS4NCj4gPiA+ID4gPiA+IA0K
+PiA+ID4gPiA+ID4gVXNlcmxhbmQgaXMgRGViaWFuIDggKHRoZSBsYXN0IHJlbGVhc2Ugc3VwcG9y
+dGluZyAib2xkIg0KPiA+ID4gPiA+ID4gTUlQUykuDQo+ID4gPiA+ID4gPiBNeSBrZXJuZWwgaXMg
+YmFzZWQgb24gdjQuMjAuMC1yYzUsIGJ1dCB0aGUgaXNzdWUgaGFwcGVucw0KPiA+ID4gPiA+ID4g
+d2l0aA0KPiA+ID4gPiA+ID4gdjQuMjAtcmMxLA0KPiA+ID4gPiA+ID4gdG9vLg0KPiA+ID4gPiA+
+ID4gDQo+ID4gPiA+ID4gPiBIb3dldmVyLCBJIG5vdGljZWQgaXQgd29ya3MgaW4gdjQuMTkhIEhl
+bmNlIEkndmUgYmlzZWN0ZWQNCj4gPiA+ID4gPiA+IHRoaXMsDQo+ID4gPiA+ID4gPiB0byBjb21t
+aXQNCj4gPiA+ID4gPiA+IDI3N2U0YWI3ZDUzMGJmMjggKCJTVU5SUEM6IFNpbXBsaWZ5IFRDUCBy
+ZWNlaXZlIGNvZGUgYnkNCj4gPiA+ID4gPiA+IHN3aXRjaGluZw0KPiA+ID4gPiA+ID4gdG8gdXNp
+bmcNCj4gPiA+ID4gPiA+IGl0ZXJhdG9ycyIpLg0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiBE
+cm9wcGluZyB0aGUgIix0Y3AiIHBhcnQgZnJvbSB0aGUgbmZzcm9vdCBwYXJhbWV0ZXIgYWxzbw0K
+PiA+ID4gPiA+ID4gZml4ZXMNCj4gPiA+ID4gPiA+IHRoZSBpc3N1ZS4NCj4gPiA+ID4gPiA+IA0K
+PiA+ID4gPiA+ID4gR2l2ZW4gUkJUWDQ5MjcgaXMgbGl0dGxlIGVuZGlhbiwganVzdCBsaWtlIG15
+IGFybS9hcm02NA0KPiA+ID4gPiA+ID4gYm9hcmRzLA0KPiA+ID4gPiA+ID4gaXQncyBwcm9iYWJs
+eQ0KPiA+ID4gPiA+ID4gbm90IGFuIGVuZGlhbm5lc3MgaXNzdWUuICBTcGFyc2UgZGlkbid0IHNo
+b3cgYW55dGhpbmcNCj4gPiA+ID4gPiA+IHN1c3BpY2lvdXMNCj4gPiA+ID4gPiA+IGJlZm9yZS9h
+ZnRlcg0KPiA+ID4gPiA+ID4gdGhlIGd1aWx0eSBjb21taXQuDQo+ID4gPiA+ID4gPiANCj4gPiA+
+ID4gPiA+IERvIHlvdSBoYXZlIGEgY2x1ZT8NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBJZiBpdCB3
+YXMgYSBjYWNoZSBpc3N1ZSwgZGlzYWJsaW5nIGktY2FjaGUgb3IgZC1jYWNoZQ0KPiA+ID4gPiA+
+IGNvbXBsZXRlbHkNCj4gPiA+ID4gPiBtaWdodA0KPiA+ID4gPiA+IGhlbHAgdW5kZXJzdGFuZGlu
+ZyB0aGUgcHJvYmxlbS4gIEkgYWRkZWQgVFh4OSBzcGVjaWZpYw0KPiA+ID4gPiA+ICJpY2Rpc2Fi
+bGUiDQo+ID4gPiA+ID4gYW5kDQo+ID4gPiA+ID4gImRjZGlzYWJsZSIga2VybmVsIG9wdGlvbnMg
+Zm9yIGRlYnVnZ2luZyBsb25nIGFnby4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBJIGhvcGUgdGhl
+c2Ugb3B0aW9ucyBzdGlsbCB3b3JrcyBjb3JyZWN0bHkgd2l0aCByZWNlbnQga2VybmVsDQo+ID4g
+PiA+ID4gYnV0DQo+ID4gPiA+ID4gbm90DQo+ID4gPiA+ID4gc3VyZS4NCj4gPiA+ID4gPiANCj4g
+PiA+ID4gPiBBbHNvLCBkaXNhYmxpbmcgaS1jYWNoZSBtYWtlcyB5b3VyIGJvYXJkIFZFUlkgc2xv
+dywgb2YNCj4gPiA+ID4gPiBjb3Vyc2UuDQo+ID4gPiA+IA0KPiA+ID4gPiBUaGFua3MhDQo+ID4g
+PiA+IA0KPiA+ID4gPiBXaGVuIHVzaW5nIHRoZXNlIG9wdGlvbnMsIEkgZG8gc2VlIGEgc2xvd2Rv
+d24gaW4gZWFybHkgYm9vdCwNCj4gPiA+ID4gYnV0IHRoZQ0KPiA+ID4gPiBpc3N1ZQ0KPiA+ID4g
+PiBpcyBzdGlsbCB0aGVyZS4NCj4gPiA+ID4gDQo+ID4gPiA+IE15IG5leHQgZ3Vlc3MgaXMgYW4g
+dW5hbGlnbmVkIGFjY2VzcyBub3QgdXNpbmcNCj4gPiA+ID4ge2dldCxwdXR9X3VuYWxpZ25lZCgp
+LA0KPiA+ID4gPiB3aGljaA0KPiA+ID4gPiBkb2Vzbid0IHNlZW0gdG8gd29yayBvbiB0eDQ5Mjcs
+IGJ1dCBkb2Vzbid0IGNhdXNlIGFuIGV4Y2VwdGlvbg0KPiA+ID4gPiBuZWl0aGVyLg0KPiA+ID4g
+DQo+ID4gPiBDYW4geW91IHRyeSBteSBsaW51eC1uZXh0IGJyYW5jaCBvbiBnaXQubGludXgtbmZz
+Lm9yZz8gSXQNCj4gPiA+IGNvbnRhaW5zIGENCj4gPiA+IGZpeGVzIGZvciBhIGhhbmcgdGhhdCBy
+ZXN1bHRzIGZyb20gdGhlIGFib3ZlIGNvbW1pdC4NCj4gPiA+IA0KPiA+ID4gZ2l0IHB1bGwgZ2l0
+Oi8vZ2l0LmxpbnV4LW5mcy5vcmcvcHJvamVjdHMvdHJvbmRteS9saW51eC1uZnMuZ2l0DQo+ID4g
+PiBsaW51eC1uZXh0DQo+ID4gDQo+ID4gVGhhbmtzIGZvciB0aGUgc3VnZ2VzdGlvbiwgYnV0IHVu
+Zm9ydHVuYXRlbHkgaXQgZG9lc24ndCBoZWxwLg0KPiANCj4gSW4gdGhlIG1lYW4gdGltZSwgSSB0
+cmllZCB5b3VyIG5ld2VyIGxpbnV4LW5leHQsIG5vIGNoYW5nZS4NCj4gSSB0cmllZCBzZXZlcmFs
+IG90aGVyIHRoaW5nczoNCj4gICAtIHJlbW92ZSB0aGUgcGFja2VkIGF0dHJpYnV0ZSAod2h5IGRp
+ZCB5b3UgYWRkIHRoYXQ/KSwNCg0KVGhlIHBhY2tlZCBhdHRyaWJ1dGUgYWxsb3dzIHVzIHRvIGF2
+b2lkIGEgc2VyaWVzIG9mIGNvcHkgb3BlcmF0aW9ucw0Kd2hlbiBkZWNvZGluZyB0aGUgZmlyc3Qg
+dGhyZWUgZWxlbWVudHMgb2YgYSBSUEMgb3ZlciBUQ1AgaGVhZGVyICh3aGljaA0KaXMgd2h5IHRo
+ZXkgYXJlIGFsbCBkZWNsYXJlZCBhcyBiaWcgZW5kaWFuKS4gVGhlIGFsdGVybmF0aXZlIHdvdWxk
+IGJlDQp0byBoYXZlIGEgMTIgYnl0ZSBidWZmZXIgdGhlcmUgZm9yIHRlbXBvcmFyeSBzdG9yYWdl
+LCBhbmQgdGhlbiBhDQpkdXBsaWNhdGUgc2V0IG9mIDMgMzItYml0IHdvcmRzIGludG8gd2hpY2gg
+d2UgY29weSB0aGUgYnVmZmVyIGNvbnRlbnRzDQphZnRlciBleHRyYWN0aW5nIHRoZW0gZnJvbSB0
+aGUgKG5vbi1ibG9ja2luZykgc29ja2V0Lg0KDQo+ICAgLSB2ZXJpZnkgKGF0IHJ1bnRpbWUpIHRo
+YXQgYWxsIGFjY2Vzc2VzIHRvIGZyYWdoZHIsIHhpZCwgYW5kDQo+IGNhbGxkaXINCj4gYXJlIGFs
+aWduZWQsDQo+ICAgLSBlbmFibGUgUlBDX0RFQlVHX0RBVEEsIG5vdGhpbmcgZmlzaHkgc2VlbiBh
+dCBmaXJzdCBzaWdodC4NCj4gDQo+IElzIGFueW9uZSBlbHNlIHNlZWluZyB0aGlzIG9uIE1JUFMs
+IG9yIGFueSBvdGhlciBwbGF0Zm9ybT8NCj4gRG9lcyBtb3VudGluZyBORlMgd2l0aCAtbyBuZnN2
+ZXJzPTMsdGNwIHdvcmsgb24gb3RoZXIgTUlQUyBwbGF0Zm9ybXM/DQoNCkkgaGF2ZSBubyBhY2Nl
+c3MgdG8gYW55IE1JUFMgaGFyZHdhcmUgZm9yIHRoZSBwdXJwb3NlcyBvZiB0ZXN0aW5nIHNvDQp0
+aGF0IHdvdWxkIGJlIGEgcXVlc3Rpb24gZm9yIHRoZSBjb21tdW5pdHkuDQoNCk9uZSB0aGluZyB0
+aGF0IEkgaGF2ZSBub3RpY2VkIGlzIHRoYXQgdW5saWtlIHRoZSBvbGQgY29kZSwgdGhlIGJ2ZWMN
+CidnZW5lcmljJyBjb2RlIGRvZXMgYXBwZWFyIHRvIGZhaWwgdG8gY2FsbCBmbHVzaF9kY2FjaGVf
+cGFnZSgpLiBDb3VsZA0KdGhhdCBiZSBjYXVzaW5nIHRoZSBwcm9ibGVtIGhlcmU/IElmIHNvLCB3
+aHkgd291bGQgdGhhdCBub3QgYmUgYQ0KcHJvYmxlbSBpbiB0aGUgY29udGV4dCBvZiByZWd1bGFy
+IGJsb2NrIEkvTz8NCg0KQ2hlZXJzDQogIFRyb25kDQotLSANClRyb25kIE15a2xlYnVzdA0KTGlu
+dXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0QGhh
+bW1lcnNwYWNlLmNvbQ0KDQoNCg==
