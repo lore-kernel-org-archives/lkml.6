@@ -2,138 +2,187 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B86C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C85C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB55D214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EA08214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:18:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389185AbeLQVQd (ORCPT
+        id S2389666AbeLQVST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:16:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51663 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727798AbeLQVQd (ORCPT
+        Mon, 17 Dec 2018 16:18:19 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42790 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727046AbeLQVST (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:16:33 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gZ0FV-0007Fp-9M; Mon, 17 Dec 2018 22:16:25 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gZ0FU-00054u-DA; Mon, 17 Dec 2018 22:16:24 +0100
-Date:   Mon, 17 Dec 2018 22:16:24 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     palmer@sifive.com, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, thierry.reding@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sachin.ghadi@sifive.com, paul.walmsley@sifive.com
-Subject: Re: [RFC v2 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20181217211624.5sj4n6pyartnd3fc@pengutronix.de>
-References: <1544768442-12530-1-git-send-email-yash.shah@sifive.com>
- <1544768442-12530-2-git-send-email-yash.shah@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544768442-12530-2-git-send-email-yash.shah@sifive.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 17 Dec 2018 16:18:19 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHLEltj024239
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:18:18 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pek7ts1ka-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:18:18 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 17 Dec 2018 21:18:15 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Dec 2018 21:18:13 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHLICMZ1573128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Dec 2018 21:18:12 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4E8B242052;
+        Mon, 17 Dec 2018 21:18:12 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8772F4203F;
+        Mon, 17 Dec 2018 21:18:11 +0000 (GMT)
+Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Dec 2018 21:18:11 +0000 (GMT)
+Subject: [PATCH] ima: define ima_create_tmpfile() hook and add missing call
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Ignaz Forster <iforster@suse.de>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Fabian Vogt <fvogt@suse.de>, Al Viro <viro@ZenIV.linux.org.uk>
+Date:   Mon, 17 Dec 2018 16:18:11 -0500
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121721-0012-0000-0000-000002DA720B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121721-0013-0000-0000-0000211007B0
+Message-Id: <1545081491.3730.2.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=11 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=954 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812170187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 11:50:41AM +0530, Yash Shah wrote:
-> DT documentation for PWM controller added with updated compatible
-> string.
-> 
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [Atish: Compatible string update]
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-sifive.txt         | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> new file mode 100644
-> index 0000000..250d8ee
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> @@ -0,0 +1,44 @@
-> +SiFive PWM controller
-> +
-> +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> +supports one period for all channels in the PWM. This is set globally in DTS.
-> +The period also has significant restrictions on the values it can achieve,
-> +which the driver rounds to the nearest achievable frequency.
-> +
-> +Required properties:
-> +- compatible: should be something similar to "sifive,<chip>-pwm" for
-> +	      the PWM as integrated on a particular chip, and
-> +	      "sifive,pwm<version>" for the general PWM IP block
-> +	      programming model. Supported compatible strings are:
-> +	      "sifive,fu540-c000-pwm" for the SiFive PWM v0 as
-> +	      integrated onto the SiFive FU540 chip, and "sifive,pwm0"
-> +	      for the SiFive PWM v0 IP block with no chip integration
-> +	      tweaks.
-> +- reg: physical base address and length of the controller's registers
-> +- clocks: The frequency the controller runs at
+If tmpfiles can be made persistent, then newly created tmpfiles need to
+be treated like any other new files in policy.
 
-This is unusual and the example below lists a clock phandle (which is
-the common thing), so I guess the description is just wrong.
+This patch indicates which newly created tmpfiles are in policy, causing
+the file hash to be calculated on __fput().
 
-> +- #pwm-cells: Should be 2.
-> +  The first cell is the PWM channel number
-> +  The second cell is the PWM polarity
-> +- sifive,approx-period: the driver will get as close to this period as it can
+Reported-by: Ignaz Forster <ignaz.forster@gmx.de>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ fs/namei.c                        |  2 ++
+ include/linux/ima.h               |  6 ++++++
+ security/integrity/ima/ima_main.c | 36 ++++++++++++++++++++++++++++++++++--
+ 3 files changed, 42 insertions(+), 2 deletions(-)
 
-What is the unit? I'd drop "approx", that the driver might not be able
-to exactly hit the specified period is (IMHO) obvious and doesn't need
-to be mentioned in the property name.
-
-> +- interrupts: one interrupt per PWM channel
-> +
-> +PWM RTL that corresponds to the IP block version numbers can be found
-> +here:
-> +
-> +https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
-> +
-> +Further information on the format of the IP
-> +block-specific version numbers can be found in
-> +Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
-> +
-> +Examples:
-> +
-> +pwm:  pwm@10020000 {
-> +	compatible = "sifive,fu540-c000-pwm","sifive,pwm0";
-> +	reg = <0x0 0x10020000 0x0 0x1000>;
-> +	clocks = <&tlclk>;
-> +	interrupt-parent = <&plic>;
-> +	interrupts = <42 43 44 45>;
-> +	#pwm-cells = <2>;
-> +	sifive,approx-period = <1000000>;
-> +};
-
-Best regards
-Uwe
-
+diff --git a/fs/namei.c b/fs/namei.c
+index 0cab6494978c..0911837979f6 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3495,6 +3495,8 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
+ 		goto out2;
+ 	file->f_path.mnt = path.mnt;
+ 	error = finish_open(file, child, NULL);
++	if (!error)
++		ima_post_create_tmpfile(file);
+ out2:
+ 	mnt_drop_write(path.mnt);
+ out:
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index b5e16b8c50b7..2cd1577943ce 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -18,6 +18,7 @@ struct linux_binprm;
+ #ifdef CONFIG_IMA
+ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask);
++extern void ima_post_create_tmpfile(const struct file *file);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
+ extern int ima_load_data(enum kernel_load_data_id id);
+@@ -56,6 +57,11 @@ static inline int ima_file_check(struct file *file, int mask)
+ 	return 0;
+ }
+ 
++static inline void ima_post_create_tmpfile(const struct file *file)
++{
++	return 0;
++}
++
+ static inline void ima_file_free(struct file *file)
+ {
+ 	return;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index bd9bd5f88206..388458c8ec29 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -395,6 +395,34 @@ int ima_file_check(struct file *file, int mask)
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
+ /**
++ * ima_post_create_tmpfile - mark newly created tmpfile as new
++ * @file : newly created tmpfile
++ *
++ * No measuring, appraising or auditing of newly created tmpfiles is needed.
++ * Skip calling process_measurement(), but indicate which newly, created
++ * tmpfiles are in policy.
++ */
++void ima_post_create_tmpfile(const struct file *file)
++{
++	struct inode *inode = file_inode(file);
++	struct integrity_iint_cache *iint;
++	int must_appraise;
++
++	must_appraise = ima_must_appraise(inode, MAY_ACCESS, FILE_CHECK);
++	if (!must_appraise)
++		return;
++
++	/* Nothing to do if we can't allocate memory */
++	iint = integrity_inode_get(inode);
++	if (!iint)
++		return;
++
++	/* needed for writing the security xattrs */
++	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
++	iint->ima_file_status = INTEGRITY_PASS;
++}
++
++/**
+  * ima_post_path_mknod - mark as a new inode
+  * @dentry: newly created dentry
+  *
+@@ -411,9 +439,13 @@ void ima_post_path_mknod(struct dentry *dentry)
+ 	if (!must_appraise)
+ 		return;
+ 
++	/* Nothing to do if we can't allocate memory */
+ 	iint = integrity_inode_get(inode);
+-	if (iint)
+-		iint->flags |= IMA_NEW_FILE;
++	if (!iint)
++		return;
++
++	/* needed for re-opening empty files */
++	iint->flags |= IMA_NEW_FILE;
+ }
+ 
+ /**
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.5
+
