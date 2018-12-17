@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4455C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE303C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2D421849
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:25:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 810E721783
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388922AbeLQSZs (ORCPT
+        id S2388956AbeLQS02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:25:48 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57467 "EHLO
+        Mon, 17 Dec 2018 13:26:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48715 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeLQSZs (ORCPT
+        with ESMTP id S1727840AbeLQS0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:25:48 -0500
+        Mon, 17 Dec 2018 13:26:25 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHIPPAB2563375
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBHIQ14T2563437
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Dec 2018 10:25:25 -0800
+        Mon, 17 Dec 2018 10:26:01 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHIPOC72563372;
-        Mon, 17 Dec 2018 10:25:24 -0800
-Date:   Mon, 17 Dec 2018 10:25:24 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBHIQ1aP2563434;
+        Mon, 17 Dec 2018 10:26:01 -0800
+Date:   Mon, 17 Dec 2018 10:26:01 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-c38116bb940ae37f51fccd315b420ee5961dcb76@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, luto@kernel.org,
-        dave.hansen@linux.intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        peterz@infradead.org, riel@surriel.com, bp@alien8.de
-Reply-To: torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
-          mingo@kernel.org, luto@kernel.org, tglx@linutronix.de,
-          hpa@zytor.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, riel@surriel.com, bp@alien8.de
-In-Reply-To: <20181203171043.626999883@infradead.org>
-References: <20181203171043.626999883@infradead.org>
+Message-ID: <tip-3c567356dbe0da4fc310cfcffafc39526e1ca43a@git.kernel.org>
+Cc:     peterz@infradead.org, riel@surriel.com, mingo@kernel.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, hpa@zytor.com, bp@alien8.de,
+        linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, dave.hansen@linux.intel.com, riel@surriel.com,
+          peterz@infradead.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+          torvalds@linux-foundation.org, hpa@zytor.com, luto@kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <20181203171043.695039210@infradead.org>
+References: <20181203171043.695039210@infradead.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/cpa: Better use CLFLUSHOPT
-Git-Commit-ID: c38116bb940ae37f51fccd315b420ee5961dcb76
+Subject: [tip:x86/mm] x86/mm/cpa: Rename @addrinarray to @numpages
+Git-Commit-ID: 3c567356dbe0da4fc310cfcffafc39526e1ca43a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,22 +58,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c38116bb940ae37f51fccd315b420ee5961dcb76
-Gitweb:     https://git.kernel.org/tip/c38116bb940ae37f51fccd315b420ee5961dcb76
+Commit-ID:  3c567356dbe0da4fc310cfcffafc39526e1ca43a
+Gitweb:     https://git.kernel.org/tip/3c567356dbe0da4fc310cfcffafc39526e1ca43a
 Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 3 Dec 2018 18:03:52 +0100
+AuthorDate: Mon, 3 Dec 2018 18:03:53 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Dec 2018 18:54:29 +0100
+CommitDate: Mon, 17 Dec 2018 18:54:30 +0100
 
-x86/mm/cpa: Better use CLFLUSHOPT
+x86/mm/cpa: Rename @addrinarray to @numpages
 
-Currently we issue an MFENCE before and after flushing a range. This
-means that if we flush a bunch of single page ranges -- like with the
-cpa array, we issue a whole bunch of superfluous MFENCEs.
+The CPA_ARRAY interface works in single pages, and everything, except
+in these 'few' locations is this variable called 'numpages'.
 
-Reorgainze the code a little to avoid this.
-
-[ mingo: capitalize instructions, tweak changelog and comments. ]
+Remove this 'addrinarray' abberation and use 'numpages' consistently.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -86,74 +83,177 @@ Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tom.StDenis@amd.com
 Cc: dave.hansen@intel.com
-Link: http://lkml.kernel.org/r/20181203171043.626999883@infradead.org
+Link: http://lkml.kernel.org/r/20181203171043.695039210@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pageattr.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ arch/x86/mm/pageattr.c | 52 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
 
 diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 85ef53b86fa0..7d05149995dc 100644
+index 7d05149995dc..df4340c8e293 100644
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -251,15 +251,7 @@ static unsigned long __cpa_addr(struct cpa_data *cpa, unsigned long idx)
-  * Flushing functions
-  */
+@@ -1808,14 +1808,14 @@ out_err:
+ }
+ EXPORT_SYMBOL(set_memory_uc);
  
--/**
-- * clflush_cache_range - flush a cache range with clflush
-- * @vaddr:	virtual start address
-- * @size:	number of bytes to flush
-- *
-- * clflushopt is an unordered instruction which needs fencing with mfence or
-- * sfence to avoid ordering issues.
-- */
--void clflush_cache_range(void *vaddr, unsigned int size)
-+static void clflush_cache_range_opt(void *vaddr, unsigned int size)
+-static int _set_memory_array(unsigned long *addr, int addrinarray,
++static int _set_memory_array(unsigned long *addr, int numpages,
+ 		enum page_cache_mode new_type)
  {
- 	const unsigned long clflush_size = boot_cpu_data.x86_clflush_size;
- 	void *p = (void *)((unsigned long)vaddr & ~(clflush_size - 1));
-@@ -268,11 +260,22 @@ void clflush_cache_range(void *vaddr, unsigned int size)
- 	if (p >= vend)
- 		return;
+ 	enum page_cache_mode set_type;
+ 	int i, j;
+ 	int ret;
  
--	mb();
--
- 	for (; p < vend; p += clflush_size)
- 		clflushopt(p);
-+}
+-	for (i = 0; i < addrinarray; i++) {
++	for (i = 0; i < numpages; i++) {
+ 		ret = reserve_memtype(__pa(addr[i]), __pa(addr[i]) + PAGE_SIZE,
+ 					new_type, NULL);
+ 		if (ret)
+@@ -1826,11 +1826,11 @@ static int _set_memory_array(unsigned long *addr, int addrinarray,
+ 	set_type = (new_type == _PAGE_CACHE_MODE_WC) ?
+ 				_PAGE_CACHE_MODE_UC_MINUS : new_type;
  
-+/**
-+ * clflush_cache_range - flush a cache range with clflush
-+ * @vaddr:	virtual start address
-+ * @size:	number of bytes to flush
-+ *
-+ * CLFLUSHOPT is an unordered instruction which needs fencing with MFENCE or
-+ * SFENCE to avoid ordering issues.
-+ */
-+void clflush_cache_range(void *vaddr, unsigned int size)
-+{
-+	mb();
-+	clflush_cache_range_opt(vaddr, size);
- 	mb();
- }
- EXPORT_SYMBOL_GPL(clflush_cache_range);
-@@ -333,6 +336,7 @@ static void cpa_flush(struct cpa_data *data, int cache)
- 	if (!cache)
- 		return;
+-	ret = change_page_attr_set(addr, addrinarray,
++	ret = change_page_attr_set(addr, numpages,
+ 				   cachemode2pgprot(set_type), 1);
  
-+	mb();
- 	for (i = 0; i < cpa->numpages; i++) {
- 		unsigned long addr = __cpa_addr(cpa, i);
- 		unsigned int level;
-@@ -343,8 +347,9 @@ static void cpa_flush(struct cpa_data *data, int cache)
- 		 * Only flush present addresses:
- 		 */
- 		if (pte && (pte_val(*pte) & _PAGE_PRESENT))
--			clflush_cache_range((void *)addr, PAGE_SIZE);
-+			clflush_cache_range_opt((void *)addr, PAGE_SIZE);
- 	}
-+	mb();
+ 	if (!ret && new_type == _PAGE_CACHE_MODE_WC)
+-		ret = change_page_attr_set_clr(addr, addrinarray,
++		ret = change_page_attr_set_clr(addr, numpages,
+ 					       cachemode2pgprot(
+ 						_PAGE_CACHE_MODE_WC),
+ 					       __pgprot(_PAGE_CACHE_MASK),
+@@ -1847,21 +1847,21 @@ out_free:
+ 	return ret;
  }
  
- static bool overlaps(unsigned long r1_start, unsigned long r1_end,
+-int set_memory_array_uc(unsigned long *addr, int addrinarray)
++int set_memory_array_uc(unsigned long *addr, int numpages)
+ {
+-	return _set_memory_array(addr, addrinarray, _PAGE_CACHE_MODE_UC_MINUS);
++	return _set_memory_array(addr, numpages, _PAGE_CACHE_MODE_UC_MINUS);
+ }
+ EXPORT_SYMBOL(set_memory_array_uc);
+ 
+-int set_memory_array_wc(unsigned long *addr, int addrinarray)
++int set_memory_array_wc(unsigned long *addr, int numpages)
+ {
+-	return _set_memory_array(addr, addrinarray, _PAGE_CACHE_MODE_WC);
++	return _set_memory_array(addr, numpages, _PAGE_CACHE_MODE_WC);
+ }
+ EXPORT_SYMBOL(set_memory_array_wc);
+ 
+-int set_memory_array_wt(unsigned long *addr, int addrinarray)
++int set_memory_array_wt(unsigned long *addr, int numpages)
+ {
+-	return _set_memory_array(addr, addrinarray, _PAGE_CACHE_MODE_WT);
++	return _set_memory_array(addr, numpages, _PAGE_CACHE_MODE_WT);
+ }
+ EXPORT_SYMBOL_GPL(set_memory_array_wt);
+ 
+@@ -1941,18 +1941,18 @@ int set_memory_wb(unsigned long addr, int numpages)
+ }
+ EXPORT_SYMBOL(set_memory_wb);
+ 
+-int set_memory_array_wb(unsigned long *addr, int addrinarray)
++int set_memory_array_wb(unsigned long *addr, int numpages)
+ {
+ 	int i;
+ 	int ret;
+ 
+ 	/* WB cache mode is hard wired to all cache attribute bits being 0 */
+-	ret = change_page_attr_clear(addr, addrinarray,
++	ret = change_page_attr_clear(addr, numpages,
+ 				      __pgprot(_PAGE_CACHE_MASK), 1);
+ 	if (ret)
+ 		return ret;
+ 
+-	for (i = 0; i < addrinarray; i++)
++	for (i = 0; i < numpages; i++)
+ 		free_memtype(__pa(addr[i]), __pa(addr[i]) + PAGE_SIZE);
+ 
+ 	return 0;
+@@ -2082,7 +2082,7 @@ int set_pages_uc(struct page *page, int numpages)
+ }
+ EXPORT_SYMBOL(set_pages_uc);
+ 
+-static int _set_pages_array(struct page **pages, int addrinarray,
++static int _set_pages_array(struct page **pages, int numpages,
+ 		enum page_cache_mode new_type)
+ {
+ 	unsigned long start;
+@@ -2092,7 +2092,7 @@ static int _set_pages_array(struct page **pages, int addrinarray,
+ 	int free_idx;
+ 	int ret;
+ 
+-	for (i = 0; i < addrinarray; i++) {
++	for (i = 0; i < numpages; i++) {
+ 		if (PageHighMem(pages[i]))
+ 			continue;
+ 		start = page_to_pfn(pages[i]) << PAGE_SHIFT;
+@@ -2105,10 +2105,10 @@ static int _set_pages_array(struct page **pages, int addrinarray,
+ 	set_type = (new_type == _PAGE_CACHE_MODE_WC) ?
+ 				_PAGE_CACHE_MODE_UC_MINUS : new_type;
+ 
+-	ret = cpa_set_pages_array(pages, addrinarray,
++	ret = cpa_set_pages_array(pages, numpages,
+ 				  cachemode2pgprot(set_type));
+ 	if (!ret && new_type == _PAGE_CACHE_MODE_WC)
+-		ret = change_page_attr_set_clr(NULL, addrinarray,
++		ret = change_page_attr_set_clr(NULL, numpages,
+ 					       cachemode2pgprot(
+ 						_PAGE_CACHE_MODE_WC),
+ 					       __pgprot(_PAGE_CACHE_MASK),
+@@ -2128,21 +2128,21 @@ err_out:
+ 	return -EINVAL;
+ }
+ 
+-int set_pages_array_uc(struct page **pages, int addrinarray)
++int set_pages_array_uc(struct page **pages, int numpages)
+ {
+-	return _set_pages_array(pages, addrinarray, _PAGE_CACHE_MODE_UC_MINUS);
++	return _set_pages_array(pages, numpages, _PAGE_CACHE_MODE_UC_MINUS);
+ }
+ EXPORT_SYMBOL(set_pages_array_uc);
+ 
+-int set_pages_array_wc(struct page **pages, int addrinarray)
++int set_pages_array_wc(struct page **pages, int numpages)
+ {
+-	return _set_pages_array(pages, addrinarray, _PAGE_CACHE_MODE_WC);
++	return _set_pages_array(pages, numpages, _PAGE_CACHE_MODE_WC);
+ }
+ EXPORT_SYMBOL(set_pages_array_wc);
+ 
+-int set_pages_array_wt(struct page **pages, int addrinarray)
++int set_pages_array_wt(struct page **pages, int numpages)
+ {
+-	return _set_pages_array(pages, addrinarray, _PAGE_CACHE_MODE_WT);
++	return _set_pages_array(pages, numpages, _PAGE_CACHE_MODE_WT);
+ }
+ EXPORT_SYMBOL_GPL(set_pages_array_wt);
+ 
+@@ -2154,7 +2154,7 @@ int set_pages_wb(struct page *page, int numpages)
+ }
+ EXPORT_SYMBOL(set_pages_wb);
+ 
+-int set_pages_array_wb(struct page **pages, int addrinarray)
++int set_pages_array_wb(struct page **pages, int numpages)
+ {
+ 	int retval;
+ 	unsigned long start;
+@@ -2162,12 +2162,12 @@ int set_pages_array_wb(struct page **pages, int addrinarray)
+ 	int i;
+ 
+ 	/* WB cache mode is hard wired to all cache attribute bits being 0 */
+-	retval = cpa_clear_pages_array(pages, addrinarray,
++	retval = cpa_clear_pages_array(pages, numpages,
+ 			__pgprot(_PAGE_CACHE_MASK));
+ 	if (retval)
+ 		return retval;
+ 
+-	for (i = 0; i < addrinarray; i++) {
++	for (i = 0; i < numpages; i++) {
+ 		if (PageHighMem(pages[i]))
+ 			continue;
+ 		start = page_to_pfn(pages[i]) << PAGE_SHIFT;
