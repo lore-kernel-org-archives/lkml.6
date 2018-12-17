@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14960C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AF8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D935F20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2958920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:08:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f4yzHeMV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XWpLFfM4"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VXtg/xPy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yvh08xPz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732331AbeLQKI1 (ORCPT
+        id S1732352AbeLQKIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:08:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35544 "EHLO
+        Mon, 17 Dec 2018 05:08:32 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35640 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732281AbeLQKI0 (ORCPT
+        with ESMTP id S1732281AbeLQKIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:08:26 -0500
+        Mon, 17 Dec 2018 05:08:31 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 11749608D2; Mon, 17 Dec 2018 10:08:20 +0000 (UTC)
+        id C9B8D602FA; Mon, 17 Dec 2018 10:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545041305;
-        bh=TsVA5WibB5CFfJrB2Rl0xy2bQO623ROMD6HUw5kTpo4=;
+        s=default; t=1545041310;
+        bh=KE7PYNefk9N6+yjB6233SbInKxGLIlikXtbtg1jYK3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f4yzHeMV0Mx1WJHQOs2MQLDHn4W3RWHjMjgIMmKGOkdy03AnesweL8HmKiVRsqPMU
-         4Uk75J7aNTCYWDI52IJo87svy7JI8LBI4F6+zsfatjpYF8J53DjSMDxYtsgFB+c+tl
-         T4tv5+rd1zF+EbMA5anJ88RCY+6zByvw9MK7Wd2I=
+        b=VXtg/xPybcTF0uS+OhyMbBqQ0ix5TUAH1P7TtYdK5G/uhlcw6q/NRp2dEg3J2euol
+         XGgfwuiYchXPv3NJcdqwPrIvmNH6XCiw+3LhPQ5cFovAipw8cwRBLAaumTuAsSWWvj
+         TLAAU/CstIWV1AGvgwW4iAayQEkbf+IcUomvtIF4=
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 586586092B;
-        Mon, 17 Dec 2018 10:08:14 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F5D3608C5;
+        Mon, 17 Dec 2018 10:08:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545041299;
-        bh=TsVA5WibB5CFfJrB2Rl0xy2bQO623ROMD6HUw5kTpo4=;
+        s=default; t=1545041306;
+        bh=KE7PYNefk9N6+yjB6233SbInKxGLIlikXtbtg1jYK3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XWpLFfM4/KFEiMCNy6UK4QVWJOB8JyUuKCxMkCCQfdX3QDxn5KooBHyMCHgAFYN9E
-         Wn3M63ralA/0Xyl6ytXHT6y8jWnw8Fh3oai+usmTldtTe9Xv0wPrr5W3kl3riAZbcl
-         4EMq//fJ09aif9MmFlLc9/ZPYXON03gkCGCfX6eM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 586586092B
+        b=Yvh08xPzCUBo2Vgx9TpMMrXXT6tCcuDOsGDiH74n8XZvpTuCugPs6ZQuJrJa1z5c9
+         vlUF1OGSWiaXe05B+iGCyJPMv21jPmPDtxYzTR1E3bGzahfVQZHtMAAb4QVsoT47Xi
+         F+BlACu4T3mF4OaHlegx9TysSTvTk4DjRYaiMJO4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F5D3608C5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -59,9 +59,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
         evgreen@chromium.org, briannorris@chromium.org,
         Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 6/7] arm64: dts: qcom: sdm845: Add power-domain for Q6V5 MSS node
-Date:   Mon, 17 Dec 2018 15:37:23 +0530
-Message-Id: <20181217100724.4593-6-sibis@codeaurora.org>
+Subject: [PATCH v2 7/7] arm64: dts: qcom: sdm845: Add shutdown-ack for Q6V5 MSS node
+Date:   Mon, 17 Dec 2018 15:37:24 +0530
+Message-Id: <20181217100724.4593-7-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181217100724.4593-1-sibis@codeaurora.org>
 References: <20181217100724.4593-1-sibis@codeaurora.org>
@@ -72,36 +72,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add power-domains cx, mx, mss and load_state for Q6V5 MSS node.
+Add shutdown-ack smp2p interrupt for Q6V5 MSS node.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
 
-This patch depends on the following bindings:
-https://patchwork.kernel.org/patch/10725801/ - rpmhpd dt bindings
-https://patchwork.kernel.org/patch/10725793/ - rpmhpd dt node
-https://patchwork.kernel.org/patch/10678301/ - AOP QMP dt bindings
+This patch depends on:
+https://patchwork.kernel.org/patch/10691213/ - shutdown-ack dt bindings
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 33ff8668828f..56f5f55db9e2 100644
+index 56f5f55db9e2..db17216a5bce 100644
 --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1401,6 +1401,12 @@
- 			qcom,halt-regs = <&tcsr_mutex_regs
- 						0x23000 0x25000 0x24000>;
+@@ -1376,9 +1376,11 @@
+ 				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+ 				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+ 				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+-				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+ 			interrupt-names = "wdog", "fatal", "ready",
+-					  "handover", "stop-ack";
++					  "handover", "stop-ack",
++					  "shutdown-ack";
  
-+			power-domains = <&aoss_qmp_pd AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "load_state", "cx", "mx", "mss";
-+
- 			mba {
- 				memory-region = <&mba_region>;
- 			};
+ 			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
+ 				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
