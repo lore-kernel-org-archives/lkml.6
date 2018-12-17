@@ -2,113 +2,124 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2936C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4F9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B914B21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YTGzxmWJ"
+	by mail.kernel.org (Postfix) with ESMTP id 0B72620578
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545073640;
+	bh=aE86JEauYOPNVF2BTjvbhZ4ivG8vE7/EX6BTQ77GVy4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=Ws/vQ2PWCxdHywx4rzeXsThXYaK5b8Br80uiLKlm3MwmYhP5EWKo7R/yrWYAMq0qH
+	 zZmyWW1bRgJQYXwmphdypqXIt2trVr2bgkH4DAnej70yHGpQt5moxH6DH8+DEPenUC
+	 23RXKgZPGwSLqDGcyoMlvyV5NtHTTXG4zxGaI9uE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733289AbeLQTHI (ORCPT
+        id S2387478AbeLQTHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:07:08 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43279 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732616AbeLQTHI (ORCPT
+        Mon, 17 Dec 2018 14:07:18 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53752 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732616AbeLQTHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:07:08 -0500
-Received: by mail-lj1-f194.google.com with SMTP id q2-v6so854425lji.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:07:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rEnf8BOxdkJJxo/cVEOROCN53dFtvimEQANJp2zz15A=;
-        b=YTGzxmWJelPouStvH0lOFN7Qv0mH+zJVkzq7seT513lbBKjpP6tjTV42mIPVzsCRMt
-         zteT9wyT4pU2QAobTw7Htkh0tjPied3KeaC1SJhxVREzv7gjxCcu0iE1LfdlgdsLEE4t
-         B41cJn5qGz7eIa7fpTKYBGoGEG6tCoIjE9lNc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rEnf8BOxdkJJxo/cVEOROCN53dFtvimEQANJp2zz15A=;
-        b=AUh6XCrLp/JtkswmL0sS2loK+Onov+PjzxJFBxUDjGRLM+t6m06zwZYv0ZXxmX7lM4
-         7qNNN75QLFZRyT1WfGL9L6MqV/N4Dd992VWx91cQ7JjuXJwgN4kCMzAKTMWuUH7kxryQ
-         P8ySzjZpsFPFhzao5ot2aRGrq6pOV9YsaomCR/k6llgKv5X1QXIWSWFdVJJ1nv6e/Si/
-         S62aG7Gt6EC1uVKYYGvtjZ8J8ZcOQGRIdwQt1AIMWCjhaxER+m7WbKWOXfh6MKNEDgsK
-         g/gomTlpR8V2Z6YhMDlNjvVbwaC2nrGAJb7hc8svDQ95IYbtXP3jkIqnN/cXi9AjF6YL
-         rcPA==
-X-Gm-Message-State: AA+aEWZYoFFquWnZpA2J9VYFxoVX3PZP5atTlJmfzGagRiLhC9PBei51
-        j+Zd4jy9f2naPxDvdnaUdCDr+HHVPUw=
-X-Google-Smtp-Source: AFSGD/UpzewYjQRuIoJgHipUq7iDwee6Oe71mmsdfv8RxbrUYbYpZKdy709w2grij49sZS+7KVjibg==
-X-Received: by 2002:a2e:841:: with SMTP id g1-v6mr9055367ljd.21.1545073624973;
-        Mon, 17 Dec 2018 11:07:04 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm2718209ljb.35.2018.12.17.11.07.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 11:07:03 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id u18so10291429lff.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:07:03 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr7620540lff.16.1545073623201;
- Mon, 17 Dec 2018 11:07:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128232019.GC131170@gmail.com> <20181217181244.220052-1-ebiggers@kernel.org>
- <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com> <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Dec 2018 11:06:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjsMJeEkJbE3QhM3SY-DT9VsnMWNQKMNsG9TetnjREWDQ@mail.gmail.com>
-Message-ID: <CAHk-=wjsMJeEkJbE3QhM3SY-DT9VsnMWNQKMNsG9TetnjREWDQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
-To:     ebiggers@kernel.org, James Morris James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Dec 2018 14:07:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=yYs/JPZ9IxclGWbNgS82oo799wAoJN15hkxfiE1jYuM=; b=MJ3pXcRHmkyR
+        Z1HF/ISb0Zq05QFUrwqtKE0UH/PRS0MfSqZsedJggISXYgn0HQ8Mw4j+LWKatp/RnO3mjqW+ppzwz
+        boLNRYt9JE+gRlUSlGB1hXMEyC+jaP+C/voYc6jnlgNfazwH+Px/zmKG2rRwctrYjGMBLwX4KhSeM
+        rOECo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gYyEV-0003F4-O9; Mon, 17 Dec 2018 19:07:15 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 50B8F112593C; Mon, 17 Dec 2018 19:07:15 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE" to the regmap tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20181217190715.50B8F112593C@debutante.sirena.org.uk>
+Date:   Mon, 17 Dec 2018 19:07:15 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 10:49 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So the *simplest* fix would seem to be to literally remove all those
-> "= -1" for the Opt_err initialization.  Making the code smaller,
-> simpler, and fixing the bug in the process.
+The patch
 
-Something like this
+   regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE
 
-    git  grep -l 'Opt_err = -1' | xargs sed -i 's/Opt_err = -1/Opt_err/'
+has been applied to the regmap tree at
 
-would do it, but I also notice that
-security/integrity/ima/ima_policy.c then has some truly funky code
-that plays around with the enum numbers , ie
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
 
-  #define pt(token)     policy_tokens[token + Opt_err].pattern
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-which actually depends on the ordering of policy_tokens[], and depends
-on the exact values, ie it literally (and quite insanely) sets Opt_err
-to -1, and then Opt_measure to 1, and leaves 0 unused. That code
-seriously makes no sense at all, and is fundamentally broken.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-It would be better to use
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-    #define pt(token)     policy_tokens[token - Opt_measure].pattern
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-instead, but even then you should have a huge comment about how the
-policy_tokens[] array absolutely has to be properly ordered.
+Thanks,
+Mark
 
-Honestly, for being about "security", all of this code seems to be
-doing some really questionable things with all those Opt_xyz enums.
+From 580d48573c43211fe51f411d484dbb693cc93f7c Mon Sep 17 00:00:00 2001
+From: Yangtao Li <tiny.windzz@gmail.com>
+Date: Sat, 15 Dec 2018 03:41:19 -0500
+Subject: [PATCH] regmap: debugfs: convert to DEFINE_SHOW_ATTRIBUTE
 
-                     Linus
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regmap-debugfs.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index 87b562e49a43..19eb454f26c3 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -435,17 +435,7 @@ static int regmap_access_show(struct seq_file *s, void *ignored)
+ 	return 0;
+ }
+ 
+-static int access_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, regmap_access_show, inode->i_private);
+-}
+-
+-static const struct file_operations regmap_access_fops = {
+-	.open		= access_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(regmap_access);
+ 
+ static ssize_t regmap_cache_only_write_file(struct file *file,
+ 					    const char __user *user_buf,
+-- 
+2.19.0.rc2
+
