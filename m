@@ -2,327 +2,100 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AF9C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B820C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE4620645
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:25:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="FejgNDiF"
+	by mail.kernel.org (Postfix) with ESMTP id 5AB3820645
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545049554;
+	bh=pH3CTfHYeTJZLO/EUISP3PD7oYboE1PBQjw/F9qlMsg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gZlImOzZEoRpTA7dLBLCUltJN/L6iFXB9Swn4tO9wcKtZeE+RNDLZWZuA47Ru0fp7
+	 FJCqd4hWF2eT5uo/giL7i1RxX689K30oh8VCsdB634lUvPBbdMVikqsqIvtaTyAdA0
+	 x20tPMn5XZYTY+z2xFEZP5v6nBqwqEv3eDNSG24g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732041AbeLQMZi (ORCPT
+        id S1732161AbeLQMZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 07:25:38 -0500
-Received: from mail-eopbgr810071.outbound.protection.outlook.com ([40.107.81.71]:51424
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726938AbeLQMZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 07:25:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DdRQfoIDXiInfjwnXJJa5Ls0fzDkePleJuZBaXEQuZc=;
- b=FejgNDiFa+Ar54z6YY2okqm/lNHRUlbdZnO3p6/pYXhJKs+zwoY4QbYB2f1ML4te90amMH0hU+qrgGKucDnYIJLVScVD0CQcFGXMCuVphv/lw8yfrxYPjtbynGt42zEQyh7PMe2nULdvOCoPwnCbbADCDerfBtJk2nH+K8DB2n8=
-Received: from BN3PR03CA0111.namprd03.prod.outlook.com (2603:10b6:400:4::29)
- by SN6PR03MB3727.namprd03.prod.outlook.com (2603:10b6:805:43::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.20; Mon, 17 Dec
- 2018 12:25:30 +0000
-Received: from BY2FFO11FD028.protection.gbl (2a01:111:f400:7c0c::109) by
- BN3PR03CA0111.outlook.office365.com (2603:10b6:400:4::29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1425.19 via Frontend Transport; Mon, 17 Dec 2018 12:25:30 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- BY2FFO11FD028.mail.protection.outlook.com (10.1.15.217) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1446.11
- via Frontend Transport; Mon, 17 Dec 2018 12:25:29 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id wBHCPSef016650
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Mon, 17 Dec 2018 04:25:28 -0800
-Received: from linux.analog.com (10.50.1.118) by NWD2HUBCAS7.ad.analog.com
- (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
- 07:25:28 -0500
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     Stefan Popa <stefan.popa@analog.com>,
-        <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>
-Subject: [PATCH v2 4/6] staging: iio: adc: ad7606: Misc style fixes (no functional change)
-Date:   Mon, 17 Dec 2018 14:23:38 +0200
-Message-ID: <1545049420-16484-5-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545049420-16484-1-git-send-email-stefan.popa@analog.com>
-References: <1545049420-16484-1-git-send-email-stefan.popa@analog.com>
+        Mon, 17 Dec 2018 07:25:53 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57648 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726938AbeLQMZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 07:25:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3WFdU4qSO6Hgi+thGtI+oxboQAbbMHRKvsF3TNofctA=; b=lDrxR5HutxsJqK5B7E0mVqIFi
+        nEeW/s+Xi+x1M/CDkHAl7hu5ZoZgGfR8j9PzN1VvjYeLqx8AFZHby/E/BjFAHhjPFZvX2M+zgUeGV
+        aNvFDzR8VakeVGFWdatFs34knh/Fl904QzTYDqpKsooKDop9Lh7TrV1sGDsINAqNgjwuE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gYry3-0002Hv-9T; Mon, 17 Dec 2018 12:25:51 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id F3C48112593B; Mon, 17 Dec 2018 12:25:50 +0000 (GMT)
+Date:   Mon, 17 Dec 2018 12:25:50 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     lgirdwood@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: convert to DEFINE_SHOW_ATTRIBUTE
+Message-ID: <20181217122550.GD13868@sirena.org.uk>
+References: <20181215082148.26511-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(2980300002)(3190300001)(199004)(189003)(575784001)(4326008)(53416004)(110136005)(16586007)(6666004)(356004)(106002)(54906003)(48376002)(50466002)(426003)(316002)(336012)(7636002)(77096007)(26005)(246002)(76176011)(47776003)(51416003)(7696005)(106466001)(36756003)(8936002)(186003)(8676002)(2906002)(50226002)(2616005)(5660300001)(476003)(116002)(126002)(7416002)(72206003)(11346002)(14444005)(486006)(446003)(305945005)(478600001)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3727;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD028;1:E4lmmK8HsT2MRFsnFsIsMOx1PWk/uNAogMwKOx6fFlMQIMdEWlxk/uye4cobp0vHzrHqHMxuYIKhF5f3VzdytUH3eEdOIkGgxSWd5lXYTItG3l8rPKFU0NnxkDfDuo58
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6917a64d-c467-4a7f-b771-08d6641abb95
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR03MB3727;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3727;3:p1AyKxIPXZ3mmO+cMcw9a8i4aKzJBwEQoxdSUTYYx33O5VYIvvSycPeUqDKQ9rUyqjKTt5oHtMRoc3iMtilPqpipAqCtsx43LUb9TiBXVnbP0QCy4iQtqnKlj2ZjjfJmsAimfnb5LvBCIcg5VKPWhPur7/+Gr2feEw88EW0jpQK1OUnkbdijqFe0yG+DGSeQR0ArUNZZI+Za1OsjSQyZPLoE+VcrW3v+c3g+hI3DLZYZy2DEQHswlYT4v7zuhFOPTIKFwTDT7mofSOv/6aWVngTIieIuRsI1nxUUy0a3C4CKoJnIfIbSyn2fXMextAQ9ErLWQg+APqCnJYkAm8S1bQJnFFrQ/FFAHzjpD7VEQ8c=;25:DhxMGy/9wwaqWUHB8C9anqaQaV3Q68aueecV+czNSmgG1PQXmcQClvm9pZ8BTohbsT7WMkHgJmH7hYsxZyBgD6tZAHxQ0SvLqliPpKwilPEkLciqAOwoBCfzBXxQv2Z9a1JeNP+VD5UY/zytnC5JKHYVrBQYKbUhs6t7RvkUZMQlnGixdsC3kRhsEwKBO/n7zYUAgHDiZ3DyV6Wd6eYkXDCuET4UiL7oj2Z6FdaW0bMf4gQq/pD9GNktnZDMMS1LTaoIsoNn7vo7QqajcOjI8H8lirTyEhXlxn345psmpr/7VddelJ/rEuFKRLkixNpE0hfmAudc6rZGsgIDT6ViEg==
-X-MS-TrafficTypeDiagnostic: SN6PR03MB3727:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3727;31:ddQ1Zp3v0fcp0KG7qq4IpuqtJzgW2+UujWmAEdQZ2+w/XJ5qEpdAy+t95EoR2HFFvnTBZcUA7IIK3OlmX/d4OvTe525QwDyryDruyPRr6VgjIuIxwU1zIWJfWSJW8ynufzwidXlhIEgnT3ey3qqXya5Q/aS+XrbYBIUwunIxrZzcrl93psDsKFmMXGQK7gkCl9zb+qUrnz81sijJ1FLkWnEEMA4i27xrFe7O65/kxbY=;20:cnWeusOcphZhaxUcJzpGyPYrQH48o9bilG6E/2GYZ73bIUP1xzIhwoZRONOEu+DfzqgkzCdG8cvZR5O9pWj6/CxOK9Hud6IiSojsVK4U+0sloFD8rLcmUF524hWKTnHV9R22JNo+/rHzkLWqPxf+DB/7yZIPHZTEWghLpE3STDOYLsM6aA9lOvQY2ih6uDu1AWZEcjaj/yfcZq0aVsly4H3KvIg/qKayq5a6pB51h2CORRyusBcryue1iLa9G5EMYBbsKPADsrpE0TVW3qcl/t6ooY880xnRqvV68ERhB5kJ06vOLTmrNg+kqx2At867KbDELCNmFL5cj1z4fT/+ZRv5OXCSd7Wqzparj1yfm4QZhkbvBiErHNGBcvJBbXjUq8LyOEblnpCMxTE5tiwGuzGqtvgx7TUA7iGCSCH77DaRLzIJxV/pUXc59yyKJcRaqlKWcx8Nlq7q9FFJ4qZXw6aMVX7VZAkPHzQ4peqnvtClqLahVCQ2762+iNJmkiZA
-X-Microsoft-Antispam-PRVS: <SN6PR03MB3727D68E8CF07D097C991D8E9DBC0@SN6PR03MB3727.namprd03.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3002001)(3231475)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN6PR03MB3727;BCL:0;PCL:0;RULEID:;SRVR:SN6PR03MB3727;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3727;4:dpcm/9wRXCo+4eqSwJ59GFJWKnLPkbiYaKeaIq7fDgVI83vce7hMyaJ2Y+dS5XwFZZfqRAem9gkUV30ObtND34KW1iDrlcsnoV2RxPvV5lz8z1mFqjlUcrzgSnkXckXCRM0GA9wcvpRJ2SsCbaRSRy7Xi6QDV3DcP2WggBpuJfbxl0ZiAxWPZcShdrqbirmyPx0TocHvBc7IQrL/svPPjom1+wZWYT5VB/o4nQ0kjONEFshQ2xufMuhbfu3Kfxwj8ftqu5DY768HmUWzB5U17w==
-X-Forefront-PRVS: 08897B549D
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR03MB3727;23:CMsfBHo3RCIxlj8b/Ez75yYlONJT3Bxs9UKLiWlxs?=
- =?us-ascii?Q?tvMCVPkNlwaJb9Huw1OFGme26hOsKkwNTP1kW42MzgD+yFSbE2JEnS2cYzRJ?=
- =?us-ascii?Q?Npc+VYt0KPcNlVapQ/KK0+BY1WoE3Mq9A6YZkOfokLiJ7v6nIBgsyx8gnwja?=
- =?us-ascii?Q?z5HGCbWgxaVJ0l1HNnmdLJSm+CBVjXEtnHLzYq1ZeBis8z56PkCXF6sgir/U?=
- =?us-ascii?Q?kr62Ldj666yKey8sK1PTqBDFmUjSw1o7OesMqajdvWCdooP8WYw9IpbuRS86?=
- =?us-ascii?Q?jy+Cfvw4qWykq1DTp/y7ux8KCdgjtNOIYXgHlYwbszMx7CREBljp16yqd/K3?=
- =?us-ascii?Q?PM2EsNa12vU5+E/yzdxUaPrle5Q98Dv6qfvUYIrONLG3h2LLBjTNHb9nDV08?=
- =?us-ascii?Q?ja3OLpMF9GwMn9bx/WEo4/FprjKb5n+veNC2kHfRqk+B9kNx4B2YQRzOlkcX?=
- =?us-ascii?Q?46NqQVDetzUye1PK2ZjhYowBjMKlocnSK1YLc9PQgbBTAjTfIWeoKxkiEZMl?=
- =?us-ascii?Q?kqe8W8mXyzpby5he6e/Be2Tssvczag77iF/16NgovIVk9Qhy52QB6ScYYLn3?=
- =?us-ascii?Q?t/dWx6oHxSVmDV3DWNgHihqJ/wYgjCXGLx0xm0lT4XeCHOjjOQidGlgfB9wy?=
- =?us-ascii?Q?3Yjy48z13jfiTi54Dk5r0/dgkt9KWGUvcbxpISukrTgCs7TKd+eecW+wuQqS?=
- =?us-ascii?Q?62FYbzdyU1HP/yMMNQra5v+5nnRubWn7Rou5hux5si2e2ub0cLRUEzf2Ji+j?=
- =?us-ascii?Q?naxDpoUlDmqAIJWOzYH/AbysqM6X9TghSw9f5WR9USH5r9OFBHEhwjwmJoHH?=
- =?us-ascii?Q?+aYQjzpiC45F3lJMNNy2txeqqtZVY8uZ1p4nC49af1ky2LlSGRgrYFuKhUTp?=
- =?us-ascii?Q?KN4V97ISsqFXB2V+/xfAE4VHSw8mnYnWiPkNSjBkBLw3ja43OeUwxPb/tSO5?=
- =?us-ascii?Q?1gTOuyjhxckmqVhH+ue5jUPMrTkbflrA5toL+9n9yVQs4tb/9ev8oqRXRgdk?=
- =?us-ascii?Q?VzwWXeedmZPr78Uybv7qxI3NfyUHwTo5WVxuI0wtsEX4q2MK18AZ2ReIM1gC?=
- =?us-ascii?Q?NfRuGKAWzQWfQko5Uex4VhEkGXlHN8wg1kK/2OYW5DLQFi6V0vZDkE3EhFNl?=
- =?us-ascii?Q?IUcJtt+9xWxHplGkUVI/XuX6EYCZTvz?=
-X-Microsoft-Antispam-Message-Info: z8frv8yVHXr8/X+2eaorapnEfeJA4DYFWRc9JkpaxUSGKiOodj9EyuU1DdHoPYoiQNjxDkjzaeYySLLkB1Q1zpp8NAto9N3dB0d5OGnmssu78jHZoI2sBQ6Z3WdBqbyZpw3kBO09gRPk3Cc5CEyJbTMFY1nSwEZ1BTep1bYmDFLFHjkjEVtqbrOFL8m/EtFQNxBOMreylx8bghrySZRu9tjV3hN+VnDKZpsQTKmyNNSiHXugnn1ydrcFcjAcpI3y2k+nPlCB2wRHK1gsZ+pqF/ItBfJa5elPH75ep9xkMg7r6uNIWKYzR6gZyTP1hH1k
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3727;6:1VZxtaXtrChDnAi+WCEt1kncGK0pY0OCkDlDojRdvRJcFTdREFv0PiRs5NOa5NaG14u/YiaRLBS4GDPREbRYyWHISwYDL8jlFnJzotE3FyXtAvsrGIy5GVIFvXf8A3ZaH5uhqNwwM7MDq3MD3h6woYvD/+pm9xB9QBwi0PNVme3rXCIyMg+9Cqnp4/CgUKYDjJetwsxzMA+LAkFPXtSJlrkxVr71rUvrx5qwM6oTfeQyZCHuViZgXrIx0eVKiDy34wARR0YLkkNE5JwvKm4yBeB8wNXeVn8gSEi68d5qNvOogMyRC8/xchTSRplmZnh0FG9C2BtJcFz+rXKsh7qPr47yEtUt9cVJ1dNX7axduG2S2+hmLXZQLHt/1/VIpJ7l5sYjDLSoKoKZXb9CnSjxqtmvx6x0kKlsnB/tNiD+9/Fp+DNJKKNEg+zzVMARmJ4cj9frAydsD0Rn/NezlCOK4g==;5:15IbjKAGbk/JacbnSJCdqcH5DUvnQjOXOy6C8gp4r++MtiuV/3q72FpraB+1QBJNAfNqVl/9tamLYh+lX4TGqEvnRpqfnekrh3RCoFml3TKBFz0a07tcVnltc5EEl4S4NlLfWGMK37n3CLeHbMm19N412Z+oScNFJeiWqOJf0+o=;7:tftlBZvOMx1yGG2Fhl4KCUnlEX+MDgGw8VpmPL7/nqu2PqDC7iEb1Q6T0gF1F8K/g388wOpp5jG3BbTwZq9o1BYn7lXKKNtFbDm18N0MN7lcaeUerzivhXocbBzjokQRSTOaCXRPssuLPxlm44PnRA==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2018 12:25:29.5768
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6917a64d-c467-4a7f-b771-08d6641abb95
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3727
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hoZxPH4CaxYzWscb"
+Content-Disposition: inline
+In-Reply-To: <20181215082148.26511-1-tiny.windzz@gmail.com>
+X-Cookie: You're at the end of the road again.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Placed includes in alphabetical order
-* Added brackets around num and mask through out for AD760X_CHANNEL
-* Used single line comments where needed
-* Removed extra lines and spaces
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
----
- drivers/staging/iio/adc/ad7606.c     | 27 ++++++++++++---------------
- drivers/staging/iio/adc/ad7606.h     |  1 -
- drivers/staging/iio/adc/ad7606_par.c | 27 ++++++++-------------------
- drivers/staging/iio/adc/ad7606_spi.c | 16 ++++++++--------
- 4 files changed, 28 insertions(+), 43 deletions(-)
+--hoZxPH4CaxYzWscb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
-index 5f0712c..32854f1 100644
---- a/drivers/staging/iio/adc/ad7606.c
-+++ b/drivers/staging/iio/adc/ad7606.c
-@@ -5,25 +5,25 @@
-  * Copyright 2011 Analog Devices Inc.
-  */
- 
--#include <linux/interrupt.h>
-+#include <linux/delay.h>
- #include <linux/device.h>
--#include <linux/kernel.h>
--#include <linux/slab.h>
--#include <linux/sysfs.h>
--#include <linux/regulator/consumer.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
--#include <linux/delay.h>
--#include <linux/sched.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <linux/util_macros.h>
- 
- #include <linux/iio/iio.h>
--#include <linux/iio/sysfs.h>
- #include <linux/iio/buffer.h>
--#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/sysfs.h>
- #include <linux/iio/trigger.h>
- #include <linux/iio/triggered_buffer.h>
-+#include <linux/iio/trigger_consumer.h>
- 
- #include "ad7606.h"
- 
-@@ -249,8 +249,7 @@ static const struct attribute_group ad7606_attribute_group_range = {
- 	.attrs = ad7606_attributes_range,
- };
- 
--#define AD760X_CHANNEL(num, mask)				\
--	{							\
-+#define AD760X_CHANNEL(num, mask) {				\
- 		.type = IIO_VOLTAGE,				\
- 		.indexed = 1,					\
- 		.channel = num,					\
-@@ -265,7 +264,7 @@ static const struct attribute_group ad7606_attribute_group_range = {
- 			.storagebits = 16,			\
- 			.endianness = IIO_CPU,			\
- 		},						\
--	}
-+}
- 
- #define AD7605_CHANNEL(num)	\
- 	AD760X_CHANNEL(num, 0)
-@@ -294,9 +293,7 @@ static const struct iio_chan_spec ad7606_channels[] = {
- };
- 
- static const struct ad7606_chip_info ad7606_chip_info_tbl[] = {
--	/*
--	 * More devices added in future
--	 */
-+	/* More devices added in future */
- 	[ID_AD7605_4] = {
- 		.channels = ad7605_channels,
- 		.num_channels = 5,
-diff --git a/drivers/staging/iio/adc/ad7606.h b/drivers/staging/iio/adc/ad7606.h
-index 9a832d2..5d12410 100644
---- a/drivers/staging/iio/adc/ad7606.h
-+++ b/drivers/staging/iio/adc/ad7606.h
-@@ -14,7 +14,6 @@
-  * @num_channels:	number of channels
-  * @has_oversampling:   whether the device has oversampling support
-  */
--
- struct ad7606_chip_info {
- 	const struct iio_chan_spec	*channels;
- 	unsigned int			num_channels;
-diff --git a/drivers/staging/iio/adc/ad7606_par.c b/drivers/staging/iio/adc/ad7606_par.c
-index 2d137b1..df607c7 100644
---- a/drivers/staging/iio/adc/ad7606_par.c
-+++ b/drivers/staging/iio/adc/ad7606_par.c
-@@ -26,7 +26,7 @@ static int ad7606_par16_read_block(struct device *dev,
- }
- 
- static const struct ad7606_bus_ops ad7606_par16_bops = {
--	.read_block	= ad7606_par16_read_block,
-+	.read_block = ad7606_par16_read_block,
- };
- 
- static int ad7606_par8_read_block(struct device *dev,
-@@ -41,7 +41,7 @@ static int ad7606_par8_read_block(struct device *dev,
- }
- 
- static const struct ad7606_bus_ops ad7606_par8_bops = {
--	.read_block	= ad7606_par8_read_block,
-+	.read_block = ad7606_par8_read_block,
- };
- 
- static int ad7606_par_probe(struct platform_device *pdev)
-@@ -72,22 +72,12 @@ static int ad7606_par_probe(struct platform_device *pdev)
- }
- 
- static const struct platform_device_id ad7606_driver_ids[] = {
--	{
--		.name		= "ad7605-4",
--		.driver_data	= ID_AD7605_4,
--	}, {
--		.name		= "ad7606-8",
--		.driver_data	= ID_AD7606_8,
--	}, {
--		.name		= "ad7606-6",
--		.driver_data	= ID_AD7606_6,
--	}, {
--		.name		= "ad7606-4",
--		.driver_data	= ID_AD7606_4,
--	},
-+	{ .name	= "ad7605-4", .driver_data = ID_AD7605_4, },
-+	{ .name	= "ad7606-4", .driver_data = ID_AD7606_4, },
-+	{ .name	= "ad7606-6", .driver_data = ID_AD7606_6, },
-+	{ .name	= "ad7606-8", .driver_data = ID_AD7606_8, },
- 	{ }
- };
--
- MODULE_DEVICE_TABLE(platform, ad7606_driver_ids);
- 
- static const struct of_device_id ad7606_of_match[] = {
-@@ -103,12 +93,11 @@ static struct platform_driver ad7606_driver = {
- 	.probe = ad7606_par_probe,
- 	.id_table = ad7606_driver_ids,
- 	.driver = {
--		.name	 = "ad7606",
--		.pm	 = AD7606_PM_OPS,
-+		.name = "ad7606",
-+		.pm = AD7606_PM_OPS,
- 		.of_match_table = ad7606_of_match,
- 	},
- };
--
- module_platform_driver(ad7606_driver);
- 
- MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
-diff --git a/drivers/staging/iio/adc/ad7606_spi.c b/drivers/staging/iio/adc/ad7606_spi.c
-index f38f0d6..f842eba 100644
---- a/drivers/staging/iio/adc/ad7606_spi.c
-+++ b/drivers/staging/iio/adc/ad7606_spi.c
-@@ -36,7 +36,7 @@ static int ad7606_spi_read_block(struct device *dev,
- }
- 
- static const struct ad7606_bus_ops ad7606_spi_bops = {
--	.read_block	= ad7606_spi_read_block,
-+	.read_block = ad7606_spi_read_block,
- };
- 
- static int ad7606_spi_probe(struct spi_device *spi)
-@@ -48,14 +48,14 @@ static int ad7606_spi_probe(struct spi_device *spi)
- 			    &ad7606_spi_bops);
- }
- 
--static const struct spi_device_id ad7606_id[] = {
--	{"ad7605-4", ID_AD7605_4},
--	{"ad7606-8", ID_AD7606_8},
--	{"ad7606-6", ID_AD7606_6},
--	{"ad7606-4", ID_AD7606_4},
-+static const struct spi_device_id ad7606_id_table[] = {
-+	{ "ad7605-4", ID_AD7605_4 },
-+	{ "ad7606-4", ID_AD7606_4 },
-+	{ "ad7606-6", ID_AD7606_6 },
-+	{ "ad7606-8", ID_AD7606_8 },
- 	{}
- };
--MODULE_DEVICE_TABLE(spi, ad7606_id);
-+MODULE_DEVICE_TABLE(spi, ad7606_id_table);
- 
- static const struct of_device_id ad7606_of_match[] = {
- 	{ .compatible = "adi,ad7605-4" },
-@@ -73,7 +73,7 @@ static struct spi_driver ad7606_driver = {
- 		.pm = AD7606_PM_OPS,
- 	},
- 	.probe = ad7606_spi_probe,
--	.id_table = ad7606_id,
-+	.id_table = ad7606_id_table,
- };
- module_spi_driver(ad7606_driver);
- 
--- 
-2.7.4
+On Sat, Dec 15, 2018 at 03:21:48AM -0500, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
+> +#ifdef CONFIG_DEBUG_FS
+>  	debugfs_create_file("supply_map", 0444, debugfs_root, NULL,
+>  			    &supply_map_fops);
+> =20
+>  	debugfs_create_file("regulator_summary", 0444, debugfs_root,
+>  			    NULL, &regulator_summary_fops);
+> -
+> +#endif
+
+This appears to be an unrelated change not mentioned in your changelog?
+
+--hoZxPH4CaxYzWscb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwXlc4ACgkQJNaLcl1U
+h9A19gf9HJ2nFOeqMx/fw1G119rvZtsqi4Ny9r5hbJSv7AmJrt1dksg+yh22iMLb
+CN+N7fgNu1lBl3lmFNzvoiWcgiHH0vT9A/U/b8Ovz9GlnNKtN+ima8I941lFOdT+
++sir7UNTouF5EJQWPYUQ12GAx2zJVa5WDQ9BILluhsSvxZcac6gzlxzpJ/mCMIkr
+oP+RHV6zIJMXTMZfbBnz15o2Hez3xgK3ulgV74NbncywNR5bDIYXGkrtlCIlvow0
+JRwMq3W6hPbamGgyRED9djPKcUeef1sES3/sfJlJrHjiEuq6ghE89ZtaDf8VLTmt
+/I1jDyrD3h3/ckNNEm3Bfv7fd9ajaQ==
+=s75o
+-----END PGP SIGNATURE-----
+
+--hoZxPH4CaxYzWscb--
