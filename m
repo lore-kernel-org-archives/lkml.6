@@ -2,275 +2,99 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE49C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC839C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD9B22084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D024217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="n4ArLINE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="syU1Hdqz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731536AbeLQH4U (ORCPT
+        id S1731574AbeLQH4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:56:20 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42861 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbeLQH4T (ORCPT
+        Mon, 17 Dec 2018 02:56:54 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35627 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeLQH4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:56:19 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d21so4097902uap.9
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 23:56:18 -0800 (PST)
+        Mon, 17 Dec 2018 02:56:54 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z9so5966767pfi.2;
+        Sun, 16 Dec 2018 23:56:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=guaaEgX8Iocv0fqjxPzxlpLywwiMHn5P7BspHXdJw4s=;
-        b=n4ArLINE56WXhrhOEnFBySDb968o76jLlrny1QuuvpzPCxQR0kbaEAlKVJB5z616jz
-         GAokCpIL6kvcFd3TISzyI1WL+OzaX93flAQuxJuHEsJYXwrmMxs1lCqPX6ODjJ29sMA1
-         2kr7B86TiTeEu4pdBsYNmLWGtXFCCsQNGPcs/4HWtwKPoICj6MjPSTP4m/RO6rAi1zLB
-         lQoRuuPpN/RVlhvoeIakkP/SyPFraE73Sdhmaqf+oL6BhjEtdWTVtPgoNTL3hYSucG+w
-         Tfwh/UKhYD2ludHmWfaQ1FnKmuPpONrcS/WjdIme+IxPQkf1DMhkYt8mvOyJZtOSClPN
-         Xlzw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NWLPnNlHrvA2ehDLVEPouumgN3Xl/PWww3ilC7E/OyM=;
+        b=syU1Hdqzs+6w7Cz4C1eaj3H8xojzO9kkmJ7WLGxaibg6CkG9dcfwyuJcddMjudA1dj
+         vtTHHbWgKBmhhnhGIJL4vTLHQCUmpENSIidAJZzLbGDcDS7lEpQ2tyCGiwmMVXqVSfJQ
+         ZXHuK9AlddjqY0q3ThbN/rlznJIEmcoClTVVrDYEJN5J8lJJ5RG0YG66QV0cJkCaImKe
+         C23/DTGG9zZbudnNEtubNRubjV1vtpWPyvkAHw3GVuvD1fF+REaePF0dSvlzgcbGtOAg
+         KVgTD0/XpQuIIOxnm2Efqone4ZsQxN9xnw8Rt8jDWveHndzmjHzqiEA3zjYmrPJX02Vx
+         zovw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=guaaEgX8Iocv0fqjxPzxlpLywwiMHn5P7BspHXdJw4s=;
-        b=D3bri6ogOB6hVTjRTmvTbqUqzMZjX9LEfVYGKQzkqDjqYqLVwMnq73R86FTm8G6dvG
-         FxQIN8aYgqsUvs6oD0ay9mVIlT+4jgB6Wc7MTtrM+WBqjKO+x3Itx3zoPBcAj/NPbq8B
-         RfpRU5/A1OdYHvwQTgKoi1PVY/6OHOgioEdulNyrBfCtgRLUe5TaKdyb8MhtZeAAw8RZ
-         e18DPV0TiBTzX+axNO2V6ju0ZNEz3x+iZgweVjaVXaOGPsDXXLBu0qGNfhaPIRmAdKc4
-         p/nqNoZvbVhUp80Jl9E6LlWe5osxk4ivifzNsxwZNCAWoAyu8MSwgftzg7RDIVPd39jo
-         GsRg==
-X-Gm-Message-State: AA+aEWZyxba5HHratwFAJQge5wS4dzElovruFT8ny0WaU8fX8RtfJMFk
-        4b8GNyCVIN1ud/JbVRyp6FIh5wDlbZl+mOyrZMZ1tQ==
-X-Google-Smtp-Source: AFSGD/Vne0Ax8f77zIyO7NN621G7wbH8TcCTQquuFgNxAcJRqgSb0JTxmfvqz+xaHC8IVrGxbfc8XLXLgud9ekP7nl8=
-X-Received: by 2002:ab0:2417:: with SMTP id f23mr5902317uan.129.1545033377792;
- Sun, 16 Dec 2018 23:56:17 -0800 (PST)
-MIME-Version: 1.0
-References: <1544760624-12874-1-git-send-email-tdas@codeaurora.org> <1544760624-12874-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1544760624-12874-2-git-send-email-tdas@codeaurora.org>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Mon, 17 Dec 2018 13:26:04 +0530
-Message-ID: <CAHLCerNZawU4Qexi5gdYLHDY90HNO5Tox0EVPWyy2L2QtUOX0g@mail.gmail.com>
-Subject: Re: [PATCH v13 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ
- Firmware bindings
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        evgreen@google.com, Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NWLPnNlHrvA2ehDLVEPouumgN3Xl/PWww3ilC7E/OyM=;
+        b=capGFAb4hc6B/z7QxkvJjAgo5y6LnaG841TXl31B8/zMhCb2PKZ2pGZupdVqtOiQE+
+         oypZQkbn0tTWCC6ld3pXU2PJgD04555Hhr90SPXok7RZxKc0r83mN6SPXMdhEIFnUSZ1
+         u4wGLuL7SoRsULIutBZaBQGXpA0mbqcAaaPXQDB/aa+deJEfJ/X66PvHh7GwR3O+zrdb
+         vKgIGwpBOV43YD3tnviZ3U1tzYk5rQZsOM8qCNaWechyVoE8RbFyYyNk/KbAbmJASwts
+         9kf5Mbi//IYUYgGaNNh2E7m9Sw9qADGCps5Gvl8XZHiTYuxuRtGQIFrkvTa9FBdcI6mN
+         D8cw==
+X-Gm-Message-State: AA+aEWZ5gHNPu4tHJDJ1RuKdQNVtxADIYYxy71ZyPXE+GAGNQt37fBd9
+        exwpvvlHpY2h++WmHAC4byE=
+X-Google-Smtp-Source: AFSGD/VJKRla6hz4SjCQHjQpp8LyQliqHcHwFd07BWwBNKQDP4JLjte2czE6YFO2c/dhAqQC6MX0YA==
+X-Received: by 2002:a63:df13:: with SMTP id u19mr11346510pgg.294.1545033413247;
+        Sun, 16 Dec 2018 23:56:53 -0800 (PST)
+Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id r8sm14216610pgr.48.2018.12.16.23.56.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 16 Dec 2018 23:56:52 -0800 (PST)
+From:   frowand.list@gmail.com
+To:     robh+dt@kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] of: phandle_cache, fix refcounts, remove stale entry
+Date:   Sun, 16 Dec 2018 23:56:34 -0800
+Message-Id: <1545033396-24485-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 9:40 AM Taniya Das <tdas@codeaurora.org> wrote:
->
-> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
-> SoCs. This is required for managing the cpu frequency transitions which are
-> controlled by the hardware engine.
->
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+From: Frank Rowand <frank.rowand@sony.com>
 
-Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+Non-overlay dynamic devicetree node removal may leave the node in
+the phandle cache.  Subsequent calls to of_find_node_by_phandle()
+will incorrectly find the stale entry.  This bug exposed the foloowing
+phandle cache refcount bug.
 
-> ---
->  .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 172 +++++++++++++++++++++
->  1 file changed, 172 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
->
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
-> new file mode 100644
-> index 0000000..33856947
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
-> @@ -0,0 +1,172 @@
-> +Qualcomm Technologies, Inc. CPUFREQ Bindings
-> +
-> +CPUFREQ HW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
-> +SoCs to manage frequency in hardware. It is capable of controlling frequency
-> +for multiple clusters.
-> +
-> +Properties:
-> +- compatible
-> +       Usage:          required
-> +       Value type:     <string>
-> +       Definition:     must be "qcom,cpufreq-hw".
-> +
-> +- clocks
-> +       Usage:          required
-> +       Value type:     <phandle> From common clock binding.
-> +       Definition:     clock handle for XO clock and GPLL0 clock.
-> +
-> +- clock-names
-> +       Usage:          required
-> +       Value type:     <string> From common clock binding.
-> +       Definition:     must be "xo", "alternate".
-> +
-> +- reg
-> +       Usage:          required
-> +       Value type:     <prop-encoded-array>
-> +       Definition:     Addresses and sizes for the memory of the HW bases in
-> +                       each frequency domain.
-> +- reg-names
-> +       Usage:          Optional
-> +       Value type:     <string>
-> +       Definition:     Frequency domain name i.e.
-> +                       "freq-domain0", "freq-domain1".
-> +
-> +- #freq-domain-cells:
-> +       Usage:          required.
-> +       Definition:     Number of cells in a freqency domain specifier.
-> +
-> +* Property qcom,freq-domain
-> +Devices supporting freq-domain must set their "qcom,freq-domain" property with
-> +phandle to a cpufreq_hw followed by the Domain ID(0/1) in the CPU DT node.
-> +
-> +
-> +Example:
-> +
-> +Example 1: Dual-cluster, Quad-core per cluster. CPUs within a cluster switch
-> +DCVS state together.
-> +
-> +/ {
-> +       cpus {
-> +               #address-cells = <2>;
-> +               #size-cells = <0>;
-> +
-> +               CPU0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x0>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_0>;
-> +                       qcom,freq-domain = <&cpufreq_hw 0>;
-> +                       L2_0: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                               L3_0: l3-cache {
-> +                                     compatible = "cache";
-> +                               };
-> +                       };
-> +               };
-> +
-> +               CPU1: cpu@100 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x100>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_100>;
-> +                       qcom,freq-domain = <&cpufreq_hw 0>;
-> +                       L2_100: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU2: cpu@200 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x200>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_200>;
-> +                       qcom,freq-domain = <&cpufreq_hw 0>;
-> +                       L2_200: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU3: cpu@300 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x300>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_300>;
-> +                       qcom,freq-domain = <&cpufreq_hw 0>;
-> +                       L2_300: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU4: cpu@400 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x400>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_400>;
-> +                       qcom,freq-domain = <&cpufreq_hw 1>;
-> +                       L2_400: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU5: cpu@500 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x500>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_500>;
-> +                       qcom,freq-domain = <&cpufreq_hw 1>;
-> +                       L2_500: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU6: cpu@600 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x600>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_600>;
-> +                       qcom,freq-domain = <&cpufreq_hw 1>;
-> +                       L2_600: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +
-> +               CPU7: cpu@700 {
-> +                       device_type = "cpu";
-> +                       compatible = "qcom,kryo385";
-> +                       reg = <0x0 0x700>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&L2_700>;
-> +                       qcom,freq-domain = <&cpufreq_hw 1>;
-> +                       L2_700: l2-cache {
-> +                               compatible = "cache";
-> +                               next-level-cache = <&L3_0>;
-> +                       };
-> +               };
-> +       };
-> +
-> + soc {
-> +       cpufreq_hw: cpufreq@17d43000 {
-> +               compatible = "qcom,cpufreq-hw";
-> +               reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
-> +               reg-names = "freq-domain0", "freq-domain1";
-> +
-> +               clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
-> +               clock-names = "xo", "alternate";
-> +
-> +               #freq-domain-cells = <1>;
-> +       };
-> +}
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
->
+The refcount of phandle_cache entries is not incremented while in
+the cache, allowing use after free error after kfree() of the
+cached entry.
+
+Changes since v1:
+  - make __of_free_phandle_cache() static
+  - add WARN_ON(1) for unexpected condition in of_find_node_by_phandle()
+  
+Frank Rowand (2):
+  of: of_node_get()/of_node_put() nodes held in phandle cache
+  of: __of_detach_node() - remove node from phandle cache
+
+ drivers/of/base.c       | 100 ++++++++++++++++++++++++++++++++++++------------
+ drivers/of/dynamic.c    |   3 ++
+ drivers/of/of_private.h |   4 ++
+ 3 files changed, 82 insertions(+), 25 deletions(-)
+
+-- 
+Frank Rowand <frank.rowand@sony.com>
+
