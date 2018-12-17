@@ -2,142 +2,92 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCA6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BADFC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD7C206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:04:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545062640;
-	bh=g1cipyX/ml4CsEO/LzIRh5/VHCQ/oKWBZNNrqN2IJCY=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=q8h8V5XO5LdxOWLSQWvMUb0SZ+ky5NsSGXx2zliD+v0JOlsNc2yNLiqfMRqB9lD57
-	 IOx1ycofQsqIpg7jYlKLFg/7gTrodIwFPZz9SF26jgypPc1TLQGajcmgzgNV+nWaG+
-	 4KBLbz1bEzhNPuynlrYcCu8wh9lJaejf8i8y1MH8=
+	by mail.kernel.org (Postfix) with ESMTP id F1FFF206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:04:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Iqr8gxhA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388044AbeLQQD7 (ORCPT
+        id S2388058AbeLQQEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:03:59 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:41015 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeLQQD5 (ORCPT
+        Mon, 17 Dec 2018 11:04:04 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55702 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbeLQQEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:03:57 -0500
-Received: by mail-yw1-f65.google.com with SMTP id f65so5365164ywc.8;
-        Mon, 17 Dec 2018 08:03:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L5rGZCuzin7GjzYmFJwbDOmDQPDvurbU8ESwuOCO24c=;
-        b=bea8MrlXnfd+yUZRDAbrVjszV486fIdELfmrRLq5X7fvxHfDASRuWnYO7SqlM8mo+w
-         5sSzcXWuObnk4lzDQvJ/iLZ5vtg8meyHFvUDF/kXs3XDQszb2YuVItQD6ilL3VFUIwyg
-         YbL02Qu41eQK8kVbFjGsvio4NHcTpK7SjeOmLcCb+ylUOxbajfAdHlLFQYmfxjXGGtQR
-         5obZ5OfslaiQauH2zwGBkzQQ8na/VGQu8VE5zgfjDgTDAgHdG/2SdIdakJ6zcKbV41UC
-         THtZeZ5sv+KLx8w6ud799ld6OHa+cGU5aak0XpVQXQGBes6tSl3sbEgS2N020SUItJgd
-         8FHw==
-X-Gm-Message-State: AA+aEWaj4oezgcCrZLc4YRp08StT2xrNYlKrQSh8k/c+dMKW3vrUA6A0
-        +xyUikUxH2pwdk1H/UWT3aDIXR/g
-X-Google-Smtp-Source: AFSGD/UFUPjAM5mtxlSqOVBxqstFvWl+qNgT2c1VtEdmY0Hzg7cqbprmNRcTCgaXG6pGSPE/Qi0nEQ==
-X-Received: by 2002:a81:7242:: with SMTP id n63mr13774603ywc.495.1545062635218;
-        Mon, 17 Dec 2018 08:03:55 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id x82sm4525642ywb.34.2018.12.17.08.03.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 08:03:54 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH v3] block: fix blk-iolatency accounting underflow
-Date:   Mon, 17 Dec 2018 11:03:51 -0500
-Message-Id: <20181217160351.27903-1-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
+        Mon, 17 Dec 2018 11:04:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+ZRHKN2EnoBxgTijYBWOdFP0b8r9VcWS+c8cyg1GQNo=; b=Iqr8gxhA9kZZBlj2QM7aA0OWlB
+        vJfgQZu55btUbwyapAqlQYLkpA45Xc9HEUFYLi3KSxXuYg3i6NC2+qafCWUuhF5GAiW6YzgsmQ1B2
+        mxgAsOoOW1n2m5UQlDvFhVAcipdI3BK9L3lQmRWT7/ZvQ4lriVXNM63eiN6jCLsB9+pkwbODfZpAU
+        G4v1csxN+HAxsl0pdGuw5iPwrVL9J8vqdSUTnmVZphvmModsOvB710d5gUsgPtY4lDedYdoslBJD4
+        WQ9+2dhOWiaiorHNx4k0posTbebJpz4A2b8u7Mj5MUIxYTUuIR+bIuV9V6U9M245XlWOg65QIed4m
+        Lfkw9Cuw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gYvN9-0002Rx-HM; Mon, 17 Dec 2018 16:03:59 +0000
+Subject: Re: linux-next: Tree for Dec 17 (regulator/mcp16502.c)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrei Stefanescu <andrei.stefanescu@microchip.com>
+References: <20181217220914.29144a09@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c7bd09d3-3c04-327e-6c0b-89ee058cced8@infradead.org>
+Date:   Mon, 17 Dec 2018 08:03:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181217220914.29144a09@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The blk-iolatency controller measures the time from rq_qos_throttle() to
-rq_qos_done_bio() and attributes this time to the first bio that needs
-to create the request. This means if a bio is plug-mergeable or
-bio-mergeable, it gets to bypass the blk-iolatency controller.
+On 12/17/18 3:09 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20181214:
+> 
 
-The recent series [1], to tag all bios w/ blkgs undermined how iolatency
-was determining which bios it was charging and should process in
-rq_qos_done_bio(). Because all bios are being tagged, this caused the
-atomic_t for the struct rq_wait inflight count to underflow and result
-in a stall.
+on i386:
+# CONFIG_SUSPEND is not set
+CONFIG_PM=y
 
-This patch adds a new flag BIO_TRACKED to let controllers know that a
-bio is going through the rq_qos path. blk-iolatency now checks if this
-flag is set to see if it should process the bio in rq_qos_done_bio().
+  CC      drivers/regulator/mcp16502.o
+In file included from ../include/linux/device.h:23:0,
+                 from ../include/linux/gpio/driver.h:5,
+                 from ../include/asm-generic/gpio.h:13,
+                 from ../include/linux/gpio.h:62,
+                 from ../drivers/regulator/mcp16502.c:11:
+../drivers/regulator/mcp16502.c:527:32: error: 'mcp16502_suspend_noirq' undeclared here (not in a function)
+  SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend_noirq,
+                                ^
+../include/linux/pm.h:342:19: note: in definition of macro 'SET_NOIRQ_SYSTEM_SLEEP_PM_OPS'
+  .suspend_noirq = suspend_fn, \
+                   ^
+../drivers/regulator/mcp16502.c:528:10: error: 'mcp16502_resume_noirq' undeclared here (not in a function)
+          mcp16502_resume_noirq)
+          ^
+../include/linux/pm.h:343:18: note: in definition of macro 'SET_NOIRQ_SYSTEM_SLEEP_PM_OPS'
+  .resume_noirq = resume_fn, \
+                  ^
 
-Overloading BLK_QUEUE_ENTERED works, but makes the flag rules confusing.
-BIO_THROTTLED was another candidate, but the flag is set for all bios
-that have gone through blk-throttle code. Overloading a flag comes with
-the burden of making sure that when either implementation changes, a
-change in setting rules for one doesn't cause a bug in the other. So
-here, we unfortunately opt for adding a new flag.
 
-[1] https://lore.kernel.org/lkml/20181205171039.73066-1-dennis@kernel.org/
 
-Fixes: 5cdf2e3fea5e ("blkcg: associate blkg when associating a device")
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>
----
- block/blk-iolatency.c     | 2 +-
- block/blk-rq-qos.h        | 5 +++++
- include/linux/blk_types.h | 1 +
- 3 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index bee092727cad..fc714ef402a6 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -593,7 +593,7 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
- 	bool enabled = false;
- 
- 	blkg = bio->bi_blkg;
--	if (!blkg)
-+	if (!blkg || !bio_flagged(bio, BIO_TRACKED))
- 		return;
- 
- 	iolat = blkg_to_lat(bio->bi_blkg);
-diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
-index fd8a0c5debd3..58f62483b537 100644
---- a/block/blk-rq-qos.h
-+++ b/block/blk-rq-qos.h
-@@ -170,6 +170,11 @@ static inline void rq_qos_done_bio(struct request_queue *q, struct bio *bio)
- 
- static inline void rq_qos_throttle(struct request_queue *q, struct bio *bio)
- {
-+	/*
-+	 * BIO_TRACKED lets controllers know that a bio went through the
-+	 * normal rq_qos path.
-+	 */
-+	bio_set_flag(bio, BIO_TRACKED);
- 	if (q->rq_qos)
- 		__rq_qos_throttle(q->rq_qos, bio);
- }
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 46c005d601ac..fc99474ac968 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -228,6 +228,7 @@ struct bio {
- #define BIO_TRACE_COMPLETION 10	/* bio_endio() should trace the final completion
- 				 * of this bio. */
- #define BIO_QUEUE_ENTERED 11	/* can use blk_queue_enter_live() */
-+#define BIO_TRACKED 12		/* set if bio goes through the rq_qos path */
- 
- /* See BVEC_POOL_OFFSET below before adding new flags */
- 
 -- 
-2.17.1
-
+~Randy
