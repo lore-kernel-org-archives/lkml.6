@@ -2,914 +2,134 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822ABC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E95C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DFF120874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+G8UYZy"
+	by mail.kernel.org (Postfix) with ESMTP id 3962C20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733249AbeLQONI (ORCPT
+        id S1733265AbeLQON2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:13:08 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:33545 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726965AbeLQONH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:13:07 -0500
-Received: by mail-yw1-f67.google.com with SMTP id v20so3818695ywc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 06:13:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gzssTaajNOmfNccgEqe693uYM0VLXivZtmAHlWL4zq0=;
-        b=j+G8UYZyoHEqmehjonLmmjI9vlHYiq9saMyBXR4ojwjcls2Fc0quUT33r7xzJuN0f5
-         l2OxyrNxFuPMqIfjjyrBjeE3C9oDZzF+DK4av1rDTGj09v+RErvhzd4D3aVWFR5bbSH5
-         6R0CFTJghqMsHMsx4QNy6IVlA1uSf0qegxBx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gzssTaajNOmfNccgEqe693uYM0VLXivZtmAHlWL4zq0=;
-        b=ONM6h78UKn7xz6GibvUgCB0Xuwl3gDrPlq2+tO+ZAqb4b17rft2FB0jChLZSHsLO0t
-         j1Ys8qb3e7m58uwQp2ZGghKXoUnP6hPCsnOOO1X7Z4N+3gsGzon+47Ljaw1ZUWiqZF0T
-         86id5PwJ/T8wolTEaOdb/kgAzsY+gRlBgUlE3ZXzgI/CJMNati5YahDpzn7WuNwdzNGb
-         T2Xd/r3quToLtw/bNVsaoomvV39m8qXnFKQv3fkECOKCr4W/HCE80C8G/EKu6zJwG3ke
-         N2YW/JobhVqv9R7JJC5QHWw1V3M5FXHVlrQTygZVkWE4Ytid1gjph9oTU0Y6zZeJvOUR
-         RL9Q==
-X-Gm-Message-State: AA+aEWaXcpTc3jeQOBytShR941E/3u9010nMN49CTuiqDnyF0YVIALGG
-        XjSEJchK0tvsr5rJ1ccGuod+cEEvCfEhgPNfN9IGQQ==
-X-Google-Smtp-Source: AFSGD/VfnR1nN+4Wu8dT4wwP5xqY2ay2Osg5QKiAuyn5DRfubmT5SB9h2km8iCKBrLkSuY6RT8wnoWoZX6fPnNTrbQ4=
-X-Received: by 2002:a81:2e0d:: with SMTP id u13mr13600488ywu.45.1545055984575;
- Mon, 17 Dec 2018 06:13:04 -0800 (PST)
+        Mon, 17 Dec 2018 09:13:28 -0500
+Received: from mga01.intel.com ([192.55.52.88]:11469 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732311AbeLQON1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:13:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 06:13:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,365,1539673200"; 
+   d="scan'208";a="302842542"
+Received: from zhangxi4-mobl5.ccr.corp.intel.com (HELO localhost) ([10.249.254.207])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Dec 2018 06:13:16 -0800
+Date:   Mon, 17 Dec 2018 16:13:15 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     "Dr. Greg" <greg@enjellic.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, jethro@fortanix.com
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217141315.GB4601@linux.intel.com>
+References: <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
+ <20181128104941.GA23077@wind.enjellic.com>
+ <20181128192228.GC9023@linux.intel.com>
+ <20181210104908.GA23132@wind.enjellic.com>
+ <20181212180036.GC6333@linux.intel.com>
+ <20181214235917.GA14049@wind.enjellic.com>
+ <20181215000627.GA5799@linux.intel.com>
+ <20181217132859.GA31936@linux.intel.com>
+ <20181217133928.GA32706@linux.intel.com>
+ <20181217140811.GA4601@linux.intel.com>
 MIME-Version: 1.0
-References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
- <153754768644.17872.4707695831889551662.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153754768644.17872.4707695831889551662.stgit@warthog.procyon.org.uk>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Mon, 17 Dec 2018 15:12:52 +0100
-Message-ID: <CADYN=9KNL=6juu0WuHYPLu3bMNpVimUMWfFqmr5GbTrKPyOfVg@mail.gmail.com>
-Subject: Re: [PATCH 34/34] vfs: Add a sample program for the new mount API
- [ver #12]
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        ebiederm@xmission.com, linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mszeredi@redhat.com, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217140811.GA4601@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Sep 2018 at 18:34, David Howells <dhowells@redhat.com> wrote:
->
-> Add a sample program to demonstrate fsopen/fsmount/move_mount to mount
-> something.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
+On Mon, Dec 17, 2018 at 04:08:11PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 17, 2018 at 03:39:28PM +0200, Jarkko Sakkinen wrote:
+> > On Mon, Dec 17, 2018 at 03:28:59PM +0200, Jarkko Sakkinen wrote:
+> > > On Fri, Dec 14, 2018 at 04:06:27PM -0800, Sean Christopherson wrote:
+> > > > [  504.149548] ------------[ cut here ]------------
+> > > > [  504.149550] kernel BUG at /home/sean/go/src/kernel.org/linux/mm/mmap.c:669!
+> > > > [  504.150288] invalid opcode: 0000 [#1] SMP
+> > > > [  504.150614] CPU: 2 PID: 237 Comm: kworker/u20:2 Not tainted 4.20.0-rc2+ #267
+> > > > [  504.151165] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+> > > > [  504.151818] Workqueue: sgx-encl-wq sgx_encl_release_worker
+> > > > [  504.152267] RIP: 0010:__vma_adjust+0x64a/0x820
+> > > > [  504.152626] Code: ff 48 89 50 18 e9 6f fc ff ff 4c 8b ab 88 00 00 00 45 31 e4 e9 61 fb ff ff 31 c0 48 83 c4 60 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <0f> 0b 49 89 de 49 83 c6 20 0f 84 06 fe ff ff 49 8d 7e e0 e8 fe ee
+> > > > [  504.154109] RSP: 0000:ffffc900004ebd60 EFLAGS: 00010206
+> > > > [  504.154535] RAX: 00007fd92ef7e000 RBX: ffff888467af16c0 RCX: ffff888467af16e0
+> > > > [  504.155104] RDX: ffff888458fd09e0 RSI: 00007fd954021000 RDI: ffff88846bf9e798
+> > > > [  504.155673] RBP: ffff888467af1480 R08: ffff88845bea2000 R09: 0000000000000000
+> > > > [  504.156242] R10: 0000000080000000 R11: fefefefefefefeff R12: 0000000000000000
+> > > > [  504.156810] R13: ffff88846bf9e790 R14: ffff888467af1b70 R15: ffff888467af1b60
+> > > > [  504.157378] FS:  0000000000000000(0000) GS:ffff88846f700000(0000) knlGS:0000000000000000
+> > > > [  504.158021] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > [  504.158483] CR2: 00007f2c56e99000 CR3: 0000000005009001 CR4: 0000000000360ee0
+> > > > [  504.159054] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > [  504.159623] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > [  504.160193] Call Trace:
+> > > > [  504.160406]  __split_vma+0x16f/0x180
+> > > > [  504.160706]  ? __switch_to_asm+0x40/0x70
+> > > > [  504.161024]  __do_munmap+0xfb/0x450
+> > > > [  504.161308]  sgx_encl_release_worker+0x44/0x70
+> > > > [  504.161675]  process_one_work+0x200/0x3f0
+> > > > [  504.162004]  worker_thread+0x2d/0x3d0
+> > > > [  504.162301]  ? process_one_work+0x3f0/0x3f0
+> > > > [  504.162645]  kthread+0x113/0x130
+> > > > [  504.162912]  ? kthread_park+0x90/0x90
+> > > > [  504.163209]  ret_from_fork+0x35/0x40
+> > > > [  504.163503] Modules linked in: bridge stp llc
+> > > > [  504.163866] ---[ end trace 83076139fc25e3e0 ]---
+> > > 
+> > > There was a race with release and swapping code that I thought I fixed,
+> > > and this is looks like a race there. Have to recheck what I did not
+> > > consider. Anyway, though to share this if you have time to look at it.
+> > > That is the part where something is now unsync most probably.
+> > 
+> > I think I found it. I was careless to make sgx_encl_release() to use
+> > sgx_invalidate(), which does not delete pages in the case when enclave
+> > is already marked as dead. This was after I had fixed the race that I
+> > had there in the first place. That is why I was puzzled why it suddenly
+> > reappeared.
+> > 
+> > Would be nice to use sgx_invalidate() also in release for consistency in
+> > semantics sake so maybe just delete this:
+> > 
+> > 	if (encl->flags & SGX_ENCL_DEAD)
+> > 		return;
+> 
+> Updated master, not at this point next.
 
-I was trying to build today linux-next tag next-20181217, I ran into
-the build error below
-when I was trying to build a allmodconfig kernel. I think this patch
-triggers the build error.
+If I checked this right was that mmu_notifier_unregister() cause DEAD
+to set, and thus when sgx_invalidate() is executed, it returns without
+doing anything...
 
-In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
-                 from ../samples/vfs/test-statx.c:28:
-/usr/include/x86_64-linux-gnu/bits/statx.h:25:8: error: redefinition
-of =E2=80=98struct statx_timestamp=E2=80=99
- struct statx_timestamp
-        ^~~~~~~~~~~~~~~
-In file included from ../samples/vfs/test-statx.c:26:
-./usr/include/linux/stat.h:56:8: note: originally defined here
- struct statx_timestamp {
-        ^~~~~~~~~~~~~~~
-In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
-                 from ../samples/vfs/test-statx.c:28:
-/usr/include/x86_64-linux-gnu/bits/statx.h:36:8: error: redefinition
-of =E2=80=98struct statx=E2=80=99
- struct statx
-        ^~~~~
-In file included from ../samples/vfs/test-statx.c:26:
-./usr/include/linux/stat.h:99:8: note: originally defined here
- struct statx {
-        ^~~~~
-../samples/vfs/test-statx.c:40:9: error: conflicting types for =E2=80=98sta=
-tx=E2=80=99
- ssize_t statx(int dfd, const char *filename, unsigned flags,
-         ^~~~~
-In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
-                 from ../samples/vfs/test-statx.c:28:
-/usr/include/x86_64-linux-gnu/bits/statx.h:87:5: note: previous
-declaration of =E2=80=98statx=E2=80=99 was here
- int statx (int __dirfd, const char *__restrict __path, int __flags,
-     ^~~~~
-make[3]: *** [scripts/Makefile.host:90: samples/vfs/test-statx] Error 1
-make[3]: Target '__build' not remade because of errors.
-make[2]: *** [../scripts/Makefile.build:492: samples/vfs] Error 2
-make[2]: Target '__build' not remade because of errors.
-make[1]: *** [/srv/src/kernel/next/Makefile:1065: samples] Error 2
-make[1]: Target 'bzImage' not remade because of errors.
-make: *** [Makefile:152: sub-make] Error 2
-make: Target 'bzImage' not remade because of errors.
-
-My libc version:
-$ dpkg -l libc6
-ii  libc6:amd64    2.28-2       amd64        GNU C Library: Shared librarie=
-s
-
-Any idea what I do wrong?
-
-Cheers,
-Anders
-
-> ---
->
->  samples/Kconfig            |   10 +-
->  samples/Makefile           |    2
->  samples/statx/Makefile     |    7 -
->  samples/statx/test-statx.c |  258 --------------------------------------=
-------
->  samples/vfs/Makefile       |   10 ++
->  samples/vfs/test-fsmount.c |  118 ++++++++++++++++++++
->  samples/vfs/test-statx.c   |  258 ++++++++++++++++++++++++++++++++++++++=
-++++++
->  7 files changed, 393 insertions(+), 270 deletions(-)
->  delete mode 100644 samples/statx/Makefile
->  delete mode 100644 samples/statx/test-statx.c
->  create mode 100644 samples/vfs/Makefile
->  create mode 100644 samples/vfs/test-fsmount.c
->  create mode 100644 samples/vfs/test-statx.c
->
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index bd133efc1a56..8df1c012820f 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -146,10 +146,12 @@ config SAMPLE_VFIO_MDEV_MBOCHS
->           Specifically it does *not* include any legacy vga stuff.
->           Device looks a lot like "qemu -device secondary-vga".
->
-> -config SAMPLE_STATX
-> -       bool "Build example extended-stat using code"
-> -       depends on BROKEN
-> +config SAMPLE_VFS
-> +       bool "Build example programs that use new VFS system calls"
-> +       depends on X86
->         help
-> -         Build example userspace program to use the new extended-stat sy=
-scall.
-> +         Build example userspace programs that use new VFS system calls =
-such
-> +         as mount API and statx().  Note that this is restricted to the =
-x86
-> +         arch whilst it accesses system calls that aren't yet in all arc=
-hes.
->
->  endif # SAMPLES
-> diff --git a/samples/Makefile b/samples/Makefile
-> index bd601c038b86..c5a6175c2d3f 100644
-> --- a/samples/Makefile
-> +++ b/samples/Makefile
-> @@ -3,4 +3,4 @@
->  obj-$(CONFIG_SAMPLES)  +=3D kobject/ kprobes/ trace_events/ livepatch/ \
->                            hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ secc=
-omp/ \
->                            configfs/ connector/ v4l/ trace_printk/ \
-> -                          vfio-mdev/ statx/ qmi/
-> +                          vfio-mdev/ vfs/ qmi/
-> diff --git a/samples/statx/Makefile b/samples/statx/Makefile
-> deleted file mode 100644
-> index 59df7c25a9d1..000000000000
-> --- a/samples/statx/Makefile
-> +++ /dev/null
-> @@ -1,7 +0,0 @@
-> -# List of programs to build
-> -hostprogs-$(CONFIG_SAMPLE_STATX) :=3D test-statx
-> -
-> -# Tell kbuild to always build the programs
-> -always :=3D $(hostprogs-y)
-> -
-> -HOSTCFLAGS_test-statx.o +=3D -I$(objtree)/usr/include
-> diff --git a/samples/statx/test-statx.c b/samples/statx/test-statx.c
-> deleted file mode 100644
-> index d4d77b09412c..000000000000
-> --- a/samples/statx/test-statx.c
-> +++ /dev/null
-> @@ -1,258 +0,0 @@
-> -/* Test the statx() system call.
-> - *
-> - * Note that the output of this program is intended to look like the out=
-put of
-> - * /bin/stat where possible.
-> - *
-> - * Copyright (C) 2015 Red Hat, Inc. All Rights Reserved.
-> - * Written by David Howells (dhowells@redhat.com)
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public Licence
-> - * as published by the Free Software Foundation; either version
-> - * 2 of the Licence, or (at your option) any later version.
-> - */
-> -
-> -#define _GNU_SOURCE
-> -#define _ATFILE_SOURCE
-> -#include <stdio.h>
-> -#include <stdlib.h>
-> -#include <string.h>
-> -#include <unistd.h>
-> -#include <ctype.h>
-> -#include <errno.h>
-> -#include <time.h>
-> -#include <sys/syscall.h>
-> -#include <sys/types.h>
-> -#include <linux/stat.h>
-> -#include <linux/fcntl.h>
-> -#include <sys/stat.h>
-> -
-> -#define AT_STATX_SYNC_TYPE     0x6000
-> -#define AT_STATX_SYNC_AS_STAT  0x0000
-> -#define AT_STATX_FORCE_SYNC    0x2000
-> -#define AT_STATX_DONT_SYNC     0x4000
-> -
-> -static __attribute__((unused))
-> -ssize_t statx(int dfd, const char *filename, unsigned flags,
-> -             unsigned int mask, struct statx *buffer)
-> -{
-> -       return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
-> -}
-> -
-> -static void print_time(const char *field, struct statx_timestamp *ts)
-> -{
-> -       struct tm tm;
-> -       time_t tim;
-> -       char buffer[100];
-> -       int len;
-> -
-> -       tim =3D ts->tv_sec;
-> -       if (!localtime_r(&tim, &tm)) {
-> -               perror("localtime_r");
-> -               exit(1);
-> -       }
-> -       len =3D strftime(buffer, 100, "%F %T", &tm);
-> -       if (len =3D=3D 0) {
-> -               perror("strftime");
-> -               exit(1);
-> -       }
-> -       printf("%s", field);
-> -       fwrite(buffer, 1, len, stdout);
-> -       printf(".%09u", ts->tv_nsec);
-> -       len =3D strftime(buffer, 100, "%z", &tm);
-> -       if (len =3D=3D 0) {
-> -               perror("strftime2");
-> -               exit(1);
-> -       }
-> -       fwrite(buffer, 1, len, stdout);
-> -       printf("\n");
-> -}
-> -
-> -static void dump_statx(struct statx *stx)
-> -{
-> -       char buffer[256], ft =3D '?';
-> -
-> -       printf("results=3D%x\n", stx->stx_mask);
-> -
-> -       printf(" ");
-> -       if (stx->stx_mask & STATX_SIZE)
-> -               printf(" Size: %-15llu", (unsigned long long)stx->stx_siz=
-e);
-> -       if (stx->stx_mask & STATX_BLOCKS)
-> -               printf(" Blocks: %-10llu", (unsigned long long)stx->stx_b=
-locks);
-> -       printf(" IO Block: %-6llu", (unsigned long long)stx->stx_blksize)=
-;
-> -       if (stx->stx_mask & STATX_TYPE) {
-> -               switch (stx->stx_mode & S_IFMT) {
-> -               case S_IFIFO:   printf("  FIFO\n");                     f=
-t =3D 'p'; break;
-> -               case S_IFCHR:   printf("  character special file\n");   f=
-t =3D 'c'; break;
-> -               case S_IFDIR:   printf("  directory\n");                f=
-t =3D 'd'; break;
-> -               case S_IFBLK:   printf("  block special file\n");       f=
-t =3D 'b'; break;
-> -               case S_IFREG:   printf("  regular file\n");             f=
-t =3D '-'; break;
-> -               case S_IFLNK:   printf("  symbolic link\n");            f=
-t =3D 'l'; break;
-> -               case S_IFSOCK:  printf("  socket\n");                   f=
-t =3D 's'; break;
-> -               default:
-> -                       printf(" unknown type (%o)\n", stx->stx_mode & S_=
-IFMT);
-> -                       break;
-> -               }
-> -       } else {
-> -               printf(" no type\n");
-> -       }
-> -
-> -       sprintf(buffer, "%02x:%02x", stx->stx_dev_major, stx->stx_dev_min=
-or);
-> -       printf("Device: %-15s", buffer);
-> -       if (stx->stx_mask & STATX_INO)
-> -               printf(" Inode: %-11llu", (unsigned long long) stx->stx_i=
-no);
-> -       if (stx->stx_mask & STATX_NLINK)
-> -               printf(" Links: %-5u", stx->stx_nlink);
-> -       if (stx->stx_mask & STATX_TYPE) {
-> -               switch (stx->stx_mode & S_IFMT) {
-> -               case S_IFBLK:
-> -               case S_IFCHR:
-> -                       printf(" Device type: %u,%u",
-> -                              stx->stx_rdev_major, stx->stx_rdev_minor);
-> -                       break;
-> -               }
-> -       }
-> -       printf("\n");
-> -
-> -       if (stx->stx_mask & STATX_MODE)
-> -               printf("Access: (%04o/%c%c%c%c%c%c%c%c%c%c)  ",
-> -                      stx->stx_mode & 07777,
-> -                      ft,
-> -                      stx->stx_mode & S_IRUSR ? 'r' : '-',
-> -                      stx->stx_mode & S_IWUSR ? 'w' : '-',
-> -                      stx->stx_mode & S_IXUSR ? 'x' : '-',
-> -                      stx->stx_mode & S_IRGRP ? 'r' : '-',
-> -                      stx->stx_mode & S_IWGRP ? 'w' : '-',
-> -                      stx->stx_mode & S_IXGRP ? 'x' : '-',
-> -                      stx->stx_mode & S_IROTH ? 'r' : '-',
-> -                      stx->stx_mode & S_IWOTH ? 'w' : '-',
-> -                      stx->stx_mode & S_IXOTH ? 'x' : '-');
-> -       if (stx->stx_mask & STATX_UID)
-> -               printf("Uid: %5d   ", stx->stx_uid);
-> -       if (stx->stx_mask & STATX_GID)
-> -               printf("Gid: %5d\n", stx->stx_gid);
-> -
-> -       if (stx->stx_mask & STATX_ATIME)
-> -               print_time("Access: ", &stx->stx_atime);
-> -       if (stx->stx_mask & STATX_MTIME)
-> -               print_time("Modify: ", &stx->stx_mtime);
-> -       if (stx->stx_mask & STATX_CTIME)
-> -               print_time("Change: ", &stx->stx_ctime);
-> -       if (stx->stx_mask & STATX_BTIME)
-> -               print_time(" Birth: ", &stx->stx_btime);
-> -
-> -       if (stx->stx_attributes_mask) {
-> -               unsigned char bits, mbits;
-> -               int loop, byte;
-> -
-> -               static char attr_representation[64 + 1] =3D
-> -                       /* STATX_ATTR_ flags: */
-> -                       "????????"      /* 63-56 */
-> -                       "????????"      /* 55-48 */
-> -                       "????????"      /* 47-40 */
-> -                       "????????"      /* 39-32 */
-> -                       "????????"      /* 31-24        0x00000000-ff0000=
-00 */
-> -                       "????????"      /* 23-16        0x00000000-00ff00=
-00 */
-> -                       "???me???"      /* 15- 8        0x00000000-0000ff=
-00 */
-> -                       "?dai?c??"      /*  7- 0        0x00000000-000000=
-ff */
-> -                       ;
-> -
-> -               printf("Attributes: %016llx (", stx->stx_attributes);
-> -               for (byte =3D 64 - 8; byte >=3D 0; byte -=3D 8) {
-> -                       bits =3D stx->stx_attributes >> byte;
-> -                       mbits =3D stx->stx_attributes_mask >> byte;
-> -                       for (loop =3D 7; loop >=3D 0; loop--) {
-> -                               int bit =3D byte + loop;
-> -
-> -                               if (!(mbits & 0x80))
-> -                                       putchar('.');   /* Not supported =
-*/
-> -                               else if (bits & 0x80)
-> -                                       putchar(attr_representation[63 - =
-bit]);
-> -                               else
-> -                                       putchar('-');   /* Not set */
-> -                               bits <<=3D 1;
-> -                               mbits <<=3D 1;
-> -                       }
-> -                       if (byte)
-> -                               putchar(' ');
-> -               }
-> -               printf(")\n");
-> -       }
-> -}
-> -
-> -static void dump_hex(unsigned long long *data, int from, int to)
-> -{
-> -       unsigned offset, print_offset =3D 1, col =3D 0;
-> -
-> -       from /=3D 8;
-> -       to =3D (to + 7) / 8;
-> -
-> -       for (offset =3D from; offset < to; offset++) {
-> -               if (print_offset) {
-> -                       printf("%04x: ", offset * 8);
-> -                       print_offset =3D 0;
-> -               }
-> -               printf("%016llx", data[offset]);
-> -               col++;
-> -               if ((col & 3) =3D=3D 0) {
-> -                       printf("\n");
-> -                       print_offset =3D 1;
-> -               } else {
-> -                       printf(" ");
-> -               }
-> -       }
-> -
-> -       if (!print_offset)
-> -               printf("\n");
-> -}
-> -
-> -int main(int argc, char **argv)
-> -{
-> -       struct statx stx;
-> -       int ret, raw =3D 0, atflag =3D AT_SYMLINK_NOFOLLOW;
-> -
-> -       unsigned int mask =3D STATX_ALL;
-> -
-> -       for (argv++; *argv; argv++) {
-> -               if (strcmp(*argv, "-F") =3D=3D 0) {
-> -                       atflag &=3D ~AT_STATX_SYNC_TYPE;
-> -                       atflag |=3D AT_STATX_FORCE_SYNC;
-> -                       continue;
-> -               }
-> -               if (strcmp(*argv, "-D") =3D=3D 0) {
-> -                       atflag &=3D ~AT_STATX_SYNC_TYPE;
-> -                       atflag |=3D AT_STATX_DONT_SYNC;
-> -                       continue;
-> -               }
-> -               if (strcmp(*argv, "-L") =3D=3D 0) {
-> -                       atflag &=3D ~AT_SYMLINK_NOFOLLOW;
-> -                       continue;
-> -               }
-> -               if (strcmp(*argv, "-O") =3D=3D 0) {
-> -                       mask &=3D ~STATX_BASIC_STATS;
-> -                       continue;
-> -               }
-> -               if (strcmp(*argv, "-A") =3D=3D 0) {
-> -                       atflag |=3D AT_NO_AUTOMOUNT;
-> -                       continue;
-> -               }
-> -               if (strcmp(*argv, "-R") =3D=3D 0) {
-> -                       raw =3D 1;
-> -                       continue;
-> -               }
-> -
-> -               memset(&stx, 0xbf, sizeof(stx));
-> -               ret =3D statx(AT_FDCWD, *argv, atflag, mask, &stx);
-> -               printf("statx(%s) =3D %d\n", *argv, ret);
-> -               if (ret < 0) {
-> -                       perror(*argv);
-> -                       exit(1);
-> -               }
-> -
-> -               if (raw)
-> -                       dump_hex((unsigned long long *)&stx, 0, sizeof(st=
-x));
-> -
-> -               dump_statx(&stx);
-> -       }
-> -       return 0;
-> -}
-> diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
-> new file mode 100644
-> index 000000000000..4ac9690fb3c4
-> --- /dev/null
-> +++ b/samples/vfs/Makefile
-> @@ -0,0 +1,10 @@
-> +# List of programs to build
-> +hostprogs-$(CONFIG_SAMPLE_VFS) :=3D \
-> +       test-fsmount \
-> +       test-statx
-> +
-> +# Tell kbuild to always build the programs
-> +always :=3D $(hostprogs-y)
-> +
-> +HOSTCFLAGS_test-fsmount.o +=3D -I$(objtree)/usr/include
-> +HOSTCFLAGS_test-statx.o +=3D -I$(objtree)/usr/include
-> diff --git a/samples/vfs/test-fsmount.c b/samples/vfs/test-fsmount.c
-> new file mode 100644
-> index 000000000000..74124025ade0
-> --- /dev/null
-> +++ b/samples/vfs/test-fsmount.c
-> @@ -0,0 +1,118 @@
-> +/* fd-based mount test.
-> + *
-> + * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <sys/prctl.h>
-> +#include <sys/wait.h>
-> +#include <linux/fs.h>
-> +#include <linux/unistd.h>
-> +
-> +#define E(x) do { if ((x) =3D=3D -1) { perror(#x); exit(1); } } while(0)
-> +
-> +static void check_messages(int fd)
-> +{
-> +       char buf[4096];
-> +       int err, n;
-> +
-> +       err =3D errno;
-> +
-> +       for (;;) {
-> +               n =3D read(fd, buf, sizeof(buf));
-> +               if (n < 0)
-> +                       break;
-> +               n -=3D 2;
-> +
-> +               switch (buf[0]) {
-> +               case 'e':
-> +                       fprintf(stderr, "Error: %*.*s\n", n, n, buf + 2);
-> +                       break;
-> +               case 'w':
-> +                       fprintf(stderr, "Warning: %*.*s\n", n, n, buf + 2=
-);
-> +                       break;
-> +               case 'i':
-> +                       fprintf(stderr, "Info: %*.*s\n", n, n, buf + 2);
-> +                       break;
-> +               }
-> +       }
-> +
-> +       errno =3D err;
-> +}
-> +
-> +static __attribute__((noreturn))
-> +void mount_error(int fd, const char *s)
-> +{
-> +       check_messages(fd);
-> +       fprintf(stderr, "%s: %m\n", s);
-> +       exit(1);
-> +}
-> +
-> +static inline int fsopen(const char *fs_name, unsigned int flags)
-> +{
-> +       return syscall(__NR_fsopen, fs_name, flags);
-> +}
-> +
-> +static inline int fsmount(int fsfd, unsigned int flags, unsigned int ms_=
-flags)
-> +{
-> +       return syscall(__NR_fsmount, fsfd, flags, ms_flags);
-> +}
-> +
-> +static inline int fsconfig(int fsfd, unsigned int cmd,
-> +                          const char *key, const void *val, int aux)
-> +{
-> +       return syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
-> +}
-> +
-> +static inline int move_mount(int from_dfd, const char *from_pathname,
-> +                            int to_dfd, const char *to_pathname,
-> +                            unsigned int flags)
-> +{
-> +       return syscall(__NR_move_mount,
-> +                      from_dfd, from_pathname,
-> +                      to_dfd, to_pathname, flags);
-> +}
-> +
-> +#define E_fsconfig(fd, cmd, key, val, aux)                             \
-> +       do {                                                            \
-> +               if (fsconfig(fd, cmd, key, val, aux) =3D=3D -1)          =
-   \
-> +                       mount_error(fd, key ?: "create");               \
-> +       } while (0)
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +       int fsfd, mfd;
-> +
-> +       /* Mount a publically available AFS filesystem */
-> +       fsfd =3D fsopen("afs", 0);
-> +       if (fsfd =3D=3D -1) {
-> +               perror("fsopen");
-> +               exit(1);
-> +       }
-> +
-> +       E_fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "#grand.central.o=
-rg:root.cell.", 0);
-> +       E_fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> +
-> +       mfd =3D fsmount(fsfd, 0, MS_RDONLY);
-> +       if (mfd < 0)
-> +               mount_error(fsfd, "fsmount");
-> +       E(close(fsfd));
-> +
-> +       if (move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH=
-) < 0) {
-> +               perror("move_mount");
-> +               exit(1);
-> +       }
-> +
-> +       E(close(mfd));
-> +       exit(0);
-> +}
-> diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
-> new file mode 100644
-> index 000000000000..d4d77b09412c
-> --- /dev/null
-> +++ b/samples/vfs/test-statx.c
-> @@ -0,0 +1,258 @@
-> +/* Test the statx() system call.
-> + *
-> + * Note that the output of this program is intended to look like the out=
-put of
-> + * /bin/stat where possible.
-> + *
-> + * Copyright (C) 2015 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#define _ATFILE_SOURCE
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +#include <ctype.h>
-> +#include <errno.h>
-> +#include <time.h>
-> +#include <sys/syscall.h>
-> +#include <sys/types.h>
-> +#include <linux/stat.h>
-> +#include <linux/fcntl.h>
-> +#include <sys/stat.h>
-> +
-> +#define AT_STATX_SYNC_TYPE     0x6000
-> +#define AT_STATX_SYNC_AS_STAT  0x0000
-> +#define AT_STATX_FORCE_SYNC    0x2000
-> +#define AT_STATX_DONT_SYNC     0x4000
-> +
-> +static __attribute__((unused))
-> +ssize_t statx(int dfd, const char *filename, unsigned flags,
-> +             unsigned int mask, struct statx *buffer)
-> +{
-> +       return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
-> +}
-> +
-> +static void print_time(const char *field, struct statx_timestamp *ts)
-> +{
-> +       struct tm tm;
-> +       time_t tim;
-> +       char buffer[100];
-> +       int len;
-> +
-> +       tim =3D ts->tv_sec;
-> +       if (!localtime_r(&tim, &tm)) {
-> +               perror("localtime_r");
-> +               exit(1);
-> +       }
-> +       len =3D strftime(buffer, 100, "%F %T", &tm);
-> +       if (len =3D=3D 0) {
-> +               perror("strftime");
-> +               exit(1);
-> +       }
-> +       printf("%s", field);
-> +       fwrite(buffer, 1, len, stdout);
-> +       printf(".%09u", ts->tv_nsec);
-> +       len =3D strftime(buffer, 100, "%z", &tm);
-> +       if (len =3D=3D 0) {
-> +               perror("strftime2");
-> +               exit(1);
-> +       }
-> +       fwrite(buffer, 1, len, stdout);
-> +       printf("\n");
-> +}
-> +
-> +static void dump_statx(struct statx *stx)
-> +{
-> +       char buffer[256], ft =3D '?';
-> +
-> +       printf("results=3D%x\n", stx->stx_mask);
-> +
-> +       printf(" ");
-> +       if (stx->stx_mask & STATX_SIZE)
-> +               printf(" Size: %-15llu", (unsigned long long)stx->stx_siz=
-e);
-> +       if (stx->stx_mask & STATX_BLOCKS)
-> +               printf(" Blocks: %-10llu", (unsigned long long)stx->stx_b=
-locks);
-> +       printf(" IO Block: %-6llu", (unsigned long long)stx->stx_blksize)=
-;
-> +       if (stx->stx_mask & STATX_TYPE) {
-> +               switch (stx->stx_mode & S_IFMT) {
-> +               case S_IFIFO:   printf("  FIFO\n");                     f=
-t =3D 'p'; break;
-> +               case S_IFCHR:   printf("  character special file\n");   f=
-t =3D 'c'; break;
-> +               case S_IFDIR:   printf("  directory\n");                f=
-t =3D 'd'; break;
-> +               case S_IFBLK:   printf("  block special file\n");       f=
-t =3D 'b'; break;
-> +               case S_IFREG:   printf("  regular file\n");             f=
-t =3D '-'; break;
-> +               case S_IFLNK:   printf("  symbolic link\n");            f=
-t =3D 'l'; break;
-> +               case S_IFSOCK:  printf("  socket\n");                   f=
-t =3D 's'; break;
-> +               default:
-> +                       printf(" unknown type (%o)\n", stx->stx_mode & S_=
-IFMT);
-> +                       break;
-> +               }
-> +       } else {
-> +               printf(" no type\n");
-> +       }
-> +
-> +       sprintf(buffer, "%02x:%02x", stx->stx_dev_major, stx->stx_dev_min=
-or);
-> +       printf("Device: %-15s", buffer);
-> +       if (stx->stx_mask & STATX_INO)
-> +               printf(" Inode: %-11llu", (unsigned long long) stx->stx_i=
-no);
-> +       if (stx->stx_mask & STATX_NLINK)
-> +               printf(" Links: %-5u", stx->stx_nlink);
-> +       if (stx->stx_mask & STATX_TYPE) {
-> +               switch (stx->stx_mode & S_IFMT) {
-> +               case S_IFBLK:
-> +               case S_IFCHR:
-> +                       printf(" Device type: %u,%u",
-> +                              stx->stx_rdev_major, stx->stx_rdev_minor);
-> +                       break;
-> +               }
-> +       }
-> +       printf("\n");
-> +
-> +       if (stx->stx_mask & STATX_MODE)
-> +               printf("Access: (%04o/%c%c%c%c%c%c%c%c%c%c)  ",
-> +                      stx->stx_mode & 07777,
-> +                      ft,
-> +                      stx->stx_mode & S_IRUSR ? 'r' : '-',
-> +                      stx->stx_mode & S_IWUSR ? 'w' : '-',
-> +                      stx->stx_mode & S_IXUSR ? 'x' : '-',
-> +                      stx->stx_mode & S_IRGRP ? 'r' : '-',
-> +                      stx->stx_mode & S_IWGRP ? 'w' : '-',
-> +                      stx->stx_mode & S_IXGRP ? 'x' : '-',
-> +                      stx->stx_mode & S_IROTH ? 'r' : '-',
-> +                      stx->stx_mode & S_IWOTH ? 'w' : '-',
-> +                      stx->stx_mode & S_IXOTH ? 'x' : '-');
-> +       if (stx->stx_mask & STATX_UID)
-> +               printf("Uid: %5d   ", stx->stx_uid);
-> +       if (stx->stx_mask & STATX_GID)
-> +               printf("Gid: %5d\n", stx->stx_gid);
-> +
-> +       if (stx->stx_mask & STATX_ATIME)
-> +               print_time("Access: ", &stx->stx_atime);
-> +       if (stx->stx_mask & STATX_MTIME)
-> +               print_time("Modify: ", &stx->stx_mtime);
-> +       if (stx->stx_mask & STATX_CTIME)
-> +               print_time("Change: ", &stx->stx_ctime);
-> +       if (stx->stx_mask & STATX_BTIME)
-> +               print_time(" Birth: ", &stx->stx_btime);
-> +
-> +       if (stx->stx_attributes_mask) {
-> +               unsigned char bits, mbits;
-> +               int loop, byte;
-> +
-> +               static char attr_representation[64 + 1] =3D
-> +                       /* STATX_ATTR_ flags: */
-> +                       "????????"      /* 63-56 */
-> +                       "????????"      /* 55-48 */
-> +                       "????????"      /* 47-40 */
-> +                       "????????"      /* 39-32 */
-> +                       "????????"      /* 31-24        0x00000000-ff0000=
-00 */
-> +                       "????????"      /* 23-16        0x00000000-00ff00=
-00 */
-> +                       "???me???"      /* 15- 8        0x00000000-0000ff=
-00 */
-> +                       "?dai?c??"      /*  7- 0        0x00000000-000000=
-ff */
-> +                       ;
-> +
-> +               printf("Attributes: %016llx (", stx->stx_attributes);
-> +               for (byte =3D 64 - 8; byte >=3D 0; byte -=3D 8) {
-> +                       bits =3D stx->stx_attributes >> byte;
-> +                       mbits =3D stx->stx_attributes_mask >> byte;
-> +                       for (loop =3D 7; loop >=3D 0; loop--) {
-> +                               int bit =3D byte + loop;
-> +
-> +                               if (!(mbits & 0x80))
-> +                                       putchar('.');   /* Not supported =
-*/
-> +                               else if (bits & 0x80)
-> +                                       putchar(attr_representation[63 - =
-bit]);
-> +                               else
-> +                                       putchar('-');   /* Not set */
-> +                               bits <<=3D 1;
-> +                               mbits <<=3D 1;
-> +                       }
-> +                       if (byte)
-> +                               putchar(' ');
-> +               }
-> +               printf(")\n");
-> +       }
-> +}
-> +
-> +static void dump_hex(unsigned long long *data, int from, int to)
-> +{
-> +       unsigned offset, print_offset =3D 1, col =3D 0;
-> +
-> +       from /=3D 8;
-> +       to =3D (to + 7) / 8;
-> +
-> +       for (offset =3D from; offset < to; offset++) {
-> +               if (print_offset) {
-> +                       printf("%04x: ", offset * 8);
-> +                       print_offset =3D 0;
-> +               }
-> +               printf("%016llx", data[offset]);
-> +               col++;
-> +               if ((col & 3) =3D=3D 0) {
-> +                       printf("\n");
-> +                       print_offset =3D 1;
-> +               } else {
-> +                       printf(" ");
-> +               }
-> +       }
-> +
-> +       if (!print_offset)
-> +               printf("\n");
-> +}
-> +
-> +int main(int argc, char **argv)
-> +{
-> +       struct statx stx;
-> +       int ret, raw =3D 0, atflag =3D AT_SYMLINK_NOFOLLOW;
-> +
-> +       unsigned int mask =3D STATX_ALL;
-> +
-> +       for (argv++; *argv; argv++) {
-> +               if (strcmp(*argv, "-F") =3D=3D 0) {
-> +                       atflag &=3D ~AT_STATX_SYNC_TYPE;
-> +                       atflag |=3D AT_STATX_FORCE_SYNC;
-> +                       continue;
-> +               }
-> +               if (strcmp(*argv, "-D") =3D=3D 0) {
-> +                       atflag &=3D ~AT_STATX_SYNC_TYPE;
-> +                       atflag |=3D AT_STATX_DONT_SYNC;
-> +                       continue;
-> +               }
-> +               if (strcmp(*argv, "-L") =3D=3D 0) {
-> +                       atflag &=3D ~AT_SYMLINK_NOFOLLOW;
-> +                       continue;
-> +               }
-> +               if (strcmp(*argv, "-O") =3D=3D 0) {
-> +                       mask &=3D ~STATX_BASIC_STATS;
-> +                       continue;
-> +               }
-> +               if (strcmp(*argv, "-A") =3D=3D 0) {
-> +                       atflag |=3D AT_NO_AUTOMOUNT;
-> +                       continue;
-> +               }
-> +               if (strcmp(*argv, "-R") =3D=3D 0) {
-> +                       raw =3D 1;
-> +                       continue;
-> +               }
-> +
-> +               memset(&stx, 0xbf, sizeof(stx));
-> +               ret =3D statx(AT_FDCWD, *argv, atflag, mask, &stx);
-> +               printf("statx(%s) =3D %d\n", *argv, ret);
-> +               if (ret < 0) {
-> +                       perror(*argv);
-> +                       exit(1);
-> +               }
-> +
-> +               if (raw)
-> +                       dump_hex((unsigned long long *)&stx, 0, sizeof(st=
-x));
-> +
-> +               dump_statx(&stx);
-> +       }
-> +       return 0;
-> +}
->
+/Jarkko
