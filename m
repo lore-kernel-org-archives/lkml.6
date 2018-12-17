@@ -2,66 +2,164 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF88C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5653C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 109F521841
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7FE21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731641AbeLQKay (ORCPT
+        id S1731899AbeLQKbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:30:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48536 "EHLO mx1.redhat.com"
+        Mon, 17 Dec 2018 05:31:08 -0500
+Received: from ozlabs.org ([203.11.71.1]:51939 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727064AbeLQKax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:30:53 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726924AbeLQKbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 05:31:08 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 837162814D;
-        Mon, 17 Dec 2018 10:30:53 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 520C86012E;
-        Mon, 17 Dec 2018 10:30:51 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Subject: Re: [PATCH v2 0/7] x86/kvm/hyper-v: Implement KVM_GET_SUPPORTED_HV_CPUID
-In-Reply-To: <7a318d1c-7601-fc67-8924-971f9deb8824@redhat.com>
-References: <20181210172159.410-1-vkuznets@redhat.com> <7a318d1c-7601-fc67-8924-971f9deb8824@redhat.com>
-Date:   Mon, 17 Dec 2018 11:30:49 +0100
-Message-ID: <87woo830o6.fsf@vitty.brq.redhat.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 43JHVv44stz9sBh;
+        Mon, 17 Dec 2018 21:31:03 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        Firoz Khan <firoz.khan@linaro.org>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Breno Leitao <leitao@debian.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-arch@vger.kernel.org, y2038@lists.linaro.org,
+        linux-kernel@vger.kernel.org, marcin.juszkiewicz@linaro.org,
+        deepa.kernel@gmail.com
+Subject: Re: [PATCH v5 0/5] powerpc: system call table generation support
+In-Reply-To: <20181217080846.GA28424@sathnaga86.in.ibm.com>
+References: <1544691770-8938-1-git-send-email-firoz.khan@linaro.org> <20181217080846.GA28424@sathnaga86.in.ibm.com>
+Date:   Mon, 17 Dec 2018 21:30:58 +1100
+Message-ID: <877eg8v40t.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 17 Dec 2018 10:30:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
-
+Satheesh Rajendran <sathnaga@linux.vnet.ibm.com> writes:
+> Hi Firoz,
 >
-> Queued, thanks.  I moved this above the direct EOI series so that
-> KVM_CAP_HYPERV_STIMER_DIRECT need not exist at any point of the history.
+> On Thu, Dec 13, 2018 at 02:32:45PM +0530, Firoz Khan wrote:
+>> The purpose of this patch series is, we can easily
+>> add/modify/delete system call table support by cha-
+>> nging entry in syscall.tbl file instead of manually
+>> changing many files. The other goal is to unify the 
+>> system call table generation support implementation 
+>> across all the architectures. 
+>> 
+>> The system call tables are in different format in 
+>> all architecture. It will be difficult to manually
+>> add, modify or delete the system calls in the resp-
+>> ective files manually. To make it easy by keeping a 
+>> script and which'll generate uapi header file and 
+>> syscall table file.
+>> 
+>> syscall.tbl contains the list of available system 
+>> calls along with system call number and correspond-
+>> ing entry point. Add a new system call in this arch-
+>> itecture will be possible by adding new entry in 
+>> the syscall.tbl file.
+>> 
+>> Adding a new table entry consisting of:
+>>         - System call number.
+>>         - ABI.
+>>         - System call name.
+>>         - Entry point name.
+>> 	- Compat entry name, if required.
+>> 	- spu entry name, if required.
+>> 
+>> ARM, s390 and x86 architecuture does exist the sim-
+>> ilar support. I leverage their implementation to 
+>> come up with a generic solution.
+>> 
+>> I have done the same support for work for alpha, 
+>> ia64, m68k, microblaze, mips, parisc, sh, sparc, 
+>> and xtensa. Below mentioned git repository contains
+>> more details about the workflow.
+>> 
+>> https://github.com/frzkhn/system_call_table_generator/
+>> 
+>> Finally, this is the ground work to solve the Y2038
+>> issue. We need to add two dozen of system calls to 
+>> solve Y2038 issue. So this patch series will help to
+>> add new system calls easily by adding new entry in the
+>> syscall.tbl.
+>> 
+>> Changes since v4:
+>>  - DOTSYM macro removed for ppc32, which was causing
+>>    the compilation error.
+>> 
+>> Changes since v3:
+>>  - split compat syscall table out from native table.
+>>  - modified the script to add new line in the generated
+>>    file.
+>> 
+>> Changes since v2:
+>>  - modified/optimized the syscall.tbl to avoid duplicate
+>>    for the spu entries.
+>>  - updated the syscalltbl.sh to meet the above point.
+>> 
+>> Changes since v1:
+>>  - optimized/updated the syscall table generation 
+>>    scripts.
+>>  - fixed all mixed indentation issues in syscall.tbl.
+>>  - added "comments" in syscall_*.tbl.
+>>  - changed from generic-y to generated-y in Kbuild.
+>> 
+>> Firoz Khan (5):
+>>   powerpc: add __NR_syscalls along with NR_syscalls
+>>   powerpc: move macro definition from asm/systbl.h
+>>   powerpc: add system call table generation support
+>>   powerpc: split compat syscall table out from native table
+>>   powerpc: generate uapi header and system call table files
 >
+> Tried to apply on linus "master" and linuxppc-dev(https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git) "merge" branch,
+> both failed to apply series.
+>
+> # git am mbox
+> Applying: powerpc: add __NR_syscalls along with NR_syscalls
+> Applying: powerpc: move macro definition from asm/systbl.h
+> Applying: powerpc: add system call table generation support
+> Applying: powerpc: split compat syscall table out from native table
+> Applying: powerpc: generate uapi header and system call table files
+> error: patch failed: arch/powerpc/include/uapi/asm/Kbuild:1
+> error: arch/powerpc/include/uapi/asm/Kbuild: patch does not apply
+> Patch failed at 0005 powerpc: generate uapi header and system call table files
+> Use 'git am --show-current-patch' to see the failed patch
+> When you have resolved this problem, run "git am --continue".
+> If you prefer to skip this patch, run "git am --skip" instead.
+> To restore the original branch and stop patching, run "git am --abort".
+>
+> Then, tried with linuxppc-dev(https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git) "next" branch,
+> patch got applied, compiled with ppc64le_defconfig and booted on IBM Power8 box.
+>
+> # uname -r
+> 4.20.0-rc2-gdd2690d2c
+>
+> Looks like patch series needs a rebase against the latest kernel versions.
 
-Thanks! Just to make sure (and to conclude our discussion with Roman):
-with your Qemu maintainer hat on, do you agree with the design decision
-that KVM_GET_SUPPORTED_HV_CPUID's output value changes when
-KVM_CAP_HYPERV_ENLIGHTENED_VMCS gets enabled? This differs from
-KVM_GET_SUPPORTED_CPUID (where we always list all feature bits even if
-they require explicit enablement)?
+No it's fine if it applies on next.
 
--- 
-Vitaly
+I can also fix up minor merge conflicts if there are any.
+
+cheers
