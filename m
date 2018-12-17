@@ -2,100 +2,83 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB449C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EBBC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74D76206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A492206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388126AbeLQQHM (ORCPT
+        id S2388137AbeLQQHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:07:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39542 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727788AbeLQQHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:07:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AF43BAF8E;
-        Mon, 17 Dec 2018 16:07:09 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 17:07:09 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 10/11] livepatch: Remove ordering and refuse loading
- conflicting patches
-Message-ID: <20181217160709.vnbxjo4mimy3dmm7@pathway.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-11-pmladek@suse.com>
- <20181213230652.e2vn27qvqhumtaog@treble>
+        Mon, 17 Dec 2018 11:07:32 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:33385 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727788AbeLQQHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:07:31 -0500
+Received: by mail-vk1-f195.google.com with SMTP id d201so2961841vka.0;
+        Mon, 17 Dec 2018 08:07:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PcEy5g5+pMfpGpqJHU0Swt65d2yFYeN2tB0w5Sx3elY=;
+        b=b6rvFS/ycM1lQ4bjKUp3iW4SR8HlxA7kS0PLHCCoNeGRmHs2Z9GyJch/yW8MHC0D+L
+         F1uPkmRMUMrHqeStxWTXYlr2MGGKqrm3OZylOmSFPoEHISjtS9V05h4T3lfrKQ97YDRz
+         toQY1KafAJznNjiBhzMM94mjZZVP6KrgMnvMe8nLVe+s+e6yfvzK4mG82vDif1RJHKgW
+         GnyvVDa8qC96rHQKPigeurIiFqcBBIMuiFi4jWloS2heLriqSlzBijclYBa/3C31NhEp
+         MywfN/8doMC1Ulhxd77AzLbvxEBdfjidcdHGyjkGqjiUo1/10UeI7XYAkX/OiZFXnh6G
+         FbTg==
+X-Gm-Message-State: AA+aEWbMEAAgXL+NQ8CtVyHtHm6frSBEeGC2bNcmCarmyKdfYEgdaZT9
+        uCGpG12SRVCfXqEYaiZl3VnT6bVFmL3m1l6p8KM=
+X-Google-Smtp-Source: AFSGD/W7DHvx/bS9cKmv/wP/gcV43Quk1pGmdSNjVF9f7sTp7JCKhjBHAQ+2vyt/AggisNiNUu3Ugv6ZKGUqos7/2CU=
+X-Received: by 2002:a1f:298e:: with SMTP id p136mr3861012vkp.40.1545062850356;
+ Mon, 17 Dec 2018 08:07:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213230652.e2vn27qvqhumtaog@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544778613-24279-8-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544778613-24279-8-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 17 Dec 2018 17:07:18 +0100
+Message-ID: <CAMuHMdWHTPTaNr56Xf5CSFXRt99BmUsh6o0DJAF2TVO+mQEN0g@mail.gmail.com>
+Subject: Re: [PATCH 7/9] arm64: dts: renesas: r8a774c0: Add Ethernet AVB node
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-12-13 17:06:52, Josh Poimboeuf wrote:
-> On Thu, Nov 29, 2018 at 10:44:30AM +0100, Petr Mladek wrote:
-> > The atomic replace and cumulative patches were introduced as a more secure
-> > way to handle dependent patches. They simplify the logic:
-> > 
-> >   + Any new cumulative patch is supposed to take over shadow variables
-> >     and changes made by callbacks from previous livepatches.
-> > 
-> >   + All replaced patches are discarded and the modules can be unloaded.
-> >     As a result, there is only one scenario when a cumulative livepatch
-> >     gets disabled.
-> > 
-> > The different handling of "normal" and cumulative patches might cause
-> > confusion. It would make sense to keep only one mode. On the other hand,
-> > it would be rude to enforce using the cumulative livepatches even for
-> > trivial and independent (hot) fixes.
-> > 
-> > This patch removes the stack of patches. The list of enabled patches
-> > is still needed but the ordering is not longer enforced.
-> > 
-> > Note that it is not possible to catch all possible dependencies. It is
-> > the responsibility of the livepatch authors to decide.
-> > 
-> > Nevertheless this patch prevents having two patches for the same function
-> > enabled at the same time after the transition finishes. It might help
-> > to catch obvious mistakes. But more importantly, we do not need to
-> > handle situation when a patch in the middle of the function stack
-> > (ops->func_stack) is being removed.
-> 
-> I'm not sure about this patch.  I like the removal of the stacking.  But
-> do we really want to enforce no dependencies between non-cumulative
-> patches?  It can be done correctly if the user is careful.
-> 
-> Maybe we should just let users do it if they want to.  And then that
-> also would mean less code for us to maintain.
-> 
-> And as usual, I apologize if I'm either contradicting or repeating past
-> versions of myself. :-)
+On Fri, Dec 14, 2018 at 10:10 AM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds the SoC specific part of the Ethernet AVB
+> device tree node.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch was actually motivated by you. On some conference, we
-discussed how to automatize the creation of livepatches. You wanted
-to make livepatching more safe in general (by tools, by checks, ...).
-Also you always wanted to make things easier and reduce possible
-scenarios. I thought that this might be in line with your wishes.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The problem with this patch is that it forces people to use
-cumulative patches. I am not sure if everyone is ready for it.
+Gr{oetje,eeting}s,
 
-I do not resist on it. But I still think that it makes sense.
+                        Geert
 
-Best Regards,
-Petr
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
