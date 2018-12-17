@@ -2,127 +2,90 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2559EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9FAC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAF102133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF25D2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:49:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388501AbeLQTsQ (ORCPT
+        id S1727329AbeLQTtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:48:16 -0500
-Received: from mga06.intel.com ([134.134.136.31]:7846 "EHLO mga06.intel.com"
+        Mon, 17 Dec 2018 14:49:21 -0500
+Received: from mga07.intel.com ([134.134.136.100]:25774 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726660AbeLQTsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:48:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727060AbeLQTtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:49:21 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:48:09 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 11:49:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="108094230"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Dec 2018 11:48:08 -0800
-Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 17 Dec 2018 11:48:08 -0800
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.59]) by
- ORSMSX157.amr.corp.intel.com ([169.254.9.206]) with mapi id 14.03.0415.000;
- Mon, 17 Dec 2018 11:48:08 -0800
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>,
-        "bhsharma@redhat.com" <bhsharma@redhat.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
-        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>
-Subject: RE: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Topic: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Index: AQHUiJNT1thRYrJKskifWLlncDcXfqWDUdzAgACK0QD//3p94IAAnSqA//97RiA=
-Date:   Mon, 17 Dec 2018 19:48:07 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F486046A9@ORSMSX114.amr.corp.intel.com>
-References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
- <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
- <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
- <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
- <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
- <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9iJinkP-buhmzRyB91_HcJ-tDwT3YHeHGFo4Bsiv7O_Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmQwNzFkNTYtYmUwZi00MGQ3LTk2Y2QtMDU4ZTZiZmE1NjQxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRno3V09aeThtUG1PemNTTFg1UFE4cjV1Q29aYkpvM2EyTXoxYXN1RGdiS0wxdWwwaW5OV01yNWk4NlVvTnA2VSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+   d="scan'208";a="101389785"
+Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
+  by orsmga006.jf.intel.com with ESMTP; 17 Dec 2018 11:49:14 -0800
+Date:   Mon, 17 Dec 2018 21:49:13 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181217194913.GD29785@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ID4gPiBIaSBUaG9tYXMgYW5kIEluZ28sDQo+ID4gPiA+DQo+ID4gPiA+IEkgcmVjZW50bHkg
-bm90aWNlZCB0aGF0IHRoZSBiZWxvdyBjb21taXRzIFsxXSBhbmQgWzJdIGFyZSBicm9rZW4NCj4g
-PiA+ID4gd2hlbiBrZXJuZWwgY29tbWFuZCBsaW5lIGFyZ3VtZW50ICJlZmk9b2xkX21hcCIgaXMg
-cGFzc2VkLiBTb3JyeSENCj4gPiA+ID4gSSBtaXNzZWQgdG8gdGVzdCB0aGlzIGNvbmRpdGlvbiBw
-cmlvciB0byBzZW5kaW5nIHRoZXNlIHBhdGNoZXMgdG8gbWFpbGluZyBsaXN0Lg0KPiA+ID4gPiBJ
-IGFtIHdvcmtpbmcgb24gYSBmaXggYW5kIHdpbGwgc2VuZCBpdCB0byBtYWlsaW5nIGxpc3QgYXMg
-c29vbiBhcyBpdCdzIHJlYWR5Lg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IENvdWxkIHlvdSBlbGFi
-b3JhdGUgb24gdGhlIHByb2JsZW0gcGxlYXNlPw0KPiA+DQo+ID4gU3VyZSEgTXkgYmFkLi4NCj4g
-Pg0KPiA+IExpdHRsZSBiaXQgb2YgaGlzdG9yeSBoZXJlOg0KPiA+IEJvcmlzIHdpdGggdGhpcyBw
-YXRjaCBzZXQgWzFdIGludHJvZHVjZWQgc3RhdGljYWxseSBtYXBwaW5nIEVGSQ0KPiA+IFJ1bnRp
-bWUgU2VydmljZXMgYXQgLTRHIGFuZCBhbHNvIGludHJvZHVjZWQgImVmaT1vbGRfbWFwIiB0byBy
-ZXR1cm4gdG8NCj4gPiBwcmV2aW91cyBFRkkgZnVuY3Rpb25hbGl0eSB3aGljaCB1c2VkIGlvcmVt
-YXAgYW5kIF9fdmEocGEpLg0KPiA+DQo+ID4gWzNdIGFuZCBbNF0gYXJlIGxpbmtzIHRvIG9sZF9t
-YXBfcmVnaW9uKCkNCj4gPg0KPiA+IFRoZSBjb21taXQgMDhjZmIzOGYzZWY0ICgieDg2L2VmaTog
-VW5tYXAgRUZJIGJvb3Qgc2VydmljZXMgY29kZS9kYXRhDQo+ID4gcmVnaW9ucyBmcm9tIGVmaV9w
-Z2QiKSwgdW5tYXBzIEVGSSBib290IHNlcnZpY2VzIGNvZGUvZGF0YSByZWdpb25zDQo+ID4gKm9u
-bHkqIGZyb20gZWZpX3BnZCBidXQgZWZpPW9sZF9tYXAgbWFwcyBFRkkgYm9vdCBzZXJ2aWNlcyBj
-b2RlL2RhdGENCj4gPiByZWdpb25zIGludG8gc3dhcHBlcl9wZ2QuIEFsc28sIGVmaT1vbGRfbWFw
-ICB1c2VzIGVpdGhlcg0KPiA+IGlvcmVtYXAoKSBvciBfX3ZhKG1kLT5waHlzX2FkZHIpIHRvIG1h
-cCBFRkkgcnVudGltZS9ib290IHRpbWUgc2VydmljZXMgYW5kDQo+IGRvZXNuJ3QgdXNlIGtlcm5l
-bF9tYXBfcGFnZXNfaW5fcGdkKCkuDQo+ID4NCj4gPiBTbywgd2UgbmVlZCBhIGRpZmZlcmVudCB1
-bm1hcHBpbmcgcm91dGluZSB0byB1bm1hcCBFRkkgYm9vdCBzZXJ2aWNlcw0KPiA+IGNvZGUvZGF0
-YSByZWdpb25zIGZyb20gc3dhcHBlcl9wZ2QgaWYgdGhleSB3ZXJlIG1hcHBlZCB1c2luZyBlZmk9
-b2xkX21hcC4NCj4gPg0KPiANCj4gRm9yIHRoZSBzaG9ydCB0ZXJtLCBjb3VsZCB3ZSBzaW1wbHkg
-bWFrZSB5b3VyIGNoYW5nZXMgZGVwZW5kZW50IG9uIGVmaSAhPQ0KPiBvbGRfbWFwPyBUaGF0IGdp
-dmVzIHVzIHNvbWUgdGltZSB0byBmaXggdGhlIG9sZF9tYXAgY2FzZSBwcm9wZXJseS4NCg0KWWVz
-LCBJIHRoaW5rIHdlIGNvdWxkIGFuZCBpdCBzaG91bGQgd29yayBidXQgSSBoZXNpdGF0ZWQgdG8g
-cHJvcG9zZSBpdCBiZWNhdXNlIA0KKGFzIHlvdSBhbHJlYWR5IG5vdGVkKSBpdCdzIGEgc2hvcnQg
-dGVybSBmaXggYW5kIG5vdCB0aGUgcmlnaHQgZml4Lg0KDQpBbHRlcm5hdGl2ZWx5LCB3ZSBjb3Vs
-ZCBhbHNvIGV2YWx1YXRlIGlmIHdlIG5lZWQgdG8gc3VwcG9ydCBlZmk9b2xkX21hcCBjYXNlIGdv
-aW5nIGZ1cnRoZXIuDQpJIHRob3VnaHQgZHJvcHBpbmcgaXQgd291bGQgYmUgYSBiYWQgaWRlYSBi
-ZWNhdXNlIGl0IGNoYW5nZXMga2VybmVsIHVzZXIgdmlzaWJsZSBpbnRlcmZhY2UgDQooYmVjYXVz
-ZSBpdCdzIGEga2VybmVsIGNvbW1hbmQgbGluZSBhcmd1bWVudCkgYW5kIG5ldmVyIGJyb3VnaHQg
-aXQgdXAuDQpOb3Qgc3VyZSB3aGF0IFRob21hcywgSW5nbyBvciBMaW51cyBtaWdodCB0aGluayBh
-Ym91dCBkcm9wcGluZyBhIGtlcm5lbCBjb21tYW5kIGxpbmUgDQphcmd1bWVudC4NCg0KUmVnYXJk
-cywNClNhaQ0K
+On Mon, Dec 17, 2018 at 11:17:49AM -0800, Dave Hansen wrote:
+> On 12/17/18 11:12 AM, Andy Lutomirski wrote:
+> > So I'm not saying that you shouldn't do it the way you are now, but I
+> > do think that the changelog or at least some emails should explain
+> > *why* the enclave needs to keep a pointer to the creating process's
+> > mm.  And, if you do keep the current model, it would be nice to
+> > understand what happens if you do something awful like mremap()ing an
+> > enclave, or calling madvise on it, or otherwise abusing the vma.  Or
+> > doing fork(), for that matter.
+> 
+> Yeah, the code is built to have one VMA and only one VMA per enclave.
+> You need to go over the origin of this restriction and what enforces this.
+
+It is before ECREATE but after that you can split it with mprotect().
+
+Lets take an example. I'm not sure how we would acquire mm efficiently
+in sgx_encl_page_reclaim() otherwise than having it as a field in encl.
+
+/Jarkko
