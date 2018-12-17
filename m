@@ -2,310 +2,217 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B0EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89BD0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C1C206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:22:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vq+1Dl9K"
+	by mail.kernel.org (Postfix) with ESMTP id 5B3AA217F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 07:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbeLQHWV (ORCPT
+        id S1731372AbeLQHYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:22:21 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38792 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731372AbeLQHWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 02:22:20 -0500
-Received: by mail-vs1-f65.google.com with SMTP id x64so7098575vsa.5
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 23:22:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hZw47SEGF4Gi++4s16HWfIRjbOkalduCKULhSiQ9q4E=;
-        b=Vq+1Dl9KB1HyJRpWPBzxnqRxyoXuvvPqdVZ2JNSC/qiUtWAmHaVHWHp10ePVaGvGXY
-         JrkBu/glQl9l23csPkRFuLmiOgR1b6ka8JO4IDcRx+QYRXxQbImvyv/g+4vnGgGadLFp
-         a5XK22R+zbKH4X1fqpJzvfU/J4DBmeMpDJtR4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hZw47SEGF4Gi++4s16HWfIRjbOkalduCKULhSiQ9q4E=;
-        b=bbah7dC4WtG1lAATsm+vknLVLwj48uzMGqa8sBlQfgON1uvkle1C8vcXFSM2szoPYU
-         cznaR+kRxzsBqZFWnav5lNFxYr0hVAQbzqMQnB2QwlUFd7c9bRrtkqeYh5DYwDjtumrp
-         l4myM6hrKeqtOokhnzmyEyq5za6xEYJXSboeLRFlXDKmMfRqbLLDHWQTDJRR2PA225oK
-         eOL1l09lTRYHgPFFUuQps2OcPiVcegVRafgsm4gsCI6ivJhaJu/ZqE7hPXTDPi+iyPIM
-         gMAP7+SAop11xxuJ73LVi0jAq1tj0IV9uRyaFeqhNVz8KGyHz9Qtv27kIeIa6qiqlqGC
-         rjYg==
-X-Gm-Message-State: AA+aEWbOd22EQhYmJ47ChyCntH5IoUN4EysAv5/3H9vGFZaG6tWGdgGb
-        RikmFlL9iUlB8GwzbC6+8WL8/5yI3zIU0jdy2PpkDg==
-X-Google-Smtp-Source: AFSGD/UN/litMxFsd9QZujJ4bSKW40F+uGSlizRbMtXhDjaBp2mMWdybvrjHIsVlGgeZs2dpcBNUF4F3pZaq92RqKoo=
-X-Received: by 2002:a67:d00f:: with SMTP id r15mr5746387vsi.191.1545031338555;
- Sun, 16 Dec 2018 23:22:18 -0800 (PST)
+        Mon, 17 Dec 2018 02:24:05 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:59614 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726417AbeLQHYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 02:24:05 -0500
+Received: from [10.10.2.219] (pluton2.ispras.ru [83.149.199.44])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 5BF8154006B;
+        Mon, 17 Dec 2018 10:24:01 +0300 (MSK)
+Subject: Re: [PATCH] mailbox: imx: Fix clk handling in imx_mu_probe()
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+References: <1544914904-3809-1-git-send-email-khoroshilov@ispras.ru>
+ <20181217060111.hsay6vhqpxyfdbiu@pengutronix.de>
+From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=khoroshilov@ispras.ru; prefer-encrypt=mutual; keydata=
+ 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
+ kK2E04Fb+Zk1eJvHYRc=
+Message-ID: <3ccce5b6-75a5-da94-08e3-985880382d00@ispras.ru>
+Date:   Mon, 17 Dec 2018 10:24:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1544833340-5024-1-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1544833340-5024-1-git-send-email-skomatineni@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 17 Dec 2018 08:21:40 +0100
-Message-ID: <CAPDyKFrsuRY5+EvPeGmAvi-qkLFD4nFoa=Tdq-m+iNcF7dB4Bw@mail.gmail.com>
-Subject: Re: [PATCH V1] mmc: tegra: HW Command Queue Support for Tegra SDMMC
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181217060111.hsay6vhqpxyfdbiu@pengutronix.de>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: ru-RU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Dec 2018 at 01:22, Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
->
-> This patch adds HW Command Queue for supported Tegra SDMMC
-> controllers.
->
-> Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
-> use of 64_BIT DMA to disable 64-bit addressing mode access to the
-> system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
-> for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
->
-> CQE need to use ADMA3 as it need to fetch task descriptor along
-> with transfer descriptor, so this patch forces DMA Select to be
-> ADMA3 for CQE.
->
-> Note that this patch depends on below patches
-> [0] DMA Config prior to CQE
->     https://lkml.org/lkml/2018/12/14/1062
-> [1] SDMMC address range
->     https://lkml.org/lkml/2018/12/14/1323
-> [2] Fix sdhci_do_enable_v4_mode
->     https://lkml.org/lkml/2018/12/14/72
+Hi Oleksij,
 
-Can you please collect these into a series and while re-posting make
-sure to also have a cover letter.
+By chance I took a look at another implementations:
 
-This makes 0-day builds build to pick up the decency, but also helps
-when reviewing.
+arch/arm/mach-ep93xx/clock.c#L266
 
-Kind regards
-Uffe
+int clk_enable(struct clk *clk)
+{
+	unsigned long flags;
 
->
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 76 +++++++++++++++++++++++++++++++++++++++++-
->  drivers/mmc/host/sdhci.c       | 18 +++++++++-
->  drivers/mmc/host/sdhci.h       |  1 +
->  3 files changed, 93 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 7b95d088fdef..eaebe5e22183 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -33,6 +33,7 @@
->  #include <linux/ktime.h>
->
->  #include "sdhci-pltfm.h"
-> +#include "cqhci.h"
->
->  /* Tegra SDHOST controller vendor register definitions */
->  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL                  0x100
-> @@ -89,6 +90,10 @@
->  #define NVQUIRK_NEEDS_PAD_CONTROL                      BIT(7)
->  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP                        BIT(8)
->
-> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-> +#define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
-> +
-> +
->  struct sdhci_tegra_soc_data {
->         const struct sdhci_pltfm_data *pdata;
->         u32 nvquirks;
-> @@ -128,6 +133,7 @@ struct sdhci_tegra {
->         u32 default_tap;
->         u32 default_trim;
->         u32 dqs_trim;
-> +       bool enable_hwcq;
->  };
->
->  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> @@ -836,6 +842,17 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
->                 tegra_host->pad_calib_required = true;
->  }
->
-> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-> +{
-> +       sdhci_dumpregs(mmc_priv(mmc));
-> +}
-> +
-> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
-> +       .enable = sdhci_cqe_enable,
-> +       .disable = sdhci_cqe_disable,
-> +       .dumpregs = sdhci_tegra_dumpregs,
-> +};
-> +
->  static const struct sdhci_ops tegra_sdhci_ops = {
->         .get_ro     = tegra_sdhci_get_ro,
->         .read_w     = tegra_sdhci_readw,
-> @@ -989,6 +1006,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
->         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
->         .voltage_switch = tegra_sdhci_voltage_switch,
->         .get_max_clock = tegra_sdhci_get_max_clock,
-> +       .irq = sdhci_cqhci_irq,
->  };
->
->  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-> @@ -1030,6 +1048,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
->
-> +static int sdhci_tegra_add_host(struct sdhci_host *host)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> +       struct cqhci_host *cq_host;
-> +       bool dma64;
-> +       int ret;
-> +
-> +       if (!tegra_host->enable_hwcq)
-> +               return sdhci_add_host(host);
-> +
-> +       host->v4_mode = true;
-> +
-> +       ret = sdhci_setup_host(host);
-> +       if (ret)
-> +               return ret;
-> +
-> +       host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-> +
-> +       cq_host = devm_kzalloc(host->mmc->parent,
-> +                               sizeof(*cq_host), GFP_KERNEL);
-> +       if (!cq_host) {
-> +               ret = -ENOMEM;
-> +               goto cleanup;
-> +       }
-> +
-> +       cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-> +       cq_host->ops = &sdhci_tegra_cqhci_ops;
-> +
-> +       dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-> +       if (dma64)
-> +               cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-> +
-> +       ret = cqhci_init(cq_host, host->mmc, dma64);
-> +       if (ret)
-> +               goto cleanup;
-> +
-> +       ret = __sdhci_add_host(host);
-> +       if (ret)
-> +               goto cleanup;
-> +
-> +       return 0;
-> +
-> +cleanup:
-> +       sdhci_cleanup_host(host);
-> +       return ret;
-> +
-> +}
-> +
->  static int sdhci_tegra_probe(struct platform_device *pdev)
->  {
->         const struct of_device_id *match;
-> @@ -1039,6 +1106,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->         struct sdhci_tegra *tegra_host;
->         struct clk *clk;
->         int rc;
-> +       struct resource *iomem;
->
->         match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
->         if (!match)
-> @@ -1056,6 +1124,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->         tegra_host->pad_control_available = false;
->         tegra_host->soc_data = soc_data;
->
-> +       iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
-> +               tegra_host->enable_hwcq = true;
-> +       else
-> +               tegra_host->enable_hwcq = false;
-> +
->         if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
->                 rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
->                 if (rc == 0)
-> @@ -1117,7 +1191,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->
->         usleep_range(2000, 4000);
->
-> -       rc = sdhci_add_host(host);
-> +       rc = sdhci_tegra_add_host(host);
->         if (rc)
->                 goto err_add_host;
->
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 99bdae53fa2e..8c03c7a3dab2 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -36,6 +36,7 @@
->  #include <linux/mmc/slot-gpio.h>
->
->  #include "sdhci.h"
-> +#include "cqhci.h"
->
->  #define DRIVER_NAME "sdhci"
->
-> @@ -3308,7 +3309,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
->
->         ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
->         ctrl &= ~SDHCI_CTRL_DMA_MASK;
-> -       if (host->flags & SDHCI_USE_64_BIT_DMA)
-> +       if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
-> +                       (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
->                 ctrl |= SDHCI_CTRL_ADMA64;
->         else
->                 ctrl |= SDHCI_CTRL_ADMA32;
-> @@ -3361,6 +3363,20 @@ void sdhci_cqe_disable(struct mmc_host *mmc, bool recovery)
->  }
->  EXPORT_SYMBOL_GPL(sdhci_cqe_disable);
->
-> +u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask)
-> +{
-> +       int cmd_error = 0;
-> +       int data_error = 0;
-> +
-> +       if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-> +               return intmask;
-> +
-> +       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(sdhci_cqhci_irq);
-> +
->  bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
->                    int *data_error)
->  {
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index b001cf4d3d7e..9ff7a138270e 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -777,6 +777,7 @@ void sdhci_cqe_enable(struct mmc_host *mmc);
->  void sdhci_cqe_disable(struct mmc_host *mmc, bool recovery);
->  bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
->                    int *data_error);
-> +u32 sdhci_cqhci_irq(struct sdhci_host *host, u32 intmask);
->
->  void sdhci_dumpregs(struct sdhci_host *host);
->  void sdhci_enable_v4_mode(struct sdhci_host *host);
-> --
-> 2.7.4
->
+	if (!clk)
+		return -EINVAL;
+...
+
+arch/c6x/platforms/pll.c#L48
+
+int clk_enable(struct clk *clk)
+{
+	unsigned long flags;
+
+	if (clk == NULL || IS_ERR(clk))
+		return -EINVAL;
+
+So, I am not sure the NULL resistance is a part of the clk_enable()
+contract?
+
+--
+Alexey
+
+
+On 17.12.2018 9:01, Oleksij Rempel wrote:
+> Hi Alexey,
+> 
+> On Sun, Dec 16, 2018 at 02:01:44AM +0300, Alexey Khoroshilov wrote:
+>> Handling of devm_clk_get() suggests that the driver should support
+>> lack of priv->clk. But imx_mu_probe() fails on clk_prepare_enable(NULL)
+>> in that case.
+>>
+>> The patch removes the try to enable absent clk and adds error handling
+>> for mbox_controller_register().
+>>
+>> Found by Linux Driver Verification project (linuxtesting.org).
+>>
+>> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+>> ---
+>>  drivers/mailbox/imx-mailbox.c | 18 +++++++++++++-----
+>>  1 file changed, 13 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+>> index 363d35d5e49d..ddde398f576e 100644
+>> --- a/drivers/mailbox/imx-mailbox.c
+>> +++ b/drivers/mailbox/imx-mailbox.c
+>> @@ -292,10 +292,12 @@ static int imx_mu_probe(struct platform_device *pdev)
+>>  		priv->clk = NULL;
+>>  	}
+>>  
+>> -	ret = clk_prepare_enable(priv->clk);
+>> -	if (ret) {
+>> -		dev_err(dev, "Failed to enable clock\n");
+>> -		return ret;
+>> +	if (priv->clk) {
+>> +		ret = clk_prepare_enable(priv->clk);
+>> +		if (ret) {
+>> +			dev_err(dev, "Failed to enable clock\n");
+>> +			return ret;
+>> +		}
+>>  	}
+>>  
+>>  	for (i = 0; i < IMX_MU_CHANS; i++) {
+>> @@ -324,7 +326,13 @@ static int imx_mu_probe(struct platform_device *pdev)
+>>  
+>>  	imx_mu_init_generic(priv);
+>>  
+>> -	return mbox_controller_register(&priv->mbox);
+>> +	ret = mbox_controller_register(&priv->mbox);
+>> +	if (ret) {
+>> +		clk_disable_unprepare(priv->clk);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>>  }
+>>  
+>>  static int imx_mu_remove(struct platform_device *pdev)
+>> -- 
+>> 2.7.4
+>>
+>>
+> 
+> NACK for this patch.
+> 
+> Here are code snippets from clk framework:
+> ============================================================================
+> /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+> static inline int clk_prepare_enable(struct clk *clk)
+> {
+> 	int ret;
+> 
+> 	ret = clk_prepare(clk);
+> 	if (ret)
+> 		return ret;
+> 	ret = clk_enable(clk);
+> 	if (ret)
+> 		clk_unprepare(clk);
+> 
+> 	return ret;
+> }
+> 
+> int clk_prepare(struct clk *clk)
+> {
+> 	if (!clk)
+> 		return 0;
+> 
+> 	return clk_core_prepare_lock(clk->core);
+> }
+> 
+> int clk_enable(struct clk *clk)
+> {
+> 	if (!clk)
+> 		return 0;
+> 
+> 	return clk_core_enable_lock(clk->core);
+> }
+> ============================================================================
+> 
+> As you can see, complete code path is NULL resistant. Are you trying to
+> fix some real issue, or it is a theoretical work?
+> 
+
