@@ -2,79 +2,92 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A5CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5F5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66E02145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB579206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:52:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fJnEZOwA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388295AbeLQQvB (ORCPT
+        id S2388337AbeLQQwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:51:01 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:33222 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbeLQQvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:51:01 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gYw6H-0002lM-Kq; Mon, 17 Dec 2018 09:50:38 -0700
-To:     Nick Kossifidis <mick@ics.forth.gr>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andrew Waterman <andrew@sifive.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Zong Li <zong@andestech.com>, Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Clark <michaeljclark@mac.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20181015175702.9036-1-logang@deltatee.com>
- <20181015175702.9036-7-logang@deltatee.com>
- <4b591ba933363e29392dba218ef63267@mailhost.ics.forth.gr>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <5fd0880c-5896-ffee-4d3c-4fce1649382e@deltatee.com>
-Date:   Mon, 17 Dec 2018 09:50:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 17 Dec 2018 11:52:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40584 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388298AbeLQQwc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:52:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OYL9WFygQ+hDPFIACis4Z/GLLsWAtobhaqY1c5uZH0Q=; b=fJnEZOwAVYuYbtbbBez3FOgQ0
+        VEyOl6gk/BCWvhmDyVgLNvS2Wt56lArUKiVT+Z/2K1ALfTjSnVaTWmx1FDdOj7S9HY81xrocwBf2/
+        cU1hdhSXN8eOQqCXhT82CMNpJAz55SLwH03VNmIMAgUZVa49OPctOUkx/nib3QmyxG0nP+rULuhZZ
+        d/zsO2IcXXcJScSHay9YmurdV/x51rTdRP+YGl1X3f+duZxxXyHpWqaRsNpsWc5wxPnutodbbCcIf
+        DK8Cu8IO5zGFFf0+oxjsEc9FQ4HTabnkl/MoJRqEKtFNfSh8PgT/+E6XKx2Wi4iW9sjb99pwq//uo
+        AnCttPnFw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gYw87-0007cy-GW; Mon, 17 Dec 2018 16:52:31 +0000
+Date:   Mon, 17 Dec 2018 08:52:31 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181217165231.GB18626@infradead.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
+ <20181212202609.GA193967@gmail.com>
+ <20181213202249.GA3797@infradead.org>
+ <20181214051722.GF20880@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <4b591ba933363e29392dba218ef63267@mailhost.ics.forth.gr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: hch@lst.de, michaeljclark@mac.com, akpm@linux-foundation.org, olof@lixom.net, zong@andestech.com, sbates@raithlin.com, palmer@sifive.com, arnd@arndb.de, andrew@sifive.com, aou@eecs.berkeley.edu, robh@kernel.org, linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mick@ics.forth.gr
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v2 6/6] RISC-V: Implement sparsemem
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214051722.GF20880@thunk.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[FYI, your mail never made it to my inbox, although I found the copy
+in linux-fsdevel now]
 
+On Fri, Dec 14, 2018 at 12:17:22AM -0500, Theodore Y. Ts'o wrote:
+> I don't consider fs-verity to be part of core VFS, but rather a
+> library that happens to be used by ext4 and f2fs.  This is much like
+> fscrypt, which was originally an ext4-only thing, but the code was
+> always set up so it could be used by other file systems, and when f2fs
+> was interested in using it, we moved it to fs/crypto.  As such the
+> fscrypto code never got a review from Al, Andrew, or you, and when I
+> pushed it to Linus, he accepted the pull request.
 
-On 2018-12-17 7:59 a.m., Nick Kossifidis wrote:
-> Having memory blocks of a minimum size of 1GB doesn't make much sense. 
-> It makes it harder to implement hotplug on top of this since we'll only 
-> able to add/remove 1GB at a time. ARM used to do the same and they 
-> switched to 27bits (https://patchwork.kernel.org/patch/9172845/), ARM64 
-> still uses 1GB, x86 also uses 27bits and most archs also use something 
-> below 30. I believe we should go for 27bits as well or even better have 
-> this as a compile time option.
+And as a result we are stuck with a pretty bad interface, so this is
+a very good example for how to not do thing!  Just because a user
+interface is only implemented by one or two file systems doesn't mean
+it should skip the userspace ABI review, because we tend to generalize
+them unless they are deeply specific to fs internals.
 
-Thanks, that makes sense. I'll make the change for the next time we submit.
+> P.S.  And if you've purchased a Pixel 3 device, it's already using the
+> fsverity code, so it's quite well tested (and yes, we have xfstests).
 
-> BTW memblocks_present is on master now (got merged 3 days ago).
-
-Great! We'll send an updated patch set after the merge window.
-
-Logan
+And all kinds of other code that would never pass review, so that isn't
+really a good argument unfortunately :(  Note that I would want to buy
+a piece of hardware coming with google spyware preinstalled.
