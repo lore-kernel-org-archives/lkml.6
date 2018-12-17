@@ -2,87 +2,102 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90973C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE2FC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D7A3214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD40020874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545082014;
-	bh=iML32z7Npv/AvMYBSMJpUIMm4IiyRT58lgsv7SYvVR8=;
+	s=default; t=1545082112;
+	bh=qTL/oj7ZiO+0JiKGHEvcg8NE3WggL+eYluASmXssyG0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fwhzsV7nFESnhfU1tzWW7TYxpacb7UGIQdSww/OFeJ4Pm/fHM4VYdaSe61I0++mT2
-	 QeL/3w4xZELpfTQHX2n1QknuGFyxTCBWU6G6eSOJIoFTNq2K13Mu8Kpmnt3A7QmBcw
-	 LR2ijd4Rw6OFH15GUTuQAU6NSZmpaxJscwkpx2rg=
+	b=tSl/aPPcnuufmIcCHwpT0y1JMiVCAyZHq2ne+i98E7FoVP0viwvGe3JfH90NtJ49a
+	 ZR0xwk4jsJTTcx0vnc4SILFKNavFVLknunVu5k/3WbyldoWBpvAmhCFo/wCKUXIStT
+	 TmCQAmNbuIshT1oLDre6ZGPYdkPFv10Y3X+SFC7E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732546AbeLQV0x (ORCPT
+        id S2387635AbeLQV2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:26:53 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37631 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbeLQV0x (ORCPT
+        Mon, 17 Dec 2018 16:28:31 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40592 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbeLQV2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:26:53 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 40so13635291oth.4;
-        Mon, 17 Dec 2018 13:26:52 -0800 (PST)
+        Mon, 17 Dec 2018 16:28:31 -0500
+Received: by mail-qk1-f193.google.com with SMTP id y16so8261300qki.7;
+        Mon, 17 Dec 2018 13:28:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IsPYRmN2ohiuYijZ8MSpnBZggV+vxwnQddS15sgckdU=;
-        b=dTSxKeLUo6G7H7cXFoMFC3DA25FjCE42yceiDp3bpZda+bpB5Z0ajCCfzkOuLupHlK
-         hXv3x5qMGLav7KOA0wWPNnahnL4fPbUwSqjPb8gJUOXXtPxNfOytoC9fmOV4wqawrv78
-         fgLQoKnVb0IE0aeKbbEaecOelvCLYMoJOClJZHnK2xI6PntE1N2NFrJVzHuQzB1jC5v1
-         PACcPa4mwW/frs+BLHa+PlUGE2D6xfMYC0Ek7LpKIH0Tr/QXcWI0Fu4GWg03u7dyRWOE
-         I0aDIS+u3poRu1BuTxCJT6j4vNvEI73JrRrr6+sVttp+DF27hXVuFiuOkIWF4JOz6HA3
-         1+KQ==
-X-Gm-Message-State: AA+aEWZ6aJXCZHa57PfD9iIaHptKSY5nNDeABXRO8qxrqqwX0PnSG3gM
-        /ttg6yuErvNfQ8/3f1B1NA==
-X-Google-Smtp-Source: AFSGD/VVTu9ZZffDFEdS18EmhoSyllhhBQd4CCD4j7Mjt2w3dAIaTA6Otq3n04wptY45A46S18C/0g==
-X-Received: by 2002:a9d:2f64:: with SMTP id h91mr10670320otb.14.1545082012247;
-        Mon, 17 Dec 2018 13:26:52 -0800 (PST)
-Received: from localhost (cpe-70-114-214-127.austin.res.rr.com. [70.114.214.127])
-        by smtp.gmail.com with ESMTPSA id 4sm6877164otw.39.2018.12.17.13.26.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 13:26:51 -0800 (PST)
-Date:   Mon, 17 Dec 2018 15:26:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Christophe Kerello <christophe.kerello@st.com>
-Cc:     boris.brezillon@bootlin.com, miquel.raynal@bootlin.com,
-        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, mark.rutland@arm.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v4 1/3] dt-bindings: mtd: stm32_fmc2: add STM32 FMC2 NAND
- controller documentation
-Message-ID: <20181217212650.GA20603@bogus>
-References: <1544781488-18723-1-git-send-email-christophe.kerello@st.com>
- <1544781488-18723-2-git-send-email-christophe.kerello@st.com>
+        bh=hICT8iegwCs+8IKlBLqosthCdlIAWqoprn338q3xsdE=;
+        b=aIRPOKn1obThGB6E3dWqMtfRVsYceHVvCoAfx+Sdtv5Kt3hgV26gMMziIfqNjRAC8f
+         3b2U2MUUmzZMCXZbEPMFwivNdaosaf82nUEwSk8IfUIuQ4to7R5QqucM4dphrlblA+uz
+         VASUjRCN3sSPC5JN2vNTLzIFYPSWy8gvOw7erucIkzm3xuG36KbzsGMpZSNL+pXSbYYw
+         PGTHMdppQ8Ph3lBjHzGRrPtJLWWhyVo4yU6Qyn0pUNt8RSCNanCuUVRgAvzt0//VHEvT
+         /Up9IrFa5sMcEVCh3gAqbE+BwPJezZ8me0oPTb1NJbHx/2NqwePruV26zON6udVPaATz
+         i9Ng==
+X-Gm-Message-State: AA+aEWZxMB5EET0v4I6U0Yx5xmqkrFHyOxXeDE4wNMyZj2mLkQt1Aeup
+        r2d6a5d9jqsdQ94Qqix6JPU=
+X-Google-Smtp-Source: AFSGD/WJljSDUuf3JCJY2+THbbVhJZIw3augeggiVVWPK+6M69I5jalE0ArBEDajRgOPj+8rihGTxg==
+X-Received: by 2002:a37:1054:: with SMTP id a81mr13241242qkh.150.1545082109511;
+        Mon, 17 Dec 2018 13:28:29 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::6:416f])
+        by smtp.gmail.com with ESMTPSA id y70sm7435858qka.75.2018.12.17.13.28.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 13:28:28 -0800 (PST)
+Date:   Mon, 17 Dec 2018 16:28:26 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Liu Bo <obuil.liubo@gmail.com>
+Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] block: fix blk-iolatency accounting underflow
+Message-ID: <20181217212826.GA71824@dennisz-mbp.dhcp.thefacebook.com>
+References: <20181217160351.27903-1-dennis@kernel.org>
+ <CANQeFDAO5PdMOrZnn0UgFHcHGvXEs7qS9Kqrk1KRCAwgfRzSOg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544781488-18723-2-git-send-email-christophe.kerello@st.com>
+In-Reply-To: <CANQeFDAO5PdMOrZnn0UgFHcHGvXEs7qS9Kqrk1KRCAwgfRzSOg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 10:58:06AM +0100, Christophe Kerello wrote:
-> This patch adds the documentation of the device tree bindings for the STM32
-> FMC2 NAND controller.
+On Mon, Dec 17, 2018 at 11:42:28AM -0800, Liu Bo wrote:
+> On Mon, Dec 17, 2018 at 8:04 AM Dennis Zhou <dennis@kernel.org> wrote:
+> >
+> > The blk-iolatency controller measures the time from rq_qos_throttle() to
+> > rq_qos_done_bio() and attributes this time to the first bio that needs
+> > to create the request. This means if a bio is plug-mergeable or
+> > bio-mergeable, it gets to bypass the blk-iolatency controller.
+> >
 > 
-> Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
-> ---
->  .../devicetree/bindings/mtd/stm32-fmc2-nand.txt    | 61 ++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/stm32-fmc2-nand.txt
+> Hi,
+> 
+> I have a question about merging in plug list, since plug merges are
+> done before rq_qos_throttle(), why would plug-mergeable bios bypass
+> the controller?
+> 
+> thanks,
+> liubo
+> 
 
-Please add acks/reviewed-bys when posting new versions.
+Hi Liubo,
 
-Rob
+BIO_TRACKED is tagging the bio that is responsible for allocating a new
+request, so that rq_qos controllers can decide whether or not they want
+to process the bio any part of the way. I should have phrased that a
+little better in the commit message. It's not that the bio itself is
+bypassing the blk-iolatency controller, but the blk-iolatency controller
+deciding to not do anything based on the BIO_TRACKED flag. This doesn't
+change any of the function calls made on a bio/request.
+
+Thanks,
+Dennis
