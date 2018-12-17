@@ -2,259 +2,279 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55154C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB225C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02AB9214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FA0A214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:46:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NbqDgrAT"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ig4rz2eh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733243AbeLQSqL (ORCPT
+        id S2389089AbeLQSqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:46:11 -0500
-Received: from mail-it1-f176.google.com ([209.85.166.176]:38893 "EHLO
-        mail-it1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727447AbeLQSqL (ORCPT
+        Mon, 17 Dec 2018 13:46:21 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11364 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbeLQSqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:46:11 -0500
-Received: by mail-it1-f176.google.com with SMTP id h65so441068ith.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:46:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9U94R06JMJihKEn4ykZFaXUxyjfw6aGK4cSw3eC0y4o=;
-        b=NbqDgrATCweKpj7zEAVkWBshpZ48StPBQNujLM0ov1o9AqgriO5eSa4FrtzFsFGIkv
-         s04hNC6oqXVKE4oOZUrrLnRXKanhzU4CpaGTCVoKkgXsMdv7IJnWiwJVe4vwkfVavQcj
-         RbiGuSZ6YKoFtWGVPsWQhWz/Lw3FiKbs+Y5WRDvXLUQxuxPbX4quuBqYXxFboeGTCuSO
-         DDvxnq96I+e7km156KByIr8RKC4WxJIQ9ssB/I9FdMSaRTVZVpcOo0myuXByacYjI8hN
-         /sWIdh07rUgTPyfL0EMYfmPl2FXsHOehmxTZubQEJvarJTiVWO5lIKZavc16CtwtCaER
-         fnAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9U94R06JMJihKEn4ykZFaXUxyjfw6aGK4cSw3eC0y4o=;
-        b=NhH5gvfIjPqgZTQr/pXhusN4my+uTHAkNumUkwwZ05pOhhs75hqdpXEcmyAUkgv1OY
-         zPWbDzwQHUm0jwmbT9bt6kTd45NghhpAx1YZFzdDUXcemoeUvB/AVwMhqEURgQzXUIbC
-         pk6+4PrspdvBMp0KjlU4fkVIvrnYNPd/GLE3XMok/DNA43ZtZUAMCkXJsX4zPntX88Hu
-         Eym9Ml6DvyWsir9m4y7Kjb3F+8cF0H8LNQaJ2QSXXXro7+n1npaL7XNfgDjYhtwm8DFK
-         IGwCnvIX+8tNo2Ch4jObzpSZ/B1D/H1U5x1cO6MCW46nlvVl71EES6o6/RSeaxykZVaA
-         H5rg==
-X-Gm-Message-State: AA+aEWYOrQeeqTMTpefRPheJcxFU7hsQLAkmSJjSC7sh/yemF4LA+BgD
-        muEZvlBpgONi0pyQVXc0HqQ2rt+rl0OJHtCLCJzSww==
-X-Google-Smtp-Source: AFSGD/VzwTIIwGp3SLcgxFaoShLOcanBpQF8Ms4ap0qbrrRPCkxhwGnI7H2fwyFj37xJ6hy79DHK2SFfGCVWEV67V1E=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr243485iti.166.1545072369759;
- Mon, 17 Dec 2018 10:46:09 -0800 (PST)
+        Mon, 17 Dec 2018 13:46:20 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c17eef50000>; Mon, 17 Dec 2018 10:46:13 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 17 Dec 2018 10:46:18 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 17 Dec 2018 10:46:18 -0800
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 17 Dec
+ 2018 18:46:17 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Mon, 17 Dec 2018 18:46:17 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c17eef90000>; Mon, 17 Dec 2018 10:46:17 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
+        <linux-mmc@vger.kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V3] mmc: tegra: HW Command Queue Support for Tegra SDMMC
+Date:   Mon, 17 Dec 2018 10:46:13 -0800
+Message-ID: <1545072373-6562-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <0000000000005e47a2057d0edc49@google.com> <20181216190412.GE4170@linux.ibm.com>
- <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
- <20181217112916.GG4170@linux.ibm.com> <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
- <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
- <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com> <20181217162421.6d636ee5@redhat.com>
- <20181217192121.64f34511@redhat.com>
-In-Reply-To: <20181217192121.64f34511@redhat.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 17 Dec 2018 19:45:58 +0100
-Message-ID: <CACT4Y+ZU3F=AyyuNyVia7gT22Z71JKM-K4uap0J-iumF=NjH9A@mail.gmail.com>
-Subject: Re: WARNING in __rcu_read_unlock
-To:     Stefano Brivio <sbrivio@redhat.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545072373; bh=pAbh9kF/hKIQUKcFf9x0My5iflBXsdukeXVbB8fPQTc=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=Ig4rz2ehYlGc8YdTwkfjTE+FKTKN6x7B0XMKPY9zIumEetSHNihtZ/kq/V+x9eWFL
+         +VHOgrUPTxepH48RhcOhuhLm95YK8ykicY1qwq0lPi7LRI/Fb3hpjFF9O/SXCYNbW5
+         eo9iyfTo7MSbke3kQF5+kP9l1aanQlorPQ3hV6Lr7SLa3eSriuj5ETEEtLod8Y/8xQ
+         r17uNBppeRP0m5Dz7YbZILxsLwY5URcbdEAESgRLHtT1wBWDW2f1q4VQF41rnKRTiV
+         D7zw85ITzkJi76X4w4BgTbPeytyupoaVJKGSO0rlguE+U6TwkcoLyY+k7u/Y6RWqMW
+         M0gHylbO3fF/Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 12:29 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> Any chance of a bisection?
+This patch adds HW Command Queue for supported Tegra SDMMC
+controllers.
 
-Better later then never. Bisection also needs testing :)
+Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
+use of 64_BIT DMA to disable 64-bit addressing mode access to the
+system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
+for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
 
-syz-bisect -config bisect.cfg -crash dda626cdbd87eafe9a755acbbe102e2b6096b256
-searching for guilty commit starting from 2aa55dccf83d
-building syzkaller on 7624ddd6
-testing commit 2aa55dccf83d7ca9f1da59ae005426c44fbeb890 with gcc (GCC) 8.1.0
-run #0: crashed: KASAN: slab-out-of-bounds in tick_sched_handle
-run #1: crashed: KASAN: slab-out-of-bounds in tick_sched_handle
-run #2: crashed: BUG: Bad page map
-run #3: crashed: BUG: Bad page map
-run #4: crashed: PANIC: double fault in __udp4_lib_err
-run #5: crashed: general protection fault in __bfs
-run #6: crashed: KASAN: stack-out-of-bounds Read in __handle_mm_fault
-run #7: crashed: no output from test machine
-testing release v4.19
-testing commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect start 2aa55dccf83d v4.19
-Bisecting: 7955 revisions left to test after this (roughly 13 steps)
-[f8cab69be0a8a756a7409f6d2bd1e6e96ce46482] Merge tag
-'linux-kselftest-4.20-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
-testing commit f8cab69be0a8a756a7409f6d2bd1e6e96ce46482 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good f8cab69be0a8a756a7409f6d2bd1e6e96ce46482
-Bisecting: 3957 revisions left to test after this (roughly 12 steps)
-[b3491d8430dd25f0a4e00c33d60da22a9bd9d052] Merge tag 'media/v4.20-2'
-of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
-testing commit b3491d8430dd25f0a4e00c33d60da22a9bd9d052 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good b3491d8430dd25f0a4e00c33d60da22a9bd9d052
-Bisecting: 1978 revisions left to test after this (roughly 11 steps)
-[40df309e4166c69600968c93846aa0b1821e83f0] octeontx2-af: Support to
-enable/disable default MCAM entries
-testing commit 40df309e4166c69600968c93846aa0b1821e83f0 with gcc (GCC) 8.1.0
-run #0: crashed: general protection fault in __bfs
-run #1: crashed: KASAN: stack-out-of-bounds Read in copy_page_range
-run #2: crashed: general protection fault in __bfs
-run #3: crashed: KASAN: slab-out-of-bounds Read in vma_compute_subtree_gap
-run #4: crashed: general protection fault in corrupted
-run #5: crashed: general protection fault in corrupted
-run #6: crashed: BUG: unable to handle kernel paging request in corrupted
-run #7: crashed: KASAN: stack-out-of-bounds Read in inet6_fill_ifla6_attrs
-# git bisect bad 40df309e4166c69600968c93846aa0b1821e83f0
-Bisecting: 989 revisions left to test after this (roughly 10 steps)
-[a13511dfa836c8305a737436eed3ba9a8e74a826] Merge
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-testing commit a13511dfa836c8305a737436eed3ba9a8e74a826 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good a13511dfa836c8305a737436eed3ba9a8e74a826
-Bisecting: 521 revisions left to test after this (roughly 9 steps)
-[9ff01193a20d391e8dbce4403dd5ef87c7eaaca6] Linux 4.20-rc3
-testing commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6
-Bisecting: 260 revisions left to test after this (roughly 8 steps)
-[47e3e53ceadc568c038e457661d836f2259ed774] ice: Destroy scheduler tree
-in reset path
-testing commit 47e3e53ceadc568c038e457661d836f2259ed774 with gcc (GCC) 8.1.0
-run #0: crashed: KASAN: slab-out-of-bounds Read in tick_sched_handle
-run #1: crashed: KASAN: stack-out-of-bounds in __fget_light
-run #2: crashed: BUG: unable to handle kernel paging request in corrupted
-run #3: crashed: KASAN: stack-out-of-bounds in anon_vma_interval_tree_remove
-run #4: crashed: general protection fault in __udp4_lib_err
-run #5: crashed: KASAN: stack-out-of-bounds Read in free_pgd_range
-run #6: crashed: general protection fault in change_protection
-run #7: crashed: INFO: trying to register non-static key in corrupted
-# git bisect bad 47e3e53ceadc568c038e457661d836f2259ed774
-Bisecting: 129 revisions left to test after this (roughly 7 steps)
-[52358cb5a310990ea5069f986bdab3620e01181f] Merge branch 's390-qeth-next'
-testing commit 52358cb5a310990ea5069f986bdab3620e01181f with gcc (GCC) 8.1.0
-run #0: crashed: BUG: unable to handle kernel paging request in corrupted
-run #1: crashed: general protection fault in vma_interval_tree_insert
-run #2: crashed: KASAN: stack-out-of-bounds Read in __call_rcu
-run #3: crashed: BUG: unable to handle kernel paging request in corrupted
-run #4: crashed: general protection fault in __bfs
-run #5: crashed: BUG: unable to handle kernel paging request in
-__cgroup_account_cputime_field
-run #6: crashed: WARNING in anon_vma_interval_tree_verify
-run #7: crashed: general protection fault in rb_first
-# git bisect bad 52358cb5a310990ea5069f986bdab3620e01181f
-Bisecting: 65 revisions left to test after this (roughly 6 steps)
-[2e7ad56aa54778de863998579fc6b5ff52838571] net/wan/fsl_ucc_hdlc: add BQL support
-testing commit 2e7ad56aa54778de863998579fc6b5ff52838571 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good 2e7ad56aa54778de863998579fc6b5ff52838571
-Bisecting: 32 revisions left to test after this (roughly 5 steps)
-[b592843c6723a850be70bf9618578082f3b73851] net: sched: add an offload
-dump helper
-testing commit b592843c6723a850be70bf9618578082f3b73851 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good b592843c6723a850be70bf9618578082f3b73851
-Bisecting: 16 revisions left to test after this (roughly 4 steps)
-[a07966447f39fe43e37d05c9bfc92b1493267a59] geneve: ICMP error lookup handler
-testing commit a07966447f39fe43e37d05c9bfc92b1493267a59 with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good a07966447f39fe43e37d05c9bfc92b1493267a59
-Bisecting: 8 revisions left to test after this (roughly 3 steps)
-[04087d9a89bef97998c71c21e3ecfca0cc7c52f3] openvswitch: remove BUG_ON
-from get_dpdev
-testing commit 04087d9a89bef97998c71c21e3ecfca0cc7c52f3 with gcc (GCC) 8.1.0
-run #0: crashed: WARNING: kernel stack regs has bad 'bp' value
-run #1: crashed: BUG: unable to handle kernel paging request in corrupted
-run #2: crashed: general protection fault in corrupted
-run #3: crashed: general protection fault in __bfs
-run #4: crashed: general protection fault in corrupted
-run #5: crashed: general protection fault in rb_insert_color
-run #6: crashed: BUG: corrupted list in __pagevec_lru_add_fn
-run #7: crashed: general protection fault in validate_mm
-# git bisect bad 04087d9a89bef97998c71c21e3ecfca0cc7c52f3
-Bisecting: 3 revisions left to test after this (roughly 2 steps)
-[e7cc082455cb49ea937a3ec4ab3d001b0b5f137b] udp: Support for error
-handlers of tunnels with arbitrary destination port
-testing commit e7cc082455cb49ea937a3ec4ab3d001b0b5f137b with gcc (GCC) 8.1.0
-all runs: OK
-# git bisect good e7cc082455cb49ea937a3ec4ab3d001b0b5f137b
-Bisecting: 1 revision left to test after this (roughly 1 step)
-[56fd865f46b894681dd7e7f83761243add7a71a3] selftests: pmtu: Introduce
-FoU and GUE PMTU exceptions tests
-testing commit 56fd865f46b894681dd7e7f83761243add7a71a3 with gcc (GCC) 8.1.0
-run #0: crashed: WARNING in unlink_anon_vmas
-run #1: crashed: BUG: unable to handle kernel NULL pointer dereference
-in corrupted
-run #2: crashed: BUG: unable to handle kernel NULL pointer dereference
-in corrupted
-run #3: crashed: KASAN: stack-out-of-bounds Read in update_min_vruntime
-run #4: crashed: BUG: unable to handle kernel paging request in corrupted
-run #5: crashed: PANIC: double fault in corrupted
-run #6: crashed: WARNING in unlink_anon_vmas
-run #7: crashed: WARNING in unlink_anon_vmas
-# git bisect bad 56fd865f46b894681dd7e7f83761243add7a71a3
-Bisecting: 0 revisions left to test after this (roughly 0 steps)
-[b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e] fou, fou6: ICMP error
-handlers for FoU and GUE
-testing commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e with gcc (GCC) 8.1.0
-run #0: crashed: kernel BUG at include/linux/swapops.h:LINE!
-run #1: crashed: general protection fault in __bfs
-run #2: crashed: INFO: trying to register non-static key in corrupted
-run #3: crashed: lost connection to test machine
-run #4: crashed: BUG: unable to handle kernel NULL pointer dereference
-in corrupted
-run #5: crashed: kernel BUG at include/linux/swapops.h:LINE!
-run #6: crashed: no output from test machine
-run #7: crashed: lost connection to test machine
-# git bisect bad b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
-b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e is the first bad commit
-commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
-Author: Stefano Brivio <sbrivio@redhat.com>
-Date:   Thu Nov 8 12:19:23 2018 +0100
+CQE need to use ADMA3 as it need to fetch task descriptor along
+with transfer descriptor, so this patch forces DMA Select to be
+ADMA3 for CQE.
 
-    fou, fou6: ICMP error handlers for FoU and GUE
+Note that this patch depends on below patches
+[0] DMA Config prior to CQE
+    https://lkml.org/lkml/2018/12/14/1062
+[1] SDMMC address range
+    https://lkml.org/lkml/2018/12/14/1323
+[2] Fix sdhci_do_enable_v4_mode
+    https://lkml.org/lkml/2018/12/14/72
 
-    As the destination port in FoU and GUE receiving sockets doesn't
-    necessarily match the remote destination port, we can't associate errors
-    to the encapsulating tunnels with a socket lookup -- we need to blindly
-    try them instead. This means we don't even know if we are handling errors
-    for FoU or GUE without digging into the packets.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/mmc/host/Kconfig       |  1 +
+ drivers/mmc/host/sdhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci.c       |  3 +-
+ 3 files changed, 91 insertions(+), 2 deletions(-)
 
-    Hence, implement a single handler for both, one for IPv4 and one for IPv6,
-    that will check whether the packet that generated the ICMP error used a
-    direct IP encapsulation or if it had a GUE header, and send the error to
-    the matching protocol handler, if any.
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 1b58739d9744..5aa2de2c7609 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
+ 	depends on ARCH_TEGRA
+ 	depends on MMC_SDHCI_PLTFM
+ 	select MMC_SDHCI_IO_ACCESSORS
++	select MMC_CQHCI
+ 	help
+ 	  This selects the Tegra SD/MMC controller. If you have a Tegra
+ 	  platform with SD or MMC devices, say Y or M here.
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 7b95d088fdef..ba8bd72ec59a 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -33,6 +33,7 @@
+ #include <linux/ktime.h>
+ 
+ #include "sdhci-pltfm.h"
++#include "cqhci.h"
+ 
+ /* Tegra SDHOST controller vendor register definitions */
+ #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
+@@ -89,6 +90,10 @@
+ #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
+ #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
+ 
++/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
++#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
++
++
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
+ 	u32 nvquirks;
+@@ -128,6 +133,7 @@ struct sdhci_tegra {
+ 	u32 default_tap;
+ 	u32 default_trim;
+ 	u32 dqs_trim;
++	bool enable_hwcq;
+ };
+ 
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+@@ -836,6 +842,30 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+ 		tegra_host->pad_calib_required = true;
+ }
+ 
++static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
++{
++	sdhci_dumpregs(mmc_priv(mmc));
++}
++
++static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
++{
++	int cmd_error = 0;
++	int data_error = 0;
++
++	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
++		return intmask;
++
++	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
++
++	return 0;
++}
++
++static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
++	.enable	= sdhci_cqe_enable,
++	.disable = sdhci_cqe_disable,
++	.dumpregs = sdhci_tegra_dumpregs,
++};
++
+ static const struct sdhci_ops tegra_sdhci_ops = {
+ 	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+@@ -989,6 +1019,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+ 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
++	.irq = sdhci_tegra_cqhci_irq,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+@@ -1030,6 +1061,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
+ 
++static int sdhci_tegra_add_host(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	struct cqhci_host *cq_host;
++	bool dma64;
++	int ret;
++
++	if (!tegra_host->enable_hwcq)
++		return sdhci_add_host(host);
++
++	host->v4_mode = true;
++
++	ret = sdhci_setup_host(host);
++	if (ret)
++		return ret;
++
++	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
++
++	cq_host = devm_kzalloc(host->mmc->parent,
++				sizeof(*cq_host), GFP_KERNEL);
++	if (!cq_host) {
++		ret = -ENOMEM;
++		goto cleanup;
++	}
++
++	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
++	cq_host->ops = &sdhci_tegra_cqhci_ops;
++
++	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
++	if (dma64)
++		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
++
++	ret = cqhci_init(cq_host, host->mmc, dma64);
++	if (ret)
++		goto cleanup;
++
++	ret = __sdhci_add_host(host);
++	if (ret)
++		goto cleanup;
++
++	return 0;
++
++cleanup:
++	sdhci_cleanup_host(host);
++	return ret;
++
++}
++
+ static int sdhci_tegra_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+@@ -1039,6 +1119,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	struct sdhci_tegra *tegra_host;
+ 	struct clk *clk;
+ 	int rc;
++	struct resource *iomem;
+ 
+ 	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
+ 	if (!match)
+@@ -1056,6 +1137,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	tegra_host->pad_control_available = false;
+ 	tegra_host->soc_data = soc_data;
+ 
++	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
++		tegra_host->enable_hwcq = true;
++	else
++		tegra_host->enable_hwcq = false;
++
+ 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+ 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+ 		if (rc == 0)
+@@ -1117,7 +1204,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 
+ 	usleep_range(2000, 4000);
+ 
+-	rc = sdhci_add_host(host);
++	rc = sdhci_tegra_add_host(host);
+ 	if (rc)
+ 		goto err_add_host;
+ 
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 99bdae53fa2e..87375fbfca30 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3308,7 +3308,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+ 
+ 	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+ 	ctrl &= ~SDHCI_CTRL_DMA_MASK;
+-	if (host->flags & SDHCI_USE_64_BIT_DMA)
++	if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
++			(host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
+ 		ctrl |= SDHCI_CTRL_ADMA64;
+ 	else
+ 		ctrl |= SDHCI_CTRL_ADMA32;
+-- 
+2.7.4
 
-    Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-    Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-:040000 040000 cabdcb7779c24a357486aae139cb31cdd625bc53
-6bc9db712d9698330234b7c8c934dcfc71cfb657 M net
-revisions tested: 16, total time: 3h25m25.893971693s (build:
-1h23m29.053198068s, test: 1h59m23.409063298s)
-first bad commit: b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e fou, fou6:
-ICMP error handlers for FoU and GUE
-cc: ["sbrivio@redhat.com" "sd@queasysnail.net"]
