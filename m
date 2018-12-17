@@ -2,176 +2,125 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 171D9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF06C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5AE206A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F982133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeLQLJl (ORCPT
+        id S1727266AbeLQLLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:09:41 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:8933 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726692AbeLQLJj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:09:39 -0500
-X-UUID: 54ce35dccf384a0bb4b92223aaa3e8c5-20181217
-X-UUID: 54ce35dccf384a0bb4b92223aaa3e8c5-20181217
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chuanjia.liu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 990765218; Mon, 17 Dec 2018 19:09:31 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 17 Dec
- 2018 19:09:30 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 17 Dec 2018 19:09:29 +0800
-Message-ID: <1545044969.15380.1.camel@mhfsdcap03>
-Subject: Re: [PATCH] eint: add gpio vritual number select
-From:   Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-To:     Sean Wang <sean.wang@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <hongkun.cao@mediatek.com>,
-        <youlin.pei@mediatek.com>, <eddie.huang@mediatek.com>,
-        <zhiyong.tao@mediatek.com>, <hailong.fan@mediatek.com>
-Date:   Mon, 17 Dec 2018 19:09:29 +0800
-In-Reply-To: <CAGp9LzoiVQyWMbBx3X2SscnSrS5OPT2O+NbW+yq6p2qtfsnFag@mail.gmail.com>
-References: <1544693783-25079-1-git-send-email-chuanjia.liu@mediatek.com>
-         <CAGp9LzpcRCMWSn-u6K6+eRT=Zr8PR22Vd381miyhVYbF87N02g@mail.gmail.com>
-         <1545016504.29293.10.camel@mhfsdcap03>
-         <CAGp9LzoiVQyWMbBx3X2SscnSrS5OPT2O+NbW+yq6p2qtfsnFag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Dec 2018 06:11:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:53386 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727009AbeLQLLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 06:11:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7A2CEBD;
+        Mon, 17 Dec 2018 03:11:38 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 158723F6A8;
+        Mon, 17 Dec 2018 03:11:35 -0800 (PST)
+Date:   Mon, 17 Dec 2018 11:11:33 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org, linux-imx@nxp.com,
+        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
+        l.stach@pengutronix.de, Trent Piepho <tpiepho@impinj.com>
+Subject: Re: [PATCH v2 0/3] PCIE support for i.MX8MQ
+Message-ID: <20181217111133.GB14261@e107981-ln.cambridge.arm.com>
+References: <20181206073545.10967-1-andrew.smirnov@gmail.com>
+ <20181206121550.GA2725@e107981-ln.cambridge.arm.com>
+ <20181214203828.GD20725@google.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214203828.GD20725@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-12-16 at 23:59 -0800, Sean Wang wrote:
-> On Sun, Dec 16, 2018 at 7:15 PM Chuanjia Liu <Chuanjia.Liu@mediatek.com> wrote:
-> >
-> > On Thu, 2018-12-13 at 11:33 -0800, Sean Wang wrote:
-> > > On Thu, Dec 13, 2018 at 1:36 AM <chuanjia.liu@mediatek.com> wrote:
-> > > >
-> > > > From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> > > >
-> > > > This patch add gpio vritual number select,avoid virtual gpio set SMT.
-> > >
-> > > s/gpio/GPIO/
-> > > s/vritual/virtual/
-> > >
-> > > Virtual GPIOs you said here that means these pins only used inside SoC
-> > > and not being exported to outside SoC, right? It seems this kind of
-> > > pins doesn't need SMT.
-> > >
-> > Yes,virtual gpio only used inside SOC and these pins doesn't need set
-> > SMT
-> > > >
-> > > > Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> > > > ---
-> > > >  drivers/pinctrl/mediatek/mtk-eint.h              |    1 +
-> > > >  drivers/pinctrl/mediatek/pinctrl-mt8183.c        |    1 +
-> > > >  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |    9 ++++++---
-> > > >  3 files changed, 8 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-> > > > index 48468d0..c16beaf 100644
-> > > > --- a/drivers/pinctrl/mediatek/mtk-eint.h
-> > > > +++ b/drivers/pinctrl/mediatek/mtk-eint.h
-> > > > @@ -37,6 +37,7 @@ struct mtk_eint_hw {
-> > > >         u8              ports;
-> > > >         unsigned int    ap_num;
-> > > >         unsigned int    db_cnt;
-> > > > +       unsigned int    vir_start;
-> > > >  };
-> > > >
-> > > >  struct mtk_eint;
-> > > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> > > > index 6262fd3..bbeafd3 100644
-> > > > --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> > > > +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> > > > @@ -497,6 +497,7 @@
-> > > >         .ports     = 6,
-> > > >         .ap_num    = 212,
-> > > >         .db_cnt    = 13,
-> > > > +       .vir_start = 180,
-> > > >  };
-> > > >
-> > > >  static const struct mtk_pin_soc mt8183_data = {
-> > > > diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > > > index 4a9e0d4..ca3bae1 100644
-> > > > --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > > > +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> > > > @@ -289,9 +289,12 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
-> > > >         if (err)
-> > > >                 return err;
-> > > >
-> > > > -       err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
-> > > > -       if (err)
-> > > > -               return err;
-> > > > +       if (gpio_n < hw->eint->hw->vir_start) {
-> > > > +               err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> > > > +                                      MTK_ENABLE);
-> > > > +               if (err)
-> > > > +                       return err;
-> > > > +       }
-> > >
-> > > The changes will break these SoCs without a properly configured vir_start.
-> > >
-> > > If SMT seems unnecessary for these kinds of virtual GPIOs pin in the
-> > > path, we can do it as
-> > >
-> > > err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> > >                                         MTK_ENABLE);
-> > > /* please add comments for the exclusion condition */
-> > > if (err && err != -ENOTSUPP)
-> > >         return err;
-> > >
-> > > If there is getting much special on certain pins between SoCs, and
-> > > then we can consider creating a desc->flag to split logic.
-> >
-> > Yes,SMT unnecessary for these kinds of virtual GPIOS pin in the path,if
-> > do it as
-> >         err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> >                                         MTK_ENABLE);
-> >         if (err && err != -ENOTSUPP)
-> >                   return err;
-> > I wonder if system will lose -ENOTSUPP information when smt was not
-> > successfully set by real gpio?
+On Fri, Dec 14, 2018 at 02:38:29PM -0600, Bjorn Helgaas wrote:
+> [+cc Trent]
 > 
-> -ENOTSUPP shouldn't happen in a real pin as SMT is supposed to be
-> supported by every real pin.
+> On Thu, Dec 06, 2018 at 12:15:50PM +0000, Lorenzo Pieralisi wrote:
+> > On Wed, Dec 05, 2018 at 11:35:42PM -0800, Andrey Smirnov wrote:
+> > > Everyone:
+> > > 
+> > > This series contains changes I made in order to enable support of PCIE
+> > > IP block on i.MX8MQ SoCs (full tree can be found at [github-v2]).
+> > > 
+> > > NOTE: The last patch have a Kconfig symbol depenency on [imx8mq-kconfig].
+> > > 
+> > > Changes since [v1]:
+> > > 
+> > >  - Driver changed to use single "fsl,controller-id" property to
+> > >    distinguish between two intances of PCIE IP block
+> > > 
+> > >  - All code pertaining to L1SS was dropped to simplify the patch
+> > > 
+> > >  - Documented additions to DT bindings
+> > > 
+> > > Feedback is welcome!
+> > > 
+> > > Thanks,
+> > > Andrey Smirnov
+> > 
+> > Andrey,
+> > 
+> > I have applied the patches, ...
 > 
-> If it is not true or there are more special on certain pins, and then
-> we consider to add a flag to struct mtk_pin_desc to group these pins
-> with their characteristics and to split and reuse the common code flow
-> with the extra flag.
+> When I merged your pci/dwc branch, I noticed what looks like a merge
+> conflict between these commits:
 > 
-> So for now, I thought it's enough to handle your case with adding a
-> few well self-explained comments for the exclusion condition. These
-> words help us remember we should add adding an extra flag to pin
-> description as one of TODO if more needs like you come out.
+>   d123765b58ee ("PCI: dwc: Adjust Kconfig to allow IMX6 PCIe host on IMX7")
+>   1a059d994189 ("PCI: imx: Add support for i.MX8MQ")
 > 
- Thanks for your advice,I will update new patch
-> > >
-> > > >
-> > > >         return 0;
-> > > >  }
-> > > > --
-> > > > 1.7.9.5
-> >
-> >
+> d123765b58ee added SOC_IMX7D:
+> 
+>   -       depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
+>   +       depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
+> 
+> and 1a059d994189 added SOC_IMX8MQ but dropped SOC_IMX7D again, which looks
+> like a mistake:
+> 
+>   -       depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
+>   +       depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+> 
+> So my "next" branch[1] (current head 7053eeb009e0) is:
+> 
+>   config PCI_IMX6
+>         bool "Freescale i.MX6/7 PCIe controller"
+>         depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+>         depends on PCI_MSI_IRQ_DOMAIN
+>         select PCIE_DW_HOST
+> 
+> which I think is wrong.  Lorenzo, if you update your pci/dwc branch,
+> I'll rebuild my "next" branch.
 
+Sorry about that, I missed it.
 
+I dropped Andrey's patches from pci/dwc waiting for him/Lucas to agree
+on a way forward.
+
+Thanks,
+Lorenzo
+
+> If you want to tweak the switch statements and/or IMX8 checks, you
+> could do that at the same time.
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/log/?h=next
