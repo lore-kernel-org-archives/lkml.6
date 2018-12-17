@@ -2,134 +2,145 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693EFC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCF7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399E92133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:32:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HsAfEsO4"
+	by mail.kernel.org (Postfix) with ESMTP id 414DF2146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:34:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732368AbeLQKc6 (ORCPT
+        id S1732378AbeLQKe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:32:58 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:32859 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732017AbeLQKc6 (ORCPT
+        Mon, 17 Dec 2018 05:34:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56356 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726755AbeLQKe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:32:58 -0500
-Received: by mail-it1-f194.google.com with SMTP id m8so5115793itk.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:32:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=M/hrvpMWylKMYAtzA9GzD07lIiZgy8DdC6TOmQXU8pU=;
-        b=HsAfEsO4q61HVUOynRbtoPfO3uOsBjYiugr8mKjzoq42lTm63FMHtuEwyNI56bnTbA
-         ZGIf/x1BIShIK4L0CbeDbY1VX/MC7Y/iKFUrL1z33TjFTHtkTM5lDZN+k505t1VSivg5
-         3cCKvPW12G66PtlJUtO8bWvrrLhdeLbiD9mp+WGau8Wo9X8Ww9af5c7FwIu+9cVFjogD
-         mquLF3itFRjHvtCpaSH+uJZmxU2j2cmF2PAZhGva8Zqw395zGot97rd1z5zlXsuDQS2m
-         Aor9A7JaXX/WlijWpkwfTRjbnjxMvYrxT1SVlvpKfXc4SzBjuDbUXQ0kjb9f722auwu2
-         gLlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=M/hrvpMWylKMYAtzA9GzD07lIiZgy8DdC6TOmQXU8pU=;
-        b=Xp+h6/HD0kqT1O+HlnUmQJsQ0OZgJ1oumEEuRXmBUgN4QF8RTKg0rhkGXhOsjxh4CU
-         /S1QI9Tjt0maQnidP6RJufstICrk/wGFvxE52w3Au9tkzrA59XziiQNeLKDjcGDoLAIG
-         fN667Dp4frTGnj93GEVlbX1CNkAoRro4O1SsFpnVTXahYhtHxyS14DoDuqCauaffl0/t
-         Q49JPipKKqBvfTPN2UT5xUJqOsOeIj3UMhJUqX4AbmAe33yQtB7VVMM/cMOnMyY8kZGq
-         OA7D1x0RAy0W17JQHomrQl2x/o2NRObgbYSDw8kc2I8spqE+33OqV5rpwq4lckPBi3WK
-         lkyA==
-X-Gm-Message-State: AA+aEWbJrBCEkEq6+XrArx1ksGPhcvdf1EYhiURgiDFApeoq/6xUo9TP
-        LnjvN0AGjwt5u5yNCgCFnR+AQZd05E1xi4/6c6lRZg==
-X-Google-Smtp-Source: AFSGD/XToPKM6YImP+3OrBDRD/hAP4ESWQCGcaN1+tSs3WZmjhCuYFX4JHdPZ7BMDdf3BVrdgNbOs4SM/hd6sPeDvGA=
-X-Received: by 2002:a24:9d1:: with SMTP id 200mr12436190itm.53.1545042776512;
- Mon, 17 Dec 2018 02:32:56 -0800 (PST)
+        Mon, 17 Dec 2018 05:34:28 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHASrnJ112077
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 05:34:27 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pe84fd5un-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 05:34:26 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Mon, 17 Dec 2018 10:34:26 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Dec 2018 10:34:22 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHAYLEl23265378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Dec 2018 10:34:21 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E6D326A04D;
+        Mon, 17 Dec 2018 10:34:20 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 99CA36A04F;
+        Mon, 17 Dec 2018 10:34:16 +0000 (GMT)
+Received: from [9.85.72.89] (unknown [9.85.72.89])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Dec 2018 10:34:16 +0000 (GMT)
+Subject: Re: [PATCH 3/3] hugetlbfs: remove unnecessary code after i_mmap_rwsem
+ synchronization
+To:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20181203200850.6460-1-mike.kravetz@oracle.com>
+ <20181203200850.6460-4-mike.kravetz@oracle.com>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Mon, 17 Dec 2018 16:04:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de> <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
- <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
- <20181202215613.jcfrxwl4taiqgsql@pengutronix.de> <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
- <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
- <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de> <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
- <20181203110654.53o3prw3qu3u2uyf@pengutronix.de> <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
- <CAMpxmJWAZevmCkDDgLVTY5REGPB3HA5JAtNDtxT0NMt964GQCQ@mail.gmail.com>
-In-Reply-To: <CAMpxmJWAZevmCkDDgLVTY5REGPB3HA5JAtNDtxT0NMt964GQCQ@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 17 Dec 2018 11:32:45 +0100
-Message-ID: <CAMRc=MdaEPVTx6u0XsLJ8RFH2Kw+8DE1pJMe3H+e3KY2ycETaw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181203200850.6460-4-mike.kravetz@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121710-8235-0000-0000-00000E39CC17
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010240; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01133031; UDB=6.00588966; IPR=6.00913170;
+ MB=3.00024716; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-17 10:34:25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121710-8236-0000-0000-000043BC3621
+Message-Id: <b6d50644-7d0c-2c1e-2781-2c6cc81ddc80@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=952 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812170099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 5 gru 2018 o 13:38 Bartosz Golaszewski
-<bgolaszewski@baylibre.com> napisa=C5=82(a):
->
-> =C5=9Br., 5 gru 2018 o 13:20 Linus Walleij <linus.walleij@linaro.org> nap=
-isa=C5=82(a):
-> >
-> > On Mon, Dec 3, 2018 at 12:06 PM Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> wrote:
-> > > On Mon, Dec 03, 2018 at 11:57:26AM +0100, Bartosz Golaszewski wrote:
-> >
-> > > > It used to live in the gpio-mockup driver and I generalized it
-> > > > precisely because there was another driver - iio evgen - which was
-> > > > doing basically the same thing. While I don't know if there'll be m=
-ore
-> > > > users (I'd guess it would be useful for testing purposes of other
-> > > > subsystems) having the same functionality implemented once is bette=
-r
-> > > > than twice.
-> > >
-> > > The iio testing driver only needs the trigger and relies on an irq th=
-at
-> > > then calls the registerd handler. The iio driver doesn't need to tune
-> > > the edge sensitivity though and if your mockup driver just only calls
-> > > the fire routine if the configured sensitivity justifies that,
-> > > everything should work as expected.
-> >
-> > Simulating edges in the generic IRQ simulator codes seems
-> > generally useful to me, even if there is just one user now.
-> >
-> > Certainly for any kind of IRQ testing, it could be interesting to
-> > throw several low-to-high and high-to-low transitions
-> > on a driver and see how it reacts.
-> >
-> > But it is up to the irqchip maintainers to state whether they
-> > agree.
-> >
->
-> All that would be great, but at this point I just want to fix broken
-> tests in user-space. After that we can think about how to
-> improve/approach simulating interrupts all we want.
->
-> Marc: is my explanation for using an int instead of bool for
-> irq_sim_fire_edge() fine? Can Linus pick this up for fixes?
->
+On 12/4/18 1:38 AM, Mike Kravetz wrote:
+> After expanding i_mmap_rwsem use for better shared pmd and page fault/
+> truncation synchronization, remove code that is no longer necessary.
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: ebed4bfc8da8 ("hugetlb: fix absurd HugePages_Rsvd")
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+> ---
+>   fs/hugetlbfs/inode.c | 46 +++++++++++++++-----------------------------
+>   mm/hugetlb.c         | 21 ++++++++++----------
+>   2 files changed, 25 insertions(+), 42 deletions(-)
+> 
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index 3244147fc42b..a9c00c6ef80d 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -383,17 +383,16 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end)
+>    * truncation is indicated by end of range being LLONG_MAX
+>    *	In this case, we first scan the range and release found pages.
+>    *	After releasing pages, hugetlb_unreserve_pages cleans up region/reserv
+> - *	maps and global counts.  Page faults can not race with truncation
+> - *	in this routine.  hugetlb_no_page() prevents page faults in the
+> - *	truncated range.  It checks i_size before allocation, and again after
+> - *	with the page table lock for the page held.  The same lock must be
+> - *	acquired to unmap a page.
+> + *	maps and global counts.
+>    * hole punch is indicated if end is not LLONG_MAX
+>    *	In the hole punch case we scan the range and release found pages.
+>    *	Only when releasing a page is the associated region/reserv map
+>    *	deleted.  The region/reserv map for ranges without associated
+> - *	pages are not modified.  Page faults can race with hole punch.
+> - *	This is indicated if we find a mapped page.
+> + *	pages are not modified.
+> + *
+> + * Callers of this routine must hold the i_mmap_rwsem in write mode to prevent
+> + * races with page faults.
 
-Ping. We have only this week left to fix the regression - can we get
-your Ack Marc?
+Should this patch be merged to the previous one? Because the changes to 
+callers are done in the previous patch.
 
-NOTE: this patch must go into v4.20, and will probably conflict with
-the bitmap patch you picked up for 4.21. I can take it into my PR for
-Linus Walleij and then fix the conflict in next.
 
-Bart
+> + *
+>    * Note: If the passed end of range value is beyond the end of file, but
+>    * not LLONG_MAX this routine still performs a hole punch operation.
+>    */
+> @@ -423,32 +422,14 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
+> 
+>   		for (i = 0; i < pagevec_count(&pvec); ++i) {
+> 
+-aneesh
+
