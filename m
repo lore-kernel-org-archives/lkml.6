@@ -2,264 +2,104 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6C7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D5EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2A720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43AFC206A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:59:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="2Ikd8S8X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbeLQKxw (ORCPT
+        id S1731762AbeLQK7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:53:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36680 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbeLQKxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:53:52 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4EFDBC049582;
-        Mon, 17 Dec 2018 10:53:51 +0000 (UTC)
-Received: from [10.36.117.250] (ovpn-117-250.ams2.redhat.com [10.36.117.250])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CAC6F5C1B5;
-        Mon, 17 Dec 2018 10:53:46 +0000 (UTC)
-Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
- capabilities
-To:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        miklos@szeredi.hu, sweil@redhat.com, swhiteho@redhat.com
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <20181210171318.16998-19-vgoyal@redhat.com>
- <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
- <20181213091320.GA2313@work-vm>
- <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
- <20181213100058.GC2313@work-vm>
- <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
- <20181213121548.GN2313@work-vm>
- <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
- <20181213133823.2272736b.cohuck@redhat.com>
- <20181214134434.GA3882@stefanha-x1.localdomain>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <cf910f77-203c-8efd-fed1-6b041b078d63@redhat.com>
-Date:   Mon, 17 Dec 2018 11:53:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 17 Dec 2018 05:59:51 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42029 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726505AbeLQK7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 05:59:50 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d72so5945113pga.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HCRVfPc+8euivZcx8DvOeAt/hoZ7BKtn/0PNVNt4DFI=;
+        b=2Ikd8S8X/e75L7f7iAijpT2q1cfcP2pRK5pLybR3cZtUnq2Y5OKOURt6SVoATPmSHo
+         Nn2oxoUcFVsvv5knY5cdShOz85BJ2adBnXgjBYSoQet2Cf2U2gSd01SP/OcNMxinHw16
+         tBi+AdWnbv1cBIHdw0EZocshguno8AESdxCvn1mjb8/Hp0X/OEqQ+FQzA8weRnKMMb2c
+         ffBzlhYugclMqE43cU/LBhWNcv9EUJTFhzRHnkx4RN18dfz7G2IGYWHk2dN9F8w/3O56
+         /xQxQwacADWKIBNUxS0v5ORWqPTt5JfW4GiQrne/Os1IOZgAqL0th2tdKyckMERguRA8
+         +O1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HCRVfPc+8euivZcx8DvOeAt/hoZ7BKtn/0PNVNt4DFI=;
+        b=U9etAa5HdRlnXJMp900IQ3KJ/yYJX4aqPRpEqyQqNWZeZsbfi9zxI8N96cdQZmE/37
+         5CSS8Ka5K8LhzPkrHkzPureUJu97v7pMfARIap3T8gsqUHFll0Q2RJgLnfcbsBqxOOQt
+         DFfKbcDMRA9iFYeSQRQBB2qIq2S+vJzHgYs4q7TDP80WXaSbYR7gpZ3ma4Xi0W1Fu/mK
+         4lEIUltzTshWGvaPgay8NrAAi2sM+CTA6af2kDe5j/rczpXJ2MM/ecMqe3Cr6nNcZ3iB
+         dyceDknhIBcuMo2rfWME9pNaFt96ZAM7fgXTUxYbuFrNXryk7aH0CNM49wC7y3qIGhxX
+         6fHA==
+X-Gm-Message-State: AA+aEWZb/A5OOjkdT2Osw+/XUYPDCmq3RtGEZCSe81v1MZNRg89FGH2l
+        xeJma2aAKsZWzOcwDAa+fCA/iw==
+X-Google-Smtp-Source: AFSGD/X87cQkZoV3i2W3tK/EWCfTVWQOgPsl7jjy/YfVaE25lP2g5f7QWBMOfZPtKKAFlBgy+WHG1A==
+X-Received: by 2002:a62:2e46:: with SMTP id u67mr12168681pfu.3.1545044390161;
+        Mon, 17 Dec 2018 02:59:50 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.40])
+        by smtp.gmail.com with ESMTPSA id d69sm16433919pfg.168.2018.12.17.02.59.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 02:59:49 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 713A7300316; Mon, 17 Dec 2018 13:59:44 +0300 (+03)
+Date:   Mon, 17 Dec 2018 13:59:44 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hsiangkao@mail.ru,
+        kirill.shutemov@linux.intel.com, stable@vger.kernel.org,
+        zhangjun <openzhangj@gmail.com>
+Subject: Re: [PATCH] ubifs: Get/put page when changing PG_private
+Message-ID: <20181217105944.a7eylrxi5pni4mqq@kshutemo-mobl1>
+References: <20181215150130.19381-1-richard@nod.at>
 MIME-Version: 1.0
-In-Reply-To: <20181214134434.GA3882@stefanha-x1.localdomain>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 17 Dec 2018 10:53:51 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181215150130.19381-1-richard@nod.at>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.12.18 14:44, Stefan Hajnoczi wrote:
-> On Thu, Dec 13, 2018 at 01:38:23PM +0100, Cornelia Huck wrote:
->> On Thu, 13 Dec 2018 13:24:31 +0100
->> David Hildenbrand <david@redhat.com> wrote:
->>
->>> On 13.12.18 13:15, Dr. David Alan Gilbert wrote:
->>>> * David Hildenbrand (david@redhat.com) wrote:  
->>>>> On 13.12.18 11:00, Dr. David Alan Gilbert wrote:  
->>>>>> * David Hildenbrand (david@redhat.com) wrote:  
->>>>>>> On 13.12.18 10:13, Dr. David Alan Gilbert wrote:  
->>>>>>>> * David Hildenbrand (david@redhat.com) wrote:  
->>>>>>>>> On 10.12.18 18:12, Vivek Goyal wrote:  
->>>>>>>>>> Instead of assuming we had the fixed bar for the cache, use the
->>>>>>>>>> value from the capabilities.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
->>>>>>>>>> ---
->>>>>>>>>>  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
->>>>>>>>>>  1 file changed, 17 insertions(+), 15 deletions(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
->>>>>>>>>> index 60d496c16841..55bac1465536 100644
->>>>>>>>>> --- a/fs/fuse/virtio_fs.c
->>>>>>>>>> +++ b/fs/fuse/virtio_fs.c
->>>>>>>>>> @@ -14,11 +14,6 @@
->>>>>>>>>>  #include <uapi/linux/virtio_pci.h>
->>>>>>>>>>  #include "fuse_i.h"
->>>>>>>>>>  
->>>>>>>>>> -enum {
->>>>>>>>>> -	/* PCI BAR number of the virtio-fs DAX window */
->>>>>>>>>> -	VIRTIO_FS_WINDOW_BAR = 2,
->>>>>>>>>> -};
->>>>>>>>>> -
->>>>>>>>>>  /* List of virtio-fs device instances and a lock for the list */
->>>>>>>>>>  static DEFINE_MUTEX(virtio_fs_mutex);
->>>>>>>>>>  static LIST_HEAD(virtio_fs_instances);
->>>>>>>>>> @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
->>>>>>>>>>  	struct dev_pagemap *pgmap;
->>>>>>>>>>  	struct pci_dev *pci_dev;
->>>>>>>>>>  	phys_addr_t phys_addr;
->>>>>>>>>> -	size_t len;
->>>>>>>>>> +	size_t bar_len;
->>>>>>>>>>  	int ret;
->>>>>>>>>>  	u8 have_cache, cache_bar;
->>>>>>>>>>  	u64 cache_offset, cache_len;
->>>>>>>>>> @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
->>>>>>>>>>          }
->>>>>>>>>>  
->>>>>>>>>>  	/* TODO handle case where device doesn't expose BAR? */  
->>>>>>>>>
->>>>>>>>> For virtio-pmem we decided to not go via BARs as this would effectively
->>>>>>>>> make it only usable for virtio-pci implementers. Instead, we are going
->>>>>>>>> to export the applicable physical device region directly (e.g.
->>>>>>>>> phys_start, phys_size in virtio config), so it is decoupled from PCI
->>>>>>>>> details. Doing the same for virtio-fs would allow e.g. also virtio-ccw
->>>>>>>>> to make eventually use of this.  
->>>>>>>>
->>>>>>>> That makes it a very odd looking PCI device;  I can see that with
->>>>>>>> virtio-pmem it makes some sense, given that it's job is to expose
->>>>>>>> arbitrary chunks of memory.
->>>>>>>>
->>>>>>>> Dave  
->>>>>>>
->>>>>>> Well, the fact that your are
->>>>>>>
->>>>>>> - including <uapi/linux/virtio_pci.h>
->>>>>>> - adding pci related code
->>>>>>>
->>>>>>> in/to fs/fuse/virtio_fs.c
->>>>>>>
->>>>>>> tells me that these properties might be better communicated on the
->>>>>>> virtio layer, not on the PCI layer.
->>>>>>>
->>>>>>> Or do you really want to glue virtio-fs to virtio-pci for all eternity?  
->>>>>>
->>>>>> No, these need cleaning up; and the split within the bar
->>>>>> is probably going to change to be communicated via virtio layer
->>>>>> rather than pci capabilities.  However, I don't want to make our PCI
->>>>>> device look odd, just to make portability to non-PCI devices - so it's
->>>>>> right to make the split appropriately, but still to use PCI bars
->>>>>> for what they were designed for.
->>>>>>
->>>>>> Dave  
->>>>>
->>>>> Let's discuss after the cleanup. In general I am not convinced this is
->>>>> the right thing to do. Using virtio-pci for anything else than pure
->>>>> transport smells like bad design to me (well, I am no virtio expert
->>>>> after all ;) ). No matter what PCI bars were designed for. If we can't
->>>>> get the same running with e.g. virtio-ccw or virtio-whatever, it is
->>>>> broken by design (or an addon that is tightly glued to virtio-pci, if
->>>>> that is the general idea).  
->>>>
->>>> I'm sure we can find alternatives for virtio-*, so I wouldn't expect
->>>> it to be glued to virtio-pci.
->>>>
->>>> Dave  
->>>
->>> As s390x does not have the concept of memory mapped io (RAM is RAM,
->>> nothing else), this is not architectured. vitio-ccw can therefore not
->>> define anything similar like that. However, in virtual environments we
->>> can do whatever we want on top of the pure transport (e.g. on the virtio
->>> layer).
->>>
->>> Conny can correct me if I am wrong.
->>
->> I don't think you're wrong, but I haven't read the code yet and I'm
->> therefore not aware of the purpose of this BAR.
->>
->> Generally, if there is a memory location shared between host and guest,
->> we need a way to communicate its location, which will likely differ
->> between transports. For ccw, I could imagine a new channel command
->> dedicated to exchanging configuration information (similar to what
->> exists today to communicate the locations of virtqueues), but I'd
->> rather not go down this path.
->>
->> Without reading the code/design further, can we use one of the
->> following instead of a BAR:
->> - a virtqueue;
->> - something in config space?
->> That would be implementable by any virtio transport.
+On Sat, Dec 15, 2018 at 04:01:30PM +0100, Richard Weinberger wrote:
+> The page migration code assumes that a page with PG_private
+> set has its page count elevated by 1.
+> UBIFS never did this and therefore the migration code was unable
+> to migrate some pages owned by UBIFS.
+> The lead to situations where the CMA memory allocator failed to
+> allocate memory.
 > 
-> The way I think about this is that we wish to extend the VIRTIO device
-> model with the concept of shared memory.  virtio-fs, virtio-gpu, and
-> virtio-vhost-user all have requirements for shared memory.
-> 
-> This seems like a transport-level issue to me.  PCI supports
-> memory-mapped I/O and that's the right place to do it.  If you try to
-> put it into config space or the virtqueue, you'll end up with something
-> that cannot be realized as a PCI device because it bypasses PCI bus
-> address translation.
-> 
-> If CCW needs a side-channel, that's fine.  But that side-channel is a
-> CCW-specific mechanism and probably doesn't apply to all other
-> transports.
-> 
-> Stefan
-> 
+> Fix this by using get/put_page when changing PG_private.
 
-I think the problem is more fundamental. There is no iommu. Whatever
-shared region you want to indicate, you want it to be assigned a memory
-region in guest physical memory. Like a DIMM/NVDIMM. And this should be
-different to the concept of a BAR. Or am I missing something?
+Looks good to me.
 
-I am ok with using whatever other channel to transport such information.
-But I believe this is different to a typical BAR. (I wish I knew more
-about PCI internals ;) ).
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-I would also like to know how shared memory works as of now for e.g.
-virtio-gpu.
+> Cc: <stable@vger.kernel.org>
+> Cc: zhangjun <openzhangj@gmail.com>
+> Fixes: 4ac1c17b2044 ("UBIFS: Implement ->migratepage()")
+
+It is fair to reference the commit here. But I believe the bug itself
+predates the commit and relevant not only for migration.
+
+We might make it clear in the commit message.
 
 -- 
-
-Thanks,
-
-David / dhildenb
+ Kirill A. Shutemov
