@@ -2,191 +2,105 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47328C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 862FEC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1374620675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54322217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:01:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R6qYykyD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731397AbeLQGBP (ORCPT
+        id S1731446AbeLQGB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 01:01:15 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54269 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeLQGBO (ORCPT
+        Mon, 17 Dec 2018 01:01:57 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47556 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeLQGB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 01:01:14 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1gYlxo-0005u0-IC; Mon, 17 Dec 2018 07:01:12 +0100
-Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1gYlxn-0004C9-9P; Mon, 17 Dec 2018 07:01:11 +0100
-Date:   Mon, 17 Dec 2018 07:01:11 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Subject: Re: [PATCH] mailbox: imx: Fix clk handling in imx_mu_probe()
-Message-ID: <20181217060111.hsay6vhqpxyfdbiu@pengutronix.de>
-References: <1544914904-3809-1-git-send-email-khoroshilov@ispras.ru>
+        Mon, 17 Dec 2018 01:01:56 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBH61tAV093951;
+        Mon, 17 Dec 2018 00:01:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1545026515;
+        bh=AqLnCKPttMMoVBVoWmkxLk6XSMtMBNQrUYiUrZ36+ys=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=R6qYykyDDj/REs7GlcL3eIimzjturCvnphdC8NJ+QB3YEDc0muGD8n9hTO0LOppk5
+         JjyiX7RAPUmq+3R+nbHSEQ3jiugP46xoR6U4QCFUNOYBIPg0Ljv7LEQbOwHHFLqT6y
+         28NHiXLOIbyWexP/N8VlG38nPy6mrpeDQPR6YgTo=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBH61tdS094274
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Dec 2018 00:01:55 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 17
+ Dec 2018 00:01:55 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 17 Dec 2018 00:01:55 -0600
+Received: from [172.22.216.133] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBH61pjP020195;
+        Mon, 17 Dec 2018 00:01:53 -0600
+Subject: Re: [PATCH] tps65218.c: fix IRQ resource leak in tps65218_probe()
+To:     Lee Jones <lee.jones@linaro.org>,
+        Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <1544090279-26762-1-git-send-email-Christian.Hohnstaedt@wago.com>
+ <20181214122559.GV4497@dell> <20181214122619.GW4497@dell>
+From:   "J, KEERTHY" <j-keerthy@ti.com>
+Message-ID: <f584aab6-374c-5a53-51c5-61098f8bb792@ti.com>
+Date:   Mon, 17 Dec 2018 11:31:50 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="s7owgsepa225a342"
-Content-Disposition: inline
-In-Reply-To: <1544914904-3809-1-git-send-email-khoroshilov@ispras.ru>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 06:52:23 up 187 days, 15:01, 90 users,  load average: 0.14, 0.15,
- 0.12
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181214122619.GW4497@dell>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---s7owgsepa225a342
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alexey,
+On 12/14/2018 5:56 PM, Lee Jones wrote:
+> On Fri, 14 Dec 2018, Lee Jones wrote:
+> 
+>> On Thu, 06 Dec 2018, Christian Hohnstaedt wrote:
+>>
+>>> Free allocated IRQ if reading the device ID fails.
+>>
+>> The patch is fine.  However, in future please submit patches using the
+>> format set (by precedent) by the subsystem.  I will fix the subject
+>> for you this time.
+>>
+>> To check the format, you can do:
+>>
+>>    `git log --oneline -- <subsystem>`
+> 
+> Patch applied, by the way.
 
-On Sun, Dec 16, 2018 at 02:01:44AM +0300, Alexey Khoroshilov wrote:
-> Handling of devm_clk_get() suggests that the driver should support
-> lack of priv->clk. But imx_mu_probe() fails on clk_prepare_enable(NULL)
-> in that case.
->=20
-> The patch removes the try to enable absent clk and adds error handling
-> for mbox_controller_register().
->=20
-> Found by Linux Driver Verification project (linuxtesting.org).
->=20
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> ---
->  drivers/mailbox/imx-mailbox.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-> index 363d35d5e49d..ddde398f576e 100644
-> --- a/drivers/mailbox/imx-mailbox.c
-> +++ b/drivers/mailbox/imx-mailbox.c
-> @@ -292,10 +292,12 @@ static int imx_mu_probe(struct platform_device *pde=
-v)
->  		priv->clk =3D NULL;
->  	}
-> =20
-> -	ret =3D clk_prepare_enable(priv->clk);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to enable clock\n");
-> -		return ret;
-> +	if (priv->clk) {
-> +		ret =3D clk_prepare_enable(priv->clk);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to enable clock\n");
-> +			return ret;
-> +		}
->  	}
-> =20
->  	for (i =3D 0; i < IMX_MU_CHANS; i++) {
-> @@ -324,7 +326,13 @@ static int imx_mu_probe(struct platform_device *pdev)
-> =20
->  	imx_mu_init_generic(priv);
-> =20
-> -	return mbox_controller_register(&priv->mbox);
-> +	ret =3D mbox_controller_register(&priv->mbox);
-> +	if (ret) {
-> +		clk_disable_unprepare(priv->clk);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
->  }
-> =20
->  static int imx_mu_remove(struct platform_device *pdev)
-> --=20
-> 2.7.4
->=20
->=20
+This would no longer be needed as the bigger clean up is here:
 
-NACK for this patch.
+https://lkml.org/lkml/2018/12/9/86
 
-Here are code snippets from clk framework:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-/* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
-static inline int clk_prepare_enable(struct clk *clk)
-{
-	int ret;
+As both are applied it results in a compilation issue.
 
-	ret =3D clk_prepare(clk);
-	if (ret)
-		return ret;
-	ret =3D clk_enable(clk);
-	if (ret)
-		clk_unprepare(clk);
+Lee Jones,
 
-	return ret;
-}
+Do you want me to submit a fix patch? Or you can revert this patch?
+Anything fine by me.
 
-int clk_prepare(struct clk *clk)
-{
-	if (!clk)
-		return 0;
+Let me know.
 
-	return clk_core_prepare_lock(clk->core);
-}
-
-int clk_enable(struct clk *clk)
-{
-	if (!clk)
-		return 0;
-
-	return clk_core_enable_lock(clk->core);
-}
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-
-As you can see, complete code path is NULL resistant. Are you trying to
-fix some real issue, or it is a theoretical work?
-
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---s7owgsepa225a342
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlwXO6AACgkQdQOiSHVI
-77QKeQf/VZ9xfjMcC9bDfdTndYtnwIm8ugM4cuoxE30GiaOVK0F9T2zene/USVUl
-HDEtF6A4TF6s6sQCFsEZ1dYYePftCS6OU4hGykqf5HYkFceCVgnG7UrJjolwgPC2
-yIndgvoUex0qkKDDzSiKIh7Sa0113XtxTJvrWGrCSmKys/RcqG17+sSlcsey2+A0
-Xts8RyOpDytTStN+3xF2mX1RcQ32jfCAs3gEAU9Kvv6PH49QBV5+2I/mZ0nlNVFB
-xBhCi/GR89DRVlvcdXiaEt2S7t+9KAI8yAb6SknerQ6YuyIPbKl0YlMXZz2A3yXm
-Pfa8teKiyy5ZYtA2SCHKylF30+tmbA==
-=godA
------END PGP SIGNATURE-----
-
---s7owgsepa225a342--
+Thanks,
+Keerthy
+> 
