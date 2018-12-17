@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E39C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A728DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 914B82146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 729212146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 16:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545064319;
-	bh=iVstpJM9s1mRH8P+3AvIMAJ6ix1RosFDCTB9wXJ8YrM=;
+	s=default; t=1545064323;
+	bh=tgUhWxz8TECcIGGWwrTQdqrcExe+xUZUjwXy2JJHg14=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=1PIbG5Q31X/hHYgKeJRqttJk0+sdLm0C0mKe0kRQzrSIG9D87FC6aoazvh3e2liYh
-	 n5qObr4xlt43Oy62nIUe14+QYD1HdaXvTewz434AFPotkIftGV0iWl6HRrwBSt2gp1
-	 AVtN0Hpr6WfAi28d/zLGR+G2ApFO/BBx4KfoInso=
+	b=roIcI/hkaLQKS7pFLfAxmXNR9cQIyZ0yOFJGaSSOu42K+nzvzJ68VSg1RUONqxZuv
+	 plwxXnEQjiaNDUpRUCjtJb5cC6m2CLcWzgl9vUpcCBEGBJrW9CMMGzcqYxi2pDhrl2
+	 GXKFfkj3iB52ZmFc8M5F69+mkZ67Yqq+6ZH8/PQs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388267AbeLQQb6 (ORCPT
+        id S2388245AbeLQQb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:31:58 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47238 "EHLO
+        Mon, 17 Dec 2018 11:31:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47236 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388202AbeLQQb5 (ORCPT
+        with ESMTP id S2387698AbeLQQb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Dec 2018 11:31:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,24 +34,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=R1RHBq2J/8ZPmuesQTSadhfdxis2AX7khfAtecOtvmg=; b=sgXC5MQC0yBk
-        ywiiGAniI92wYm+EebhcZVGZeBCjiHWmNcqQNhYRB0BBy7G5CeyscvlIPVQIeQh+7p8blY+OvEcBZ
-        ryFYSQmIqg8H0KgifnuNOol5dd8u4s0u4piTChta21qN6JoJ0mLjfqVhWXlrlM9sbEZhz1QKtu9lo
-        zd3IA=;
+        List-Archive; bh=Bn737CPFIchKOu9U1NVtT48peBR0p50+K9nX5G6PPqU=; b=slBD7W/Y+mnX
+        9N+yR+uvtv1xhE0vFJ/b9ZEYfalQJYXON75Jo5ApF6gbjuDW71nKg9gP5FW5yKqWrDJocFiV2RdO7
+        IGwO4Dc6uTYSUlffQJEQTWoEe/MaK9gt3NCafDPajFwkAj7O1sjwq0cgTXv7+cAuo5wDG6m044PfN
+        GMbSc=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gYvoA-0002kz-Ux; Mon, 17 Dec 2018 16:31:55 +0000
+        id 1gYvo9-0002ku-Eh; Mon, 17 Dec 2018 16:31:53 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8412F112593C; Mon, 17 Dec 2018 16:31:54 +0000 (GMT)
+        id EAE9E112593C; Mon, 17 Dec 2018 16:31:52 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: axp20x: fix set_ramp_delay for AXP209/dcdc2" to the regulator tree
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     Andrei Stefanescu <andrei.stefanescu@microchip.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: act8945a-regulator: fix 'defined but not used' compiler warning" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181217163154.8412F112593C@debutante.sirena.org.uk>
-Date:   Mon, 17 Dec 2018 16:31:54 +0000 (GMT)
+Message-Id: <20181217163152.EAE9E112593C@debutante.sirena.org.uk>
+Date:   Mon, 17 Dec 2018 16:31:52 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: axp20x: fix set_ramp_delay for AXP209/dcdc2
+   regulator: act8945a-regulator: fix 'defined but not used' compiler warning
 
 has been applied to the regulator tree at
 
@@ -84,34 +85,36 @@ to this mail.
 Thanks,
 Mark
 
-From 918446c96595636be81a224bf663b0f4e669aad7 Mon Sep 17 00:00:00 2001
-From: Priit Laes <plaes@plaes.org>
-Date: Fri, 14 Dec 2018 22:54:07 +0200
-Subject: [PATCH] regulator: axp20x: fix set_ramp_delay for AXP209/dcdc2
+From 22a5a4a44c43e2993e96183039aef71566e1a514 Mon Sep 17 00:00:00 2001
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+Date: Mon, 17 Dec 2018 10:37:51 +0000
+Subject: [PATCH] regulator: act8945a-regulator: fix 'defined but not used'
+ compiler warning
 
-Initial commit of set_ramp_delay feature was missing an assignment which
-should have populated slew_rate table for dcdc2 regulator. Add it.
+Fix 'defined but not used' compiler warning for act8945a_suspend()
+function in case CONFIG_PM_SLEEP is not defined.
 
-Fixes: d29f54df8b16 ("regulator: axp20x: add support for set_ramp_delay for AXP209")
-
-Signed-off-by: Priit Laes <plaes@plaes.org>
+Fixes: b5ebba46e694 ("regulator: act8945a-regulator: add shutdown function")
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reported-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/axp20x-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/act8945a-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index e8a895b81c90..48af859fd053 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -378,6 +378,7 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- 	switch (axp20x->variant) {
- 	case AXP209_ID:
- 		if (desc->id == AXP20X_DCDC2) {
-+			slew_rates = axp209_dcdc2_ldo3_slew_rates;
- 			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
- 			reg = AXP20X_DCDC2_LDO3_V_RAMP;
- 			mask = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK |
+diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+index 90572b6370c6..157272536122 100644
+--- a/drivers/regulator/act8945a-regulator.c
++++ b/drivers/regulator/act8945a-regulator.c
+@@ -326,7 +326,7 @@ static int act8945a_pmic_probe(struct platform_device *pdev)
+ 	return regmap_write(act8945a->regmap, ACT8945A_SYS_UNLK_REGS, 0xef);
+ }
+ 
+-static int act8945a_suspend(struct device *pdev)
++static int __maybe_unused act8945a_suspend(struct device *pdev)
+ {
+ 	struct act8945a_pmic *act8945a = dev_get_drvdata(pdev);
+ 
 -- 
 2.19.0.rc2
 
