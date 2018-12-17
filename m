@@ -2,83 +2,110 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED97C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BCCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C824220645
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:13:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GraVzwAU"
+	by mail.kernel.org (Postfix) with ESMTP id 2DDFE20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 12:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeLQMNE (ORCPT
+        id S1732346AbeLQMN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 07:13:04 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54836 "EHLO mail.skyhub.de"
+        Mon, 17 Dec 2018 07:13:59 -0500
+Received: from relay.sw.ru ([185.231.240.75]:42462 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726831AbeLQMND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 07:13:03 -0500
-Received: from zn.tnic (p200300EC2BC8CE0001731E093D136BFD.dip0.t-ipconnect.de [IPv6:2003:ec:2bc8:ce00:173:1e09:3d13:6bfd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31D1C1EC0452;
-        Mon, 17 Dec 2018 13:13:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1545048782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=sBUMPXyM0Bx8ARebV90kShPkwYyjTvobE4IIr2jqDu4=;
-        b=GraVzwAUKUT94g64bLd7qiQHkWd4CS0M+8aSi9cG+R0v3d7gRUDGFKfmgP8Ikler0N2Jdi
-        JCknB2/Vve39dRutJVpF8v6iFf3/sV8lJ9DhMYGOC0i9vO9FSYfDLYF7u5hMe3gRIflxOe
-        fID4FruYRlZ93Cfb99W8yxmmWNd6mgc=
-Date:   Mon, 17 Dec 2018 13:12:55 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2 v3] kdump: add the vmcoreinfo documentation
-Message-ID: <20181217121255.GC12165@zn.tnic>
-References: <20181216131617.2612-1-lijiang@redhat.com>
- <20181216131617.2612-2-lijiang@redhat.com>
+        id S1726687AbeLQMN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 07:13:58 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gYrmS-0007gf-E7; Mon, 17 Dec 2018 15:13:52 +0300
+Subject: [PATCH] mm: Remove __hugepage_set_anon_rmap()
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mike.kravetz@oracle.com, jglisse@redhat.com, ktkhai@virtuozzo.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date:   Mon, 17 Dec 2018 15:13:51 +0300
+Message-ID: <154504875359.30235.6237926369392564851.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181216131617.2612-2-lijiang@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 09:16:16PM +0800, Lianbo Jiang wrote:
+This function is identical to __page_set_anon_rmap()
+since the time, when it was introduced (8 years ago).
+The patch removes the function, and makes its users
+to use __page_set_anon_rmap() instead.
 
-This...
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ mm/rmap.c |   25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
-> +node_online_map
-> +===============
-> +It is a macro definition, actually it is an array node_states[N_ONLINE],
-> +and it represents the set of online node in a system, one bit position
-> +per node number.
-> +
-> +This is used to keep track of which nodes are in the system and online.
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 896c61dbf16c..f0d3bab2f7ad 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1020,7 +1020,7 @@ void page_move_anon_rmap(struct page *page, struct vm_area_struct *vma)
+ 
+ /**
+  * __page_set_anon_rmap - set up new anonymous rmap
+- * @page:	Page to add to rmap	
++ * @page:	Page or Hugepage to add to rmap
+  * @vma:	VM area to add page to.
+  * @address:	User virtual address of the mapping	
+  * @exclusive:	the page is exclusively owned by the current process
+@@ -1921,27 +1921,10 @@ void rmap_walk_locked(struct page *page, struct rmap_walk_control *rwc)
+ 
+ #ifdef CONFIG_HUGETLB_PAGE
+ /*
+- * The following three functions are for anonymous (private mapped) hugepages.
++ * The following two functions are for anonymous (private mapped) hugepages.
+  * Unlike common anonymous pages, anonymous hugepages have no accounting code
+  * and no lru code, because we handle hugepages differently from common pages.
+  */
+-static void __hugepage_set_anon_rmap(struct page *page,
+-	struct vm_area_struct *vma, unsigned long address, int exclusive)
+-{
+-	struct anon_vma *anon_vma = vma->anon_vma;
+-
+-	BUG_ON(!anon_vma);
+-
+-	if (PageAnon(page))
+-		return;
+-	if (!exclusive)
+-		anon_vma = anon_vma->root;
+-
+-	anon_vma = (void *) anon_vma + PAGE_MAPPING_ANON;
+-	page->mapping = (struct address_space *) anon_vma;
+-	page->index = linear_page_index(vma, address);
+-}
+-
+ void hugepage_add_anon_rmap(struct page *page,
+ 			    struct vm_area_struct *vma, unsigned long address)
+ {
+@@ -1953,7 +1936,7 @@ void hugepage_add_anon_rmap(struct page *page,
+ 	/* address might be in next vma when migration races vma_adjust */
+ 	first = atomic_inc_and_test(compound_mapcount_ptr(page));
+ 	if (first)
+-		__hugepage_set_anon_rmap(page, vma, address, 0);
++		__page_set_anon_rmap(page, vma, address, 0);
+ }
+ 
+ void hugepage_add_new_anon_rmap(struct page *page,
+@@ -1961,6 +1944,6 @@ void hugepage_add_new_anon_rmap(struct page *page,
+ {
+ 	BUG_ON(address < vma->vm_start || address >= vma->vm_end);
+ 	atomic_set(compound_mapcount_ptr(page), 0);
+-	__hugepage_set_anon_rmap(page, vma, address, 1);
++	__page_set_anon_rmap(page, vma, address, 1);
+ }
+ #endif /* CONFIG_HUGETLB_PAGE */
 
-... and this...
-
-> +nodemask_t
-> +==========
-> +The size of a 'nodemask_t' type. This value is used to compute the number
-> +of online nodes.
-
-sound redundant too?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
