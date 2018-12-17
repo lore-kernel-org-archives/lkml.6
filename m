@@ -2,139 +2,107 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB3CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9109C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D08522145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:10:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A9B42145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545055849;
-	bh=77+tzFWG1iU+L9mdAw4cjp4qZ+79opegclEDKLPOOvk=;
+	s=default; t=1545055907;
+	bh=8cVS+Q/Q8Sw9seQvLuc3PgbOs5lVlr6dplm/BPEy2JM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=IImVjdjJg/gi7qn5DqMIg8dsYOQfrlr1rZCwAOJH4DtA2YOSdQ1OrjqQ+wIyPJwq4
-	 rBD4EjJmfLa3Ncu4DjFKT37NFx0QqOBp2xDH1r2ov8T8bg503+emy2AOEfhLlxOkmQ
-	 6iz7E9w3dk5kr4RbTzxNgsI6cLmpddMIBOAkTzCg=
+	b=RwFXgI3/qq5+zxWh+KMNoVewLpDD9MdvZqDUYIcCpKEav00EwmZ3BMFJUIX3aBA56
+	 s/lmzJ9W2e5hVKf93GTkPFXwm90mliMdNijCrj+HQJb/ih96AjsM2znNtuwYPABXoo
+	 1reWmLNRDX1yysAxxAiOFz+ndZMgACRdquXqOyOU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733206AbeLQOKs (ORCPT
+        id S1733217AbeLQOLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:10:48 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48654 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727193AbeLQOKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:10:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B7912AD72;
-        Mon, 17 Dec 2018 14:10:45 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 15:10:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Hou Tao <houtao1@huawei.com>, phillip@squashfs.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
- in mem alloc
-Message-ID: <20181217141044.GP30879@dhcp22.suse.cz>
-References: <20181204020840.49576-1-houtao1@huawei.com>
- <20181215143824.GJ10600@bombadil.infradead.org>
- <69457a5a-79c9-4950-37ae-eff7fa4f949a@huawei.com>
- <20181217035157.GK10600@bombadil.infradead.org>
- <20181217093337.GC30879@dhcp22.suse.cz>
- <00ff5d2d-a50f-4730-db8a-cea3d7a3eef7@I-love.SAKURA.ne.jp>
- <20181217122546.GL10600@bombadil.infradead.org>
+        Mon, 17 Dec 2018 09:11:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbeLQOLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 09:11:46 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4FBB2133F;
+        Mon, 17 Dec 2018 14:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545055905;
+        bh=8cVS+Q/Q8Sw9seQvLuc3PgbOs5lVlr6dplm/BPEy2JM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=itQFMkqNX84Wjj4VZK70t5pYsZV/QiTQLSO01+SBW4NiZ4HjoNdcFWhz1la9SH5VH
+         qpam8y7CJQwBVSacSb/9lIknXFcdw3EbMXHT+dyt31HXm3vERa/qyBp2X3CdcNpvbk
+         Z4Sbm0DuRdiYY6cb/fVIX9MvaSAg/8AvD6bgXctA=
+Date:   Mon, 17 Dec 2018 15:11:42 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Mathias Nyman <mathias.nyman@intel.com>, oneukum@suse.com,
+        sandeep.singh@amd.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xhci: fix 'broken_suspend' placement in struct xchi_hcd
+Message-ID: <20181217141142.GA26880@kroah.com>
+References: <20181217133740.5342-1-nsaenzjulienne@suse.de>
+ <7ea44e0c-5268-b898-4d27-048921eaab69@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217122546.GL10600@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7ea44e0c-5268-b898-4d27-048921eaab69@linux.intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 17-12-18 04:25:46, Matthew Wilcox wrote:
-> On Mon, Dec 17, 2018 at 07:51:27PM +0900, Tetsuo Handa wrote:
-> > On 2018/12/17 18:33, Michal Hocko wrote:
-> > > On Sun 16-12-18 19:51:57, Matthew Wilcox wrote:
-> > > [...]
-> > >> Ah, yes, that makes perfect sense.  Thank you for the explanation.
-> > >>
-> > >> I wonder if the correct fix, however, is not to move the check for
-> > >> GFP_NOFS in out_of_memory() down to below the check whether to kill
-> > >> the current task.  That would solve your problem, and I don't _think_
-> > >> it would cause any new ones.  Michal, you touched this code last, what
-> > >> do you think?
-> > > 
-> > > What do you mean exactly? Whether we kill a current task or something
-> > > else doesn't change much on the fact that NOFS is a reclaim restricted
-> > > context and we might kill too early. If the fs can do GFP_FS then it is
-> > > obviously a better thing to do because FS metadata can be reclaimed as
-> > > well and therefore there is potentially less memory pressure on
-> > > application data.
-> > > 
+On Mon, Dec 17, 2018 at 03:59:28PM +0200, Mathias Nyman wrote:
+> On 17.12.2018 15:37, Nicolas Saenz Julienne wrote:
+> > As commented in the struct's definition there shouldn't be anything
+> > underneath it's 'priv[0]' member as it would break some macros.
 > > 
-> > I interpreted "to move the check for GFP_NOFS in out_of_memory() down to
-> > below the check whether to kill the current task" as
+> > The patch converts the broken_suspend into a bit-field and relocates it
+> > next to to the rest of bit-fields.
+> > 
+> > Fixes: a7d57abcc8a5 ("xhci: workaround CSS timeout on AMD SNPS 3.0 xHC")
+> > Reported-by: Oliver Neukum  <oneukum@suse.com>
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+> >   drivers/usb/host/xhci.h | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> > index c3515bad5dbb..011dd45f8718 100644
+> > --- a/drivers/usb/host/xhci.h
+> > +++ b/drivers/usb/host/xhci.h
+> > @@ -1863,6 +1863,8 @@ struct xhci_hcd {
+> >   	unsigned		sw_lpm_support:1;
+> >   	/* support xHCI 1.0 spec USB2 hardware LPM */
+> >   	unsigned		hw_lpm_support:1;
+> > +	/* Broken Suspend flag for SNPS Suspend resume issue */
+> > +	unsigned		broken_suspend:1;
+> >   	/* cached usb2 extened protocol capabilites */
+> >   	u32                     *ext_caps;
+> >   	unsigned int            num_ext_caps;
+> > @@ -1880,8 +1882,6 @@ struct xhci_hcd {
+> >   	void			*dbc;
+> >   	/* platform-specific data -- must come last */
+> >   	unsigned long		priv[0] __aligned(sizeof(s64));
+> > -	/* Broken Suspend flag for SNPS Suspend resume issue */
+> > -	u8			broken_suspend;
+> >   };
+> >   /* Platform specific overrides to generic XHCI hc_driver ops */
+> > 
 > 
-> Too far; I meant one line earlier, before we try to select a different
-> process.
-
-We could still panic the system on pre-mature OOM. So it doesn't really
-seem good.
-
-> > @@ -1104,6 +1095,19 @@ bool out_of_memory(struct oom_control *oc)
-> >  	}
-> >  
-> >  	select_bad_process(oc);
-> > +
-> > +	/*
-> > +	 * The OOM killer does not compensate for IO-less reclaim.
-> > +	 * pagefault_out_of_memory lost its gfp context so we have to
-> > +	 * make sure exclude 0 mask - all other users should have at least
-> > +	 * ___GFP_DIRECT_RECLAIM to get here.
-> > +	 */
-> > +	if ((oc->gfp_mask && !(oc->gfp_mask & __GFP_FS)) && oc->chosen &&
-> > +	    oc->chosen != (void *)-1UL && oc->chosen != current) {
-> > +		put_task_struct(oc->chosen);
-> > +		return true;
-> > +	}
-> > +
-> >  	/* Found nothing?!?! */
-> >  	if (!oc->chosen) {
-> >  		dump_header(oc, NULL);
-> > 
-> > which is prefixed by "the correct fix is not".
-> > 
-> > Behaving like sysctl_oom_kill_allocating_task == 1 if __GFP_FS is not used
-> > will not be the correct fix. But ...
-> > 
-> > Hou Tao wrote:
-> > > There is no need to disable __GFP_FS in ->readpage:
-> > > * It's a read-only fs, so there will be no dirty/writeback page and
-> > >   there will be no deadlock against the caller's locked page
-> > 
-> > is read-only filesystem sufficient for safe to use __GFP_FS?
-> > 
-> > Isn't "whether it is safe to use __GFP_FS" depends on "whether fs locks
-> > are held or not" rather than "whether fs has dirty/writeback page or not" ?
+> Thanks, not sure how I missed that.
 > 
-> It's worth noticing that squashfs _is_ in fact holding a page locked in
-> squashfs_copy_cache() when it calls grab_cache_page_nowait().  I'm not
-> sure if this will lead to trouble or not because I'm insufficiently
-> familiar with the reclaim path.
+> Greg, in case you want to pick this simple fix to 4.20 still:
+> Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-Hmm, this is more interesting then. If there is any memcg accounted
-allocation down that path _and_ the squashfs writeout can lock more
-pages and mark them writeback before they are really sent to the storage
-then we have a problem. See [1]
+I can queue it up, thanks!
 
-[1] http://lkml.kernel.org/r/20181213092221.27270-1-mhocko@kernel.org
-
--- 
-Michal Hocko
-SUSE Labs
+greg k-h
