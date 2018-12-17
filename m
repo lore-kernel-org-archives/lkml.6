@@ -2,125 +2,160 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16029C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D61C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DDC214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5371220874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:42:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p7n4cSGv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389022AbeLQSm0 (ORCPT
+        id S2389109AbeLQSmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:42:26 -0500
-Received: from mga12.intel.com ([192.55.52.136]:42808 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbeLQSm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:42:26 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 10:42:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
-   d="scan'208";a="284238657"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2018 10:42:25 -0800
-Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 17 Dec 2018 10:42:24 -0800
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.59]) by
- ORSMSX113.amr.corp.intel.com ([169.254.9.208]) with mapi id 14.03.0415.000;
- Mon, 17 Dec 2018 10:42:24 -0800
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>,
-        "bhsharma@redhat.com" <bhsharma@redhat.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "natechancellor@gmail.com" <natechancellor@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sedat.dilek@gmail.com" <sedat.dilek@gmail.com>,
-        "zhuyifei1999@gmail.com" <zhuyifei1999@gmail.com>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>
-Subject: RE: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Topic: [tip:efi/core] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Index: AQHUiJNT1thRYrJKskifWLlncDcXfqWDUdzAgACK0QD//3p94A==
-Date:   Mon, 17 Dec 2018 18:42:23 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F486045CA@ORSMSX114.amr.corp.intel.com>
-References: <20181129171230.18699-6-ard.biesheuvel@linaro.org>
- <tip-08cfb38f3ef49cfd1bba11a00401451606477d80@git.kernel.org>
- <FFF73D592F13FD46B8700F0A279B802F48604575@ORSMSX114.amr.corp.intel.com>
- <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_vTHFxpKRu_CxKP-GdNdgdFKr7fi87VkNur0sqGQNVDw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjhlNDhhY2ItOTk1OS00YThjLWFhMmYtMDNkZjliYTE4N2RiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRXlySDJwM2hXTTNWXC9mWHVXMEY1a0poK2czQUhLZXd3bFNUMW1oSFBCdXg3T0JxMm9SZE11SFh3Q1ArMmZpZUsifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 17 Dec 2018 13:42:38 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42068 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbeLQSmh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:42:37 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBHIcoEs075359;
+        Mon, 17 Dec 2018 18:42:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=5NQAwKI6BPkMli61v3/BbXZPUF3F0B7MFFmBnQFNKgk=;
+ b=p7n4cSGvtMxSsCu0np6uk2cEH/1hNoZqvzlZyW/kxapIA5jSmEYNcsxrfbYjm+P7urFx
+ N6YJjNSezMu7OPBdvgWZ4lF4b3Z6UHwnzu55UUK2WehLPEEtI4bJV7bVmbMm4fRivz85
+ OdV3Zsnk0b6WxVvBvbJkwOw+Ur5ybJq3RX+lV/ZNmqeEHIpHna/PbmHI6robD5neWMLS
+ zRmJJfckiWNUBUJeI1oBBEqQNla/4jUE1Gnf5RtjVdRvby6n7tpvDXcCg3UKBjMq043A
+ 6ANYmBND/7zgaJJWxsj7pIeUtc4KYX9TnxafZPG9+kjbGIH2IalKMG7Gyi3kt24K8tlu AQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2pct8qq5jk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Dec 2018 18:42:24 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBHIgM0o005317
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Dec 2018 18:42:22 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBHIgJug003501;
+        Mon, 17 Dec 2018 18:42:19 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 Dec 2018 10:42:19 -0800
+Subject: Re: [PATCH 2/3] hugetlbfs: Use i_mmap_rwsem to fix page
+ fault/truncate race
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20181203200850.6460-1-mike.kravetz@oracle.com>
+ <20181203200850.6460-3-mike.kravetz@oracle.com>
+ <27f8893b-57b3-088d-2d48-9e8acc5987bd@linux.ibm.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <f6fd9491-4b3d-16ca-f606-025c78756936@oracle.com>
+Date:   Mon, 17 Dec 2018 10:42:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <27f8893b-57b3-088d-2d48-9e8acc5987bd@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9110 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812170163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+IEhpIFRob21hcyBhbmQgSW5nbywNCj4gPg0KPiA+IEkgcmVjZW50bHkgbm90aWNlZCB0aGF0
-IHRoZSBiZWxvdyBjb21taXRzIFsxXSBhbmQgWzJdIGFyZSBicm9rZW4gd2hlbg0KPiA+IGtlcm5l
-bCBjb21tYW5kIGxpbmUgYXJndW1lbnQgImVmaT1vbGRfbWFwIiBpcyBwYXNzZWQuIFNvcnJ5ISBJ
-IG1pc3NlZA0KPiA+IHRvIHRlc3QgdGhpcyBjb25kaXRpb24gcHJpb3IgdG8gc2VuZGluZyB0aGVz
-ZSBwYXRjaGVzIHRvIG1haWxpbmcgbGlzdC4NCj4gPiBJIGFtIHdvcmtpbmcgb24gYSBmaXggYW5k
-IHdpbGwgc2VuZCBpdCB0byBtYWlsaW5nIGxpc3QgYXMgc29vbiBhcyBpdCdzIHJlYWR5Lg0KPiA+
-DQo+IA0KPiBDb3VsZCB5b3UgZWxhYm9yYXRlIG9uIHRoZSBwcm9ibGVtIHBsZWFzZT8NCg0KU3Vy
-ZSEgTXkgYmFkLi4NCg0KTGl0dGxlIGJpdCBvZiBoaXN0b3J5IGhlcmU6DQpCb3JpcyB3aXRoIHRo
-aXMgcGF0Y2ggc2V0IFsxXSBpbnRyb2R1Y2VkIHN0YXRpY2FsbHkgbWFwcGluZyBFRkkgUnVudGlt
-ZSBTZXJ2aWNlcyBhdCAtNEcgDQphbmQgYWxzbyBpbnRyb2R1Y2VkICJlZmk9b2xkX21hcCIgdG8g
-cmV0dXJuIHRvIHByZXZpb3VzIEVGSSBmdW5jdGlvbmFsaXR5IHdoaWNoIHVzZWQgDQppb3JlbWFw
-IGFuZCBfX3ZhKHBhKS4NCg0KWzNdIGFuZCBbNF0gYXJlIGxpbmtzIHRvIG9sZF9tYXBfcmVnaW9u
-KCkNCg0KVGhlIGNvbW1pdCAwOGNmYjM4ZjNlZjQgKCJ4ODYvZWZpOiBVbm1hcCBFRkkgYm9vdCBz
-ZXJ2aWNlcyBjb2RlL2RhdGEgcmVnaW9ucyBmcm9tIGVmaV9wZ2QiKSwgDQp1bm1hcHMgRUZJIGJv
-b3Qgc2VydmljZXMgY29kZS9kYXRhIHJlZ2lvbnMgKm9ubHkqIGZyb20gZWZpX3BnZCBidXQgZWZp
-PW9sZF9tYXAgbWFwcyANCkVGSSBib290IHNlcnZpY2VzIGNvZGUvZGF0YSByZWdpb25zIGludG8g
-c3dhcHBlcl9wZ2QuIEFsc28sIGVmaT1vbGRfbWFwICB1c2VzIGVpdGhlciANCmlvcmVtYXAoKSBv
-ciBfX3ZhKG1kLT5waHlzX2FkZHIpIHRvIG1hcCBFRkkgcnVudGltZS9ib290IHRpbWUgc2Vydmlj
-ZXMgYW5kIGRvZXNuJ3QgdXNlIGtlcm5lbF9tYXBfcGFnZXNfaW5fcGdkKCkuDQoNClNvLCB3ZSBu
-ZWVkIGEgZGlmZmVyZW50IHVubWFwcGluZyByb3V0aW5lIHRvIHVubWFwIEVGSSBib290IHNlcnZp
-Y2VzIGNvZGUvZGF0YSANCnJlZ2lvbnMgZnJvbSBzd2FwcGVyX3BnZCBpZiB0aGV5IHdlcmUgbWFw
-cGVkIHVzaW5nIGVmaT1vbGRfbWFwLg0KDQpbMV0gaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTMv
-OS8xOS8yMzUgLSBDb3ZlciBsZXR0ZXIgZm9yIEVGSSBydW50aW1lIHNlcnZpY2VzIHZpcnR1YWwg
-bWFwcGluZw0KWzJdIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDEzLzEwLzgvNzc3IC0gVGFsa3Mg
-YWJvdXQgZWZpPW9sZF9tYXANClszXSBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92
-NC4yMC1yYzcvc291cmNlL2FyY2gveDg2L3BsYXRmb3JtL2VmaS9lZmlfNjQuYyNMNDI5DQpbNF0g
-aHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjQuMjAtcmM3L3NvdXJjZS9hcmNoL3g4
-Ni9wbGF0Zm9ybS9lZmkvZWZpLmMjTDU4NA0KDQo+IA0KPiA+IE1lYW53aGlsZSwgY291bGQgeW91
-IHBsZWFzZSBkcm9wIHRoZXNlIHBhdGNoZXMgYmVmb3JlIHNlbmRpbmcgcHVsbCByZXF1ZXN0DQo+
-IHRvIExpbnVzPw0KPiA+DQo+ID4gWzFdIENvbW1pdCAwOGNmYjM4ZjNlZjQgKCJ4ODYvZWZpOiBV
-bm1hcCBFRkkgYm9vdCBzZXJ2aWNlcyBjb2RlL2RhdGENCj4gPiByZWdpb25zIGZyb20gZWZpX3Bn
-ZCIpIFsyXSBDb21taXQgN2UwZGFiZDMwMTBkICgieDg2L21tL3BhZ2VhdHRyOg0KPiA+IEludHJv
-ZHVjZSBoZWxwZXIgZnVuY3Rpb24gdG8gdW5tYXAgRUZJIGJvb3Qgc2VydmljZXMiKQ0KPiA+DQo+
-IA0KPiBJJ2QgbGlrZSB0byB1bmRlcnN0YW5kIHdoYXQgdGhlIGlzc3VlIGlzIGJlZm9yZSB3ZSBk
-cm9wIGFueXRoaW5nLg0KDQpSZWdhcmRzLA0KU2FpDQo=
+On 12/17/18 2:25 AM, Aneesh Kumar K.V wrote:
+> On 12/4/18 1:38 AM, Mike Kravetz wrote:
+>> hugetlbfs page faults can race with truncate and hole punch operations.
+>> Current code in the page fault path attempts to handle this by 'backing
+>> out' operations if we encounter the race.  One obvious omission in the
+>> current code is removing a page newly added to the page cache.  This is
+>> pretty straight forward to address, but there is a more subtle and
+>> difficult issue of backing out hugetlb reservations.  To handle this
+>> correctly, the 'reservation state' before page allocation needs to be
+>> noted so that it can be properly backed out.  There are four distinct
+>> possibilities for reservation state: shared/reserved, shared/no-resv,
+>> private/reserved and private/no-resv.  Backing out a reservation may
+>> require memory allocation which could fail so that needs to be taken
+>> into account as well.
+>>
+>> Instead of writing the required complicated code for this rare
+>> occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
+>> mode for the duration of page fault processing.  Hold i_mmap_rwsem
+>> longer in truncation and hold punch code to cover the call to
+>> remove_inode_hugepages.
+>>
+>> Cc: <stable@vger.kernel.org>
+>> Fixes: ebed4bfc8da8 ("hugetlb: fix absurd HugePages_Rsvd")
+>> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+>> ---
+>>   fs/hugetlbfs/inode.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+>> index 32920a10100e..3244147fc42b 100644
+>> --- a/fs/hugetlbfs/inode.c
+>> +++ b/fs/hugetlbfs/inode.c
+>> @@ -505,8 +505,8 @@ static int hugetlb_vmtruncate(struct inode *inode, loff_t
+>> offset)
+>>       i_mmap_lock_write(mapping);
+>>       if (!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root))
+>>           hugetlb_vmdelete_list(&mapping->i_mmap, pgoff, 0);
+>> -    i_mmap_unlock_write(mapping);
+>>       remove_inode_hugepages(inode, offset, LLONG_MAX);
+>> +    i_mmap_unlock_write(mapping);
+>>       return 0;
+>>   }
+> 
+> 
+> We used to do remove_inode_hugepages()
+> 
+>     mutex_lock(&hugetlb_fault_mutex_table[hash]);
+>     i_mmap_lock_write(mapping);
+>     hugetlb_vmdelete_list(&mapping->i_mmap,
+>     i_mmap_unlock_write(mapping);
+> 
+> did we change the lock ordering with this patch?
+
+Thanks for taking a look.
+
+Yes, we did take locks in that order in the 'if (unlikely(page_mapped(page)))'
+case within remove_inode_hugepages.  That ordering was important as the
+fault_mutex prevented faults while unmapping the page in all potential
+mappings.
+
+With the change above, we will be holding i_mmap_rwsem in write mode while
+calling remove_inode_hugepages.  The page fault code (modified in previous
+patch) acquires i_mmap_rwsem in read mode.  Therefore, no page faults can
+occur and, that 'if (unlikely(page_mapped(page)))' case within
+remove_inode_hugepages will never happen.  The now dead code is removed in
+the subsequent patch.
+
+As you suggested in a comment to the subsequent patch, it would be better to
+combine the patches and remove the dead code when it becomes dead.  I will
+work on that.  Actually some of the code in patch 3 applies to patch 1 and
+some applies to patch 2.  So, it will not be simply combining patch 2 and 3.
+
+-- 
+Mike Kravetz
