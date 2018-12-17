@@ -2,124 +2,98 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D2AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1749BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D3321473
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:38:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PhFrmywC"
+	by mail.kernel.org (Postfix) with ESMTP id 9F81820578
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 23:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbeLQXiP (ORCPT
+        id S1726333AbeLQXrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 18:38:15 -0500
-Received: from ozlabs.org ([203.11.71.1]:38943 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeLQXiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 18:38:14 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Jcz71YDLz9s2P;
-        Tue, 18 Dec 2018 10:38:11 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545089891;
-        bh=Z6v1fw6zmqbFHlhOpgDqfqrVZR3HT06aRl0FHqQ8l3k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PhFrmywCAI1jG9F/iP1WFc85Jh5UjcGmV98KqJ5LsvZTY9VDOQN2Izjz1SeN5srXg
-         Ym5Xj5h8JqOM1x1UzSwrpa+Ap+yZQo6ySMACIPOVbZgs/FKqrwCESriY5EzfZneBEA
-         vc1T4HxMI1+VjU4uLoYEuaPtv+tqEyq4G18yQ8L3gahZkIzLUax7jz3lw4fMr/Ze3B
-         hoxoZWWku/q8+0JQkIS8yDTRu8EWZGwk92sTUIMbZcvvU34lIMKZHdgE3xhYxAAQw0
-         WZUmElDe2ldiqBuPduFoknULC4bFthoIp2nCtZfEKnepEuc2qsgyuIANn40gNjdq8q
-         2AfB8F1adF2ow==
-Date:   Tue, 18 Dec 2018 10:38:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the vfs tree
-Message-ID: <20181218103810.11687f68@canb.auug.org.au>
+        Mon, 17 Dec 2018 18:47:35 -0500
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:55008 "EHLO
+        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbeLQXrf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 18:47:35 -0500
+Received: from darkstar.musicnaut.iki.fi (85-76-70-99-nat.elisa-mobile.fi [85.76.70.99])
+        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 6A6FC4003E;
+        Tue, 18 Dec 2018 01:47:32 +0200 (EET)
+Date:   Tue, 18 Dec 2018 01:47:32 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Tony Lindgren <tony@atomide.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181217234731.GC7288@darkstar.musicnaut.iki.fi>
+References: <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+ <20181122151236.GA9611@n2100.armlinux.org.uk>
+ <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
+ <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
+ <20181124200942.GS6920@n2100.armlinux.org.uk>
+ <20181125010717.GJ53235@atomide.com>
+ <20181125111105.GT6920@n2100.armlinux.org.uk>
+ <20181125165830.GC3416@darkstar.musicnaut.iki.fi>
+ <20181125171428.GL53235@atomide.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NtkgW1+nRoCK.YKjRv.S9xP"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181125171428.GL53235@atomide.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/NtkgW1+nRoCK.YKjRv.S9xP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Al,
+On Sun, Nov 25, 2018 at 09:14:28AM -0800, Tony Lindgren wrote:
+> * Aaro Koskinen <aaro.koskinen@iki.fi> [181125 16:58]:
+> > Below changes get traffic going with DMA & g_ether...
+> 
+> Oh cool, if you have dma and g_ether working, you should
+> test it with a variable size ping test loop :) That should
+> expose any issues within few minutes.
 
-Commits
+The ping test is working fine. Also setting MTU higher works fine.
 
-  c1cae12e6b4a ("vfs: Add a sample program for the new mount API")
-  d101a34a2c79 ("vfs: syscall: Add fspick() to select a superblock for reco=
-nfiguration")
-  1fcae4c630e3 ("vfs: syscall: Add fsmount() to create a mount for a superb=
-lock")
-  ec4256de39c3 ("vfs: syscall: Add fsconfig() for configuring and managing =
-a context")
-  0cba0050bcbe ("vfs: Implement logging through fs_context")
-  4552c960ff40 ("vfs: syscall: Add fsopen() to prepare for superblock creat=
-ion")
-  03ca430a2648 ("Make anon_inodes unconditional")
-  96298884c8b4 ("vfs: syscall: Add move_mount(2) to move mounts around")
-  6c606fff6c91 ("afs: Use fs_context to pass parameters over automount")
-  10424811186f ("afs: Add fs_context support")
-  8fa5366945d8 ("vfs: Add some logging to the core users of the fs_context =
-log")
-  8907f3967fbc ("vfs: Implement logging through fs_context")
-  bed15a150f44 ("vfs: Provide documentation for new mount API")
-  460375e70621 ("vfs: Remove kern_mount_data()")
-  e88bea43b477 ("hugetlbfs: Convert to fs_context")
-  d48db7fb30db ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
-  35822336b482 ("cpuset: Use fs_context")
-  b97c89323b7b ("ipc: Convert mqueue fs to fs_context")
-  e1f97a645981 ("proc: Add fs_context support to procfs")
-  5aed868ddf7f ("procfs: Move proc_fill_super() to fs/proc/root.c")
-  013c7af575e5 ("vfs: Implement a filesystem superblock creation/configurat=
-ion context")
-  47173883ff4d ("tomoyo: Implement security hooks for the new mount API")
-  c36d02347290 ("apparmor: Implement security hooks for the new mount API")
-  18ee890db905 ("vfs: Put security flags into the fs_context struct")
-  18ef962eeec1 ("vfs: Add LSM hooks for the new mount API")
-  1bff8b546644 ("vfs: Add configuration parser helpers")
-  57fb096cd685 ("vfs: Introduce logging functions")
-  23ac0033ae3c ("vfs: Introduce the basic header for the new mount API's fi=
-lesystem context")
-  0a8054c863b8 ("vfs: Separate changing mount flags full remount")
-  e322b9267880 ("vfs: Suppress MS_* flag defs within the kernel unless expl=
-icitly enabled")
+I was also able to reduce the needed changes further, so only the below
+are now needed for 15xx DMA.
 
-are missing a Signed-off-by from their committer.
+The dma_dest_len() change I can understand.
 
---=20
-Cheers,
-Stephen Rothwell
+But why the BURST_4 is not working in out direction?
 
---Sig_/NtkgW1+nRoCK.YKjRv.S9xP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -498,7 +498,7 @@ static u16 dma_dest_len(struct omap_ep *ep, dma_addr_t start)
+ 
+ 	end |= start & (0xffff << 16);
+ 	if (cpu_is_omap15xx())
+-		end++;
++		end += sizeof(u16);
+ 	if (end < start)
+ 		end += 0x10000;
+ 	return end - start;
+@@ -754,8 +754,9 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
+ 				UDC_DATA_DMA,
+ 				0, 0);
+ 			/* EMIFF or SDRC */
+-			omap_set_dma_dest_burst_mode(ep->lch,
+-						OMAP_DMA_DATA_BURST_4);
++			if (!cpu_is_omap15xx())
++				omap_set_dma_dest_burst_mode(ep->lch,
++							OMAP_DMA_DATA_BURST_4);
+ 			omap_set_dma_dest_data_pack(ep->lch, 1);
+ 		}
+ 	}
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYM2IACgkQAVBC80lX
-0Gzcywf+JAGWAjUM0QAfyEBgD+a1rX97iANjWiwSWIaavUekLrNdt44yCgC1sN2M
-4ExYjFWy3jU5UhKfF7IAE5sh7LC8qEyQDBuvWqCLPxUc0ISGpAgZ8O7/aB5OCnC6
-OTGKBoh5FXU2fQGdcnC1STSlKIFEPtQyeNm+wNnMGqVbESQfJrLIAPJiKJfM9/Df
-klfa586JUvUyH12ctU6frdqIIPtfV0lYHXSxlOJ474XfLgaP2tcbo87VFq9BeMOD
-xFC+nUDaAMHLlAMilnSpWMKJ2Qc/AbCuEDdPqjtf0dX69U4LQz+XeZDpBMX1zGEg
-+HtgKUz+tMpHIFPKVI3N/vXGi6Kj1Q==
-=dhHA
------END PGP SIGNATURE-----
-
---Sig_/NtkgW1+nRoCK.YKjRv.S9xP--
+A.
