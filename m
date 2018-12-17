@@ -2,91 +2,133 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBBAEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB4BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808EB214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:49:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HlsZ2vf5"
+	by mail.kernel.org (Postfix) with ESMTP id 9A955214C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 21:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbeLQVtV (ORCPT
+        id S1727542AbeLQVyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 16:49:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:59267 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbeLQVtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 16:49:21 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43JZYW0fVCz9s6w;
-        Tue, 18 Dec 2018 08:49:19 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545083359;
-        bh=SNKP15KEDz9QOBQoOZGinPievkqNlnDgCDOVMJ7W2ys=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HlsZ2vf5pp9w8kx2ULigz80EnRbvAtmn7mC0ouMQJ4U8Bz+3J2dP2APskgj+I1lBf
-         BQz32AvzL7H7iaxgW0FXbBnAz6PwpBPMibM5op3nkLqnLDQXykBqhMQJc8LcRY+9At
-         zyETLw3NTL6FXxw8eXyRf2gtq/o0zViMVOCZgeYSl9YyBKGR9Ox/ShEtCRVTVmL9TE
-         CBTeFwQ3sqKPoLQbQ/FvXrRXSmi0/MISc/5nxsZ4jcnU9orVg0AWcXlaOpE3JOswXf
-         Yg4moW47XJNiRi2taYYy8WJkq7iEw5zTVdamQ+5OCIZBh7PmkXy5bQhfp87lRvlkT1
-         i0c4yEN3m2PxQ==
-Date:   Tue, 18 Dec 2018 08:49:18 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the kgdb-dt tree
-Message-ID: <20181218084918.755551b7@canb.auug.org.au>
+        Mon, 17 Dec 2018 16:54:44 -0500
+Received: from gateway34.websitewelcome.com ([192.185.149.222]:24400 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727289AbeLQVyn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 16:54:43 -0500
+X-Greylist: delayed 1206 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Dec 2018 16:54:43 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id D9D8A1F31C
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:34:36 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Z0X6gpzZz90onZ0X6gOPeA; Mon, 17 Dec 2018 15:34:36 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=48868 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gZ0X1-004EAc-PV; Mon, 17 Dec 2018 15:34:36 -0600
+Date:   Mon, 17 Dec 2018 15:34:30 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] gpiolib: Fix potential Spectre v1 vulnerabilities
+Message-ID: <20181217213430.GA28450@embeddedor>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eALjmxwk.k9Zd7a0ljy_cR9"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gZ0X1-004EAc-PV
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.106.44]:48868
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/eALjmxwk.k9Zd7a0ljy_cR9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+offset and lineinfo.line_offset are indirectly controlled by user-space,
+hence leading to a potential exploitation of the Spectre variant 1
+vulnerability.
 
-Hi Daniel,
+This issue was detected with the help of Smatch:
 
-Commits
+drivers/gpio/gpiolib.c:580 linehandle_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
+drivers/gpio/gpiolib.c:927 lineevent_create() warn: potential spectre issue 'gdev->descs' [r] (local cap)
+drivers/gpio/gpiolib.c:1053 gpio_ioctl() warn: potential spectre issue 'gdev->descs' [r] (local cap)
 
-  aee700022ad5 ("kdb: Don't back trace on a cpu that didn't round up")
-  e046994f7695 ("kgdb: Don't round up a CPU that failed rounding up before")
-  2649a5d9dccd ("kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call=
-_function()")
-  990bbea1e0d1 ("kgdb: Remove irq flags from roundup")
+Fix this by sanitizing both offset and lineinfo.line_offset before
+using them to index gdev->descs.
 
-are missing a Signed-off-by from their committer.
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
---=20
-Cheers,
-Stephen Rothwell
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
---Sig_/eALjmxwk.k9Zd7a0ljy_cR9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpio/gpiolib.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index fc36dc358716..73a0a550162e 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -29,6 +29,8 @@
+ #include <linux/timekeeping.h>
+ #include <uapi/linux/gpio.h>
+ 
++#include <linux/nospec.h>
++
+ #include "gpiolib.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -576,6 +578,7 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 			ret = -EINVAL;
+ 			goto out_free_descs;
+ 		}
++		offset = array_index_nospec(offset, gdev->ngpio);
+ 
+ 		desc = &gdev->descs[offset];
+ 		ret = gpiod_request(desc, lh->label);
+@@ -910,6 +913,7 @@ static int lineevent_create(struct gpio_device *gdev, void __user *ip)
+ 		ret = -EINVAL;
+ 		goto out_free_label;
+ 	}
++	offset = array_index_nospec(offset, gdev->ngpio);
+ 
+ 	/* Return an error if a unknown flag is set */
+ 	if ((lflags & ~GPIOHANDLE_REQUEST_VALID_FLAGS) ||
+@@ -1049,6 +1053,8 @@ static long gpio_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			return -EFAULT;
+ 		if (lineinfo.line_offset >= gdev->ngpio)
+ 			return -EINVAL;
++		lineinfo.line_offset = array_index_nospec(lineinfo.line_offset,
++							  gdev->ngpio);
+ 
+ 		desc = &gdev->descs[lineinfo.line_offset];
+ 		if (desc->name) {
+-- 
+2.19.2
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwYGd4ACgkQAVBC80lX
-0GzinQf/fnPGJaZVqWGTtzqlQjECW40E10DmivNuvw+VZlZSCxR7l93wt4b6SHmk
-c8pOjHvevx6OKKlOQ+DQJCB9KuuXgjKmxqXdr2p+SLho0DRGxK9QF2rQmqaYHxiN
-AyOY35EchA69QY+26owU/76rKsOjm/fji9yPu6oA6R2Azud83MQQyIEU7RgSUZX6
-tYn5r3zeCHMUEzu4MF8WfpMv07j0V40PcL656Lx1aIYfX2MZYvLagALyYF6WUf2X
-tYjeM/LZT4eQbsAnqA9HkxBXGxsuapSh1ul43jxgOxglCNwM87F13q2/g8YI3jyx
-VTpfkPhHXyppq5JXEiAvI9TURmRNDw==
-=NkdK
------END PGP SIGNATURE-----
-
---Sig_/eALjmxwk.k9Zd7a0ljy_cR9--
