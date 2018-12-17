@@ -2,126 +2,102 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B5AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D773C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA05B214C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 555DA2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 20:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389176AbeLQUiR (ORCPT
+        id S2388382AbeLQUjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 15:38:17 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:42874 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbeLQUiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 15:38:17 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBHKaDBj030388
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 17 Dec 2018 12:37:29 -0800
-Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
- 12:37:20 -0800
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 18/18] mfd: wm8400-core: Make it explicitly non-modular
-Date:   Mon, 17 Dec 2018 15:31:28 -0500
-Message-ID: <1545078688-21217-19-git-send-email-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 17 Dec 2018 15:39:12 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49896 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727641AbeLQUjM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 15:39:12 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 337BDD62;
+        Mon, 17 Dec 2018 20:38:48 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 12:38:47 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgenii Stepanov <eugenis@google.com>
+Subject: Re: [PATCH v13 19/25] kasan: add hooks implementation for tag-based
+ mode
+Message-Id: <20181217123847.492b9ae4934bd0d95b0bbbdc@linux-foundation.org>
+In-Reply-To: <CAAeHK+w2jppKbb26bBk6uP9ydZeHrtNc6b2CVv4xbvt6ecVooA@mail.gmail.com>
+References: <cover.1544099024.git.andreyknvl@google.com>
+        <bda78069e3b8422039794050ddcb2d53d053ed41.1544099024.git.andreyknvl@google.com>
+        <2bf7415e-2724-b3c3-9571-20c8b6d43b92@arm.com>
+        <CAAeHK+xc6R_p26-tu--9W1L1PvUAFb70J23ByiEukKz3uVC3EQ@mail.gmail.com>
+        <b99b331d-22ca-b9db-8677-4896c427ef10@arm.com>
+        <CAAeHK+w2jppKbb26bBk6uP9ydZeHrtNc6b2CVv4xbvt6ecVooA@mail.gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On Mon, 17 Dec 2018 20:33:42 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
 
-drivers/mfd/Kconfig:config MFD_WM8400
-drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8400"
+> > Curiosity, did you try your patches with SLUB red zoning enabled?
+> > Since the area used for the Redzone is just after the payload, aligning the
+> > object_size independently from the allocator could have side effects, at least
+> > if I understand well how the mechanism works.
+> >
+> > Setting ARCH_SLAB_MINALIGN should avoid this as well.
+> >
+> > What do you think?
+> 
+> Sounds good to me.
+> 
+> Andrew, how should proceed with this? Send another fixup patch or
+> resend the whole series?
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-A trivial function rename from wm8400_module_init to the name
-wm8400_driver_init is also done to reduce possible confusion.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
-
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: patches@opensource.cirrus.com
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mfd/wm8400-core.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mfd/wm8400-core.c b/drivers/mfd/wm8400-core.c
-index 8a98a2fc74e1..79756c83f5f0 100644
---- a/drivers/mfd/wm8400-core.c
-+++ b/drivers/mfd/wm8400-core.c
-@@ -12,7 +12,7 @@
-  *
-  */
- 
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/bug.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
-@@ -150,7 +150,6 @@ static const struct i2c_device_id wm8400_i2c_id[] = {
-        { "wm8400", 0 },
-        { }
- };
--MODULE_DEVICE_TABLE(i2c, wm8400_i2c_id);
- 
- static struct i2c_driver wm8400_i2c_driver = {
- 	.driver = {
-@@ -161,7 +160,7 @@ static struct i2c_driver wm8400_i2c_driver = {
- };
- #endif
- 
--static int __init wm8400_module_init(void)
-+static int __init wm8400_driver_init(void)
- {
- 	int ret = -ENODEV;
- 
-@@ -173,15 +172,4 @@ static int __init wm8400_module_init(void)
- 
- 	return ret;
- }
--subsys_initcall(wm8400_module_init);
--
--static void __exit wm8400_module_exit(void)
--{
--#if IS_ENABLED(CONFIG_I2C)
--	i2c_del_driver(&wm8400_i2c_driver);
--#endif
--}
--module_exit(wm8400_module_exit);
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
-+subsys_initcall(wm8400_driver_init);
--- 
-2.7.4
+It depends on how extensive the changes are.  I prefer a fixup, but at
+some point it's time to drop it all and start again.
 
