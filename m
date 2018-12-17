@@ -2,75 +2,177 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B10EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD90C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A11720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:58:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M8mTiHAR"
+	by mail.kernel.org (Postfix) with ESMTP id DDA2120874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 14:59:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387500AbeLQO6U (ORCPT
+        id S2387557AbeLQO7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:58:20 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:54774 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733112AbeLQO6U (ORCPT
+        Mon, 17 Dec 2018 09:59:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41632 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387545AbeLQO7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:58:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zgswlOL0Z7zZLXeaLuuRwh49voJotlcz14ISMgP0uR4=; b=M8mTiHARUZd3NYq8v22Dx+iAh
-        cp6yCkrxK0ooOVnNfugF5ib49vuIHzMiMkE3jrJ0oLChFH2Pn7K08WyPBpaHroLO4dQJU2xpKOR4b
-        OtEf4e3xkqBDgRuGLGUsv7mGCBjFn/BEGjMXYVnyL+4eLG3/uHRFSMZK/YtBOmGLD4MN984Yz03Mi
-        IT2KeszNtK8yc7EdHlOtnDw5bip8plUz/462TxIXYdV7JR04Q3D/FfLYh9GkF3+f9235eK/G5v4dT
-        107jpxyJPz/PsAcMxj1Wt4L0aIqU9wi/3zP9U5LL5J31bwrDn6dZseP42zJz1k4XBIDPVXym0BtNO
-        ykwTLtp4g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYuLG-000213-4y; Mon, 17 Dec 2018 14:57:58 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3716A2027DA91; Mon, 17 Dec 2018 15:57:54 +0100 (CET)
-Date:   Mon, 17 Dec 2018 15:57:54 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     gregkh@linuxfoundation.org, tj@kernel.org, lizefan@huawei.com,
-        hannes@cmpxchg.org, axboe@kernel.dk, dennis@kernel.org,
-        dennisszhou@gmail.com, mingo@redhat.com, akpm@linux-foundation.org,
-        corbet@lwn.net, cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 3/6] psi: eliminate lazy clock mode
-Message-ID: <20181217145754.GB2218@hirez.programming.kicks-ass.net>
-References: <20181214171508.7791-1-surenb@google.com>
- <20181214171508.7791-4-surenb@google.com>
+        Mon, 17 Dec 2018 09:59:05 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBHEwtGe046857
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:59:03 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2peaw5rrsc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 09:59:03 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
+        Mon, 17 Dec 2018 14:59:02 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Dec 2018 14:58:59 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBHEwwJm62587016
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Dec 2018 14:58:58 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B758811C05C;
+        Mon, 17 Dec 2018 14:58:58 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E0F811C054;
+        Mon, 17 Dec 2018 14:58:58 +0000 (GMT)
+Received: from oc5311105230.ibm.com (unknown [9.145.57.218])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Dec 2018 14:58:58 +0000 (GMT)
+Subject: Re: [PATCH v2] net/smc: fix TCP fallback socket release
+To:     Myungho Jung <mhjungk@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181217052122.GA26299@myunghoj-Precision-5530>
+From:   Ursula Braun <ubraun@linux.ibm.com>
+Openpgp: preference=signencrypt
+Date:   Mon, 17 Dec 2018 15:58:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214171508.7791-4-surenb@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181217052122.GA26299@myunghoj-Precision-5530>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121714-0008-0000-0000-000002A29549
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121714-0009-0000-0000-0000220D24DD
+Message-Id: <a9ad19c4-1ef7-4dc9-639e-03b3459457e2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812170133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:15:05AM -0800, Suren Baghdasaryan wrote:
-> Eliminate the idle mode and keep the worker doing 2s update intervals
-> at all times.
 
-That sounds like a bad deal.. esp. so for battery powered devices like
-say Andoird.
 
-In general the push has been to always idle everything, see NOHZ and
-NOHZ_FULL and all the work that's being put into getting rid of any and
-all period work.
+On 12/17/2018 06:21 AM, Myungho Jung wrote:
+> clcsock can be released while kernel_accept() references it in TCP
+> listen worker. Also, clcsock needs to wake up before released if TCP
+> fallback is used and the clcsock is blocked by accept. Add a lock to
+> safely release clcsock and call kernel_sock_shutdown() to wake up
+> clcsock from accept in smc_release().
 
+Thanks for your effort to solve this problem. I have some minor
+improvement proposals:
+
+> 
+> Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
+> Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+> ---
+>  net/smc/af_smc.c | 14 ++++++++++++--
+>  net/smc/smc.h    |  2 ++
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 5fbaf1901571..5d06fb1bbccf 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -147,8 +147,14 @@ static int smc_release(struct socket *sock)
+>  		sk->sk_shutdown |= SHUTDOWN_MASK;
+>  	}
+>  	if (smc->clcsock) {
+> +		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
+> +			/* wake up clcsock accept */
+> +			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
+> +		}
+
+This part is not needed, since an SMC socket in state SMC_LISTEN is never
+a use_fallback socket.
+
+> +		mutex_lock(&smc->clcsock_release_lock);
+>  		sock_release(smc->clcsock);
+>  		smc->clcsock = NULL;
+> +		mutex_unlock(&smc->clcsock_release_lock);
+>  	}
+>  	if (smc->use_fallback) {
+>  		if (sk->sk_state != SMC_LISTEN && sk->sk_state != SMC_INIT)
+> @@ -205,6 +211,7 @@ static struct sock *smc_sock_alloc(struct net *net, struct socket *sock,
+>  	spin_lock_init(&smc->conn.send_lock);
+>  	sk->sk_prot->hash(sk);
+>  	sk_refcnt_debug_inc(sk);
+> +	mutex_init(&smc->clcsock_release_lock);
+>  
+>  	return sk;
+>  }
+> @@ -821,7 +828,7 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
+>  	struct socket *new_clcsock = NULL;
+>  	struct sock *lsk = &lsmc->sk;
+>  	struct sock *new_sk;
+> -	int rc;
+> +	int rc = 0;
+
+Without clcsock the good path should not be executed. Thus I suggest
+to initialize with something negative like -EINVAL.
+
+>  
+>  	release_sock(lsk);
+>  	new_sk = smc_sock_alloc(sock_net(lsk), NULL, lsk->sk_protocol);
+> @@ -834,7 +841,10 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
+>  	}
+>  	*new_smc = smc_sk(new_sk);
+>  
+> -	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
+> +	mutex_lock(&lsmc->clcsock_release_lock);
+> +	if (lsmc->clcsock)
+> +		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
+> +	mutex_unlock(&lsmc->clcsock_release_lock);
+>  	lock_sock(lsk);
+>  	if  (rc < 0)
+>  		lsk->sk_err = -rc;
+> diff --git a/net/smc/smc.h b/net/smc/smc.h
+> index 08786ace6010..9a2795cf5d30 100644
+> --- a/net/smc/smc.h
+> +++ b/net/smc/smc.h
+> @@ -219,6 +219,8 @@ struct smc_sock {				/* smc sock container */
+>  						 * started, waiting for unsent
+>  						 * data to be sent
+>  						 */
+> +	struct mutex            clcsock_release_lock;
+> +						/* protects clcsock */
+
+I suggest to be more precise: "protects clcsock of a listen socket" 
+
+>  };
+>  
+>  static inline struct smc_sock *smc_sk(const struct sock *sk)
+> 
 
