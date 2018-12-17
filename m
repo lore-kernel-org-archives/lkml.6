@@ -2,71 +2,94 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B6DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F880C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD2E320874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF50420874
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:42:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcqPXBJN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732443AbeLQKmK (ORCPT
+        id S1732130AbeLQKmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:42:10 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:47096 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbeLQKmK (ORCPT
+        Mon, 17 Dec 2018 05:42:49 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42259 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeLQKmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:42:10 -0500
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 407B367A658
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 11:42:08 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 17 Dec
- 2018 11:42:07 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 17 Dec 2018 11:42:07 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-rt-users@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RT-Kernel boot stalls because of change in fs/dcache.c
-Thread-Topic: RT-Kernel boot stalls because of change in fs/dcache.c
-Thread-Index: AQHUlfUoWBvAkgSJkE+oWdptakv0Lw==
-Date:   Mon, 17 Dec 2018 10:42:07 +0000
-Message-ID: <cfff1645-aab1-7b39-5f75-31b94f3365d1@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5DF9071B5AC20A468762196811215C6E@snt-world.com>
-Content-Transfer-Encoding: base64
+        Mon, 17 Dec 2018 05:42:49 -0500
+Received: by mail-io1-f68.google.com with SMTP id x6so9599128ioa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:42:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Da/nKj92LiTLzN6gmOjFat553E3Faps1ywC2IU+ZEuY=;
+        b=hcqPXBJNPp0cw3G3qIdDYDrTqI5e33m0PsPlNlh59Rx4G5v3B9zffIJDNXtYgMWKgd
+         eCDWB8nm1GIsRU61ArryN3fk4V59JXAu8GxEmscEG9ziLpJfFL9Qah3SmQNBNdeqIP7p
+         Si4mF0GCHe+ME8cg9bIrF0tDWc4wmOFvlS34w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Da/nKj92LiTLzN6gmOjFat553E3Faps1ywC2IU+ZEuY=;
+        b=TOOVZFjQgRoxTvxzP7HwvVuD/w+Eghpe/w7/xBGHcjd6PtX4QoxBsHMUnedAmqIq1S
+         5ZaHnRt5LLs9p5axnBU6k728B5RlQbwNWOdr0O2RcnhL5oaw4aKVPZ1egLpk78yb/DGm
+         tpikcnmO9onlEpcHU/HNz/q5ff9ojFrnxOvcq8JwTv6VaL19Ny0bPcCmCKdHwYJCO38f
+         OcOKw6ltfzx6KReQl855r48icHvnD4Enh9bX3NwBibBsAlW9+XX9NGt8w1yWyKe10V1a
+         50fQcDN+9jIZm176JlcGB1jwiFB236VSMt83q67lKufLcrzkR1+hS4Lxl0tnZR8KktMD
+         OEzA==
+X-Gm-Message-State: AA+aEWYRGz7vN72PsBsxsQels+JCUdHlrKC6neJtii6WlL6p2Z8UCzzj
+        C9f8gFBm8Uy6b+05lin5A5avlAPG+LPlGLjoIgJcdw==
+X-Google-Smtp-Source: AFSGD/W/CyGsIm3JnHJ8Dm/5ZX0mKF10fQWtRwEhQJPJkvan2c0DCuxa2C9sboIoz9FjOr9wQ2SB4txgIsaZYRbvjNA=
+X-Received: by 2002:a6b:6919:: with SMTP id e25mr10270672ioc.119.1545043368209;
+ Mon, 17 Dec 2018 02:42:48 -0800 (PST)
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 407B367A658.AA143
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: linux-kernel@vger.kernel.org
+References: <1544691770-8938-1-git-send-email-firoz.khan@linaro.org>
+ <20181217080846.GA28424@sathnaga86.in.ibm.com> <877eg8v40t.fsf@concordia.ellerman.id.au>
+In-Reply-To: <877eg8v40t.fsf@concordia.ellerman.id.au>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Mon, 17 Dec 2018 16:12:37 +0530
+Message-ID: <CALxhOnh5a86pBi4rD1YzhVGq7KPs56du9+G8vkt7zVAqbGkLEw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] powerpc: system call table generation support
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Breno Leitao <leitao@debian.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCkkgaGF2ZSB0cmllZCB0byBib290IGEgNC4xNC1LZXJuZWwgd2l0aCB0aGUgUlQtcGF0
-Y2hlcyBhbmQgDQpQUkVFTVBUX1JUX0ZVTEwgb24gYW4gaS5NWDZVTCBib2FyZC4gVW5mb3J0dW5h
-dGVseSB0aGUgYm9vdCBzdGFsbHMgYXQgDQpzb21lIHBvaW50IGFuZCBuZXZlciBmaW5pc2hlcy4N
-Cg0KSSBkaWQgc29tZSBiaXNlY3RpbmcgYW5kIGZvdW5kIG91dCwgdGhhdCByZXZlcnRpbmcgdGhp
-cyBjaGFuZ2U6IFsxXSwgDQptYWtlcyB0aGUgYm9hcmQgYm9vdCBjb3JyZWN0bHkuDQoNCkNhbiBh
-bnlvbmUgaGVscCB0byBjb21lIHVwIHdpdGggYSBwcm9wZXIgZml4IGZvciB0aGlzPw0KDQpUaGFu
-a3MsDQpGcmllZGVyDQoNClsxXTogDQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
-dXgva2VybmVsL2dpdC9ydC9saW51eC1zdGFibGUtcnQuZ2l0L2NvbW1pdC8/aD12NC4xNC1ydCZp
-ZD01NjY4NGQyMWY3ZjgzNDFmN2E1ZWQxNDMzNzE0MTEyZjQ5Mjk0NTkw
+Hi Michael,
+
+On Mon, 17 Dec 2018 at 16:01, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> No it's fine if it applies on next.
+>
+> I can also fix up minor merge conflicts if there are any.
+
+Ohh. I already rebased and sent v6.
+
+Thanks
+Firoz
