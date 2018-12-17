@@ -2,152 +2,118 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D486BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9E4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2262086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:34:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ndnFUfCW"
+	by mail.kernel.org (Postfix) with ESMTP id 67D3F20675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389050AbeLQSex (ORCPT
+        id S2389070AbeLQSf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:34:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42666 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387936AbeLQSex (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:34:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=e5vUeLFz+4vQCOAjKVsAoU/kOmxWpWAc3TiNRePY+ow=; b=ndnFUfCWYaOf0apTrT+FgRtxi
-        oJ66lCfKaA1lBw6CvnrRpvo7SVsDg+7gfEOFxBVkLSOkwn6SNRnR77ulr1Qy4T4Zr4Df7M3Mera/j
-        awzyPDIvCUio8qW0SPKDsYRuLgW2QVC9VYpZ+qHi87fyuCG17SeqUgKpOWKQZtnUcHWd3icRi5wnF
-        RBxFhIUuRSpWDH5ttCad1z/bIBasqxpPa0+I6Pc3IaJeP+C5CewcBlITRC39KRXx8bkrBxsz4eD7l
-        bXalgI5lo8XdjCN5ws3dYsFTn4/Qm3XmEVMb1XN0OPnaGAtXnDR1lfef8z1SLKUJJYGMwysYb5ll1
-        Fh0KnweAQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gYxj1-0006ET-MP; Mon, 17 Dec 2018 18:34:43 +0000
-Date:   Mon, 17 Dec 2018 10:34:43 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181217183443.GO10600@bombadil.infradead.org>
-References: <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
+        Mon, 17 Dec 2018 13:35:26 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:34058 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387936AbeLQSfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:35:25 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gYxj0-0002I4-Hj; Mon, 17 Dec 2018 11:34:43 -0700
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     linux-pci@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Will Deacon <will.deacon@arm.com>, linuxarm@huawei.com,
+        Keith Busch <keith.busch@intel.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alex.umansky@huawei.com,
+        Eric.Wehage@huawei.com
+References: <20181214131055.52253-1-Jonathan.Cameron@huawei.com>
+ <20181214131055.52253-3-Jonathan.Cameron@huawei.com>
+ <20181214235505.GI20725@google.com> <20181217110906.0000003f@huawei.com>
+ <20181217181915.GL20725@google.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <5bbd3740-0a25-a5a8-bd88-9e29dffdc4d3@deltatee.com>
+Date:   Mon, 17 Dec 2018 11:34:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217181148.GA3341@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181217181915.GL20725@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: Eric.Wehage@huawei.com, alex.umansky@huawei.com, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lenb@kernel.org, rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org, mika.westerberg@linux.intel.com, wangzhou1@hisilicon.com, keith.busch@intel.com, linuxarm@huawei.com, will.deacon@arm.com, zhangshaokun@hisilicon.com, mark.rutland@arm.com, linux-pci@vger.kernel.org, jonathan.cameron@huawei.com, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 2/2] PCI/portdrv Hisilicon PCIe transport layer Port
+ PMU driver.
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 01:11:50PM -0500, Jerome Glisse wrote:
-> On Mon, Dec 17, 2018 at 08:58:19AM +1100, Dave Chinner wrote:
-> > Sure, that's a possibility, but that doesn't close off any race
-> > conditions because there can be DMA into the page in progress while
-> > the page is being bounced, right? AFAICT this ext3+DIF/DIX case is
-> > different in that there is no 3rd-party access to the page while it
-> > is under IO (ext3 arbitrates all access to it's metadata), and so
-> > nothing can actually race for modification of the page between
-> > submission and bouncing at the block layer.
-> > 
-> > In this case, the moment the page is unlocked, anyone else can map
-> > it and start (R)DMA on it, and that can happen before the bio is
-> > bounced by the block layer. So AFAICT, block layer bouncing doesn't
-> > solve the problem of racing writeback and DMA direct to the page we
-> > are doing IO on. Yes, it reduces the race window substantially, but
-> > it doesn't get rid of it.
-> 
-> So the event flow is:
->     - userspace create object that match a range of virtual address
->       against a given kernel sub-system (let's say infiniband) and
->       let's assume that the range is an mmap() of a regular file
->     - device driver do GUP on the range (let's assume it is a write
->       GUP) so if the page is not already map with write permission
->       in the page table than a page fault is trigger and page_mkwrite
->       happens
->     - Once GUP return the page to the device driver and once the
->       device driver as updated the hardware states to allow access
->       to this page then from that point on hardware can write to the
->       page at _any_ time, it is fully disconnected from any fs event
->       like write back, it fully ignore things like page_mkclean
-> 
-> This is how it is to day, we allowed people to push upstream such
-> users of GUP. This is a fact we have to live with, we can not stop
-> hardware access to the page, we can not force the hardware to follow
-> page_mkclean and force a page_mkwrite once write back ends. This is
-> the situation we are inheriting (and i am personnaly not happy with
-> that).
-> 
-> >From my point of view we are left with 2 choices:
->     [C1] break all drivers that do not abide by the page_mkclean and
->          page_mkwrite
->     [C2] mitigate as much as possible the issue
-> 
-> For [C2] the idea is to keep track of GUP per page so we know if we
-> can expect the page to be written to at any time. Here is the event
-> flow:
->     - driver GUP the page and program the hardware, page is mark as
->       GUPed
->     ...
->     - write back kicks in on the dirty page, lock the page and every
->       thing as usual , sees it is GUPed and inform the block layer to
->       use a bounce page
 
-No.  The solution John, Dan & I have been looking at is to take the
-dirty page off the LRU while it is pinned by GUP.  It will never be
-found for writeback.
 
-That's not the end of the story though.  Other parts of the kernel (eg
-msync) also need to be taught to stay away from pages which are pinned
-by GUP.  But the idea is that no page gets written back to storage while
-it's pinned by GUP.  Only when the last GUP ends is the page returned
-to the list of dirty pages.
+On 2018-12-17 11:19 a.m., Bjorn Helgaas wrote:
+> I *think* drivers/pci/switch/switchtec.c is for a type 0 endpoint that
+> happens to be built into the switch, e.g., the type 1 bridge is
+> function 0 and the type 0 management endpoint is function 1.  Logan,
+> can you confirm/deny?
 
->     - block layer copy the page to a bounce page effectively creating
->       a snapshot of what is the content of the real page. This allows
->       everything in block layer that need stable content to work on
->       the bounce page (raid, stripping, encryption, ...)
->     - once write back is done the page is not marked clean but stays
->       dirty, this effectively disable things like COW for filesystem
->       and other feature that expect page_mkwrite between write back.
->       AFAIK it is believe that it is something acceptable
+Yes, that's correct. The upstream port has multiple functions: one for
+the bridge and one for the management/NTB endpoint. In the driver, we
+have absolutely no reason to touch, or even know about, the bridge
+endpoint. This is all very configurable and you can disable either of
+the endpoints in the switch's configuration. And the NTB endpoint can
+have all the BARS configured with any reasonable amount of BAR space for
+memory windows. In the NTB world, there are never enough BARs or address
+space within them.
 
-So none of this is necessary.
+The upstream device, with both functions, looks like this on my system:
 
+02:00.0 PCI bridge: PMC-Sierra Inc. Device 8543 (prog-if 00 [Normal decode])
+	Flags: bus master, fast devsel, latency 0, NUMA node 0
+	Bus: primary=02, secondary=03, subordinate=0c, sec-latency=0
+	I/O behind bridge: 00002000-00006fff
+	Memory behind bridge: f7100000-f78fffff
+	Prefetchable memory behind bridge: 0000381f80000000-0000381fc3ffffff
+	Capabilities: [40] Express Upstream Port, MSI 00
+	Capabilities: [7c] MSI: Enable- Count=1/8 Maskable- 64bit+
+	Capabilities: [8c] Power Management version 3
+	Capabilities: [94] Subsystem: PMC-Sierra Inc. Device beef
+	Capabilities: [100] Advanced Error Reporting
+	Capabilities: [138] Power Budgeting <?>
+	Capabilities: [148] #12
+	Capabilities: [178] #19
+	Capabilities: [1a4] Device Serial Number 50-0e-00-4a-00-00-00-01
+	Capabilities: [1b0] Latency Tolerance Reporting
+	Capabilities: [1b8] Access Control Services
+	Capabilities: [7f8] Vendor Specific Information: ID=ffff Rev=1 Len=808 <?>
+	Kernel driver in use: pcieport
+
+02:00.1 Memory controller: PMC-Sierra Inc. Device 8543
+	Subsystem: PMC-Sierra Inc. Device 8543
+	Flags: bus master, fast devsel, latency 0, NUMA node 0
+	Memory at 381fc4000000 (64-bit, prefetchable) [size=4M]
+	Capabilities: [40] MSI: Enable- Count=1/4 Maskable- 64bit+
+	Capabilities: [50] MSI-X: Enable+ Count=4 Masked-
+	Capabilities: [5c] Power Management version 3
+	Capabilities: [64] Express Endpoint, MSI 00
+	Capabilities: [100] Advanced Error Reporting
+	Capabilities: [138] Device Serial Number 50-0e-00-4a-00-00-00-01
+	Capabilities: [144] Access Control Services
+	Kernel driver in use: switchtec
+	Kernel modules: switchtec
+
+
+Logan
