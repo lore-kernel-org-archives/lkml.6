@@ -2,120 +2,104 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F111DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C44C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F022133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80E1A2133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 10:13:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kS9qcsUB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbeLQKLY (ORCPT
+        id S1731628AbeLQKNE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 05:11:24 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64686 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbeLQKLY (ORCPT
+        Mon, 17 Dec 2018 05:13:04 -0500
+Received: from mail-yb1-f174.google.com ([209.85.219.174]:46154 "EHLO
+        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeLQKNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 05:11:24 -0500
-Received: from 79.184.255.25.ipv4.supernova.orange.pl (79.184.255.25) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 5497a8a5e3a7d10e; Mon, 17 Dec 2018 11:11:21 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/5] mm: Randomize free memory
-Date:   Mon, 17 Dec 2018 11:10:57 +0100
-Message-ID: <2153922.MoOcIFpNeT@aspire.rjw.lan>
-In-Reply-To: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Mon, 17 Dec 2018 05:13:01 -0500
+Received: by mail-yb1-f174.google.com with SMTP id f9so4838860ybm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 02:13:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hHYje4n6KxofNi9mlQsooXZ4wBBO/retiPR2c4W92ds=;
+        b=kS9qcsUBreL3BXy/ZRmFibSUJCIu+BLCMnRsbum8cAFOfUX/UwGiKbx9QiL0PkVIKY
+         WmYVtvDhYEYCob93eMUOcOYEhYzvNszdJH9EfeEk5vSa3Mt8fji9Js88ZBCddQ3Gm8Yo
+         zfjndgYuIQbmpvYGNi+66jVuKljzPIfaqTZ5MehLKyB6P0DNL1USgSKyoeKsF0k1Cm/4
+         yfzE9Ugn8zUin+gdltt0I2ry3e3uzViz6skcyJ3OEFgt/4QJVKVPUZ9qfqayPj52muu0
+         qaW87E96sIyy3ChdbcI62mNXuMBCT8j2uA4/oxtblZCzWMRcH3Ph3gzFdBvsDJdYkxbq
+         i9qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hHYje4n6KxofNi9mlQsooXZ4wBBO/retiPR2c4W92ds=;
+        b=hY/lOVFMwdJLnglC5RR88SETReq4ng8mDhhpA1ovpu+OiDyurBZlyGagFH29A0vJta
+         c7BWmPPCS42y5pJdhaldgNyc4qbgJnb1/3TxZ48I0xWIrMLakaUrZFUioc+uSQWn53bQ
+         0P0YMr45wsY24qY34Op9x/YFJ7N+6WKtQbxwXQgMGbxtq8K1DwdX6oLlAbAvJx6RJIXM
+         Hj2wZYTqhGu3SXzplkLQNMNceGDS81koyV5tnZVoZoce5S/yRmV5vs5tJ8duGBGn76eQ
+         zJdX2Cr4gpBD2tYEtDDRpGpeyXT2wAKKjxIdquyyNG1j+S8ua/sXLC3vHOT41fGHSSNS
+         YQOQ==
+X-Gm-Message-State: AA+aEWbUSuoYHFemdm7k4a5I3wp/+Iqs0WrY9YW+83aN/hw5dl8nwMoL
+        qlvJb/xZvnuHf9VX1p543LLoZfDTk/Hma5xZqbzBsA==
+X-Google-Smtp-Source: AFSGD/UH5NqP1camh8oSgb5IwjpNcu8MtdGx6T4cgOzY8HOR/sL/3vcJwiSyEn3qjKRvkKmLZhsgEBzUK3H7B43EehM=
+X-Received: by 2002:a25:3042:: with SMTP id w63mr6155349ybw.461.1545041579439;
+ Mon, 17 Dec 2018 02:12:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20181217113106.32d98f30@canb.auug.org.au> <20181217100314.GA12765@splinter>
+In-Reply-To: <20181217100314.GA12765@splinter>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Mon, 17 Dec 2018 02:12:47 -0800
+Message-ID: <CANn89iJAED9AxeX6BjwvEo204-rHOr0QFFk6v7r3nCHb3_0OYA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+To:     Ido Schimmel <idosch@mellanox.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, December 15, 2018 2:48:30 AM CET Dan Williams wrote:
-> Changes since v4: [1]
-> * Default the randomization to off and enable it dynamically based on
->   the detection of a memory side cache advertised by platform firmware.
->   In the case of x86 this enumeration comes from the ACPI HMAT. (Michal
->   and Mel)
-> * Improve the changelog of the patch that introduces the shuffling to
->   clarify the motivation and better explain the tradeoffs. (Michal and
->   Mel)
-> * Include the required HMAT enabling in the series.
-> 
-> [1]: https://lkml.kernel.org/r/153922180166.838512.8260339805733812034.stgit@dwillia2-desk3.amr.corp.intel.com
-> 
-> ---
-> 
-> Quote patch 3:
-> 
-> Randomization of the page allocator improves the average utilization of
-> a direct-mapped memory-side-cache. Memory side caching is a platform
-> capability that Linux has been previously exposed to in HPC
-> (high-performance computing) environments on specialty platforms. In
-> that instance it was a smaller pool of high-bandwidth-memory relative to
-> higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-> be found on general purpose server platforms where DRAM is a cache in
-> front of higher latency persistent memory [2].
-> 
-> Robert offered an explanation of the state of the art of Linux
-> interactions with memory-side-caches [3], and I copy it here:
-> 
->     It's been a problem in the HPC space:
->     http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
-> 
->     A kernel module called zonesort is available to try to help:
->     https://software.intel.com/en-us/articles/xeon-phi-software
-> 
->     and this abandoned patch series proposed that for the kernel:
->     https://lkml.org/lkml/2017/8/23/195
-> 
->     Dan's patch series doesn't attempt to ensure buffers won't conflict, but
->     also reduces the chance that the buffers will. This will make performance
->     more consistent, albeit slower than "optimal" (which is near impossible
->     to attain in a general-purpose kernel).  That's better than forcing
->     users to deploy remedies like:
->         "To eliminate this gradual degradation, we have added a Stream
->          measurement to the Node Health Check that follows each job;
->          nodes are rebooted whenever their measured memory bandwidth
->          falls below 300 GB/s."
-> 
-> A replacement for zonesort was merged upstream in commit cc9aec03e58f
-> "x86/numa_emulation: Introduce uniform split capability". With this
-> numa_emulation capability, memory can be split into cache sized
-> ("near-memory" sized) numa nodes. A bind operation to such a node, and
-> disabling workloads on other nodes, enables full cache performance.
-> However, once the workload exceeds the cache size then cache conflicts
-> are unavoidable. While HPC environments might be able to tolerate
-> time-scheduling of cache sized workloads, for general purpose server
-> platforms, the oversubscribed cache case will be the common case.
-> 
-> The worst case scenario is that a server system owner benchmarks a
-> workload at boot with an un-contended cache only to see that performance
-> degrade over time, even below the average cache performance due to
-> excessive conflicts. Randomization clips the peaks and fills in the
-> valleys of cache utilization to yield steady average performance.
-> 
-> See patch 3 for more details.
-> 
-> [2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
-> [3]: https://lkml.org/lkml/2018/9/22/54
+On Mon, Dec 17, 2018 at 2:03 AM Ido Schimmel <idosch@mellanox.com> wrote:
+>
+> On Mon, Dec 17, 2018 at 11:31:06AM +1100, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the net-next tree got a conflict in:
+> >
+> >   net/ipv6/ip6_output.c
+> >
+> > between commit:
+> >
+> >   8203e2d844d3 ("net: clear skb->tstamp in forwarding paths")
+> >
+> > from the net tree and commit:
+> >
+> >   f839a6c92504 ("net: Do not route unicast IP packets twice")
+> >
+> > from the net-next tree.
+> >
+> > I fixed it up (I was not quite sure of the correct ordering - see below)
+> > and can carry the fix as necessary. This is now fixed as far as linux-next
+> > is concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
+>
+> Looks good to me. Eric?
+>
+> Thank you!
 
-Has this hibernation been tested with this series applied?
 
+Yes, SGTM,  thanks.
