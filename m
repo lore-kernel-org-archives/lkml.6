@@ -2,207 +2,156 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 756A9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FA8C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BC020874
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 18:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5110E21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 19:00:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="UiRubWDf"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="iJs/F41Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732881AbeLQSzc (ORCPT
+        id S1733051AbeLQTAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 13:55:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43359 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728301AbeLQSzb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 13:55:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2-v6so822888lji.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 10:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mK8FxPSg3yEXlR4c/dgVe8ombh9XrqEJVxE4vCuZPZs=;
-        b=UiRubWDf0bjvjXEStS5i8v9jM7u6suXB0sOQK7GgK6xLimwaSAGg55q613QbHa+yeF
-         uAaF47ii+fIcS60cx0mTP1pXvg4WabAXju6s/tzQipMDqTE85CqRKnjVmijydV5XWZwC
-         kk4qREGZSOWTXv/uVhv3doSXLB4nuOkW18A9LuwFcN3D2yoI/8s7UdbwVoGfUaRfDtAx
-         xNvsH7kz5VgDneC2Id3slAz98GmYNnC5uNJvDcs3dVCTKh4TEjaE7ntysIk7NyslPwwi
-         jk+CZfGKXUen1KgXUNClCqKKiPp6MU6AIUFEED8H/a8hAagOJcdgByUKBOEz1v9IFPv5
-         jGvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=mK8FxPSg3yEXlR4c/dgVe8ombh9XrqEJVxE4vCuZPZs=;
-        b=IZTyCyNBumjBT7YUvGnng83icwDUW5p20Oeuxvtu8ZKIzrMTqJHiJPTvFtaF9OaoBF
-         YQPy2Jb1uTj5RirE8IdQyN14uTUwx2faXDtr5U0wuCv9B6bcwOSYedMLB/KtkCJ+sPsH
-         6HJJnyLK+OgOUWHPmMej3STlZnVlpYbrDbGj+mTSOro0R5OLoyMQdvwcIjgN/8LhHWS6
-         o7WGE2PlRerH+ZL798BunGzOrZuUSGnnwu9PUci112kJvwJSm6Q35LQ2lKH51iCm9vJ3
-         z7h8STQtWhirPpLyy4BMFNRfIH8Yhtlg7O+X4E9Wn77beYbWGcrk8g0FJNwLdorS7Q9z
-         Gb/Q==
-X-Gm-Message-State: AA+aEWYFADHE6+FGaWEfXBE8MBg8foWfC70ZmYostz9kG1kwbjWYkRAp
-        dq6/mN+D02n3IxYsF9PWFV1uhg==
-X-Google-Smtp-Source: AFSGD/VL5AyEBpt7MKooj/bPc6IzjNW/DZLkzDjs0MmtImOj3jsaU5XNt0XdUEc/FGi5oyNYBADR4w==
-X-Received: by 2002:a2e:681a:: with SMTP id c26-v6mr7946290lja.175.1545072928545;
-        Mon, 17 Dec 2018 10:55:28 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.86.84])
-        by smtp.gmail.com with ESMTPSA id r69sm2885928lfi.15.2018.12.17.10.55.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 10:55:26 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
- <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
- <557c8114-2819-7be3-21b8-02918aa89c04@cogentembedded.com>
- <OFAE786891.A102E46D-ON48258366.002779D7-48258366.002A5C36@mxic.com.tw>
-Organization: Cogent Embedded
-Message-ID: <bfda743d-4aa0-732f-e240-9435647a4856@cogentembedded.com>
-Date:   Mon, 17 Dec 2018 21:55:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 17 Dec 2018 14:00:11 -0500
+Received: from mail-eopbgr150074.outbound.protection.outlook.com ([40.107.15.74]:53895
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727705AbeLQTAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:00:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=opcMvsYkUWBS1u5Kbyd9Ni5NvdVj2ghMznX7HqmSblA=;
+ b=iJs/F41QeryQSotzmjelnhuxTYlNFlSseqVpeONoj0LLdGyXFJlGkHAMKNIeKFxmo897R502wcwADwCUIZoLA7f/sPuDeg1Ck3HrrJxoCUC1NMnAiVCOn0n0SahZ0Hv3U6WKiJblvixnGFM6LWKF8otTawpR8qDk7r13NthGXnM=
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
+ AM6PR0402MB3895.eurprd04.prod.outlook.com (52.133.29.158) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.20; Mon, 17 Dec 2018 18:59:27 +0000
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::55a5:d113:d738:e0c9]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::55a5:d113:d738:e0c9%4]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
+ 18:59:27 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 0/3] clk: imx: Make all the parent_names arrays be const
+ pointers
+Thread-Topic: [PATCH 0/3] clk: imx: Make all the parent_names arrays be const
+ pointers
+Thread-Index: AQHUk8HlzY+WhQB2ck6/TH6/+MaDIqV+utiAgAQW6YCAAHbNAIAABTAA
+Date:   Mon, 17 Dec 2018 18:59:27 +0000
+Message-ID: <20181217185926.xkbpnqvcrollj5vr@fsr-ub1664-175>
+References: <1544801400-18951-1-git-send-email-abel.vesa@nxp.com>
+ <154482171780.19322.123667425822315496@swboyd.mtv.corp.google.com>
+ <20181217113539.nfwp4knbx3luxoqn@fsr-ub1664-175>
+ <154507205230.19322.658078387500141910@swboyd.mtv.corp.google.com>
+In-Reply-To: <154507205230.19322.658078387500141910@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3895;6:Rw7wEiti6NEi4SPpi6ECF1FkGkMsuRQqITCR9CYbiPYumG2D0h7P9XBA0NMsJ/JU0SfTUIcZN0XSLauz434aSlrE3dIpnYSxXJTm36LM0j+HQWs5TqjCi87A6OXQz2ndvLRJvAzzSMtFen+yUahPoAJlD40EQtykZ9492q7xBKKfbETAz3H7Va5C6oSv0XiSi1benQtn1BN2KEX+QJsnXVsKw046ksFSidhlQt7ZkIOasNUvVjNwWI5nV1P26m5r6FIZyhxR1Ge7ASM92MNRf3bhucX5TdQnST8hyoxz1K3JSAyqTRu3Vr3lq4f0odjsA3LmjJjnwC8cwoZj5WY5RznBEHn38q18CTwNe8Gv/8c27uHW3AS1f/HfHKsdRsPvjE5umiseypgPN4NUnka26iM8a0nKmRE5LbnKObzmtQbcRZK8/uKhVZ5f4WXbdrUC5X4jKJIBx/iNfZYuRLaxEQ==;5:sLvsyScG58R2QUz8SCRD11QzN0AN1Pm9N2yH+ixyYCRB5RA8Lyqtcbfe+NAX0cXUTqJaiTuofTAZAIJEtZrcyQg2F6+d7GBz8AKUJD2BnwswuamY6DCugzOEti7HqC5QmGB4HOBXfwdpQNaCO3M9o1Bq2OXXsZiq8D3UaGYgC9Q=;7:4EgoncRVw4DFOTUkRkhFDQaj0ri3Yi3eplZ0lUQO+xqZhXzMqxNMHsmDcdfnN7ZfbZaNeYtKXrwPfni8WcNWYBFHeBSXXbHYAuXwdIi73VXf1guG0Aix3sSxZdMMV81qjYBKZsBvweBGi6VfJh9DdA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 37bb1b98-cbe3-4e65-fa17-08d66451c4b0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3895;
+x-ms-traffictypediagnostic: AM6PR0402MB3895:
+x-microsoft-antispam-prvs: <AM6PR0402MB389595BF68564885D7AE0E24F6BC0@AM6PR0402MB3895.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3895;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3895;
+x-forefront-prvs: 08897B549D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(136003)(396003)(366004)(39860400002)(376002)(346002)(199004)(189003)(25786009)(11346002)(76176011)(105586002)(1076002)(81166006)(3846002)(186003)(6116002)(4001150100001)(97736004)(4326008)(106356001)(68736007)(6436002)(66066001)(6486002)(6512007)(14444005)(256004)(81156014)(33896004)(486006)(5660300001)(9686003)(6246003)(6506007)(53546011)(53936002)(93886005)(26005)(102836004)(33716001)(6916009)(54906003)(2906002)(305945005)(71200400001)(86362001)(71190400001)(478600001)(316002)(8936002)(8676002)(14454004)(99286004)(476003)(44832011)(7736002)(446003)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3895;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: UngrksQgYgsl4Anu7z3F8jLuRoC6VoY5qgn0F8B2J2aZs+dk94UWS4ZHEAz0I0LmKt25bUGce1o+o43x3vMQstZon1ays0b5fz+Vunr4YvJHIfdfuWHSJ03ECDYTtSXlf2arjIBjZxiQFlaQv0k28pc8m9qtguZa/Ckr9P510dNwFWJdOoZGcbRND2WT3j7Yv3krr3//bSW7qfCQ8iJg654tJQaXZBUpRQSNFiStZgksMDfF1Ab0r4VcmyoPBUBAId+nlKb5TXluBgETtI07+QQ1F9/H2gDEs2VB5UP7YkxG99Pc16mAkgVvuC6lTRKL
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E0D39000BDA3C048B4D40B8005EE0590@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <OFAE786891.A102E46D-ON48258366.002779D7-48258366.002A5C36@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37bb1b98-cbe3-4e65-fa17-08d66451c4b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 18:59:27.3627
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3895
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On 18-12-17 10:40:52, Stephen Boyd wrote:
+> Quoting Abel Vesa (2018-12-17 03:35:40)
+> > On 18-12-14 13:08:37, Stephen Boyd wrote:
+> > > Quoting Abel Vesa (2018-12-14 07:30:08)
+> > > > This is mainly to shut up the checkpatch.pl script warnings about t=
+he
+> > > > "static const char *" needing to be "static const char * const".
+> > > >=20
+> > > > Abel Vesa (3):
+> > > >   clk: imx: Make parent_names const pointer in composite-8m
+> > > >   clk: imx: Make parents const pointer in mux wrappers
+> > > >   clk: imx8mq: Make parent names arrays const pointers
+> > > >=20
+> > >=20
+> > > I still see warnings though so there seems to be some more work to do=
+.
+> > >=20
+> > > drivers/clk/imx/clk-imx8mq.c:401:89: warning: passing argument 5 of '=
+imx_clk_mux2' discards 'const' qualifier from pointer target type [-Wdiscar=
+ded-qualifiers]
+> > >   clks[IMX8MQ_CLK_GPU_SHADER_SRC] =3D imx_clk_mux2("gpu_shader_src", =
+base + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader=
+_sels));
+> > >=20
+> > Hmm, I guess you applied this on top of clk-imx8mq, right ?
+> > This change is against linux-next. The actual problem is the imx_clk_mu=
+x2
+> > which looks like this on branch clk-imx8mq:
+>=20
+> Yes. It would be great if you could indicate where patches are
+> generated. In fact, I see that 'git format-patch' now has an option to
+> do just this!
+>=20
+> 	git format-patch --base=3Dcommit
+>=20
 
-On 12/17/2018 10:42 AM, masonccyang@mxic.com.tw wrote:
+Sorry about that. Will do that in the future.
 
->> > +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
->> > +            const void *tx_buf, void *rx_buf)
->> > +{
->> > +   u32 smenr, smcr, data, pos = 0;
->> > +   int ret = 0;
->> > +
->> > +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
->> > +              RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
->> > +              RPC_CMNCR_BSZ(0));
->> > +   regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
->> > +   regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
->> > +   regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
->> > +   regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
->> > +
->> > +   if (tx_buf) {
->> > +      smenr = rpc->smenr;
->> > +
->> > +      while (pos < rpc->xferlen) {
->> > +         u32 nbytes = rpc->xferlen  - pos;
->> > +
->> > +         regmap_write(rpc->regmap, RPC_SMWDR0,
->> > +                 get_unaligned((u32 *)(tx_buf + pos)));
->> > +
->> > +         if (nbytes > 4) {
->> > +            nbytes = 4;
->> > +            smcr = rpc->smcr |
->> > +                   RPC_SMCR_SPIE | RPC_SMCR_SSLKP;
->> > +         } else {
->> > +            smcr = rpc->smcr | RPC_SMCR_SPIE;
->> > +         }
->> > +
->> > +         regmap_write(rpc->regmap, RPC_SMENR, smenr);
->> > +         regmap_write(rpc->regmap, RPC_SMCR, smcr);
->> > +         ret = wait_msg_xfer_end(rpc);
->> > +         if (ret)
->> > +            goto out;
->> > +
->> > +         pos += nbytes;
->> > +         smenr = rpc->smenr & ~RPC_SMENR_CDE &
->> > +                    ~RPC_SMENR_ADE(0xf);
->> > +      }
->> > +   } else if (rx_buf) {
->> > +      while (pos < rpc->xferlen) {
->> > +         u32 nbytes = rpc->xferlen  - pos;
->> > +
->> > +         if (nbytes > 4)
->> > +            nbytes = 4;
->> > +
->> > +         regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
->> > +         regmap_write(rpc->regmap, RPC_SMCR,
->> > +                 rpc->smcr | RPC_SMCR_SPIE);
->>
->>    Hm... our flash chip (Spansion S25FS512S) doesn't get detected; it sends
->> JEDEC ID bytes 0..3 repeatedly, unless I copy the SSLKP logic from the writing
->> branch above...
-> 
-> Do you switch the SW1, SW2, SW3, SW13, SW31 and SW10 to on-board QSPI mode ?
-> Because R-Car D3 Draak board default is booting from HyperFlsah.
+> >=20
+> > static inline struct clk *imx_clk_mux2(const char *name, void __iomem *=
+reg, =20
+> >                 u8 shift, u8 width, const char **parents, int num_paren=
+ts)  =20
+> >=20
+> > but it looks like this on linux-next (which is exactly the same on clk-=
+next):
+> >=20
+> > static inline struct clk *imx_clk_mux2(const char *name, void __iomem *=
+reg, =20
+> >                         u8 shift, u8 width, const char * const *parents=
+,    =20
+> >                         int num_parents)                               =
+     =20
+>=20
+> Hrmm ok. I'll have to rejigger things and I probably won't be getting to
+> it until early next year.
+>=20
 
-   I was testing your patch on the V3H-based Condor and Starter Kit boards --
-it should have worked without much ado...
-   It works with *our* driver, living under drivers/mtd/spi-nor/ (which makes
-it outdated, AFAIU) and I was going to push it upstream before I learned about
-your driver. :-)
-
-> what follows is my booting log, FYI.
-> ------------------------------------------------------------------
-> [    1.625053] m25p80 spi5.0: s25fl129p1 (16384 Kbytes)
-
-   So another Spansion flash?
-
-> [    1.634391] 12 fixed-partitions partitions found on MTD device spi5.0
-> [    1.642198] Creating 12 MTD partitions on "spi5.0":
-> [    1.647598] 0x000000000000-0x000000040000 : "Bank 1 - Boot parameter"
-> [    1.660893] 0x000000040000-0x000000180000 : "Bank 1 - Loader-BL2"
-> [    1.671287] 0x000000180000-0x0000001c0000 : "Bank 1 - Certification"
-> -----------------------------------------------------------------------
-> 
->>
->> > +         ret = wait_msg_xfer_end(rpc);
->> > +         if (ret)
->> > +            goto out;
->> > +
->> > +         regmap_read(rpc->regmap, RPC_SMRDR0, &data);
->> > +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
->> > +         pos += nbytes;
->>
->>    ... and it skips byte 4 unless I copy the code from the end of the writing
->> branch, clearing CDE/ADE. But even then the byte 4 reads as 0x03 instead of 0.
-> 
-> yup, I think this is some kind of RPC HW limitation,
-> in RPC manual I/O mode, it only could read 4 bytes data w/ one command.
-
-   Thank for the info -- seems worth a comment though...
-
-> That is, one command + read 4 bytes data + read 4 bytes data + read 4 bytes data + ...
-> will get the incorrect data.
-
-   What if we want to read less than 4 bytes (the ID read requests SPI_NOR_MAX_ID_LEN
-(6) bytes, i.e. 4 + 2)? You seem to always expect 4 bytes...
-
-> That's why RPC in manual I/O mode, driver only could do,
-> one command + read 4 bytes data; one command + read 4 bytes data and so on.
-
-   The question is why it just duplicates the ID bytes 0..3 on the 2nd iteration
-in our case...
-
-> But RPC in external address space read mode(here we call it direct mapping read mode)
-> is ok for one command + read 4 bytes data + read 4 bytes data + ....
-
-   Sounds promising... if only we could make the probing work. :-)
-
-> thanks & best regards,
-> Mason
-
-MBR, Sergei
+I can rebase it on clk-imx8mq and resend if you want.=
