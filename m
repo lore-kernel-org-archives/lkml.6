@@ -2,90 +2,148 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849B8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F933C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 574682133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B2C22133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 22:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEGSYSuP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731315AbeLQWYN (ORCPT
+        id S1731429AbeLQWZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 17:24:13 -0500
-Received: from sauhun.de ([88.99.104.3]:41594 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730992AbeLQWYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 17:24:13 -0500
-Received: from localhost (p54B3357B.dip0.t-ipconnect.de [84.179.53.123])
-        by pokefinder.org (Postfix) with ESMTPSA id 668CA2E3656;
-        Mon, 17 Dec 2018 23:24:11 +0100 (CET)
-Date:   Mon, 17 Dec 2018 23:24:11 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: rcar: Add r8a774c0 support
-Message-ID: <20181217222410.dfy2them2skvlnuw@ninjato>
-References: <1544732342-6131-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 17 Dec 2018 17:25:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38626 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730992AbeLQWZ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 17:25:56 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q1so7062660pfi.5;
+        Mon, 17 Dec 2018 14:25:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ceZm7S8yafV6cnS09VkfG2vqMdlLccr/B/nge3GEWKw=;
+        b=WEGSYSuPtB9LkuBxEFfj/YU1EV2vRsr6T/JYQXvjGa0ZeyLaffcG2aNTLx2fpFzCJM
+         gUZqh1GHE+gdQe9HaLdZQecqoUw1d/tkRzOngiHniQ63HYSubrfgp05FsqJugBFNmFZ9
+         nxJ5n3xNCh1R7gRrYdpqnn7GoRE/yranvDVEiYBpJg0DZU0flgRTnHNm5GdT2K19yO8u
+         PStpSZv2Qc2zGNEPT9ZfFMNkmJdiLxT+omPor9AEPVp0SeuT75M4Pbj3ng+19TuVilKp
+         oVZuxeFDgxH3o0kbyq+clCkJ1sHtn2aNmJmyROBWlqGjzYcsxIU1lXpVIglvwUQofgrm
+         FOtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ceZm7S8yafV6cnS09VkfG2vqMdlLccr/B/nge3GEWKw=;
+        b=pLQPAGRgPKEFEBoFFihkMNjE84jga0SokzirSXgncN/l8LUeFPp+a4gzcCuujMtrEW
+         tZdVIbjmd7ymFmoXQrSbODsgRyRUcRZIO1j2IT8rLrzvcJitp7EIa0oAX+5K1oFse+Vn
+         TpDJx+lGdij2g9FYnvYVQlfIBdKSq8NlgQ4A7L3CW5tpjDRx/h/Tz4QTkwIjiubXiREC
+         iaPzg7qxvv7AjmReRQFUXrV67QpeOqw7x4dt+wMHF5ROjAAwv/p6v0okih7wmOsQMiYH
+         a9xVXdUptxr4W13vvt07CPFwZAp1wAGJ+F+d6pXLaekSRvHhhZ4GHs18wOMykqlmAivK
+         bw7w==
+X-Gm-Message-State: AA+aEWaXwU05xFukr8sy6bUTA8CorLqAVi7773rX4j1Y+eG4yx16+EJq
+        NCmlUxxitmQcT9lkbEaAazOR9nBbA9RYHt8HwvY=
+X-Google-Smtp-Source: AFSGD/WhobW1ZpVuMhsqZlUzUw1xPKTSLWmW6/OA2i4od+Xs/NiAa88004ro2/XPTUTI69IWLEJ1Ll3TAZXU6egRKKU=
+X-Received: by 2002:a62:2b8b:: with SMTP id r133mr14375900pfr.246.1545085554735;
+ Mon, 17 Dec 2018 14:25:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7dt2z4ll2efnf3bx"
-Content-Disposition: inline
-In-Reply-To: <1544732342-6131-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181217201146.170ca9b4@canb.auug.org.au> <CAK8P3a3LaRt8Gszbj2QYJhERKS=T3u=fzPTXaELW4a=BJDNnzA@mail.gmail.com>
+In-Reply-To: <CAK8P3a3LaRt8Gszbj2QYJhERKS=T3u=fzPTXaELW4a=BJDNnzA@mail.gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 17 Dec 2018 16:25:43 -0600
+Message-ID: <CAH2r5mtzWrJqj6uVXO=QrY=WwrKAWfrwqf-3yz1PcLm27r0XMg@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the y2038 tree
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paulo Alcantara <palcantara@suse.de>,
+        =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Pushed to cifs-2.6.git for-next (after minor commit description text
+cleanup and adding acked-by and reviewed-by)
 
---7dt2z4ll2efnf3bx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Paulo/Aurelien,
+Let me know your thoughts about Arnd's additional comments which were
+interesting.
 
-On Thu, Dec 13, 2018 at 08:19:02PM +0000, Fabrizio Castro wrote:
-> Document RZ/G2E (R8A774C0) I2C compatibility with the relevant driver
-> dt-bindings.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Mon, Dec 17, 2018 at 6:49 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Mon, Dec 17, 2018 at 10:11 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> > I have applied the following merge fix patch (better versions welcome):
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 17 Dec 2018 20:03:28 +1100
+> > Subject: [PATCH] cifs: update for current_kernel_time64() removal
+> >
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+>
+> Your patch looks correct, and the conflict should be easy to
+> resolve by Steve merging this into his tree, as
+> ktime_get_coarse_real_ts64() is readily available in mainline
+> kernels.
+>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>
+> >  fs/cifs/dfs_cache.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+> > index 70f9c9e2175c..d20cc94d7abd 100644
+> > --- a/fs/cifs/dfs_cache.c
+> > +++ b/fs/cifs/dfs_cache.c
+> > @@ -103,7 +103,7 @@ static inline bool cache_entry_expired(const struct dfs_cache_entry *ce)
+> >  {
+> >         struct timespec64 ts;
+> >
+> > -       ts = current_kernel_time64();
+> > +       ktime_get_coarse_real_ts64(&ts);
+> >         return timespec64_compare(&ts, &ce->ce_etime) >= 0;
+> >  }
+> >
+> > @@ -338,8 +338,10 @@ static inline struct timespec64 get_expire_time(int ttl)
+> >                 .tv_sec = ttl,
+> >                 .tv_nsec = 0,
+> >         };
+> > +       struct timespec64 now;
+> >
+> > -       return timespec64_add(current_kernel_time64(), ts);
+> > +       ktime_get_coarse_real_ts64(&now);
+> > +       return timespec64_add(now, ts);
+> >  }
+>
+> In case efficiency is a concern: using ktime_t with
+> ktime_get_coarse_real() may be much faster if we decide to
+> abandon the coarse-grained timespec64 accessors in the future.
+>
+> Also, I wonder if the expiration here has to use CLOCK_REALTIME,
+> since that is affected by leap second adjustment and
+> clock_settime().
+>
+> In other modules, we usually concluded that it should be either
+> CLOCK_MONOTONIC or CLOCK_BOOTTIME, depending on whether
+> you want the expiration timer to keep ticking during suspend.
+>
+>         Arnd
 
-Fixed the typo in the commit message and applied to for-next, thanks!
 
 
+-- 
+Thanks,
 
---7dt2z4ll2efnf3bx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwYIgoACgkQFA3kzBSg
-KbaWSQ/+LbpQI8hOr1Zwos9aH3AL4C/xMnhpg1VIG7cLc82/YpBoHeK9hS2UmWzl
-jGa4SQLjKKyJfxNKEuhado5zqHCZD1r8VpYvK4BuEsNdPC/lyYsC9XGr9fpMdRhu
-OXjiur9a1A80rRLPvvsvqYeAK4GEdhD30IKYkOwe9PjofEZJ5RP34c/7v0DY7UrJ
-WfE3NCohBcF6DWAqNa/qonTVHJgAsrktj9AqGqYUoUCAdsDqHgp3SumOo59HQXpD
-9i9ctinI1J3SXjvdV+MJ08z5tGMJShYywGlhOEeP6jeQtix/OUov6M4Rq09ZBXoH
-n9KtXNFbLJ3AkUUjT+KxiXLKBpNFqHY4bxVeitYooGAIB+pxEc+i4BOCL4LMtTIN
-Q4AhFbeeQFxcrAAftwUiQG+QiGx7pn4IDiMa1njQ7DyPNw8MoJsDKfUjNF2bE/Tf
-3uGvTZwk2baXCLCnDMNyxcJSo9zrTqdZfspLdX5y1Ql4JVgYx07wrhpDlCFWoOI2
-KDckCMpXHuK0xsacs68MfuPrbD6eErgwjt9MJzEmllAOdJ74SNpj3nUIF/C3HiS4
-qoNcXKsygZPYbtPgUaKJPZzVDoAuGgmAV7dzb++1wp8apztwFMQdysn66eS+t3tv
-FkZQbdTQ3LDQfUbAGj83RjK+kt3WIZXS72Gd/0nuizU4IshRHi0=
-=G+Yq
------END PGP SIGNATURE-----
-
---7dt2z4ll2efnf3bx--
+Steve
