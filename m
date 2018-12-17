@@ -2,111 +2,116 @@ Return-Path: <SRS0=+VtO=O2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456B4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED8CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB092133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:21:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="MO4LbbBb"
+	by mail.kernel.org (Postfix) with ESMTP id E7DB02133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 11:23:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731938AbeLQLVM (ORCPT
+        id S1727235AbeLQLXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:21:12 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39479 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeLQLVM (ORCPT
+        Mon, 17 Dec 2018 06:23:54 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:57974 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeLQLXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:21:12 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t27so11862690wra.6
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 03:21:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=r3ZtV6/3p8+1zZTRGIE7ARCZeIbcdQoYiizKfuD75Jk=;
-        b=MO4LbbBbq4JzbydvtrYTcQtiwwYiG8Ic8e/iV/5DQ1g48PQ9YvG7ZHSuBXTjJB3yur
-         IRNgONxFFNCl2z44BLosagqSDwWWTrNUNE+OVYntZJCuxSlKRHmtmVaN9zQ3ZCitaVHG
-         vOXKZVQrakuW4bozhtZfnLFOnzMelorZZYJ98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r3ZtV6/3p8+1zZTRGIE7ARCZeIbcdQoYiizKfuD75Jk=;
-        b=Xj1wSnwBx3erONX/7Fqlna6YTXVb5E7vhd0wquNCB0N01Ki9Q1P6ffjPYrFwjbBWN+
-         1Z4VoJxRqCHOAizuauspmNFQO05MiEEUdJbYH9uo+Rof6xpclbLnyunhC6KnydHqjdZH
-         ymz6ofhbKruU41g67MM5SAijIx9UBiKEf9dx21qJwvUY1nASYTHHAwnuE/p6S304oZ4n
-         ObPsOzd+ICk/B2f2SWdjUQH692TN5pfqmKZej/tp/+eh7LgMEJ9Qj/M/1qFhcELdeqFg
-         RY8MWJvSWhjvEDFm818vASpigeTTK1RBE3N+PtwBkAM+Cu3ewRf1nfJ8Sil2EudVVTYL
-         BatA==
-X-Gm-Message-State: AA+aEWbaLi1xA1MV4E3f6EVKhKrEzaCamkdJt/uXaKVfVwLTLyEJ2yeD
-        ISa/Md/9vOCTGLKFn0zObly5rg==
-X-Google-Smtp-Source: AFSGD/Vqv6Xms9LUmLlJFDRqwdP8EUeaCwUrU+Lr7ObTDk/jkJDmv8mlUOyeou72QGPOQMqVWfSrzA==
-X-Received: by 2002:a5d:51ca:: with SMTP id n10mr9636198wrv.316.1545045670638;
-        Mon, 17 Dec 2018 03:21:10 -0800 (PST)
-Received: from ?IPv6:2001:470:1f0a:1832::2? (nikaleksandrov-1-pt.tunnel.tserv6.fra1.ipv6.he.net. [2001:470:1f0a:1832::2])
-        by smtp.gmail.com with ESMTPSA id x3sm24407941wrd.19.2018.12.17.03.21.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 03:21:10 -0800 (PST)
-Subject: Re: [PATCH net-next] net: bridge: remove unneeded variable 'err'
-To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
-        roopa@cumulusnetworks.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bridge@lists.linux-foundation.org
-References: <20181217094623.32668-1-yuehaibing@huawei.com>
- <e9b1e56e-4c37-aff4-b855-2523eae1ef49@cumulusnetworks.com>
- <d0c9ac6a-5c23-84dc-f45f-28bc2a3d20fe@huawei.com>
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Message-ID: <1ea956e2-ea17-2fb4-30c4-194e438514a6@cumulusnetworks.com>
-Date:   Mon, 17 Dec 2018 13:21:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 17 Dec 2018 06:23:54 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 0089E72CA5E;
+        Mon, 17 Dec 2018 14:23:51 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id E4340964720; Mon, 17 Dec 2018 14:23:50 +0300 (MSK)
+Date:   Mon, 17 Dec 2018 14:23:50 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Oleg Nesterov <oleg@redhat.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/ptrace: cleanup do_syscall_trace_enter
+Message-ID: <20181217112350.GB5778@altlinux.org>
+References: <20181203031823.GE11573@altlinux.org>
+ <20181207011946.GA18558@altlinux.org>
+ <87y391k2tq.fsf@concordia.ellerman.id.au>
+ <20181207154255.GA28964@altlinux.org>
+ <20181207155605.GB28964@altlinux.org>
+ <20181207185226.GB31278@altlinux.org>
+ <20181210132806.GA4177@redhat.com>
+ <20181210133655.GH11942@altlinux.org>
+ <20181216172828.GA25359@altlinux.org>
+ <87y38otn5x.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <d0c9ac6a-5c23-84dc-f45f-28bc2a3d20fe@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
+Content-Disposition: inline
+In-Reply-To: <87y38otn5x.fsf@concordia.ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/12/2018 13:16, YueHaibing wrote:
-> On 2018/12/17 17:51, Nikolay Aleksandrov wrote:
->> On 17/12/2018 11:46, YueHaibing wrote:
->>> function br_multicast_toggle now always return 0,
->>> so the variable 'err' is unneeded.
->>> Also cleanup dead branch in br_changelink.
->>>
->>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->>> ---
->>>  net/bridge/br_multicast.c | 3 +--
->>>  net/bridge/br_netlink.c   | 4 +---
->>>  2 files changed, 2 insertions(+), 5 deletions(-)
->>>
->>
->> That is correct, but in such case just make it void.
-> 
-> In net/bridge/br_sysfs_br.c:
-> 
-> static ssize_t multicast_snooping_store(struct device *d,
->                                         struct device_attribute *attr,
->                                         const char *buf, size_t len)
-> {
->         return store_bridge_parm(d, buf, len, br_multicast_toggle);
-> }
-> 
-> and store_bridge_parm need the returned err.
-> 
 
-That can be worked-around with a set option that returns 0 but it's not that
-important.
+--pvezYHf7grwyp3Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fair enough,
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Hi,
 
+On Mon, Dec 17, 2018 at 10:20:26PM +1100, Michael Ellerman wrote:
+> "Dmitry V. Levin" <ldv@altlinux.org> writes:
+> > Invoke tracehook_report_syscall_entry once.
+>=20
+> Thanks.
+>=20
+> > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> > ---
+> >  arch/powerpc/kernel/ptrace.c | 54 +++++++++++++++++++++---------------
+> >  1 file changed, 31 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+> > index 714c3480c52d..8794d32c2d9e 100644
+> > --- a/arch/powerpc/kernel/ptrace.c
+> > +++ b/arch/powerpc/kernel/ptrace.c
+> > @@ -3263,32 +3263,40 @@ static inline int do_seccomp(struct pt_regs *re=
+gs) { return 0; }
+> >   */
+> >  long do_syscall_trace_enter(struct pt_regs *regs)
+> >  {
+> > +	u32 cached_flags;
+> > +
+>=20
+> Do you mind if I just call it "flags", I find "cached_flags" a bit
+> unwieldy for some reason.
+>=20
+> I'm happy to fix it up when applying.
+
+No problem, feel free to call it whatever you like.  Thanks,
+
+
+--=20
+ldv
+
+--pvezYHf7grwyp3Bc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcF4dGAAoJEAVFT+BVnCUIqN0P/ROF4ZwS3xzAexyXGTVWOSqK
+j/l3IVN+IZCQFAXjHBHn8b2p/6/WlQiImJFykJIv1SwkrbXZ66k387FdcbGywlix
+T6vK3lq1r4jPqC3QhrBWQvYkpeX5hkmG698r4Z6WoMW9G12Z407ScGpSAlLEDNsR
+PspeHVKs0keASgix/Xt7S0MHhryLgDhQjnKFzbJkLzSc8RtThNVtZY2JI/rzVYGQ
+apa5KQ+rnhILwyG2yLA0qo4JJynexUeXHuUmXLyTyvlEEMTPloAO4WcFJxITWI++
+ofwWoyJQZPDOpfIwo8JXO/mhs/Nds0X1Hnmo+eHOx4D0K91UGhlzfTbZ6IaoMKK0
+mtLQPcyjflircLerqZ+HxslzovnVSIc3vLSTaHpqf75qLiEswwz1WucYhjWqvLMc
+0ZkXBrsv4R6lVwLDtN0iRBMtUMpR7IbZpyz4qJV8+5vj2rJkOx6ayuk7HfjWN/Ir
+UCvR/0lg3oZRPPZjMWf0pi1bjVeM2ivVdz2oCv79nYJ5AhVo46j5HZReFWAT8jrP
+ZkqzbZE+cL++oHM/PbWBxDcbaM3Ai6bfm7kI7ti3f7abTC4pqgQIG8xsoZkcv0uc
+1B81/fWYG6jtsr0G2mc9sS3EBOBLsLaipgD8BX5YwGAw+y6MMS9o3bLepPFOp+S+
+NSfp2wySjVujD8Ti0h0u
+=bfGc
+-----END PGP SIGNATURE-----
+
+--pvezYHf7grwyp3Bc--
