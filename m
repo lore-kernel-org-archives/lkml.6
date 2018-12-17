@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE17C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67498C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A6420675
-	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 349C920675
+	for <linux-kernel@archiver.kernel.org>; Mon, 17 Dec 2018 06:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731518AbeLQGLH (ORCPT
+        id S1731475AbeLQGLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 01:11:07 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:51937 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeLQGLF (ORCPT
+        Mon, 17 Dec 2018 01:11:06 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:45475 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbeLQGLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Dec 2018 01:11:05 -0500
-Received: by mail-it1-f200.google.com with SMTP id c73so13175942itd.1
+Received: by mail-io1-f69.google.com with SMTP id r65so11163012iod.12
         for <linux-kernel@vger.kernel.org>; Sun, 16 Dec 2018 22:11:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=RglAZ96Lrwq5jK7Dx5eQaA+/SBe59zZGKD/ofMtj9dE=;
-        b=Di70crxij3jZ6sDYABrcDGSu7eQQrnDbyy3aAVnPmZIQTTe5Yn3vhzhMrKXHT523ZK
-         FqAUHjTBXLx05bUpBdmK99kDAOfCzrVjgaNoSjq5XCmbJ+ydzEKyl3MUR+IJV6CDQj8j
-         w2DniRvPyxx6TeDbNBaGAkknemeqy30XdzzT8FTFb+4nwPUhMXOhz7S257YaggEYgGrb
-         DYoPgScfuOD1aOVqx+aaRVdwZsH+1E8JOPq1WkyAysl6afp2qhEfTHyx802lfIgS6G1n
-         F2IzoxjoGTZw8lGIk0R0Zvi8HS0xHXaDzTkaVlaplvbfi3uLzXCvz9sTnifhwVtqIuZT
-         r0cQ==
-X-Gm-Message-State: AA+aEWY8nge/5bhHxPvuikVOGAPCM1kZdvtPBTZaGqA1KHKWINO9KxPY
-        rQwsqiUUY023AwmZfLdvGDlJDNXeSayb0VJtN+/8fZveuVCS
-X-Google-Smtp-Source: AFSGD/VsPUirkfZgu8Jp7ncri1unDlSQvY2sjPdS1Kj3avA5u05NKp1Vn403KIwfw9i5jKDKyP3kY0Lhm9JnJ7eDjxHYzcSiDbw4
+        bh=YMxXTHzjsQCwIcah2nzwn+FIb9FdSCHvGCBR2joJIKI=;
+        b=g1ep2b1wTFoFOP16CKkPxLUNOi79vYVn6UhTrDARdFxThCIoTidhFdXpskBsToOpbO
+         IfoSX6CiTf/sFPalziAW1G7VHDd5GdIsAbicy6kw9n9LubkDeuQ/kW7pl6IBsr4eBFoj
+         C1jvK7pJ1P2hIom3PtJwLFg2cVfqV66q91zdKHLhSbDcjy2H0oRQAfuCpVk6h7+OFH3u
+         koFYfw4jKAh/oBbrs1OEoSSzM7mKjNQD2eSl71IO0B1elHLS+53PL/5DypFUI0BoyPAw
+         3Mdf2HJvx22DLJVgCT3NLVUy/i1v1cnTwuraQ3kI/x7VYQar8U2MNwrK7cTbbqwKRkGD
+         QHJg==
+X-Gm-Message-State: AA+aEWb+nwZ4QY3T+9CO5Sl56IHANcECwYfSZsp3CU7sYjbYbk7Wn7XU
+        B4qsbr43x/hhleaFvcMJD7ee3tZOf5nYfokRvdOBCjAIuNxr
+X-Google-Smtp-Source: AFSGD/Vf938menufu3BlLnWZ8PIcZtODIplgrd5ixCjzoH20DNd5KDG32E3Km9pYYqwySFDSYBpR1kahiL/PPwSmtAqJY0pbnS9u
 MIME-Version: 1.0
-X-Received: by 2002:a5e:a70c:: with SMTP id b12mr10377457iod.26.1545027064028;
+X-Received: by 2002:a5d:8d81:: with SMTP id b1mr10543537ioj.27.1545027064238;
  Sun, 16 Dec 2018 22:11:04 -0800 (PST)
 Date:   Sun, 16 Dec 2018 22:11:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000051e9c2057d31a563@google.com>
-Subject: kernel BUG at fs/inode.c:LINE!
-From:   syzbot <syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000551b80057d31a5f7@google.com>
+Subject: KASAN: slab-out-of-bounds Read in tick_sched_handle
+From:   syzbot <syzbot+09d51a30df9fe76edb2a@syzkaller.appspotmail.com>
+To:     fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -56,360 +56,154 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    d14b746c6c1c Add linux-next specific files for 20181214
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13706347400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1da6d2d18f803140
-dashboard link: https://syzkaller.appspot.com/bug?extid=5399ed0832693e29f392
+HEAD commit:    c151acc6e9ff l2tp: Add protocol field decompression
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1231955d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9655b05acfc97ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=09d51a30df9fe76edb2a
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101032b3400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16534063400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11e68f6d400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1737c943400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
+Reported-by: syzbot+09d51a30df9fe76edb2a@syzkaller.appspotmail.com
 
-  slab_pre_alloc_hook mm/slab.h:423 [inline]
-  slab_alloc mm/slab.c:3365 [inline]
-  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
-  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:1566!
-  d_alloc_anon fs/dcache.c:1698 [inline]
-  d_make_root+0x43/0xc0 fs/dcache.c:1885
-  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 6100 Comm: syz-executor637 Not tainted  
-4.20.0-rc6-next-20181214+ #171
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+kasan: CONFIG_KASAN_INLINE enabled
+==================================================================
+BUG: KASAN: slab-out-of-bounds in tick_sched_handle+0x16c/0x180  
+kernel/time/tick-sched.c:164
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+Read of size 8 at addr ffff8881d8b67b70 by task syz-executor132/5936
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+
+CPU: 0 PID: 5936 Comm: syz-executor132 Not tainted 4.20.0-rc6+ #347
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc6+ #347
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:iput+0x915/0xa90 fs/inode.c:1566
-Code: e4 0f 84 a8 fe ff ff e8 e9 fe a6 ff 48 89 df e8 61 f4 ff ff 48 8b bd  
-f0 fe ff ff e8 35 41 08 06 e9 69 fd ff ff e8 cb fe a6 ff <0f> 0b e8 c4 fe  
-a6 ff 0f 0b e9 d5 fb ff ff e8 b8 fe a6 ff 0f 0b e9
-RSP: 0018:ffff8881c0ff76b8 EFLAGS: 00010293
-RAX: ffff8881c0fdc100 RBX: ffff8881b25f44a0 RCX: ffffffff81d8fc14
-RDX: 0000000000000000 RSI: ffffffff81d90455 RDI: 0000000000000007
-RBP: ffff8881c0ff77f0 R08: ffff8881c0fdc100 R09: 0000000000000006
-R10: 0000000000000000 R11: ffff8881c0fdc100 R12: 0000000000000040
-R13: ffff8881c0ff7910 R14: 00000000ffffffea R15: ffff8881d0c4d200
-  mount_nodev+0x73/0x120 fs/super.c:1402
-FS:  0000000001e1a880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-CR2: 00000000006cd0a0 CR3: 00000001b2c56000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-  autofs_fill_super+0x15fb/0x1c30 fs/autofs/inode.c:352
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-RIP: 0033:0x441be9
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000100
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 0
-CPU: 0 PID: 6107 Comm: syz-executor637 Not tainted  
-4.20.0-rc6-next-20181214+ #171
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+RIP: 0010:lookup_object lib/debugobjects.c:156 [inline]
+RIP: 0010:debug_object_deactivate+0x191/0x450 lib/debugobjects.c:542
+  <IRQ>
+Code: 02 00 00 48 8b 1b 41 bf 01 00 00 00 48 85 db 74 46 48 b8 00 00 00 00  
+00 fc ff df 48 8d 7b 18 41 83 c7 01 48 89 fe 48 c1 ee 03 <80> 3c 06 00 0f  
+85 04 02 00 00 48 3b 53 18 0f 84 53 01 00 00 48 89
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x244/0x39d lib/dump_stack.c:113
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
-  fail_dump lib/fault-inject.c:51 [inline]
-  should_fail.cold.4+0xa/0x17 lib/fault-inject.c:149
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  __should_failslab+0x124/0x180 mm/failslab.c:32
-RIP: 0033:0x441be9
-  should_failslab+0x9/0x14 mm/slab_common.c:1576
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-  slab_pre_alloc_hook mm/slab.h:423 [inline]
-  slab_alloc mm/slab.c:3365 [inline]
-  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-  d_alloc_anon fs/dcache.c:1698 [inline]
-  d_make_root+0x43/0xc0 fs/dcache.c:1885
-  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-------------[ cut here ]------------
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-kernel BUG at fs/inode.c:1566!
-invalid opcode: 0000 [#2] PREEMPT SMP KASAN
-CPU: 1 PID: 6105 Comm: syz-executor637 Tainted: G      D            
-4.20.0-rc6-next-20181214+ #171
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:iput+0x915/0xa90 fs/inode.c:1566
-Code: e4 0f 84 a8 fe ff ff e8 e9 fe a6 ff 48 89 df e8 61 f4 ff ff 48 8b bd  
-f0 fe ff ff e8 35 41 08 06 e9 69 fd ff ff e8 cb fe a6 ff <0f> 0b e8 c4 fe  
-a6 ff 0f 0b e9 d5 fb ff ff e8 b8 fe a6 ff 0f 0b e9
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-RSP: 0018:ffff8881b4f276b8 EFLAGS: 00010293
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
-RAX: ffff8881c170a580 RBX: ffff8881b2687880 RCX: ffffffff81d8fc14
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-RDX: 0000000000000000 RSI: ffffffff81d90455 RDI: 0000000000000007
-RBP: ffff8881b4f277f0 R08: ffff8881c170a580 R09: ffffed103b5a5b77
-R10: ffffed103b5a5b77 R11: ffff8881dad2dbbb R12: 0000000000000040
-R13: ffff8881b4f27910 R14: 00000000ffffffea R15: ffff8881d0c4af00
-FS:  0000000001e1a880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
+RSP: 0018:ffff8881daf078b0 EFLAGS: 00010807
+RAX: dffffc0000000000 RBX: da3ef506c4b2a03d RCX: ffffffff83939c1a
+RDX: ffff8881bb4ed108 RSI: 1b47dea0d896540a RDI: da3ef506c4b2a055
+RBP: ffff8881daf07968 R08: ffffed103b5e0f03 R09: ffffed103b5e0f02
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+R10: ffffed103b5e0f02 R11: 0000000000000003 R12: 1ffff1103b5e0f18
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+R13: ffffffff8b23e7a8 R14: ffffffff895a5980 R15: 0000000000000003
+FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000002497000 CR3: 00000001b3373000 CR4: 00000000001406e0
+  tick_sched_handle+0x16c/0x180 kernel/time/tick-sched.c:164
+CR2: 0000000000619570 CR3: 00000001c3506000 CR4: 00000000001406e0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-RIP: 0033:0x441be9
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
 Call Trace:
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:1566!
-  autofs_fill_super+0x15fb/0x1c30 fs/autofs/inode.c:352
-CPU: 0 PID: 6109 Comm: syz-executor637 Tainted: G      D            
-4.20.0-rc6-next-20181214+ #171
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  fail_dump lib/fault-inject.c:51 [inline]
-  should_fail.cold.4+0xa/0x17 lib/fault-inject.c:149
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-  __should_failslab+0x124/0x180 mm/failslab.c:32
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-  should_failslab+0x9/0x14 mm/slab_common.c:1576
-  slab_pre_alloc_hook mm/slab.h:423 [inline]
-  slab_alloc mm/slab.c:3365 [inline]
-  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
-  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  d_alloc_anon fs/dcache.c:1698 [inline]
-  d_make_root+0x43/0xc0 fs/dcache.c:1885
-  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441be9
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000100
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
+  <IRQ>
+  debug_timer_deactivate kernel/time/timer.c:714 [inline]
+  debug_deactivate kernel/time/timer.c:770 [inline]
+  detach_timer kernel/time/timer.c:815 [inline]
+  expire_timers kernel/time/timer.c:1353 [inline]
+  __run_timers+0x56f/0xc70 kernel/time/timer.c:1682
+  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
+  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1695
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+
+Allocated by task 5092:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  getname_flags+0xd0/0x590 fs/namei.c:140
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  user_path_at_empty+0x2d/0x50 fs/namei.c:2608
+  user_path_at include/linux/namei.h:57 [inline]
+  do_faccessat+0x254/0x800 fs/open.c:378
+  __do_sys_access fs/open.c:430 [inline]
+  __se_sys_access fs/open.c:428 [inline]
+  __x64_sys_access+0x59/0x80 fs/open.c:428
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441be9
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-CPU: 1 PID: 6101 Comm: syz-executor637 Tainted: G      D            
-4.20.0-rc6-next-20181214+ #171
-invalid opcode: 0000 [#3] PREEMPT SMP KASAN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-CPU: 0 PID: 6102 Comm: syz-executor637 Tainted: G      D            
-4.20.0-rc6-next-20181214+ #171
-Call Trace:
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-RIP: 0010:iput+0x915/0xa90 fs/inode.c:1566
-Code: e4 0f 84 a8 fe ff ff e8 e9 fe a6 ff 48 89 df e8 61 f4 ff ff 48 8b bd  
-f0 fe ff ff e8 35 41 08 06 e9 69 fd ff ff e8 cb fe a6 ff <0f> 0b e8 c4 fe  
-a6 ff 0f 0b e9 d5 fb ff ff e8 b8 fe a6 ff 0f 0b e9
-RSP: 0000:ffff8881cca776b8 EFLAGS: 00010293
-  fail_dump lib/fault-inject.c:51 [inline]
-  should_fail.cold.4+0xa/0x17 lib/fault-inject.c:149
-RAX: ffff8881d105c540 RBX: ffff8881b26768c0 RCX: ffffffff81d8fc14
-RDX: 0000000000000000 RSI: ffffffff81d90455 RDI: 0000000000000007
-RBP: ffff8881cca777f0 R08: ffff8881d105c540 R09: ffffed103b585b77
-R10: ffffed103b585b77 R11: ffff8881dac2dbbb R12: 0000000000000040
-R13: ffff8881cca77910 R14: 00000000ffffffea R15: ffff8881d0c4d000
-FS:  0000000001e1a880(0000) GS:ffff8881dac00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 00000001d824d000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  __should_failslab+0x124/0x180 mm/failslab.c:32
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  should_failslab+0x9/0x14 mm/slab_common.c:1576
-Call Trace:
-  slab_pre_alloc_hook mm/slab.h:423 [inline]
-  slab_alloc mm/slab.c:3365 [inline]
-  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
-  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
-  autofs_fill_super+0x15fb/0x1c30 fs/autofs/inode.c:352
-  d_alloc_anon fs/dcache.c:1698 [inline]
-  d_make_root+0x43/0xc0 fs/dcache.c:1885
-  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
+
+Freed by task 5092:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x83/0x290 mm/slab.c:3760
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  putname+0xf2/0x130 fs/namei.c:261
+  </IRQ>
+  filename_lookup+0x39a/0x520 fs/namei.c:2357
+RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:58
+  user_path_at_empty+0x40/0x50 fs/namei.c:2608
+Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 d3 ac e5 f9 48 8b 45 d8 e9 ca  
+fe ff ff 48 89 df e8 c2 ac e5 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
+00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
+  user_path_at include/linux/namei.h:57 [inline]
+  do_faccessat+0x254/0x800 fs/open.c:378
+RSP: 0018:ffff8881d9b27cb8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+  __do_sys_access fs/open.c:430 [inline]
+  __se_sys_access fs/open.c:428 [inline]
+  __x64_sys_access+0x59/0x80 fs/open.c:428
+RAX: dffffc0000000000 RBX: 1ffff1103b364f9b RCX: 0000000000000000
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
+RDX: 1ffffffff12a4021 RSI: 0000000000000001 RDI: ffffffff89520108
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-RIP: 0033:0x441be9
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000100
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-Modules linked in:
-RIP: 0033:0x441be9
-------------[ cut here ]------------
-Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-kernel BUG at fs/inode.c:1566!
-RSP: 002b:00007ffff6330f88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-invalid opcode: 0000 [#4] PREEMPT SMP KASAN
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441be9
-CPU: 0 PID: 6109 Comm: syz-executor637 Tainted: G      D            
-4.20.0-rc6-next-20181214+ #171
-RDX: 0000000020000180 RSI: 0000000020000100 RDI: 0000000000000000
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RBP: 00007ffff6330fe0 R08: 0000000000000000 R09: 0000000000000100
-RIP: 0010:iput+0x915/0xa90 fs/inode.c:1566
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-Code: e4 0f 84 a8 fe ff ff e8 e9 fe a6 ff 48 89 df e8 61 f4 ff ff 48 8b bd  
-f0 fe ff ff e8 35 41 08 06 e9 69 fd ff ff e8 cb fe a6 ff <0f> 0b e8 c4 fe  
-a6 ff 0f 0b e9 d5 fb ff ff e8 b8 fe a6 ff 0f 0b e9
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-RSP: 0000:ffff8881d2b476b8 EFLAGS: 00010293
----[ end trace c981ed50117a38b3 ]---
-RAX: ffff8881d96ec080 RBX: ffff8881b269a8c0 RCX: ffffffff81d8fc14
-RIP: 0010:iput+0x915/0xa90 fs/inode.c:1566
-RDX: 0000000000000000 RSI: ffffffff81d90455 RDI: 0000000000000007
-RBP: ffff8881d2b477f0 R08: ffff8881d96ec080 R09: ffffed103b585b77
-R10: ffffed103b585b77 R11: ffff8881dac2dbbb R12: 0000000000000040
-R13: ffff8881d2b47910 R14: 00000000ffffffea R15: ffff8881d0c4a200
-FS:  0000000001e1a880(0000) GS:ffff8881dac00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 00000001b7099000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-Code: e4 0f 84 a8 fe ff ff e8 e9 fe a6 ff 48 89 df e8 61 f4 ff ff 48 8b bd  
-f0 fe ff ff e8 35 41 08 06 e9 69 fd ff ff e8 cb fe a6 ff <0f> 0b e8 c4 fe  
-a6 ff 0f 0b e9 d5 fb ff ff e8 b8 fe a6 ff 0f 0b e9
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-RSP: 0018:ffff8881c0ff76b8 EFLAGS: 00010293
-RAX: ffff8881c0fdc100 RBX: ffff8881b25f44a0 RCX: ffffffff81d8fc14
-  autofs_fill_super+0x15fb/0x1c30 fs/autofs/inode.c:352
-RDX: 0000000000000000 RSI: ffffffff81d90455 RDI: 0000000000000007
-RBP: ffff8881c0ff77f0 R08: ffff8881c0fdc100 R09: 0000000000000006
-R10: 0000000000000000 R11: ffff8881c0fdc100 R12: 0000000000000040
-R13: ffff8881c0ff7910 R14: 00000000ffffffea R15: ffff8881d0c4d200
-  mount_nodev+0x73/0x120 fs/super.c:1402
-  autofs_mount+0x34/0x40 fs/autofs/init.c:16
-FS:  0000000001e1a880(0000) GS:ffff8881dad00000(0000) knlGS:0000000000000000
-  legacy_get_tree+0x12f/0x260 fs/fs_context.c:714
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1795
-  do_new_mount fs/namespace.c:2716 [inline]
-  do_mount+0x82a/0x1ff0 fs/namespace.c:3042
-CR2: 0000000002497000 CR3: 00000001b3373000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  ksys_mount+0x12d/0x140 fs/namespace.c:3258
-  __do_sys_mount fs/namespace.c:3272 [inline]
-  __se_sys_mount fs/namespace.c:3269 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3269
+RBP: ffff8881d9b27cb8 R08: ffff8881d9b14340 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881d9b27d78
+
+R13: ffffffff8a166760 R14: 0000000000000000 R15: 0000000000000001
+The buggy address belongs to the object at ffff8881d8b66100
+  which belongs to the cache names_cache of size 4096
+  arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
+  default_idle+0xbf/0x490 arch/x86/kernel/process.c:561
+The buggy address is located 2672 bytes to the right of
+  4096-byte region [ffff8881d8b66100, ffff8881d8b67100)
+The buggy address belongs to the page:
+page:ffffea000762d980 count:1 mapcount:0 mapping:ffff8881da980e00 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea0007628f08 ffffea000762dc88 ffff8881da980e00
+raw: 0000000000000000 ffff8881d8b66100 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881d8b67a00: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
+  ffff8881d8b67a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:552
+> ffff8881d8b67b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+                                                              ^
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
+  ffff8881d8b67b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8881d8b67c00: fc fc fc fc fc 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
 ---
