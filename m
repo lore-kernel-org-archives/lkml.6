@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D628C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3BB218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6C43218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545170907;
-	bh=3NGSXHh4t7q77uVGjJyaxfie2RxmWZgduGacaAcSQLY=;
+	s=default; t=1545170911;
+	bh=EdEyZwH3Vh/HCl2uA+NYdhQRpsqmqGtGGjeB6WjKeZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m5C+G/mvIrrwJHzhYzaBig+RuzV8LAYi1k+1JbbFlvUGY0ZAd1RzoSqNN+G/xlH2D
-	 OK8K4PUCtg1DJ66JFfmhRF1aYy1krQSHIzTC80YfT9epkOtAcwnYQphvjoHYapb9GQ
-	 cPevV78Y76Ux2XiF+o2fTl+91qmuVsFEq9K5qljI=
+	b=UiXU7ZkMQlV8pyDh2Bf8pphccO1YNhFPZOdoe1GzO3STCwMFq1EsLvL7x4cvn0wk4
+	 4LEA0j3oqx83vJ8hTYIqqG5kMNa5iTAx3RFiQkpJRM80AjC16W5w5zqKizE11e4kKT
+	 +667mGoq/rdrXPdxTCYMftby2cjCf/J96FzxXUMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeLRWI0 (ORCPT
+        id S1726868AbeLRWI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:08:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36180 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:08:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbeLRWIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:08:25 -0500
+        id S1727029AbeLRWI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:08:28 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C9BF218A4;
-        Tue, 18 Dec 2018 22:08:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFE05217D9;
+        Tue, 18 Dec 2018 22:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545170904;
-        bh=3NGSXHh4t7q77uVGjJyaxfie2RxmWZgduGacaAcSQLY=;
+        s=default; t=1545170907;
+        bh=EdEyZwH3Vh/HCl2uA+NYdhQRpsqmqGtGGjeB6WjKeZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U7TzbMl1+BNL1sdTVCHCOabG3QCaXNFQt7rViDPV9UoDJbtxi9mlft5NKu2A7m5TF
-         ZGtgowvXz9O6YQ7RwxYnGpp1DLAibML7L7D+cKmgBTBBkiI/32EtXSIJOS/d18EqJi
-         pgUxm0PxE3KUb3wdCfDrbdo/gmP/iFqyXpZwmG2g=
+        b=lBcJqFW00Qv4m7/ptz5Zp9uwot9qVkg3HSIMm8G+2cSnC2nQfUB52+vRgExBhDFzS
+         N/LvaCBfMANB8/cEkIV5vNtgPOJ29451uyh54WSTEcNqwgeoS9iXWWLrtjnusXPGat
+         qgHDuxBsZUBnkjoNm9vGnQLJpaJueYQsozf9zexg=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
         Jiri Olsa <jolsa@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/63] perf auxtrace: Alter addr_filter__entire_dso() to work if there are no symbols
-Date:   Tue, 18 Dec 2018 19:06:32 -0300
-Message-Id: <20181218220733.15839-3-acme@kernel.org>
+Subject: [PATCH 03/63] perf tests: Use shebangs in the shell scripts
+Date:   Tue, 18 Dec 2018 19:06:33 -0300
+Message-Id: <20181218220733.15839-4-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -61,50 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Michael Petlan <mpetlan@redhat.com>
 
-addr_filter__entire_dso() uses the first and last symbols from a dso,
-and so does not work when there are no symbols.  Alter it to filter the
-whole file instead.
+Since the first line was used as a test identification, it needs to be
+skipped by shell_test__description() function now.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Further notes from Hendrik:
+
+It might be worth to note that adding the shebang is necessary to spot
+them as scripts.
+
+Using /bin/sh looks fine to.  Just briefly checked whether the scripts
+contains some bash-specifics, which is not the case.
+
+Signed-off-by: Michael Petlan <mpetlan@redhat.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Fixes: 1b36c03e3569 ("perf record: Add support for using symbols in address filters")
-Link: http://lkml.kernel.org/r/20181127084634.12469-1-adrian.hunter@intel.com
-[ split from a larger patch ]
+LPU-Reference: 2127419430.57657104.1542836358464.JavaMail.zimbra@redhat.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ tools/perf/tests/builtin-test.c                           | 3 +++
+ tools/perf/tests/shell/probe_vfs_getname.sh               | 1 +
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh     | 1 +
+ tools/perf/tests/shell/record+script_probe_vfs_getname.sh | 1 +
+ tools/perf/tests/shell/trace+probe_vfs_getname.sh         | 1 +
+ 5 files changed, 7 insertions(+)
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 72d5ba2479bf..f69961c4a4f3 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -1983,17 +1983,14 @@ static int find_dso_sym(struct dso *dso, const char *sym_name, u64 *start,
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 12c09e0ece71..9852b5d624a5 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -424,6 +424,9 @@ static const char *shell_test__description(char *description, size_t size,
+ 	if (!fp)
+ 		return NULL;
  
- static int addr_filter__entire_dso(struct addr_filter *filt, struct dso *dso)
- {
--	struct symbol *first_sym = dso__first_symbol(dso);
--	struct symbol *last_sym = dso__last_symbol(dso);
--
--	if (!first_sym || !last_sym) {
--		pr_err("Failed to determine filter for %s\nNo symbols found.\n",
-+	if (dso__data_file_size(dso, NULL)) {
-+		pr_err("Failed to determine filter for %s\nCannot determine file size.\n",
- 		       filt->filename);
- 		return -EINVAL;
- 	}
++	/* Skip shebang */
++	while (fgetc(fp) != '\n');
++
+ 	description = fgets(description, size, fp);
+ 	fclose(fp);
  
--	filt->addr = first_sym->start;
--	filt->size = last_sym->end - first_sym->start;
-+	filt->addr = 0;
-+	filt->size = dso->data.file_size;
+diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
+index 9b7635184dc2..46e076e3c537 100755
+--- a/tools/perf/tests/shell/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/probe_vfs_getname.sh
+@@ -1,3 +1,4 @@
++#!/bin/sh
+ # Add vfs_getname probe to get syscall args filenames
+ #
+ # Arnaldo Carvalho de Melo <acme@kernel.org>, 2017
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index cab7b0aea6ea..61c9f8fc6fa1 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -1,3 +1,4 @@
++#!/bin/sh
+ # probe libc's inet_pton & backtrace it with ping
  
- 	return 0;
- }
+ # Installs a probe on libc's inet_pton function, that will use uprobes,
+diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
+index ba29535b8580..9b073e7fa88c 100755
+--- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
+@@ -1,3 +1,4 @@
++#!/bin/sh
+ # Use vfs_getname probe to get syscall args filenames
+ 
+ # Uses the 'perf test shell' library to add probe:vfs_getname to the system
+diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+index 4ce276efe6b4..50109f27ca07 100755
+--- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+@@ -1,3 +1,4 @@
++#!/bin/sh
+ # Check open filename arg using perf trace + vfs_getname
+ 
+ # Uses the 'perf test shell' library to add probe:vfs_getname to the system
 -- 
 2.19.2
 
