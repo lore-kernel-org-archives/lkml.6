@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28374C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54322C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE5C9218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23490218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151319;
-	bh=7+Xw7OcwMQqMxSnvHhTnNkjVWal3MVc38LVt8DzSjxE=;
+	s=default; t=1545151324;
+	bh=Lq6x0L0WkcgGqIOdHJEOrHl3Q2WAW61f6Ve7U74HCJo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tiSOJumtH/BdChZi1kF1fSo9UWaKJyWMexg4ihzVd7Z6VoQR+VM1vL2kY1vl1byh8
-	 FJR0ttjXPx94s7Hx8tVOIXrCZsysCQofOshPcgvbb1TSwHuvn15vbe+hY2J+rJqOoR
-	 RQe6lke8ZdIiiFAFhHTbnsnni6dihrRNVi2Sehy0=
+	b=FEuGdXNSmlMZTupTEZKC7f6/gLgLJylLLNTrdc1W0DMjCtE6cTHUYrG70/t//ErzK
+	 PonKGDYLCJxfXnbLmMnX273jvXq8I5lVWBu90YuNAncta6h2eVbNqp2lys6xG8F4iD
+	 eZicAAS/wI3fALdXEILTsRmvaIrlDLv/POWLunNg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeLRQl5 (ORCPT
+        id S1727687AbeLRQmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39528 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:42:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeLRQly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:54 -0500
+        id S1726422AbeLRQmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:42:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FF35218CD;
-        Tue, 18 Dec 2018 16:41:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD4E721873;
+        Tue, 18 Dec 2018 16:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151314;
-        bh=7+Xw7OcwMQqMxSnvHhTnNkjVWal3MVc38LVt8DzSjxE=;
+        s=default; t=1545151319;
+        bh=Lq6x0L0WkcgGqIOdHJEOrHl3Q2WAW61f6Ve7U74HCJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sQFEBiSulTGm0FM83GmProL9vQk7L8anbeqSW13oDzU9RWRGkMOZ34mA0G0l5/E/Q
-         s4r4ga01lSrmS0IFQMIX8jy1pYWzvfbU4NYShJWFq8PALWAlysi6HQX0wx1zwI7Hqg
-         Ky+i2Mp4I0lf/VbRvuA2vCjfwTMnYnTh1oVPFpa8=
+        b=UkIIU9N28j0f5ZIGAaoTwjHtOBrdY2Q8fKfJZ3K1aZRUSS4xsxq4zJPrXaJ93z4Mn
+         HpTkRgQ8mfdDtTg//8NZmQM7eVhqUQ4LzQIpHnHgKJEf+wHGJ/kF1A3JEQC+QIR2Ed
+         4Aaig26dbC6Xi8GDbwwViljIy5noARxLT1e6u98o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.19 33/44] drm/nouveau/kms: Fix memory leak in nv50_mstm_del()
-Date:   Tue, 18 Dec 2018 17:39:45 +0100
-Message-Id: <20181218163931.324359708@linuxfoundation.org>
+        stable@vger.kernel.org, David Teigland <teigland@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 25/44] dm cache metadata: verify cache has blocks in blocks_are_clean_separate_dirty()
+Date:   Tue, 18 Dec 2018 17:39:37 +0100
+Message-Id: <20181218163930.444431564@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,34 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 24199c5436f267399afed0c4f1f57663c0408f57 upstream.
+commit 687cf4412a343a63928a5c9d91bdc0f522939d43 upstream.
 
-Noticed this while working on redoing the reference counting scheme in
-the DP MST helpers. Nouveau doesn't attempt to call
-drm_dp_mst_topology_mgr_destroy() at all, which leaves it leaking all of
-the resources for drm_dp_mst_topology_mgr and it's children mstbs+ports.
+Otherwise dm_bitset_cursor_begin() return -ENODATA.  Other calls to
+dm_bitset_cursor_begin() have similar negative checks.
 
-Fixes: f479c0ba4a17 ("drm/nouveau/kms/nv50: initial support for DP 1.2 multi-stream")
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes inability to create a cache in passthrough mode (even though doing
+so makes no sense).
+
+Fixes: 0d963b6e65 ("dm cache metadata: fix metadata2 format's blocks_are_clean_separate_dirty")
+Cc: stable@vger.kernel.org
+Reported-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/dm-cache-metadata.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -1226,6 +1226,7 @@ nv50_mstm_del(struct nv50_mstm **pmstm)
- {
- 	struct nv50_mstm *mstm = *pmstm;
- 	if (mstm) {
-+		drm_dp_mst_topology_mgr_destroy(&mstm->mgr);
- 		kfree(*pmstm);
- 		*pmstm = NULL;
- 	}
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -930,6 +930,10 @@ static int blocks_are_clean_separate_dir
+ 	bool dirty_flag;
+ 	*result = true;
+ 
++	if (from_cblock(cmd->cache_blocks) == 0)
++		/* Nothing to do */
++		return 0;
++
+ 	r = dm_bitset_cursor_begin(&cmd->dirty_info, cmd->dirty_root,
+ 				   from_cblock(cmd->cache_blocks), &cmd->dirty_cursor);
+ 	if (r) {
 
 
