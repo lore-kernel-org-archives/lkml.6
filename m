@@ -2,65 +2,157 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8C3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92807C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E52EC217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69B85217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbeLRMoj (ORCPT
+        id S1726633AbeLRMqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:44:39 -0500
-Received: from mga12.intel.com ([192.55.52.136]:8647 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726403AbeLRMoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:44:38 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 04:44:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
-   d="scan'208";a="119246904"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga002.jf.intel.com with SMTP; 18 Dec 2018 04:44:32 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 18 Dec 2018 14:44:31 +0200
-Date:   Tue, 18 Dec 2018 14:44:31 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] gpiolib-acpi: remove unused variable 'err', cleans
- up build warning
-Message-ID: <20181218124431.GK2469@lahna.fi.intel.com>
-References: <20181218122802.28157-1-colin.king@canonical.com>
+        Tue, 18 Dec 2018 07:46:21 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50225 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbeLRMqV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:46:21 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 0A6768083E; Tue, 18 Dec 2018 13:46:12 +0100 (CET)
+Date:   Tue, 18 Dec 2018 13:46:16 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20181218124616.GA10758@amd>
+References: <20181217004450.GW6707@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181218122802.28157-1-colin.king@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181217004450.GW6707@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 12:28:02PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable err is defined but never used. Remove it. Cleans up warning:
-> 
-> warning: unused variable ‘err’ [-Wunused-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+--opJtzjQTFsWo+cga
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> So the little elves have been slowly working to get voice calls
+> working on droid 4 with the mainline kernel. And just in time for the
+> upcoming holidays, it might be possible to call friends and relatives.
+>=20
+> I've pushed out an experimental branch containing serdev ts 27.010
+> UART multiplexing support. That contains a serdev core driver for the
+> mdm6600 modem (that also now idles the modem for PM), support for Alsa
+> ASoC voice codec and mixer, and a GNSS driver for the GPS.
+
+Thanks for doing the work.
+
+I'm quite busy these days, but...
+
+# commit	 64cf2bf6b7614da35028a11974acb5a445dcc535 (patch)
+# n_gsm: Use const unsigned char * and size_t
+# We can use const unsigned char * and size_t. This makes things
+# a bit easier for adding serdev support.
+#=20
+# Note that gsm_control_modem() gsm_control_rls() read the data
+# for tty control characters and then call gsm_control_reply()
+# that allocates a new reply and copies the data.
+#=20
+# REVISIT: Check size_t usage vs int
+#=20
+# Signed-off-by: Tony Lindgren <tony@atomide.com>
+
+Dunno, I see that you might want const there, but u8 -> unsigned char
+seems like a step in wrong direction.
+
+# commit	   cd16272060d8100ef0388349cf88f42a1dc667fc (patch)
+# tty: n_gsm: Add support for serdev
+
+Is it worth putting those in separate file? n_gsm_serdev.c?
+
+# commit	    0c1bc81ba976bcd480d6e3c3009a28589f8427c0 (patch)
+# mfd: motmdm: Add Motorola TS 27.010 serdev driver for devices like droid4
+
+Oh, that is a lot of fun. Especially state machine for parsing modem
+responses. I wonder how well it is going to work when modem is
+accessed over USB...=20
+
+motmdm_read_state(... size_t len)
+
+I applied it over my tree (I still need patches for display,
+right?). I'm getting
+
+/data/fast/l/k/drivers/mfd/motorola-mdm.c:1132:3: error: initializer
+element is not constant
+/data/fast/l/k/drivers/mfd/motorola-mdm.c:1132:3: error: (near
+initialization for 'motmdm_driver.driver.name')
+/data/fast/l/k/scripts/Makefile.build:291: recipe for target
+'drivers/mfd/motorola-mdm.o' failed
+
+Oh and that mdelay(3000) is going to hurt... especially because
+console is initialized very late or d4.
+
+I did a quick test in my config... and it did not break my old setup
+-- voice calls still work when set up over USB and with manual mixer
+setup. That was good surprise.
+
+Thanks,
+									Pavel
+
+diff --git a/drivers/mfd/motorola-mdm.c b/drivers/mfd/motorola-mdm.c
+index eea754d..2b7c324 100644
+--- a/drivers/mfd/motorola-mdm.c
++++ b/drivers/mfd/motorola-mdm.c
+@@ -1129,7 +1129,7 @@ static void motmdm_remove(struct serdev_device *serde=
+v)
+=20
+ static struct serdev_device_driver motmdm_driver =3D {
+ 	.driver =3D {
+-		.name =3D motmdm_driver_name,
++		.name =3D "motmdm",
+ 		.of_match_table =3D of_match_ptr(motmdm_id_table),
+ 		.pm =3D &motmdm_pm_ops,
+ 	},
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--opJtzjQTFsWo+cga
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwY7BgACgkQMOfwapXb+vIAIACdFimDv6I3DKxlcmcAmyroAyn2
+H9MAoIfC7hqnXVixy+non3E5WJZXClwH
+=CINq
+-----END PGP SIGNATURE-----
+
+--opJtzjQTFsWo+cga--
