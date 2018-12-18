@@ -2,189 +2,295 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D863DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B687C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4AF217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:35:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="g08yOayA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RNXttDOk"
+	by mail.kernel.org (Postfix) with ESMTP id 3F4002184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:35:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545132945;
+	bh=SX2nxxtVd7991BP1v8rwJJJjYA4xC67IoJAGiaa7Ss8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=N8FBoBNth++afwRtmXqQRfOBRwndf/OU7ahpxcdW/MZVlVFdKNi4aKi8EjJJMEdUI
+	 59yLmGNCd26LP/H2F+vW69On4CR2JL+YjInMTVq7gQHs6D2rxk8i97WCzBa9c/686o
+	 uiizxPzDA9cm1p5wNVmorm2Gli6VJvDyo4MACLUc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeLRLfG (ORCPT
+        id S1726629AbeLRLfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:35:06 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38399 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726395AbeLRLfG (ORCPT
+        Tue, 18 Dec 2018 06:35:44 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43740 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbeLRLfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:35:06 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id AB47F236CA;
-        Tue, 18 Dec 2018 06:35:04 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 18 Dec 2018 06:35:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        roTxGBo5vsIxNuEAXDNgMvoMCdkvUuloVGKuG+rNJ3w=; b=g08yOayAiPj25/vB
-        ZIJYqsRhZdM059vXu3lZ5UL3S5OEwfITs2jmcVhqzNUbipeRxXiApHeH6tI5PjVb
-        2vbkg5W+dBhnyZuQnCoB1tp/4jRx/9UAkdp0TrPFUuFDJuxwBq+Ds1LUtQfgWGah
-        O+oiaAI/cqkWTrp4FzW3ykJy4Vs/PWHXjDs/vflQYWiUyBNjBQLJRxmMk0bAJtc6
-        fAy08iU6G6Dxn+kZtddQh/qK+Neh9/xfT/nOBBnTbnvZU1xfqA8ncbjZNR1aLRQB
-        CJ9PL1R2SoBWe1AjSTECtvMxLPrQ+JShiEy9Eq4/BHRc/YRRIRuAEnu0G2ljHX9Q
-        osmH7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=roTxGBo5vsIxNuEAXDNgMvoMCdkvUuloVGKuG+rNJ
-        3w=; b=RNXttDOktvGeHy0EvYOyCL5C3isVVsR17TI6KihS4VrXYj2hQ82j4wXkI
-        NhI0gsT72/9eyzpcvb7hhGc/B77YPLBnRI/EJwnYLYp3yBIWixzI2nCBuzQ+3z84
-        ADDDNJPbbW0FjZQPJxdZy17iLzYfEPDgRXdvsbL7SW8GlfLCTpgQ08qoA8tCZc2H
-        vdgUsqhIAbtcDptFTEQXeVYscTrEmlAVoaERoy6sNyrWemYwOC7FYdKEJYTNkGBv
-        GFGmMB7JeY7CBrxFTYNY1DY7JX2SqTraTEIKF3vU4q/RXi1OqbUwHWYK/zcUC0jQ
-        cyTi26aoolWPQyShmjUzqZZ/RKv6g==
-X-ME-Sender: <xms:aNsYXGNhvzdPXecCyDJ5oUb5KLdLoYU3jihvPm-zKdbctPTNpwCMKg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudeiiedgudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuuhhsphgvtghtffhomh
-    grihhnucdlgeelmdenucfjughrpefkuffhvfffjghftgfoggfgsehtjeertdertdejnecu
-    hfhrohhmpefkrghnucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuff
-    homhgrihhnpegrphhpshhpohhtrdgtohhmpdhoiihlrggsshdrohhrghenucfkphepuddu
-    kedrvddtledrudekhedrudegudenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnh
-    esthhhvghmrgifrdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:aNsYXIStGKSZLzbR-r94FTMnmN-CNo81hgA9uamEQauLGYZ7AjZWZA>
-    <xmx:aNsYXJFnqG4e_VQXm4aTQZCtqaCllEnW1etcrwDeMK9gqdDFDrVCMA>
-    <xmx:aNsYXJ4IpLBlMQp9bsGZXX0qW9eE50pIS8xRY6rtr4jGPbMCji5wig>
-    <xmx:aNsYXBHzLFhzbKF38GD_Ed3otmi6vwlhVLe_xaqMYUxAz4bpyQFYGw>
-Received: from localhost (unknown [118.209.185.141])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 671831026D;
-        Tue, 18 Dec 2018 06:35:01 -0500 (EST)
-Message-ID: <66d497c00cffb3e4109ca0d5287c8277954d7132.camel@themaw.net>
-Subject: Re: kernel BUG at fs/inode.c:LINE!
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        DmitryVyukov <dvyukov@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Date:   Tue, 18 Dec 2018 19:34:57 +0800
-In-Reply-To: <95ae4c9893c89189d4309fe673ade6f389280101.camel@themaw.net>
-References: <00000000000051e9c2057d31a563@google.com>
-         <20181217072144.GQ2217@ZenIV.linux.org.uk>
-         <95ae4c9893c89189d4309fe673ade6f389280101.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Dec 2018 06:35:43 -0500
+Received: by mail-lj1-f193.google.com with SMTP id q2-v6so2755119lji.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 03:35:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XH9ZRCaOeLdsJZWLJEJTaoMn2AczNCZW+Di9zNqp7Qk=;
+        b=lnXffSePzcRgG9S45pIT0jZA6XttRkE1O1gOvLX4V8dRvLfk6W+g/VpPX7BLeabvKd
+         bZVITqxtZaRX7N0crizovVslCUmo+WTMF6x5HOxH7t/x96m4HAMWJ2C4nwFU6cTPbgiX
+         Id38uuIQwSY1cGaGb7/pMFwKouEAhf6AQfYvfquLVQj2Frk/m4oZPaOuORx95jSaOcs+
+         J/Q40+kj/ndyfNS9F0gaxgA9/XseKgngOnzAh286nja+Ve9057XHUGMKXW9yjdBa5B9G
+         2d1omBMVc38lHqHOTfvTf/EJ8Os72MHS83lV4MEUV8j1J6XW9XT/fJYd5hO/xD6FYZ7p
+         k6UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XH9ZRCaOeLdsJZWLJEJTaoMn2AczNCZW+Di9zNqp7Qk=;
+        b=Iq69K/QTZxST88QzpXqbed2+D522yuA/df8LwGpfhjUqg8n+ulgY+mkcSEij54egzY
+         +7EBQABqMs+KSS4gM7qM1Q68AqCzME6dreibXb3oh4emEzo/MqECLR8UetWdI6wsQTXh
+         igtrsbWV/VRxZVNkg+2KogokRw8M/aden4LcAdODloj6gTVjfLdyCpODlrIhI79RysYK
+         6ve0NiBzHrN681fap7ScPKPxxbp6Yegwj6WF5u1xUZFCFkGhrrdGjI0q2Emvh75xkOMA
+         9HgyANr+IKRJ7Dc2pzdGby6h6GNUYQme3BQ0d9WPD6l2O/nz/VAsihXd9ODV5KegskDX
+         thfg==
+X-Gm-Message-State: AA+aEWaM/MNEEIQZzxUXafB4v1X48Y2oJXN/Ob9EE5j9KbX5K47io4v/
+        2dX85V8D4sqeTdzgbsloOTc=
+X-Google-Smtp-Source: AFSGD/WfJJMPBPXmVqOrfQE38lN+cW7efBKw8Nx3IXEjLN5UQNLV9IpddO6zrvfoyby4A2WrLgkGPg==
+X-Received: by 2002:a2e:145a:: with SMTP id 26-v6mr9691256lju.116.1545132939990;
+        Tue, 18 Dec 2018 03:35:39 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id y9sm3168588lfe.75.2018.12.18.03.35.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 03:35:39 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gZDf2-0004x5-U1; Tue, 18 Dec 2018 12:35:41 +0100
+Date:   Tue, 18 Dec 2018 12:35:40 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] staging: greybus: arche-apb-ctrl.c: Switch to the
+ gpio descriptor interface
+Message-ID: <20181218113540.GN20658@localhost>
+References: <cover.1542898267.git.nishadkamdar@gmail.com>
+ <9ebe2c3909643701e5936da3778bf4fab3e53036.1542898267.git.nishadkamdar@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ebe2c3909643701e5936da3778bf4fab3e53036.1542898267.git.nishadkamdar@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-18 at 18:42 +0800, Ian Kent wrote:
-> On Mon, 2018-12-17 at 07:21 +0000, Al Viro wrote:
-> > On Sun, Dec 16, 2018 at 10:11:04PM -0800, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following crash on:
-> > > 
-> > > HEAD commit:    d14b746c6c1c Add linux-next specific files for 20181214
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=13706347400000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=1da6d2d18f803140
-> > > dashboard link: 
-> > > https://syzkaller.appspot.com/bug?extid=5399ed0832693e29f392
-> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=101032b3400000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16534063400000
-> > > 
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
-> > > 
-> > >  slab_pre_alloc_hook mm/slab.h:423 [inline]
-> > >  slab_alloc mm/slab.c:3365 [inline]
-> > >  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
-> > >  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
-> > > ------------[ cut here ]------------
-> > > kernel BUG at fs/inode.c:1566!
-> > >  d_alloc_anon fs/dcache.c:1698 [inline]
-> > >  d_make_root+0x43/0xc0 fs/dcache.c:1885
-> > >  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
-> > 
-> > Huh?  BUG is in iput(), AFAICS, so the stack trace is rather misreported.
-> > iput() can be called by d_make_root(), provided that dentry allocation
-> > fails.  So the most straightforward interpretation would be that we
-> > had an allocation failure (injected?), followed by iput() of the inode
-> > passed to d_make_root().  Which happened to find I_CLEAR in ->i_state
-> > of that inode somehow, which should be impossible short of seriously
-> > buggered inode refcounting somewhere - the inode has just been returned
-> > by new_inode(), which clears i_state, and it would have to have passed
-> > clear_inode() (i.e. has been through inode eviction) since then...
+On Thu, Nov 22, 2018 at 10:38:18PM +0530, Nishad Kamdar wrote:
+> Use the gpiod interface instead of the deprecated old non-descriptor
+> interface.
 > 
-> Sorry Al, that's my bad.
-> 
-> See 
-> https://www.ozlabs.org/~akpm/mmotm/broken-out/autofs-fix-possible-inode-leak-in-autofs_fill_super.patch
-> 
-> I think this will fix it, I'll forward it to Andrew if you agree:
-
-Actually, looking at it again the above patch is plain not needed,
-dropping it and updating the patch which follows it in the series
-is what needs to be done.
-
-Andrew, what should I do to make this easiest for you to handle,
-a respost with v2 in the subject of the patch affected by dropping
-the above patch?
-
-Or I could repost the series with above patch dropped and the affected
-patch corrected?
-
-> 
-> autofs - fix handling of d_make_root() return in autofs_fill_super()
-> 
-> From: Ian Kent <raven@themaw.net>
-> 
-> A previous change to handle a possible inode leak in autofs_fill_super()
-> added an iput() on d_make_root() failure but d_make_root() already puts
-> the passed in inode on failure.
-> 
-> Reported-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
-> Signed-off-by: Ian Kent <raven@themaw.net>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 > ---
->  fs/autofs/inode.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Changes in v2:
+>  - Resolved compilation errors.
+> ---
+>  drivers/staging/greybus/arche-apb-ctrl.c | 159 +++++++++--------------
+>  1 file changed, 65 insertions(+), 94 deletions(-)
 > 
-> diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
-> index 501833cc49a8..953f76b95172 100644
-> --- a/fs/autofs/inode.c
-> +++ b/fs/autofs/inode.c
-> @@ -271,7 +271,7 @@ int autofs_fill_super(struct super_block *s, void *data,
-> int silent)
->  	}
->  	root = d_make_root(root_inode);
->  	if (!root)
-> -		goto fail_iput;
-> +		goto fail_ino;
->  	pipe = NULL;
+> diff --git a/drivers/staging/greybus/arche-apb-ctrl.c b/drivers/staging/greybus/arche-apb-ctrl.c
+> index be5ffed90bcf..e887f6aee20b 100644
+> --- a/drivers/staging/greybus/arche-apb-ctrl.c
+> +++ b/drivers/staging/greybus/arche-apb-ctrl.c
+> @@ -8,9 +8,8 @@
 >  
->  	root->d_fsdata = ino;
-> @@ -347,8 +347,6 @@ int autofs_fill_super(struct super_block *s, void *data,
-> int silent)
->  fail_dput:
->  	dput(root);
->  	goto fail_free;
-> -fail_iput:
-> -	iput(root_inode);
->  fail_ino:
->  	autofs_free_ino(ino);
->  fail_free:
-> 
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/module.h>
+>  #include <linux/pinctrl/consumer.h>
+> @@ -24,12 +23,12 @@ static void apb_bootret_deassert(struct device *dev);
+>  
+>  struct arche_apb_ctrl_drvdata {
+>  	/* Control GPIO signals to and from AP <=> AP Bridges */
+> -	int resetn_gpio;
+> -	int boot_ret_gpio;
+> -	int pwroff_gpio;
+> -	int wake_in_gpio;
+> -	int wake_out_gpio;
+> -	int pwrdn_gpio;
+> +	struct gpio_desc *resetn;
+> +	struct gpio_desc *boot_ret;
+> +	struct gpio_desc *pwroff;
+> +	struct gpio_desc *wake_in;
+> +	struct gpio_desc *wake_out;
+> +	struct gpio_desc *pwrdn;
+>  
+>  	enum arche_platform_state state;
+>  	bool init_disabled;
+> @@ -37,28 +36,28 @@ struct arche_apb_ctrl_drvdata {
+>  	struct regulator *vcore;
+>  	struct regulator *vio;
+>  
+> -	int clk_en_gpio;
+> +	struct gpio_desc *clk_en;
+>  	struct clk *clk;
+>  
+>  	struct pinctrl *pinctrl;
+>  	struct pinctrl_state *pin_default;
+>  
+>  	/* V2: SPI Bus control  */
+> -	int spi_en_gpio;
+> +	struct gpio_desc *spi_en;
+>  	bool spi_en_polarity_high;
+>  };
+>  
+>  /*
+>   * Note that these low level api's are active high
+>   */
+> -static inline void deassert_reset(unsigned int gpio)
+> +static inline void deassert_reset(struct gpio_desc *gpio)
+>  {
+> -	gpio_set_value(gpio, 1);
+> +	gpiod_set_value(gpio, 1);
+>  }
+>  
+> -static inline void assert_reset(unsigned int gpio)
+> +static inline void assert_reset(struct gpio_desc *gpio)
+>  {
+> -	gpio_set_value(gpio, 0);
+> +	gpiod_set_value(gpio, 0);
+>  }
 
+As the comment above deassert_reset() suggests, this change will
+actually change the semantics of these calls by taking any gpio flags
+into account (e.g. ACTIVE_LOW which will invert the signals).
+
+Perhaps you should just use gpiod_set_raw_value() for now, and this can
+be addressed later. Alternatively, drop the comment and invert the
+polarity here and any users will need to update their device trees.
+
+Either way, mention this in the commit message.
+
+>  /*
+> @@ -75,11 +74,11 @@ static int coldboot_seq(struct platform_device *pdev)
+>  		return 0;
+>  
+>  	/* Hold APB in reset state */
+> -	assert_reset(apb->resetn_gpio);
+> +	assert_reset(apb->resetn);
+>  
+>  	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
+> -	    gpio_is_valid(apb->spi_en_gpio))
+> -		devm_gpio_free(dev, apb->spi_en_gpio);
+> +	    apb->spi_en)
+
+No need to break the line any more.
+
+> +		devm_gpiod_put(dev, apb->spi_en);
+>  
+>  	/* Enable power to APB */
+>  	if (!IS_ERR(apb->vcore)) {
+> @@ -101,13 +100,13 @@ static int coldboot_seq(struct platform_device *pdev)
+>  	apb_bootret_deassert(dev);
+>  
+>  	/* On DB3 clock was not mandatory */
+> -	if (gpio_is_valid(apb->clk_en_gpio))
+> -		gpio_set_value(apb->clk_en_gpio, 1);
+> +	if (apb->clk_en)
+> +		gpiod_set_value(apb->clk_en, 1);
+>  
+>  	usleep_range(100, 200);
+>  
+>  	/* deassert reset to APB : Active-low signal */
+> -	deassert_reset(apb->resetn_gpio);
+> +	deassert_reset(apb->resetn);
+>  
+>  	apb->state = ARCHE_PLATFORM_STATE_ACTIVE;
+>  
+> @@ -119,6 +118,7 @@ static int fw_flashing_seq(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct arche_apb_ctrl_drvdata *apb = platform_get_drvdata(pdev);
+>  	int ret;
+> +	unsigned long flags;
+>  
+>  	if (apb->init_disabled ||
+>  	    apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING)
+> @@ -136,25 +136,20 @@ static int fw_flashing_seq(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	if (gpio_is_valid(apb->spi_en_gpio)) {
+
+spi_en_gpio is currently optional, so cannot just drop the check.
+
+> -		unsigned long flags;
+> +	if (apb->spi_en_polarity_high)
+> +		flags = GPIOD_OUT_HIGH;
+> +	else
+> +		flags = GPIOD_OUT_LOW;
+
+This should probably also be converted to honouring the gpio flags, but
+perhaps better to do in a later patch.
+
+>  
+> -		if (apb->spi_en_polarity_high)
+> -			flags = GPIOF_OUT_INIT_HIGH;
+> -		else
+> -			flags = GPIOF_OUT_INIT_LOW;
+> -
+> -		ret = devm_gpio_request_one(dev, apb->spi_en_gpio,
+> -					    flags, "apb_spi_en");
+> -		if (ret) {
+> -			dev_err(dev, "Failed requesting SPI bus en gpio %d\n",
+> -				apb->spi_en_gpio);
+> -			return ret;
+> -		}
+> +	apb->spi_en = devm_gpiod_get(dev, "gb,spi-en-gpio", flags);
+> +	if (IS_ERR(apb->spi_en)) {
+> +		ret = PTR_ERR(apb->spi_en);
+> +		dev_err(dev, "Failed requesting SPI bus en GPIO: %d\n", ret);
+> +		return ret;
+>  	}
+>  
+>  	/* for flashing device should be in reset state */
+> -	assert_reset(apb->resetn_gpio);
+> +	assert_reset(apb->resetn);
+>  	apb->state = ARCHE_PLATFORM_STATE_FW_FLASHING;
+>  
+>  	return 0;
+> @@ -177,8 +172,8 @@ static int standby_boot_seq(struct platform_device *pdev)
+>  		return 0;
+>  
+>  	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
+> -	    gpio_is_valid(apb->spi_en_gpio))
+> -		devm_gpio_free(dev, apb->spi_en_gpio);
+> +	    apb->spi_en)
+
+No line break. Check this throughout.
+
+> +		devm_gpiod_put(dev, apb->spi_en);
+>  
+>  	/*
+>  	 * As per WDM spec, do nothing
+
+> @@ -404,12 +379,8 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
+>  	}
+>  
+>  	/* Only applicable for platform >= V2 */
+> -	apb->spi_en_gpio = of_get_named_gpio(np, "spi-en-gpio", 0);
+> -	if (apb->spi_en_gpio >= 0) {
+> -		if (of_property_read_bool(pdev->dev.of_node,
+> -					  "spi-en-active-high"))
+> -			apb->spi_en_polarity_high = true;
+> -	}
+> +	if (of_property_read_bool(pdev->dev.of_node, "gb,spi-en-active-high"))
+> +		apb->spi_en_polarity_high = true;
+
+Guess it's fine to drop the spi_en check here though.
+
+Johan
