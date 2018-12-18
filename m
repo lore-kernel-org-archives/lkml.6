@@ -2,137 +2,196 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446F5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F36C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F50D2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB4412184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCTlYH1s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbeLRKMM (ORCPT
+        id S1726675AbeLRKMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:12:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:42526 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbeLRKML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:12:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D596A78;
-        Tue, 18 Dec 2018 02:12:10 -0800 (PST)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.41.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 30B2F3F5C0;
-        Tue, 18 Dec 2018 02:12:01 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
-        akpm@linux-foundation.org, jiangqi903@gmail.com,
-        hverkuil@xs4all.nl, vkoul@kernel.org, sfr@canb.auug.org.au,
-        dledford@redhat.com, mpe@ellerman.id.au, axboe@kernel.dk,
-        jeffrey.t.kirsher@intel.com, david@redhat.com
-Subject: [PATCH V3 0/2] Replace all open encodings for NUMA_NO_NODE
-Date:   Tue, 18 Dec 2018 15:42:11 +0530
-Message-Id: <1545127933-10711-1-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 18 Dec 2018 05:12:18 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46874 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbeLRKMQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 05:12:16 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c73so7898464pfe.13;
+        Tue, 18 Dec 2018 02:12:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OyPcckJ9H9PrTKbckA2hoYoFgyfsOddw9oRRuNtLyW8=;
+        b=ZCTlYH1ss+S1m+k+w6/x2ENkFmSnefUVv58lbNZQpzLyqcCLqLhZhaICUZhV637HjJ
+         y2a4fxpp5niYNeo8IaKu9Xw0lPNDyM+nygig6ubkAc1lycdvyVu35NnOIinMInw547R9
+         3p24ua0Xmr+T2gkf/++Hu0OJ94pxhzW4GkVPyysQTF5tFzqSoY5XE1ZkUjFhJwkN4//u
+         bGP8vCjJ5DI9HpVyZcgBTbh89pXhcKz+sZ27PmCKp/eEfyd+MjYsiDW65in/FMwMLlZn
+         YSNBXfQkvVvAlQfFrRBQNhf+rDEDf7Ag/fSL4bIAf95Dk4GX8MFEMtWggfM53HJj6E7S
+         zcqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OyPcckJ9H9PrTKbckA2hoYoFgyfsOddw9oRRuNtLyW8=;
+        b=O/4Ffywwgo740aclf0LdX0GlisSJm1OQDEuHRruUvBfXnhRp0sn+tOvabdXLBadrUk
+         GC1Uk/71/RS3w5ADPmJCPu5DXMVFp+8sOQeeQI2S/2E4vy7kvwv3j6eooncoRRyv3r6g
+         8aX2K8dGF0A5Bes7d3J9Agvg2WUT4OrhNS6j67M2o0iV3LQnakFxvMycr5oJVz2ColtO
+         TieVKKotOjlhK0+24erBJ40TR2yxss2A9bnciII7fL7MyBBK3WV0OgbSVTdrLqmxJ5HC
+         /g1Q1llIobbvIxtYN6Jg39li9YDPi8ZpsOpa6LMpTzZeo781So8CiAOZ1u6TWebdRyQo
+         gt0w==
+X-Gm-Message-State: AA+aEWZWmSQ8ge+2laQNKHTpNL1M0wvdQOYz6Poc2JT86Gbc+QtYrRyP
+        9UUnkuHT916k6+a5/dgV0cM=
+X-Google-Smtp-Source: AFSGD/W1vfcVu/nOlvpukKbX5cQ+j/PQNytUizBELpoxW/wLnDO94gibWYT3zUOJfadsCoGMoaonKA==
+X-Received: by 2002:a62:1992:: with SMTP id 140mr2082156pfz.33.1545127935314;
+        Tue, 18 Dec 2018 02:12:15 -0800 (PST)
+Received: from localhost.localdomain ([2001:268:c0a5:b5e9:3c79:e26e:bf45:b953])
+        by smtp.gmail.com with ESMTPSA id x27sm31442450pfe.178.2018.12.18.02.12.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 02:12:14 -0800 (PST)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v5 3/8] gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+Date:   Tue, 18 Dec 2018 19:12:45 +0900
+Message-Id: <d2d2fed72659deb4ff267ef73103dddc047ced5b.1545126272.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1545126272.git.vilhelm.gray@gmail.com>
+References: <cover.1545126272.git.vilhelm.gray@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in V3:
+Replace verbose implementation in get_multiple/set_multiple callbacks
+with for_each_set_clump8 macro to simplify code and improve clarity.
 
-- Dropped all references to NUMA_NO_NODE as per Lubomir Rinetl
-- Split the patch into two creating a new one specifically for tools
-- Folded Stephen's linux-next build fix into the second patch
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-104-dio-48e.c | 71 ++++++++++-----------------------
+ 1 file changed, 20 insertions(+), 51 deletions(-)
 
-Changes in V2: (https://patchwork.kernel.org/patch/10698089/)
-
-- Added inclusion of 'numa.h' header at various places per Andrew
-- Updated 'dev_to_node' to use NUMA_NO_NODE instead per Vinod
-
-Changes in V1: (https://lkml.org/lkml/2018/11/23/485)
-
-- Dropped OCFS2 changes per Joseph
-- Dropped media/video drivers changes per Hans
-
-RFC - https://patchwork.kernel.org/patch/10678035/
-
-Build tested this with multiple cross compiler options like alpha, sparc,
-arm64, x86, powerpc, powerpc64le etc with their default config which might
-not have compiled tested all driver related changes. I will appreciate
-folks giving this a test in their respective build environments.
-
-All these places for replacement were found by running the following grep
-patterns on the entire kernel code. Please let me know if this might have
-missed some instances. This might also have replaced some false positives.
-I will appreciate suggestions, inputs and review.
-
-1. git grep "nid == -1"
-2. git grep "node == -1"
-3. git grep "nid = -1"
-4. git grep "node = -1"
-
-NOTE: I can still split the first patch into multiple ones - one for each
-subsystem as suggested by Lubomir if that would be better.
-
-Anshuman Khandual (1):
-  mm: Replace all open encodings for NUMA_NO_NODE
-
-Stephen Rothwell (1):
-  Tools: Replace open encodings for NUMA_NO_NODE
-
- arch/alpha/include/asm/topology.h             |  3 ++-
- arch/ia64/kernel/numa.c                       |  2 +-
- arch/ia64/mm/discontig.c                      |  6 +++---
- arch/powerpc/include/asm/pci-bridge.h         |  3 ++-
- arch/powerpc/kernel/paca.c                    |  3 ++-
- arch/powerpc/kernel/pci-common.c              |  3 ++-
- arch/powerpc/mm/numa.c                        | 14 +++++++-------
- arch/powerpc/platforms/powernv/memtrace.c     |  5 +++--
- arch/sparc/kernel/pci_fire.c                  |  3 ++-
- arch/sparc/kernel/pci_schizo.c                |  3 ++-
- arch/sparc/kernel/psycho_common.c             |  3 ++-
- arch/sparc/kernel/sbus.c                      |  3 ++-
- arch/sparc/mm/init_64.c                       |  6 +++---
- arch/x86/include/asm/pci.h                    |  3 ++-
- arch/x86/kernel/apic/x2apic_uv_x.c            |  7 ++++---
- arch/x86/kernel/smpboot.c                     |  3 ++-
- drivers/block/mtip32xx/mtip32xx.c             |  5 +++--
- drivers/dma/dmaengine.c                       |  4 +++-
- drivers/infiniband/hw/hfi1/affinity.c         |  3 ++-
- drivers/infiniband/hw/hfi1/init.c             |  3 ++-
- drivers/iommu/dmar.c                          |  5 +++--
- drivers/iommu/intel-iommu.c                   |  3 ++-
- drivers/misc/sgi-xp/xpc_uv.c                  |  3 ++-
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |  5 +++--
- include/linux/device.h                        |  2 +-
- init/init_task.c                              |  3 ++-
- kernel/kthread.c                              |  3 ++-
- kernel/sched/fair.c                           | 15 ++++++++-------
- lib/cpumask.c                                 |  3 ++-
- mm/huge_memory.c                              | 13 +++++++------
- mm/hugetlb.c                                  |  3 ++-
- mm/ksm.c                                      |  2 +-
- mm/memory.c                                   |  7 ++++---
- mm/memory_hotplug.c                           | 12 ++++++------
- mm/mempolicy.c                                |  2 +-
- mm/page_alloc.c                               |  4 ++--
- mm/page_ext.c                                 |  2 +-
- net/core/pktgen.c                             |  3 ++-
- net/qrtr/qrtr.c                               |  3 ++-
- tools/include/linux/numa.h                    | 16 ++++++++++++++++
- tools/perf/bench/numa.c                       |  6 +++---
- 41 files changed, 123 insertions(+), 77 deletions(-)
- create mode 100644 tools/include/linux/numa.h
-
+diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
+index 92c8f944bf64..b68c39f8aa23 100644
+--- a/drivers/gpio/gpio-104-dio-48e.c
++++ b/drivers/gpio/gpio-104-dio-48e.c
+@@ -183,46 +183,25 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return !!(port_state & mask);
+ }
+ 
++static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
++
+ static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	unsigned long *bits)
+ {
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-	size_t i;
+-	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
+-	const unsigned int gpio_reg_size = 8;
+-	unsigned int bits_offset;
+-	size_t word_index;
+-	unsigned int word_offset;
+-	unsigned long word_mask;
+-	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
++	unsigned int offset;
++	unsigned long gpio_mask;
++	unsigned int port_addr;
+ 	unsigned long port_state;
+ 
+ 	/* clear bits array to a clean slate */
+ 	bitmap_zero(bits, chip->ngpio);
+ 
+-	/* get bits are evaluated a gpio port register at a time */
+-	for (i = 0; i < ARRAY_SIZE(ports); i++) {
+-		/* gpio offset in bits array */
+-		bits_offset = i * gpio_reg_size;
+-
+-		/* word index for bits array */
+-		word_index = BIT_WORD(bits_offset);
+-
+-		/* gpio offset within current word of bits array */
+-		word_offset = bits_offset % BITS_PER_LONG;
+-
+-		/* mask of get bits for current gpio within current word */
+-		word_mask = mask[word_index] & (port_mask << word_offset);
+-		if (!word_mask) {
+-			/* no get bits in this port so skip to next one */
+-			continue;
+-		}
+-
+-		/* read bits from current gpio port */
+-		port_state = inb(dio48egpio->base + ports[i]);
++	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
++		port_addr = dio48egpio->base + ports[offset / 8];
++		port_state = inb(port_addr) & gpio_mask;
+ 
+-		/* store acquired bits at respective bits array offset */
+-		bits[word_index] |= (port_state << word_offset) & word_mask;
++		bitmap_set_value8(bits, &port_state, offset);
+ 	}
+ 
+ 	return 0;
+@@ -252,37 +231,27 @@ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
+ 	unsigned long *mask, unsigned long *bits)
+ {
+ 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+-	unsigned int i;
+-	const unsigned int gpio_reg_size = 8;
+-	unsigned int port;
+-	unsigned int out_port;
++	unsigned int offset;
++	unsigned long gpio_mask;
++	size_t index;
++	unsigned int port_addr;
+ 	unsigned int bitmask;
+ 	unsigned long flags;
+ 
+-	/* set bits are evaluated a gpio register size at a time */
+-	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
+-		/* no more set bits in this mask word; skip to the next word */
+-		if (!mask[BIT_WORD(i)]) {
+-			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
+-			continue;
+-		}
++	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
++		index = offset / 8;
++		port_addr = dio48egpio->base + ports[index];
+ 
+-		port = i / gpio_reg_size;
+-		out_port = (port > 2) ? port + 1 : port;
+-		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
++		bitmask = bitmap_get_value8(bits, offset) & gpio_mask;
+ 
+ 		raw_spin_lock_irqsave(&dio48egpio->lock, flags);
+ 
+ 		/* update output state data and set device gpio register */
+-		dio48egpio->out_state[port] &= ~mask[BIT_WORD(i)];
+-		dio48egpio->out_state[port] |= bitmask;
+-		outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
++		dio48egpio->out_state[index] &= ~gpio_mask;
++		dio48egpio->out_state[index] |= bitmask;
++		outb(dio48egpio->out_state[index], port_addr);
+ 
+ 		raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
+-
+-		/* prepare for next gpio register set */
+-		mask[BIT_WORD(i)] >>= gpio_reg_size;
+-		bits[BIT_WORD(i)] >>= gpio_reg_size;
+ 	}
+ }
+ 
 -- 
-2.7.4
+2.20.1
 
