@@ -2,190 +2,77 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E591CC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F8FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B747B2145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 802B921841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545101183;
+	bh=HkltPihwmyOlTXZVDAe8tLtLgUuCWmQzS2knf9FAWCM=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=AkM5a0aA9UG77FxKeepnAFgRRMRrmI8ZZYI3SfkkD+oTa6LonW3DZQFMD2yBkVOQj
+	 dJBHEOHtI2148DQD6xIcveiDAuxtsu/J3nXm1Tbq0VWmYDWQyL9kBNMUTgD+0RHY60
+	 yF54jf9wpzK0NyuS4YlxV3mUVNu7ROAzREYIQbnI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeLRCmh (ORCPT
+        id S1726438AbeLRCqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:42:37 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12619 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726276AbeLRCmg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:42:36 -0500
-X-UUID: 2a8cf2235d7944129de7f51e1be54daf-20181218
-X-UUID: 2a8cf2235d7944129de7f51e1be54daf-20181218
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 834688985; Tue, 18 Dec 2018 10:42:30 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 18 Dec 2018 10:42:28 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 10:42:27 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     <davem@davemloft.net>, <robh+dt@kernel.org>
-CC:     <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
-        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
-        <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
-        <andrew@lunn.ch>
-Subject: [PATCH 2/2] net-next: stmmac: dwmac-mediatek: remove fine-tune property
-Date:   Tue, 18 Dec 2018 10:42:17 +0800
-Message-ID: <1545100937-16093-3-git-send-email-biao.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1545100937-16093-1-git-send-email-biao.huang@mediatek.com>
-References: <1545100937-16093-1-git-send-email-biao.huang@mediatek.com>
+        Mon, 17 Dec 2018 21:46:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbeLRCqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 21:46:21 -0500
+Received: from [10.20.30.225] (net77-43-75-18.mclink.it [77.43.75.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CB502145D;
+        Tue, 18 Dec 2018 02:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545101181;
+        bh=HkltPihwmyOlTXZVDAe8tLtLgUuCWmQzS2knf9FAWCM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JkyPb6gPIo364imJM/i39aCkUbs54vJGtNNSyptORvYqathDYSyO2GNw6vgNyKnM5
+         LHktzgbX/Sc3L6eddF4rd6JAENO1j60mQSUoU8fTWK7BxHJ+FkpEc0iKZpxsR/7IXu
+         k/sPS0ZcsGYkajvsxUGTFr4Os5pQ4XoOO5DZLdEc=
+Subject: Re: [PATCH v10 6/6] ACPI/IORT: Stub out ACS functions when CONFIG_PCI
+ is not set
+To:     Hanjun Guo <guohanjun@huawei.com>, linux-acpi@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181215010247.26101-1-okaya@kernel.org>
+ <20181215010247.26101-7-okaya@kernel.org>
+ <40e31e86-a4ac-d9a6-d752-b04203d5ced7@huawei.com>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <80c186fe-e5ff-1d13-fad5-6386b21b45c4@kernel.org>
+Date:   Tue, 18 Dec 2018 03:46:17 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <40e31e86-a4ac-d9a6-d752-b04203d5ced7@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. remove fine-tune property and related setting to simplify
-the timing adjustment flow.
-2. set timing value according to the value from device tree,
-and will not care whether PHY insert internal delay.
+On 12/18/2018 3:14 AM, Hanjun Guo wrote:
+> I prefer stub function for iort_enable_acs(), not adding #ifdef/#endif pair inside
+> this function.
 
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
----
- .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |   71 +++++++-------------
- 1 file changed, 24 insertions(+), 47 deletions(-)
+Yes, I'm reworking this per input from Lorenzo.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-index e400cbd..801c797 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-@@ -44,7 +44,6 @@ struct mac_delay_struct {
- 	u32 rx_delay;
- 	bool tx_inv;
- 	bool rx_inv;
--	bool fine_tune;
- };
- 
- struct mediatek_dwmac_plat_data {
-@@ -105,16 +104,28 @@ static int mt2712_set_interface(struct mediatek_dwmac_plat_data *plat)
- 	return 0;
- }
- 
--static void mt2712_delay_ps2stage(struct mac_delay_struct *mac_delay)
-+static void mt2712_delay_ps2stage(struct mediatek_dwmac_plat_data *plat)
- {
--	if (mac_delay->fine_tune) {
--		/* 170ps per stage for fine tune delay macro circuit*/
--		mac_delay->tx_delay /= 170;
--		mac_delay->rx_delay /= 170;
--	} else {
--		/* 550ps per stage for coarse tune delay macro circuit*/
-+	struct mac_delay_struct *mac_delay = &plat->mac_delay;
-+
-+	switch (plat->phy_mode) {
-+	case PHY_INTERFACE_MODE_MII:
-+	case PHY_INTERFACE_MODE_RMII:
-+		/* 550ps per stage for mii/rmii*/
- 		mac_delay->tx_delay /= 550;
- 		mac_delay->rx_delay /= 550;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+		/* 170ps per stage for mii/rmii*/
-+		mac_delay->tx_delay /= 170;
-+		mac_delay->rx_delay /= 170;
-+		break;
-+	default:
-+		dev_err(plat->dev, "phy interface not supported\n");
-+		break;
- 	}
- }
- 
-@@ -123,7 +134,7 @@ static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
- 	struct mac_delay_struct *mac_delay = &plat->mac_delay;
- 	u32 delay_val = 0, fine_val = 0;
- 
--	mt2712_delay_ps2stage(mac_delay);
-+	mt2712_delay_ps2stage(plat);
- 
- 	switch (plat->phy_mode) {
- 	case PHY_INTERFACE_MODE_MII:
-@@ -167,13 +178,10 @@ static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
- 			fine_val = ETH_RMII_DLY_TX_INV;
- 		break;
- 	case PHY_INTERFACE_MODE_RGMII:
--		/* the PHY is not responsible for inserting any internal
--		 * delay by itself in PHY_INTERFACE_MODE_RGMII case,
--		 * so Ethernet MAC will insert delays for both transmit
--		 * and receive path here.
--		 */
--		if (mac_delay->fine_tune)
--			fine_val = ETH_FINE_DLY_GTXC | ETH_FINE_DLY_RXC;
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+		fine_val = ETH_FINE_DLY_GTXC | ETH_FINE_DLY_RXC;
- 
- 		delay_val |= FIELD_PREP(ETH_DLY_GTXC_ENABLE, !!mac_delay->tx_delay);
- 		delay_val |= FIELD_PREP(ETH_DLY_GTXC_STAGES, mac_delay->tx_delay);
-@@ -183,36 +191,6 @@ static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
- 		delay_val |= FIELD_PREP(ETH_DLY_RXC_STAGES, mac_delay->rx_delay);
- 		delay_val |= FIELD_PREP(ETH_DLY_RXC_INV, mac_delay->rx_inv);
- 		break;
--	case PHY_INTERFACE_MODE_RGMII_TXID:
--		/* the PHY should insert an internal delay for the transmit
--		 * path in PHY_INTERFACE_MODE_RGMII_TXID case,
--		 * so Ethernet MAC will insert the delay for receive path here.
--		 */
--		if (mac_delay->fine_tune)
--			fine_val = ETH_FINE_DLY_RXC;
--
--		delay_val |= FIELD_PREP(ETH_DLY_RXC_ENABLE, !!mac_delay->rx_delay);
--		delay_val |= FIELD_PREP(ETH_DLY_RXC_STAGES, mac_delay->rx_delay);
--		delay_val |= FIELD_PREP(ETH_DLY_RXC_INV, mac_delay->rx_inv);
--		break;
--	case PHY_INTERFACE_MODE_RGMII_RXID:
--		/* the PHY should insert an internal delay for the receive
--		 * path in PHY_INTERFACE_MODE_RGMII_RXID case,
--		 * so Ethernet MAC will insert the delay for transmit path here.
--		 */
--		if (mac_delay->fine_tune)
--			fine_val = ETH_FINE_DLY_GTXC;
--
--		delay_val |= FIELD_PREP(ETH_DLY_GTXC_ENABLE, !!mac_delay->tx_delay);
--		delay_val |= FIELD_PREP(ETH_DLY_GTXC_STAGES, mac_delay->tx_delay);
--		delay_val |= FIELD_PREP(ETH_DLY_GTXC_INV, mac_delay->tx_inv);
--		break;
--	case PHY_INTERFACE_MODE_RGMII_ID:
--		/* the PHY should insert internal delays for both transmit
--		 * and receive path in PHY_INTERFACE_MODE_RGMII_RXID case,
--		 * so Ethernet MAC will NOT insert any delay here.
--		 */
--		break;
- 	default:
- 		dev_err(plat->dev, "phy interface not supported\n");
- 		return -EINVAL;
-@@ -270,7 +248,6 @@ static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
- 
- 	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
- 	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
--	mac_delay->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
- 	plat->rmii_rxc = of_property_read_bool(plat->np, "mediatek,rmii-rxc");
- 
- 	return 0;
--- 
-1.7.9.5
+> 
+> By the way, there are other pci function called in iort.c, could you explain a
+> little bit why no need to update other function calls in commit message?
 
+I added few words about why other code was not stubbed out.
