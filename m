@@ -2,221 +2,387 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DADC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F75C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0453A21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46A66218AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:57:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="tyZMTf6N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeLRSy6 (ORCPT
+        id S1726746AbeLRS5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:54:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51710 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726536AbeLRSy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:54:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83415AF07;
-        Tue, 18 Dec 2018 18:54:52 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 10:54:43 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        Xie Yongji <xieyongji@baidu.com>, zhangyu31@baidu.com,
-        liuqi16@baidu.com, yuanlinsi01@baidu.com, nixun@baidu.com,
-        lilin24@baidu.com, longman@redhat.com,
-        andrea.parri@amarulasolutions.com
-Subject: [PATCH v2] sched/wake_q: Reduce reference counting for special users
-Message-ID: <20181218185443.g5jzinm3vnrkznmm@linux-r8p5>
-References: <20181129180828.GA11650@hirez.programming.kicks-ass.net>
- <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
- <20181129213017.v3eljor54lfpoug2@linux-r8p5>
- <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
- <20181129221714.GF11632@hirez.programming.kicks-ass.net>
- <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
- <20181217113718.GB4900@worktop.programming.kicks-ass.net>
- <20181217205310.pvwcryyaqlrzmaex@linux-r8p5>
- <20181218131031.GJ15430@hirez.programming.kicks-ass.net>
- <20181218131419.GD16284@hirez.programming.kicks-ass.net>
+        Tue, 18 Dec 2018 13:57:05 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55375 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbeLRS5E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 13:57:04 -0500
+Received: by mail-it1-f195.google.com with SMTP id m62so5767449ith.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:57:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yQNGICKeoXlxxv0k42bZ4N2Fh6MAppCH00VxK5aqj9I=;
+        b=tyZMTf6NXNdz5hErgVCfk+RGn8v6r62w7PheSRsO4dMvz9PwACPeqSq4m0cFHsaL9v
+         /YFNZtd4IkTvDlZgrDTIDr2E54jG1KCYY420hmPXUyvt4YEHcNv16M+9Z++P6UZT7g6J
+         dgrwzDBz4TMXunpW+qmlwFuvHFPMdmC0ir81dCEqhl7ZS0JGKzEQGUExGhh3BNTgLwYv
+         iXACEVF1gnNTc3XymrVXBEgK4OjERJxyI3411ilMtiGVv27fW9d5QMai/1DjV+eMLFHF
+         8oyPClgqGzaRbJH/F70zJe7cmJpKtUZUBeXNqcGcPVS48S5y9aNnBKjIygtU8Muyulb5
+         N7ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yQNGICKeoXlxxv0k42bZ4N2Fh6MAppCH00VxK5aqj9I=;
+        b=I/LYFjltJwSzoQT/3B/kZUveD32rPzN8lGmpS1nynk1K0f35uvWZT0UyWTeoqP4uyb
+         DDsJteiVdblWL9dQ99NS1bZLjMiwAvpuI7BOSvRU4Dga+3ENlowmqxPuHIqGkdGwT0u8
+         Be+3DYICQmV4ztRxVFGGcnIl6DDuosDHuCCuApIQdOgqSngrqukLh9DUjnokw50NXkWl
+         Ukh0c1t7Nxf+xLcZba+1LwRj4g6DKBFVu8txm3x3Uo5PWZlhh7omE4ErUGrVXy7eMW6D
+         2KyFMobM1qu7LSTxvYhokrIoHMtJ/Ov3Tpz28WVHJ6prcMGwNqI0mWiQWRuPrRfCNE/R
+         gEAQ==
+X-Gm-Message-State: AA+aEWbKpyOUkqLDgo+/eRN68fCKA5UO/lu/nsuIRkPkE5dGW0H4mFdh
+        6Ue42aq6Nqa1zrJETXL6VTBc5g==
+X-Google-Smtp-Source: AFSGD/W98MOWVwRx3I/ZsEMwmwFAg6A/+cbT/XO2o7NodBF2g4Y4wFWOzZwW6P5ySGC4eg9b+o8E6Q==
+X-Received: by 2002:a24:3e43:: with SMTP id s64mr4164059its.111.1545159422684;
+        Tue, 18 Dec 2018 10:57:02 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id v19sm1995058itb.0.2018.12.18.10.57.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 10:57:01 -0800 (PST)
+Subject: Re: [LKP] [lkp-robot] [brd] 316ba5736c: aim7.jobs-per-min -11.2%
+ regression
+To:     kemi <kemi.wang@intel.com>,
+        kernel test robot <xiaolong.ye@intel.com>,
+        SeongJae Park <sj38.park@gmail.com>
+Cc:     Jens Axboe <axboe@fb.com>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>
+References: <20180604055259.GF16472@yexl-desktop>
+ <1483bdb1-df0c-3b9c-43b9-4f477d00b097@intel.com>
+ <8de67b1a-5e13-a812-e806-4d562cc20e2c@intel.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <53166948-c4db-635d-3098-5e88ce8fa9c0@kernel.dk>
+Date:   Tue, 18 Dec 2018 11:57:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181218131419.GD16284@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <8de67b1a-5e13-a812-e806-4d562cc20e2c@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some users, specifically futexes and rwsems, required fixes
-that allowed the callers to be safe when wakeups occur before
-they are expected by wake_up_q(). Such scenarios also play
-games and rely on reference counting, and until now were
-pivoting on wake_q doing it. With the wake_q_add() call being
-moved down, this can no longer be the case. As such we end up
-with a a double task refcounting overhead; and these callers
-care enough about this (being rather core-ish).
+On 12/18/18 2:11 AM, kemi wrote:
+> Hi, All
+>   Do we have special reason to keep this patch (316ba5736c9:brd: Mark as non-rotational).
+> which leads to a performance regression when BRD is used as a disk on btrfs.
 
-This patch introduces a wake_q_add_safe() call that serves
-for callers that have already done refcounting and therefore the
-task is 'safe' from wake_q point of view (int that it requires
-reference throughout the entire queue/>wakeup cycle). In the one
-case it has internal reference counting, in the other case it
-consumes the reference counting.
+I really suspect that this is a btrfs issue, as this is just flagging
+what is pretty obvious, that a ramdisk is NOT a rotational drive.
+So whatever btrfs is doing with that information is causing it to
+run slower - this really doesn't make any sense, but there we are.
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
+CC'ing Chris, leaving the report below.
 
-Changes from v1:
- - Simplify some of the interface allowing callers to not worry
-   about the return value of the add operation. This makes caller
-   refcouting two levels/asymm by putting the refcouting in the
-   wake_q's hands, but the benefits are worth it.
+> On 2018/7/10 下午1:27, kemi wrote:
+>> Hi, SeongJae
+>>   Do you have any input for this regression? thanks
+>>
+>> On 2018年06月04日 13:52, kernel test robot wrote:
+>>>
+>>> Greeting,
+>>>
+>>> FYI, we noticed a -11.2% regression of aim7.jobs-per-min due to commit:
+>>>
+>>>
+>>> commit: 316ba5736c9caa5dbcd84085989862d2df57431d ("brd: Mark as non-rotational")
+>>> https://git.kernel.org/cgit/linux/kernel/git/axboe/linux-block.git for-4.18/block
+>>>
+>>> in testcase: aim7
+>>> on test machine: 40 threads Intel(R) Xeon(R) CPU E5-2690 v2 @ 3.00GHz with 384G memory
+>>> with following parameters:
+>>>
+>>> 	disk: 1BRD_48G
+>>> 	fs: btrfs
+>>> 	test: disk_rw
+>>> 	load: 1500
+>>> 	cpufreq_governor: performance
+>>>
+>>> test-description: AIM7 is a traditional UNIX system level benchmark suite which is used to test and measure the performance of multiuser system.
+>>> test-url: https://sourceforge.net/projects/aimbench/files/aim-suite7/
+>>>
+>>>
+>>>
+>>> Details are as below:
+>>> -------------------------------------------------------------------------------------------------->
+>>>
+>>> =========================================================================================
+>>> compiler/cpufreq_governor/disk/fs/kconfig/load/rootfs/tbox_group/test/testcase:
+>>>   gcc-7/performance/1BRD_48G/btrfs/x86_64-rhel-7.2/1500/debian-x86_64-2016-08-31.cgz/lkp-ivb-ep01/disk_rw/aim7
+>>>
+>>> commit: 
+>>>   522a777566 ("block: consolidate struct request timestamp fields")
+>>>   316ba5736c ("brd: Mark as non-rotational")
+>>>
+>>> 522a777566f56696 316ba5736c9caa5dbcd8408598 
+>>> ---------------- -------------------------- 
+>>>          %stddev     %change         %stddev
+>>>              \          |                \  
+>>>      28321           -11.2%      25147        aim7.jobs-per-min
+>>>     318.19           +12.6%     358.23        aim7.time.elapsed_time
+>>>     318.19           +12.6%     358.23        aim7.time.elapsed_time.max
+>>>    1437526 ±  2%     +14.6%    1646849 ±  2%  aim7.time.involuntary_context_switches
+>>>      11986           +14.2%      13691        aim7.time.system_time
+>>>      73.06 ±  2%      -3.6%      70.43        aim7.time.user_time
+>>>    2449470 ±  2%     -25.0%    1837521 ±  4%  aim7.time.voluntary_context_switches
+>>>      20.25 ± 58%   +1681.5%     360.75 ±109%  numa-meminfo.node1.Mlocked
+>>>     456062           -16.3%     381859        softirqs.SCHED
+>>>       9015 ±  7%     -21.3%       7098 ± 22%  meminfo.CmaFree
+>>>      47.50 ± 58%   +1355.8%     691.50 ± 92%  meminfo.Mlocked
+>>>       5.24 ±  3%      -1.2        3.99 ±  2%  mpstat.cpu.idle%
+>>>       0.61 ±  2%      -0.1        0.52 ±  2%  mpstat.cpu.usr%
+>>>      16627           +12.8%      18762 ±  4%  slabinfo.Acpi-State.active_objs
+>>>      16627           +12.9%      18775 ±  4%  slabinfo.Acpi-State.num_objs
+>>>      57.00 ±  2%     +17.5%      67.00        vmstat.procs.r
+>>>      20936           -24.8%      15752 ±  2%  vmstat.system.cs
+>>>      45474            -1.7%      44681        vmstat.system.in
+>>>       6.50 ± 59%   +1157.7%      81.75 ± 75%  numa-vmstat.node0.nr_mlock
+>>>     242870 ±  3%     +13.2%     274913 ±  7%  numa-vmstat.node0.nr_written
+>>>       2278 ±  7%     -22.6%       1763 ± 21%  numa-vmstat.node1.nr_free_cma
+>>>       4.75 ± 58%   +1789.5%      89.75 ±109%  numa-vmstat.node1.nr_mlock
+>>>   88018135 ±  3%     -48.9%   44980457 ±  7%  cpuidle.C1.time
+>>>    1398288 ±  3%     -51.1%     683493 ±  9%  cpuidle.C1.usage
+>>>    3499814 ±  2%     -38.5%    2153158 ±  5%  cpuidle.C1E.time
+>>>      52722 ±  4%     -45.6%      28692 ±  6%  cpuidle.C1E.usage
+>>>    9865857 ±  3%     -40.1%    5905155 ±  5%  cpuidle.C3.time
+>>>      69656 ±  2%     -42.6%      39990 ±  5%  cpuidle.C3.usage
+>>>     590856 ±  2%     -12.3%     517910        cpuidle.C6.usage
+>>>      46160 ±  7%     -53.7%      21372 ± 11%  cpuidle.POLL.time
+>>>       1716 ±  7%     -46.6%     916.25 ± 14%  cpuidle.POLL.usage
+>>>     197656            +4.1%     205732        proc-vmstat.nr_active_file
+>>>     191867            +4.1%     199647        proc-vmstat.nr_dirty
+>>>     509282            +1.6%     517318        proc-vmstat.nr_file_pages
+>>>       2282 ±  8%     -24.4%       1725 ± 22%  proc-vmstat.nr_free_cma
+>>>     357.50           +10.6%     395.25 ±  2%  proc-vmstat.nr_inactive_file
+>>>      11.50 ± 58%   +1397.8%     172.25 ± 93%  proc-vmstat.nr_mlock
+>>>     970355 ±  4%     +14.6%    1111549 ±  8%  proc-vmstat.nr_written
+>>>     197984            +4.1%     206034        proc-vmstat.nr_zone_active_file
+>>>     357.50           +10.6%     395.25 ±  2%  proc-vmstat.nr_zone_inactive_file
+>>>     192282            +4.1%     200126        proc-vmstat.nr_zone_write_pending
+>>>    7901465 ±  3%     -14.0%    6795016 ± 16%  proc-vmstat.pgalloc_movable
+>>>     886101           +10.2%     976329        proc-vmstat.pgfault
+>>>  2.169e+12           +15.2%  2.497e+12        perf-stat.branch-instructions
+>>>       0.41            -0.1        0.35        perf-stat.branch-miss-rate%
+>>>      31.19 ±  2%      +1.6       32.82        perf-stat.cache-miss-rate%
+>>>  9.116e+09            +8.3%  9.869e+09        perf-stat.cache-misses
+>>>  2.924e+10            +2.9%  3.008e+10 ±  2%  perf-stat.cache-references
+>>>    6712739 ±  2%     -15.4%    5678643 ±  2%  perf-stat.context-switches
+>>>       4.02            +2.7%       4.13        perf-stat.cpi
+>>>  3.761e+13           +17.3%  4.413e+13        perf-stat.cpu-cycles
+>>>     606958           -13.7%     523758 ±  2%  perf-stat.cpu-migrations
+>>>  2.476e+12           +13.4%  2.809e+12        perf-stat.dTLB-loads
+>>>       0.18 ±  2%      -0.0        0.16 ±  9%  perf-stat.dTLB-store-miss-rate%
+>>>  1.079e+09 ±  2%      -9.6%  9.755e+08 ±  9%  perf-stat.dTLB-store-misses
+>>>  5.933e+11            +1.6%  6.029e+11        perf-stat.dTLB-stores
+>>>  9.349e+12           +14.2%  1.068e+13        perf-stat.instructions
+>>>      11247 ± 11%     +19.8%      13477 ±  9%  perf-stat.instructions-per-iTLB-miss
+>>>       0.25            -2.6%       0.24        perf-stat.ipc
+>>>     865561           +10.3%     954350        perf-stat.minor-faults
+>>>  2.901e+09 ±  3%      +9.8%  3.186e+09 ±  3%  perf-stat.node-load-misses
+>>>  3.682e+09 ±  3%     +11.0%  4.088e+09 ±  3%  perf-stat.node-loads
+>>>  3.778e+09            +4.8%  3.959e+09 ±  2%  perf-stat.node-store-misses
+>>>  5.079e+09            +6.4%  5.402e+09        perf-stat.node-stores
+>>>     865565           +10.3%     954352        perf-stat.page-faults
+>>>      51.75 ±  5%     -12.5%      45.30 ± 10%  sched_debug.cfs_rq:/.load_avg.avg
+>>>     316.35 ±  3%     +17.2%     370.81 ±  8%  sched_debug.cfs_rq:/.util_est_enqueued.stddev
+>>>      15294 ± 30%    +234.9%      51219 ± 76%  sched_debug.cpu.avg_idle.min
+>>>     299443 ±  3%      -7.3%     277566 ±  5%  sched_debug.cpu.avg_idle.stddev
+>>>       1182 ± 19%     -26.3%     872.02 ± 13%  sched_debug.cpu.nr_load_updates.stddev
+>>>       1.22 ±  8%     +21.7%       1.48 ±  6%  sched_debug.cpu.nr_running.avg
+>>>       2.75 ± 10%     +26.2%       3.47 ±  6%  sched_debug.cpu.nr_running.max
+>>>       0.58 ±  7%     +24.2%       0.73 ±  6%  sched_debug.cpu.nr_running.stddev
+>>>      77148           -20.0%      61702 ±  7%  sched_debug.cpu.nr_switches.avg
+>>>      70024           -24.8%      52647 ±  8%  sched_debug.cpu.nr_switches.min
+>>>       6662 ±  6%     +61.9%      10789 ± 24%  sched_debug.cpu.nr_switches.stddev
+>>>      80.45 ± 18%     -19.1%      65.05 ±  6%  sched_debug.cpu.nr_uninterruptible.stddev
+>>>      76819           -19.3%      62008 ±  8%  sched_debug.cpu.sched_count.avg
+>>>      70616           -23.5%      53996 ±  8%  sched_debug.cpu.sched_count.min
+>>>       5494 ±  9%     +85.3%      10179 ± 26%  sched_debug.cpu.sched_count.stddev
+>>>      16936           -52.9%       7975 ±  9%  sched_debug.cpu.sched_goidle.avg
+>>>      19281           -49.9%       9666 ±  7%  sched_debug.cpu.sched_goidle.max
+>>>      15417           -54.8%       6962 ± 10%  sched_debug.cpu.sched_goidle.min
+>>>     875.00 ±  6%     -35.0%     569.09 ± 13%  sched_debug.cpu.sched_goidle.stddev
+>>>      40332           -23.5%      30851 ±  7%  sched_debug.cpu.ttwu_count.avg
+>>>      35074           -26.3%      25833 ±  6%  sched_debug.cpu.ttwu_count.min
+>>>       3239 ±  8%     +67.4%       5422 ± 28%  sched_debug.cpu.ttwu_count.stddev
+>>>       5232           +27.4%       6665 ± 13%  sched_debug.cpu.ttwu_local.avg
+>>>      15877 ± 12%     +77.5%      28184 ± 27%  sched_debug.cpu.ttwu_local.max
+>>>       2530 ± 10%     +95.9%       4956 ± 27%  sched_debug.cpu.ttwu_local.stddev
+>>>       2.52 ±  7%      -0.6        1.95 ±  3%  perf-profile.calltrace.cycles-pp.btrfs_dirty_pages.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write.vfs_write
+>>>       1.48 ± 12%      -0.5        1.01 ±  4%  perf-profile.calltrace.cycles-pp.btrfs_get_extent.btrfs_dirty_pages.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write
+>>>       1.18 ± 16%      -0.4        0.76 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_search_slot.btrfs_lookup_file_extent.btrfs_get_extent.btrfs_dirty_pages.__btrfs_buffered_write
+>>>       1.18 ± 16%      -0.4        0.76 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_lookup_file_extent.btrfs_get_extent.btrfs_dirty_pages.__btrfs_buffered_write.btrfs_file_write_iter
+>>>       0.90 ± 17%      -0.3        0.56 ±  4%  perf-profile.calltrace.cycles-pp.__dentry_kill.dentry_kill.dput.__fput.task_work_run
+>>>       0.90 ± 17%      -0.3        0.56 ±  4%  perf-profile.calltrace.cycles-pp.evict.__dentry_kill.dentry_kill.dput.__fput
+>>>       0.90 ± 17%      -0.3        0.56 ±  4%  perf-profile.calltrace.cycles-pp.dentry_kill.dput.__fput.task_work_run.exit_to_usermode_loop
+>>>       0.90 ± 18%      -0.3        0.56 ±  4%  perf-profile.calltrace.cycles-pp.btrfs_evict_inode.evict.__dentry_kill.dentry_kill.dput
+>>>       0.90 ± 17%      -0.3        0.57 ±  5%  perf-profile.calltrace.cycles-pp.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>       0.90 ± 17%      -0.3        0.57 ±  5%  perf-profile.calltrace.cycles-pp.task_work_run.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>       0.90 ± 17%      -0.3        0.57 ±  5%  perf-profile.calltrace.cycles-pp.__fput.task_work_run.exit_to_usermode_loop.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>       0.90 ± 17%      -0.3        0.57 ±  5%  perf-profile.calltrace.cycles-pp.dput.__fput.task_work_run.exit_to_usermode_loop.do_syscall_64
+>>>       1.69            -0.1        1.54 ±  2%  perf-profile.calltrace.cycles-pp.lock_and_cleanup_extent_if_need.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write.vfs_write
+>>>       0.87 ±  4%      -0.1        0.76 ±  2%  perf-profile.calltrace.cycles-pp.__clear_extent_bit.clear_extent_bit.lock_and_cleanup_extent_if_need.__btrfs_buffered_write.btrfs_file_write_iter
+>>>       0.87 ±  4%      -0.1        0.76 ±  2%  perf-profile.calltrace.cycles-pp.clear_extent_bit.lock_and_cleanup_extent_if_need.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write
+>>>       0.71 ±  6%      -0.1        0.61 ±  2%  perf-profile.calltrace.cycles-pp.clear_state_bit.__clear_extent_bit.clear_extent_bit.lock_and_cleanup_extent_if_need.__btrfs_buffered_write
+>>>       0.69 ±  6%      -0.1        0.60 ±  2%  perf-profile.calltrace.cycles-pp.btrfs_clear_bit_hook.clear_state_bit.__clear_extent_bit.clear_extent_bit.lock_and_cleanup_extent_if_need
+>>>      96.77            +0.6       97.33        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe
+>>>       0.00            +0.6        0.56 ±  3%  perf-profile.calltrace.cycles-pp.can_overcommit.reserve_metadata_bytes.btrfs_delalloc_reserve_metadata.__btrfs_buffered_write.btrfs_file_write_iter
+>>>      96.72            +0.6       97.29        perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>      43.13            +0.8       43.91        perf-profile.calltrace.cycles-pp.btrfs_inode_rsv_release.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write.vfs_write
+>>>      42.37            +0.8       43.16        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.block_rsv_release_bytes.btrfs_inode_rsv_release.__btrfs_buffered_write
+>>>      43.11            +0.8       43.89        perf-profile.calltrace.cycles-pp.block_rsv_release_bytes.btrfs_inode_rsv_release.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write
+>>>      42.96            +0.8       43.77        perf-profile.calltrace.cycles-pp._raw_spin_lock.block_rsv_release_bytes.btrfs_inode_rsv_release.__btrfs_buffered_write.btrfs_file_write_iter
+>>>      95.28            +0.9       96.23        perf-profile.calltrace.cycles-pp.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>      95.22            +1.0       96.18        perf-profile.calltrace.cycles-pp.vfs_write.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>      94.88            +1.0       95.85        perf-profile.calltrace.cycles-pp.__vfs_write.vfs_write.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>>>      94.83            +1.0       95.80        perf-profile.calltrace.cycles-pp.btrfs_file_write_iter.__vfs_write.vfs_write.ksys_write.do_syscall_64
+>>>      94.51            +1.0       95.50        perf-profile.calltrace.cycles-pp.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write.vfs_write.ksys_write
+>>>      42.44            +1.1       43.52        perf-profile.calltrace.cycles-pp._raw_spin_lock.reserve_metadata_bytes.btrfs_delalloc_reserve_metadata.__btrfs_buffered_write.btrfs_file_write_iter
+>>>      42.09            +1.1       43.18        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.reserve_metadata_bytes.btrfs_delalloc_reserve_metadata.__btrfs_buffered_write
+>>>      44.07            +1.2       45.29        perf-profile.calltrace.cycles-pp.btrfs_delalloc_reserve_metadata.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write.vfs_write
+>>>      43.42            +1.3       44.69        perf-profile.calltrace.cycles-pp.reserve_metadata_bytes.btrfs_delalloc_reserve_metadata.__btrfs_buffered_write.btrfs_file_write_iter.__vfs_write
+>>>       2.06 ± 18%      -0.9        1.21 ±  6%  perf-profile.children.cycles-pp.btrfs_search_slot
+>>>       2.54 ±  7%      -0.6        1.96 ±  3%  perf-profile.children.cycles-pp.btrfs_dirty_pages
+>>>       1.05 ± 24%      -0.5        0.52 ±  9%  perf-profile.children.cycles-pp._raw_spin_lock_irqsave
+>>>       1.50 ± 12%      -0.5        1.03 ±  4%  perf-profile.children.cycles-pp.btrfs_get_extent
+>>>       1.22 ± 15%      -0.4        0.79 ±  8%  perf-profile.children.cycles-pp.btrfs_lookup_file_extent
+>>>       0.81 ±  5%      -0.4        0.41 ±  6%  perf-profile.children.cycles-pp.btrfs_calc_reclaim_metadata_size
+>>>       0.74 ± 24%      -0.4        0.35 ±  9%  perf-profile.children.cycles-pp.btrfs_lock_root_node
+>>>       0.74 ± 24%      -0.4        0.35 ±  9%  perf-profile.children.cycles-pp.btrfs_tree_lock
+>>>       0.90 ± 17%      -0.3        0.56 ±  4%  perf-profile.children.cycles-pp.__dentry_kill
+>>>       0.90 ± 17%      -0.3        0.56 ±  4%  perf-profile.children.cycles-pp.evict
+>>>       0.90 ± 17%      -0.3        0.56 ±  4%  perf-profile.children.cycles-pp.dentry_kill
+>>>       0.90 ± 18%      -0.3        0.56 ±  4%  perf-profile.children.cycles-pp.btrfs_evict_inode
+>>>       0.91 ± 18%      -0.3        0.57 ±  4%  perf-profile.children.cycles-pp.exit_to_usermode_loop
+>>>       0.52 ± 20%      -0.3        0.18 ± 14%  perf-profile.children.cycles-pp.do_idle
+>>>       0.90 ± 17%      -0.3        0.57 ±  5%  perf-profile.children.cycles-pp.task_work_run
+>>>       0.90 ± 17%      -0.3        0.57 ±  5%  perf-profile.children.cycles-pp.__fput
+>>>       0.90 ± 18%      -0.3        0.57 ±  4%  perf-profile.children.cycles-pp.dput
+>>>       0.51 ± 20%      -0.3        0.18 ± 14%  perf-profile.children.cycles-pp.secondary_startup_64
+>>>       0.51 ± 20%      -0.3        0.18 ± 14%  perf-profile.children.cycles-pp.cpu_startup_entry
+>>>       0.50 ± 21%      -0.3        0.17 ± 16%  perf-profile.children.cycles-pp.start_secondary
+>>>       0.47 ± 20%      -0.3        0.16 ± 13%  perf-profile.children.cycles-pp.cpuidle_enter_state
+>>>       0.47 ± 19%      -0.3        0.16 ± 13%  perf-profile.children.cycles-pp.intel_idle
+>>>       0.61 ± 20%      -0.3        0.36 ± 11%  perf-profile.children.cycles-pp.btrfs_tree_read_lock
+>>>       0.47 ± 26%      -0.3        0.21 ± 10%  perf-profile.children.cycles-pp.prepare_to_wait_event
+>>>       0.64 ± 18%      -0.2        0.39 ±  9%  perf-profile.children.cycles-pp.btrfs_read_lock_root_node
+>>>       0.40 ± 22%      -0.2        0.21 ±  5%  perf-profile.children.cycles-pp.btrfs_clear_path_blocking
+>>>       0.38 ± 23%      -0.2        0.19 ± 13%  perf-profile.children.cycles-pp.finish_wait
+>>>       1.51 ±  3%      -0.2        1.35 ±  2%  perf-profile.children.cycles-pp.__clear_extent_bit
+>>>       1.71            -0.1        1.56 ±  2%  perf-profile.children.cycles-pp.lock_and_cleanup_extent_if_need
+>>>       0.29 ± 25%      -0.1        0.15 ± 10%  perf-profile.children.cycles-pp.btrfs_orphan_del
+>>>       0.27 ± 27%      -0.1        0.12 ±  8%  perf-profile.children.cycles-pp.btrfs_del_orphan_item
+>>>       0.33 ± 18%      -0.1        0.19 ±  9%  perf-profile.children.cycles-pp.queued_read_lock_slowpath
+>>>       0.33 ± 19%      -0.1        0.20 ±  4%  perf-profile.children.cycles-pp.__wake_up_common_lock
+>>>       0.45 ± 15%      -0.1        0.34 ±  2%  perf-profile.children.cycles-pp.btrfs_alloc_data_chunk_ondemand
+>>>       0.47 ± 16%      -0.1        0.36 ±  4%  perf-profile.children.cycles-pp.btrfs_check_data_free_space
+>>>       0.91 ±  4%      -0.1        0.81 ±  3%  perf-profile.children.cycles-pp.clear_extent_bit
+>>>       1.07 ±  5%      -0.1        0.97        perf-profile.children.cycles-pp.__set_extent_bit
+>>>       0.77 ±  6%      -0.1        0.69 ±  3%  perf-profile.children.cycles-pp.btrfs_clear_bit_hook
+>>>       0.17 ± 20%      -0.1        0.08 ± 10%  perf-profile.children.cycles-pp.queued_write_lock_slowpath
+>>>       0.16 ± 22%      -0.1        0.08 ± 24%  perf-profile.children.cycles-pp.btrfs_lookup_inode
+>>>       0.21 ± 17%      -0.1        0.14 ± 19%  perf-profile.children.cycles-pp.__btrfs_update_delayed_inode
+>>>       0.26 ± 12%      -0.1        0.18 ± 13%  perf-profile.children.cycles-pp.btrfs_async_run_delayed_root
+>>>       0.52 ±  5%      -0.1        0.45        perf-profile.children.cycles-pp.set_extent_bit
+>>>       0.45 ±  5%      -0.1        0.40 ±  3%  perf-profile.children.cycles-pp.alloc_extent_state
+>>>       0.11 ± 17%      -0.1        0.06 ± 11%  perf-profile.children.cycles-pp.btrfs_clear_lock_blocking_rw
+>>>       0.28 ±  9%      -0.0        0.23 ±  3%  perf-profile.children.cycles-pp.btrfs_drop_pages
+>>>       0.07            -0.0        0.03 ±100%  perf-profile.children.cycles-pp.btrfs_set_lock_blocking_rw
+>>>       0.39 ±  3%      -0.0        0.34 ±  3%  perf-profile.children.cycles-pp.get_alloc_profile
+>>>       0.33 ±  7%      -0.0        0.29        perf-profile.children.cycles-pp.btrfs_set_extent_delalloc
+>>>       0.38 ±  2%      -0.0        0.35 ±  4%  perf-profile.children.cycles-pp.__set_page_dirty_nobuffers
+>>>       0.49 ±  3%      -0.0        0.46 ±  3%  perf-profile.children.cycles-pp.pagecache_get_page
+>>>       0.18 ±  4%      -0.0        0.15 ±  2%  perf-profile.children.cycles-pp.truncate_inode_pages_range
+>>>       0.08 ±  5%      -0.0        0.05 ±  9%  perf-profile.children.cycles-pp.btrfs_set_path_blocking
+>>>       0.08 ±  6%      -0.0        0.06 ±  6%  perf-profile.children.cycles-pp.truncate_cleanup_page
+>>>       0.80 ±  4%      +0.2        0.95 ±  2%  perf-profile.children.cycles-pp.can_overcommit
+>>>      96.84            +0.5       97.37        perf-profile.children.cycles-pp.entry_SYSCALL_64_after_hwframe
+>>>      96.80            +0.5       97.35        perf-profile.children.cycles-pp.do_syscall_64
+>>>      43.34            +0.8       44.17        perf-profile.children.cycles-pp.btrfs_inode_rsv_release
+>>>      43.49            +0.8       44.32        perf-profile.children.cycles-pp.block_rsv_release_bytes
+>>>      95.32            +0.9       96.26        perf-profile.children.cycles-pp.ksys_write
+>>>      95.26            +0.9       96.20        perf-profile.children.cycles-pp.vfs_write
+>>>      94.91            +1.0       95.88        perf-profile.children.cycles-pp.__vfs_write
+>>>      94.84            +1.0       95.81        perf-profile.children.cycles-pp.btrfs_file_write_iter
+>>>      94.55            +1.0       95.55        perf-profile.children.cycles-pp.__btrfs_buffered_write
+>>>      86.68            +1.0       87.70        perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
+>>>      44.08            +1.2       45.31        perf-profile.children.cycles-pp.btrfs_delalloc_reserve_metadata
+>>>      43.49            +1.3       44.77        perf-profile.children.cycles-pp.reserve_metadata_bytes
+>>>      87.59            +1.8       89.38        perf-profile.children.cycles-pp._raw_spin_lock
+>>>       0.47 ± 19%      -0.3        0.16 ± 13%  perf-profile.self.cycles-pp.intel_idle
+>>>       0.33 ±  6%      -0.1        0.18 ±  6%  perf-profile.self.cycles-pp.get_alloc_profile
+>>>       0.27 ±  8%      -0.0        0.22 ±  4%  perf-profile.self.cycles-pp.btrfs_drop_pages
+>>>       0.07            -0.0        0.03 ±100%  perf-profile.self.cycles-pp.btrfs_set_lock_blocking_rw
+>>>       0.14 ±  5%      -0.0        0.12 ±  6%  perf-profile.self.cycles-pp.clear_page_dirty_for_io
+>>>       0.09 ±  5%      -0.0        0.07 ± 10%  perf-profile.self.cycles-pp._raw_spin_lock_irqsave
+>>>       0.17 ±  4%      +0.1        0.23 ±  3%  perf-profile.self.cycles-pp.reserve_metadata_bytes
+>>>       0.31 ±  7%      +0.1        0.45 ±  2%  perf-profile.self.cycles-pp.can_overcommit
+>>>      86.35            +1.0       87.39        perf-profile.self.cycles-pp.native_queued_spin_lock_slowpath
+>>>
+>>>
+>>>                                                                                 
+>>>                                   aim7.jobs-per-min                             
+>>>                                                                                 
+>>>   29000 +-+-----------------------------------------------------------------+   
+>>>   28500 +-+               +..   +                           +..+..  +..     |   
+>>>         |..+    +.+..+.. :    .. +  .+.+..+..+.+.. .+..+.. +       +   +    |   
+>>>   28000 +-+ + ..         :   +    +.              +       +       +         |   
+>>>   27500 +-+  +          +                                                   |   
+>>>         |                                                                   |   
+>>>   27000 +-+                                                                 |   
+>>>   26500 +-+                                                                 |   
+>>>   26000 +-+                                                                 |   
+>>>         |                                                                   |   
+>>>   25500 +-+               O       O                               O O  O    |   
+>>>   25000 +-+                     O    O         O  O O  O  O O               O   
+>>>         |    O  O O     O    O         O                       O         O  |   
+>>>   24500 O-+O         O                    O  O                              |   
+>>>   24000 +-+-----------------------------------------------------------------+   
+>>>                                                                                 
+>>>                                                                                 
+>>> [*] bisect-good sample
+>>> [O] bisect-bad  sample
+>>>
+>>>
+>>> Disclaimer:
+>>> Results have been estimated based on internal Intel analysis and are provided
+>>> for informational purposes only. Any difference in system hardware or software
+>>> design or configuration may affect actual performance.
+>>>
+>>>
+>>> Thanks,
+>>> Xiaolong
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> LKP mailing list
+>>> LKP@lists.01.org
+>>> https://lists.01.org/mailman/listinfo/lkp
+>>>
 
-Applies on peterz' queue tree.
 
- include/linux/sched/wake_q.h |  4 +--
- kernel/futex.c               |  3 +--
- kernel/locking/rwsem-xadd.c  |  4 +--
- kernel/sched/core.c          | 62 ++++++++++++++++++++++++++++++++------------
- 4 files changed, 50 insertions(+), 23 deletions(-)
-
-diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
-index 545f37138057..ad826d2a4557 100644
---- a/include/linux/sched/wake_q.h
-+++ b/include/linux/sched/wake_q.h
-@@ -51,8 +51,8 @@ static inline void wake_q_init(struct wake_q_head *head)
- 	head->lastp = &head->first;
- }
- 
--extern void wake_q_add(struct wake_q_head *head,
--		       struct task_struct *task);
-+extern void wake_q_add(struct wake_q_head *head, struct task_struct *task);
-+extern void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task);
- extern void wake_up_q(struct wake_q_head *head);
- 
- #endif /* _LINUX_SCHED_WAKE_Q_H */
-diff --git a/kernel/futex.c b/kernel/futex.c
-index d14971f6ed3d..6218d98f649b 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1402,8 +1402,7 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
- 	 * Queue the task for later wakeup for after we've released
- 	 * the hb->lock. wake_q_add() grabs reference to p.
- 	 */
--	wake_q_add(wake_q, p);
--	put_task_struct(p);
-+	wake_q_add_safe(wake_q, p);
- }
- 
- /*
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 50d9af615dc4..fbe96341beee 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -211,9 +211,7 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 		 * Ensure issuing the wakeup (either by us or someone else)
- 		 * after setting the reader waiter to nil.
- 		 */
--		wake_q_add(wake_q, tsk);
--		/* wake_q_add() already take the task ref */
--		put_task_struct(tsk);
-+		wake_q_add_safe(wake_q, tsk);
- 	}
- 
- 	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d740d7a3608d..ef85c6ad4caa 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -396,19 +396,7 @@ static bool set_nr_if_polling(struct task_struct *p)
- #endif
- #endif
- 
--/**
-- * wake_q_add() - queue a wakeup for 'later' waking.
-- * @head: the wake_q_head to add @task to
-- * @task: the task to queue for 'later' wakeup
-- *
-- * Queue a task for later wakeup, most likely by the wake_up_q() call in the
-- * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-- * instantly.
-- *
-- * This function must be used as-if it were wake_up_process(); IOW the task
-- * must be ready to be woken at this location.
-- */
--void wake_q_add(struct wake_q_head *head, struct task_struct *task)
-+static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
- {
- 	struct wake_q_node *node = &task->wake_q;
- 
-@@ -422,15 +410,57 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
- 	 */
- 	smp_mb__before_atomic();
- 	if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
--		return;
--
--	get_task_struct(task);
-+		return false;
- 
- 	/*
- 	 * The head is context local, there can be no concurrency.
- 	 */
- 	*head->lastp = node;
- 	head->lastp = &node->next;
-+	return true;
-+}
-+
-+/**
-+ * wake_q_add() - queue a wakeup for 'later' waking.
-+ * @head: the wake_q_head to add @task to
-+ * @task: the task to queue for 'later' wakeup
-+ *
-+ * Queue a task for later wakeup, most likely by the wake_up_q() call in the
-+ * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-+ * instantly.
-+ *
-+ * This function must be used as-if it were wake_up_process(); IOW the task
-+ * must be ready to be woken at this location.
-+ *
-+ * The @task will be refcounted upon a
-+ */
-+void wake_q_add(struct wake_q_head *head, struct task_struct *task)
-+{
-+	if (__wake_q_add(head, task))
-+		get_task_struct(task);
-+}
-+
-+/**
-+ * wake_q_add_safe() - queue a wakeup for 'later' waking.
-+ * @head: the wake_q_head to add @task to
-+ * @task: the task to queue for 'later' wakeup
-+ *
-+ * Queue a task for later wakeup, most likely by the wake_up_q() call in the
-+ * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-+ * instantly.
-+ *
-+ * This function must be used as-if it were wake_up_process(); IOW the task
-+ * must be ready to be woken at this location.
-+ *
-+ * This function is essentially a task-safe equivalent to wake_q_add(). Callers
-+ * that already hold reference to @task can call the 'safe' version and trust
-+ * wake_q to do the right thing depending whether or not the @task is already
-+ * queued for wakeup.
-+ */
-+void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
-+{
-+	if (!__wake_q_add(head, task))
-+		get_task_struct(task);
- }
- 
- void wake_up_q(struct wake_q_head *head)
 -- 
-2.16.4
+Jens Axboe
 
