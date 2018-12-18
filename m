@@ -2,94 +2,116 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E5CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AACC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A23218A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:10:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72B1B2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:14:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="OxpD0mQe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbeLRXKE (ORCPT
+        id S1727970AbeLRXOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 18:10:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60519 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbeLRXKD (ORCPT
+        Tue, 18 Dec 2018 18:14:49 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35465 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727417AbeLRXOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 18:10:03 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIN9qQi3003785
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 15:09:52 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIN9pEg3003782;
-        Tue, 18 Dec 2018 15:09:51 -0800
-Date:   Tue, 18 Dec 2018 15:09:51 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-72a8f089c382c078f8c7c1c759cb726de80d4284@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        mingo@kernel.org, bp@suse.de, hpa@zytor.com, tglx@linutronix.de,
-        tony.luck@intel.com
-Reply-To: tglx@linutronix.de, tony.luck@intel.com, hpa@zytor.com,
-          bp@suse.de, mingo@kernel.org, linux-edac@vger.kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20181218182546.GA21386@zn.tnic>
-References: <20181218182546.GA21386@zn.tnic>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/mce: Restore MCE injector's module name
-Git-Commit-ID: 72a8f089c382c078f8c7c1c759cb726de80d4284
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 18:14:49 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v6so142753oif.2;
+        Tue, 18 Dec 2018 15:14:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LM+SCpKm1SU1QFp2bGgNH/8e9PzJQO0K0O14ThmeN3w=;
+        b=OxpD0mQeuQeGBYU0leEKzPXqYmm4bbtVOTuO+KqCGT1rsd9uGsQXwQAY/VJdiRT46w
+         jMa/7G3gHNKgzX+TLge4JHMpygzlsKC7RgAtUo8gcP2C5fM6h4lKNv8ezVbyJHeh1qOR
+         zP//bDkR3/jxxGAD6wqgFJFI7CCJVC0CWfb+B7eBduNixQcyphOtZnDXXlSoWC9g8LoM
+         G51s88dNk2Uv0rVizGY0hdoO4tE/PhTvw651rYL5PqBezW7fTylEi7anV1dqRbTR1ttu
+         ajnNsxOjDWhMHGXm3o6iqmAWXM8SXrU6QNbOP/elQtYPxU3F2wT1wbeG1t1mmE0Mfu2x
+         /qZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LM+SCpKm1SU1QFp2bGgNH/8e9PzJQO0K0O14ThmeN3w=;
+        b=kfTcnJngHKDm/+c2Fl7s07wqsE3QHIxW2bh1AjB9E/BTr4WBvJ3w4Ukh/oy1GMo7x4
+         bzFfRL/8HGZyy2N+fS43W3YCQ2rhAqAb6++hmaOzpynvJRtyxqjsGYq8DsCUE9OkTvgh
+         52e/+ZNbXpIr2r5fePHxz1MyuM6/rkh/WtN7aNd2sFu36wRyle+Zyis2hPGP2wNg4h9/
+         y168ai1mYZVRaFdPtQVhcFpxDxNv0Na3+1oPiW3zVQed7ghTYJsYC0hBZ/9FPrcLuGEg
+         gV+rUsZogDkdBIQLUHpNmsIXhZT279nP+LwJlzjUxUkZdWXPdu+2ExGHdF/FzWkfRmqR
+         /IVg==
+X-Gm-Message-State: AA+aEWZR1nBKUNIZPygjKDBRd2JVuyAgprp1H3MtcvXC4S9mK7+56XHJ
+        /vFI2gXYq1vSp7ObMacEMKqhTwPFqEeRYa7tNc8=
+X-Google-Smtp-Source: AFSGD/UYqTj4MR4JR5pzJ+fkoG2pt0w0GjynKLFCNxcIFpA7U8r/WDYWTwbT1b8Rmvj11JB06oFrZ/iSCeCNJcYWpvY=
+X-Received: by 2002:aca:58d7:: with SMTP id m206mr9368690oib.140.1545174887971;
+ Tue, 18 Dec 2018 15:14:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <1545120286-129258-1-git-send-email-hanjie.lin@amlogic.com> <1545120286-129258-2-git-send-email-hanjie.lin@amlogic.com>
+In-Reply-To: <1545120286-129258-2-git-send-email-hanjie.lin@amlogic.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 19 Dec 2018 00:14:37 +0100
+Message-ID: <CAFBinCD1x7jcJJx78yNx87MOmKQ2HuSBeRpDRQE0hyNCwm1JAg@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] dt-bindings: PCI: meson: add DT bindings for
+ Amlogic Meson PCIe controller
+To:     Rob Herring <robh@kernel.org>, Hanjie Lin <hanjie.lin@amlogic.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yue Wang <yue.wang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  72a8f089c382c078f8c7c1c759cb726de80d4284
-Gitweb:     https://git.kernel.org/tip/72a8f089c382c078f8c7c1c759cb726de80d4284
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Tue, 18 Dec 2018 19:25:46 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 19 Dec 2018 00:04:36 +0100
+Hi Rob, Hi Hanjie,
 
-x86/mce: Restore MCE injector's module name
+(sorry for being late with my question)
 
-It was mce-inject.ko but it turned into inject.ko since the containing
-source file got renamed. Restore it.
+On Tue, Dec 18, 2018 at 9:05 AM Hanjie Lin <hanjie.lin@amlogic.com> wrote:
+[...]
+> +- reg-names: Must be
+> +       - "elbi"        External local bus interface registers
+> +       - "cfg"         Meson specific registers
+> +       - "phy"         Meson PCIE PHY registers
+I have learned that there are two PHY register designs:
+- AXG only has a PCIe PHY
+- G12A has a PHY which supports PCIe and USB 3.0. The PCIe part of
+this PHY design is compatible with AXG, but this design also supports
+a USB 3.0 port (it's an exclusive choice: either PCIe *or* USB 3.0)
 
-Fixes: 21afaf181362 ("x86/mce: Streamline MCE subsystem's naming")
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20181218182546.GA21386@zn.tnic
----
- arch/x86/kernel/cpu/mce/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The PCIe controller itself is identical on both, AXG and G12A.
+This patch adds support for the AXG PCIe controller and PHY within one
+device-tree node.
 
-diff --git a/arch/x86/kernel/cpu/mce/Makefile b/arch/x86/kernel/cpu/mce/Makefile
-index 765759765ab7..9f020c994154 100644
---- a/arch/x86/kernel/cpu/mce/Makefile
-+++ b/arch/x86/kernel/cpu/mce/Makefile
-@@ -5,7 +5,9 @@ obj-$(CONFIG_X86_ANCIENT_MCE)	+= winchip.o p5.o
- obj-$(CONFIG_X86_MCE_INTEL)	+= intel.o
- obj-$(CONFIG_X86_MCE_AMD)	+= amd.o
- obj-$(CONFIG_X86_MCE_THRESHOLD) += threshold.o
--obj-$(CONFIG_X86_MCE_INJECT)	+= inject.o
-+
-+mce-inject-y			:= inject.o
-+obj-$(CONFIG_X86_MCE_INJECT)	+= mce-inject.o
- 
- obj-$(CONFIG_X86_THERMAL_VECTOR) += therm_throt.o
- 
+For G12A I propose to add a separate "phys" property with a phandle to
+the "combo" PCIe and USB3.0 PHY - this can be part of a separate patch
+though.
+I would like to know whether it's OK that for AXG the PCIe PHY is
+described in the same device-tree node as the PCIe controller (in
+other words: we're not using a "phys" property here)?
+
+
+Kind Regards
+Martin
