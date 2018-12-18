@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846CCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7518DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB63217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA2C217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:19:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbeLROSd (ORCPT
+        id S1726824AbeLROTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:18:33 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55061 "EHLO
+        Tue, 18 Dec 2018 09:19:44 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50093 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeLROSc (ORCPT
+        with ESMTP id S1726469AbeLROTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:18:32 -0500
+        Tue, 18 Dec 2018 09:19:43 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEICME2855344
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEJMEZ2855409
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:18:12 -0800
+        Tue, 18 Dec 2018 06:19:22 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEICUh2855341;
-        Tue, 18 Dec 2018 06:18:12 -0800
-Date:   Tue, 18 Dec 2018 06:18:12 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEJMi22855406;
+        Tue, 18 Dec 2018 06:19:22 -0800
+Date:   Tue, 18 Dec 2018 06:19:22 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-o72pyiwt05f3p2juprwmz2jo@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, peterz@infradead.org, acme@redhat.com,
-        davem@davemloft.net, namhyung@kernel.org, jolsa@kernel.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-          namhyung@kernel.org, davem@davemloft.net, acme@redhat.com,
-          hpa@zytor.com, linux-kernel@vger.kernel.org
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-7d0f4fefc492498a180da8fd5c9ebe11dc768c83@git.kernel.org>
+Cc:     acme@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        mathieu.poirier@linaro.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org,
+        mingo@kernel.org
+Reply-To: namhyung@kernel.org, acme@redhat.com,
+          alexander.shishkin@linux.intel.com, peterz@infradead.org,
+          hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          jolsa@redhat.com, tglx@linutronix.de, mathieu.poirier@linaro.org
+In-Reply-To: <1543955944-10042-3-git-send-email-mathieu.poirier@linaro.org>
+References: <1543955944-10042-3-git-send-email-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Move perf_top__reset_sample_counters() to
- after counts display
-Git-Commit-ID: 8aa5c8eddcdd055c29a4c30df2587104c07c7c2d
+Subject: [tip:perf/core] perf cs-etm: Add support for ETMv3 trace decoding
+Git-Commit-ID: 7d0f4fefc492498a180da8fd5c9ebe11dc768c83
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,80 +58,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181218141812.lpbKblSMp9s6XwL5TbX-G28cPtrpyoV9Wh8lzYWX2Uo@z>
 
-Commit-ID:  8aa5c8eddcdd055c29a4c30df2587104c07c7c2d
-Gitweb:     https://git.kernel.org/tip/8aa5c8eddcdd055c29a4c30df2587104c07c7c2d
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Tue, 13 Nov 2018 11:15:34 +0100
+Commit-ID:  7d0f4fefc492498a180da8fd5c9ebe11dc768c83
+Gitweb:     https://git.kernel.org/tip/7d0f4fefc492498a180da8fd5c9ebe11dc768c83
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Tue, 4 Dec 2018 13:39:03 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:58:47 -0300
+CommitDate: Mon, 17 Dec 2018 14:58:59 -0300
 
-perf top: Move perf_top__reset_sample_counters() to after counts display
+perf cs-etm: Add support for ETMv3 trace decoding
 
-Move the perf_top__reset_sample_counters() call to right after we
-display the counters so we can see the updated numbers for longer.
+Add support for the creation of packet printer and decoder for the ETMv3
+trace architecture.  That way traces generated by tracers adhering to
+that trace protocol can be handled properly by the perf infrastructure.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: David S. Miller <davem@davemloft.net>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-o72pyiwt05f3p2juprwmz2jo@git.kernel.org
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1543955944-10042-3-git-send-email-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c       | 4 ----
- tools/perf/ui/browsers/hists.c | 3 +++
- tools/perf/util/top.c          | 1 +
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index f22c531be366..fe3ecfb2e64b 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -273,8 +273,6 @@ static void perf_top__print_sym_table(struct perf_top *top)
- 	perf_top__header_snprintf(top, bf, sizeof(bf));
- 	printf("%s\n", bf);
- 
--	perf_top__reset_sample_counters(top);
--
- 	printf("%-*.*s\n", win_width, win_width, graph_dotted_line);
- 
- 	if (!top->record_opts.overwrite &&
-@@ -573,8 +571,6 @@ static void perf_top__sort_new_samples(void *arg)
- 
- 	if (t->lost || t->drop)
- 		pr_warning("Too slow to read ring buffer (change period (-c/-F) or limit CPUs (-C)\n");
--
--	perf_top__reset_sample_counters(t);
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 5efb616bd609..952d1f43f3fa 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -116,6 +116,19 @@ int cs_etm_decoder__get_packet(struct cs_etm_decoder *decoder,
+ 	return 1;
  }
  
- static void stop_top(void)
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 36b262c49f51..ffac1d54a3d4 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2229,8 +2229,11 @@ static int hists_browser__scnprintf_title(struct hist_browser *browser, char *bf
- 
- 		if (top->zero)
- 			printed += scnprintf(bf + printed, size - printed, " [z]");
++static int cs_etm_decoder__gen_etmv3_config(struct cs_etm_trace_params *params,
++					    ocsd_etmv3_cfg *config)
++{
++	config->reg_idr = params->etmv3.reg_idr;
++	config->reg_ctrl = params->etmv3.reg_ctrl;
++	config->reg_ccer = params->etmv3.reg_ccer;
++	config->reg_trc_id = params->etmv3.reg_trc_id;
++	config->arch_ver = ARCH_V7;
++	config->core_prof = profile_CortexA;
 +
-+		perf_top__reset_sample_counters(top);
- 	}
- 
++	return 0;
++}
 +
- 	return printed;
- }
+ static void cs_etm_decoder__gen_etmv4_config(struct cs_etm_trace_params *params,
+ 					     ocsd_etmv4_cfg *config)
+ {
+@@ -237,10 +250,16 @@ cs_etm_decoder__create_etm_packet_printer(struct cs_etm_trace_params *t_params,
+ 					  struct cs_etm_decoder *decoder)
+ {
+ 	const char *decoder_name;
++	ocsd_etmv3_cfg config_etmv3;
+ 	ocsd_etmv4_cfg trace_config_etmv4;
+ 	void *trace_config;
  
-diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
-index 31a8dee9af69..4c8da8c4435f 100644
---- a/tools/perf/util/top.c
-+++ b/tools/perf/util/top.c
-@@ -107,6 +107,7 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
- 					top->evlist->cpus->nr > 1 ? "s" : "");
- 	}
+ 	switch (t_params->protocol) {
++	case CS_ETM_PROTO_ETMV3:
++		cs_etm_decoder__gen_etmv3_config(t_params, &config_etmv3);
++		decoder_name = OCSD_BUILTIN_DCD_ETMV3;
++		trace_config = &config_etmv3;
++		break;
+ 	case CS_ETM_PROTO_ETMV4i:
+ 		cs_etm_decoder__gen_etmv4_config(t_params, &trace_config_etmv4);
+ 		decoder_name = OCSD_BUILTIN_DCD_ETMV4I;
+@@ -427,11 +446,17 @@ static int cs_etm_decoder__create_etm_packet_decoder(
+ 					struct cs_etm_decoder *decoder)
+ {
+ 	const char *decoder_name;
++	ocsd_etmv3_cfg config_etmv3;
+ 	ocsd_etmv4_cfg trace_config_etmv4;
+ 	void *trace_config;
+ 	u8 csid;
  
-+	perf_top__reset_sample_counters(top);
- 	return ret;
- }
- 
+ 	switch (t_params->protocol) {
++	case CS_ETM_PROTO_ETMV3:
++		cs_etm_decoder__gen_etmv3_config(t_params, &config_etmv3);
++		decoder_name = OCSD_BUILTIN_DCD_ETMV3;
++		trace_config = &config_etmv3;
++		break;
+ 	case CS_ETM_PROTO_ETMV4i:
+ 		cs_etm_decoder__gen_etmv4_config(t_params, &trace_config_etmv4);
+ 		decoder_name = OCSD_BUILTIN_DCD_ETMV4I;
