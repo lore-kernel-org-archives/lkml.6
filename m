@@ -6,54 +6,52 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC29C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C70C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67DA6218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:49:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F506218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbeLRXt4 (ORCPT
+        id S1728091AbeLRXuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 18:49:56 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:38686 "EHLO
+        Tue, 18 Dec 2018 18:50:10 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:40104 "EHLO
         mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727854AbeLRXtz (ORCPT
+        with ESMTP id S1727854AbeLRXuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 18:49:55 -0500
+        Tue, 18 Dec 2018 18:50:06 -0500
 Received: from marcel-macpro.fritz.box (p4FF9F1DE.dip0.t-ipconnect.de [79.249.241.222])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 8F4BFCEE94;
-        Wed, 19 Dec 2018 00:57:32 +0100 (CET)
+        by mail.holtmann.org (Postfix) with ESMTPSA id DF9D1CEE9C;
+        Wed, 19 Dec 2018 00:57:43 +0100 (CET)
 Content-Type: text/plain;
         charset=us-ascii
 Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] bluetooth: Remove unnecessary smp_mb__after_atomic()
- barriers
+Subject: Re: [PATCH] bluetooth: hci_intel: clean an indentation issue, remove
+ extraneous spaces
 From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20181127112225.6177-1-andrea.parri@amarulasolutions.com>
-Date:   Wed, 19 Dec 2018 00:49:53 +0100
+In-Reply-To: <20181030113419.12107-1-colin.king@canonical.com>
+Date:   Wed, 19 Dec 2018 00:50:04 +0100
 Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-bluetooth@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <E1EF7686-BED9-4E96-988E-8B22B2646D78@holtmann.org>
-References: <20181127112225.6177-1-andrea.parri@amarulasolutions.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Message-Id: <4A389261-2255-4A8D-B078-F36F4AD12032@holtmann.org>
+References: <20181030113419.12107-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
 X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrea,
+Hi Colin,
 
-> The barriers are redundant because atomic_test_and_clear_bit() already
-> provides the required full ordering for the cases in question (that is,
-> when the bit is cleared).
+> Trivial fix to clean up an indentation issue, remove spaces
 > 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> drivers/bluetooth/btusb.c     |  8 ++------
-> drivers/bluetooth/hci_intel.c | 16 ++++------------
-> 2 files changed, 6 insertions(+), 18 deletions(-)
+> drivers/bluetooth/hci_intel.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 
 patch has been applied to bluetooth-next tree.
 
