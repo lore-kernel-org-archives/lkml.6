@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FC1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FD8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2AEE218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8C0218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171305;
-	bh=adaX1c3PVpeOpSMZkWwBBQ22vMrSw3tTb40bRS1T6eU=;
+	s=default; t=1545171312;
+	bh=kgkpcFZ3AUV4IAUpAYg2NEOdANbwaDFSyoACXvje13A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RoRUrqedFNxyeVUeCQDDXGxK9MSxLITsxltztqDsxxiuJRHXKyJ3NR49pTS8lWOts
-	 Av3s4oKOgqQteqSgOtGrjpeAGMmHO2MPs2Hwers+6AUSzUT1uv3/QRA+1h09A5sDAl
-	 yg/wCPQXGXSaPbHlqhd7t7nxAjTIPf9MhRQfukO0=
+	b=mQSuaY014AJoAGXXzpsuKeFdACDTu/X8vwMhWqTV36eTl5T3r2WySonMSOJNSCAoE
+	 Fv7FyFwzBsQlpD+vxlbhRmArrPUROmgfpiMhxsHujI+TFabffMGaDPHEuahp+XTRLG
+	 lQqzzodHMm6bawL6jbvYM6NMfbpBEJPPafx+OWao=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeLRWPE (ORCPT
+        id S1728104AbeLRWPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:15:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44644 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:15:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727549AbeLRWPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:15:03 -0500
+        id S1727546AbeLRWPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:15:10 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF87C217D9;
-        Tue, 18 Dec 2018 22:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E45E821871;
+        Tue, 18 Dec 2018 22:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171302;
-        bh=adaX1c3PVpeOpSMZkWwBBQ22vMrSw3tTb40bRS1T6eU=;
+        s=default; t=1545171308;
+        bh=kgkpcFZ3AUV4IAUpAYg2NEOdANbwaDFSyoACXvje13A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=voEemIb3s4wIesAD8g0I5Djq6JOh3UDBY5hvuaq9N01O5e6tmwfDyllAsjT6yLD8J
-         W4/vS78bp78c8yQrPbFDsiHZv3qb+mN5fN0yja9aoFVFCDGO7d0Tj1fTKasDJlJmYq
-         utT9WJLdkC/nyN5qTqT+ijka0hXlFp6ciXjWASTk=
+        b=SJNUcDhq09O8FljJhCGclIgOEgGMyc3+IxT7aTUDek+aN0DoFaWUgONUgEq0k/K80
+         6tJyYaKTKvD2x7BCuOcwjU5BrbmS8Lm0LydH8QPLcFa120Ob0M91mwj3Olo4/5+YXy
+         3rOjQ1i27N8zoYIJqifp1WxEZD2bIYjaYmvBYNlU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 49/63] perf trace: Enclose the errno strings with ()
-Date:   Tue, 18 Dec 2018 19:07:19 -0300
-Message-Id: <20181218220733.15839-50-acme@kernel.org>
+Subject: [PATCH 50/63] perf trace: Show NULL when syscall pointer args are 0
+Date:   Tue, 18 Dec 2018 19:07:20 -0300
+Message-Id: <20181218220733.15839-51-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -65,38 +65,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-To match strace, now both emit the same line for calls like:
-
- access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+Matching strace's output format. The 'format' file for the syscall
+tracepoints have an indication if the arg is a pointer, with some
+exceptions like 'mmap' that has its first arg as an 'unsigned long', so
+use a heuristic using the argument name, i.e. if it contains the 'addr'
+substring, format it with the pointer formatter.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-krxl6klsqc9qyktoaxyih942@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-ddghemr8qrm6i0sb8awznbze@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-trace.c       | 28 ++++++++++++----------------
+ tools/perf/trace/beauty/beauty.h |  3 +++
+ 2 files changed, 15 insertions(+), 16 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 226e994ac638..35d8fbe47ee4 100644
+index 35d8fbe47ee4..6ba8290a0794 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -2024,10 +2024,10 @@ errno_print: {
- 		const char *emsg = str_error_r(-ret, bf, sizeof(bf)),
- 			   *e = errno_to_name(evsel, -ret);
+@@ -444,6 +444,13 @@ size_t syscall_arg__scnprintf_hex(char *bf, size_t size, struct syscall_arg *arg
+ 	return scnprintf(bf, size, "%#lx", arg->val);
+ }
  
--		fprintf(trace->output, "-1 %s %s", e, emsg);
-+		fprintf(trace->output, "-1 %s (%s)", e, emsg);
- 	}
- 	} else if (ret == 0 && sc->fmt->timeout)
--		fprintf(trace->output, "0 Timeout");
-+		fprintf(trace->output, "0 (Timeout)");
- 	else if (ttrace->ret_scnprintf) {
- 		char bf[1024];
- 		struct syscall_arg arg = {
++size_t syscall_arg__scnprintf_ptr(char *bf, size_t size, struct syscall_arg *arg)
++{
++	if (arg->val == 0)
++		return scnprintf(bf, size, "NULL");
++	return syscall_arg__scnprintf_hex(bf, size, arg);
++}
++
+ size_t syscall_arg__scnprintf_int(char *bf, size_t size, struct syscall_arg *arg)
+ {
+ 	return scnprintf(bf, size, "%d", arg->val);
+@@ -660,7 +667,7 @@ static struct syscall_fmt {
+ 	{ .name	    = "bpf",
+ 	  .arg = { [0] = STRARRAY(cmd, bpf_cmd), }, },
+ 	{ .name	    = "brk",	    .hexret = true,
+-	  .arg = { [0] = { .scnprintf = SCA_HEX, /* brk */ }, }, },
++	  .arg = { [0] = { .scnprintf = SCA_PTR, /* brk */ }, }, },
+ 	{ .name     = "clock_gettime",
+ 	  .arg = { [0] = STRARRAY(clk_id, clockid), }, },
+ 	{ .name	    = "clone",	    .errpid = true, .nr_args = 5,
+@@ -738,17 +745,12 @@ static struct syscall_fmt {
+ 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* fd */ }, }, },
+ 	{ .name	    = "mknodat",
+ 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* fd */ }, }, },
+-	{ .name	    = "mlock",
+-	  .arg = { [0] = { .scnprintf = SCA_HEX, /* addr */ }, }, },
+-	{ .name	    = "mlockall",
+-	  .arg = { [0] = { .scnprintf = SCA_HEX, /* addr */ }, }, },
+ 	{ .name	    = "mmap",	    .hexret = true,
+ /* The standard mmap maps to old_mmap on s390x */
+ #if defined(__s390x__)
+ 	.alias = "old_mmap",
+ #endif
+-	  .arg = { [0] = { .scnprintf = SCA_HEX,	/* addr */ },
+-		   [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ },
++	  .arg = { [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ },
+ 		   [3] = { .scnprintf = SCA_MMAP_FLAGS,	/* flags */ }, }, },
+ 	{ .name	    = "mount",
+ 	  .arg = { [0] = { .scnprintf = SCA_FILENAME, /* dev_name */ },
+@@ -760,13 +762,7 @@ static struct syscall_fmt {
+ 	{ .name	    = "mq_unlink",
+ 	  .arg = { [0] = { .scnprintf = SCA_FILENAME, /* u_name */ }, }, },
+ 	{ .name	    = "mremap",	    .hexret = true,
+-	  .arg = { [0] = { .scnprintf = SCA_HEX,	  /* addr */ },
+-		   [3] = { .scnprintf = SCA_MREMAP_FLAGS, /* flags */ },
+-		   [4] = { .scnprintf = SCA_HEX,	  /* new_addr */ }, }, },
+-	{ .name	    = "munlock",
+-	  .arg = { [0] = { .scnprintf = SCA_HEX, /* addr */ }, }, },
+-	{ .name	    = "munmap",
+-	  .arg = { [0] = { .scnprintf = SCA_HEX, /* addr */ }, }, },
++	  .arg = { [3] = { .scnprintf = SCA_MREMAP_FLAGS, /* flags */ }, }, },
+ 	{ .name	    = "name_to_handle_at",
+ 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
+ 	{ .name	    = "newfstatat",
+@@ -1350,8 +1346,8 @@ static int syscall__set_arg_fmts(struct syscall *sc)
+ 			  strcmp(field->name, "path") == 0 ||
+ 			  strcmp(field->name, "pathname") == 0))
+ 			sc->arg_fmt[idx].scnprintf = SCA_FILENAME;
+-		else if (field->flags & TEP_FIELD_IS_POINTER)
+-			sc->arg_fmt[idx].scnprintf = syscall_arg__scnprintf_hex;
++		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
++			sc->arg_fmt[idx].scnprintf = SCA_PTR;
+ 		else if (strcmp(field->type, "pid_t") == 0)
+ 			sc->arg_fmt[idx].scnprintf = SCA_PID;
+ 		else if (strcmp(field->type, "umode_t") == 0)
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index ac25b6410bc8..1a93d9c626ef 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -98,6 +98,9 @@ size_t syscall_arg__scnprintf_fd(char *bf, size_t size, struct syscall_arg *arg)
+ size_t syscall_arg__scnprintf_hex(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_HEX syscall_arg__scnprintf_hex
+ 
++size_t syscall_arg__scnprintf_ptr(char *bf, size_t size, struct syscall_arg *arg);
++#define SCA_PTR syscall_arg__scnprintf_ptr
++
+ size_t syscall_arg__scnprintf_int(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_INT syscall_arg__scnprintf_int
+ 
 -- 
 2.19.2
 
