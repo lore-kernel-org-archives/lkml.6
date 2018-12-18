@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59130C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F73C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB8A218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:35:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A52B9218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ba6STcNg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hrc5o/ib"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbeLRSfl (ORCPT
+        id S1727944AbeLRSfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:35:41 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51464 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727859AbeLRSfY (ORCPT
+        Tue, 18 Dec 2018 13:35:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50648 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727849AbeLRSfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:35:24 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so3613448wmj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:35:22 -0800 (PST)
+        Tue, 18 Dec 2018 13:35:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id n190so3684000wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:35:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=amuON1W5B6KrHHSGLUNGq2frpY8ho5Bv4GUjP7uCZ44=;
-        b=Ba6STcNgYR652ZOJYvS5vuw1uC0cFSoVjm6rAPh76YPL5DZWWQz7zEaxJcSk6dIFls
-         Q5pYXtpWPiL5CHrdRBtU6Ll/sCeF4xj2zHmlsudMP5hRBCO8d2+kK82Lt2KI1MAfo67f
-         P2ELaBkCiyF+cltiIrr3GDfjGCYv0p6NJc+mFfWM/6CWpIFBAVz7t65NR6PZpDKsYese
-         ST8CSEf0issIxFzbO8PyTcxLl2lIqH76XLggoYXkf5RuPWnPmZzGkZAAgQbwGMht/n+t
-         Isql4eFFUdGJSYeZX05gn6VnSgLIp0PqAAqDRw5gIi5u0ZWH2thG9MCzuTPF7pvy74/D
-         f1tg==
+        bh=D9J5Blxm383J8hyjcDroLXwXnSmb1MbWGbnJ7VOJtZY=;
+        b=Hrc5o/ibaoYO320/GHpLipW3d9kafYiLFnyeN/h5kvNurQhKibB+2GEve26BnRwlBw
+         Is/6s5lb6ZPt792tnP8JjC098OhAsbFfpwjrYNCQNpNu3ALUx5JYazbVSA5/YbSXDJ2h
+         ddg5fknT2GQBkJME9pMG7SZLx40Wdca+CYEDlAG2C4fby6g74THmAbeqK850+QQOvsO6
+         rrUNltunF4KNDjX9+/tvyPQyYvJbNo9lsI5U8nr9N29JDGAleirsEpQ+BQJ6TpM959nX
+         3Faj2ntxqmlcCwIPwzG1cfZYSSmrwNDWBJlVL0lzzYebNT28iD9OZqaee4BZ1rhDFnL8
+         ROzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=amuON1W5B6KrHHSGLUNGq2frpY8ho5Bv4GUjP7uCZ44=;
-        b=N31wZ5nxAIdHPbgI1kpuJ88x4fYoVG+sHICvblMFKux4PyLyTsuWOZojvYuDTcTjWW
-         XEQH/X5kKYcFmaPXcXs5TOSftZEO8miLE/1b3O7xJ4HSCC+gU1bMB6/M5ZCBi/T7JgpS
-         JusY+Yn/VCX70Waa/KaMMEZK7EnhwuE4xlVsFxG1QNzDyYj9BU/mKshsxggp2txhuXfj
-         x/vS3Lynu0qAtcgerdSuHtuW7p07Zz04ab526J8H3P6LPQbMHw3FM4F5sojZz+PiHJum
-         Vceb+uEv2NnWXoQCm2fsktxD1KoCPOtBJhI2rLHbbU4VFoZN39ujYFJPNpTBH/3j3yvR
-         GPPQ==
-X-Gm-Message-State: AA+aEWaaMjMX4fjnnUvR5vc5pigi27UbWrPVHxUR7N7MFrohIqpW4VEN
-        JB83r9/yWy7IQ2zpTUzn5yo=
-X-Google-Smtp-Source: AFSGD/XFxidrhlWFDPcoTTHXj3I1Fiu9jr7rJQrdDY2jrksvyCvLDu5fgCxDwXC+DmF6IwWSgutCcQ==
-X-Received: by 2002:a1c:87cc:: with SMTP id j195mr4232623wmd.2.1545158122131;
-        Tue, 18 Dec 2018 10:35:22 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id 202sm3614535wmt.8.2018.12.18.10.35.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=D9J5Blxm383J8hyjcDroLXwXnSmb1MbWGbnJ7VOJtZY=;
+        b=te4LDzhOBWXmkptIB4LTeWiKjjboncr8rPXlrEnDABrwDCJqX25hWyRHhdEVQXB8pH
+         RZ2lLS6LHUYFGMmooBCQE9KoWbQ3707b/uZFJNIvu5P6WlApw6Ak1ozShYeUdH6Y4fv9
+         /o/oT7QS1Toa7D8zYi6HXYLUJQnbuSg4GWwHu+OhbvNpk7s7XtSL4wpRKWYJDRAQoCD2
+         fE0MstFMhiaAvFspdmdtNVzaVqsm1wXgZbNmxOnNnS9kTznGbSgIfHAUYE6PKp/o4h40
+         IEURYI05RHf3LsxDaVhMgcUL/6Fl0ZiJhpUpQW6lCBIX82AUI/cWH9e656hw8rJnpCKm
+         xFWw==
+X-Gm-Message-State: AA+aEWZOVy3tz15X1d8KY6bT5BbkTlipkUUNWNJKOcizmsiM0xCX38uU
+        LyT1TAW+d8RPc6sIxQoG130=
+X-Google-Smtp-Source: AFSGD/XC9uxxkQj/yd9zOT0nWoHZjgamFZCBSS/M4N3HktEIGKmJhmnO3ktkpmjrY8By/KAij8vumQ==
+X-Received: by 2002:a1c:ad43:: with SMTP id w64mr4153960wme.32.1545158121251;
         Tue, 18 Dec 2018 10:35:21 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id 202sm3614535wmt.8.2018.12.18.10.35.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 10:35:20 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH v2 15/17] staging: rtl8188eu: change return type of is_basicrate() to bool
-Date:   Tue, 18 Dec 2018 19:34:49 +0100
-Message-Id: <20181218183451.18692-15-straube.linux@gmail.com>
+Subject: [PATCH v2 14/17] staging: rtl8188eu: simplify null array initializations
+Date:   Tue, 18 Dec 2018 19:34:48 +0100
+Message-Id: <20181218183451.18692-14-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218183451.18692-1-straube.linux@gmail.com>
 References: <20181218183451.18692-1-straube.linux@gmail.com>
@@ -73,27 +73,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function is_basicrate() returns true or false, so change the
-return type from int to bool.
+Simplfy initialization of null arrays to improve readability
+and save some lines.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_wlan_util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 4 ++--
+ drivers/staging/rtl8188eu/core/rtw_xmit.c     | 6 ++----
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-index d18ce3a76c95..5f9c9de1f1da 100644
---- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
-@@ -156,7 +156,7 @@ static unsigned char ratetbl_val_2wifirate(unsigned char rate)
- 	}
- }
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+index d3d211d8eeee..2a42f80d1970 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+@@ -17,7 +17,7 @@
+ #include <mlme_osdep.h>
+ #include <recv_osdep.h>
  
--static int is_basicrate(struct adapter *padapter, unsigned char rate)
-+static bool is_basicrate(struct adapter *padapter, unsigned char rate)
- {
- 	int i;
- 	unsigned char val;
+-static u8 null_addr[ETH_ALEN] = {0, 0, 0, 0, 0, 0};
++static u8 null_addr[ETH_ALEN] = {};
+ 
+ /**************************************************
+ OUI definitions for the vendor specific IE
+@@ -5207,7 +5207,7 @@ u8 setkey_hdl(struct adapter *padapter, u8 *pbuf)
+ 	struct setkey_parm *pparm = (struct setkey_parm *)pbuf;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+ 	struct mlme_ext_info *pmlmeinfo = &pmlmeext->mlmext_info;
+-	u8 null_sta[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
++	u8 null_sta[ETH_ALEN] = {};
+ 
+ 	/* main tx key for wep. */
+ 	if (pparm->set_tx)
+diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+index 14e3f59b9009..3b1ccd138c3f 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
++++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+@@ -592,7 +592,7 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 	struct	pkt_attrib *pattrib = &pxmitframe->attrib;
+ 	struct	security_priv	*psecuritypriv = &padapter->securitypriv;
+ 	struct	xmit_priv *pxmitpriv = &padapter->xmitpriv;
+-	u8 priority[4] = {0x0, 0x0, 0x0, 0x0};
++	u8 priority[4] = {};
+ 	u8 hw_hdr_offset = 0;
+ 
+ 	if (pattrib->psta)
+@@ -605,9 +605,7 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
+ 	if (pattrib->encrypt == _TKIP_) {
+ 		/* encode mic code */
+ 		if (stainfo) {
+-			u8 null_key[16] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+-					   0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+-					   0x0, 0x0};
++			u8 null_key[16] = {};
+ 
+ 			pframe = pxmitframe->buf_addr + hw_hdr_offset;
+ 
 -- 
 2.20.1
 
