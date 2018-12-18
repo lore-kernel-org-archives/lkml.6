@@ -2,119 +2,103 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C10C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C3DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8AC8217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5EB0217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:10:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s+h3E0Ua"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qpOMFhV6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbeLRKKV (ORCPT
+        id S1726483AbeLRKKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:10:21 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60614 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeLRKKV (ORCPT
+        Tue, 18 Dec 2018 05:10:55 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46584 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeLRKKz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:10:21 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBIA9NGN033629;
-        Tue, 18 Dec 2018 04:09:23 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545127763;
-        bh=3HqKMTzrhsnO+QFb08lasonXQUmMnOYXHt6JF7xQBoE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=s+h3E0UaVsngNx1cu5oWVh9dThxqrh/2QUnIZRAipwU8k4Igomkm+N0L6AnPS9QzK
-         yKxmwmin1x125rtcCjlPxkHaZZ0VM9AAXZPNlOQf2bmNz8H8tvt3fd44jiJ8CW0j0w
-         gz1xADs4eDojk+n98i9MSEihN845C/Ob2EfzgNUE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBIA9NRB063017
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Dec 2018 04:09:23 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 18
- Dec 2018 04:09:22 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 18 Dec 2018 04:09:22 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBIA9Kc4007714;
-        Tue, 18 Dec 2018 04:09:21 -0600
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-CC:     <vkoul@kernel.org>, <dan.j.williams@intel.com>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tony@atomide.com>, <linux-omap@vger.kernel.org>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
- <20181122151236.GA9611@n2100.armlinux.org.uk>
- <20181217191657.GB7288@darkstar.musicnaut.iki.fi>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <36444432-a34c-826f-6efa-109921da69b7@ti.com>
-Date:   Tue, 18 Dec 2018 12:11:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 18 Dec 2018 05:10:55 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so7580271pgp.13
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 02:10:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SzTU5vMrJWnlVd50H6l6cJ3m7jhynoeNErsz6WGN+RE=;
+        b=qpOMFhV6Y6Y9u0iF0BZShQ2KPRe12ku0S+fgfnOM0AvD9YNuqIDeEZ++LElreMYxkL
+         GuV/4LJorOcGpOBq4ZB08zugxYvmmj93EGdPP+9rGThJE4CxS+f2IDjicoxVKSSuYCbc
+         IvWQ7cz3tn5zLqpqPokAnOwcFSbes6tqcSs5A/1Pkw6bYor3Mw8o6AEUUShIWCvNbx8l
+         rxO58XmktO220z2l0j1XXBbhzK7gpMedYZS8LoItj57k6igLAZr7opFRJPXi6z9+kG3w
+         qC+yN/21aZguZ7i32VtuID+9t0ESo0HsM0ywerJbpnsLmTPPwO73+hhyyPu/l0ryybC5
+         TKkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SzTU5vMrJWnlVd50H6l6cJ3m7jhynoeNErsz6WGN+RE=;
+        b=uE7szj2h452QLtS62ZUJKdwGwTfJKwT7X5hp60m0k26pvsZGRtxubYXUZ7yFJZGq71
+         P8/bKnIt2eBfUUW5K2cmydJfSno4X0V18bc97+YvVKlTC29mHsN2ZSfGUQKSx7DY5+7s
+         MZhpmP78G7fO9Exh2Lk9rv1cjblC2R7yW3V+LIhivN2rRExteohq+b+TcFpbDxiR8Jcm
+         sRvQ46xdd7L7iw6CougUOQi7YetscKw/awYlB0OZY10+oWpfzlH3OE/ohkWbbi1njbRa
+         ndymw/AUcvLnM4+Cz1MXpUP46PvS2jDltpfbyFh8diW833DhG3xdxiynnoqgOcHTCIf/
+         tiNg==
+X-Gm-Message-State: AA+aEWY+gb5zKuZ9uudFHx2KLsbTr53idtBGh5rrf/xcDsqoiwcCZFTh
+        tHucG6xoDb2EIl+fWraLvyvXYUGc
+X-Google-Smtp-Source: AFSGD/VQx4y093kZ1XVtipXa34hR/iPvQo3wa2VSMNlOgSZ0XXQ58QJAGnu7J0F/rrzyfnqJ7NGLlg==
+X-Received: by 2002:a63:a611:: with SMTP id t17mr14985012pge.338.1545127854606;
+        Tue, 18 Dec 2018 02:10:54 -0800 (PST)
+Received: from localhost ([175.223.2.245])
+        by smtp.gmail.com with ESMTPSA id x2sm20514336pfx.78.2018.12.18.02.10.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 02:10:53 -0800 (PST)
+Date:   Tue, 18 Dec 2018 19:10:50 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+Message-ID: <20181218101050.GB460@jagdpanzerIV>
+References: <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+ <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+ <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+ <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
+ <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
+ <20181213124255.GB3053@tigerII.localdomain>
+ <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
+ <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
+ <20181218085524.GA1047@jagdpanzerIV>
+ <20181218100119.3lf5ktzqbqkwsfb2@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20181217191657.GB7288@darkstar.musicnaut.iki.fi>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218100119.3lf5ktzqbqkwsfb2@pathway.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (12/18/18 11:01), Petr Mladek wrote:
+> I have updated the patch in printk.git, for-4.22 branch.
 
+Thanks.
 
-On 17/12/2018 21.16, Aaro Koskinen wrote:
-> On Thu, Nov 22, 2018 at 03:12:36PM +0000, Russell King - ARM Linux wrote:
->> Also we can't deal with the omap_set_dma_dest_burst_mode() setting -
->> DMAengine always uses a 64 byte burst, but udc wants a smaller burst
->> setting.  Does this matter?
-> 
-> Looking at OMAP1 docs, it seems it supports only 16 bytes. Then checking
-> DMAengine code, I don't think these CSDP bit values are not valid
-> for OMAP1:
-> 
->         CSDP_SRC_BURST_1        = 0 << 7,
->         CSDP_SRC_BURST_16       = 1 << 7,
->         CSDP_SRC_BURST_32       = 2 << 7,
->         CSDP_SRC_BURST_64       = 3 << 7,
-> 
-> From TI SPRU674 document, pages 50-51:
-> 
-> 	0	single access (no burst)
-> 	1	single access (no burst)
-> 	2	burst 4
+> PS: I think that I have rushed the patch probably too much.
+> I did too much nitpicking in the past and am trying to find
+> a better balance now.
 
-In omap1510 it is 4 x data_type
-In omap1610/1710 it is 4 x data_type (only data_type == 32bit is supported)
-From omap2420+ 32 bytes (8x32bit/4x64bit)
+It's all good.
 
-So for OMAP1 we need to have different handling of the burst:
-only enable if data_type is 32bit.
-
-> 	3	reserved (do not use this setting)
-> 
-> So if CSDP_SRC_BURST_64 (3) gets programmed OMAP1, I wonder what is the
-> end result, no burst or burst 4...
-> 
-> A.
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+	-ss
