@@ -2,267 +2,110 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3A7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AACDF20815
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5591621871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ptyJSaLc"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UVGoRgyC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbeLRWhX (ORCPT
+        id S1727749AbeLRWlA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:37:23 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:53070 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbeLRWhX (ORCPT
+        Tue, 18 Dec 2018 17:41:00 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16327 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLRWk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:37:23 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBIMXqh6038564;
-        Tue, 18 Dec 2018 22:36:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=IuX36jtKJXAkPMUKIbK1MQXTpY0GwOAcxsWsjJtl40g=;
- b=ptyJSaLcYAi6ziDxENUIv9Zemx15qU1A+ldPu3wVKAzfavX2qRNwJkGaKsW2+HY+tOEc
- YMP619ed6PvSBRfJWUr9OGqrBxbNxzrCEDMo+lW0/NTaH6JwkWIOikZVkisUM9xbEaRz
- ERiBTdhQ+4W0NYeZB087fEzYV3xEoKwI0SdXnQBmbGUgpHdmdWO0pIKy08UTEQhSkASD
- Dm6T3j+DTuJikl8gHsMBJDLCkZy75ni0xAzqbPT+65nUu91zAjg0XhHCeBA2MfPsnufT
- AomPrnApKF3IGpyk7yNXf0/P2Bf3IG7XzCT2q69jIbgtbkl9oiZClR/aMwOTGZ4ImT0g Qw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2pcs1tp7c0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Dec 2018 22:36:10 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBIMa9bY000873
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Dec 2018 22:36:10 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBIMa9HL018736;
-        Tue, 18 Dec 2018 22:36:09 GMT
-Received: from monkey.oracle.com (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Dec 2018 14:36:09 -0800
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>, stable@vger.kernel.org
-Subject: [PATCH v2 2/2] hugetlbfs: Use i_mmap_rwsem to fix page fault/truncate race
-Date:   Tue, 18 Dec 2018 14:35:57 -0800
-Message-Id: <20181218223557.5202-3-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181218223557.5202-1-mike.kravetz@oracle.com>
-References: <20181218223557.5202-1-mike.kravetz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9111 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812180184
+        Tue, 18 Dec 2018 17:40:59 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1977720000>; Tue, 18 Dec 2018 14:40:50 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Dec 2018 14:40:58 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 14:40:58 -0800
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 22:40:58 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 22:40:58 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c19777a0006>; Tue, 18 Dec 2018 14:40:58 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <talho@nvidia.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1 1/2] i2c: tegra: Add HW feature structure for Tegra186
+Date:   Tue, 18 Dec 2018 14:40:55 -0800
+Message-ID: <1545172856-19509-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545172850; bh=lcyQLLqhgmcGLqkvlcg6NSRKdP9W2w7F1QegK3ARrhw=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=UVGoRgyCCg8BXFq7zSzmWlecVq07aiBfk3WMdVOHJ34BnbqCrKW/+rxop6imurXxW
+         OHMuMlrlQJoY7e1V4Dn051hGcN/TOshs68eatX14nTIvvgHP8tjN+Z0mIWTWZJHnfS
+         csXb3jKFHh8DtMKn6s9gPfZBOTCZrVbgFsMOWu9cdo4Pt8Z/khMdv78+h7yzyi9ooO
+         S2mpXYkagks5/O5gU07WNu3kGn4u1Qt9zwh39oiSHh9DbK2Dymfld3CCYAwMzInjfS
+         zcmkWg8NCrDX/YP67uvNHymmW2PODgGcj/17rUqI1XJ5SKQiJMb15wVt/1cWoUYByJ
+         IJbzhcv3ZE7tA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hugetlbfs page faults can race with truncate and hole punch operations.
-Current code in the page fault path attempts to handle this by 'backing
-out' operations if we encounter the race.  One obvious omission in the
-current code is removing a page newly added to the page cache.  This is
-pretty straight forward to address, but there is a more subtle and
-difficult issue of backing out hugetlb reservations.  To handle this
-correctly, the 'reservation state' before page allocation needs to be
-noted so that it can be properly backed out.  There are four distinct
-possibilities for reservation state: shared/reserved, shared/no-resv,
-private/reserved and private/no-resv.  Backing out a reservation may
-require memory allocation which could fail so that needs to be taken
-into account as well.
+Add HW feature structure for Tegra186 and compatible name
 
-Instead of writing the required complicated code for this rare
-occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
-mode for the duration of page fault processing.  Hold i_mmap_rwsem
-longer in truncation and hold punch code to cover the call to
-remove_inode_hugepages.
-
-With this modification, code in remove_inode_hugepages checking for
-races becomes 'dead' as it can not longer happen.  Remove the dead code
-and expand comments to explain reasoning.  Similarly, checks for races
-with truncation in the page fault path can be simplified and removed.
-
-Cc: <stable@vger.kernel.org>
-Fixes: ebed4bfc8da8 ("hugetlb: fix absurd HugePages_Rsvd")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- fs/hugetlbfs/inode.c | 50 +++++++++++++++-----------------------------
- mm/hugetlb.c         | 21 +++++++++----------
- 2 files changed, 27 insertions(+), 44 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 32920a10100e..a9c00c6ef80d 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -383,17 +383,16 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end)
-  * truncation is indicated by end of range being LLONG_MAX
-  *	In this case, we first scan the range and release found pages.
-  *	After releasing pages, hugetlb_unreserve_pages cleans up region/reserv
-- *	maps and global counts.  Page faults can not race with truncation
-- *	in this routine.  hugetlb_no_page() prevents page faults in the
-- *	truncated range.  It checks i_size before allocation, and again after
-- *	with the page table lock for the page held.  The same lock must be
-- *	acquired to unmap a page.
-+ *	maps and global counts.
-  * hole punch is indicated if end is not LLONG_MAX
-  *	In the hole punch case we scan the range and release found pages.
-  *	Only when releasing a page is the associated region/reserv map
-  *	deleted.  The region/reserv map for ranges without associated
-- *	pages are not modified.  Page faults can race with hole punch.
-- *	This is indicated if we find a mapped page.
-+ *	pages are not modified.
-+ *
-+ * Callers of this routine must hold the i_mmap_rwsem in write mode to prevent
-+ * races with page faults.
-+ *
-  * Note: If the passed end of range value is beyond the end of file, but
-  * not LLONG_MAX this routine still performs a hole punch operation.
-  */
-@@ -423,32 +422,14 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 437294ea2f0a..63e2345a95c5 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -898,6 +898,19 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_mst_fifo = false,
+ };
  
- 		for (i = 0; i < pagevec_count(&pvec); ++i) {
- 			struct page *page = pvec.pages[i];
--			u32 hash;
- 
- 			index = page->index;
--			hash = hugetlb_fault_mutex_hash(h, current->mm,
--							&pseudo_vma,
--							mapping, index, 0);
--			mutex_lock(&hugetlb_fault_mutex_table[hash]);
--
- 			/*
--			 * If page is mapped, it was faulted in after being
--			 * unmapped in caller.  Unmap (again) now after taking
--			 * the fault mutex.  The mutex will prevent faults
--			 * until we finish removing the page.
--			 *
--			 * This race can only happen in the hole punch case.
--			 * Getting here in a truncate operation is a bug.
-+			 * A mapped page is impossible as callers should unmap
-+			 * all references before calling.  And, i_mmap_rwsem
-+			 * prevents the creation of additional mappings.
- 			 */
--			if (unlikely(page_mapped(page))) {
--				BUG_ON(truncate_op);
--
--				i_mmap_lock_write(mapping);
--				hugetlb_vmdelete_list(&mapping->i_mmap,
--					index * pages_per_huge_page(h),
--					(index + 1) * pages_per_huge_page(h));
--				i_mmap_unlock_write(mapping);
--			}
-+			VM_BUG_ON(page_mapped(page));
- 
- 			lock_page(page);
- 			/*
-@@ -470,7 +451,6 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			}
- 
- 			unlock_page(page);
--			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 		}
- 		huge_pagevec_release(&pvec);
- 		cond_resched();
-@@ -505,8 +485,8 @@ static int hugetlb_vmtruncate(struct inode *inode, loff_t offset)
- 	i_mmap_lock_write(mapping);
- 	if (!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root))
- 		hugetlb_vmdelete_list(&mapping->i_mmap, pgoff, 0);
--	i_mmap_unlock_write(mapping);
- 	remove_inode_hugepages(inode, offset, LLONG_MAX);
-+	i_mmap_unlock_write(mapping);
- 	return 0;
- }
- 
-@@ -540,8 +520,8 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
- 			hugetlb_vmdelete_list(&mapping->i_mmap,
- 						hole_start >> PAGE_SHIFT,
- 						hole_end  >> PAGE_SHIFT);
--		i_mmap_unlock_write(mapping);
- 		remove_inode_hugepages(inode, hole_start, hole_end);
-+		i_mmap_unlock_write(mapping);
- 		inode_unlock(inode);
- 	}
- 
-@@ -624,7 +604,11 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		/* addr is the offset within the file (zero based) */
- 		addr = index * hpage_size;
- 
--		/* mutex taken here, fault path and hole punch */
-+		/*
-+		 * fault mutex taken here, protects against fault path
-+		 * and hole punch.  inode_lock previously taken protects
-+		 * against truncation.
-+		 */
- 		hash = hugetlb_fault_mutex_hash(h, mm, &pseudo_vma, mapping,
- 						index, addr);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index ab4c77b8c72c..25a0cd2f8b39 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3760,16 +3760,16 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	/*
--	 * Use page lock to guard against racing truncation
--	 * before we get page_table_lock.
-+	 * We can not race with truncation due to holding i_mmap_rwsem.
-+	 * Check once here for faults beyond end of file.
- 	 */
-+	size = i_size_read(mapping->host) >> huge_page_shift(h);
-+	if (idx >= size)
-+		goto out;
++static const struct tegra_i2c_hw_feature tegra186_i2c_hw = {
++	.has_continue_xfer_support = true,
++	.has_per_pkt_xfer_complete_irq = true,
++	.has_single_clk_source = true,
++	.clk_divisor_hs_mode = 1,
++	.clk_divisor_std_fast_mode = 0x19,
++	.clk_divisor_fast_plus_mode = 0x10,
++	.has_config_load_reg = true,
++	.has_multi_master_mode = true,
++	.has_slcg_override_reg = true,
++	.has_mst_fifo = false,
++};
 +
- retry:
- 	page = find_lock_page(mapping, idx);
- 	if (!page) {
--		size = i_size_read(mapping->host) >> huge_page_shift(h);
--		if (idx >= size)
--			goto out;
--
- 		/*
- 		 * Check for page in userfault range
- 		 */
-@@ -3859,9 +3859,6 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	ptl = huge_pte_lock(h, mm, ptep);
--	size = i_size_read(mapping->host) >> huge_page_shift(h);
--	if (idx >= size)
--		goto backout;
- 
- 	ret = 0;
- 	if (!huge_pte_none(huge_ptep_get(ptep)))
-@@ -3964,8 +3961,10 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	/*
- 	 * Acquire i_mmap_rwsem before calling huge_pte_alloc and hold
--	 * until finished with ptep.  This prevents huge_pmd_unshare from
--	 * being called elsewhere and making the ptep no longer valid.
-+	 * until finished with ptep.  This serves two purposes:
-+	 * 1) It prevents huge_pmd_unshare from being called elsewhere
-+	 *    and making the ptep no longer valid.
-+	 * 2) It synchronizes us with file truncation.
- 	 *
- 	 * ptep could have already be assigned via huge_pte_offset.  That
- 	 * is OK, as huge_pte_alloc will return the same value unless
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_continue_xfer_support = true,
+ 	.has_per_pkt_xfer_complete_irq = true,
+@@ -914,6 +927,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ /* Match table for of_platform binding */
+ static const struct of_device_id tegra_i2c_of_match[] = {
+ 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
++	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
+ 	{ .compatible = "nvidia,tegra210-i2c", .data = &tegra210_i2c_hw, },
+ 	{ .compatible = "nvidia,tegra124-i2c", .data = &tegra124_i2c_hw, },
+ 	{ .compatible = "nvidia,tegra114-i2c", .data = &tegra114_i2c_hw, },
 -- 
-2.17.2
+2.7.4
 
