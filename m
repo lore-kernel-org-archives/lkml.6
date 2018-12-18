@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A370EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDD2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73BCD2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9E032133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O3h/8Wro"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dr0EVT+O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbeLRIGY (ORCPT
+        id S1726764AbeLRIGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:06:24 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38245 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeLRIGX (ORCPT
+        Tue, 18 Dec 2018 03:06:30 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36908 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbeLRIG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:06:23 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q1so7758718pfi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:06:23 -0800 (PST)
+        Tue, 18 Dec 2018 03:06:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so7468960plr.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:06:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jBeXaJXIkgLTVAea7CD+4QY6FweZRNu6qTHTVAB8x/Y=;
-        b=O3h/8WrootvgLo6iq19RENYMSgRZXgcAimJmVbJ1apvTl0v088S7GX4+j8W4I1AWTU
-         d6QGZUDdXG8lODI4a2XlfM9kWxlSZ1mfYCxShhmwuUDpJ8n+lIfjad/tMyTDmHaZoPqt
-         oCcK89JeiKGxtLVa8rx5HzDxbciCXatzC81ac=
+        bh=KIbCrv6kxd+jKuB+Z655EDqVYRNgXku8ohIbZgJ20mM=;
+        b=Dr0EVT+OfdgOd3vo+FXI4YpTZNroQuSRFkxLLwUs0bNV53QET8UOOVxhnHCEELmJLi
+         FS9dh43kX898kswHwjWnvkJsM63YNgspkEYXi4bAly143zlm69aCuqnyPXQ/VotWZSBg
+         UcJbCfxQyh2y9EVoCOpVgrZFbChPvIDmxBbMs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jBeXaJXIkgLTVAea7CD+4QY6FweZRNu6qTHTVAB8x/Y=;
-        b=lvKqqm/ap4QFa05tN2zP2lbyBPSnm5cDkjv2W1yPWr42WNZxkVmILs9Sr2ezjKck2r
-         KpCYearqYFTfRPAGo8Utt8BqL3XUcPuexBKDnThpB9DFGp/t7fEm2cgpiTe75PSfQkTy
-         9OLSDnxBx+m5EzmO12F0RhoVgJ4Npfb/Dr3XgjVtwHnHAZjkIdmEqrdwbjxnkKZFDCXP
-         yJcVTQX5SovKHftIR3E2mhJMEonzRqqo+V+eMntRvW1nv7UBzEH9aL0GL6cNmTTOT//p
-         f3b2ecydbXZ7wxyQRv2Rap0XHaLJ0u5QfhtpMpCO6awqJaWZ06hv/HXjjZsfaMd9IQIf
-         yjVQ==
-X-Gm-Message-State: AA+aEWZ6ht3Ulws1/aZU/99msLodSjGsez1KizUh/oqt/rqsV5NrGhZQ
-        VbW2mh9mJ3weVi5heF67PE57
-X-Google-Smtp-Source: AFSGD/WBh09Nz1b5fu1kid9HelfFVw/BVqdKmZUoUY3UtqyX1OnuV3yltB+DYa7g07SVikdPvhg26w==
-X-Received: by 2002:a65:55ca:: with SMTP id k10mr14788239pgs.448.1545120382887;
-        Tue, 18 Dec 2018 00:06:22 -0800 (PST)
+        bh=KIbCrv6kxd+jKuB+Z655EDqVYRNgXku8ohIbZgJ20mM=;
+        b=cKEjn8KYPc6XFbCiCrRRlbOv2i86GMw3tOFQMifptn5bNKeao997xpf6qqRGbPerNn
+         5e8sFuh0YpTNAjZCLOdvq7apIjvVC7Sq1S3F3JUzfA/wXi+3Lvi9LUGRnJ8WkC+laSFh
+         4ULO5bUEcG6NBkCT2lNh/kjZ0m1u7m7oXRd22Zs+0N1WeLVN4lL+fJjBdnaZZ/nfv1CO
+         PqkdM7Sspsq8TJQBGOtfALpnOwThqCnZJ4fhy44mQkUsLTsljJAEPpdxhZqMlrCDqXd9
+         xejZvU5y0I2PCTFiKbOBeNn/taDpXnXIUAfC2nELJObSivu4WjGmaDv8VZxeFiuEW+FZ
+         3Q0w==
+X-Gm-Message-State: AA+aEWYhBxprtdeW5CH45oNRgPco6p6GIJcLD5VZOakb6ZQzr1eews3a
+        PaSohmovKyvWPJkPYQC/iTgS
+X-Google-Smtp-Source: AFSGD/Xfz1iwkfX41/a4TTcw4HAnrY69fAz2xtFw9u9blKCVecgh9kZRARwZ/u0vciiAotjEz81A7Q==
+X-Received: by 2002:a17:902:5a86:: with SMTP id r6mr14914715pli.301.1545120388928;
+        Tue, 18 Dec 2018 00:06:28 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id 7sm45596888pfm.8.2018.12.18.00.06.14
+        by smtp.gmail.com with ESMTPSA id 7sm45596888pfm.8.2018.12.18.00.06.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 00:06:21 -0800 (PST)
+        Tue, 18 Dec 2018 00:06:28 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         gregkh@linuxfoundation.org, jslaby@suse.com
@@ -62,9 +62,9 @@ Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
         amit.kucheria@linaro.org, linus.walleij@linaro.org,
         zhao_steven@263.net,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 05/11] ARM: dts: Add devicetree for OrangePi 2G IoT board
-Date:   Tue, 18 Dec 2018 13:35:21 +0530
-Message-Id: <20181218080527.10801-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 06/11] ARM: dts: Add devicetree for OrangePi i96 board
+Date:   Tue, 18 Dec 2018 13:35:22 +0530
+Message-Id: <20181218080527.10801-7-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
 References: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
@@ -76,34 +76,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add initial devicetree support for OrangePi 2G IoT board from Xunlong.
+Add initial devicetree for Orange Pi i96 board from Xunlong. It
+is one of the 96Boards IoT Edition board.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm/boot/dts/Makefile                    |  2 +
- .../boot/dts/rda8810pl-orangepi-2g-iot.dts    | 50 +++++++++++++++++++
- 2 files changed, 52 insertions(+)
- create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
+ arch/arm/boot/dts/Makefile                   |  3 +-
+ arch/arm/boot/dts/rda8810pl-orangepi-i96.dts | 50 ++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b0e966d625b9..a0fdad8f10dd 100644
+index a0fdad8f10dd..cfb08ea33872 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -806,6 +806,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-msm8974-sony-xperia-castor.dtb \
+@@ -807,7 +807,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
  	qcom-msm8974-sony-xperia-honami.dtb \
  	qcom-mdm9615-wp8548-mangoh-green.dtb
-+dtb-$(CONFIG_ARCH_RDA) += \
-+	rda8810pl-orangepi-2g-iot.dtb
+ dtb-$(CONFIG_ARCH_RDA) += \
+-	rda8810pl-orangepi-2g-iot.dtb
++	rda8810pl-orangepi-2g-iot.dtb \
++	rda8810pl-orangepi-i96.dtb
  dtb-$(CONFIG_ARCH_REALVIEW) += \
  	arm-realview-pb1176.dtb \
  	arm-realview-pb11mp.dtb \
-diff --git a/arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts b/arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
+diff --git a/arch/arm/boot/dts/rda8810pl-orangepi-i96.dts b/arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
 new file mode 100644
-index 000000000000..98e34248ae80
+index 000000000000..728f76931b99
 --- /dev/null
-+++ b/arch/arm/boot/dts/rda8810pl-orangepi-2g-iot.dts
++++ b/arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
 @@ -0,0 +1,50 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
@@ -116,12 +118,12 @@ index 000000000000..98e34248ae80
 +#include "rda8810pl.dtsi"
 +
 +/ {
-+	compatible = "xunlong,orangepi-2g-iot", "rda,8810pl";
-+	model = "Orange Pi 2G-IoT";
++	compatible = "xunlong,orangepi-i96", "rda,8810pl";
++	model = "Orange Pi i96";
 +
 +	aliases {
-+		serial0 = &uart1;
-+		serial1 = &uart2;
++		serial0 = &uart2;
++		serial1 = &uart1;
 +		serial2 = &uart3;
 +	};
 +
