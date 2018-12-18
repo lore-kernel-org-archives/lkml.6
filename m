@@ -2,89 +2,127 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739AAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C99DC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476B32133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 441D5217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:04:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbeLRIES (ORCPT
+        id S1726516AbeLRIEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:04:18 -0500
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:48429 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726324AbeLRIER (ORCPT
+        Tue, 18 Dec 2018 03:04:41 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:51165 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRIEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:04:17 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07857972|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03295;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DZFShi5_1545120251;
-Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DZFShi5_1545120251)
-          by smtp.aliyun-inc.com(10.147.40.7);
-          Tue, 18 Dec 2018 16:04:12 +0800
-Subject: Re: [PATCH] pstore: fix crypto dependencies of 842/zstd compression
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
-References: <1544603038-9373-1-git-send-email-liaoweixiong@allwinnertech.com>
- <201812171624.Ych15Vum%fengguang.wu@intel.com>
-From:   =?UTF-8?B?5buW5aiB6ZuE?= <liaoweixiong@allwinnertech.com>
-Message-ID: <12bc8a0a-45bc-3622-5745-654957825047@allwinnertech.com>
-Date:   Tue, 18 Dec 2018 16:04:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Dec 2018 03:04:41 -0500
+Received: from droid10.amlogic.com (10.18.11.213) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 18 Dec 2018
+ 16:05:07 +0800
+From:   Hanjie Lin <hanjie.lin@amlogic.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     Hanjie Lin <hanjie.lin@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH v8 0/2 RESEND] add the Amlogic Meson PCIe controller driver
+Date:   Tue, 18 Dec 2018 16:04:44 +0800
+Message-ID: <1545120286-129258-1-git-send-email-hanjie.lin@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <201812171624.Ych15Vum%fengguang.wu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.213]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi ,
-On 2018/12/17 16:16, kbuild test robot wrote:
-> Hi liaoweixiong,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on kees/for-next/pstore]
-> [also build test ERROR on v4.20-rc7 next-20181214]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/liaoweixiong/pstore-fix-crypto-dependencies-of-842-zstd-compression/20181214-222645
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
-> config: i386-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    fs/pstore/platform.o: In function `zbufsize_zstd':
->>> platform.c:(.text+0x30a): undefined reference to `ZSTD_compressBound'
-Yes, i reproduced it. I had made a new patch in version 2.
-On new patch, i try to trun sub-options of compression back to 'bool'
-for more rigorous.
+The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+PCI core. This patchset add the driver and dt-bindings of the controller.
 
-Commit info like this:
-On commit 58eb5b670747 ("pstore: fix crypto dependencies"),
-dependency bug was fixed by selecting the crypto core rather than
-turned compression sub-options to 'tristate'.
-In addition, these options are used to enable/disable compression. They
-are not modules, and mean nothing when set to 'M'.
-So, this patch is going to turn them back to 'bool'.
+Changes since v7: [6]
+ - include files in alphabetical order
+ - get rid of unused MACROs and variables
+ - optimize meson_pcie_link_up() while loop
+ - correct cover-letter version
 
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
+Changes since v6: [5]
+ - fix bad usage of ERR_PTR(ENXIO)
+ - fix meson_pcie_rd_own_conf() when read PCI_CLASS_DEVICE reg 
+
+Changes since v5: [4]
+ - update MAINTAINER file in alphabetical order
+ - remove meaningless comment
+ - use ERR_PTR function instead of (void *) cast
+ - use is_power_of_2(size) instead of size & (size - 1)
+ - add comment for PCI_CLASS_REVISION register operation
+ 
+Changes since v4: [3]
+ - fix kbuild test robot and compile warnings
+
+Changes since v3: [2]
+ - modify subject format
+ - update Kconfig
+ - update MAINTAINER file
+ - add comment and error handle for meson_pcie_get_mem_shared()
+ - drop useless initialization code
+ - add comment for meson_size_to_payload()
+ - optimize meson_pcie_establish_link() return code
+ - optimize meson_pcie_enable_interrupts() redundant function
+ - drop device_attch related code
+ - drop dw_pcie_ops read_dbi and write_dbi function
+ - add error handle for meson_add_pcie_port() when probe
+
+Changes since v2: [1]
+ - abandon phy driver, move reset to the controller
+ - use devm_add_action_or_reset() to use clock res
+ - format correcting
+
+Changes since v1: [0]
+ - use gpio lib instead open code
+ - move 'apb' and 'port' reset from phy driver
+ - format correcting
+
+[0] : https://lkml.kernel.org/r/1534227522-186798-1-git-send-email-hanjie.lin@amlogic.com
+[1] : https://lkml.kernel.org/r/1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com
+[2] : https://lkml.kernel.org/r/1537509820-52040-1-git-send-email-hanjie.lin@amlogic.com 
+[3] : https://lkml.kernel.org/r/1538999834-156423-3-git-send-email-hanjie.lin@amlogic.com
+[4] : https://lkml.kernel.org/r/1539049990-30810-1-git-send-email-hanjie.lin@amlogic.com
+[5] : https://lkml.kernel.org/r/1542876836-191355-1-git-send-email-hanjie.lin@amlogic.com
+[6] : https://lkml.kernel.org/r/1544097760-85834-1-git-send-email-hanjie.lin@amlogic.com
+
+Yue Wang (2):
+  dt-bindings: PCI: meson: add DT bindings for Amlogic Meson PCIe
+    controller
+  PCI: amlogic: Add the Amlogic Meson PCIe controller driver
+
+ .../devicetree/bindings/pci/amlogic,meson-pcie.txt |  70 +++
+ MAINTAINERS                                        |   7 +
+ drivers/pci/controller/dwc/Kconfig                 |  10 +
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pci-meson.c             | 595 +++++++++++++++++++++
+ 5 files changed, 683 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+ create mode 100644 drivers/pci/controller/dwc/pci-meson.c
+
+-- 
+2.7.4
 
