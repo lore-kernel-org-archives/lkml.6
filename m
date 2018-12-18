@@ -2,164 +2,132 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C473DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842F8C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9556621871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 580652133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X4NhPEvv"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JmVTSylA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeLRSFr (ORCPT
+        id S1727548AbeLRSJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:05:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35912 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727465AbeLRSFr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:05:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p6so3476265wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:05:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=6lEfEC1lHx7ice2Le/HKQJGJ1GtmYuRqhVayCgxWRhY=;
-        b=X4NhPEvvQIRX7udARiL0IrXceTbHRgn4yeGsIf0NAv5+fanbfYkF8e72S+/3RrMvY1
-         Zt5O1SOYcocxeEBMtuaPV6i58TpJToRHnelhtLHhbSUcRsxSg71MWH5QLC6xaZwQDH03
-         yZsnvi7qBhnpRX2CWL3N4I0JyVHGMVCCXgGbA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=6lEfEC1lHx7ice2Le/HKQJGJ1GtmYuRqhVayCgxWRhY=;
-        b=iPoV2ZZXtionxZSBKduR+ULSMaW/FPjkPDkJHK2Hli20l7gSaRVsAqO3TOVMztYsUZ
-         d/eqE1LL3Q88ihoRO8GGcVGpQgTJ5gtzeZPg3HfFlJkp+itwCuMCky5Qw+NPNxCA8sIQ
-         C08sx92YQMDZpCt42nvedIUR80bgPP7FKB3he9tlYZjtbSMZScy2jTw6STJ31rLC6VJL
-         WPMlt/Toqf0EC7EzEiFk+ox7cMw5tUGX7IRfXBHMfOr8sr6EGwyiUWAGRjPUkQfixyCR
-         s360gVm4kpnpnheNC8CX6oGes+BS0OHsVXIVOjyxURk0VqZHJxbWQmiZsJCJHRKmbWx1
-         jUhA==
-X-Gm-Message-State: AA+aEWbOVwQg9VH5Yy6lL/TnPUzPizvdZvZvY/dUq7n0SRyX8AyKe2tW
-        8aoeMt8VGdyCM5gwxswWfu9ioQ==
-X-Google-Smtp-Source: AFSGD/VjRiKTxDSQVTm80qu8/gLvMTgqv6imP+pKKhsM+8csuBJ4iBUxZbVnRPVQBg3rdMGI47yBjg==
-X-Received: by 2002:a1c:1741:: with SMTP id 62mr3954903wmx.25.1545156344847;
-        Tue, 18 Dec 2018 10:05:44 -0800 (PST)
-Received: from [192.168.0.100] ([84.33.66.6])
-        by smtp.gmail.com with ESMTPSA id y185sm1943751wmg.34.2018.12.18.10.05.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 10:05:44 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
- policy in blkio/io
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
-Date:   Tue, 18 Dec 2018 19:05:42 +0100
-Cc:     Tejun Heo <tj@kernel.org>,
-        Angelo Ruocco <angelo.ruocco.90@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, broonie@kernel.org,
-        oleksandr@natalenko.name, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+        Tue, 18 Dec 2018 13:09:08 -0500
+Received: from mail-eopbgr20059.outbound.protection.outlook.com ([40.107.2.59]:60355
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726868AbeLRSJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 13:09:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RJ7A6sVRf5V3xWRtCRJhgeWSwN/O17oyjx7as3K64VY=;
+ b=JmVTSylAC/25Pky1TF7BclFaLD5eeQglwRJjfOJMFh9Zd/Pbk2VhhYdqZgvZzxq+bJ8xltBm4fFELy35mGg5znSFaWlK8fJn17vvGi1pZt3E3l0PvKBybmOCk2IhLhHD4fRxEvaMXuTkP/pZdAG6Qjq9rgJzbE0bugPf/KFpSfA=
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
+ VI1PR04MB4686.eurprd04.prod.outlook.com (20.177.56.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.20; Tue, 18 Dec 2018 18:09:02 +0000
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::f80a:77f3:7cbf:62b5]) by VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::f80a:77f3:7cbf:62b5%2]) with mapi id 15.20.1425.023; Tue, 18 Dec 2018
+ 18:09:02 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Rob Herring <robh@kernel.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
+Thread-Topic: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
+Thread-Index: AQHUlocxSxlVauzxZ0epY0uSJZc9vQ==
+Date:   Tue, 18 Dec 2018 18:09:02 +0000
+Message-ID: <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
+ <20181218040702.29231-4-andrew.smirnov@gmail.com>
+ <20181218151533.GA2922@bogus>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [85.204.4.237]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4686;6:gcFZRIqSkZ11JEqO+kA8PfqCY/kr9Ce0sMuBdl+OnpjdvU+qoIMsZedqrXAsfsxrD3OAKCWXTa3JWyzMkWvv7jaowkhVco0H1Ko+JyYtxK8y2M4HmdPUhjq3LXbx+NDb3+G93PwhZcJm9n3UDbRdd5yLxyTl9aqEk+D4JuofPor2y2syKopC8kaBynluIZcg8U5isuMxzn5cHGTe+UDuOeUGTnWKVBu9HdPXfwfsFgBJAWHZ+dWGF71yFjgUdodcgqyUf6KvAYzLi2ZIJZypOEYWKEYFDNlido8kqLNT2pTG50vJQBz8PWNJGCcg+PFRcWK+JUgAVhfimdiHf7OEKCvfetmHSI6z1+rdRy+BeFmmxbG+FKUP+azrbGyebldofLjC2wQEn18L4IXw34Qm8SxkkSYb8gVxnC5YtOMWCNnkCc7KTzpKALLdpW54IowCjgI3iXUojqAou+9g9pMvLw==;5:TQXiX+DBd3Nlxi7eg0MsAYqS1mbsKXkpOo0kjpF4h+Iokj7ShB80EdFaYRfQymqAiZpm6Lg5QQKqOIn4iXV70I2mrOtjvCE09dKyHcwaakk5Jqs63fyDi4wjDX793PQ9Rpuks77+e6l8yEasg/+H+Fv2RtFf8Bs7Dajb3rkvUbs=;7:aAw38CeQhVEQFp0R0LM2cOVPLqzw+quVGSj2Im49aKsqENGSAFZrIvu2TZIuDPlFpUVZtHD1dbNH5Cs89Qvb7mf2Yc2XSqFDZR9XMx07arU6f88LExWp1qEzj8dJyt7M+YSpfJ/S4hqFTv8HY7LlKw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 7d0803fa-eb7b-494c-c351-08d66513e409
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4686;
+x-ms-traffictypediagnostic: VI1PR04MB4686:
+x-microsoft-antispam-prvs: <VI1PR04MB4686946FAC8AA284B172B1AAEEBD0@VI1PR04MB4686.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4686;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4686;
+x-forefront-prvs: 08902E536D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(376002)(396003)(189003)(199004)(316002)(110136005)(6116002)(54906003)(3846002)(55016002)(486006)(7696005)(2906002)(6306002)(9686003)(229853002)(106356001)(476003)(26005)(6506007)(186003)(53546011)(76176011)(102836004)(25786009)(44832011)(105586002)(86362001)(7416002)(14454004)(97736004)(5660300001)(68736007)(6436002)(7736002)(305945005)(66066001)(33656002)(8936002)(71190400001)(71200400001)(8676002)(81156014)(81166006)(446003)(4326008)(39060400002)(256004)(99286004)(74316002)(966005)(6246003)(53936002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4686;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: aSatyeHanByzzohmYyFfPLXufwxqNaOig2MPZLlzTmpvsGYkCTMbQbqZNUXtt+KnroNCVMqJQUt7bF3kxNA+3UrxJwKC8oITTeT/1t1au1H5owvFs805khyRlkh0r+K6h3qiUJxOrclE9WaviS8H45wOsFdt5GH6bdI538CSWWkbCcZwOlf2rfhnIxfFrYtBdG6coTxzv+m+0jF02KuS05yaSLh4vk8lH6HJJSDg8/mWfSbeorXl5wYQBwkOdjeiIw6fazCCSL3bK3sumfpEyX73pC3udqtOBgpdRy/HfVzCm34zPwb1r3xTkscdFHgf
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <E6C76EEB-122B-4FE5-A670-FA066F813C1D@linaro.org>
-References: <20181119103424.3853-1-paolo.valente@linaro.org>
- <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
- <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
- <7D7FAB43-5F62-4402-A9B3-E7C2E30AE680@linaro.org>
- <20181130184256.GI2509588@devbig004.ftw2.facebook.com>
- <5534B7D4-A5D9-4F44-9620-970A7F9EC140@linaro.org>
- <CADiTV-29TmkB5-k=TtQfoJqjP2Qv7GSsGLXAPBaTB6DoQ+6yyw@mail.gmail.com>
- <874A0232-2103-4364-BD88-F33B85D6A764@linaro.org>
- <20181218164126.GX2509588@devbig004.ftw2.facebook.com>
- <EC4F9B54-2352-4D85-B56C-5800CFEBCCB8@linaro.org>
-To:     bfq-iosched@googlegroups.com
-X-Mailer: Apple Mail (2.3445.102.3)
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d0803fa-eb7b-494c-c351-08d66513e409
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 18:09:02.3032
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4686
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> Il giorno 18 dic 2018, alle ore 18:22, Paolo Valente =
-<paolo.valente@linaro.org> ha scritto:
->=20
->=20
->=20
->> Il giorno 18 dic 2018, alle ore 17:41, Tejun Heo <tj@kernel.org> ha =
-scritto:
->>=20
->> Hello, Paolo.
->>=20
->> On Tue, Dec 18, 2018 at 08:48:10AM +0100, Paolo Valente wrote:
->>> If Tejun cannot see any solution to his concern, then can we just
->>> switch to this extension, considering that
->>> - for non-shared names the interface is *identical* to the current
->>> one;
->>> - by using this new interface, and getting feedback we could
->>> understand how to better handle Tejun's concern?
->>> A lot of systems do use weights, and people don't even know that =
-these
->>> systems don't work correctly in blk-mq.  And they won't work =
-correctly
->>> in any available configuration from 4.21, if we don't fix this =
-problem.
->>=20
->> So, when seen from userland, how it should behave isn't vague or
->> complicated.  For a given device and policy type, there can be only
->> one implementation active.
->=20
-> Yes, but the problem is the opposite. You may have
-> - two different policies, with the same interface parameter,=20
-> - one active on one device
-> - the other one active on another device
->=20
-> In that case, statistics from one policy necessarily differ from
-> statistics from the other policy.
->=20
-> In this respect, in a system with more than one drive it already
-> happens that the same policy is active on different devices.  When
-> printing a statistics interface file for the policy, the output will
-> be a list of separate statistics, with a bunch of statistics *for
-> each* drive (plus a grand total in some cases).
->=20
-> So, our proposal simply extends this scheme in the most natural way:
-> if, now, also two or more policies share the same statistics file,
-> then the output will be a list of separate statistics, one for each
-> policy.  The statistics for each policy will be tagged with the policy
-> name, and will have the same identical form as above.  It seems the
-> most natural hierarchical extension of the same scheme.
->=20
-> At any rate, if you don't like it, just tell us how you prefer it
-> done.  Do you prefer the sharing of statistics file to be simply
-> forbidden?  (If this can be done.) I think such an incomplete solution
-> would preserve part of the current mess; but, if this allows us to
-> exit from this impasse, then it is ok for me.
->=20
-> *Any* feasible option is ok for me. Just pick one.
->=20
->> It doesn't make sense to have two weight
->> mechanisms active on one device, right?
->=20
-> (Un)fortunately, the problem are not weights.  There won't be two
-> weights for two policies expiring a weight parameter.  The problems
-
-s/expiring/sharing sorry
-
+On 12/18/2018 5:15 PM, Rob Herring wrote:=0A=
+> On Mon, Dec 17, 2018 at 08:07:02PM -0800, Andrey Smirnov wrote:=0A=
+>> Add code needed to support i.MX8MQ variant.=0A=
+>>=0A=
+>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>=0A=
+>> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>=0A=
+=0A=
+>> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt=0A=
+>> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt=0A=
+>>   =0A=
+>> +Additional required properties for imx8mq-pcie:=0A=
+>> +- fsl,controller-id: Logical ID of a given PCIE controller. PCIE1 is 0,=
+ PCIE2 is 1;=0A=
+>> +=0A=
+> =0A=
+> Remove this.=0A=
+> =0A=
+> If GPR register offset is what you need, then put that into DT.=0A=
+> Typically, we'd have a property with iomuxc phandle and offset.=0A=
+=0A=
+This series initially added explicit offsets but I suggested a single =0A=
+"controller-id" because:=0A=
+  * There are multiple bit and byte offsets=0A=
+  * Other imx8 SOCs also have 2x pcie with other bit/byte offsets=0A=
+=0A=
+Hiding this behind a compatible string and single "controller-id" seem =0A=
+preferable to elaborating register maps in dt bindings. It also makes =0A=
+upgrades simpler: if features are added which use other bits there is no =
+=0A=
+need to describe them in DT and deal with compatibility headaches.=0A=
+=0A=
+Link to older thread: https://lkml.org/lkml/2018/11/29/888=0A=
+=0A=
+It's possible my suggestion was misguided.=0A=
