@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C2BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEE7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACF4921871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 453BC21871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:29:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeLRO2l (ORCPT
+        id S1727078AbeLRO3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:28:41 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56821 "EHLO
+        Tue, 18 Dec 2018 09:29:17 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56025 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbeLRO2l (ORCPT
+        with ESMTP id S1726536AbeLRO3Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:28:41 -0500
+        Tue, 18 Dec 2018 09:29:16 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIES8lX2858190
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEShcR2858250
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:28:08 -0800
+        Tue, 18 Dec 2018 06:28:43 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIES8Cu2858187;
-        Tue, 18 Dec 2018 06:28:08 -0800
-Date:   Tue, 18 Dec 2018 06:28:08 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIESh9G2858247;
+        Tue, 18 Dec 2018 06:28:43 -0800
+Date:   Tue, 18 Dec 2018 06:28:43 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-1f44b3e2fc5d7a2c5f6d1e67c80ebc226d6bd25f@git.kernel.org>
-Cc:     acme@redhat.com, fweisbec@gmail.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, lclaudio@uudg.org, namhyung@kernel.org,
-        peterz@infradead.org, ldv@altlinux.org,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        esyr@redhat.com, jolsa@kernel.org, hpa@zytor.com,
-        rostedt@goodmis.org
-Reply-To: rostedt@goodmis.org, hpa@zytor.com, jolsa@kernel.org,
-          peterz@infradead.org, alexander.shishkin@linux.intel.com,
-          ldv@altlinux.org, lclaudio@uudg.org, namhyung@kernel.org,
-          esyr@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-          acme@redhat.com, fweisbec@gmail.com, tglx@linutronix.de
-In-Reply-To: <20181205160509.1168-8-jolsa@kernel.org>
-References: <20181205160509.1168-8-jolsa@kernel.org>
+Message-ID: <tip-appp27jw1ul8kgg872j43r5o@git.kernel.org>
+Cc:     fweisbec@gmail.com, esyr@redhat.com, peterz@infradead.org,
+        namhyung@kernel.org, lclaudio@uudg.org, rostedt@goodmis.org,
+        mingo@kernel.org, tglx@linutronix.de, acme@redhat.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        ldv@altlinux.org, alexander.shishkin@linux.intel.com,
+        adrian.hunter@intel.com
+Reply-To: fweisbec@gmail.com, lclaudio@uudg.org, peterz@infradead.org,
+          namhyung@kernel.org, esyr@redhat.com, rostedt@goodmis.org,
+          mingo@kernel.org, tglx@linutronix.de, acme@redhat.com,
+          hpa@zytor.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com, adrian.hunter@intel.com,
+          ldv@altlinux.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Move event delivery to a new
- deliver_event() function
-Git-Commit-ID: 1f44b3e2fc5d7a2c5f6d1e67c80ebc226d6bd25f
+Subject: [tip:perf/core] perf ordered_events: Add first_time() method
+Git-Commit-ID: 83356b3d124af5ae472ce1358222f6b7749d2322
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,20 +59,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20181218142843.T1V8U5NVm7V7_AnxpvHwMpg9KR3sqt4LCpkhi8vvXOs@z>
 
-Commit-ID:  1f44b3e2fc5d7a2c5f6d1e67c80ebc226d6bd25f
-Gitweb:     https://git.kernel.org/tip/1f44b3e2fc5d7a2c5f6d1e67c80ebc226d6bd25f
+Commit-ID:  83356b3d124af5ae472ce1358222f6b7749d2322
+Gitweb:     https://git.kernel.org/tip/83356b3d124af5ae472ce1358222f6b7749d2322
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 5 Dec 2018 17:05:08 +0100
+AuthorDate: Thu, 6 Dec 2018 14:38:52 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 17 Dec 2018 15:02:17 -0300
 
-perf trace: Move event delivery to a new deliver_event() function
+perf ordered_events: Add first_time() method
 
-Mov event delivery code to a new trace__deliver_event() function, so
-it's easier to add ordered delivery coming in the following patches.
+To get the timestamp in the first event in the queue.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Dmitry Levin <ldv@altlinux.org>
 Cc: Eugene Syromiatnikov <esyr@redhat.com>
@@ -84,56 +83,45 @@ Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181205160509.1168-8-jolsa@kernel.org
-[ Add trace__ prefix to the deliver_event method ]
+Link: https://lkml.kernel.org/n/tip-appp27jw1ul8kgg872j43r5o@git.kernel.org
+[ split from a larger patch ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ tools/perf/util/ordered-events.c | 11 +++++++++++
+ tools/perf/util/ordered-events.h |  1 +
+ 2 files changed, 12 insertions(+)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 98aff12af9e6..3b6b1fecf2bb 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2637,6 +2637,21 @@ static int trace__set_filter_pids(struct trace *trace)
- 	return err;
+diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+index 46965643020b..897589507d97 100644
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -343,6 +343,17 @@ int ordered_events__flush_time(struct ordered_events *oe, u64 timestamp)
+ 	return __ordered_events__flush(oe, OE_FLUSH__TIME, timestamp);
  }
  
-+static int trace__deliver_event(struct trace *trace, union perf_event *event)
++u64 ordered_events__first_time(struct ordered_events *oe)
 +{
-+	struct perf_evlist *evlist = trace->evlist;
-+	struct perf_sample sample;
-+	int err;
++	struct ordered_event *event;
 +
-+	err = perf_evlist__parse_sample(evlist, event, &sample);
-+	if (err)
-+		fprintf(trace->output, "Can't parse sample, err = %d, skipping...\n", err);
-+	else
-+		trace__handle_event(trace, event, &sample);
++	if (list_empty(&oe->events))
++		return 0;
 +
-+	return 0;
++	event = list_first_entry(&oe->events, struct ordered_event, list);
++	return event->timestamp;
 +}
 +
- static int trace__run(struct trace *trace, int argc, const char **argv)
+ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver,
+ 			  void *data)
  {
- 	struct perf_evlist *evlist = trace->evlist;
-@@ -2802,18 +2817,10 @@ again:
- 			continue;
+diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
+index f352af20e167..0920fb0ec6cc 100644
+--- a/tools/perf/util/ordered-events.h
++++ b/tools/perf/util/ordered-events.h
+@@ -61,6 +61,7 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
+ 			  void *data);
+ void ordered_events__free(struct ordered_events *oe);
+ void ordered_events__reinit(struct ordered_events *oe);
++u64 ordered_events__first_time(struct ordered_events *oe);
  
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
--			struct perf_sample sample;
--
- 			++trace->nr_events;
- 
--			err = perf_evlist__parse_sample(evlist, event, &sample);
--			if (err) {
--				fprintf(trace->output, "Can't parse sample, err = %d, skipping...\n", err);
--				goto next_event;
--			}
-+			trace__deliver_event(trace, event);
- 
--			trace__handle_event(trace, event, &sample);
--next_event:
- 			perf_mmap__consume(md);
- 
- 			if (interrupted)
+ static inline
+ void ordered_events__set_alloc_size(struct ordered_events *oe, u64 size)
