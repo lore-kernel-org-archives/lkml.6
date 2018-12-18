@@ -2,95 +2,137 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED673C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AC1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3E26218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55D2A218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545146138;
+	bh=hL+OjmqDQsMlbbsagd8Nizmshe4fBv3fqkUyaYlrrlI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2nhayHzMkm8T1I2/qM5JgnhnzpnWbs58qpVhYdXU9vd7IhjGkmW4iNOU4I6HvYBMr
+	 iObn2452wwSW8lff7C7C6LzsK6IE7k54pv7M67QKXHiB0HLr3wxgQ9iwvyeo6lYEiP
+	 6nbA4Mdah/YvQOa9/hBYYpMCN5hxUVYjZWbS3qiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbeLRPPF (ORCPT
+        id S1726869AbeLRPPh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:15:05 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41280 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbeLRPPF (ORCPT
+        Tue, 18 Dec 2018 10:15:37 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45064 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbeLRPPg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:15:05 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l12so16618987qtf.8;
-        Tue, 18 Dec 2018 07:15:04 -0800 (PST)
+        Tue, 18 Dec 2018 10:15:36 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y1so2174695oie.12;
+        Tue, 18 Dec 2018 07:15:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ecrRTW8cnwJLggp6bmuNjzdzyOyHWgpci+BQNwnWe/4=;
-        b=FsdnmZOfRblz8dw2/RrMbJucGAGMiJ9z4ZqY9KMYd1XH6nX1/jNS97F/ozt6FMRcJL
-         PUzNIc94GCpZznIJnXdbn1rBvy/WJx/5W+LtaVCV6aPuSX2Iz9yzYHb0++7Qrx50Haue
-         O757JxgtANQ47R1HdryHedHY/F1Np64IrNEVW+0mKcFHzXaDtFp02yDdwQz7CVVEGXBV
-         lL6lfUkFuD9naoVaOftdpc6/wYvR7rCy4tD/b85aqocZLFmWNQjjziiu+TkieyvLejgM
-         b31Ak5xxlZSP8qBRYuIqvihMx2A/bOsvsxF+NwpcbVBJD4ZcdD85W2nw7ovGdGnFaY4H
-         5q3Q==
-X-Gm-Message-State: AA+aEWaeKaBsVp2jD+MhI30lLP5OLCRP3wtpTcydRsWQSbmpG0LoTizg
-        8V2tYOBNzYvk8VOBz6x89KoRSHRMa+MwGot4gHs=
-X-Google-Smtp-Source: AFSGD/Vomr7uJnASNHKb8D15NyrhrJDg36EUHBf+0iF/Grllnv0IbJpNWUXLWj77k3YegABlY1jvuB+HOhrPrCcNlC8=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr17657446qte.212.1545146104039;
- Tue, 18 Dec 2018 07:15:04 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R6FiizF1WZO/jYfpHg3Lq2YG0OpoJsKc5a+tOWuKe9M=;
+        b=qpXl+P7jpxgs42NuayiPAqNS90Cl7ZBBAeOWVpM3SJa4CcHd+VWJ8C2rgsbtUamP78
+         hXfLvPauXMGwGjJlMo5a82t6hcdO9Uviu/qOfBehf5w/UtDZ9KgKc7nilUO2rUxXpH9R
+         OQRk6F7jNXVR/P25AhL2yvJws0w2WLCCSSQyRrvdHEdnQwfMYeGOo7/M0muDI5CcxF/W
+         NFM6sCIL5cq5PnmG1VgWynzrfhoInwpsAab59/XipD7Ij6Ojd/oYcbnMgMmrhTqPG5yk
+         e9yJOHPYTl+/oHBNkgEneRKko0/91bnQv5ZQWuOXOnoHY6cPVea6AKzyo16FWmDptIGn
+         eXGw==
+X-Gm-Message-State: AA+aEWZSRVN8oetjPXPwR2lu2JS7oE8JzPcpm54euwNCNNlN0TezsuVP
+        Ag7Gvu0QvdxMllYIePcqYg==
+X-Google-Smtp-Source: AFSGD/U+VViOFv01xysi619namV0zfIztq2Q1OIIQsE1SoxVMSJAxcYAiY7owRJpQ8eXZN/HS9/TOA==
+X-Received: by 2002:aca:5205:: with SMTP id g5mr8315705oib.149.1545146134892;
+        Tue, 18 Dec 2018 07:15:34 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l6sm2813042otk.51.2018.12.18.07.15.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 07:15:34 -0800 (PST)
+Date:   Tue, 18 Dec 2018 09:15:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, devicetree@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
+Message-ID: <20181218151533.GA2922@bogus>
+References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
+ <20181218040702.29231-4-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-References: <20181217130646.GB3560@osiris> <CAK8P3a0kLHcfAtVVuVBqwcQJE+qk6LAO9TBJO2Sb2_m6z5cn8g@mail.gmail.com>
- <CAK8P3a3buLM8aKdN8PATzx_mQqFrrLcJmPjbeiJ8uCzx2GwS2Q@mail.gmail.com> <20181218075653.GB3590@osiris>
-In-Reply-To: <20181218075653.GB3590@osiris>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 18 Dec 2018 16:14:47 +0100
-Message-ID: <CAK8P3a239wziapVWTuPN09-FZ-fip_f3uhFD6B0=92Rw+=zWzw@mail.gmail.com>
-Subject: Re: [-next] strace tests fail because of "y2038: socket: Add compat_sys_recvmmsg_time64"
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218040702.29231-4-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 8:57 AM Heiko Carstens
-<heiko.carstens@de.ibm.com> wrote:
->
-> On Mon, Dec 17, 2018 at 11:05:06PM +0100, Arnd Bergmann wrote:
-> > On Mon, Dec 17, 2018 at 10:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Mon, Dec 17, 2018 at 2:06 PM Heiko Carstens
-> > > <heiko.carstens@de.ibm.com> wrote:
-> > > >
-> > > > Hi Arnd,
-> > > >
-> > > > in linux-next as of today 16 strace self tests fail on s390. I could
-> > > > bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
-> > > >
-> > > > The following tests fail:
-> > >
-> > > Hi Heiko,
-> > >
-> > > Thanks for the report and sorry I broke things. I'll have a closer look
-> > > tomorrow if I don't find it right away. I suppose the regression was in
-> > > native system calls, not the compat syscalls with 31-bit user space,
-> > > right?
->
-> Yes, I was talking about 64 bit native system calls.
->
-> > I found a bug in my patch by inspection. Can you try if the patch
-> > below makes it all work (apologies for the garbled whitespace),
-> > I'm considering a rewrite of that function now (to split it into two
-> > again), but want to make sure there isn't another problem in my
-> > original patch.
->
-> With your patch below applied, the tests pass again.
+On Mon, Dec 17, 2018 at 08:07:02PM -0800, Andrey Smirnov wrote:
+> Add code needed to support i.MX8MQ variant.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> ---
+>  .../bindings/pci/fsl,imx6q-pcie.txt           |  6 +-
+>  drivers/pci/controller/dwc/Kconfig            |  4 +-
+>  drivers/pci/controller/dwc/pci-imx6.c         | 82 ++++++++++++++++++-
+>  3 files changed, 87 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> index d514c1f2365f..1a10c313e8d7 100644
+> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>  	- "fsl,imx6sx-pcie",
+>  	- "fsl,imx6qp-pcie"
+>  	- "fsl,imx7d-pcie"
+> +	- "fsl,imx8mq-pcie"
+>  - reg: base address and length of the PCIe controller
+>  - interrupts: A list of interrupt outputs of the controller. Must contain an
+>    entry for each entry in the interrupt-names property.
+> @@ -45,7 +46,7 @@ Additional required properties for imx6sx-pcie:
+>    PCIE_PHY power domains
+>  - power-domain-names: Must be "pcie", "pcie_phy"
+>  
+> -Additional required properties for imx7d-pcie:
+> +Additional required properties for imx7d-pcie and imx8mq-pcie:
+>  - power-domains: Must be set to a phandle pointing to PCIE_PHY power domain
+>  - resets: Must contain phandles to PCIe-related reset lines exposed by SRC
+>    IP block
+> @@ -54,6 +55,9 @@ Additional required properties for imx7d-pcie:
+>  	       - "apps"
+>  	       - "turnoff"
+>  
+> +Additional required properties for imx8mq-pcie:
+> +- fsl,controller-id: Logical ID of a given PCIE controller. PCIE1 is 0, PCIE2 is 1;
+> +
 
-Ok, thanks for testing, I've pushed out the fixed version of that
-branch now.
+Remove this.
 
-       Arnd
+If GPR register offset is what you need, then put that into DT. 
+Typically, we'd have a property with iomuxc phandle and offset.
+
+Rob
