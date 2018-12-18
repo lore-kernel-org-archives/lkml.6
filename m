@@ -2,98 +2,84 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B486C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A204BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4AE2184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545175351;
-	bh=oBkqXTf95ZFidO1yuRUBfm28piVET2XRgGpJYmkkQ+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=t+KjkAAQaH1Il7RAkxyGMI02tD20NCM6LyY6uSIufPjvBQxgC3mTPmZ5MRGasplrK
-	 k/j708epj/uLvVaGPvcZtiBuZ8CNaCtjfyhWsiCNDoQPfgXlwPz9eRUAu5NqB/LAk9
-	 rYd84XjG40PwP/Bf2DcCUhQT+DeeVagNg+w0BdqU=
+	by mail.kernel.org (Postfix) with ESMTP id 7649D217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:23:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbeLRXWa (ORCPT
+        id S1727980AbeLRXXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 18:22:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54756 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 18:23:16 -0500
+Received: from mga03.intel.com ([134.134.136.65]:65385 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726658AbeLRXWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 18:22:30 -0500
-Received: from localhost (unknown [104.132.0.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEFDE217D9;
-        Tue, 18 Dec 2018 23:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545175349;
-        bh=oBkqXTf95ZFidO1yuRUBfm28piVET2XRgGpJYmkkQ+g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iQNRWSd6QdB9+qq9sjtqQb6TaF5mK9NK/14072thXxxvuQIOZTMAkHvTTxZ2I251n
-         y0hjmTJoV7a6sc2FXIStcA5nW0Ec6Mu9R5pSuYi0vnDmbFekyya46zlYbTb7dnQn+T
-         5OCUQhKaZklfYwxgxh19w4ss+yN/iimtu30fE3T8=
-Date:   Tue, 18 Dec 2018 15:22:28 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH v2] f2fs: fix missing unlock(sbi->gc_mutex)
-Message-ID: <20181218232228.GE31062@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181218021530.78323-1-jaegeuk@kernel.org>
+        id S1726658AbeLRXXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 18:23:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 15:23:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,370,1539673200"; 
+   d="scan'208";a="119922125"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga001.jf.intel.com with ESMTP; 18 Dec 2018 15:23:13 -0800
+Subject: Re: [PATCH v6 1/3] x86/fpu: track AVX-512 usage of tasks
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Aubrey Li <aubrey.li@intel.com>, mingo@redhat.com,
+        peterz@infradead.org, hpa@zytor.com, ak@linux.intel.com,
+        tim.c.chen@linux.intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20181218042218.8653-1-aubrey.li@intel.com>
+ <alpine.DEB.2.21.1812181448170.12686@nanos.tec.linutronix.de>
+ <62997df2-0817-b54d-b11e-00a567f1d67c@linux.intel.com>
+ <alpine.DEB.2.21.1812181630530.14031@nanos.tec.linutronix.de>
+ <f0390c3a-2332-6e7c-0f0d-f3d25e4cf0bc@intel.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <5c3b1ca3-d720-1493-d3d5-463869931f46@linux.intel.com>
+Date:   Wed, 19 Dec 2018 07:23:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218021530.78323-1-jaegeuk@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <f0390c3a-2332-6e7c-0f0d-f3d25e4cf0bc@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes missing unlock call.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
-
-v1 -> v2:
- - clean up
-
- fs/f2fs/super.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index b79677639108..cec7ef27b389 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1457,19 +1457,16 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
- 
- 	sbi->sb->s_flags |= SB_ACTIVE;
- 
--	mutex_lock(&sbi->gc_mutex);
- 	f2fs_update_time(sbi, DISABLE_TIME);
- 
- 	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
-+		mutex_lock(&sbi->gc_mutex);
- 		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
- 		if (err == -ENODATA)
- 			break;
--		if (err && err != -EAGAIN) {
--			mutex_unlock(&sbi->gc_mutex);
-+		if (err && err != -EAGAIN)
- 			return err;
--		}
- 	}
--	mutex_unlock(&sbi->gc_mutex);
- 
- 	err = sync_filesystem(sbi->sb);
- 	if (err)
--- 
-2.19.0.605.g01d371f741-goog
+On 2018/12/19 1:14, Dave Hansen wrote:
+> On 12/18/18 7:32 AM, Thomas Gleixner wrote:
+>> What exactly prevents a 32bit kernel from having the AVX512 feature bit
+>> set? And if it cannot be set on 32bit, then why are you compiling that code
+>> in at all?
+> 
+> There are three different AVX-512 states (and three bits) which Aubrey's
+> patch checks.  All three have different rules.  Here's a summary along
+> with some relevant SDM quotes from Vol1-13.6.
+> 
+> Opmask state: All opmask registers can be set in 32-bit mode.
+> ZMM_Hi256 state: "An execution of XRSTOR or XRSTORS outside 64-bit mode
+> 		  does not update ZMM8_H–ZMM15_H."  This implies that
+> 		  ZMM0_H-ZMM7_H *are* updated in 32-bit mode.
+> Hi16_ZMM state: "Outside 64-bit mode, Hi16_ZMM state is always in its
+> 		 initial configuration."
+> 
+> All of Hi16_ZMM and *part* of ZMM_Hi256 can not be practically used in
+> 32-bit mode.  But, even using part of ZMM_Hi256 means the xfeature bit
+> will be set.
+> 
+> So, 2/3 of the features can be used in 32-bit mode.  Nothing that I can
+> find _prevents_ those features from being used in 32-bit mode.
+> 
+> Aubrey, do you have information to the contrary?
+> 
+Thanks Dave for the summary, similar info I have from SDM, so yes, 32bit
+kernel can have xfeature bits set.
 
