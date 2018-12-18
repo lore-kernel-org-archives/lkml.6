@@ -2,266 +2,144 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DFAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B339C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7771217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545125294;
-	bh=GmP6gl+OnmPFIYtuoAXp78y31o6kcnPD8cNRViuQ5A8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=NHbE5xfp02ONUAnO/xhpnN79Kp2B5AsX+2q93B3Sfi7hKDjkHD3KqEXLoETC5YtRC
-	 o8uL+VEmF7PKSvRFaDrtJUMG8qXolbLvS3cpVdNBdN3oqUfskPIpYdRrmkKJwe8Fqd
-	 SZ+3JFWuYdiZPj4WwfXZvJYteL4XZyVGSyC/Q9Lw=
+	by mail.kernel.org (Postfix) with ESMTP id D22672133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:28:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="hFSBhBAv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbeLRJ2N (ORCPT
+        id S1726524AbeLRJ2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:28:13 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43735 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRJ2N (ORCPT
+        Tue, 18 Dec 2018 04:28:35 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:33217 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeLRJ2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:28:13 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so7848199pfk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:28:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wPvGr/wNcmr4Tb5YHQNZJ/6FEIYgCd53/p3Q1S9g57k=;
-        b=WXvsUfktY2Yetg0Z2PHLIORXZf1zYurEejZQmuGtua0pik3lYlxSt2JPbDMTptNEmh
-         J6ZQ5uSS1f68mdTF4e1yX+YXmRSJudN5+mYqe2RC+ixtJESwpYJx+pb5OrnHMVureNds
-         YDM70T5tfn0jAqtMgoogLXEc7+vEmVmBeo+K5/2iZAJqQOpLuIObNBHkQ4G2zRfcAae6
-         mKitHuYiIccsI8Nvf9Eya5Mco2mIIfuTuw7S1CLp2memd+hBTLbof37GqJdp4ofXgtX/
-         a3mt68bpwD5r/ZX9P3nXHM8w0/jwf0rAEuW1m72/8S+/XHiufvySjir7/L5pPz5478wi
-         iBCQ==
-X-Gm-Message-State: AA+aEWbD4Hpa0cNjAxs/dlSTM6qfmY41D3JfJlihcVRl7SigZKYJbZ1y
-        DM6VaQQ+5JvXGNSu+JYt9vN0tkoZ
-X-Google-Smtp-Source: AFSGD/Xaz9uMk7WsmcIJdbAQH9qQtYEhhAXaorM6ebFAjvod2kBDUwADFe1b9pLyHaTLUZ7cmDeOvw==
-X-Received: by 2002:a62:30c3:: with SMTP id w186mr16023767pfw.39.1545125291692;
-        Tue, 18 Dec 2018 01:28:11 -0800 (PST)
-Received: from tiehlicka.microfocus.com (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id h9sm19484073pgd.53.2018.12.18.01.28.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 01:28:10 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Oscar Salvador <OSalvador@suse.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] mm: do not report isolation failures for CMA pages
-Date:   Tue, 18 Dec 2018 10:28:02 +0100
-Message-Id: <20181218092802.31429-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.2
+        Tue, 18 Dec 2018 04:28:32 -0500
+X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
+   d="scan'208";a="21637114"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Dec 2018 02:28:31 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 18 Dec 2018 02:28:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MhHySijBICS9BkuruPPjYDDzkpGdtnXaGDZ26N6igXU=;
+ b=hFSBhBAvn8UxrN7tSOqICnblLJvXV8O3qFvnh2xTL652zTUHz5tp7Fq4HarlVMvGe/qoPDuiQZfoPBUVRzKRPO/eQMFKwX/VqrHfaBZYnmCgwwwPTGu+FqPIZNllKlST5s+z3JHlZkYC9/Muu1YYTcoW3uJPTRIWFW0mtAmIWAA=
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
+ BN6PR1101MB2194.namprd11.prod.outlook.com (10.174.112.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Tue, 18 Dec 2018 09:28:28 +0000
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::1dae:74d9:ffd2:7838]) by BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::1dae:74d9:ffd2:7838%3]) with mapi id 15.20.1446.015; Tue, 18 Dec 2018
+ 09:28:28 +0000
+From:   <Andrei.Stefanescu@microchip.com>
+To:     <rdunlap@infradead.org>, <sfr@canb.auug.org.au>,
+        <linux-next@vger.kernel.org>, <broonie@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Dec 17 (regulator/mcp16502.c)
+Thread-Topic: linux-next: Tree for Dec 17 (regulator/mcp16502.c)
+Thread-Index: AQHUliLT5z09/PS5+EOiL8HGfieb6aWEO8EA
+Date:   Tue, 18 Dec 2018 09:28:28 +0000
+Message-ID: <366d42a1-ce66-c2ec-3007-40c72bd41a93@microchip.com>
+References: <20181217220914.29144a09@canb.auug.org.au>
+ <c7bd09d3-3c04-327e-6c0b-89ee058cced8@infradead.org>
+In-Reply-To: <c7bd09d3-3c04-327e-6c0b-89ee058cced8@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR08CA0204.eurprd08.prod.outlook.com
+ (2603:10a6:800:d2::34) To BN6PR1101MB2243.namprd11.prod.outlook.com
+ (2603:10b6:405:52::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2194;6:REC0LOxDj3cH3d/k74f+7MmVSmljkApjBwZEAbieuOFA5jthRQNFtTFF+hCj3qSDsR/rmoOoazPT34CalNmiXjj8tUHEPXlUfgNfTVOVG/A+k2ThlR6YkLtPiocj2MNKd3o1oM+ZmUEavkqPu1d5xtVIuUUh2+ugTSs22TF0Hhc63iC/J8KqRyv124Z4zKpI7ecTOhBL5bTwcWbrR+duyeiVGUP8+6QE8alwI2ltWnB7iOa0NMljipAookuTnwQhubOak6BsCMm2YpRmFzqvnid+MoED37GULZmJclmNMopY43w+Cu3lfHLaEEN5ULsGCceeOFhgJX0r58bz0gsgUwG1wnDgHk+9kjckM+jqpwu3G4Z+Fo430zsBniWxNknbs85V9qaJj1VTFY0ZM60d0fW8W5f/9N8amgo5UD1xF3TtFxvjc+7HXDbyBKTwwm8wdZ4mmlmY3CzQyODB+tIu9Q==;5:vDPGi9MOUURbm601M+BBxL386snyo5qL5lqMlrh32+Gnhxl1ni7HwmytNKFdCPNmWq+mNDQohAmuM0jaj7bzbst6cuPCPFzAKHQxcxGRw+FXORLWov8yUWUFGsjsaNiYuecIPBhdfcWZVYkGPF1l6ol68cfCNTrcR993Wzhq9c8=;7:I3LNQEoSiDwcs2LGHZpoGKrWxDJ9olzyGTehFlCt0P/pKg1cLOYCVznCoNtIbwUCtgNao9uGgnkOegctDiPN8cULYOs/OtmKEx61ad6ck2FduTLQyYc7QhQgzBuzQSPVZDJzkFa1O1/5WPfNOuMGGQ==
+x-ms-office365-filtering-correlation-id: 90dd742e-e71a-460d-58be-08d664cb2b0c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2194;
+x-ms-traffictypediagnostic: BN6PR1101MB2194:
+x-microsoft-antispam-prvs: <BN6PR1101MB21946A3D431A9FBBB1712A16EDBD0@BN6PR1101MB2194.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231475)(944501520)(4982022)(52105112)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2194;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2194;
+x-forefront-prvs: 08902E536D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(366004)(396003)(136003)(189003)(53754006)(199004)(6486002)(36756003)(31686004)(14444005)(6246003)(345774005)(25786009)(305945005)(256004)(110136005)(7736002)(71200400001)(478600001)(229853002)(316002)(446003)(8676002)(11346002)(2616005)(476003)(31696002)(99286004)(71190400001)(14454004)(105586002)(81166006)(72206003)(2906002)(966005)(81156014)(4326008)(3846002)(102836004)(8936002)(86362001)(2501003)(76176011)(52116002)(53546011)(6512007)(5660300001)(486006)(53936002)(6306002)(26005)(68736007)(386003)(6436002)(97736004)(106356001)(6506007)(186003)(66066001)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2194;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: +dYz8Y0zRECeYHFYApMB/fmYuCLBtOQMUJphTG5EksJp6Ij8jo0Imhh92PaKHpFJ3vr+IPmVSFm6o5735iE3nHoCgihNVjVuBYWL3nQqsk51UShG+Dv2Kc86yAWeOawZ+Q26esuOlIwnZx7mnIlCGg1RevpmBOtkfgP7MDzAewUxUNtxdDqyc3Vtq0xCgdX2Js66ll13CFuVDXgjbD5IVgjPQUrm8vUYSAG6TlW92we7gXCFOUCE4r+RRud/14wvJuTpkqkodIlwp2HL/Z5ica8AMExERnOTVLQKZf4m37AP76tcYliQhSuXuLVhY6OG
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <F7C901288C954F44984E5A5A20E9FFA5@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90dd742e-e71a-460d-58be-08d664cb2b0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 09:28:28.7886
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2194
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+Hi Randy,
 
-Heiko has complained that his log is swamped by warnings from has_unmovable_pages
-[   20.536664] page dumped because: has_unmovable_pages
-[   20.536792] page:000003d081ff4080 count:1 mapcount:0 mapping:000000008ff88600 index:0x0 compound_mapcount: 0
-[   20.536794] flags: 0x3fffe0000010200(slab|head)
-[   20.536795] raw: 03fffe0000010200 0000000000000100 0000000000000200 000000008ff88600
-[   20.536796] raw: 0000000000000000 0020004100000000 ffffffff00000001 0000000000000000
-[   20.536797] page dumped because: has_unmovable_pages
-[   20.536814] page:000003d0823b0000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
-[   20.536815] flags: 0x7fffe0000000000()
-[   20.536817] raw: 07fffe0000000000 0000000000000100 0000000000000200 0000000000000000
-[   20.536818] raw: 0000000000000000 0000000000000000 ffffffff00000001 0000000000000000
+Thank you for the email. The error should be fixed with this patch [1].
 
-which are not triggered by the memory hotplug but rather CMA allocator.
-The original idea behind dumping the page state for all call paths was
-that these messages will be helpful debugging failures. From the above
-it seems that this is not the case for the CMA path because we are
-lacking much more context. E.g the second reported page might be a CMA
-allocated page. It is still interesting to see a slab page in the CMA
-area but it is hard to tell whether this is bug from the above output
-alone.
+Best regards,
+Andrei
 
-Address this issue by dumping the page state only on request. Both
-start_isolate_page_range and has_unmovable_pages already have an
-argument to ignore hwpoison pages so make this argument more generic and
-turn it into flags and allow callers to combine non-default modes into a
-mask. While we are at it, has_unmovable_pages call from is_pageblock_removable_nolock
-(sysfs removable file) is questionable to report the failure so drop it
-from there as well.
+[1] -=20
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-December/621292.=
+html
 
-Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
-
-Hi,
-this is triggered by [1]. I think it should go as a separate patch
-rathen than folded in to [2] because it gives a more context for future
-reference but I will not insist of course.
-
-Implementation wise I went with the simplest patch but if there is a
-strong feeling that we need a dedicated enum then I will do that. The
-API is quite low level so I didn't feel an urge to do that myself.
-
-[1] http://lkml.kernel.org/r/20181217155922.GC3560@osiris
-[2] http://lkml.kernel.org/r/20181116083020.20260-6-mhocko@kernel.org
-
- include/linux/page-isolation.h | 11 +++++++++--
- mm/memory_hotplug.c            |  5 +++--
- mm/page_alloc.c                | 11 +++++------
- mm/page_isolation.c            | 10 ++++------
- 4 files changed, 21 insertions(+), 16 deletions(-)
-
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-index 4ae347cbc36d..4eb26d278046 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -30,8 +30,11 @@ static inline bool is_migrate_isolate(int migratetype)
- }
- #endif
- 
-+#define SKIP_HWPOISON	0x1
-+#define REPORT_FAILURE	0x2
-+
- bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
--			 int migratetype, bool skip_hwpoisoned_pages);
-+			 int migratetype, int flags);
- void set_pageblock_migratetype(struct page *page, int migratetype);
- int move_freepages_block(struct zone *zone, struct page *page,
- 				int migratetype, int *num_movable);
-@@ -44,10 +47,14 @@ int move_freepages_block(struct zone *zone, struct page *page,
-  * For isolating all pages in the range finally, the caller have to
-  * free all pages in the range. test_page_isolated() can be used for
-  * test it.
-+ *
-+ * The following flags are allowed (they can be combined in a bit mask)
-+ * SKIP_HWPOISON - ignore hwpoison pages
-+ * REPORT_FAILURE - report details about the failure to isolate the range
-  */
- int
- start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
--			 unsigned migratetype, bool skip_hwpoisoned_pages);
-+			 unsigned migratetype, int flags);
- 
- /*
-  * Changes MIGRATE_ISOLATE to MIGRATE_MOVABLE.
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c82193db4be6..8537429d33a6 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1226,7 +1226,7 @@ static bool is_pageblock_removable_nolock(struct page *page)
- 	if (!zone_spans_pfn(zone, pfn))
- 		return false;
- 
--	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, true);
-+	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, SKIP_HWPOISON);
- }
- 
- /* Checks if this range of memory is likely to be hot-removable. */
-@@ -1577,7 +1577,8 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 
- 	/* set above range as isolated */
- 	ret = start_isolate_page_range(start_pfn, end_pfn,
--				       MIGRATE_MOVABLE, true);
-+				       MIGRATE_MOVABLE,
-+				       SKIP_HWPOISON | REPORT_FAILURE);
- 	if (ret) {
- 		mem_hotplug_done();
- 		reason = "failure to isolate range";
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ec2c7916dc2d..ee4043419791 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7754,8 +7754,7 @@ void *__init alloc_large_system_hash(const char *tablename,
-  * race condition. So you can't expect this function should be exact.
-  */
- bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
--			 int migratetype,
--			 bool skip_hwpoisoned_pages)
-+			 int migratetype, int flags)
- {
- 	unsigned long pfn, iter, found;
- 
-@@ -7818,7 +7817,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		 * The HWPoisoned page may be not in buddy system, and
- 		 * page_count() is not 0.
- 		 */
--		if (skip_hwpoisoned_pages && PageHWPoison(page))
-+		if ((flags & SKIP_HWPOISON) && PageHWPoison(page))
- 			continue;
- 
- 		if (__PageMovable(page))
-@@ -7845,7 +7844,8 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 	return false;
- unmovable:
- 	WARN_ON_ONCE(zone_idx(zone) == ZONE_MOVABLE);
--	dump_page(pfn_to_page(pfn+iter), "unmovable page");
-+	if (flags & REPORT_FAILURE)
-+		dump_page(pfn_to_page(pfn+iter), "unmovable page");
- 	return true;
- }
- 
-@@ -7972,8 +7972,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
- 	 */
- 
- 	ret = start_isolate_page_range(pfn_max_align_down(start),
--				       pfn_max_align_up(end), migratetype,
--				       false);
-+				       pfn_max_align_up(end), migratetype, 0);
- 	if (ret)
- 		return ret;
- 
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 43e085608846..ce323e56b34d 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -15,8 +15,7 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/page_isolation.h>
- 
--static int set_migratetype_isolate(struct page *page, int migratetype,
--				bool skip_hwpoisoned_pages)
-+static int set_migratetype_isolate(struct page *page, int migratetype, int isol_flags)
- {
- 	struct zone *zone;
- 	unsigned long flags, pfn;
-@@ -60,8 +59,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
- 	 * FIXME: Now, memory hotplug doesn't call shrink_slab() by itself.
- 	 * We just check MOVABLE pages.
- 	 */
--	if (!has_unmovable_pages(zone, page, arg.pages_found, migratetype,
--				 skip_hwpoisoned_pages))
-+	if (!has_unmovable_pages(zone, page, arg.pages_found, migratetype, flags))
- 		ret = 0;
- 
- 	/*
-@@ -185,7 +183,7 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
-  * prevents two threads from simultaneously working on overlapping ranges.
-  */
- int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
--			     unsigned migratetype, bool skip_hwpoisoned_pages)
-+			     unsigned migratetype, int flags)
- {
- 	unsigned long pfn;
- 	unsigned long undo_pfn;
-@@ -199,7 +197,7 @@ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
- 	     pfn += pageblock_nr_pages) {
- 		page = __first_valid_page(pfn, pageblock_nr_pages);
- 		if (page &&
--		    set_migratetype_isolate(page, migratetype, skip_hwpoisoned_pages)) {
-+		    set_migratetype_isolate(page, migratetype, flags)) {
- 			undo_pfn = pfn;
- 			goto undo;
- 		}
--- 
-2.19.2
-
+On 17.12.2018 18:03, Randy Dunlap wrote:
+> On 12/17/18 3:09 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20181214:
+>>
+> on i386:
+> # CONFIG_SUSPEND is not set
+> CONFIG_PM=3Dy
+>
+>    CC      drivers/regulator/mcp16502.o
+> In file included from ../include/linux/device.h:23:0,
+>                   from ../include/linux/gpio/driver.h:5,
+>                   from ../include/asm-generic/gpio.h:13,
+>                   from ../include/linux/gpio.h:62,
+>                   from ../drivers/regulator/mcp16502.c:11:
+> ../drivers/regulator/mcp16502.c:527:32: error: 'mcp16502_suspend_noirq' u=
+ndeclared here (not in a function)
+>    SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend_noirq,
+>                                  ^
+> ../include/linux/pm.h:342:19: note: in definition of macro 'SET_NOIRQ_SYS=
+TEM_SLEEP_PM_OPS'
+>    .suspend_noirq =3D suspend_fn, \
+>                     ^
+> ../drivers/regulator/mcp16502.c:528:10: error: 'mcp16502_resume_noirq' un=
+declared here (not in a function)
+>            mcp16502_resume_noirq)
+>            ^
+> ../include/linux/pm.h:343:18: note: in definition of macro 'SET_NOIRQ_SYS=
+TEM_SLEEP_PM_OPS'
+>    .resume_noirq =3D resume_fn, \
+>                    ^
+>
+>
+>
