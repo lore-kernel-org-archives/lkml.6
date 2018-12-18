@@ -2,108 +2,74 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2808EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B88C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF89F218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:39:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E69EF2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545169221;
+	bh=NjVwqfXeFsL9NB6Y1BCrOiBFK7L9VhI63AU+az+6d2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DrFRPvPHHu585a/kM0YRui/AROR9MED3aY/D7wONQEaCNModxKIDOg7K+tjTOL3j0
+	 hyYr7dcENxVqI4nsyLXe0M4NYntbRXx/jC61yqMIVd8lAwcJhTx4yq4adzhJLeU0V1
+	 abWHPcdVXlSaH1x1CY9Hp9EPkkoV7m2tyJsCthfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeLRVjI (ORCPT
+        id S1727208AbeLRVkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:39:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46770 "EHLO mx1.redhat.com"
+        Tue, 18 Dec 2018 16:40:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbeLRVjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:39:08 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726701AbeLRVkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:40:19 -0500
+Received: from localhost (unknown [104.132.0.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E7FFED7E91;
-        Tue, 18 Dec 2018 21:39:07 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 357DA5DEE2;
-        Tue, 18 Dec 2018 21:39:03 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-        Tejun Heo <tj@kernel.org>, Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] include/linux/nodemask.h: Use nr_node_ids (not MAX_NUMNODES) in __nodemask_pr_numnodes()
-Date:   Tue, 18 Dec 2018 16:38:42 -0500
-Message-Id: <1545169122-12579-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 18 Dec 2018 21:39:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B59721871;
+        Tue, 18 Dec 2018 21:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545169219;
+        bh=NjVwqfXeFsL9NB6Y1BCrOiBFK7L9VhI63AU+az+6d2A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eE0DKYKWh9Anh3HMu3TEvZSZDwzP5UL1ybma9lHyb/OEXbxw92/LBvCWVMg/JjICr
+         puc9CpWJGnuEMhnoJZ/MTe2TW/nfPCX1abGGpGbCuJpe3jcm/k0CVZTXkWyQav5Cej
+         YOSxDempwNLPTAqF1N+9RPvL4dICKNsPhAIYtZeg=
+Date:   Tue, 18 Dec 2018 13:40:18 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, dm-devel@redhat.com,
+        Alasdair Kergon <agk@redhat.com>, stable@vger.kernel.org
+Subject: Re: dm: give req_size precisely given by user
+Message-ID: <20181218214018.GA31062@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181218172537.12300-1-jaegeuk@kernel.org>
+ <01a60138-63ab-6a9d-c0ba-b8fea551b14e@kernel.dk>
+ <20181218194708.GA24676@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218194708.GA24676@redhat.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When viewing the /proc/<pid>/status file, one can see output lines like
+On 12/18, Mike Snitzer wrote:
+> On Tue, Dec 18 2018 at 12:45pm -0500,
+> Jens Axboe <axboe@kernel.dk> wrote:
+> 
+> > On 12/18/18 10:25 AM, Jaegeuk Kim wrote:
+> > > This patch makes dm be aware of io_pages to assign sane req_size for reads.
+> > 
+> > Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> > 
+> 
+> I've applied this, see:
+> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.21&id=c6d6e9b0f6b4201c77f2cea3964dd122697e3543
 
-  Cpus_allowed:	ffffffff,ffffffff,ffffffff
-  Cpus_allowed_list:	0-95
-  Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f
-  Mems_allowed_list:	0-3
-
-The "Mems_allowed" line uses the "%*pb" format string while the
-"Mems_allowed_list" line uses the "%*pbl" format string together with
-the nodemask_pr_args() macro.
-
-The "Mems_allowed" looks insane compared with the others.  It is because
-the nodemask_pr_args() macro uses MAX_NUMNODES as the number of nodes
-to iterate. The cpumask_pr_args() macro uses nr_cpu_ids instead of
-MAX_CPUS. For nodes, there is a corresponding nr_node_ids.  So it makes
-sense to use nr_node_ids instead to be consistent with "Cpus_allowed:".
-
-With that change, the "Mems_allowed" line becomes sane again.
-
-  Mems_allowed:	f
-
-There are currently 10 call sites of nodemask_pr_args() in the kernel.
-Of them, only cpuset_task_status_allowed() in kernel/cgroup/cpuset.c
-uses the "%*pb" format string that will be affected by this change. That
-cpuset function is called by proc_pid_status() only.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/nodemask.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-index 5a30ad5..ba07661 100644
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -97,6 +97,8 @@
- 
- typedef struct { DECLARE_BITMAP(bits, MAX_NUMNODES); } nodemask_t;
- extern nodemask_t _unused_nodemask_arg_;
-+extern int nr_node_ids;
-+extern int nr_online_nodes;
- 
- /**
-  * nodemask_pr_args - printf args to output a nodemask
-@@ -108,7 +110,7 @@
- 				__nodemask_pr_bits(maskp)
- static inline unsigned int __nodemask_pr_numnodes(const nodemask_t *m)
- {
--	return m ? MAX_NUMNODES : 0;
-+	return m ? nr_node_ids : 0;
- }
- static inline const unsigned long *__nodemask_pr_bits(const nodemask_t *m)
- {
-@@ -444,9 +446,6 @@ static inline int next_memory_node(int nid)
- 	return next_node(nid, node_states[N_MEMORY]);
- }
- 
--extern int nr_node_ids;
--extern int nr_online_nodes;
--
- static inline void node_set_online(int nid)
- {
- 	node_set_state(nid, N_ONLINE);
--- 
-1.8.3.1
-
+Got it. Thank you so much.
