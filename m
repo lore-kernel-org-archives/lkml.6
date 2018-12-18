@@ -6,72 +6,53 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E21C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22017C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C31D21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE4D821871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbeLRNwG (ORCPT
+        id S1726810AbeLRNwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Dec 2018 08:52:06 -0500
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:40628 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726626AbeLRNwB (ORCPT
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44876 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbeLRNwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:52:01 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 9A494B8829
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 13:51:58 +0000 (GMT)
-Received: (qmail 7453 invoked from network); 18 Dec 2018 13:51:58 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Dec 2018 13:51:58 -0000
-Date:   Tue, 18 Dec 2018 13:51:56 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/14] mm, compaction: Ignore the fragmentation avoidance
- boost for isolation and compaction
-Message-ID: <20181218135156.GK29005@techsingularity.net>
-References: <20181214230310.572-1-mgorman@techsingularity.net>
- <20181214230310.572-10-mgorman@techsingularity.net>
- <f8aeec16-65de-b873-3362-3c7cb30c4ac6@suse.cz>
+        Tue, 18 Dec 2018 08:52:05 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gZFmx-0006Kg-Qx; Tue, 18 Dec 2018 13:51:59 +0000
+Date:   Tue, 18 Dec 2018 13:51:59 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ian Kent <raven@themaw.net>
+Cc:     syzbot <syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        DmitryVyukov <dvyukov@google.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: kernel BUG at fs/inode.c:LINE!
+Message-ID: <20181218135159.GV2217@ZenIV.linux.org.uk>
+References: <00000000000051e9c2057d31a563@google.com>
+ <20181217072144.GQ2217@ZenIV.linux.org.uk>
+ <95ae4c9893c89189d4309fe673ade6f389280101.camel@themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f8aeec16-65de-b873-3362-3c7cb30c4ac6@suse.cz>
+In-Reply-To: <95ae4c9893c89189d4309fe673ade6f389280101.camel@themaw.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 01:36:42PM +0100, Vlastimil Babka wrote:
-> On 12/15/18 12:03 AM, Mel Gorman wrote:
-> > When pageblocks get fragmented, watermarks are artifically boosted to pages
-> > are reclaimed to avoid further fragmentation events. However, compaction
-> > is often either fragmentation-neutral or moving movable pages away from
-> > unmovable/reclaimable pages. As the actual watermarks are preserved,
-> > allow compaction to ignore the boost factor.
-> 
-> Right, I should have realized that when reviewing the boost patch. I
-> think it would be useful to do the same change in
-> __compaction_suitable() as well. Compaction has its own "gap".
-> 
+On Tue, Dec 18, 2018 at 06:42:35PM +0800, Ian Kent wrote:
 
-That gap is somewhat static though so I'm a bit more wary of it.  However,
-the check in __isolate_free_page looks too agressive. We isolate in
-units of COMPACT_CLUSTER_MAX yet the watermark check there is based on
-the allocation request. That means for THP that we check if 512 pages
-can be allocated when only somewhere between 1 and 32 is needed for that
-compaction cycle to complete. Adjusting that might be more appropriate?
+> Sorry Al, that's my bad.
+> 
+> See https://www.ozlabs.org/~akpm/mmotm/broken-out/autofs-fix-possible-inode-leak-in-autofs_fill_super.patch
+> 
+> I think this will fix it, I'll forward it to Andrew if you agree:
 
--- 
-Mel Gorman
-SUSE Labs
+Just drop it and be done with that.  d_make_root(NULL) returns NULL,
+no need to check that in the caller.  There is no leak in the mainline;
+the calling conventions for d_make_root() are chosen that way
+just for that reason - to minimize the amount of cleanups needed.
