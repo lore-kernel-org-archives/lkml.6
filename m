@@ -3,128 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77951C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA94C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 446CC20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:54:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6725C20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:54:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="twAYXpOW"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRHOJ4YZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbeLRLyG (ORCPT
+        id S1726719AbeLRLyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:54:06 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37930 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbeLRLyE (ORCPT
+        Tue, 18 Dec 2018 06:54:10 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:43824 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbeLRLyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:54:04 -0500
-Received: by mail-it1-f193.google.com with SMTP id h65so3860552ith.3;
-        Tue, 18 Dec 2018 03:54:03 -0800 (PST)
+        Tue, 18 Dec 2018 06:54:05 -0500
+Received: by mail-ua1-f66.google.com with SMTP id z11so5590448uaa.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 03:54:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=XG561vlEbhMFJiYgq/xx1pNfBZk+bYzH3azxFJSzktE=;
-        b=twAYXpOWHOc8Ev3iieU3LRN88jEk/k2yMqsr9KNJM4mjNMAxX3iZyEDgtOEX4CsmIy
-         y2X/JsvPU2lQzTDNEep9K80srNSSes74E2kPIP4cFnlUXxfJ5KsTPr8hWQ+aqz+C2Kyl
-         e6v4tVVJ5rOuDjcTTLTJXHQHjfzNWoyqwvAP24N4Gju9fw144lx+YTc5hopN0g9hT7mY
-         SRZFatDiqh9Oeaph12HRxHb6B+TEIWsLfMPsOiuyKvd4GD393J1AWdoPdO7NH6PN5HaF
-         scg0WsFRpmbdHFZFAW97BnJe94u49DfJdGLtqjiz5LxE2bnGhjrnnxQRX7aWR6O4tiSX
-         M+QQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mU4UBYgCjkb6XraI/BZfL8VEXjzHaubB0pTaEcFYDu0=;
+        b=NRHOJ4YZzaOVZTO6CTq1b2fkn9TAyEN50NB/vSGGY4dRpyJp5CpxZpi4PAcsDsT7pg
+         85Ok1IecZVIWGINIh2RkLD/XVZ4b86rEXFoBjcfW4z5v6Rc2nTW7QryzXH6iPDPaspTF
+         Jj4pj4WUnBKw3RorIKw99hhVPQW1NRSDbxxno=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=XG561vlEbhMFJiYgq/xx1pNfBZk+bYzH3azxFJSzktE=;
-        b=TaLXRCwonQuSLZHnaUJQDg6G2zrEoK7l49JQA6Iaib/WW5+J0WCwBnEheMgHiDCFD6
-         guFvlz582WG5vICGiMFLm4Lv6OgInGi0UOnNDwdxAepbSbZI/I+1JaMPU5jaLUHVrx6W
-         jcFjAfcsQ7YJtaYMXf3DoSeGVUQE4s0I4HEiJYttO/DFSvAerd5pH7lJ2lH3Nu6+Hzzl
-         SqH4aTJLaOrWH1PRbDPl1BI7Oz8EliFDrrCKtpeOn9qInmXFQiilujO8hePMqlKxq4BY
-         bQEBQU3yp8KApKdkrDG6e4hZJeAY2YT0qCqsXvY/2apwThU0G890fdYOLdMmj2NSSlty
-         +T6Q==
-X-Gm-Message-State: AA+aEWaitnngaCEqqNLVR8tXwH+ibxKwQzQdNS/+u8l3XQRAqH+7wrBr
-        wHXNL3zV+Vd9yk3Kg5w3u7DP9PfR
-X-Google-Smtp-Source: AFSGD/U8gsfhbflXkdhkuLa1MolcSzK4CF6J0JLIu6dUoaBH64RfzPLiKdqaqKWclx02vo9+sPB4IA==
-X-Received: by 2002:a24:ad0:: with SMTP id 199mr2511963itw.142.1545134042735;
-        Tue, 18 Dec 2018 03:54:02 -0800 (PST)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.24? ([2402:f000:1:1501:200:5efe:a66f:4718])
-        by smtp.gmail.com with ESMTPSA id 79sm1551366itx.11.2018.12.18.03.54.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 03:54:02 -0800 (PST)
-Subject: Re: [PATCH] r8a66597: Fix a possible concurrency use-after-free bug
- in r8a66597_endpoint_disable()
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181218100020.26250-1-baijiaju1990@gmail.com>
- <20181218111149.GA979@kroah.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <e94fc8ed-9f18-7da7-5768-e768153e1d7d@gmail.com>
-Date:   Tue, 18 Dec 2018 19:53:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mU4UBYgCjkb6XraI/BZfL8VEXjzHaubB0pTaEcFYDu0=;
+        b=NVuHLcAvSpV2nQbhkrD0nDuF5GTvqONdfAQPxcM/E7OqnO/XElXcPD6b1r+4qwsW/1
+         A3uHlopwLyrL6Ot7oR91c6NDwpltqAjJTQFjoJEisBGbtgk8Pjqj2y+CRmP78wB3Eoap
+         QZ1/dCWYaIOzYKGVJdC0zJZTTYdIQok8eGuYGbU+FK7pxoG+tgsRZIR9QPqkEfLpHLNc
+         N58+/AzD4Tp7BhvNLoEahSXZw+MSrNmz23ZOOzqaW+Ii331I9pEYk0qnVV/ilCqphnAY
+         +rRx7TM0ZP8yx3q2tNDoILGjnSXJ1XoIV01r4CCMRlxUN2grvT+SXgCghfkGzNiWvp3X
+         vdYQ==
+X-Gm-Message-State: AA+aEWZEURk5VvGBuRV0Udvpio61hhPX6Gf5r+IqfJOlUBxCY9vFImK8
+        BT9kyxBqOszqdQyvz6lawSA7cwI/NU1q5Ci46CuamSu9
+X-Google-Smtp-Source: AFSGD/X7j38drFRxjVdpqBW0nnKHiOIH3OjOFRCq6I7YazR3Lc7TpR7DC/nElWE5MtUQIGG8HD7rd4Eyi/zsbwZEnYQ=
+X-Received: by 2002:ab0:526:: with SMTP id 35mr8012867uax.25.1545134044074;
+ Tue, 18 Dec 2018 03:54:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181218111149.GA979@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-2-ulf.hansson@linaro.org> <81caa4b6-d0ac-f351-2ecf-47fb0f7dcc74@linaro.org>
+In-Reply-To: <81caa4b6-d0ac-f351-2ecf-47fb0f7dcc74@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 18 Dec 2018 12:53:28 +0100
+Message-ID: <CAPDyKFp=z0TS5oDD7muRCSuqqJ5sj-vOUyTf9tUJfXgWyE64Mg@mail.gmail.com>
+Subject: Re: [PATCH v10 01/27] PM / Domains: Add generic data pointer to
+ genpd_power_state struct
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 18 Dec 2018 at 11:39, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> On 29/11/2018 18:46, Ulf Hansson wrote:
+> > Let's add a data pointer to the genpd_power_state struct, to allow a genpd
+> > backend driver to store per state specific data. In order to introduce the
+> > pointer, we also need to adopt how genpd frees the allocated data for the
+> > default genpd_power_state struct, that it may allocate at pm_genpd_init().
+> >
+> > More precisely, let's use an internal genpd flag to understand when the
+> > states needs to be freed by genpd. When freeing the states data in
+> > genpd_remove(), let's also clear the corresponding genpd->states pointer
+> > and reset the genpd->state_count. In this way, a genpd backend driver
+> > becomes aware of when there is state specific data for it to free.
+> >
+> > Cc: Lina Iyer <ilina@codeaurora.org>
+> > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >
+> > Changes in v10:
+> >       - Update the patch allow backend drivers to free the states specific
+> >         data during genpd removal. Due to this added complexity, I decided to
+> >         keep the patch separate, rather than fold it into the patch that makes
+> >         use of the new void pointer, which was suggested by Rafael.
+> >       - Claim authorship of the patch as lots of changes has been done since
+> >         the original pick up from Lina Iyer.
+> >
+> > ---
+> >  drivers/base/power/domain.c | 8 ++++++--
+> >  include/linux/pm_domain.h   | 3 ++-
+> >  2 files changed, 8 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index 7f38a92b444a..e27b91d36a2a 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -1620,7 +1620,7 @@ static int genpd_set_default_power_state(struct generic_pm_domain *genpd)
+> >
+> >       genpd->states = state;
+> >       genpd->state_count = 1;
+> > -     genpd->free = state;
+> > +     genpd->free_state = true;
+> >
+> >       return 0;
+> >  }
+> > @@ -1736,7 +1736,11 @@ static int genpd_remove(struct generic_pm_domain *genpd)
+> >       list_del(&genpd->gpd_list_node);
+> >       genpd_unlock(genpd);
+> >       cancel_work_sync(&genpd->power_off_work);
+> > -     kfree(genpd->free);
+> > +     if (genpd->free_state) {
+> > +             kfree(genpd->states);
+> > +             genpd->states = NULL;
+> > +             genpd->state_count = 0;
+>
+> Why these two initializations? After genpd_remove, this structure
+> shouldn't be used anymore, no ?
 
+Correct.
 
-On 2018/12/18 19:11, Greg KH wrote:
-> On Tue, Dec 18, 2018 at 06:00:20PM +0800, Jia-Ju Bai wrote:
->> The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
->> be concurrently executed.
->> The two functions both access a possible shared variable "hep->hcpriv".
->>
->> This shared variable is freed by r8a66597_endpoint_disable() via the
->> call path:
->> r8a66597_endpoint_disable
->>    kfree(hep->hcpriv) (line 1995 in Linux-4.19)
->>
->> This variable is read by r8a66597_urb_enqueue() via the call path:
->> r8a66597_urb_enqueue
->>    spin_lock_irqsave(&r8a66597->lock);
->>    init_pipe_info
->>      enable_r8a66597_pipe
->>        pipe = hep->hcpriv (line 802 in Linux-4.19)
->>
->> The read operation is protected by a spinlock, but the free operation
->> is not protected by this spinlock, thus a concurrency use-after-free bug
->> may occur.
->>
->> To fix this bug, the spin-lock and spin-unlock function calls in
->> r8a66597_endpoint_disable() are moved to protect the free operation.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->> ---
->>   drivers/usb/host/r8a66597-hcd.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
->> index 984892dd72f5..1495ce14ad22 100644
->> --- a/drivers/usb/host/r8a66597-hcd.c
->> +++ b/drivers/usb/host/r8a66597-hcd.c
->> @@ -1991,13 +1991,14 @@ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
->>   		return;
->>   	pipenum = pipe->info.pipenum;
->>   
->> +	spin_lock_irqsave(&r8a66597->lock, flags);
-> Don't you also need the __aquires/__releases markings on this function
-> in order to properly annotate it, like the rest of the driver has?
+>
+> > +     }
+>
+> Instead of a flag, replacing the 'free' pointer to a 'free' callback
+> will allow to keep the free path self-encapsulated in domain.c
+>
+> genpd->free(genpd->states);
 
-Okay, thanks for this suggestion :)
-I will send a v2 patch.
+Right, I get your idea and it makes sense. Let me convert to that.
 
+>
+> Patch 18/27 can fill this field with its specific free pointer.
 
-Best wishes,
-Jia-Ju Bai
+Yep!
+
+[...]
+
+Thanks for reviewing!
+
+Kind regards
+Uffe
