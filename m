@@ -6,49 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393E1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A729C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06DA7218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 588F421873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151278;
-	bh=Di2zPvQ5jRklEiY3MB+7R7wiP7Yi3AthW4dNyfrTdHs=;
+	s=default; t=1545151280;
+	bh=+NB+aZVCc1dKVHrotFJ9kUvFJAzLATf4ELIfDWry5EY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=saZ1oIeiRPOVIsx3SifAwMOPp48qgA+ETyRExgOUm3EKYaFXcg0UlrnJT3xoxjyN3
-	 r/qN+ShVUfj5BQ2J/tR2CI/Rqze6lCoCTqLwoEaScbLmGdI8AbAXMaZiMRXhj4duHB
-	 9+M0Q4U28gOshS5576bMHX6rO0Ubkz/TcrinDmMQ=
+	b=hFDTo2u8t47R9nwisvByPkVVu0FP4NNzlKvROhbnxGorxTz5FAxzQCA0GGna3DB5n
+	 Bz2qaZAxbiK+GXlCWK4NAActxjPIIQqsJdN2ibT4QOo1e3jOqEPYuxxCEoc8MtFmTu
+	 hR+Gv3k2msuPM81IDR3vFSp58I80uDOybqOyNuj8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbeLRQlQ (ORCPT
+        id S1727482AbeLRQlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbeLRQlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:14 -0500
+        id S1726451AbeLRQlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10ED5218A3;
-        Tue, 18 Dec 2018 16:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF1F421873;
+        Tue, 18 Dec 2018 16:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151273;
-        bh=Di2zPvQ5jRklEiY3MB+7R7wiP7Yi3AthW4dNyfrTdHs=;
+        s=default; t=1545151276;
+        bh=+NB+aZVCc1dKVHrotFJ9kUvFJAzLATf4ELIfDWry5EY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dZ2t8e66xIWg1g4K7QeWhLE9JpUGUZRZ6MgiKACFJWk2AKnvEPF2q2mKN8B0NTqwf
-         q0R+mn8LJo+S69MK4lXkHRzsjhZ1T6oFt/+lqWs8tqFJinci5wah5oVd5WqrtHbRW+
-         NJL5EkU/0JSnd6VCbdXtoTunmu/1XkXXtTOkvI6s=
+        b=gZgELyEtvwZ4jsBQNSfu475CSA90Yf6ljbDMIUOsQMlhEf2Vg534NY6XGDZv1ut/I
+         jGYrGWCoHY4/e6NkG2bpuiZyuPU/OK5yKyvk5PVsZFiwdi6SBGJ7goZSPZJxSluZCj
+         WxqD4AlUtJw/pJiGqSWVZ//eX8aWyFOOGCKU3Uwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
-        Andrzej Zaborowski <balrogg@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 17/44] MMC: OMAP: fix broken MMC on OMAP15XX/OMAP5910/OMAP310
-Date:   Tue, 18 Dec 2018 17:39:29 +0100
-Message-Id: <20181218163929.540357858@linuxfoundation.org>
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.19 08/44] pinctrl: sunxi: a83t: Fix IRQ offset typo for PH11
+Date:   Tue, 18 Dec 2018 17:39:20 +0100
+Message-Id: <20181218163928.314767419@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -67,128 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Chen-Yu Tsai <wens@csie.org>
 
-commit e8cde625bfe8a714a856e1366bcbb259d7346095 upstream.
+commit 478b6767ad26ab86d9ecc341027dd09a87b1f997 upstream.
 
-Since v2.6.22 or so there has been reports [1] about OMAP MMC being
-broken on OMAP15XX based hardware (OMAP5910 and OMAP310). The breakage
-seems to have been caused by commit 46a6730e3ff9 ("mmc-omap: Fix
-omap to use MMC_POWER_ON") that changed clock enabling to be done
-on MMC_POWER_ON. This can happen multiple times in a row, and on 15XX
-the hardware doesn't seem to like it and the MMC just stops responding.
-Fix by memorizing the power mode and do the init only when necessary.
+Pin PH11 is used on various A83T board to detect a change in the OTG
+port's ID pin, as in when an OTG host cable is plugged in.
 
-Before the patch (on Palm TE):
+The incorrect offset meant the gpiochip/irqchip was activating the wrong
+pin for interrupts.
 
-	mmc0: new SD card at address b368
-	mmcblk0: mmc0:b368 SDC   977 MiB
-	mmci-omap mmci-omap.0: command timeout (CMD18)
-	mmci-omap mmci-omap.0: command timeout (CMD13)
-	mmci-omap mmci-omap.0: command timeout (CMD13)
-	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
-	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
-	mmcblk0: error -110 requesting status
-	mmci-omap mmci-omap.0: command timeout (CMD8)
-	mmci-omap mmci-omap.0: command timeout (CMD18)
-	mmci-omap mmci-omap.0: command timeout (CMD13)
-	mmci-omap mmci-omap.0: command timeout (CMD13)
-	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
-	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
-	mmcblk0: error -110 requesting status
-	mmcblk0: recovery failed!
-	print_req_error: I/O error, dev mmcblk0, sector 0
-	Buffer I/O error on dev mmcblk0, logical block 0, async page read
-	 mmcblk0: unable to read partition table
-
-After the patch:
-
-	mmc0: new SD card at address b368
-	mmcblk0: mmc0:b368 SDC   977 MiB
-	 mmcblk0: p1
-
-The patch is based on a fix and analysis done by Ladislav Michl.
-
-Tested on OMAP15XX/OMAP310 (Palm TE), OMAP1710 (Nokia 770)
-and OMAP2420 (Nokia N810).
-
-[1] https://marc.info/?t=123175197000003&r=1&w=2
-
-Fixes: 46a6730e3ff9 ("mmc-omap: Fix omap to use MMC_POWER_ON")
-Reported-by: Ladislav Michl <ladis@linux-mips.org>
-Reported-by: Andrzej Zaborowski <balrogg@gmail.com>
-Tested-by: Ladislav Michl <ladis@linux-mips.org>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/omap.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/host/omap.c
-+++ b/drivers/mmc/host/omap.c
-@@ -104,6 +104,7 @@ struct mmc_omap_slot {
- 	unsigned int		vdd;
- 	u16			saved_con;
- 	u16			bus_mode;
-+	u16			power_mode;
- 	unsigned int		fclk_freq;
+--- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
+@@ -568,7 +568,7 @@ static const struct sunxi_desc_pin sun8i
+ 	SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 11),
+ 		  SUNXI_FUNCTION(0x0, "gpio_in"),
+ 		  SUNXI_FUNCTION(0x1, "gpio_out"),
+-		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 1)),	/* PH_EINT11 */
++		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 11)),	/* PH_EINT11 */
+ };
  
- 	struct tasklet_struct	cover_tasklet;
-@@ -1157,7 +1158,7 @@ static void mmc_omap_set_ios(struct mmc_
- 	struct mmc_omap_slot *slot = mmc_priv(mmc);
- 	struct mmc_omap_host *host = slot->host;
- 	int i, dsor;
--	int clk_enabled;
-+	int clk_enabled, init_stream;
- 
- 	mmc_omap_select_slot(slot, 0);
- 
-@@ -1167,6 +1168,7 @@ static void mmc_omap_set_ios(struct mmc_
- 		slot->vdd = ios->vdd;
- 
- 	clk_enabled = 0;
-+	init_stream = 0;
- 	switch (ios->power_mode) {
- 	case MMC_POWER_OFF:
- 		mmc_omap_set_power(slot, 0, ios->vdd);
-@@ -1174,13 +1176,17 @@ static void mmc_omap_set_ios(struct mmc_
- 	case MMC_POWER_UP:
- 		/* Cannot touch dsor yet, just power up MMC */
- 		mmc_omap_set_power(slot, 1, ios->vdd);
-+		slot->power_mode = ios->power_mode;
- 		goto exit;
- 	case MMC_POWER_ON:
- 		mmc_omap_fclk_enable(host, 1);
- 		clk_enabled = 1;
- 		dsor |= 1 << 11;
-+		if (slot->power_mode != MMC_POWER_ON)
-+			init_stream = 1;
- 		break;
- 	}
-+	slot->power_mode = ios->power_mode;
- 
- 	if (slot->bus_mode != ios->bus_mode) {
- 		if (slot->pdata->set_bus_mode != NULL)
-@@ -1196,7 +1202,7 @@ static void mmc_omap_set_ios(struct mmc_
- 	for (i = 0; i < 2; i++)
- 		OMAP_MMC_WRITE(host, CON, dsor);
- 	slot->saved_con = dsor;
--	if (ios->power_mode == MMC_POWER_ON) {
-+	if (init_stream) {
- 		/* worst case at 400kHz, 80 cycles makes 200 microsecs */
- 		int usecs = 250;
- 
-@@ -1234,6 +1240,7 @@ static int mmc_omap_new_slot(struct mmc_
- 	slot->host = host;
- 	slot->mmc = mmc;
- 	slot->id = id;
-+	slot->power_mode = MMC_POWER_UNDEFINED;
- 	slot->pdata = &host->pdata->slots[id];
- 
- 	host->slots[id] = slot;
+ static const struct sunxi_pinctrl_desc sun8i_a83t_pinctrl_data = {
 
 
