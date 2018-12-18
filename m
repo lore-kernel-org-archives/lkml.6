@@ -2,93 +2,112 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72046C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7025BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A06F217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37F3A217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:51:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YO9SFjPZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbeLRMsm (ORCPT
+        id S1726598AbeLRMvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:48:42 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:52214 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726419AbeLRMsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:48:42 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBICjod7022973
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 18 Dec 2018 04:46:00 -0800
-Received: from [128.224.162.162] (128.224.162.162) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 18 Dec
- 2018 04:45:39 -0800
-Subject: Re: [PATCH] perf/x86/intel: Avoid unnecessary reallocations of memory
- allocated in cpu hotplug prepare state
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     <acme@kernel.org>, <ak@linux.intel.com>,
-        <alexander.shishkin@linux.intel.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <jolsa@kernel.org>, <jolsa@redhat.com>,
-        <kan.liang@linux.intel.com>, <mingo@redhat.com>,
-        <namhyung@kernel.org>, <tglx@linutronix.de>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>
-References: <1545129033-21757-1-git-send-email-zhe.he@windriver.com>
- <20181218110209.GD15430@hirez.programming.kicks-ass.net>
- <20181218111637.b53u5pi3nxnyldaq@linutronix.de>
- <20181218113119.GG15430@hirez.programming.kicks-ass.net>
- <20181218113700.GC16284@hirez.programming.kicks-ass.net>
- <20181218114708.p6fpz447brob4kzz@linutronix.de>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <b8f1f75c-bb8e-3b07-b113-32d1ff70fd3e@windriver.com>
-Date:   Tue, 18 Dec 2018 20:45:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 18 Dec 2018 07:51:01 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36241 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbeLRMvA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:51:00 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x23so1843986oix.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=q2PNKSAhpSgYUq64TB11w1Y0vKi5UwhbWSsBx1rp4JE=;
+        b=YO9SFjPZhU7rN9QO0SO0Nrg20L4UkWq/Fi2soR1uJ1u7tQjLRhCXDQi990TqAB4yIA
+         oQ5JDe3Bq47AP0xzzkYZfa1/jnWe61HHrT3Bm/hNUUquZcyOJA4UZ2q+jfdr18vn5NaU
+         6UwAUQbBnSiv+Su7iMC7sLpSjSE5c3Liv0fpf3QjlZ8AtB6DAPx/UkemGmqMdfuL7mI2
+         haSet+Bz9fTNw/bvVEZPDHLba1GdWQVelP+YppsE/5FJj07U+NyEkLLtY0z0QwphpeDi
+         AM3rsirgUNBmly0o7OxkRyS5vQU7hprsu1mjY4XkxnZsAbSrm7YzjRX2i7BQzErX4xWZ
+         PWgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=q2PNKSAhpSgYUq64TB11w1Y0vKi5UwhbWSsBx1rp4JE=;
+        b=Vrt4QsJ4dpFzDrcKupFzMVfKt78cBFNFM1ggmjVmSXDPOlD00xqAVKKXdw4WozpMtt
+         LDDhY3kyo9R9FYtKRf3wpeE4tCJJAtxXIKRQ2/jAjXQKUrtsi7FWoM4w4U19hRJOXK+z
+         fdNIwataw7uuGTFsDXOnv2akTZ9/lYldYZLiQRZM+6S8YVfFtMpyiOfswlqXL9PCyEt/
+         1PV2/oLFhrAVZM77hK2jFZlPR8occ7k18JesCjrs0y/jVeV+Ps7pdlUnJLg+kvTCnKBN
+         /I9Izl5IwVqDQF7mGf/0vUy0Vn7x5RayBFjhnZyPsfdSt6RvIQlHu7GDq749foHeYRAa
+         vFfw==
+X-Gm-Message-State: AA+aEWZrzWQrdCE/BarPcOR3lP1QyeCwRXkM/+Eyys1MyBGj55VqUoe+
+        mAHnGspg+v3EcQpYgesZHb5Sf5Ch7DrEZvi45k09ew==
+X-Google-Smtp-Source: AFSGD/VgImYHxk3h3dHSgKdv9EbyMi8RrGnZ5U6+4r0Rya6QGiakTE4wAPGwU2pQ3RERjJi8uFQPZwbMnnbYUyzVCBk=
+X-Received: by 2002:aca:1e17:: with SMTP id m23mr8031817oic.332.1545137459636;
+ Tue, 18 Dec 2018 04:50:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181218114708.p6fpz447brob4kzz@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.162]
+References: <20181217153652.20056-1-jank@cadence.com> <20181217153652.20056-3-jank@cadence.com>
+ <CAMpxmJXrjyK3m4JwgkxwkHjSj-ugb7UzwNrYcBwYjWwj+JBNxw@mail.gmail.com> <CACRpkdYq5Eg2DrwdED-yTZ4kMoCxew+0rdU-b4zuinOf7BEr6Q@mail.gmail.com>
+In-Reply-To: <CACRpkdYq5Eg2DrwdED-yTZ4kMoCxew+0rdU-b4zuinOf7BEr6Q@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 18 Dec 2018 13:50:48 +0100
+Message-ID: <CAMpxmJUnfnHmopyOfHRZrN1KoqZx_Bsra1BTiGud6UVmzz1ryA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] gpio: Add Cadence GPIO driver
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jan Kotas <jank@cadence.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/12/18 19:47, Sebastian Andrzej Siewior wrote:
-> On 2018-12-18 12:37:00 [+0100], Peter Zijlstra wrote:
->> On Tue, Dec 18, 2018 at 12:31:19PM +0100, Peter Zijlstra wrote:
->>> On Tue, Dec 18, 2018 at 12:16:37PM +0100, Sebastian Andrzej Siewior wrote:
->>>> On 2018-12-18 12:02:09 [+0100], Peter Zijlstra wrote:
->>>>> On Tue, Dec 18, 2018 at 06:30:33PM +0800, zhe.he@windriver.com wrote:
->>>>>> Besides, in preempt-rt full mode, the freeing can happen in atomic context and
->>>>>> thus cause the following BUG.
->>>>> Hurm, I though we fixed all those long ago..
->>>>>
->>>>> And no, the patch is horrible; that's what we have things like
->>>>> x86_pmu::cpu_dead() for.
->>>> ehm, you say we keep memory allocation +free on CPU up/down?
->>> Sure, why not?
-> It does not seem to be useful to allocate & free memory which you need
-> anyway. So you could avoid the refcnt for instance.
-> Also I doubt the memory will remain unallocated for a longer period of
-> time (like you would remove the CPU for good and not boot it again a
-> minute later).
-> *Maybe* it is different in cloud environment where you attach vcpus
-> depending on guest load at runtime but still…
+pon., 17 gru 2018 o 23:22 Linus Walleij <linus.walleij@linaro.org> napisa=
+=C5=82(a):
 >
->> I suspect the below is all we really need.
-> Zhe, could you please have a look?
-
-This works in my environment, taking CPUs offline and online many times.
-
-Zhe
-
+> On Mon, Dec 17, 2018 at 4:51 PM Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
 >
-> Sebastian
+> > The driver looks good but is there any particular reason not to use
+> > regmap for register IO?
+>
+> I thought we only use regmap for MMIO when the register range is
+> shared (as in a system controller) so that some registers are for this,
+> some register or even bits in a register for some other driver, so they
+> need the spinlock in the regmap to protect the register range.
 >
 
+This is what syscon is for. Regmap simply abstracts any register IO.
+For instance: there's no locking in this driver. Are we sure it's not
+needed? Regmap provides internal locking for you in the form of a
+mutex or spinlock.
+
+Also: it looks like the interrupts here are quite simple with a single
+bit per interrupt in the status register and the same layout in the
+mask register - it could probably profit from using the
+regmap_irq_chip and not bother with reimplementing irq_chip callbacks.
+
+> It is also nice for shadowing/caching of register contents I guess,
+> wat does this driver get from regmap MMIO?
+>
+
+Code shrinkage IMO.
+
+Note that I'm not blocking this from being merged - I just think that
+using modern frameworks is always a good idea.
+
+Best regards,
+Bartosz Golaszewski
+
+> Yours,
+> Linus Walleij
