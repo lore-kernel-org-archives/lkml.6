@@ -6,88 +6,174 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8E4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7A3C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260A0217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3AF02133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbeLRH5f (ORCPT
+        id S1726731AbeLRH5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 02:57:35 -0500
-Received: from mx.socionext.com ([202.248.49.38]:4468 "EHLO mx.socionext.com"
+        Tue, 18 Dec 2018 02:57:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:39790 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbeLRH5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 02:57:32 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 18 Dec 2018 16:57:29 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 1B796180097;
-        Tue, 18 Dec 2018 16:57:30 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 18 Dec 2018 16:57:30 +0900
-Received: from plum.e01.socionext.com (unknown [10.213.132.32])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 686BD1A1235;
-        Tue, 18 Dec 2018 16:57:29 +0900 (JST)
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        id S1726717AbeLRH5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 02:57:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4E6215AB;
+        Mon, 17 Dec 2018 23:57:34 -0800 (PST)
+Received: from a75553-lin.blr.arm.com (a75553-lin.blr.arm.com [10.162.0.175])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0C94A3F575;
+        Mon, 17 Dec 2018 23:57:30 -0800 (PST)
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
         linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH net] net: phy: Fix the issue that netif always links up after resuming
-Date:   Tue, 18 Dec 2018 16:57:04 +0900
-Message-Id: <1545119824-30380-1-git-send-email-hayashi.kunihiko@socionext.com>
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v4 4/6] arm64/kvm: enable pointer authentication cpufeature conditionally
+Date:   Tue, 18 Dec 2018 13:26:48 +0530
+Message-Id: <1545119810-12182-5-git-send-email-amit.kachhap@arm.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
+References: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even though the link is down before entering hibernation,
-there is an issue that the network interface always links up after resuming
-from hibernation.
+According to userspace settings, pointer authentication cpufeature
+is enabled/disabled from guests.
 
-If the link is still down before enabling the network interface,
-and after resuming from hibernation, the phydev->state is forcibly set
-to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
-
-In suspend sequence, only if the PHY is attached, mdio_bus_phy_suspend()
-calls phy_stop_machine(), and mdio_bus_phy_resume() calls
-phy_start_machine().
-In resume sequence, it's enough to do the same as mdio_bus_phy_resume()
-because the state has been preserved.
-
-This patch fixes the issue by calling phy_start_machine() in
-mdio_bus_phy_restore() in the same way as mdio_bus_phy_resume().
-
-Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu
 ---
- drivers/net/phy/phy_device.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ Documentation/arm64/pointer-authentication.txt |  3 +++
+ arch/arm64/kvm/sys_regs.c                      | 33 ++++++++++++++++----------
+ 2 files changed, 24 insertions(+), 12 deletions(-)
 
-This patch is based on the RFC patch discussion [1].
-[1] https://www.spinics.net/lists/netdev/msg537326.html
-
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 7d5d698..3685be4 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -315,11 +315,8 @@ static int mdio_bus_phy_restore(struct device *dev)
- 	if (ret < 0)
- 		return ret;
+diff --git a/Documentation/arm64/pointer-authentication.txt b/Documentation/arm64/pointer-authentication.txt
+index 8c0f338..a65dca2 100644
+--- a/Documentation/arm64/pointer-authentication.txt
++++ b/Documentation/arm64/pointer-authentication.txt
+@@ -92,3 +92,6 @@ created by passing a flag (KVM_ARM_VCPU_PTRAUTH) requesting this feature
+ to be enabled. Without this flag, pointer authentication is not enabled
+ in KVM guests and attempted use of the feature will result in an UNDEFINED
+ exception being injected into the guest.
++
++Additionally, when KVM_ARM_VCPU_PTRAUTH is not set then KVM will mask the
++feature bits from ID_AA64ISAR1_EL1.
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 6af6c7d..ce6144a 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -1055,7 +1055,7 @@ static bool access_cntp_cval(struct kvm_vcpu *vcpu,
+ }
  
--	/* The PHY needs to renegotiate. */
--	phydev->link = 0;
--	phydev->state = PHY_UP;
--
--	phy_start_machine(phydev);
-+	if (phydev->attached_dev && phydev->adjust_link)
-+		phy_start_machine(phydev);
+ /* Read a sanitised cpufeature ID register by sys_reg_desc */
+-static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
++static u64 read_id_reg(struct kvm_vcpu *vcpu, struct sys_reg_desc const *r, bool raz)
+ {
+ 	u32 id = sys_reg((u32)r->Op0, (u32)r->Op1,
+ 			 (u32)r->CRn, (u32)r->CRm, (u32)r->Op2);
+@@ -1066,6 +1066,15 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
+ 			kvm_debug("SVE unsupported for guests, suppressing\n");
+ 
+ 		val &= ~(0xfUL << ID_AA64PFR0_SVE_SHIFT);
++	} else if (id == SYS_ID_AA64ISAR1_EL1) {
++		const u64 ptrauth_mask = (0xfUL << ID_AA64ISAR1_APA_SHIFT) |
++					 (0xfUL << ID_AA64ISAR1_API_SHIFT) |
++					 (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
++					 (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
++		if (!kvm_arm_vcpu_ptrauth_allowed(vcpu)) {
++			kvm_debug("ptrauth unsupported for guests, suppressing\n");
++			val &= ~ptrauth_mask;
++		}
+ 	} else if (id == SYS_ID_AA64MMFR1_EL1) {
+ 		if (val & (0xfUL << ID_AA64MMFR1_LOR_SHIFT))
+ 			kvm_debug("LORegions unsupported for guests, suppressing\n");
+@@ -1086,7 +1095,7 @@ static bool __access_id_reg(struct kvm_vcpu *vcpu,
+ 	if (p->is_write)
+ 		return write_to_read_only(vcpu, p, r);
+ 
+-	p->regval = read_id_reg(r, raz);
++	p->regval = read_id_reg(vcpu, r, raz);
+ 	return true;
+ }
+ 
+@@ -1115,17 +1124,17 @@ static u64 sys_reg_to_index(const struct sys_reg_desc *reg);
+  * are stored, and for set_id_reg() we don't allow the effective value
+  * to be changed.
+  */
+-static int __get_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
+-			bool raz)
++static int __get_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
++			void __user *uaddr, bool raz)
+ {
+ 	const u64 id = sys_reg_to_index(rd);
+-	const u64 val = read_id_reg(rd, raz);
++	const u64 val = read_id_reg(vcpu, rd, raz);
+ 
+ 	return reg_to_user(uaddr, &val, id);
+ }
+ 
+-static int __set_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
+-			bool raz)
++static int __set_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
++			void __user *uaddr, bool raz)
+ {
+ 	const u64 id = sys_reg_to_index(rd);
+ 	int err;
+@@ -1136,7 +1145,7 @@ static int __set_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
+ 		return err;
+ 
+ 	/* This is what we mean by invariant: you can't change it. */
+-	if (val != read_id_reg(rd, raz))
++	if (val != read_id_reg(vcpu, rd, raz))
+ 		return -EINVAL;
  
  	return 0;
+@@ -1145,25 +1154,25 @@ static int __set_id_reg(const struct sys_reg_desc *rd, void __user *uaddr,
+ static int get_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+ 		      const struct kvm_one_reg *reg, void __user *uaddr)
+ {
+-	return __get_id_reg(rd, uaddr, false);
++	return __get_id_reg(vcpu, rd, uaddr, false);
  }
+ 
+ static int set_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+ 		      const struct kvm_one_reg *reg, void __user *uaddr)
+ {
+-	return __set_id_reg(rd, uaddr, false);
++	return __set_id_reg(vcpu, rd, uaddr, false);
+ }
+ 
+ static int get_raz_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+ 			  const struct kvm_one_reg *reg, void __user *uaddr)
+ {
+-	return __get_id_reg(rd, uaddr, true);
++	return __get_id_reg(vcpu, rd, uaddr, true);
+ }
+ 
+ static int set_raz_id_reg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd,
+ 			  const struct kvm_one_reg *reg, void __user *uaddr)
+ {
+-	return __set_id_reg(rd, uaddr, true);
++	return __set_id_reg(vcpu, rd, uaddr, true);
+ }
+ 
+ /* sys_reg_desc initialiser for known cpufeature ID registers */
 -- 
 2.7.4
 
