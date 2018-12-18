@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A52EC43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A925DC43612
 	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43B472184B
+	by mail.kernel.org (Postfix) with ESMTP id 65F0021850
 	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeLREgJ (ORCPT
+        id S1726643AbeLREgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 23:36:09 -0500
-Received: from mga06.intel.com ([134.134.136.31]:51300 "EHLO mga06.intel.com"
+        Mon, 17 Dec 2018 23:36:13 -0500
+Received: from mga02.intel.com ([134.134.136.20]:45458 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbeLREgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 23:36:09 -0500
+        id S1726305AbeLREgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 23:36:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 20:36:08 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 20:36:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
-   d="scan'208";a="284353351"
+   d="scan'208";a="111404570"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2018 20:36:08 -0800
-Subject: [PATCH v6 2/6] acpi: Add HMAT to generic parsing tables
+  by orsmga003.jf.intel.com with ESMTP; 17 Dec 2018 20:36:03 -0800
+Subject: [PATCH v6 1/6] acpi: Create subtable parsing infrastructure
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Keith Busch <keith.busch@intel.com>, peterz@infradead.org,
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>, peterz@infradead.org,
         dave.hansen@linux.intel.com, linux-mm@kvack.org, x86@kernel.org,
         linux-kernel@vger.kernel.org, mgorman@suse.de
-Date:   Mon, 17 Dec 2018 20:23:33 -0800
-Message-ID: <154510701343.1941238.7745758103869136625.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Mon, 17 Dec 2018 20:23:28 -0800
+Message-ID: <154510700824.1941238.14650493839997144294.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <154510700291.1941238.817190985966612531.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <154510700291.1941238.817190985966612531.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -49,75 +50,628 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Keith Busch <keith.busch@intel.com>
 
-The HMAT table header has different field lengths than the existing
-parsing uses. Add the HMAT type to the parsing rules so it may be
-generically parsed.
+Parsing entries in an ACPI table had assumed a generic header
+structure. There is no standard ACPI header, though, so less common
+layouts with different field sizes required custom parsers to go through
+their subtable entry list.
 
+Create the infrastructure for adding different table types so parsing
+the entries array may be more reused for all ACPI system tables so that
+the common code doesn't need to be duplicated.
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/acpi/tables.c |    9 +++++++++
- include/linux/acpi.h  |    1 +
- 2 files changed, 10 insertions(+)
+ arch/ia64/kernel/acpi.c                       |   12 ++--
+ arch/x86/kernel/acpi/boot.c                   |   36 +++++++------
+ drivers/acpi/numa.c                           |   16 +++---
+ drivers/acpi/scan.c                           |    4 +
+ drivers/acpi/tables.c                         |   67 +++++++++++++++++++++----
+ drivers/irqchip/irq-gic-v2m.c                 |    2 -
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c      |    2 -
+ drivers/irqchip/irq-gic-v3-its-platform-msi.c |    2 -
+ drivers/irqchip/irq-gic-v3-its.c              |    6 +-
+ drivers/irqchip/irq-gic-v3.c                  |    8 +--
+ drivers/irqchip/irq-gic.c                     |    4 +
+ drivers/mailbox/pcc.c                         |    2 -
+ include/linux/acpi.h                          |    5 +-
+ 13 files changed, 108 insertions(+), 58 deletions(-)
 
+diff --git a/arch/ia64/kernel/acpi.c b/arch/ia64/kernel/acpi.c
+index 41eb281709da..3973d2c2a9b0 100644
+--- a/arch/ia64/kernel/acpi.c
++++ b/arch/ia64/kernel/acpi.c
+@@ -177,7 +177,7 @@ struct acpi_table_madt *acpi_madt __initdata;
+ static u8 has_8259;
+ 
+ static int __init
+-acpi_parse_lapic_addr_ovr(struct acpi_subtable_header * header,
++acpi_parse_lapic_addr_ovr(union acpi_subtable_headers * header,
+ 			  const unsigned long end)
+ {
+ 	struct acpi_madt_local_apic_override *lapic;
+@@ -216,7 +216,7 @@ acpi_parse_lsapic(struct acpi_subtable_header * header, const unsigned long end)
+ }
+ 
+ static int __init
+-acpi_parse_lapic_nmi(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_lapic_nmi(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_apic_nmi *lacpi_nmi;
+ 
+@@ -230,7 +230,7 @@ acpi_parse_lapic_nmi(struct acpi_subtable_header * header, const unsigned long e
+ }
+ 
+ static int __init
+-acpi_parse_iosapic(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_iosapic(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_io_sapic *iosapic;
+ 
+@@ -245,7 +245,7 @@ acpi_parse_iosapic(struct acpi_subtable_header * header, const unsigned long end
+ static unsigned int __initdata acpi_madt_rev;
+ 
+ static int __init
+-acpi_parse_plat_int_src(struct acpi_subtable_header * header,
++acpi_parse_plat_int_src(union acpi_subtable_headers * header,
+ 			const unsigned long end)
+ {
+ 	struct acpi_madt_interrupt_source *plintsrc;
+@@ -329,7 +329,7 @@ unsigned int get_cpei_target_cpu(void)
+ }
+ 
+ static int __init
+-acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
++acpi_parse_int_src_ovr(union acpi_subtable_headers * header,
+ 		       const unsigned long end)
+ {
+ 	struct acpi_madt_interrupt_override *p;
+@@ -350,7 +350,7 @@ acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
+ }
+ 
+ static int __init
+-acpi_parse_nmi_src(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_nmi_src(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_nmi_source *nmi_src;
+ 
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 06635fbca81c..58561b4df09d 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -197,7 +197,7 @@ static int acpi_register_lapic(int id, u32 acpiid, u8 enabled)
+ }
+ 
+ static int __init
+-acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
++acpi_parse_x2apic(union acpi_subtable_headers *header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_x2apic *processor = NULL;
+ #ifdef CONFIG_X86_X2APIC
+@@ -210,7 +210,7 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ 	if (BAD_MADT_ENTRY(processor, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ #ifdef CONFIG_X86_X2APIC
+ 	apic_id = processor->local_apic_id;
+@@ -242,7 +242,7 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ }
+ 
+ static int __init
+-acpi_parse_lapic(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_lapic(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_apic *processor = NULL;
+ 
+@@ -251,7 +251,7 @@ acpi_parse_lapic(struct acpi_subtable_header * header, const unsigned long end)
+ 	if (BAD_MADT_ENTRY(processor, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	/* Ignore invalid ID */
+ 	if (processor->id == 0xff)
+@@ -272,7 +272,7 @@ acpi_parse_lapic(struct acpi_subtable_header * header, const unsigned long end)
+ }
+ 
+ static int __init
+-acpi_parse_sapic(struct acpi_subtable_header *header, const unsigned long end)
++acpi_parse_sapic(union acpi_subtable_headers *header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_sapic *processor = NULL;
+ 
+@@ -281,7 +281,7 @@ acpi_parse_sapic(struct acpi_subtable_header *header, const unsigned long end)
+ 	if (BAD_MADT_ENTRY(processor, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	acpi_register_lapic((processor->id << 8) | processor->eid,/* APIC ID */
+ 			    processor->processor_id, /* ACPI ID */
+@@ -291,7 +291,7 @@ acpi_parse_sapic(struct acpi_subtable_header *header, const unsigned long end)
+ }
+ 
+ static int __init
+-acpi_parse_lapic_addr_ovr(struct acpi_subtable_header * header,
++acpi_parse_lapic_addr_ovr(union acpi_subtable_headers * header,
+ 			  const unsigned long end)
+ {
+ 	struct acpi_madt_local_apic_override *lapic_addr_ovr = NULL;
+@@ -301,7 +301,7 @@ acpi_parse_lapic_addr_ovr(struct acpi_subtable_header * header,
+ 	if (BAD_MADT_ENTRY(lapic_addr_ovr, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	acpi_lapic_addr = lapic_addr_ovr->address;
+ 
+@@ -309,7 +309,7 @@ acpi_parse_lapic_addr_ovr(struct acpi_subtable_header * header,
+ }
+ 
+ static int __init
+-acpi_parse_x2apic_nmi(struct acpi_subtable_header *header,
++acpi_parse_x2apic_nmi(union acpi_subtable_headers *header,
+ 		      const unsigned long end)
+ {
+ 	struct acpi_madt_local_x2apic_nmi *x2apic_nmi = NULL;
+@@ -319,7 +319,7 @@ acpi_parse_x2apic_nmi(struct acpi_subtable_header *header,
+ 	if (BAD_MADT_ENTRY(x2apic_nmi, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	if (x2apic_nmi->lint != 1)
+ 		printk(KERN_WARNING PREFIX "NMI not connected to LINT 1!\n");
+@@ -328,7 +328,7 @@ acpi_parse_x2apic_nmi(struct acpi_subtable_header *header,
+ }
+ 
+ static int __init
+-acpi_parse_lapic_nmi(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_lapic_nmi(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_apic_nmi *lapic_nmi = NULL;
+ 
+@@ -337,7 +337,7 @@ acpi_parse_lapic_nmi(struct acpi_subtable_header * header, const unsigned long e
+ 	if (BAD_MADT_ENTRY(lapic_nmi, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	if (lapic_nmi->lint != 1)
+ 		printk(KERN_WARNING PREFIX "NMI not connected to LINT 1!\n");
+@@ -449,7 +449,7 @@ static int __init mp_register_ioapic_irq(u8 bus_irq, u8 polarity,
+ }
+ 
+ static int __init
+-acpi_parse_ioapic(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_ioapic(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_io_apic *ioapic = NULL;
+ 	struct ioapic_domain_cfg cfg = {
+@@ -462,7 +462,7 @@ acpi_parse_ioapic(struct acpi_subtable_header * header, const unsigned long end)
+ 	if (BAD_MADT_ENTRY(ioapic, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	/* Statically assign IRQ numbers for IOAPICs hosting legacy IRQs */
+ 	if (ioapic->global_irq_base < nr_legacy_irqs())
+@@ -508,7 +508,7 @@ static void __init acpi_sci_ioapic_setup(u8 bus_irq, u16 polarity, u16 trigger,
+ }
+ 
+ static int __init
+-acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
++acpi_parse_int_src_ovr(union acpi_subtable_headers * header,
+ 		       const unsigned long end)
+ {
+ 	struct acpi_madt_interrupt_override *intsrc = NULL;
+@@ -518,7 +518,7 @@ acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
+ 	if (BAD_MADT_ENTRY(intsrc, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	if (intsrc->source_irq == acpi_gbl_FADT.sci_interrupt) {
+ 		acpi_sci_ioapic_setup(intsrc->source_irq,
+@@ -550,7 +550,7 @@ acpi_parse_int_src_ovr(struct acpi_subtable_header * header,
+ }
+ 
+ static int __init
+-acpi_parse_nmi_src(struct acpi_subtable_header * header, const unsigned long end)
++acpi_parse_nmi_src(union acpi_subtable_headers * header, const unsigned long end)
+ {
+ 	struct acpi_madt_nmi_source *nmi_src = NULL;
+ 
+@@ -559,7 +559,7 @@ acpi_parse_nmi_src(struct acpi_subtable_header * header, const unsigned long end
+ 	if (BAD_MADT_ENTRY(nmi_src, end))
+ 		return -EINVAL;
+ 
+-	acpi_table_print_madt_entry(header);
++	acpi_table_print_madt_entry(&header->common);
+ 
+ 	/* TBD: Support nimsrc entries? */
+ 
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index 274699463b4f..f5e09c39ff22 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -338,7 +338,7 @@ acpi_numa_x2apic_affinity_init(struct acpi_srat_x2apic_cpu_affinity *pa)
+ }
+ 
+ static int __init
+-acpi_parse_x2apic_affinity(struct acpi_subtable_header *header,
++acpi_parse_x2apic_affinity(union acpi_subtable_headers *header,
+ 			   const unsigned long end)
+ {
+ 	struct acpi_srat_x2apic_cpu_affinity *processor_affinity;
+@@ -347,7 +347,7 @@ acpi_parse_x2apic_affinity(struct acpi_subtable_header *header,
+ 	if (!processor_affinity)
+ 		return -EINVAL;
+ 
+-	acpi_table_print_srat_entry(header);
++	acpi_table_print_srat_entry(&header->common);
+ 
+ 	/* let architecture-dependent part to do it */
+ 	acpi_numa_x2apic_affinity_init(processor_affinity);
+@@ -356,7 +356,7 @@ acpi_parse_x2apic_affinity(struct acpi_subtable_header *header,
+ }
+ 
+ static int __init
+-acpi_parse_processor_affinity(struct acpi_subtable_header *header,
++acpi_parse_processor_affinity(union acpi_subtable_headers *header,
+ 			      const unsigned long end)
+ {
+ 	struct acpi_srat_cpu_affinity *processor_affinity;
+@@ -365,7 +365,7 @@ acpi_parse_processor_affinity(struct acpi_subtable_header *header,
+ 	if (!processor_affinity)
+ 		return -EINVAL;
+ 
+-	acpi_table_print_srat_entry(header);
++	acpi_table_print_srat_entry(&header->common);
+ 
+ 	/* let architecture-dependent part to do it */
+ 	acpi_numa_processor_affinity_init(processor_affinity);
+@@ -374,7 +374,7 @@ acpi_parse_processor_affinity(struct acpi_subtable_header *header,
+ }
+ 
+ static int __init
+-acpi_parse_gicc_affinity(struct acpi_subtable_header *header,
++acpi_parse_gicc_affinity(union acpi_subtable_headers *header,
+ 			 const unsigned long end)
+ {
+ 	struct acpi_srat_gicc_affinity *processor_affinity;
+@@ -383,7 +383,7 @@ acpi_parse_gicc_affinity(struct acpi_subtable_header *header,
+ 	if (!processor_affinity)
+ 		return -EINVAL;
+ 
+-	acpi_table_print_srat_entry(header);
++	acpi_table_print_srat_entry(&header->common);
+ 
+ 	/* let architecture-dependent part to do it */
+ 	acpi_numa_gicc_affinity_init(processor_affinity);
+@@ -394,7 +394,7 @@ acpi_parse_gicc_affinity(struct acpi_subtable_header *header,
+ static int __initdata parsed_numa_memblks;
+ 
+ static int __init
+-acpi_parse_memory_affinity(struct acpi_subtable_header * header,
++acpi_parse_memory_affinity(union acpi_subtable_headers * header,
+ 			   const unsigned long end)
+ {
+ 	struct acpi_srat_mem_affinity *memory_affinity;
+@@ -403,7 +403,7 @@ acpi_parse_memory_affinity(struct acpi_subtable_header * header,
+ 	if (!memory_affinity)
+ 		return -EINVAL;
+ 
+-	acpi_table_print_srat_entry(header);
++	acpi_table_print_srat_entry(&header->common);
+ 
+ 	/* let architecture-dependent part to do it */
+ 	if (!acpi_numa_memory_affinity_init(memory_affinity))
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index bd1c59fb0e17..d98d5da6a279 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -2234,10 +2234,10 @@ static struct acpi_probe_entry *ape;
+ static int acpi_probe_count;
+ static DEFINE_MUTEX(acpi_probe_mutex);
+ 
+-static int __init acpi_match_madt(struct acpi_subtable_header *header,
++static int __init acpi_match_madt(union acpi_subtable_headers *header,
+ 				  const unsigned long end)
+ {
+-	if (!ape->subtable_valid || ape->subtable_valid(header, ape))
++	if (!ape->subtable_valid || ape->subtable_valid(&header->common, ape))
+ 		if (!ape->probe_subtbl(header, end))
+ 			acpi_probe_count++;
+ 
 diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index e9643b4267c7..bc1addf715dc 100644
+index 61203eebf3a1..e9643b4267c7 100644
 --- a/drivers/acpi/tables.c
 +++ b/drivers/acpi/tables.c
-@@ -51,6 +51,7 @@ static int acpi_apic_instance __initdata;
+@@ -49,6 +49,15 @@ static struct acpi_table_desc initial_tables[ACPI_MAX_TABLES] __initdata;
  
- enum acpi_subtable_type {
- 	ACPI_SUBTABLE_COMMON,
-+	ACPI_SUBTABLE_HMAT,
- };
+ static int acpi_apic_instance __initdata;
  
- struct acpi_subtable_entry {
-@@ -232,6 +233,8 @@ acpi_get_entry_type(struct acpi_subtable_entry *entry)
- 	switch (entry->type) {
- 	case ACPI_SUBTABLE_COMMON:
- 		return entry->hdr->common.type;
-+	case ACPI_SUBTABLE_HMAT:
-+		return entry->hdr->hmat.type;
++enum acpi_subtable_type {
++	ACPI_SUBTABLE_COMMON,
++};
++
++struct acpi_subtable_entry {
++	union acpi_subtable_headers *hdr;
++	enum acpi_subtable_type type;
++};
++
+ /*
+  * Disable table checksum verification for the early stage due to the size
+  * limitation of the current x86 early mapping implementation.
+@@ -217,6 +226,42 @@ void acpi_table_print_madt_entry(struct acpi_subtable_header *header)
  	}
- 	return 0;
  }
-@@ -242,6 +245,8 @@ acpi_get_entry_length(struct acpi_subtable_entry *entry)
- 	switch (entry->type) {
- 	case ACPI_SUBTABLE_COMMON:
- 		return entry->hdr->common.length;
-+	case ACPI_SUBTABLE_HMAT:
-+		return entry->hdr->hmat.length;
- 	}
- 	return 0;
- }
-@@ -252,6 +257,8 @@ acpi_get_subtable_header_length(struct acpi_subtable_entry *entry)
- 	switch (entry->type) {
- 	case ACPI_SUBTABLE_COMMON:
- 		return sizeof(entry->hdr->common);
-+	case ACPI_SUBTABLE_HMAT:
-+		return sizeof(entry->hdr->hmat);
- 	}
- 	return 0;
- }
-@@ -259,6 +266,8 @@ acpi_get_subtable_header_length(struct acpi_subtable_entry *entry)
- static enum acpi_subtable_type __init
- acpi_get_subtable_type(char *id)
+ 
++static unsigned long __init
++acpi_get_entry_type(struct acpi_subtable_entry *entry)
++{
++	switch (entry->type) {
++	case ACPI_SUBTABLE_COMMON:
++		return entry->hdr->common.type;
++	}
++	return 0;
++}
++
++static unsigned long __init
++acpi_get_entry_length(struct acpi_subtable_entry *entry)
++{
++	switch (entry->type) {
++	case ACPI_SUBTABLE_COMMON:
++		return entry->hdr->common.length;
++	}
++	return 0;
++}
++
++static unsigned long __init
++acpi_get_subtable_header_length(struct acpi_subtable_entry *entry)
++{
++	switch (entry->type) {
++	case ACPI_SUBTABLE_COMMON:
++		return sizeof(entry->hdr->common);
++	}
++	return 0;
++}
++
++static enum acpi_subtable_type __init
++acpi_get_subtable_type(char *id)
++{
++	return ACPI_SUBTABLE_COMMON;
++}
++
+ /**
+  * acpi_parse_entries_array - for each proc_num find a suitable subtable
+  *
+@@ -246,8 +291,8 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
+ 		struct acpi_subtable_proc *proc, int proc_num,
+ 		unsigned int max_entries)
  {
-+	if (strncmp(id, ACPI_SIG_HMAT, 4) == 0)
-+		return ACPI_SUBTABLE_HMAT;
- 	return ACPI_SUBTABLE_COMMON;
+-	struct acpi_subtable_header *entry;
+-	unsigned long table_end;
++	struct acpi_subtable_entry entry;
++	unsigned long table_end, subtable_len, entry_len;
+ 	int count = 0;
+ 	int errs = 0;
+ 	int i;
+@@ -270,19 +315,20 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
+ 
+ 	/* Parse all entries looking for a match. */
+ 
+-	entry = (struct acpi_subtable_header *)
++	entry.type = acpi_get_subtable_type(id);
++	entry.hdr = (union acpi_subtable_headers *)
+ 	    ((unsigned long)table_header + table_size);
++	subtable_len = acpi_get_subtable_header_length(&entry);
+ 
+-	while (((unsigned long)entry) + sizeof(struct acpi_subtable_header) <
+-	       table_end) {
++	while (((unsigned long)entry.hdr) + subtable_len  < table_end) {
+ 		if (max_entries && count >= max_entries)
+ 			break;
+ 
+ 		for (i = 0; i < proc_num; i++) {
+-			if (entry->type != proc[i].id)
++			if (acpi_get_entry_type(&entry) != proc[i].id)
+ 				continue;
+ 			if (!proc[i].handler ||
+-			     (!errs && proc[i].handler(entry, table_end))) {
++			     (!errs && proc[i].handler(entry.hdr, table_end))) {
+ 				errs++;
+ 				continue;
+ 			}
+@@ -297,13 +343,14 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
+ 		 * If entry->length is 0, break from this loop to avoid
+ 		 * infinite loop.
+ 		 */
+-		if (entry->length == 0) {
++		entry_len = acpi_get_entry_length(&entry);
++		if (entry_len == 0) {
+ 			pr_err("[%4.4s:0x%02x] Invalid zero length\n", id, proc->id);
+ 			return -EINVAL;
+ 		}
+ 
+-		entry = (struct acpi_subtable_header *)
+-		    ((unsigned long)entry + entry->length);
++		entry.hdr = (union acpi_subtable_headers *)
++		    ((unsigned long)entry.hdr + entry_len);
+ 	}
+ 
+ 	if (max_entries && count > max_entries) {
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index f5fe0100f9ff..de14e06fd9ec 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -446,7 +446,7 @@ static struct fwnode_handle *gicv2m_get_fwnode(struct device *dev)
  }
  
+ static int __init
+-acpi_parse_madt_msi(struct acpi_subtable_header *header,
++acpi_parse_madt_msi(union acpi_subtable_headers *header,
+ 		    const unsigned long end)
+ {
+ 	int ret;
+diff --git a/drivers/irqchip/irq-gic-v3-its-pci-msi.c b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+index 8d6d009d1d58..c81d5b81da56 100644
+--- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+@@ -159,7 +159,7 @@ static int __init its_pci_of_msi_init(void)
+ #ifdef CONFIG_ACPI
+ 
+ static int __init
+-its_pci_msi_parse_madt(struct acpi_subtable_header *header,
++its_pci_msi_parse_madt(union acpi_subtable_headers *header,
+ 		       const unsigned long end)
+ {
+ 	struct acpi_madt_generic_translator *its_entry;
+diff --git a/drivers/irqchip/irq-gic-v3-its-platform-msi.c b/drivers/irqchip/irq-gic-v3-its-platform-msi.c
+index 7b8e87b493fe..9cdcda5bb3bd 100644
+--- a/drivers/irqchip/irq-gic-v3-its-platform-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-platform-msi.c
+@@ -117,7 +117,7 @@ static int __init its_pmsi_init_one(struct fwnode_handle *fwnode,
+ 
+ #ifdef CONFIG_ACPI
+ static int __init
+-its_pmsi_parse_madt(struct acpi_subtable_header *header,
++its_pmsi_parse_madt(union acpi_subtable_headers *header,
+ 			const unsigned long end)
+ {
+ 	struct acpi_madt_generic_translator *its_entry;
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index db20e992a40f..d6677075d68f 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3764,13 +3764,13 @@ static int __init acpi_get_its_numa_node(u32 its_id)
+ 	return NUMA_NO_NODE;
+ }
+ 
+-static int __init gic_acpi_match_srat_its(struct acpi_subtable_header *header,
++static int __init gic_acpi_match_srat_its(union acpi_subtable_headers *header,
+ 					  const unsigned long end)
+ {
+ 	return 0;
+ }
+ 
+-static int __init gic_acpi_parse_srat_its(struct acpi_subtable_header *header,
++static int __init gic_acpi_parse_srat_its(union acpi_subtable_headers *header,
+ 			 const unsigned long end)
+ {
+ 	int node;
+@@ -3837,7 +3837,7 @@ static int __init acpi_get_its_numa_node(u32 its_id) { return NUMA_NO_NODE; }
+ static void __init acpi_its_srat_maps_free(void) { }
+ #endif
+ 
+-static int __init gic_acpi_parse_madt_its(struct acpi_subtable_header *header,
++static int __init gic_acpi_parse_madt_its(union acpi_subtable_headers *header,
+ 					  const unsigned long end)
+ {
+ 	struct acpi_madt_generic_translator *its_entry;
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 8f87f40c9460..1729514a0578 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -1365,7 +1365,7 @@ gic_acpi_register_redist(phys_addr_t phys_base, void __iomem *redist_base)
+ }
+ 
+ static int __init
+-gic_acpi_parse_madt_redist(struct acpi_subtable_header *header,
++gic_acpi_parse_madt_redist(union acpi_subtable_headers *header,
+ 			   const unsigned long end)
+ {
+ 	struct acpi_madt_generic_redistributor *redist =
+@@ -1383,7 +1383,7 @@ gic_acpi_parse_madt_redist(struct acpi_subtable_header *header,
+ }
+ 
+ static int __init
+-gic_acpi_parse_madt_gicc(struct acpi_subtable_header *header,
++gic_acpi_parse_madt_gicc(union acpi_subtable_headers *header,
+ 			 const unsigned long end)
+ {
+ 	struct acpi_madt_generic_interrupt *gicc =
+@@ -1425,14 +1425,14 @@ static int __init gic_acpi_collect_gicr_base(void)
+ 	return -ENODEV;
+ }
+ 
+-static int __init gic_acpi_match_gicr(struct acpi_subtable_header *header,
++static int __init gic_acpi_match_gicr(union acpi_subtable_headers *header,
+ 				  const unsigned long end)
+ {
+ 	/* Subtable presence means that redist exists, that's it */
+ 	return 0;
+ }
+ 
+-static int __init gic_acpi_match_gicc(struct acpi_subtable_header *header,
++static int __init gic_acpi_match_gicc(union acpi_subtable_headers *header,
+ 				      const unsigned long end)
+ {
+ 	struct acpi_madt_generic_interrupt *gicc =
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index ced10c44b68a..8d2750b835da 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -1508,7 +1508,7 @@ static struct
+ } acpi_data __initdata;
+ 
+ static int __init
+-gic_acpi_parse_madt_cpu(struct acpi_subtable_header *header,
++gic_acpi_parse_madt_cpu(union acpi_subtable_headers *header,
+ 			const unsigned long end)
+ {
+ 	struct acpi_madt_generic_interrupt *processor;
+@@ -1540,7 +1540,7 @@ gic_acpi_parse_madt_cpu(struct acpi_subtable_header *header,
+ }
+ 
+ /* The things you have to do to just *count* something... */
+-static int __init acpi_dummy_func(struct acpi_subtable_header *header,
++static int __init acpi_dummy_func(union acpi_subtable_headers *header,
+ 				  const unsigned long end)
+ {
+ 	return 0;
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index 256f18b67e8a..08a0a3517138 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -382,7 +382,7 @@ static const struct mbox_chan_ops pcc_chan_ops = {
+  *
+  * This gets called for each entry in the PCC table.
+  */
+-static int parse_pcc_subspace(struct acpi_subtable_header *header,
++static int parse_pcc_subspace(union acpi_subtable_headers *header,
+ 		const unsigned long end)
+ {
+ 	struct acpi_pcct_subspace *ss = (struct acpi_pcct_subspace *) header;
 diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 18805a967c70..4373f5ba0f95 100644
+index ed80f147bd50..18805a967c70 100644
 --- a/include/linux/acpi.h
 +++ b/include/linux/acpi.h
-@@ -143,6 +143,7 @@ enum acpi_address_range_id {
+@@ -141,10 +141,13 @@ enum acpi_address_range_id {
+ 
+ 
  /* Table Handlers */
- union acpi_subtable_headers {
- 	struct acpi_subtable_header common;
-+	struct acpi_hmat_structure hmat;
- };
++union acpi_subtable_headers {
++	struct acpi_subtable_header common;
++};
  
  typedef int (*acpi_tbl_table_handler)(struct acpi_table_header *table);
+ 
+-typedef int (*acpi_tbl_entry_handler)(struct acpi_subtable_header *header,
++typedef int (*acpi_tbl_entry_handler)(union acpi_subtable_headers *header,
+ 				      const unsigned long end);
+ 
+ /* Debugger support */
 
