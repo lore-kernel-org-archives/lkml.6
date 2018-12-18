@@ -2,106 +2,175 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A38B6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35CCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7309221852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B59D21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:19:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cvmd0VNs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbeLRNTG (ORCPT
+        id S1726740AbeLRNTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:19:06 -0500
-Received: from mga12.intel.com ([192.55.52.136]:11938 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbeLRNTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:19:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 05:19:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
-   d="scan'208";a="130937362"
-Received: from quwen-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.215])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Dec 2018 05:18:56 -0800
-Date:   Tue, 18 Dec 2018 15:18:53 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181218131853.GC25667@linux.intel.com>
-References: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <20181217222047.GG12491@linux.intel.com>
- <20181218013918.GC333@linux.intel.com>
- <CALCETrUy25OJ8Q4eH81hwtvQyLGTmYCMMkEs+m8uNWqoFVt=-g@mail.gmail.com>
+        Tue, 18 Dec 2018 08:19:16 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38217 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbeLRNTQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 08:19:16 -0500
+Received: by mail-it1-f196.google.com with SMTP id h65so4170312ith.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:19:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5qO6CnQKCYs65/W6hQYHrGYILyLIVxUEjRluasjk/3I=;
+        b=Cvmd0VNsxSA0Wfd1Mmz0ZCVB5c1NBXtZvJcXcnLY1ln433YEAgko7/Jh3oc+h1WZ22
+         DsAm7lZ9O9VyrZjSpBi4+b/QWO14HvOHTqcXtLBl9XAkVupezBBC9pOCwxK3gHZbabqt
+         2jnnGoj3cGFliAC8KTh9c2vpbSqKKfccv4SFsHbVeKMvKHOikwaoOYnyaQyfEJ4QpXAs
+         /LlJJLDX/BnUHJOciv8SidWONwGZqZdTHPHnX3yJ8N3cGFjIHnSGtzWckXSvlRHT+0ZX
+         jb357EVgEJMBD+/KBrsdfduuqKCwMz19ErcwkKliSwc6ZJL9GKdvusS336HFcTzp7V/9
+         5i0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5qO6CnQKCYs65/W6hQYHrGYILyLIVxUEjRluasjk/3I=;
+        b=np7ZGsn2yQ5u9iZvezh4ofDitWf1oTNL6ZRqVpWkFTMNfYf+XF6rUrk+Zy4lE2YXEA
+         DONiSAu/mpjqiuGxxvSDWmdAplF1yoL0tuFY2VnEPlQ594zP6ZA0kjmEat+phcKF2ORK
+         Msa6C4TTSk5WYqX5ejWEKhvex76/CdO86/qKdhB16FvrtXdKV3iioZhyQnIwDasY5GH3
+         UH0td4grW2gDseU9uhP182lkpzeJfCtpYZUNOwubqOYlPtkIcqDTszqGBBTAwNBIMA5i
+         byE3G7jkXBjNS1PUH9b4+W7rZ3+tBQg5IxgD/xdXo9CYXt7PUboZ5DsjGq9vJSyLtdhx
+         lJ9A==
+X-Gm-Message-State: AA+aEWbQIeJJMx8gntNUFD7pnDe6WREuCjtx/hnPNfs3jmUzDdjRN9tS
+        93LC5skZ17LG0JCjRftShLEY/7Vy3HFsGGDttuVXTw==
+X-Google-Smtp-Source: AFSGD/WexWk+VQlQQmc7VX1ZyZqGgKRDlB5Yc9BeLRgn3QepV17Xqnv1fxZKe+rruUzi6DQHR/bBpntsI7EIOuXf4j8=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr2618493iti.166.1545139154628;
+ Tue, 18 Dec 2018 05:19:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUy25OJ8Q4eH81hwtvQyLGTmYCMMkEs+m8uNWqoFVt=-g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <00000000000051e9c2057d31a563@google.com> <20181217072144.GQ2217@ZenIV.linux.org.uk>
+ <95ae4c9893c89189d4309fe673ade6f389280101.camel@themaw.net>
+ <66d497c00cffb3e4109ca0d5287c8277954d7132.camel@themaw.net>
+ <CACT4Y+a+UAFqOvd8BJ4KB0+48NhoKf0717hdY6XHEcvwG7DJkQ@mail.gmail.com> <8917bbe175172b4fd9c9f92bf2a52443eb2b1827.camel@themaw.net>
+In-Reply-To: <8917bbe175172b4fd9c9f92bf2a52443eb2b1827.camel@themaw.net>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 18 Dec 2018 14:19:03 +0100
+Message-ID: <CACT4Y+b7zU9Zp2jcXs6bZ_=abi-udPpbQ54XUHqAiMpbmWszvg@mail.gmail.com>
+Subject: Re: kernel BUG at fs/inode.c:LINE!
+To:     Ian Kent <raven@themaw.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 08:55:02PM -0800, Andy Lutomirski wrote:
-> On Mon, Dec 17, 2018 at 5:39 PM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
+On Tue, Dec 18, 2018 at 1:42 PM Ian Kent <raven@themaw.net> wrote:
+>
+> On Tue, 2018-12-18 at 13:27 +0100, Dmitry Vyukov wrote:
+> > On Tue, Dec 18, 2018 at 12:35 PM Ian Kent <raven@themaw.net> wrote:
+> > >
+> > > On Tue, 2018-12-18 at 18:42 +0800, Ian Kent wrote:
+> > > > On Mon, 2018-12-17 at 07:21 +0000, Al Viro wrote:
+> > > > > On Sun, Dec 16, 2018 at 10:11:04PM -0800, syzbot wrote:
+> > > > > > Hello,
+> > > > > >
+> > > > > > syzbot found the following crash on:
+> > > > > >
+> > > > > > HEAD commit:    d14b746c6c1c Add linux-next specific files for
+> > > > > > 20181214
+> > > > > > git tree:       linux-next
+> > > > > > console output:
+> > > > > > https://syzkaller.appspot.com/x/log.txt?x=13706347400000
+> > > > > > kernel config:
+> > > > > > https://syzkaller.appspot.com/x/.config?x=1da6d2d18f803140
+> > > > > > dashboard link:
+> > > > > > https://syzkaller.appspot.com/bug?extid=5399ed0832693e29f392
+> > > > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > > > > syz repro:
+> > > > > > https://syzkaller.appspot.com/x/repro.syz?x=101032b3400000
+> > > > > > C reproducer:
+> > > > > > https://syzkaller.appspot.com/x/repro.c?x=16534063400000
+> > > > > >
+> > > > > > IMPORTANT: if you fix the bug, please add the following tag to the
+> > > > > > commit:
+> > > > > > Reported-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
+> > > > > >
+> > > > > >  slab_pre_alloc_hook mm/slab.h:423 [inline]
+> > > > > >  slab_alloc mm/slab.c:3365 [inline]
+> > > > > >  kmem_cache_alloc+0x2c4/0x730 mm/slab.c:3539
+> > > > > >  __d_alloc+0xc8/0xb90 fs/dcache.c:1599
+> > > > > > ------------[ cut here ]------------
+> > > > > > kernel BUG at fs/inode.c:1566!
+> > > > > >  d_alloc_anon fs/dcache.c:1698 [inline]
+> > > > > >  d_make_root+0x43/0xc0 fs/dcache.c:1885
+> > > > > >  autofs_fill_super+0x6f1/0x1c30 fs/autofs/inode.c:273
+> > > > >
+> > > > > Huh?  BUG is in iput(), AFAICS, so the stack trace is rather
+> > > > > misreported.
+> > > > > iput() can be called by d_make_root(), provided that dentry allocation
+> > > > > fails.  So the most straightforward interpretation would be that we
+> > > > > had an allocation failure (injected?), followed by iput() of the inode
+> > > > > passed to d_make_root().  Which happened to find I_CLEAR in ->i_state
+> > > > > of that inode somehow, which should be impossible short of seriously
+> > > > > buggered inode refcounting somewhere - the inode has just been returned
+> > > > > by new_inode(), which clears i_state, and it would have to have passed
+> > > > > clear_inode() (i.e. has been through inode eviction) since then...
+> > > >
+> > > > Sorry Al, that's my bad.
+> > > >
+> > > > See
+> > > >
+> https://www.ozlabs.org/~akpm/mmotm/broken-out/autofs-fix-possible-inode-leak-in-autofs_fill_super.patch
+> > > >
+> > > > I think this will fix it, I'll forward it to Andrew if you agree:
+> > >
+> > > Actually, looking at it again the above patch is plain not needed,
+> > > dropping it and updating the patch which follows it in the series
+> > > is what needs to be done.
+> > >
+> > > Andrew, what should I do to make this easiest for you to handle,
+> > > a respost with v2 in the subject of the patch affected by dropping
+> > > the above patch?
+> > >
+> > > Or I could repost the series with above patch dropped and the affected
+> > > patch corrected?
 > >
-> > On Mon, Dec 17, 2018 at 02:20:48PM -0800, Sean Christopherson wrote:
-> > > The only potential hiccup I can see is the build flow.  Currently,
-> > > EADD+EEXTEND is done via a work queue to avoid major performance issues
-> > > (10x regression) when userspace is building multiple enclaves in parallel
-> > > using goroutines to wrap Cgo (the issue might apply to any M:N scheduler,
-> > > but I've only confirmed the Golang case).  The issue is that allocating
-> > > an EPC page acts like a blocking syscall when the EPC is under pressure,
-> > > i.e. an EPC page isn't immediately available.  This causes Go's scheduler
-> > > to thrash and tank performance[1].
+> > Hi Ian,
 > >
-> > I don't see any major issues having that kthread. All the code that
-> > maps the enclave would be removed.
-> >
-> > I would only allow to map enclave to process address space after the
-> > enclave has been initialized i.e. SGX_IOC_ENCLAVE_ATTACH.
-> >
-> 
-> What's SGX_IOC_ENCLAVE_ATTACH?  Why would it be needed at all?  I
-> would imagine that all pages would be faulted in as needed (or
-> prefaulted as an optimization) and the enclave would just work in any
-> process.
+> > If you going to amend any commits, please add:
+> >     Tested-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
+> > otherwise:
+> >     Reported-by: syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com
+>
+> I was thinking about how to handle loosing that information.
+>
+> I don't think this amounts amending commits since Andrews mmotm is
+> based on patch series so dropping a patch and updating patches before
+> being merged won't capture this.
+>
+> Adding the "Tested-by" attribution to the updated patch prior to syzbot
+> actually performing the test might be ok since it will get tested along
+> the way. Although the problem patch itself won't exist any more so ... ?
 
-The way I see it the efficient way to implement this is to have the
-enclave attached to a single process address space at a time.
+I am a bit lost.
+There should be some patch that will fix this (new or amended). Either
+that patch needs to include Reporter/Tested-by tag, or we will need to
+tell syzbot about the fix manually with the "#syz fix:" command.
 
-#PF handler is trivial with multiple address spaces but swapping is
-a bit tedious as you would need to zap N processes.
-
-/Jarkko
+> OTOH, if I repost the series I think I can send them to syzbot for testing
+> before forwarding to Andrew (I've done something like that before but can't
+> remember how now) and add the attribution to the series.
+>
+> But this all depends on what is best for Andrew and what Al would like to
+> see done.
