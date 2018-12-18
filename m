@@ -2,103 +2,100 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D60CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B79C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1340F21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9511217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:12:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbeLRIIF (ORCPT
+        id S1726483AbeLRIMT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:08:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40618 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726316AbeLRIIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:08:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 49698AF63;
-        Tue, 18 Dec 2018 08:08:03 +0000 (UTC)
-Subject: Re: [PATCH 05/14] mm, compaction: Skip pageblocks with reserved pages
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20181214230310.572-1-mgorman@techsingularity.net>
- <20181214230310.572-6-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <b1d38179-4ccf-f34a-dffa-26c7957b8aed@suse.cz>
-Date:   Tue, 18 Dec 2018 09:08:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 18 Dec 2018 03:12:19 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48248 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726341AbeLRIMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:12:18 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2EB2820AB1; Tue, 18 Dec 2018 09:12:16 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BBEF920834;
+        Tue, 18 Dec 2018 09:12:05 +0100 (CET)
+Date:   Tue, 18 Dec 2018 09:12:05 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     Marek Behun <marek.behun@nic.cz>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        devicetree@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-pci@vger.kernel.org,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-kernel@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v2 03/12] PCI: aardvark: Add PHY support
+Message-ID: <20181218091205.04588033@xps13>
+In-Reply-To: <87zht480v5.fsf@tkos.co.il>
+References: <20181212102142.16053-1-miquel.raynal@bootlin.com>
+        <20181212102142.16053-4-miquel.raynal@bootlin.com>
+        <20181214014701.373b220b@nic.cz>
+        <20181214015712.31f749ea@nic.cz>
+        <20181217170724.58421a29@xps13>
+        <87zht480v5.fsf@tkos.co.il>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181214230310.572-6-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/18 12:03 AM, Mel Gorman wrote:
-> Reserved pages are set at boot time, tend to be clustered and almost
-> never become unreserved. When isolating pages for migrating, skip
-> the entire pageblock is one PageReserved page is encountered on the
-> grounds that it is highly probable the entire pageblock is reserved.
+Hi Baruch,
 
-Agreed, but maybe since it's highly probable and not certain, this
-skipping should not be done on the highest compaction priority?
+Baruch Siach <baruch@tkos.co.il> wrote on Mon, 17 Dec 2018 20:27:42
++0200:
 
-> The impact depends on the machine and timing but both thpscale and
-> thpfioscale when using MADV_HUGEPAGE show a reduction of scanning and
-> fault latency on a 1-socket machine. The 2-socket results were too
-> noisy to draw any meaningful conclusion but it's safe to assume less
-> scanning is useful.
+> Hi Miquel,
 > 
-> 1-socket thpfioscale
->                                    4.20.0-rc6             4.20.0-rc6
->                                mmotm-20181210        noreserved-v1r4
-> Amean     fault-base-1     1481.32 (   0.00%)     1443.63 (   2.54%)
-> Amean     fault-huge-1     1118.17 (   0.00%)      981.30 *  12.24%*
-> Amean     fault-both-1     1176.43 (   0.00%)     1052.64 *  10.52%*
+> Miquel Raynal writes:
+> > Marek Behun <marek.behun@nic.cz> wrote on Fri, 14 Dec 2018 01:57:12
+> > +0100:
+> >  
+> >> On Fri, 14 Dec 2018 01:47:01 +0100
+> >> Marek Behun <marek.behun@nic.cz> wrote:
+> >>   
+> >> > are there already patches for the A37xx comphy driver?    
+> >
+> > Please try the latest patches on top of phy -next (with PHY interface
+> > mode), available there [1]. You can pick only the COMPHY patches, but
+> > keep them over the phy -next branch.
+> >
+> > Please note that for the SMC calls to succeed you must use a recent
+> > ATF. Personally I used to work with the 'atf-v1.5-devel' branch of
+> > Marvell's misl-atf repository but it is not available anymore. If you
+> > already have a clone, then you are good to go, otherwise it might be
+> > great if someone from Marvell could share a public Github link?  
 > 
-> Compaction migrate scanned     3860713     3294284
-> Compaction free scanned      613786341   433423502
-> Kcompactd migrate scanned       408711      291915
-> Kcompactd free scanned       242509759   217164988
+> The latest ATF from Marvell is at the 'atf-v1.5-armada-18.09' branch at
 > 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> ---
->  mm/compaction.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 3afa4e9188b6..8134dba47584 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -827,6 +827,13 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
->  					goto isolate_success;
->  			}
->  
-> +			/*
-> +			 * A reserved page is never freed and tend to be
-> +			 * clustered in the same pageblocks. Skip the block.
-> +			 */
-> +			if (PageReserved(page))
-> +				low_pfn = end_pfn;
-> +
->  			goto isolate_fail;
->  		}
->  
-> 
+>   https://github.com/MarvellEmbeddedProcessors/atf-marvell
 
+Indeed, but I don't see A3700 COMPHY support there (only CP110's), I
+think it will be merged into 18.12 release (will happen this month).
+
+
+Thanks,
+Miquèl
