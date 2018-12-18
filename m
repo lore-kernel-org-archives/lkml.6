@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 532F8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8678DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170B821871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5737121871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbeLRNun (ORCPT
+        id S1726751AbeLRNut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:50:43 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42299 "EHLO
+        Tue, 18 Dec 2018 08:50:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53553 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbeLRNum (ORCPT
+        with ESMTP id S1726422AbeLRNus (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:50:42 -0500
+        Tue, 18 Dec 2018 08:50:48 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIDnV7f2850471
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIDodUb2850620
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 05:49:31 -0800
+        Tue, 18 Dec 2018 05:50:40 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIDnVs22850466;
-        Tue, 18 Dec 2018 05:49:31 -0800
-Date:   Tue, 18 Dec 2018 05:49:31 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIDodj42850617;
+        Tue, 18 Dec 2018 05:50:39 -0800
+Date:   Tue, 18 Dec 2018 05:50:39 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-8e80ad9983caeee09c3a0a1a37e05bff93becce4@git.kernel.org>
-Cc:     acme@redhat.com, hpa@zytor.com, jolsa@redhat.com,
-        ak@linux.intel.com, davem@davemloft.net, adrian.hunter@intel.com,
-        leo.yan@linaro.org, linux-kernel@vger.kernel.org,
-        mathieu.poirier@linaro.org, tglx@linutronix.de, mingo@kernel.org
-Reply-To: ak@linux.intel.com, jolsa@redhat.com, hpa@zytor.com,
-          acme@redhat.com, mingo@kernel.org, mathieu.poirier@linaro.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          adrian.hunter@intel.com, leo.yan@linaro.org, davem@davemloft.net
-In-Reply-To: <20181106210712.12098-2-adrian.hunter@intel.com>
-References: <20181106210712.12098-2-adrian.hunter@intel.com>
+Message-ID: <tip-692d0e63324d2954a0c63a812a8588e97023a295@git.kernel.org>
+Cc:     ak@linux.intel.com, leo.yan@linaro.org, davem@davemloft.net,
+        tglx@linutronix.de, adrian.hunter@intel.com, mingo@kernel.org,
+        acme@redhat.com, mathieu.poirier@linaro.org, jolsa@redhat.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@redhat.com,
+          mathieu.poirier@linaro.org, acme@redhat.com, mingo@kernel.org,
+          adrian.hunter@intel.com, tglx@linutronix.de, davem@davemloft.net,
+          leo.yan@linaro.org, ak@linux.intel.com
+In-Reply-To: <20181106210712.12098-4-adrian.hunter@intel.com>
+References: <20181106210712.12098-4-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf thread: Add fallback functions for cases where
- cpumode is insufficient
-Git-Commit-ID: 8e80ad9983caeee09c3a0a1a37e05bff93becce4
+Subject: [tip:perf/core] perf script: Use fallbacks for branch stacks
+Git-Commit-ID: 692d0e63324d2954a0c63a812a8588e97023a295
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,19 +58,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8e80ad9983caeee09c3a0a1a37e05bff93becce4
-Gitweb:     https://git.kernel.org/tip/8e80ad9983caeee09c3a0a1a37e05bff93becce4
+Commit-ID:  692d0e63324d2954a0c63a812a8588e97023a295
+Gitweb:     https://git.kernel.org/tip/692d0e63324d2954a0c63a812a8588e97023a295
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Tue, 6 Nov 2018 23:07:10 +0200
+AuthorDate: Tue, 6 Nov 2018 23:07:12 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:54:13 -0300
+CommitDate: Mon, 17 Dec 2018 14:54:18 -0300
 
-perf thread: Add fallback functions for cases where cpumode is insufficient
+perf script: Use fallbacks for branch stacks
 
-For branch stacks or branch samples, the sample cpumode might not be
-correct because it applies only to the sample 'ip' and not necessary to
-'addr' or branch stack addresses. Add fallback functions that can be
-used to deal with those cases
+Branch stacks do not necessarily have the same cpumode as the 'ip'. Use
+the fallback functions in those cases.
+
+This patch depends on patch "perf tools: Add fallback functions for cases
+where cpumode is insufficient".
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -80,126 +80,92 @@ Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: stable@vger.kernel.org # 4.19
-Link: http://lkml.kernel.org/r/20181106210712.12098-2-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181106210712.12098-4-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/event.c   | 27 +++++++++++++++++++++++++++
- tools/perf/util/machine.c | 27 +++++++++++++++++++++++++++
- tools/perf/util/machine.h |  2 ++
- tools/perf/util/thread.h  |  4 ++++
- 4 files changed, 60 insertions(+)
+ tools/perf/builtin-script.c                            | 12 ++++++------
+ tools/perf/util/scripting-engines/trace-event-python.c | 16 ++++++++--------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index e9c108a6b1c3..9431b20c1337 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1577,6 +1577,24 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 	return al->map;
- }
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 04913136bac9..3ea98fe72f7f 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -724,8 +724,8 @@ static int perf_sample__fprintf_brstack(struct perf_sample *sample,
+ 		if (PRINT_FIELD(DSO)) {
+ 			memset(&alf, 0, sizeof(alf));
+ 			memset(&alt, 0, sizeof(alt));
+-			thread__find_map(thread, sample->cpumode, from, &alf);
+-			thread__find_map(thread, sample->cpumode, to, &alt);
++			thread__find_map_fb(thread, sample->cpumode, from, &alf);
++			thread__find_map_fb(thread, sample->cpumode, to, &alt);
+ 		}
  
-+/*
-+ * For branch stacks or branch samples, the sample cpumode might not be correct
-+ * because it applies only to the sample 'ip' and not necessary to 'addr' or
-+ * branch stack addresses. If possible, use a fallback to deal with those cases.
-+ */
-+struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-+				struct addr_location *al)
-+{
-+	struct map *map = thread__find_map(thread, cpumode, addr, al);
-+	struct machine *machine = thread->mg->machine;
-+	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode, addr);
-+
-+	if (map || addr_cpumode == cpumode)
-+		return map;
-+
-+	return thread__find_map(thread, addr_cpumode, addr, al);
-+}
-+
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al)
- {
-@@ -1586,6 +1604,15 @@ struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 	return al->sym;
- }
+ 		printed += fprintf(fp, " 0x%"PRIx64, from);
+@@ -771,8 +771,8 @@ static int perf_sample__fprintf_brstacksym(struct perf_sample *sample,
+ 		from = br->entries[i].from;
+ 		to   = br->entries[i].to;
  
-+struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-+				      u64 addr, struct addr_location *al)
-+{
-+	al->sym = NULL;
-+	if (thread__find_map_fb(thread, cpumode, addr, al))
-+		al->sym = map__find_symbol(al->map, al->addr);
-+	return al->sym;
-+}
-+
- /*
-  * Callers need to drop the reference to al->thread, obtained in
-  * machine__findnew_thread()
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 8f36ce813bc5..9397e3f2444d 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2592,6 +2592,33 @@ int machine__get_kernel_start(struct machine *machine)
- 	return err;
- }
+-		thread__find_symbol(thread, sample->cpumode, from, &alf);
+-		thread__find_symbol(thread, sample->cpumode, to, &alt);
++		thread__find_symbol_fb(thread, sample->cpumode, from, &alf);
++		thread__find_symbol_fb(thread, sample->cpumode, to, &alt);
  
-+u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr)
-+{
-+	u8 addr_cpumode = cpumode;
-+	bool kernel_ip;
-+
-+	if (!machine->single_address_space)
-+		goto out;
-+
-+	kernel_ip = machine__kernel_ip(machine, addr);
-+	switch (cpumode) {
-+	case PERF_RECORD_MISC_KERNEL:
-+	case PERF_RECORD_MISC_USER:
-+		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_KERNEL :
-+					   PERF_RECORD_MISC_USER;
-+		break;
-+	case PERF_RECORD_MISC_GUEST_KERNEL:
-+	case PERF_RECORD_MISC_GUEST_USER:
-+		addr_cpumode = kernel_ip ? PERF_RECORD_MISC_GUEST_KERNEL :
-+					   PERF_RECORD_MISC_GUEST_USER;
-+		break;
-+	default:
-+		break;
-+	}
-+out:
-+	return addr_cpumode;
-+}
-+
- struct dso *machine__findnew_dso(struct machine *machine, const char *filename)
- {
- 	return dsos__findnew(&machine->dsos, filename);
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index ca897a73014c..ebde3ea70225 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -100,6 +100,8 @@ static inline bool machine__kernel_ip(struct machine *machine, u64 ip)
- 	return ip >= kernel_start;
- }
+ 		printed += symbol__fprintf_symname_offs(alf.sym, &alf, fp);
+ 		if (PRINT_FIELD(DSO)) {
+@@ -816,11 +816,11 @@ static int perf_sample__fprintf_brstackoff(struct perf_sample *sample,
+ 		from = br->entries[i].from;
+ 		to   = br->entries[i].to;
  
-+u8 machine__addr_cpumode(struct machine *machine, u8 cpumode, u64 addr);
-+
- struct thread *machine__find_thread(struct machine *machine, pid_t pid,
- 				    pid_t tid);
- struct comm *machine__thread_exec_comm(struct machine *machine,
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 30e2b4c165fe..5920c3bb8ffe 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -96,9 +96,13 @@ struct thread *thread__main_thread(struct machine *machine, struct thread *threa
+-		if (thread__find_map(thread, sample->cpumode, from, &alf) &&
++		if (thread__find_map_fb(thread, sample->cpumode, from, &alf) &&
+ 		    !alf.map->dso->adjust_symbols)
+ 			from = map__map_ip(alf.map, from);
  
- struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 			     struct addr_location *al);
-+struct map *thread__find_map_fb(struct thread *thread, u8 cpumode, u64 addr,
-+				struct addr_location *al);
+-		if (thread__find_map(thread, sample->cpumode, to, &alt) &&
++		if (thread__find_map_fb(thread, sample->cpumode, to, &alt) &&
+ 		    !alt.map->dso->adjust_symbols)
+ 			to = map__map_ip(alt.map, to);
  
- struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
- 				   u64 addr, struct addr_location *al);
-+struct symbol *thread__find_symbol_fb(struct thread *thread, u8 cpumode,
-+				      u64 addr, struct addr_location *al);
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 69aa93d4ee99..0c4b050f6fc2 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -494,14 +494,14 @@ static PyObject *python_process_brstack(struct perf_sample *sample,
+ 		pydict_set_item_string_decref(pyelem, "cycles",
+ 		    PyLong_FromUnsignedLongLong(br->entries[i].flags.cycles));
  
- void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
- 					struct addr_location *al);
+-		thread__find_map(thread, sample->cpumode,
+-				 br->entries[i].from, &al);
++		thread__find_map_fb(thread, sample->cpumode,
++				    br->entries[i].from, &al);
+ 		dsoname = get_dsoname(al.map);
+ 		pydict_set_item_string_decref(pyelem, "from_dsoname",
+ 					      _PyUnicode_FromString(dsoname));
+ 
+-		thread__find_map(thread, sample->cpumode,
+-				 br->entries[i].to, &al);
++		thread__find_map_fb(thread, sample->cpumode,
++				    br->entries[i].to, &al);
+ 		dsoname = get_dsoname(al.map);
+ 		pydict_set_item_string_decref(pyelem, "to_dsoname",
+ 					      _PyUnicode_FromString(dsoname));
+@@ -576,14 +576,14 @@ static PyObject *python_process_brstacksym(struct perf_sample *sample,
+ 		if (!pyelem)
+ 			Py_FatalError("couldn't create Python dictionary");
+ 
+-		thread__find_symbol(thread, sample->cpumode,
+-				    br->entries[i].from, &al);
++		thread__find_symbol_fb(thread, sample->cpumode,
++				       br->entries[i].from, &al);
+ 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
+ 		pydict_set_item_string_decref(pyelem, "from",
+ 					      _PyUnicode_FromString(bf));
+ 
+-		thread__find_symbol(thread, sample->cpumode,
+-				    br->entries[i].to, &al);
++		thread__find_symbol_fb(thread, sample->cpumode,
++				       br->entries[i].to, &al);
+ 		get_symoff(al.sym, &al, true, bf, sizeof(bf));
+ 		pydict_set_item_string_decref(pyelem, "to",
+ 					      _PyUnicode_FromString(bf));
