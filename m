@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891C8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FB5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57BBC2080D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6FDD2080D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:18:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="Sx4TZAPn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="CPuj/r/i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbeLRMSy (ORCPT
+        id S1726756AbeLRMS4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:18:54 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36563 "EHLO
+        Tue, 18 Dec 2018 07:18:56 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40765 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbeLRMSv (ORCPT
+        with ESMTP id S1726658AbeLRMSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:18:51 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p6so2295669wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:18:49 -0800 (PST)
+        Tue, 18 Dec 2018 07:18:54 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f188so1890368wmf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:18:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=SkscCEtDXpliSXHUz/cuWzh5NuHyq42x9x7Eg9phJA0=;
-        b=Sx4TZAPnVYELEi/GgiW2vm6HLxP6N3CesPKNUruVEtOrQdV3j+sJUglwhjkcqZlcLt
-         FM3CCZsB4QyVZ8LX+cpq/z+1XCkXMNEbX6yGwR2HeBOMote03LYZtCRB1i/0AvSwQhcS
-         HvM/qslHbK26aBNdqbHvbzKK5fbJSlX4Q90VHlnKpj6fc9T6TfsQKQtPYk/+TeU/WrK3
-         5DICy+eqFo2fqf8a5JUIlCJcoTENy6ff747mQ2VNZOnIMd+Xi7ErwXXatX/Fy6pe7M8V
-         yhHEd36TYjFL6Okln5g99tFj9Q9JzXVRw6bjxe6XOp0eVEiXvZw0GB74vuPE7BcFp02M
-         pCFA==
+         :in-reply-to:references;
+        bh=eSWAZ8hE+0QmxOSC1nocpx2/Vn+e5jpinCbecxT0A1U=;
+        b=CPuj/r/i3UFd+YIrnxG0g630Kds/PAKQUZcebI8OCjummw+9fT9Cv8Q4tAn91hUzR+
+         j1AsMVfOWONddLGNp6Ig3rGdBPrSSWShb86H15qWzlMyPWSfAW5pxwadN9/LdnLLGvAa
+         LXU2XAqubaXg2La+Q1FMeCM8H4Q1MzdlpPQ+aKpk1Jv/8kgip+Ql8Sb4PjHvjGhzA48P
+         Bux30y7bSPIxQJnf8jnLsQ2vst0DMSERSxV9n74WAb1+Binw1xBPJhy4rks+JufyOimA
+         rceETvjlvJX7Extac0QySHselFY1jKEU5mR57JRcCQp2/PGFDYiTC0GVy4fJIqtBqZEV
+         OOOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=SkscCEtDXpliSXHUz/cuWzh5NuHyq42x9x7Eg9phJA0=;
-        b=lLj/fdIeqQWzJYPqCtGf6kIe6E6E6F3lZV2T16d6F/Bg6lWnYf4Y1R+myM7d8scgry
-         wrtdBXZVp5ARmkEbPFfQb3zUnM5XeG6GkK3urw1apTpjM7uULMQQ9YIcM0ivvXgsT4Xd
-         eXkF0PvnuM0ZWCuPAUK3QtR4bR8AoiYVuF2XzLe7mvXII0ljdVhIpHgoDnPN5LobG0PC
-         HEcp1tLxeBPaUPLEH8f3VU9iMWRTLB3V1EFdv4wGEVmvP54n9xSYywRE19Nip21Tm/io
-         Slda8xU38LFj8oLQ68+PhgGmxJjr1OAS3akHFAH/aN0eKO8k+6knc7cQpoiFZknjpv8V
-         Tc9g==
-X-Gm-Message-State: AA+aEWazMTitC4SXT/VM4Th9dPLtRoR3RjpIQq89QvobsPDvjO9UCaMo
-        uizcJEWjEyKGTIXf3V8u5RRg+2/KRQ7M8A==
-X-Google-Smtp-Source: AFSGD/WQEIrEbaUo7eI1G29c2X+n1KtgyLsk4tqicmOf5dgboH1XY/qgCxqhmzmGHXqNTPd5hn7WcA==
-X-Received: by 2002:a1c:8851:: with SMTP id k78mr3047275wmd.51.1545135528993;
-        Tue, 18 Dec 2018 04:18:48 -0800 (PST)
+         :in-reply-to:references:in-reply-to:references;
+        bh=eSWAZ8hE+0QmxOSC1nocpx2/Vn+e5jpinCbecxT0A1U=;
+        b=FKTWa5zVFistxrzD0Sl8ewjLVeqZ168V8WL1eVtmz6GFgWE4R1dnFbAAnftiEDMcLK
+         t1MCwnORIxm/lSWHgp65qq0sG6ZVKD4uMJ4hvOM75qIZN1NB0HLYjwwRE8YjB3zKE+Ko
+         nIfcguZdSQudHU2bHpz9y5DxMJN4eB5e64uA8ZLv5pDXVrZ9driEAhuhYZMLb3zkJSyn
+         vKXKGBuvfE2/9/y3NdRm7Z0SaZWnTP13OtsF5bFJWIWb/ZKLJiXh7yxMVfri8c3NkmLD
+         mld4DDgRLjCSvHiH67+cCfCuBMsM1HKpNIg96iWC5FemGSJw+4WOJuZ0kQL10vojhviY
+         1q6Q==
+X-Gm-Message-State: AA+aEWYvBniW2ieS1ld8Nzd3ytqBpWrOTSbbNs+u+CAqJlMR4AO6Q3R0
+        Lml/3xpeMJy8O485m93Jo5j2flNlOE02Xg==
+X-Google-Smtp-Source: AFSGD/VsDGPBBDng6W5LtjkbuBDOleG+qY9bwFQ71ITJ8/+DcG9OwXkaK+TcXJneJQBU8Ao+XuFlpg==
+X-Received: by 2002:a1c:6a16:: with SMTP id f22mr3014484wmc.25.1545135532031;
+        Tue, 18 Dec 2018 04:18:52 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id s66sm2092390wmf.34.2018.12.18.04.18.48
+        by smtp.gmail.com with ESMTPSA id e19sm4269935wrc.25.2018.12.18.04.18.51
         (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 18 Dec 2018 04:18:48 -0800 (PST)
+        Tue, 18 Dec 2018 04:18:51 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com,
@@ -64,63 +63,48 @@ To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/4] serial: uartps: Add the device_init_wakeup
-Date:   Tue, 18 Dec 2018 13:18:39 +0100
-Message-Id: <439951b77da9a1d4cc0551af41c158ae5908b840.1545135519.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 3/4] serial: uartps: Fix error path when alloc failed
+Date:   Tue, 18 Dec 2018 13:18:41 +0100
+Message-Id: <2c90972b04a6f87100f6bcc4f6fa4630de025874.1545135519.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1545135519.git.michal.simek@xilinx.com>
 References: <cover.1545135519.git.michal.simek@xilinx.com>
 In-Reply-To: <cover.1545135519.git.michal.simek@xilinx.com>
 References: <cover.1545135519.git.michal.simek@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+When cdns_uart_console allocation failed there is a need to also clear
+ID from ID list.
 
-Initialise the device wakeup.
-
-The device_init_wakeup is needed for the wakeup to work by default.
-Uart can be configured as the primary wakeup source so it is good to
-enable wakeup by default.
-
-The same functionality is enabled also by 8250_omap, atmel_serial,
-omap-serial and stm32-usart.
-
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Fixes: ae1cca3fa347 ("serial: uartps: Change uart ID port allocation")
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
-Changes in v2:
-- Change description based on request from Greg
+Changes in v2: None
 
- drivers/tty/serial/xilinx_uartps.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/xilinx_uartps.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 379242b96790..0140644391df 100644
+index 9cdc36be5b13..c6d38617d622 100644
 --- a/drivers/tty/serial/xilinx_uartps.c
 +++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1624,6 +1624,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, UART_AUTOSUSPEND_TIMEOUT);
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
-+	device_init_wakeup(port->dev, true);
- 
+@@ -1508,8 +1508,10 @@ static int cdns_uart_probe(struct platform_device *pdev)
  #ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
- 	/*
-@@ -1702,6 +1703,7 @@ static int cdns_uart_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
-+	device_init_wakeup(&pdev->dev, false);
+ 	cdns_uart_console = devm_kzalloc(&pdev->dev, sizeof(*cdns_uart_console),
+ 					 GFP_KERNEL);
+-	if (!cdns_uart_console)
+-		return -ENOMEM;
++	if (!cdns_uart_console) {
++		rc = -ENOMEM;
++		goto err_out_id;
++	}
  
- #ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
- 	if (console_port == port)
+ 	strncpy(cdns_uart_console->name, CDNS_UART_TTY_NAME,
+ 		sizeof(cdns_uart_console->name));
 -- 
 1.9.1
 
