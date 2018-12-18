@@ -2,155 +2,56 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8781C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3E9C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD69217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:02:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDAeVtdd"
+	by mail.kernel.org (Postfix) with ESMTP id 05FC3217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeLRRCd (ORCPT
+        id S1727201AbeLRRDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:02:33 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37345 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeLRRCc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:02:32 -0500
-Received: by mail-pg1-f195.google.com with SMTP id c25so6581676pgb.4;
-        Tue, 18 Dec 2018 09:02:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=HgIRH3ITFXhF8C3OSCxta0zkrzq8EfL6o1r8MfBFziY=;
-        b=XDAeVtddtWlYEzwScK4LVoums4b4laKEm67eMRFGo4piyrqjh3+fvXKaG7YQyaBBFu
-         oGym0W4HJZjCRO4ihLZONVJQZzWIIX3E4H5jYg5lRAuepfZGDV+Q5qLBzgmUv7BgDONS
-         hJC0VTZ8hWl5lkrW/IUp0vM0ucFGbT1G3DbA1hn6O7AefoxWny5b00LL0VVTZchR+524
-         OlJ25DFHQRbc3DUGSXGnNky4dfQolG/LDdg8UgicMaWuIHoAU4Oqdkq80p4y+wmn96my
-         4yDJuEVWBQeyTxi6a2+EJHGGV1G334UI4xIih6rHxdEdVNBnDnAoMrzIbq9i7LgmmXP2
-         YFaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=HgIRH3ITFXhF8C3OSCxta0zkrzq8EfL6o1r8MfBFziY=;
-        b=o+X8hS6Xd6Waemve/+Xf3i2ujbpej8WEP8U2+OmvJ137LzA4DlNBvlkVdRd3dgZPla
-         KDHyWUV5GdW8c8EMXfG2J75eYNPj8TPLjCaqh68EXFBKGFCdDLpRiiPg/UopovpMYF8S
-         0mFioduzUxkl5J31Vber4mvjOi6xEIjMXESWMIJwhFAeeUNvJyz79bLB49YuIZU8t9hC
-         s0R3uSo+JFB6M9SPHGhOWWPidskYpy53zhisqZTREUuGBqvDIFb4C1ufEXt6PptlHtIl
-         JkfwpqDydHPGG2l6AZYzCxDXJd+JlM7DeplJw3etjaxZS8y7adSHjbxYEkSIp0/uJhJM
-         wc7w==
-X-Gm-Message-State: AA+aEWbSjnNDVZzTObLuPyv2U6maRjYPA/+3pO9oX7UOzt0ytjrm+ItB
-        MNIvpSgzc0h3utNoTtJUNs8=
-X-Google-Smtp-Source: AFSGD/V5sfuTMjSyuEYffRslh43Z7ir+/sfEdPKkDkjWEtpvKCQKt3TdlJPgtU7vj+ZXBnfkf0nEtg==
-X-Received: by 2002:a63:8c0d:: with SMTP id m13mr16637626pgd.422.1545152551330;
-        Tue, 18 Dec 2018 09:02:31 -0800 (PST)
-Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.gmail.com with ESMTPSA id u126sm36191931pgb.2.2018.12.18.09.02.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:02:30 -0800 (PST)
-Date:   Tue, 18 Dec 2018 09:02:25 -0800
-From:   Myungho Jung <mhjungk@gmail.com>
-To:     Ursula Braun <ubraun@linux.ibm.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] net/smc: fix TCP fallback socket release
-Message-ID: <20181218170221.GA21835@myunghoj-Precision-5530>
+        Tue, 18 Dec 2018 12:03:16 -0500
+Received: from verein.lst.de ([213.95.11.211]:41971 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726422AbeLRRDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:03:15 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id A438B68D8D; Tue, 18 Dec 2018 18:03:13 +0100 (CET)
+Date:   Tue, 18 Dec 2018 18:03:13 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     peng yu <yupeng0921@gmail.com>
+Cc:     Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, axboe@fb.com, hch@lst.de, jthumshirn@suse.de
+Subject: Re: [PATCH v4 2/2] trace nvme submit queue status
+Message-ID: <20181218170313.GA13540@lst.de>
+References: <20181218045138.4282-1-yupeng0921@gmail.com> <20181218045138.4282-2-yupeng0921@gmail.com> <24f78f57-9786-effd-6ffe-f9a556211898@grimberg.me> <CAG3TDc1Od_aAq7VC5y_cu0mms2muzWXrBv-fCsHQkXEdXsBmoQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAG3TDc1Od_aAq7VC5y_cu0mms2muzWXrBv-fCsHQkXEdXsBmoQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clcsock can be released while kernel_accept() references it in TCP
-listen worker. Also, clcsock needs to wake up before released if TCP
-fallback is used and the clcsock is blocked by accept. Add a lock to
-safely release clcsock and call kernel_sock_shutdown() to wake up
-clcsock from accept in smc_release().
+On Mon, Dec 17, 2018 at 11:44:51PM -0800, peng yu wrote:
+> Sorry, I don't quite understand your meaning. Do you mean I'd better
+> change this:
+>         trace_nvme_sq(req->rq_disk,
+>                 nvmeq->qid,
+>                 le16_to_cpu(cqe->sq_head),
+>                 nvmeq->sq_tail);
+> to something like below:
+>         trace_nvme_sq(req->rq_disk, nvmeq->qid, le16_to_cpu(cqe->sq_head),
+>                 nvmeq->sq_tail);
+> Please let me know whether my understanding is correct.
 
-Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
-Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
-Signed-off-by: Myungho Jung <mhjungk@gmail.com>
----
- net/smc/af_smc.c | 14 ++++++++++++--
- net/smc/smc.h    |  4 ++++
- 2 files changed, 16 insertions(+), 2 deletions(-)
+Yes.  Let me know if this version that I've applied is fine with you:
 
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 5fbaf1901571..82cb0e5634bc 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -147,8 +147,14 @@ static int smc_release(struct socket *sock)
- 		sk->sk_shutdown |= SHUTDOWN_MASK;
- 	}
- 	if (smc->clcsock) {
-+		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
-+			/* wake up clcsock accept */
-+			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
-+		}
-+		mutex_lock(&smc->clcsock_release_lock);
- 		sock_release(smc->clcsock);
- 		smc->clcsock = NULL;
-+		mutex_unlock(&smc->clcsock_release_lock);
- 	}
- 	if (smc->use_fallback) {
- 		if (sk->sk_state != SMC_LISTEN && sk->sk_state != SMC_INIT)
-@@ -205,6 +211,7 @@ static struct sock *smc_sock_alloc(struct net *net, struct socket *sock,
- 	spin_lock_init(&smc->conn.send_lock);
- 	sk->sk_prot->hash(sk);
- 	sk_refcnt_debug_inc(sk);
-+	mutex_init(&smc->clcsock_release_lock);
- 
- 	return sk;
- }
-@@ -821,7 +828,7 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
- 	struct socket *new_clcsock = NULL;
- 	struct sock *lsk = &lsmc->sk;
- 	struct sock *new_sk;
--	int rc;
-+	int rc = -EINVAL;
- 
- 	release_sock(lsk);
- 	new_sk = smc_sock_alloc(sock_net(lsk), NULL, lsk->sk_protocol);
-@@ -834,7 +841,10 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
- 	}
- 	*new_smc = smc_sk(new_sk);
- 
--	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
-+	mutex_lock(&lsmc->clcsock_release_lock);
-+	if (lsmc->clcsock)
-+		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
-+	mutex_unlock(&lsmc->clcsock_release_lock);
- 	lock_sock(lsk);
- 	if  (rc < 0)
- 		lsk->sk_err = -rc;
-diff --git a/net/smc/smc.h b/net/smc/smc.h
-index 08786ace6010..5721416d0605 100644
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -219,6 +219,10 @@ struct smc_sock {				/* smc sock container */
- 						 * started, waiting for unsent
- 						 * data to be sent
- 						 */
-+	struct mutex            clcsock_release_lock;
-+						/* protects clcsock of a listen
-+						 * socket
-+						 * */
- };
- 
- static inline struct smc_sock *smc_sk(const struct sock *sk)
--- 
-2.17.1
-
+http://git.infradead.org/nvme.git/commitdiff/ed537628e59166a080d618825a7d175565a9cad4
