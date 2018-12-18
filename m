@@ -2,106 +2,110 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B99C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FFBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A5E2184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0043C214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:57:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545127046;
+	bh=ZrWoCwIWQgmITNoNcfFgYw+90L9e0OEYK6x2Yhj6G1U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=KgNlGSqSkodxYaIgl/ctdM9uXOklDoQi6dLxTt0LZKrTqpcoqT/C5OO/LDpPj64Gn
+	 fxDikcHlKLKGDtLTaWrp3htrfJ8NCBzPVSKerlZoyek85YeCnuNtioH4FTtA+ZUzhp
+	 pwpMWdmY9ettOtKcKEmd2NHb1adMOfwf71paRHUI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbeLRJze (ORCPT
+        id S1726438AbeLRJ5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:55:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58002 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726365AbeLRJze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:55:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3924BACB8;
-        Tue, 18 Dec 2018 09:55:32 +0000 (UTC)
-Subject: Re: [PATCH 08/14] mm, compaction: Use the page allocator bulk-free
- helper for lists of pages
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20181214230310.572-1-mgorman@techsingularity.net>
- <20181214230310.572-9-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <e5a93476-c31d-5c5e-7649-2b23188aaaac@suse.cz>
-Date:   Tue, 18 Dec 2018 10:55:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 18 Dec 2018 04:57:24 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39493 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbeLRJ5Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 04:57:24 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n8so15086659otl.6;
+        Tue, 18 Dec 2018 01:57:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=00FxPsfrcp7joAZSXVq+WKZb/kQ2nBOl2ENc4HLkmqg=;
+        b=neDUJc8MrbvwvaubBIpVNy/i2XhDb4s1EUN0ZUK+PornMxVHDLhITospPqkgAsliWB
+         ZsWMhEyYCmDXHaAiBc3KHwVOiBbNpxiWv4T27W+chCS7q8zbY7AI1htP0W+oXIeu6jq6
+         54lxIzvd2bttZsOfe2HlAAdG7no7Cmw0ivW5ssJoZgtoaUIFzzIA8uciV3PjMiJM9/6R
+         f4LpbAeClSCH3abyMcH48//sWohj8UVfU7mr9SeHgXbASD+skfUFRmU3Q2OYyWLgtEvp
+         Ja8y0jhb05OA4gjW1KW1AVXdeOXXYTTZhOF0+CbOhnQqxwMQt6EqzVHq/9BhYCzmeHJb
+         1MZQ==
+X-Gm-Message-State: AA+aEWaSf1wD3zgXJgUlRXDJNGswb8+MzSMDuC95aMrbDQ+1i36Ckbds
+        tUUilgDugP1pnl9s79ZFObk3M2ErGX2Ur5Y5hwo=
+X-Google-Smtp-Source: AFSGD/Wh3Mk/yhi/N3Ny/pCtKoXp0amQA2QAsmQgMjOXID0RdO99X58w5upt6AnZfMoWMVniOgBCXBOYnDeObZDyCrw=
+X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr11116209otq.119.1545127043316;
+ Tue, 18 Dec 2018 01:57:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181214230310.572-9-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1544797347-20601-1-git-send-email-vincent.guittot@linaro.org>
+ <1544797347-20601-4-git-send-email-vincent.guittot@linaro.org>
+ <CAPDyKFrvrN6+sVGc1sM+hmQo=JR=8FyAz_YRK9DzEQN2jOVX6w@mail.gmail.com> <CAKfTPtBbZgZtU-qZhh-nKoC=cNj=ZT_LTn=cTX4V10MCZhDFEg@mail.gmail.com>
+In-Reply-To: <CAKfTPtBbZgZtU-qZhh-nKoC=cNj=ZT_LTn=cTX4V10MCZhDFEg@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 18 Dec 2018 10:57:12 +0100
+Message-ID: <CAJZ5v0i0FMw90vBH9L9EirX-mfFzh4Fb0npE8Y7rHbFn0JpZyw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] drm/i915: Move to new PM core fields
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/18 12:03 AM, Mel Gorman wrote:
-> release_pages() is a simpler version of free_unref_page_list() but it
-> tracks the highest PFN for caching the restart point of the compaction
-> free scanner. This patch optionally tracks the highest PFN in the core
-> helper and converts compaction to use it.
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+On Mon, Dec 17, 2018 at 3:22 PM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Fri, 14 Dec 2018 at 15:36, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Fri, 14 Dec 2018 at 15:22, Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > >
+> > > With jiffies been replaced by raw ns in PM core accounting, 915 driver is
+> > > updated to use this new time infrastructure.
+> > >
+> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/i915/i915_pmu.c | 12 ++++++------
+> > >  drivers/gpu/drm/i915/i915_pmu.h |  4 ++--
+> > >  2 files changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> > > index d6c8f8f..cf6437d 100644
+> > > --- a/drivers/gpu/drm/i915/i915_pmu.c
+> > > +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> > > @@ -493,14 +493,14 @@ static u64 get_rc6(struct drm_i915_private *i915)
+> > >                  */
+> > >                 if (kdev->power.runtime_status == RPM_SUSPENDED) {
+> > >                         if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
+> > > -                               i915->pmu.suspended_jiffies_last =
+> > > -                                                 kdev->power.suspended_jiffies;
+> > > +                               i915->pmu.suspended_time_last =
+> > > +                                       kdev->power.suspended_time;
+> > >
+> >
+> > Huh, so patch 2 introduces a complier error because of removing the
+> > old fields. We can't have that.
+>
+> I agree
+> The patch was mainly to raise discussion
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-Nit below:
-
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -2961,18 +2961,26 @@ void free_unref_page(struct page *page)
->  /*
->   * Free a list of 0-order pages
->   */
-> -void free_unref_page_list(struct list_head *list)
-> +void __free_page_list(struct list_head *list, bool dropref,
-> +				unsigned long *highest_pfn)
->  {
->  	struct page *page, *next;
->  	unsigned long flags, pfn;
->  	int batch_count = 0;
->  
-> +	if (highest_pfn)
-> +		*highest_pfn = 0;
-> +
->  	/* Prepare pages for freeing */
->  	list_for_each_entry_safe(page, next, list, lru) {
-> +		if (dropref)
-> +			WARN_ON_ONCE(!put_page_testzero(page));
-
-That will warn just once, but then page will remain with elevated count
-and free_unref_page_prepare() will warn either immediately or later
-depending on DEBUG_VM, for each page.
-Also IIRC it's legal for basically anyone to do get_page_unless_zero()
-and later put_page(), and this would now cause warning. Maybe just test
-for put_page_testzero() result without warning, and continue? Hm but
-then we should still do a list_del() and that becomes racy after
-dropping our ref...
-
->  		pfn = page_to_pfn(page);
->  		if (!free_unref_page_prepare(page, pfn))
->  			list_del(&page->lru);
->  		set_page_private(page, pfn);
-> +		if (highest_pfn && pfn > *highest_pfn)
-> +			*highest_pfn = pfn;
->  	}
->  
->  	local_irq_save(flags);
-> 
-
+OK, so patch [1/3] from this series should be applicable regardless, right?
