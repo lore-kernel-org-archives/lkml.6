@@ -2,119 +2,143 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DB0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2465C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 752C2218A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE2E218A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:57:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="d6/LATT+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeLRV5R (ORCPT
+        id S1727457AbeLRV5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:57:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbeLRV5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:57:17 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FECA21852;
-        Tue, 18 Dec 2018 21:57:15 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 16:57:13 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Martin Jambor <mjambor@suse.cz>, Miroslav Benes <mbenes@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
-Message-ID: <20181218165713.4309797a@gandalf.local.home>
-In-Reply-To: <20181218211501.GD25620@tassilo.jf.intel.com>
-References: <20181217173900.ygifx7khwmzn2gv2@treble>
-        <20181217180434.GS25620@tassilo.jf.intel.com>
-        <20181217181638.dfexg6mkmbfyzfli@treble>
-        <20181217192938.GF2218@hirez.programming.kicks-ass.net>
-        <20181217213126.lsqhyszoulel6uq6@treble>
-        <20181217173644.391c2070@gandalf.local.home>
-        <20181218000618.GA25620@tassilo.jf.intel.com>
-        <20181218024916.vmfnyqzouhfxhyvc@treble>
-        <alpine.LSU.2.21.1812181022570.9644@pobox.suse.cz>
-        <ri6h8fbqbdf.fsf@suse.cz>
-        <20181218211501.GD25620@tassilo.jf.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 18 Dec 2018 16:57:22 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:35374 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726704AbeLRV5V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:57:21 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBILn03A162207;
+        Tue, 18 Dec 2018 21:56:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=rIZJd2cMLWvsLIk+czPSxnxYLnjyiuI06xKRaKYevwI=;
+ b=d6/LATT+0qQoBIQf4ta9dye8cXPDui0qLYeqFFCD7OxVkFGQgczQ8W5OcT0l6h0ACEAO
+ /0C4fGDlsddhUNxyrh0znD6EiAIcKUySoJavKmplIFK9uKjtRwyixNmw02YzOjwdcA49
+ VQpOF3otv0PRse7YqDuBqNiYnCPwzJ6QIliE9Mt9JfcOnthhEuoiP5SAwwpY05T87LIJ
+ s6nGj8UQ5f7VjJ4YxZm/3WYG7t5jNqzgxMKFDKWVJ2njlkqjrQQ9x0Egr4mZQeQd80dd
+ UPCcA5wB/uYqZ8GNehqOoB/3Ttb1A7Xjfa4OkcNjE4ebi9JxfJLZVZukrRzG4xpAVri1 8Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2pct8qwykd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Dec 2018 21:56:55 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBILusYS001854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Dec 2018 21:56:54 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBILurmT032189;
+        Tue, 18 Dec 2018 21:56:53 GMT
+Received: from kadam (/41.202.241.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Dec 2018 13:56:52 -0800
+Date:   Wed, 19 Dec 2018 00:56:42 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Andrew Cooper <andrew.cooper3@citrix.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Juergen Gross <jgross@suse.com>, sstabellini@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Xen-devel] [PATCH -next] x86/xen: Fix read buffer overflow
+Message-ID: <20181218215642.GL19692@kadam>
+References: <20181218081910.18080-1-yuehaibing@huawei.com>
+ <7825d772-338a-e39e-eaff-73e666ef5c08@suse.com>
+ <2fe8f6b7-b791-e7ea-6484-491e089321d5@huawei.com>
+ <08a359b7-1746-8997-4c19-b60a30ccdd63@citrix.com>
+ <0de982b7-3402-9321-bd6a-f40de653f6e1@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0de982b7-3402-9321-bd6a-f40de653f6e1@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9111 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812180179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 13:15:01 -0800
-Andi Kleen <ak@linux.intel.com> wrote:
-
+On Tue, Dec 18, 2018 at 12:35:34PM -0500, Boris Ostrovsky wrote:
+> On 12/18/18 6:28 AM, Andrew Cooper wrote:
+> > On 18/12/2018 10:42, YueHaibing wrote:
+> >> On 2018/12/18 16:31, Juergen Gross wrote:
+> >>> On 18/12/2018 09:19, YueHaibing wrote:
+> >>>> Fix smatch warning:
+> >>>>
+> >>>> arch/x86/xen/enlighten_pv.c:649 get_trap_addr() error:
+> >>>>  buffer overflow 'early_idt_handler_array' 32 <= 32
+> >>>>
+> >>>> Fixes: 42b3a4cb5609 ("x86/xen: Support early interrupts in xen pv guests")
+> >>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> >>>> ---
+> >>>>  arch/x86/xen/enlighten_pv.c | 2 +-
+> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+> >>>> index 2f6787f..81f200d 100644
+> >>>> --- a/arch/x86/xen/enlighten_pv.c
+> >>>> +++ b/arch/x86/xen/enlighten_pv.c
+> >>>> @@ -646,7 +646,7 @@ static bool __ref get_trap_addr(void **addr, unsigned int ist)
+> >>>>  
+> >>>>  	if (nr == ARRAY_SIZE(trap_array) &&
+> >>>>  	    *addr >= (void *)early_idt_handler_array[0] &&
+> >>>> -	    *addr < (void *)early_idt_handler_array[NUM_EXCEPTION_VECTORS]) {
+> >>>> +	    *addr < (void *)early_idt_handler_array[NUM_EXCEPTION_VECTORS - 1]) {
+> >>>>  		nr = (*addr - (void *)early_idt_handler_array[0]) /
+> >>>>  		     EARLY_IDT_HANDLER_SIZE;
+> >>>>  		*addr = (void *)xen_early_idt_handler_array[nr];
+> >>>>
+> >>> No, this patch is wrong.
+> >>>
+> >>> early_idt_handler_array is a 2-dimensional array:
+> >>>
+> >>> const char
+> >>> early_idt_handler_array[NUM_EXCEPTION_VECTORS][EARLY_IDT_HANDLER_SIZE];
+> >>>
+> >>> So above code doesn't do an out of bounds array access, but checks for
+> >>> *addr being in the array or outside of it (note the "<" used for the
+> >>> test).
+> >> Thank you for your explanation.
+> > This looks like a smatch bug.  I'd feed it back upstream.
 > 
-> > 
-> > I am the developer who introduced attribute noclone to GCC and also the
-> > one who advises against using it :-) ...at least without also using the
-> > noinline attribute, the combination means "  
+> +Dan
 > 
-> The function in question uses noinline too.
 
-And that's all I care about.
+Yep.  Thanks for the bug report.  Let me test my fix and push it later
+this week.
 
-> 
-> > I want only one or zero
-> > copies of this function in the compiled assembly" which you might need
-> > if you do fancy stuff in inline assembly, for example.  
-> 
-> For this case we only want one non inlined copy because it is used as a
-> test case for a function tracer.
+Btw, it might help readability slightly if we made it more clear we were
+doing pointer math:
 
-The function tracer selftest should work just fine if there's more than
-one copy. Because the test will enable all copies.
+		*addr >= (void *)&early_idt_handler_array[0] &&
+		*addr < (void *)&early_idt_handler_array[NUM_EXCEPTION_VECTORS]) {
+			nr = (*addr - (void *)&early_idt_handler_array[0]) /
 
-> 
-> LTO comes into play because it originally relied on being in a separate
-> file, so it would not be inlined, but with LTO that doesn't work.
+Regardless, this is definitely a bug in Smatch and I will push a fix.
 
-The reason for it being in a separate file is because the entire
-directory is marked "notrace". That file, and that file alone in that
-directory, gets compiled with the -pg flags. As long as the functions
-in that file don't get inlined (which will make them notrace as well)
-all is good.
+regards,
+dan carpenter
 
-Thus, if used and/or noinline prevents the functions from being
-inlined, and thus have their profiling removed, we should be good.
-
-Hmm, how does that work? When does LTO do its linker magic? Because the
-fentry/mcounts are added when the object is created. Are they removed
-if the compiler sees that it can be inlined? Or does LTO just compile
-everything in one go?
-
-> 
-> > 
-> > I believe that when people use noclone on its own, in 99 out 100 cases
-> > they actually want something else.  Usually there is something that  
-> 
-> AFAIK there is no noclone without noinline in the kernel tree.
-> 
-> 
-> > references the function from code (such as assembly) or a tool that the
-> > compiler does know about and then they should use the "used" attribute.  
-> 
-> Neither in the ftrace case, nor in the KVM case (another user which
-> has fancy inline assembly that cannot be duplicated) that's the case.
-> It's just about having exactly one out of line instance.
-
-Again, that's not the ftrace case. It doesn't care about more than one
-out of line instance. Thus, for this particular use, "used" should be
-good enough.
-
--- Steve
