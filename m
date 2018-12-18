@@ -2,79 +2,81 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83AEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D85C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F6F21852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EAC1218A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeLRPIQ (ORCPT
+        id S1726731AbeLRPLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:08:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:22909 "EHLO mga12.intel.com"
+        Tue, 18 Dec 2018 10:11:43 -0500
+Received: from mga14.intel.com ([192.55.52.115]:23191 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeLRPIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:08:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726426AbeLRPLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:11:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 07:08:15 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 07:11:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
-   d="scan'208";a="284574208"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga005.jf.intel.com with ESMTP; 18 Dec 2018 07:08:15 -0800
-Date:   Tue, 18 Dec 2018 07:08:15 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v5 0/5] x86: Add vDSO exception fixup for SGX
-Message-ID: <20181218150815.GB28326@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <20181218041815.GA5097@linux.intel.com>
+   d="scan'208";a="119805608"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga001.jf.intel.com with ESMTP; 18 Dec 2018 07:11:40 -0800
+Subject: Re: [PATCH v6 1/3] x86/fpu: track AVX-512 usage of tasks
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Aubrey Li <aubrey.li@intel.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20181218042218.8653-1-aubrey.li@intel.com>
+ <alpine.DEB.2.21.1812181448170.12686@nanos.tec.linutronix.de>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <62997df2-0817-b54d-b11e-00a567f1d67c@linux.intel.com>
+Date:   Tue, 18 Dec 2018 23:11:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218041815.GA5097@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <alpine.DEB.2.21.1812181448170.12686@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 06:18:15AM +0200, Jarkko Sakkinen wrote:
-> On Fri, Dec 14, 2018 at 01:57:24PM -0800, Sean Christopherson wrote:
-> > __vdso_sgx_enter_enclave() gets another rewrite, this time to strip
-> > it down to the bare minimum and explicitly break compliance with the
-> > x86-64 ABI.  Feedback from v4 revealed that __vdso_sgx_enter_enclave()
-> > would need to save (a lot) more than just the non-volatile GPRs to be
-> > compliant with the x86-64 ABI, at which point breaking from the ABI
-> > completely became much more palatable.
-> > 
-> > The non-standard ABI also solves the question of "which GPRs should be
-> > marshalled to/from the enclave" by getting out of the way entirely and
-> > letting userspace have free reign (except for RSP, which has a big ol'
-> > DO NOT TOUCH sign on it).
+On 2018/12/18 22:14, Thomas Gleixner wrote:
+> On Tue, 18 Dec 2018, Aubrey Li wrote:
+>> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+>> index a38bf5a1e37a..8778ac172255 100644
+>> --- a/arch/x86/include/asm/fpu/internal.h
+>> +++ b/arch/x86/include/asm/fpu/internal.h
+>> @@ -411,6 +411,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
+>>  {
+>>  	if (likely(use_xsave())) {
+>>  		copy_xregs_to_kernel(&fpu->state.xsave);
+>> +
+>> +		/*
+>> +		 * AVX512 state is tracked here because its use is
+>> +		 * known to slow the max clock speed of the core.
+>> +		 */
+>> +		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
+>> +			fpu->avx512_timestamp = jiffies_64;
 > 
-> Can you share a reference, or is this better documented in the
-> accompanied patches?
+> Even if unlikely this is incorrect when running a 32 bit kernel because
+> there jiffies_64 cannot be atomically loaded vs. a concurrent update. See
+> the comment in include/linux/jiffies.h right above the jiffies_64
+> declaration.
+> 
+Yeah, I noticed this, because this is under use_xsave() condition, also need
+valid AVX512 state, so a 32 bit kernel won't enter this branch.
 
-Patch 5/5 has more details, and v4 of the series has a lot of background
-info by way of discussion:
-
-https://lkml.kernel.org/r/20181213213135.12913-1-sean.j.christopherson@intel.com
+Thanks,
+-Aubrey
