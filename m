@@ -2,139 +2,139 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDC5C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F10C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E229121873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:08:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X7rlwMEp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RrPw3yiR"
+	by mail.kernel.org (Postfix) with ESMTP id 306CA21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545153114;
+	bh=7zuagWpv7MxipcwAuF1eeYX1fMHP5H4wzlhb2u+Qq9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ap4/K1WBQm5roysY5lYcEPVkfOmHmst0l0t2whYJO3hBByshMnzIevFOstu4b+2nz
+	 BwudRS5sIRd8too0pARYilOn6fOSpx3dkoKcXtzGHTZdmfXRs2NyyOh+3Wxtct1HIu
+	 iQ4bHiJILcH9mqGgSpeJiGvRvKPVz/l/Mn6W7vQc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeLRRIS (ORCPT
+        id S1727134AbeLRRLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:08:18 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48942 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726899AbeLRRIS (ORCPT
+        Tue, 18 Dec 2018 12:11:53 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33451 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726868AbeLRRLx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:08:18 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6696E605A5; Tue, 18 Dec 2018 17:08:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545152897;
-        bh=aYJkrPOgJuHwT8PEc3wRoJtoLpp5dPqY7ziQqra9rAM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=X7rlwMEpkGrrrE+U5PAhlj6nImLXrwYgawYhsDEweYXwqHl8/ZMzampmnyP9xOPxs
-         fYatT79g1Kr0LfcLDaRrj43+AWZNAWiElkrODurcba1rTT7v0cypOOtIrbX2P5yD4O
-         hVd4WPVHhznmmpzWDpRcTDzTZyAplUoU48V+Ai48=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D7A2C605A5;
-        Tue, 18 Dec 2018 17:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545152896;
-        bh=aYJkrPOgJuHwT8PEc3wRoJtoLpp5dPqY7ziQqra9rAM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RrPw3yiR0XE2bZ+U0c96wnL1pv5bc58o4ImlNusPSUS03pHCk3GWBVubtF/bYuy9p
-         3pvcLB3e51tWX5V5IpKv4+l4SJ0oG0lJYdwndeqw+fKHs/Qx2+Cz1ZznPDjd2WDdyr
-         h3Jv5Tjgvc2//zCH4NPnF0hlc+/ewCebcroyOMEc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7A2C605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org
-Cc:     bjorn.andersson@linaro.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] clk: qcom: List rates in debugfs for rcg
-Date:   Tue, 18 Dec 2018 10:08:04 -0700
-Message-Id: <1545152884-768-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 18 Dec 2018 12:11:53 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i20so16402864otl.0;
+        Tue, 18 Dec 2018 09:11:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ygrl2FiWe+R6FPgyEioUT5XeXhqROQwQmX6FUTgJuE8=;
+        b=rgcMEFEUrv65/d6WH1QyQ4EWPJ33E3bp6b9svwSKlRHaZXct72L/JzaKapaMpb/PsT
+         Jozia1VwqgeXt8bDPM9vriJKNJPoKeTvsOFc1o/b1RL432V6LClCmPpg8wncw9Y757Fn
+         HUMA8ds5Ju+hDlDXf3QVE11TkGK9VqgfZdluM8hanH9Pm1WuzS5PRVRw7nE5SPxvaceA
+         o7auqpcRSEikpaz0TRkXj2XCwXWah80IwJbYaPUpIyC6wQb3R/78UJe3ZCNu+/mk6fKq
+         73vZd//aGvtFF3txRHtMbMIhiGAueJ4udr+PtItlAss5Nz5d7tjUoVFZOXLVuq8et58T
+         QmWQ==
+X-Gm-Message-State: AA+aEWZUts8l5jiknSvhSOAac7b1PagaoJBEoDwqM+yA1jQVMqysh/50
+        b+dyKTLvoEyvJMIlSmbSkg==
+X-Google-Smtp-Source: AFSGD/Wk0pHF4zUUFvAET4hrdL8YGrYEPKiaEuvq9+nDPy2U7hJR5JUXzDJWUG7Lxt4nH9hFRCXqkQ==
+X-Received: by 2002:a9d:3662:: with SMTP id w89mr13259483otb.55.1545153111855;
+        Tue, 18 Dec 2018 09:11:51 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s66sm13221395oia.55.2018.12.18.09.11.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 09:11:51 -0800 (PST)
+Date:   Tue, 18 Dec 2018 11:11:50 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V2] dt-bindings: timer: gpt: update binding doc
+Message-ID: <20181218171150.GA21403@bogus>
+References: <1544598889-2995-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544598889-2995-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RCGs typically have multiple frequencies they can support based on client
-requests.  It can be very helpful to have a list of what are the supported
-frequencies when attempting to bringup or debug a new device.  Add a clock
-specific "list_rates" debugfs file which dumps the supported rates of a
-selected rcg in a convenient format.
+On Wed, Dec 12, 2018 at 07:20:44AM +0000, Anson Huang wrote:
+> The i.MX GPT timer driver binding doc is out of date,
+> update it according to current GPT timer driver.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  .../devicetree/bindings/timer/fsl,imxgpt.txt       | 28 +++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt b/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt
+> index 9809b11..2ed84ad 100644
+> --- a/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt
+> +++ b/Documentation/devicetree/bindings/timer/fsl,imxgpt.txt
+> @@ -2,17 +2,33 @@ Freescale i.MX General Purpose Timer (GPT)
+>  
+>  Required properties:
+>  
+> -- compatible : should be "fsl,<soc>-gpt"
+> -- reg : Specifies base physical address and size of the registers.
+> -- interrupts : A list of 4 interrupts; one per timer channel.
+> -- clocks : The clocks provided by the SoC to drive the timer.
+> +- compatible : must be one of following:
+> +  - "fsl,imx1-gpt",
+> +  - "fsl,imx21-gpt",
+> +  - "fsl,imx27-gpt",
+> +  - "fsl,imx31-gpt",
+> +  - "fsl,imx25-gpt",
+> +  - "fsl,imx50-gpt",
+> +  - "fsl,imx51-gpt",
+> +  - "fsl,imx53-gpt",
+> +  - "fsl,imx6q-gpt",
+> +  - "fsl,imx6dl-gpt",
+> +  - "fsl,imx6sl-gpt",
+> +  - "fsl,imx6sx-gpt".
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg2.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+You need to list fall-backs here. IOW, what are the valid combinations?
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 6e3bd19..e4b1d35 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -13,6 +13,8 @@
- #include <linux/regmap.h>
- #include <linux/math64.h>
- #include <linux/slab.h>
-+#include <linux/debugfs.h>
-+#include <linux/seq_file.h>
- 
- #include <asm/div64.h>
- 
-@@ -347,6 +349,36 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
- 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
- }
- 
-+static int rcg2_list_rates_show(struct seq_file *m, void *unused)
-+{
-+	struct clk_rcg2 *rcg = m->private;
-+	const struct freq_tbl *f;
-+
-+	if (rcg->freq_tbl)
-+		for (f = rcg->freq_tbl; f->freq; f++)
-+			seq_printf(m, "%lu\n", f->freq);
-+
-+	return 0;
-+}
-+
-+static int rcg2_list_rates_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, rcg2_list_rates_show, inode->i_private);
-+}
-+
-+static const struct file_operations rcg2_list_rates_fops = {
-+	.open		= rcg2_list_rates_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= seq_release,
-+};
-+
-+static void clk_rcg2_debug_init(struct clk_hw *hw, struct dentry *dentry)
-+{
-+	debugfs_create_file("list_rates", 0444, dentry, to_clk_rcg2(hw),
-+			    &rcg2_list_rates_fops);
-+}
-+
- const struct clk_ops clk_rcg2_ops = {
- 	.is_enabled = clk_rcg2_is_enabled,
- 	.get_parent = clk_rcg2_get_parent,
-@@ -355,6 +387,7 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
- 	.determine_rate = clk_rcg2_determine_rate,
- 	.set_rate = clk_rcg2_set_rate,
- 	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
-+	.debug_init = clk_rcg2_debug_init,
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_ops);
- 
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> +- reg : specifies base physical address and size of the registers.
+> +- interrupts : should be the clock event device interrupt.
 
+'clock event' is a Linux thing and shouldn't be part of the binding.
+
+What happened to the 4 interrupts?
+
+> +- clocks : the clocks provided by the SoC to drive the timer, must contain
+> +           an entry for each entry in clock-names.
+> +- clock-names : must include "ipg" entry first, then "per" entry, "osc_per"
+> +                can be a substitute of "per" entry on some SoCs.
+
+per or osc_per should be deprecated so only one is used going forward.
+
+>  
+>  Example:
+>  
+>  gpt1: timer@10003000 {
+> -	compatible = "fsl,imx27-gpt", "fsl,imx1-gpt";
+> +	compatible = "fsl,imx27-gpt", "fsl,imx21-gpt";
+>  	reg = <0x10003000 0x1000>;
+>  	interrupts = <26>;
+> -	clocks = <&clks 46>, <&clks 61>;
+> +	clocks = <&clks IMX27_CLK_GPT1_IPG_GATE>,
+> +		 <&clks IMX27_CLK_PER1_GATE>;
+>  	clock-names = "ipg", "per";
+>  };
+> -- 
+> 2.7.4
+> 
