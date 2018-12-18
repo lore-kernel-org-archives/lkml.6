@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03CEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACABC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8713218AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7C49218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:49:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbeLRXtp (ORCPT
+        id S1727849AbeLRXtu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 18:49:45 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:50112 "EHLO
+        Tue, 18 Dec 2018 18:49:50 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:55302 "EHLO
         mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbeLRXtp (ORCPT
+        with ESMTP id S1726719AbeLRXtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 18:49:45 -0500
+        Tue, 18 Dec 2018 18:49:47 -0500
 Received: from marcel-macpro.fritz.box (p4FF9F1DE.dip0.t-ipconnect.de [79.249.241.222])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 8810BCEE81;
-        Wed, 19 Dec 2018 00:57:22 +0100 (CET)
+        by mail.holtmann.org (Postfix) with ESMTPSA id 71D00CEE92;
+        Wed, 19 Dec 2018 00:57:24 +0100 (CET)
 Content-Type: text/plain;
         charset=us-ascii
 Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] net/bluetooth: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Subject: Re: [PATCH] 6lowpan: convert to DEFINE_SHOW_ATTRIBUTE
 From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20181105145619.6395-1-tiny.windzz@gmail.com>
-Date:   Wed, 19 Dec 2018 00:49:43 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, keescook@chromium.org,
-        gustavo@embeddedor.com, dvlasenk@redhat.com,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <20181215072217.26085-1-tiny.windzz@gmail.com>
+Date:   Wed, 19 Dec 2018 00:49:45 +0100
+Cc:     Alexander Aring <alex.aring@gmail.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-bluetooth@vger.kernel.org, linux-wpan@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <89EE12B3-8784-4E50-86F5-ACEC00EC6A47@holtmann.org>
-References: <20181105145619.6395-1-tiny.windzz@gmail.com>
+Message-Id: <62A2F405-FC91-4A6C-85B4-A5D28E306F01@holtmann.org>
+References: <20181215072217.26085-1-tiny.windzz@gmail.com>
 To:     Yangtao Li <tiny.windzz@gmail.com>
 X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,11 +51,8 @@ Hi Yangtao,
 > 
 > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
-> net/bluetooth/l2cap_core.c  | 12 +-----------
-> net/bluetooth/rfcomm/core.c | 12 +-----------
-> net/bluetooth/rfcomm/sock.c | 12 +-----------
-> net/bluetooth/sco.c         | 12 +-----------
-> 4 files changed, 4 insertions(+), 44 deletions(-)
+> net/6lowpan/debugfs.c | 13 +------------
+> 1 file changed, 1 insertion(+), 12 deletions(-)
 
 patch has been applied to bluetooth-next tree.
 
