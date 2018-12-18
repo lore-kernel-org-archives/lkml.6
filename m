@@ -2,147 +2,92 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1F1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776CAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB1D4218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:20:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545153635;
-	bh=T5PcE17zxWrJHgtfRGz7WHwWqmcsVv3obSgIGUDebv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sozm5MXN8bYtkZj3V5fe6INvx2lS6CTw64BZZpnbmZZKv0KRVAQJGeNMvZLskzzuc
-	 Z+1P4MbE+sJwrPx0lZDdXPcraBK4vDiA892bV1aQxWL6IvqY3zygWgZSBsxye4emsh
-	 2TV3qI9E2UyhH3YUqNyg/u73iFes++W6VLWJYNxs=
+	by mail.kernel.org (Postfix) with ESMTP id 44B03218A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:21:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cEe9Z06G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeLRRUe (ORCPT
+        id S1727275AbeLRRVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:20:34 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41105 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbeLRRUe (ORCPT
+        Tue, 18 Dec 2018 12:21:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53658 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeLRRVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:20:34 -0500
-Received: by mail-oi1-f193.google.com with SMTP id j21so2559337oii.8;
-        Tue, 18 Dec 2018 09:20:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ay0IswX+sRWNKX5ziAV2hvU/TN5PQDEK6pFJnClTI3Q=;
-        b=r0vz9PG7rf/48lq1Uj/rJ8zeI8pfzj0OGoOgdTd7AX/pOzJweFCDioxQUQwZstCIlk
-         cfmViT+26Nw5s4M2/SYX8TT1OSM38Iw/1y/xVmfI9VKlizahNK0AuLthvrluojV1vjYn
-         2+haJQibgiziNQIm56gwT9XbSHqse89CLVIwuGEEoE2cIeMHybHyRRDjjVefPiazhWM6
-         3PiZk1CjXZDwxNkZQh4zbIw0Ok+M2NPgWKorRo/NcajLxmwv5KSwZixW7LVU1VZds4Pd
-         0a6c+HgqljMjjdVMr3anEfwec/kssb3uFKdBE4l5+p3B4rT3XSjmvdu6nTwZ3VMLewAR
-         iOFQ==
-X-Gm-Message-State: AA+aEWai5T2ye4w//j1xVzkv+cFLlmOkKL1BMXhtubvoT3nM0yr/AQ9I
-        Yfb6xL/MdYKRzUHL33rgOpY9xxmZ+Q==
-X-Google-Smtp-Source: AFSGD/WvNjfb6eF+KnwrvCaF1Q03GxUQflfTylnXk3tkWA2mz++vItu2t/i0MNrl4EfD8GPJvPaIzA==
-X-Received: by 2002:aca:a60d:: with SMTP id p13mr8771745oie.2.1545153632929;
-        Tue, 18 Dec 2018 09:20:32 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s66sm13246235oia.55.2018.12.18.09.20.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:20:32 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:20:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     palmer@sifive.com, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, thierry.reding@gmail.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com,
-        paul.walmsley@sifive.com
-Subject: Re: [RFC v2 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20181218172031.GA7272@bogus>
-References: <1544768442-12530-1-git-send-email-yash.shah@sifive.com>
- <1544768442-12530-2-git-send-email-yash.shah@sifive.com>
+        Tue, 18 Dec 2018 12:21:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bb0X2bTtkDjmBJqyQPos1ClaHaQNdMFm7mSAo4n5hNQ=; b=cEe9Z06GjqMwwpL+3jnSurDeX
+        tFV1oEIbl05ObVV4t6VQR7s/vRNSBAb/YHbaX92+l1VyfQJDsBh+ZV5N8uwM/g3BvZNNV5GiOrKaK
+        tqSiyWC/qvWs4FGzYH8hoanUom2gOOTLvDVcGOIKoOcTU2H4cR1mNSe5Z1gcyOjhTP469AHDq5d5v
+        MIRk3AloXhzzLAx1fPbCDDtvvM5Wd4psxcGNeCNeJsgKf5DHfbE0tamyMG7HKYmDKOc+d3MoYaaTo
+        R+61OlRkBdA+iFAxSG1bGPtrUG9Ipjqr6k8LLd3RpSoFi8EFQs+9/GK+2aFZZG4ODqFdd5XFLSs4I
+        fREKruwgw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gZJ3Q-00031M-76; Tue, 18 Dec 2018 17:21:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E844D201409D6; Tue, 18 Dec 2018 18:21:09 +0100 (CET)
+Date:   Tue, 18 Dec 2018 18:21:09 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
+Message-ID: <20181218172109.GK15430@hirez.programming.kicks-ass.net>
+References: <20181218104812.GC15430@hirez.programming.kicks-ass.net>
+ <20181218111701.GA32522@jagdpanzerIV>
+ <20181218114709.GF7485@zn.tnic>
+ <20181218130750.GA665@tigerII.localdomain>
+ <20181218142623.GH7485@zn.tnic>
+ <20181218145558.GD665@tigerII.localdomain>
+ <20181218150313.GI7485@zn.tnic>
+ <20181218151455.GE665@tigerII.localdomain>
+ <20181218152413.GJ7485@zn.tnic>
+ <20181218165217.GA534@tigerII.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544768442-12530-2-git-send-email-yash.shah@sifive.com>
+In-Reply-To: <20181218165217.GA534@tigerII.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 11:50:41AM +0530, Yash Shah wrote:
-> DT documentation for PWM controller added with updated compatible
-> string.
+On Wed, Dec 19, 2018 at 01:52:17AM +0900, Sergey Senozhatsky wrote:
+> On (12/18/18 16:24), Borislav Petkov wrote:
+> > On Wed, Dec 19, 2018 at 12:14:55AM +0900, Sergey Senozhatsky wrote:
+> > > Right, but unlike log_buf_len, devkmsg is a bit close to a "binary" knob:
+> > > either all messages or none;
+> > 
+> > ... which is perfectly fine for a debugging session.
 > 
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [Atish: Compatible string update]
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-sifive.txt         | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> But devkmsg ratelimits systemd errors, so one does not even know that
+> "some debugging is required". For instance from my x86 box:
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> new file mode 100644
-> index 0000000..250d8ee
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> @@ -0,0 +1,44 @@
-> +SiFive PWM controller
-> +
-> +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> +supports one period for all channels in the PWM. This is set globally in DTS.
-> +The period also has significant restrictions on the values it can achieve,
-> +which the driver rounds to the nearest achievable frequency.
-> +
-> +Required properties:
-> +- compatible: should be something similar to "sifive,<chip>-pwm" for
-> +	      the PWM as integrated on a particular chip, and
-> +	      "sifive,pwm<version>" for the general PWM IP block
-> +	      programming model. Supported compatible strings are:
-> +	      "sifive,fu540-c000-pwm" for the SiFive PWM v0 as
-> +	      integrated onto the SiFive FU540 chip, and "sifive,pwm0"
-> +	      for the SiFive PWM v0 IP block with no chip integration
-> +	      tweaks.
-
-This should reference the common doc Paul has written and not re-explain 
-the versioning scheme again.
-
-> +- reg: physical base address and length of the controller's registers
-> +- clocks: The frequency the controller runs at
-> +- #pwm-cells: Should be 2.
-> +  The first cell is the PWM channel number
-> +  The second cell is the PWM polarity
-> +- sifive,approx-period: the driver will get as close to this period as it can
-
-Needs a unit suffix as defined in property-units.txt
-
-> +- interrupts: one interrupt per PWM channel
-> +
-> +PWM RTL that corresponds to the IP block version numbers can be found
-> +here:
-> +
-> +https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
-> +
-> +Further information on the format of the IP
-> +block-specific version numbers can be found in
-> +Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
-> +
-> +Examples:
-> +
-> +pwm:  pwm@10020000 {
-> +	compatible = "sifive,fu540-c000-pwm","sifive,pwm0";
-> +	reg = <0x0 0x10020000 0x0 0x1000>;
-> +	clocks = <&tlclk>;
-> +	interrupt-parent = <&plic>;
-> +	interrupts = <42 43 44 45>;
-> +	#pwm-cells = <2>;
-> +	sifive,approx-period = <1000000>;
-> +};
-> -- 
-> 1.9.1
+>  Unmounting /home...
+>  [..]
+>  home.mount: Mount process exited, code=exited status=32
+>  Failed unmounting /home.
 > 
+> I don't want to debug systemd, I want to know that something didn't
+> work out. 10 messages max and 5 seconds interval looks a bit too strict.
+
+Again, complain to system-doofus for printing so much crap to somewhere
+it should not print to begin with.
