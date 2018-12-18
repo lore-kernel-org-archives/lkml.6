@@ -2,77 +2,102 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2756C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E77C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9962121871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:24:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qwq4jMS9"
+	by mail.kernel.org (Postfix) with ESMTP id 73FC820815
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbeLRPYU (ORCPT
+        id S1726818AbeLRPZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:24:20 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:48200 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbeLRPYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:24:20 -0500
-Received: from zn.tnic (p200300EC2BD17800C11009BD73D4094D.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:7800:c110:9bd:73d4:94d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 285281EC0629;
-        Tue, 18 Dec 2018 16:24:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1545146659;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=WiI6Cwb5uZxuV1PBAluk7NuN00HlrCKbo6BN3NUAdeA=;
-        b=Qwq4jMS9Pt+LQxCRIdJaV5zQR1mRF9L2GHQppAcimZtUvzXnTKJBqb2QwfAL7fPvGVEQpP
-        jyRXRaqDhQP0T+HV4xEP8CtCszwm4jQcjpnr/SZyliieYRGeEvC2SwVUyo95v8z6xKz1jB
-        +8zaHJXQ37EXThh533WAwf7OsZ1SvyM=
-Date:   Tue, 18 Dec 2018 16:24:13 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181218152413.GJ7485@zn.tnic>
-References: <20181218091842.4996-1-sergey.senozhatsky@gmail.com>
- <20181218104812.GC15430@hirez.programming.kicks-ass.net>
- <20181218111701.GA32522@jagdpanzerIV>
- <20181218114709.GF7485@zn.tnic>
- <20181218130750.GA665@tigerII.localdomain>
- <20181218142623.GH7485@zn.tnic>
- <20181218145558.GD665@tigerII.localdomain>
- <20181218150313.GI7485@zn.tnic>
- <20181218151455.GE665@tigerII.localdomain>
+        Tue, 18 Dec 2018 10:25:03 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44339 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbeLRPZC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:25:02 -0500
+Received: by mail-qk1-f196.google.com with SMTP id n12so9659497qkh.11;
+        Tue, 18 Dec 2018 07:25:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TohuLPIf0o9dPse0NxnUD/wZGM8HyqMmatknUS6JBdo=;
+        b=TsxSXCVmf51l6tvfnEx14CCvQ3Cxht0Je+DW8ugboSFDKLHyxp7bgfYlHubmxqTffW
+         wB+C+6IWam29BrjLNtPGgIM0kmsr7qdE/XrSt+8NsTXBey5E8mUc53eBEeRkMW2nOGXn
+         AeXuq99VT1914JTPLPQtAhH4DI0NYNrnA0AXknH9kidK28HG0bZAos9qhZXCTjXvT5jv
+         hH5PcjprnoI5rtkcZetOuaw6/mqmjdLpzXrbh5xFWI3S3DL74WuZuN6Wxbt1aAT2ixWA
+         3hPxZwJwC0z32miaLkOHU5sipw0lP3oyyKpYQKAORiXqDumr5LdIZ1vxBOaTbIiQ+Uhq
+         fBVg==
+X-Gm-Message-State: AA+aEWbckxhuxXpX7KfQpYEOLQ9Oo/bfqcNkugBW4162UfaIjBrpoKnp
+        h9S7EFWZjePQBE/8oywZgvnnn4X5wT36AnM43aU=
+X-Google-Smtp-Source: AFSGD/VTjn43qT8Lfr+9KkSs74tGoZD2Fxc+cAfG6p+N9hFFssdKam1XkMeIdbyGw4JzWDKSfoZUIXh/VTsoiFTezSs=
+X-Received: by 2002:a37:324a:: with SMTP id y71mr16649536qky.291.1545146701922;
+ Tue, 18 Dec 2018 07:25:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181218151455.GE665@tigerII.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542125174-8204-1-git-send-email-thor.thayer@linux.intel.com>
+ <1542125174-8204-2-git-send-email-thor.thayer@linux.intel.com>
+ <CAK8P3a1+LKakyD_gJTiNqKwNuP2Ptr_Wj4zJXf=+SDHSJHbexA@mail.gmail.com> <183b18b9-55f4-55d0-b1f6-674a6df49d1b@linux.intel.com>
+In-Reply-To: <183b18b9-55f4-55d0-b1f6-674a6df49d1b@linux.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Dec 2018 16:24:44 +0100
+Message-ID: <CAK8P3a2=v=Kn5ECTFT-HkqhdtEkgG5sJ=jGpEa-FVFzP5M3Sgw@mail.gmail.com>
+Subject: Re: [RESEND 1/4] mfd: altera-sysmgr: Add SOCFPGA System Manager abstraction
+To:     thor.thayer@linux.intel.com
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        David Miller <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 12:14:55AM +0900, Sergey Senozhatsky wrote:
-> Right, but unlike log_buf_len, devkmsg is a bit close to a "binary" knob:
-> either all messages or none;
+On Tue, Dec 18, 2018 at 12:21 AM Thor Thayer
+<thor.thayer@linux.intel.com> wrote:
+>
+> Hi Arnd,
+>
+> On 12/14/18 6:36 AM, Arnd Bergmann wrote:
+> > On Tue, Nov 13, 2018 at 5:03 PM <thor.thayer@linux.intel.com> wrote:
+> >>
+> >> From: Thor Thayer <thor.thayer@linux.intel.com>
 
-... which is perfectly fine for a debugging session.
+> >> +static int socfpga_is_s10(void)
+> >> +{
+> >> +       return of_machine_is_compatible("altr,socfpga-stratix10");
+> >> +}
+> >
+> > I don't really like the way you are checking for a specific here
+> > here though, that is something that should only be done in
+> > an absolute emergency when there is no way of fixing the
+> > device tree files.
+> >
+> > Since this is a new driver for a device that is not used in
+> > mainline kernels yet (AFAICT), let's fix the binding and add
+> > a proper detection method here.
+> >
+> Thank you. I'm not completely clear on this. Are you saying this
+> function should test for a new compatible that is assigned to Stratix10
+> in the binding ("altr,sys-mgr-s10") instead of the machine name?
 
--- 
-Regards/Gruss,
-    Boris.
+Yes, exactly.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+      Arnd
