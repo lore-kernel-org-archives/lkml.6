@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A9FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED83C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98C9218A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2DFE218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151240;
-	bh=Da7vgIY9hpI3HkO70rfyeVWzMY5TBsby0iDEC7AEuxo=;
+	s=default; t=1545151244;
+	bh=8JEP9quJHhWVWjmIM36WrOZN1IpHVr8yKc2APP89WH8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NjLEgITCf0UNSDAalcVA8DjtJ/LGGKjq+thhaNZoCa6GAdIHBf/m6s+ksCtPa9QTR
-	 Akhdwk+Wlr6tvQ4LIEPHWn2w9fijB/kzz6538Lci6xn82KmBIWAzYTZunGjemusMzD
-	 p3R2jPnH0XVfKsVtZX9M7Bok4uiFgxHa4fvKjQjk=
+	b=MN6TqHCDnKmTt+WzgPzgxSKf59uVErjwexhsV6mfjqVgvqzihDVQ43ZJXd73mpezN
+	 o9E/+WAPehahm4qWdYBdXtlrqiZ3t8FbeZstcXvpxkMdltwKpPcX+mdrApta+ozRfA
+	 pwGBxFuz0I2n7g2lHmO6bfo/kf92XTpurqO5Su5Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeLRQkj (ORCPT
+        id S1727339AbeLRQkn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:40:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:40:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727271AbeLRQkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:40:32 -0500
+        id S1726639AbeLRQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:40:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8FCF21873;
-        Tue, 18 Dec 2018 16:40:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1749521873;
+        Tue, 18 Dec 2018 16:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151231;
-        bh=Da7vgIY9hpI3HkO70rfyeVWzMY5TBsby0iDEC7AEuxo=;
+        s=default; t=1545151239;
+        bh=8JEP9quJHhWVWjmIM36WrOZN1IpHVr8yKc2APP89WH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UHX8MDZaqhApEjqC2mua3JqcmIHkB1ExNTb02ffUEKct8PKuoHLlUuCweYb1B8q4v
-         e8M3p1NcmwxIU2sR9Xh0iDaFWUQzpOQpzNP9t8dixRJ/F6lR512gugCoVAFKiGjYNu
-         qitCKpPUzA5BARiABJGeEVcLFwVMhrgCZZ24oImY=
+        b=fLycP6EK4wFv0fdY5wJ1cBXnoyR8KehppwVmmkRHLRqSDcnrvnT0yhkR1kMApI/3B
+         L8WBq5a3sLl4/oCQqe2S23sruTAdbLAT/wzt5mzXuNqxTOJBzL01yEQ6l5OzfvRLuY
+         c+TGltghaOGc26+T91/1K+lKnOt4ga76r7z9sr+w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 19/44] mmc: sdhci-omap: Fix DCRC error handling during tuning
-Date:   Tue, 18 Dec 2018 17:39:31 +0100
-Message-Id: <20181218163929.742254637@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Subject: [PATCH 4.19 22/44] ARM: mmp/mmp2: fix cpu_is_mmp2() on mmp2-dt
+Date:   Tue, 18 Dec 2018 17:39:34 +0100
+Message-Id: <20181218163930.124621780@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -66,63 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-commit db2039fcfd5754d15986340152e4503737f68f8d upstream.
+commit 76f4e2c3b6a560cdd7a75b87df543e04d05a9e5f upstream.
 
-Commit 7d33c3581536 ("mmc: sdhci-omap: Workaround for Errata i802")
-disabled DCRC interrupts during tuning. This write to the interrupt
-enable register gets overwritten in sdhci_prepare_data() and the
-interrupt is not in fact disabled. Fix this by disabling the interrupt
-in the host->ier variable.
+cpu_is_mmp2() was equivalent to cpu_is_pj4(), wouldn't be correct for
+multiplatform kernels. Fix it by also considering mmp_chip_id, as is
+done for cpu_is_pxa168() and cpu_is_pxa910() above.
 
-Fixes: 7d33c3581536 ("mmc: sdhci-omap: Workaround for Errata i802")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Moreover, it is only available with CONFIG_CPU_MMP2 and thus doesn't work
+on DT-based MMP2 machines. Enable it on CONFIG_MACH_MMP2_DT too.
+
+Note: CONFIG_CPU_MMP2 is only used for machines that use board files
+instead of DT. It should perhaps be renamed. I'm not doing it now, because
+I don't have a better idea.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci-omap.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/arm/mach-mmp/cputype.h |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -288,9 +288,9 @@ static int sdhci_omap_execute_tuning(str
- 	struct device *dev = omap_host->dev;
- 	struct mmc_ios *ios = &mmc->ios;
- 	u32 start_window = 0, max_window = 0;
-+	bool dcrc_was_enabled = false;
- 	u8 cur_match, prev_match = 0;
- 	u32 length = 0, max_len = 0;
--	u32 ier = host->ier;
- 	u32 phase_delay = 0;
- 	int ret = 0;
- 	u32 reg;
-@@ -317,9 +317,10 @@ static int sdhci_omap_execute_tuning(str
- 	 * during the tuning procedure. So disable it during the
- 	 * tuning procedure.
- 	 */
--	ier &= ~SDHCI_INT_DATA_CRC;
--	sdhci_writel(host, ier, SDHCI_INT_ENABLE);
--	sdhci_writel(host, ier, SDHCI_SIGNAL_ENABLE);
-+	if (host->ier & SDHCI_INT_DATA_CRC) {
-+		host->ier &= ~SDHCI_INT_DATA_CRC;
-+		dcrc_was_enabled = true;
-+	}
+--- a/arch/arm/mach-mmp/cputype.h
++++ b/arch/arm/mach-mmp/cputype.h
+@@ -44,10 +44,12 @@ static inline int cpu_is_pxa910(void)
+ #define cpu_is_pxa910()	(0)
+ #endif
  
- 	while (phase_delay <= MAX_PHASE_DELAY) {
- 		sdhci_omap_set_dll(omap_host, phase_delay);
-@@ -366,6 +367,9 @@ tuning_error:
- 
- ret:
- 	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
-+	/* Reenable forbidden interrupt */
-+	if (dcrc_was_enabled)
-+		host->ier |= SDHCI_INT_DATA_CRC;
- 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
- 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
- 	return ret;
+-#ifdef CONFIG_CPU_MMP2
++#if defined(CONFIG_CPU_MMP2) || defined(CONFIG_MACH_MMP2_DT)
+ static inline int cpu_is_mmp2(void)
+ {
+-	return (((read_cpuid_id() >> 8) & 0xff) == 0x58);
++	return (((read_cpuid_id() >> 8) & 0xff) == 0x58) &&
++		(((mmp_chip_id & 0xfff) == 0x410) ||
++		 ((mmp_chip_id & 0xfff) == 0x610));
+ }
+ #else
+ #define cpu_is_mmp2()	(0)
 
 
