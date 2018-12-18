@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED83C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94C7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2DFE218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70338218A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151244;
-	bh=8JEP9quJHhWVWjmIM36WrOZN1IpHVr8yKc2APP89WH8=;
+	s=default; t=1545151250;
+	bh=cnBtbNBkjhT0m/KVc0kjKLdw05HPguOo9EM8isPnMJo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MN6TqHCDnKmTt+WzgPzgxSKf59uVErjwexhsV6mfjqVgvqzihDVQ43ZJXd73mpezN
-	 o9E/+WAPehahm4qWdYBdXtlrqiZ3t8FbeZstcXvpxkMdltwKpPcX+mdrApta+ozRfA
-	 pwGBxFuz0I2n7g2lHmO6bfo/kf92XTpurqO5Su5Y=
+	b=WnnujRWFFQgoyRe1LIWORKuInfTbRAllmJpiEZURERhGssHouVwfbymKhHkJR03vm
+	 T4VYnP6OAFx+ksqk0Jz+mu6TcM93ENLQbf6GD+wu/ywB6i+9TZCwyabByDwD6fkj6M
+	 5z9N5tVpU+2p20X9ntNQcwQqRZg9YBAL1e6YIMkI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeLRQkn (ORCPT
+        id S1727353AbeLRQkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:40:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37808 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:40:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726639AbeLRQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:40:40 -0500
+        id S1726639AbeLRQkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:40:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1749521873;
-        Tue, 18 Dec 2018 16:40:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78BA921873;
+        Tue, 18 Dec 2018 16:40:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151239;
-        bh=8JEP9quJHhWVWjmIM36WrOZN1IpHVr8yKc2APP89WH8=;
+        s=default; t=1545151245;
+        bh=cnBtbNBkjhT0m/KVc0kjKLdw05HPguOo9EM8isPnMJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fLycP6EK4wFv0fdY5wJ1cBXnoyR8KehppwVmmkRHLRqSDcnrvnT0yhkR1kMApI/3B
-         L8WBq5a3sLl4/oCQqe2S23sruTAdbLAT/wzt5mzXuNqxTOJBzL01yEQ6l5OzfvRLuY
-         c+TGltghaOGc26+T91/1K+lKnOt4ga76r7z9sr+w=
+        b=m2yeDilaGyKjJUPC8DSSwgvKGlxMeKTWi93B1e1yK+rNMZc3Lqp0vbRwgNPH5GOPA
+         snKi7A5rEkHb9fu85P35bicke8eMD8NdPsYLVPx0pkTZR6wX0+TNig4EN8hRxoB+Rh
+         r/q5wpeq5JTyw/hodg8Lf2OFN+ROuK+ewTWIyjs8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.19 22/44] ARM: mmp/mmp2: fix cpu_is_mmp2() on mmp2-dt
-Date:   Tue, 18 Dec 2018 17:39:34 +0100
-Message-Id: <20181218163930.124621780@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 24/44] dm thin: send event about thin-pool state change _after_ making it
+Date:   Tue, 18 Dec 2018 17:39:36 +0100
+Message-Id: <20181218163930.326675612@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,47 +64,171 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 76f4e2c3b6a560cdd7a75b87df543e04d05a9e5f upstream.
+commit f6c367585d0d851349d3a9e607c43e5bea993fa1 upstream.
 
-cpu_is_mmp2() was equivalent to cpu_is_pj4(), wouldn't be correct for
-multiplatform kernels. Fix it by also considering mmp_chip_id, as is
-done for cpu_is_pxa168() and cpu_is_pxa910() above.
+Sending a DM event before a thin-pool state change is about to happen is
+a bug.  It wasn't realized until it became clear that userspace response
+to the event raced with the actual state change that the event was
+meant to notify about.
 
-Moreover, it is only available with CONFIG_CPU_MMP2 and thus doesn't work
-on DT-based MMP2 machines. Enable it on CONFIG_MACH_MMP2_DT too.
+Fix this by first updating internal thin-pool state to reflect what the
+DM event is being issued about.  This fixes a long-standing racey/buggy
+userspace device-mapper-test-suite 'resize_io' test that would get an
+event but not find the state it was looking for -- so it would just go
+on to hang because no other events caused the test to reevaluate the
+thin-pool's state.
 
-Note: CONFIG_CPU_MMP2 is only used for machines that use board files
-instead of DT. It should perhaps be renamed. I'm not doing it now, because
-I don't have a better idea.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-mmp/cputype.h |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/md/dm-thin.c |   68 ++++++++++++++++++++++++++-------------------------
+ 1 file changed, 35 insertions(+), 33 deletions(-)
 
---- a/arch/arm/mach-mmp/cputype.h
-+++ b/arch/arm/mach-mmp/cputype.h
-@@ -44,10 +44,12 @@ static inline int cpu_is_pxa910(void)
- #define cpu_is_pxa910()	(0)
- #endif
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -195,7 +195,7 @@ static void throttle_unlock(struct throt
+ struct dm_thin_new_mapping;
  
--#ifdef CONFIG_CPU_MMP2
-+#if defined(CONFIG_CPU_MMP2) || defined(CONFIG_MACH_MMP2_DT)
- static inline int cpu_is_mmp2(void)
- {
--	return (((read_cpuid_id() >> 8) & 0xff) == 0x58);
-+	return (((read_cpuid_id() >> 8) & 0xff) == 0x58) &&
-+		(((mmp_chip_id & 0xfff) == 0x410) ||
-+		 ((mmp_chip_id & 0xfff) == 0x610));
+ /*
+- * The pool runs in 4 modes.  Ordered in degraded order for comparisons.
++ * The pool runs in various modes.  Ordered in degraded order for comparisons.
+  */
+ enum pool_mode {
+ 	PM_WRITE,		/* metadata may be changed */
+@@ -282,9 +282,38 @@ struct pool {
+ 	mempool_t mapping_pool;
+ };
+ 
+-static enum pool_mode get_pool_mode(struct pool *pool);
+ static void metadata_operation_failed(struct pool *pool, const char *op, int r);
+ 
++static enum pool_mode get_pool_mode(struct pool *pool)
++{
++	return pool->pf.mode;
++}
++
++static void notify_of_pool_mode_change(struct pool *pool)
++{
++	const char *descs[] = {
++		"write",
++		"out-of-data-space",
++		"read-only",
++		"read-only",
++		"fail"
++	};
++	const char *extra_desc = NULL;
++	enum pool_mode mode = get_pool_mode(pool);
++
++	if (mode == PM_OUT_OF_DATA_SPACE) {
++		if (!pool->pf.error_if_no_space)
++			extra_desc = " (queue IO)";
++		else
++			extra_desc = " (error IO)";
++	}
++
++	dm_table_event(pool->ti->table);
++	DMINFO("%s: switching pool to %s%s mode",
++	       dm_device_name(pool->pool_md),
++	       descs[(int)mode], extra_desc ? : "");
++}
++
+ /*
+  * Target context for a pool.
+  */
+@@ -2351,8 +2380,6 @@ static void do_waker(struct work_struct
+ 	queue_delayed_work(pool->wq, &pool->waker, COMMIT_PERIOD);
  }
- #else
- #define cpu_is_mmp2()	(0)
+ 
+-static void notify_of_pool_mode_change_to_oods(struct pool *pool);
+-
+ /*
+  * We're holding onto IO to allow userland time to react.  After the
+  * timeout either the pool will have been resized (and thus back in
+@@ -2365,7 +2392,7 @@ static void do_no_space_timeout(struct w
+ 
+ 	if (get_pool_mode(pool) == PM_OUT_OF_DATA_SPACE && !pool->pf.error_if_no_space) {
+ 		pool->pf.error_if_no_space = true;
+-		notify_of_pool_mode_change_to_oods(pool);
++		notify_of_pool_mode_change(pool);
+ 		error_retry_list_with_code(pool, BLK_STS_NOSPC);
+ 	}
+ }
+@@ -2433,26 +2460,6 @@ static void noflush_work(struct thin_c *
+ 
+ /*----------------------------------------------------------------*/
+ 
+-static enum pool_mode get_pool_mode(struct pool *pool)
+-{
+-	return pool->pf.mode;
+-}
+-
+-static void notify_of_pool_mode_change(struct pool *pool, const char *new_mode)
+-{
+-	dm_table_event(pool->ti->table);
+-	DMINFO("%s: switching pool to %s mode",
+-	       dm_device_name(pool->pool_md), new_mode);
+-}
+-
+-static void notify_of_pool_mode_change_to_oods(struct pool *pool)
+-{
+-	if (!pool->pf.error_if_no_space)
+-		notify_of_pool_mode_change(pool, "out-of-data-space (queue IO)");
+-	else
+-		notify_of_pool_mode_change(pool, "out-of-data-space (error IO)");
+-}
+-
+ static bool passdown_enabled(struct pool_c *pt)
+ {
+ 	return pt->adjusted_pf.discard_passdown;
+@@ -2501,8 +2508,6 @@ static void set_pool_mode(struct pool *p
+ 
+ 	switch (new_mode) {
+ 	case PM_FAIL:
+-		if (old_mode != new_mode)
+-			notify_of_pool_mode_change(pool, "failure");
+ 		dm_pool_metadata_read_only(pool->pmd);
+ 		pool->process_bio = process_bio_fail;
+ 		pool->process_discard = process_bio_fail;
+@@ -2516,8 +2521,6 @@ static void set_pool_mode(struct pool *p
+ 
+ 	case PM_OUT_OF_METADATA_SPACE:
+ 	case PM_READ_ONLY:
+-		if (!is_read_only_pool_mode(old_mode))
+-			notify_of_pool_mode_change(pool, "read-only");
+ 		dm_pool_metadata_read_only(pool->pmd);
+ 		pool->process_bio = process_bio_read_only;
+ 		pool->process_discard = process_bio_success;
+@@ -2538,8 +2541,6 @@ static void set_pool_mode(struct pool *p
+ 		 * alarming rate.  Adjust your low water mark if you're
+ 		 * frequently seeing this mode.
+ 		 */
+-		if (old_mode != new_mode)
+-			notify_of_pool_mode_change_to_oods(pool);
+ 		pool->out_of_data_space = true;
+ 		pool->process_bio = process_bio_read_only;
+ 		pool->process_discard = process_discard_bio;
+@@ -2552,8 +2553,6 @@ static void set_pool_mode(struct pool *p
+ 		break;
+ 
+ 	case PM_WRITE:
+-		if (old_mode != new_mode)
+-			notify_of_pool_mode_change(pool, "write");
+ 		if (old_mode == PM_OUT_OF_DATA_SPACE)
+ 			cancel_delayed_work_sync(&pool->no_space_timeout);
+ 		pool->out_of_data_space = false;
+@@ -2573,6 +2572,9 @@ static void set_pool_mode(struct pool *p
+ 	 * doesn't cause an unexpected mode transition on resume.
+ 	 */
+ 	pt->adjusted_pf.mode = new_mode;
++
++	if (old_mode != new_mode)
++		notify_of_pool_mode_change(pool);
+ }
+ 
+ static void abort_transaction(struct pool *pool)
 
 
