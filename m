@@ -2,111 +2,155 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D38C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 437C6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 398C62133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:33:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545154411;
-	bh=JOfZMzOVTlyicqfXYkjw8gRCahIBs+OxkaXRces6KHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mWhxsoOB0cqUgD/vWAcyAf2BCYM+udxSMoUwBu438CMcZIg3WsdmzV0bs1Qe04ZFY
-	 DJnUloP7v8o2OWI3XxP5Gscl4FQLBNxm0QcHo4cBaLdL3qfCAtxEZRZsDpw3PcTkIU
-	 PTCAEjPMvFCUb5CsXDQ1u5DjzQpkcShulL8f3eKc=
+	by mail.kernel.org (Postfix) with ESMTP id 1DE2F2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbeLRRda (ORCPT
+        id S1727277AbeLRReD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:33:30 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41445 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbeLRRd3 (ORCPT
+        Tue, 18 Dec 2018 12:34:03 -0500
+Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:59432 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726839AbeLRReC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:33:29 -0500
-Received: by mail-ot1-f67.google.com with SMTP id u16so16413677otk.8;
-        Tue, 18 Dec 2018 09:33:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tV8/DGJ53qwJSmkJnArvpr8WpIblVj5jGwXmw2hy6qc=;
-        b=VfaOlPJtFGjvbA80IyIHNCdYwRWAKBndE+CvT+ZxGhIZDRsJCk8HfwX7sW0oCgz8SO
-         jjINUqRvOwM8dDI93zjUbQjQMqLD+972x1OA1/XOjuHD3z+EZK2ukdztIVWioNYr+1NV
-         /QqcBx664RaaRhygKEO5RLBrrVglXKE5QNYnE4dfmnu8jDpwyvQjKJWb0RQT5Ve8h70b
-         Z3x+jonUrLStb+RBYLkdzVwAYmedB4B//VqVrWqhkp9KwXCBhLUJmKmaHPDH368X4iFS
-         9iuI6boDlzHAFg9H8NtmIgiVCoLsNy1LTVmEdG3GHhdLOqEVmhk1B5nqKTtZPKtDBKRe
-         NAjQ==
-X-Gm-Message-State: AA+aEWZ6L8+n7FL16DumSnpQrAOsmvp2MfZvJaDYKDw2NVUR43a/G8+2
-        oqO9mOGncjpl9UT1nqJPIw==
-X-Google-Smtp-Source: AFSGD/WUGlBonC9ony+dPtBD3QPDlWlv800IpZJLkfoMqIfG/mlatgAjTHVlioyUP1FeXgRSxgDvnA==
-X-Received: by 2002:a9d:5415:: with SMTP id j21mr12304860oth.202.1545154409080;
-        Tue, 18 Dec 2018 09:33:29 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i22sm7678557otp.7.2018.12.18.09.33.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:33:28 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:33:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jan Kotas <jank@cadence.com>
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        mark.rutland@arm.com, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: Add bindings for Cadence GPIO
-Message-ID: <20181218173327.GA29063@bogus>
-References: <20181217153652.20056-1-jank@cadence.com>
- <20181217153652.20056-2-jank@cadence.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217153652.20056-2-jank@cadence.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 18 Dec 2018 12:34:02 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 2527118028995;
+        Tue, 18 Dec 2018 17:34:01 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: blow87_400871a9d6404
+X-Filterd-Recvd-Size: 4506
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 18 Dec 2018 17:33:59 +0000 (UTC)
+Message-ID: <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
+Subject: Re: [PATCH] cifs: check kzalloc return
+From:   Joe Perches <joe@perches.com>
+To:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Steve French <sfrench@samba.org>
+Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 18 Dec 2018 09:33:58 -0800
+In-Reply-To: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
+References: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:36:51PM +0000, Jan Kotas wrote:
-> This patch adds a DT binding documentation for
-> Cadence GPIO controller.
+On Tue, 2018-12-18 at 17:27 +0100, Nicholas Mc Guire wrote:
+> kzalloc can return NULL so a check is needed. While there is a
+> check for ret_buf there is no check for the allocation of
+> ret_buf->crfid.fid - this check is thus added. Both call-sites
+> of tconInfoAlloc() check for NULL return of tconInfoAlloc()
+> so returning NULL on failure of kzalloc() here seems appropriate.
+> As the kzalloc() is the only thing here that can fail it is
+> moved to the beginning so as not to initialize other resources
+> on failure of kzalloc.
 > 
-> Signed-off-by: Jan Kotas <jank@cadence.com>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 3d4ef9a15343 ("smb3: fix redundant opens on root")
 > ---
->  .../devicetree/bindings/gpio/cdns,gpio.txt         | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/cdns,gpio.txt b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
-> new file mode 100644
-> index 000000000..c87a47827
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
-> @@ -0,0 +1,44 @@
-> +Cadence GPIO controller bindings
+> Problem located with an experimental coccinelle script
+> 
+> While at it make checkpatch happy by using *ret_buf->crfid.fid
+> rather than struct cifs_fid.
+> 
+> Patch was compile tested with: x86_64_defconfig + CIFS=m
+> (with some unrelated smatch warnings and some pending cocci fixes)
+> 
+> Patch is against v4.20-rc7 (localversion-next is next-20181218)
+[]
+> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+[]
+> @@ -113,6 +113,13 @@ tconInfoAlloc(void)
+>  	struct cifs_tcon *ret_buf;
+>  	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+>  	if (ret_buf) {
+> +		ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid),
+> +					     GFP_KERNEL);
+> +		if (!ret_buf->crfid.fid) {
+> +			kfree(ret_buf);
+> +			return NULL;
+> +		}
 > +
-> +Required properties:
-> +- compatible: should be "cdns,gpio-r1p02".
-> +- reg: the register base address and size.
-> +- #gpio-cells: should be 2.
-> +	* first cell is the GPIO number.
-> +	* second cell specifies the GPIO flags, as defined in
-> +		<dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH
-> +		and GPIO_ACTIVE_LOW flags are supported.
-> +- gpio-controller: marks the device as a GPIO controller.
-> +- clocks: should contain one entry referencing the peripheral clock driving
-> +	the GPIO controller.
-> +
-> +Optional properties:
-> +- ngpios: integer number of gpio lines supported by this controller, up to 32.
-> +- interrupt-parent: phandle of the parent interrupt controller.
+>  		atomic_inc(&tconInfoAllocCount);
+>  		ret_buf->tidStatus = CifsNew;
+>  		++ret_buf->tc_count;
+> @@ -120,8 +127,6 @@ tconInfoAlloc(void)
+>  		INIT_LIST_HEAD(&ret_buf->tcon_list);
+>  		spin_lock_init(&ret_buf->open_file_lock);
+>  		mutex_init(&ret_buf->crfid.fid_mutex);
+> -		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+> -					     GFP_KERNEL);
+>  		spin_lock_init(&ret_buf->stat_lock);
+>  		atomic_set(&ret_buf->num_local_opens, 0);
+>  		atomic_set(&ret_buf->num_remote_opens, 0);
 
-Don't document interrupt-parent as it is implied and could be in a 
-parent. Otherwise,
+Perhaps use a more common style by returning early on the
+first possible failure too so the block can be unindented.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Maybe as a separate cleanup patch.
+---
+ fs/cifs/misc.c | 34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
-Rob
+diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+index 113980dba4d8..bee203055b30 100644
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -111,21 +111,27 @@ struct cifs_tcon *
+ tconInfoAlloc(void)
+ {
+ 	struct cifs_tcon *ret_buf;
+-	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+-	if (ret_buf) {
+-		atomic_inc(&tconInfoAllocCount);
+-		ret_buf->tidStatus = CifsNew;
+-		++ret_buf->tc_count;
+-		INIT_LIST_HEAD(&ret_buf->openFileList);
+-		INIT_LIST_HEAD(&ret_buf->tcon_list);
+-		spin_lock_init(&ret_buf->open_file_lock);
+-		mutex_init(&ret_buf->crfid.fid_mutex);
+-		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+-					     GFP_KERNEL);
+-		spin_lock_init(&ret_buf->stat_lock);
+-		atomic_set(&ret_buf->num_local_opens, 0);
+-		atomic_set(&ret_buf->num_remote_opens, 0);
++
++	ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
++	if (!ret_buf)
++		return NULL;
++	ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
++	if (!ret_buf->crfid.fid) {
++		kfree(ret_buf);
++		return NULL;
+ 	}
++
++	atomic_inc(&tconInfoAllocCount);
++	ret_buf->tidStatus = CifsNew;
++	++ret_buf->tc_count;
++	INIT_LIST_HEAD(&ret_buf->openFileList);
++	INIT_LIST_HEAD(&ret_buf->tcon_list);
++	spin_lock_init(&ret_buf->open_file_lock);
++	mutex_init(&ret_buf->crfid.fid_mutex);
++	spin_lock_init(&ret_buf->stat_lock);
++	atomic_set(&ret_buf->num_local_opens, 0);
++	atomic_set(&ret_buf->num_remote_opens, 0);
++
+ 	return ret_buf;
+ }
+ 
+
