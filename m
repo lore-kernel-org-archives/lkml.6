@@ -2,223 +2,119 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDFCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DB0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 623302184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:54:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (768-bit key) header.d=jasper.es header.i=@jasper.es header.b="B6/SneqJ"
+	by mail.kernel.org (Postfix) with ESMTP id 752C2218A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbeLRVyC (ORCPT
+        id S1727432AbeLRV5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:54:02 -0500
-Received: from do-db2.lkml.org ([188.166.10.231]:47065 "EHLO squeeze.vs19.net"
+        Tue, 18 Dec 2018 16:57:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeLRVyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:54:01 -0500
-X-Greylist: delayed 2051 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Dec 2018 16:54:00 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jasper.es;
-         s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        To:From:Date:Resent-To:Resent-Message-ID:Resent-Date:Resent-From:Sender:
-        Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Sender:Resent-Cc:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=d206OrxF+u8874eg90nHBcAujJmermbVvFP2cYeWMKA=; b=B6/SneqJpA3uXMhLwCL80S1jSg
-        dPQPV395rbENJ0fel8hTXuTpxHKPy0mttAsJQ+vpl+vRSs1/3Xn7IebtaA79PonjYtxW86P7FCa8m
-        NzrFJOMNinu7KviAaJKyiPVq/;
-Received: from [::ffff:83.85.49.179] (helo=jasper.es)
-        by squeeze.vs19.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <spaans@jasper.es>)
-        id 1gZMlh-0003mE-0w; Tue, 18 Dec 2018 22:19:16 +0100
-Received: from [::ffff:83.85.49.179] (helo=gpg)
-        by squeeze.vs19.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <j@jasper.es>)
-        id 1gZMXa-0003je-Kd
-        for j@jasper.es; Tue, 18 Dec 2018 22:04:35 +0100
-Received: from spaans by gpg with local (Exim 4.89)
-        (envelope-from <j@jasper.es>)
-        id 1gZLwh-0000O2-TQ; Tue, 18 Dec 2018 21:26:32 +0100
-Date:   Tue, 18 Dec 2018 21:26:27 +0100
-From:   Jasper Spaans <j@jasper.es>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] LKML Archive in Maildir Format
-Message-ID: <20181218202627.j6d2jgxercylclpc@jasper.es>
-References: <20181216190639.6safwjqwdphkce67@gmail.com>
- <c7865616af2eab80f5e5a4cf756ba430f2293499.camel@perches.com>
- <20181216192135.hc7gykmwkfgil2j5@gmail.com>
+        id S1726704AbeLRV5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:57:17 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FECA21852;
+        Tue, 18 Dec 2018 21:57:15 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 16:57:13 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Martin Jambor <mjambor@suse.cz>, Miroslav Benes <mbenes@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
+Message-ID: <20181218165713.4309797a@gandalf.local.home>
+In-Reply-To: <20181218211501.GD25620@tassilo.jf.intel.com>
+References: <20181217173900.ygifx7khwmzn2gv2@treble>
+        <20181217180434.GS25620@tassilo.jf.intel.com>
+        <20181217181638.dfexg6mkmbfyzfli@treble>
+        <20181217192938.GF2218@hirez.programming.kicks-ass.net>
+        <20181217213126.lsqhyszoulel6uq6@treble>
+        <20181217173644.391c2070@gandalf.local.home>
+        <20181218000618.GA25620@tassilo.jf.intel.com>
+        <20181218024916.vmfnyqzouhfxhyvc@treble>
+        <alpine.LSU.2.21.1812181022570.9644@pobox.suse.cz>
+        <ri6h8fbqbdf.fsf@suse.cz>
+        <20181218211501.GD25620@tassilo.jf.intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nugofhd7rie23n2q"
-Content-Disposition: inline
-In-Reply-To: <20181216192135.hc7gykmwkfgil2j5@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-Received-SPF: softfail client-ip=::ffff:83.85.49.179; envelope-from=j@jasper.es; helo=gpg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 18 Dec 2018 13:15:01 -0800
+Andi Kleen <ak@linux.intel.com> wrote:
 
---nugofhd7rie23n2q
-Content-Type: multipart/mixed; boundary="54hek7jfnt45m4o4"
-Content-Disposition: inline
+> 
+> > 
+> > I am the developer who introduced attribute noclone to GCC and also the
+> > one who advises against using it :-) ...at least without also using the
+> > noinline attribute, the combination means "  
+> 
+> The function in question uses noinline too.
 
+And that's all I care about.
 
---54hek7jfnt45m4o4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> 
+> > I want only one or zero
+> > copies of this function in the compiled assembly" which you might need
+> > if you do fancy stuff in inline assembly, for example.  
+> 
+> For this case we only want one non inlined copy because it is used as a
+> test case for a function tracer.
 
-Hi Joey,
+The function tracer selftest should work just fine if there's more than
+one copy. Because the test will enable all copies.
 
-On Sun, Dec 16, 2018 at 09:21:35AM -1000, Joey Pabalinas wrote:
-> > > I spent a lot of time trying to find an LKML archive in Maildir format
-> > > that I could use for local searches with nutmuch or something, but all
-> > > the links I was able to find were all dead.
-> >=20
-> > You might instead use
-> >=20
-> > https://www.kernel.org/lore.html
-> > https://git.kernel.org/pub/scm/public-inbox/vger.kernel.org/git.git/
->=20
-> That was my first attempt, but the ducumentation for the public-inbox
-> format is sort of terrible, and after a few hours trying to convert it
-> to Maildir I just gave up.
->=20
-> I ended up just slowly scraping lkml.org for a couple weeks so I
-> wouldn't disrupt anything and it worked fairly well. Just looking for
-> advice on where to host this now so others might be able to use it.
+> 
+> LTO comes into play because it originally relied on being in a separate
+> file, so it would not be inlined, but with LTO that doesn't work.
 
-Now you've caught my attention; first of all, there are more than 3M
-messages stored in the lkml.org datase, so I guess you've missed some
-messages or something is really broken.
+The reason for it being in a separate file is because the entire
+directory is marked "notrace". That file, and that file alone in that
+directory, gets compiled with the -pg flags. As long as the functions
+in that file don't get inlined (which will make them notrace as well)
+all is good.
 
-Besides, unless you figured out how to get to the raw data, you've just
-scraped a rendering which discards stuff like pgp signatures etc and has
-very incomplete headers. Unless you don't care for those of course :)
+Thus, if used and/or noinline prevents the functions from being
+inlined, and thus have their profiling removed, we should be good.
 
-Note that I've also been toying with the lore dataset, and wrote a tiny tool
-to get Maildir-like data out of it; this code is a bit of a single-use-jig
-so you'll need to do some coding if you really want to use it.  Attached
-anyway.
+Hmm, how does that work? When does LTO do its linker magic? Because the
+fentry/mcounts are added when the object is created. Are they removed
+if the compiler sees that it can be inlined? Or does LTO just compile
+everything in one go?
 
-All the best and enjoy,
-Jasper
+> 
+> > 
+> > I believe that when people use noclone on its own, in 99 out 100 cases
+> > they actually want something else.  Usually there is something that  
+> 
+> AFAIK there is no noclone without noinline in the kernel tree.
+> 
+> 
+> > references the function from code (such as assembly) or a tool that the
+> > compiler does know about and then they should use the "used" attribute.  
+> 
+> Neither in the ftrace case, nor in the KVM case (another user which
+> has fancy inline assembly that cannot be duplicated) that's the case.
+> It's just about having exactly one out of line instance.
 
---54hek7jfnt45m4o4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=Pipfile
+Again, that's not the ftrace case. It doesn't care about more than one
+out of line instance. Thus, for this particular use, "used" should be
+good enough.
 
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
-
-[packages]
-gitpython = "*"
-ipython = "*"
-
-[dev-packages]
-
-[requires]
-python_version = "3.7"
-
---54hek7jfnt45m4o4
-Content-Type: text/x-python; charset=us-ascii
-Content-Disposition: attachment; filename="test.py"
-Content-Transfer-Encoding: quoted-printable
-
-=66rom email.parser import BytesParser
-=66rom email.message import EmailMessage
-=66rom email.policy import default
-
-=66rom git import Repo
-
-our_last_id =3D '<dc4d502c-bc3c-46e3-a984-41271951a5f7@mellanox.com>'
-#'<20180711142744.GN3593@linux.vnet.ibm.com>'
-
-
-repo =3D Repo('/Users/spaans/xsrc/lkml/lkml/git/6.git')
-
-
-commit =3D repo.commit("master")
-counter =3D 5000
-=66roms =3D set()
-while True:
-    tree =3D commit.tree
-    blob =3D tree['m']
-    data =3D blob.data_stream.read()
-
-    msg =3D BytesParser(policy=3Ddefault).parsebytes(data)
-
-    msgid =3D msg['Message-ID']
-    from_ =3D msg['From']
-    froms.add(from_)
-    print(msgid)
-
-    #import pdb; pdb.set_trace()
-    if len(froms) > 1000:
-        print("HAVE LOTS OF FRIENDS NOW")
-        break
-    if msgid =3D=3D our_last_id:
-        print("LADIES & GENTLEMEN, WE'VE GOT HIM")
-        break
-    parents =3D commit.parents
-    if len(parents) !=3D 1:
-        print("WUH")
-        break
-    else:
-        commit =3D commit.parents[0]
-
-    #with open("output/%04d.eml" % counter, "bw") as f:
-    #    f.write(data)
-    counter -=3D 1
-
-import pprint
-pprint.pprint(froms)
-
---54hek7jfnt45m4o4--
-
---nugofhd7rie23n2q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQQzBAABCAAdFiEEN3eQQUH8qSq/vGsT2E735yq+rWEFAlwZV+gACgkQ2E735yq+
-rWGdaCAAlRfh0L67CH87GXQq03SH8lNuqVaJqLdjXXHlqG7nQrQL2V25d0Xkhg/B
-9sJRSXauzcq4B0CTLkl1o5wISDP8iPC9UZLWZ9FitTnPNHXT47OgaajInM6Bpd/h
-bbtO0Le1MiwNxR5WtKmU4hfQ7n7LfYSAL7M5DoBd2YqGeozLD7sH3Wmzl8MKx8QJ
-YTvtFH9+7VSXAalDYkVC+djzAtVcG+TBYxj9dQjeipHdtIN4BHIZwY+rnxXk/M6t
-XmoALkexcItJ2+ZbkrcRtfeES9rICVEf+Jo8aJudshiPdRGyfshy6t0EGWUsURzl
-2VslX3M+gU4fGoqohRzYfyXLCJz7jIw0QQYGzf36f3xx6g0P8PDT1bESFfMOEq8/
-SKsXj5bnebegT/Pl/qfSKNgrjxPiKJI4lwBrLPKuL3JlMgEM8aTQN4O8MyBDDmJE
-ly9PfXB/ZuumndxJbBj0LjKAtyFE2sJXJEMAD2o07ci314/2y8R5jBYOnZFp9TBr
-KgS+vovId0zGan+m7mCBDL0s2K8JTUpnPb57YsDerD40V+ggifkv8sFNz/jNM0Gz
-TWylGQb3f60H0bhPrTwE+ZbttA/qg2s4S8o+nSLKPPlxKCXANl1Jope/LTpW+Vw6
-19YeoNPlccJvFjtKOwzg+CStGLwFsPObmH3H07w568NAmshkUF79wWUT7MFcceD2
-Zgh63ivrJkYel8Fcyj4iWFvNOlq4tgWUb2IHtI6gN4VafvTSK1L4Tvc1RPLzSA/i
-XhgHS4k9zii9/r9LEiI/gt3jsJZFYIavk9r14rxR0c8lKNtu9bHSL8rQYs+cwLni
-MvvuJO1HHgOjhVgh27Cz9SL+yrGx0mIJr1S8jkvLKocIL3V1QZBfSvv5EZF1gPiI
-STdXOq2fkJOf1f1p+4n2lUeIDUM7imTBYo61CZQQp6LuToeRh8nMP4CSnG39sZDM
-7EH/Og178G9V/8BVDKAI6f/7lD8LGKJP1mKjfJDGtGXOr+VBdUKFbWn5uJFtpM4S
-j7iuY1Kvm+GpHS5ojwZSwzxE5SnHqXG56ECUvTOb69MHG+Bval0m+qmUuuCDEJ0j
-a36p8lXZRC4O6Bu6A+sQanQJwcvK2V5K9eJPgE501tqVySstVrwjCjxrlsJI8n5i
-hPuz4Py2vOTlURnjhB8kP8QA3m8QkGgVdCh2jBuDcLagE4vLweiNSMnhW5/nm42j
-OqCe4m0hNvUG50mXWYT5K1oCcAyE8qnqKKvPvyamvO3D20fZkYNVrw74kJjfTzcs
-RZFR/f4F4sovvR8CsPDZBoGNisLaMwIGm2fRKbLgA0Q6w5uJLBQ66szS4uJtVI7z
-M08tgj6F30dxKAr5xaRRthdj7Ed9ow==
-=Nm+V
------END PGP SIGNATURE-----
-
---nugofhd7rie23n2q--
-
+-- Steve
