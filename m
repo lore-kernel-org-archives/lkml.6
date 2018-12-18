@@ -2,251 +2,332 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2398C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE7CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6642721852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:36:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AA66217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:36:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hnSFo2Rf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SdUHWXCO"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VSUGJOV7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbeLRLgE (ORCPT
+        id S1726610AbeLRLgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:36:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33980 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbeLRLgC (ORCPT
+        Tue, 18 Dec 2018 06:36:52 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42046 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeLRLgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:36:02 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A509260A43; Tue, 18 Dec 2018 11:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545132961;
-        bh=USb75eDXNfcvqvp05qisI4Mmqi/YjfsStN03YbSaYFM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hnSFo2RfAGlRHMV7fZFIW6c/wmg9DJ7dbXSaaSTANnUDe3i0sL4lBUc2bU8CUVRbx
-         xzJeIxUveZabUyHJZjBvmawEwx2yzeG8KjEUdyX5+ZiAzErj7gLbMselNm3nYXQqyJ
-         WR+vVfImYJA4ioSdeHoJTdd28X1NGu1rkxa3Gwz4=
-Received: from jshekhar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jshekhar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9888608CE;
-        Tue, 18 Dec 2018 11:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545132959;
-        bh=USb75eDXNfcvqvp05qisI4Mmqi/YjfsStN03YbSaYFM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SdUHWXCOiZFdgibqkmvSDhYO9oWnecXLo1D2YzGSkPjnjm2k9fXwCxnduLKI30MNI
-         RXgtw//rP//fynYQHX3Ie2+fVWnfCgeu+y7pLhJmt18aYdodIHJ6rjd9Ik142B5CcZ
-         wgf5FVPCJbdlVJa9+jM/j2KHcCmDAtQwghG7rmRA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9888608CE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jshekhar@codeaurora.org
-From:   Jayant Shekhar <jshekhar@codeaurora.org>
-To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     Jayant Shekhar <jshekhar@codeaurora.org>,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        abhinavk@codeaurora.org, jsanka@codeaurora.org,
-        chandanu@codeaurora.org, nganji@codeaurora.org
-Subject: [v3] drm/msm/dpu: Clean up dpu hw interrupts
-Date:   Tue, 18 Dec 2018 17:05:48 +0530
-Message-Id: <1545132948-20833-1-git-send-email-jshekhar@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 18 Dec 2018 06:36:51 -0500
+Received: by mail-io1-f67.google.com with SMTP id x6so12487352ioa.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 03:36:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EwreEKzoORVE1yW1swYmyPH5HDCKPKva5qRcn2bhPkM=;
+        b=VSUGJOV7FNJ4syUPL34QOXTKwhOhSMewPzo9D+JZOSt723AP2K8dD5/0WBsXLlQa8+
+         Wg4c906+ed6T9pVZW36r995o1IZ36zMju4wKf6V4tIVhM44jac9R6hRfeBdOBWJem+Jf
+         zoYC7hDq6CVcO3LQuWTEcmg9oyLeCbH5+AE9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EwreEKzoORVE1yW1swYmyPH5HDCKPKva5qRcn2bhPkM=;
+        b=Bqqq/G+3mMgXPcKVuElfTypzCWVj+YNXWumaf0HR+UMq5IwDb2WPmMmCXIuWqOzMz6
+         Y0Qwz2ymju8AowXfHIIyYumMw48+6vu2Q2UTD1kMmKfD8RUEsoO6AU8CmkdvSNq6JcQu
+         B5rj29sNUe/ArCUfuieDAav8MYIbAjvCbWeLpWqKbe5FaPoBQKv3peylwCSvWQAqvFOr
+         nwDvNxutM7qp20dtagTLTrmKTgWwjmQQxhQAoekZFgUiQKNzwZ3nguHESMS182ZvF/C5
+         nYB4k8ZqJ9Lg2sQi4Tv3hxMnWdqU3JEWxXAx4u/dl9cAQYTMXtqgs3n2mrm58SQgyXWu
+         Qv8A==
+X-Gm-Message-State: AA+aEWbcG9WLboVjTgQ6QZpJ+BICSEP3pXsf4gjYWgvMOVynSScc7RVS
+        WwhnUsPmZJy7QlPp4azAjq0tMGv1CCfRkWMuEzPocg==
+X-Google-Smtp-Source: AFSGD/VjLjb2HWnIqkb6VC0kr7dfMfeMUueMxF8iPD5HGaxf2aVpkp2uU2WBgVe3/ktKYIgo80bga1VgX9WBSgnsVdA=
+X-Received: by 2002:a5e:c609:: with SMTP id f9mr13204599iok.114.1545133010241;
+ Tue, 18 Dec 2018 03:36:50 -0800 (PST)
+MIME-Version: 1.0
+References: <20181214204101.9681-1-jagan@amarulasolutions.com>
+ <20181214204101.9681-2-jagan@amarulasolutions.com> <20181214220231.GT154160@art_vandelay>
+In-Reply-To: <20181214220231.GT154160@art_vandelay>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Tue, 18 Dec 2018 17:06:38 +0530
+Message-ID: <CAMty3ZBJGgwKCZSeWQmRRjnx3i5z_rV0GASdKLfjq+dSTGSkdw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] drm/panel: Add Feiyang FY07024DI26A30-D MIPI-DSI
+ LCD panel
+To:     Sean Paul <sean@poorly.run>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unused functions and macros from files handling
-dpu hardware interrupts.
+On Sat, Dec 15, 2018 at 3:32 AM Sean Paul <sean@poorly.run> wrote:
+>
+> On Sat, Dec 15, 2018 at 02:11:01AM +0530, Jagan Teki wrote:
+> > Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
+> >
+> > Add panel driver for it.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v2:
+> > - use simple structure for command init
+> > - update proper comments on power, reset delay sequnce
+> > - fix to use set_display_off in disable function
+> > - move mode type to structure
+> > - drop refres rate value, let drm compute
+> >
+> >  MAINTAINERS                                   |   6 +
+> >  drivers/gpu/drm/panel/Kconfig                 |   9 +
+> >  drivers/gpu/drm/panel/Makefile                |   1 +
+> >  .../drm/panel/panel-feiyang-fy07024di26a30d.c | 296 ++++++++++++++++++
+> >  4 files changed, 312 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index d2928a4d2847..e643238855ea 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4732,6 +4732,12 @@ T:     git git://anongit.freedesktop.org/drm/drm-misc
+> >  S:   Maintained
+> >  F:   drivers/gpu/drm/tve200/
+> >
+> > +DRM DRIVER FOR FEIYANG FY07024DI26A30-D MIPI-DSI LCD PANELS
+> > +M:   Jagan Teki <jagan@amarulasolutions.com>
+> > +S:   Maintained
+> > +F:   drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > +F:   Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt
+> > +
+> >  DRM DRIVER FOR ILITEK ILI9225 PANELS
+> >  M:   David Lechner <david@lechnology.com>
+> >  S:   Maintained
+>
+> As I mentioned on IRC, this will be drm-misc maintained with the other panels,
+> no need to have a dedicated MAINTAINERS entry. You'll get pulled from
+> get_maintainers.pl as a majority commit signer
 
-changes in v2:
-  Removed clear_interrupt_status (Jordan Crouse)
-changes in v3:
-  Changed commit text
+This I missed it on IRC, sorry will drop.
 
-Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 44 -----------------------
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h | 44 -----------------------
- 2 files changed, 88 deletions(-)
+>
+> > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> > index d93b2ba709bc..cb8ca93550cf 100644
+> > --- a/drivers/gpu/drm/panel/Kconfig
+> > +++ b/drivers/gpu/drm/panel/Kconfig
+> > @@ -38,6 +38,15 @@ config DRM_PANEL_SIMPLE
+> >         that it can be automatically turned off when the panel goes into a
+> >         low power state.
+> >
+> > +config DRM_PANEL_FEIYANG_FY07024DI26A30D
+> > +     tristate "Feiyang FY07024DI26A30-D MIPI-DSI LCD panel"
+> > +     depends on OF
+> > +     depends on DRM_MIPI_DSI
+> > +     depends on BACKLIGHT_CLASS_DEVICE
+> > +     help
+> > +       Say Y if you want to enable support for panels based on the
+> > +       Feiyang FY07024DI26A30-D MIPI-DSI interface.
+> > +
+> >  config DRM_PANEL_ILITEK_IL9322
+> >       tristate "Ilitek ILI9322 320x240 QVGA panels"
+> >       depends on OF && SPI
+> > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> > index 6a9b4cec1891..0fa0ef69e109 100644
+> > --- a/drivers/gpu/drm/panel/Makefile
+> > +++ b/drivers/gpu/drm/panel/Makefile
+> > @@ -2,6 +2,7 @@
+> >  obj-$(CONFIG_DRM_PANEL_ARM_VERSATILE) += panel-arm-versatile.o
+> >  obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+> >  obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+> > +obj-$(CONFIG_DRM_PANEL_FEIYANG_FY07024DI26A30D) += panel-feiyang-fy07024di26a30d.o
+> >  obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+> >  obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9881C) += panel-ilitek-ili9881c.o
+> >  obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+> > diff --git a/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > new file mode 100644
+> > index 000000000000..4abccbf62c3c
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > @@ -0,0 +1,296 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Copyright (C) 2018 Amarula Solutions
+> > + * Author: Jagan Teki <jagan@amarulasolutions.com>
+> > + */
+> > +
+> > +#include <linux/backlight.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_device.h>
+> > +
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/regulator/consumer.h>
+> > +
+> > +#include <drm/drmP.h>
+> > +#include <drm/drm_mipi_dsi.h>
+> > +#include <drm/drm_panel.h>
+> > +
+> > +#define FEIYANG_INIT_CMD_LEN 2
+> > +
+> > +struct feiyang {
+> > +     struct drm_panel        panel;
+> > +     struct mipi_dsi_device  *dsi;
+> > +
+> > +     struct backlight_device *backlight;
+> > +     struct regulator        *dvdd;
+> > +     struct regulator        *avdd;
+> > +     struct gpio_desc        *reset;
+> > +};
+> > +
+> > +static inline struct feiyang *panel_to_feiyang(struct drm_panel *panel)
+> > +{
+> > +     return container_of(panel, struct feiyang, panel);
+> > +}
+> > +
+> > +struct feiyang_init_cmd {
+> > +     u8 data[FEIYANG_INIT_CMD_LEN];
+> > +};
+> > +
+> > +static const struct feiyang_init_cmd feiyang_init_cmds[] = {
+> > +     { .data = { 0x80, 0x58 } },
+> > +     { .data = { 0x81, 0x47 } },
+> > +     { .data = { 0x82, 0xD4 } },
+> > +     { .data = { 0x83, 0x88 } },
+> > +     { .data = { 0x84, 0xA9 } },
+> > +     { .data = { 0x85, 0xC3 } },
+> > +     { .data = { 0x86, 0x82 } },
+> > +};
+> > +
+> > +static int feiyang_prepare(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +     struct mipi_dsi_device *dsi = ctx->dsi;
+> > +     unsigned int i;
+> > +     int ret;
+> > +
+> > +     ret = regulator_enable(ctx->dvdd);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* T1 (dvdd start + dvdd rise) 0 < T1 <= 10ms */
+> > +     msleep(10);
+> > +
+> > +     ret = regulator_enable(ctx->avdd);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* T3 (dvdd rise + avdd start + avdd rise) T3 >= 20ms */
+> > +     msleep(20);
+> > +
+> > +     gpiod_set_value(ctx->reset, 1);
+> > +     msleep(50);
+> > +
+> > +     gpiod_set_value(ctx->reset, 0);
+> > +     /* T5 + T6 (avdd rise + video & logic signal rise)
+> > +      * T5 >= 10ms, 0 < T6 <= 10ms
+> > +      */
+> > +     msleep(20);
+> > +
+> > +     gpiod_set_value(ctx->reset, 1);
+> > +
+> > +     /* T12 (video & logic signal rise + backlight rise) T12 >= 200ms */
+> > +     msleep(200);
+> > +
+> > +     for (i = 0; i < ARRAY_SIZE(feiyang_init_cmds); i++) {
+> > +             const struct feiyang_init_cmd *cmd =
+> > +                                             &feiyang_init_cmds[i];
+> > +
+> > +             ret = mipi_dsi_dcs_write_buffer(dsi, cmd->data,
+> > +                                             FEIYANG_INIT_CMD_LEN);
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int feiyang_enable(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +
+> > +     /* T12 (video & logic signal rise + backlight rise) T12 >= 200ms */
+> > +     msleep(200);
+> > +
+> > +     mipi_dsi_dcs_set_display_on(ctx->dsi);
+> > +     backlight_enable(ctx->backlight);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int feiyang_disable(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +
+> > +     backlight_disable(ctx->backlight);
+> > +     return mipi_dsi_dcs_set_display_off(ctx->dsi);
+> > +}
+> > +
+> > +static int feiyang_unprepare(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +     int ret;
+> > +
+> > +     ret = mipi_dsi_dcs_set_display_off(ctx->dsi);
+> > +     if (ret < 0)
+> > +             DRM_DEV_ERROR(panel->dev, "failed to set display off: %d\n",
+> > +                           ret);
+> > +
+> > +     ret = mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
+> > +     if (ret < 0)
+> > +             DRM_DEV_ERROR(panel->dev, "failed to enter sleep mode: %d\n",
+> > +                           ret);
+> > +
+> > +     /* T13 (backlight fall + video & logic signal fall) T13 >= 200ms */
+> > +     msleep(200);
+> > +
+> > +     gpiod_set_value(ctx->reset, 0);
+> > +
+> > +     gpiod_set_value(ctx->reset, 1);
+> > +
+> > +     gpiod_set_value(ctx->reset, 0);
+> > +
+> > +     regulator_disable(ctx->avdd);
+> > +
+> > +     /* T11 (dvdd rise to fall) 0 < T11 <= 10ms  */
+> > +     msleep(10);
+> > +
+> > +     regulator_disable(ctx->dvdd);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct drm_display_mode feiyang_default_mode = {
+> > +     .clock = 55000,
+> > +
+> > +     .hdisplay = 1024,
+> > +     .hsync_start = 1024 + 396,
+> > +     .hsync_end = 1024 + 396 + 20,
+> > +     .htotal = 1024 + 396 + 20 + 100,
+> > +
+> > +     .vdisplay = 600,
+> > +     .vsync_start = 600 + 12,
+> > +     .vsync_end = 600 + 12 + 2,
+> > +     .vtotal = 600 + 12 + 2 + 21,
+>
+> These timings are still incorrect, they'll give a 56.2Hz refresh rate. Is that
+> really what you want?
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
-index c0b7f00..8a28a03 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
-@@ -170,10 +170,6 @@
- /**
-  * AD4 interrupt status bit definitions
-  */
--#define DPU_INTR_BRIGHTPR_UPDATED BIT(4)
--#define DPU_INTR_DARKENH_UPDATED BIT(3)
--#define DPU_INTR_STREN_OUTROI_UPDATED BIT(2)
--#define DPU_INTR_STREN_INROI_UPDATED BIT(1)
- #define DPU_INTR_BACKLIGHT_UPDATED BIT(0)
- /**
-  * struct dpu_intr_reg - array of DPU register sets
-@@ -782,18 +778,6 @@ static int dpu_hw_intr_irqidx_lookup(enum dpu_intr_type intr_type,
- 	return -EINVAL;
- }
- 
--static void dpu_hw_intr_set_mask(struct dpu_hw_intr *intr, uint32_t reg_off,
--		uint32_t mask)
--{
--	if (!intr)
--		return;
--
--	DPU_REG_WRITE(&intr->hw, reg_off, mask);
--
--	/* ensure register writes go through */
--	wmb();
--}
--
- static void dpu_hw_intr_dispatch_irq(struct dpu_hw_intr *intr,
- 		void (*cbfunc)(void *, int),
- 		void *arg)
-@@ -1004,18 +988,6 @@ static int dpu_hw_intr_disable_irqs(struct dpu_hw_intr *intr)
- 	return 0;
- }
- 
--static int dpu_hw_intr_get_valid_interrupts(struct dpu_hw_intr *intr,
--		uint32_t *mask)
--{
--	if (!intr || !mask)
--		return -EINVAL;
--
--	*mask = IRQ_SOURCE_MDP | IRQ_SOURCE_DSI0 | IRQ_SOURCE_DSI1
--		| IRQ_SOURCE_HDMI | IRQ_SOURCE_EDP;
--
--	return 0;
--}
--
- static void dpu_hw_intr_get_interrupt_statuses(struct dpu_hw_intr *intr)
- {
- 	int i;
-@@ -1065,19 +1037,6 @@ static void dpu_hw_intr_clear_intr_status_nolock(struct dpu_hw_intr *intr,
- 	wmb();
- }
- 
--static void dpu_hw_intr_clear_interrupt_status(struct dpu_hw_intr *intr,
--		int irq_idx)
--{
--	unsigned long irq_flags;
--
--	if (!intr)
--		return;
--
--	spin_lock_irqsave(&intr->irq_lock, irq_flags);
--	dpu_hw_intr_clear_intr_status_nolock(intr, irq_idx);
--	spin_unlock_irqrestore(&intr->irq_lock, irq_flags);
--}
--
- static u32 dpu_hw_intr_get_interrupt_status(struct dpu_hw_intr *intr,
- 		int irq_idx, bool clear)
- {
-@@ -1113,16 +1072,13 @@ static u32 dpu_hw_intr_get_interrupt_status(struct dpu_hw_intr *intr,
- 
- static void __setup_intr_ops(struct dpu_hw_intr_ops *ops)
- {
--	ops->set_mask = dpu_hw_intr_set_mask;
- 	ops->irq_idx_lookup = dpu_hw_intr_irqidx_lookup;
- 	ops->enable_irq = dpu_hw_intr_enable_irq;
- 	ops->disable_irq = dpu_hw_intr_disable_irq;
- 	ops->dispatch_irqs = dpu_hw_intr_dispatch_irq;
- 	ops->clear_all_irqs = dpu_hw_intr_clear_irqs;
- 	ops->disable_all_irqs = dpu_hw_intr_disable_irqs;
--	ops->get_valid_interrupts = dpu_hw_intr_get_valid_interrupts;
- 	ops->get_interrupt_statuses = dpu_hw_intr_get_interrupt_statuses;
--	ops->clear_interrupt_status = dpu_hw_intr_clear_interrupt_status;
- 	ops->clear_intr_status_nolock = dpu_hw_intr_clear_intr_status_nolock;
- 	ops->get_interrupt_status = dpu_hw_intr_get_interrupt_status;
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
-index 61e4cba..4d7a1c7 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
-@@ -20,13 +20,6 @@
- #include "dpu_hw_util.h"
- #include "dpu_hw_mdss.h"
- 
--#define IRQ_SOURCE_MDP		BIT(0)
--#define IRQ_SOURCE_DSI0		BIT(4)
--#define IRQ_SOURCE_DSI1		BIT(5)
--#define IRQ_SOURCE_HDMI		BIT(8)
--#define IRQ_SOURCE_EDP		BIT(12)
--#define IRQ_SOURCE_MHL		BIT(16)
--
- /**
-  * dpu_intr_type - HW Interrupt Type
-  * @DPU_IRQ_TYPE_WB_ROT_COMP:		WB rotator done
-@@ -96,18 +89,6 @@ enum dpu_intr_type {
-  */
- struct dpu_hw_intr_ops {
- 	/**
--	 * set_mask - Programs the given interrupt register with the
--	 *            given interrupt mask. Register value will get overwritten.
--	 * @intr:	HW interrupt handle
--	 * @reg_off:	MDSS HW register offset
--	 * @irqmask:	IRQ mask value
--	 */
--	void (*set_mask)(
--			struct dpu_hw_intr *intr,
--			uint32_t reg,
--			uint32_t irqmask);
--
--	/**
- 	 * irq_idx_lookup - Lookup IRQ index on the HW interrupt type
- 	 *                 Used for all irq related ops
- 	 * @intr_type:		Interrupt type defined in dpu_intr_type
-@@ -177,16 +158,6 @@ struct dpu_hw_intr_ops {
- 			struct dpu_hw_intr *intr);
- 
- 	/**
--	 * clear_interrupt_status - Clears HW interrupt status based on given
--	 *                          lookup IRQ index.
--	 * @intr:	HW interrupt handle
--	 * @irq_idx:	Lookup irq index return from irq_idx_lookup
--	 */
--	void (*clear_interrupt_status)(
--			struct dpu_hw_intr *intr,
--			int irq_idx);
--
--	/**
- 	 * clear_intr_status_nolock() - clears the HW interrupts without lock
- 	 * @intr:	HW interrupt handle
- 	 * @irq_idx:	Lookup irq index return from irq_idx_lookup
-@@ -206,21 +177,6 @@ struct dpu_hw_intr_ops {
- 			struct dpu_hw_intr *intr,
- 			int irq_idx,
- 			bool clear);
--
--	/**
--	 * get_valid_interrupts - Gets a mask of all valid interrupt sources
--	 *                        within DPU. These are actually status bits
--	 *                        within interrupt registers that specify the
--	 *                        source of the interrupt in IRQs. For example,
--	 *                        valid interrupt sources can be MDP, DSI,
--	 *                        HDMI etc.
--	 * @intr:	HW interrupt handle
--	 * @mask:	Returning the interrupt source MASK
--	 * @return:	0 for success, otherwise failure
--	 */
--	int (*get_valid_interrupts)(
--			struct dpu_hw_intr *intr,
--			uint32_t *mask);
- };
- 
- /**
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I would like to go with same rate as of now since BSP is using the
+same, since I don't have any information from chip vendor(even I wrote
+it and waiting for response). I will update accordingly once I get the
+information from vendor.
 
+Let me know your inputs.
