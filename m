@@ -2,475 +2,854 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F33B4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610CBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACEF820675
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545165370;
-	bh=u+9ToJr6hknrxucnicMvNqbt+yZyb0y1utvchqgyacw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=pnclc1rwJCwbRdmRgRQ5NCtzJjGf956tuc0UggPrCP1L8sVM9aIxO0gBdS5Z3Cbzm
-	 2QKiTKs0XfyXHit+z5Zzmem1GTA7icaDyfp80c3jhSrMTVHi0oyj3ZVkSBxB6/zEBL
-	 BrYDEmmowYsqWs93IJAQiQy6YefcMUAn2XOALRrI=
+	by mail.kernel.org (Postfix) with ESMTP id 1AB8B20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbeLRUgJ (ORCPT
+        id S1727814AbeLRUgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:36:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbeLRUev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:34:51 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF20C21871;
-        Tue, 18 Dec 2018 20:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545165289;
-        bh=u+9ToJr6hknrxucnicMvNqbt+yZyb0y1utvchqgyacw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=uaOEUN5l4yWlH0xrHkLfxTWvjeAwSs2GV/WtYmzBNTKDdYrYi/911YW4bgVQALqce
-         Jbx01026XBlkIjuiXKbkJS2o8TIYgwValUasohbPpraxMfpWyqvNXDcInLPJqQVVOH
-         BI6ca1cB145A+sn/BSE01Pu6BLSC+BLmH5Hl8Tm0=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v9 05/15] tracing: Add conditional snapshot
-Date:   Tue, 18 Dec 2018 14:34:04 -0600
-Message-Id: <b3027efbe874396c71f9fb10570600419ebbb23e.1545161056.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
-References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
-References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
+        Tue, 18 Dec 2018 15:36:22 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49954 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbeLRUeq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:34:46 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: gtucker)
+        with ESMTPSA id C366A2639CE
+Subject: Re: [15/15] dma-mapping: bypass indirect calls for dma-direct
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@toke.dk>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        ezequiel Garcia <ezequiel@collabora.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20181207190720.18517-16-hch@lst.de>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <2e779fa7-dc9f-7ed8-252a-5d20c5deca9c@collabora.com>
+Date:   Tue, 18 Dec 2018 20:34:37 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181207190720.18517-16-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On 07/12/2018 19:07, Christoph Hellwig wrote:
+> Avoid expensive indirect calls in the fast path DMA mapping
+> operations by directly calling the dma_direct_* ops if we are using
+> the directly mapped DMA operations.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Currently, tracing snapshots are context-free - they capture the ring
-buffer contents at the time the tracing_snapshot() function was
-invoked, and nothing else.  Additionally, they're always taken
-unconditionally - the calling code can decide whether or not to take a
-snapshot, but the data used to make that decision is kept separately
-from the snapshot itself.
+I've run a semi-automated bisection on kernelci.org and found that this
+patch appeared to cause some regressions in linux-next on the
+rk3399-gru-kevin arm64 platform.  The bisection was run between
+next-20181128 and its merge base in mainline master (6531e115b7ab) with
+a plain defconfig.
 
-This change adds the ability to associate with each trace instance
-some user data, along with an 'update' function that can use that data
-to determine whether or not to actually take a snapshot.  The update
-function can then update that data along with any other state (as part
-of the data presumably), if warranted.
 
-Because snapshots are 'global' per-instance, only one user can enable
-and use a conditional snapshot for any given trace instance.  To
-enable a conditional snapshot (see details in the function and data
-structure comments), the user calls tracing_snapshot_cond_enable().
-Similarly, to disable a conditional snapshot and free it up for other
-users, tracing_snapshot_cond_disable() should be called.
+The problems seem to start with this message:
 
-To actually initiate a conditional snapshot, tracing_snapshot_cond()
-should be called.  tracing_snapshot_cond() will invoke the update()
-callback, allowing the user to decide whether or not to actually take
-the snapshot and update the user-defined data associated with the
-snapshot.  If the callback returns 'true', tracing_snapshot_cond()
-will then actually take the snapshot and return.
+[    3.242163] mmc1: Unable to allocate ADMA buffers - falling back to standard DMA
 
-This scheme allows for flexibility in snapshot implementations - for
-example, by implementing slightly different update() callbacks,
-snapshots can be taken in situations where the user is only interested
-in taking a snapshot when a new maximum in hit versus when a value
-changes in any way at all.  Future patches will demonstrate both
-cases.
+then we can see this kind of warnings:
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace.c                | 162 ++++++++++++++++++++++++++++++++++--
- kernel/trace/trace.h                |  56 ++++++++++++-
- kernel/trace/trace_events_trigger.c |   2 +-
- kernel/trace/trace_sched_wakeup.c   |   2 +-
- 4 files changed, 211 insertions(+), 11 deletions(-)
+[    3.424261] mmc1: asked for transfer of 512 bytes exceeds bounce buffer 0 bytes
+[    3.432488] WARNING: CPU: 3 PID: 1596 at ../drivers/mmc/host/sdhci.c:1050 sdhci_send_command+0x8f0/0xfe8
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 1abde13a7eab..9c6fb83850d6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -894,7 +894,7 @@ int __trace_bputs(unsigned long ip, const char *str)
- EXPORT_SYMBOL_GPL(__trace_bputs);
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--void tracing_snapshot_instance(struct trace_array *tr)
-+void tracing_snapshot_instance(struct trace_array *tr, void *cond_data)
- {
- 	struct tracer *tracer = tr->current_trace;
- 	unsigned long flags;
-@@ -920,7 +920,7 @@ void tracing_snapshot_instance(struct trace_array *tr)
- 	}
- 
- 	local_irq_save(flags);
--	update_max_tr(tr, current, smp_processor_id());
-+	update_max_tr(tr, current, smp_processor_id(), cond_data);
- 	local_irq_restore(flags);
- }
- 
-@@ -942,10 +942,58 @@ void tracing_snapshot(void)
- {
- 	struct trace_array *tr = &global_trace;
- 
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot);
- 
-+/**
-+ * tracing_snapshot_cond - conditionally take a snapshot of the current buffer.
-+ * @tr:		The tracing instance to snapshot
-+ * @cond_data:	The data to be tested conditionally, and possibly saved
-+ *
-+ * This is the same as tracing_snapshot() except that the snapshot is
-+ * conditional - the snapshot will only happen if the
-+ * cond_snapshot.update() implementation receiving the cond_data
-+ * returns true, which means that the trace array's cond_snapshot
-+ * update() operation used the cond_data to determine whether the
-+ * snapshot should be taken, and if it was, presumably saved it along
-+ * with the snapshot.
-+ */
-+void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
-+{
-+	tracing_snapshot_instance(tr, cond_data);
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
-+
-+/**
-+ * tracing_snapshot_cond_data - get the user data associated with a snapshot
-+ * @tr:		The tracing instance
-+ *
-+ * When the user enables a conditional snapshot using
-+ * tracing_snapshot_cond_enable(), the user-defined cond_data is saved
-+ * with the snapshot.  This accessor is used to retrieve it.
-+ *
-+ * Should not be called from cond_snapshot.update(), since it takes
-+ * the tr->max_lock lock, which the code calling
-+ * cond_snapshot.update() has already done.
-+ *
-+ * Returns the cond_data associated with the trace array's snapshot.
-+ */
-+void *tracing_cond_snapshot_data(struct trace_array *tr)
-+{
-+	void *cond_data = NULL;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (tr->cond_snapshot)
-+		cond_data = tr->cond_snapshot->cond_data;
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return cond_data;
-+}
-+EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
-+
- static int resize_buffer_duplicate_size(struct trace_buffer *trace_buf,
- 					struct trace_buffer *size_buf, int cpu_id);
- static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
-@@ -1025,12 +1073,85 @@ void tracing_snapshot_alloc(void)
- 	tracing_snapshot();
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
-+
-+/**
-+ * tracing_snapshot_cond_enable - enable conditional snapshot for an instance
-+ * @tr:		The tracing instance
-+ * @cond_data:	User data to associate with the snapshot
-+ * @update:	Implementation of the cond_snapshot update function
-+ *
-+ * Check whether the conditional snapshot for the given instance has
-+ * already been enabled; if so, return -EBUSY, else create a
-+ * cond_snapshot and save the cond_data and update function inside.
-+ *
-+ * Returns 0 if successful, error otherwise.
-+ */
-+int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data,
-+				 cond_update_fn_t update)
-+{
-+	struct cond_snapshot *cond_snapshot;
-+	int ret = 0;
-+
-+	cond_snapshot = kzalloc(sizeof(*cond_snapshot), GFP_KERNEL);
-+	if (!cond_snapshot)
-+		return -ENOMEM;
-+
-+	cond_snapshot->cond_data = cond_data;
-+	cond_snapshot->update = update;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (tr->cond_snapshot) {
-+		kfree(cond_snapshot);
-+		ret = -EBUSY;
-+	} else
-+		tr->cond_snapshot = cond_snapshot;
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
-+
-+/**
-+ * tracing_snapshot_cond_disable - disable conditional snapshot for an instance
-+ * @tr:		The tracing instance
-+ *
-+ * Check whether the conditional snapshot for the given instance is
-+ * enabled; if so, free the cond_snapshot associated with it,
-+ * otherwise return -EINVAL.
-+ *
-+ * Returns 0 if successful, error otherwise.
-+ */
-+int tracing_snapshot_cond_disable(struct trace_array *tr)
-+{
-+	int ret = 0;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (!tr->cond_snapshot)
-+		ret = -EINVAL;
-+	else {
-+		kfree(tr->cond_snapshot);
-+		tr->cond_snapshot = NULL;
-+	}
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
- #else
- void tracing_snapshot(void)
- {
- 	WARN_ONCE(1, "Snapshot feature not enabled, but internal snapshot used");
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot);
-+void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but internal conditional snapshot used");
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
- int tracing_alloc_snapshot(void)
- {
- 	WARN_ONCE(1, "Snapshot feature not enabled, but snapshot allocation used");
-@@ -1043,6 +1164,27 @@ void tracing_snapshot_alloc(void)
- 	tracing_snapshot();
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
-+void *tracing_cond_snapshot_data(struct trace_array *tr)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to get internal conditional snapshot data");
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
-+int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to enable internal conditional snapshot");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
-+int tracing_snapshot_cond_disable(struct trace_array *tr)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to disable internal conditional snapshot");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
- #endif /* CONFIG_TRACER_SNAPSHOT */
- 
- void tracer_tracing_off(struct trace_array *tr)
-@@ -1359,7 +1501,8 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
-  * about which task was the cause of this latency.
-  */
- void
--update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
-+update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
-+	      void *cond_data)
- {
- 	if (tr->stop_count)
- 		return;
-@@ -1380,6 +1523,11 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 	else
- 		ring_buffer_record_off(tr->max_buffer.buffer);
- 
-+	if (tr->cond_snapshot && !tr->cond_snapshot->update(tr, cond_data)) {
-+		arch_spin_unlock(&tr->max_lock);
-+		return;
-+	}
-+
- 	swap(tr->trace_buffer.buffer, tr->max_buffer.buffer);
- 
- 	__update_max_tr(tr, tsk, cpu);
-@@ -6501,7 +6649,7 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		local_irq_disable();
- 		/* Now, we're going to swap */
- 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
--			update_max_tr(tr, current, smp_processor_id());
-+			update_max_tr(tr, current, smp_processor_id(), NULL);
- 		else
- 			update_max_tr_single(tr, current, iter->cpu_file);
- 		local_irq_enable();
-@@ -7093,7 +7241,7 @@ ftrace_snapshot(unsigned long ip, unsigned long parent_ip,
- 		struct trace_array *tr, struct ftrace_probe_ops *ops,
- 		void *data)
- {
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- 
- static void
-@@ -7115,7 +7263,7 @@ ftrace_count_snapshot(unsigned long ip, unsigned long parent_ip,
- 		(*count)--;
- 	}
- 
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- 
- static int
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 08900828d282..c590dbb2b57c 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -194,6 +194,51 @@ struct trace_pid_list {
- 	unsigned long			*pids;
- };
- 
-+typedef bool (*cond_update_fn_t)(struct trace_array *tr, void *cond_data);
-+
-+/**
-+ * struct cond_snapshot - conditional snapshot data and callback
-+ *
-+ * The cond_snapshot structure encapsulates a callback function and
-+ * data associated with the snapshot for a given tracing instance.
-+ *
-+ * When a snapshot is taken conditionally, by invoking
-+ * tracing_snapshot_cond(tr, cond_data), the cond_data passed in is
-+ * passed in turn to the cond_snapshot.update() function.  That data
-+ * can be compared by the update() implementation with the cond_data
-+ * contained wihin the struct cond_snapshot instance associated with
-+ * the trace_array.  Because the tr->max_lock is held throughout the
-+ * update() call, the update() function can directly retrieve the
-+ * cond_snapshot and cond_data associated with the per-instance
-+ * snapshot associated with the trace_array.
-+ *
-+ * The cond_snapshot.update() implementation can save data to be
-+ * associated with the snapshot if it decides to, and returns 'true'
-+ * in that case, or it returns 'false' if the conditional snapshot
-+ * shouldn't be taken.
-+ *
-+ * The cond_snapshot instance is created and associated with the
-+ * user-defined cond_data by tracing_cond_snapshot_enable().
-+ * Likewise, the cond_snapshot instance is destroyed and is no longer
-+ * associated with the trace instance by
-+ * tracing_cond_snapshot_disable().
-+ *
-+ * The method below is required.
-+ *
-+ * @update: When a conditional snapshot is invoked, the update()
-+ *	callback function is invoked with the tr->max_lock held.  The
-+ *	update() implementation signals whether or not to actually
-+ *	take the snapshot, by returning 'true' if so, 'false' if no
-+ *	snapshot should be taken.  Because the max_lock is held for
-+ *	the duration of update(), the implementation is safe to
-+ *	directly retrieven and save any implementation data it needs
-+ *	to in association with the snapshot.
-+ */
-+struct cond_snapshot {
-+	void				*cond_data;
-+	cond_update_fn_t		update;
-+};
-+
- /*
-  * The trace array - an array of per-CPU trace arrays. This is the
-  * highest level data structure that individual tracers deal with.
-@@ -277,6 +322,7 @@ struct trace_array {
- #endif
- 	int			time_stamp_abs_ref;
- 	struct list_head	hist_vars;
-+	struct cond_snapshot	*cond_snapshot;
- };
- 
- enum {
-@@ -727,7 +773,8 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
- 		    const char __user *ubuf, size_t cnt);
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
--void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu);
-+void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
-+		   void *cond_data);
- void update_max_tr_single(struct trace_array *tr,
- 			  struct task_struct *tsk, int cpu);
- #endif /* CONFIG_TRACER_MAX_TRACE */
-@@ -1808,6 +1855,11 @@ static inline bool event_command_needs_rec(struct event_command *cmd_ops)
- extern int trace_event_enable_disable(struct trace_event_file *file,
- 				      int enable, int soft_disable);
- extern int tracing_alloc_snapshot(void);
-+extern void tracing_snapshot_cond(struct trace_array *tr, void *cond_data);
-+extern int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update);
-+
-+extern int tracing_snapshot_cond_disable(struct trace_array *tr);
-+extern void *tracing_cond_snapshot_data(struct trace_array *tr);
- 
- extern const char *__start___trace_bprintk_fmt[];
- extern const char *__stop___trace_bprintk_fmt[];
-@@ -1881,7 +1933,7 @@ static inline void trace_event_eval_update(struct trace_eval_map **map, int len)
- #endif
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--void tracing_snapshot_instance(struct trace_array *tr);
-+void tracing_snapshot_instance(struct trace_array *tr, void *cond_data);
- int tracing_alloc_snapshot_instance(struct trace_array *tr);
- #else
- static inline void tracing_snapshot_instance(struct trace_array *tr) { }
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 2152d1e530cb..a77102a17046 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1049,7 +1049,7 @@ snapshot_trigger(struct event_trigger_data *data, void *rec,
- 	struct trace_event_file *file = data->private_data;
- 
- 	if (file)
--		tracing_snapshot_instance(file->tr);
-+		tracing_snapshot_instance(file->tr, NULL);
- 	else
- 		tracing_snapshot();
- }
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index 4ea7e6845efb..007c074fe6d6 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -482,7 +482,7 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
- 
- 	if (likely(!is_tracing_stopped())) {
- 		wakeup_trace->max_latency = delta;
--		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu);
-+		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu, NULL);
- 	}
- 
- out_unlock:
--- 
-2.14.1
+see also:
+
+[   16.046084] rk_iommu ff8f3f00.iommu: DMA map error for DT
+
+
+The full kernel log is available here:
+
+  https://lava.collabora.co.uk/scheduler/job/1395093
+
+
+Reverting this patch makes the errors go away, but I haven't done any
+further investigation so the actual problem may well lie somewhere else.
+
+Hope this helps!
+
+Best wishes,
+Guillaume
+
+> ---
+>  arch/alpha/include/asm/dma-mapping.h |   2 +-
+>  arch/arc/mm/cache.c                  |   2 +-
+>  arch/arm/include/asm/dma-mapping.h   |   2 +-
+>  arch/arm/mm/dma-mapping-nommu.c      |  14 +---
+>  arch/arm64/mm/dma-mapping.c          |   3 -
+>  arch/ia64/hp/common/hwsw_iommu.c     |   2 +-
+>  arch/ia64/hp/common/sba_iommu.c      |   4 +-
+>  arch/ia64/kernel/dma-mapping.c       |   1 -
+>  arch/mips/include/asm/dma-mapping.h  |   2 +-
+>  arch/parisc/kernel/setup.c           |   4 -
+>  arch/sparc/include/asm/dma-mapping.h |   4 +-
+>  arch/x86/kernel/pci-dma.c            |   2 +-
+>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c  |   2 +-
+>  drivers/iommu/amd_iommu.c            |  13 +---
+>  include/asm-generic/dma-mapping.h    |   2 +-
+>  include/linux/dma-direct.h           |  17 ----
+>  include/linux/dma-mapping.h          | 111 +++++++++++++++++++++++----
+>  include/linux/dma-noncoherent.h      |   5 +-
+>  kernel/dma/direct.c                  |  37 ++-------
+>  kernel/dma/mapping.c                 |  40 ++++++----
+>  20 files changed, 150 insertions(+), 119 deletions(-)
+> 
+> diff --git a/arch/alpha/include/asm/dma-mapping.h b/arch/alpha/include/asm/dma-mapping.h
+> index 8beeafd4f68e..0ee6a5c99b16 100644
+> --- a/arch/alpha/include/asm/dma-mapping.h
+> +++ b/arch/alpha/include/asm/dma-mapping.h
+> @@ -7,7 +7,7 @@ extern const struct dma_map_ops alpha_pci_ops;
+>  static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+>  {
+>  #ifdef CONFIG_ALPHA_JENSEN
+> -	return &dma_direct_ops;
+> +	return NULL;
+>  #else
+>  	return &alpha_pci_ops;
+>  #endif
+> diff --git a/arch/arc/mm/cache.c b/arch/arc/mm/cache.c
+> index f2701c13a66b..e188bb3ede53 100644
+> --- a/arch/arc/mm/cache.c
+> +++ b/arch/arc/mm/cache.c
+> @@ -1280,7 +1280,7 @@ void __init arc_cache_init_master(void)
+>  	/*
+>  	 * In case of IOC (say IOC+SLC case), pointers above could still be set
+>  	 * but end up not being relevant as the first function in chain is not
+> -	 * called at all for @dma_direct_ops
+> +	 * called at all for devices using coherent DMA.
+>  	 *     arch_sync_dma_for_cpu() -> dma_cache_*() -> __dma_cache_*()
+>  	 */
+>  }
+> diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
+> index 965b7c846ecb..31d3b96f0f4b 100644
+> --- a/arch/arm/include/asm/dma-mapping.h
+> +++ b/arch/arm/include/asm/dma-mapping.h
+> @@ -18,7 +18,7 @@ extern const struct dma_map_ops arm_coherent_dma_ops;
+>  
+>  static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+>  {
+> -	return IS_ENABLED(CONFIG_MMU) ? &arm_dma_ops : &dma_direct_ops;
+> +	return IS_ENABLED(CONFIG_MMU) ? &arm_dma_ops : NULL;
+>  }
+>  
+>  #ifdef __arch_page_to_dma
+> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+> index 712416ecd8e6..f304b10e23a4 100644
+> --- a/arch/arm/mm/dma-mapping-nommu.c
+> +++ b/arch/arm/mm/dma-mapping-nommu.c
+> @@ -22,7 +22,7 @@
+>  #include "dma.h"
+>  
+>  /*
+> - *  dma_direct_ops is used if
+> + *  The generic direct mapping code is used if
+>   *   - MMU/MPU is off
+>   *   - cpu is v7m w/o cache support
+>   *   - device is coherent
+> @@ -209,16 +209,9 @@ const struct dma_map_ops arm_nommu_dma_ops = {
+>  };
+>  EXPORT_SYMBOL(arm_nommu_dma_ops);
+>  
+> -static const struct dma_map_ops *arm_nommu_get_dma_map_ops(bool coherent)
+> -{
+> -	return coherent ? &dma_direct_ops : &arm_nommu_dma_ops;
+> -}
+> -
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  			const struct iommu_ops *iommu, bool coherent)
+>  {
+> -	const struct dma_map_ops *dma_ops;
+> -
+>  	if (IS_ENABLED(CONFIG_CPU_V7M)) {
+>  		/*
+>  		 * Cache support for v7m is optional, so can be treated as
+> @@ -234,7 +227,6 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  		dev->archdata.dma_coherent = (get_cr() & CR_M) ? coherent : true;
+>  	}
+>  
+> -	dma_ops = arm_nommu_get_dma_map_ops(dev->archdata.dma_coherent);
+> -
+> -	set_dma_ops(dev, dma_ops);
+> +	if (!dev->archdata.dma_coherent)
+> +		set_dma_ops(dev, &arm_nommu_dma_ops);
+>  }
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index ab1e417204d0..95eda81e3f2d 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -462,9 +462,6 @@ static void __iommu_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  			const struct iommu_ops *iommu, bool coherent)
+>  {
+> -	if (!dev->dma_ops)
+> -		dev->dma_ops = &dma_direct_ops;
+> -
+>  	dev->dma_coherent = coherent;
+>  	__iommu_setup_dma_ops(dev, dma_base, size, iommu);
+>  
+> diff --git a/arch/ia64/hp/common/hwsw_iommu.c b/arch/ia64/hp/common/hwsw_iommu.c
+> index f40ca499b246..8840ed97712f 100644
+> --- a/arch/ia64/hp/common/hwsw_iommu.c
+> +++ b/arch/ia64/hp/common/hwsw_iommu.c
+> @@ -38,7 +38,7 @@ static inline int use_swiotlb(struct device *dev)
+>  const struct dma_map_ops *hwsw_dma_get_ops(struct device *dev)
+>  {
+>  	if (use_swiotlb(dev))
+> -		return &dma_direct_ops;
+> +		return NULL;
+>  	return &sba_dma_ops;
+>  }
+>  EXPORT_SYMBOL(hwsw_dma_get_ops);
+> diff --git a/arch/ia64/hp/common/sba_iommu.c b/arch/ia64/hp/common/sba_iommu.c
+> index 5ee74820a0f6..5a361e51cb1e 100644
+> --- a/arch/ia64/hp/common/sba_iommu.c
+> +++ b/arch/ia64/hp/common/sba_iommu.c
+> @@ -2078,7 +2078,7 @@ sba_init(void)
+>  	 * a successful kdump kernel boot is to use the swiotlb.
+>  	 */
+>  	if (is_kdump_kernel()) {
+> -		dma_ops = &dma_direct_ops;
+> +		dma_ops = NULL;
+>  		if (swiotlb_late_init_with_default_size(64 * (1<<20)) != 0)
+>  			panic("Unable to initialize software I/O TLB:"
+>  				  " Try machvec=dig boot option");
+> @@ -2100,7 +2100,7 @@ sba_init(void)
+>  		 * If we didn't find something sba_iommu can claim, we
+>  		 * need to setup the swiotlb and switch to the dig machvec.
+>  		 */
+> -		dma_ops = &dma_direct_ops;
+> +		dma_ops = NULL;
+>  		if (swiotlb_late_init_with_default_size(64 * (1<<20)) != 0)
+>  			panic("Unable to find SBA IOMMU or initialize "
+>  			      "software I/O TLB: Try machvec=dig boot option");
+> diff --git a/arch/ia64/kernel/dma-mapping.c b/arch/ia64/kernel/dma-mapping.c
+> index 80cd3e1ea95a..ad7d9963de34 100644
+> --- a/arch/ia64/kernel/dma-mapping.c
+> +++ b/arch/ia64/kernel/dma-mapping.c
+> @@ -36,7 +36,6 @@ long arch_dma_coherent_to_pfn(struct device *dev, void *cpu_addr,
+>  
+>  void __init swiotlb_dma_init(void)
+>  {
+> -	dma_ops = &dma_direct_ops;
+>  	swiotlb_init(1);
+>  }
+>  #endif
+> diff --git a/arch/mips/include/asm/dma-mapping.h b/arch/mips/include/asm/dma-mapping.h
+> index 69f914667f3e..20dfaad3a55d 100644
+> --- a/arch/mips/include/asm/dma-mapping.h
+> +++ b/arch/mips/include/asm/dma-mapping.h
+> @@ -11,7 +11,7 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+>  #if defined(CONFIG_MACH_JAZZ)
+>  	return &jazz_dma_ops;
+>  #else
+> -	return &dma_direct_ops;
+> +	return NULL;
+>  #endif
+>  }
+>  
+> diff --git a/arch/parisc/kernel/setup.c b/arch/parisc/kernel/setup.c
+> index cd227f1cf629..54818cd78bd0 100644
+> --- a/arch/parisc/kernel/setup.c
+> +++ b/arch/parisc/kernel/setup.c
+> @@ -99,10 +99,6 @@ void __init dma_ops_init(void)
+>  
+>  	case pcxl2:
+>  		pa7300lc_init();
+> -	case pcxl: /* falls through */
+> -	case pcxs:
+> -	case pcxt:
+> -		hppa_dma_ops = &dma_direct_ops;
+>  		break;
+>  	default:
+>  		break;
+> diff --git a/arch/sparc/include/asm/dma-mapping.h b/arch/sparc/include/asm/dma-mapping.h
+> index b0bb2fcaf1c9..59f5a0f17316 100644
+> --- a/arch/sparc/include/asm/dma-mapping.h
+> +++ b/arch/sparc/include/asm/dma-mapping.h
+> @@ -14,11 +14,11 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+>  {
+>  #ifdef CONFIG_SPARC_LEON
+>  	if (sparc_cpu_model == sparc_leon)
+> -		return &dma_direct_ops;
+> +		return NULL;
+>  #endif
+>  #if defined(CONFIG_SPARC32) && defined(CONFIG_PCI)
+>  	if (bus == &pci_bus_type)
+> -		return &dma_direct_ops;
+> +		return NULL;
+>  #endif
+>  	return dma_ops;
+>  }
+> diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+> index f4562fcec681..d460998ae828 100644
+> --- a/arch/x86/kernel/pci-dma.c
+> +++ b/arch/x86/kernel/pci-dma.c
+> @@ -17,7 +17,7 @@
+>  
+>  static bool disable_dac_quirk __read_mostly;
+>  
+> -const struct dma_map_ops *dma_ops = &dma_direct_ops;
+> +const struct dma_map_ops *dma_ops;
+>  EXPORT_SYMBOL(dma_ops);
+>  
+>  #ifdef CONFIG_IOMMU_DEBUG
+> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> index 61a84b958d67..50637f372e9f 100644
+> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+> @@ -581,7 +581,7 @@ static int vmw_dma_select_mode(struct vmw_private *dev_priv)
+>  
+>  	dev_priv->map_mode = vmw_dma_map_populate;
+>  
+> -	if (dma_ops->sync_single_for_cpu)
+> +	if (dma_ops && dma_ops->sync_single_for_cpu)
+>  		dev_priv->map_mode = vmw_dma_alloc_coherent;
+>  #ifdef CONFIG_SWIOTLB
+>  	if (swiotlb_nr_tbl() == 0)
+> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+> index c5d6c7c42b0a..567221cca13c 100644
+> --- a/drivers/iommu/amd_iommu.c
+> +++ b/drivers/iommu/amd_iommu.c
+> @@ -2184,7 +2184,7 @@ static int amd_iommu_add_device(struct device *dev)
+>  				dev_name(dev));
+>  
+>  		iommu_ignore_device(dev);
+> -		dev->dma_ops = &dma_direct_ops;
+> +		dev->dma_ops = NULL;
+>  		goto out;
+>  	}
+>  	init_iommu_group(dev);
+> @@ -2770,17 +2770,6 @@ int __init amd_iommu_init_dma_ops(void)
+>  	swiotlb        = (iommu_pass_through || sme_me_mask) ? 1 : 0;
+>  	iommu_detected = 1;
+>  
+> -	/*
+> -	 * In case we don't initialize SWIOTLB (actually the common case
+> -	 * when AMD IOMMU is enabled and SME is not active), make sure there
+> -	 * are global dma_ops set as a fall-back for devices not handled by
+> -	 * this driver (for example non-PCI devices). When SME is active,
+> -	 * make sure that swiotlb variable remains set so the global dma_ops
+> -	 * continue to be SWIOTLB.
+> -	 */
+> -	if (!swiotlb)
+> -		dma_ops = &dma_direct_ops;
+> -
+>  	if (amd_iommu_unmap_flush)
+>  		pr_info("AMD-Vi: IO/TLB flush on unmap enabled\n");
+>  	else
+> diff --git a/include/asm-generic/dma-mapping.h b/include/asm-generic/dma-mapping.h
+> index 880a292d792f..c13f46109e88 100644
+> --- a/include/asm-generic/dma-mapping.h
+> +++ b/include/asm-generic/dma-mapping.h
+> @@ -4,7 +4,7 @@
+>  
+>  static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+>  {
+> -	return &dma_direct_ops;
+> +	return NULL;
+>  }
+>  
+>  #endif /* _ASM_GENERIC_DMA_MAPPING_H */
+> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+> index 3b0a3ea3876d..b7338702592a 100644
+> --- a/include/linux/dma-direct.h
+> +++ b/include/linux/dma-direct.h
+> @@ -60,22 +60,5 @@ void dma_direct_free_pages(struct device *dev, size_t size, void *cpu_addr,
+>  struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+>  		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs);
+>  void __dma_direct_free_pages(struct device *dev, size_t size, struct page *page);
+> -dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+> -		unsigned long offset, size_t size, enum dma_data_direction dir,
+> -		unsigned long attrs);
+> -void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+> -		size_t size, enum dma_data_direction dir, unsigned long attrs);
+> -int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+> -		enum dma_data_direction dir, unsigned long attrs);
+> -void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+> -		int nents, enum dma_data_direction dir, unsigned long attrs);
+> -void dma_direct_sync_single_for_device(struct device *dev,
+> -		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> -void dma_direct_sync_sg_for_device(struct device *dev,
+> -		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+> -void dma_direct_sync_single_for_cpu(struct device *dev,
+> -		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> -void dma_direct_sync_sg_for_cpu(struct device *dev,
+> -		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+>  int dma_direct_supported(struct device *dev, u64 mask);
+>  #endif /* _LINUX_DMA_DIRECT_H */
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index 269ee27fc3d9..f422aec0f53c 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -134,7 +134,6 @@ struct dma_map_ops {
+>  
+>  #define DMA_MAPPING_ERROR		(~(dma_addr_t)0)
+>  
+> -extern const struct dma_map_ops dma_direct_ops;
+>  extern const struct dma_map_ops dma_virt_ops;
+>  extern const struct dma_map_ops dma_dummy_ops;
+>  
+> @@ -222,6 +221,69 @@ static inline const struct dma_map_ops *get_dma_ops(struct device *dev)
+>  }
+>  #endif
+>  
+> +static inline bool dma_is_direct(const struct dma_map_ops *ops)
+> +{
+> +	return likely(!ops);
+> +}
+> +
+> +/*
+> + * All the dma_direct_* declarations are here just for the indirect call bypass,
+> + * and must not be used directly drivers!
+> + */
+> +dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+> +		unsigned long offset, size_t size, enum dma_data_direction dir,
+> +		unsigned long attrs);
+> +int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+> +		enum dma_data_direction dir, unsigned long attrs);
+> +
+> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
+> +    defined(CONFIG_SWIOTLB)
+> +void dma_direct_sync_single_for_device(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> +void dma_direct_sync_sg_for_device(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+> +#else
+> +static inline void dma_direct_sync_single_for_device(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir)
+> +{
+> +}
+> +static inline void dma_direct_sync_sg_for_device(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> +{
+> +}
+> +#endif
+> +
+> +#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> +    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL) || \
+> +    defined(CONFIG_SWIOTLB)
+> +void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs);
+> +void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+> +		int nents, enum dma_data_direction dir, unsigned long attrs);
+> +void dma_direct_sync_single_for_cpu(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir);
+> +void dma_direct_sync_sg_for_cpu(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir);
+> +#else
+> +static inline void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +{
+> +}
+> +static inline void dma_direct_unmap_sg(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir,
+> +		unsigned long attrs)
+> +{
+> +}
+> +static inline void dma_direct_sync_single_for_cpu(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir)
+> +{
+> +}
+> +static inline void dma_direct_sync_sg_for_cpu(struct device *dev,
+> +		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> +{
+> +}
+> +#endif
+> +
+>  static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+>  					      size_t size,
+>  					      enum dma_data_direction dir,
+> @@ -232,9 +294,12 @@ static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+>  	debug_dma_map_single(dev, ptr, size);
+> -	addr = ops->map_page(dev, virt_to_page(ptr),
+> -			     offset_in_page(ptr), size,
+> -			     dir, attrs);
+> +	if (dma_is_direct(ops))
+> +		addr = dma_direct_map_page(dev, virt_to_page(ptr),
+> +				offset_in_page(ptr), size, dir, attrs);
+> +	else
+> +		addr = ops->map_page(dev, virt_to_page(ptr),
+> +				offset_in_page(ptr), size, dir, attrs);
+>  	debug_dma_map_page(dev, virt_to_page(ptr),
+>  			   offset_in_page(ptr), size,
+>  			   dir, addr, true);
+> @@ -249,7 +314,9 @@ static inline void dma_unmap_single_attrs(struct device *dev, dma_addr_t addr,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->unmap_page)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+> +	else if (ops->unmap_page)
+>  		ops->unmap_page(dev, addr, size, dir, attrs);
+>  	debug_dma_unmap_page(dev, addr, size, dir, true);
+>  }
+> @@ -272,7 +339,10 @@ static inline int dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
+>  	int ents;
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	ents = ops->map_sg(dev, sg, nents, dir, attrs);
+> +	if (dma_is_direct(ops))
+> +		ents = dma_direct_map_sg(dev, sg, nents, dir, attrs);
+> +	else
+> +		ents = ops->map_sg(dev, sg, nents, dir, attrs);
+>  	BUG_ON(ents < 0);
+>  	debug_dma_map_sg(dev, sg, nents, ents, dir);
+>  
+> @@ -287,7 +357,9 @@ static inline void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+>  	debug_dma_unmap_sg(dev, sg, nents, dir);
+> -	if (ops->unmap_sg)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
+> +	else if (ops->unmap_sg)
+>  		ops->unmap_sg(dev, sg, nents, dir, attrs);
+>  }
+>  
+> @@ -301,7 +373,10 @@ static inline dma_addr_t dma_map_page_attrs(struct device *dev,
+>  	dma_addr_t addr;
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> +	if (dma_is_direct(ops))
+> +		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+> +	else
+> +		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+>  	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
+>  
+>  	return addr;
+> @@ -322,7 +397,7 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
+>  	BUG_ON(pfn_valid(PHYS_PFN(phys_addr)));
+>  
+>  	addr = phys_addr;
+> -	if (ops->map_resource)
+> +	if (ops && ops->map_resource)
+>  		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
+>  
+>  	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
+> @@ -337,7 +412,7 @@ static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->unmap_resource)
+> +	if (ops && ops->unmap_resource)
+>  		ops->unmap_resource(dev, addr, size, dir, attrs);
+>  	debug_dma_unmap_resource(dev, addr, size, dir);
+>  }
+> @@ -349,7 +424,9 @@ static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_single_for_cpu)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_single_for_cpu(dev, addr, size, dir);
+> +	else if (ops->sync_single_for_cpu)
+>  		ops->sync_single_for_cpu(dev, addr, size, dir);
+>  	debug_dma_sync_single_for_cpu(dev, addr, size, dir);
+>  }
+> @@ -368,7 +445,9 @@ static inline void dma_sync_single_for_device(struct device *dev,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_single_for_device)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_single_for_device(dev, addr, size, dir);
+> +	else if (ops->sync_single_for_device)
+>  		ops->sync_single_for_device(dev, addr, size, dir);
+>  	debug_dma_sync_single_for_device(dev, addr, size, dir);
+>  }
+> @@ -387,7 +466,9 @@ dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_sg_for_cpu)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_sg_for_cpu(dev, sg, nelems, dir);
+> +	else if (ops->sync_sg_for_cpu)
+>  		ops->sync_sg_for_cpu(dev, sg, nelems, dir);
+>  	debug_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
+>  }
+> @@ -399,7 +480,9 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->sync_sg_for_device)
+> +	if (dma_is_direct(ops))
+> +		dma_direct_sync_sg_for_device(dev, sg, nelems, dir);
+> +	else if (ops->sync_sg_for_device)
+>  		ops->sync_sg_for_device(dev, sg, nelems, dir);
+>  	debug_dma_sync_sg_for_device(dev, sg, nelems, dir);
+>  
+> diff --git a/include/linux/dma-noncoherent.h b/include/linux/dma-noncoherent.h
+> index 306557331d7d..69b36ed31a99 100644
+> --- a/include/linux/dma-noncoherent.h
+> +++ b/include/linux/dma-noncoherent.h
+> @@ -38,7 +38,10 @@ pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
+>  void arch_dma_cache_sync(struct device *dev, void *vaddr, size_t size,
+>  		enum dma_data_direction direction);
+>  #else
+> -#define arch_dma_cache_sync NULL
+> +static inline void arch_dma_cache_sync(struct device *dev, void *vaddr,
+> +		size_t size, enum dma_data_direction direction)
+> +{
+> +}
+>  #endif /* CONFIG_DMA_NONCOHERENT_CACHE_SYNC */
+>  
+>  #ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 85d8286a0ba2..79da61b49fa4 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -223,6 +223,7 @@ void dma_direct_sync_single_for_device(struct device *dev,
+>  	if (!dev_is_dma_coherent(dev))
+>  		arch_sync_dma_for_device(dev, paddr, size, dir);
+>  }
+> +EXPORT_SYMBOL(dma_direct_sync_single_for_device);
+>  
+>  void dma_direct_sync_sg_for_device(struct device *dev,
+>  		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> @@ -240,6 +241,7 @@ void dma_direct_sync_sg_for_device(struct device *dev,
+>  					dir);
+>  	}
+>  }
+> +EXPORT_SYMBOL(dma_direct_sync_sg_for_device);
+>  #endif
+>  
+>  #if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> @@ -258,6 +260,7 @@ void dma_direct_sync_single_for_cpu(struct device *dev,
+>  	if (unlikely(is_swiotlb_buffer(paddr)))
+>  		swiotlb_tbl_sync_single(dev, paddr, size, dir, SYNC_FOR_CPU);
+>  }
+> +EXPORT_SYMBOL(dma_direct_sync_single_for_cpu);
+>  
+>  void dma_direct_sync_sg_for_cpu(struct device *dev,
+>  		struct scatterlist *sgl, int nents, enum dma_data_direction dir)
+> @@ -277,6 +280,7 @@ void dma_direct_sync_sg_for_cpu(struct device *dev,
+>  	if (!dev_is_dma_coherent(dev))
+>  		arch_sync_dma_for_cpu_all(dev);
+>  }
+> +EXPORT_SYMBOL(dma_direct_sync_sg_for_cpu);
+>  
+>  void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+>  		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> @@ -289,6 +293,7 @@ void dma_direct_unmap_page(struct device *dev, dma_addr_t addr,
+>  	if (unlikely(is_swiotlb_buffer(phys)))
+>  		swiotlb_tbl_unmap_single(dev, phys, size, dir, attrs);
+>  }
+> +EXPORT_SYMBOL(dma_direct_unmap_page);
+>  
+>  void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+>  		int nents, enum dma_data_direction dir, unsigned long attrs)
+> @@ -300,11 +305,7 @@ void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+>  		dma_direct_unmap_page(dev, sg->dma_address, sg_dma_len(sg), dir,
+>  			     attrs);
+>  }
+> -#else
+> -void dma_direct_unmap_sg(struct device *dev, struct scatterlist *sgl,
+> -		int nents, enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -}
+> +EXPORT_SYMBOL(dma_direct_unmap_sg);
+>  #endif
+>  
+>  static inline bool dma_direct_possible(struct device *dev, dma_addr_t dma_addr,
+> @@ -331,6 +332,7 @@ dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+>  		arch_sync_dma_for_device(dev, phys, size, dir);
+>  	return dma_addr;
+>  }
+> +EXPORT_SYMBOL(dma_direct_map_page);
+>  
+>  int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+>  		enum dma_data_direction dir, unsigned long attrs)
+> @@ -352,6 +354,7 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
+>  	dma_direct_unmap_sg(dev, sgl, i, dir, attrs | DMA_ATTR_SKIP_CPU_SYNC);
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL(dma_direct_map_sg);
+>  
+>  /*
+>   * Because 32-bit DMA masks are so common we expect every architecture to be
+> @@ -372,27 +375,3 @@ int dma_direct_supported(struct device *dev, u64 mask)
+>  
+>  	return mask >= phys_to_dma(dev, min_mask);
+>  }
+> -
+> -const struct dma_map_ops dma_direct_ops = {
+> -	.alloc			= dma_direct_alloc,
+> -	.free			= dma_direct_free,
+> -	.map_page		= dma_direct_map_page,
+> -	.map_sg			= dma_direct_map_sg,
+> -#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
+> -    defined(CONFIG_SWIOTLB)
+> -	.sync_single_for_device	= dma_direct_sync_single_for_device,
+> -	.sync_sg_for_device	= dma_direct_sync_sg_for_device,
+> -#endif
+> -#if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> -    defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL) || \
+> -    defined(CONFIG_SWIOTLB)
+> -	.sync_single_for_cpu	= dma_direct_sync_single_for_cpu,
+> -	.sync_sg_for_cpu	= dma_direct_sync_sg_for_cpu,
+> -	.unmap_page		= dma_direct_unmap_page,
+> -	.unmap_sg		= dma_direct_unmap_sg,
+> -#endif
+> -	.get_required_mask	= dma_direct_get_required_mask,
+> -	.dma_supported		= dma_direct_supported,
+> -	.cache_sync		= arch_dma_cache_sync,
+> -};
+> -EXPORT_SYMBOL(dma_direct_ops);
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 0b18cfbdde95..fc84c81029d9 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -7,6 +7,7 @@
+>   */
+>  #include <linux/memblock.h> /* for max_pfn */
+>  #include <linux/acpi.h>
+> +#include <linux/dma-direct.h>
+>  #include <linux/dma-noncoherent.h>
+>  #include <linux/export.h>
+>  #include <linux/gfp.h>
+> @@ -229,8 +230,8 @@ int dma_get_sgtable_attrs(struct device *dev, struct sg_table *sgt,
+>  		unsigned long attrs)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> -	BUG_ON(!ops);
+> -	if (ops->get_sgtable)
+> +
+> +	if (!dma_is_direct(ops) && ops->get_sgtable)
+>  		return ops->get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
+>  					attrs);
+>  	return dma_common_get_sgtable(dev, sgt, cpu_addr, dma_addr, size,
+> @@ -293,8 +294,8 @@ int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
+>  		unsigned long attrs)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> -	BUG_ON(!ops);
+> -	if (ops->mmap)
+> +
+> +	if (!dma_is_direct(ops) && ops->mmap)
+>  		return ops->mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
+>  	return dma_common_mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
+>  }
+> @@ -324,6 +325,8 @@ u64 dma_get_required_mask(struct device *dev)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+> +	if (dma_is_direct(ops))
+> +		return dma_direct_get_required_mask(dev);
+>  	if (ops->get_required_mask)
+>  		return ops->get_required_mask(dev);
+>  	return dma_default_get_required_mask(dev);
+> @@ -341,7 +344,6 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  	void *cpu_addr;
+>  
+> -	BUG_ON(!ops);
+>  	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
+>  
+>  	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
+> @@ -352,10 +354,14 @@ void *dma_alloc_attrs(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  
+>  	if (!arch_dma_alloc_attrs(&dev))
+>  		return NULL;
+> -	if (!ops->alloc)
+> +
+> +	if (dma_is_direct(ops))
+> +		cpu_addr = dma_direct_alloc(dev, size, dma_handle, flag, attrs);
+> +	else if (ops->alloc)
+> +		cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
+> +	else
+>  		return NULL;
+>  
+> -	cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
+>  	debug_dma_alloc_coherent(dev, size, *dma_handle, cpu_addr);
+>  	return cpu_addr;
+>  }
+> @@ -366,8 +372,6 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+> -	BUG_ON(!ops);
+> -
+>  	if (dma_release_from_dev_coherent(dev, get_order(size), cpu_addr))
+>  		return;
+>  	/*
+> @@ -379,11 +383,14 @@ void dma_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+>  	 */
+>  	WARN_ON(irqs_disabled());
+>  
+> -	if (!ops->free || !cpu_addr)
+> +	if (!cpu_addr)
+>  		return;
+>  
+>  	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
+> -	ops->free(dev, size, cpu_addr, dma_handle, attrs);
+> +	if (dma_is_direct(ops))
+> +		dma_direct_free(dev, size, cpu_addr, dma_handle, attrs);
+> +	else if (ops->free)
+> +		ops->free(dev, size, cpu_addr, dma_handle, attrs);
+>  }
+>  EXPORT_SYMBOL(dma_free_attrs);
+>  
+> @@ -397,9 +404,9 @@ int dma_supported(struct device *dev, u64 mask)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+> -	if (!ops)
+> -		return 0;
+> -	if (!ops->dma_supported)
+> +	if (dma_is_direct(ops))
+> +		return dma_direct_supported(dev, mask);
+> +	if (ops->dma_supported)
+>  		return 1;
+>  	return ops->dma_supported(dev, mask);
+>  }
+> @@ -437,7 +444,10 @@ void dma_cache_sync(struct device *dev, void *vaddr, size_t size,
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	BUG_ON(!valid_dma_direction(dir));
+> -	if (ops->cache_sync)
+> +
+> +	if (dma_is_direct(ops))
+> +		arch_dma_cache_sync(dev, vaddr, size, dir);
+> +	else if (ops->cache_sync)
+>  		ops->cache_sync(dev, vaddr, size, dir);
+>  }
+>  EXPORT_SYMBOL(dma_cache_sync);
+> 
 
