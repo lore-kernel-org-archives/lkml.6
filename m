@@ -2,115 +2,236 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28D6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59462C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A82218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171473;
-	bh=Kb8O8hxUjeSR78xQ0jBTx61rGXeSqq0l2FuOxtS6+nA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rlcfF2RRP6rlsQctp42ajkq95YvIPmYWUR933pFRJrrSQOsvuuB2joU+O1RzRTovU
-	 P5a07q8kwfJGhMbDN4qIm4TuxCpkhmNRLFjMT6g+p3xumrtNcEG1KDlwZSesZLv/YK
-	 bHOqGCVfknhxWXMpa78fwGESQ9+wR7PBnV2g14HM=
+	by mail.kernel.org (Postfix) with ESMTP id 1E03F21871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbeLRWRw (ORCPT
+        id S1727394AbeLRWTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:17:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727546AbeLRWRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:17:51 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A00321871;
-        Tue, 18 Dec 2018 22:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171471;
-        bh=Kb8O8hxUjeSR78xQ0jBTx61rGXeSqq0l2FuOxtS6+nA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=prWh5r/iJWBpVtFLJ/8nzvN7DtuSVSAGzGjQqBMwnajpNCR3BwVNJeS2f2SVlbnf6
-         n74KpilAr0Md9Ayvx5p06CrhleVFTYwXvApl18ho93Y41kegp5xJCsONaEluRJwY/q
-         ATMJ4lcT/77WQK3q0qCJXneuXPR8Qb+Pm5jjJVMU=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Guo Ren <ren_guo@c-sky.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 63/63] tools uapi asm: Update asm-generic/unistd.h copy
-Date:   Tue, 18 Dec 2018 19:07:33 -0300
-Message-Id: <20181218220733.15839-64-acme@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
-References: <20181218220733.15839-1-acme@kernel.org>
+        Tue, 18 Dec 2018 17:19:31 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33511 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726570AbeLRWTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:19:31 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIMIre22990413
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 14:18:53 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIMIqBH2990410;
+        Tue, 18 Dec 2018 14:18:52 -0800
+Date:   Tue, 18 Dec 2018 14:18:52 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-da791a667536bf8322042e38ca85d55a78d3c273@git.kernel.org>
+Cc:     peterz@infradead.org, stli@linux.ibm.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, heiko.carstens@de.ibm.com,
+        hpa@zytor.com, sashal@kernel.org, dvhart@infradead.org,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, stli@linux.ibm.com, peterz@infradead.org,
+          heiko.carstens@de.ibm.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, dvhart@infradead.org, sashal@kernel.org,
+          hpa@zytor.com
+In-Reply-To: <20181210152311.986181245@linutronix.de>
+References: <20181210152311.986181245@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/urgent] futex: Cure exit race
+Git-Commit-ID: da791a667536bf8322042e38ca85d55a78d3c273
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Commit-ID:  da791a667536bf8322042e38ca85d55a78d3c273
+Gitweb:     https://git.kernel.org/tip/da791a667536bf8322042e38ca85d55a78d3c273
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 10 Dec 2018 14:35:14 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 18 Dec 2018 23:13:15 +0100
 
-To get the change in:
+futex: Cure exit race
 
-  b7d624ab4312 ("asm-generic: unistd.h: fixup broken macro include.")
+Stefan reported, that the glibc tst-robustpi4 test case fails
+occasionally. That case creates the following race between
+sys_exit() and sys_futex_lock_pi():
 
-That doesn't imply in any changes in the tools.
+ CPU0				CPU1
 
-This silences the following perf build warning:
+ sys_exit()			sys_futex()
+  do_exit()			 futex_lock_pi()
+   exit_signals(tsk)		  No waiters:
+    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
+  mm_release(tsk)		  Set waiter bit
+   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
+      Set owner died		  attach_to_pi_owner() {
+    *uaddr = 0xC0000000;	   tsk = get_task(PID);
+   }				   if (!tsk->flags & PF_EXITING) {
+  ...				     attach();
+  tsk->flags |= PF_EXITPIDONE;	   } else {
+				     if (!(tsk->flags & PF_EXITPIDONE))
+				       return -EAGAIN;
+				     return -ESRCH; <--- FAIL
+				   }
 
-  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
-  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+ESRCH is returned all the way to user space, which triggers the glibc test
+case assert. Returning ESRCH unconditionally is wrong here because the user
+space value has been changed by the exiting task to 0xC0000000, i.e. the
+FUTEX_OWNER_DIED bit is set and the futex PID value has been cleared. This
+is a valid state and the kernel has to handle it, i.e. taking the futex.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Guo Ren <ren_guo@c-sky.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-2e7xwm5i2qcc88jp2lyawdyd@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cure it by rereading the user space value when PF_EXITING and PF_EXITPIDONE
+is set in the task which 'owns' the futex. If the value has changed, let
+the kernel retry the operation, which includes all regular sanity checks
+and correctly handles the FUTEX_OWNER_DIED case.
+
+If it hasn't changed, then return ESRCH as there is no way to distinguish
+this case from malfunctioning user space. This happens when the exiting
+task did not have a robust list, the robust list was corrupted or the user
+space value in the futex was simply bogus.
+
+Reported-by: Stefan Liebler <stli@linux.ibm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200467
+Link: https://lkml.kernel.org/r/20181210152311.986181245@linutronix.de
 ---
- tools/include/uapi/asm-generic/unistd.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/futex.c | 69 +++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 6 deletions(-)
 
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index 538546edbfbd..c7f3321fbe43 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -760,8 +760,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
- #define __NR_ftruncate __NR3264_ftruncate
- #define __NR_lseek __NR3264_lseek
- #define __NR_sendfile __NR3264_sendfile
-+#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
- #define __NR_newfstatat __NR3264_fstatat
- #define __NR_fstat __NR3264_fstat
-+#endif
- #define __NR_mmap __NR3264_mmap
- #define __NR_fadvise64 __NR3264_fadvise64
- #ifdef __NR3264_stat
-@@ -776,8 +778,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
- #define __NR_ftruncate64 __NR3264_ftruncate
- #define __NR_llseek __NR3264_lseek
- #define __NR_sendfile64 __NR3264_sendfile
-+#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
- #define __NR_fstatat64 __NR3264_fstatat
- #define __NR_fstat64 __NR3264_fstat
-+#endif
- #define __NR_mmap2 __NR3264_mmap
- #define __NR_fadvise64_64 __NR3264_fadvise64
- #ifdef __NR3264_stat
--- 
-2.19.2
-
+diff --git a/kernel/futex.c b/kernel/futex.c
+index f423f9b6577e..5cc8083a4c89 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1148,11 +1148,65 @@ out_error:
+ 	return ret;
+ }
+ 
++static int handle_exit_race(u32 __user *uaddr, u32 uval,
++			    struct task_struct *tsk)
++{
++	u32 uval2;
++
++	/*
++	 * If PF_EXITPIDONE is not yet set, then try again.
++	 */
++	if (tsk && !(tsk->flags & PF_EXITPIDONE))
++		return -EAGAIN;
++
++	/*
++	 * Reread the user space value to handle the following situation:
++	 *
++	 * CPU0				CPU1
++	 *
++	 * sys_exit()			sys_futex()
++	 *  do_exit()			 futex_lock_pi()
++	 *                                futex_lock_pi_atomic()
++	 *   exit_signals(tsk)		    No waiters:
++	 *    tsk->flags |= PF_EXITING;	    *uaddr == 0x00000PID
++	 *  mm_release(tsk)		    Set waiter bit
++	 *   exit_robust_list(tsk) {	    *uaddr = 0x80000PID;
++	 *      Set owner died		    attach_to_pi_owner() {
++	 *    *uaddr = 0xC0000000;	     tsk = get_task(PID);
++	 *   }				     if (!tsk->flags & PF_EXITING) {
++	 *  ...				       attach();
++	 *  tsk->flags |= PF_EXITPIDONE;     } else {
++	 *				       if (!(tsk->flags & PF_EXITPIDONE))
++	 *				         return -EAGAIN;
++	 *				       return -ESRCH; <--- FAIL
++	 *				     }
++	 *
++	 * Returning ESRCH unconditionally is wrong here because the
++	 * user space value has been changed by the exiting task.
++	 *
++	 * The same logic applies to the case where the exiting task is
++	 * already gone.
++	 */
++	if (get_futex_value_locked(&uval2, uaddr))
++		return -EFAULT;
++
++	/* If the user space value has changed, try again. */
++	if (uval2 != uval)
++		return -EAGAIN;
++
++	/*
++	 * The exiting task did not have a robust list, the robust list was
++	 * corrupted or the user space value in *uaddr is simply bogus.
++	 * Give up and tell user space.
++	 */
++	return -ESRCH;
++}
++
+ /*
+  * Lookup the task for the TID provided from user space and attach to
+  * it after doing proper sanity checks.
+  */
+-static int attach_to_pi_owner(u32 uval, union futex_key *key,
++static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
+ 			      struct futex_pi_state **ps)
+ {
+ 	pid_t pid = uval & FUTEX_TID_MASK;
+@@ -1162,12 +1216,15 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
+ 	/*
+ 	 * We are the first waiter - try to look up the real owner and attach
+ 	 * the new pi_state to it, but bail out when TID = 0 [1]
++	 *
++	 * The !pid check is paranoid. None of the call sites should end up
++	 * with pid == 0, but better safe than sorry. Let the caller retry
+ 	 */
+ 	if (!pid)
+-		return -ESRCH;
++		return -EAGAIN;
+ 	p = find_get_task_by_vpid(pid);
+ 	if (!p)
+-		return -ESRCH;
++		return handle_exit_race(uaddr, uval, NULL);
+ 
+ 	if (unlikely(p->flags & PF_KTHREAD)) {
+ 		put_task_struct(p);
+@@ -1187,7 +1244,7 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
+ 		 * set, we know that the task has finished the
+ 		 * cleanup:
+ 		 */
+-		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
++		int ret = handle_exit_race(uaddr, uval, p);
+ 
+ 		raw_spin_unlock_irq(&p->pi_lock);
+ 		put_task_struct(p);
+@@ -1244,7 +1301,7 @@ static int lookup_pi_state(u32 __user *uaddr, u32 uval,
+ 	 * We are the first waiter - try to look up the owner based on
+ 	 * @uval and attach to it.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, uval, key, ps);
+ }
+ 
+ static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
+@@ -1352,7 +1409,7 @@ static int futex_lock_pi_atomic(u32 __user *uaddr, struct futex_hash_bucket *hb,
+ 	 * attach to the owner. If that fails, no harm done, we only
+ 	 * set the FUTEX_WAITERS bit in the user space variable.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, newval, key, ps);
+ }
+ 
+ /**
