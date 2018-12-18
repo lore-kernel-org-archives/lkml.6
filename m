@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C880FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A39FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95698218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBE87218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545163813;
-	bh=V2Z6FNlObzVrANZZjLMVrzORLYCaCBjOZOSSho75eZ0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=zH1Nj9jz0INZ1Lv4V98sZXI7UgQoixJa6oOYc03z6cHXBlkPCYCenPS0799nwKdzb
-	 j0pqBqRpJIzJbEegID1wKqF/PNvpcYWtZP82+UuhL6mdtPwODrBKlhWZS4nbDkllPI
-	 9fyCoXZAk/fd8IrvMASi5bgSJA9hDzCFCV49moTY=
+	s=default; t=1545163818;
+	bh=a1bfEZsI4yWUP/xuJWMQJY1H78hazjgTE7mf64t6iYU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=hOMMRZx8S3s5snHToYrw4HKuD3sX+Gm3aubW/GKPQQyJ5kb/BV229vJwlM3iyZBle
+	 3cMsDQn3M/+FDHAypvE0XMHGP6RuQqNzwuIELNy0cKXUbA8AgbIyCz560MkAQa0ZxA
+	 pOlAjlGqrF5RnwCzh1c2dgmQzyNYtvOXOgu8l9Zg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeLRUKM (ORCPT
+        id S1726914AbeLRUKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:10:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36812 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 15:10:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeLRUKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:10:12 -0500
+        id S1726590AbeLRUKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:10:14 -0500
 Received: from localhost.localdomain (unknown [178.38.170.116])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0519121873;
-        Tue, 18 Dec 2018 20:10:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10786218AC;
+        Tue, 18 Dec 2018 20:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545163811;
-        bh=V2Z6FNlObzVrANZZjLMVrzORLYCaCBjOZOSSho75eZ0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BKBosLUHWplD0avHxIjeMhwmcP0I+uwNiuLSmufaRimVJTaYdfE3IRUGdaf1YO9Js
-         N3ATmM7unm3hqmZ/1s9/zlaxDJ2cFhAe35cl3jsrCSDbi06Mli0McxYsZhQNcjls4v
-         DmLpX5yFW6NLRsyF0EoUURoGKRvZ0bPVw9tGpy+4=
+        s=default; t=1545163813;
+        bh=a1bfEZsI4yWUP/xuJWMQJY1H78hazjgTE7mf64t6iYU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vtPE5pMMk5GvfdLIhH9oGgQ1WjDbzW1Bu1COTU2WtVE1r2O0B5+4fL956D9gbyL3F
+         7YQwBdvNr5bKkO/btrkXRNdiKq7+Fm63rXHqT8VVU3Dj5Gz/xvV3igzNL5VUa1MD7R
+         Sy7h6AcavMG99sg+Ch7mPfVm/p1j++bLinJBjyik=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         arm@kernel.org
@@ -46,10 +46,12 @@ Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL 1/2] ARM: dts: exynos: Second round for v4.21
-Date:   Tue, 18 Dec 2018 21:10:02 +0100
-Message-Id: <20181218201003.12806-1-krzk@kernel.org>
+Subject: [GIT PULL 2/2] arm64: dts: exynos: Second round for v4.21
+Date:   Tue, 18 Dec 2018 21:10:03 +0100
+Message-Id: <20181218201003.12806-2-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181218201003.12806-1-krzk@kernel.org>
+References: <20181218201003.12806-1-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,33 +65,31 @@ Best regards,
 Krzysztof
 
 
-The following changes since commit 57b13b8b34002ce8f1d822ea05f0a84e5bc3a64a:
+The following changes since commit 9deffb5ee78e41e2a5d6c448874a24caec6467d0:
 
-  ARM: dts: exynos: remove display-port node from Arndale (2018-12-06 19:47:15 +0100)
+  arm64: dts: exynos: Add all CPUs in cooling maps (2018-11-18 15:18:42 +0100)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-4.21-2
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-4.21-2
 
-for you to fetch changes up to 8ac686d7dfed721102860ff2571e6b9f529ae81a:
+for you to fetch changes up to 74ebbdda7cecf789661c208faccbeef10a7f05da:
 
-  ARM: dts: exynos: Specify I2S assigned clocks in proper node (2018-12-13 21:56:07 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM changes for v4.21, part 2
-
-1. Add missing CPUs in cooling maps for Odroid X2 (missed in previous
-   round of fixups).
-2. Fix clock configuration in audio subsystem on Odroid XU3/XU4.
+  arm64: dts: exynos: Add Bluetooth chip to TM2(e) boards (2018-12-17 20:23:32 +0100)
 
 ----------------------------------------------------------------
-Markus Reichl (1):
-      ARM: dts: exynos: Add missing CPUs in cooling maps for Odroid X2
+Samsung DTS ARM64 changes for v4.21, part 2
 
-Sylwester Nawrocki (1):
-      ARM: dts: exynos: Specify I2S assigned clocks in proper node
+Add IMEM clock controller (for Security SubSystem) and Bluetooth chip to
+Exynos5433 TM2(e) boards.
 
- arch/arm/boot/dts/exynos4412-prime.dtsi           | 6 ++++--
- arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi | 9 ++++-----
- arch/arm/boot/dts/exynos5422-odroidxu4.dts        | 9 ++++-----
- 3 files changed, 12 insertions(+), 12 deletions(-)
+----------------------------------------------------------------
+Kamil Konieczny (1):
+      arm64: dts: exynos: Add IMEM clock controller to Exynos5433
+
+Marek Szyprowski (1):
+      arm64: dts: exynos: Add Bluetooth chip to TM2(e) boards
+
+ arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi | 14 ++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi            | 15 +++++++++++++++
+ 2 files changed, 29 insertions(+)
