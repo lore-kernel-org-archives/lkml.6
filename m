@@ -2,50 +2,54 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D983C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9D3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1A6214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE43B214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CZ+r16s+"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bEtZO6Ls"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbeLRHfN (ORCPT
+        id S1726626AbeLRHfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 02:35:13 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7732 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeLRHfJ (ORCPT
+        Tue, 18 Dec 2018 02:35:18 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:8296 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbeLRHfR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 02:35:09 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c18a3240000>; Mon, 17 Dec 2018 23:35:00 -0800
+        Tue, 18 Dec 2018 02:35:17 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c18a32e0002>; Mon, 17 Dec 2018 23:35:10 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 17 Dec 2018 23:35:08 -0800
+  Mon, 17 Dec 2018 23:35:16 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 17 Dec 2018 23:35:08 -0800
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 07:35:08 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 07:35:08 +0000
+        by hqpgpgate101.nvidia.com on Mon, 17 Dec 2018 23:35:16 -0800
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 07:35:16 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 07:35:15 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 07:35:15 +0000
 Received: from niwei-ubuntu.nvidia.com (Not Verified[10.19.225.182]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c18a32a0003>; Mon, 17 Dec 2018 23:35:08 -0800
+        id <B5c18a3310001>; Mon, 17 Dec 2018 23:35:15 -0800
 From:   Wei Ni <wni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
         <edubezval@gmail.com>, <linux-tegra@vger.kernel.org>
 CC:     <rui.zhang@intel.com>, <srikars@nvidia.com>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Wei Ni <wni@nvidia.com>
-Subject: [PATCH v1 00/12] Add some functionalities for Tegra soctherm
-Date:   Tue, 18 Dec 2018 15:34:32 +0800
-Message-ID: <1545118484-23641-2-git-send-email-wni@nvidia.com>
+Subject: [PATCH v1 03/12] arm64: dts: tegra210: set thermtrip
+Date:   Tue, 18 Dec 2018 15:34:35 +0800
+Message-ID: <1545118484-23641-5-git-send-email-wni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545118484-23641-1-git-send-email-wni@nvidia.com>
 References: <1545118484-23641-1-git-send-email-wni@nvidia.com>
@@ -53,50 +57,83 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545118500; bh=g3abqK16pmixOrUCH8NtW0d20RplocShqM3+KYI/8G0=;
+        t=1545118511; bh=Pfxfdgnv5/IIDUk+o7WtuuT2E4eppKOazkbdTy8g7zI=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=CZ+r16s+i3yOHJs22kcyQf6KMCPGDizxZkpNTizNK28lzf1LP4IUA/qFYtgb3Z7Hx
-         xdDFhnP7qJMPwVWtBtmIMGpoQbrSiUTq1cqqUaylI3AAUan8dG06AXE9FZ5wVfSV/N
-         lKu3rGflTen9Gsyj5Fsyib+G8VuxvjatQkC7j4eMsDRq+/3Cp56OsWyLnVo/Pr9mcV
-         21F3Rr7ihvkW2LfVFirHqaRkolccQi4yA6sM4HT+25bfSIjC3zrgCURQkdKsFS3hWb
-         HKfIIg0bgsBLdVnT2xMUX++9zhLR8oM+ePQ/+Af41mYkc7PLxl2Fudc3gi+84Gjtep
-         JiKka2LKQzrng==
+        b=bEtZO6Ls1/R74JTitAvBfUGlgM0HUFx6CyQK3JEP9FByUs2aBvKZw8daqhOd47t8b
+         TV14HhVbgWIF13M2LmoQTlo3i9jIFFoyh3DyEbVAmiXcGAtijbZM0RoIO2UZYB5aPx
+         wRHdPSiPYzB2ZQHzfoCYQtsuoJIY8ObcslnA5/+6T1cDeoc3IyGY8OKbEcI+9rwm8z
+         qtNMbd/D/GjcjOK1K4mKb+5soJaCMSxLdXgW0G/9p4Y2JNLLPmAD/icFtTyLK60kkN
+         GB4hVvtxlt2YZc9lai/qONL18PrxlHaiOJZ5RDMyUm2n3v78oNqaHKNUT1fXYR7Zz9
+         Kabulcwrl+vyQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the hw/sw shutdown patches into this serial. There already have
-some discussion for it in https://lkml.org/lkml/2018/12/7/225.
-Support GPU HW throttle, thermal IRQ, set_trips(), EDP IRQ and OC
-hw throttle.
+Set "nvidia,thermtrips" property, it used to set
+HW shutdown temperatures.
 
-Wei Ni (12):
-  of: Add bindings of thermtrip for Tegra soctherm
-  thermal: tegra: support hw and sw shutdown
-  arm64: dts: tegra210: set thermtrip
-  of: Add bindings of gpu hw throttle for Tegra soctherm
-  thermal: tegra: add support for gpu hw-throttle
-  arm64: dts: tegra210: set gpu hw throttle level
-  thermal: tegra: add support for thermal IRQ
-  thermal: tegra: add set_trips functionality
-  thermal: tegra: add support for EDP IRQ
-  arm64: dts: tegra210: set EDP interrupt line
-  of: Add bindings of OC hw throttle for Tegra soctherm
-  thermal: tegra: enable OC hw throttle
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
- .../bindings/thermal/nvidia,tegra124-soctherm.txt  |  63 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  20 +-
- drivers/thermal/tegra/soctherm.c                   | 959 +++++++++++++++++++--
- drivers/thermal/tegra/soctherm.h                   |  16 +
- drivers/thermal/tegra/tegra124-soctherm.c          |   7 +-
- drivers/thermal/tegra/tegra132-soctherm.c          |   7 +-
- drivers/thermal/tegra/tegra210-soctherm.c          |  15 +-
- include/dt-bindings/thermal/tegra124-soctherm.h    |  22 +-
- 8 files changed, 1033 insertions(+), 76 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2205d66b0443..36c7dce7fa69 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -1332,6 +1332,9 @@
+ 		reset-names = "soctherm";
+ 		#thermal-sensor-cells = <1>;
+ 
++		nvidia,thermtrips = <TEGRA124_SOCTHERM_SENSOR_CPU 102500
++				     TEGRA124_SOCTHERM_SENSOR_GPU 103000>;
++
+ 		throttle-cfgs {
+ 			throttle_heavy: heavy {
+ 				nvidia,priority = <100>;
+@@ -1351,8 +1354,8 @@
+ 				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
+ 
+ 			trips {
+-				cpu-shutdown-trip {
+-					temperature = <102500>;
++				cpu-critical-trip {
++					temperature = <102000>;
+ 					hysteresis = <0>;
+ 					type = "critical";
+ 				};
+@@ -1379,7 +1382,7 @@
+ 				<&soctherm TEGRA124_SOCTHERM_SENSOR_MEM>;
+ 
+ 			trips {
+-				mem-shutdown-trip {
++				mem-critical-trip {
+ 					temperature = <103000>;
+ 					hysteresis = <0>;
+ 					type = "critical";
+@@ -1401,8 +1404,8 @@
+ 				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
+ 
+ 			trips {
+-				gpu-shutdown-trip {
+-					temperature = <103000>;
++				gpu-critical-trip {
++					temperature = <102500>;
+ 					hysteresis = <0>;
+ 					type = "critical";
+ 				};
+@@ -1429,7 +1432,7 @@
+ 				<&soctherm TEGRA124_SOCTHERM_SENSOR_PLLX>;
+ 
+ 			trips {
+-				pllx-shutdown-trip {
++				pllx-critical-trip {
+ 					temperature = <103000>;
+ 					hysteresis = <0>;
+ 					type = "critical";
 -- 
 2.7.4
 
