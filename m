@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E12DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041E4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2C40218AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE256218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545170974;
-	bh=JUHgXEDFRQQ0Vou/a3YbE2jr+4K/OaOIrhMcMPoARs0=;
+	s=default; t=1545170976;
+	bh=sQzOP+9OhakI0znnJjphATJcCEEyXRw+mo4NRzn4HtU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iZQqPJdmV93g4cWPFyunufGeLbF9rt/KxWUVjEd4NDcikFkd/xXTQWZpCbc79TUc5
-	 bAkw6aHuOicSnphvLnIxroeY6umsg2IN8sOm7AYCCw24964QF9URzNjPdCA+Iwtwc3
-	 v1y0AtTiqvQfPK8n4AKHxXuvaLqqzQ9vy9PpGCHE=
+	b=F7GgeKZ2asITvF8eX474Hq720Ck4X7F5H+fUQtzYiz8CqoQVS7XZfBxiTlewySMje
+	 mJ1NzkB6zdAfdwv+3Tr07dvB+xjGbk/0VzHty+zgX5+nlsMAArqF4CRdKSF8qSbm3x
+	 om4hd4LR+YU74soxt0WHRqyioV0uYCrxZEjxTYY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbeLRWJc (ORCPT
+        id S1727988AbeLRWJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:09:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37726 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727267AbeLRWJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:09:30 -0500
+        id S1727976AbeLRWJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:09:33 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06FF8218A2;
-        Tue, 18 Dec 2018 22:09:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B9B3218A4;
+        Tue, 18 Dec 2018 22:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545170969;
-        bh=JUHgXEDFRQQ0Vou/a3YbE2jr+4K/OaOIrhMcMPoARs0=;
+        s=default; t=1545170973;
+        bh=sQzOP+9OhakI0znnJjphATJcCEEyXRw+mo4NRzn4HtU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B0ne+Yv2otSgWvpOjWAQ4zV7JAuEDJP61Cbdy5SScf2B7YGx9mmPqQ1P849+dFI+8
-         Yw1uG4/F6UiP5aQsr1bUIr2qZ3OGHMrVEko1GbYRjnXap/BP5ZhrKXIRLmp41ocrss
-         cAz2cixHN/CkaqeKC76hLT/7bYPWgoAuwA3+yGk8=
+        b=SlPlODkfjE0bkU9ttjg1anbUs4M6k6bCv3Td9HGCyRnSS33Rf4pvvZBSFCOgBqM8Q
+         80HI+dbvZSf8dHIMBVq85N3VyCe77cENnCkvXvmJu5u604qmyS5XOF8yDAxB9/OqQZ
+         HfsMcjk6UzviW83R7a/jNz9Fc6RbZ6At3OvYc4Bo=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Herton Krzesinski <herton@redhat.com>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 18/63] tools lib traceevent: Use LDFLAGS in the build commands
-Date:   Tue, 18 Dec 2018 19:06:48 -0300
-Message-Id: <20181218220733.15839-19-acme@kernel.org>
+Subject: [PATCH 19/63] perf tools: Link libperf-jvmti.so with LDFLAGS variable
+Date:   Tue, 18 Dec 2018 19:06:49 -0300
+Message-Id: <20181218220733.15839-20-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -60,44 +60,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-So that the user can specify outside LDFLAGS values.
-
-Keeping the CFLAGS in there as well, so we don't break existing scripts.
+So we could propagate distro flags into libperf-jvmti.so library.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Herton Krzesinski <herton@redhat.com>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Link: http://lkml.kernel.org/r/20181212091214.GC17489@krava
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181212132940.840-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/Makefile.perf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 67fe5d7ef190..941761d9923d 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -177,7 +177,7 @@ $(TE_IN): force
- 	$(Q)$(MAKE) $(build)=libtraceevent
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 22956a85e4c6..8c1350c591f2 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -654,7 +654,7 @@ $(LIBJVMTI_IN): FORCE
+ 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=jvmti obj=jvmti
  
- $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
--	$(QUIET_LINK)$(CC) --shared $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
-+	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
- 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
- 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
+ $(OUTPUT)$(LIBJVMTI): $(LIBJVMTI_IN)
+-	$(QUIET_LINK)$(CC) -shared -Wl,-soname -Wl,$(LIBJVMTI) -o $@ $<
++	$(QUIET_LINK)$(CC) $(LDFLAGS) -shared -Wl,-soname -Wl,$(LIBJVMTI) -o $@ $<
+ endif
  
-@@ -196,7 +196,7 @@ $(PLUGINS_IN): force
- 	$(Q)$(MAKE) $(build)=$(plugin_obj)
- 
- $(OUTPUT)%.so: $(OUTPUT)%-in.o
--	$(QUIET_LINK)$(CC) $(CFLAGS) -shared -nostartfiles -o $@ $^
-+	$(QUIET_LINK)$(CC) $(CFLAGS) -shared $(LDFLAGS) -nostartfiles -o $@ $^
- 
- define make_version.h
-   (echo '/* This file is automatically generated. Do not modify. */';		\
+ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
 -- 
 2.19.2
 
