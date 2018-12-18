@@ -6,61 +6,47 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C775C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC13C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B752184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409E221855
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545101779;
-	bh=srECx3uDp528BcPgeYFTmHwXgYvdj7lpCSHqqkym1Fg=;
+	s=default; t=1545101781;
+	bh=huE7+kw7prZWjnTByz2rTYX+7JxBV1By3zjE6tcZvOQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PNbarHU0cWbHtnlyewGAQs8DdodPS0IldmIZQJ33XpoyieoygTyJHCLMXqXD/qMhG
-	 I0+BJ+uCZCAYRjud/STlJXnkJfLuPYvPjYmOXJkbOvhpNGfOhp/usjdKVLvma/R/b7
-	 8+zAgQqTQNPYs0EMqnqiJBT+p1OhMlQK4QJUa6ko=
+	b=c3+pFIl0cox5YGaDzyzq/eiM+4LxkNOgUEqcN68fknby+AjWZdwnycYKrTxuMPGly
+	 NmjZ0BatgdK93huCb/MdV0b5cSY5X/z6VA1jUhgYmmMMJNmBlKVmnStSr6TH59kLvJ
+	 rCV00YokbUNrk0gStdRXAYHwfnNmZIPyhaRVQwHY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeLRC4S (ORCPT
+        id S1726627AbeLRC4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:56:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38190 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 21:56:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726488AbeLRC4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:56:16 -0500
+        id S1726491AbeLRC4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 21:56:11 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.76.210.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9BEC2145D;
-        Tue, 18 Dec 2018 02:56:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1A5F217D9;
+        Tue, 18 Dec 2018 02:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545101775;
-        bh=srECx3uDp528BcPgeYFTmHwXgYvdj7lpCSHqqkym1Fg=;
+        s=default; t=1545101770;
+        bh=huE7+kw7prZWjnTByz2rTYX+7JxBV1By3zjE6tcZvOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sae9ws7uHRBtWTqP3XJhS37GpaY5nYtdA+o216aKDsVYWcaOXbX01ycWrbJ/JLfbD
-         IsRBYB8HWUf9xUxnzP3OXGetK0IY4He2s96OSK6qwqlgEdaDL01XJk6x06bAQcFAXc
-         At/xMKtP01xkTi9L2dLIorCQJGsLgi84WJisveNY=
+        b=LN/9WacbMPk1VvyOEwSVccMq2nohKmzjHhc7vfd08wxztCnlccAj1ekWYTaUK3DP0
+         h15vtQVKLFu60KBu7XGblbOLgwvwrmRdkRfFLIRC/VsruHl5TRSaxqIm6MS+FxaIyn
+         dlJMPhiP8LnSSv2RN6YjHzFD8Y8L5tI7J01n+Scc=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-acpi@vger.kernel.org
 Cc:     Sinan Kaya <okaya@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
-        <ckoenig.leichtzumerken@gmail.com>,
-        Otavio Pontes <otavio.pontes@intel.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT)), linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-        devel@acpica.org (open list:ACPI COMPONENT ARCHITECTURE (ACPICA))
-Subject: [PATCH v11 3/7] PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set
-Date:   Tue, 18 Dec 2018 02:56:02 +0000
-Message-Id: <20181218025606.32668-4-okaya@kernel.org>
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v11 2/7] ACPI / OSL: Stub out acpi_os_(read/write)_pci_configurations()
+Date:   Tue, 18 Dec 2018 02:56:01 +0000
+Message-Id: <20181218025606.32668-3-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181218025606.32668-1-okaya@kernel.org>
 References: <20181218025606.32668-1-okaya@kernel.org>
@@ -71,160 +57,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are compiling PCI code today for systems with ACPI and no PCI
-device present. Remove the useless code and reduce the tight
-dependency.
+Getting ready to allow CONFIG_PCI to be unset with ACPI enabled. Stub out
+acpi_os_read_pci_configuration and acpi_os_write_pci_configuration
+functions when CONFIG_PCI is not defined.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com> # PCI parts
-Acked-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/pci_x86.h | 7 +++++++
- drivers/acpi/Kconfig           | 1 -
- drivers/acpi/Makefile          | 2 +-
- drivers/acpi/internal.h        | 5 +++++
- drivers/pci/Makefile           | 2 +-
- include/acpi/acpi_drivers.h    | 7 +++++++
- include/linux/acpi.h           | 7 +++++++
- include/linux/pci.h            | 4 ++++
- 8 files changed, 32 insertions(+), 3 deletions(-)
+ drivers/acpi/osl.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-index 959d618dbb17..73bb404f4d2a 100644
---- a/arch/x86/include/asm/pci_x86.h
-+++ b/arch/x86/include/asm/pci_x86.h
-@@ -121,7 +121,14 @@ extern void __init dmi_check_pciprobe(void);
- extern void __init dmi_check_skip_isa_align(void);
- 
- /* some common used subsys_initcalls */
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index b48874b8e1ea..524fd5f33ea4 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -773,6 +773,7 @@ acpi_status
+ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 			       u64 *value, u32 width)
+ {
 +#ifdef CONFIG_PCI
- extern int __init pci_acpi_init(void);
+ 	int result, size;
+ 	u32 value32;
+ 
+@@ -799,12 +800,19 @@ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 	*value = value32;
+ 
+ 	return (result ? AE_ERROR : AE_OK);
 +#else
-+static inline int  __init pci_acpi_init(void)
-+{
-+	return -EINVAL;
-+}
++	int rc;
++
++	rc = pr_warn_once("PCI configuration space access is not supported\n");
++	return rc ? AE_SUPPORT : AE_OK;
 +#endif
- extern void __init pcibios_irq_init(void);
- extern int __init pcibios_init(void);
- extern int pci_legacy_init(void);
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 7cea769c37df..a0abcb3bd673 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -9,7 +9,6 @@ config ARCH_SUPPORTS_ACPI
- menuconfig ACPI
- 	bool "ACPI (Advanced Configuration and Power Interface) Support"
- 	depends on ARCH_SUPPORTS_ACPI
--	depends on PCI
- 	select PNP
- 	default y if X86
- 	help
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index edc039313cd6..7c6afc111d76 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -39,7 +39,7 @@ acpi-y				+= processor_core.o
- acpi-$(CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC) += processor_pdc.o
- acpi-y				+= ec.o
- acpi-$(CONFIG_ACPI_DOCK)	+= dock.o
--acpi-y				+= pci_root.o pci_link.o pci_irq.o
-+acpi-$(CONFIG_PCI)		+= pci_root.o pci_link.o pci_irq.o
- obj-$(CONFIG_ACPI_MCFG)		+= pci_mcfg.o
- acpi-y				+= acpi_lpss.o acpi_apd.o
- acpi-y				+= acpi_platform.o
-diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
-index 530a3f675490..b7060dae2789 100644
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -25,8 +25,13 @@ int acpi_osi_init(void);
- acpi_status acpi_os_initialize1(void);
- void init_acpi_device_notify(void);
- int acpi_scan_init(void);
+ }
+ 
+ acpi_status
+ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 				u64 value, u32 width)
+ {
 +#ifdef CONFIG_PCI
- void acpi_pci_root_init(void);
- void acpi_pci_link_init(void);
+ 	int result, size;
+ 
+ 	switch (width) {
+@@ -826,6 +834,12 @@ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 				reg, size, value);
+ 
+ 	return (result ? AE_ERROR : AE_OK);
 +#else
-+static inline void acpi_pci_root_init(void) {}
-+static inline void acpi_pci_link_init(void) {}
++	int rc;
++
++	rc = pr_warn_once("PCI configuration space access is not supported\n");
++	return rc ? AE_SUPPORT : AE_OK;
 +#endif
- void acpi_processor_init(void);
- void acpi_platform_init(void);
- void acpi_pnp_init(void);
-diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-index f2bda77a2df1..657d642fcc67 100644
---- a/drivers/pci/Makefile
-+++ b/drivers/pci/Makefile
-@@ -11,6 +11,7 @@ ifdef CONFIG_PCI
- obj-$(CONFIG_PROC_FS)		+= proc.o
- obj-$(CONFIG_SYSFS)		+= slot.o
- obj-$(CONFIG_OF)		+= of.o
-+obj-$(CONFIG_ACPI)		+= pci-acpi.o
- endif
+ }
  
- obj-$(CONFIG_PCI_QUIRKS)	+= quirks.o
-@@ -20,7 +21,6 @@ obj-$(CONFIG_PCI_MSI)		+= msi.o
- obj-$(CONFIG_PCI_ATS)		+= ats.o
- obj-$(CONFIG_PCI_IOV)		+= iov.o
- obj-$(CONFIG_PCI_BRIDGE_EMUL)	+= pci-bridge-emul.o
--obj-$(CONFIG_ACPI)		+= pci-acpi.o
- obj-$(CONFIG_PCI_LABEL)		+= pci-label.o
- obj-$(CONFIG_X86_INTEL_MID)	+= pci-mid.o
- obj-$(CONFIG_PCI_SYSCALL)	+= syscall.o
-diff --git a/include/acpi/acpi_drivers.h b/include/acpi/acpi_drivers.h
-index 14499757338f..de1804aeaf69 100644
---- a/include/acpi/acpi_drivers.h
-+++ b/include/acpi/acpi_drivers.h
-@@ -88,7 +88,14 @@ int acpi_pci_link_free_irq(acpi_handle handle);
- 
- struct pci_bus;
- 
-+#ifdef CONFIG_PCI
- struct pci_dev *acpi_get_pci_dev(acpi_handle);
-+#else
-+static inline struct pci_dev *acpi_get_pci_dev(acpi_handle handle)
-+{
-+	return NULL;
-+}
-+#endif
- 
- /* Arch-defined function to add a bus to the system */
- 
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index ed80f147bd50..eb1fdf4c196a 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -340,7 +340,14 @@ struct pci_dev;
- int acpi_pci_irq_enable (struct pci_dev *dev);
- void acpi_penalize_isa_irq(int irq, int active);
- bool acpi_isa_irq_available(int irq);
-+#ifdef CONFIG_PCI
- void acpi_penalize_sci_irq(int irq, int trigger, int polarity);
-+#else
-+static inline void acpi_penalize_sci_irq(int irq, int trigger,
-+					int polarity)
-+{
-+}
-+#endif
- void acpi_pci_irq_disable (struct pci_dev *dev);
- 
- extern int ec_read(u8 addr, u8 *val);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 11c71c4ecf75..51a5a5217667 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1960,7 +1960,11 @@ int pcibios_set_pcie_reset_state(struct pci_dev *dev,
- 				 enum pcie_reset_state state);
- int pcibios_add_device(struct pci_dev *dev);
- void pcibios_release_device(struct pci_dev *dev);
-+#ifdef CONFIG_PCI
- void pcibios_penalize_isa_irq(int irq, int active);
-+#else
-+static inline void pcibios_penalize_isa_irq(int irq, int active) {}
-+#endif
- int pcibios_alloc_irq(struct pci_dev *dev);
- void pcibios_free_irq(struct pci_dev *dev);
- resource_size_t pcibios_default_alignment(void);
+ static void acpi_os_execute_deferred(struct work_struct *work)
 -- 
 2.19.0
 
