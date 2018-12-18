@@ -1,120 +1,131 @@
 Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD5DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12A2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B75FC21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A290221871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545141123;
+	bh=WqWLrpE8VoNzWAHb/VyKZRbfjGVdFK31ehgBqercEAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Dfv/swiUWOWIoGVmuEt20s9Jq4O7mNfarWI8ZAIFYHBln7Co0axj8tpHfzFLZfm/5
+	 fDte5LO4D/BPXZ4R67tFW26kbqALLDup0xQAx//fsx8JZ6VWmsFu8ZdGRj6N14QmQO
+	 Ur4KKzzi39kBjDgG0b0OhBIoswWrijWP5hnHESOw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbeLRNv6 (ORCPT
+        id S1726799AbeLRNwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:51:58 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39843 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbeLRNv5 (ORCPT
+        Tue, 18 Dec 2018 08:52:02 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51490 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbeLRNv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:51:57 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIDpoYT2850929
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 05:51:51 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIDpoBS2850926;
-        Tue, 18 Dec 2018 05:51:50 -0800
-Date:   Tue, 18 Dec 2018 05:51:50 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-2aac9f9d5b85da1cc77c51d78aa41012244f7518@git.kernel.org>
-Cc:     jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        hpa@zytor.com, adrian.hunter@intel.com, mingo@kernel.org,
-        tglx@linutronix.de
-Reply-To: jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-          hpa@zytor.com, adrian.hunter@intel.com, tglx@linutronix.de,
-          mingo@kernel.org
-In-Reply-To: <20181122135545.16295-1-adrian.hunter@intel.com>
-References: <20181122135545.16295-1-adrian.hunter@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests record: Allow for 'sleep' being
- 'coreutils'
-Git-Commit-ID: 2aac9f9d5b85da1cc77c51d78aa41012244f7518
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 08:51:58 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b11so2685413wmj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:51:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=piICW2MK9zNucBsn8z1v8+n7fIciN3iNTbfVbDAomXY=;
+        b=VvZ7KpvyvkMFZx+DXgjyRXxZPHYxYcnsTftu2BLtqZgc23F5DS8Fk+CP8W7a5fKejA
+         jWdrtr9RntnZ2EE8UzDKc6tnneNq6V8VpBgnZwtiB5OdCM+HR97K7N+PtLUcCCtMgib0
+         1nNzGXunoHmQqGTb+EHJWtkpCjDgMF8SAxlPM89zf1lria4q2DsbSWNt9p6j60gyX0Jw
+         dV5Lk/x1DpqsG+AAHXOcxAdOf2K/Dg0jUtOJ3f8cGehI8d315Y44o7hFNTWiZf2mHbEa
+         i8ZtJISOixK8cA37ZVhta4sUQ2t3812Wk2dovmlSGF9oi+mxZTbrR+yZn8uPF7wyIA5k
+         7A8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=piICW2MK9zNucBsn8z1v8+n7fIciN3iNTbfVbDAomXY=;
+        b=hCioRlg98XZeiL3hyRpmcyUah/JJGPb2b05mDlfI1xMOL+3cN2Pxv+A+nHodfvMFa9
+         a4MneCtbAQJAFG8M4q1kR3XFsRyZ1pz5LDj8EFkHJ6ImRvfLrjUC9ivjNCbW8lxz6Pip
+         /ef+xXW85cB49Ek6wbcF7eeYzgDcKaNSYV5cNhmoD/db8DFnb0C4hMy6vERbvxAlWq1N
+         OyPLgP8E4j9QyvJqZ3oBaO1EyAI31ZHkDVTBII8/IbVJOzbGexe1floXvX84sHOKRNNc
+         7sVivGCJf2m0lF7BH+qGjJYEfSytf78DN8MCoc6Flnat+H7cE12QozZaCTcPBHFgqoiG
+         N1dQ==
+X-Gm-Message-State: AA+aEWZ4tksC8h/2pQ1cGC7wBvei1l/o+GXZ54hEff1OXlsAONet1a9D
+        P9vqo6iVhIsw/CRhTQ7cPUo=
+X-Google-Smtp-Source: AFSGD/Wkz0WnrphJpuLMYJvewl+z94d4IkqjTN1rjRH5e2FDQZm/enwLEefOswR7+y24ZzyEL/mtcw==
+X-Received: by 2002:a1c:3905:: with SMTP id g5mr3238844wma.30.1545141116224;
+        Tue, 18 Dec 2018 05:51:56 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id w6sm2122977wme.46.2018.12.18.05.51.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 05:51:55 -0800 (PST)
+Date:   Tue, 18 Dec 2018 14:51:53 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        yang.shi@linux.alibaba.com, Arnd Bergmann <arnd@arndb.de>,
+        sergey.senozhatsky.work@gmail.com, dima@arista.com, bp@alien8.de
+Subject: Re: [PATCH v2] debugobjects: Move printk out of db lock critical
+ sections
+Message-ID: <20181218135153.GA101957@gmail.com>
+References: <1544738377-3848-1-git-send-email-longman@redhat.com>
+ <20181217181712.GA5114@gmail.com>
+ <CAHk-=wjhqBYmzOyg7LPjvZhoXr3Tr+k9+caG2ScdCtZeO6oJcQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAHk-=wjhqBYmzOyg7LPjvZhoXr3Tr+k9+caG2ScdCtZeO6oJcQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2aac9f9d5b85da1cc77c51d78aa41012244f7518
-Gitweb:     https://git.kernel.org/tip/2aac9f9d5b85da1cc77c51d78aa41012244f7518
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 22 Nov 2018 15:55:45 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:54:26 -0300
 
-perf tests record: Allow for 'sleep' being 'coreutils'
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-If the 'sleep' command is provided by coreutils, then the "PERF_RECORD_*
-events & perf_sample fields" test will fail because the MMAP name is
-'coreutils' not 'sleep', and there is an extra COMM event. Fix the test
-to detect that case.
+> On Mon, Dec 17, 2018 at 10:17 AM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > We should rename printk() to syslog() or so, and rename early_printk() to
+> > printk(), and be done with this.
+> 
+> No.
+> 
+> As already pointed out, the syslog part isn't the issue. The printing
+> part is the issue.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181122135545.16295-1-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/perf-record.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Indeed - I fired a shot fired in the wrong direction ...
 
-diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-index 34394cc05077..07f6bd8ed719 100644
---- a/tools/perf/tests/perf-record.c
-+++ b/tools/perf/tests/perf-record.c
-@@ -58,6 +58,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 	char *bname, *mmap_filename;
- 	u64 prev_time = 0;
- 	bool found_cmd_mmap = false,
-+	     found_coreutils_mmap = false,
- 	     found_libc_mmap = false,
- 	     found_vdso_mmap = false,
- 	     found_ld_mmap = false;
-@@ -254,6 +255,8 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 					if (bname != NULL) {
- 						if (!found_cmd_mmap)
- 							found_cmd_mmap = !strcmp(bname + 1, cmd);
-+						if (!found_coreutils_mmap)
-+							found_coreutils_mmap = !strcmp(bname + 1, "coreutils");
- 						if (!found_libc_mmap)
- 							found_libc_mmap = !strncmp(bname + 1, "libc", 4);
- 						if (!found_ld_mmap)
-@@ -292,7 +295,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 	}
- 
- found_exit:
--	if (nr_events[PERF_RECORD_COMM] > 1) {
-+	if (nr_events[PERF_RECORD_COMM] > 1 + !!found_coreutils_mmap) {
- 		pr_debug("Excessive number of PERF_RECORD_COMM events!\n");
- 		++errs;
- 	}
-@@ -302,7 +305,7 @@ found_exit:
- 		++errs;
- 	}
- 
--	if (!found_cmd_mmap) {
-+	if (!found_cmd_mmap && !found_coreutils_mmap) {
- 		pr_debug("PERF_RECORD_MMAP for %s missing!\n", cmd);
- 		++errs;
- 	}
+> So thinking that early_printk is any better is just puting your head in 
+> the sand.
+
+... at my own feet. ;-) Apologies to the syslog folks!
+
+early_printk should still in principle be more robust: it tries to use as 
+little (no) locking as possible, and definitely tries to do no 
+allocations. It doesn't use syslog, nor any console locking, nor any 
+regular console drivers.
+
+Which results in usability trade-offs: trashed screen output, mangled 
+lines. It's a superior debug facility when debugging particularly hairy 
+low level code - which most of the kernel isn't where it turns into an 
+inferior debugging method.
+
+I thing a good solution would be PeterZ's force_early_printk boot knob, 
+for those low level folks who absolutely want to rely on printk always 
+working in some fashion.
+
+( I think it might even be possible to add a non-locked feature to 
+  early-printk that actually adds the messages to the syslog ring-buffer 
+  - without any notification/wakeup/serialization features. 'dmesg' is 
+  handy and its lack is the primary usability disadvantage of 
+  earlyprintk. )
+
+Thanks,
+
+	Ingo
