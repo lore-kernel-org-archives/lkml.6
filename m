@@ -2,127 +2,126 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590CEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9855C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273702133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:02:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545109340;
-	bh=TKC+IXVMQgdMwlbJGDewPI6zoy8Su+7mMv0Fg9t32oE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=sW5vz9aly9HxdrQBEF680Jh2GkfgcCEuwZYG94wfxZTE5EILo317kCxDloAtfl8TZ
-	 eI+cJYhaPyxFH6dmDTRYRhVrfws63jHigadvzC1rBNqzPQn84VYYjr9kv+OHWIScrn
-	 JOWS1Y2fZi8PrJSo/86UziJFXYJigwPt+wk6U6m4=
+	by mail.kernel.org (Postfix) with ESMTP id 81D322133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbeLRFCT (ORCPT
+        id S1726702AbeLRFFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 00:02:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbeLRFCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 00:02:18 -0500
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D284F21848
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545109338;
-        bh=TKC+IXVMQgdMwlbJGDewPI6zoy8Su+7mMv0Fg9t32oE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Ju0hVs9L/hBvtbV+7kUZHLf3o7h2zpp3BQ8C/hTguOAWDSTfSRFrQef/EmofOjcCe
-         TZQyhvfMAX5HrM91hGBNYzhKwHFOVHhgv/bWdeSC8MScqD1gU1pj3CtL70BXCvIidB
-         SeCGr000+jYyzPUkkz3IKDJyDALgtJla6Fmv1yGU=
-Received: by mail-wr1-f41.google.com with SMTP id v13so14482175wrw.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 21:02:17 -0800 (PST)
-X-Gm-Message-State: AA+aEWa7hpoMil/PT/anmDK8RDYItS0LBB6jKHLNXyRyg3TzPTuYYY21
-        xvXkBzheRGx664HsYv7s6WyUZvlXJgygXwDlbRruEw==
-X-Google-Smtp-Source: AFSGD/XUbvei4YCn+C8ifzCzpXPA6k6601K/QUQXaeTuRkksI/PXPFnqioCqali11te8+fOTMEgUpI6hgt6q7DBK06A=
-X-Received: by 2002:a5d:550f:: with SMTP id b15mr13723383wrv.330.1545109334432;
- Mon, 17 Dec 2018 21:02:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com> <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com> <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <20181217222047.GG12491@linux.intel.com> <20181218013918.GC333@linux.intel.com>
- <20181218032702.GA2903@linux.intel.com>
-In-Reply-To: <20181218032702.GA2903@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 17 Dec 2018 21:02:03 -0800
-X-Gmail-Original-Message-ID: <CALCETrVTfGUSfm5hy9_F00LcMUHJqAjOmfJhtXP+uD5dnmt4EQ@mail.gmail.com>
-Message-ID: <CALCETrVTfGUSfm5hy9_F00LcMUHJqAjOmfJhtXP+uD5dnmt4EQ@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
+        Tue, 18 Dec 2018 00:05:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50770 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726316AbeLRFFA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 00:05:00 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBI54Mbb050360
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:04:59 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2perng3ru7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:04:59 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 18 Dec 2018 05:04:57 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Dec 2018 05:04:54 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBI54ric3342804
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Dec 2018 05:04:53 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6ABC1A4059;
+        Tue, 18 Dec 2018 05:04:53 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 75C4DA4057;
+        Tue, 18 Dec 2018 05:04:52 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.36])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Dec 2018 05:04:52 +0000 (GMT)
+Subject: Re: [PATCH] ima: cleanup the match_token policy code
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-integrity@vger.kernel.org,
+        James Morris James Morris <jmorris@namei.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Date:   Tue, 18 Dec 2018 00:04:41 -0500
+In-Reply-To: <20181218040629.GT2217@ZenIV.linux.org.uk>
+References: <1545092089.4206.5.camel@linux.ibm.com>
+         <CAHk-=whEb_vShPGCK80_tspsyw12G6mHLQkMDiSP0GWWHroqqA@mail.gmail.com>
+         <20181218013348.GR2217@ZenIV.linux.org.uk>
+         <1545102007.4206.15.camel@linux.ibm.com>
+         <20181218040629.GT2217@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121805-0020-0000-0000-000002F9192A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121805-0021-0000-0000-000021491A0B
+Message-Id: <1545109481.4206.36.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812180044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 7:27 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Tue, Dec 18, 2018 at 03:39:18AM +0200, Jarkko Sakkinen wrote:
-> > On Mon, Dec 17, 2018 at 02:20:48PM -0800, Sean Christopherson wrote:
-> > > The only potential hiccup I can see is the build flow.  Currently,
-> > > EADD+EEXTEND is done via a work queue to avoid major performance issues
-> > > (10x regression) when userspace is building multiple enclaves in parallel
-> > > using goroutines to wrap Cgo (the issue might apply to any M:N scheduler,
-> > > but I've only confirmed the Golang case).  The issue is that allocating
-> > > an EPC page acts like a blocking syscall when the EPC is under pressure,
-> > > i.e. an EPC page isn't immediately available.  This causes Go's scheduler
-> > > to thrash and tank performance[1].
-> >
-> > I don't see any major issues having that kthread. All the code that
-> > maps the enclave would be removed.
-> >
-> > I would only allow to map enclave to process address space after the
-> > enclave has been initialized i.e. SGX_IOC_ENCLAVE_ATTACH.
->
-> Some refined thoughts.
->
-> PTE insertion can done in the #PF handler. In fact, we can PoC this
-> already with the current architecture (and I will right after sending
-> v18).
->
-> The backing space is a bit more nasty issue in the add pager thread.
-> The previous shmem swapping would have been a better fit. Maybe that
-> should be reconsidered?
->
-> If shmem was used, all the commits up to "SGX Enclave Driver" could
-> be reworked to the new model.
->
-> When we think about the swapping code, there uprises some difficulties.
-> Namely, when a page is swapped, the enclave must unmap the PTE from all
-> processes that have it mapped.
+On Tue, 2018-12-18 at 04:06 +0000, Al Viro wrote:
+> On Mon, Dec 17, 2018 at 10:00:07PM -0500, Mimi Zohar wrote:
+> 
+> > Could you expand on commit 5b2ea6199614 ("selinux: switch away from
+> > match_token()") patch description.  All that it says is "It's not a
+> > good fit, unfortunately, and the next step will make it even less so.
+> > Open-code what we need here."  And there's even less for the
+> > equivalent Smack patch, which just says "same issue as with
+> > selinux...".
+> 
+> match_token() would require messing around with strsep() or something
+> equivalent.  It's not a regex; foo=%s has no idea that comma is in any
+> way special, etc.
+> 
+> As for the next commit...  Killing the Cthulhu-awful mess in
+> selinux_sb_eat_lsm_opts() (allocating two temproraries, concatenating
+> (comma-separated) non-LSM options into one, concatenating (pipe-separated)
+> dequoted LSM options into another, then splitting that another by '|'
+> instances and figuring out which option each piece is, etc.)
+> is a Good Thing(tm).  And having to dance around the needs of
+> match_token() adds extra headache, for no good reason.
 
-That's what unmap_mapping_range(), etc do for you, no?  IOW make a
-struct address_space that represents the logical enclave address
-space, i.e. address 0 is the start and the pages count up from there.
-You can unmap pages whenever you want, and the core mm code will take
-care of zapping the pages from all vmas referencing that
-address_space.
+Ok, so it is this particular combination of things, not the general
+usage of strsep or match_token that you're objecting to.  So fixing
+the other match_token non-LSM instances is fine.
+
+To prevent the enumeration and the match_table from going out of sync,
+I was thinking about defining a macro to create the match_table_t:
+
+#define __policy_tokens_match(ENUM, str) {Opt_ ## ENUM, #str},
+
+static const match_table_t policy_tokens = {
+        __policy_tokens_id(__policy_tokens_match)
+};
+
+and the enumeration:
+
+enum policy_tokens_id {
+        __policy_tokens_id(__policy_tokens_enumify)
+};
+
+Mimi
+
