@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F38C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8E0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90AFE217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 996DE21871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171316;
-	bh=kN7wFD3C6wt4ETmI7w8uQ6+wgvl1CYxR7j1AFMwlkYE=;
+	s=default; t=1545171321;
+	bh=qSD11Gom9SdN96fbp+OiH7uTAlBjF7i0hz1LWFuu0p8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nNFNmk+m0qcecGTOs9L+F136eTCTodW7zOmg6QRBCtTHVe0utxCA+XaN650lzfRgV
-	 V0zEHMPfKM784+ON47Rq7555qBrkdfZcFXu91E3m02fSlfiFEZhfP5Md/6M2CYsZIf
-	 2BpJht+qj7FKebw5LjLBQt57OZSi5LOhUkyP4vL4=
+	b=rcts6nkxIvLzv5Vyrlt8CPQxgCOUNWIu02FtDPnHOEhJBhTG28yKO1UdtJ7pjZg24
+	 rSwNCZHEgvK+9rzHWZ9B6yQLnj4iupMMJ2q9xSb3H7otPogCkZmVt4rnN+FS2RQA3G
+	 Jyoli91lekOzcSnxKnmKwsB1fcBz9mN/HG2YAmPI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeLRWPP (ORCPT
+        id S1728132AbeLRWPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:15:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44982 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:15:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727546AbeLRWPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:15:14 -0500
+        id S1727546AbeLRWPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:15:19 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5F16217D9;
-        Tue, 18 Dec 2018 22:15:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67E1B21871;
+        Tue, 18 Dec 2018 22:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171313;
-        bh=kN7wFD3C6wt4ETmI7w8uQ6+wgvl1CYxR7j1AFMwlkYE=;
+        s=default; t=1545171318;
+        bh=qSD11Gom9SdN96fbp+OiH7uTAlBjF7i0hz1LWFuu0p8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iNa38+YlmjVJfv4YQ57yi2W7RKoL3bkwsbPRxI6WVZajrQ9fmoU0KhHy5fRDZE4qL
-         5MAYDp+KvAraxiXCsq302yjycGqHp8kaAluOq2Q4NhFhLN5nP/vrApWozKtN1g5V1D
-         yYW+/EyTokOe19Lu5WBOKp0Uj2Ybs21U0G1/AS/Q=
+        b=uHCrpksNkN+E1APRYaoaFnnkE02c16JY+yCkA+Na8lV1wT8r+JhyktkoswgYnCmto
+         yLZitLM5IIzP18lVSpgN3TdMntYqYDLN/GsDuaFsMHCuTlARWpYaiwIuslY6f7X+Bh
+         h6ct7s158yjMAbTV9ZFXeixAwI7w0oeFgAXtFl/o=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 51/63] tools include arch: Grab a copy of x86's prctl.h
-Date:   Tue, 18 Dec 2018 19:07:21 -0300
-Message-Id: <20181218220733.15839-52-acme@kernel.org>
+Subject: [PATCH 52/63] perf beauty: Add a string table generator for x86's 'arch_prctl' codes
+Date:   Tue, 18 Dec 2018 19:07:22 -0300
+Message-Id: <20181218220733.15839-53-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -65,57 +65,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-We need it to generate the tables for the 'code' arch_prctl's syscall
-argument.
+  $ tools/perf/trace/beauty/x86_arch_prctl.sh
+  #define x86_arch_prctl_codes_1_offset 0x1001
+  static const char *x86_arch_prctl_codes_1[] = {
+	[0x1001 - 0x1001]= "SET_GS",
+	[0x1002 - 0x1001]= "SET_FS",
+	[0x1003 - 0x1001]= "GET_FS",
+	[0x1004 - 0x1001]= "GET_GS",
+	[0x1011 - 0x1001]= "GET_CPUID",
+	[0x1012 - 0x1001]= "SET_CPUID",
+  };
+
+  #define x86_arch_prctl_codes_2_offset 0x2001
+  static const char *x86_arch_prctl_codes_2[] = {
+	[0x2001 - 0x2001]= "MAP_VDSO_X32",
+	[0x2002 - 0x2001]= "MAP_VDSO_32",
+	[0x2003 - 0x2001]= "MAP_VDSO_64",
+  };
+  $
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-vu890pi18fpd4eyz61cazckj@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-w0fux1psivphhx6rve8kn3vq@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/arch/x86/include/uapi/asm/prctl.h | 17 +++++++++++++++++
- tools/perf/check-headers.sh             |  1 +
- 2 files changed, 18 insertions(+)
- create mode 100644 tools/arch/x86/include/uapi/asm/prctl.h
+ tools/perf/trace/beauty/x86_arch_prctl.sh | 26 +++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100755 tools/perf/trace/beauty/x86_arch_prctl.sh
 
-diff --git a/tools/arch/x86/include/uapi/asm/prctl.h b/tools/arch/x86/include/uapi/asm/prctl.h
-new file mode 100644
-index 000000000000..5a6aac9fa41f
+diff --git a/tools/perf/trace/beauty/x86_arch_prctl.sh b/tools/perf/trace/beauty/x86_arch_prctl.sh
+new file mode 100755
+index 000000000000..7372d3cab959
 --- /dev/null
-+++ b/tools/arch/x86/include/uapi/asm/prctl.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _ASM_X86_PRCTL_H
-+#define _ASM_X86_PRCTL_H
++++ b/tools/perf/trace/beauty/x86_arch_prctl.sh
+@@ -0,0 +1,26 @@
++#!/bin/sh
++# Copyright (C) 2018, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
++# SPDX-License-Identifier: LGPL-2.1
 +
-+#define ARCH_SET_GS		0x1001
-+#define ARCH_SET_FS		0x1002
-+#define ARCH_GET_FS		0x1003
-+#define ARCH_GET_GS		0x1004
++[ $# -eq 1 ] && x86_header_dir=$1 || x86_header_dir=tools/arch/x86/include/uapi/asm/
 +
-+#define ARCH_GET_CPUID		0x1011
-+#define ARCH_SET_CPUID		0x1012
++prctl_arch_header=${x86_header_dir}/prctl.h
 +
-+#define ARCH_MAP_VDSO_X32	0x2001
-+#define ARCH_MAP_VDSO_32	0x2002
-+#define ARCH_MAP_VDSO_64	0x2003
++print_range () {
++	local idx=$1
++	local prefix=$2
++	local first_entry=$3
 +
-+#endif /* _ASM_X86_PRCTL_H */
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index 9531f7bd7d9b..10d97dc632da 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -21,6 +21,7 @@ include/uapi/linux/hw_breakpoint.h
- arch/x86/include/asm/disabled-features.h
- arch/x86/include/asm/required-features.h
- arch/x86/include/asm/cpufeatures.h
-+arch/x86/include/uapi/asm/prctl.h
- arch/arm/include/uapi/asm/perf_regs.h
- arch/arm64/include/uapi/asm/perf_regs.h
- arch/powerpc/include/uapi/asm/perf_regs.h
++	printf "#define x86_arch_prctl_codes_%d_offset %s\n" $idx $first_entry
++	printf "static const char *x86_arch_prctl_codes_%d[] = {\n" $idx
++	regex=`printf '^[[:space:]]*#[[:space:]]*define[[:space:]]+ARCH_([[:alnum:]_]+)[[:space:]]+(%s[[:xdigit:]]+).*' ${prefix}`
++	fmt="\t[%#x - ${first_entry}]= \"%s\",\n"
++	egrep -q $regex ${prctl_arch_header} && \
++	(egrep $regex ${prctl_arch_header} | \
++		sed -r "s/$regex/\2 \1/g"	| \
++		xargs printf "$fmt")
++	printf "};\n\n"
++}
++
++print_range 1 0x1 0x1001
++print_range 2 0x2 0x2001
 -- 
 2.19.2
 
