@@ -2,204 +2,149 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC3EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBF0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FAA7217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:40:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6382A217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:40:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeLRMkT (ORCPT
+        id S1726598AbeLRMkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:40:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49185 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeLRMkS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:40:18 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBICds0x2833228
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 04:39:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBICdrQp2833225;
-        Tue, 18 Dec 2018 04:39:53 -0800
-Date:   Tue, 18 Dec 2018 04:39:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for LendackyThomas <tipbot@zytor.com>
-Message-ID: <tip-bbec2eb92c567938b0182a8534e7421f64fbd56d@git.kernel.org>
-Cc:     konrad.wilk@oracle.com, dwmw@amazon.co.uk, Thomas.Lendacky@amd.com,
-        thomas.lendacky@amd.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, aarcange@redhat.com, tglx@linutronix.de,
-        bp@alien8.de, hpa@zytor.com, jkosina@suse.cz,
-        tim.c.chen@linux.intel.com
-Reply-To: konrad.wilk@oracle.com, dwmw@amazon.co.uk,
-          Thomas.Lendacky@amd.com, thomas.lendacky@amd.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          aarcange@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-          bp@alien8.de, jkosina@suse.cz, tim.c.chen@linux.intel.com
-In-Reply-To: <20181213230352.6937.74943.stgit@tlendack-t1.amdoffice.net>
-References: <20181213230352.6937.74943.stgit@tlendack-t1.amdoffice.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/speculation: Add support for STIBP always-on
- preferred mode
-Git-Commit-ID: bbec2eb92c567938b0182a8534e7421f64fbd56d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 07:40:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51398 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbeLRMke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:40:34 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C5B24C0AF7B0;
+        Tue, 18 Dec 2018 12:40:33 +0000 (UTC)
+Received: from localhost (ovpn-200-20.brq.redhat.com [10.40.200.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 773A65C689;
+        Tue, 18 Dec 2018 12:40:29 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 13:40:24 +0100
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        netdev <netdev@vger.kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>
+Subject: Re: WARNING in __rcu_read_unlock
+Message-ID: <20181218134024.45d2d5e3@redhat.com>
+In-Reply-To: <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
+References: <0000000000005e47a2057d0edc49@google.com>
+        <20181216190412.GE4170@linux.ibm.com>
+        <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
+        <20181217112916.GG4170@linux.ibm.com>
+        <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
+        <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
+        <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com>
+        <20181217162421.6d636ee5@redhat.com>
+        <CACT4Y+YXFrnQh9h1KQf8=NcHugmxTj+d7AQdGCvRX_xsHwr1qA@mail.gmail.com>
+        <20181218001828.49cea463@redhat.com>
+        <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 18 Dec 2018 12:40:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bbec2eb92c567938b0182a8534e7421f64fbd56d
-Gitweb:     https://git.kernel.org/tip/bbec2eb92c567938b0182a8534e7421f64fbd56d
-Author:     LendackyThomas <Thomas.Lendacky@amd.com>
-AuthorDate: Thu, 13 Dec 2018 23:03:54 +0000
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 18 Dec 2018 13:36:53 +0100
+On Tue, 18 Dec 2018 09:49:17 +0100
+Dmitry Vyukov <dvyukov@google.com> wrote:
 
-x86/speculation: Add support for STIBP always-on preferred mode
+> On Tue, Dec 18, 2018 at 12:18 AM Stefano Brivio <sbrivio@redhat.com> wrote:
+> >
+> > On Mon, 17 Dec 2018 16:53:36 +0100
+> > Dmitry Vyukov <dvyukov@google.com> wrote:
+> >  
+> > > On Mon, Dec 17, 2018 at 4:24 PM Stefano Brivio <sbrivio@redhat.com> wrote:  
+> > > >
+> > > > On Mon, 17 Dec 2018 06:57:35 -0800
+> > > > Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> > > >  
+> > > > > Might be cause by commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
+> > > > > fou, fou6: ICMP error handlers for FoU and GUE  
+> > > >
+> > > > This:
+> > > >
+> > > > diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
+> > > > index 0d0ad19ecb87..20a6de26d146 100644
+> > > > --- a/net/ipv4/fou.c
+> > > > +++ b/net/ipv4/fou.c
+> > > > @@ -1008,6 +1008,9 @@ static int gue_err_proto_handler(int proto, struct sk_buff *skb, u32 info)
+> > > >  {
+> > > >         const struct net_protocol *ipprot = rcu_dereference(inet_protos[proto]);
+> > > >
+> > > > +       if (ipprot == IPPROTO_UDP)
+> > > > +               return -EINVAL;
+> > > > +
+> > > >         if (ipprot && ipprot->err_handler) {
+> > > >                 if (!ipprot->err_handler(skb, info))
+> > > >                         return 0;
+> > > >
+> > > > should fix the issue, but I still have to run tests and make sure we
+> > > > don't hit similar cases.  
+> > >
+> > > Please don't forget to add a regression test for it too ;)  
+> >
+> > Where would you suggest to add this? The only selftest that goes  
+> 
+> I dunno. But there must be some place for such tests, right?
 
-Different AMD processors may have different implementations of STIBP.
-When STIBP is conditionally enabled, some implementations would benefit
-from having STIBP always on instead of toggling the STIBP bit through MSR
-writes. This preference is advertised through a CPUID feature bit.
+Not as far as I know. The selftests checking this path, by design, only
+use supported configurations, they don't forge packets.
 
-When conditional STIBP support is requested at boot and the CPU advertises
-STIBP always-on mode as preferred, switch to STIBP "on" support. To show
-that this transition has occurred, create a new spectre_v2_user_mitigation
-value and a new spectre_v2_user_strings message. The new mitigation value
-is used in spectre_v2_user_select_mitigation() to print the new mitigation
-message as well as to return a new string from stibp_state().
+Maybe it would be nice to have a semi-automated way to isolate and
+describe/name specific conditions found by syzbot via fuzzing and turn
+those into tests that are then repeated periodically. I'm not sure how
+that would look like, but I think it's still more maintainable than a
+pile of C reproducers with forged packets in selftests/net.
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20181213230352.6937.74943.stgit@tlendack-t1.amdoffice.net
+Eric, Cong, Xin, as you also recently fixed a nice deal of similar cases
+reported by syzbot, what do you think? Did you ever feel the need to
+turn a syzbot reproducer into a regression test case?
 
----
- arch/x86/include/asm/cpufeatures.h   |  1 +
- arch/x86/include/asm/nospec-branch.h |  1 +
- arch/x86/kernel/cpu/bugs.c           | 28 ++++++++++++++++++++++------
- 3 files changed, 24 insertions(+), 6 deletions(-)
+> > through this path currently is net/pmtu.sh, but as configuration of an
+> > actual UDP-in-GUE tunnel is currently not supported, I would really
+> > need to forge that specific packet, so that doesn't seem to be a good
+> > fit.
+> >
+> > Won't syzbot add this to some list of reproducers that are checked in
+> > the future?  
+> 
+> It won't. Also fuzzing is complementary to testing, not a replacement:
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 28c4a502b419..df8e94e2f7be 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -284,6 +284,7 @@
- #define X86_FEATURE_AMD_IBPB		(13*32+12) /* "" Indirect Branch Prediction Barrier */
- #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
- #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_AMD_STIBP_ALWAYS_ON	(13*32+17) /* "" Single Thread Indirect Branch Predictors always-on preferred */
- #define X86_FEATURE_AMD_SSBD		(13*32+24) /* "" Speculative Store Bypass Disable */
- #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
- #define X86_FEATURE_AMD_SSB_NO		(13*32+26) /* "" Speculative Store Bypass is fixed in hardware. */
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 032b6009baab..dad12b767ba0 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -232,6 +232,7 @@ enum spectre_v2_mitigation {
- enum spectre_v2_user_mitigation {
- 	SPECTRE_V2_USER_NONE,
- 	SPECTRE_V2_USER_STRICT,
-+	SPECTRE_V2_USER_STRICT_PREFERRED,
- 	SPECTRE_V2_USER_PRCTL,
- 	SPECTRE_V2_USER_SECCOMP,
- };
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 58689ac64440..77bf22546ddd 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -262,10 +262,11 @@ enum spectre_v2_user_cmd {
- };
- 
- static const char * const spectre_v2_user_strings[] = {
--	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
--	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
--	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
--	[SPECTRE_V2_USER_SECCOMP]	= "User space: Mitigation: STIBP via seccomp and prctl",
-+	[SPECTRE_V2_USER_NONE]			= "User space: Vulnerable",
-+	[SPECTRE_V2_USER_STRICT]		= "User space: Mitigation: STIBP protection",
-+	[SPECTRE_V2_USER_STRICT_PREFERRED]	= "User space: Mitigation: STIBP always-on protection",
-+	[SPECTRE_V2_USER_PRCTL]			= "User space: Mitigation: STIBP via prctl",
-+	[SPECTRE_V2_USER_SECCOMP]		= "User space: Mitigation: STIBP via seccomp and prctl",
- };
- 
- static const struct {
-@@ -355,6 +356,15 @@ spectre_v2_user_select_mitigation(enum spectre_v2_mitigation_cmd v2_cmd)
- 		break;
- 	}
- 
-+	/*
-+	 * At this point, an STIBP mode other than "off" has been set.
-+	 * If STIBP support is not being forced, check if STIBP always-on
-+	 * is preferred.
-+	 */
-+	if (mode != SPECTRE_V2_USER_STRICT &&
-+	    boot_cpu_has(X86_FEATURE_AMD_STIBP_ALWAYS_ON))
-+		mode = SPECTRE_V2_USER_STRICT_PREFERRED;
-+
- 	/* Initialize Indirect Branch Prediction Barrier */
- 	if (boot_cpu_has(X86_FEATURE_IBPB)) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
-@@ -610,6 +620,7 @@ void arch_smt_update(void)
- 	case SPECTRE_V2_USER_NONE:
- 		break;
- 	case SPECTRE_V2_USER_STRICT:
-+	case SPECTRE_V2_USER_STRICT_PREFERRED:
- 		update_stibp_strict();
- 		break;
- 	case SPECTRE_V2_USER_PRCTL:
-@@ -812,7 +823,8 @@ static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
- 		 * Indirect branch speculation is always disabled in strict
- 		 * mode.
- 		 */
--		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
-+		if (spectre_v2_user == SPECTRE_V2_USER_STRICT ||
-+		    spectre_v2_user == SPECTRE_V2_USER_STRICT_PREFERRED)
- 			return -EPERM;
- 		task_clear_spec_ib_disable(task);
- 		task_update_spec_tif(task);
-@@ -825,7 +837,8 @@ static int ib_prctl_set(struct task_struct *task, unsigned long ctrl)
- 		 */
- 		if (spectre_v2_user == SPECTRE_V2_USER_NONE)
- 			return -EPERM;
--		if (spectre_v2_user == SPECTRE_V2_USER_STRICT)
-+		if (spectre_v2_user == SPECTRE_V2_USER_STRICT ||
-+		    spectre_v2_user == SPECTRE_V2_USER_STRICT_PREFERRED)
- 			return 0;
- 		task_set_spec_ib_disable(task);
- 		if (ctrl == PR_SPEC_FORCE_DISABLE)
-@@ -896,6 +909,7 @@ static int ib_prctl_get(struct task_struct *task)
- 			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
- 		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
- 	case SPECTRE_V2_USER_STRICT:
-+	case SPECTRE_V2_USER_STRICT_PREFERRED:
- 		return PR_SPEC_DISABLE;
- 	default:
- 		return PR_SPEC_NOT_AFFECTED;
-@@ -1089,6 +1103,8 @@ static char *stibp_state(void)
- 		return ", STIBP: disabled";
- 	case SPECTRE_V2_USER_STRICT:
- 		return ", STIBP: forced";
-+	case SPECTRE_V2_USER_STRICT_PREFERRED:
-+		return ", STIBP: always-on";
- 	case SPECTRE_V2_USER_PRCTL:
- 	case SPECTRE_V2_USER_SECCOMP:
- 		if (static_key_enabled(&switch_to_cond_stibp))
+Indeed, but that doesn't mean we need to limit the potential of fuzzing
+because "it's not testing". It can be used to check for regressions,
+too, especially in these cases.
+
+> https://twitter.com/dvyukov/status/1074719682962358272
+
+Now, I'm extremely thankful for the work you're doing and especially
+for finding this subtle condition with syzbot, but this is quite
+inaccurate. To be exposed to this issue, the user would need to
+have the fou module loaded (it won't autoload), which is used quite
+rarely, and, on top of that, have a UDP tunnel configured. It wouldn't
+have been the kind of "evil packet crashes the internet" scenario you
+were dreaming of ;)
+
+-- 
+Stefano
