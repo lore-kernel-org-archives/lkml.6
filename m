@@ -2,189 +2,91 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9E2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF99DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC77214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ccWKYLtG"
+	by mail.kernel.org (Postfix) with ESMTP id B552720874
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbeLRJGf (ORCPT
+        id S1726509AbeLRJHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:06:35 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46655 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbeLRJGe (ORCPT
+        Tue, 18 Dec 2018 04:07:40 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40216 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbeLRJHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:06:34 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so7511805ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4yTV4X8CkEIiOkt+tdSxJrLNju+SrdagLpO1CMXTxP4=;
-        b=ccWKYLtGlWLvpkdaXxGtTR5xuXYyVmHwy0bt2P/DnBDwF2jM+msDmnBZom0ROAxvrB
-         o51hEdJAE3uXCCj6s/bNhmsBKYIvooGdzQA3ratqAFImk+dJmhZNdlCxi9akSYRgoSUl
-         I0ipY0rMojxaj+ejn98iF1oaoF1N9w13mwACs=
+        Tue, 18 Dec 2018 04:07:40 -0500
+Received: by mail-qt1-f196.google.com with SMTP id k12so17326178qtf.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:07:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4yTV4X8CkEIiOkt+tdSxJrLNju+SrdagLpO1CMXTxP4=;
-        b=IFBFX3V1zpRzxLuTIEeA8ynV2NaERKV+ptuF3uIQZYk4zwoXWjrvYD99ZFXqSVpqeG
-         rczfblD6cUX+Xt9ttdkupbKVN3G7cfxDH3WrK2/nzUAC+kvuKEiQrOfzFXn0DEDU47ZM
-         vfg4eL4xo6h8jFHnsMzZlGCy9S87sUtHdOeGXOKRhrB2b8g8a7fnYbrA7csaFOZIwbFR
-         AJUEdAztZi5VXLUWagya7vLO8GHcsLvAc6WpEAXvwDDKFRP6NgbsVLcduV6IgN3zu01+
-         ObRqOpnl2Qc4Wqmf2XrVoRZ+XL+NJ/pzLmA34ftnfHsNknxXasSBrfzjwrDFCVC9iehb
-         u2uA==
-X-Gm-Message-State: AA+aEWYgJi9Uo8FYWfpT2JhEt+ra9iLbz+tVSy5IYv8cJVTNFxjyB81b
-        fVSgDnJH6H+h9S4ZdzlOifoLpcRbcAU=
-X-Google-Smtp-Source: AFSGD/XHXjiQ6E2Yhc4deGZrCymQfyljuTUqvdqK8zdCxGhZyWZDR3bOYOwDXGVAYk7UabyW6SrfIA==
-X-Received: by 2002:a17:902:4523:: with SMTP id m32mr15614593pld.53.1545123993221;
-        Tue, 18 Dec 2018 01:06:33 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id y71sm31698299pfi.123.2018.12.18.01.06.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 01:06:32 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [RESEND v2] mfd: cros_ec: Add commands to control codec
-Date:   Tue, 18 Dec 2018 17:06:26 +0800
-Message-Id: <20181218090626.46625-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pJchzieKvEw2q1jiD8rRlxKTlS2uWfldtdARgrlnAhI=;
+        b=Um6SR2Y3og2A9fBCtxXjjvai7NJo2oDk2q+P8FQ+eTGd+NJnz3OjhihwuTFTVyWdIU
+         TIMl+k9pcniCvHBmA4n1bIDGnosRW4BDKnDqD6QBs3YuQrRI1b1q5t+SN+vGeyeKPN+z
+         onh0hWkHcyqkNh6gIejI91DgwHBf+SMneHr+wb8SJIYSahq90iawCCoGxeM/Ws6gwDNC
+         /rL7P0QDuQDrjfubwUvYBN1seIuR2huq0BXdVPmBiKnLMQ7nHcH7wL2RxBsxHovgsLAU
+         Sz+pbO7mHmr8OWT6JSusrvLuFFbfcUiNIIcL9zG8uH6nwR4EMowLJbvgrr4dV30EdWhr
+         l6Sg==
+X-Gm-Message-State: AA+aEWZPZQLNOFJD14LBi9UcY1ms6qMlaW2oiriMGuGF9djm9Y8TLLDq
+        i4Qm5wePvujMMBFfYrYWYeIzUQ2/hTa1DnjW3xI=
+X-Google-Smtp-Source: AFSGD/VJ5OS7xGiWkpkncCzaZ7+vZyd8T37eKvY6Ai39wmaQ9C9l13wtX94ZlX9DDuSrKBIEL0vqlT8q5If0F5VbO6A=
+X-Received: by 2002:a05:6214:1087:: with SMTP id o7mr16475667qvr.115.1545124058264;
+ Tue, 18 Dec 2018 01:07:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181213122910.24193-1-anders.roxell@linaro.org>
+ <20181213122910.24193-2-anders.roxell@linaro.org> <20181213124042.GG10669@sirena.org.uk>
+ <CADYN=9KBpcUSaU_P_sZuhin60huQUBUT-H-FedH=fXu7a_7EWQ@mail.gmail.com>
+In-Reply-To: <CADYN=9KBpcUSaU_P_sZuhin60huQUBUT-H-FedH=fXu7a_7EWQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Dec 2018 10:07:21 +0100
+Message-ID: <CAK8P3a1qn2SOsk_Uo_VDGSkR6OsDkqzm0Rbo+5F5Pc1WA3tJzQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] config: provide a fragment to enable gdb for qemu
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add EC host commands to control codec on EC.
+On Tue, Dec 18, 2018 at 9:45 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> On Thu, 13 Dec 2018 at 13:40, Mark Brown <broonie@kernel.org> wrote:
+> >
+> > On Thu, Dec 13, 2018 at 01:29:08PM +0100, Anders Roxell wrote:
+> > > Adding a fragment to make it easier to know what options is needed to
+> > > build a kernel to get the that you can debug in qemu.
+> >
+> > > @@ -0,0 +1,7 @@
+> > > +# Enable debug info for gdb
+> > > +# CONFIG_COMPILE_TEST is not set
+> > > +CONFIG_DEBUG_INFO=y
+> > > +CONFIG_GDB_SCRIPTS=y
+> >
+> > Is this specifically for qemu or is this just good for debugging with
+> > GDB in general (eg, via JTAG)?
+>
+> I haven't tried, and I don't have a JTAG so I could test it =/
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+The DEBUG_INFO=y and (as a dependency for that) CONFIG_COMPILE_TEST
+are definitely needed for all GDB operation. I would assume that
+the scripts also work with any other gdb environment, but haven't tried either.
 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 9a9631f0559e2..fc91082d4c357 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -2790,6 +2790,100 @@ struct ec_response_battery_vendor_param {
- 	uint32_t value;
- } __packed;
- 
-+/*****************************************************************************/
-+/* Commands for I2S recording on audio codec. */
-+
-+#define EC_CMD_CODEC_I2S 0x00BC
-+
-+enum ec_codec_i2s_subcmd {
-+	EC_CODEC_SET_SAMPLE_DEPTH = 0x0,
-+	EC_CODEC_SET_GAIN = 0x1,
-+	EC_CODEC_GET_GAIN = 0x2,
-+	EC_CODEC_I2S_ENABLE = 0x3,
-+	EC_CODEC_I2S_SET_CONFIG = 0x4,
-+	EC_CODEC_I2S_SET_TDM_CONFIG = 0x5,
-+	EC_CODEC_I2S_SET_BCLK = 0x6,
-+};
-+
-+enum ec_sample_depth_value {
-+	EC_CODEC_SAMPLE_DEPTH_16 = 0,
-+	EC_CODEC_SAMPLE_DEPTH_24 = 1,
-+};
-+
-+enum ec_i2s_config {
-+	EC_DAI_FMT_I2S = 0,
-+	EC_DAI_FMT_RIGHT_J = 1,
-+	EC_DAI_FMT_LEFT_J = 2,
-+	EC_DAI_FMT_PCM_A = 3,
-+	EC_DAI_FMT_PCM_B = 4,
-+	EC_DAI_FMT_PCM_TDM = 5,
-+};
-+
-+struct ec_param_codec_i2s {
-+	/*
-+	 * enum ec_codec_i2s_subcmd
-+	 */
-+	uint8_t cmd;
-+	union {
-+		/*
-+		 * EC_CODEC_SET_SAMPLE_DEPTH
-+		 * Value should be one of ec_sample_depth_value.
-+		 */
-+		uint8_t depth;
-+
-+		/*
-+		 * EC_CODEC_SET_GAIN
-+		 * Value should be 0~43 for both channels.
-+		 */
-+		struct ec_param_codec_i2s_set_gain {
-+			uint8_t left;
-+			uint8_t right;
-+		} __packed gain;
-+
-+		/*
-+		 * EC_CODEC_I2S_ENABLE
-+		 * 1 to enable, 0 to disable.
-+		 */
-+		uint8_t i2s_enable;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_COFNIG
-+		 * Value should be one of ec_i2s_config.
-+		 */
-+		uint8_t i2s_config;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_TDM_CONFIG
-+		 * Value should be one of ec_i2s_config.
-+		 */
-+		struct ec_param_codec_i2s_tdm {
-+			/*
-+			 * 0 to 496
-+			 */
-+			int16_t ch0_delay;
-+			/*
-+			 * -1 to 496
-+			 */
-+			int16_t ch1_delay;
-+			uint8_t adjacent_to_ch0;
-+			uint8_t adjacent_to_ch1;
-+		} __packed tdm_param;
-+
-+		/*
-+		 * EC_CODEC_I2S_SET_BCLK
-+		 */
-+		uint32_t bclk;
-+	};
-+} __packed;
-+
-+/*
-+ * For subcommand EC_CODEC_GET_GAIN.
-+ */
-+struct ec_response_codec_gain {
-+	uint8_t left;
-+	uint8_t right;
-+} __packed;
-+
- /*****************************************************************************/
- /* System commands */
- 
--- 
-2.20.1.415.g653613c723-goog
+For CONFIG_RANDOMIZE_BASE, I'm not actually sure if that helps or
+not. I think I originally suggested to Anders to turn that off when he
+was analyzing a bug, but I don't know if it helped or if it works just
+as well without that.
 
+        Arnd
