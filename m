@@ -2,95 +2,102 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD59C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B790DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B86120873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:02:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzf6cWMS"
+	by mail.kernel.org (Postfix) with ESMTP id 8EF5B21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeLROCN (ORCPT
+        id S1726914AbeLROCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:02:13 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41322 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbeLROCM (ORCPT
+        Tue, 18 Dec 2018 09:02:32 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50473 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeLROCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:02:12 -0500
-Received: by mail-pg1-f193.google.com with SMTP id m1so6230471pgq.8
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 06:02:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TtIAwiyVyPrAiLTiS34Zwc9UngKAIw5vQ62s9hPfmDI=;
-        b=bzf6cWMSpqEOchVKg9bgM5K55aM5y6wIvBsQEmIbGq0sFdAZJCQ5rY8RKfkXknsFD4
-         PF+fsj7ETVjYkjomWo0rVRo83mIqMAYqJwJ9sCd3cWIro7vhvx0KJKPUE8lidwj8eNhx
-         ClbwpmnWUx3y5vwqS9t33pt8xtaczsoAAVC5v2+HMjCsTsSiKlJ3Ti/rx01LsbIqb6S6
-         jh5qoPdmzBO4SR67Hm67/aWeCs2GteBkNXott3lPZYPxzfs8wMTB9E89HEYKTrAlItKC
-         NtNryLpV5py3aO647P2KLa46fmk/7z50ueax3n0sVsIsBuJ0JJWh3HkF6MqzZ1vDdnDR
-         K5pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TtIAwiyVyPrAiLTiS34Zwc9UngKAIw5vQ62s9hPfmDI=;
-        b=dZzJDEqPuW6b7Rr4CoMyxG+Fp22KmWwzcAU3e6iUurtph1SbFcMdd45vN6jApjEMCO
-         /hPAEu+bq/kpCrM5DMUdDYt0oOBuRrdQWpvJhYPgXhMwofbOvzSFyQ0ym9YxzlVK+LoA
-         MBlMCKFN12UiBIkf1sFjdlR8Lj5D3ugPNCghaTxFCGJBQKIZ+4ZqK3r2wx1jJRGBVald
-         ghtDQCgTVDI4dXvac/3ZekDtg7aOQW2qEcHzJtdsrGFzqjsnq0WsZHp8s/hSP0pQ9Bd3
-         aCK89JsuehlST0MEDg4dJ8w+xES8S0v12a6GnH3nxI5BkgOABDM106MHBrUFScYHRLLU
-         +aaA==
-X-Gm-Message-State: AA+aEWblxi991sRf/dqPiifeHv7xOzprdAjDFQIQDSmhQceb7xCD2gmu
-        cTG0AdKA8lU5njq5QHhnBOE=
-X-Google-Smtp-Source: AFSGD/V0H4Cq5vj/6uM3mElLNuwyHqF2hlM/PqgLBCXSC8mHT4eHsAeCzOY8OBpVp/bnHZBbGQ9quA==
-X-Received: by 2002:a62:33c1:: with SMTP id z184mr16632054pfz.104.1545141731808;
-        Tue, 18 Dec 2018 06:02:11 -0800 (PST)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id j70sm21117770pfc.43.2018.12.18.06.02.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 06:02:10 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Tue, 18 Dec 2018 23:02:07 +0900
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181218140207.GC665@tigerII.localdomain>
-References: <20181218091842.4996-1-sergey.senozhatsky@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218091842.4996-1-sergey.senozhatsky@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Tue, 18 Dec 2018 09:02:32 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gZFx6-0002gJ-RI; Tue, 18 Dec 2018 15:02:28 +0100
+Message-ID: <1545141748.5874.27.camel@pengutronix.de>
+Subject: Re: [PATCH] clk: imx: add CLK_GET_RATE_NOCACHE flag for i.MX8M
+ composite clock
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 18 Dec 2018 15:02:28 +0100
+In-Reply-To: <25BEFDBA-5A09-42E9-A4E3-AC15EF4B1886@nxp.com>
+References: <1545101396-16335-1-git-send-email-Anson.Huang@nxp.com>
+         <CAOMZO5BX6PWBp_FmTsMkZJEsKpf+=N6Zyn8P_+ziis-fKR37Ng@mail.gmail.com>
+         ,<1545129634.5874.20.camel@pengutronix.de>
+         <7E78DD25-BA90-4EBA-81B9-755CD89BD0BF@nxp.com>
+        ,<1545140504.5874.25.camel@pengutronix.de>
+         <25BEFDBA-5A09-42E9-A4E3-AC15EF4B1886@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/18/18 18:18), Sergey Senozhatsky wrote:
+Am Dienstag, den 18.12.2018, 13:53 +0000 schrieb Anson Huang:
+[...]
+> > 
+> > > Regarding about the over head, yes, the change in common composite
+> > > clock register has too many over head for other clocks, what if I
+> > > ONLY have dram core clock to pass the CLK_GET_RATE_NOCACHE flag to
+> > > register the composite clock?
+> > 
+> > IMHO marking clocks under TF-A control explicitly as nocache would be
+> > much more acceptable than doing it for every composite clock. This
+> > seems okay for a short term solution.
+> > 
+> > Still I think that whatever is causing the bus frequency scale to
+> > change should have a way to explicitly invalidate the clock cache for
+> > the affected clocks eventually.
 > 
-> I know that there is a "kernel.printk_devkmsg" interface; do we
-> expect every systemd-enabled distro to find that out and to tweak
-> kernel.printk_devkmsg
+> It is because the DDR PLL/clocks can only be changed with strict DDR
+> freq change flow, and it is done in TF-A, Linux kernel can NOT touch
+> it in runtime, so we have to mark the child clock of DDR PLL to be
+> uncached, in V2 patch, I will just add the flag for the DDR PLL child
+> clocks to be a shorten solution, should be only very few ones, hope
+> it is acceptable, thanks.
 
-My bad, this should be corrected. I thought that user space can
-adjust ratelimit, via file->private_data->rs. This does not
-appear to be the case.
+I fully understand why you are doing the frequency change in TF-A and I
+agree with the reasoning to do so. I also think that using uncached for
+the few clocks under TF-A control is fine for now.
 
-So the question is - is it time to change the default devkmsg
-ratelimit?
+But if/when the bus frequency scaling is actually implemented for
+upstream I think the flow should look something like that:
 
-	-ss
+1. Bus freq scaling driver determines that a change is necessary
+2. Scaling driver calls into TF-A to do the change
+3. TF-A reconfigures clock rates
+4. Scaling driver calls into clock driver to signal that a clock change
+might have happened
+5. Clock driver invalidates and recalculates cached values for the
+affected clocks
+
+Regards,
+Lucas
