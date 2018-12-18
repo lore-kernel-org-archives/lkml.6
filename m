@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A700C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA7AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73AE218A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1AF20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545165244;
-	bh=Cv7605pWXCvJsuctaI+lgj4tbMu+qY6gKJB6Y4pbEU8=;
+	s=default; t=1545165247;
+	bh=mIjDOT5VHWi0rziTf3IcrsxCHBTjYTQtYKUL3LJEddk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=e6FEkcZFynP24/cbWwE5WhOH4wZmEPuszXpJSn7Q1mdyQXCqDZXNU9ZUZj7q2eYf2
-	 I4LFsc+1LcVs2RTRqkW4QplqUXFaiJW1LQi7uOTSZ58f5L6u1+cZRk+Dt39CezhszM
-	 /BQTUFOdprTEtZqFpVJBAWiIZomizTTP6N9aoCBI=
+	b=AcLHuTVoy19JqSC1TUtMQ+d/Qa0iNWB2v3V4pS26f/PNHExh/rrY3KvYvCMaCiBmP
+	 1vdXepkUOZnJx1gPxxtPkq1ycB2V9ifCbBlnlK6xPH+UziqDgz+bp/6ce9PkHu1OgL
+	 0KAecn7cPACpSBN6v6sOEDyoNULRsrxKN1LanaeU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbeLRUeC (ORCPT
+        id S1727524AbeLRUeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:34:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55346 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 15:34:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727400AbeLRUeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:34:00 -0500
+        id S1727476AbeLRUeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:34:02 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22043218AC;
-        Tue, 18 Dec 2018 20:33:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7A9721871;
+        Tue, 18 Dec 2018 20:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545165240;
-        bh=Cv7605pWXCvJsuctaI+lgj4tbMu+qY6gKJB6Y4pbEU8=;
+        s=default; t=1545165241;
+        bh=mIjDOT5VHWi0rziTf3IcrsxCHBTjYTQtYKUL3LJEddk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=HZzU9hYzMRY3qMWKYZXRCphig/Gx/i0I8k1Bmgx2Qa6e/rAei7S4oAdOawdXg/eQH
-         gWaHs1el3XQqkW+js88SE+Kbe0LmVO4VGl2uG8273i9hN5kfmReFFb1LJ+DQviovW+
-         AW27dcQCpxBnrEg33Rmc6Qx4aUFFE7mI8+LZAXCI=
+        b=E6AaQdgLc1TaoR0W3o7UgZ5n4YcFS+HRE2dgGxJDw7V7FbrjWzxjwngPt34TwQ8tX
+         6hNiG9+anm2Zv3ck1gmnnz5yAU7Ff/8EZDVoPkw7lMb7WFjobJULB//RF7Cm0xoKXv
+         A7M7z9Zanb9F7YoSSgjS8kM8t95KYRM0q/rSADrQ=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH 5/7] tracing: Use hist trigger's var_ref array to destroy var_refs
-Date:   Tue, 18 Dec 2018 14:33:24 -0600
-Message-Id: <fad1a164f0e257c158e70d6eadbf6c586e04b2a2.1545161087.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH 6/7] tracing: Remove hist trigger synth_var_refs
+Date:   Tue, 18 Dec 2018 14:33:25 -0600
+Message-Id: <b4d3470526b8f0426dcec125399dad9ad9b8589d.1545161087.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1545161087.git.tom.zanussi@linux.intel.com>
 References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
@@ -63,71 +63,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Since every var ref for a trigger has an entry in the var_ref[] array,
-use that to destroy the var_refs, instead of piecemeal via the field
-expressions.
-
-This allows us to avoid having to keep and treat differently separate
-lists for the action-related references, which future patches will
-remove.
+All var_refs are now handled uniformly and there's no reason to treat
+the synth_refs in a special way now, so remove them and associated
+functions.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- kernel/trace/trace_events_hist.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ kernel/trace/trace_events_hist.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 9d4cf7a8a95b..725d22f5372f 100644
+index 725d22f5372f..e66dd764e057 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -2193,6 +2193,15 @@ static int contains_operator(char *str)
- 	return field_op;
+@@ -279,8 +279,6 @@ struct hist_trigger_data {
+ 	struct action_data		*actions[HIST_ACTIONS_MAX];
+ 	unsigned int			n_actions;
+ 
+-	struct hist_field               *synth_var_refs[SYNTH_FIELDS_MAX];
+-	unsigned int                    n_synth_var_refs;
+ 	struct field_var		*field_vars[SYNTH_FIELDS_MAX];
+ 	unsigned int			n_field_vars;
+ 	unsigned int			n_field_var_str;
+@@ -3602,20 +3600,6 @@ static void save_field_var(struct hist_trigger_data *hist_data,
  }
  
-+static void __destroy_hist_field(struct hist_field *hist_field)
-+{
-+	kfree(hist_field->var.name);
-+	kfree(hist_field->name);
-+	kfree(hist_field->type);
-+
-+	kfree(hist_field);
-+}
-+
- static void destroy_hist_field(struct hist_field *hist_field,
- 			       unsigned int level)
- {
-@@ -2204,14 +2213,13 @@ static void destroy_hist_field(struct hist_field *hist_field,
- 	if (!hist_field)
- 		return;
  
-+	if (hist_field->flags & HIST_FIELD_FL_VAR_REF)
-+		return; /* var refs will be destroyed separately */
-+
- 	for (i = 0; i < HIST_FIELD_OPERANDS_MAX; i++)
- 		destroy_hist_field(hist_field->operands[i], level + 1);
- 
--	kfree(hist_field->var.name);
--	kfree(hist_field->name);
--	kfree(hist_field->type);
+-static void destroy_synth_var_refs(struct hist_trigger_data *hist_data)
+-{
+-	unsigned int i;
 -
--	kfree(hist_field);
-+	__destroy_hist_field(hist_field);
- }
+-	for (i = 0; i < hist_data->n_synth_var_refs; i++)
+-		destroy_hist_field(hist_data->synth_var_refs[i], 0);
+-}
+-
+-static void save_synth_var_ref(struct hist_trigger_data *hist_data,
+-			 struct hist_field *var_ref)
+-{
+-	hist_data->synth_var_refs[hist_data->n_synth_var_refs++] = var_ref;
+-}
+-
+ static int check_synth_field(struct synth_event *event,
+ 			     struct hist_field *hist_field,
+ 			     unsigned int field_pos)
+@@ -3775,7 +3759,6 @@ static int onmatch_create(struct hist_trigger_data *hist_data,
+ 				goto err;
+ 			}
  
- static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
-@@ -2338,6 +2346,12 @@ static void destroy_hist_fields(struct hist_trigger_data *hist_data)
- 			hist_data->fields[i] = NULL;
- 		}
- 	}
-+
-+	for (i = 0; i < hist_data->n_var_refs; i++) {
-+		WARN_ON(!(hist_data->var_refs[i]->flags & HIST_FIELD_FL_VAR_REF));
-+		__destroy_hist_field(hist_data->var_refs[i]);
-+		hist_data->var_refs[i] = NULL;
-+	}
- }
+-			save_synth_var_ref(hist_data, var_ref);
+ 			field_pos++;
+ 			kfree(p);
+ 			continue;
+@@ -4519,7 +4502,6 @@ static void destroy_hist_data(struct hist_trigger_data *hist_data)
+ 	destroy_actions(hist_data);
+ 	destroy_field_vars(hist_data);
+ 	destroy_field_var_hists(hist_data);
+-	destroy_synth_var_refs(hist_data);
  
- static int init_var_ref(struct hist_field *ref_field,
+ 	kfree(hist_data);
+ }
 -- 
 2.14.1
 
