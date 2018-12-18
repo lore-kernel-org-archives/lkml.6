@@ -3,146 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C71C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965FBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8407D21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545148111;
-	bh=mubsLf6SJPKKrE+HQ9JmI3lcCtzqTozKZDL86VdW4xw=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=dAlI55YEqSjcEZjrWiVTu55A/D6zjIkjeu6DKcz7qESXR6fFFQhHb5Pc26MOQ4IHW
-	 KaaBU0PeeJoO5gMD9Kos2Xupm+XwNbD4nY46WgneGCkBtsk4xx01TIZvdeaYjFP2WR
-	 fUCDv6hU+Q9OneqMoh3RYeeNhOuRTvHstCYYe7TE=
+	by mail.kernel.org (Postfix) with ESMTP id 63F2821873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:52:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dPwtXqhg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeLRPsa (ORCPT
+        id S1726899AbeLRPwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:48:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726792AbeLRPsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:48:30 -0500
-Received: from [192.168.1.10] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CEE521852;
-        Tue, 18 Dec 2018 15:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545148109;
-        bh=mubsLf6SJPKKrE+HQ9JmI3lcCtzqTozKZDL86VdW4xw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lrdK1bi3N1jmhgQY/zYD+z4YhohtvZQjV3TgsY9zWiguEIqXoyVgh2Rd7e/mQGi+6
-         P7gJaSM2XnwChLyLoU28N/h33fjGj2Kex9b043jykmI6hHrtsG8GJyPCT6x9xySX+g
-         4cR9zjSIxhrw57DOl5mBzrPYSxfpz/lSgh2zHLwQ=
-Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com>
- <20181204193416.24661-1-sboyd@kernel.org>
- <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
- <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org>
- <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
- <9af950b2-036c-6afd-e31d-7eb2799e56c9@kernel.org>
- <154509808233.19322.16971841121259793017@swboyd.mtv.corp.google.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <69588a30-d8ee-2572-6c19-0516a4276b4d@kernel.org>
-Date:   Tue, 18 Dec 2018 09:48:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 18 Dec 2018 10:52:14 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56042 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeLRPwN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:52:13 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBIFpIWd125353;
+        Tue, 18 Dec 2018 09:51:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1545148278;
+        bh=PqxrPyIuAqdAT+svYzC+6UTzwE5NisjnkqGf6S7SbYE=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=dPwtXqhgYXE+rMr8sznG2YesrDAsst0kWWD7Wjo28uZXpGEGrKm0vHJk+d5PFnpUe
+         RtcS6M+Qr43bgztWkRFTNqj67YS+nikqkVbsdqWuiXFjf6Xk8BA5c8A/w5Lu93gs+y
+         aakGkO8qRd1RqFFfLOFP2iLbLRkHPKXVL8BtABZA=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBIFpIua033006
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Dec 2018 09:51:18 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 18
+ Dec 2018 09:51:17 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 18 Dec 2018 09:51:17 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBIFpDXY031387;
+        Tue, 18 Dec 2018 09:51:13 -0600
+Subject: Re: [PATCH 05/16] remoteproc/pru: Add pru-specific debugfs support
+To:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>, Mark Brown <broonie@kernel.org>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-6-git-send-email-rogerq@ti.com>
+ <d0e227e3-39dc-dfc8-b94c-3d9d072f6562@lechnology.com>
+ <5BFFBCAC.9000004@ti.com>
+CC:     <tony@atomide.com>, <robh+dt@kernel.org>, <bcousson@baylibre.com>,
+        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C191770.9090804@ti.com>
+Date:   Tue, 18 Dec 2018 17:51:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <154509808233.19322.16971841121259793017@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5BFFBCAC.9000004@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++Mark
 
+David,
 
-On 12/17/18 7:54 PM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2018-12-06 07:16:47)
->>
->>
->> On 12/5/18 9:55 AM, Stephen Boyd wrote:
->>> Quoting Dinh Nguyen (2018-12-05 07:17:41)
->>>> Hi Stephen,
->>>>
->>>> On 12/5/18 1:17 AM, Stephen Boyd wrote:
->>>>> (Adding Dinh's korg email)
->>>>>
->>>>> I also wonder if this driver is even used anymore or maybe we can delete
->>>>> it?
->>>>>
->>>>
->>>> The armv7 SoCFPGA platforms are using this driver.
->>>>
+On 29/11/18 12:17, Roger Quadros wrote:
+> On 27/11/18 00:37, David Lechner wrote:
+>> On 11/26/18 1:52 AM, Roger Quadros wrote:
+>>> From: Suman Anna <s-anna@ti.com>
 >>>
->>> Ok and those platforms are booting in kernelci.org as
->>> https://kernelci.org/boot/socfpga_cyclone5_de0_sockit/ perhaps?
+>>> The remoteproc core creates certain standard debugfs entries,
+>>> that does not give a whole lot of useful information for the
+>>> PRUs. The PRU remoteproc driver is enhanced to add additional
+>>> debugfs entries for PRU. These will be auto-cleaned up when
+>>> the parent rproc debug directory is removed.
+>>>
+>>> The enhanced debugfs support adds two new entries: 'regs' and
+>>> 'single_step'. The 'regs' dumps out the useful CTRL sub-module
+>>> registers as well as each of the 32 GPREGs and CT_REGs registers.
+>>> The GPREGs and CT_REGs though are printed only when the PRU is
+>>> halted and accessible as per the IP design.
 >>>
 >>
->> Yes that's right.
+>> If the driver used regmap to access the CTRL I/O memory, then
+>> 'regs' wouldn't be needed since regmap already does debugfs.
 >>
 > 
-> Ok. Dinh, can you review this patch? Or test it out? Or do I need to get
-> someone in kernelci to try it out?
+> ok, we could split out CTRL from this and use regmap.
 > 
 
-Just tested on an Arria5 board, feel free to add:
+I was thinking of using regmap for both control and debug
+but regmap_mmio only supports one iomap even though it supports
+multiple ranges.
 
-Tested-by: Dinh Nguyen <dinguyen@kernel.org>
+What can we do here?
 
-Thanks,
-Dinh
+The control and debug regions even though separate are right
+next to each other
+
+reg = <0x34000 0x3000>,
+	<0x22000 0x400>,
+	<0x22400 0x100>;
+reg-names = "iram", "control", "debug";
+
+We could combine control and debug into one iomap and use
+2 regmap ranges. But this is really working around the
+regmap_mmio limitation of not being able to use more than one ioremaps.
+
+Mark, any suggestions?
+
+Is it meaningful to support __devm_regmap_init_mmio_clk()
+with separate iomem regions for the ranges?
+
+cheers,
+-roger
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
