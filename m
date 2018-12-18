@@ -2,111 +2,119 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9125FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30986C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F72F2184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1C9C217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:46:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DNE2olsz"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="acARrZ8S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbeLRKpj (ORCPT
+        id S1726619AbeLRKqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:45:39 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40040 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRKpi (ORCPT
+        Tue, 18 Dec 2018 05:46:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49520 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeLRKqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:45:38 -0500
+        Tue, 18 Dec 2018 05:46:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lHWQL5ZkkZOHZm9RFneFu3rdbyqynYoSp+SPVhSSX/c=; b=DNE2olszgXnx60fA2Bvm2RYpY
-        QJqTcKlCT3V6v6EugC5mEfj8zAfVfmnHLp+TaKsQqxW/sJHG7m4gabMVbXZ2jLMcLY5mMHU8XMK79
-        9//45ZtPtLHbnLFpMoyYgLN/jdIddpExzHPIQRiTAK6Urk4TteJf7EGc5C5QI1JIYm4xk=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:38318)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gZCsP-0005eW-7v; Tue, 18 Dec 2018 10:45:25 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gZCsH-0006Bp-Ry; Tue, 18 Dec 2018 10:45:18 +0000
-Date:   Tue, 18 Dec 2018 10:45:13 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        stefanr@s5r6.in-berlin.de, linux-mm@kvack.org,
-        linux1394-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 3/9] drivers/firewire/core-iso.c: Convert to use
- vm_insert_range
-Message-ID: <20181218104513.GM26090@n2100.armlinux.org.uk>
-References: <20181217202246.GA10500@jordon-HP-15-Notebook-PC>
+         bh=eVdR9lHYgwIxzuSNH4ypjLBCr5/5VTkW/iKHFipJKEw=; b=acARrZ8SMv7OG02VMWkIkr5Dd
+        /0APdno5I3UgmIndDgCVAu6y/HDffHq8/7LAe+BENcI5bUOt5NFlpAqo4Rxj+IRJ1LYjHxo2dHdx4
+        +XOc94/R7CtzYrhn9vscgao/MUV5O15SSwsLbTA0D9TNm6xoAnshjwKojdfeF6yZfjDC0eUMMjTrp
+        LCPr122DPJzkWwYPYtBh/OSgHxErOHaKJrkblvkOxCCHlGucpMi75hNn2QOm7xEMx9gnlKI+4be8B
+        0JRtOkmwpTvU1e5BR4IAJ3QT/7orXG6ETq/G5VuPpztkvixdW+D0DeXAtXb/FldnQxfAQpaN+/DUz
+        fZJ+jqrzg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gZCtL-0002gf-VC; Tue, 18 Dec 2018 10:46:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 378B320276AC4; Tue, 18 Dec 2018 11:46:22 +0100 (CET)
+Date:   Tue, 18 Dec 2018 11:46:22 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, lizefan@huawei.com,
+        Johannes Weiner <hannes@cmpxchg.org>, axboe@kernel.dk,
+        dennis@kernel.org, Dennis Zhou <dennisszhou@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Subject: Re: [PATCH 6/6] psi: introduce psi monitor
+Message-ID: <20181218104622.GB15430@hirez.programming.kicks-ass.net>
+References: <20181214171508.7791-1-surenb@google.com>
+ <20181214171508.7791-7-surenb@google.com>
+ <20181217162223.GD2218@hirez.programming.kicks-ass.net>
+ <CAJuCfpHGsDnE-eAHY1QnX949stA3cvNA=078q1swqVnz95aJfg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217202246.GA10500@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAJuCfpHGsDnE-eAHY1QnX949stA3cvNA=078q1swqVnz95aJfg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 01:52:46AM +0530, Souptick Joarder wrote:
-> Convert to use vm_insert_range to map range of kernel memory
-> to user vma.
+On Mon, Dec 17, 2018 at 05:21:05PM -0800, Suren Baghdasaryan wrote:
+> On Mon, Dec 17, 2018 at 8:22 AM Peter Zijlstra <peterz@infradead.org> wrote:
+
+> > How well has this thing been fuzzed? Custom string parser, yay!
 > 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  drivers/firewire/core-iso.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-> index 35e784c..7bf28bb 100644
-> --- a/drivers/firewire/core-iso.c
-> +++ b/drivers/firewire/core-iso.c
-> @@ -107,19 +107,8 @@ int fw_iso_buffer_init(struct fw_iso_buffer *buffer, struct fw_card *card,
->  int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
->  			  struct vm_area_struct *vma)
->  {
-> -	unsigned long uaddr;
-> -	int i, err;
-> -
-> -	uaddr = vma->vm_start;
-> -	for (i = 0; i < buffer->page_count; i++) {
-> -		err = vm_insert_page(vma, uaddr, buffer->pages[i]);
-> -		if (err)
-> -			return err;
-> -
-> -		uaddr += PAGE_SIZE;
-> -	}
-> -
-> -	return 0;
-> +	return vm_insert_range(vma, vma->vm_start, buffer->pages,
-> +				buffer->page_count);
+> Honestly, not much. Normal cases and some obvious corner cases. Will
+> check if I can use some fuzzer to get more coverage or will write a
+> script.
+> I'm not thrilled about writing a custom parser, so if there is a
+> better way to handle this please advise.
 
-This looks functionally equivalent.  Note that if we go with my
-proposal to your patch 4, that would cause an issue for this
-implementation.
+The grammar seems fairly simple, something like:
 
-Maybe we need two functions, but that then causes problems with
-which function should be used (which makes it easy to get wrong.)
+  some-full = "some" | "full" ;
+  threshold-abs = integer ;
+  threshold-pct = integer, { "%" } ;
+  threshold = threshold-abs | threshold-pct ;
+  window = integer ;
+  trigger = some-full, space, threshold, space, window ;
 
-I'm beginning to wonder if the risks of causing regressions and
-introducing bugs is actually worth the effort of trying to clean
-this up.
+And that could even be expressed as two scanf formats:
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+ "%4s %u%% %u" , "%4s %u %u"
+
+which then gets your something like:
+
+  char type[5];
+
+  if (sscanf(input, "%4s %u%% %u", &type, &pct, &window) == 3) {
+  	// do pct thing
+  } else if (sscanf(intput, "%4s %u %u", &type, &thres, &window) == 3) {
+  	// do abs thing
+  } else return -EFAIL;
+
+  if (!strcmp(type, "some")) {
+  	// some
+  } else if (!strcmp(type, "full")) {
+  	// full
+  } else return -EFAIL;
+
+  // do more
+
+which seems like a lot less error prone. Alternatively you can use 4
+formats:
+
+  "some %u%% %u" "some %u %u"
+  "full %u%% %u" "full %u %u"
+
+and avoid the whole 'type' thing.
+
+
