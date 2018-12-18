@@ -2,206 +2,136 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B588C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC813C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E26E217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:14:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9821A217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:14:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbeLROOS convert rfc822-to-8bit (ORCPT
+        id S1727043AbeLROO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:14:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59842 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeLROOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:14:16 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DB5B4207D9; Tue, 18 Dec 2018 15:14:12 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5DBFD2072C;
-        Tue, 18 Dec 2018 15:14:12 +0100 (CET)
-Date:   Tue, 18 Dec 2018 15:14:12 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, sudeep.holla@arm.com,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
-Message-ID: <20181218151412.4341718d@xps13>
-In-Reply-To: <28619896.152T6JUIHS@aspire.rjw.lan>
-References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
-        <61805564.abKDZ2rVK7@aspire.rjw.lan>
-        <20181217155426.71058a03@xps13>
-        <28619896.152T6JUIHS@aspire.rjw.lan>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 18 Dec 2018 09:14:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57197 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeLROO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:14:26 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEE6lI2854560
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 06:14:06 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEE5Kg2854557;
+        Tue, 18 Dec 2018 06:14:05 -0800
+Date:   Tue, 18 Dec 2018 06:14:05 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-x4k0iuw7tt6mywsaguq6jfwu@git.kernel.org>
+Cc:     peterz@infradead.org, acme@redhat.com, namhyung@kernel.org,
+        jolsa@kernel.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Reply-To: namhyung@kernel.org, acme@redhat.com, peterz@infradead.org,
+          hpa@zytor.com, jolsa@kernel.org, mingo@kernel.org,
+          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, davem@davemloft.net
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf top: Move lost events warning to helpline
+Git-Commit-ID: 254de74cd14a2e64323caeffe653de0f390a4e65
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20181218141405.t4WbzBEc5qssQr-CWy7BHsdJ1hrEoRDWB6D9nuk6Rqc@z>
 
-Hi Rafael, Stephen & Bjorn,
+Commit-ID:  254de74cd14a2e64323caeffe653de0f390a4e65
+Gitweb:     https://git.kernel.org/tip/254de74cd14a2e64323caeffe653de0f390a4e65
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Mon, 5 Nov 2018 21:34:47 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 17 Dec 2018 14:57:45 -0300
 
-Glad to see you all in this thread that talks about:
-  * adding S2RAM support to a PCIe controller driver
-  * by taking into account that the PCI clock must be
-    {enabled before,disabled after} the PCI IP itself
-  * and that it requires some tweaking in the clock driver to
-    promote the suspend/resume() callbacks to the NOIRQ phase
-    (reference there [1]).
+perf top: Move lost events warning to helpline
 
-Stephen, Rafael answered here to your remark (in thread [1]) about the
-NOIRQ promotion (see below).
+We can't display the UI box saying that we are slow in the reader
+thread.  That will make 'perf top' even slower and the user even more
+angry ;-)
 
-Bjorn, there is a question for you below about the need for a PCI
-controller driver to suspend/resume in the NOIRQ phase.
+Move the UI box message from the reader thread to the UI thread and
+change it to a helpline, so there's no need to 'press any key'.
 
-Rafael, thanks for the explanation of what the PM core sequences really
-are, I would need you to confirm my approach that promotes the clock
-suspend/resume() callbacks to the NOIRQ phase, or otherwise give me
-pointers to an alternate solution (also below).
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: David S. Miller <davem@davemloft.net>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/n/tip-x4k0iuw7tt6mywsaguq6jfwu@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-top.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-
-"Rafael J. Wysocki" <rjw@rjwysocki.net> wrote on Tue, 18 Dec 2018
-11:54:43 +0100:
-
-> On Monday, December 17, 2018 3:54:26 PM CET Miquel Raynal wrote:
-> > Hi Rafael,
-> > 
-> > "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote on Thu, 13 Dec 2018
-> > 22:50:51 +0100:
-> >   
-> > > On Thursday, December 13, 2018 3:30:00 PM CET Miquel Raynal wrote:  
-> > > > Hi Lorenzo,
-> > > >     
-> > > > > > If that's really the case, then I can see how one device and it's
-> > > > > > children are suspended and the irq for it is disabled but the providing
-> > > > > > devices (clk, regulator, bus controller, etc.) are still fully active
-> > > > > > and not suspended but in fact completely usable and able to service
-> > > > > > interrupts. If that all makes sense, then I would answer the question
-> > > > > > with a definitive "yes it's all fine" because the clk consumer could be
-> > > > > > in the NOIRQ phase of its suspend but the clk provider wouldn't have
-> > > > > > even started suspending yet when clk_disable_unprepare() is called.      
-> > > > > 
-> > > > > That's a very good summary and address my concern, I still question this
-> > > > > patch correctness (and many others that carry out clk operations in S2R
-> > > > > NOIRQ phase), they may work but do not tell me they are rock solid given
-> > > > > your accurate summary above.    
-> > > > 
-> > > > I understand your concern but I don't see any alternative right now
-> > > > and a deep rework of the PM core to respect such dependency is not
-> > > > something that can be done in a reasonable amount of time.    
-> > > 
-> > > Maybe you don't need to rework anything. :-)
-> > > 
-> > > Have you considered using device links?  
-> > 
-> > Absolutely, yes :) I am actively working on it in parallel, you can
-> > check the third version there [1]. Stephen Boyd has a slightly
-> > different idea of how it should be done, I will propose a v4 this week,
-> > I can add you in copy if you are interested!
-> > 
-> > Anyway, there is one thing that is still missing:
-> > * Let's have device A that requests clock B
-> > * With the device link series, A is linked (as a child) to B.
-> > * A suspend/resume hooks handle things in the NOIRQ phase.  
-> 
-> Why do you need them to run in the "noirq" phase in the first place?
-
-I suppose (and I would like Bjorn to validate my thoughts) that this
-is a limitation imposed by the PCI core, as described in this
-commit:
-
-commit ab14d45ea58eae67c739e4ba01871cae7b6c4586
-Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Date:   Tue Mar 17 15:55:45 2015 +0100
-
-    PCI: mvebu: Add suspend/resume support
-
-    Add suspend/resume support for the mvebu PCIe host driver.  Without this
-    commit, the system will panic at resume time when PCIe devices are
-    connected.
-
-    Note that we have to use the ->suspend_noirq() and ->resume_noirq() hooks,
-    because at resume time, the PCI fixups are done at ->resume_noirq() time,
-    so the PCIe controller has to be ready at this point.
-
-    Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-    Acked-by: Jason Cooper <jason@lakedaemon.net>
-
-> 
-> > * B suspend/resume hooks handle things in the default phase.
-> > 
-> > What I expected during a suspend:
-> > 1/ ->suspend_noirq(device A)
-> > 2/ ->suspend(clock B)  
-> 
-> This expectation is not in agreement with the documented suspend code flow,
-> however.
-> 
-> Each phase of it is carried out for *all* devices completely before getting
-> to the next phase, "prepare" first, then "suspend", "suspend_late" and
-> "suspend_noirq", in this order.
-
-Thanks for clarifying, now it is clear and it also answers Stephen
-remark in the related thread [1]:
-
-        [PATCH 2/4] clk: mvebu: armada-37xx-periph: change
-        suspend/resume time
-
-Stephen, said:
-
-        "This seems sad that the PM core can't "priority boost" any
-        suspend/resume callbacks of a device that doesn't have noirq callbacks
-        when a device that depends on it from the device link perspective does
-        have noirq callbacks."
-
-> 
-> > Unfortunately, device links do not seem to enforce any priority between
-> > phases (default/late/noirq) and what happens is:
-> > 1/ ->suspend(B)
-> > 2/ ->suspend_noirq(A)
-> > Which has no sense in my case. Hence, I had to request the clock
-> > suspend/resume callbacks to be upgraded to the NOIRQ phase as well (I
-> > don't have a better solution for now). This is still under discussion
-> > in a thread you have been recently added to by Bjorn, see [2].
-> > 
-> > So when I told you I was not confident in "reworking the PM core to
-> > respect such dependency", this is what I was referring to. I am
-> > definitely ready to help, but I don't feel I can do it alone.
-> > 
-> > [1] https://www.spinics.net/lists/linux-clk/msg32824.html
-> > [2] https://marc.info/?l=linux-pm&m=154465198510735&w=2  
-> 
-> The rework you seem to be talking about is not possible, I'm afraid.
-> 
-
-Ok, then do you agree that the only solution in this case is what I
-propose in thread [1], ie. promoting the clock suspend/resume callbacks
-to the NOIRQ phase in order to ensure that they will run first (once
-device links will be merged too) ?
-
-[1] https://www.spinics.net/lists/linux-clk/msg32537.html
-
-
-Thank you very much for helping,
-Miquèl
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index c02ea537d5a7..9fe835ba0697 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -553,8 +553,6 @@ static void perf_top__sort_new_samples(void *arg)
+ 	struct perf_evsel *evsel = t->sym_evsel;
+ 	struct hists *hists;
+ 
+-	perf_top__reset_sample_counters(t);
+-
+ 	if (t->evlist->selected != NULL)
+ 		t->sym_evsel = t->evlist->selected;
+ 
+@@ -571,6 +569,11 @@ static void perf_top__sort_new_samples(void *arg)
+ 
+ 	hists__collapse_resort(hists, NULL);
+ 	perf_evsel__output_resort(evsel, NULL);
++
++	if (t->lost)
++		pr_warning("Too slow to read ring buffer (change period (-c/-F) or limit CPUs (-C)\n");
++
++	perf_top__reset_sample_counters(t);
+ }
+ 
+ static void *display_thread_tui(void *arg)
+@@ -908,10 +911,8 @@ static void perf_top__mmap_read(struct perf_top *top)
+ {
+ 	bool overwrite = top->record_opts.overwrite;
+ 	struct perf_evlist *evlist = top->evlist;
+-	unsigned long long start, end;
+ 	int i;
+ 
+-	start = rdclock();
+ 	if (overwrite)
+ 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_DATA_PENDING);
+ 
+@@ -922,13 +923,6 @@ static void perf_top__mmap_read(struct perf_top *top)
+ 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_EMPTY);
+ 		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_RUNNING);
+ 	}
+-	end = rdclock();
+-
+-	if ((end - start) > (unsigned long long)top->delay_secs * NSEC_PER_SEC)
+-		ui__warning("Too slow to read ring buffer.\n"
+-			    "Please try increasing the period (-c) or\n"
+-			    "decreasing the freq (-F) or\n"
+-			    "limiting the number of CPUs (-C)\n");
+ }
+ 
+ /*
