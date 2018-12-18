@@ -2,104 +2,81 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E528C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C170C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26FEB217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347ED21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbeLROGP (ORCPT
+        id S1726904AbeLROGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:06:15 -0500
-Received: from ozlabs.org ([203.11.71.1]:45499 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeLROGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:06:19 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:56144 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeLROGO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 09:06:14 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43K0Dg4LFBz9s3Z;
-        Wed, 19 Dec 2018 01:06:11 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
-In-Reply-To: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
-References: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
-Date:   Wed, 19 Dec 2018 01:06:11 +1100
-Message-ID: <87y38nrkto.fsf@concordia.ellerman.id.au>
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gZG0f-0002fd-Cp; Tue, 18 Dec 2018 15:06:09 +0100
+Date:   Tue, 18 Dec 2018 15:06:03 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ingo Molnar <mingo@kernel.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        yang.shi@linux.alibaba.com, Arnd Bergmann <arnd@arndb.de>,
+        sergey.senozhatsky.work@gmail.com, dima@arista.com, bp@alien8.de
+Subject: Re: [PATCH v2] debugobjects: Move printk out of db lock critical
+ sections
+In-Reply-To: <20181218135153.GA101957@gmail.com>
+Message-ID: <alpine.DEB.2.21.1812181504590.14031@nanos.tec.linutronix.de>
+References: <1544738377-3848-1-git-send-email-longman@redhat.com> <20181217181712.GA5114@gmail.com> <CAHk-=wjhqBYmzOyg7LPjvZhoXr3Tr+k9+caG2ScdCtZeO6oJcQ@mail.gmail.com> <20181218135153.GA101957@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Tue, 18 Dec 2018, Ingo Molnar wrote:
+> * Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > So thinking that early_printk is any better is just puting your head in 
+> > the sand.
+> 
+> ... at my own feet. ;-) Apologies to the syslog folks!
+> 
+> early_printk should still in principle be more robust: it tries to use as 
+> little (no) locking as possible, and definitely tries to do no 
+> allocations. It doesn't use syslog, nor any console locking, nor any 
+> regular console drivers.
+> 
+> Which results in usability trade-offs: trashed screen output, mangled 
+> lines. It's a superior debug facility when debugging particularly hairy 
+> low level code - which most of the kernel isn't where it turns into an 
+> inferior debugging method.
+> 
+> I thing a good solution would be PeterZ's force_early_printk boot knob, 
+> for those low level folks who absolutely want to rely on printk always 
+> working in some fashion.
+> 
+> ( I think it might even be possible to add a non-locked feature to 
+>   early-printk that actually adds the messages to the syslog ring-buffer 
+>   - without any notification/wakeup/serialization features. 'dmesg' is 
+>   handy and its lack is the primary usability disadvantage of 
+>   earlyprintk. )
 
-> This patch implements CONFIG_DEBUG_VIRTUAL to warn about
-> incorrect use of virt_to_phys() and page_to_phys()
+There is work in progress on that... Should be in your inbox early next
+year.
 
-This commit is breaking my p5020ds booting a 32-bit kernel with:
+Thanks,
 
-  smp: Bringing up secondary CPUs ...
-  __ioremap(): phys addr 0x7fef5000 is RAM lr ioremap_coherent
-  Unable to handle kernel paging request for data at address 0x00000000
-  Faulting instruction address: 0xc002e950
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  BE SMP NR_CPUS=24 CoreNet Generic
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9 #148
-  NIP:  c002e950 LR: c002eb20 CTR: 00000001
-  REGS: e804bd20 TRAP: 0300   Not tainted  (4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9)
-  MSR:  00021002 <CE,ME>  CR: 28004222  XER: 00000000
-  DEAR: 00000000 ESR: 00000000 
-  GPR00: c002eb20 e804bdd0 e8050000 00000000 00021002 00000000 00000050 00021002 
-  GPR08: 2d3f0000 00000001 00000000 00000004 24000842 00000000 c00026d0 00000000 
-  GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001 
-  GPR24: 00029002 7fef5140 30000000 00000000 00000000 00000040 00000001 00000000 
-  NIP [c002e950] smp_85xx_kick_cpu+0x120/0x410
-  LR [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410
-  Call Trace:
-  [e804bdd0] [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410 (unreliable)
-  [e804be20] [c0012e38] __cpu_up+0xc8/0x230
-  [e804be50] [c0040b34] bringup_cpu+0x34/0x110
-  [e804be70] [c00418a8] cpu_up+0x128/0x250
-  [e804beb0] [c0b84b14] smp_init+0xc4/0x10c
-  [e804bee0] [c0b75c1c] kernel_init_freeable+0xc8/0x250
-  [e804bf20] [c00026e8] kernel_init+0x18/0x120
-  [e804bf40] [c0011298] ret_from_kernel_thread+0x14/0x1c
-  Instruction dump:
-  7fb3e850 57bdd1be 2e1d0000 41d20250 57bd3032 393dffc0 7e6a9b78 5529d1be 
-  39290001 7d2903a6 60000000 60000000 <7c0050ac> 394a0040 4200fff8 7c0004ac 
-  ---[ end trace edcab2a1dfd5b38c ]---
-
-
-Which is obviously this hunk:
-
-> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-> index 4fc77a99c9bf..68d204a45cd0 100644
-> --- a/arch/powerpc/mm/pgtable_32.c
-> +++ b/arch/powerpc/mm/pgtable_32.c
-> @@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
->  	 * Don't allow anybody to remap normal RAM that we're using.
->  	 * mem_init() sets high_memory so only do the check after that.
->  	 */
-> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
-> +	if (slab_is_available() && virt_addr_valid(p) &&
->  	    page_is_ram(__phys_to_pfn(p))) {
->  		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
->  		       (unsigned long long)p, __builtin_return_address(0));
-
-
-I'll try and come up with a fix tomorrow.
-
-cheers
-
+	tglx
