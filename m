@@ -2,133 +2,112 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B279C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124A9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26009217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545152621;
-	bh=yMByLnbTs572AUCg1FGnvOxRCEM8PeAKFlDMq0heK7E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zxT3hxnGwIUzXCuWjQBOU2BxhGFtuOCi8hIWZLLdacryMASBswyAByVIlyVik21Sf
-	 4I7PhdgJyBcN3ueqKXS7aEMBKIX2vqR+Q5FetkHS1Bqt340IgbQPes2Xne8dP2JSuF
-	 sWmrSXP4uQ/AzjrAvqZ1OoBGTeYvqbwAJS1UUPJk=
+	by mail.kernel.org (Postfix) with ESMTP id DF52D218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeLRRDk (ORCPT
+        id S1727275AbeLRREJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:03:40 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37093 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbeLRRDj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:03:39 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y23so2543344oia.4;
-        Tue, 18 Dec 2018 09:03:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ta9uqWuRF9HSrsEjvZP6GAVGaMXo88p/gAL5HC+mQXo=;
-        b=hIDJDvVKXp2845n+jFdVVWsNKIZviVZL7HCc/ibrXOQQNhgrzjT+/J0sIL6gCV79W+
-         tSuzLad+f0CpKSvNuZoIgniy4BvVDu+dj/gbyIDeBXQV7t5NOV8LHk+0H4uxDpbDEBkR
-         9czUe/VhL+Ea7qrLXhlGpCf0fY69v2CFqBJWq34AdKKbSbYirjf8WUYBDmM3RU3g9CWQ
-         pBJi3kKlbufzUeTe9uQgiBqk72sHbA2JRF1pWFF2sQyo94m2RqXgzKPpL3i2zorAPlkD
-         5wNatZPeRJuqR4nwe0VLB+29MPNbfhu3lfi5hvF/XApnu4X4EGT/NcnsjRbh4m8cs7wN
-         C0mw==
-X-Gm-Message-State: AA+aEWbZb5hJH5mR/AcpPkahbNTuiWIgIYcftIvsT12kW3cObH29u3uF
-        2TuDHg2vM/eXVqBHUXASgQ==
-X-Google-Smtp-Source: AFSGD/WGnzZJl3xNK+uN6pH5BGDBuW/hYTBBahT9cml5Bl8vQ4LiheKqVB0L4yvzLWaSv7bIkay5bw==
-X-Received: by 2002:aca:6c4:: with SMTP id 187mr6746120oig.290.1545152618881;
-        Tue, 18 Dec 2018 09:03:38 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l6sm3102765otk.51.2018.12.18.09.03.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:03:38 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:03:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jacky Bai <ping.bai@nxp.com>
-Cc:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v2 1/2] Doc: bindings: Add binding doc for nxp system
- counter timer
-Message-ID: <20181218170337.GA3394@bogus>
-References: <1544592770-19996-1-git-send-email-ping.bai@nxp.com>
+        Tue, 18 Dec 2018 12:04:09 -0500
+Received: from mout.gmx.net ([212.227.17.22]:58841 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726422AbeLRREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:04:09 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MZU7V-1gpakj3Hjx-00LFYi; Tue, 18
+ Dec 2018 18:04:04 +0100
+Date:   Tue, 18 Dec 2018 18:04:03 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 03/13] powerpc/mm/32s: rework mmu_mapin_ram()
+Message-ID: <20181218170403.GF24278@latitude>
+References: <84624899-bbda-9f08-2527-151fddbd1b01@c-s.fr>
+ <a253e9f8-1e0a-1596-e0ea-54261ac62212@c-s.fr>
+ <20181217012837.GT15324@latitude>
+ <18ba3a7c-ebfa-66aa-e231-b56985d0e89a@c-s.fr>
+ <20181218030538.GA24278@latitude>
+ <9a39d910-2a05-3ce7-c949-296db2d458b9@c-s.fr>
+ <20181218140714.GC24278@latitude>
+ <96539c09-ea57-43d6-bae9-7371235b175f@c-s.fr>
+ <ee4322c4-60e1-94c5-1e55-5d4c3e4de03b@c-s.fr>
+ <c1ee5c7f-d683-924f-68cb-43e1fe14363a@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RE3pQJLXZi4fr8Xo"
 Content-Disposition: inline
-In-Reply-To: <1544592770-19996-1-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <c1ee5c7f-d683-924f-68cb-43e1fe14363a@c-s.fr>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:vOTDsAX29Qu/G5fkkoHo8SlhyFbmGZy5X7EJrcrzQXOO7NNcDE2
+ +3R/hXoLqe41utdVArDd5A6yUPkXLMhXeufp4jgvhHha8AXSlcpfioAVKdcIDu0e7GqAwHG
+ E02Y2QTm4O0C0tsCI8kIukmeWyOgwWQTdr+S9qgQB4IoqIkqmZbv9dVKlDNqCTBk9uG6Wxn
+ Io8BsnrxT/oI+Cac6I5wQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4Whz/1x0dDc=:nLrSFRAs+ynZYFKaB95egx
+ 7/Ufepo4I/DCWqzjMaNyO6MIXkCNXco9CbuIsiI34///BIiCm38npytRTd//dm9c7nPKPV1j9
+ vZ1Gv+H9HQpj6p9UtxieK2keAwySBP/uZ/OThLCDt9Pi5xceb3RsNfgOAAfVx54iqYt7rWm67
+ AwcGWWt6ASHuCCPkVHCgeItmkGWX23QQDcMc3FNsZoodAK/71kQVuWFSYzYki+Y6BDlhCCuy5
+ cLIOdeDks4UV3v6YVw2eCK+R/X5ZTRDPHG+z+OH0S/vc+VaZIbanrH8uItYTmIgwc/ZGL6vLu
+ cwxWc9kMx/+L3q5qAsvslzEmNb6oNhjXOdpwU+gMlFfXwf/M1Iwna13Fa80quoOO8I4YAs7FU
+ slhsNJ8hj4JCV46ivTC1hrWrwOLJRgg1YJrEOCHtCngRU+87l9JAJOyQeh0b6ky+82iA08K2j
+ Hi+seB1xIVAcbLG5ThfQSfk1kQvzYf6pFVrxXd8ePfYITL5lskNCrtakLjqUHeeOl6fP/GGuA
+ wkys0oM5hafm1Lsvd9jtLJpcfVI23E9fCdUAOkD5ypv5VfVOmjrNk/Qh7no1YhSwcga6PgdE6
+ gmkBtCQQkKUZ0XZRm7WldlexqU3wPYPR6grMIA3CWfluZ7aHyC+hNsZBh6WCB945w9be7XpY1
+ SOxjke0WgKngeE+yCEULO3XqL4e3FflGx8Ad3D0hE5EGz1bUn096G7k8Sp8YP2A77uAleDfRv
+ P5MOMQaCmfn0h1YDNX249/w6WOrT45P3CxFzO31+s7Uca757V5AcjLI932XIh2e/xMSnATUvI
+ TSPHuEWIyn2FgYE7SLuXNZ6Bp8vrK7U3jhTjghGax1589waF6ckL++tSW4p+mxeezWzZm1KcY
+ IrEVF0h7yfj3D8nxUotjwpo1WjHIFXLJ8agaLlryts5i+mdEqWkLkgl30E/cq3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 05:28:23AM +0000, Jacky Bai wrote:
-> Add the binding doc for nxp system counter timer module.
-> 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> ---
-> change v1->v2
->  - remove the blank line at EOF
-> ---
->  .../devicetree/bindings/timer/nxp,sysctr_timer.txt | 26 ++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/nxp,sysctr_timer.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/nxp,sysctr_timer.txt b/Documentation/devicetree/bindings/timer/nxp,sysctr_timer.txt
-> new file mode 100644
-> index 0000000..21f1527
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/nxp,sysctr_timer.txt
-> @@ -0,0 +1,26 @@
-> +NXP System Counter Module(sys_ctr)
-> +
-> +The system counter(sys_ctr) is a programmable system counter which provides
-> +a shared time base to Cortex A15, A7, A53, A73, etc. it is intended for use in
-> +applications where the counter is always powered and support multiple,
-> +unrelated clocks.
-> +
-> +Required properties:
-> +
-> +- compatible :      should be "nxp,sysctr-timer"
 
-Only 1 version? Should be SoC specific.
+--RE3pQJLXZi4fr8Xo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +- reg :             Specifies the base physical address and size of the comapre
+On Tue, Dec 18, 2018 at 04:04:42PM +0100, Christophe Leroy wrote:
+> Stupid of me. In fact at the time being, BATS cover both RO and RW data
+> areas, so it can definitly not be mapped with PAGE_KERNEL_ROX.
+>=20
+> In fact, as I have CONFIG_BDI_SWITCH in my setup, PAGE_KERNEL_TEXT is
+> PAGE_KERNEL_X on my side. That's the reason why I missed it.
+>=20
+> With this change being done to patch 3, does the overall serie works for =
+you ?
 
-s/comapre/compare/
+Yes, with the PAGE_KERNEL_X change, the whole series boots on the Wii.
 
-> +                    frame and the counter control, read & compare.
-> +- interrupts :      should be the compare frames' interrupt
-> +- clock-frequency : Specifies the counter clock frequency.
-> +
-> +Example:
-> +
-> +	system_counter: timer@306a0000 {
-> +		compatible = "nxp,sysctr-timer";
-> +		reg = <0x0 0x306a0000 0x0 0x10000>, /* system-counter-rd base */
-> +		      <0x0 0x306b0000 0x0 0x10000>, /* system-counter-cmp base */
-> +		      <0x0 0x306c0000 0x0 0x10000>; /* system-counter-ctrl base */
 
-Are these really 64K in length? That wastes virtual space which can be 
-important on 32-bit systems.
+Jonathan
 
-> +		clock-frequency = <8000000>;
-> +		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> -- 
-> 1.9.1
-> 
+--RE3pQJLXZi4fr8Xo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlwZKHoACgkQCDBEmo7z
+X9tpig//bmhSTq1Kh7bclVY1IgUPwMgUUmIP/xkQbC91G/VM4IDeL+waD6YRYskK
+7Ab20CFU6zl6doeot+NdmiZ9vx1sg+73AsxIAIPL2bMXW/lW3CFQDtw+kWsol679
+D4WOU3+01OumtFNWKFOp/opHfAZpvudrJnK1tgaTM8Ocp4E+GRof/ZBJc142QiR5
+9jJMfY+xPTqxHRVyXg5pHZGV6WJurhb3Gp4Up9JH0AK1o1NoIYQmuxQGAacZs266
+/wSY/6j1OhWGa2iSPs9EQ5Up+YPrG7pcC4UU1rE0YsnqRE4uFaWD7rSysNgi9KlX
+g2vDlRm8mLP965W0Xr5Kg+VBqkQIhFNHdD4Gvp7ZJzIrwMtp1J0nEm+zYFxA8jt0
+LvbZxsSZyC3BhClzEDhbgBSqsqVCDXWUBpAxaKrt3RNY/8dZyvozoDifxM1YXGu2
+znJPAn7uJwJdFLSIcjwj7f90eVI8tgZ1nsHT1jtOf8IEr2av0I1Cj78wK4/80Sqg
+yvKvOdeBqFr16T8k3TLDkRylSVpLpSKdRmxz+bJ85qXg/yb0CdRLqZDThZ8cT8mK
+WLjHcVX376SybBQbI+OVTDNVXCdcUmxZme8gDu/pfPzQgLtEbI31cLc57Q2Ypm6q
+cKRKRtSZI8KvvPtSZ93kQrmlxEtaYXjCZgz5Hnl/Yn3tB0Ww+30=
+=zGQU
+-----END PGP SIGNATURE-----
+
+--RE3pQJLXZi4fr8Xo--
