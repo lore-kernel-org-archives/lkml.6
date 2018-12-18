@@ -2,90 +2,164 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCFAC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA7FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59D942184A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7669D214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:20:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5GdOQTHM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbeLRISb convert rfc822-to-8bit (ORCPT
+        id S1726484AbeLRIUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:18:31 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48444 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbeLRISb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:18:31 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5040420834; Tue, 18 Dec 2018 09:18:28 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DB906206A7;
-        Tue, 18 Dec 2018 09:18:17 +0100 (CET)
-Date:   Tue, 18 Dec 2018 09:18:17 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Marek Behun <marek.behun@nic.cz>
-Cc:     Nadav Haklai <nadavh@marvell.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH v2 03/12] PCI: aardvark: Add PHY support
-Message-ID: <20181218091817.4a8a5d42@xps13>
-In-Reply-To: <20181217223430.182d01d8@nic.cz>
-References: <20181212102142.16053-1-miquel.raynal@bootlin.com>
-        <20181212102142.16053-4-miquel.raynal@bootlin.com>
-        <20181214014701.373b220b@nic.cz>
-        <20181214015712.31f749ea@nic.cz>
-        <20181217170724.58421a29@xps13>
-        <20181217223430.182d01d8@nic.cz>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 18 Dec 2018 03:20:43 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49908 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRIUm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:20:42 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBI8J21T049407;
+        Tue, 18 Dec 2018 08:20:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=ggHsS4nn74FSCoDyln7CGsjbLT8GHtz/WLVR3Xa6oAg=;
+ b=5GdOQTHM/Zpfp7m9shaGW5M07OaQIOMfWzn6XhcDuldF5ehh/GkeO2tQo3ymyW5K7NVE
+ wZlxMi0A08oREmalUQEV/QGxZb/3Vr0RDNUOqE8MYOMtKM+HVqmzsUvl28CJLIA8gB2U
+ Y6bbXkhG/4Ndcsyxcz2WbOEY4wKo33a76rlX5O3oa3fB0SDMKsBho9fFUm0XX+Ab75qw
+ bp2wzg3ao3ibO2pGv+7xYx++LpvQozeruKeMA3ZQ1Vi85YDRmUH2K0jpGTOZDLnEJb2y
+ DhrLgo1h/ZsFKCPvq5jBRo1gs9+cACZREu5Ra9zM9zz/1T3xU9/cuYfVAjv8TClA4hMU 2A== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2pcq4dsvp0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Dec 2018 08:20:05 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBI8K4Wg028236
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Dec 2018 08:20:04 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBI8K2aP024445;
+        Tue, 18 Dec 2018 08:20:03 GMT
+Received: from kadam (/197.157.0.59)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Dec 2018 00:20:02 -0800
+Date:   Tue, 18 Dec 2018 11:20:03 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Timur Tabi <timur@freescale.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mihai Caraman <mihai.caraman@freescale.com>,
+        Kumar Gala <galak@kernel.crashing.org>
+Subject: [PATCH 1/2] fsl_hypervisor: dereferencing error pointers in ioctl
+Message-ID: <20181218082003.GD32567@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9110 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812180075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
+The strndup_user() function returns error pointers on error, and then
+in the error handling we pass the error pointers to kfree().  It will
+cause an Oops.
 
-Marek Behun <marek.behun@nic.cz> wrote on Mon, 17 Dec 2018 22:34:30
-+0100:
+Fixes: 6db7199407ca ("drivers/virt: introduce Freescale hypervisor management driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/virt/fsl_hypervisor.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-> Miquel,
-> 
-> I tried the patches and they are working, with the exception of Compex
-> WLE900X card, but we know that this card is problematic.
+diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
+index 8ba726e600e9..7b7f8e9a2801 100644
+--- a/drivers/virt/fsl_hypervisor.c
++++ b/drivers/virt/fsl_hypervisor.c
+@@ -331,8 +331,8 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 	struct fsl_hv_ioctl_prop param;
+ 	char __user *upath, *upropname;
+ 	void __user *upropval;
+-	char *path = NULL, *propname = NULL;
+-	void *propval = NULL;
++	char *path, *propname;
++	void *propval;
+ 	int ret = 0;
+ 
+ 	/* Get the parameters from the user. */
+@@ -344,32 +344,30 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 	upropval = (void __user *)(uintptr_t)param.propval;
+ 
+ 	path = strndup_user(upath, FH_DTPROP_MAX_PATHLEN);
+-	if (IS_ERR(path)) {
+-		ret = PTR_ERR(path);
+-		goto out;
+-	}
++	if (IS_ERR(path))
++		return PTR_ERR(path);
+ 
+ 	propname = strndup_user(upropname, FH_DTPROP_MAX_PATHLEN);
+ 	if (IS_ERR(propname)) {
+ 		ret = PTR_ERR(propname);
+-		goto out;
++		goto err_free_path;
+ 	}
+ 
+ 	if (param.proplen > FH_DTPROP_MAX_PROPLEN) {
+ 		ret = -EINVAL;
+-		goto out;
++		goto err_free_propname;
+ 	}
+ 
+ 	propval = kmalloc(param.proplen, GFP_KERNEL);
+ 	if (!propval) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto err_free_propname;
+ 	}
+ 
+ 	if (set) {
+ 		if (copy_from_user(propval, upropval, param.proplen)) {
+ 			ret = -EFAULT;
+-			goto out;
++			goto err_free_propval;
+ 		}
+ 
+ 		param.ret = fh_partition_set_dtprop(param.handle,
+@@ -388,7 +386,7 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 			if (copy_to_user(upropval, propval, param.proplen) ||
+ 			    put_user(param.proplen, &p->proplen)) {
+ 				ret = -EFAULT;
+-				goto out;
++				goto err_free_propval;
+ 			}
+ 		}
+ 	}
+@@ -396,10 +394,12 @@ static long ioctl_dtprop(struct fsl_hv_ioctl_prop __user *p, int set)
+ 	if (put_user(param.ret, &p->ret))
+ 		ret = -EFAULT;
+ 
+-out:
+-	kfree(path);
++err_free_propval:
+ 	kfree(propval);
++err_free_propname:
+ 	kfree(propname);
++err_free_path:
++	kfree(path);
+ 
+ 	return ret;
+ }
+-- 
+2.17.1
 
-How did you test them? I am surprised that COMPHY calls worked for you
-out of the box. I am not sure you have A3700 COMPHY support in your ATF
-but it probably work because U-Boot is doing the initial configuration.
-
-> I am interesting if there is a known way to turn of the comphy on
-> A3720, or at least change the SGMII mode from 1Gbps to 2.5Gbps and
-> back. Marvell documentation does not provide this information and the
-> code in ATF providing the SMC calls does not do this either.
-> Do you know how this can be achieved?
-
-The driver already handles these calls (see [1]), making use of
-them is just a matter of hacking into drivers (in your case, I
-suppose it is mvneta) and add phy_set_mode()/phy_power_on() calls.
-
-[1] https://github.com/miquelraynal/linux/blob/marvell/phy-next/pm/drivers/phy/marvell/phy-mvebu-a3700-comphy.c#L189
-
-
-Thanks,
-Miquèl
