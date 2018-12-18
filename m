@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA261C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB6CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37F920675
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A749F20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbeLRQrb (ORCPT
+        id S1727347AbeLRQrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:47:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55060 "EHLO mx1.redhat.com"
+        Tue, 18 Dec 2018 11:47:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46136 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727269AbeLRQr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:47:29 -0500
+        id S1726548AbeLRQrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:47:33 -0500
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B1532D80D;
-        Tue, 18 Dec 2018 16:47:29 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 66D5F7AE89;
+        Tue, 18 Dec 2018 16:47:33 +0000 (UTC)
 Received: from f28server.default (ovpn-116-118.phx2.redhat.com [10.3.116.118])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 322BF65959;
-        Tue, 18 Dec 2018 16:47:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7DCF666D5A;
+        Tue, 18 Dec 2018 16:47:29 +0000 (UTC)
 From:   Daniel Bristot de Oliveira <bristot@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -44,20 +44,24 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
         Marcelo Tosatti <mtosatti@redhat.com>,
         Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: [PATCH V2 4/9] x86/jump_label: Add __jump_label_set_jump_code() helper
-Date:   Tue, 18 Dec 2018 17:46:33 +0100
-Message-Id: <273d912befe0cedc409eb760679d58ee6de94bfc.1545149539.git.bristot@redhat.com>
+Subject: [PATCH V2 5/9] x86/alternative: Split text_poke_bp() into tree steps
+Date:   Tue, 18 Dec 2018 17:46:34 +0100
+Message-Id: <0ae51df28b823b7ac22be513a65d8c24d3aabb10.1545149539.git.bristot@redhat.com>
 In-Reply-To: <cover.1545149539.git.bristot@redhat.com>
 References: <cover.1545149539.git.bristot@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 18 Dec 2018 16:47:29 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 18 Dec 2018 16:47:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the definition of the code to be written from
-__jump_label_transform() to a specialized function.
+text_poke_bp() updates instructions on live kernel on SMP in three steps:
+ 1) add a int3 trap to the address that will be patched
+ 2) update all but the first byte of the patched range
+ 3) replace the first byte (int3) by the first byte of
+
+This patch creates one function for each of these steps.
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -80,79 +84,84 @@ Cc: Clark Williams <williams@redhat.com>
 Cc: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/kernel/jump_label.c | 38 +++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
+ arch/x86/kernel/alternative.c | 38 +++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index 7894080bd02f..a039ac4ca5bf 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -75,30 +75,36 @@ static inline void __jump_label_trans_check_disable(struct jump_entry *entry,
- 		bug_at((void *)jump_entry_code(entry), line);
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac487a20c..6f5ad8587de0 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -767,6 +767,29 @@ int poke_int3_handler(struct pt_regs *regs)
+ 
  }
  
-+static void __jump_label_set_jump_code(struct jump_entry *entry,
-+				       enum jump_label_type type,
-+				       union jump_code_union *code,
-+				       int init)
++static void text_poke_bp_set_handler(void *addr, void *handler,
++				     unsigned char int3)
 +{
-+	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
-+
-+	code->jump = 0xe9;
-+	code->offset = jump_entry_target(entry) -
-+		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-+
-+	if (type == JUMP_LABEL_JMP) {
-+		__jump_label_trans_check_enable(entry, type, ideal_nop, init);
-+	} else {
-+		__jump_label_trans_check_disable(entry, type, code, init);
-+		memcpy(code, ideal_nop, JUMP_LABEL_NOP_SIZE);
-+	}
++	bp_int3_handler = handler;
++	bp_int3_addr = (u8 *)addr + sizeof(int3);
++	text_poke(addr, &int3, sizeof(int3));
 +}
- 
- static void __ref __jump_label_transform(struct jump_entry *entry,
- 					 enum jump_label_type type,
- 					 void *(*poker)(void *, const void *, size_t),
- 					 int init)
++
++static void patch_all_but_first_byte(void *addr, const void *opcode,
++				     size_t len, unsigned char int3)
++{
++	/* patch all but the first byte */
++	text_poke((char *)addr + sizeof(int3),
++		  (const char *) opcode + sizeof(int3),
++		  len - sizeof(int3));
++}
++
++static void patch_first_byte(void *addr, const void *opcode, unsigned char int3)
++{
++	/* patch the first byte */
++	text_poke(addr, opcode, sizeof(int3));
++}
++
+ /**
+  * text_poke_bp() -- update instructions on live kernel on SMP
+  * @addr:	address to patch
+@@ -791,27 +814,21 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
  {
--	union jump_code_union jmp;
--	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
--	const void *code;
+ 	unsigned char int3 = 0xcc;
+ 
+-	bp_int3_handler = handler;
+-	bp_int3_addr = (u8 *)addr + sizeof(int3);
+-	bp_patching_in_progress = true;
 -
--	jmp.jump = 0xe9;
--	jmp.offset = jump_entry_target(entry) -
--		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-+	union jump_code_union code;
+ 	lockdep_assert_held(&text_mutex);
  
- 	if (early_boot_irqs_disabled)
- 		poker = text_poke_early;
- 
--	if (type == JUMP_LABEL_JMP) {
--		__jump_label_trans_check_enable(entry, type, ideal_nop, init);
--		code = &jmp.code;
--	} else {
--		__jump_label_trans_check_disable(entry, type, &jmp, init);
--		code = ideal_nop;
--	}
-+	__jump_label_set_jump_code(entry, type, &code, init);
- 
++	bp_patching_in_progress = true;
  	/*
- 	 * Make text_poke_bp() a default fallback poker.
-@@ -109,12 +115,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	 *
+ 	 * Corresponding read barrier in int3 notifier for making sure the
+ 	 * in_progress and handler are correctly ordered wrt. patching.
  	 */
- 	if (poker) {
--		(*poker)((void *)jump_entry_code(entry), code,
-+		(*poker)((void *)jump_entry_code(entry), &code,
- 			 JUMP_LABEL_NOP_SIZE);
- 		return;
+ 	smp_wmb();
+ 
+-	text_poke(addr, &int3, sizeof(int3));
++	text_poke_bp_set_handler(addr, handler, int3);
+ 
+ 	on_each_cpu(do_sync_core, NULL, 1);
+ 
+ 	if (len - sizeof(int3) > 0) {
+-		/* patch all but the first byte */
+-		text_poke((char *)addr + sizeof(int3),
+-			  (const char *) opcode + sizeof(int3),
+-			  len - sizeof(int3));
++		patch_all_but_first_byte(addr, opcode, len, int3);
+ 		/*
+ 		 * According to Intel, this core syncing is very likely
+ 		 * not necessary and we'd be safe even without it. But
+@@ -820,8 +837,7 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 		on_each_cpu(do_sync_core, NULL, 1);
  	}
  
--	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
-+	text_poke_bp((void *)jump_entry_code(entry), &code, JUMP_LABEL_NOP_SIZE,
- 		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
- }
+-	/* patch the first byte */
+-	text_poke(addr, opcode, sizeof(int3));
++	patch_first_byte(addr, opcode, int3);
  
+ 	on_each_cpu(do_sync_core, NULL, 1);
+ 	/*
 -- 
 2.17.1
 
