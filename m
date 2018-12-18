@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68171C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA779C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35DB721873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAF28218A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151221;
-	bh=QmH90L4YYXjeheZTJKWgWWswWOix5yj+tQh/32gNglA=;
+	s=default; t=1545151224;
+	bh=JAz3KF9eotQYq14cZdWM9jc3/3OIqvKcqhwxtAL3HHo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kyGP3BX2Xy2KIdYJ7FIuek7tT7IiFr7Oa8wCnf8trL/GwkGygOYSf1RVG0mrhHbFg
-	 T948Sv6xKbnE79/KtApoBq3LOT14Ks4gVN2abt+re1dVyBZrXCjDExy8cYCKwzqBY2
-	 V+5+n3JScmKs0+cDivvNAGzk++wbxLIw/5D71M2Y=
+	b=0bSglPKOgDi7191xhZQfBjiEakTBX0wGZ4W52+tHzX6gmz7KiYq9cQhtcioySgynB
+	 X99SiRdlbF21Jc1mIDQhnzs2Z+21UJe8Qa3pkafAcWfzBvBlwfLe/o6hPWBmfgXoZK
+	 RfR6d4gwQ1+/AKw5XXA0MNa7P4cj1bNweJM48fyM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeLRQkS (ORCPT
+        id S1727116AbeLRQkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:40:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37120 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:40:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeLRQkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:40:13 -0500
+        id S1727052AbeLRQkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:40:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FD09218A4;
-        Tue, 18 Dec 2018 16:40:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E053218A4;
+        Tue, 18 Dec 2018 16:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151212;
-        bh=QmH90L4YYXjeheZTJKWgWWswWOix5yj+tQh/32gNglA=;
+        s=default; t=1545151218;
+        bh=JAz3KF9eotQYq14cZdWM9jc3/3OIqvKcqhwxtAL3HHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VLYsXlLYui7vcDjthiimfGQcMrJgSWYjWiafZTgpZvoiUMBrhkEB2szjuAy/425dq
-         /nCdPDtSfLYF+Nm91T7UPcKxHfp1pRCjw1/QVTuGR+oi4yav2I3GwxAWj93+6XnDl2
-         HZEDudcjjsVqvc8fJYBbYACVyWGybexVxjvBGzJ0=
+        b=UF3cPhkTULHRscYxi9Js4khZ33AQrqu6h+Y918bdzh/4npAs6txBQdHIM1bSDNiLq
+         CkU0nZfor9Tmz7ksOg8x+w8w/+oJassBGKJkYGjrALOJ0XIy23vi70jf4qoD03VeWk
+         uOO++8dNspEfOjCuCKbGNUM7I5Hw8FXFl0c7YAmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Brendan Higgins <brendanhiggins@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 03/44] staging: olpc_dcon: add a missing dependency
-Date:   Tue, 18 Dec 2018 17:39:15 +0100
-Message-Id: <20181218163927.496565094@linuxfoundation.org>
+Subject: [PATCH 4.19 05/44] i2c: aspeed: fix build warning
+Date:   Tue, 18 Dec 2018 17:39:17 +0100
+Message-Id: <20181218163927.733959335@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,33 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 33f49571d75024b1044cd02689ad2bdb4924cc80 upstream.
+Upstream commit 3e9efc3299dd ("i2c: aspeed: Handle master/slave combined irq events
+properly") reworked the interrupt handling and fixed a warning in the process:
 
-  WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
-    Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
-    Selected by [y]:
-    - FB_OLPC_DCON [=y] && STAGING [=y] && X86 [=y] && OLPC [=y] && FB [=y]
-                        && I2C [=y] && (GPIO_CS5535 [=n] || GPIO_CS5535 [=n]=n)
+drivers/i2c/busses/i2c-aspeed.c: In function 'aspeed_i2c_bus_irq':
+drivers/i2c/busses/i2c-aspeed.c:567:1: error: label 'out' defined but not used [-Werror=unused-label]
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The warning is still present in v4.19.8 and can be fixed either by applying
+that original patch, or by adding a simple #ifdef.
+
+Here, I choose the second simpler option as the original patch seems too
+invasive for a stable backport.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/olpc_dcon/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/i2c/busses/i2c-aspeed.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/olpc_dcon/Kconfig b/drivers/staging/olpc_dcon/Kconfig
-index c91a56f77bcb..192cc8d0853f 100644
---- a/drivers/staging/olpc_dcon/Kconfig
-+++ b/drivers/staging/olpc_dcon/Kconfig
-@@ -2,6 +2,7 @@ config FB_OLPC_DCON
- 	tristate "One Laptop Per Child Display CONtroller support"
- 	depends on OLPC && FB
- 	depends on I2C
-+	depends on BACKLIGHT_LCD_SUPPORT
- 	depends on (GPIO_CS5535 || GPIO_CS5535=n)
- 	select BACKLIGHT_CLASS_DEVICE
- 	help
+diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+index a4f956c6d567..a19fbff16861 100644
+--- a/drivers/i2c/busses/i2c-aspeed.c
++++ b/drivers/i2c/busses/i2c-aspeed.c
+@@ -555,7 +555,7 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+ 	spin_lock(&bus->lock);
+ 
+ #if IS_ENABLED(CONFIG_I2C_SLAVE)
+-	if (aspeed_i2c_slave_irq(bus)) {
++	if (IS_ENABLED(CONFIG_I2C_SLAVE) && aspeed_i2c_slave_irq(bus)) {
+ 		dev_dbg(bus->dev, "irq handled by slave.\n");
+ 		ret = true;
+ 		goto out;
+@@ -564,7 +564,9 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+ 
+ 	ret = aspeed_i2c_master_irq(bus);
+ 
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
+ out:
++#endif
+ 	spin_unlock(&bus->lock);
+ 	return ret ? IRQ_HANDLED : IRQ_NONE;
+ }
 -- 
 2.19.1
 
