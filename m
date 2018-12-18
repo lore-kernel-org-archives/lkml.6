@@ -2,103 +2,155 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C3DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6CFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5EB0217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54312217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:11:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qpOMFhV6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFJHXi2I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbeLRKKz (ORCPT
+        id S1726541AbeLRKLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:10:55 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46584 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRKKz (ORCPT
+        Tue, 18 Dec 2018 05:11:25 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44733 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeLRKLZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:10:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so7580271pgp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 02:10:55 -0800 (PST)
+        Tue, 18 Dec 2018 05:11:25 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so7589495pgr.11;
+        Tue, 18 Dec 2018 02:11:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SzTU5vMrJWnlVd50H6l6cJ3m7jhynoeNErsz6WGN+RE=;
-        b=qpOMFhV6Y6Y9u0iF0BZShQ2KPRe12ku0S+fgfnOM0AvD9YNuqIDeEZ++LElreMYxkL
-         GuV/4LJorOcGpOBq4ZB08zugxYvmmj93EGdPP+9rGThJE4CxS+f2IDjicoxVKSSuYCbc
-         IvWQ7cz3tn5zLqpqPokAnOwcFSbes6tqcSs5A/1Pkw6bYor3Mw8o6AEUUShIWCvNbx8l
-         rxO58XmktO220z2l0j1XXBbhzK7gpMedYZS8LoItj57k6igLAZr7opFRJPXi6z9+kG3w
-         qC+yN/21aZguZ7i32VtuID+9t0ESo0HsM0ywerJbpnsLmTPPwO73+hhyyPu/l0ryybC5
-         TKkg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mhf8R5TufUTluG0+Ql4zPiZm7xmwRnclFg2svm4Hkcs=;
+        b=jFJHXi2IT2YNosr8LwuF/f1POt+X6mCioANAezgQcR02msNUjTKIgf3ou6easAEv50
+         +ObLZK6VEMCENjqMVDouzFV4iawl/RnCGVHH1BiwEdKoFlB4HKGkzqtQ+o0Cvk1IM6fP
+         LpTXMjA9v/QCsOMLn7zcfKlnZ91bg6NqXflHNtBoZeBNkQUp77zUHnJ5INVnbrJiTYAE
+         YCTw8rMzbryP2XjBE8KN1+jdy/txAqYADfue8vJIQW1HVJvFGewIbIqeSvMwlTBcDIVi
+         j33GaGuH8I4flE3L0B8K1LyP5EezDenkjElB+MWpgF6Jo/5ogXImeIuWFcbXKI84Jc2C
+         z/fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SzTU5vMrJWnlVd50H6l6cJ3m7jhynoeNErsz6WGN+RE=;
-        b=uE7szj2h452QLtS62ZUJKdwGwTfJKwT7X5hp60m0k26pvsZGRtxubYXUZ7yFJZGq71
-         P8/bKnIt2eBfUUW5K2cmydJfSno4X0V18bc97+YvVKlTC29mHsN2ZSfGUQKSx7DY5+7s
-         MZhpmP78G7fO9Exh2Lk9rv1cjblC2R7yW3V+LIhivN2rRExteohq+b+TcFpbDxiR8Jcm
-         sRvQ46xdd7L7iw6CougUOQi7YetscKw/awYlB0OZY10+oWpfzlH3OE/ohkWbbi1njbRa
-         ndymw/AUcvLnM4+Cz1MXpUP46PvS2jDltpfbyFh8diW833DhG3xdxiynnoqgOcHTCIf/
-         tiNg==
-X-Gm-Message-State: AA+aEWY+gb5zKuZ9uudFHx2KLsbTr53idtBGh5rrf/xcDsqoiwcCZFTh
-        tHucG6xoDb2EIl+fWraLvyvXYUGc
-X-Google-Smtp-Source: AFSGD/VQx4y093kZ1XVtipXa34hR/iPvQo3wa2VSMNlOgSZ0XXQ58QJAGnu7J0F/rrzyfnqJ7NGLlg==
-X-Received: by 2002:a63:a611:: with SMTP id t17mr14985012pge.338.1545127854606;
-        Tue, 18 Dec 2018 02:10:54 -0800 (PST)
-Received: from localhost ([175.223.2.245])
-        by smtp.gmail.com with ESMTPSA id x2sm20514336pfx.78.2018.12.18.02.10.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 02:10:53 -0800 (PST)
-Date:   Tue, 18 Dec 2018 19:10:50 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181218101050.GB460@jagdpanzerIV>
-References: <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
- <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
- <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
- <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
- <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
- <20181213124255.GB3053@tigerII.localdomain>
- <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
- <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
- <20181218085524.GA1047@jagdpanzerIV>
- <20181218100119.3lf5ktzqbqkwsfb2@pathway.suse.cz>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mhf8R5TufUTluG0+Ql4zPiZm7xmwRnclFg2svm4Hkcs=;
+        b=l0hRj6G6YzJEGIQR4Hxo6g2wvx18wfV9T6xkFjGMcti7ldAD+8BgfP4wtQOnFOGH97
+         +Y8g/SPya3Tu0X0a20VjNynhC2a1Blz+80ac07tSgESet8ltyLjquBOtf/BpJHfa0Qln
+         WvP5kKMFEpebLFrPLh+MpjG4YBRa2j3ECHalGTihIAywnaCE4aukyklx2LcDTtMT8HbS
+         hhedTxQnzB/oFN5jGZ+fZqaK1SbBkHa65OWD8JQjuPbujAHpzqQLhYhGLqG8Dh9ZgZvz
+         gYjCMCL1VCHyHmBVzYQ8BNumYzSr/aFJCNwzsfr+T+NJugAUtYaMc+g2hgdHYuy71X9f
+         nOxQ==
+X-Gm-Message-State: AA+aEWbKQ+tkvFG6Dq5Sh7Y6Cgh24H/jzLl5jP6ooZLlcK1YvZG1BENs
+        8h/pbvAPSvPVQTabF8x2eOU=
+X-Google-Smtp-Source: AFSGD/X+YBXin41yxF15lvqajrdQWQcTtk+p14MRo27RBOrGv/CtpG3r2ZpuW6cgmVE2cho1P5ERVA==
+X-Received: by 2002:a62:5a03:: with SMTP id o3mr15983222pfb.19.1545127882966;
+        Tue, 18 Dec 2018 02:11:22 -0800 (PST)
+Received: from localhost.localdomain ([2001:268:c0a5:b5e9:3c79:e26e:bf45:b953])
+        by smtp.gmail.com with ESMTPSA id 24sm5879420pfl.32.2018.12.18.02.11.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 02:11:22 -0800 (PST)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v5 0/8] Introduce the for_each_set_clump8 macro
+Date:   Tue, 18 Dec 2018 19:11:32 +0900
+Message-Id: <cover.1545126272.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218100119.3lf5ktzqbqkwsfb2@pathway.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/18/18 11:01), Petr Mladek wrote:
-> I have updated the patch in printk.git, for-4.22 branch.
+Changes in v5:
+  - Restrict the function of the for_each_set_clump macro to handle only
+    8-bit clumps (i.e. for_each_set_clump8)
+  - Introduce the bitmap_get_value8 and bitmap_set_value8 functions to
+    get and set 8-bit values respectively
+  - Reimplement the for_each_set_clump macro to return the bit offset
+    and clump value; this simplifies the arguments list and aligns the
+    macro use to similar macros such as find_next_bit et al.
 
-Thanks.
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-> PS: I think that I have rushed the patch probably too much.
-> I did too much nitpicking in the past and am trying to find
-> a better balance now.
+This patchset introduces the for_each_set_clump8 macro and utilizes it
+in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+for-loop syntax that iterates over a memory region entire groups of set
+bits at a time.
 
-It's all good.
+For example, suppose you would like to iterate over a 32-bit integer 8
+bits at a time, skipping over 8-bit groups with no set bit, where
+XXXXXXXX represents the current 8-bit group:
 
-	-ss
+    Example:        10111110 00000000 11111111 00110011
+    First loop:     10111110 00000000 11111111 XXXXXXXX
+    Second loop:    10111110 00000000 XXXXXXXX 00110011
+    Third loop:     XXXXXXXX 00000000 11111111 00110011
+
+Each iteration of the loop returns the next 8-bit group that has at
+least one set bit.
+
+The for_each_set_clump8 macro has four parameters:
+
+    * start: set to the bit offset of the current clump
+    * clump: set to the current clump value
+    * bits: bitmap to search within
+    * size: bitmap size in number of bits
+
+In this version of the patchset, the for_each_set_clump macro has been
+reimplemented and simplified based on the suggestions provided by Rasmus
+Villemoes and Andy Shevchenko in the version 4 submission.
+
+In particular, the function of the for_each_set_clump macro has been
+restricted to handle only 8-bit clumps; the drivers that use the
+for_each_set_clump macro only handle 8-bit ports so a generic
+for_each_set_clump implementation is not necessary. Thus, a solution for
+odd-sized clumps (e.g. 3-bit, 7-bit, etc.) mismatching word boundaries
+can be postponed until a driver appears that actually requires a generic
+for_each_set_clump implementation.
+
+In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+introduced to get and set 8-bit values respectively. Their use is based
+on the behavior suggested in the previous patchset version review.
+Similarly, the implementation of the find_next_clump function has been
+simplified in order for the function to match the syntax and use of the
+find_next_bit function.
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump8 macro
+  lib/test_bitmap.c: Add for_each_set_clump8 test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+  gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+  gpio: gpio-mm: Utilize for_each_set_clump8 macro
+  gpio: ws16c48: Utilize for_each_set_clump8 macro
+  gpio: pci-idio-16: Utilize for_each_set_clump8 macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  71 ++++++-------------
+ drivers/gpio/gpio-104-idi-48.c    |  36 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  71 ++++++-------------
+ drivers/gpio/gpio-pci-idio-16.c   |  73 +++++++-------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 109 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  71 ++++++-------------
+ include/asm-generic/bitops/find.h |  14 ++++
+ include/linux/bitops.h            |   5 ++
+ lib/find_bit.c                    |  63 +++++++++++++++++
+ lib/test_bitmap.c                 |  67 ++++++++++++++++++
+ 10 files changed, 281 insertions(+), 299 deletions(-)
+
+-- 
+2.20.1
+
