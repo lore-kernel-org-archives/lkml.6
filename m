@@ -2,125 +2,1002 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F69C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C295C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7C22133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF0242133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:07:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DmDld7BI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbeLRIHE (ORCPT
+        id S1726875AbeLRIHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:07:04 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.66]:12427 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726557AbeLRIGh (ORCPT
+        Tue, 18 Dec 2018 03:07:09 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34956 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbeLRIHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:06:37 -0500
-Received: from [46.226.52.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-b.eu-west-1.aws.symcld.net id 52/EB-12141-98AA81C5; Tue, 18 Dec 2018 08:06:33 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOKsWRWlGSWpSXmKPExsVy8+3OTbodqyR
-  iDL4v5LeY+vAJm8X8I+dYLe5/Pcpo8e1KB5PF5V1z2CxmL+lnsVh6/SKTReveI+wW+694OXB6
-  rJm3htHj29dJLB47Z91l99i0qpPN4861PWwenzfJBbBFsWbmJeVXJLBmTDn9l61gE1fF9IuLG
-  RsYuzm7GLk4hARWM0o0PzzDAuE8ZZT48vokYxcjJ5BTITFhyi0mEJtNwEpi95rFQEUcHCICKh
-  Ln3piD1DMLTGGS2Dh7GgtIjbCAq8TeuyeYQGpYBFQl7p5OBAnzCvhIXP54ihXElhCQk7h5rpM
-  ZxOYU8JU4Ov0gM8QqH4n7MyazQdQLSpyc+QRsJLOAhMTBFy+garQkrv47yA4yXkJAQeLlmziI
-  kXESc2ceZYIIa0p0PsiCCNtLTH9/lRnCNpT4PusbC4RtLnH842WouI3Eob+tbBC2qcSmr9Ph7
-  OPts5gnMErMQnLQLCQHLWBkWsVokVSUmZ5RkpuYmaNraGCga2hopGtoaaZraGKsl1ilm6SXWq
-  pbnlpcomuol1herFdcmZuck6KXl1qyiREY4SkFR/p3MD5bnn6IUZKDSUmU9/RyiRghvqT8lMq
-  MxOKM+KLSnNTiQ4wyHBxKErwzVgLlBItS01Mr0jJzgKkGJi3BwaMkwlsPkuYtLkjMLc5Mh0id
-  YlSUEufdBpIQAElklObBtcHS2yVGWSlhXkYGBgYhnoLUotzMElT5V4ziHIxKwrwbQabwZOaVw
-  E1/BbSYCWhxzhYmkMUliQgpqQbGVt3SBJt7LXfuvuhZd2l34PGrsZ8MxFtmhiZrTlMQcmH4mv
-  5r+ooPHf1vPL/FvGcPcapf9mam3aW2I3YbeqR/Wqa4xyTHpewSbCzmN30xvf2Gxs+Q6/1Zf+4
-  nl2atNZnuHuixvz84Wqn4ereGa41eel3mjKpp9xSC9cXFN80IXj1necrWmpdKLMUZiYZazEXF
-  iQCF5ACdagMAAA==
-X-Env-Sender: Christian.Hohnstaedt@wago.com
-X-Msg-Ref: server-20.tower-282.messagelabs.com!1545120391!3961610!1
-X-Originating-IP: [217.237.185.178]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.14.24; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 11595 invoked from network); 18 Dec 2018 08:06:32 -0000
-Received: from unknown (HELO SVEX01006.wago.local) (217.237.185.178)
-  by server-20.tower-282.messagelabs.com with AES128-SHA encrypted SMTP; 18 Dec 2018 08:06:32 -0000
-Received: from SVEX01011.wago.local (10.1.103.229) by SVEX01006.wago.local
- (10.1.101.122) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 18 Dec
- 2018 09:06:31 +0100
-Received: from lc010965.wago.local (10.1.101.133) by SVEX01011.wago.local
- (10.1.103.229) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Tue, 18 Dec
- 2018 09:06:30 +0100
-Received: by lc010965.wago.local (Postfix, from userid 11100404)        id
- B8019170069F; Tue, 18 Dec 2018 09:06:30 +0100 (CET)
-From:   Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Tony Lindgren" <tony@atomide.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>
-Subject: [PATCH 1/2] dt-bindings: regulator: extend tps65218 bindings
-Date:   Tue, 18 Dec 2018 09:05:55 +0100
-Message-ID: <1545120356-7749-2-git-send-email-Christian.Hohnstaedt@wago.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545120356-7749-1-git-send-email-Christian.Hohnstaedt@wago.com>
-References: <1545120356-7749-1-git-send-email-Christian.Hohnstaedt@wago.com>
+        Tue, 18 Dec 2018 03:07:02 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s198so7456075pgs.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bpa0I/YhnzBcdzs3JkVMyNimUM8qKGedLIepD8045n0=;
+        b=DmDld7BILC2mBTrbEZPsyBlUgT3K3sgmVwrdtxin3vo+qq9eiGqhki46ojg7Zy9qvu
+         WK/jhEnI+9WmHwLL8t/bROqAYNXY2RUfiO+KYF27f6GjaLLaOidZ/2m/TE+MsQ7ogssa
+         ONyI74TJqJJb+dpI/kmkBK+uvH6yqtFgfsayM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bpa0I/YhnzBcdzs3JkVMyNimUM8qKGedLIepD8045n0=;
+        b=pygy6++NedOVVGfSMhNNVh6H10cicfBe5XdawTcYGzzEYa3cXtktv6Ct8HcJouYZBc
+         TrOVtcQRXPTrCe5haL7fLhcxW5Z9xa3tEd3q/GISWhsz03gN9xhiD7xkXTk0N5lKXF+p
+         xHmMPEuzTYZ9ghgfiPHa6LwPsy822pH8S0ByJ5+RwVqE9OxMFwxSGAOlwnoEy9iluQIz
+         GIPEWi3yfwkAahCH9M1EezA7mtZ83pi5prRcARQmN5fnqTmSfxe1AwqacracXV7PLxzz
+         7fCdsxiG1/GXcCfycXC4nfmCOvSxMly3hfMP/XI3Fq1vIM5M5A0Sn7tiFFqjd8SigwX5
+         M9UA==
+X-Gm-Message-State: AA+aEWal2zJhxNJx/wfDcDE2nYAwEuoKBfvdgD2pAKkj0+MsRugg3M0k
+        rTMTshqbjOc/WMah0x9OKCaN
+X-Google-Smtp-Source: AFSGD/UrD1Teo+bFC4k9Wx4iDBAiCT7XlpgyW2AtEMbtO+rl721TUBCIB7r54PTYKwLNLuLhN0uehQ==
+X-Received: by 2002:a62:6a88:: with SMTP id f130mr15939721pfc.201.1545120421275;
+        Tue, 18 Dec 2018 00:07:01 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
+        by smtp.gmail.com with ESMTPSA id 7sm45596888pfm.8.2018.12.18.00.06.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 00:07:00 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        gregkh@linuxfoundation.org, jslaby@suse.com
+Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        amit.kucheria@linaro.org, linus.walleij@linaro.org,
+        zhao_steven@263.net,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 10/11] tty: serial: Add RDA8810PL UART driver
+Date:   Tue, 18 Dec 2018 13:35:26 +0530
+Message-Id: <20181218080527.10801-11-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
+References: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.1.101.133]
-X-ClientProxiedBy: SVEX01011.wago.local (10.1.103.229) To SVEX01011.wago.local
- (10.1.103.229)
-X-KSE-ServerInfo: SVEX01011.wago.local, 9
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 18.12.2018 03:56:00
-X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
-X-PP-Proceessed: 7aa37ed7-add0-4ed7-8916-66d632c2b0a3
-X-PP-Proceessed: 76874689-fff8-43e0-8f1a-01f8fc6dac97
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add input voltage configuration options
+Add UART driver for RDA Micro RDA8810PL SoC.
 
-Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/regulator/tps65218.txt | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |   6 +
+ drivers/tty/serial/Kconfig                    |  19 +
+ drivers/tty/serial/Makefile                   |   1 +
+ drivers/tty/serial/rda-uart.c                 | 831 ++++++++++++++++++
+ include/uapi/linux/serial_core.h              |   3 +
+ 5 files changed, 860 insertions(+)
+ create mode 100644 drivers/tty/serial/rda-uart.c
 
-diff --git a/Documentation/devicetree/bindings/regulator/tps65218.txt b/Documentation/devicetree/bindings/regulator/tps65218.txt
-index 02f0e9b..a9ee377 100644
---- a/Documentation/devicetree/bindings/regulator/tps65218.txt
-+++ b/Documentation/devicetree/bindings/regulator/tps65218.txt
-@@ -16,12 +16,22 @@ Required properties:
-   regulator-dcdc5, regulator-dcdc6, regulator-ldo1, regulator-ls3.
-   Each regulator is defined using the standard binding for regulators.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 81d1d5a74728..07078880f7fd 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1020,6 +1020,12 @@
+ 			specified address. The serial port must already be
+ 			setup and configured. Options are not yet supported.
  
-+Optional properties:
-+  If any of these properties is absent, the setting will not be touched.
-+- strict-supply-voltage: <1|0> Set/Reset STRICT flag in CONFIG1
-+- under-voltage-limit: Select 2.75, 2.95, 3.25 or 3.35V as UVLO in CONFIG1
-+- under-voltage-hysteresis: Select 200mV or 400mV UVLOHYS in CONFIG2
++		rda,<addr>
++			Start an early, polled-mode console on a serial port
++			of an RDA Micro SoC, such as RDA8810PL, at the
++			specified address. The serial port must already be
++			setup and configured. Options are not yet supported.
 +
- Example:
- tps65218: tps65218@24 {
- 	reg = <0x24>;
- 	compatible = "ti,tps65218";
- 	interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* NMIn */
- 	interrupt-controller;
-+	strict-supply-voltage = <1>;
-+	under-voltage-hysteresis = <400000>;
-+	under-voltage-limit = <3350000>;
-+
- 	#interrupt-cells = <2>;
+ 		smh	Use ARM semihosting calls for early console.
  
- 	dcdc1: regulator-dcdc1 {
+ 		s3c2410,<addr>
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 32886c304641..67b9bf3b500e 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1529,6 +1529,25 @@ config SERIAL_OWL_CONSOLE
+ 	  Say 'Y' here if you wish to use Actions Semiconductor S500/S900 UART
+ 	  as the system console.
+ 
++config SERIAL_RDA
++	bool "RDA Micro serial port support"
++	depends on ARCH_RDA || COMPILE_TEST
++	select SERIAL_CORE
++	help
++	  This driver is for RDA8810PL SoC's UART.
++	  Say 'Y' here if you wish to use the on-board serial port.
++	  Otherwise, say 'N'.
++
++config SERIAL_RDA_CONSOLE
++	bool "Console on RDA Micro serial port"
++	depends on SERIAL_RDA=y
++	select SERIAL_CORE_CONSOLE
++	select SERIAL_EARLYCON
++	default y
++	help
++	  Say 'Y' here if you wish to use the RDA8810PL UART as the system
++	  console. Only earlycon is implemented currently.
++
+ endmenu
+ 
+ config SERIAL_MCTRL_GPIO
+diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+index daac675612df..8c303736b7e8 100644
+--- a/drivers/tty/serial/Makefile
++++ b/drivers/tty/serial/Makefile
+@@ -89,6 +89,7 @@ obj-$(CONFIG_SERIAL_MVEBU_UART)	+= mvebu-uart.o
+ obj-$(CONFIG_SERIAL_PIC32)	+= pic32_uart.o
+ obj-$(CONFIG_SERIAL_MPS2_UART)	+= mps2-uart.o
+ obj-$(CONFIG_SERIAL_OWL)	+= owl-uart.o
++obj-$(CONFIG_SERIAL_RDA)	+= rda-uart.o
+ 
+ # GPIOLIB helpers for modem control lines
+ obj-$(CONFIG_SERIAL_MCTRL_GPIO)	+= serial_mctrl_gpio.o
+diff --git a/drivers/tty/serial/rda-uart.c b/drivers/tty/serial/rda-uart.c
+new file mode 100644
+index 000000000000..284623eefaeb
+--- /dev/null
++++ b/drivers/tty/serial/rda-uart.c
+@@ -0,0 +1,831 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * RDA8810PL serial device driver
++ *
++ * Copyright RDA Microelectronics Company Limited
++ * Copyright (c) 2017 Andreas Färber
++ * Copyright (c) 2018 Manivannan Sadhasivam
++ */
++
++#include <linux/clk.h>
++#include <linux/console.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/serial.h>
++#include <linux/serial_core.h>
++#include <linux/tty.h>
++#include <linux/tty_flip.h>
++
++#define RDA_UART_PORT_NUM 3
++#define RDA_UART_DEV_NAME "ttyRDA"
++
++#define RDA_UART_CTRL		0x00
++#define RDA_UART_STATUS		0x04
++#define RDA_UART_RXTX_BUFFER	0x08
++#define RDA_UART_IRQ_MASK	0x0c
++#define RDA_UART_IRQ_CAUSE	0x10
++#define RDA_UART_IRQ_TRIGGERS	0x14
++#define RDA_UART_CMD_SET	0x18
++#define RDA_UART_CMD_CLR	0x1c
++
++/* UART_CTRL Bits */
++#define RDA_UART_ENABLE			BIT(0)
++#define RDA_UART_DBITS_8		BIT(1)
++#define RDA_UART_TX_SBITS_2		BIT(2)
++#define RDA_UART_PARITY_EN		BIT(3)
++#define RDA_UART_PARITY(x)		(((x) & 0x3) << 4)
++#define RDA_UART_PARITY_ODD		RDA_UART_PARITY(0)
++#define RDA_UART_PARITY_EVEN		RDA_UART_PARITY(1)
++#define RDA_UART_PARITY_SPACE		RDA_UART_PARITY(2)
++#define RDA_UART_PARITY_MARK		RDA_UART_PARITY(3)
++#define RDA_UART_DIV_MODE		BIT(20)
++#define RDA_UART_IRDA_EN		BIT(21)
++#define RDA_UART_DMA_EN			BIT(22)
++#define RDA_UART_FLOW_CNT_EN		BIT(23)
++#define RDA_UART_LOOP_BACK_EN		BIT(24)
++#define RDA_UART_RX_LOCK_ERR		BIT(25)
++#define RDA_UART_RX_BREAK_LEN(x)	(((x) & 0xf) << 28)
++
++/* UART_STATUS Bits */
++#define RDA_UART_RX_FIFO(x)		(((x) & 0x7f) << 0)
++#define RDA_UART_RX_FIFO_MASK		(0x7f << 0)
++#define RDA_UART_TX_FIFO(x)		(((x) & 0x1f) << 8)
++#define RDA_UART_TX_FIFO_MASK		(0x1f << 8)
++#define RDA_UART_TX_ACTIVE		BIT(14)
++#define RDA_UART_RX_ACTIVE		BIT(15)
++#define RDA_UART_RX_OVERFLOW_ERR	BIT(16)
++#define RDA_UART_TX_OVERFLOW_ERR	BIT(17)
++#define RDA_UART_RX_PARITY_ERR		BIT(18)
++#define RDA_UART_RX_FRAMING_ERR		BIT(19)
++#define RDA_UART_RX_BREAK_INT		BIT(20)
++#define RDA_UART_DCTS			BIT(24)
++#define RDA_UART_CTS			BIT(25)
++#define RDA_UART_DTR			BIT(28)
++#define RDA_UART_CLK_ENABLED		BIT(31)
++
++/* UART_RXTX_BUFFER Bits */
++#define RDA_UART_RX_DATA(x)		(((x) & 0xff) << 0)
++#define RDA_UART_TX_DATA(x)		(((x) & 0xff) << 0)
++
++/* UART_IRQ_MASK Bits */
++#define RDA_UART_TX_MODEM_STATUS	BIT(0)
++#define RDA_UART_RX_DATA_AVAILABLE	BIT(1)
++#define RDA_UART_TX_DATA_NEEDED		BIT(2)
++#define RDA_UART_RX_TIMEOUT		BIT(3)
++#define RDA_UART_RX_LINE_ERR		BIT(4)
++#define RDA_UART_TX_DMA_DONE		BIT(5)
++#define RDA_UART_RX_DMA_DONE		BIT(6)
++#define RDA_UART_RX_DMA_TIMEOUT		BIT(7)
++#define RDA_UART_DTR_RISE		BIT(8)
++#define RDA_UART_DTR_FALL		BIT(9)
++
++/* UART_IRQ_CAUSE Bits */
++#define RDA_UART_TX_MODEM_STATUS_U	BIT(16)
++#define RDA_UART_RX_DATA_AVAILABLE_U	BIT(17)
++#define RDA_UART_TX_DATA_NEEDED_U	BIT(18)
++#define RDA_UART_RX_TIMEOUT_U		BIT(19)
++#define RDA_UART_RX_LINE_ERR_U		BIT(20)
++#define RDA_UART_TX_DMA_DONE_U		BIT(21)
++#define RDA_UART_RX_DMA_DONE_U		BIT(22)
++#define RDA_UART_RX_DMA_TIMEOUT_U	BIT(23)
++#define RDA_UART_DTR_RISE_U		BIT(24)
++#define RDA_UART_DTR_FALL_U		BIT(25)
++
++/* UART_TRIGGERS Bits */
++#define RDA_UART_RX_TRIGGER(x)		(((x) & 0x1f) << 0)
++#define RDA_UART_TX_TRIGGER(x)		(((x) & 0xf) << 8)
++#define RDA_UART_AFC_LEVEL(x)		(((x) & 0x1f) << 16)
++
++/* UART_CMD_SET Bits */
++#define RDA_UART_RI			BIT(0)
++#define RDA_UART_DCD			BIT(1)
++#define RDA_UART_DSR			BIT(2)
++#define RDA_UART_TX_BREAK_CONTROL	BIT(3)
++#define RDA_UART_TX_FINISH_N_WAIT	BIT(4)
++#define RDA_UART_RTS			BIT(5)
++#define RDA_UART_RX_FIFO_RESET		BIT(6)
++#define RDA_UART_TX_FIFO_RESET		BIT(7)
++
++#define RDA_UART_TX_FIFO_SIZE	16
++
++static struct uart_driver rda_uart_driver;
++
++struct rda_uart_port {
++	struct uart_port port;
++	struct clk *clk;
++};
++
++#define to_rda_uart_port(port) container_of(port, struct rda_uart_port, port)
++
++static struct rda_uart_port *rda_uart_ports[RDA_UART_PORT_NUM];
++
++static inline void rda_uart_write(struct uart_port *port, u32 val,
++				  unsigned int off)
++{
++	writel(val, port->membase + off);
++}
++
++static inline u32 rda_uart_read(struct uart_port *port, unsigned int off)
++{
++	return readl(port->membase + off);
++}
++
++static unsigned int rda_uart_tx_empty(struct uart_port *port)
++{
++	unsigned long flags;
++	unsigned int ret;
++	u32 val;
++
++	spin_lock_irqsave(&port->lock, flags);
++
++	val = rda_uart_read(port, RDA_UART_STATUS);
++	ret = (val & RDA_UART_TX_FIFO_MASK) ? TIOCSER_TEMT : 0;
++
++	spin_unlock_irqrestore(&port->lock, flags);
++
++	return ret;
++}
++
++static unsigned int rda_uart_get_mctrl(struct uart_port *port)
++{
++	unsigned int mctrl = 0;
++	u32 cmd_set, status;
++
++	cmd_set = rda_uart_read(port, RDA_UART_CMD_SET);
++	status = rda_uart_read(port, RDA_UART_STATUS);
++	if (cmd_set & RDA_UART_RTS)
++		mctrl |= TIOCM_RTS;
++	if (!(status & RDA_UART_CTS))
++		mctrl |= TIOCM_CTS;
++
++	return mctrl;
++}
++
++static void rda_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
++{
++	u32 val;
++
++	if (mctrl & TIOCM_RTS) {
++		val = rda_uart_read(port, RDA_UART_CMD_SET);
++		rda_uart_write(port, (val | RDA_UART_RTS), RDA_UART_CMD_SET);
++	} else {
++		/* Clear RTS to stop to receive. */
++		val = rda_uart_read(port, RDA_UART_CMD_CLR);
++		rda_uart_write(port, (val | RDA_UART_RTS), RDA_UART_CMD_CLR);
++	}
++
++	val = rda_uart_read(port, RDA_UART_CTRL);
++
++	if (mctrl & TIOCM_LOOP)
++		val |= RDA_UART_LOOP_BACK_EN;
++	else
++		val &= ~RDA_UART_LOOP_BACK_EN;
++
++	rda_uart_write(port, val, RDA_UART_CTRL);
++}
++
++static void rda_uart_stop_tx(struct uart_port *port)
++{
++	u32 val;
++
++	val = rda_uart_read(port, RDA_UART_IRQ_MASK);
++	val &= ~RDA_UART_TX_DATA_NEEDED;
++	rda_uart_write(port, val, RDA_UART_IRQ_MASK);
++
++	val = rda_uart_read(port, RDA_UART_CMD_SET);
++	val |= RDA_UART_TX_FIFO_RESET;
++	rda_uart_write(port, val, RDA_UART_CMD_SET);
++}
++
++static void rda_uart_stop_rx(struct uart_port *port)
++{
++	u32 val;
++
++	val = rda_uart_read(port, RDA_UART_IRQ_MASK);
++	val &= ~(RDA_UART_RX_DATA_AVAILABLE | RDA_UART_RX_TIMEOUT);
++	rda_uart_write(port, val, RDA_UART_IRQ_MASK);
++
++	/* Read Rx buffer before reset to avoid Rx timeout interrupt */
++	val = rda_uart_read(port, RDA_UART_RXTX_BUFFER);
++
++	val = rda_uart_read(port, RDA_UART_CMD_SET);
++	val |= RDA_UART_RX_FIFO_RESET;
++	rda_uart_write(port, val, RDA_UART_CMD_SET);
++}
++
++static void rda_uart_start_tx(struct uart_port *port)
++{
++	u32 val;
++
++	if (uart_tx_stopped(port)) {
++		rda_uart_stop_tx(port);
++		return;
++	}
++
++	val = rda_uart_read(port, RDA_UART_IRQ_MASK);
++	val |= RDA_UART_TX_DATA_NEEDED;
++	rda_uart_write(port, val, RDA_UART_IRQ_MASK);
++}
++
++static void rda_uart_change_baudrate(struct rda_uart_port *rda_port,
++				     unsigned long baud)
++{
++	clk_set_rate(rda_port->clk, baud * 8);
++}
++
++static void rda_uart_set_termios(struct uart_port *port,
++				 struct ktermios *termios,
++				 struct ktermios *old)
++{
++	struct rda_uart_port *rda_port = to_rda_uart_port(port);
++	unsigned long flags;
++	unsigned int ctrl, cmd_set, cmd_clr, triggers;
++	unsigned int baud;
++	u32 irq_mask;
++
++	spin_lock_irqsave(&port->lock, flags);
++
++	baud = uart_get_baud_rate(port, termios, old, 9600, port->uartclk / 4);
++	rda_uart_change_baudrate(rda_port, baud);
++
++	ctrl = rda_uart_read(port, RDA_UART_CTRL);
++	cmd_set = rda_uart_read(port, RDA_UART_CMD_SET);
++	cmd_clr = rda_uart_read(port, RDA_UART_CMD_CLR);
++
++	switch (termios->c_cflag & CSIZE) {
++	case CS5:
++	case CS6:
++		dev_warn(port->dev, "bit size not supported, using 7 bits\n");
++		/* Fall through */
++	case CS7:
++		ctrl &= ~RDA_UART_DBITS_8;
++		break;
++	default:
++		ctrl |= RDA_UART_DBITS_8;
++		break;
++	}
++
++	/* stop bits */
++	if (termios->c_cflag & CSTOPB)
++		ctrl |= RDA_UART_TX_SBITS_2;
++	else
++		ctrl &= ~RDA_UART_TX_SBITS_2;
++
++	/* parity check */
++	if (termios->c_cflag & PARENB) {
++		ctrl |= RDA_UART_PARITY_EN;
++
++		/* Mark or Space parity */
++		if (termios->c_cflag & CMSPAR) {
++			if (termios->c_cflag & PARODD)
++				ctrl |= RDA_UART_PARITY_MARK;
++			else
++				ctrl |= RDA_UART_PARITY_SPACE;
++		} else if (termios->c_cflag & PARODD) {
++			ctrl |= RDA_UART_PARITY_ODD;
++		} else {
++			ctrl |= RDA_UART_PARITY_EVEN;
++		}
++	} else {
++		ctrl &= ~RDA_UART_PARITY_EN;
++	}
++
++	/* Hardware handshake (RTS/CTS) */
++	if (termios->c_cflag & CRTSCTS) {
++		ctrl   |= RDA_UART_FLOW_CNT_EN;
++		cmd_set |= RDA_UART_RTS;
++	} else {
++		ctrl   &= ~RDA_UART_FLOW_CNT_EN;
++		cmd_clr |= RDA_UART_RTS;
++	}
++
++	ctrl |= RDA_UART_ENABLE;
++	ctrl &= ~RDA_UART_DMA_EN;
++
++	triggers  = (RDA_UART_AFC_LEVEL(20) | RDA_UART_RX_TRIGGER(16));
++	irq_mask = rda_uart_read(port, RDA_UART_IRQ_MASK);
++	rda_uart_write(port, 0, RDA_UART_IRQ_MASK);
++
++	rda_uart_write(port, triggers, RDA_UART_IRQ_TRIGGERS);
++	rda_uart_write(port, ctrl, RDA_UART_CTRL);
++	rda_uart_write(port, cmd_set, RDA_UART_CMD_SET);
++	rda_uart_write(port, cmd_clr, RDA_UART_CMD_CLR);
++
++	rda_uart_write(port, irq_mask, RDA_UART_IRQ_MASK);
++
++	/* Don't rewrite B0 */
++	if (tty_termios_baud_rate(termios))
++		tty_termios_encode_baud_rate(termios, baud, baud);
++
++	/* update the per-port timeout */
++	uart_update_timeout(port, termios->c_cflag, baud);
++
++	spin_unlock_irqrestore(&port->lock, flags);
++}
++
++static void rda_uart_send_chars(struct uart_port *port)
++{
++	struct circ_buf *xmit = &port->state->xmit;
++	unsigned int ch;
++	u32 val;
++
++	if (uart_tx_stopped(port))
++		return;
++
++	if (port->x_char) {
++		while (!(rda_uart_read(port, RDA_UART_STATUS) &
++			 RDA_UART_TX_FIFO_MASK))
++			cpu_relax();
++
++		rda_uart_write(port, port->x_char, RDA_UART_RXTX_BUFFER);
++		port->icount.tx++;
++		port->x_char = 0;
++	}
++
++	while (rda_uart_read(port, RDA_UART_STATUS) & RDA_UART_TX_FIFO_MASK) {
++		if (uart_circ_empty(xmit))
++			break;
++
++		ch = xmit->buf[xmit->tail];
++		rda_uart_write(port, ch, RDA_UART_RXTX_BUFFER);
++		xmit->tail = (xmit->tail + 1) & (SERIAL_XMIT_SIZE - 1);
++		port->icount.tx++;
++	}
++
++	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
++		uart_write_wakeup(port);
++
++	if (!uart_circ_empty(xmit)) {
++		/* Re-enable Tx FIFO interrupt */
++		val = rda_uart_read(port, RDA_UART_IRQ_MASK);
++		val |= RDA_UART_TX_DATA_NEEDED;
++		rda_uart_write(port, val, RDA_UART_IRQ_MASK);
++	}
++}
++
++static void rda_uart_receive_chars(struct uart_port *port)
++{
++	u32 status, val;
++
++	status = rda_uart_read(port, RDA_UART_STATUS);
++	while ((status & RDA_UART_RX_FIFO_MASK)) {
++		char flag = TTY_NORMAL;
++
++		if (status & RDA_UART_RX_PARITY_ERR) {
++			port->icount.parity++;
++			flag = TTY_PARITY;
++		}
++
++		if (status & RDA_UART_RX_FRAMING_ERR) {
++			port->icount.frame++;
++			flag = TTY_FRAME;
++		}
++
++		if (status & RDA_UART_RX_OVERFLOW_ERR) {
++			port->icount.overrun++;
++			flag = TTY_OVERRUN;
++		}
++
++		val = rda_uart_read(port, RDA_UART_RXTX_BUFFER);
++		val &= 0xff;
++
++		port->icount.rx++;
++		tty_insert_flip_char(&port->state->port, val, flag);
++
++		status = rda_uart_read(port, RDA_UART_STATUS);
++	}
++
++	spin_unlock(&port->lock);
++	tty_flip_buffer_push(&port->state->port);
++	spin_lock(&port->lock);
++}
++
++static irqreturn_t rda_interrupt(int irq, void *dev_id)
++{
++	struct uart_port *port = dev_id;
++	unsigned long flags;
++	u32 val, irq_mask;
++
++	spin_lock_irqsave(&port->lock, flags);
++
++	/* Clear IRQ cause */
++	val = rda_uart_read(port, RDA_UART_IRQ_CAUSE);
++	rda_uart_write(port, val, RDA_UART_IRQ_CAUSE);
++
++	if (val & (RDA_UART_RX_DATA_AVAILABLE | RDA_UART_RX_TIMEOUT))
++		rda_uart_receive_chars(port);
++
++	if (val & (RDA_UART_TX_DATA_NEEDED)) {
++		irq_mask = rda_uart_read(port, RDA_UART_IRQ_MASK);
++		irq_mask &= ~RDA_UART_TX_DATA_NEEDED;
++		rda_uart_write(port, irq_mask, RDA_UART_IRQ_MASK);
++
++		rda_uart_send_chars(port);
++	}
++
++	spin_unlock_irqrestore(&port->lock, flags);
++
++	return IRQ_HANDLED;
++}
++
++static int rda_uart_startup(struct uart_port *port)
++{
++	unsigned long flags;
++	int ret;
++	u32 val;
++
++	spin_lock_irqsave(&port->lock, flags);
++	rda_uart_write(port, 0, RDA_UART_IRQ_MASK);
++	spin_unlock_irqrestore(&port->lock, flags);
++
++	ret = request_irq(port->irq, rda_interrupt, IRQF_NO_SUSPEND,
++			  "rda-uart", port);
++	if (ret)
++		return ret;
++
++	spin_lock_irqsave(&port->lock, flags);
++
++	val = rda_uart_read(port, RDA_UART_CTRL);
++	val |= RDA_UART_ENABLE;
++	rda_uart_write(port, val, RDA_UART_CTRL);
++
++	/* enable rx interrupt */
++	val = rda_uart_read(port, RDA_UART_IRQ_MASK);
++	val |= (RDA_UART_RX_DATA_AVAILABLE | RDA_UART_RX_TIMEOUT);
++	rda_uart_write(port, val, RDA_UART_IRQ_MASK);
++
++	spin_unlock_irqrestore(&port->lock, flags);
++
++	return 0;
++}
++
++static void rda_uart_shutdown(struct uart_port *port)
++{
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&port->lock, flags);
++
++	rda_uart_stop_tx(port);
++	rda_uart_stop_rx(port);
++
++	val = rda_uart_read(port, RDA_UART_CTRL);
++	val &= ~RDA_UART_ENABLE;
++	rda_uart_write(port, val, RDA_UART_CTRL);
++
++	spin_unlock_irqrestore(&port->lock, flags);
++}
++
++static const char *rda_uart_type(struct uart_port *port)
++{
++	return (port->type == PORT_RDA) ? "rda-uart" : NULL;
++}
++
++static int rda_uart_request_port(struct uart_port *port)
++{
++	struct platform_device *pdev = to_platform_device(port->dev);
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return -ENXIO;
++
++	if (!devm_request_mem_region(port->dev, port->mapbase,
++				     resource_size(res), dev_name(port->dev)))
++		return -EBUSY;
++
++	if (port->flags & UPF_IOREMAP) {
++		port->membase = devm_ioremap_nocache(port->dev, port->mapbase,
++						     resource_size(res));
++		if (!port->membase)
++			return -EBUSY;
++	}
++
++	return 0;
++}
++
++static void rda_uart_config_port(struct uart_port *port, int flags)
++{
++	unsigned long irq_flags;
++
++	if (flags & UART_CONFIG_TYPE) {
++		port->type = PORT_RDA;
++		rda_uart_request_port(port);
++	}
++
++	spin_lock_irqsave(&port->lock, irq_flags);
++
++	/* Clear mask, so no surprise interrupts. */
++	rda_uart_write(port, 0, RDA_UART_IRQ_MASK);
++
++	/* Clear status register */
++	rda_uart_write(port, 0, RDA_UART_STATUS);
++
++	spin_unlock_irqrestore(&port->lock, irq_flags);
++}
++
++static void rda_uart_release_port(struct uart_port *port)
++{
++	struct platform_device *pdev = to_platform_device(port->dev);
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res)
++		return;
++
++	if (port->flags & UPF_IOREMAP) {
++		devm_release_mem_region(port->dev, port->mapbase,
++					resource_size(res));
++		devm_iounmap(port->dev, port->membase);
++		port->membase = NULL;
++	}
++}
++
++static int rda_uart_verify_port(struct uart_port *port,
++				struct serial_struct *ser)
++{
++	if (port->type != PORT_RDA)
++		return -EINVAL;
++
++	if (port->irq != ser->irq)
++		return -EINVAL;
++
++	return 0;
++}
++
++static const struct uart_ops rda_uart_ops = {
++	.tx_empty       = rda_uart_tx_empty,
++	.get_mctrl      = rda_uart_get_mctrl,
++	.set_mctrl      = rda_uart_set_mctrl,
++	.start_tx       = rda_uart_start_tx,
++	.stop_tx        = rda_uart_stop_tx,
++	.stop_rx        = rda_uart_stop_rx,
++	.startup        = rda_uart_startup,
++	.shutdown       = rda_uart_shutdown,
++	.set_termios    = rda_uart_set_termios,
++	.type           = rda_uart_type,
++	.request_port	= rda_uart_request_port,
++	.release_port	= rda_uart_release_port,
++	.config_port	= rda_uart_config_port,
++	.verify_port	= rda_uart_verify_port,
++};
++
++#ifdef CONFIG_SERIAL_RDA_CONSOLE
++
++static void rda_console_putchar(struct uart_port *port, int ch)
++{
++	if (!port->membase)
++		return;
++
++	while (!(rda_uart_read(port, RDA_UART_STATUS) & RDA_UART_TX_FIFO_MASK))
++		cpu_relax();
++
++	rda_uart_write(port, ch, RDA_UART_RXTX_BUFFER);
++}
++
++static void rda_uart_port_write(struct uart_port *port, const char *s,
++				u_int count)
++{
++	u32 old_irq_mask;
++	unsigned long flags;
++	int locked;
++
++	local_irq_save(flags);
++
++	if (port->sysrq) {
++		locked = 0;
++	} else if (oops_in_progress) {
++		locked = spin_trylock(&port->lock);
++	} else {
++		spin_lock(&port->lock);
++		locked = 1;
++	}
++
++	old_irq_mask = rda_uart_read(port, RDA_UART_IRQ_MASK);
++	rda_uart_write(port, 0, RDA_UART_IRQ_MASK);
++
++	uart_console_write(port, s, count, rda_console_putchar);
++
++	/* wait until all contents have been sent out */
++	while (!(rda_uart_read(port, RDA_UART_STATUS) & RDA_UART_TX_FIFO_MASK))
++		cpu_relax();
++
++	rda_uart_write(port, old_irq_mask, RDA_UART_IRQ_MASK);
++
++	if (locked)
++		spin_unlock(&port->lock);
++
++	local_irq_restore(flags);
++}
++
++static void rda_uart_console_write(struct console *co, const char *s,
++				   u_int count)
++{
++	struct rda_uart_port *rda_port;
++
++	rda_port = rda_uart_ports[co->index];
++	if (!rda_port)
++		return;
++
++	rda_uart_port_write(&rda_port->port, s, count);
++}
++
++static int rda_uart_console_setup(struct console *co, char *options)
++{
++	struct rda_uart_port *rda_port;
++	int baud = 921600;
++	int bits = 8;
++	int parity = 'n';
++	int flow = 'n';
++
++	if (co->index < 0 || co->index >= RDA_UART_PORT_NUM)
++		return -EINVAL;
++
++	rda_port = rda_uart_ports[co->index];
++	if (!rda_port || !rda_port->port.membase)
++		return -ENODEV;
++
++	if (options)
++		uart_parse_options(options, &baud, &parity, &bits, &flow);
++
++	return uart_set_options(&rda_port->port, co, baud, parity, bits, flow);
++}
++
++static struct console rda_uart_console = {
++	.name = RDA_UART_DEV_NAME,
++	.write = rda_uart_console_write,
++	.device = uart_console_device,
++	.setup = rda_uart_console_setup,
++	.flags = CON_PRINTBUFFER,
++	.index = -1,
++	.data = &rda_uart_driver,
++};
++
++static int __init rda_uart_console_init(void)
++{
++	register_console(&rda_uart_console);
++
++	return 0;
++}
++console_initcall(rda_uart_console_init);
++
++static void rda_uart_early_console_write(struct console *co,
++					 const char *s,
++					 u_int count)
++{
++	struct earlycon_device *dev = co->data;
++
++	rda_uart_port_write(&dev->port, s, count);
++}
++
++static int __init
++rda_uart_early_console_setup(struct earlycon_device *device, const char *opt)
++{
++	if (!device->port.membase)
++		return -ENODEV;
++
++	device->con->write = rda_uart_early_console_write;
++
++	return 0;
++}
++
++OF_EARLYCON_DECLARE(rda, "rda,8810pl-uart",
++		    rda_uart_early_console_setup);
++
++#define RDA_UART_CONSOLE (&rda_uart_console)
++#else
++#define RDA_UART_CONSOLE NULL
++#endif /* CONFIG_SERIAL_RDA_CONSOLE */
++
++static struct uart_driver rda_uart_driver = {
++	.owner = THIS_MODULE,
++	.driver_name = "rda-uart",
++	.dev_name = RDA_UART_DEV_NAME,
++	.nr = RDA_UART_PORT_NUM,
++	.cons = RDA_UART_CONSOLE,
++};
++
++static const struct of_device_id rda_uart_dt_matches[] = {
++	{ .compatible = "rda,8810pl-uart" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rda_uart_dt_matches);
++
++static int rda_uart_probe(struct platform_device *pdev)
++{
++	struct resource *res_mem;
++	struct rda_uart_port *rda_port;
++	int ret, irq;
++
++	if (pdev->dev.of_node)
++		pdev->id = of_alias_get_id(pdev->dev.of_node, "serial");
++
++	if (pdev->id < 0 || pdev->id >= RDA_UART_PORT_NUM) {
++		dev_err(&pdev->dev, "id %d out of range\n", pdev->id);
++		return -EINVAL;
++	}
++
++	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res_mem) {
++		dev_err(&pdev->dev, "could not get mem\n");
++		return -ENODEV;
++	}
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "could not get irq\n");
++		return irq;
++	}
++
++	if (rda_uart_ports[pdev->id]) {
++		dev_err(&pdev->dev, "port %d already allocated\n", pdev->id);
++		return -EBUSY;
++	}
++
++	rda_port = devm_kzalloc(&pdev->dev, sizeof(*rda_port), GFP_KERNEL);
++	if (!rda_port)
++		return -ENOMEM;
++
++	rda_port->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(rda_port->clk)) {
++		dev_err(&pdev->dev, "could not get clk\n");
++		return PTR_ERR(rda_port->clk);
++	}
++
++	rda_port->port.dev = &pdev->dev;
++	rda_port->port.regshift = 0;
++	rda_port->port.line = pdev->id;
++	rda_port->port.type = PORT_RDA;
++	rda_port->port.iotype = UPIO_MEM;
++	rda_port->port.mapbase = res_mem->start;
++	rda_port->port.irq = irq;
++	rda_port->port.uartclk = clk_get_rate(rda_port->clk);
++	if (rda_port->port.uartclk == 0) {
++		dev_err(&pdev->dev, "clock rate is zero\n");
++		return -EINVAL;
++	}
++	rda_port->port.flags = UPF_BOOT_AUTOCONF | UPF_IOREMAP |
++			       UPF_LOW_LATENCY;
++	rda_port->port.x_char = 0;
++	rda_port->port.fifosize = RDA_UART_TX_FIFO_SIZE;
++	rda_port->port.ops = &rda_uart_ops;
++
++	rda_uart_ports[pdev->id] = rda_port;
++	platform_set_drvdata(pdev, rda_port);
++
++	ret = uart_add_one_port(&rda_uart_driver, &rda_port->port);
++	if (ret)
++		rda_uart_ports[pdev->id] = NULL;
++
++	return ret;
++}
++
++static int rda_uart_remove(struct platform_device *pdev)
++{
++	struct rda_uart_port *rda_port = platform_get_drvdata(pdev);
++
++	uart_remove_one_port(&rda_uart_driver, &rda_port->port);
++	rda_uart_ports[pdev->id] = NULL;
++
++	return 0;
++}
++
++static struct platform_driver rda_uart_platform_driver = {
++	.probe = rda_uart_probe,
++	.remove = rda_uart_remove,
++	.driver = {
++		.name = "rda-uart",
++		.of_match_table = rda_uart_dt_matches,
++	},
++};
++
++static int __init rda_uart_init(void)
++{
++	int ret;
++
++	ret = uart_register_driver(&rda_uart_driver);
++	if (ret)
++		return ret;
++
++	ret = platform_driver_register(&rda_uart_platform_driver);
++	if (ret)
++		uart_unregister_driver(&rda_uart_driver);
++
++	return ret;
++}
++
++static void __init rda_uart_exit(void)
++{
++	platform_driver_unregister(&rda_uart_platform_driver);
++	uart_unregister_driver(&rda_uart_driver);
++}
++
++module_init(rda_uart_init);
++module_exit(rda_uart_exit);
++
++MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
++MODULE_DESCRIPTION("RDA8810PL serial device driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+index dce5f9dae121..df4a7534e239 100644
+--- a/include/uapi/linux/serial_core.h
++++ b/include/uapi/linux/serial_core.h
+@@ -281,4 +281,7 @@
+ /* MediaTek BTIF */
+ #define PORT_MTK_BTIF	117
+ 
++/* RDA UART */
++#define PORT_RDA	118
++
+ #endif /* _UAPILINUX_SERIAL_CORE_H */
 -- 
-2.7.4
+2.17.1
 
