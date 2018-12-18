@@ -2,105 +2,98 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691E9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63599C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BE721873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:23:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545150199;
-	bh=tGcHBZdwasvjiervYRfbkKSGSX9FI5nFAJ8rSyf1OI4=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=lx9nG1aOotZlFNdlTcZXVbuiCHK6Olgs4KRubVK5VutXgsLWwbL7Q8uKIRnZQVW4c
-	 Nqolvih4KOg/tJ7r+iCXO08yKfeBFESGPRAEyKMgVqMTuAUECwFZ1kzqLjEUbeljOX
-	 KGcGSnNFC1W/1X52C6DYXtH5r+V9vyBYXLPoFDNk=
+	by mail.kernel.org (Postfix) with ESMTP id 2D18A21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbeLRQXS (ORCPT
+        id S1727153AbeLRQ2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:23:18 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40019 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeLRQXR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:23:17 -0500
-Received: by mail-ed1-f66.google.com with SMTP id g22so8335920edr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 08:23:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0g1/EcXrWfzlu6dFXFwPJ34Xnq9GCNFuM6Gf8l29vM8=;
-        b=ecebYUIt2sCAMqs4qrRVQi7ZUZM94PBexWnaLuadSjSdSDjf2PToEtouJNBD/FlQCX
-         RM166TJP34pqrB5vR5JD543T4PpBbM3zYVK5f6HiJ1ETiuUHRGwgnhHgCzA0sWmqsSr1
-         OKgVNgsAA3J1XionkZoXhBTSsr0QUCi6uzVzk+72MZkyBqQbRORdHpXSdH6An1tq4N3e
-         viL6KjvByXVkIcPyclcVDB5kZyh+5/DH93prDIwabXBN4W+nX3O0o+Sw/GW1WYFM7BHa
-         KrYbAfvJznw/zPvOHnydMyl5mal59bJTL+PxvOY5BBQALU+B68IvdibGB4NIsXh605o+
-         o9cw==
-X-Gm-Message-State: AA+aEWa8souZBVKOSRas1U/XEVJDo3e3ftDUmH4RFAP1cytDJcYoMuoa
-        tS5Smdo6ROh4f8Kq8U8lMK8=
-X-Google-Smtp-Source: AFSGD/WAq5W/NHTYo0B6lpL85g4a8J17Ly8mkDX9Xth6mbUyWUuuJVuOErAEWChrEC/mwsWwvdFu7Q==
-X-Received: by 2002:a17:906:a301:: with SMTP id j1-v6mr13505963ejz.188.1545150196012;
-        Tue, 18 Dec 2018 08:23:16 -0800 (PST)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id q16sm4538203eds.60.2018.12.18.08.23.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 08:23:15 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Pavel Tatashin <pasha.tatashin@soleen.com>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] memory_hotplug: add missing newlines to debugging output
-Date:   Tue, 18 Dec 2018 17:23:07 +0100
-Message-Id: <20181218162307.10518-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.2
+        Tue, 18 Dec 2018 11:28:15 -0500
+Received: from mga03.intel.com ([134.134.136.65]:25946 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726611AbeLRQ2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:28:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 08:28:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
+   d="scan'208";a="119825143"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga001.jf.intel.com with ESMTP; 18 Dec 2018 08:28:12 -0800
+Subject: Re: [PATCH v6 1/3] x86/fpu: track AVX-512 usage of tasks
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Aubrey Li <aubrey.li@intel.com>, mingo@redhat.com,
+        peterz@infradead.org, hpa@zytor.com, ak@linux.intel.com,
+        tim.c.chen@linux.intel.com, dave.hansen@intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20181218042218.8653-1-aubrey.li@intel.com>
+ <alpine.DEB.2.21.1812181448170.12686@nanos.tec.linutronix.de>
+ <62997df2-0817-b54d-b11e-00a567f1d67c@linux.intel.com>
+ <alpine.DEB.2.21.1812181630530.14031@nanos.tec.linutronix.de>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <b14a9c82-3336-0f13-1a27-fba929e6b4fb@linux.intel.com>
+Date:   Wed, 19 Dec 2018 00:28:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1812181630530.14031@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+On 2018/12/18 23:32, Thomas Gleixner wrote:
+> On Tue, 18 Dec 2018, Li, Aubrey wrote:
+> 
+>> On 2018/12/18 22:14, Thomas Gleixner wrote:
+>>> On Tue, 18 Dec 2018, Aubrey Li wrote:
+>>>> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+>>>> index a38bf5a1e37a..8778ac172255 100644
+>>>> --- a/arch/x86/include/asm/fpu/internal.h
+>>>> +++ b/arch/x86/include/asm/fpu/internal.h
+>>>> @@ -411,6 +411,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
+>>>>  {
+>>>>  	if (likely(use_xsave())) {
+>>>>  		copy_xregs_to_kernel(&fpu->state.xsave);
+>>>> +
+>>>> +		/*
+>>>> +		 * AVX512 state is tracked here because its use is
+>>>> +		 * known to slow the max clock speed of the core.
+>>>> +		 */
+>>>> +		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
+>>>> +			fpu->avx512_timestamp = jiffies_64;
+>>>
+>>> Even if unlikely this is incorrect when running a 32 bit kernel because
+>>> there jiffies_64 cannot be atomically loaded vs. a concurrent update. See
+>>> the comment in include/linux/jiffies.h right above the jiffies_64
+>>> declaration.
+>>>
+>> Yeah, I noticed this, because this is under use_xsave() condition, also need
+>> valid AVX512 state, so a 32 bit kernel won't enter this branch.
+> 
+> What exactly prevents a 32bit kernel from having the AVX512 feature bit
+> set? And if it cannot be set on 32bit, then why are you compiling that code
+> in at all?
+> 
 
-pages_correctly_probed is missing new lines which means that the line is
-not printed rightaway but it rather waits for additional printks.
+I misunderstood, you mean 32bit kernel, not 32bit machine. Theoretically 32bit
+kernel can use AVX512, but not sure if anyone use it like this. get_jiffies_64()
+includes jiffies_lock ops so not good in context switch. So I want to use raw
+jiffies_64 here. jiffies is a good candidate but it has wraparound overflow issue.
+Other time source are expensive here.
 
-Add \n to all three messages in pages_correctly_probed.
+Should I limit the code only running on 64bit kernel? 
 
-Fixes: b77eab7079d9 ("mm/memory_hotplug: optimize probe routine")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- drivers/base/memory.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 0e5985682642..b5ff45ab7967 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -207,15 +207,15 @@ static bool pages_correctly_probed(unsigned long start_pfn)
- 			return false;
- 
- 		if (!present_section_nr(section_nr)) {
--			pr_warn("section %ld pfn[%lx, %lx) not present",
-+			pr_warn("section %ld pfn[%lx, %lx) not present\n",
- 				section_nr, pfn, pfn + PAGES_PER_SECTION);
- 			return false;
- 		} else if (!valid_section_nr(section_nr)) {
--			pr_warn("section %ld pfn[%lx, %lx) no valid memmap",
-+			pr_warn("section %ld pfn[%lx, %lx) no valid memmap\n",
- 				section_nr, pfn, pfn + PAGES_PER_SECTION);
- 			return false;
- 		} else if (online_section_nr(section_nr)) {
--			pr_warn("section %ld pfn[%lx, %lx) is already online",
-+			pr_warn("section %ld pfn[%lx, %lx) is already online\n",
- 				section_nr, pfn, pfn + PAGES_PER_SECTION);
- 			return false;
- 		}
--- 
-2.19.2
-
+Thanks,
+-Aubrey
