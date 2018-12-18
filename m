@@ -2,76 +2,106 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D79C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D340CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB4620815
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B7D9218A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545146861;
+	bh=GIPmiDMxAfWFegTfVFlBOREnRLIv2Oab4u3bzF54KFA=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=MLD7QUsubkToOjtBic4OKKeOq//Eox/SulXvGPonyCqinlZdblSYnvQUExKsrBSl6
+	 Ka7kSZmvh+5ykNKBV1NYnJBw8LqlRZ/htM/NRnaz8Fcg577J79efHZmEBnFksaKot2
+	 oerqMgetXqIqs24r99c58zqT5iU3H5kKTOEQe1/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeLRP0G (ORCPT
+        id S1726863AbeLRP1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:26:06 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:56376 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbeLRP0G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:26:06 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gZHFx-00048u-P1; Tue, 18 Dec 2018 16:26:01 +0100
-Date:   Tue, 18 Dec 2018 16:26:01 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <douliyangs@gmail.com>
-cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        kashyap.desai@broadcom.com,
-        shivasharan.srikanteshwara@broadcom.com, sumit.saxena@broadcom.com,
-        ming.lei@redhat.com, hch@lst.de, bhelgaas@google.com,
-        douliyang1@huawei.com
-Subject: Re: [PATCH 2/3] irq/affinity: Add is_managed into struct
- irq_affinity_desc
-In-Reply-To: <20181204155122.6327-3-douliyangs@gmail.com>
-Message-ID: <alpine.DEB.2.21.1812181545340.14031@nanos.tec.linutronix.de>
-References: <20181204155122.6327-1-douliyangs@gmail.com> <20181204155122.6327-3-douliyangs@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 18 Dec 2018 10:27:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726626AbeLRP1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:27:40 -0500
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94A3220815;
+        Tue, 18 Dec 2018 15:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545146859;
+        bh=GIPmiDMxAfWFegTfVFlBOREnRLIv2Oab4u3bzF54KFA=;
+        h=From:To:Subject:Date:From;
+        b=K/Es2xV/KqumZH6kHYTiBGKOpd2ImxpZR+cEcHMB60obaEmmjBrXxS2sZfFP4dK6W
+         ePlpJUwrEuurzrMaGWqqS8LMuSfsgrUu990SPwvGd8vJuAYX3ii2+JBAXCoCt7KrLk
+         ZBvwb1+s3rwsYeeE70HU0wkvrkjPIEKbDa+ksvPI=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Raphael Teysseyre <rteysseyre@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v4 0/5] leds: trigger: Add pattern initialization from Device Tree
+Date:   Tue, 18 Dec 2018 16:27:27 +0100
+Message-Id: <1545146852-32207-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018, Dou Liyang wrote:
-> diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-> index 1562a36e7c0f..d122575ba1b4 100644
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -289,6 +289,13 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
->  	for (; curvec < nvecs; curvec++)
->  		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
->  
-> +	/*  Setup complementary information */
-> +	for (i = 0; i < nvecs; i++) {
-> +		if (i >= affd->pre_vectors && i < nvecs - affd->post_vectors)
-> +			masks[i].is_managed = 1;
-> +		else
-> +			masks[i].is_managed = 0;
+Hi,
 
-Why want you clear the bit? The masks are allocated with kcalloc() so it's
-clear already.
+Changes since v3:
+1. Add missing EXPORT_SYMBOL_GPL.
+2. Put pattern trigger format into common file - shared between
+   dt-bindings and sysfs.
+3. Use array of integers as led-pattern property (since it is bigger change
+   I did not add Pavel's ack to patch 2/5).
+4. Mention ms units for led-pattern bindings.
 
-+	/* Mark the managed interrupts */
-+	for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
-+		masks[i].is_managed = 1;
-+
+Changes since v2:
+1. Drop Jacek's patches and my "led: triggers: Initialize
+   LED_INIT_DEFAULT_TRIGGER if trigger is brought after class".
+2. Follow Rob's advices about bindings - use "led-pattern" property
+   and generalize usage of it into to three triggers.
+3. New patches (2/5, 4/5 and 5/5).
 
-Is what I made it instead.
+Changes since v1:
+1. Rebase on Jacek's patches.
+2. Add patch 3/5 for fixup of Jacek's solution.
+3. Drop first two patches from the series (applied).
+4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
+5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek).
 
-Thanks,
 
-	tglx
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (5):
+  dt-bindings: leds: Add pattern initialization from Device Tree
+  leds: Add helper for getting default pattern from Device Tree
+  leds: trigger: pattern: Add pattern initialization from Device Tree
+  leds: trigger: oneshot: Add initialization from Device Tree
+  leds: trigger: timer: Add initialization from Device Tree
+
+ .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 +----------
+ Documentation/devicetree/bindings/leds/common.txt  | 11 +++
+ .../bindings/leds/leds-trigger-pattern.txt         | 48 +++++++++++
+ drivers/leds/led-class.c                           | 42 +++++++++
+ drivers/leds/trigger/ledtrig-oneshot.c             | 38 ++++++++-
+ drivers/leds/trigger/ledtrig-pattern.c             | 99 +++++++++++++++++-----
+ drivers/leds/trigger/ledtrig-timer.c               | 34 ++++++++
+ include/linux/leds.h                               |  3 +
+ 8 files changed, 257 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+
+-- 
+2.7.4
+
