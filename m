@@ -2,158 +2,158 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEA4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E66AC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6EFA217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:11:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E581217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:13:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545124387;
+	bh=zUFQpdcaWT/Rj/5p0J7zOMRT0X3gfwVnpGrdMolw7MY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=S80Z6fYcY964iDp0wbAOX7z5pzMlhS+BzDvPF7ewapUUkHri8hJ5Udjp5sftP9z5X
+	 xZ0yylYwW8UmJNaKJS1/MT73puT6aXle2rie4xH1ipr8nmiB6Sj0Cg0+ce2NTcchAO
+	 QyzO91zA3JoXRS0kbhJ3E0Nx9u0uyRTxxaAjepF0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbeLRJLg (ORCPT
+        id S1726492AbeLRJNG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:11:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726388AbeLRJLg (ORCPT
+        Tue, 18 Dec 2018 04:13:06 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34638 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbeLRJNG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:11:36 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBI94DJa128576
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:11:35 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pevdt4gud-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:11:31 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 18 Dec 2018 09:11:29 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Dec 2018 09:11:25 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBI9BOIM10354984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Dec 2018 09:11:24 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20499A405C;
-        Tue, 18 Dec 2018 09:11:24 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64FB6A4054;
-        Tue, 18 Dec 2018 09:11:23 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.52])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 18 Dec 2018 09:11:23 +0000 (GMT)
-Date:   Tue, 18 Dec 2018 11:11:21 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/5] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
-References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154483852617.1672629.2068988045031389440.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181216124335.GB30212@rapoport-lnx>
- <CAPcyv4hXPm4GnBheTZ5WN6s5Kiw02MW1aWA-s2qC8BqfthT3Yg@mail.gmail.com>
+        Tue, 18 Dec 2018 04:13:06 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p6so11693373lfc.1;
+        Tue, 18 Dec 2018 01:13:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6r0hfYSfE3H+Mwp6T1U8Eexoij36bxoyzYXm6MDevnk=;
+        b=inHGPsApkBOl/l8VXy96N0gBlgo72Xcqkt73LbfTorkn4bBdYFrdjd16ke23x8kxzQ
+         SJ9PbY2Awxu8wvSvobSwi/++mGITt4dhAKiEO/0jpmDyHHZyurEp9b5LwcWIXYwN1E4N
+         P0Ce0Paa2npDGGoDPjYUyua3zs65N4SkFmpouqRREIZy2lnCox0yvfrWL6OgwqCLcEx9
+         6o8cy5zQB8WWyyA6ijmEt5q/LUio8IxyJ1zYW/ZWqZ5cnsp5lENFHaixhbOJOFKT3vlV
+         qeRQP8s8zDvRzOLFTgn4G9iAUwbeF1n8RBtwFv1E8hdfeoubP/haJ016f9AcMd5lopBz
+         CXOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6r0hfYSfE3H+Mwp6T1U8Eexoij36bxoyzYXm6MDevnk=;
+        b=iI9VD5ODdKl0R0Lo8Tpu4b2rJkC+JgKWfwU2hOC7yEe/n9KI6M8NhflDJnn8mNxDmA
+         o7IA9RAc73Lwiq8DYibEvegWKqZaeo39MUnR5CojY0zX6rNYH4HlaeOd/CfhN1yDwlF2
+         XRYme2uatxZ0c29MXY73dvy+fSp+9UVAkkzUtQiimavaeNb21u145LYKcYwT01M5Staw
+         TaSpv/Kh0HK9O81qC9TAGbn5IKE2nXWp0hCFEfrxgRd/BYe6Wco3aP3709vKpPETVQIt
+         uZpNNEDFC4g5VGzNPtZBE4Xq8H1uWQid27X39CrsPqqSwumbfhcDfcWG5hqulPI+3y/I
+         fzpw==
+X-Gm-Message-State: AA+aEWasggPcptRxMzgALdwH3OxWJTxzcUh8b2p/7z8IbZS5IvYA6nwo
+        zSkzoG96q74Oh77YjsDOB0s=
+X-Google-Smtp-Source: AFSGD/VhxxCVtqCyBo7mATlvQS2HsiulYqLuZvKg06S4otYtyNiKoQ5ILRTfqr3m0Q/EVOoKZii91A==
+X-Received: by 2002:a19:9508:: with SMTP id x8mr9722456lfd.112.1545124384054;
+        Tue, 18 Dec 2018 01:13:04 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm2998886lje.73.2018.12.18.01.13.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 01:13:03 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gZBR4-0002ME-72; Tue, 18 Dec 2018 10:13:06 +0100
+Date:   Tue, 18 Dec 2018 10:13:06 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+Message-ID: <20181218091306.GA10562@localhost>
+References: <20181217141330.6294-1-bgodavar@codeaurora.org>
+ <20181217141330.6294-2-bgodavar@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4hXPm4GnBheTZ5WN6s5Kiw02MW1aWA-s2qC8BqfthT3Yg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18121809-0028-0000-0000-0000032C1921
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121809-0029-0000-0000-000023E8740B
-Message-Id: <20181218091121.GA25499@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812180081
+In-Reply-To: <20181217141330.6294-2-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:56:36AM -0800, Dan Williams wrote:
-> On Sun, Dec 16, 2018 at 4:43 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> >
-> > On Fri, Dec 14, 2018 at 05:48:46PM -0800, Dan Williams wrote:
-> > > Randomization of the page allocator improves the average utilization of
-> > > a direct-mapped memory-side-cache. Memory side caching is a platform
-> > > capability that Linux has been previously exposed to in HPC
-> > > (high-performance computing) environments on specialty platforms. In
-> > > that instance it was a smaller pool of high-bandwidth-memory relative to
-> > > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-> > > be found on general purpose server platforms where DRAM is a cache in
-> > > front of higher latency persistent memory [1].
-> [..]
-> > > diff --git a/mm/memblock.c b/mm/memblock.c
-> > > index 185bfd4e87bb..fd617928ccc1 100644
-> > > --- a/mm/memblock.c
-> > > +++ b/mm/memblock.c
-> > > @@ -834,8 +834,16 @@ int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
-> > >               return ret;
-> > >
-> > >       for (i = start_rgn; i < end_rgn; i++) {
-> > > -             type->regions[i].cache_size = cache_size;
-> > > -             type->regions[i].direct_mapped = direct_mapped;
-> > > +             struct memblock_region *r = &type->regions[i];
-> > > +
-> > > +             r->cache_size = cache_size;
-> > > +             r->direct_mapped = direct_mapped;
-> >
-> > I think this change can be merged into the previous patch
+On Mon, Dec 17, 2018 at 07:43:26PM +0530, Balakrishna Godavarthi wrote:
+> wcn3990 requires a power pulse to turn ON/OFF along with
+> regulators. Sometimes we are observing the power pulses are sent
+> out with some time delay, due to queuing these commands. This is
+> causing synchronization issues with chip, which intern delay the
+> chip setup or may end up with communication issues.
 > 
-> Ok, will do.
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> v4:
+>  * used serdev_device_write_buf() instead of serdev_device_write()
 > 
-> > > +             /*
-> > > +              * Enable randomization for amortizing direct-mapped
-> > > +              * memory-side-cache conflicts.
-> > > +              */
-> > > +             if (r->size > r->cache_size && r->direct_mapped)
-> > > +                     page_alloc_shuffle_enable();
-> >
-> > It seems that this is the only use for ->direct_mapped in the memblock
-> > code. Wouldn't cache_size != 0 suffice? I.e., in the code that sets the
-> > memblock region attributes, the cache_size can be set to 0 for the non
-> > direct mapped caches, isn't it?
-> >
+> v3:
+>   * no change.
+> v2: 
+>   * Updated function qca_send_power_pulse()
+>   * addressed reviewer comments.
 > 
-> The HMAT specification allows for other cache-topologies, so it's not
-> sufficient to just look for non-zero size when a platform implements a
-> set-associative cache. The expectation is that a set-associative cache
-> would not need the kernel to perform memory randomization to improve
-> the cache utilization.
+> v1:
+>  * initial patch
 > 
-> The check for memory size > cache-size is a sanity check for a
-> platform BIOS or system configuration that mis-reports or mis-sizes
-> the cache.
+> ---
+>  drivers/bluetooth/hci_qca.c | 37 +++++++++++++------------------------
+>  1 file changed, 13 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index f036c8f98ea3..d8bc77c8c9b9 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>  		hci_uart_set_baudrate(hu, speed);
+>  }
+>  
+> -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+> +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
+>  {
+> -	struct hci_uart *hu = hci_get_drvdata(hdev);
+> -	struct qca_data *qca = hu->priv;
+> -	struct sk_buff *skb;
+> +	int ret;
+>  
+>  	/* These power pulses are single byte command which are sent
+>  	 * at required baudrate to wcn3990. On wcn3990, we have an external
+> @@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>  	 * save power. Disabling hardware flow control is mandatory while
+>  	 * sending power pulses to SoC.
+>  	 */
+> -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+> -
+> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+> -	if (!skb)
+> -		return -ENOMEM;
+> -
+> +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
+>  	hci_uart_set_flow_control(hu, true);
+> +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
+> +	if (ret < 0) {
+> +		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
+> +			   cmd);
+> +		return ret;
+> +	}
 
-Apparently I didn't explain my point well.
+As I mentioned earlier, serdev_device_write_buf() can buffer less than
+sizeof(cmd) bytes if the tty driver's write buffer is full (and return
+the number of bytes buffered).
 
-The acpi_numa_memory_affinity_init() already knows whether the cache is
-direct mapped or a set-associative. It can just skip calling
-memblock_set_sidecache() for the set-associative case.
+How you want to deal with that is up to you and the bluetooth
+maintainers, but I think you want to at least log it even if you choose
+to ignore it.
 
-Another thing I've noticed only now, is that memory randomization is
-enabled if there is at least one memory region with a direct mapped side
-cache attached and once the randomization is on the cache size and the
-mapping mode do not matter. So, I think it's not necessary to store them in
-the memory region at all.
-
--- 
-Sincerely yours,
-Mike.
-
+Johan
