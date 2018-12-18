@@ -2,111 +2,79 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09969C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB01C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C905E218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545154032;
-	bh=kxUvsOyDTqLHwe1shpxJEKAtHdYM5IW0FRBQoxhGY7M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1yCv3nA+KUwmTq8CcoXo44VVrtesjgSPhcnIA8MbcDLioZjSvu9am8DRnLeUD0qNl
-	 j2BeF2C8LYBHtu2YnBVFrXnSDpxyc54CeMnEnPgYWvAZGNjjei113zMoVstvbvFw3n
-	 RnFW+8uDrIUYe5rrYcMMcpR4Ipq9ZaAfwPCC6bk4=
+	by mail.kernel.org (Postfix) with ESMTP id 17E6521873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbeLRR1M (ORCPT
+        id S1727255AbeLRR1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:27:12 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45839 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbeLRR1L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:27:11 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 32so16373926ota.12;
-        Tue, 18 Dec 2018 09:27:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ayJEj22fjGMBH+oW4YmpMd5fNmXzaycv+scYNi+UhFI=;
-        b=s83ykHkQKOuusPrHvA+qBMMzr75tJJu+9hbXzntp3NZ9jieQbqC4C6der+IvadD+E7
-         iBcS9dbjOQETqKJzbRNtpA7ARFssRxDg2hiocJLT/g+6+IIW/w1n8FiBQiIeHmO0LvjK
-         PpK2mTvH0GDOFgpbKPCnHDVk4EgkYe/lMU14kpLyPDLYJ4u4FTdn4w5GpEXAQ8aQ1RBL
-         u9gacQy/JAczPTa/NRAgyc9+Mw8SUJXpk3QgI9DAZPhqFSFE87O31Iwu+CCOhYDO+bWz
-         fwFveTFaEN9qorc58viEnC8BG3tlPK5oFWOFqEECrDgTRF2Gkw2KsSYXe1bTamnqGhxD
-         FnXg==
-X-Gm-Message-State: AA+aEWZnj5883sCAtfxc6meXAo8lZJIZ2e/OqQVpaOecSsH7jqoTUi7r
-        BGBLnDVRfwYfK9mgyZZfFQ==
-X-Google-Smtp-Source: AFSGD/Vdjs3wY1LW/no6TLz1N5yhO2ikwZcX8qoEFBzEmnJUgqTk4qbXOIPDrrJ82AU8gJlaqqyDTw==
-X-Received: by 2002:a9d:5f85:: with SMTP id g5mr3978681oti.333.1545154030663;
-        Tue, 18 Dec 2018 09:27:10 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s17sm7696890otp.36.2018.12.18.09.27.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:27:09 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:27:09 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, dianders@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
-        mark.rutland@arm.com, linux-remoteproc@vger.kernel.org,
-        evgreen@chromium.org, briannorris@chromium.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: remoteproc: qcom: Add clock bindings
- for Q6V5
-Message-ID: <20181218172709.GA19660@bogus>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
- <20181217100724.4593-2-sibis@codeaurora.org>
+        Tue, 18 Dec 2018 12:27:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726638AbeLRR1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:27:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EF648AD65;
+        Tue, 18 Dec 2018 17:27:22 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 09:27:14 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Xie Yongji <xieyongji@baidu.com>, zhangyu31@baidu.com,
+        liuqi16@baidu.com, yuanlinsi01@baidu.com, nixun@baidu.com,
+        lilin24@baidu.com, longman@redhat.com,
+        andrea.parri@amarulasolutions.com
+Subject: Re: [RFC] locking/rwsem: Avoid issuing wakeup before setting the
+ reader waiter to nil
+Message-ID: <20181218172714.fa3zpoyqndarqgd3@linux-r8p5>
+References: <20181129180828.GA11650@hirez.programming.kicks-ass.net>
+ <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
+ <20181129213017.v3eljor54lfpoug2@linux-r8p5>
+ <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
+ <20181129221714.GF11632@hirez.programming.kicks-ass.net>
+ <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
+ <20181217113718.GB4900@worktop.programming.kicks-ass.net>
+ <20181217205310.pvwcryyaqlrzmaex@linux-r8p5>
+ <20181218131031.GJ15430@hirez.programming.kicks-ass.net>
+ <20181218131419.GD16284@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20181217100724.4593-2-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181218131419.GD16284@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:37:19PM +0530, Sibi Sankar wrote:
-> Add missing clock bindings for Q6V5 MSS on SDM845 SoCs.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt       | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 9ff5b0309417..780adc043b37 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -39,13 +39,17 @@ on the Qualcomm Hexagon core.
->  - clocks:
->  	Usage: required
->  	Value type: <phandle>
-> -	Definition: reference to the iface, bus and mem clocks to be held on
-> -		    behalf of the booting of the Hexagon core
-> +	Definition: reference to the list of 4 clocks for the modem sub-system
-> +		    reference to the list of 8 clocks for the modem sub-system
-> +		    on SDM845 SoCs
->  
->  - clock-names:
->  	Usage: required
->  	Value type: <stringlist>
-> -	Definition: must be "iface", "bus", "mem"
-> +	Definition: must be "iface", "bus", "mem", "xo" for the modem sub-system
-> +		    must be "iface", "bus", "mem", "gpll0_mss", "snoc_axi",
-> +		    "mnoc_axi", "prng", "xo" for the modem sub-system on SDM845
-> +		    SoCs
+On Tue, 18 Dec 2018, Peter Zijlstra wrote:
+>> I'd rather do it like so, except I'm still conflicted on the naming.
+>
+>> +void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+>> +{
+>> +	if (__wake_q_add(head, task))
+>> +		get_task_struct(task);
+>> +}
+>> +
+>> +void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
+>> +{
+>> +	if (!__wake_a_add(head, task))
+>> +		put_task_struct(task);
+>>  }
+>
+>That is, in the one case it has internal reference counting, in the
+>other case it consumes the reference counting.
 
-This seems to me a list of all clocks you need enabled, not what clocks 
-actually go to the modem. Specifically, shouldn't the *noc_axi clocks be 
-managed by the interconnect driver?
+Yeah I like that better for an interface. Also no concurrency in head
+so delaying the get() should be ok.
 
-Rob
+Thanks,
+Davidlohr
