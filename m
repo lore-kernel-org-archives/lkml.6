@@ -5,60 +5,209 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FC9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6495C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A457C218A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7667B218A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:25:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbeLRRZM (ORCPT
+        id S1727280AbeLRRZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:25:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 12:25:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49362 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726812AbeLRRZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:25:12 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726555AbeLRRZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:25:34 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00C96218A3;
-        Tue, 18 Dec 2018 17:25:09 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 12:25:08 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Zhou Chengming <zhouchengming1@huawei.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: Re: [PATCH V2 5/9] x86/alternative: Split text_poke_bp() into tree
- steps
-Message-ID: <20181218122508.63f164a8@gandalf.local.home>
-In-Reply-To: <0ae51df28b823b7ac22be513a65d8c24d3aabb10.1545149539.git.bristot@redhat.com>
-References: <cover.1545149539.git.bristot@redhat.com>
-        <0ae51df28b823b7ac22be513a65d8c24d3aabb10.1545149539.git.bristot@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id A6CC158E29;
+        Tue, 18 Dec 2018 17:25:33 +0000 (UTC)
+Received: from [10.36.117.218] (ovpn-117-218.ams2.redhat.com [10.36.117.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 04A0C5D9CD;
+        Tue, 18 Dec 2018 17:25:27 +0000 (UTC)
+Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
+ capabilities
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        miklos@szeredi.hu, sweil@redhat.com, swhiteho@redhat.com
+References: <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
+ <20181213091320.GA2313@work-vm>
+ <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
+ <20181213100058.GC2313@work-vm>
+ <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+ <20181213121548.GN2313@work-vm>
+ <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+ <20181213133823.2272736b.cohuck@redhat.com>
+ <20181214134434.GA3882@stefanha-x1.localdomain>
+ <cf910f77-203c-8efd-fed1-6b041b078d63@redhat.com>
+ <20181217145638.GH6785@stefanha-x1.localdomain>
+ <20181218181358.3bc2615a.cohuck@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <4a870d9c-8c46-7f2e-4947-a3913a824d14@redhat.com>
+Date:   Tue, 18 Dec 2018 18:25:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181218181358.3bc2615a.cohuck@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Dec 2018 17:25:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 18.12.18 18:13, Cornelia Huck wrote:
+> On Mon, 17 Dec 2018 14:56:38 +0000
+> Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> 
+>> On Mon, Dec 17, 2018 at 11:53:46AM +0100, David Hildenbrand wrote:
+>>> On 14.12.18 14:44, Stefan Hajnoczi wrote:  
+>>>> On Thu, Dec 13, 2018 at 01:38:23PM +0100, Cornelia Huck wrote:  
+>>>>> On Thu, 13 Dec 2018 13:24:31 +0100
+>>>>> David Hildenbrand <david@redhat.com> wrote:
+> 
+>>>>>> As s390x does not have the concept of memory mapped io (RAM is RAM,
+>>>>>> nothing else), this is not architectured. vitio-ccw can therefore not
+>>>>>> define anything similar like that. However, in virtual environments we
+>>>>>> can do whatever we want on top of the pure transport (e.g. on the virtio
+>>>>>> layer).
+>>>>>>
+>>>>>> Conny can correct me if I am wrong.  
+>>>>>
+>>>>> I don't think you're wrong, but I haven't read the code yet and I'm
+>>>>> therefore not aware of the purpose of this BAR.
+>>>>>
+>>>>> Generally, if there is a memory location shared between host and guest,
+>>>>> we need a way to communicate its location, which will likely differ
+>>>>> between transports. For ccw, I could imagine a new channel command
+>>>>> dedicated to exchanging configuration information (similar to what
+>>>>> exists today to communicate the locations of virtqueues), but I'd
+>>>>> rather not go down this path.
+>>>>>
+>>>>> Without reading the code/design further, can we use one of the
+>>>>> following instead of a BAR:
+>>>>> - a virtqueue;
+>>>>> - something in config space?
+>>>>> That would be implementable by any virtio transport.  
+>>>>
+>>>> The way I think about this is that we wish to extend the VIRTIO device
+>>>> model with the concept of shared memory.  virtio-fs, virtio-gpu, and
+>>>> virtio-vhost-user all have requirements for shared memory.
+>>>>
+>>>> This seems like a transport-level issue to me.  PCI supports
+>>>> memory-mapped I/O and that's the right place to do it.  If you try to
+>>>> put it into config space or the virtqueue, you'll end up with something
+>>>> that cannot be realized as a PCI device because it bypasses PCI bus
+>>>> address translation.
+>>>>
+>>>> If CCW needs a side-channel, that's fine.  But that side-channel is a
+>>>> CCW-specific mechanism and probably doesn't apply to all other
+>>>> transports.
+>>>>
+>>>> Stefan
+>>>>   
+>>>
+>>> I think the problem is more fundamental. There is no iommu. Whatever
+>>> shared region you want to indicate, you want it to be assigned a memory
+>>> region in guest physical memory. Like a DIMM/NVDIMM. And this should be
+>>> different to the concept of a BAR. Or am I missing something?  
+>>
+>> If you implement a physical virtio PCI adapter then there is bus
+>> addressing and an IOMMU and VIRTIO has support for that.  I'm not sure I
+>> understand what you mean by "there is no iommu"?
+> 
+> For ccw, there is no iommu; channel-program translation is doing
+> similar things. (I hope that is what David meant :)
+> 
+>>
+>>> I am ok with using whatever other channel to transport such information.
+>>> But I believe this is different to a typical BAR. (I wish I knew more
+>>> about PCI internals ;) ).
+>>>
+>>> I would also like to know how shared memory works as of now for e.g.
+>>> virtio-gpu.  
+>>
+>> virtio-gpu currently does not use shared memory, it needs it for future
+>> features.
+> 
+> OK, that all sounds like we need to define a generic, per transport,
+> device agnostic way to specify shared memory.
+> 
+> Where is that memory situated? Is it something in guest memory (like
+> virtqueues)? If it is something provided by the device, things will get
+> tricky for ccw (remember that there's no mmio on s390; pci on s390 uses
+> special instructions for that.)
+> 
 
-Splitting text_poke_bp() into tree steps. Is this a subtle joke on
-static_branches?
+I am just very very confused right now. What I am struggling with right
+now (Stefan, hope you can clarify it for me):
 
-;-)
+We need some place where this shared memory is located in the guest
+physical memory. On x86 - if I am not wrong - this BAR is placed into
+the reserved memory area between 3 and 4 GB. There is no such thing on
+s390x. Because we don't have IO via memory (yet). All we have is one or
+two KVM memory slots filled with all memory.
 
--- Steve
+So what we will need on s390x is on the QEMU side such a reserved memory
+region where devices like virtio-fs can reserve a region for shared memory.
+
+So it is something like a dimm/nvdimm except that it is smaller and not
+visible to the user directly (via memory backends).
+
+-- 
+
+Thanks,
+
+David / dhildenb
