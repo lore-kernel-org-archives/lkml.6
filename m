@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68108C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14BCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3714321873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B129821873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151302;
-	bh=PQ/tq4z2bkOkOCVX2oQ7F9exo1OfctrfmiERuYUt0c4=;
+	s=default; t=1545151309;
+	bh=SbRbdCL7dvVt89A5l4sx8/WBqSQNEh/srwJcsTOpm0I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A4xQkq6cta9YWAlE58wlCVmPoOqbhjjWmSl5WEhCP+JVL/jP6IkYFZ0wPJSPRKZLr
-	 KVLziYzqTffhQ4hDNlC6ux5YMJKygiD9DeJQMdmVZ81rQkmyfl0k44qGk814UbRvbt
-	 Z3cFMqkwPiOH960B1t43PY7dEsalTitMGHwsgo4U=
+	b=DZhLOtGUFRa9BUIYfqlA1NsQ3ujm/8eUyTHbhG4y4QT6s5zT5v99G1Iy7OpoLA8GR
+	 DrY80egqqgkGDyhEO6Lt0DypEUvmhG0ZvmTZeUAYdg0i82A+RSZUTp+X2tmWFiV2S6
+	 UZLmrvxu/G1xSBChVDEKxWlwWp+wezwybRcBWTog=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeLRQll (ORCPT
+        id S1727622AbeLRQls (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39170 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726737AbeLRQli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:38 -0500
+        id S1727598AbeLRQlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C68321873;
-        Tue, 18 Dec 2018 16:41:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5593021873;
+        Tue, 18 Dec 2018 16:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151297;
-        bh=PQ/tq4z2bkOkOCVX2oQ7F9exo1OfctrfmiERuYUt0c4=;
+        s=default; t=1545151305;
+        bh=SbRbdCL7dvVt89A5l4sx8/WBqSQNEh/srwJcsTOpm0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sEG5rlnu8pDpwBKBYyuYMbNOFZnjHjMSMEnIRyHySo6ir+AwzRpYmg/OWo8DgjFPr
-         zxuhk7sRtjTaO9OyYrtQo7LDOf5PQZbz3JLE9Nce0kf/kfQtN4tJo3lNgJdBHU9Bao
-         xd6TfCvBSeSGe5t1eGwYe1bDGy89YpDvyG7WRvlY=
+        b=ohYnpsT9v2JQPgo7iE0cw7ITHVEDTCZQ6Yur3ZuIJ1Pm5gUkH42lML2b9DJ1BwpO0
+         jpIyGntBRYMYW/7A6K5ZG54/xJcep8tlifjyGS7k2m6KSQuZfJAAVD43KJXJzkzWNA
+         Q+AS+lfo3KIppkLVf2EqP6zJx+q8QWl/Fznz2h1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 27/44] tracing: Fix memory leak in create_filter()
-Date:   Tue, 18 Dec 2018 17:39:39 +0100
-Message-Id: <20181218163930.677328030@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 30/44] media: vb2: dont call __vb2_queue_cancel if vb2_start_streaming failed
+Date:   Tue, 18 Dec 2018 17:39:42 +0100
+Message-Id: <20181218163930.965994484@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,52 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit b61c19209c2c35ea2a2fe502d484703686eba98c upstream.
+commit 04990215dec43c424daff00d1f622167b8aafd1f upstream.
 
-The create_filter() calls create_filter_start() which allocates a
-"parse_error" descriptor, but fails to call create_filter_finish() that
-frees it.
+vb2_start_streaming() already rolls back the buffers, so there is no
+need to call __vb2_queue_cancel(). Especially since __vb2_queue_cancel()
+does too much, such as zeroing the q->queued_count value, causing vb2
+to think that no buffers have been queued.
 
-The op_stack and inverts in predicate_parse() were also not freed.
+It appears that this call to __vb2_queue_cancel() is a left-over from
+before commit b3379c6201bb3.
 
-Found by kmemleak detector.
+Fixes: b3379c6201bb3 ('vb2: only call start_streaming if sufficient buffers are queued')
 
-Cc: stable@vger.kernel.org
-Fixes: 80765597bc587 ("tracing: Rewrite filter logic to be simpler and faster")
-Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: <stable@vger.kernel.org>      # for v4.16 and up
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_filter.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/common/videobuf2/videobuf2-core.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -570,11 +570,13 @@ predicate_parse(const char *str, int nr_
- 		}
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -1755,10 +1755,8 @@ int vb2_core_streamon(struct vb2_queue *
+ 		if (ret)
+ 			return ret;
+ 		ret = vb2_start_streaming(q);
+-		if (ret) {
+-			__vb2_queue_cancel(q);
++		if (ret)
+ 			return ret;
+-		}
  	}
  
-+	kfree(op_stack);
-+	kfree(inverts);
- 	return prog;
- out_free:
- 	kfree(op_stack);
--	kfree(prog_stack);
- 	kfree(inverts);
-+	kfree(prog_stack);
- 	return ERR_PTR(ret);
- }
- 
-@@ -1718,6 +1720,7 @@ static int create_filter(struct trace_ev
- 	err = process_preds(call, filter_string, *filterp, pe);
- 	if (err && set_str)
- 		append_filter_err(pe, *filterp);
-+	create_filter_finish(pe);
- 
- 	return err;
- }
+ 	q->streaming = 1;
 
 
