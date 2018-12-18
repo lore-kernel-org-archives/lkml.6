@@ -2,139 +2,131 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6A7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFED2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 012FF21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9FFB21850
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545144835;
+	bh=2dpshEut2yHTzIQ57or8Rxgx0kWdLvyD3iA0La9ewEs=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=hu5AAdOA6ow5QMna7ZdZfDzo/37MikQVx18eeoPghs10pRCk6gfYyJ0snyE85C9Nl
+	 qHxTGoH6nO6sWpQnmI+B3+/rnZjuR65wzZC9KH1o0OjaBOQMAtT11z7WRVFhLbIlRe
+	 VqnLMXqMxEaqOB+cT+6yHw9mR8kRGBoesZuZQzx0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbeLROs5 (ORCPT
+        id S1726685AbeLROxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:48:57 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33387 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726629AbeLROs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:48:57 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBIEkYJA015616;
-        Tue, 18 Dec 2018 15:48:28 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2pcr8xr9fe-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 18 Dec 2018 15:48:28 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3A22734;
-        Tue, 18 Dec 2018 14:48:28 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D75F54E6E;
-        Tue, 18 Dec 2018 14:48:27 +0000 (GMT)
-Received: from localhost (10.75.127.50) by SFHDAG6NODE3.st.com (10.75.127.18)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 18 Dec 2018 15:48:27
- +0100
-From:   <patrice.chotard@st.com>
-To:     Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <patrice.chotard@st.com>
-Subject: [PATCH 1/1] ARM: STi: Restore secondary CPU's bringup
-Date:   Tue, 18 Dec 2018 15:48:13 +0100
-Message-ID: <1545144493-11600-1-git-send-email-patrice.chotard@st.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 18 Dec 2018 09:53:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726426AbeLROxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:53:54 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 935F521850;
+        Tue, 18 Dec 2018 14:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545144833;
+        bh=2dpshEut2yHTzIQ57or8Rxgx0kWdLvyD3iA0La9ewEs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=R3CG8O/LI0KI9eYItvy+ZC4rKxegixVczykTeTgIgf3IkT77C58hN2I9nBYK+c76r
+         aS+UjBDVCyTyazYXTFZjpwJa/zhADG5ePDqVZ4b/byROP1JuEjKghBywMXOCSTyVOo
+         C70Wn6rrSfY3ORzRU9AaJk1W8tfw3VOPkbzvrZcM=
+Subject: Re: selftests/net: udpgso: LTS kernels supportability ?
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>,
+        Dan Rue <dan.rue@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        shuah <shuah@kernel.org>
+References: <bbabafb5-e16c-4025-31d0-d9e5feb5f39a@linaro.org>
+ <1d2c9a10-6caf-49ff-b921-8b93dbe96f78@kernel.org>
+ <1de7a003-0aac-1f4f-b836-267136e30a0a@linaro.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <fd4c527a-daeb-1c73-c423-95d02e1b8e86@kernel.org>
+Date:   Tue, 18 Dec 2018 07:53:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_06:,,
- signatures=0
+In-Reply-To: <1de7a003-0aac-1f4f-b836-267136e30a0a@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On 12/18/18 4:37 AM, Rafael David Tinoco wrote:
+> On 12/17/18 4:42 PM, shuah wrote:
+>> Hi Rafael,
+>>
+>> On 12/17/18 10:53 AM, Rafael David Tinoco wrote:
+>>> Shuah,
+>>>
+>>> I was recently investigating some errors coming out of our functional
+>>> tests and we, Dan and I, came up with a discussion that might not be new
+>>> for you, but, interests us, in defining how to better use kselftests as
+>>> a regression mechanism/tool in our LKFT (https://lkft.linaro.org).
+>>>
+>>> David / Willem,
+>>>
+>>> I'm only using udpgso as an example for what I'd like to ask Shuah. Feel
+>>> free to jump in in the discussion if you think its worth.
+>>>
+>>> All,
+>>>
+>>> Regarding: udpgso AND https://bugs.linaro.org/show_bug.cgi?id=3980
+>>>
+>>> udpgso tests are failing in kernels bellow 4.18 because of 2 main
+>>> reasons:
+>>>
+>>> 1) udp4_ufo_fragment does not seem to demand the GSO SKB to be > than
+>>> the MTU for older kernels (4th test case in udpgso.c).
+>>>
+>>> 2) setsockopt(...UDP_SEGMENT) support is not present for older kernels.
+>>> (commits "udp: generate gso with UDP_SEGMENT" and its fixes seem to be
+>>> needed).
+>>
+>> This case is easy right? Based on the test output below , I can see that
+>> the failure is due to
+>>
+>> ./udpgso: setsockopt udp segment: Protocol not available. setsockopt()
+>> is returning an error to clearly indicate that this options isn't
+>> supported. This will be a test change to say test is a skip as opposed
+>> to fail.
+> 
+> You referred to (2). (1) isn't that straightforward.
+> 
+>> We have a solution for this - test should SKIP as opposed to FAIL.
+>>
+>>> With that explained, finally the question/discussion:
+>>>
+>>> Shouldn't we enforce a versioning mechanism for tests that are testing
+>>> recently added features ? I mean, some of the tests inside udpgso
+>>> selftest are good enough for older kernels...
+>>
+>> Right - we do have generic way to handle that by detecting if feature is
+>> supported and skip instead of using Kernel version which is going to be
+>> hard to maintain.
+> 
+> You can't distinguish case (1) failures between real failures OR older
+> kernel behaving differently then testcase expects.
+> 
+>>>
+>>> But, because we have no control over "kernel features" and "supported
+>>> test cases", we, Linaro, have to end up blacklisting all selftests that
+>>> have new feature oriented tests, because one or two test cases only.
+>>>
 
-Due to pen_release and boot_lock removal, secondary CPU's bringup
-was broken. Restore CPU's bringup by reworking properly
-.smp_prepare_cpus and .smp_boot_secondary STi callbacks.
+Can you share the blacklisted tests?
 
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
- arch/arm/mach-sti/platsmp.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
-
-diff --git a/arch/arm/mach-sti/platsmp.c b/arch/arm/mach-sti/platsmp.c
-index 2166850..9bfc93a 100644
---- a/arch/arm/mach-sti/platsmp.c
-+++ b/arch/arm/mach-sti/platsmp.c
-@@ -28,8 +28,21 @@
- 
- #include "smp.h"
- 
-+static u32 __iomem *cpu_strt_ptr;
-+
- static int sti_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
-+	unsigned long entry_pa = __pa_symbol(secondary_startup);
-+
-+	__raw_writel(entry_pa, cpu_strt_ptr);
-+
-+	/*
-+	 * wmb so that data is actually written
-+	 * before cache flush is done
-+	 */
-+	smp_wmb();
-+	sync_cache_w(cpu_strt_ptr);
-+
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
- 	 * it to jump to the secondary entrypoint.
-@@ -43,10 +56,8 @@ static void __init sti_smp_prepare_cpus(unsigned int max_cpus)
- {
- 	struct device_node *np;
- 	void __iomem *scu_base;
--	u32 __iomem *cpu_strt_ptr;
- 	u32 release_phys;
- 	int cpu;
--	unsigned long entry_pa = __pa_symbol(secondary_startup);
- 
- 	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-scu");
- 
-@@ -74,8 +85,8 @@ static void __init sti_smp_prepare_cpus(unsigned int max_cpus)
- 		}
- 
- 		/*
--		 * holding pen is usually configured in SBC DMEM but can also be
--		 * in RAM.
-+		 * cpu-release-addr is usually configured in SBC DMEM but can
-+		 * also be in RAM.
- 		 */
- 
- 		if (!memblock_is_memory(release_phys))
-@@ -85,17 +96,7 @@ static void __init sti_smp_prepare_cpus(unsigned int max_cpus)
- 			cpu_strt_ptr =
- 				(u32 __iomem *)phys_to_virt(release_phys);
- 
--		__raw_writel(entry_pa, cpu_strt_ptr);
--
--		/*
--		 * wmb so that data is actually written
--		 * before cache flush is done
--		 */
--		smp_wmb();
--		sync_cache_w(cpu_strt_ptr);
--
--		if (!memblock_is_memory(release_phys))
--			iounmap(cpu_strt_ptr);
-+		set_cpu_possible(cpu, true);
- 	}
- }
- 
--- 
-1.9.1
-
+thanks,
+-- Shuah
