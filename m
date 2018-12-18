@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CABC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28374C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76422218A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE5C9218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151313;
-	bh=qPba8Uk0y0zHYJaSx5j2SPDYnRI40m9EhfSc1vrHaHE=;
+	s=default; t=1545151319;
+	bh=7+Xw7OcwMQqMxSnvHhTnNkjVWal3MVc38LVt8DzSjxE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0+T4WU7oKUkOlrHQV45cw6W4aTE9LN14F3hPRHdfqro4S3HtKI2hXVaVm5B92UrHr
-	 763wx8L2XM6Nb8qF1gX3hTNjEHk7bYeSDAyg4829bXFTgII7o9zbI1dZI0e7ZSqWIY
-	 nQPBiAv03ms7kgzUYir1TvI2i6MT8QlOTIOOPXlM=
+	b=tiSOJumtH/BdChZi1kF1fSo9UWaKJyWMexg4ihzVd7Z6VoQR+VM1vL2kY1vl1byh8
+	 FJR0ttjXPx94s7Hx8tVOIXrCZsysCQofOshPcgvbb1TSwHuvn15vbe+hY2J+rJqOoR
+	 RQe6lke8ZdIiiFAFhHTbnsnni6dihrRNVi2Sehy0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbeLRQlw (ORCPT
+        id S1727651AbeLRQl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39398 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbeLRQlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:49 -0500
+        id S1726422AbeLRQly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 388FA218A4;
-        Tue, 18 Dec 2018 16:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FF35218CD;
+        Tue, 18 Dec 2018 16:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151308;
-        bh=qPba8Uk0y0zHYJaSx5j2SPDYnRI40m9EhfSc1vrHaHE=;
+        s=default; t=1545151314;
+        bh=7+Xw7OcwMQqMxSnvHhTnNkjVWal3MVc38LVt8DzSjxE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VkihMO/En9738WyTnB/vJjIeTbUTaWYoDmgTCJBAF5dLdRJl3FdceuGQPpfdVNjtg
-         8LruLyivp8BbfaYTangmnirvr9ahoP2xCCSjnzZsqEr7ZjpxIhWPsB11d9PE7IHtM8
-         7+lSWHz03UtLRL4p2tRKDsLcxE9TjJ7bGMomWw8M=
+        b=sQFEBiSulTGm0FM83GmProL9vQk7L8anbeqSW13oDzU9RWRGkMOZ34mA0G0l5/E/Q
+         s4r4ga01lSrmS0IFQMIX8jy1pYWzvfbU4NYShJWFq8PALWAlysi6HQX0wx1zwI7Hqg
+         Ky+i2Mp4I0lf/VbRvuA2vCjfwTMnYnTh1oVPFpa8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 31/44] powerpc/msi: Fix NULL pointer access in teardown code
-Date:   Tue, 18 Dec 2018 17:39:43 +0100
-Message-Id: <20181218163931.095810312@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.19 33/44] drm/nouveau/kms: Fix memory leak in nv50_mstm_del()
+Date:   Tue, 18 Dec 2018 17:39:45 +0100
+Message-Id: <20181218163931.324359708@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,54 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Radu Rendec <radu.rendec@gmail.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 78e7b15e17ac175e7eed9e21c6f92d03d3b0a6fa upstream.
+commit 24199c5436f267399afed0c4f1f57663c0408f57 upstream.
 
-The arch_teardown_msi_irqs() function assumes that controller ops
-pointers were already checked in arch_setup_msi_irqs(), but this
-assumption is wrong: arch_teardown_msi_irqs() can be called even when
-arch_setup_msi_irqs() returns an error (-ENOSYS).
+Noticed this while working on redoing the reference counting scheme in
+the DP MST helpers. Nouveau doesn't attempt to call
+drm_dp_mst_topology_mgr_destroy() at all, which leaves it leaking all of
+the resources for drm_dp_mst_topology_mgr and it's children mstbs+ports.
 
-This can happen in the following scenario:
-  - msi_capability_init() calls pci_msi_setup_msi_irqs()
-  - pci_msi_setup_msi_irqs() returns -ENOSYS
-  - msi_capability_init() notices the error and calls free_msi_irqs()
-  - free_msi_irqs() calls pci_msi_teardown_msi_irqs()
-
-This is easier to see when CONFIG_PCI_MSI_IRQ_DOMAIN is not set and
-pci_msi_setup_msi_irqs() and pci_msi_teardown_msi_irqs() are just
-aliases to arch_setup_msi_irqs() and arch_teardown_msi_irqs().
-
-The call to free_msi_irqs() upon pci_msi_setup_msi_irqs() failure
-seems legit, as it does additional cleanup; e.g.
-list_del(&entry->list) and kfree(entry) inside free_msi_irqs() do
-happen (MSI descriptors are allocated before pci_msi_setup_msi_irqs()
-is called and need to be cleaned up if that fails).
-
-Fixes: 6b2fd7efeb88 ("PCI/MSI/PPC: Remove arch_msi_check_device()")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Radu Rendec <radu.rendec@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: f479c0ba4a17 ("drm/nouveau/kms/nv50: initial support for DP 1.2 multi-stream")
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: <stable@vger.kernel.org> # v4.10+
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/msi.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/powerpc/kernel/msi.c
-+++ b/arch/powerpc/kernel/msi.c
-@@ -34,5 +34,10 @@ void arch_teardown_msi_irqs(struct pci_d
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -1226,6 +1226,7 @@ nv50_mstm_del(struct nv50_mstm **pmstm)
  {
- 	struct pci_controller *phb = pci_bus_to_host(dev->bus);
- 
--	phb->controller_ops.teardown_msi_irqs(dev);
-+	/*
-+	 * We can be called even when arch_setup_msi_irqs() returns -ENOSYS,
-+	 * so check the pointer again.
-+	 */
-+	if (phb->controller_ops.teardown_msi_irqs)
-+		phb->controller_ops.teardown_msi_irqs(dev);
- }
+ 	struct nv50_mstm *mstm = *pmstm;
+ 	if (mstm) {
++		drm_dp_mst_topology_mgr_destroy(&mstm->mgr);
+ 		kfree(*pmstm);
+ 		*pmstm = NULL;
+ 	}
 
 
