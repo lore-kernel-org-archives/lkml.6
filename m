@@ -3,87 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E84DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D6AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D47217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:29:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AB7A21850
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:31:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hfuJ2bpx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WNIaTBw7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbeLRL3p (ORCPT
+        id S1726556AbeLRLb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:29:45 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36766 "EHLO
+        Tue, 18 Dec 2018 06:31:26 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:36784 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbeLRL3o (ORCPT
+        with ESMTP id S1726341AbeLRLbZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:29:44 -0500
+        Tue, 18 Dec 2018 06:31:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FAKsZSVf2S0E+nyC1FDpLhK6DsQWrlnEfdac8lJBcU4=; b=hfuJ2bpx1DQwIdBOoahQtxwcS
-        nj9uX6pwVlJ2/6j+GJ3zZ+I7G0G50CcUDLkRwxINSjs0dwWjlNCUyiJZ1ggyERp3hixpCA4GbaQlo
-        2Nuojn5bUugODeZ+jDZf8ZFfsa+vAVJadGOZKcVz+QES7CBgdEFy5KE/s5iwTzeL8lIXbCDopSdkm
-        dZLJEXjKHJSJ2yisT4MqoWbap0h/w+D4zeSOy5/qPLe6ilpOoHFM48cakvCXy4AzCIT6vdppl3osA
-        JddcfHSRobdB1PSadkGV8wfh4FN/zBAW/pJiwZb9U7zTpnMiG3UykeYAjCufS3ZzNZfyPCMFbnJZ7
-        2kYAldIfw==;
+         bh=dAov5ZcSFlQtD214rmeCOiBw6GEx1p+y+/aWc9vcmlU=; b=WNIaTBw7iKsJ649GXfERq+vDF
+        yv/vz0c8dI79ALAf4Srj7kbdCTealfT2sbLT2tXgyBMiKO2cZf30TeymiZVVHe3W6Hv0zCDVOY0VJ
+        K7ktubIl7wKcUhmk7V9qeyOkmvt73tTp+N85I1CYBxBGHmp6X4JxNVMui1sxyifizcqdSZPIGiVfX
+        MdDbcf8gQyC6z20E4lBG2ansDIYDcWjqSjp+/Txml/CBrl5BkfJQnc/VUGJdOZ7TsecE1zCzoqI8M
+        g9Y5zIA3QrssOY8l9bzt6iYveoiEd2LBaeBDuFFYppoZAXeTYMynKLVseHoSIZm4wIv3nBz9I3RaF
+        4joFqZG7Q==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZDZ9-0007ft-Vv; Tue, 18 Dec 2018 11:29:36 +0000
+        id 1gZDar-0007gK-16; Tue, 18 Dec 2018 11:31:21 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C69B62027E1A4; Tue, 18 Dec 2018 12:29:34 +0100 (CET)
-Date:   Tue, 18 Dec 2018 12:29:34 +0100
+        id D07FF2027DA8E; Tue, 18 Dec 2018 12:31:19 +0100 (CET)
+Date:   Tue, 18 Dec 2018 12:31:19 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181218112934.GF15430@hirez.programming.kicks-ass.net>
-References: <20181218091842.4996-1-sergey.senozhatsky@gmail.com>
- <20181218104812.GC15430@hirez.programming.kicks-ass.net>
- <20181218111701.GA32522@jagdpanzerIV>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     zhe.he@windriver.com, acme@kernel.org, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, bp@alien8.de, hpa@zytor.com,
+        jolsa@kernel.org, jolsa@redhat.com, kan.liang@linux.intel.com,
+        mingo@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH] perf/x86/intel: Avoid unnecessary reallocations of
+ memory allocated in cpu hotplug prepare state
+Message-ID: <20181218113119.GG15430@hirez.programming.kicks-ass.net>
+References: <1545129033-21757-1-git-send-email-zhe.he@windriver.com>
+ <20181218110209.GD15430@hirez.programming.kicks-ass.net>
+ <20181218111637.b53u5pi3nxnyldaq@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218111701.GA32522@jagdpanzerIV>
+In-Reply-To: <20181218111637.b53u5pi3nxnyldaq@linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 08:17:01PM +0900, Sergey Senozhatsky wrote:
-> On (12/18/18 11:48), Peter Zijlstra wrote:
-> > > I know that there is a "kernel.printk_devkmsg" interface; do we
-> > > expect every systemd-enabled distro to find that out and to tweak
-> > > kernel.printk_devkmsg or shall we change the default devkmsg
-> > > ratelimit instead?
+On Tue, Dec 18, 2018 at 12:16:37PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2018-12-18 12:02:09 [+0100], Peter Zijlstra wrote:
+> > On Tue, Dec 18, 2018 at 06:30:33PM +0800, zhe.he@windriver.com wrote:
+> > > Besides, in preempt-rt full mode, the freeing can happen in atomic context and
+> > > thus cause the following BUG.
 > > 
-> > How about we complain to systemd instead?
+> > Hurm, I though we fixed all those long ago..
+> > 
+> > And no, the patch is horrible; that's what we have things like
+> > x86_pmu::cpu_dead() for.
 > 
-> We certainly can. As far as I understand, they log shutdown events
-> (including errors and warnings): what they kill, what they stop,
-> what they umount, etc. The more partitions, services are running
-> (I guess), the more things they need to umount, kill, stop; hence,
-> the more messages. I kinda can imagine what they will answer ;)
-> 
-> The below (and a bunch of other) messages are getting ratelimited.
-> I'm not sure what will happen should any of those steps fail and
-> print warning-s. My guess would be that we probably can ratelimit
-> those warnings:
+> ehm, you say we keep memory allocation +free on CPU up/down?
 
-Why are they writing it to /dev/kmsg though? Shouldn't they be writing
-this to syslog directly?
-
-
+Sure, why not?
