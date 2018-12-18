@@ -2,157 +2,119 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F5FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BFCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E212184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:59:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4085F2184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:00:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UsmloMLq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vPD66ggb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbeLRJ7a (ORCPT
+        id S1726475AbeLRKAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:59:30 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40935 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeLRJ73 (ORCPT
+        Tue, 18 Dec 2018 05:00:31 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:40721 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeLRKAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:59:29 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so15219010wrt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:59:27 -0800 (PST)
+        Tue, 18 Dec 2018 05:00:30 -0500
+Received: by mail-io1-f68.google.com with SMTP id v12so8690517iop.7;
+        Tue, 18 Dec 2018 02:00:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8OEdTVozQxClVBbIU7NBQsHspAFsTO1ZUR1Kn8Esn1Y=;
-        b=UsmloMLq0uifOWJFqCnXwYlGp3Sq1jAASmAWlG8rniDpcO4i02I14v1l/5NWmhYPiR
-         4n8fPzsbOzbq9QabeImg9mE5eTdvvMsOP5iZhXHthQ5Occa/S3Cd3PYTXqnLKLDsnhkn
-         pkhrTmHP22fWxVvsgBNFB813kmKO2eV4cY11M=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Bygy8q+B+26MqgPUBkfyodN9+lfiaRKsw0ThW9v2JQM=;
+        b=vPD66ggb0O+2Ymqvhuv9Z096lrbab0CMHY9LJDyQ5f/KO1g2ppMa2CUOcp+TF6RWrT
+         DtwwzeJAplyabkbHTWkZou6FE45zqKMbYq3PBVZCMV1+sAHTfHDOo+/0dxnDK0Bajlnc
+         SOhV9aYreBJik+89y5HQaTudgHdH4HIsm5cGYGac1tIBet2YfWe7FvxAQNYlqapC/NmT
+         DNLL/Oq7VOY2LgtjGEG11Z4etfJ/ppfkPOQoyDApQcy04Xkkq6S4ESJwNl0kyU7NOto/
+         rAvEd787tVZYVbehdOYgQRptTOWzrpPotUsqcN8lU9pUzAE1EdB/LtfvVSB5OAxB/BGx
+         V8hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8OEdTVozQxClVBbIU7NBQsHspAFsTO1ZUR1Kn8Esn1Y=;
-        b=WyzfHX3R2Vgixlfh6uDruSD3PSfHO9lsBt6ye2cJ9vFNVSMw21cLQmdG/mZhYtMnqh
-         g+dHWTj8wPMu98zMI8hJAIwtDraXmYSF6MfVN8m8JIRJldSXJg8YOY1zxBk/vzuqq7ol
-         cg1iUlUNwqbUezrOGrUARngl6J6kdi/dGgMBS9wxpPAlbiEgjNHOaOW1io2BLusCHNWN
-         ADTvTrgxC4I9V9y5yWut5dfM97VsNj0BYgIfOqGIlpn2L2pp8fXgIlCnd0KgNH9ObRg5
-         Yjq7+BwbGRRi8jWw/fu1aj6UhWisnjWV7e7M94x/kOrz92npvzdVpZs5AuaOFdfRlQ4+
-         N1GQ==
-X-Gm-Message-State: AA+aEWbCV1jU+xjwiJB4IXg4Z8M0FWX9lAeKXU9Bg5NUxEi1G8t5ipEG
-        1SmsENkC5F0vfI+ygjSwpCX2/WCnZso=
-X-Google-Smtp-Source: AFSGD/V2PWZ01fL1x5u/aQPCfuuHkFhDgU5v6+ZtHCS4V8gawkqkZOjbijevnqff2/Z2qw53Ms1p4w==
-X-Received: by 2002:adf:a78a:: with SMTP id j10mr14230723wrc.191.1545127166738;
-        Tue, 18 Dec 2018 01:59:26 -0800 (PST)
-Received: from localhost ([49.248.197.134])
-        by smtp.gmail.com with ESMTPSA id l202sm3231311wma.33.2018.12.18.01.59.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 01:59:26 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        marc.w.gonzalez@free.fr, bjorn.andersson@linaro.org,
-        kvalo@adurom.com, joe@perches.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 1/1] MAINTAINERS: update list of qcom drivers
-Date:   Tue, 18 Dec 2018 15:29:09 +0530
-Message-Id: <d153a86748f99526e7790bfc4ef8781a2016fd51.1545126964.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1545126964.git.amit.kucheria@linaro.org>
-References: <cover.1545126964.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Bygy8q+B+26MqgPUBkfyodN9+lfiaRKsw0ThW9v2JQM=;
+        b=KukHuv0/D7V36d4HjlCLJudKX+0zda2FNkW2NbALRV4cYy34LrVHfeLkFjws+TaxsR
+         rsUBOVqWo7dnVTNhVdqYU0Z2gW9bS6D4HTTT2gdNq/VTR53gy/NKkjm/7EdMafe2A51W
+         0u5GCVtKbXdAeWkIUtWsSN0b2/CS2dlkQidmSvMx7KlFfWDv7MoNNMURyUYoEh5x/pvQ
+         djOe56INEJR/Igt0JAKsdDiejn7l6eae0TK2ZVFSP3tEZLLcfqO3j0xipilXBJhLICDx
+         1QPYLaZslbhMqNLRmdB6BJgMaD0qkUZB8rhHZ5I8s0oCzcqLeGBqhydK0O6UvoWVvLLs
+         DKmA==
+X-Gm-Message-State: AA+aEWYugoPXlzYGCmrh3cMhg249zMaeYrGptMhlssqmLxsH4ViJNh1f
+        1SEmHQJYrvF+RDna/Tl3fgQ=
+X-Google-Smtp-Source: AFSGD/Uez3tDYekgZCva0c4AeczDVhtVOChhRykKY91LKfSMNgXzE9FkQO98uoWq4FJxxo2O8X4EgQ==
+X-Received: by 2002:a6b:1807:: with SMTP id 7mr13251090ioy.167.1545127229343;
+        Tue, 18 Dec 2018 02:00:29 -0800 (PST)
+Received: from localhost.localdomain ([2402:f000:1:4414:3dd3:3693:8487:3f39])
+        by smtp.gmail.com with ESMTPSA id p21sm6557538ioh.25.2018.12.18.02.00.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 02:00:28 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
+Date:   Tue, 18 Dec 2018 18:00:20 +0800
+Message-Id: <20181218100020.26250-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several drivers didn't have a specific maintainer (other than the
-subsystem maintainer). Add all drivers referring to qcom or msm to the
-list of supported drivers.
+The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
+be concurrently executed.
+The two functions both access a possible shared variable "hep->hcpriv".
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+This shared variable is freed by r8a66597_endpoint_disable() via the
+call path:
+r8a66597_endpoint_disable
+  kfree(hep->hcpriv) (line 1995 in Linux-4.19)
+
+This variable is read by r8a66597_urb_enqueue() via the call path:
+r8a66597_urb_enqueue
+  spin_lock_irqsave(&r8a66597->lock);
+  init_pipe_info
+    enable_r8a66597_pipe
+      pipe = hep->hcpriv (line 802 in Linux-4.19)
+
+The read operation is protected by a spinlock, but the free operation
+is not protected by this spinlock, thus a concurrency use-after-free bug
+may occur.
+
+To fix this bug, the spin-lock and spin-unlock function calls in
+r8a66597_endpoint_disable() are moved to protect the free operation.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- MAINTAINERS | 49 +++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 45 insertions(+), 4 deletions(-)
+ drivers/usb/host/r8a66597-hcd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3318f30903b2..8f8dfb6f9675 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1929,20 +1929,61 @@ M:	Andy Gross <andy.gross@linaro.org>
- M:	David Brown <david.brown@linaro.org>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
-+F:	include/dt-bindings/*/qcom*
-+F:	include/linux/*/qcom*
- F:	Documentation/devicetree/bindings/soc/qcom/
-+F:	Documentation/devicetree/bindings/*/qcom*
- F:	arch/arm/boot/dts/qcom-*.dts
- F:	arch/arm/boot/dts/qcom-*.dtsi
- F:	arch/arm/mach-qcom/
--F:	arch/arm64/boot/dts/qcom/*
--F:	drivers/i2c/busses/i2c-qup.c
-+F:	arch/arm64/boot/dts/qcom/
-+F:	drivers/bluetooth/btqcomsmd.c
-+F:	drivers/bus/qcom*
-+F:	drivers/cpufreq/qcom*
- F:	drivers/clk/qcom/
-+F:	drivers/clocksource/timer-qcom.c
-+F:	drivers/crypto/qcom-*
- F:	drivers/dma/qcom/
-+F:	drivers/edac/qcom*
-+F:	drivers/extcon/extcon-qcom*
-+F:	drivers/firmware/qcom*
-+F:	drivers/hwspinlock/qcom_*
-+F:	drivers/iio/adc/qcom*
-+F:	drivers/iommu/qcom*
-+F:	drivers/iommu/msm*
-+F:	drivers/i2c/busses/i2c-qup.c
-+F:	drivers/i2c/busses/i2c-qcom-geni.c
-+F:	drivers/irqchip/qcom*
-+F:	drivers/mailbox/qcom-*
-+F:	drivers/media/platform/qcom/
-+F:	drivers/mfd/qcom*
-+F:	drivers/mfd/ssbi.c
-+F:	drivers/misc/qcom-*
-+F:	drivers/mmc/host/mmci_qcom*
-+F:	drivers/mmc/host/sdhci_msm.c
-+F:	drivers/mtd/*/qcom*
-+F:	drivers/pci/controller/dwc/pcie-qcom.c
-+F:	drivers/perf/qcom*
-+F:	drivers/pinctrl/qcom/
-+F:	drivers/phy/qualcomm/
-+F:	drivers/power/*/qcom*
-+F:	drivers/power/*/msm*
-+F:	drivers/regulator/qcom*
-+F:	drivers/reset/reset-qcom-*
-+F:	drivers/remoteproc/qcom*
-+F:	drivers/rpmsg/qcom*
-+F:	drivers/scsi/ufs/ufs-qcom.*
-+F:	drivers/slimbus/qcom*
- F:	drivers/soc/qcom/
- F:	drivers/spi/spi-qup.c
-+F:	drivers/spi/spi-geni-qcom.c
-+F:	drivers/spi/spi-qcom-qspi.c
-+F:	drivers/thermal/qcom/
- F:	drivers/tty/serial/msm_serial.c
-+F:	drivers/tty/serial/qcom*
-+F:	drivers/usb/dwc3/dwc3-qcom.c
-+F:	drivers/watchdog/qcom*
- F:	drivers/*/pm8???-*
--F:	drivers/mfd/ssbi.c
--F:	drivers/firmware/qcom_scm*
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+index 984892dd72f5..1495ce14ad22 100644
+--- a/drivers/usb/host/r8a66597-hcd.c
++++ b/drivers/usb/host/r8a66597-hcd.c
+@@ -1991,13 +1991,14 @@ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
+ 		return;
+ 	pipenum = pipe->info.pipenum;
  
- ARM/RADISYS ENP2611 MACHINE SUPPORT
++	spin_lock_irqsave(&r8a66597->lock, flags);
+ 	if (pipenum == 0) {
+ 		kfree(hep->hcpriv);
+ 		hep->hcpriv = NULL;
++		spin_unlock_irqrestore(&r8a66597->lock, flags);
+ 		return;
+ 	}
+ 
+-	spin_lock_irqsave(&r8a66597->lock, flags);
+ 	pipe_stop(r8a66597, pipe);
+ 	pipe_irq_disable(r8a66597, pipenum);
+ 	disable_irq_empty(r8a66597, pipenum);
 -- 
-2.17.1
+2.17.0
 
