@@ -2,102 +2,156 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38614C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B93C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED7C2184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="MXga1/QJ"
+	by mail.kernel.org (Postfix) with ESMTP id ED18E21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeLRSxF (ORCPT
+        id S1726788AbeLRSxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:53:05 -0500
-Received: from cock.li ([185.100.85.212]:46576 "EHLO cock.li"
+        Tue, 18 Dec 2018 13:53:51 -0500
+Received: from mga07.intel.com ([134.134.136.100]:20846 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbeLRSxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:53:05 -0500
+        id S1726446AbeLRSxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 13:53:51 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 10:53:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
+   d="scan'208";a="108376886"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga007.fm.intel.com with ESMTP; 18 Dec 2018 10:53:49 -0800
+Date:   Tue, 18 Dec 2018 10:53:49 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181218185349.GC30082@linux.intel.com>
+References: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <20181217222047.GG12491@linux.intel.com>
+ <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
+ <20181218154417.GC28326@linux.intel.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1545159181; bh=wKjWMkWYpJJOvxB+NnVrwA5kb/0iy36b1XIn2YRD2Zs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MXga1/QJt0NytvfkDyWvsgn6xF19Y0Ncs9o308327JDX2sIDGXQZq+kIGT6KnRCiC
-         Smtntq6FRCZ8p7EhMpWbm9lVTEJyYVZvtf2qSUd4+R6mzuw/iozVB3P25DKtn4aG10
-         qFuchk8daRDjX4nyA9nvrjQCHtUuARuG+hCqeBSo5RWro0kzX9c7LlYbbAp287aUNn
-         BbGvwI4dxbqAYFmiaJSjivmoBOwjvK3s4L+/S8hPuF364k7q8TKqMguXsLDVq95KPI
-         j3V2HBsDhWhg9RXdEehe2QF6cqmAWIIGBs+ppElJWRt1W+Bdt0b2ZfNIN1tdIKsmYp
-         PIkXJx5pLp39g==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 18 Dec 2018 18:53:00 +0000
-From:   visionsofalice@redchan.it
-To:     Eben Moglen <moglen@columbia.edu>
-Cc:     linux-kernel@vger.kernel.org, esr@thyrsus.com,
-        gregkh@linuxfoundation.org, rms@gnu.org, bruce@perens.com,
-        bkuhn@sfconservancy.org, editor@lwn.net, neil@brown.name,
-        labbott@redhat.com, torvalds@linux-foundation.org,
-        ksummit-discuss@lists.linuxfoundation.org, tglx@linutronix.de,
-        olof@lixom.net, clm@fb.com, mishi@linux.com,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: The linux devs can rescind their license grant. -  Analysis
- published?
-In-Reply-To: <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
- <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
- <20181025081911.GB11343@kroah.com> <20181025193901.GD26403@thyrsus.com>
- <849-Fri26Oct2018091533-0400-eben@harlan.sflc-vpn>
- <4c023302875de71cc58007301b180940@redchan.it>
- <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
-Message-ID: <12836077374501b01a0c74a4e3f6276f@redchan.it>
-X-Sender: visionsofalice@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218154417.GC28326@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Has the analysis been published yet?
+On Tue, Dec 18, 2018 at 07:44:18AM -0800, Sean Christopherson wrote:
+> On Mon, Dec 17, 2018 at 08:59:54PM -0800, Andy Lutomirski wrote:
+> > On Mon, Dec 17, 2018 at 2:20 PM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > 
+> > > My brain is still sorting out the details, but I generally like the idea
+> > > of allocating an anon inode when creating an enclave, and exposing the
+> > > other ioctls() via the returned fd.  This is essentially the approach
+> > > used by KVM to manage multiple "layers" of ioctls across KVM itself, VMs
+> > > and vCPUS.  There are even similarities to accessing physical memory via
+> > > multiple disparate domains, e.g. host kernel, host userspace and guest.
+> > >
+> > 
+> > In my mind, opening /dev/sgx would give you the requisite inode.  I'm
+> > not 100% sure that the chardev infrastructure allows this, but I think
+> > it does.
+> 
+> My fd/inode knowledge is lacking, to say the least.  Whatever works, so
+> long as we have a way to uniquely identify enclaves.
 
-I have been away on an artistic sabbatical, but I don't see it in the 
-inbox using searches, this was the last mail I received on the subject.
+Actually, while we're dissecting the interface...
 
-On 2018-10-26 18:31, Eben Moglen wrote:
-> On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
-> 
->   You are conflating case law dealing with commercial software and
->   non-gratuitous licenses with the present situation, which would 
-> likely
->   be a case of first-impression in nearly any jurisdiction.
-> 
-> I think the best procedure would be for me to publish my analysis and
-> for you then to tell me what is wrong with it.  What you say here
-> sounds like what a lawyer might say, but isn't.  I have been teaching
-> this stuff for about thirty years, so if I am conflating or confusing
-> anything I will be grateful for help in seeing my mistake.
-> 
->   The rule for gratuitous licenses is that they are revocable at the 
-> will
->   of the grantor.
-> 
-> That's not actually "the rule."  It sounds like it might be the rule,
-> but it so happens that it's not.  When I have given the explanation as
-> I have learned, taught and depended on it, you will be able to show me
-> what I am wrong about.
-> 
->   Raymond Nimmer (God rest his soul) was in agreement on this point,
->   vis-a-vis the GPL and similar licenses.
-> 
-> You have your Nimmers confused.  The primary author of the treatise
-> Nimmer on Copyright (a book about the law, not in itself an authority)
-> was Melville Nimmer.  The treatise is continued by his son, David, a
-> fine lawyer with whom I do from time to time politely disagree about
-> something.  Ray Nimmer is quite another person.
-> 
-> Eben
+What if we re-organize the ioctls in such a way that we leave open the
+possibility of allocating raw EPC for KVM via /dev/sgx?  I'm not 100%
+positive this approach will work[1], but conceptually it fits well with
+KVM's memory model, e.g. KVM is aware of the GPA<->HVA association but
+generally speaking doesn't know what's physically backing each memory
+region.
+
+Tangentially related, I think we should support allocating multiple
+enclaves from a single /dev/sgx fd, i.e. a process shouldn't have to
+open /dev/sgx every time it wants to create a new enclave.
+
+Something like this:
+
+/dev/sgx
+  |
+  -> mmap() { return -EINVAL; }
+  |
+  -> unlocked_ioctl()
+     |
+     -> SGX_CREATE_ENCLAVE: { return alloc_enclave_fd(); }
+     |  |
+     |   -> mmap() { ... }
+     |  | 
+     |   -> get_unmapped_area() { 
+     |  |           if (enclave->size) {
+     |  |                   if (!addr)
+     |  |                           addr = enclave->base;
+     |  |                   if (addr + len + pgoff > enclave->base + enclave->size)
+     |  |                           return -EINVAL;
+     |  |           } else {
+     |  |                   if (!validate_size(len))
+     |  |                           return -EINVAL;
+     |  |                   addr = naturally_align(len);
+     |  |           }
+     |  |   }
+     |  |
+     |   -> unlocked_ioctl() {
+     |              SGX_ENCLAVE_ADD_PAGE: { ... }
+     |              SGX_ENCLAVE_INIT: { ... }
+     |              SGX_ENCLAVE_REMOVE_PAGES: { ... }
+     |              SGX_ENCLAVE_MODIFY_PAGES: { ... }
+     |      }
+     |
+     -> SGX_CREATE_VIRTUAL_EPC: {return alloc_epc_fd(); }
+        |
+         -> mmap() { ... }
+        |
+	 -> get_unmapped_area() {<page aligned/sized> }
+        |
+         -> unlocked_ioctl() {
+                    SGX_VIRTUAL_EPC_???:
+		    SGX_VIRTUAL_EPC_???:
+	    }
+
+
+[1] Delegating EPC management to /dev/sgx is viable for virtualizing SGX
+    without oversubscribing EPC to guests, but oversubscribing EPC in a
+    VMM requires handling EPC-related VM-Exits and using instructions
+    that will #UD if the CPU is not post-VMXON.  I *think* having KVM
+    forward VM-Exits to x86/sgx would work, but it's entirely possible
+    it'd be a complete cluster.
