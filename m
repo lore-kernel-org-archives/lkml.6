@@ -2,109 +2,87 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AF8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC45C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE28521841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:52:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZKeF3/t"
+	by mail.kernel.org (Postfix) with ESMTP id 1C22A21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545151966;
+	bh=hMr0MJtdThV0P1MbAGx1ezoFFcekGMtnzQFtRmbUHB4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OnyQ2W7HIhAdl69kzh83CuRrC+nfpdQHDUAJOhhHFgKkykJx7ODrVMVDF8DtSPtbf
+	 AIm3u7DMiaQ/doh6DIxC9re0Vfxi7Khej/eIQgELpRQ6qP3xboR0v/7i7Q+RYG/s3g
+	 q8DSOMW8I3gnoSGdYLB41CNgnc/KiBSOnpul+COQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbeLRQwX (ORCPT
+        id S1727183AbeLRQwp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:52:23 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34981 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbeLRQwX (ORCPT
+        Tue, 18 Dec 2018 11:52:45 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34198 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbeLRQwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:52:23 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so8093301plo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 08:52:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RC6igaPC5sJuqguvu/xuJTYNBN7mp0ebO6g02cnPcW4=;
-        b=fZKeF3/tYsPg4y0mSnWYTJAQt043Ngv/rXnhMyvxnX/16mTZRwK3Ag5xAb2/X4bWOn
-         e7WN2TaKSDYbEWKHLU7hoa8tsmHt+WySKtfOCtKyWBV7LJZP8L9KHnKfgZiviByNMzjh
-         XBZdMKF3SKMJaPoJkNF1bBktgwIwmod15BDE1ZxtV5ZxD9eWEIJ3mKV+bHRqEz0E2OD8
-         nQ1DIwk8w1rY3C6EjZDvb/xo/rcn9LHZ2ALd3drLieq/Qny6Yb3yK4hTrBvzt2med/bl
-         TPJrsbdyV0Zo459gtz4bTo/DmoAHy/oh+H56OJk/jkfHj8kQiN6YNsp5CcWqnx+AWz6M
-         BEQA==
+        Tue, 18 Dec 2018 11:52:44 -0500
+Received: by mail-oi1-f193.google.com with SMTP id h25so2521261oig.1;
+        Tue, 18 Dec 2018 08:52:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RC6igaPC5sJuqguvu/xuJTYNBN7mp0ebO6g02cnPcW4=;
-        b=dNemWs16hQV4Lmq4eRY7Uziqg71gkHrgPBSdOrxmJbqiCi6cxMqLPhmCWmsNmMbUgE
-         Lveepi6iO/y1Bh1hMzFdToaLMveQMMcABVZ5N/rrTMOU8kQ6MBk1BdMLj49iHTTpcG0R
-         mKHKLfJ5WdsvAIQXt0QyR3zP7e6U/bSgELxYtwgL8DyVI47DXQSg8m1g0FYji1iO0sFg
-         Pj/Gf4w4GIuy01q0QcJcjpm6Xh/QP9uNc1wi2NItO0abpC5N1PBGBbWtSFMgzT8IRzVV
-         LYjK/J9SbUnMiYs8E/rPgWkqCLg2aaBmJeVKpp7fOExhmmzFV58nK6aXWuaMzYHNw85e
-         QomA==
-X-Gm-Message-State: AA+aEWZoDTmZS7kvyjBe+IfZ75CXo2mYuMMZHA5zUzfeIEEFli7jT7tM
-        hsqLPXTXxZ04lZ1tHScA6z8=
-X-Google-Smtp-Source: AFSGD/WlhpV4Rn2JZip3ONeJXd0AYRVxAjZZrY3enprPfLKKa3lmD5ptP8DD7WN7+jSr13dwA+mWiA==
-X-Received: by 2002:a17:902:2aaa:: with SMTP id j39mr17507340plb.335.1545151942099;
-        Tue, 18 Dec 2018 08:52:22 -0800 (PST)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id v62sm27640347pfd.163.2018.12.18.08.52.19
+        bh=C25xjk4Ep75w0ECg//k1t7iuMcnantPZudd6ZQLjdmI=;
+        b=J4zPbQsOQr8HtF/YCDaqebJGlaGOL8qjWolu9FKmEuKvisL3lRP1fLYjNfZbWSUWFe
+         1E2LFfaqEJg5II0+JnnitEqbUuOeY8j0yjgCtXHSHtlUmyHMZ3QDRlhcyeiiBJ2IYqyQ
+         qVoEw0dfuRIYKPxYyviEgDVClY7rUIDRr/yERTlFk4/huIRJBK6CaLxA90YsUH/HF7oV
+         VHjmiUM9avAE14Trpjyjt8rr7RB2etFAPoFTTGcIENtjznX+jX14BPF9YUfvixH7oQ+A
+         Tx+tSLZvNNaKC7tmxwZaH+M3oT2NU1dBq49o+g4m3hp5qHV5zw2HFOOlJcJUerWHjwdE
+         P0WQ==
+X-Gm-Message-State: AA+aEWaCs0nUmvvA1Ni+k/nEbbPTCRZ4xdgXOZwmoVyjbF5X6k+uG8a/
+        /ms/cS4HvCc4heqG/XHQ0w==
+X-Google-Smtp-Source: AFSGD/Uh3HN94xMBGL4GQAXU0hZTMeRFoIbZr3dv3P6yyLpBhQs+AN3hl052jgqfM7UVlLSdhLs7vQ==
+X-Received: by 2002:aca:308f:: with SMTP id w137mr8650576oiw.49.1545151963654;
+        Tue, 18 Dec 2018 08:52:43 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w108sm8658120otb.6.2018.12.18.08.52.42
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 08:52:20 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Wed, 19 Dec 2018 01:52:17 +0900
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181218165217.GA534@tigerII.localdomain>
-References: <20181218091842.4996-1-sergey.senozhatsky@gmail.com>
- <20181218104812.GC15430@hirez.programming.kicks-ass.net>
- <20181218111701.GA32522@jagdpanzerIV>
- <20181218114709.GF7485@zn.tnic>
- <20181218130750.GA665@tigerII.localdomain>
- <20181218142623.GH7485@zn.tnic>
- <20181218145558.GD665@tigerII.localdomain>
- <20181218150313.GI7485@zn.tnic>
- <20181218151455.GE665@tigerII.localdomain>
- <20181218152413.GJ7485@zn.tnic>
+        Tue, 18 Dec 2018 08:52:42 -0800 (PST)
+Date:   Tue, 18 Dec 2018 10:52:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        stefan.wahren@i2se.com, eric@anholt.net, agraf@suse.de,
+        afaerber@suse.com, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: input: Add Raspberry Pi Touchscreen
+Message-ID: <20181218165242.GA2809@bogus>
+References: <20181211112408.9524-1-nsaenzjulienne@suse.de>
+ <20181211112408.9524-2-nsaenzjulienne@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218152413.GJ7485@zn.tnic>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181211112408.9524-2-nsaenzjulienne@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/18/18 16:24), Borislav Petkov wrote:
-> On Wed, Dec 19, 2018 at 12:14:55AM +0900, Sergey Senozhatsky wrote:
-> > Right, but unlike log_buf_len, devkmsg is a bit close to a "binary" knob:
-> > either all messages or none;
+On Tue, 11 Dec 2018 12:23:53 +0100, Nicolas Saenz Julienne wrote:
+> Adds device tree documentation for Raspberry Pi's official 7"
+> touchscreen.
 > 
-> ... which is perfectly fine for a debugging session.
+> This binding is meant to be used as an overlay.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  .../touchscreen/raspberrypi,firmware-ts.txt   | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/raspberrypi,firmware-ts.txt
+> 
 
-But devkmsg ratelimits systemd errors, so one does not even know that
-"some debugging is required". For instance from my x86 box:
-
- Unmounting /home...
- [..]
- home.mount: Mount process exited, code=exited status=32
- Failed unmounting /home.
-
-I don't want to debug systemd, I want to know that something didn't
-work out. 10 messages max and 5 seconds interval looks a bit too strict.
-
-	-ss
+Reviewed-by: Rob Herring <robh@kernel.org>
