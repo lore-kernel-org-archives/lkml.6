@@ -2,116 +2,169 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A60BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD31C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCFB82133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MffBEizv"
+	by mail.kernel.org (Postfix) with ESMTP id 0A81A2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbeLRIGj (ORCPT
+        id S1726805AbeLRIGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Dec 2018 03:06:39 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38899 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbeLRIGg (ORCPT
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.6]:37581 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbeLRIGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 03:06:36 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so7446676pgc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
-        b=MffBEizv6QiHPXKM+e83ZEZYoA1KC9gItgx0iSi6G9oDgRiYQnnfjrzgN318hsMC6Q
-         IAT/Dh47Ks5pu8Svd/hK5ftpbrerRHcw0Yx0c+gkDdMnFaaC+zlFJhVyyYxmS+pLFsFS
-         C0G6pDISGRxdKXI33oemt2XsNEqhF2assGZ5s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
-        b=sQBH0N8x3jILk5IijGhjsIp6tJItF19/Pzd2imF3l3Xx/irV1Ib60Q9aOfO+SWZfI3
-         J6J87XJwhzdboa10tquLeIKtyIG0pz3vvLwkejg3DJbmfs7b+H2xtU7IfJ7V0thQMovS
-         0mLX/EmXgRjJ79WzI8odfTU/qfEThQ/nps+awby1/VdIOSKoSx9lPQjnnF+IMKxa3ABl
-         173M8Fnd51JNdg3aieXjOY24U8rFDZB8/c0ra1jFSv1HchfWLnKC9yJqfS8Rb+vDWOyF
-         3IxxwtLbNHIEleeogL26QWV6nDJTaEK0zYCRHZV+Y3wEwlFULHHBBast+sDru7k0d4ai
-         9qqQ==
-X-Gm-Message-State: AA+aEWaX13F91yDmes/C4paBrV8MM+bKAf57LpWE0JLZJRpQmi1IwFHt
-        FOuFJFZdOD0EB8tfO/QhwDfF
-X-Google-Smtp-Source: AFSGD/V6n1jxQwzQiBjKKv+Wv2LUsskRd42kelksznlZGgsorN8iYDlrqQsF1sr29BaKb2nkjlvvMw==
-X-Received: by 2002:a62:1e45:: with SMTP id e66mr15627883pfe.152.1545120395371;
-        Tue, 18 Dec 2018 00:06:35 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id 7sm45596888pfm.8.2018.12.18.00.06.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 00:06:34 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        gregkh@linuxfoundation.org, jslaby@suse.com
-Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-        amit.kucheria@linaro.org, linus.walleij@linaro.org,
-        zhao_steven@263.net,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 07/11] ARM: dts: rda8810pl: Add timer support
-Date:   Tue, 18 Dec 2018 13:35:23 +0530
-Message-Id: <20181218080527.10801-8-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
-References: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
+Received: from [85.158.142.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-6.bemta.az-a.eu-central-1.aws.symcld.net id B3/C6-08814-98AA81C5; Tue, 18 Dec 2018 08:06:33 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRWlGSWpSXmKPExsVy8+3OTbqdqyR
+  iDA61ClhMffiEzWL+kXOsFve/HmW0+Halg8ni8q45bBazl/SzWCy9fpHJonXvEXaL/Ve8HDg9
+  1sxbw+jx7eskFo+ds+6ye2xa1cnmcefaHjaPz5vkAtiiWDPzkvIrElgz+lZPZyl4IFzRtbuft
+  YHxgkAXIxeHkMBqRonHX3azQDhPGSVuzJ3D2sXICeRUSCxfPQ3MZhOwkti9ZjFQEQeHiICKxL
+  k35iD1zAJTmCQ2zp7GAlIjLGAvsfviWmYQm0VAVWLtoy6wOK+Aj8TkGd/A5kgIyEncPNcJVsM
+  p4CtxdPpBZohdPhL3Z0xmg6gXlDg58wlYL7OAhMTBFy+garQkrv47yA4xR0Fi6vuVUHacxNpD
+  J9kgbE2JhmXbmCBse4np768yQ9iGEt9nfWOBsM0ljn+8DBW3kTj0txWq11Ti1Y/JTDD2hPnNL
+  BMYJWYhOWkWkpMWMDKtYrRIKspMzyjJTczM0TU0MNA1NDTWNdI1MdFLrNJN1Est1U1OzSspSg
+  RK6iWWF+sVV+Ym56To5aWWbGIExnlKIZPODsZPC9MPMUpyMCmJ8p5eLhEjxJeUn1KZkVicEV9
+  UmpNafIhRhoNDSYJ3xkqgnGBRanpqRVpmDjDhwKQlOHiURHiVVwCleYsLEnOLM9MhUqcYFaXE
+  ebeB9AmAJDJK8+DaYEnuEqOslDAvIwMDgxBPQWpRbmYJqvwrRnEORiVh3gCQ8TyZeSVw018BL
+  WYCWpyzhQlkcUkiQkqqgdF28n3Vj5XTz75Yn2SXYnD/tr6omxbrr+u7jp0+d/V/cT/zh2c9fX
+  ymLa9emHWV599vKhDUFjjj838jn+bVHVsVZTnrGFIW62x//cvjpy3vz9Kabzmcm+uu9p5bsUn
+  +7+sC9irHhE8rvu1LMMh7dZ69RjtEJz1ISp3vJ6OXP6M+1+lFs7lPlSmxFGckGmoxFxUnAgCZ
+  vwqybQMAAA==
+X-Env-Sender: Christian.Hohnstaedt@wago.com
+X-Msg-Ref: server-24.tower-223.messagelabs.com!1545120392!2439111!3
+X-Originating-IP: [217.237.185.178]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.14.24; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 21190 invoked from network); 18 Dec 2018 08:06:33 -0000
+Received: from unknown (HELO SVEX01005.wago.local) (217.237.185.178)
+  by server-24.tower-223.messagelabs.com with AES128-SHA encrypted SMTP; 18 Dec 2018 08:06:33 -0000
+Received: from SVEX01009.wago.local (10.1.103.227) by SVEX01005.wago.local
+ (10.1.101.121) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 18 Dec
+ 2018 09:06:32 +0100
+Received: from lc010965.wago.local (10.1.101.132) by SVEX01009.wago.local
+ (10.1.103.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Tue, 18 Dec
+ 2018 09:06:31 +0100
+Received: by lc010965.wago.local (Postfix, from userid 11100404)        id
+ 9AA6F170069F; Tue, 18 Dec 2018 09:06:31 +0100 (CET)
+From:   Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Tony Lindgren" <tony@atomide.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>
+Subject: [PATCH 2/2] mfd: tps65218.c: Add input voltage options
+Date:   Tue, 18 Dec 2018 09:05:56 +0100
+Message-ID: <1545120356-7749-3-git-send-email-Christian.Hohnstaedt@wago.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545120356-7749-1-git-send-email-Christian.Hohnstaedt@wago.com>
+References: <1545120356-7749-1-git-send-email-Christian.Hohnstaedt@wago.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.1.101.132]
+X-ClientProxiedBy: SVEX01014.wago.local (10.1.103.232) To SVEX01009.wago.local
+ (10.1.103.227)
+X-KSE-ServerInfo: SVEX01009.wago.local, 9
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 18.12.2018 03:56:00
+X-KSE-BulkMessagesFiltering-Scan-Result: protection disabled
+X-PP-Proceessed: 81a9f692-418a-4f33-bb70-032f75efc73b
+X-PP-Proceessed: 8707ce24-8c4e-4a04-80f2-2a31f9152b06
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add timer support for RDA Micro RDA8810PL SoC.
+These options apply to all regulators in this chip.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+strict-supply-voltage:
+  Set STRICT flag in CONFIG1
+under-voltage-limit:
+  Select 2.75, 2.95, 3.25 or 3.35 V UVLO in CONFIG1
+under-voltage-hysteresis:
+  Select 200mV or 400mV UVLOHYS in CONFIG2
+
+Signed-off-by: Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
 ---
- arch/arm/boot/dts/rda8810pl.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mfd/tps65218.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
-index 15547b138977..84baa4c0a14c 100644
---- a/arch/arm/boot/dts/rda8810pl.dtsi
-+++ b/arch/arm/boot/dts/rda8810pl.dtsi
-@@ -6,6 +6,8 @@
-  * Copyright (c) 2018 Manivannan Sadhasivam
-  */
+diff --git a/drivers/mfd/tps65218.c b/drivers/mfd/tps65218.c
+index 8bcdecf..f5e559b 100644
+--- a/drivers/mfd/tps65218.c
++++ b/drivers/mfd/tps65218.c
+@@ -211,6 +211,50 @@ static const struct of_device_id of_tps65218_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, of_tps65218_match_table);
  
-+#include <dt-bindings/interrupt-controller/irq.h>
++static void tps65218_options(struct tps65218 *tps)
++{
++	struct device *dev = tps->dev;
++	struct device_node *np = dev->of_node;
++	u32 pval;
 +
- / {
- 	compatible = "rda,8810pl";
- 	interrupt-parent = <&intc>;
-@@ -50,6 +52,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x20900000 0x100000>;
++	if (!of_property_read_u32(np, "strict-supply-voltage", &pval)) {
++		tps65218_update_bits(tps, TPS65218_REG_CONFIG1,
++			TPS65218_CONFIG1_STRICT,
++			pval ? TPS65218_CONFIG1_STRICT : 0,
++			TPS65218_PROTECT_L1);
++		dev_dbg(dev, "tps65218 strict-supply-voltage: %d\n", pval);
++	}
++	if (!of_property_read_u32(np, "under-voltage-hysteresis", &pval)) {
++		if (pval != 400000 && pval != 200000) {
++			dev_err(dev,
++				 "under-voltage-hysteresis must be %d or %d\n",
++				 200000, 400000);
++		} else {
++			tps65218_update_bits(tps, TPS65218_REG_CONFIG2,
++				TPS65218_CONFIG2_UVLOHYS,
++				pval == 400000 ? TPS65218_CONFIG2_UVLOHYS : 0,
++				TPS65218_PROTECT_L1);
++		}
++		dev_dbg(dev, "tps65218 under-voltage-hysteresis: %d\n", pval);
++	}
++	if (!of_property_read_u32(np, "under-voltage-limit", &pval)) {
++		int i, vals[] = { 275, 295, 325, 335 };
 +
-+		timer@10000 {
-+			compatible = "rda,8810pl-timer";
-+			reg = <0x10000 0x1000>;
-+			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <17 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hwtimer", "ostimer";
-+		};
- 	};
++		for (i = 0; i < ARRAY_SIZE(vals); i++) {
++			if (pval == vals[i] * 10000)
++				break;
++		}
++		if (i < ARRAY_SIZE(vals)) {
++			tps65218_update_bits(tps, TPS65218_REG_CONFIG1,
++				TPS65218_CONFIG1_UVLO_MASK, i,
++				TPS65218_PROTECT_L1);
++		} else {
++			dev_err(dev, "Invalid under-voltage-limit: %d\n", pval);
++		}
++		dev_dbg(dev, "tps65218 under-voltage-limit: %d=%d\n", pval, i);
++	}
++}
++
+ static int tps65218_probe(struct i2c_client *client,
+ 				const struct i2c_device_id *ids)
+ {
+@@ -249,6 +293,8 @@ static int tps65218_probe(struct i2c_client *client,
  
- 	apb@20a00000 {
+ 	tps->rev = chipid & TPS65218_CHIPID_REV_MASK;
+ 
++	tps65218_options(tps);
++
+ 	ret = mfd_add_devices(tps->dev, PLATFORM_DEVID_AUTO, tps65218_cells,
+ 			      ARRAY_SIZE(tps65218_cells), NULL, 0,
+ 			      regmap_irq_get_domain(tps->irq_data));
 -- 
-2.17.1
+2.7.4
 
