@@ -2,127 +2,90 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A85FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCFAC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 016B0217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:17:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PUwwpP58"
+	by mail.kernel.org (Postfix) with ESMTP id 59D942184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbeLRIR5 (ORCPT
+        id S1726555AbeLRISb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:17:57 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36872 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbeLRIR5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:17:57 -0500
-Received: by mail-it1-f196.google.com with SMTP id b5so3073501iti.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:17:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VspT+YoGe1b2wOtJh/49PGdGjBXvbYgklkIjG+r7qLk=;
-        b=PUwwpP58gsHb54vfXnh9Gq+m7zlhL4cXPju/w7oeBII2Wjiwfctdlt56bN+pKrerow
-         rLhM1dVAhSDdStqpgBH4qznvYOynmFXNo5ASogYgl6kOJIzgmFDhCw6y8JtA2LxyObiC
-         Jhi7VSpFmbyCZUjA9kTR3Z+tUmCzypUphtX18=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VspT+YoGe1b2wOtJh/49PGdGjBXvbYgklkIjG+r7qLk=;
-        b=ZuJtEPZD9CD5iBmHIiAW8Wt1zfFHUCNXONwziUK9qmp1fOeEOIHepuYJl09ARKR/By
-         cFTYzgvit89if7YML6S7gzlyqtTN5/AqpjUk2FrAVlh9qW1PRNTnFAUfjZXTlsRncFDi
-         bQMMUKy21S+81QNtgqbiUR9lMhyewBjBA7QHe/sQa1xSukpB4jH0RiaEzMAcBFlcIteU
-         zLPSKtrzn7HC3+4M8NlzNT9rHCrzHa9nHWjooMWiRiNN0Jt04fRZlsmdFXx8+HJfRo4x
-         /K6qzfx2Zmy9IN943nsAcxX+sPvPYZc4LQfvkmv/ppf8lsKp+dfOe4PkEUtZLRSi+Ddo
-         rlyQ==
-X-Gm-Message-State: AA+aEWYC7UQzuIoBezhpdnLcdQWYn3C18XFPdjEzDfqCcbyKwnSyYW3R
-        ln0W/8qzz5zkLQUlUiYI959kIjNv+Okx9yiyHboJ8QnahjZfkg==
-X-Google-Smtp-Source: AFSGD/Uzc9sBUEwoD88UnlWEzWzGh3WIgnoKiiggAwwHONo8dB81ZOrglIvM2qW3gv7nxiu5P4jP+AINuKyGXudixGU=
-X-Received: by 2002:a05:660c:a8f:: with SMTP id m15mr2018652itk.114.1545121076027;
- Tue, 18 Dec 2018 00:17:56 -0800 (PST)
+        Tue, 18 Dec 2018 03:18:31 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48444 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726316AbeLRISb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:18:31 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5040420834; Tue, 18 Dec 2018 09:18:28 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DB906206A7;
+        Tue, 18 Dec 2018 09:18:17 +0100 (CET)
+Date:   Tue, 18 Dec 2018 09:18:17 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Marek Behun <marek.behun@nic.cz>
+Cc:     Nadav Haklai <nadavh@marvell.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v2 03/12] PCI: aardvark: Add PHY support
+Message-ID: <20181218091817.4a8a5d42@xps13>
+In-Reply-To: <20181217223430.182d01d8@nic.cz>
+References: <20181212102142.16053-1-miquel.raynal@bootlin.com>
+        <20181212102142.16053-4-miquel.raynal@bootlin.com>
+        <20181214014701.373b220b@nic.cz>
+        <20181214015712.31f749ea@nic.cz>
+        <20181217170724.58421a29@xps13>
+        <20181217223430.182d01d8@nic.cz>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
- <1544803317-7610-3-git-send-email-vincent.guittot@linaro.org> <ff8844de-8dd7-c5b8-a90e-e15899d081af@arm.com>
-In-Reply-To: <ff8844de-8dd7-c5b8-a90e-e15899d081af@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 18 Dec 2018 09:17:44 +0100
-Message-ID: <CAKfTPtDKy07v6YUgz1fegTtsg_K-AcbU+t7y5wFQaTu0TK+_fA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] sched/fair: trigger asym_packing during idle load balance
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 at 17:59, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
-> Hi Vincent,
->
-> On 14/12/2018 16:01, Vincent Guittot wrote:
-> > newly idle load balance is not always triggered when a cpu becomes idle.
-> > This prevent the scheduler to get a chance to migrate task for asym packing.
-> > Enable active migration because of asym packing during idle load balance too.
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index c215f7a..9591e7a 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -8861,7 +8861,7 @@ static int need_active_balance(struct lb_env *env)
-> >  {
-> >       struct sched_domain *sd = env->sd;
-> >
-> > -     if (env->idle == CPU_NEWLY_IDLE) {
-> > +     if (env->idle != CPU_NOT_IDLE) {
-> >
-> >               /*
-> >                * ASYM_PACKING needs to force migrate tasks from busy but
-> >
->
-> That change looks fine. However, you're mentioning newidle load_balance()
-> not being triggered - you'd want to set root_domain->overload for any
-> newidle pull to happen, probably with something like this:
+Hi Marek,
 
-It's not needed in this case because the dst cpu is already the target
-cpu and the migration will happen during this idle load balance.
-Setting root_domain->overload is useful only if you want another cpu
-to pull the task during another coming load_balance (newly or normal
-idle ones) which is not the case here.
+Marek Behun <marek.behun@nic.cz> wrote on Mon, 17 Dec 2018 22:34:30
++0100:
 
->
-> -----8<-----
-> @@ -8398,6 +8408,9 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
->                 sg = sg->next;
->         } while (sg != env->sd->groups);
->
-> +       if (check_asym_packing(env, sds))
-> +               sg_status |= SG_OVERLOAD;
-> +
->  #ifdef CONFIG_NO_HZ_COMMON
->         if ((env->flags & LBF_NOHZ_AGAIN) &&
->             cpumask_subset(nohz.idle_cpus_mask, sched_domain_span(env->sd))) {
-> ----->8-----
->
-> It's similar to what is done for misfit, although that's yet another
-> 'twisted' use of that flag which we might want to rename (I suggested
-> something like 'need_idle_balance' a while back but it wasn't really
-> popular).
+> Miquel,
+> 
+> I tried the patches and they are working, with the exception of Compex
+> WLE900X card, but we know that this card is problematic.
+
+How did you test them? I am surprised that COMPHY calls worked for you
+out of the box. I am not sure you have A3700 COMPHY support in your ATF
+but it probably work because U-Boot is doing the initial configuration.
+
+> I am interesting if there is a known way to turn of the comphy on
+> A3720, or at least change the SGMII mode from 1Gbps to 2.5Gbps and
+> back. Marvell documentation does not provide this information and the
+> code in ATF providing the SMC calls does not do this either.
+> Do you know how this can be achieved?
+
+The driver already handles these calls (see [1]), making use of
+them is just a matter of hacking into drivers (in your case, I
+suppose it is mvneta) and add phy_set_mode()/phy_power_on() calls.
+
+[1] https://github.com/miquelraynal/linux/blob/marvell/phy-next/pm/drivers/phy/marvell/phy-mvebu-a3700-comphy.c#L189
+
+
+Thanks,
+Miquèl
