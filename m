@@ -2,192 +2,89 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD8CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739AAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9E92133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 476B32133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:04:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeLRH5t (ORCPT
+        id S1726446AbeLRIES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 02:57:49 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39822 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726750AbeLRH5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 02:57:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AFE515AB;
-        Mon, 17 Dec 2018 23:57:46 -0800 (PST)
-Received: from a75553-lin.blr.arm.com (a75553-lin.blr.arm.com [10.162.0.175])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A54813F575;
-        Mon, 17 Dec 2018 23:57:42 -0800 (PST)
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v4 6/6] arm/kvm: arm64: Add a vcpu feature for pointer authentication
-Date:   Tue, 18 Dec 2018 13:26:50 +0530
-Message-Id: <1545119810-12182-7-git-send-email-amit.kachhap@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
-References: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
+        Tue, 18 Dec 2018 03:04:18 -0500
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:48429 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726324AbeLRIER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:04:17 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07857972|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03295;MF=liaoweixiong@allwinnertech.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.DZFShi5_1545120251;
+Received: from 172.16.10.102(mailfrom:liaoweixiong@allwinnertech.com fp:SMTPD_---.DZFShi5_1545120251)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Tue, 18 Dec 2018 16:04:12 +0800
+Subject: Re: [PATCH] pstore: fix crypto dependencies of 842/zstd compression
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
+References: <1544603038-9373-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <201812171624.Ych15Vum%fengguang.wu@intel.com>
+From:   =?UTF-8?B?5buW5aiB6ZuE?= <liaoweixiong@allwinnertech.com>
+Message-ID: <12bc8a0a-45bc-3622-5745-654957825047@allwinnertech.com>
+Date:   Tue, 18 Dec 2018 16:04:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <201812171624.Ych15Vum%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a runtime feature and can be enabled by --ptrauth option.
+hi ,
+On 2018/12/17 16:16, kbuild test robot wrote:
+> Hi liaoweixiong,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on kees/for-next/pstore]
+> [also build test ERROR on v4.20-rc7 next-20181214]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/liaoweixiong/pstore-fix-crypto-dependencies-of-842-zstd-compression/20181214-222645
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
+> config: i386-allmodconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    fs/pstore/platform.o: In function `zbufsize_zstd':
+>>> platform.c:(.text+0x30a): undefined reference to `ZSTD_compressBound'
+Yes, i reproduced it. I had made a new patch in version 2.
+On new patch, i try to trun sub-options of compression back to 'bool'
+for more rigorous.
 
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
----
- arm/aarch32/include/kvm/kvm-cpu-arch.h    | 2 ++
- arm/aarch64/include/asm/kvm.h             | 3 +++
- arm/aarch64/include/kvm/kvm-arch.h        | 1 +
- arm/aarch64/include/kvm/kvm-config-arch.h | 4 +++-
- arm/aarch64/include/kvm/kvm-cpu-arch.h    | 2 ++
- arm/aarch64/kvm-cpu.c                     | 5 +++++
- arm/include/arm-common/kvm-config-arch.h  | 1 +
- arm/kvm-cpu.c                             | 7 +++++++
- include/linux/kvm.h                       | 1 +
- 9 files changed, 25 insertions(+), 1 deletion(-)
+Commit info like this:
+On commit 58eb5b670747 ("pstore: fix crypto dependencies"),
+dependency bug was fixed by selecting the crypto core rather than
+turned compression sub-options to 'tristate'.
+In addition, these options are used to enable/disable compression. They
+are not modules, and mean nothing when set to 'M'.
+So, this patch is going to turn them back to 'bool'.
 
-diff --git a/arm/aarch32/include/kvm/kvm-cpu-arch.h b/arm/aarch32/include/kvm/kvm-cpu-arch.h
-index d28ea67..5779767 100644
---- a/arm/aarch32/include/kvm/kvm-cpu-arch.h
-+++ b/arm/aarch32/include/kvm/kvm-cpu-arch.h
-@@ -13,4 +13,6 @@
- #define ARM_CPU_ID		0, 0, 0
- #define ARM_CPU_ID_MPIDR	5
- 
-+unsigned int kvm__cpu_ptrauth_get_feature(void) {}
-+
- #endif /* KVM__KVM_CPU_ARCH_H */
-diff --git a/arm/aarch64/include/asm/kvm.h b/arm/aarch64/include/asm/kvm.h
-index c286035..0fd183d 100644
---- a/arm/aarch64/include/asm/kvm.h
-+++ b/arm/aarch64/include/asm/kvm.h
-@@ -98,6 +98,9 @@ struct kvm_regs {
- #define KVM_ARM_VCPU_PSCI_0_2		2 /* CPU uses PSCI v0.2 */
- #define KVM_ARM_VCPU_PMU_V3		3 /* Support guest PMUv3 */
- 
-+/* CPU uses address authentication and A key */
-+#define KVM_ARM_VCPU_PTRAUTH		4
-+
- struct kvm_vcpu_init {
- 	__u32 target;
- 	__u32 features[7];
-diff --git a/arm/aarch64/include/kvm/kvm-arch.h b/arm/aarch64/include/kvm/kvm-arch.h
-index 9de623a..bd566cb 100644
---- a/arm/aarch64/include/kvm/kvm-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-arch.h
-@@ -11,4 +11,5 @@
- 
- #include "arm-common/kvm-arch.h"
- 
-+
- #endif /* KVM__KVM_ARCH_H */
-diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
-index 04be43d..2074684 100644
---- a/arm/aarch64/include/kvm/kvm-config-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-config-arch.h
-@@ -8,7 +8,9 @@
- 			"Create PMUv3 device"),				\
- 	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
- 			"Specify random seed for Kernel Address Space "	\
--			"Layout Randomization (KASLR)"),
-+			"Layout Randomization (KASLR)"),		\
-+	OPT_BOOLEAN('\0', "ptrauth", &(cfg)->has_ptrauth,		\
-+			"Enable address authentication"),
- 
- #include "arm-common/kvm-config-arch.h"
- 
-diff --git a/arm/aarch64/include/kvm/kvm-cpu-arch.h b/arm/aarch64/include/kvm/kvm-cpu-arch.h
-index a9d8563..f7b64b7 100644
---- a/arm/aarch64/include/kvm/kvm-cpu-arch.h
-+++ b/arm/aarch64/include/kvm/kvm-cpu-arch.h
-@@ -17,4 +17,6 @@
- #define ARM_CPU_CTRL		3, 0, 1, 0
- #define ARM_CPU_CTRL_SCTLR_EL1	0
- 
-+unsigned int kvm__cpu_ptrauth_get_feature(void);
-+
- #endif /* KVM__KVM_CPU_ARCH_H */
-diff --git a/arm/aarch64/kvm-cpu.c b/arm/aarch64/kvm-cpu.c
-index 1b29374..10da2cb 100644
---- a/arm/aarch64/kvm-cpu.c
-+++ b/arm/aarch64/kvm-cpu.c
-@@ -123,6 +123,11 @@ void kvm_cpu__reset_vcpu(struct kvm_cpu *vcpu)
- 		return reset_vcpu_aarch64(vcpu);
- }
- 
-+unsigned int kvm__cpu_ptrauth_get_feature(void)
-+{
-+	return (1UL << KVM_ARM_VCPU_PTRAUTH);
-+}
-+
- int kvm_cpu__get_endianness(struct kvm_cpu *vcpu)
- {
- 	struct kvm_one_reg reg;
-diff --git a/arm/include/arm-common/kvm-config-arch.h b/arm/include/arm-common/kvm-config-arch.h
-index 6a196f1..eb872db 100644
---- a/arm/include/arm-common/kvm-config-arch.h
-+++ b/arm/include/arm-common/kvm-config-arch.h
-@@ -10,6 +10,7 @@ struct kvm_config_arch {
- 	bool		aarch32_guest;
- 	bool		has_pmuv3;
- 	u64		kaslr_seed;
-+	bool		has_ptrauth;
- 	enum irqchip_type irqchip;
- };
- 
-diff --git a/arm/kvm-cpu.c b/arm/kvm-cpu.c
-index 7780251..5afd727 100644
---- a/arm/kvm-cpu.c
-+++ b/arm/kvm-cpu.c
-@@ -68,6 +68,13 @@ struct kvm_cpu *kvm_cpu__arch_init(struct kvm *kvm, unsigned long cpu_id)
- 		vcpu_init.features[0] |= (1UL << KVM_ARM_VCPU_PSCI_0_2);
- 	}
- 
-+	/* Set KVM_ARM_VCPU_PTRAUTH_I_A if available */
-+	if (kvm__supports_extension(kvm, KVM_CAP_ARM_PTRAUTH)) {
-+		if (kvm->cfg.arch.has_ptrauth)
-+			vcpu_init.features[0] |=
-+					kvm__cpu_ptrauth_get_feature();
-+	}
-+
- 	/*
- 	 * If the preferred target ioctl is successful then
- 	 * use preferred target else try each and every target type
-diff --git a/include/linux/kvm.h b/include/linux/kvm.h
-index f51d508..ffd8f5c 100644
---- a/include/linux/kvm.h
-+++ b/include/linux/kvm.h
-@@ -883,6 +883,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_PPC_MMU_RADIX 134
- #define KVM_CAP_PPC_MMU_HASH_V3 135
- #define KVM_CAP_IMMEDIATE_EXIT 136
-+#define KVM_CAP_ARM_PTRAUTH 166
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
--- 
-2.7.4
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
 
