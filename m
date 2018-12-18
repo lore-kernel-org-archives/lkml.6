@@ -2,124 +2,106 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3C6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513CAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5E021841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vt2EFxBA"
+	by mail.kernel.org (Postfix) with ESMTP id 2932521841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726443AbeLRJyN (ORCPT
+        id S1726501AbeLRJzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:54:13 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38950 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbeLRJyN (ORCPT
+        Tue, 18 Dec 2018 04:55:16 -0500
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:42734 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726397AbeLRJzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:54:13 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 94D8F53A;
-        Tue, 18 Dec 2018 10:54:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1545126851;
-        bh=TpCAUkqwNHa1mlqzW76uG9BlDjxmHA6N2EEgt0Rs8vI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vt2EFxBAjCowT12L877Dc96QaY6sQVW0itSRg0PERQTjKL4QWSEjB1W/LSb075EgF
-         XhB4TSY7bD3kgoagi8plFbxSgtYHp4BtRX4G23dVIOyrJE8uDimjx6b5cb0fHd5EG0
-         6ltFRwoPh4zG52kFcKH2Q0ljZPVS6uD2NUH455MI=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH][resend] drm: dw-hdmi-i2s: convert to SPDX identifiers
-Date:   Tue, 18 Dec 2018 11:55:01 +0200
-Message-ID: <2503467.Tla0HvxUZs@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAKMK7uEJbMDRdGq1g6i+EqYjgsYDO0RFH64WrUjaW=16Th49ig@mail.gmail.com>
-References: <87lg4n1izg.wl-kuninori.morimoto.gx@renesas.com> <1545127003.YuAFZ7QVEK@avalon> <CAKMK7uEJbMDRdGq1g6i+EqYjgsYDO0RFH64WrUjaW=16Th49ig@mail.gmail.com>
+        Tue, 18 Dec 2018 04:55:14 -0500
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id 6AB6B1C2222
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 09:55:12 +0000 (GMT)
+Received: (qmail 17620 invoked from network); 18 Dec 2018 09:55:12 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Dec 2018 09:55:12 -0000
+Date:   Tue, 18 Dec 2018 09:55:10 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 06/14] mm, migrate: Immediately fail migration of a page
+ with no migration handler
+Message-ID: <20181218095510.GJ29005@techsingularity.net>
+References: <20181214230310.572-1-mgorman@techsingularity.net>
+ <20181214230310.572-7-mgorman@techsingularity.net>
+ <0ef5c1d0-1853-8fdb-1a68-7482297cb802@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <0ef5c1d0-1853-8fdb-1a68-7482297cb802@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-On Tuesday, 18 December 2018 11:37:14 EET Daniel Vetter wrote:
-> On Tue, Dec 18, 2018 at 7:47 AM Laurent Pinchart wrote:
-> > On Tuesday, 18 December 2018 08:00:24 EET Kuninori Morimoto wrote:
-> >> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >> 
-> >> This patch updates license to use SPDX-License-Identifier
-> >> instead of verbose license text.
-> >> 
-> >> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Tue, Dec 18, 2018 at 10:06:31AM +0100, Vlastimil Babka wrote:
+> On 12/15/18 12:03 AM, Mel Gorman wrote:
+> > Pages with no migration handler use a fallback hander which sometimes
+> > works and sometimes persistently fails such as blockdev pages. Migration
+> > will retry a number of times on these persistent pages which is wasteful
+> > during compaction. This patch will fail migration immediately unless the
+> > caller is in MIGRATE_SYNC mode which indicates the caller is willing to
+> > wait while being persistent.
+> 
+> Right.
+> 
+> > This is not expected to help THP allocation success rates but it does
+> > reduce latencies slightly.
 > > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> >> ---
-> >> few weeks passed, nothing happen. I re-post this patch again.
-> >> I added Andrew on Cc
-> > 
-> > The driver seems to be lacking a maintainer :-S
+> > 1-socket thpfioscale
+> >                                     4.20.0-rc6             4.20.0-rc6
+> >                                noreserved-v1r4          failfast-v1r4
+> > Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
+> > Amean     fault-both-3      2276.15 (   0.00%)     3867.54 * -69.92%*
 > 
-> bridge drivers all have a fallback maintainer, but none of them are
-> cc'ed. It's maintained in drm-misc, so you could just push the patch
-> too :-) Especially since you're listed:
+> This is rather weird.
 > 
-> DRM DRIVERS FOR BRIDGE CHIPS
-> M:    Archit Taneja <architt@codeaurora.org>
-> M:    Andrzej Hajda <a.hajda@samsung.com>
-> R:    Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
 
-Note the R, not the M :-)
+Fault latency is extremely variable and there can be very large outliers
+that skew the mean (the full report includes quartiles but it makes for an
+excessive changelog). It can be down to luck about how often the migrate
+scanner advances and how often it gets reset. For this series, it'll
+not be unusual to see jitter in the latencies for individual patches
+that will not get nailed down reliably until later in the series. The
+alternative is massive patches that do multiple things which will look
+nice in changelogs and be horrible to review.
 
-> S:    Maintained
-> T:    git git://anongit.freedesktop.org/drm/drm-misc
-> F:    drivers/gpu/drm/bridge/
+> > Amean     fault-both-5      4992.20 (   0.00%)     5313.20 (  -6.43%)
+> > Amean     fault-both-7      7373.30 (   0.00%)     7039.11 (   4.53%)
+> > Amean     fault-both-12    11911.52 (   0.00%)    11328.29 (   4.90%)
+> > Amean     fault-both-18    17209.42 (   0.00%)    16455.34 (   4.38%)
+> > Amean     fault-both-24    20943.71 (   0.00%)    20448.94 (   2.36%)
+> > Amean     fault-both-30    22703.00 (   0.00%)    21655.07 (   4.62%)
+> > Amean     fault-both-32    22461.41 (   0.00%)    21415.35 (   4.66%)
+> > 
+> > The 2-socket results are not materially different. Scan rates are
+> > similar as expected.
+> > 
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 > 
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> Cheers, Daniel
-> 
-> >>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 5 +----
-> >>  1 file changed, 1 insertion(+), 4 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> >> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c index
-> >> 8f9c8a6..2228689 100644
-> >> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> >> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> >> @@ -1,12 +1,9 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >>  /*
-> >>   * dw-hdmi-i2s-audio.c
-> >>   *
-> >>   * Copyright (c) 2017 Renesas Solutions Corp.
-> >>   * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >> - *
-> >> - * This program is free software; you can redistribute it and/or modify
-> >> - * it under the terms of the GNU General Public License version 2 as
-> >> - * published by the Free Software Foundation.
-> >>   */
-> >>  
-> >>  #include <drm/bridge/dw_hdmi.h>
+
+Thanks.
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Mel Gorman
+SUSE Labs
