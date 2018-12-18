@@ -2,91 +2,247 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF99DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83B1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B552720874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:07:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F6A2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545124153;
+	bh=l13xqkBl22MmChMjIHMw0G3RJWcGq2Q3BD9C/nWoQcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=MQpnumvhWoOagl0LUle3Hg53NlDQ4OB4c4AmnRVwsdGcngSPvtMVDnGCupYfQeE+7
+	 PHGuNbfl4qoaUd5CPpCMDnYygegCEox+zWr3EYsFsnbAzqO5GLxCUarTVed1SoR6kf
+	 QjaPshgEy5tFdgAzQHXrFnumwP/NTG5d2Me7DLCg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbeLRJHk (ORCPT
+        id S1726447AbeLRJJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:07:40 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40216 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbeLRJHk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:07:40 -0500
-Received: by mail-qt1-f196.google.com with SMTP id k12so17326178qtf.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:07:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pJchzieKvEw2q1jiD8rRlxKTlS2uWfldtdARgrlnAhI=;
-        b=Um6SR2Y3og2A9fBCtxXjjvai7NJo2oDk2q+P8FQ+eTGd+NJnz3OjhihwuTFTVyWdIU
-         TIMl+k9pcniCvHBmA4n1bIDGnosRW4BDKnDqD6QBs3YuQrRI1b1q5t+SN+vGeyeKPN+z
-         onh0hWkHcyqkNh6gIejI91DgwHBf+SMneHr+wb8SJIYSahq90iawCCoGxeM/Ws6gwDNC
-         /rL7P0QDuQDrjfubwUvYBN1seIuR2huq0BXdVPmBiKnLMQ7nHcH7wL2RxBsxHovgsLAU
-         Sz+pbO7mHmr8OWT6JSusrvLuFFbfcUiNIIcL9zG8uH6nwR4EMowLJbvgrr4dV30EdWhr
-         l6Sg==
-X-Gm-Message-State: AA+aEWZPZQLNOFJD14LBi9UcY1ms6qMlaW2oiriMGuGF9djm9Y8TLLDq
-        i4Qm5wePvujMMBFfYrYWYeIzUQ2/hTa1DnjW3xI=
-X-Google-Smtp-Source: AFSGD/VJ5OS7xGiWkpkncCzaZ7+vZyd8T37eKvY6Ai39wmaQ9C9l13wtX94ZlX9DDuSrKBIEL0vqlT8q5If0F5VbO6A=
-X-Received: by 2002:a05:6214:1087:: with SMTP id o7mr16475667qvr.115.1545124058264;
- Tue, 18 Dec 2018 01:07:38 -0800 (PST)
+        Tue, 18 Dec 2018 04:09:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49396 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726346AbeLRJJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 04:09:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CB914AC17;
+        Tue, 18 Dec 2018 09:09:08 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 10:09:07 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [-next] lots of messages due to "mm, memory_hotplug: be more
+ verbose for memory offline failures"
+Message-ID: <20181218090907.GD30879@dhcp22.suse.cz>
+References: <20181217155922.GC3560@osiris>
+ <20181217160350.GV30879@dhcp22.suse.cz>
+ <20181217163949.GX30879@dhcp22.suse.cz>
+ <20181218075538.GA3590@osiris>
 MIME-Version: 1.0
-References: <20181213122910.24193-1-anders.roxell@linaro.org>
- <20181213122910.24193-2-anders.roxell@linaro.org> <20181213124042.GG10669@sirena.org.uk>
- <CADYN=9KBpcUSaU_P_sZuhin60huQUBUT-H-FedH=fXu7a_7EWQ@mail.gmail.com>
-In-Reply-To: <CADYN=9KBpcUSaU_P_sZuhin60huQUBUT-H-FedH=fXu7a_7EWQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 18 Dec 2018 10:07:21 +0100
-Message-ID: <CAK8P3a1qn2SOsk_Uo_VDGSkR6OsDkqzm0Rbo+5F5Pc1WA3tJzQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] config: provide a fragment to enable gdb for qemu
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218075538.GA3590@osiris>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 9:45 AM Anders Roxell <anders.roxell@linaro.org> wrote:
->
-> On Thu, 13 Dec 2018 at 13:40, Mark Brown <broonie@kernel.org> wrote:
-> >
-> > On Thu, Dec 13, 2018 at 01:29:08PM +0100, Anders Roxell wrote:
-> > > Adding a fragment to make it easier to know what options is needed to
-> > > build a kernel to get the that you can debug in qemu.
-> >
-> > > @@ -0,0 +1,7 @@
-> > > +# Enable debug info for gdb
-> > > +# CONFIG_COMPILE_TEST is not set
-> > > +CONFIG_DEBUG_INFO=y
-> > > +CONFIG_GDB_SCRIPTS=y
-> >
-> > Is this specifically for qemu or is this just good for debugging with
-> > GDB in general (eg, via JTAG)?
->
-> I haven't tried, and I don't have a JTAG so I could test it =/
+On Tue 18-12-18 08:55:38, Heiko Carstens wrote:
+> On Mon, Dec 17, 2018 at 05:39:49PM +0100, Michal Hocko wrote:
+> > On Mon 17-12-18 17:03:50, Michal Hocko wrote:
+> > > On Mon 17-12-18 16:59:22, Heiko Carstens wrote:
+> > > > Hi Michal,
+> > > > 
+> > > > with linux-next as of today on s390 I see tons of messages like
+> > > > 
+> > > > [   20.536664] page dumped because: has_unmovable_pages
+> > > > [   20.536792] page:000003d081ff4080 count:1 mapcount:0 mapping:000000008ff88600 index:0x0 compound_mapcount: 0
+> > > > [   20.536794] flags: 0x3fffe0000010200(slab|head)
+> > > > [   20.536795] raw: 03fffe0000010200 0000000000000100 0000000000000200 000000008ff88600
+> > > > [   20.536796] raw: 0000000000000000 0020004100000000 ffffffff00000001 0000000000000000
+> > > > [   20.536797] page dumped because: has_unmovable_pages
+> > > > [   20.536814] page:000003d0823b0000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
+> > > > [   20.536815] flags: 0x7fffe0000000000()
+> > > > [   20.536817] raw: 07fffe0000000000 0000000000000100 0000000000000200 0000000000000000
+> > > > [   20.536818] raw: 0000000000000000 0000000000000000 ffffffff00000001 0000000000000000
+> > > > 
+> > > > bisect points to b323c049a999 ("mm, memory_hotplug: be more verbose for memory offline failures")
+> > > > which is the first commit with which the messages appear.
+> > > 
+> > > I would bet this is CMA allocator. How much is tons? Maybe we want a
+> > > rate limit or the other user is not really interested in them at all?
+> 
+> Yes, the system in question has a 4NB CMA area. "tons" translates to several hundred.
 
-The DEBUG_INFO=y and (as a dependency for that) CONFIG_COMPILE_TEST
-are definitely needed for all GDB operation. I would assume that
-the scripts also work with any other gdb environment, but haven't tried either.
+OK, I guess these messages on their own without a wider context are not
+that helpful. It is still surprising to see slab pages or non-movable
+pages in the CMA area. The later might be an CMA allocation I guess but
+slab pages shouldn't be there at all AFAIU.
+ 
+> > In other words, this should silence those messages.
+> 
+> Yes, with the patch below applied the messages don't appear anymore.
 
-For CONFIG_RANDOMIZE_BASE, I'm not actually sure if that helps or
-not. I think I originally suggested to Anders to turn that off when he
-was analyzing a bug, but I don't know if it helped or if it works just
-as well without that.
+OK, I will post an official patch. Even if CMA allocator decides to
+report failures it can simply add the flag.
 
-        Arnd
+Thanks!
+
+> > diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
+> > index 4ae347cbc36d..4eb26d278046 100644
+> > --- a/include/linux/page-isolation.h
+> > +++ b/include/linux/page-isolation.h
+> > @@ -30,8 +30,11 @@ static inline bool is_migrate_isolate(int migratetype)
+> >  }
+> >  #endif
+> > 
+> > +#define SKIP_HWPOISON	0x1
+> > +#define REPORT_FAILURE	0x2
+> > +
+> >  bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> > -			 int migratetype, bool skip_hwpoisoned_pages);
+> > +			 int migratetype, int flags);
+> >  void set_pageblock_migratetype(struct page *page, int migratetype);
+> >  int move_freepages_block(struct zone *zone, struct page *page,
+> >  				int migratetype, int *num_movable);
+> > @@ -44,10 +47,14 @@ int move_freepages_block(struct zone *zone, struct page *page,
+> >   * For isolating all pages in the range finally, the caller have to
+> >   * free all pages in the range. test_page_isolated() can be used for
+> >   * test it.
+> > + *
+> > + * The following flags are allowed (they can be combined in a bit mask)
+> > + * SKIP_HWPOISON - ignore hwpoison pages
+> > + * REPORT_FAILURE - report details about the failure to isolate the range
+> >   */
+> >  int
+> >  start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+> > -			 unsigned migratetype, bool skip_hwpoisoned_pages);
+> > +			 unsigned migratetype, int flags);
+> > 
+> >  /*
+> >   * Changes MIGRATE_ISOLATE to MIGRATE_MOVABLE.
+> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > index c82193db4be6..8537429d33a6 100644
+> > --- a/mm/memory_hotplug.c
+> > +++ b/mm/memory_hotplug.c
+> > @@ -1226,7 +1226,7 @@ static bool is_pageblock_removable_nolock(struct page *page)
+> >  	if (!zone_spans_pfn(zone, pfn))
+> >  		return false;
+> > 
+> > -	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, true);
+> > +	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, SKIP_HWPOISON);
+> >  }
+> > 
+> >  /* Checks if this range of memory is likely to be hot-removable. */
+> > @@ -1577,7 +1577,8 @@ static int __ref __offline_pages(unsigned long start_pfn,
+> > 
+> >  	/* set above range as isolated */
+> >  	ret = start_isolate_page_range(start_pfn, end_pfn,
+> > -				       MIGRATE_MOVABLE, true);
+> > +				       MIGRATE_MOVABLE,
+> > +				       SKIP_HWPOISON | REPORT_FAILURE);
+> >  	if (ret) {
+> >  		mem_hotplug_done();
+> >  		reason = "failure to isolate range";
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index ec2c7916dc2d..ee4043419791 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -7754,8 +7754,7 @@ void *__init alloc_large_system_hash(const char *tablename,
+> >   * race condition. So you can't expect this function should be exact.
+> >   */
+> >  bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> > -			 int migratetype,
+> > -			 bool skip_hwpoisoned_pages)
+> > +			 int migratetype, int flags)
+> >  {
+> >  	unsigned long pfn, iter, found;
+> > 
+> > @@ -7818,7 +7817,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> >  		 * The HWPoisoned page may be not in buddy system, and
+> >  		 * page_count() is not 0.
+> >  		 */
+> > -		if (skip_hwpoisoned_pages && PageHWPoison(page))
+> > +		if ((flags & SKIP_HWPOISON) && PageHWPoison(page))
+> >  			continue;
+> > 
+> >  		if (__PageMovable(page))
+> > @@ -7845,7 +7844,8 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> >  	return false;
+> >  unmovable:
+> >  	WARN_ON_ONCE(zone_idx(zone) == ZONE_MOVABLE);
+> > -	dump_page(pfn_to_page(pfn+iter), "unmovable page");
+> > +	if (flags & REPORT_FAILURE)
+> > +		dump_page(pfn_to_page(pfn+iter), "unmovable page");
+> >  	return true;
+> >  }
+> > 
+> > @@ -7972,8 +7972,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+> >  	 */
+> > 
+> >  	ret = start_isolate_page_range(pfn_max_align_down(start),
+> > -				       pfn_max_align_up(end), migratetype,
+> > -				       false);
+> > +				       pfn_max_align_up(end), migratetype, 0);
+> >  	if (ret)
+> >  		return ret;
+> > 
+> > diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+> > index 43e085608846..ce323e56b34d 100644
+> > --- a/mm/page_isolation.c
+> > +++ b/mm/page_isolation.c
+> > @@ -15,8 +15,7 @@
+> >  #define CREATE_TRACE_POINTS
+> >  #include <trace/events/page_isolation.h>
+> > 
+> > -static int set_migratetype_isolate(struct page *page, int migratetype,
+> > -				bool skip_hwpoisoned_pages)
+> > +static int set_migratetype_isolate(struct page *page, int migratetype, int isol_flags)
+> >  {
+> >  	struct zone *zone;
+> >  	unsigned long flags, pfn;
+> > @@ -60,8 +59,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
+> >  	 * FIXME: Now, memory hotplug doesn't call shrink_slab() by itself.
+> >  	 * We just check MOVABLE pages.
+> >  	 */
+> > -	if (!has_unmovable_pages(zone, page, arg.pages_found, migratetype,
+> > -				 skip_hwpoisoned_pages))
+> > +	if (!has_unmovable_pages(zone, page, arg.pages_found, migratetype, flags))
+> >  		ret = 0;
+> > 
+> >  	/*
+> > @@ -185,7 +183,7 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
+> >   * prevents two threads from simultaneously working on overlapping ranges.
+> >   */
+> >  int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+> > -			     unsigned migratetype, bool skip_hwpoisoned_pages)
+> > +			     unsigned migratetype, int flags)
+> >  {
+> >  	unsigned long pfn;
+> >  	unsigned long undo_pfn;
+> > @@ -199,7 +197,7 @@ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+> >  	     pfn += pageblock_nr_pages) {
+> >  		page = __first_valid_page(pfn, pageblock_nr_pages);
+> >  		if (page &&
+> > -		    set_migratetype_isolate(page, migratetype, skip_hwpoisoned_pages)) {
+> > +		    set_migratetype_isolate(page, migratetype, flags)) {
+> >  			undo_pfn = pfn;
+> >  			goto undo;
+> >  		}
+> > -- 
+> > Michal Hocko
+> > SUSE Labs
+> > 
+
+-- 
+Michal Hocko
+SUSE Labs
