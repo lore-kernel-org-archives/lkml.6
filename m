@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9822FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5043AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709A721841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2860921841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727147AbeLRQIM (ORCPT
+        id S1727176AbeLRQIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:08:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36488 "EHLO mail.bootlin.com"
+        Tue, 18 Dec 2018 11:08:15 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36502 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726739AbeLRQIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:08:10 -0500
+        id S1727143AbeLRQIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:08:13 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 316FD20A95; Tue, 18 Dec 2018 17:08:08 +0100 (CET)
+        id EEA9B20824; Tue, 18 Dec 2018 17:08:10 +0100 (CET)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 05A8C207D9;
+        by mail.bootlin.com (Postfix) with ESMTPSA id B3DE920834;
         Tue, 18 Dec 2018 17:07:58 +0100 (CET)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Shawn Guo <shawnguo@kernel.org>
 Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [RESEND PATCH v2 1/3] arm64: dts: fsl: use a generic node name for m25p80 flashes
-Date:   Tue, 18 Dec 2018 17:07:46 +0100
-Message-Id: <20181218160750.6766-1-alexandre.belloni@bootlin.com>
+Subject: [RESEND PATCH v2 2/3] arm64: dts: fsl: ls1046a: disable the flash controller by default
+Date:   Tue, 18 Dec 2018 17:07:48 +0100
+Message-Id: <20181218160750.6766-3-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181218160750.6766-1-alexandre.belloni@bootlin.com>
+References: <20181218160750.6766-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,63 +42,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a generic node name for the m25p80 flashes on ls1043 and ls1046 boards.
+Set the Integrated Flash Controller status to disabled so each board has
+the option to enable it. All the existing users have status = "okay" so
+there is no functional change.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
-index dff3d648172e..8468e652a262 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
-@@ -138,7 +138,7 @@
- 	bus-num = <0>;
- 	status = "okay";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 51cbd50012d6..90dc3b616ea7 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -200,6 +200,7 @@
+ 			compatible = "fsl,ifc", "simple-bus";
+ 			reg = <0x0 0x1530000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
  
--	qflash0: s25fl128s@0 {
-+	qflash0: flash@0 {
- 		compatible = "spansion,m25p80";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-index e58a8ca1386c..51a518b64053 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-@@ -167,7 +167,7 @@
- 	bus-num = <0>;
- 	status = "okay";
- 
--	qflash0: s25fl128s@0 {
-+	qflash0: flash@0 {
- 		compatible = "spansion,m25p80";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-index a59b48203688..1e3d570412d2 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dts
-@@ -103,7 +103,7 @@
- 	bus-num = <0>;
- 	status = "okay";
- 
--	qflash0: s25fs512s@0 {
-+	qflash0: flash@0 {
- 		compatible = "spansion,m25p80";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -111,7 +111,7 @@
- 		reg = <0>;
- 	};
- 
--	qflash1: s25fs512s@1 {
-+	qflash1: flash@1 {
- 		compatible = "spansion,m25p80";
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+ 		qspi: spi@1550000 {
 -- 
 2.20.0
 
