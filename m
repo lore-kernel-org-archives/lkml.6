@@ -2,146 +2,104 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387FEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E528C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10924217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26FEB217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbeLROFZ (ORCPT
+        id S1726843AbeLROGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:05:25 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50625 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeLROFZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:05:25 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIE5HmR2853201
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:05:18 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIE5Hjh2853198;
-        Tue, 18 Dec 2018 06:05:17 -0800
-Date:   Tue, 18 Dec 2018 06:05:17 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sihyeon Jang <tipbot@zytor.com>
-Message-ID: <tip-00879763fcf21f4b32d63d2241c877f8c1df950e@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        uneedsihyeon@gmail.com, jolsa@kernel.org, acme@redhat.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org
-Reply-To: uneedsihyeon@gmail.com, jolsa@kernel.org, acme@redhat.com,
-          hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-          namhyung@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20181202080651.4685-1-uneedsihyeon@gmail.com>
-References: <20181202080651.4685-1-uneedsihyeon@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf beauty mmap_flags: Fixed syntax error Fixed
- missing ']' error
-Git-Commit-ID: 00879763fcf21f4b32d63d2241c877f8c1df950e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 09:06:15 -0500
+Received: from ozlabs.org ([203.11.71.1]:45499 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726426AbeLROGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:06:14 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43K0Dg4LFBz9s3Z;
+        Wed, 19 Dec 2018 01:06:11 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
+In-Reply-To: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
+References: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
+Date:   Wed, 19 Dec 2018 01:06:11 +1100
+Message-ID: <87y38nrkto.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  00879763fcf21f4b32d63d2241c877f8c1df950e
-Gitweb:     https://git.kernel.org/tip/00879763fcf21f4b32d63d2241c877f8c1df950e
-Author:     Sihyeon Jang <uneedsihyeon@gmail.com>
-AuthorDate: Sun, 2 Dec 2018 17:06:51 +0900
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:56:13 -0300
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-perf beauty mmap_flags: Fixed syntax error Fixed missing ']' error
+> This patch implements CONFIG_DEBUG_VIRTUAL to warn about
+> incorrect use of virt_to_phys() and page_to_phys()
 
-Committer testing:
+This commit is breaking my p5020ds booting a 32-bit kernel with:
 
-Before:
+  smp: Bringing up secondary CPUs ...
+  __ioremap(): phys addr 0x7fef5000 is RAM lr ioremap_coherent
+  Unable to handle kernel paging request for data at address 0x00000000
+  Faulting instruction address: 0xc002e950
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  BE SMP NR_CPUS=24 CoreNet Generic
+  Modules linked in:
+  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9 #148
+  NIP:  c002e950 LR: c002eb20 CTR: 00000001
+  REGS: e804bd20 TRAP: 0300   Not tainted  (4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9)
+  MSR:  00021002 <CE,ME>  CR: 28004222  XER: 00000000
+  DEAR: 00000000 ESR: 00000000 
+  GPR00: c002eb20 e804bdd0 e8050000 00000000 00021002 00000000 00000050 00021002 
+  GPR08: 2d3f0000 00000001 00000000 00000004 24000842 00000000 c00026d0 00000000 
+  GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001 
+  GPR24: 00029002 7fef5140 30000000 00000000 00000000 00000040 00000001 00000000 
+  NIP [c002e950] smp_85xx_kick_cpu+0x120/0x410
+  LR [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410
+  Call Trace:
+  [e804bdd0] [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410 (unreliable)
+  [e804be20] [c0012e38] __cpu_up+0xc8/0x230
+  [e804be50] [c0040b34] bringup_cpu+0x34/0x110
+  [e804be70] [c00418a8] cpu_up+0x128/0x250
+  [e804beb0] [c0b84b14] smp_init+0xc4/0x10c
+  [e804bee0] [c0b75c1c] kernel_init_freeable+0xc8/0x250
+  [e804bf20] [c00026e8] kernel_init+0x18/0x120
+  [e804bf40] [c0011298] ret_from_kernel_thread+0x14/0x1c
+  Instruction dump:
+  7fb3e850 57bdd1be 2e1d0000 41d20250 57bd3032 393dffc0 7e6a9b78 5529d1be 
+  39290001 7d2903a6 60000000 60000000 <7c0050ac> 394a0040 4200fff8 7c0004ac 
+  ---[ end trace edcab2a1dfd5b38c ]---
 
-  # tools/perf/trace/beauty/mmap_flags.sh
-  static const char *mmap_flags[] = {
-	[ilog2(0x40) + 1] = "32BIT",
-  tools/perf/trace/beauty/mmap_flags.sh: line 23: [: missing `]'
-	[ilog2(0x01) + 1] = "SHARED",
-	[ilog2(0x02) + 1] = "PRIVATE",
-	[ilog2(0x10) + 1] = "FIXED",
-	[ilog2(0x20) + 1] = "ANONYMOUS",
-	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
-  tools/perf/trace/beauty/mmap_flags.sh: line 28: [: missing `]'
-	[ilog2(0x0100) + 1] = "GROWSDOWN",
-	[ilog2(0x0800) + 1] = "DENYWRITE",
-	[ilog2(0x1000) + 1] = "EXECUTABLE",
-	[ilog2(0x2000) + 1] = "LOCKED",
-	[ilog2(0x4000) + 1] = "NORESERVE",
-	[ilog2(0x8000) + 1] = "POPULATE",
-	[ilog2(0x10000) + 1] = "NONBLOCK",
-	[ilog2(0x20000) + 1] = "STACK",
-	[ilog2(0x40000) + 1] = "HUGETLB",
-	[ilog2(0x80000) + 1] = "SYNC",
-  };
-  #
 
-After:
+Which is obviously this hunk:
 
-  $ tools/perf/trace/beauty/mmap_flags.sh
-  static const char *mmap_flags[] = {
-	[ilog2(0x40) + 1] = "32BIT",
-	[ilog2(0x01) + 1] = "SHARED",
-	[ilog2(0x02) + 1] = "PRIVATE",
-	[ilog2(0x10) + 1] = "FIXED",
-	[ilog2(0x20) + 1] = "ANONYMOUS",
-	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
-	[ilog2(0x0100) + 1] = "GROWSDOWN",
-	[ilog2(0x0800) + 1] = "DENYWRITE",
-	[ilog2(0x1000) + 1] = "EXECUTABLE",
-	[ilog2(0x2000) + 1] = "LOCKED",
-	[ilog2(0x4000) + 1] = "NORESERVE",
-	[ilog2(0x8000) + 1] = "POPULATE",
-	[ilog2(0x10000) + 1] = "NONBLOCK",
-	[ilog2(0x20000) + 1] = "STACK",
-	[ilog2(0x40000) + 1] = "HUGETLB",
-	[ilog2(0x80000) + 1] = "SYNC",
-  };
-  $
+> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+> index 4fc77a99c9bf..68d204a45cd0 100644
+> --- a/arch/powerpc/mm/pgtable_32.c
+> +++ b/arch/powerpc/mm/pgtable_32.c
+> @@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
+>  	 * Don't allow anybody to remap normal RAM that we're using.
+>  	 * mem_init() sets high_memory so only do the check after that.
+>  	 */
+> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+> +	if (slab_is_available() && virt_addr_valid(p) &&
+>  	    page_is_ram(__phys_to_pfn(p))) {
+>  		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+>  		       (unsigned long long)p, __builtin_return_address(0));
 
-Signed-off-by: Sihyeon Jang <uneedsihyeon@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: aca70cc40a0b ("perf beauty mmap_flags: Check if the arch has a mmap.h file")
-Link: http://lkml.kernel.org/r/20181202080651.4685-1-uneedsihyeon@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/mmap_flags.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/trace/beauty/mmap_flags.sh b/tools/perf/trace/beauty/mmap_flags.sh
-index cd41023107d7..32bac9c0d694 100755
---- a/tools/perf/trace/beauty/mmap_flags.sh
-+++ b/tools/perf/trace/beauty/mmap_flags.sh
-@@ -20,12 +20,12 @@ egrep -q $regex ${arch_mman} && \
- (egrep $regex ${arch_mman} | \
- 	sed -r "s/$regex/\2 \1/g"	| \
- 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
--[ ! -f ${arch_mman} || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.*' ${arch_mman} ] &&
-+([ ! -f ${arch_mman} ] || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.*' ${arch_mman}) &&
- (egrep $regex ${header_dir}/mman-common.h | \
- 	egrep -vw 'MAP_(UNINITIALIZED|TYPE|SHARED_VALIDATE)' | \
- 	sed -r "s/$regex/\2 \1/g"	| \
- 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
--[ ! -f ${arch_mman} || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.h>.*' ${arch_mman} ] &&
-+([ ! -f ${arch_mman} ] || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.h>.*' ${arch_mman}) &&
- (egrep $regex ${header_dir}/mman.h | \
- 	sed -r "s/$regex/\2 \1/g"	| \
- 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
+I'll try and come up with a fix tomorrow.
+
+cheers
+
