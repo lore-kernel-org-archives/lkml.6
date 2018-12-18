@@ -2,47 +2,50 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5444C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BEBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DF38217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF24217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeLROLz (ORCPT
+        id S1726939AbeLROMb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:11:55 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43697 "EHLO
+        Tue, 18 Dec 2018 09:12:31 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49229 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeLROLy (ORCPT
+        with ESMTP id S1726426AbeLROMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:11:54 -0500
+        Tue, 18 Dec 2018 09:12:31 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEBj3T2854149
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEAYtq2854054
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:11:45 -0800
+        Tue, 18 Dec 2018 06:10:34 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEBirV2854146;
-        Tue, 18 Dec 2018 06:11:44 -0800
-Date:   Tue, 18 Dec 2018 06:11:44 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEAXdl2854051;
+        Tue, 18 Dec 2018 06:10:33 -0800
+Date:   Tue, 18 Dec 2018 06:10:33 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-dd2e18e9ac20e3ffc27cabf318e83b43ed5ddb92@git.kernel.org>
-Cc:     mingo@kernel.org, acme@redhat.com, ak@linux.intel.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
-          tglx@linutronix.de, mingo@kernel.org, acme@redhat.com,
-          ak@linux.intel.com
-In-Reply-To: <20181204001848.24769-1-andi@firstfloor.org>
-References: <20181204001848.24769-1-andi@firstfloor.org>
+From:   tip-bot for Mark Drayton <tipbot@zytor.com>
+Message-ID: <tip-3fcb10e496505e5573a7fc386cd1152781d37fe6@git.kernel.org>
+Cc:     tglx@linutronix.de, namhyung@kernel.org, peterz@infradead.org,
+        mingo@kernel.org, mbd@fb.com, jolsa@redhat.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, songliubraving@fb.com,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com
+Reply-To: jolsa@redhat.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, songliubraving@fb.com,
+          alexander.shishkin@linux.intel.com, mingo@kernel.org, mbd@fb.com,
+          tglx@linutronix.de, namhyung@kernel.org, peterz@infradead.org
+In-Reply-To: <20181204203420.1683114-1-mbd@fb.com>
+References: <20181204203420.1683114-1-mbd@fb.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Support 'srccode' output
-Git-Commit-ID: dd2e18e9ac20e3ffc27cabf318e83b43ed5ddb92
+Subject: [tip:perf/core] perf tools: Allow specifying proc-map-timeout in
+ config file
+Git-Commit-ID: 3fcb10e496505e5573a7fc386cd1152781d37fe6
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,665 +59,505 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dd2e18e9ac20e3ffc27cabf318e83b43ed5ddb92
-Gitweb:     https://git.kernel.org/tip/dd2e18e9ac20e3ffc27cabf318e83b43ed5ddb92
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Mon, 3 Dec 2018 16:18:48 -0800
+Commit-ID:  3fcb10e496505e5573a7fc386cd1152781d37fe6
+Gitweb:     https://git.kernel.org/tip/3fcb10e496505e5573a7fc386cd1152781d37fe6
+Author:     Mark Drayton <mbd@fb.com>
+AuthorDate: Tue, 4 Dec 2018 12:34:20 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:57:07 -0300
+CommitDate: Mon, 17 Dec 2018 14:56:57 -0300
 
-perf tools: Support 'srccode' output
+perf tools: Allow specifying proc-map-timeout in config file
 
-When looking at PT or brstackinsn traces with 'perf script' it can be
-very useful to see the source code. This adds a simple facility to print
-them with 'perf script', if the information is available through dwarf
+The default timeout of 500ms for parsing /proc/<pid>/maps files is too
+short for profiling many of our services.
 
-  % perf record ...
-  % perf script -F insn,ip,sym,srccode
-  ...
+This can be overridden by passing --proc-map-timeout to the relevant
+command but it'd be nice to globally increase our default value.
 
-            4004c6 main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004c6 main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004cd main
-  5               for (i = 0; i < 10000000; i++)
-             4004b3 main
-  6                       v++;
+This patch permits setting a different default with the
+core.proc-map-timeout config file parameter.
 
-  % perf record -b ...
-  % perf script -F insn,ip,sym,srccode,brstackinsn
-
-  ...
-         main+22:
-          0000000000400543        insn: e8 ca ff ff ff            # PRED
-  |18                     f1();
-          f1:
-          0000000000400512        insn: 55
-  |10       {
-          0000000000400513        insn: 48 89 e5
-          0000000000400516        insn: b8 00 00 00 00
-  |11             f2();
-          000000000040051b        insn: e8 d6 ff ff ff            # PRED
-          f2:
-          00000000004004f6        insn: 55
-  |5        {
-          00000000004004f7        insn: 48 89 e5
-          00000000004004fa        insn: 8b 05 2c 0b 20 00
-  |6              c = a / b;
-          0000000000400500        insn: 8b 0d 2a 0b 20 00
-          0000000000400506        insn: 99
-          0000000000400507        insn: f7 f9
-          0000000000400509        insn: 89 05 29 0b 20 00
-          000000000040050f        insn: 90
-  |7        }
-          0000000000400510        insn: 5d
-          0000000000400511        insn: c3                        # PRED
-          f1+14:
-          0000000000400520        insn: b8 00 00 00 00
-  |12             f2();
-          0000000000400525        insn: e8 cc ff ff ff            # PRED
-          f2:
-          00000000004004f6        insn: 55
-  |5        {
-          00000000004004f7        insn: 48 89 e5
-          00000000004004fa        insn: 8b 05 2c 0b 20 00
-  |6              c = a / b;
-
-Not supported for callchains currently, would need some layout changes
-there.
-
-Committer notes:
-
-Fixed the build on Alpine Linux (3.4 .. 3.8) by addressing this
-warning:
-
-  In file included from util/srccode.c:19:0:
-  /usr/include/sys/fcntl.h:1:2: error: #warning redirecting incorrect #include <sys/fcntl.h> to <fcntl.h> [-Werror=cpp]
-   #warning redirecting incorrect #include <sys/fcntl.h> to <fcntl.h>
-    ^~~~~~~
-  cc1: all warnings being treated as errors
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20181204001848.24769-1-andi@firstfloor.org
+Signed-off-by: Mark Drayton <mbd@fb.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181204203420.1683114-1-mbd@fb.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-script.txt |   2 +-
- tools/perf/builtin-script.c              |  47 +++++++-
- tools/perf/util/Build                    |   1 +
- tools/perf/util/evsel_fprintf.c          |   1 +
- tools/perf/util/map.c                    |  49 ++++++++
- tools/perf/util/map.h                    |  16 +++
- tools/perf/util/srccode.c                | 186 +++++++++++++++++++++++++++++++
- tools/perf/util/srccode.h                |   7 ++
- tools/perf/util/srcline.c                |  28 +++++
- tools/perf/util/srcline.h                |   1 +
- tools/perf/util/thread.c                 |   2 +
- tools/perf/util/thread.h                 |   2 +
- 12 files changed, 339 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf-config.txt |  6 ++++++
+ tools/perf/builtin-kvm.c                 |  6 ++----
+ tools/perf/builtin-record.c              |  8 +++-----
+ tools/perf/builtin-top.c                 |  4 +---
+ tools/perf/builtin-trace.c               |  5 ++---
+ tools/perf/perf.h                        |  1 -
+ tools/perf/tests/code-reading.c          |  2 +-
+ tools/perf/tests/dwarf-unwind.c          |  2 +-
+ tools/perf/tests/mmap-thread-lookup.c    |  4 ++--
+ tools/perf/util/config.c                 |  4 ++++
+ tools/perf/util/event.c                  | 32 +++++++++++++-------------------
+ tools/perf/util/event.h                  |  8 +++-----
+ tools/perf/util/machine.c                |  4 +---
+ tools/perf/util/machine.h                |  3 ---
+ 14 files changed, 39 insertions(+), 50 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index a2b37ce48094..9e4def08d569 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -117,7 +117,7 @@ OPTIONS
-         Comma separated list of fields to print. Options are:
-         comm, tid, pid, time, cpu, event, trace, ip, sym, dso, addr, symoff,
-         srcline, period, iregs, uregs, brstack, brstacksym, flags, bpf-output, brstackinsn,
--        brstackoff, callindent, insn, insnlen, synth, phys_addr, metric, misc.
-+        brstackoff, callindent, insn, insnlen, synth, phys_addr, metric, misc, srccode.
-         Field list can be prepended with the type, trace, sw or hw,
-         to indicate to which event type the field list applies.
-         e.g., -F sw:comm,tid,time,ip,sym  and -F trace:time,cpu,trace
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 3ea98fe72f7f..3728b50e52e2 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -96,6 +96,7 @@ enum perf_output_field {
- 	PERF_OUTPUT_UREGS	    = 1U << 27,
- 	PERF_OUTPUT_METRIC	    = 1U << 28,
- 	PERF_OUTPUT_MISC            = 1U << 29,
-+	PERF_OUTPUT_SRCCODE	    = 1U << 30,
- };
+diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
+index 32f4a898e3f2..661b1fb3f8ba 100644
+--- a/tools/perf/Documentation/perf-config.txt
++++ b/tools/perf/Documentation/perf-config.txt
+@@ -199,6 +199,12 @@ colors.*::
+ 		Colors for headers in the output of a sub-commands (top, report).
+ 		Default values are 'white', 'blue'.
  
- struct output_option {
-@@ -132,6 +133,7 @@ struct output_option {
- 	{.str = "phys_addr", .field = PERF_OUTPUT_PHYS_ADDR},
- 	{.str = "metric", .field = PERF_OUTPUT_METRIC},
- 	{.str = "misc", .field = PERF_OUTPUT_MISC},
-+	{.str = "srccode", .field = PERF_OUTPUT_SRCCODE},
- };
- 
- enum {
-@@ -424,7 +426,7 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 		pr_err("Display of DSO requested but no address to convert.\n");
- 		return -EINVAL;
- 	}
--	if (PRINT_FIELD(SRCLINE) && !PRINT_FIELD(IP)) {
-+	if ((PRINT_FIELD(SRCLINE) || PRINT_FIELD(SRCCODE)) && !PRINT_FIELD(IP)) {
- 		pr_err("Display of source line number requested but sample IP is not\n"
- 		       "selected. Hence, no address to lookup the source line number.\n");
- 		return -EINVAL;
-@@ -907,6 +909,22 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
- 	return len;
- }
- 
-+static int print_srccode(struct thread *thread, u8 cpumode, uint64_t addr)
-+{
-+	struct addr_location al;
-+	int ret = 0;
++core.*::
++	core.proc-map-timeout::
++		Sets a timeout (in milliseconds) for parsing /proc/<pid>/maps files.
++		Can be overridden by the --proc-map-timeout option on supported
++		subcommands. The default timeout is 500ms.
 +
-+	memset(&al, 0, sizeof(al));
-+	thread__find_map(thread, cpumode, addr, &al);
-+	if (!al.map)
-+		return 0;
-+	ret = map__fprintf_srccode(al.map, al.addr, stdout,
-+		    &thread->srccode_state);
-+	if (ret)
-+		ret += printf("\n");
-+	return ret;
-+}
-+
- static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
- 			    struct perf_insn *x, u8 *inbuf, int len,
- 			    int insn, FILE *fp, int *total_cycles)
-@@ -998,6 +1016,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 					   x.cpumode, x.cpu, &lastsym, attr, fp);
- 		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
- 					    &x, buffer, len, 0, fp, &total_cycles);
-+		if (PRINT_FIELD(SRCCODE))
-+			printed += print_srccode(thread, x.cpumode, br->entries[nr - 1].from);
- 	}
+ tui.*, gtk.*::
+ 	Subcommands that can be configured here are 'top', 'report' and 'annotate'.
+ 	These values are booleans, for example:
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index 2b1ef704169f..3d4cbc4e87c7 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -1364,7 +1364,7 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 			"show events other than"
+ 			" HLT (x86 only) or Wait state (s390 only)"
+ 			" that take longer than duration usecs"),
+-		OPT_UINTEGER(0, "proc-map-timeout", &kvm->opts.proc_map_timeout,
++		OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 				"per thread proc mmap processing timeout in ms"),
+ 		OPT_END()
+ 	};
+@@ -1394,7 +1394,6 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 	kvm->opts.target.uses_mmap = false;
+ 	kvm->opts.target.uid_str = NULL;
+ 	kvm->opts.target.uid = UINT_MAX;
+-	kvm->opts.proc_map_timeout = 500;
  
- 	/* Print all blocks */
-@@ -1027,12 +1047,16 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 			if (ip == end) {
- 				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
- 							    &total_cycles);
-+				if (PRINT_FIELD(SRCCODE))
-+					printed += print_srccode(thread, x.cpumode, ip);
- 				break;
- 			} else {
- 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
- 						   dump_insn(&x, ip, buffer + off, len - off, &ilen));
- 				if (ilen == 0)
- 					break;
-+				if (PRINT_FIELD(SRCCODE))
-+					print_srccode(thread, x.cpumode, ip);
- 				insn++;
- 			}
- 		}
-@@ -1063,6 +1087,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 
- 		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", sample->ip,
- 			dump_insn(&x, sample->ip, buffer, len, NULL));
-+		if (PRINT_FIELD(SRCCODE))
-+			print_srccode(thread, x.cpumode, sample->ip);
+ 	symbol__init(NULL);
+ 	disable_buildid_cache();
+@@ -1453,8 +1452,7 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 	perf_session__set_id_hdr_size(kvm->session);
+ 	ordered_events__set_copy_on_queue(&kvm->session->ordered_events, true);
+ 	machine__synthesize_threads(&kvm->session->machines.host, &kvm->opts.target,
+-				    kvm->evlist->threads, false,
+-				    kvm->opts.proc_map_timeout, 1);
++				    kvm->evlist->threads, false, 1);
+ 	err = kvm_live_open_events(kvm);
+ 	if (err)
  		goto out;
- 	}
- 	for (off = 0; off <= end - start; off += ilen) {
-@@ -1070,6 +1096,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
- 		if (ilen == 0)
- 			break;
-+		if (PRINT_FIELD(SRCCODE))
-+			print_srccode(thread, x.cpumode, start + off);
- 	}
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 4736dc96c4ca..882285fb9f64 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -867,8 +867,7 @@ static int record__synthesize_workload(struct record *rec, bool tail)
+ 	err = perf_event__synthesize_thread_map(&rec->tool, thread_map,
+ 						 process_synthesized_event,
+ 						 &rec->session->machines.host,
+-						 rec->opts.sample_address,
+-						 rec->opts.proc_map_timeout);
++						 rec->opts.sample_address);
+ 	thread_map__put(thread_map);
+ 	return err;
+ }
+@@ -1085,7 +1084,7 @@ static int record__synthesize(struct record *rec, bool tail)
+ 
+ 	err = __machine__synthesize_threads(machine, tool, &opts->target, rec->evlist->threads,
+ 					    process_synthesized_event, opts->sample_address,
+-					    opts->proc_map_timeout, 1);
++					    1);
  out:
- 	return printed;
-@@ -1252,7 +1280,16 @@ static int perf_sample__fprintf_bts(struct perf_sample *sample,
- 		printed += map__fprintf_srcline(al->map, al->addr, "\n  ", fp);
- 
- 	printed += perf_sample__fprintf_insn(sample, attr, thread, machine, fp);
--	return printed + fprintf(fp, "\n");
-+	printed += fprintf(fp, "\n");
-+	if (PRINT_FIELD(SRCCODE)) {
-+		int ret = map__fprintf_srccode(al->map, al->addr, stdout,
-+					 &thread->srccode_state);
-+		if (ret) {
-+			printed += ret;
-+			printed += printf("\n");
-+		}
-+	}
-+	return printed;
+ 	return err;
  }
+@@ -1783,7 +1782,6 @@ static struct record record = {
+ 			.uses_mmap   = true,
+ 			.default_per_cpu = true,
+ 		},
+-		.proc_map_timeout     = 500,
+ 	},
+ 	.tool = {
+ 		.sample		= process_sample_event,
+@@ -1913,7 +1911,7 @@ static struct option __record_options[] = {
+ 	parse_clockid),
+ 	OPT_STRING_OPTARG('S', "snapshot", &record.opts.auxtrace_snapshot_opts,
+ 			  "opts", "AUX area tracing Snapshot Mode", ""),
+-	OPT_UINTEGER(0, "proc-map-timeout", &record.opts.proc_map_timeout,
++	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_BOOLEAN(0, "namespaces", &record.opts.record_namespaces,
+ 		    "Record namespaces events"),
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index c59a3eb0d697..1beb3e360521 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1096,7 +1096,6 @@ static int __cmd_top(struct perf_top *top)
  
- static struct {
-@@ -1792,6 +1829,12 @@ static void process_event(struct perf_script *script,
- 		fprintf(fp, "%16" PRIx64, sample->phys_addr);
- 	fprintf(fp, "\n");
+ 	machine__synthesize_threads(&top->session->machines.host, &opts->target,
+ 				    top->evlist->threads, false,
+-				    opts->proc_map_timeout,
+ 				    top->nr_threads_synthesize);
  
-+	if (PRINT_FIELD(SRCCODE)) {
-+		if (map__fprintf_srccode(al->map, al->addr, stdout,
-+					 &thread->srccode_state))
-+			printf("\n");
-+	}
-+
- 	if (PRINT_FIELD(METRIC))
- 		perf_sample__fprint_metric(script, thread, evsel, sample, fp);
+ 	if (top->nr_threads_synthesize > 1)
+@@ -1256,7 +1255,6 @@ int cmd_top(int argc, const char **argv)
+ 			.target		= {
+ 				.uses_mmap   = true,
+ 			},
+-			.proc_map_timeout    = 500,
+ 			/*
+ 			 * FIXME: This will lose PERF_RECORD_MMAP and other metadata
+ 			 * when we pause, fix that and reenable. Probably using a
+@@ -1369,7 +1367,7 @@ int cmd_top(int argc, const char **argv)
+ 	OPT_STRING('w', "column-widths", &symbol_conf.col_width_list_str,
+ 		   "width[,width...]",
+ 		   "don't try to adjust column width, use these fixed values"),
+-	OPT_UINTEGER(0, "proc-map-timeout", &opts->proc_map_timeout,
++	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_CALLBACK_NOOPT('b', "branch-any", &opts->branch_stack,
+ 		     "branch any", "sample any taken branches",
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index a6aa4589ad50..2a347ed7bdf4 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1264,7 +1264,7 @@ static int trace__symbols_init(struct trace *trace, struct perf_evlist *evlist)
  
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index b7bf201fe8a8..af72be7f5b3b 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -77,6 +77,7 @@ libperf-y += stat-shadow.o
- libperf-y += stat-display.o
- libperf-y += record.o
- libperf-y += srcline.o
-+libperf-y += srccode.o
- libperf-y += data.o
- libperf-y += tsc.o
- libperf-y += cloexec.o
-diff --git a/tools/perf/util/evsel_fprintf.c b/tools/perf/util/evsel_fprintf.c
-index 0d0a4c6f368b..95ea147f9e18 100644
---- a/tools/perf/util/evsel_fprintf.c
-+++ b/tools/perf/util/evsel_fprintf.c
-@@ -173,6 +173,7 @@ int sample__fprintf_callchain(struct perf_sample *sample, int left_alignment,
- 			if (!print_oneline)
- 				printed += fprintf(fp, "\n");
+ 	err = __machine__synthesize_threads(trace->host, &trace->tool, &trace->opts.target,
+ 					    evlist->threads, trace__tool_process, false,
+-					    trace->opts.proc_map_timeout, 1);
++					    1);
+ out:
+ 	if (err)
+ 		symbol__exit();
+@@ -3393,7 +3393,6 @@ int cmd_trace(int argc, const char **argv)
+ 			.user_interval = ULLONG_MAX,
+ 			.no_buffering  = true,
+ 			.mmap_pages    = UINT_MAX,
+-			.proc_map_timeout  = 500,
+ 		},
+ 		.output = stderr,
+ 		.show_comm = true,
+@@ -3464,7 +3463,7 @@ int cmd_trace(int argc, const char **argv)
+ 		     "Default: kernel.perf_event_max_stack or " __stringify(PERF_MAX_STACK_DEPTH)),
+ 	OPT_BOOLEAN(0, "print-sample", &trace.print_sample,
+ 			"print the PERF_RECORD_SAMPLE PERF_SAMPLE_ info, for debugging"),
+-	OPT_UINTEGER(0, "proc-map-timeout", &trace.opts.proc_map_timeout,
++	OPT_UINTEGER(0, "proc-map-timeout", &proc_map_timeout,
+ 			"per thread proc mmap processing timeout in ms"),
+ 	OPT_CALLBACK('G', "cgroup", &trace, "name", "monitor event in cgroup name only",
+ 		     trace__parse_cgroups),
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 4d40baa45a5f..388c6dd128b8 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -82,7 +82,6 @@ struct record_opts {
+ 	bool         use_clockid;
+ 	clockid_t    clockid;
+ 	u64          clockid_res_ns;
+-	unsigned int proc_map_timeout;
+ 	int	     nr_cblocks;
+ };
  
-+			/* Add srccode here too? */
- 			if (symbol_conf.bt_stop_list &&
- 			    node->sym &&
- 			    strlist__has_entry(symbol_conf.bt_stop_list,
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index a0d58b4d9c32..6751301a755c 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -19,6 +19,7 @@
- #include "srcline.h"
- #include "namespaces.h"
- #include "unwind.h"
-+#include "srccode.h"
- 
- static void __maps__insert(struct maps *maps, struct map *map);
- static void __maps__insert_name(struct maps *maps, struct map *map);
-@@ -421,6 +422,54 @@ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 	return ret;
- }
- 
-+int map__fprintf_srccode(struct map *map, u64 addr,
-+			 FILE *fp,
-+			 struct srccode_state *state)
-+{
-+	char *srcfile;
-+	int ret = 0;
-+	unsigned line;
-+	int len;
-+	char *srccode;
-+
-+	if (!map || !map->dso)
-+		return 0;
-+	srcfile = get_srcline_split(map->dso,
-+				    map__rip_2objdump(map, addr),
-+				    &line);
-+	if (!srcfile)
-+		return 0;
-+
-+	/* Avoid redundant printing */
-+	if (state &&
-+	    state->srcfile &&
-+	    !strcmp(state->srcfile, srcfile) &&
-+	    state->line == line) {
-+		free(srcfile);
-+		return 0;
-+	}
-+
-+	srccode = find_sourceline(srcfile, line, &len);
-+	if (!srccode)
-+		goto out_free_line;
-+
-+	ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
-+	state->srcfile = srcfile;
-+	state->line = line;
-+	return ret;
-+
-+out_free_line:
-+	free(srcfile);
-+	return ret;
-+}
-+
-+
-+void srccode_state_free(struct srccode_state *state)
-+{
-+	zfree(&state->srcfile);
-+	state->line = 0;
-+}
-+
- /**
-  * map__rip_2objdump - convert symbol start address to objdump address.
-  * @map: memory map
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 5c792c90fc4c..09282aa45c80 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -174,6 +174,22 @@ char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
- int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
- 			 FILE *fp);
- 
-+struct srccode_state {
-+	char *srcfile;
-+	unsigned line;
-+};
-+
-+static inline void srccode_state_init(struct srccode_state *state)
-+{
-+	state->srcfile = NULL;
-+	state->line = 0;
-+}
-+
-+void srccode_state_free(struct srccode_state *state);
-+
-+int map__fprintf_srccode(struct map *map, u64 addr,
-+			 FILE *fp, struct srccode_state *state);
-+
- int map__load(struct map *map);
- struct symbol *map__find_symbol(struct map *map, u64 addr);
- struct symbol *map__find_symbol_by_name(struct map *map, const char *name);
-diff --git a/tools/perf/util/srccode.c b/tools/perf/util/srccode.c
-new file mode 100644
-index 000000000000..fcc8630f6dff
---- /dev/null
-+++ b/tools/perf/util/srccode.c
-@@ -0,0 +1,186 @@
-+/*
-+ * Manage printing of source lines
-+ * Copyright (c) 2017, Intel Corporation.
-+ * Author: Andi Kleen
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+#include "linux/list.h"
-+#include <stdlib.h>
-+#include <sys/mman.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <assert.h>
-+#include <string.h>
-+#include "srccode.h"
-+#include "debug.h"
-+#include "util.h"
-+
-+#define MAXSRCCACHE (32*1024*1024)
-+#define MAXSRCFILES     64
-+#define SRC_HTAB_SZ	64
-+
-+struct srcfile {
-+	struct hlist_node hash_nd;
-+	struct list_head nd;
-+	char *fn;
-+	char **lines;
-+	char *map;
-+	unsigned numlines;
-+	size_t maplen;
-+};
-+
-+static struct hlist_head srcfile_htab[SRC_HTAB_SZ];
-+static LIST_HEAD(srcfile_list);
-+static long map_total_sz;
-+static int num_srcfiles;
-+
-+static unsigned shash(unsigned char *s)
-+{
-+	unsigned h = 0;
-+	while (*s)
-+		h = 65599 * h + *s++;
-+	return h ^ (h >> 16);
-+}
-+
-+static int countlines(char *map, int maplen)
-+{
-+	int numl;
-+	char *end = map + maplen;
-+	char *p = map;
-+
-+	if (maplen == 0)
-+		return 0;
-+	numl = 0;
-+	while (p < end && (p = memchr(p, '\n', end - p)) != NULL) {
-+		numl++;
-+		p++;
-+	}
-+	if (p < end)
-+		numl++;
-+	return numl;
-+}
-+
-+static void fill_lines(char **lines, int maxline, char *map, int maplen)
-+{
-+	int l;
-+	char *end = map + maplen;
-+	char *p = map;
-+
-+	if (maplen == 0 || maxline == 0)
-+		return;
-+	l = 0;
-+	lines[l++] = map;
-+	while (p < end && (p = memchr(p, '\n', end - p)) != NULL) {
-+		if (l >= maxline)
-+			return;
-+		lines[l++] = ++p;
-+	}
-+	if (p < end)
-+		lines[l] = p;
-+}
-+
-+static void free_srcfile(struct srcfile *sf)
-+{
-+	list_del(&sf->nd);
-+	hlist_del(&sf->hash_nd);
-+	map_total_sz -= sf->maplen;
-+	munmap(sf->map, sf->maplen);
-+	free(sf->lines);
-+	free(sf->fn);
-+	free(sf);
-+	num_srcfiles--;
-+}
-+
-+static struct srcfile *find_srcfile(char *fn)
-+{
-+	struct stat st;
-+	struct srcfile *h;
-+	int fd;
-+	unsigned long sz;
-+	unsigned hval = shash((unsigned char *)fn) % SRC_HTAB_SZ;
-+
-+	hlist_for_each_entry (h, &srcfile_htab[hval], hash_nd) {
-+		if (!strcmp(fn, h->fn)) {
-+			/* Move to front */
-+			list_del(&h->nd);
-+			list_add(&h->nd, &srcfile_list);
-+			return h;
-+		}
-+	}
-+
-+	/* Only prune if there is more than one entry */
-+	while ((num_srcfiles > MAXSRCFILES || map_total_sz > MAXSRCCACHE) &&
-+	       srcfile_list.next != &srcfile_list) {
-+		assert(!list_empty(&srcfile_list));
-+		h = list_entry(srcfile_list.prev, struct srcfile, nd);
-+		free_srcfile(h);
-+	}
-+
-+	fd = open(fn, O_RDONLY);
-+	if (fd < 0 || fstat(fd, &st) < 0) {
-+		pr_debug("cannot open source file %s\n", fn);
-+		return NULL;
-+	}
-+
-+	h = malloc(sizeof(struct srcfile));
-+	if (!h)
-+		return NULL;
-+
-+	h->fn = strdup(fn);
-+	if (!h->fn)
-+		goto out_h;
-+
-+	h->maplen = st.st_size;
-+	sz = (h->maplen + page_size - 1) & ~(page_size - 1);
-+	h->map = mmap(NULL, sz, PROT_READ, MAP_SHARED, fd, 0);
-+	close(fd);
-+	if (h->map == (char *)-1) {
-+		pr_debug("cannot mmap source file %s\n", fn);
-+		goto out_fn;
-+	}
-+	h->numlines = countlines(h->map, h->maplen);
-+	h->lines = calloc(h->numlines, sizeof(char *));
-+	if (!h->lines)
-+		goto out_map;
-+	fill_lines(h->lines, h->numlines, h->map, h->maplen);
-+	list_add(&h->nd, &srcfile_list);
-+	hlist_add_head(&h->hash_nd, &srcfile_htab[hval]);
-+	map_total_sz += h->maplen;
-+	num_srcfiles++;
-+	return h;
-+
-+out_map:
-+	munmap(h->map, sz);
-+out_fn:
-+	free(h->fn);
-+out_h:
-+	free(h);
-+	return NULL;
-+}
-+
-+/* Result is not 0 terminated */
-+char *find_sourceline(char *fn, unsigned line, int *lenp)
-+{
-+	char *l, *p;
-+	struct srcfile *sf = find_srcfile(fn);
-+	if (!sf)
-+		return NULL;
-+	line--;
-+	if (line >= sf->numlines)
-+		return NULL;
-+	l = sf->lines[line];
-+	if (!l)
-+		return NULL;
-+	p = memchr(l, '\n', sf->map + sf->maplen - l);
-+	*lenp = p - l;
-+	return l;
-+}
-diff --git a/tools/perf/util/srccode.h b/tools/perf/util/srccode.h
-new file mode 100644
-index 000000000000..e500a746d5f1
---- /dev/null
-+++ b/tools/perf/util/srccode.h
-@@ -0,0 +1,7 @@
-+#ifndef SRCCODE_H
-+#define SRCCODE_H 1
-+
-+/* Result is not 0 terminated */
-+char *find_sourceline(char *fn, unsigned line, int *lenp);
-+
-+#endif
-diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
-index e767c4a9d4d2..dc86597d0cc4 100644
---- a/tools/perf/util/srcline.c
-+++ b/tools/perf/util/srcline.c
-@@ -548,6 +548,34 @@ out:
- 	return srcline;
- }
- 
-+/* Returns filename and fills in line number in line */
-+char *get_srcline_split(struct dso *dso, u64 addr, unsigned *line)
-+{
-+	char *file = NULL;
-+	const char *dso_name;
-+
-+	if (!dso->has_srcline)
-+		goto out;
-+
-+	dso_name = dso__name(dso);
-+	if (dso_name == NULL)
-+		goto out;
-+
-+	if (!addr2line(dso_name, addr, &file, line, dso, true, NULL, NULL))
-+		goto out;
-+
-+	dso->a2l_fails = 0;
-+	return file;
-+
-+out:
-+	if (dso->a2l_fails && ++dso->a2l_fails > A2L_FAIL_LIMIT) {
-+		dso->has_srcline = 0;
-+		dso__free_a2l(dso);
-+	}
-+
-+	return NULL;
-+}
-+
- void free_srcline(char *srcline)
- {
- 	if (srcline && strcmp(srcline, SRCLINE_UNKNOWN) != 0)
-diff --git a/tools/perf/util/srcline.h b/tools/perf/util/srcline.h
-index b2bb5502fd62..5762212dc342 100644
---- a/tools/perf/util/srcline.h
-+++ b/tools/perf/util/srcline.h
-@@ -16,6 +16,7 @@ char *__get_srcline(struct dso *dso, u64 addr, struct symbol *sym,
- 		  bool show_sym, bool show_addr, bool unwind_inlines,
- 		  u64 ip);
- void free_srcline(char *srcline);
-+char *get_srcline_split(struct dso *dso, u64 addr, unsigned *line);
- 
- /* insert the srcline into the DSO, which will take ownership */
- void srcline__tree_insert(struct rb_root *tree, u64 addr, char *srcline);
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 3d9ed7d0e281..c83372329f89 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -64,6 +64,7 @@ struct thread *thread__new(pid_t pid, pid_t tid)
- 		RB_CLEAR_NODE(&thread->rb_node);
- 		/* Thread holds first ref to nsdata. */
- 		thread->nsinfo = nsinfo__new(pid);
-+		srccode_state_init(&thread->srccode_state);
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index 6b049f3f5cf4..dbf2c69944d2 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -599,7 +599,7 @@ static int do_test_code_reading(bool try_kcore)
  	}
  
- 	return thread;
-@@ -103,6 +104,7 @@ void thread__delete(struct thread *thread)
+ 	ret = perf_event__synthesize_thread_map(NULL, threads,
+-						perf_event__process, machine, false, 500);
++						perf_event__process, machine, false);
+ 	if (ret < 0) {
+ 		pr_debug("perf_event__synthesize_thread_map failed\n");
+ 		goto out_err;
+diff --git a/tools/perf/tests/dwarf-unwind.c b/tools/perf/tests/dwarf-unwind.c
+index 2f008067d989..7c8d2e422401 100644
+--- a/tools/perf/tests/dwarf-unwind.c
++++ b/tools/perf/tests/dwarf-unwind.c
+@@ -34,7 +34,7 @@ static int init_live_machine(struct machine *machine)
+ 	pid_t pid = getpid();
  
- 	unwind__finish_access(thread);
- 	nsinfo__zput(thread->nsinfo);
-+	srccode_state_free(&thread->srccode_state);
+ 	return perf_event__synthesize_mmap_events(NULL, &event, pid, pid,
+-						  mmap_handler, machine, true, 500);
++						  mmap_handler, machine, true);
+ }
  
- 	exit_rwsem(&thread->namespaces_lock);
- 	exit_rwsem(&thread->comm_lock);
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 5920c3bb8ffe..712dd48cc0ca 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <sys/types.h>
- #include "symbol.h"
-+#include "map.h"
- #include <strlist.h>
- #include <intlist.h>
- #include "rwsem.h"
-@@ -38,6 +39,7 @@ struct thread {
- 	void			*priv;
- 	struct thread_stack	*ts;
- 	struct nsinfo		*nsinfo;
-+	struct srccode_state	srccode_state;
- #ifdef HAVE_LIBUNWIND_SUPPORT
- 	void				*addr_space;
- 	struct unwind_libunwind_ops	*unwind_libunwind_ops;
+ /*
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index b1af2499a3c9..5ede9b561d32 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -132,7 +132,7 @@ static int synth_all(struct machine *machine)
+ {
+ 	return perf_event__synthesize_threads(NULL,
+ 					      perf_event__process,
+-					      machine, 0, 500, 1);
++					      machine, 0, 1);
+ }
+ 
+ static int synth_process(struct machine *machine)
+@@ -144,7 +144,7 @@ static int synth_process(struct machine *machine)
+ 
+ 	err = perf_event__synthesize_thread_map(NULL, map,
+ 						perf_event__process,
+-						machine, 0, 500);
++						machine, 0);
+ 
+ 	thread_map__put(map);
+ 	return err;
+diff --git a/tools/perf/util/config.c b/tools/perf/util/config.c
+index 5ac157056cdf..3beb4cf44c31 100644
+--- a/tools/perf/util/config.c
++++ b/tools/perf/util/config.c
+@@ -14,6 +14,7 @@
+ #include "util.h"
+ #include "cache.h"
+ #include <subcmd/exec-cmd.h>
++#include "util/event.h"  /* proc_map_timeout */
+ #include "util/hist.h"  /* perf_hist_config */
+ #include "util/llvm-utils.h"   /* perf_llvm_config */
+ #include "config.h"
+@@ -419,6 +420,9 @@ static int perf_buildid_config(const char *var, const char *value)
+ static int perf_default_core_config(const char *var __maybe_unused,
+ 				    const char *value __maybe_unused)
+ {
++	if (!strcmp(var, "core.proc-map-timeout"))
++		proc_map_timeout = strtoul(value, NULL, 10);
++
+ 	/* Add other config variables here. */
+ 	return 0;
+ }
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 24493200cf80..937a5a4f71cc 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -25,6 +25,8 @@
+ #include "asm/bug.h"
+ #include "stat.h"
+ 
++#define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
++
+ static const char *perf_event__names[] = {
+ 	[0]					= "TOTAL",
+ 	[PERF_RECORD_MMAP]			= "MMAP",
+@@ -72,6 +74,8 @@ static const char *perf_ns__names[] = {
+ 	[CGROUP_NS_INDEX]	= "cgroup",
+ };
+ 
++unsigned int proc_map_timeout = DEFAULT_PROC_MAP_PARSE_TIMEOUT;
++
+ const char *perf_event__name(unsigned int id)
+ {
+ 	if (id >= ARRAY_SIZE(perf_event__names))
+@@ -323,8 +327,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 				       pid_t pid, pid_t tgid,
+ 				       perf_event__handler_t process,
+ 				       struct machine *machine,
+-				       bool mmap_data,
+-				       unsigned int proc_map_timeout)
++				       bool mmap_data)
+ {
+ 	char filename[PATH_MAX];
+ 	FILE *fp;
+@@ -521,8 +524,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
+ 				      perf_event__handler_t process,
+ 				      struct perf_tool *tool,
+ 				      struct machine *machine,
+-				      bool mmap_data,
+-				      unsigned int proc_map_timeout)
++				      bool mmap_data)
+ {
+ 	char filename[PATH_MAX];
+ 	DIR *tasks;
+@@ -548,8 +550,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
+ 		 */
+ 		if (pid == tgid &&
+ 		    perf_event__synthesize_mmap_events(tool, mmap_event, pid, tgid,
+-						       process, machine, mmap_data,
+-						       proc_map_timeout))
++						       process, machine, mmap_data))
+ 			return -1;
+ 
+ 		return 0;
+@@ -598,7 +599,7 @@ static int __event__synthesize_thread(union perf_event *comm_event,
+ 		if (_pid == pid) {
+ 			/* process the parent's maps too */
+ 			rc = perf_event__synthesize_mmap_events(tool, mmap_event, pid, tgid,
+-						process, machine, mmap_data, proc_map_timeout);
++						process, machine, mmap_data);
+ 			if (rc)
+ 				break;
+ 		}
+@@ -612,8 +613,7 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+ 				      struct machine *machine,
+-				      bool mmap_data,
+-				      unsigned int proc_map_timeout)
++				      bool mmap_data)
+ {
+ 	union perf_event *comm_event, *mmap_event, *fork_event;
+ 	union perf_event *namespaces_event;
+@@ -643,7 +643,7 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 					       fork_event, namespaces_event,
+ 					       thread_map__pid(threads, thread), 0,
+ 					       process, tool, machine,
+-					       mmap_data, proc_map_timeout)) {
++					       mmap_data)) {
+ 			err = -1;
+ 			break;
+ 		}
+@@ -669,7 +669,7 @@ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 						       fork_event, namespaces_event,
+ 						       comm_event->comm.pid, 0,
+ 						       process, tool, machine,
+-						       mmap_data, proc_map_timeout)) {
++						       mmap_data)) {
+ 				err = -1;
+ 				break;
+ 			}
+@@ -690,7 +690,6 @@ static int __perf_event__synthesize_threads(struct perf_tool *tool,
+ 					    perf_event__handler_t process,
+ 					    struct machine *machine,
+ 					    bool mmap_data,
+-					    unsigned int proc_map_timeout,
+ 					    struct dirent **dirent,
+ 					    int start,
+ 					    int num)
+@@ -734,8 +733,7 @@ static int __perf_event__synthesize_threads(struct perf_tool *tool,
+ 		 */
+ 		__event__synthesize_thread(comm_event, mmap_event, fork_event,
+ 					   namespaces_event, pid, 1, process,
+-					   tool, machine, mmap_data,
+-					   proc_map_timeout);
++					   tool, machine, mmap_data);
+ 	}
+ 	err = 0;
+ 
+@@ -755,7 +753,6 @@ struct synthesize_threads_arg {
+ 	perf_event__handler_t process;
+ 	struct machine *machine;
+ 	bool mmap_data;
+-	unsigned int proc_map_timeout;
+ 	struct dirent **dirent;
+ 	int num;
+ 	int start;
+@@ -767,7 +764,7 @@ static void *synthesize_threads_worker(void *arg)
+ 
+ 	__perf_event__synthesize_threads(args->tool, args->process,
+ 					 args->machine, args->mmap_data,
+-					 args->proc_map_timeout, args->dirent,
++					 args->dirent,
+ 					 args->start, args->num);
+ 	return NULL;
+ }
+@@ -776,7 +773,6 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 				   perf_event__handler_t process,
+ 				   struct machine *machine,
+ 				   bool mmap_data,
+-				   unsigned int proc_map_timeout,
+ 				   unsigned int nr_threads_synthesize)
+ {
+ 	struct synthesize_threads_arg *args = NULL;
+@@ -806,7 +802,6 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 	if (thread_nr <= 1) {
+ 		err = __perf_event__synthesize_threads(tool, process,
+ 						       machine, mmap_data,
+-						       proc_map_timeout,
+ 						       dirent, base, n);
+ 		goto free_dirent;
+ 	}
+@@ -828,7 +823,6 @@ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 		args[i].process = process;
+ 		args[i].machine = machine;
+ 		args[i].mmap_data = mmap_data;
+-		args[i].proc_map_timeout = proc_map_timeout;
+ 		args[i].dirent = dirent;
+ 	}
+ 	for (i = 0; i < m; i++) {
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index bfa60bcafbde..eb95f3384958 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -669,8 +669,7 @@ typedef int (*perf_event__handler_t)(struct perf_tool *tool,
+ int perf_event__synthesize_thread_map(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+-				      struct machine *machine, bool mmap_data,
+-				      unsigned int proc_map_timeout);
++				      struct machine *machine, bool mmap_data);
+ int perf_event__synthesize_thread_map2(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+@@ -682,7 +681,6 @@ int perf_event__synthesize_cpu_map(struct perf_tool *tool,
+ int perf_event__synthesize_threads(struct perf_tool *tool,
+ 				   perf_event__handler_t process,
+ 				   struct machine *machine, bool mmap_data,
+-				   unsigned int proc_map_timeout,
+ 				   unsigned int nr_threads_synthesize);
+ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
+ 				       perf_event__handler_t process,
+@@ -797,8 +795,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 				       pid_t pid, pid_t tgid,
+ 				       perf_event__handler_t process,
+ 				       struct machine *machine,
+-				       bool mmap_data,
+-				       unsigned int proc_map_timeout);
++				       bool mmap_data);
+ 
+ int perf_event__synthesize_extra_kmaps(struct perf_tool *tool,
+ 				       perf_event__handler_t process,
+@@ -829,5 +826,6 @@ int perf_event_paranoid(void);
+ 
+ extern int sysctl_perf_event_max_stack;
+ extern int sysctl_perf_event_max_contexts_per_stack;
++extern unsigned int proc_map_timeout;
+ 
+ #endif /* __PERF_RECORD_H */
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index d1309201c1d2..6fcb3bce0442 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2493,15 +2493,13 @@ int machines__for_each_thread(struct machines *machines,
+ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *tool,
+ 				  struct target *target, struct thread_map *threads,
+ 				  perf_event__handler_t process, bool data_mmap,
+-				  unsigned int proc_map_timeout,
+ 				  unsigned int nr_threads_synthesize)
+ {
+ 	if (target__has_task(target))
+-		return perf_event__synthesize_thread_map(tool, threads, process, machine, data_mmap, proc_map_timeout);
++		return perf_event__synthesize_thread_map(tool, threads, process, machine, data_mmap);
+ 	else if (target__has_cpu(target))
+ 		return perf_event__synthesize_threads(tool, process,
+ 						      machine, data_mmap,
+-						      proc_map_timeout,
+ 						      nr_threads_synthesize);
+ 	/* command specified */
+ 	return 0;
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index ebde3ea70225..a5d1da60f751 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -250,17 +250,14 @@ int machines__for_each_thread(struct machines *machines,
+ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *tool,
+ 				  struct target *target, struct thread_map *threads,
+ 				  perf_event__handler_t process, bool data_mmap,
+-				  unsigned int proc_map_timeout,
+ 				  unsigned int nr_threads_synthesize);
+ static inline
+ int machine__synthesize_threads(struct machine *machine, struct target *target,
+ 				struct thread_map *threads, bool data_mmap,
+-				unsigned int proc_map_timeout,
+ 				unsigned int nr_threads_synthesize)
+ {
+ 	return __machine__synthesize_threads(machine, NULL, target, threads,
+ 					     perf_event__process, data_mmap,
+-					     proc_map_timeout,
+ 					     nr_threads_synthesize);
+ }
+ 
