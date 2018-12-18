@@ -2,115 +2,137 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66EAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 446F5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD8A217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F50D2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeLRKME (ORCPT
+        id S1726650AbeLRKMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:12:04 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44898 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbeLRKMC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:12:02 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n32so17458237qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 02:12:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JedgdVHsWAypASpBfwEba8/iQH/2X5t/wCOQ8m85dQU=;
-        b=PHUNaeZw+4LV4c32JGrcHYdZgPY64m66II2etaFfIrhR+AAt6vcAApBfX/Lbg0+gn/
-         G67iAkxcYwQVLC9tSBlVIdXVdZUYz80mh9JcqkuCTuK3J76/dweUeiQ89jhGg7tsrY5y
-         iU0mmCsosJ3HOwEZiwJkIxw0rf2IQ9NK/1m1RuB4na+bGaC1gU+OMXHGpLxql7jIwaId
-         rAkc2ThJPvqEVNEMvb7IEy5fhpWRXOqUPYwn4qG7rdmmlC/2mu0PkeGaBHkU+neVk0Tb
-         Q1GgELM8wgJHzxST2egpwLkfFnOTcAx0DoKtEQ8NvgCgCVulDIk4NAubDzvr1fusHjny
-         +5GA==
-X-Gm-Message-State: AA+aEWbu2N/JlPlWhQVdsmwvvo6o7OxuTAweJvCr83IPTSQlquYEvB9f
-        TJ7reU2AiiD/hlTE9b8VtPw2SpoLrr9PrzzAXtVuHA==
-X-Google-Smtp-Source: AFSGD/XIoVORJPslbefox2AXWdm4UdwBPGIkLFGJpaDbGWkLiVwRfBSjYmylaPQJopMo0SX2c2Jh4rXrTygYHneniXo=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr16454996qtl.343.1545127921535;
- Tue, 18 Dec 2018 02:12:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20180907103450.13890-1-benjamin.tissoires@redhat.com>
- <20180907103450.13890-7-benjamin.tissoires@redhat.com> <CA+jURct6zJoxqqu7KeOW+MEuR-Voa79=ONQJDqypEx+_BrO47w@mail.gmail.com>
-In-Reply-To: <CA+jURct6zJoxqqu7KeOW+MEuR-Voa79=ONQJDqypEx+_BrO47w@mail.gmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 18 Dec 2018 11:11:50 +0100
-Message-ID: <CAO-hwJKpLVyGBkopZZdePEXEo51HHqEOfzvX3BtxEt1YPhF9xg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] HID: logitech-hidpp: support the G700 over wireless
-To:     hcutts@chromium.org
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        Simon Wood <simon@mungewell.org>,
-        Olivier Gay <ogay@logitech.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 18 Dec 2018 05:12:12 -0500
+Received: from foss.arm.com ([217.140.101.70]:42526 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726341AbeLRKML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 05:12:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D596A78;
+        Tue, 18 Dec 2018 02:12:10 -0800 (PST)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.41.146])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 30B2F3F5C0;
+        Tue, 18 Dec 2018 02:12:01 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        akpm@linux-foundation.org, jiangqi903@gmail.com,
+        hverkuil@xs4all.nl, vkoul@kernel.org, sfr@canb.auug.org.au,
+        dledford@redhat.com, mpe@ellerman.id.au, axboe@kernel.dk,
+        jeffrey.t.kirsher@intel.com, david@redhat.com
+Subject: [PATCH V3 0/2] Replace all open encodings for NUMA_NO_NODE
+Date:   Tue, 18 Dec 2018 15:42:11 +0530
+Message-Id: <1545127933-10711-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Harry,
+Changes in V3:
 
-[now that the series has been reverted and re-inserted, I am starting
-to have a look at this again]
+- Dropped all references to NUMA_NO_NODE as per Lubomir Rinetl
+- Split the patch into two creating a new one specifically for tools
+- Folded Stephen's linux-next build fix into the second patch
 
-On Fri, Sep 7, 2018 at 7:33 PM Harry Cutts <hcutts@chromium.org> wrote:
->
-> Hi Benjamin,
->
-> On Fri, 7 Sep 2018 at 03:35, Benjamin Tissoires
-> <benjamin.tissoires@redhat.com> wrote:
-> >
-> > The G700 is using a non unifying receiver, so it's easy to add its support
-> > in hid-logitech-hidpp now.
-> > [snip]
-> > @@ -3671,6 +3671,9 @@ static const struct hid_device_id hidpp_devices[] = {
-> >         { /* Solar Keyboard Logitech K750 */
-> >           LDJ_DEVICE(0x4002),
-> >           .driver_data = HIDPP_QUIRK_CLASS_K750 },
-> > +       { /* G700 over Wireless */
-> > +         HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G700_RECEIVER),
-> > +         .driver_data = HIDPP_QUIRK_RECEIVER | HIDPP_QUIRK_UNIFYING },
->
-> As someone who's new to the codebase, it seems rather confusing to me
-> that HIDPP_QUIRK_UNIFYING would be present here for a device that
-> doesn't use a Unifying receiver. Am I misunderstanding, or should we
-> consider renaming the quirk or adding some clarifying comment?
-> (Similarly for the G900 in the next patch.)
+Changes in V2: (https://patchwork.kernel.org/patch/10698089/)
 
-The initial reason is that the gaming receivers are Unifying but that
-are not normally allowed to connect to more that one device at a time.
-The reason is that those receiver are using a higher frequency and
-need all of the bandwidth to operate (so they can't multiplex the
-devices).
+- Added inclusion of 'numa.h' header at various places per Andrew
+- Updated 'dev_to_node' to use NUMA_NO_NODE instead per Vinod
 
-But as I re-read the series, it is clear that HIDPP_QUIRK_RECEIVER and
-HIDPP_QUIRK_UNIFYING are never used separately, so it doesn't make
-sense to have 2 quirks. We should probably rename UNIFYING into
-RECEIVER for consistency and we will be good.
+Changes in V1: (https://lkml.org/lkml/2018/11/23/485)
 
-Cheers,
-Benjamin
+- Dropped OCFS2 changes per Joseph
+- Dropped media/video drivers changes per Hans
 
->
-> >
-> >         { LDJ_DEVICE(HID_ANY_ID) },
-> >
-> > --
-> > 2.14.3
-> >
->
-> Thanks,
->
-> Harry Cutts
-> Chrome OS Touch/Input team
+RFC - https://patchwork.kernel.org/patch/10678035/
+
+Build tested this with multiple cross compiler options like alpha, sparc,
+arm64, x86, powerpc, powerpc64le etc with their default config which might
+not have compiled tested all driver related changes. I will appreciate
+folks giving this a test in their respective build environments.
+
+All these places for replacement were found by running the following grep
+patterns on the entire kernel code. Please let me know if this might have
+missed some instances. This might also have replaced some false positives.
+I will appreciate suggestions, inputs and review.
+
+1. git grep "nid == -1"
+2. git grep "node == -1"
+3. git grep "nid = -1"
+4. git grep "node = -1"
+
+NOTE: I can still split the first patch into multiple ones - one for each
+subsystem as suggested by Lubomir if that would be better.
+
+Anshuman Khandual (1):
+  mm: Replace all open encodings for NUMA_NO_NODE
+
+Stephen Rothwell (1):
+  Tools: Replace open encodings for NUMA_NO_NODE
+
+ arch/alpha/include/asm/topology.h             |  3 ++-
+ arch/ia64/kernel/numa.c                       |  2 +-
+ arch/ia64/mm/discontig.c                      |  6 +++---
+ arch/powerpc/include/asm/pci-bridge.h         |  3 ++-
+ arch/powerpc/kernel/paca.c                    |  3 ++-
+ arch/powerpc/kernel/pci-common.c              |  3 ++-
+ arch/powerpc/mm/numa.c                        | 14 +++++++-------
+ arch/powerpc/platforms/powernv/memtrace.c     |  5 +++--
+ arch/sparc/kernel/pci_fire.c                  |  3 ++-
+ arch/sparc/kernel/pci_schizo.c                |  3 ++-
+ arch/sparc/kernel/psycho_common.c             |  3 ++-
+ arch/sparc/kernel/sbus.c                      |  3 ++-
+ arch/sparc/mm/init_64.c                       |  6 +++---
+ arch/x86/include/asm/pci.h                    |  3 ++-
+ arch/x86/kernel/apic/x2apic_uv_x.c            |  7 ++++---
+ arch/x86/kernel/smpboot.c                     |  3 ++-
+ drivers/block/mtip32xx/mtip32xx.c             |  5 +++--
+ drivers/dma/dmaengine.c                       |  4 +++-
+ drivers/infiniband/hw/hfi1/affinity.c         |  3 ++-
+ drivers/infiniband/hw/hfi1/init.c             |  3 ++-
+ drivers/iommu/dmar.c                          |  5 +++--
+ drivers/iommu/intel-iommu.c                   |  3 ++-
+ drivers/misc/sgi-xp/xpc_uv.c                  |  3 ++-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |  5 +++--
+ include/linux/device.h                        |  2 +-
+ init/init_task.c                              |  3 ++-
+ kernel/kthread.c                              |  3 ++-
+ kernel/sched/fair.c                           | 15 ++++++++-------
+ lib/cpumask.c                                 |  3 ++-
+ mm/huge_memory.c                              | 13 +++++++------
+ mm/hugetlb.c                                  |  3 ++-
+ mm/ksm.c                                      |  2 +-
+ mm/memory.c                                   |  7 ++++---
+ mm/memory_hotplug.c                           | 12 ++++++------
+ mm/mempolicy.c                                |  2 +-
+ mm/page_alloc.c                               |  4 ++--
+ mm/page_ext.c                                 |  2 +-
+ net/core/pktgen.c                             |  3 ++-
+ net/qrtr/qrtr.c                               |  3 ++-
+ tools/include/linux/numa.h                    | 16 ++++++++++++++++
+ tools/perf/bench/numa.c                       |  6 +++---
+ 41 files changed, 123 insertions(+), 77 deletions(-)
+ create mode 100644 tools/include/linux/numa.h
+
+-- 
+2.7.4
+
