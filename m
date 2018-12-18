@@ -2,108 +2,117 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC107C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D123C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E2520874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B65120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FZt34N9g"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k4fmE9zW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbeLRMdu (ORCPT
+        id S1726675AbeLRMeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:33:50 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41376 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbeLRMdu (ORCPT
+        Tue, 18 Dec 2018 07:34:20 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50610 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbeLRMeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:33:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g2wZq5y5ENq8UiNCs5gTLmGTpkFs7b8zTmrQA3nLddI=; b=FZt34N9gz4KJHOfktbCTFkJtG
-        ymyudHAlx7rpGiuKIqR4CE+fMN4mR+7EO6TbDipXIxtphrOZj3gOpNQvk1UXpkC+ShOovF1tI4pct
-        vLdyQWzmQg0/qHisevw/R6lyHdLM+iCLHG+ks3IJGsFwYz7eXkHS0ajNnmU2HY3yLibuw=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:44710)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gZEYt-00066i-5v; Tue, 18 Dec 2018 12:33:23 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gZEYq-0007Kf-Ll; Tue, 18 Dec 2018 12:33:20 +0000
-Date:   Tue, 18 Dec 2018 12:33:19 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Michal Hocko <mhocko@suse.com>, Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org, airlied@linux.ie,
-        hjc@rock-chips.com, Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        dri-devel@lists.freedesktop.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
- vm_insert_range
-Message-ID: <20181218123318.GN26090@n2100.armlinux.org.uk>
-References: <20181217202334.GA11758@jordon-HP-15-Notebook-PC>
- <20181218095709.GJ26090@n2100.armlinux.org.uk>
- <CAFqt6zaVU-Fme6fErieBfBKwAm9xHUa7cXTOfqzwUJR__0JysQ@mail.gmail.com>
+        Tue, 18 Dec 2018 07:34:19 -0500
+Received: by mail-it1-f195.google.com with SMTP id z7so3874238iti.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:34:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eXDNPof5uV3UGislf87gb1NcbfYgNg3HRg2PaytvV28=;
+        b=k4fmE9zWVZwGlFkkIBjCWhcdOxlDBjuF88zXyorjwYmUCcUAH3019S0PKZSxRHK+/b
+         FyLQXnpu8+1ooHaiNLNgxqiseZJoAqh1Di7Pv1EA0YKykXzxujkWdaUukPCdN3GENGjN
+         hFkKLRoDV5zsaJ5uq7WQN7bGtqF3Ho8B8y+0Mz4yg9+J8I5wrtRXs59BULWZkWBAoWd/
+         8K3vZ4VmFqiNpaYi6xCuuIIQZkBNcnF09j6J6DfVTUii9ceXzN4jum0F7cRwmN3MlWr+
+         +AywuAKj2lNA9eaj5dsMShuF77LwZOLWczIIyIutKFZmHTenPHp11VH3pPEF4AKjINCP
+         Mj2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eXDNPof5uV3UGislf87gb1NcbfYgNg3HRg2PaytvV28=;
+        b=noydg0kOclYmvUEuV3ScvI2g1EZFwsjiqtuSZI1ZwihJCpr+YLdZl8mpg1MgNpCo1Z
+         xyh39cqAPZOIFYdH5hl1G56qcahIkRdwH+pmhTqftuRxeO0B9K3GQ7MFviY0ttGeQA8l
+         XkKhkCNrajtnaiwfAl/tRfwjHszTUj2LLjBfHvWNsfmZu39k9fuaxoRCDqjMVFn/dzAz
+         hRMA3rSPxX/TJtZAnVMz8l10QdvEti661KlYC8IC64SBo9Jt8dPtGRjrzRJ3pkQFwKYl
+         65GlzdmhtKlxzaWzuyY1O1Uad0sh9Wj3G7OtQWYCYRlvqCkEYoOno/holRUhNFnEkiY4
+         YjZg==
+X-Gm-Message-State: AA+aEWbjuD7FhaUKGSCnI6HWe+7GplgXuxearMFs9wchcWPs+goGiRyy
+        pXrNqzwxJunxgpVdEO/7f/bxKqd4nuZZiDqSIlFIJQ==
+X-Google-Smtp-Source: AFSGD/Vq6xm/BGVRqjNNh+pfU6UOytYvYKw0EK13R9i2WVe6vRxIvacpfturEkKo61kXKiY6Me+640WHVQufi9DycyM=
+X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr2394129itl.144.1545136458608;
+ Tue, 18 Dec 2018 04:34:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zaVU-Fme6fErieBfBKwAm9xHUa7cXTOfqzwUJR__0JysQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181128232019.GC131170@gmail.com> <20181217181244.220052-1-ebiggers@kernel.org>
+ <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 18 Dec 2018 13:34:07 +0100
+Message-ID: <CACT4Y+agU6AOn0OQQKaemBBLFBTBD_dYY8+HhV+KBXsLFpZ1gA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        James Morris James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 05:36:04PM +0530, Souptick Joarder wrote:
-> On Tue, Dec 18, 2018 at 3:27 PM Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
-> > This looks like a change in behaviour.
+On Mon, Dec 17, 2018 at 7:43 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Mon, Dec 17, 2018 at 10:13 AM Eric Biggers <ebiggers@kernel.org> wrote:
 > >
-> > If user_count is zero, and offset is zero, then we pass into
-> > vm_insert_range() a page_count of zero, and vm_insert_range() does
-> > nothing and returns zero.
-> >
-> > However, as we can see from the above code, the original behaviour
-> > was to return -ENXIO in that case.
-> 
-> I think these checks are not necessary. I am not sure if we get into mmap
-> handlers of driver with user_count = 0.
+> > Hi Linus, please consider applying this patch.  It's been ignored by the
+> > keyrings maintainer for a month and a half with multiple reminders.  It
+> > fixes an easily reachable stack corruption in the new keyctl operations
+> > that were added in v4.20.  It was immediately reached by syzbot even
+> > without any definitions for the new keyctls yet.
+>
+> The getoptions() code in security/keys/trusted.c has exactly the same
+> buggy pattern, and seems to actually be the source of that idiocy.
+>
+> Mind fixing that one too and getting rid of this incorrect code entirely?
+>
+> Also, maybe the right fix is to do the "check for duplicate tokens"
+> only *after* all the other validation (ie after the switch())?
+>
+> Or maybe just remove it entirely, since it's clearly entirely
+> incorrect from the very start.
+>
+> Finally, the code was actually originally introduced in commit
+> 5208cc83423d ("keys, trusted: fix: *do not* allow duplicate key
+> options"), this second place you found is just pattern matching from
+> that original garbage, that was acked and "reviewed" by several
+> people.
 
-I'm not sure either, I'm just pointing out the change of behaviour.
+... also acked by 0 tests added by that commit.
 
-> > The other thing that I'm wondering is that if (eg) count is 8 (the
-> > object is 8 pages), offset is 2, and the user requests mapping 6
-> > pages (user_count = 6), then we call vm_insert_range() with a
-> > pages of rk_obj->pages + 2, and a pages_count of 6 - 2 = 4. So we
-> > end up inserting four pages.
-> 
-> Considering the scenario, user_count will remain 8 (user_count =
-> vma_pages(vma) ). ? No ?
-> Then we call vm_insert_range() with a pages of rk_obj->pages + 2, and
-> a pages_count
-> of 8 - 2 = 6. So we end up inserting 6 pages.
-> 
-> Please correct me if I am wrong.
-
-vma_pages(vma) is the number of pages that the user requested, it is
-the difference between vma->vm_end and vma->vm_start in pages.  As I
-said above, "the user requests mapping 6 pages", so vma_pages() will
-be 6, and so user_count will also be 6.  You are passing
-user_count - offset into vm_insert_range(), which will be 6 - 2 = 4
-in my example.  This is two pages short of what the user requested.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> The fix should have that clarification. Commit 00d60fd3b932
+> wasn't the _origin_ of this bug, even if it made a copy of it.
+>
+> Looking around, nobody else has picked up that incorrect pattern.
+>
+>                    Linus
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/CAHk-%3Dwhmh8WdcKHdYjioJNjyeewv%3DfO1H0hxXqDh6kiX0YvzmQ%40mail.gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
