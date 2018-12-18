@@ -2,149 +2,175 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBF0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E87AC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6382A217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 484FC2186A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeLRMkf (ORCPT
+        id S1726631AbeLRMlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:40:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbeLRMke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:40:34 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5B24C0AF7B0;
-        Tue, 18 Dec 2018 12:40:33 +0000 (UTC)
-Received: from localhost (ovpn-200-20.brq.redhat.com [10.40.200.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 773A65C689;
-        Tue, 18 Dec 2018 12:40:29 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 13:40:24 +0100
-From:   Stefano Brivio <sbrivio@redhat.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Xin Long <lucien.xin@gmail.com>
-Subject: Re: WARNING in __rcu_read_unlock
-Message-ID: <20181218134024.45d2d5e3@redhat.com>
-In-Reply-To: <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
-References: <0000000000005e47a2057d0edc49@google.com>
-        <20181216190412.GE4170@linux.ibm.com>
-        <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
-        <20181217112916.GG4170@linux.ibm.com>
-        <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
-        <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
-        <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com>
-        <20181217162421.6d636ee5@redhat.com>
-        <CACT4Y+YXFrnQh9h1KQf8=NcHugmxTj+d7AQdGCvRX_xsHwr1qA@mail.gmail.com>
-        <20181218001828.49cea463@redhat.com>
-        <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
-Organization: Red Hat
+        Tue, 18 Dec 2018 07:41:04 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:38272 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbeLRMlE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:41:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id m128so3139561itd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:41:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=mUfbHQ74N9uH9Gs2f8y9eJBQ3F7xR2hO6D0FQiQnrTE=;
+        b=jhELDCV5wksetn8gEMyUiAGBoW/39D3gvuwaKA60C8RfRTwwkR1SONzK5gtg1QeKXp
+         cUjmJzLI0cWCs3xMVxvrCZMi6Ovfj3evVOtAdKgJfN0bmtJqI3U+6cawmMnrjAsVG+N1
+         wLFNw3g2ibcKl0j4ZbrjAbCcBtHRfAmrjQeTWUxHmWftqekWXuKnXU1osHs/XH922G0X
+         XGkBNVwIzY81cwQiADKWbHoGnL+yW0PH41UTERi5nwERcr6jIMTTub/EcJ6gsTcIdFJF
+         crfbbIyQc1+BX2Tbrm3BM6Pim6l3Ttn9tM3fwJqF5cAJlALL2gUvvJ4niJwnZAhijRAr
+         9yoA==
+X-Gm-Message-State: AA+aEWZciWWQpBvFdVtt2k+tnX+Ky6D+syatVn7S/AsceKu/HtVyuvX6
+        QoGWbdCMF632axEXPbAosnQUCG+vFBlbPjjrk5tYLRfsqHF2
+X-Google-Smtp-Source: AFSGD/X8jxKZtOXoTaBL+j49PJOgrlBDsy5WVPt5wxeATTydgm+p6MLOJpq1xO/04tXZum5cGibvsRKJ7x5sKUrB1im1Ad/eUPJj
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 18 Dec 2018 12:40:34 +0000 (UTC)
+X-Received: by 2002:a02:2b18:: with SMTP id h24mr14084363jaa.7.1545136862827;
+ Tue, 18 Dec 2018 04:41:02 -0800 (PST)
+Date:   Tue, 18 Dec 2018 04:41:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d69d87057d4b3550@google.com>
+Subject: KMSAN: kernel-infoleak in video_usercopy
+From:   syzbot <syzbot+4f021cf3697781dbd9fb@syzkaller.appspotmail.com>
+To:     glider@google.com, hansverk@cisco.com, hdegoede@redhat.com,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        mchehab@kernel.org, niklas.soderlund+renesas@ragnatech.se,
+        paul.kocialkowski@bootlin.com, sakari.ailus@linux.intel.com,
+        samitolvanen@google.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 09:49:17 +0100
-Dmitry Vyukov <dvyukov@google.com> wrote:
+Hello,
 
-> On Tue, Dec 18, 2018 at 12:18 AM Stefano Brivio <sbrivio@redhat.com> wrote:
-> >
-> > On Mon, 17 Dec 2018 16:53:36 +0100
-> > Dmitry Vyukov <dvyukov@google.com> wrote:
-> >  
-> > > On Mon, Dec 17, 2018 at 4:24 PM Stefano Brivio <sbrivio@redhat.com> wrote:  
-> > > >
-> > > > On Mon, 17 Dec 2018 06:57:35 -0800
-> > > > Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> > > >  
-> > > > > Might be cause by commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
-> > > > > fou, fou6: ICMP error handlers for FoU and GUE  
-> > > >
-> > > > This:
-> > > >
-> > > > diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
-> > > > index 0d0ad19ecb87..20a6de26d146 100644
-> > > > --- a/net/ipv4/fou.c
-> > > > +++ b/net/ipv4/fou.c
-> > > > @@ -1008,6 +1008,9 @@ static int gue_err_proto_handler(int proto, struct sk_buff *skb, u32 info)
-> > > >  {
-> > > >         const struct net_protocol *ipprot = rcu_dereference(inet_protos[proto]);
-> > > >
-> > > > +       if (ipprot == IPPROTO_UDP)
-> > > > +               return -EINVAL;
-> > > > +
-> > > >         if (ipprot && ipprot->err_handler) {
-> > > >                 if (!ipprot->err_handler(skb, info))
-> > > >                         return 0;
-> > > >
-> > > > should fix the issue, but I still have to run tests and make sure we
-> > > > don't hit similar cases.  
-> > >
-> > > Please don't forget to add a regression test for it too ;)  
-> >
-> > Where would you suggest to add this? The only selftest that goes  
-> 
-> I dunno. But there must be some place for such tests, right?
+syzbot found the following crash on:
 
-Not as far as I know. The selftests checking this path, by design, only
-use supported configurations, they don't forge packets.
+HEAD commit:    0a602458c72c kmsan: random: another take at unpoisoning CR..
+git tree:       kmsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f2cd5d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9b071100dcf8e641
+dashboard link: https://syzkaller.appspot.com/bug?extid=4f021cf3697781dbd9fb
+compiler:       clang version 8.0.0 (trunk 348261)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d6b21b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f15885400000
 
-Maybe it would be nice to have a semi-automated way to isolate and
-describe/name specific conditions found by syzbot via fuzzing and turn
-those into tests that are then repeated periodically. I'm not sure how
-that would look like, but I think it's still more maintainable than a
-pile of C reproducers with forged packets in selftests/net.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4f021cf3697781dbd9fb@syzkaller.appspotmail.com
 
-Eric, Cong, Xin, as you also recently fixed a nice deal of similar cases
-reported by syzbot, what do you think? Did you ever feel the need to
-turn a syzbot reproducer into a regression test case?
+==================================================================
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x1a4/0x250 lib/usercopy.c:32
+CPU: 0 PID: 6254 Comm: syz-executor456 Not tainted 4.20.0-rc5+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x220 lib/dump_stack.c:113
+  kmsan_report+0x12d/0x290 mm/kmsan/kmsan.c:682
+  kmsan_internal_check_memory+0x334/0xa60 mm/kmsan/kmsan.c:742
+  kmsan_copy_to_user+0x8d/0xa0 mm/kmsan/kmsan_hooks.c:604
+  _copy_to_user+0x1a4/0x250 lib/usercopy.c:32
+  copy_to_user include/linux/uaccess.h:177 [inline]
+  video_usercopy+0x16c9/0x17d0 drivers/media/v4l2-core/v4l2-ioctl.c:3066
+  video_ioctl2+0x9f/0xb0 drivers/media/v4l2-core/v4l2-ioctl.c:3079
+  v4l2_ioctl+0x23f/0x270 drivers/media/v4l2-core/v4l2-dev.c:364
+  do_vfs_ioctl+0xf36/0x2d30 fs/ioctl.c:46
+  ksys_ioctl fs/ioctl.c:713 [inline]
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
+  __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
+  do_syscall_64+0xcd/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x445659
+Code: e8 6c b6 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ff7a472ada8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dac28 RCX: 0000000000445659
+RDX: 0000000020000000 RSI: 0000000080885659 RDI: 0000000000000003
+RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac2c
+R13: 6469762f7665642f R14: 00007ff7a472b9c0 R15: 00000000006dad2c
 
-> > through this path currently is net/pmtu.sh, but as configuration of an
-> > actual UDP-in-GUE tunnel is currently not supported, I would really
-> > need to forge that specific packet, so that doesn't seem to be a good
-> > fit.
-> >
-> > Won't syzbot add this to some list of reproducers that are checked in
-> > the future?  
-> 
-> It won't. Also fuzzing is complementary to testing, not a replacement:
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:247 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:262 [inline]
+  kmsan_internal_chain_origin+0x162/0x260 mm/kmsan/kmsan.c:470
+  kmsan_memcpy_memmove_metadata+0x1a9/0xf30 mm/kmsan/kmsan.c:345
+  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:363
+  __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:148
+  __v4l2_event_dequeue+0x2f8/0x730 drivers/media/v4l2-core/v4l2-event.c:54
+  v4l2_event_dequeue+0x41c/0x560 drivers/media/v4l2-core/v4l2-event.c:81
+  v4l_dqevent+0xba/0xe0 drivers/media/v4l2-core/v4l2-ioctl.c:2427
+  __video_do_ioctl+0x1975/0x1fc0 drivers/media/v4l2-core/v4l2-ioctl.c:2853
+  video_usercopy+0x8ae/0x17d0 drivers/media/v4l2-core/v4l2-ioctl.c:3035
+  video_ioctl2+0x9f/0xb0 drivers/media/v4l2-core/v4l2-ioctl.c:3079
+  v4l2_ioctl+0x23f/0x270 drivers/media/v4l2-core/v4l2-dev.c:364
+  do_vfs_ioctl+0xf36/0x2d30 fs/ioctl.c:46
+  ksys_ioctl fs/ioctl.c:713 [inline]
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
+  __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
+  do_syscall_64+0xcd/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-Indeed, but that doesn't mean we need to limit the potential of fuzzing
-because "it's not testing". It can be used to check for regressions,
-too, especially in these cases.
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:247 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:262 [inline]
+  kmsan_internal_chain_origin+0x162/0x260 mm/kmsan/kmsan.c:470
+  kmsan_memcpy_memmove_metadata+0x1a9/0xf30 mm/kmsan/kmsan.c:345
+  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:363
+  __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:148
+  __v4l2_event_queue_fh+0xd2d/0x1260 drivers/media/v4l2-core/v4l2-event.c:145
+  v4l2_event_queue_fh+0x1a1/0x270 drivers/media/v4l2-core/v4l2-event.c:185
+  v4l2_ctrl_add_event+0x952/0xc20 drivers/media/v4l2-core/v4l2-ctrls.c:4099
+  v4l2_event_subscribe+0xf75/0x1240 drivers/media/v4l2-core/v4l2-event.c:251
+  v4l2_ctrl_subscribe_event+0xb6/0x110  
+drivers/media/v4l2-core/v4l2-ctrls.c:4156
+  v4l_subscribe_event+0x9e/0xc0 drivers/media/v4l2-core/v4l2-ioctl.c:2433
+  __video_do_ioctl+0x1975/0x1fc0 drivers/media/v4l2-core/v4l2-ioctl.c:2853
+  video_usercopy+0x8ae/0x17d0 drivers/media/v4l2-core/v4l2-ioctl.c:3035
+  video_ioctl2+0x9f/0xb0 drivers/media/v4l2-core/v4l2-ioctl.c:3079
+  v4l2_ioctl+0x23f/0x270 drivers/media/v4l2-core/v4l2-dev.c:364
+  do_vfs_ioctl+0xf36/0x2d30 fs/ioctl.c:46
+  ksys_ioctl fs/ioctl.c:713 [inline]
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
+  __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
+  do_syscall_64+0xcd/0x110 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-> https://twitter.com/dvyukov/status/1074719682962358272
+Local variable description: ----ev@v4l2_ctrl_add_event
+Variable was created at:
+  v4l2_ctrl_add_event+0x6e/0xc20 drivers/media/v4l2-core/v4l2-ctrls.c:4080
+  v4l2_event_subscribe+0xf75/0x1240 drivers/media/v4l2-core/v4l2-event.c:251
 
-Now, I'm extremely thankful for the work you're doing and especially
-for finding this subtle condition with syzbot, but this is quite
-inaccurate. To be exposed to this issue, the user would need to
-have the fou module loaded (it won't autoload), which is used quite
-rarely, and, on top of that, have a UDP tunnel configured. It wouldn't
-have been the kind of "evil packet crashes the internet" scenario you
-were dreaming of ;)
+Bytes 44-71 of 136 are uninitialized
+Memory access of size 136 starts at ffff8881bcc903c0
+Data copied to user address 0000000020000000
+==================================================================
 
--- 
-Stefano
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
