@@ -2,117 +2,147 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8601DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD5EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FFFC21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:03:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f6ivAqyq"
+	by mail.kernel.org (Postfix) with ESMTP id A4B4721852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:04:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeLRPD4 (ORCPT
+        id S1726968AbeLRPEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:03:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:47027 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbeLRPDy (ORCPT
+        Tue, 18 Dec 2018 10:04:02 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:52862 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726947AbeLRPEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:03:54 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c73so8248313pfe.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 07:03:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zcGwIisGD3xe1Hi10sfTFo4sWeyzLGuK/X6UgTn9Mq8=;
-        b=f6ivAqyq0w5nlhZ64fTOLvUYLzZCviL2IHcDV94FRjYkb0hO0NBSAsTuGvvRQfhbLM
-         IwTNxva5mndlup6iOhak/AtnTwbiJ1iKCa+CaAWCe4OaMy3a6ma33tcuxN8K8z8vFRvc
-         DqKEee/E1gR9OIsfDHQ49/vXQfOAA3695ETos=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zcGwIisGD3xe1Hi10sfTFo4sWeyzLGuK/X6UgTn9Mq8=;
-        b=kOSPHHWn9Tl/P3yoGnRerQ43bIY9pF7w6zt7UczGeBfBvrY2wpNCxzLKORXyPyw9Py
-         aptDY797w5QI307RrCEcxTFpH/TpXv7qEjaqSlV8XajapWGDWvVdRGDGJD23K6PUPt5W
-         UFHl9l53PP4Ob9VZRcnWBLjXJgh8UQJTMZXyG+BYM2Ztxy3YxcJMMCgyr/RyLWXkxO7C
-         ePKvB0HEmo8V8LN6MHxKaazZaO6e4+JwHR4HuIevIQj9AMJHFG9s9PNrSx5l9aASpS8e
-         0Fl405JjpadfQSaSEznn3WWeWbpvOt/uS3MOYWPTk+btZ0loQuKzAME24nEXOARVC2U+
-         OCxA==
-X-Gm-Message-State: AA+aEWbpBfa/kjNtBA7a/v9SAWa1lFbSGtqWDcxtXJagfsNu111tfewv
-        XeQduQfdQ9v24csVOZju1yCT
-X-Google-Smtp-Source: AFSGD/UPjymwPQoXl7pFQFBvNtOwB9L8rNCGFVk4qL2jb46eilT7lTlW0tBBQGWkPvdR9FeaISMxzA==
-X-Received: by 2002:a63:8742:: with SMTP id i63mr3163859pge.298.1545145433135;
-        Tue, 18 Dec 2018 07:03:53 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id m198sm28798688pga.10.2018.12.18.07.03.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 07:03:52 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     olof@lixom.net, arnd@arndb.de, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-unisoc@lists.infradead.org, afaerber@suse.de,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, zhao_steven@263.net,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 07/11] ARM: dts: rda8810pl: Add timer support
-Date:   Tue, 18 Dec 2018 20:32:34 +0530
-Message-Id: <20181218150238.23010-8-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181218150238.23010-1-manivannan.sadhasivam@linaro.org>
-References: <20181218150238.23010-1-manivannan.sadhasivam@linaro.org>
+        Tue, 18 Dec 2018 10:04:00 -0500
+Received: (qmail 2561 invoked by uid 2102); 18 Dec 2018 10:03:59 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 18 Dec 2018 10:03:59 -0500
+Date:   Tue, 18 Dec 2018 10:03:59 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Andrew Worsley <amworsley@gmail.com>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Jon Flatley <jflat@chromium.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Bin Liu <b-liu@ti.com>, Benson Leung <bleung@chromium.org>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Prevent race condition between USB authorisation and
+ USB discovery events
+In-Reply-To: <CA+Y=x3mHS4h13dTe4549Zcir5w3U54wJjyuaAa802=brp_FpeQ@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1812180957040.1402-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add timer support for RDA Micro RDA8810PL SoC.
+On Tue, 18 Dec 2018, Andrew Worsley wrote:
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/boot/dts/rda8810pl.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> On Tue, 18 Dec 2018 at 03:21, Alan Stern <stern@rowland.harvard.edu> wrote:
+> >
+> > On Mon, 17 Dec 2018, Andrew Worsley wrote:
+> >
+> > > A sysfs driven USB authorisation change can trigger a usb_set_configuration
+> > > while a hub_event worker thread is running. This can result in a USB device
+> > > being disabled just after it was configured and bringing down all the
+> > > devices and impacting hardware and user processes that were established on
+> > > top of this these interfaces. In some cases the USB disable never completed
+> > > and the whole system hung.
+> >
+> > Can you be more specific about this?  Disabling a USB device shouldn't
+> > cause these kinds of problems, regardless of whether or not the device
+> > was just configured.
+> 
+> I can't say too much about the hardware - but there was an SPI bus and
+> an i2c bus built
+> on top of USB devices on a bus. It appears the SPI bus shutdown was
+> the item that was prone
+> to problems when being torn down.
+> 
+> I understand it would be better if the dependant systems shutdown
+> cleanly, which it
+> did about 75% of the time but then it was rather messy sequence. So
+> the current system
+> is far from ideal. The crux of the issue is the usb_disable_device()
+> (line 1874 of drivers/usb/core/message.c)
+> call in usb_set_configuration() is applied to a configured device and
+> triggers the
+> tear down of all the devices built on that USB device and is very disruptive.
 
-diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
-index 15547b138977..84baa4c0a14c 100644
---- a/arch/arm/boot/dts/rda8810pl.dtsi
-+++ b/arch/arm/boot/dts/rda8810pl.dtsi
-@@ -6,6 +6,8 @@
-  * Copyright (c) 2018 Manivannan Sadhasivam
-  */
- 
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
- / {
- 	compatible = "rda,8810pl";
- 	interrupt-parent = <&intc>;
-@@ -50,6 +52,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x20900000 0x100000>;
-+
-+		timer@10000 {
-+			compatible = "rda,8810pl-timer";
-+			reg = <0x10000 0x1000>;
-+			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <17 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hwtimer", "ostimer";
-+		};
- 	};
- 
- 	apb@20a00000 {
--- 
-2.17.1
+This is intentional.  When a USB device is disabled, nothing that
+depends on it is supposed to survive.  However in spite of all the
+disruption, nothing should hang.
+
+> > > At my work I had an occasional hang due to this race condition. Roughly 1
+> > > in 50 boots had the race occurrence and 1 in 4 of those resulted in a hang.
+> > > This patch fixed the problem and I had no problems (spurious disables
+> > > or hangs) in 750+ boots.
+> >
+> > usb_authorize_device, usb_deauthorize_device, and hub_event all acquire
+> > the device mutex.  Why should adding another mutex make any difference?
+> 
+> I believe the new usb_authorize_mutex prevents the cascade of USB
+> device bus scans,
+> discoveries and probes from colliding with those caused a change in
+> USB bus authorisation.
+> The individual device / hub locks are not across the whole system,
+> only an individual
+> component hub/device so any logic that gives an orderly USB device
+> scanning and probing is
+> undermined. The idea of the mutex is to keep the USB device discovery
+> work when a device is
+> added/removed/powered up is separated from those that are caused by
+> authorisation changes.
+> 
+> I don't pretend to understand all the logic and sequencing of the
+> current code which works works
+> faultlessly when these threads are serialised by the mutex (750+
+> times) in boot ups which
+> build up the system and shutdowns which bring down the system.
+> Likewise if I endlessly run
+> the authorisation off / on by itself it is faultless over hundreds of
+> iterations.
+
+Can you post a dmesg log that illustrates the problem with dynamic
+debugging enabled for the usbcore module?
+
+> > In fact there's an actual disadvantage: Making hub_event acquire a
+> > global mutex will prevent us from handling multiple hubs concurrently.
+> > Although we don't do this now, we might want to in the future.
+> >
+> > Alan Stern
+> 
+> This is true - I am not trying to serialise the hub_event() threads -
+> but to prevent the authorisation changes
+> from happening during the hub_event threads. So perhaps there would be
+> a way of allowing multiple
+> concurrent hub_events from happening but only one authorisation thread
+> at a time. Assuming multiple
+> hub_event()s are deemed ok. Something like a lock which allows
+> multiple readers but only a single exclusive
+> writer lock?
+
+It's not that simple.  There are other ways a USB device can be
+disabled that don't involve authorization.  For example, the user can
+do:
+
+	echo 0 >/sys/bus/usb/devices/.../bConfigurationValue
+
+(the ... gets filled in with the device's path).  This should cause
+just as much disruption.
+
+The locking we already have is supposed to prevent the sort of problem 
+you are seeing.  To find out why it doesn't, we need more information.
+
+Alan Stern
 
