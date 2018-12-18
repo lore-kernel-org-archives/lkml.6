@@ -3,98 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AD0C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C620DC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909142080D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96A1C2080D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeLRBkU (ORCPT
+        id S1726565AbeLRBkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 20:40:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:37610 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeLRBkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 20:40:20 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 17:40:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
-   d="scan'208";a="101457034"
-Received: from unknown (HELO localhost) ([10.249.254.218])
-  by orsmga006.jf.intel.com with ESMTP; 17 Dec 2018 17:40:10 -0800
-Date:   Tue, 18 Dec 2018 03:40:08 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181218014008.GD333@linux.intel.com>
-References: <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <beea8ad3-a607-5478-ad87-b8dd33e86146@intel.com>
- <20181217194913.GD29785@linux.intel.com>
- <16fdd37a-b9cc-1045-1497-2cfff6af176a@intel.com>
- <CALCETrUhVDxMAtpyn5ahsTFwhJkzWxKa5Ur8q4FuVaKLmSyYHQ@mail.gmail.com>
- <826f6a5a-fdf6-e7e5-d2d8-bcdc57c016fe@intel.com>
- <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
+        Mon, 17 Dec 2018 20:40:37 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:36488 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeLRBkh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 20:40:37 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gZ4N7-0003yN-HI; Tue, 18 Dec 2018 01:40:33 +0000
+Date:   Tue, 18 Dec 2018 01:40:33 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        James Morris James Morris <jmorris@namei.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ima: cleanup the match_token policy code
+Message-ID: <20181218014033.GS2217@ZenIV.linux.org.uk>
+References: <1545092089.4206.5.camel@linux.ibm.com>
+ <CAHk-=whEb_vShPGCK80_tspsyw12G6mHLQkMDiSP0GWWHroqqA@mail.gmail.com>
+ <20181218013348.GR2217@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrX_7g+GYj2hHvFjodPw_ryrVTQdF2M3p+KYNTBUOhg-8g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181218013348.GR2217@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 12:10:17PM -0800, Andy Lutomirski wrote:
-> On Mon, Dec 17, 2018 at 12:03 PM Dave Hansen <dave.hansen@intel.com> wrote:
-> >
-> > On 12/17/18 11:55 AM, Andy Lutomirski wrote:
-> > >> You're effectively rebuilding reverse-mapping infrastructure here.  It's
-> > >> a frequent thing for the core VM to need to go from 'struct page' back
-> > >> to the page tables mapping it.  For that we go (logically)
-> > >> page->{anon_vma,mapping}->vma->vm_mm->pagetable.
-> > > This is a bit outside my expertise here, but doesn't
-> > > unmap_mapping_range() do exactly what SGX wants?
-> >
-> > There's no 'struct page' for enclave memory as it stands.  That means no
-> > page cache, and that means there's no 'struct address_space *mapping' in
-> > the first place.
-> >
-> > Basically, the choice was made a long time ago to have SGX's memory
-> > management live outside the core VM.  I've waffled back and forth on it,
-> > but I do still think this is the right way to do it.
+On Tue, Dec 18, 2018 at 01:33:48AM +0000, Al Viro wrote:
+> On Mon, Dec 17, 2018 at 04:36:54PM -0800, Linus Torvalds wrote:
+> > On Mon, Dec 17, 2018 at 4:14 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >
+> > > Start the policy_tokens and the associated enumeration from zero,
+> > > simplifying the pt macro.
+> > 
+> > I applied this directly, since I decided to just commit my own "don't
+> > use negative Opt_err" patch for the test_and_set_bit() cases, and they
+> > kind of go together.
+> > 
+> > There's still a -1 in security/keys/encrypted-keys/encrypted.c, and
+> > there are also three cases of "Opt_error = -1" in the security layer.
+> > 
+> > All of which look pointless and wrong, but not actively buggy, so I'll
+> > leave them alone.
 > 
-> AFAICS a lack of struct page isn't a problem.  The core code seems to
-> understand that address_space objects might cover non-struct-page
-> memory.  Morally, enclave memory is a lot like hot-unpluggable PCI
-> space.
+> FWIW, that part of LSM shite is getting taken out and shot - LSM-related
+> preps in the beginning of mount API series are, at the moment, at
+>  fs/btrfs/ctree.h           |   4 -
+>  fs/btrfs/super.c           |  82 ++-------
+>  fs/namespace.c             |   9 +-
+>  fs/nfs/internal.h          |   2 +-
+>  fs/nfs/super.c             |  34 ++--
+>  fs/super.c                 |  23 +--
+>  include/linux/lsm_hooks.h  |  17 +-
+>  include/linux/security.h   |  82 ++-------
+>  security/security.c        |  39 +++--
+>  security/selinux/hooks.c   | 798 ++++++++++++++++++++++++++++++++------------------------------------------------------
+>  security/smack/smack_lsm.c | 359 +++++++++++++++------------------------
+>  11 files changed, 523 insertions(+), 926 deletions(-)
+> and unlike the original variant there's not much touched in security/*
+> further in the series...
+> 
+> No match_token() uses left in there after this part.
 
-I'm fine using it if it works. Will try it for v19.
-
-/Jarkko
+In LSM, that is...
