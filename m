@@ -2,85 +2,171 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57952C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1F6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A30217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:22:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA497214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:36:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbeLREWI (ORCPT
+        id S1726524AbeLREf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 23:22:08 -0500
-Received: from mga04.intel.com ([192.55.52.120]:65344 "EHLO mga04.intel.com"
+        Mon, 17 Dec 2018 23:35:59 -0500
+Received: from mga04.intel.com ([192.55.52.120]:1867 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726303AbeLREWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 23:22:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726305AbeLREf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 23:35:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 20:22:07 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 20:35:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
-   d="scan'208";a="128721522"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Dec 2018 20:22:07 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 05071300B49; Mon, 17 Dec 2018 20:22:07 -0800 (PST)
-Date:   Mon, 17 Dec 2018 20:22:06 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
+   d="scan'208";a="119156575"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga002.jf.intel.com with ESMTP; 17 Dec 2018 20:35:58 -0800
+Subject: [PATCH v6 0/6] mm: Randomize free memory
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
-Message-ID: <20181218042206.GC25620@tassilo.jf.intel.com>
-References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
- <20181217173900.ygifx7khwmzn2gv2@treble>
- <20181217180434.GS25620@tassilo.jf.intel.com>
- <20181217181638.dfexg6mkmbfyzfli@treble>
- <20181217192938.GF2218@hirez.programming.kicks-ass.net>
- <20181217213126.lsqhyszoulel6uq6@treble>
- <20181217173644.391c2070@gandalf.local.home>
- <20181218000618.GA25620@tassilo.jf.intel.com>
- <20181218024916.vmfnyqzouhfxhyvc@treble>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Lutomirski <luto@kernel.org>, linux-mm@kvack.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, mgorman@suse.de
+Date:   Mon, 17 Dec 2018 20:23:23 -0800
+Message-ID: <154510700291.1941238.817190985966612531.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218024916.vmfnyqzouhfxhyvc@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The plugin is only used for older versions of GCC.  Newer versions have
-> the same functionality builtin with -fsanitize-coverage=trace-pc.
+Changes since v5 [1]:
+* Add missing kernel-doc for new functionality, and fold some changes
+  from patch 4 to patch 3. (Mike)
+* Actually include the HMAT parsing, and test the autodetect in QEMU.
+  (Keith)
+* Test against hibernation. Note, only a basic checkout with
+  pm_test in QEMU was performed. (Rafael)
+* Fix up interaction between auto-detect, override, and the status value
+  exported to /sys/module/page_alloc/parameters/shuffle
+* Don't pollute mm.h, move the new functionality to its own header.
 
-Ok and the frame pointer issue is with the older version only?
+[1]: https://lkml.kernel.org/r/154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com/
 
-> 
-> So the problem is GCC.  We're using a function attribute which at least
-> oneGCC developer doesn't recommend.  If you want to keep the LTO support
-> then '__used' seems like a much better choice.
+---
 
-I guess __used will work for now.
+Andrew, this needs at least an ack from Michal, or Mel before it moves
+forward. It would be a nice surprise / present to see it move forward
+before the holidays, but I suspect it may need to simmer until the new
+year. This series is against v4.20-rc6.
 
-Still would be better to root cause it properly, but I guess that's
-ok for now. The lack of understanding may eventually come back
-to bite you later.
+Summary, quote patch 4:
 
-FWIW i did some tests and I don't see noclone affecting frame pointer
-with gcc 8. The only thing I saw was that empty functions ended up
-without frame pointer.
+Randomization of the page allocator improves the average utilization of
+a direct-mapped memory-side-cache. Memory side caching is a platform
+capability that Linux has been previously exposed to in HPC
+(high-performance computing) environments on specialty platforms. In
+that instance it was a smaller pool of high-bandwidth-memory relative to
+higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+be found on general purpose server platforms where DRAM is a cache in
+front of higher latency persistent memory [2].
 
-I suspect you'll need to fix up the other users of noclone too.
+Robert offered an explanation of the state of the art of Linux
+interactions with memory-side-caches [3], and I copy it here:
 
--Andi
+    It's been a problem in the HPC space:
+    http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
+
+    A kernel module called zonesort is available to try to help:
+    https://software.intel.com/en-us/articles/xeon-phi-software
+
+    and this abandoned patch series proposed that for the kernel:
+    https://lkml.org/lkml/2017/8/23/195
+
+    Dan's patch series doesn't attempt to ensure buffers won't conflict, but
+    also reduces the chance that the buffers will. This will make performance
+    more consistent, albeit slower than "optimal" (which is near impossible
+    to attain in a general-purpose kernel).  That's better than forcing
+    users to deploy remedies like:
+        "To eliminate this gradual degradation, we have added a Stream
+         measurement to the Node Health Check that follows each job;
+         nodes are rebooted whenever their measured memory bandwidth
+         falls below 300 GB/s."
+
+A replacement for zonesort was merged upstream in commit cc9aec03e58f
+"x86/numa_emulation: Introduce uniform split capability". With this
+numa_emulation capability, memory can be split into cache sized
+("near-memory" sized) numa nodes. A bind operation to such a node, and
+disabling workloads on other nodes, enables full cache performance.
+However, once the workload exceeds the cache size then cache conflicts
+are unavoidable. While HPC environments might be able to tolerate
+time-scheduling of cache sized workloads, for general purpose server
+platforms, the oversubscribed cache case will be the common case.
+
+The worst case scenario is that a server system owner benchmarks a
+workload at boot with an un-contended cache only to see that performance
+degrade over time, even below the average cache performance due to
+excessive conflicts. Randomization clips the peaks and fills in the
+valleys of cache utilization to yield steady average performance.
+
+See patch 3 for more details.
+
+[2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+[3]: https://lkml.org/lkml/2018/9/22/54
+
+---
+
+Dan Williams (3):
+      mm: Shuffle initial free memory to improve memory-side-cache utilization
+      mm: Move buddy list manipulations into helpers
+      mm: Maintain randomization of page free lists
+
+Keith Busch (3):
+      acpi: Create subtable parsing infrastructure
+      acpi: Add HMAT to generic parsing tables
+      acpi/numa: Set the memory-side-cache size in memblocks
+
+
+ arch/ia64/kernel/acpi.c                       |   12 +
+ arch/x86/Kconfig                              |    1 
+ arch/x86/kernel/acpi/boot.c                   |   36 ++--
+ drivers/acpi/numa.c                           |   48 ++++-
+ drivers/acpi/scan.c                           |    4 
+ drivers/acpi/tables.c                         |   76 +++++++-
+ drivers/irqchip/irq-gic-v2m.c                 |    2 
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c      |    2 
+ drivers/irqchip/irq-gic-v3-its-platform-msi.c |    2 
+ drivers/irqchip/irq-gic-v3-its.c              |    6 -
+ drivers/irqchip/irq-gic-v3.c                  |    8 -
+ drivers/irqchip/irq-gic.c                     |    4 
+ drivers/mailbox/pcc.c                         |    2 
+ include/linux/acpi.h                          |    6 +
+ include/linux/list.h                          |   17 ++
+ include/linux/memblock.h                      |   38 ++++
+ include/linux/mm.h                            |    3 
+ include/linux/mm_types.h                      |    3 
+ include/linux/mmzone.h                        |   65 +++++++
+ include/linux/shuffle.h                       |   59 ++++++
+ init/Kconfig                                  |   36 ++++
+ mm/Kconfig                                    |    3 
+ mm/Makefile                                   |    7 +
+ mm/compaction.c                               |    4 
+ mm/memblock.c                                 |   50 +++++
+ mm/memory_hotplug.c                           |    3 
+ mm/page_alloc.c                               |   82 ++++-----
+ mm/shuffle.c                                  |  231 +++++++++++++++++++++++++
+ 28 files changed, 702 insertions(+), 108 deletions(-)
+ create mode 100644 include/linux/shuffle.h
+ create mode 100644 mm/shuffle.c
