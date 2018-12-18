@@ -2,176 +2,293 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B01F2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D27C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869D721841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D8D62184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeLRMA4 (ORCPT
+        id S1726740AbeLRMCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:00:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:5156 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbeLRMAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:00:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 04:00:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
-   d="scan'208";a="130920664"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 18 Dec 2018 04:00:52 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 18 Dec 2018 14:00:51 +0200
-Date:   Tue, 18 Dec 2018 14:00:51 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Kyle Tso <kyletso@google.com>
-Cc:     linux@roeck-us.net, gregkh@linuxfoundation.org,
-        Adam.Thomson.Opensource@diasemi.com, badhri@google.com,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] usb: typec: tcpm: Extend the matching rules on PPS
- APDO selection
-Message-ID: <20181218120051.GC14121@kuha.fi.intel.com>
-References: <20181217132213.91566-1-kyletso@google.com>
+        Tue, 18 Dec 2018 07:02:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42895 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeLRMCK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:02:10 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIC0tXY2823051
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 04:00:55 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIC0sqn2823045;
+        Tue, 18 Dec 2018 04:00:54 -0800
+Date:   Tue, 18 Dec 2018 04:00:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Chang S. Bae" <tipbot@zytor.com>
+Message-ID: <tip-4771d4f5de52b4e7aa62334d7ba1e5bd22a5f900@git.kernel.org>
+Cc:     luto@kernel.org, chang.seok.bae@intel.com, tglx@linutronix.de,
+        hpa@zytor.com, mingo@kernel.org, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        ravi.v.shankar@intel.com
+Reply-To: chang.seok.bae@intel.com, luto@kernel.org, tglx@linutronix.de,
+          hpa@zytor.com, dave.hansen@linux.intel.com, mingo@kernel.org,
+          ravi.v.shankar@intel.com, ak@linux.intel.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20181126195524.32179-1-chang.seok.bae@intel.com>
+References: <20181126195524.32179-1-chang.seok.bae@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/fsgsbase/64: Fix the base write helper
+ functions
+Git-Commit-ID: 4771d4f5de52b4e7aa62334d7ba1e5bd22a5f900
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181217132213.91566-1-kyletso@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 09:22:13PM +0800, Kyle Tso wrote:
-> Current matching rules ensure that the voltage range of selected Source
-> Capability is entirely within the range defined in one of the Sink
-> Capabilities. This is reasonable but not practical because Sink may not
-> support wide range of voltage when sinking power while Source could
-> advertise its capabilities in relatively wider range. For example, a
-> Source PDO advertising 3.3V-11V@3A (9V Prog of Fixed Nominal Voltage)
-> will not be selected if the Sink requires 5V-12V@3A PPS power. However,
-> the Sink could work well if the requested voltage range in RDOs is
-> 5V-11V@3A.
-> 
-> Currently accepted:
-> 		|--------- source -----|
-> 	|----------- sink ---------------|
-> 
-> Currently not accepted:
-> 			|--------- source -----|
-> 	|----------- sink ---------------|
-> 
-> 	|--------- source -----|
-> 		|----------- sink ---------------|
-> 
-> 	|--------- source -----------------|
-> 		|------ sink -------|
-> 
-> To improve the usability, change the matching rules to what listed
-> below:
-> a. The Source PDO is selectable if any portion of the voltage range
->    overlaps one of the Sink PDO's voltage range.
-> b. The maximum operational voltage will be the lower one between the
->    selected Source PDO and the matching Sink PDO.
-> c. The maximum power will be the maximum operational voltage times the
->    maximum current defined in the selected Source PDO
-> d. Select the Source PDO with the highest maximum power
-> 
-> Signed-off-by: Kyle Tso <kyletso@google.com>
+Commit-ID:  4771d4f5de52b4e7aa62334d7ba1e5bd22a5f900
+Gitweb:     https://git.kernel.org/tip/4771d4f5de52b4e7aa62334d7ba1e5bd22a5f900
+Author:     Chang S. Bae <chang.seok.bae@intel.com>
+AuthorDate: Mon, 26 Nov 2018 11:55:24 -0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 18 Dec 2018 12:58:21 +0100
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+x86/fsgsbase/64: Fix the base write helper functions
 
-> ---
-> Changelog since v1:
-> - updated the commit message as suggested by Guenter Roeck <linux@roeck-us.net>
-> 
-> Changelog since v2:
-> - fixed the coding style problems as suggested by Heikki Krogerus
->   <heikki.krogerus@linux.intel.com>
-> - Corrected a wrong word in the commit message as suggested by Adam Thomson
->   <Adam.Thomson.Opensource@diasemi.com>
-> ---
->  drivers/usb/typec/tcpm/tcpm.c | 35 ++++++++++++++++++++---------------
->  1 file changed, 20 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index 3620efee2688..4bc29b586698 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -2213,7 +2213,8 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  	unsigned int i, j, max_mw = 0, max_mv = 0;
->  	unsigned int min_src_mv, max_src_mv, src_ma, src_mw;
->  	unsigned int min_snk_mv, max_snk_mv;
-> -	u32 pdo;
-> +	unsigned int max_op_mv;
-> +	u32 pdo, src, snk;
->  	unsigned int src_pdo = 0, snk_pdo = 0;
->  
->  	/*
-> @@ -2263,16 +2264,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  					continue;
->  				}
->  
-> -				if (max_src_mv <= max_snk_mv &&
-> -				    min_src_mv >= min_snk_mv) {
-> +				if (min_src_mv <= max_snk_mv &&
-> +				    max_src_mv >= min_snk_mv) {
-> +					max_op_mv = min(max_src_mv, max_snk_mv);
-> +					src_mw = (max_op_mv * src_ma) / 1000;
->  					/* Prefer higher voltages if available */
->  					if ((src_mw == max_mw &&
-> -					     min_src_mv > max_mv) ||
-> +					     max_op_mv > max_mv) ||
->  					    src_mw > max_mw) {
->  						src_pdo = i;
->  						snk_pdo = j;
->  						max_mw = src_mw;
-> -						max_mv = max_src_mv;
-> +						max_mv = max_op_mv;
->  					}
->  				}
->  			}
-> @@ -2285,16 +2288,18 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  	}
->  
->  	if (src_pdo) {
-> -		pdo = port->source_caps[src_pdo];
-> -
-> -		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
-> -		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
-> -		port->pps_data.max_curr =
-> -			min_pps_apdo_current(pdo, port->snk_pdo[snk_pdo]);
-> -		port->pps_data.out_volt =
-> -			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
-> -		port->pps_data.op_curr =
-> -			min(port->pps_data.max_curr, port->pps_data.op_curr);
-> +		src = port->source_caps[src_pdo];
-> +		snk = port->snk_pdo[snk_pdo];
-> +
-> +		port->pps_data.min_volt = max(pdo_pps_apdo_min_voltage(src),
-> +					      pdo_pps_apdo_min_voltage(snk));
-> +		port->pps_data.max_volt = min(pdo_pps_apdo_max_voltage(src),
-> +					      pdo_pps_apdo_max_voltage(snk));
-> +		port->pps_data.max_curr = min_pps_apdo_current(src, snk);
-> +		port->pps_data.out_volt = min(port->pps_data.max_volt,
-> +					      port->pps_data.out_volt);
-> +		port->pps_data.op_curr = min(port->pps_data.max_curr,
-> +					     port->pps_data.op_curr);
->  	}
->  
->  	return src_pdo;
-> -- 
-> 2.20.0.405.gbc1bbc6f85-goog
+The helper functions which write fs/gs base are not just writing the base,
+they are also changing the index. That's wrong and needs to be separated.
 
-thanks,
+Make the index explicitly changed from the caller, instead of including
+the code in the helpers.
 
--- 
-heikki
+Subsequently, the task write helpers do not handle for the current task
+anymore. The range check for a base value is also factored out, to minimize
+code redundancy from the caller.
+
+Fixes: b1378a561fd1 ("x86/fsgsbase/64: Introduce FS/GS base helper functions")
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20181126195524.32179-1-chang.seok.bae@intel.com
+---
+ arch/x86/include/asm/fsgsbase.h | 15 +++++--
+ arch/x86/kernel/process_64.c    | 99 +++++++++++++++++++++++------------------
+ arch/x86/kernel/ptrace.c        |  9 ++--
+ 3 files changed, 71 insertions(+), 52 deletions(-)
+
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index eb377b6e9eed..bca4c743de77 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -16,8 +16,8 @@
+  */
+ extern unsigned long x86_fsbase_read_task(struct task_struct *task);
+ extern unsigned long x86_gsbase_read_task(struct task_struct *task);
+-extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
+-extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
++extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
++extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
+ 
+ /* Helper functions for reading/writing FS/GS base */
+ 
+@@ -39,8 +39,15 @@ static inline unsigned long x86_gsbase_read_cpu_inactive(void)
+ 	return gsbase;
+ }
+ 
+-extern void x86_fsbase_write_cpu(unsigned long fsbase);
+-extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
++static inline void x86_fsbase_write_cpu(unsigned long fsbase)
++{
++	wrmsrl(MSR_FS_BASE, fsbase);
++}
++
++static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
++{
++	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++}
+ 
+ #endif /* CONFIG_X86_64 */
+ 
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index bbfbf017065c..ddd4fa718c43 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -339,24 +339,6 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 	return base;
+ }
+ 
+-void x86_fsbase_write_cpu(unsigned long fsbase)
+-{
+-	/*
+-	 * Set the selector to 0 as a notion, that the segment base is
+-	 * overwritten, which will be checked for skipping the segment load
+-	 * during context switch.
+-	 */
+-	loadseg(FS, 0);
+-	wrmsrl(MSR_FS_BASE, fsbase);
+-}
+-
+-void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
+-{
+-	/* Set the selector to 0 for the same reason as %fs above. */
+-	loadseg(GS, 0);
+-	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
+-}
+-
+ unsigned long x86_fsbase_read_task(struct task_struct *task)
+ {
+ 	unsigned long fsbase;
+@@ -385,38 +367,18 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
+ 	return gsbase;
+ }
+ 
+-int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
++void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
+ {
+-	/*
+-	 * Not strictly needed for %fs, but do it for symmetry
+-	 * with %gs
+-	 */
+-	if (unlikely(fsbase >= TASK_SIZE_MAX))
+-		return -EPERM;
++	WARN_ON_ONCE(task == current);
+ 
+-	preempt_disable();
+ 	task->thread.fsbase = fsbase;
+-	if (task == current)
+-		x86_fsbase_write_cpu(fsbase);
+-	task->thread.fsindex = 0;
+-	preempt_enable();
+-
+-	return 0;
+ }
+ 
+-int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
++void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
+ {
+-	if (unlikely(gsbase >= TASK_SIZE_MAX))
+-		return -EPERM;
++	WARN_ON_ONCE(task == current);
+ 
+-	preempt_disable();
+ 	task->thread.gsbase = gsbase;
+-	if (task == current)
+-		x86_gsbase_write_cpu_inactive(gsbase);
+-	task->thread.gsindex = 0;
+-	preempt_enable();
+-
+-	return 0;
+ }
+ 
+ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+@@ -754,11 +716,60 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 
+ 	switch (option) {
+ 	case ARCH_SET_GS: {
+-		ret = x86_gsbase_write_task(task, arg2);
++		if (unlikely(arg2 >= TASK_SIZE_MAX))
++			return -EPERM;
++
++		preempt_disable();
++		/*
++		 * ARCH_SET_GS has always overwritten the index
++		 * and the base. Zero is the most sensible value
++		 * to put in the index, and is the only value that
++		 * makes any sense if FSGSBASE is unavailable.
++		 */
++		if (task == current) {
++			loadseg(GS, 0);
++			x86_gsbase_write_cpu_inactive(arg2);
++
++			/*
++			 * On non-FSGSBASE systems, save_base_legacy() expects
++			 * that we also fill in thread.gsbase.
++			 */
++			task->thread.gsbase = arg2;
++
++		} else {
++			task->thread.gsindex = 0;
++			x86_gsbase_write_task(task, arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_SET_FS: {
+-		ret = x86_fsbase_write_task(task, arg2);
++		/*
++		 * Not strictly needed for %fs, but do it for symmetry
++		 * with %gs
++		 */
++		if (unlikely(arg2 >= TASK_SIZE_MAX))
++			return -EPERM;
++
++		preempt_disable();
++		/*
++		 * Set the selector to 0 for the same reason
++		 * as %gs above.
++		 */
++		if (task == current) {
++			loadseg(FS, 0);
++			x86_fsbase_write_cpu(arg2);
++
++			/*
++			 * On non-FSGSBASE systems, save_base_legacy() expects
++			 * that we also fill in thread.fsbase.
++			 */
++			task->thread.fsbase = arg2;
++		} else {
++			task->thread.fsindex = 0;
++			x86_fsbase_write_task(task, arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_GET_FS: {
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index ffae9b9740fd..4b8ee05dd6ad 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -397,11 +397,12 @@ static int putreg(struct task_struct *child,
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+ 		/*
+-		 * When changing the FS base, use the same
+-		 * mechanism as for do_arch_prctl_64().
++		 * When changing the FS base, use do_arch_prctl_64()
++		 * to set the index to zero and to set the base
++		 * as requested.
+ 		 */
+ 		if (child->thread.fsbase != value)
+-			return x86_fsbase_write_task(child, value);
++			return do_arch_prctl_64(child, ARCH_SET_FS, value);
+ 		return 0;
+ 	case offsetof(struct user_regs_struct,gs_base):
+ 		/*
+@@ -410,7 +411,7 @@ static int putreg(struct task_struct *child,
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+ 		if (child->thread.gsbase != value)
+-			return x86_gsbase_write_task(child, value);
++			return do_arch_prctl_64(child, ARCH_SET_GS, value);
+ 		return 0;
+ #endif
+ 	}
