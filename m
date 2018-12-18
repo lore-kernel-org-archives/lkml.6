@@ -2,75 +2,67 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AE0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B4DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEDDF217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 321FD217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbeLRIgi (ORCPT
+        id S1726666AbeLRIgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:36:38 -0500
-Received: from mail1.skidata.com ([91.230.2.99]:20755 "EHLO mail1.skidata.com"
+        Tue, 18 Dec 2018 03:36:43 -0500
+Received: from mga01.intel.com ([192.55.52.88]:46004 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbeLRIgi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:36:38 -0500
-X-IronPort-AV: E=Sophos;i="5.56,367,1539640800"; 
-   d="scan'208";a="14044614"
-From:   Richard Leitner <richard.leitner@skidata.com>
-To:     <dmitry.torokhov@gmail.com>, <mark.rutland@arm.com>
-CC:     <robh+dt@kernel.org>, <linux-input@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <richard.leitner@skidata.com>
-Subject: [RESEND PATCH v2 1/8] dt-bindings: input: touchscreen: sx8654: add reset-gpio property
-Date:   Tue, 18 Dec 2018 09:35:59 +0100
-Message-ID: <20181218083606.25795-2-richard.leitner@skidata.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181218083606.25795-1-richard.leitner@skidata.com>
-References: <20181218083606.25795-1-richard.leitner@skidata.com>
+        id S1726482AbeLRIgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:36:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 00:36:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
+   d="scan'208";a="119723622"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga001.jf.intel.com with ESMTP; 18 Dec 2018 00:36:32 -0800
+Subject: Re: [RESEND PATCH v5 1/3] x86/fpu: track AVX-512 usage of tasks
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Aubrey Li <aubrey.li@intel.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20181217191209.6494-1-aubrey.li@intel.com>
+ <alpine.DEB.2.21.1812180931420.1660@nanos.tec.linutronix.de>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <2a06cf94-0312-533a-4c75-bcf944f4cd35@linux.intel.com>
+Date:   Tue, 18 Dec 2018 16:36:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.111.252]
-X-ClientProxiedBy: sdex3srv.skidata.net (192.168.111.81) To
- sdex5srv.skidata.net (192.168.111.83)
+In-Reply-To: <alpine.DEB.2.21.1812180931420.1660@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the reset-gpio property for the sx8654 touchscreen controller
-driver.
+On 2018/12/18 16:33, Thomas Gleixner wrote:
+> Aubrey,
+> 
+> On Tue, 18 Dec 2018, Aubrey Li wrote:
+> 
+> RESEND....
+> 
+> Please don't do that. This is not a resend because you changed something,
+> so it's new version. Usually I ignore resends when I have the original
+> submission already lined up for review.
 
-Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/input/touchscreen/sx8654.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+oh, okay, I'll send another version, sorry for the trouble...
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/sx8654.txt b/Documentation/devicetree/bindings/input/touchscreen/sx8654.txt
-index 4886c4aa2906..ca521d8f7d65 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/sx8654.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/sx8654.txt
-@@ -5,6 +5,9 @@ Required properties:
- - reg: i2c slave address
- - interrupts: touch controller interrupt
- 
-+Optional properties:
-+ - reset-gpios: GPIO specification for the NRST input
-+
- Example:
- 
- 	sx8654@48 {
-@@ -12,4 +15,5 @@ Example:
- 		reg = <0x48>;
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
- 	};
--- 
-2.11.0
-
+Thanks,
+-Aubrey
