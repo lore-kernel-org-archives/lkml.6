@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BFBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF264C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 541DF21872
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F32621871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:38:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1vFynlR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFzEOu45"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeLRNid (ORCPT
+        id S1726726AbeLRNih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:38:33 -0500
-Received: from mail-qk1-f169.google.com ([209.85.222.169]:34724 "EHLO
-        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbeLRNib (ORCPT
+        Tue, 18 Dec 2018 08:38:37 -0500
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:33335 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbeLRNig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:38:31 -0500
-Received: by mail-qk1-f169.google.com with SMTP id q8so7264528qke.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:38:30 -0800 (PST)
+        Tue, 18 Dec 2018 08:38:36 -0500
+Received: by mail-qt1-f181.google.com with SMTP id l11so18186198qtp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:38:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=kwbyrKVr7th7uUgx1fkm/6bOB2+rMDEnicy6YFlOrBc=;
-        b=I1vFynlR3h/MSBG807AqtQU+P6EEq7/4ac07SnBx67tiOzF8qVjq3iZEI+GoUvfpXF
-         JbK5bHSMfYHexVbV1FZ1eorDOhdiMwuZ3kNmG/QV486hRWtkXi9iYDGKyeFDD+q63EwX
-         TYlUvi5+e6o+8ZqwrYcH6v1MG2xgjXugTGuMQCmjvZ2ynhmNtzbmaWM/WS1nbobuJc5F
-         fEXlzQpytSbJdCbDOse1X0nEra4UnXtGx7ybiM17cZjEIOl1LDEexB7AI01buNTeUJB6
-         DlvuNf9XyzkXP3QntzqYYNYAClmWMQexNTIG6CWBPiV+zedY/c5l1VPnZUXUVYvaSUA3
-         lraA==
+        bh=kZ876vEU/Oii4iRqu5x0JYnZNEW+hbH0bFximUvVlIY=;
+        b=RFzEOu45Zq8si/LvXbxqng03UoceixrjF0Lz29M2a99JosWLLX7a2qXVAmn0LnU2aN
+         C+AvNmIs7K/YLO/ybv3ETzHQepTuKYlv29aDYBDjP/vUmGZoEVUDgACbz6HTiR9GQKqL
+         RmC6otXMx1KLEtBVQasdNkHuY9DYytIObdRyEkbs75gkuT/gi2V0SXGNVEZjEgXM23U9
+         bjUI2DTBStoHk2Vbf1Rr4145Bz9P80H3fk4/ec/7u+3SfieZBaEVub6dcUc6espi9PoO
+         9jjk+7GOS3ok1XxWdaXv0NHuT+yC5FLBaSV7kNQU18lcQfdOP1MLwMRb6j3D6pSiXuxw
+         gNOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=kwbyrKVr7th7uUgx1fkm/6bOB2+rMDEnicy6YFlOrBc=;
-        b=ADC8rGW1rVxpZHT+rCVudJCTIak9nWcfIy3YltuSWlarRTHpRu9S+bZWTlSY9b8xH+
-         VTMrLQB6Mo9NRkXhjzMbWeRs+F3IyjI2ZOfqZ37dJKaRvwtTd4QtWwztrElxlIERoAm4
-         PUVs4SdDN2Kh6VnnIHHjSRwX0rC6nEMD1BYiyP6lOEUPOZi6Kj54EQF7KDvCjTdV5yP3
-         yJoJclsWJSDsU/XRO8UzQSgeX+WI6O4k836PaCpCRX2Qzq1NVvYfKTn70yngSPOE6N81
-         ABslenE/b8me4z+IttLVPGfRy973o7reQkxZy3Jv3Y7GrM6ZY8x945lVXFeODmrs+I8E
-         7Ksg==
-X-Gm-Message-State: AA+aEWZ4Z4iXCQGgx9RITJ5D8Jw3j/2+gcv8HkCk28hKB2A9D5BMRHq6
-        IICkm9GytgbzGC7MTUA20auwIUwlxJg=
-X-Google-Smtp-Source: AFSGD/XXnc8fvoDqt22yNjJFK4GwWCSNJE1tWxEWt1L4F22pa3zZQIpHOLxCJhFLlxGYYI/dUjJleg==
-X-Received: by 2002:a37:8ac3:: with SMTP id m186mr15926589qkd.263.1545140309682;
-        Tue, 18 Dec 2018 05:38:29 -0800 (PST)
+        bh=kZ876vEU/Oii4iRqu5x0JYnZNEW+hbH0bFximUvVlIY=;
+        b=Gsjc7b6CeOIGwQEYdjUWHHweOKWdujkHUAmLUPnAA5xwFSHKstxwXDLvcdspAAtxLH
+         OuuYxKy08p9SwZh6CdBW1GC6CUf6PcjKOoNkEQHNzssjLsZDpgy+WWpN2sirCAI6Vdox
+         FKhbVGWD2JOZPFIjhL72jWYH3ZzSnBEcDuXEpZsa6sYW+jArDMxOBuicm0WCoILMewMh
+         PiSeUR6KGl3LDqOabhR6qjfevNuHvfHD1cvvUTGCEcWvUoXoBkPOrEYmI7pExQAN1lKZ
+         j8wCpmbMGzUIOnG2eddaOdLK41kV0lEFfUWvYwWgQdwu/oAMjQNAGWYuLk6bXhqgXzfj
+         wLjw==
+X-Gm-Message-State: AA+aEWYIuZQSSSpSsIbUObmhLqDPJFItNowSkSrRQRRbjtmlWs/w4h93
+        T3sAzf0N9EYjZ78HT/ew4s0=
+X-Google-Smtp-Source: AFSGD/VQyWX62NaHIQyXGT3M2vLe4oIB7DhJj05CpG5YfJ4maz2/llJBAUKj4B/wZGnLue3uZdBkyg==
+X-Received: by 2002:ac8:1c50:: with SMTP id j16mr17996803qtk.320.1545140314875;
+        Tue, 18 Dec 2018 05:38:34 -0800 (PST)
 Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id b6sm7702997qtq.29.2018.12.18.05.38.27
+        by smtp.gmail.com with ESMTPSA id f201sm7535392qke.0.2018.12.18.05.38.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 05:38:29 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:38:25 -0200
+        Tue, 18 Dec 2018 05:38:34 -0800 (PST)
+Date:   Tue, 18 Dec 2018 11:38:30 -0200
 From:   Shayenne Moura <shayenneluzmoura@gmail.com>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] drm: sti: Delete base.id prints
-Message-ID: <20181218133825.rdqanhqozsnqp2fy@smtp.gmail.com>
+Subject: [PATCH 6/7] drm: meson: Delete base.id prints
+Message-ID: <20181218133830.tlm4ndyrefwvvdyt@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -74,29 +74,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This patch removes base.id prints from drm_display_mode                         
-objects in sti files. It removes dependency from drm_mode_object.
+objects in meson files. It removes dependency from drm_mode_object.
 
 Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
 ---
- drivers/gpu/drm/sti/sti_crtc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_crtc.c b/drivers/gpu/drm/sti/sti_crtc.c
-index ed76e52eb213..ab7989bc8fa0 100644
---- a/drivers/gpu/drm/sti/sti_crtc.c
-+++ b/drivers/gpu/drm/sti/sti_crtc.c
-@@ -53,9 +53,9 @@ sti_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode)
- 	struct clk *compo_clk, *pix_clk;
- 	int rate = mode->clock * 1000;
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index d8c5cc34e22e..b203560f666d 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -365,7 +365,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+ 	unsigned int wr_clk =
+ 		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
  
--	DRM_DEBUG_KMS("CRTC:%d (%s) mode:%d (%s)\n",
-+	DRM_DEBUG_KMS("CRTC:%d (%s) mode: (%s)\n",
- 		      crtc->base.id, sti_mixer_to_str(mixer),
--		      mode->base.id, mode->name);
-+		      mode->name);
+-	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
++	DRM_DEBUG_DRIVER("\"%s\"\n", mode->name);
  
- 	DRM_DEBUG_KMS("%d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
- 		      mode->vrefresh, mode->clock,
+ 	/* Enable clocks */
+ 	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
+@@ -555,8 +555,8 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 	int vic = drm_match_cea_mode(mode);
+ 	enum drm_mode_status status;
+ 
+-	DRM_DEBUG_DRIVER("Modeline %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
+-		mode->base.id, mode->name, mode->vrefresh, mode->clock,
++	DRM_DEBUG_DRIVER("Modeline \"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
++		mode->name, mode->vrefresh, mode->clock,
+ 		mode->hdisplay, mode->hsync_start,
+ 		mode->hsync_end, mode->htotal,
+ 		mode->vdisplay, mode->vsync_start,
+@@ -650,8 +650,7 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_encoder *encoder,
+ 	struct meson_drm *priv = dw_hdmi->priv;
+ 	int vic = drm_match_cea_mode(mode);
+ 
+-	DRM_DEBUG_DRIVER("%d:\"%s\" vic %d\n",
+-			 mode->base.id, mode->name, vic);
++	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
+ 
+ 	/* VENC + VENC-DVI Mode setup */
+ 	meson_venc_hdmi_mode_set(priv, vic, mode);
 -- 
 2.17.1
 
