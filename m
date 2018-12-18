@@ -2,118 +2,130 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE7EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F528C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14672145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 187B02145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbeLRCtV (ORCPT
+        id S1726506AbeLRCuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:49:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeLRCtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:49:21 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 73F87DD9C0;
-        Tue, 18 Dec 2018 02:49:20 +0000 (UTC)
-Received: from treble (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1660351F26;
-        Tue, 18 Dec 2018 02:49:18 +0000 (UTC)
-Date:   Mon, 17 Dec 2018 20:49:16 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
-Message-ID: <20181218024916.vmfnyqzouhfxhyvc@treble>
-References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
- <20181217173900.ygifx7khwmzn2gv2@treble>
- <20181217180434.GS25620@tassilo.jf.intel.com>
- <20181217181638.dfexg6mkmbfyzfli@treble>
- <20181217192938.GF2218@hirez.programming.kicks-ass.net>
- <20181217213126.lsqhyszoulel6uq6@treble>
- <20181217173644.391c2070@gandalf.local.home>
- <20181218000618.GA25620@tassilo.jf.intel.com>
+        Mon, 17 Dec 2018 21:50:18 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:56404 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726285AbeLRCuS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 21:50:18 -0500
+X-IronPort-AV: E=Sophos;i="5.56,367,1539619200"; 
+   d="scan'208";a="50027160"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 18 Dec 2018 10:50:16 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 344DD4B75BD3;
+        Tue, 18 Dec 2018 10:50:15 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 18 Dec 2018 10:50:21 +0800
+Date:   Tue, 18 Dec 2018 10:49:52 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Ingo Molnar <mingo@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v14 5/5] x86/boot/KASLR: Limit KASLR to extracting kernel
+ in immovable memory
+Message-ID: <20181218024951.GA10386@localhost.localdomain>
+References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+ <20181214093013.13370-6-fanc.fnst@cn.fujitsu.com>
+ <20181217174324.GE90818@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181218000618.GA25620@tassilo.jf.intel.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 18 Dec 2018 02:49:20 +0000 (UTC)
+In-Reply-To: <20181217174324.GE90818@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 344DD4B75BD3.AB722
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 04:06:18PM -0800, Andi Kleen wrote:
-> On Mon, Dec 17, 2018 at 05:36:44PM -0500, Steven Rostedt wrote:
-> > On Mon, 17 Dec 2018 15:31:26 -0600
-> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > 
-> > > On Mon, Dec 17, 2018 at 08:29:38PM +0100, Peter Zijlstra wrote:
-> > > > On Mon, Dec 17, 2018 at 12:16:38PM -0600, Josh Poimboeuf wrote:
-> > > >   
-> > > > > > Yes LTO causes the to be treated like static functions.
-> > > > > > 
-> > > > > > I guess noclone is unlikely to be really needed here because these
-> > > > > > functions are unlikely to be cloned.
-> > > > > > 
-> > > > > > So as a workaround it could be removed.
-> > > > > > 
-> > > > > > But note we have other noclone functions in the tree (like in KVM)
-> > > > > > which actually need it.  
-> > > > > 
-> > > > > How about we just use the __used attribute then?  It seems to have the
-> > > > > same result of preventing IPA optimizations (without the weird side
-> > > > > effect of missing frame pointers).  
-> > > > 
-> > > > AFAIK we don't have any in-tree LTO, so it can all go in the bin.
-> > > > 
-> > > > When/if we get the LTO trainwreck sorted -- which very much includes
-> > > > getting that memory-order-consume fixed -- we can revisit all that.  
-> > > 
-> > > Ok, then if there are no objections I'll just send a revert of:
-> > > 
-> > >   dd3dad0d716d ("ftrace: Mark function tracer test functions noinline/noclone")
+On Mon, Dec 17, 2018 at 06:43:24PM +0100, Ingo Molnar wrote:
+>
+>* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>
+>> KASLR randomly chooses some positions which may locate in movable
+>> memory regions. It will break memory hotplug feature and make the
+>> movable memory chosen by KASLR practically immovable.
+>> 
+>> The solution is to limit KASLR to choose memory regions in immovable
+>> node according to SRAT tables.
+>> When CONFIG_EARLY_PARSE_RSDP is enabled, walk through SRAT to get the
+>> information of immovable memory so that KASLR knows where should be
+>> chosen for randomization.
+>> 
+>> Rename process_mem_region() as __process_mem_region() and name new
+>> function as process_mem_region().
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/kaslr.c | 75 +++++++++++++++++++++++++++-----
+>>  1 file changed, 64 insertions(+), 11 deletions(-)
+>
+>Ok, I like this basic approach of automatically detecing memory areas we 
+>should not KASLR into - it's far better than earlier iterations.
 
-Sorry for suggesting this prematurely, my email client stopped syncing
-and I missed your later replies to Peter about this.
+Thanks,
 
-> > Should it be reverted, or just remove the noclone, and keep the
-> > noinline?
-> 
-> It should not be touched for now, until it is properly debugged.
-> 
-> IMHO Josh's explanation doesn't make much sense and there
-> was a lot of handwaving 
-> 
-> And just fixing one case isn't good enough because there are other
-> noclone functions in the tree.
-> 
-> It the problem is the plugin the plugin needs to be fixed.
-> 
-> If the problem is gcc we need a gcc test case and bug, with 
-> some analysis, and then based on that select the proper workaround.
+>
+>> +++ b/arch/x86/boot/compressed/kaslr.c
+>> @@ -97,6 +97,11 @@ static bool memmap_too_large;
+>>  /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+>>  static unsigned long long mem_limit = ULLONG_MAX;
+>>  
+>> +#ifdef CONFIG_EARLY_SRAT_PARSE
+>> +/* The immovable memory regions */
+>> +extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
+>> +#endif
+>
+>What logic is the maximum size of this array based on?
+>
 
-The plugin is only used for older versions of GCC.  Newer versions have
-the same functionality builtin with -fsanitize-coverage=trace-pc.
+Oh, sorry for that, I ever explained for that, I would add
+more comments in next PATCH.
 
-So the problem is GCC.  We're using a function attribute which at least
-oneGCC developer doesn't recommend.  If you want to keep the LTO support
-then '__used' seems like a much better choice.
+See arch/x86/mm/numa_internal.h:
+struct numa_meminfo {
+        int                     nr_blks;
+        struct numa_memblk      blk[NR_NODE_MEMBLKS];
+};
 
--- 
-Josh
+In arch/x86/include/asm/numa.h:
+#define NR_NODE_MEMBLKS         (MAX_NUMNODES*2)
+
+That means the memory in one node may be devided into 1 or 2 memory
+regions(Also I saw that in the dmesg).
+So think about how many regions we need to store the immovable memory.
+The worst condition is:
+1. There are MAX_NUMANODES nodes on this machine.
+2. In SRAT table, every node is devided into 2 memory regions.
+3. All of them are immovable.
+So MAX_NUMNODES*2 is the biggest amount.
+
+Thanks,
+Chao Fan
+
+>Thanks,
+>
+>	Ingo
+>
+>
+
+
