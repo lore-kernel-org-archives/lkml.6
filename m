@@ -6,31 +6,34 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D82C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB6EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36125217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2886217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:59:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbeLRM6O (ORCPT
+        id S1726570AbeLRM7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:58:14 -0500
-Received: from foss.arm.com ([217.140.101.70]:45160 "EHLO foss.arm.com"
+        Tue, 18 Dec 2018 07:59:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:45188 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726390AbeLRM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:58:13 -0500
+        id S1726390AbeLRM7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:59:46 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B96080D;
-        Tue, 18 Dec 2018 04:58:13 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7847D80D;
+        Tue, 18 Dec 2018 04:59:45 -0800 (PST)
 Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D6323F575;
-        Tue, 18 Dec 2018 04:58:12 -0800 (PST)
-Subject: Re: [PATCH -next] irqchip/irq-rda-intc: Fix return value check in
- rda8810_intc_init()
-To:     YueHaibing <yuehaibing@huawei.com>, tglx@linutronix.de,
-        jason@lakedaemon.net
-Cc:     linux-kernel@vger.kernel.org
-References: <20181218121542.15500-1-yuehaibing@huawei.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 40C8F3F575;
+        Tue, 18 Dec 2018 04:59:44 -0800 (PST)
+Subject: Re: [PATCH] irqchip/irq-imx-gpcv2: add IRQCHIP_DECLARE for i.MX8MQ
+ compatible
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, patchwork-lst@pengutronix.de,
+        Jason Cooper <jason@lakedaemon.net>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org
+References: <20181214121528.5534-1-l.stach@pengutronix.de>
+ <1545061881.5874.10.camel@pengutronix.de>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
@@ -76,50 +79,50 @@ Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
  hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
  yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
 Organization: ARM Ltd
-Message-ID: <fcacb2b1-7b49-b6bc-f64a-29f6a21be7f9@arm.com>
-Date:   Tue, 18 Dec 2018 12:58:09 +0000
+Message-ID: <3e287cee-f10f-7233-ee40-fd736497d3e6@arm.com>
+Date:   Tue, 18 Dec 2018 12:59:42 +0000
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181218121542.15500-1-yuehaibing@huawei.com>
+In-Reply-To: <1545061881.5874.10.camel@pengutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/12/2018 12:15, YueHaibing wrote:
-> In case of error, the function of_io_request_and_map() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should
-> be replaced with IS_ERR().
+On 17/12/2018 15:51, Lucas Stach wrote:
+> Hi Marc,
 > 
-> Fixes: d852e62ad689 ("irqchip: Add RDA8810PL interrupt driver")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/irqchip/irq-rda-intc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Am Freitag, den 14.12.2018, 13:15 +0100 schrieb Lucas Stach:
+>> The GPC node on i.MX8MQ can not claim to be compatible with the i.MX7D
+>> GPC, as the power gating part has some significant differences. Thus we
+>> can not rely on the irqchip being probed with the old compatible.
+>>
+>>> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+>> ---
+>>  drivers/irqchip/irq-imx-gpcv2.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
+>> index 17a2dad2d4c2..68b9cca24044 100644
+>> --- a/drivers/irqchip/irq-imx-gpcv2.c
+>> +++ b/drivers/irqchip/irq-imx-gpcv2.c
+>> @@ -289,4 +289,5 @@ static int __init imx_gpcv2_irqchip_init(struct device_node *node,
+>>>  	return 0;
+>>  }
+>>  
+>> -IRQCHIP_DECLARE(imx_gpcv2, "fsl,imx7d-gpc", imx_gpcv2_irqchip_init);
+>> +IRQCHIP_DECLARE(imx_gpcv2_imx7d, "fsl,imx7d-gpc", imx_gpcv2_irqchip_init);
+>> +IRQCHIP_DECLARE(imx_gpcv2_imx8mq, "fsl,imx8mq-gpc", imx_gpcv2_irqchip_init);
 > 
-> diff --git a/drivers/irqchip/irq-rda-intc.c b/drivers/irqchip/irq-rda-intc.c
-> index 1176291..f80c424 100644
-> --- a/drivers/irqchip/irq-rda-intc.c
-> +++ b/drivers/irqchip/irq-rda-intc.c
-> @@ -85,7 +85,7 @@ static int __init rda8810_intc_init(struct device_node *node,
->  				    struct device_node *parent)
->  {
->  	rda_intc_base = of_io_request_and_map(node, 0, "rda-intc");
-> -	if (!rda_intc_base)
-> +	if (IS_ERR(rda_intc_base))
->  		return -ENXIO;
->  
->  	/* Mask all interrupt sources */
-> 
+> It would be nice if we could get this into 4.21, as this is the last
+> missing bit preventing me from pushing forward on the patches
+> describing the i.MX8MQ IRQ hierarchy properly for the next cycle.
 
-Already posted as
-https://lore.kernel.org/lkml/1545047898-153890-1-git-send-email-weiyongjun1@huawei.com/
-
-You may want to synchronize with your colleagues running the same scripts.
+Now applied.
 
 Thanks,
 
