@@ -7,58 +7,54 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3521C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28D6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72613218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A82218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171468;
-	bh=QvX1FT/J4txISmekqCbCmvyNEUbSp6T3jY4PTkQLn6Y=;
+	s=default; t=1545171473;
+	bh=Kb8O8hxUjeSR78xQ0jBTx61rGXeSqq0l2FuOxtS6+nA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E6ZSxt27J+2lye1yIY88LDIaZW8fsHGFpeDY3WZqvaVyXgPdYp9nIUSh7d5dnY03k
-	 zIRs+hAVVRICYhwNxC4GvnazokfthjbWdlksbLOBsLbqqquMPGtdJaWpOrH8eSF1xL
-	 xc//Dymycd//H+Otijtii6QldGBnxrpygj9pdcwA=
+	b=rlcfF2RRP6rlsQctp42ajkq95YvIPmYWUR933pFRJrrSQOsvuuB2joU+O1RzRTovU
+	 P5a07q8kwfJGhMbDN4qIm4TuxCpkhmNRLFjMT6g+p3xumrtNcEG1KDlwZSesZLv/YK
+	 bHOqGCVfknhxWXMpa78fwGESQ9+wR7PBnV2g14HM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728013AbeLRWRr (ORCPT
+        id S1728083AbeLRWRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:17:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48370 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:17:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeLRWRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:17:46 -0500
+        id S1727546AbeLRWRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:17:51 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0787217D9;
-        Tue, 18 Dec 2018 22:17:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A00321871;
+        Tue, 18 Dec 2018 22:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171466;
-        bh=QvX1FT/J4txISmekqCbCmvyNEUbSp6T3jY4PTkQLn6Y=;
+        s=default; t=1545171471;
+        bh=Kb8O8hxUjeSR78xQ0jBTx61rGXeSqq0l2FuOxtS6+nA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PdxFopp6OTp/uWfH4PR/eUepsLRUKvnXIXyf4tG1Vp1ztXTkFF+5qLnW62h5Bseks
-         TB2NYjHDiDm4jjZLTqT0YEZOM15gGkuCk3V7lfxHYPSCozBAMcJe0J8JjHhsUaMLux
-         7n28J9mMv5W6fDbuvNdS2hP3opINOKiN/UU/geqQ=
+        b=prWh5r/iJWBpVtFLJ/8nzvN7DtuSVSAGzGjQqBMwnajpNCR3BwVNJeS2f2SVlbnf6
+         n74KpilAr0Md9Ayvx5p06CrhleVFTYwXvApl18ho93Y41kegp5xJCsONaEluRJwY/q
+         ATMJ4lcT/77WQK3q0qCJXneuXPR8Qb+Pm5jjJVMU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        =?UTF-8?q?H=C3=ADtalo=20Silva?= <hitalos@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Guo Ren <ren_guo@c-sky.com>,
         Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 62/63] perf symbols: Relax checks on perf-PID.map ownership
-Date:   Tue, 18 Dec 2018 19:07:32 -0300
-Message-Id: <20181218220733.15839-63-acme@kernel.org>
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 63/63] tools uapi asm: Update asm-generic/unistd.h copy
+Date:   Tue, 18 Dec 2018 19:07:33 -0300
+Message-Id: <20181218220733.15839-64-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,51 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Those are simple enough, and usually not produced by root, instead by
-whatever user is running java, rust, Node.js JIT code that end up
-generating those /tmp/perf-PID.map for resolution of symbols in the
-anonymous executable maps.
+To get the change in:
 
-Having to use --force to resolve symbols in 'perf top' is a distraction,
-as recently I experienced when node.js symbols were not being resolved
-by 'perf top'.
+  b7d624ab4312 ("asm-generic: unistd.h: fixup broken macro include.")
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+That doesn't imply in any changes in the tools.
+
+This silences the following perf build warning:
+
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
+  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Hítalo Silva <hitalos@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Guo Ren <ren_guo@c-sky.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-tk2jgo2v4v2yjuj28axbpppo@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-2e7xwm5i2qcc88jp2lyawdyd@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ tools/include/uapi/asm-generic/unistd.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index dcce74bae6de..01f2c7385e38 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1537,17 +1537,6 @@ int dso__load(struct dso *dso, struct map *map)
- 	dso->adjust_symbols = 0;
- 
- 	if (perfmap) {
--		struct stat st;
--
--		if (lstat(map_path, &st) < 0)
--			goto out;
--
--		if (!symbol_conf.force && st.st_uid && (st.st_uid != geteuid())) {
--			pr_warning("File %s not owned by current user or root, "
--				   "ignoring it (use -f to override).\n", map_path);
--			goto out;
--		}
--
- 		ret = dso__load_perf_map(map_path, dso);
- 		dso->symtab_type = ret > 0 ? DSO_BINARY_TYPE__JAVA_JIT :
- 					     DSO_BINARY_TYPE__NOT_FOUND;
+diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+index 538546edbfbd..c7f3321fbe43 100644
+--- a/tools/include/uapi/asm-generic/unistd.h
++++ b/tools/include/uapi/asm-generic/unistd.h
+@@ -760,8 +760,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
+ #define __NR_ftruncate __NR3264_ftruncate
+ #define __NR_lseek __NR3264_lseek
+ #define __NR_sendfile __NR3264_sendfile
++#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+ #define __NR_newfstatat __NR3264_fstatat
+ #define __NR_fstat __NR3264_fstat
++#endif
+ #define __NR_mmap __NR3264_mmap
+ #define __NR_fadvise64 __NR3264_fadvise64
+ #ifdef __NR3264_stat
+@@ -776,8 +778,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
+ #define __NR_ftruncate64 __NR3264_ftruncate
+ #define __NR_llseek __NR3264_lseek
+ #define __NR_sendfile64 __NR3264_sendfile
++#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+ #define __NR_fstatat64 __NR3264_fstatat
+ #define __NR_fstat64 __NR3264_fstat
++#endif
+ #define __NR_mmap2 __NR3264_mmap
+ #define __NR_fadvise64_64 __NR3264_fadvise64
+ #ifdef __NR3264_stat
 -- 
 2.19.2
 
