@@ -2,69 +2,119 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC60C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBCEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACDF421841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:16:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="TuTA1+Nj"
+	by mail.kernel.org (Postfix) with ESMTP id B6D8F21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:16:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeLRQQD (ORCPT
+        id S1727222AbeLRQQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:16:03 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:46650 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726471AbeLRQQD (ORCPT
+        Tue, 18 Dec 2018 11:16:40 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40599 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeLRQQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:16:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=sV/QL4B04BXdYgCnVdFh/+CGTMTB8YD57dJQeC/jR0o=;
-        b=TuTA1+NjrXEMkk2SlapT7nS11xW0GjkjlymrbYknIFuTWzhMV2f7+wPBMLkWFAZHvkrEK3PluzoyPo4+D4SytsCLHsLk/bQvqRVSaCf+/uhPimDPNWy9qJjt0ACI0bLxGMHz51ZsjwCskACJnjPbg4AYlCJWSK3LnnpQo4VpfkL7wUFBsEhhuNSO1R9qGeRVvEnMizQ+vLNuyANQQlTg6kudYxaor+UsEbh/yoRg9mxD8VaQ23+YICpFab+ck1PVMqXwn+K3EJ67TzB+pAgU+1LL0pf1q3YoWv8hoGd8W3OkGPgFk1avHVnB7rjemMltmZPje4NTSgAfDplgkk212Q==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:61555 helo=[192.168.10.173])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gZI2J-0002bA-Im; Tue, 18 Dec 2018 17:15:59 +0100
-Subject: Re: [Xen-devel][PATCH v2 2/3] drm/xen-front: Use Xen common shared
- buffer implementation
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com
-Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181130074205.20496-1-andr2000@gmail.com>
- <20181130074205.20496-2-andr2000@gmail.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <75f3a715-94a0-a21d-04c1-aa3cf4cdb331@tronnes.org>
-Date:   Tue, 18 Dec 2018 17:15:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 18 Dec 2018 11:16:39 -0500
+Received: by mail-qt1-f195.google.com with SMTP id k12so18763341qtf.7;
+        Tue, 18 Dec 2018 08:16:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IPsG8LHe7LbR8IWimNxu1tJf1e8xCfgBsKFmbckviLQ=;
+        b=hTTcKQl6gR5RqHtZE7vlMWBPlSUEC8D0YhaSQcZzwJIFQ6G9jo2dmAli6KvJ/kUW5o
+         ItYz0M6x24pZ1d55cGz8Hq17+Eo7U6uzTP0P4Wacp2zA+3WhN9c9j90PY9nG8PlXGBla
+         gXrQLYLKtHv/D98haQgJEqR8GpQZu3tqGxlZTn9znsLIFCkbENYpf2oN/u4TUNvypSq6
+         scJbfS8c9YKguxJ+iknuMOaSdr9yW8lyiVGtQKQHaWOMNtZKkhchIUKrrF+aGq+JLNoi
+         njvY7Oge1Z1bxNdi2qf3HJaeCV3Vj2mE0fTRVlAlMqd/UcBBWGr7luCyZe02lRGL4MSW
+         WsZA==
+X-Gm-Message-State: AA+aEWbmZT7oY7WVWWo/xp8+Xgqql28hSbLj56nSU8Gy505hIFITbWoG
+        LqAfJ9On050rWSL8dXN23jZAfzXUS3OPE4Uzlsk=
+X-Google-Smtp-Source: AFSGD/VXyTq0hTJE6/FLsxMU+U2XtK9I2LN/x9c8ei/1ccKQuZ4wtgjeetVgMuICboHTyeyatgoUk/WyzG5bV5uGBpQ=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr17935701qte.212.1545149797871;
+ Tue, 18 Dec 2018 08:16:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181130074205.20496-2-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20181211202520.16799-1-deepa.kernel@gmail.com>
+ <20181211202520.16799-8-deepa.kernel@gmail.com> <CAF=yD-+mrKfq35g+EVkP-pNbBL=6BvYDdduks=yAxiADSRWvzg@mail.gmail.com>
+In-Reply-To: <CAF=yD-+mrKfq35g+EVkP-pNbBL=6BvYDdduks=yAxiADSRWvzg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Dec 2018 17:16:20 +0100
+Message-ID: <CAK8P3a1xeZsrOv4+xhL5dbi02zfQcPEJvWDzmUNkFKmQubMkSA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] socket: Add SO_TIMESTAMPING_NEW
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Chris Zankel <chris@zankel.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Thomas Gleixner <tglx@linutronix.de>, ubraun@linux.ibm.com,
+        linux-alpha@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-ia64@vger.kernel.org,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 12, 2018 at 4:25 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+> On Tue, Dec 11, 2018 at 3:30 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 
-Den 30.11.2018 08.42, skrev Oleksandr Andrushchenko:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> > @@ -851,39 +890,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+> >                 break;
+> >
+> >         case SO_TIMESTAMPING_OLD:
+> > -               if (val & ~SOF_TIMESTAMPING_MASK) {
+> > -                       ret = -EINVAL;
+> > -                       break;
+> > -               }
+> > -
+> > -               if (val & SOF_TIMESTAMPING_OPT_ID &&
+> > -                   !(sk->sk_tsflags & SOF_TIMESTAMPING_OPT_ID)) {
+> > -                       if (sk->sk_protocol == IPPROTO_TCP &&
+> > -                           sk->sk_type == SOCK_STREAM) {
+> > -                               if ((1 << sk->sk_state) &
+> > -                                   (TCPF_CLOSE | TCPF_LISTEN)) {
+> > -                                       ret = -EINVAL;
+> > -                                       break;
+> > -                               }
+> > -                               sk->sk_tskey = tcp_sk(sk)->snd_una;
+> > -                       } else {
+> > -                               sk->sk_tskey = 0;
+> > -                       }
+> > -               }
+> > -
+> > -               if (val & SOF_TIMESTAMPING_OPT_STATS &&
+> > -                   !(val & SOF_TIMESTAMPING_OPT_TSONLY)) {
+> > -                       ret = -EINVAL;
+> > -                       break;
+> > -               }
+> > -
+> > -               sk->sk_tsflags = val;
+> > -               if (val & SOF_TIMESTAMPING_RX_SOFTWARE)
+> > -                       sock_enable_timestamp(sk,
+> > -                                             SOCK_TIMESTAMPING_RX_SOFTWARE);
+> > -               else
+> > -                       sock_disable_timestamp(sk,
+> > -                                              (1UL << SOCK_TIMESTAMPING_RX_SOFTWARE));
+> > +               ret = setsockopt_timestamping(sk, optname, val);
 >
-> Use page directory based shared buffer implementation
-> now available as common code for Xen frontend drivers.
->
-> Remove flushing of shared buffer on page flip as this
-> workaround needs a proper fix.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
+> Once again a lot of needless code churn. The only functional change is adding
 
-Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
+I think moving the code out into a separate function is a useful cleanup,
+but if we want to do that, it may be better done in another patch, to
+make it easier to review.
 
+       Arnd
