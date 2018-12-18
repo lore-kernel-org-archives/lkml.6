@@ -2,84 +2,98 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3575EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97C5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AABA218AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AF01217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545171070;
+	bh=kD5qDdgazUJZ4bfm6JtJ+vL/+wOvHg4tYlpAm70o2WM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=vdra9HYo+VAAnnjk/PN/dBzjNGkz5WB+Yv2x5hwwsubWxXUdDCBU20qwnKV+ufyht
+	 EOe/cY6dx/GSz08BpL++FS85AH2Ao7G1nC2WxMdRMNzIC/8cs55GhS5zPskcfOCUI4
+	 lK2JJ+C/LjUjo9RKEq+m6hAnmy4Pea2DV2VSMvH8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeLRWK5 (ORCPT
+        id S1727790AbeLRWLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:10:57 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36770 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeLRWK4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:10:56 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00D0AD1F;
-        Tue, 18 Dec 2018 22:10:54 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 14:10:53 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 2/3] hugetlbfs: Use i_mmap_rwsem to fix page
- fault/truncate race
-Message-Id: <20181218141053.e2725111ce5cc91493efab5f@linux-foundation.org>
-In-Reply-To: <dbc4abb9-aa7b-6515-0f37-23a77b50ff6e@oracle.com>
-References: <20181203200850.6460-1-mike.kravetz@oracle.com>
-        <20181203200850.6460-3-mike.kravetz@oracle.com>
-        <27f8893b-57b3-088d-2d48-9e8acc5987bd@linux.ibm.com>
-        <f6fd9491-4b3d-16ca-f606-025c78756936@oracle.com>
-        <dbc4abb9-aa7b-6515-0f37-23a77b50ff6e@oracle.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Dec 2018 17:11:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727675AbeLRWIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:08:45 -0500
+Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AA14218A2;
+        Tue, 18 Dec 2018 22:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545170925;
+        bh=kD5qDdgazUJZ4bfm6JtJ+vL/+wOvHg4tYlpAm70o2WM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ElMbjWQUqUFHDUIvT7OTaBByPaaWgc5Lx9SKHXstQT/nQLkgzygVl5trF0dGWCDtl
+         bgXcceF3jlYrbDytLfeQozUUCn+msIMrYgvxd511HZJET0Q6XNsZlYjiHclbAhDUlI
+         9QtKA/b446whqCg7FFYMGU0MK0nQrzgOPu49wh2I=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 08/63] perf trace beauty: Beautify renameat2's fd arg wrt AT_FDCWD
+Date:   Tue, 18 Dec 2018 19:06:38 -0300
+Message-Id: <20181218220733.15839-9-acme@kernel.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
+References: <20181218220733.15839-1-acme@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 16:17:52 -0800 Mike Kravetz <mike.kravetz@oracle.com> wrote:
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-> ...
->
-> > As you suggested in a comment to the subsequent patch, it would be better to
-> > combine the patches and remove the dead code when it becomes dead.  I will
-> > work on that.  Actually some of the code in patch 3 applies to patch 1 and
-> > some applies to patch 2.  So, it will not be simply combining patch 2 and 3.
-> 
-> On second thought, the cleanups in patch 3 only apply to patch 2.  So, just
-> combining those two patches with a slightly updated commit message as below
-> makes the most sense.
+Just like is done with the 'renameat' syscall.
 
-All confused.  I dropped the current version, let's try again.
+  # strace -e renameat2 -f perf trace -e rename* mv c /tmp
+  [pid 12334] renameat2(AT_FDCWD, "c", AT_FDCWD, "/tmp", RENAME_NOREPLACE) = -1 EXDEV (Invalid cross-device link)
+  [pid 12334] renameat2(AT_FDCWD, "c", AT_FDCWD, "/tmp/c", RENAME_NOREPLACE) = -1 EEXIST (File exists)
+     1.947 ( 0.007 ms): mv/12334 renameat2(olddfd: CWD, oldname: 0x7ffce8b7fd81, newdfd: CWD, newname: 0x7ffce8b7fd83, flags: 1) = -1 EXDEV Invalid cross-device link
+     2.073 ( 0.009 ms): mv/12334 renameat2(olddfd: CWD, oldname: 0x7ffce8b7fd81, newdfd: CWD, newname: 0x55ce7f0a1cc0, flags: 1mv: ) = -1 EEXIST File exists'c' and '/tmp/c' are the same file
+  #
 
-This:
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-8q9l92eh9eee3y2bwyqku3tc@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-trace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> Hoping to get more comments on the overall direction and locking changes
-> of this and the previous patch.
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 406bceda6a2b..60c61a89436f 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -799,6 +799,9 @@ static struct syscall_fmt {
+ 	  .arg = { [2] = { .scnprintf = SCA_MSG_FLAGS, /* flags */ }, }, },
+ 	{ .name	    = "renameat",
+ 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
++	{ .name	    = "renameat2",
++	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* olddirfd */ },
++		   [2] = { .scnprintf = SCA_FDAT, /* newdirfd */ }, }, },
+ 	{ .name	    = "rt_sigaction",
+ 	  .arg = { [0] = { .scnprintf = SCA_SIGNUM, /* sig */ }, }, },
+ 	{ .name	    = "rt_sigprocmask",
+-- 
+2.19.2
 
-and this:
-
-> Cc: <stable@vger.kernel.org>
-> Fixes: ebed4bfc8da8 ("hugetlb: fix absurd HugePages_Rsvd")
-
-make for a hot combination.  Could people please prioritize review of
-this code?
-
-Perhaps a refresh and resend is in order.
