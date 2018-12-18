@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16ACC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2711AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED34218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E149A217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545170945;
-	bh=JN5M7QWdkFHmiMgLUDg9fAl3gJubYDgjcWRWTdCcpns=;
+	s=default; t=1545170949;
+	bh=+IXf3lQSDjRMw6+xqyf8XF8P0iSKM8OYe/WJD7wwil4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZFbUtSn5K1IQBPq9CyXQbaxYM8nIWpsDRg0614X6Hp5gDNLU4z+ZX2NULBviIYtDw
-	 3VWsbDURLz9IG2/yss0dxzAqI7UbBBhJUmqzCu5iH3s00OT90BOo1uosMmFCtFKrm/
-	 moe7dgNbLISHISyaK8kvEiRtAJFDVjv1YqiK6aGo=
+	b=sui9T55txGwG89GAJnDGz6jwoaXhZha2wng0Gks/l+hJa1lKog4t/TVKm3iWhEbzJ
+	 4pqI3392kk1Vi55jX6aKNGp92T2tX5N7NgrSSKS95pHxACs+KQk6Mg80G279O7xd6T
+	 CtVBUPOp7SCdhioNFsoYaPukJPf8hprZYJtWhhBc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbeLRWJE (ORCPT
+        id S1727902AbeLRWJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:09:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37008 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:09:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726904AbeLRWJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:09:02 -0500
+        id S1726904AbeLRWJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:09:05 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 656ED217D9;
-        Tue, 18 Dec 2018 22:08:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FE53218D2;
+        Tue, 18 Dec 2018 22:09:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545170941;
-        bh=JN5M7QWdkFHmiMgLUDg9fAl3gJubYDgjcWRWTdCcpns=;
+        s=default; t=1545170944;
+        bh=+IXf3lQSDjRMw6+xqyf8XF8P0iSKM8OYe/WJD7wwil4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ivm+i1eaYwBMp/Z15/AXdVJ23iwT5dW5TeQhp0UgL9jXKZfysmgYPkAC6zRsniiG9
-         TBiiV+yal7y/q1lfUFBYmdcWwz5P5AELiVkLooCU4YXwbe0I5EYa7OpaChEO+lqo9e
-         fSAL7F4fdVgVcHVROtstvy3VdU5lQVPp9vx4QhIs=
+        b=FR/prwk21AgHBWqypbJ1hhNCCshNyBSNZ4NUPhzFCeztRLlxgMBqfxBj9ROS4ll9e
+         wHWblLXKwZ3inpqP+AAfAojsFmuqzDbwSWuiTnm6C2oFfZ8AMLWGI2z6MkY1SvihI/
+         T7Wjw7WVsIvotp3H8YdesXT2PrhQQjxiYLPak2o4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 12/63] perf trace beauty: renameat's newdirfd may also be AT_FDCWD
-Date:   Tue, 18 Dec 2018 19:06:42 -0300
-Message-Id: <20181218220733.15839-13-acme@kernel.org>
+Subject: [PATCH 13/63] tools lib subcmd: Don't add the kernel sources to the include path
+Date:   Tue, 18 Dec 2018 19:06:43 -0300
+Message-Id: <20181218220733.15839-14-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -62,31 +62,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Noticed while working on renameat2.
+At some point we decided not to directly include kernel sources files
+when building tools/perf/, but when tools/lib/subcmd/ was forked from
+tools/perf it somehow ended up adding it via these two lines in its
+Makefile:
 
+  CFLAGS += -I$(srctree)/include/uapi
+  CFLAGS += -I$(srctree)/include
+
+As $(srctree) points to the kernel sources.
+
+Removing those lines and keeping just:
+
+  CFLAGS += -I$(srctree)/tools/include/
+
+Is enough to build tools/perf and tools/objtool.
+
+This fixes the build when building from the sources in environments such
+as the Android NDK crossbuilding from a fedora:26 system:
+
+  subcmd-util.h:11:15: error: expected ',' or ';' before 'void'
+   static inline void report(const char *prefix, const char *err, va_list params)
+                 ^
+  In file included from /git/perf/include/uapi/linux/stddef.h:2:0,
+                   from /git/perf/include/uapi/linux/posix_types.h:5,
+                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h:36,
+                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/unistd.h:33,
+                   from run-command.c:2:
+  subcmd-util.h:18:17: error: '__no_instrument_function__' attribute applies only to functions
+
+The /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h
+file that includes linux/posix_types.h ends up getting the one in the kernel
+sources causing the breakage. Fix it.
+
+Test built tools/objtool/ too.
+
+Reported-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-8omchrcjcvlwoxxv6wrjehfh@git.kernel.org
+Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
+Link: https://lkml.kernel.org/n/tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/lib/subcmd/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 4b3f8407f8d5..a14ee4ed2c9f 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -798,7 +798,8 @@ static struct syscall_fmt {
- 	{ .name	    = "recvmsg",
- 	  .arg = { [2] = { .scnprintf = SCA_MSG_FLAGS, /* flags */ }, }, },
- 	{ .name	    = "renameat",
--	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
-+	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* olddirfd */ },
-+		   [2] = { .scnprintf = SCA_FDAT, /* newdirfd */ }, }, },
- 	{ .name	    = "renameat2",
- 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* olddirfd */ },
- 		   [2] = { .scnprintf = SCA_FDAT, /* newdirfd */ },
+diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+index 95563b8e1ad7..ed61fb3a46c0 100644
+--- a/tools/lib/subcmd/Makefile
++++ b/tools/lib/subcmd/Makefile
+@@ -36,8 +36,6 @@ endif
+ CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+ 
+ CFLAGS += -I$(srctree)/tools/include/
+-CFLAGS += -I$(srctree)/include/uapi
+-CFLAGS += -I$(srctree)/include
+ 
+ SUBCMD_IN := $(OUTPUT)libsubcmd-in.o
+ 
 -- 
 2.19.2
 
