@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FB2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBC0C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7143E20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B3EC20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YBDFvHX7"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sz6MESQF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeLRDm5 (ORCPT
+        id S1726803AbeLRDnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 22:42:57 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38256 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbeLRDmy (ORCPT
+        Mon, 17 Dec 2018 22:43:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38930 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbeLRDnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 22:42:54 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so7158215plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 19:42:53 -0800 (PST)
+        Mon, 17 Dec 2018 22:43:02 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so372285pfc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 19:43:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
-        b=YBDFvHX7AiucyPS8BT+C9ypYixQsdfJG7w9Nw/JM1sLJJBbysciZj38Z7NbumJjmEb
-         Zikib+uZNRRj8XAUHEFg6sQ+1yZbNOphofHiQavO4CeKVEb+FhcCnHL/mTqjVwpfNRtV
-         kUlMAkNyD3vs80tduMbIGmsdT92ra6ei0ckCg=
+        bh=p8+PRll/69hpVBI8tPhWaAoQEyS3IrjnhvvEZdMVHBc=;
+        b=Sz6MESQFeLz7vdepva0/s+KBta4BzPpTYsMOoTThD/2hAW5V+IzXPsDeB2T9gKRRGM
+         4EBP8RY/wXHE8/mtugnpRpxaSUrNb2hzhxlnlNnRLKuAuPTOgapfOwurVDS7pF0z7w+K
+         cYl4lvL/iSj+JotZctezEu14AoQyaD/d/FEWk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M9evsXiKq/f6/hJaxP4dc1I6TBIm55n2snnXtgBmQsE=;
-        b=sEtFs0bm3pLsB7flkWCyq6A/dGKBkAdfnPbhLvvcMQmatNchUHHGruJ4A0A/CodD0E
-         CwdT/VLJewI234k/dYCF+8Go0BSghl1/q7ZvyzbCk7LveIVk6MAXcXuxpeUKmYxSXgnb
-         69Z017dQRHdSAUp1bEl6LdAJ6GwX2ss70VMBre2lGdiXBnF3DQPAbbzwbeufP+1DaDuf
-         7htIgacQ3FHC0FMv1b6iIs0Al8EPt+W58t+fGcl+XxoDWuuoETfWiqAYy9b618XC5KhZ
-         tmr03VfZBdLsBY+YjngICDhyXcntoBwqZrhw9Gs9GFYsUv4e6M39yS5mddMdMgWDWgr2
-         661g==
-X-Gm-Message-State: AA+aEWY1Wi7d1djbqtHRMYDGnb+sGTFCDNqjhlyfEFPHBGd9R04thcfC
-        0NXF+Nusj1GppVj8vBwzD4BU
-X-Google-Smtp-Source: AFSGD/XHItxOIu1KkoZQlSL6eFA4WYQq8HdFiNJ7nJINZBrDQhCI33qZh6eC7nwl7lgfYaQ7/DXApQ==
-X-Received: by 2002:a17:902:4124:: with SMTP id e33mr14993867pld.236.1545104573365;
-        Mon, 17 Dec 2018 19:42:53 -0800 (PST)
+        bh=p8+PRll/69hpVBI8tPhWaAoQEyS3IrjnhvvEZdMVHBc=;
+        b=m3czWbeQttFx8VbAwmrxghDk7x8paaiJKCiCrRzDJUT0tqapySqR4yk7Q96x++LT0q
+         coL5xqYHUA3dtKSCa0tNqNwWooGINBu3l8V9SdnXQDqMCSoUuQAxhYz21WK6SgzNvF46
+         VajTNTidhTIS7BAtcyt4/aX3e66vfw8fLXCF5chxl8aO9+Qlcg/Kd5tbz5CXcnacF1n1
+         FyTE8l7/IyFKeGHIOPjiwXbQYCA//sUDEBESFm5RuMgwFhyW5KZAsbAzku+fWbAu/vwp
+         bjTM1fUPY/llv+L2arvOfXr5zd6U2x8lR8tngA2c8Fg3oxSb1x1Au72vFbjhRK8ytECo
+         jHCw==
+X-Gm-Message-State: AA+aEWYxn+Op5soSd/2bhI2QpvU+FGeOr0D0E0sbO4izLcoJIyCR5ezR
+        hQhz0M0MbKkyjM8906nom0xL
+X-Google-Smtp-Source: AFSGD/XSCShiBqWsD6aQOj+TE8YBK0+4tdEzHuDa630UDB+/aaLMMUNc6EVPbkJwdub5tT+XwkK/ig==
+X-Received: by 2002:a62:1043:: with SMTP id y64mr15467075pfi.78.1545104581361;
+        Mon, 17 Dec 2018 19:43:01 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id b202sm25255422pfb.88.2018.12.17.19.42.45
+        by smtp.gmail.com with ESMTPSA id b202sm25255422pfb.88.2018.12.17.19.42.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 19:42:52 -0800 (PST)
+        Mon, 17 Dec 2018 19:43:00 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         gregkh@linuxfoundation.org, jslaby@suse.com
@@ -62,9 +62,9 @@ Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
         amit.kucheria@linaro.org, linus.walleij@linaro.org,
         zhao_steven@263.net,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v5 07/11] ARM: dts: rda8810pl: Add timer support
-Date:   Tue, 18 Dec 2018 09:11:28 +0530
-Message-Id: <20181218034132.5070-8-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v5 08/11] dt-bindings: serial: Document RDA Micro UART
+Date:   Tue, 18 Dec 2018 09:11:29 +0530
+Message-Id: <20181218034132.5070-9-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181218034132.5070-1-manivannan.sadhasivam@linaro.org>
 References: <20181218034132.5070-1-manivannan.sadhasivam@linaro.org>
@@ -76,42 +76,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add timer support for RDA Micro RDA8810PL SoC.
+From: Andreas Färber <afaerber@suse.de>
+
+Add an initial binding for the UART in RDA Micro RDA8810PL SoC.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm/boot/dts/rda8810pl.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../bindings/serial/rda,8810pl-uart.txt         | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
 
-diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
-index 15547b138977..84baa4c0a14c 100644
---- a/arch/arm/boot/dts/rda8810pl.dtsi
-+++ b/arch/arm/boot/dts/rda8810pl.dtsi
-@@ -6,6 +6,8 @@
-  * Copyright (c) 2018 Manivannan Sadhasivam
-  */
- 
-+#include <dt-bindings/interrupt-controller/irq.h>
+diff --git a/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt b/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+new file mode 100644
+index 000000000000..a08df97a69e6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+@@ -0,0 +1,17 @@
++RDA Micro UART
 +
- / {
- 	compatible = "rda,8810pl";
- 	interrupt-parent = <&intc>;
-@@ -50,6 +52,14 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x20900000 0x100000>;
++Required properties:
++- compatible :  "rda,8810pl-uart" for RDA8810PL SoCs.
++- reg        :  Offset and length of the register set for the device.
++- interrupts :  Should contain UART interrupt.
++- clocks     :  Phandle to the input clock.
 +
-+		timer@10000 {
-+			compatible = "rda,8810pl-timer";
-+			reg = <0x10000 0x1000>;
-+			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
-+				     <17 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hwtimer", "ostimer";
++
++Example:
++
++		uart2: serial@20a90000 {
++			compatible = "rda,8810pl-uart";
++			reg = <0x20a90000 0x1000>;
++			interrupts = <11 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&uart_clk>;
 +		};
- 	};
- 
- 	apb@20a00000 {
 -- 
 2.17.1
 
