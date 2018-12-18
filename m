@@ -2,107 +2,189 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D5DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9E2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4565C217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BC77214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ccWKYLtG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbeLRJGg (ORCPT
+        id S1726458AbeLRJGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:06:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49004 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726422AbeLRJGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 04:06:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46655 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbeLRJGe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 04:06:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AD62FAC17;
-        Tue, 18 Dec 2018 09:06:32 +0000 (UTC)
-Subject: Re: [PATCH 06/14] mm, migrate: Immediately fail migration of a page
- with no migration handler
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20181214230310.572-1-mgorman@techsingularity.net>
- <20181214230310.572-7-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <0ef5c1d0-1853-8fdb-1a68-7482297cb802@suse.cz>
-Date:   Tue, 18 Dec 2018 10:06:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+Received: by mail-pl1-f193.google.com with SMTP id t13so7511805ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:06:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4yTV4X8CkEIiOkt+tdSxJrLNju+SrdagLpO1CMXTxP4=;
+        b=ccWKYLtGlWLvpkdaXxGtTR5xuXYyVmHwy0bt2P/DnBDwF2jM+msDmnBZom0ROAxvrB
+         o51hEdJAE3uXCCj6s/bNhmsBKYIvooGdzQA3ratqAFImk+dJmhZNdlCxi9akSYRgoSUl
+         I0ipY0rMojxaj+ejn98iF1oaoF1N9w13mwACs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4yTV4X8CkEIiOkt+tdSxJrLNju+SrdagLpO1CMXTxP4=;
+        b=IFBFX3V1zpRzxLuTIEeA8ynV2NaERKV+ptuF3uIQZYk4zwoXWjrvYD99ZFXqSVpqeG
+         rczfblD6cUX+Xt9ttdkupbKVN3G7cfxDH3WrK2/nzUAC+kvuKEiQrOfzFXn0DEDU47ZM
+         vfg4eL4xo6h8jFHnsMzZlGCy9S87sUtHdOeGXOKRhrB2b8g8a7fnYbrA7csaFOZIwbFR
+         AJUEdAztZi5VXLUWagya7vLO8GHcsLvAc6WpEAXvwDDKFRP6NgbsVLcduV6IgN3zu01+
+         ObRqOpnl2Qc4Wqmf2XrVoRZ+XL+NJ/pzLmA34ftnfHsNknxXasSBrfzjwrDFCVC9iehb
+         u2uA==
+X-Gm-Message-State: AA+aEWYgJi9Uo8FYWfpT2JhEt+ra9iLbz+tVSy5IYv8cJVTNFxjyB81b
+        fVSgDnJH6H+h9S4ZdzlOifoLpcRbcAU=
+X-Google-Smtp-Source: AFSGD/XHXjiQ6E2Yhc4deGZrCymQfyljuTUqvdqK8zdCxGhZyWZDR3bOYOwDXGVAYk7UabyW6SrfIA==
+X-Received: by 2002:a17:902:4523:: with SMTP id m32mr15614593pld.53.1545123993221;
+        Tue, 18 Dec 2018 01:06:33 -0800 (PST)
+Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
+        by smtp.gmail.com with ESMTPSA id y71sm31698299pfi.123.2018.12.18.01.06.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 01:06:32 -0800 (PST)
+From:   Cheng-Yi Chiang <cychiang@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        dgreid@chromium.org, tzungbi@chromium.org,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>
+Subject: [RESEND v2] mfd: cros_ec: Add commands to control codec
+Date:   Tue, 18 Dec 2018 17:06:26 +0800
+Message-Id: <20181218090626.46625-1-cychiang@chromium.org>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 MIME-Version: 1.0
-In-Reply-To: <20181214230310.572-7-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/18 12:03 AM, Mel Gorman wrote:
-> Pages with no migration handler use a fallback hander which sometimes
-> works and sometimes persistently fails such as blockdev pages. Migration
-> will retry a number of times on these persistent pages which is wasteful
-> during compaction. This patch will fail migration immediately unless the
-> caller is in MIGRATE_SYNC mode which indicates the caller is willing to
-> wait while being persistent.
+Add EC host commands to control codec on EC.
 
-Right.
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+---
+ include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-> This is not expected to help THP allocation success rates but it does
-> reduce latencies slightly.
-> 
-> 1-socket thpfioscale
->                                     4.20.0-rc6             4.20.0-rc6
->                                noreserved-v1r4          failfast-v1r4
-> Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
-> Amean     fault-both-3      2276.15 (   0.00%)     3867.54 * -69.92%*
-
-This is rather weird.
-
-> Amean     fault-both-5      4992.20 (   0.00%)     5313.20 (  -6.43%)
-> Amean     fault-both-7      7373.30 (   0.00%)     7039.11 (   4.53%)
-> Amean     fault-both-12    11911.52 (   0.00%)    11328.29 (   4.90%)
-> Amean     fault-both-18    17209.42 (   0.00%)    16455.34 (   4.38%)
-> Amean     fault-both-24    20943.71 (   0.00%)    20448.94 (   2.36%)
-> Amean     fault-both-30    22703.00 (   0.00%)    21655.07 (   4.62%)
-> Amean     fault-both-32    22461.41 (   0.00%)    21415.35 (   4.66%)
-> 
-> The 2-socket results are not materially different. Scan rates are
-> similar as expected.
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  mm/migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index df17a710e2c7..0e27a10429e2 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -885,7 +885,7 @@ static int fallback_migrate_page(struct address_space *mapping,
->  	 */
->  	if (page_has_private(page) &&
->  	    !try_to_release_page(page, GFP_KERNEL))
-> -		return -EAGAIN;
-> +		return mode == MIGRATE_SYNC ? -EAGAIN : -EBUSY;
->  
->  	return migrate_page(mapping, newpage, page, mode);
->  }
-> 
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index 9a9631f0559e2..fc91082d4c357 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -2790,6 +2790,100 @@ struct ec_response_battery_vendor_param {
+ 	uint32_t value;
+ } __packed;
+ 
++/*****************************************************************************/
++/* Commands for I2S recording on audio codec. */
++
++#define EC_CMD_CODEC_I2S 0x00BC
++
++enum ec_codec_i2s_subcmd {
++	EC_CODEC_SET_SAMPLE_DEPTH = 0x0,
++	EC_CODEC_SET_GAIN = 0x1,
++	EC_CODEC_GET_GAIN = 0x2,
++	EC_CODEC_I2S_ENABLE = 0x3,
++	EC_CODEC_I2S_SET_CONFIG = 0x4,
++	EC_CODEC_I2S_SET_TDM_CONFIG = 0x5,
++	EC_CODEC_I2S_SET_BCLK = 0x6,
++};
++
++enum ec_sample_depth_value {
++	EC_CODEC_SAMPLE_DEPTH_16 = 0,
++	EC_CODEC_SAMPLE_DEPTH_24 = 1,
++};
++
++enum ec_i2s_config {
++	EC_DAI_FMT_I2S = 0,
++	EC_DAI_FMT_RIGHT_J = 1,
++	EC_DAI_FMT_LEFT_J = 2,
++	EC_DAI_FMT_PCM_A = 3,
++	EC_DAI_FMT_PCM_B = 4,
++	EC_DAI_FMT_PCM_TDM = 5,
++};
++
++struct ec_param_codec_i2s {
++	/*
++	 * enum ec_codec_i2s_subcmd
++	 */
++	uint8_t cmd;
++	union {
++		/*
++		 * EC_CODEC_SET_SAMPLE_DEPTH
++		 * Value should be one of ec_sample_depth_value.
++		 */
++		uint8_t depth;
++
++		/*
++		 * EC_CODEC_SET_GAIN
++		 * Value should be 0~43 for both channels.
++		 */
++		struct ec_param_codec_i2s_set_gain {
++			uint8_t left;
++			uint8_t right;
++		} __packed gain;
++
++		/*
++		 * EC_CODEC_I2S_ENABLE
++		 * 1 to enable, 0 to disable.
++		 */
++		uint8_t i2s_enable;
++
++		/*
++		 * EC_CODEC_I2S_SET_COFNIG
++		 * Value should be one of ec_i2s_config.
++		 */
++		uint8_t i2s_config;
++
++		/*
++		 * EC_CODEC_I2S_SET_TDM_CONFIG
++		 * Value should be one of ec_i2s_config.
++		 */
++		struct ec_param_codec_i2s_tdm {
++			/*
++			 * 0 to 496
++			 */
++			int16_t ch0_delay;
++			/*
++			 * -1 to 496
++			 */
++			int16_t ch1_delay;
++			uint8_t adjacent_to_ch0;
++			uint8_t adjacent_to_ch1;
++		} __packed tdm_param;
++
++		/*
++		 * EC_CODEC_I2S_SET_BCLK
++		 */
++		uint32_t bclk;
++	};
++} __packed;
++
++/*
++ * For subcommand EC_CODEC_GET_GAIN.
++ */
++struct ec_response_codec_gain {
++	uint8_t left;
++	uint8_t right;
++} __packed;
++
+ /*****************************************************************************/
+ /* System commands */
+ 
+-- 
+2.20.1.415.g653613c723-goog
 
