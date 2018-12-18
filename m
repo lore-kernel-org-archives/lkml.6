@@ -7,46 +7,54 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F565C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69DBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E937921873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7816420815
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151330;
-	bh=D2eSeEIjVeqaEc/zNGqENmuVPLlBSusdkM015X+uJxc=;
+	s=default; t=1545151334;
+	bh=77zp0ETMe/MK+/zMC9kzOhxSn/RRH5cMgIJOvSkPfYM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bNMPtNiBJknuK6J7KOerD09BFMKzLneaPt8yF8XI6sBJEmSed0dNlJrav9pn2d8BO
-	 C/3meq6GVb+Q6UIVYmwDSCqVFpKl3pfTc+rKuJcP/nymKtqYcdpc/wKYqdCYtOqrCw
-	 AhSl9EDfLMjVYW96BuZ8RpCRrzGG3et8YoDKt44A=
+	b=cX/NqHdKb7/qzGmwxAltfEyQQdm5QFk9djKH7ukSfdS/Fz6Ul5p7YW9sevqeJfyGc
+	 MDTG7viZBpgbXqrrFg+ADNj8U0rDF0TB+uFQp9kGSRqHNnhl5PG+Yr6xttt/r/Jtcc
+	 +Jqf2fKt5FgcXEZ4l6moMXeUXgKM8HMmp36Do5jk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbeLRQmI (ORCPT
+        id S1727723AbeLRQmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:42:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39764 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:42:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeLRQmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:42:06 -0500
+        id S1727708AbeLRQmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:42:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B5AF21873;
-        Tue, 18 Dec 2018 16:42:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7139218A2;
+        Tue, 18 Dec 2018 16:42:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151325;
-        bh=D2eSeEIjVeqaEc/zNGqENmuVPLlBSusdkM015X+uJxc=;
+        s=default; t=1545151327;
+        bh=77zp0ETMe/MK+/zMC9kzOhxSn/RRH5cMgIJOvSkPfYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sTls1la8vBX2fxuBfUtLC26QoCgwyrlbCHMCzzI89VLewhAIccCI78//PSOPL2Wg3
-         Xu6Z6qkcLH92lB3J7R93ubmgP3HruU+yls3MveMf8f0Sjw4bqrFH1Q0b8EDPyQ/0RA
-         EDXK7IHpANGpD+BxfRVXV/yr6XwJa49iFBf6g8aM=
+        b=d+JxfDWyLGubUFEawgPL8GNfigYdnu+GJdonfzBgKni9A0TCYr8Vtgb3xyk+mXQb2
+         8lIeoO7Vhn3AS3mAMqNS7MEwV6b9uUG2ak6wwS3N4JIKUMtZEg21PTbZX6VBIAnxFd
+         4qNEdDljsZY3LIRbJlMKZB7W/3axh3Qf83NiLeJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.19 43/44] dm zoned: Fix target BIO completion handling
-Date:   Tue, 18 Dec 2018 17:39:55 +0100
-Message-Id: <20181218163932.444455036@linuxfoundation.org>
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Gi-Oh Kim <gi-oh.kim@cloud.ionos.com>
+Subject: [PATCH 4.19 44/44] x86/build: Fix compiler support check for CONFIG_RETPOLINE
+Date:   Tue, 18 Dec 2018 17:39:56 +0100
+Message-Id: <20181218163932.542245832@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,261 +73,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-commit d57f9da890696af1484f4a47f7f123560197865a upstream.
+commit 25896d073d8a0403b07e6dec56f58e6c33678207 upstream.
 
-struct bioctx includes the ref refcount_t to track the number of I/O
-fragments used to process a target BIO as well as ensure that the zone
-of the BIO is kept in the active state throughout the lifetime of the
-BIO. However, since decrementing of this reference count is done in the
-target .end_io method, the function bio_endio() must be called multiple
-times for read and write target BIOs, which causes problems with the
-value of the __bi_remaining struct bio field for chained BIOs (e.g. the
-clone BIO passed by dm core is large and splits into fragments by the
-block layer), resulting in incorrect values and inconsistencies with the
-BIO_CHAIN flag setting. This is turn triggers the BUG_ON() call:
+It is troublesome to add a diagnostic like this to the Makefile
+parse stage because the top-level Makefile could be parsed with
+a stale include/config/auto.conf.
 
-BUG_ON(atomic_read(&bio->__bi_remaining) <= 0);
+Once you are hit by the error about non-retpoline compiler, the
+compilation still breaks even after disabling CONFIG_RETPOLINE.
 
-in bio_remaining_done() called from bio_endio().
+The easiest fix is to move this check to the "archprepare" like
+this commit did:
 
-Fix this ensuring that bio_endio() is called only once for any target
-BIO by always using internal clone BIOs for processing any read or
-write target BIO. This allows reference counting using the target BIO
-context counter to trigger the target BIO completion bio_endio() call
-once all data, metadata and other zone work triggered by the BIO
-complete.
+  829fe4aa9ac1 ("x86: Allow generating user-space headers without a compiler")
 
-Overall, this simplifies the code too as the target .end_io becomes
-unnecessary and differences between read and write BIO issuing and
-completion processing disappear.
-
-Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
-Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Reported-by: Meelis Roos <mroos@linux.ee>
+Tested-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+Link: http://lkml.kernel.org/r/1543991239-18476-1-git-send-email-yamada.masahiro@socionext.com
+Link: https://lkml.org/lkml/2018/12/4/206
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Gi-Oh Kim <gi-oh.kim@cloud.ionos.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-target.c |  122 +++++++++++++------------------------------
- 1 file changed, 38 insertions(+), 84 deletions(-)
+ arch/x86/Makefile |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/md/dm-zoned-target.c
-+++ b/drivers/md/dm-zoned-target.c
-@@ -20,7 +20,6 @@ struct dmz_bioctx {
- 	struct dm_zone		*zone;
- 	struct bio		*bio;
- 	atomic_t		ref;
--	blk_status_t		status;
- };
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -223,9 +223,6 @@ KBUILD_CFLAGS += -fno-asynchronous-unwin
  
- /*
-@@ -78,65 +77,66 @@ static inline void dmz_bio_endio(struct
- {
- 	struct dmz_bioctx *bioctx = dm_per_bio_data(bio, sizeof(struct dmz_bioctx));
+ # Avoid indirect branches in kernel to deal with Spectre
+ ifdef CONFIG_RETPOLINE
+-ifeq ($(RETPOLINE_CFLAGS),)
+-  $(error You are building kernel with non-retpoline compiler, please update your compiler.)
+-endif
+   KBUILD_CFLAGS += $(RETPOLINE_CFLAGS)
+ endif
  
--	if (bioctx->status == BLK_STS_OK && status != BLK_STS_OK)
--		bioctx->status = status;
--	bio_endio(bio);
-+	if (status != BLK_STS_OK && bio->bi_status == BLK_STS_OK)
-+		bio->bi_status = status;
-+
-+	if (atomic_dec_and_test(&bioctx->ref)) {
-+		struct dm_zone *zone = bioctx->zone;
-+
-+		if (zone) {
-+			if (bio->bi_status != BLK_STS_OK &&
-+			    bio_op(bio) == REQ_OP_WRITE &&
-+			    dmz_is_seq(zone))
-+				set_bit(DMZ_SEQ_WRITE_ERR, &zone->flags);
-+			dmz_deactivate_zone(zone);
-+		}
-+		bio_endio(bio);
-+	}
- }
+@@ -303,6 +300,13 @@ ifndef CC_HAVE_ASM_GOTO
+ 	@echo Compiler lacks asm-goto support.
+ 	@exit 1
+ endif
++ifdef CONFIG_RETPOLINE
++ifeq ($(RETPOLINE_CFLAGS),)
++	@echo "You are building kernel with non-retpoline compiler." >&2
++	@echo "Please update your compiler." >&2
++	@false
++endif
++endif
  
- /*
-- * Partial clone read BIO completion callback. This terminates the
-+ * Completion callback for an internally cloned target BIO. This terminates the
-  * target BIO when there are no more references to its context.
-  */
--static void dmz_read_bio_end_io(struct bio *bio)
-+static void dmz_clone_endio(struct bio *clone)
- {
--	struct dmz_bioctx *bioctx = bio->bi_private;
--	blk_status_t status = bio->bi_status;
-+	struct dmz_bioctx *bioctx = clone->bi_private;
-+	blk_status_t status = clone->bi_status;
- 
--	bio_put(bio);
-+	bio_put(clone);
- 	dmz_bio_endio(bioctx->bio, status);
- }
- 
- /*
-- * Issue a BIO to a zone. The BIO may only partially process the
-+ * Issue a clone of a target BIO. The clone may only partially process the
-  * original target BIO.
-  */
--static int dmz_submit_read_bio(struct dmz_target *dmz, struct dm_zone *zone,
--			       struct bio *bio, sector_t chunk_block,
--			       unsigned int nr_blocks)
-+static int dmz_submit_bio(struct dmz_target *dmz, struct dm_zone *zone,
-+			  struct bio *bio, sector_t chunk_block,
-+			  unsigned int nr_blocks)
- {
- 	struct dmz_bioctx *bioctx = dm_per_bio_data(bio, sizeof(struct dmz_bioctx));
--	sector_t sector;
- 	struct bio *clone;
- 
--	/* BIO remap sector */
--	sector = dmz_start_sect(dmz->metadata, zone) + dmz_blk2sect(chunk_block);
--
--	/* If the read is not partial, there is no need to clone the BIO */
--	if (nr_blocks == dmz_bio_blocks(bio)) {
--		/* Setup and submit the BIO */
--		bio->bi_iter.bi_sector = sector;
--		atomic_inc(&bioctx->ref);
--		generic_make_request(bio);
--		return 0;
--	}
--
--	/* Partial BIO: we need to clone the BIO */
- 	clone = bio_clone_fast(bio, GFP_NOIO, &dmz->bio_set);
- 	if (!clone)
- 		return -ENOMEM;
- 
--	/* Setup the clone */
--	clone->bi_iter.bi_sector = sector;
-+	bio_set_dev(clone, dmz->dev->bdev);
-+	clone->bi_iter.bi_sector =
-+		dmz_start_sect(dmz->metadata, zone) + dmz_blk2sect(chunk_block);
- 	clone->bi_iter.bi_size = dmz_blk2sect(nr_blocks) << SECTOR_SHIFT;
--	clone->bi_end_io = dmz_read_bio_end_io;
-+	clone->bi_end_io = dmz_clone_endio;
- 	clone->bi_private = bioctx;
- 
- 	bio_advance(bio, clone->bi_iter.bi_size);
- 
--	/* Submit the clone */
- 	atomic_inc(&bioctx->ref);
- 	generic_make_request(clone);
- 
-+	if (bio_op(bio) == REQ_OP_WRITE && dmz_is_seq(zone))
-+		zone->wp_block += nr_blocks;
-+
- 	return 0;
- }
- 
-@@ -214,7 +214,7 @@ static int dmz_handle_read(struct dmz_ta
- 		if (nr_blocks) {
- 			/* Valid blocks found: read them */
- 			nr_blocks = min_t(unsigned int, nr_blocks, end_block - chunk_block);
--			ret = dmz_submit_read_bio(dmz, rzone, bio, chunk_block, nr_blocks);
-+			ret = dmz_submit_bio(dmz, rzone, bio, chunk_block, nr_blocks);
- 			if (ret)
- 				return ret;
- 			chunk_block += nr_blocks;
-@@ -229,25 +229,6 @@ static int dmz_handle_read(struct dmz_ta
- }
- 
- /*
-- * Issue a write BIO to a zone.
-- */
--static void dmz_submit_write_bio(struct dmz_target *dmz, struct dm_zone *zone,
--				 struct bio *bio, sector_t chunk_block,
--				 unsigned int nr_blocks)
--{
--	struct dmz_bioctx *bioctx = dm_per_bio_data(bio, sizeof(struct dmz_bioctx));
--
--	/* Setup and submit the BIO */
--	bio_set_dev(bio, dmz->dev->bdev);
--	bio->bi_iter.bi_sector = dmz_start_sect(dmz->metadata, zone) + dmz_blk2sect(chunk_block);
--	atomic_inc(&bioctx->ref);
--	generic_make_request(bio);
--
--	if (dmz_is_seq(zone))
--		zone->wp_block += nr_blocks;
--}
--
--/*
-  * Write blocks directly in a data zone, at the write pointer.
-  * If a buffer zone is assigned, invalidate the blocks written
-  * in place.
-@@ -265,7 +246,9 @@ static int dmz_handle_direct_write(struc
- 		return -EROFS;
- 
- 	/* Submit write */
--	dmz_submit_write_bio(dmz, zone, bio, chunk_block, nr_blocks);
-+	ret = dmz_submit_bio(dmz, zone, bio, chunk_block, nr_blocks);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Validate the blocks in the data zone and invalidate
-@@ -301,7 +284,9 @@ static int dmz_handle_buffered_write(str
- 		return -EROFS;
- 
- 	/* Submit write */
--	dmz_submit_write_bio(dmz, bzone, bio, chunk_block, nr_blocks);
-+	ret = dmz_submit_bio(dmz, bzone, bio, chunk_block, nr_blocks);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Validate the blocks in the buffer zone
-@@ -600,7 +585,6 @@ static int dmz_map(struct dm_target *ti,
- 	bioctx->zone = NULL;
- 	bioctx->bio = bio;
- 	atomic_set(&bioctx->ref, 1);
--	bioctx->status = BLK_STS_OK;
- 
- 	/* Set the BIO pending in the flush list */
- 	if (!nr_sectors && bio_op(bio) == REQ_OP_WRITE) {
-@@ -624,35 +608,6 @@ static int dmz_map(struct dm_target *ti,
- }
- 
- /*
-- * Completed target BIO processing.
-- */
--static int dmz_end_io(struct dm_target *ti, struct bio *bio, blk_status_t *error)
--{
--	struct dmz_bioctx *bioctx = dm_per_bio_data(bio, sizeof(struct dmz_bioctx));
--
--	if (bioctx->status == BLK_STS_OK && *error)
--		bioctx->status = *error;
--
--	if (!atomic_dec_and_test(&bioctx->ref))
--		return DM_ENDIO_INCOMPLETE;
--
--	/* Done */
--	bio->bi_status = bioctx->status;
--
--	if (bioctx->zone) {
--		struct dm_zone *zone = bioctx->zone;
--
--		if (*error && bio_op(bio) == REQ_OP_WRITE) {
--			if (dmz_is_seq(zone))
--				set_bit(DMZ_SEQ_WRITE_ERR, &zone->flags);
--		}
--		dmz_deactivate_zone(zone);
--	}
--
--	return DM_ENDIO_DONE;
--}
--
--/*
-  * Get zoned device information.
-  */
- static int dmz_get_zoned_device(struct dm_target *ti, char *path)
-@@ -947,7 +902,6 @@ static struct target_type dmz_type = {
- 	.ctr		 = dmz_ctr,
- 	.dtr		 = dmz_dtr,
- 	.map		 = dmz_map,
--	.end_io		 = dmz_end_io,
- 	.io_hints	 = dmz_io_hints,
- 	.prepare_ioctl	 = dmz_prepare_ioctl,
- 	.postsuspend	 = dmz_suspend,
+ archclean:
+ 	$(Q)rm -rf $(objtree)/arch/i386
 
 
