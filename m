@@ -2,112 +2,176 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12151C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1CCC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A30218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:10:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545167457;
-	bh=4TSoy7am50zcJFdCj0qlkmFgh7ve6nj0hZ7RxM5K9Po=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=DTh+pKER1qNtR7x3SBWAqYpaVrjGgQfyhS9pWYJUhl5WTwrIBc+Pghc5c4P3k/Cn9
-	 gRjCAe7iDgNpiYH1K5Hzze3uLI5vKTQNttu7N0gQl316IN3nVUFE8h1gbizfDGI6lf
-	 jJGkLOMjEJsKuGL+Fh+qxGgTs8x5r/CW4hl47rgo=
+	by mail.kernel.org (Postfix) with ESMTP id 8700A217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:11:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbeLRVK4 (ORCPT
+        id S1726868AbeLRVLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:10:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56964 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 16:11:45 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:43264 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbeLRVK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:10:56 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD82A218A4;
-        Tue, 18 Dec 2018 21:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545167455;
-        bh=4TSoy7am50zcJFdCj0qlkmFgh7ve6nj0hZ7RxM5K9Po=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IJBUb327rfAXUE1s+r/hAEIDd0rS0Z5jodnjPsyMu1eVoUNReMdMsntsciGu5MBVm
-         6sP95GSgyvAslUH5JBJOpIejDZ0NZjD/6JcqsBpmWJanoryEpBwjdZpvliqtTHMMSu
-         3/Hb6tfjHnIRkRsFfTrsMMSEP4rUGZLLZptABCLE=
-Received: by mail-qk1-f174.google.com with SMTP id q70so10401527qkh.6;
-        Tue, 18 Dec 2018 13:10:55 -0800 (PST)
-X-Gm-Message-State: AA+aEWbQ64PIJnPiM57nsLaTsj3Bf+9yOxh85h224RePJzOGn5gmNDRm
-        9KqT6xQqXNDYGbW9ooVkcegJcHIFRESKRJ16GA==
-X-Google-Smtp-Source: AFSGD/XDMMsXDqTSKfsppkIWD2amigNADiMJP2tAz6O2uo7RqRXdFgiaPggf87D75bHQhJxasdYd+0hDUMxCGYVSHXU=
-X-Received: by 2002:ae9:ef14:: with SMTP id d20mr18087864qkg.147.1545167454899;
- Tue, 18 Dec 2018 13:10:54 -0800 (PST)
+        id S1726570AbeLRVLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:11:45 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BE46F20824; Tue, 18 Dec 2018 22:11:41 +0100 (CET)
+Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8F605207BE;
+        Tue, 18 Dec 2018 22:11:31 +0100 (CET)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] rtc: enforce rtc_timer_init private_data type
+Date:   Tue, 18 Dec 2018 22:11:26 +0100
+Message-Id: <20181218211126.12613-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
- <20181218040702.29231-4-andrew.smirnov@gmail.com> <20181218151533.GA2922@bogus>
- <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB5533533242C036C5CF6352BAEEBD0@VI1PR04MB5533.eurprd04.prod.outlook.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 18 Dec 2018 15:10:43 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJb24ZpM7qQfy_F7RUVEGyceBAXOndbZcTMh3a__k38UQ@mail.gmail.com>
-Message-ID: <CAL_JsqJb24ZpM7qQfy_F7RUVEGyceBAXOndbZcTMh3a__k38UQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, devicetree@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 12:09 PM Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
->
-> On 12/18/2018 5:15 PM, Rob Herring wrote:
-> > On Mon, Dec 17, 2018 at 08:07:02PM -0800, Andrey Smirnov wrote:
-> >> Add code needed to support i.MX8MQ variant.
-> >>
-> >> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> >> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
->
-> >> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> >> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> >>
-> >> +Additional required properties for imx8mq-pcie:
-> >> +- fsl,controller-id: Logical ID of a given PCIE controller. PCIE1 is 0, PCIE2 is 1;
-> >> +
-> >
-> > Remove this.
-> >
-> > If GPR register offset is what you need, then put that into DT.
-> > Typically, we'd have a property with iomuxc phandle and offset.
->
-> This series initially added explicit offsets but I suggested a single
-> "controller-id" because:
->   * There are multiple bit and byte offsets
->   * Other imx8 SOCs also have 2x pcie with other bit/byte offsets
->
-> Hiding this behind a compatible string and single "controller-id" seem
-> preferable to elaborating register maps in dt bindings. It also makes
-> upgrades simpler: if features are added which use other bits there is no
-> need to describe them in DT and deal with compatibility headaches.
+All the remaining users of rtc_timers are passing the rtc_device as private
+data. Enforce that and rename private_data to rtc.
 
-You already have an id for the controllers: the address. Use that if
-you don't want to put the register offsets in DT.
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/class.c     |  4 ++--
+ drivers/rtc/interface.c | 19 +++++++++----------
+ include/linux/rtc.h     | 14 ++++++++------
+ 3 files changed, 19 insertions(+), 18 deletions(-)
 
-Rob
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index 6d364085bd86..8d9b65d54f4f 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -178,9 +178,9 @@ static struct rtc_device *rtc_allocate_device(void)
+ 	timerqueue_init_head(&rtc->timerqueue);
+ 	INIT_WORK(&rtc->irqwork, rtc_timer_do_work);
+ 	/* Init aie timer */
+-	rtc_timer_init(&rtc->aie_timer, rtc_aie_update_irq, (void *)rtc);
++	rtc_timer_init(&rtc->aie_timer, rtc_aie_update_irq, rtc);
+ 	/* Init uie timer */
+-	rtc_timer_init(&rtc->uie_rtctimer, rtc_uie_update_irq, (void *)rtc);
++	rtc_timer_init(&rtc->uie_rtctimer, rtc_uie_update_irq, rtc);
+ 	/* Init pie timer */
+ 	hrtimer_init(&rtc->pie_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 	rtc->pie_timer.function = rtc_pie_update_irq;
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index e8d77b1eaeb2..98d9c87b0d1b 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -609,26 +609,24 @@ void rtc_handle_legacy_irq(struct rtc_device *rtc, int num, int mode)
+ 
+ /**
+  * rtc_aie_update_irq - AIE mode rtctimer hook
+- * @private: pointer to the rtc_device
++ * @rtc: pointer to the rtc_device
+  *
+  * This functions is called when the aie_timer expires.
+  */
+-void rtc_aie_update_irq(void *private)
++void rtc_aie_update_irq(struct rtc_device *rtc)
+ {
+-	struct rtc_device *rtc = (struct rtc_device *)private;
+ 	rtc_handle_legacy_irq(rtc, 1, RTC_AF);
+ }
+ 
+ 
+ /**
+  * rtc_uie_update_irq - UIE mode rtctimer hook
+- * @private: pointer to the rtc_device
++ * @rtc: pointer to the rtc_device
+  *
+  * This functions is called when the uie_timer expires.
+  */
+-void rtc_uie_update_irq(void *private)
++void rtc_uie_update_irq(struct rtc_device *rtc)
+ {
+-	struct rtc_device *rtc = (struct rtc_device *)private;
+ 	rtc_handle_legacy_irq(rtc, 1,  RTC_UF);
+ }
+ 
+@@ -908,7 +906,7 @@ void rtc_timer_do_work(struct work_struct *work)
+ 		trace_rtc_timer_dequeue(timer);
+ 		timer->enabled = 0;
+ 		if (timer->func)
+-			timer->func(timer->private_data);
++			timer->func(timer->rtc);
+ 
+ 		trace_rtc_timer_fired(timer);
+ 		/* Re-add/fwd periodic timers */
+@@ -955,16 +953,17 @@ void rtc_timer_do_work(struct work_struct *work)
+ /* rtc_timer_init - Initializes an rtc_timer
+  * @timer: timer to be intiialized
+  * @f: function pointer to be called when timer fires
+- * @data: private data passed to function pointer
++ * @rtc: pointer to the rtc_device
+  *
+  * Kernel interface to initializing an rtc_timer.
+  */
+-void rtc_timer_init(struct rtc_timer *timer, void (*f)(void *p), void *data)
++void rtc_timer_init(struct rtc_timer *timer, void (*f)(struct rtc_device *r),
++		    struct rtc_device *rtc)
+ {
+ 	timerqueue_init(&timer->node);
+ 	timer->enabled = 0;
+ 	timer->func = f;
+-	timer->private_data = data;
++	timer->rtc = rtc;
+ }
+ 
+ /* rtc_timer_start - Sets an rtc_timer to fire in the future
+diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+index 58147b057acd..c1089fe5344a 100644
+--- a/include/linux/rtc.h
++++ b/include/linux/rtc.h
+@@ -87,15 +87,16 @@ struct rtc_class_ops {
+ 	int (*set_offset)(struct device *, long offset);
+ };
+ 
++struct rtc_device;
++
+ struct rtc_timer {
+ 	struct timerqueue_node node;
+ 	ktime_t period;
+-	void (*func)(void *private_data);
+-	void *private_data;
++	void (*func)(struct rtc_device *rtc);
++	struct rtc_device *rtc;
+ 	int enabled;
+ };
+ 
+-
+ /* flags */
+ #define RTC_DEV_BUSY 0
+ 
+@@ -197,11 +198,12 @@ extern int rtc_dev_update_irq_enable_emul(struct rtc_device *rtc,
+ 						unsigned int enabled);
+ 
+ void rtc_handle_legacy_irq(struct rtc_device *rtc, int num, int mode);
+-void rtc_aie_update_irq(void *private);
+-void rtc_uie_update_irq(void *private);
++void rtc_aie_update_irq(struct rtc_device *rtc);
++void rtc_uie_update_irq(struct rtc_device *rtc);
+ enum hrtimer_restart rtc_pie_update_irq(struct hrtimer *timer);
+ 
+-void rtc_timer_init(struct rtc_timer *timer, void (*f)(void *p), void *data);
++void rtc_timer_init(struct rtc_timer *timer, void (*f)(struct rtc_device *r),
++		    struct rtc_device *rtc);
+ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer *timer,
+ 		    ktime_t expires, ktime_t period);
+ void rtc_timer_cancel(struct rtc_device *rtc, struct rtc_timer *timer);
+-- 
+2.20.0
+
