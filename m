@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6860DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A1AC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E11F21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F8221871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545165315;
-	bh=wNXpEvHfF8L0Pgc8OIMtZCLN2O99PXMpLp2xLuYBUGw=;
+	s=default; t=1545165319;
+	bh=EkyHHZ1S8VTPJzcnInoUl/2fIwZOGTZcXHSRkuDRTSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=TRgUqhwTgbdMnbkOqJAmyRugVOqLp6+3X//0j7P2hXjK0KdoJtWv9f8LO1ElWbugR
-	 TH/qheb634F6GKrqHlwb7PS8c9DoJWwBN+w6IXEAP7iX8tzze26UNWLG81UaOiajIs
-	 3FnMDrMKFfcGaSIUsHP9Y4rWdsNW0qof8/+BHsm4=
+	b=CocclQql/rtYVAK2BYbJKu74rkNXDv59zX9+DQgeby6eq9sRGHG6/YuF2Q8Qz58yE
+	 h6Zl72daR0neNw2LL8NTXIBbvYZQm3msTXQAXb2GtTNilZKv0rxdmq9ajAaY49AITs
+	 bKaBenFsTIQ8tmBr6m2Ro2CpqKIL5trNuZWCRjeg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbeLRUfO (ORCPT
+        id S1727718AbeLRUfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:35:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727640AbeLRUfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 15:35:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727640AbeLRUfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:35:01 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020D321871;
-        Tue, 18 Dec 2018 20:35:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BC4D218AD;
+        Tue, 18 Dec 2018 20:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545165306;
-        bh=wNXpEvHfF8L0Pgc8OIMtZCLN2O99PXMpLp2xLuYBUGw=;
+        s=default; t=1545165300;
+        bh=EkyHHZ1S8VTPJzcnInoUl/2fIwZOGTZcXHSRkuDRTSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=voO1BNulQsc5tWe1m0nyWg9p+y7EZfU4cIZlei8VUAw9vG9or4p5N1kreF1c90d55
-         1L68kYmJ6ruUUntsMF2dIHbq4CPXtq4QdMxXRu0vEKjGkzj8MBpzbUczB1GlF5/zJn
-         4lxiMwtGdNZWZWTvFj9uRpgkCx8Rbn5b1TGbnOpA=
+        b=xloDFwqq580scuety3f+OAmUe+RanD3jjnDBoRtsHQNhTBskIRkEoNxMw0HDHGjqN
+         bePKEfshBdtpimmQCGZyhZzGJPT7royqhqEMWs0xw8IhNIOz2SNKl1gWGiJ9SSnh53
+         TaKq1pxLgeDBBAzuakYYq70mHl93l+XsZb0jTpiM=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v9 15/15] tracing: Add hist trigger action 'expected fail' test case
-Date:   Tue, 18 Dec 2018 14:34:14 -0600
-Message-Id: <aabc22ffe65429fa7770e7f789ffba4af5d7a117.1545161056.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v9 11/15] tracing: Add SPDX license GPL-2.0 license identifier to inter-event testcases
+Date:   Tue, 18 Dec 2018 14:34:10 -0600
+Message-Id: <94f5be2761c937c11fa9cf5fc5d13a36e5cc469b.1545161056.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
 References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
@@ -63,51 +63,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a test case verifying that basic action combinations fail as
-expected.
+Apparently this directory was missed in the license cleanup process -
+add the missing identifiers to the trigger/inter-event test cases.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- .../inter-event/trigger-action-hist-xfail.tc       | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+ .../ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc  | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc  | 1 +
+ .../test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc      | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc    | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc     | 1 +
+ .../test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc      | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc       | 1 +
+ .../test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc   | 1 +
+ 8 files changed, 8 insertions(+)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
-new file mode 100644
-index 000000000000..1221240f8cf6
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
-@@ -0,0 +1,30 @@
-+#!/bin/sh
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
+index 401104344593..9912616a8672 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
 +# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test inter-event histogram trigger expected fail actions
-+
-+fail() { #msg
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f snapshot ]; then
-+    echo "snapshot is not supported"
-+    exit_unsupported
-+fi
-+
-+grep -q "snapshot()" README || exit_unsupported # version issue
-+
-+echo "Test expected snapshot action failure"
-+
-+echo 'hist:keys=comm:onmatch(sched.sched_wakeup).snapshot()' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger && exit_fail
-+
-+echo "Test expected save action failure"
-+
-+echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger && exit_fail
-+
-+exit_xfail
+ # description: event trigger - test extended error support
+ 
+ 
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
+index f59b2a9a1f22..77be6e1f6e7b 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test field variable support
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
+index 524d9ce361e2..f3eb8aacec0e 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event combined histogram trigger
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
+index 4ddc546771b5..d281f056f980 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test multiple actions on hist trigger
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
+index 39fb65b0cd9f..a708f0e7858a 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event histogram trigger onmatch action
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
+index 81ab3939c96a..dfce6932d8be 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event histogram trigger onmatch-onmax action
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
+index 1180ab5f0845..0035995c2194 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event histogram trigger onmax action
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
+index 41128219231a..df44b14724a4 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test synthetic event create remove
+ 
+ fail() { #msg
 -- 
 2.14.1
 
