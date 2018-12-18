@@ -2,162 +2,166 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FCAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B717DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793E021852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B91D21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:03:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DFFe5goN"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tftRytD/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbeLRPDs (ORCPT
+        id S1726930AbeLRPDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:03:48 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37564 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeLRPDr (ORCPT
+        Tue, 18 Dec 2018 10:03:52 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35566 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726575AbeLRPDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:03:47 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so7952214plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 07:03:46 -0800 (PST)
+        Tue, 18 Dec 2018 10:03:51 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p8so7958581plo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 07:03:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HM6vGHLEYTQ34K9d+Cku5qQedHbZ76UdlqZjiEC2yYI=;
-        b=DFFe5goNJ8sL3mG1QL4BIapBIANcH2+8O3WOryVR7vnKWC/Ldpfg6UnIfIa7MBhDrL
-         KNASmNqDLUPuxi/0dVrx4rvAqJ+ZLhtTQIcbpy8ekVH7jfP/YzbyhRibR4iAOwAh+kAY
-         3MMucGr6nYYJzyr19GhReRznyqp4qrU6vM988=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sfl3jpT+Z6dPcoWKLdIC2EG1bdaigl5ehtSeHXXAKIU=;
+        b=tftRytD/Y/atZpWfzM4JEyT85SgQxakaxsQa4NkmgL4FdrpvZG3e2148E9bgtXrSeI
+         1LIlHdVlV5dVPXzj0HzMIBPV9O+QFsM43gb7UDC4F9b70HVYaHAx3YagrqQ6NRnX0Eoj
+         tVkHox5MPSXBa+QSwtGB0tZhv7Ogm9PJJ1iRZlkPOzmUEcBr62sM7OEpvcPEPcUqRDoE
+         bkTsWB0UhRZvezXm2FgW1e30O/vfLjEB0lw/OYEZFLIKaGZbPFK9sYjxAq3PkOK9IDBs
+         N2BqU1yBw3U60WDm8iZUuKNnCQTZetBt9HnkAZ51j7N0PmIy1OBOxbu5xbhfwL7uE6+K
+         g1dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HM6vGHLEYTQ34K9d+Cku5qQedHbZ76UdlqZjiEC2yYI=;
-        b=UWh9l2VR1vaLJVpHI/IaJ6HhwoTLgzhsQ+TF+zgZt0UxPJHLyRPPNJAxeiaUimaPKV
-         sIZ4U2KvQZQArpoT/mRmWTrV/jiJPsJ7hbvtxDr1m1wzVC52KiRSQl95qv1SPeIrHpA4
-         OlIoN0ejax9VlJNFYreE36HjFdw6sl8QHtFLHdN3fbrMhTp5kbet9IHZ2sgWzSo+b3wl
-         XT6K/t8TvpY7HBFb/hkwY8iKuETv4iWZAw8EnnNovKLxsYx6a9J3dl16zGv3vE5gh75W
-         CDUfB9oeegEz4QBoLnTKYv/jZtordUZDjQ3gFlawc+siPVuJV6Pkic+xHT4YAIrrtnga
-         qLcQ==
-X-Gm-Message-State: AA+aEWaovMZU4iFhJZmVkNosJNa+ULDtVUClNTQbtkmtlKNaKImBAM1j
-        wTPN+hRuRa/9ncJ9GDA34qHI
-X-Google-Smtp-Source: AFSGD/W3FUXjOO3QZhHB/6lIBHHQPo9D7ENM/Sq4ljq3u2v/P6Oh1BEhCBqtGVfbZn6QaRpO9utmDw==
-X-Received: by 2002:a17:902:59c8:: with SMTP id d8mr16783365plj.116.1545145425629;
-        Tue, 18 Dec 2018 07:03:45 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id m198sm28798688pga.10.2018.12.18.07.03.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 07:03:44 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     olof@lixom.net, arnd@arndb.de, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-unisoc@lists.infradead.org, afaerber@suse.de,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, zhao_steven@263.net,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 06/11] ARM: dts: Add devicetree for OrangePi i96 board
-Date:   Tue, 18 Dec 2018 20:32:33 +0530
-Message-Id: <20181218150238.23010-7-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181218150238.23010-1-manivannan.sadhasivam@linaro.org>
-References: <20181218150238.23010-1-manivannan.sadhasivam@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sfl3jpT+Z6dPcoWKLdIC2EG1bdaigl5ehtSeHXXAKIU=;
+        b=RVnRRWl2LLfftz4+xS8Hyhk+rPgQnPR1ZgyHmK/oA3i3vBSsZvUiGLjZxPg1C1/mYf
+         0rJAt8kxYfpOURNUqfmbknfydA8JIU3yGap05SXp7i/ei49xBYnjkmnMeU2/u4IP8pqO
+         ji8gQTq6hzV/D9BRbtoLQNd52QDbX5w2qjAf3CnVI7hDyuJjBSYk5J8r1qi7a6QGcFAV
+         xOhpShzmpU9WYAJR3Zhclo1UDtKFxoo51eNljUbQA/t2MtYfXkEz1UhCn5f6++mqNWv5
+         qUqtR/4NEnbAiNIS6+LTLrS9VG+o3NXtw2GuqPmvrFflyEJ/PEYVkoXLJVGv7MN4F437
+         rzOQ==
+X-Gm-Message-State: AA+aEWaVfhNl/Ou2h/DDoaM//QzDS4AE0e9pCnL9RGGdW+TM4I9d1uqd
+        jgOoYq0g5bdn22w9DfHBFJKg4pVhMOq0HKKFHCFfCw==
+X-Google-Smtp-Source: AFSGD/UzhMrkNuMyEwebGi2TeQRVTqS5wzGKyjGmvoYXSgz4FVYzGPhGy+Dl3TxijCqgg3hCP90RHV+czduuqkIeWHA=
+X-Received: by 2002:a17:902:b406:: with SMTP id x6mr15943874plr.329.1545145430285;
+ Tue, 18 Dec 2018 07:03:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1544445454.git.andreyknvl@google.com> <20181210143044.12714-1-vincenzo.frascino@arm.com>
+ <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com> <20181212150230.GH65138@arrakis.emea.arm.com>
+In-Reply-To: <20181212150230.GH65138@arrakis.emea.arm.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 18 Dec 2018 16:03:38 +0100
+Message-ID: <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add initial devicetree for Orange Pi i96 board from Xunlong. It
-is one of the 96Boards IoT Edition board.
+On Wed, Dec 12, 2018 at 4:02 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> Hi Andrey,
+>
+> On Wed, Dec 12, 2018 at 03:23:25PM +0100, Andrey Konovalov wrote:
+> > On Mon, Dec 10, 2018 at 3:31 PM Vincenzo Frascino
+> > <vincenzo.frascino@arm.com> wrote:
+> > > On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
+> > > the userspace (EL0) is allowed to set a non-zero value in the top
+> > > byte but the resulting pointers are not allowed at the user-kernel
+> > > syscall ABI boundary.
+> > >
+> > > This patchset proposes a relaxation of the ABI and a mechanism to
+> > > advertise it to the userspace via an AT_FLAGS.
+> > >
+> > > The rationale behind the choice of AT_FLAGS is that the Unix System V
+> > > ABI defines AT_FLAGS as "flags", leaving some degree of freedom in
+> > > interpretation.
+> > > There are two previous attempts of using AT_FLAGS in the Linux Kernel
+> > > for different reasons: the first was more generic and was used to expose
+> > > the support for the GNU STACK NX feature [1] and the second was done for
+> > > the MIPS architecture and was used to expose the support of "MIPS ABI
+> > > Extension for IEEE Std 754 Non-Compliant Interlinking" [2].
+> > > Both the changes are currently _not_ merged in mainline.
+> > > The only architecture that reserves some of the bits in AT_FLAGS is
+> > > currently MIPS, which introduced the concept of platform specific ABI
+> > > (psABI) reserving the top-byte [3].
+> > >
+> > > When ARM64_AT_FLAGS_SYSCALL_TBI is set the kernel is advertising
+> > > to the userspace that a relaxed ABI is supported hence this type
+> > > of pointers are now allowed to be passed to the syscalls when they are
+> > > in memory ranges obtained by anonymous mmap() or brk().
+> > >
+> > > The userspace _must_ verify that the flag is set before passing tagged
+> > > pointers to the syscalls allowed by this relaxation.
+> > >
+> > > More in general, exposing the ARM64_AT_FLAGS_SYSCALL_TBI flag and mandating
+> > > to the software to check that the feature is present, before using the
+> > > associated functionality, it provides a degree of control on the decision
+> > > of disabling such a feature in future without consequently breaking the
+> > > userspace.
+> [...]
+> > Acked-by: Andrey Konovalov <andreyknvl@google.com>
+>
+> Thanks for the ack. However, if we go ahead with this ABI proposal it
+> means that your patches need to be reworked to allow a non-zero top byte
+> in all syscalls, including mmap() and friends, ioctl(). There are ABI
+> concerns in either case but I'd rather have this discussion in the open.
+> It doesn't necessarily mean that I endorse this proposal, I would like
+> feedback and not just from kernel developers but user space ones.
+>
+> The summary of our internal discussions (mostly between kernel
+> developers) is that we can't properly describe a user ABI that covers
+> future syscalls or syscall extensions while not all syscalls accept
+> tagged pointers. So we tweaked the requirements slightly to only allow
+> tagged pointers back into the kernel *if* the originating address is
+> from an anonymous mmap() or below sbrk(0). This should cover some of the
+> ioctls or getsockopt(TCP_ZEROCOPY_RECEIVE) where the user passes a
+> pointer to a buffer obtained via mmap() on the device operations.
+>
+> (sorry for not being clear on what Vincenzo's proposal implies)
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/boot/dts/Makefile                   |  3 +-
- arch/arm/boot/dts/rda8810pl-orangepi-i96.dts | 50 ++++++++++++++++++++
- 2 files changed, 52 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
+OK, I see. So I need to make the following changes to my patchset AFAIU.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index a0fdad8f10dd..cfb08ea33872 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -807,7 +807,8 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-msm8974-sony-xperia-honami.dtb \
- 	qcom-mdm9615-wp8548-mangoh-green.dtb
- dtb-$(CONFIG_ARCH_RDA) += \
--	rda8810pl-orangepi-2g-iot.dtb
-+	rda8810pl-orangepi-2g-iot.dtb \
-+	rda8810pl-orangepi-i96.dtb
- dtb-$(CONFIG_ARCH_REALVIEW) += \
- 	arm-realview-pb1176.dtb \
- 	arm-realview-pb11mp.dtb \
-diff --git a/arch/arm/boot/dts/rda8810pl-orangepi-i96.dts b/arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
-new file mode 100644
-index 000000000000..728f76931b99
---- /dev/null
-+++ b/arch/arm/boot/dts/rda8810pl-orangepi-i96.dts
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2017 Andreas Färber
-+ * Copyright (c) 2018 Manivannan Sadhasivam
-+ */
-+
-+/dts-v1/;
-+
-+#include "rda8810pl.dtsi"
-+
-+/ {
-+	compatible = "xunlong,orangepi-i96", "rda,8810pl";
-+	model = "Orange Pi i96";
-+
-+	aliases {
-+		serial0 = &uart2;
-+		serial1 = &uart1;
-+		serial2 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:921600n8";
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x10000000>;
-+	};
-+
-+	uart_clk: uart-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <921600>;
-+		#clock-cells = <0>;
-+	};
-+};
-+
-+&uart1 {
-+	status = "okay";
-+	clocks = <&uart_clk>;
-+};
-+
-+&uart2 {
-+	status = "okay";
-+	clocks = <&uart_clk>;
-+};
-+
-+&uart3 {
-+	status = "okay";
-+	clocks = <&uart_clk>;
-+};
--- 
-2.17.1
+1. Make sure that we only allow tagged user addresses that originate
+from an anonymous mmap() or below sbrk(0). How exactly should this
+check be performed?
 
+2. Allow tagged addressed passed to memory syscalls (as long as (1) is
+satisfied). Do I understand correctly that this means that I need to
+locate all find_vma() callers outside of mm/ and fix them up as well?
