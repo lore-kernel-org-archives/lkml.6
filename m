@@ -2,115 +2,98 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABB0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628C2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F07217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A0E6214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:25:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="ckuzd2hi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbeLRIY1 (ORCPT
+        id S1726758AbeLRIZO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:24:27 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40650 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726409AbeLRIYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:24:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C81615BF;
-        Tue, 18 Dec 2018 00:24:25 -0800 (PST)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.41.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 693CC3F575;
-        Tue, 18 Dec 2018 00:24:21 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     suzuki.poulose@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
-        steve.capper@arm.com, catalin.marinas@arm.com, mhocko@kernel.org,
-        akpm@linux-foundation.org, mike.kravetz@oracle.com,
-        n-horiguchi@ah.jp.nec.com
-Subject: [RESEND PATCH V3 5/5] arm64/mm: Enable HugeTLB migration for contiguous bit HugeTLB pages
-Date:   Tue, 18 Dec 2018 13:54:10 +0530
-Message-Id: <1545121450-1663-6-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545121450-1663-1-git-send-email-anshuman.khandual@arm.com>
-References: <1545121450-1663-1-git-send-email-anshuman.khandual@arm.com>
+        Tue, 18 Dec 2018 03:25:14 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33554 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRIZN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:25:13 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so6549621wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:25:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IpykpJoy63zv5Qr2sa4YjvLcDK9nBwqseXtSqQ+mgA4=;
+        b=ckuzd2hi1aO4C8vNbcH8WxP+w7qciNjsquy0ycxsGqWOI6gOBgVIjVsQFl6ZSWQVGs
+         lWwHW3bTLXqVisGxPiE7aBUIiVdI+837SUHideezgE207xsd/2/kLnpW8MteUDN2czcn
+         y2pOL5akqm2QyqUN56z4gTA9xBjpfEh8qRdvJnKolRUHnuNXCOgDZNf9ysTBluFn4DbE
+         IQUqgG5rZsVbpyIaIMTj68UDbNv1B//FsMx4v7xa3mYtvYseeTsSV8qNXFnV8+EyrEb2
+         /YCC20RwHcB3p7U0NcG116a4U5Vix0bff50v5bt27uB+wHPeJBv1D+eNYVyg4yZwV7XZ
+         bgFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IpykpJoy63zv5Qr2sa4YjvLcDK9nBwqseXtSqQ+mgA4=;
+        b=UTZAYSfpPGUttPCHpPJ3ryo0oD2eM5ZBTGwpc/mc2hp2GUHVn5QHKt1UCX4DyOMZMX
+         lm7pGLkzti4HdhlzMQdFLWf520xkm5AO9OFLtSEyIYv1sZInKhWs79CvklUjyd2r7LGY
+         v6S+fTHtL3ATXDoB10XogpjVWE3Kkdo5uHJM+TzTxLXOk6GAzMD+zDno0lQtztt+iGCZ
+         tLxBPTolinPsDZcTklh1O+jaELIH4Bdnd/65pT8pqNpeRDbtoZVM8Ae85/428Kpu91wq
+         OhXTi18DWtlBn/QaSiZdAhz1f1bVBl34gTklQnrfBPMhKbUqGE1XNJgqIVpZopHy8llR
+         54xQ==
+X-Gm-Message-State: AA+aEWb7kSKw/q8AL6ynL15B30zIlM+TGkLME1b13wHMzkcpba/hZN1x
+        m5gxl2bFFpRMxyI62lJgHgL3dAH8WjZdHUNbZTFwHA==
+X-Google-Smtp-Source: AFSGD/Xp7ENy9UfdLu8zRnlO/IIwh2pr5bRJHzoRtpL31TWpNg0VyqLScnkpaYCx3/pvVXpDDqt+B2rDV0m3mLJp3yw=
+X-Received: by 2002:a1c:a3c3:: with SMTP id m186mr2205887wme.16.1545121511510;
+ Tue, 18 Dec 2018 00:25:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20181130080207.20505-1-anup@brainfault.org> <20181130080207.20505-3-anup@brainfault.org>
+ <20181217182415.GA7086@infradead.org>
+In-Reply-To: <20181217182415.GA7086@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 18 Dec 2018 13:55:00 +0530
+Message-ID: <CAAhSdy0_m-TfBYTEBw_k5+n9WC8c_ASg0A=_0S2TPHppCFCWgw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] irqchip: sifive-plic: Add struct plic_hw for
+ global PLIC HW details
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let arm64 subscribe to the previously added framework in which architecture
-can inform whether a given huge page size is supported for migration. This
-just overrides the default function arch_hugetlb_migration_supported() and
-enables migration for all possible HugeTLB page sizes on arm64. With this,
-HugeTLB migration support on arm64 now covers all possible HugeTLB options.
+On Mon, Dec 17, 2018 at 11:54 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> > +struct plic_hw {
+> > +     u32                     nr_irqs;
+> > +     u32                     nr_handlers;
+> > +     u32                     nr_mapped;
+> > +     void __iomem            *regs;
+> > +     struct irq_domain       *irqdomain;
+> > +};
+> > +
+> > +static struct plic_hw plic;
+>
+> Please use local variables instead of a single instance struct.
+> And only add these variables in the patches where you actually need
+> them.
 
-        CONT PTE    PMD    CONT PMD    PUD
-        --------    ---    --------    ---
-4K:        64K      2M        32M      1G
-16K:        2M     32M         1G
-64K:        2M    512M        16G
+I am sure it will be useful in-future but for now I will
+remove the struct instance.
 
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reviewed-by: Steve Capper <steve.capper@arm.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/include/asm/hugetlb.h |  5 +++++
- arch/arm64/mm/hugetlbpage.c      | 20 ++++++++++++++++++++
- 2 files changed, 25 insertions(+)
-
-diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
-index fb66098..c6a07a3 100644
---- a/arch/arm64/include/asm/hugetlb.h
-+++ b/arch/arm64/include/asm/hugetlb.h
-@@ -20,6 +20,11 @@
- 
- #include <asm/page.h>
- 
-+#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-+#define arch_hugetlb_migration_supported arch_hugetlb_migration_supported
-+extern bool arch_hugetlb_migration_supported(struct hstate *h);
-+#endif
-+
- #define __HAVE_ARCH_HUGE_PTEP_GET
- static inline pte_t huge_ptep_get(pte_t *ptep)
- {
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index f58ea50..e445500 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -27,6 +27,26 @@
- #include <asm/tlbflush.h>
- #include <asm/pgalloc.h>
- 
-+#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-+bool arch_hugetlb_migration_supported(struct hstate *h)
-+{
-+	size_t pagesize = huge_page_size(h);
-+
-+	switch (pagesize) {
-+#ifdef CONFIG_ARM64_4K_PAGES
-+	case PUD_SIZE:
-+#endif
-+	case PMD_SIZE:
-+	case CONT_PMD_SIZE:
-+	case CONT_PTE_SIZE:
-+		return true;
-+	}
-+	pr_warn("%s: unrecognized huge page size 0x%lx\n",
-+			__func__, pagesize);
-+	return false;
-+}
-+#endif
-+
- int pmd_huge(pmd_t pmd)
- {
- 	return pmd_val(pmd) && !(pmd_val(pmd) & PMD_TABLE_BIT);
--- 
-2.7.4
-
+Regards,
+Anup
