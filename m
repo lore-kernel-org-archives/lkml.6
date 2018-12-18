@@ -2,165 +2,108 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC500C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D310C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B81217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFC16217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:41:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="hJpxFsnZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbeLRLkx (ORCPT
+        id S1726727AbeLRLlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:40:53 -0500
-Received: from mga03.intel.com ([134.134.136.65]:62099 "EHLO mga03.intel.com"
+        Tue, 18 Dec 2018 06:41:22 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35350 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbeLRLki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:40:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 03:40:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
-   d="scan'208";a="304764717"
-Received: from aubrey-skl.sh.intel.com ([10.239.53.9])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Dec 2018 03:40:36 -0800
-From:   Aubrey Li <aubrey.li@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
-        hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
-        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-Subject: [PATCH v6 2/3] proc: add AVX-512 usage elapsed time to /proc/pid/status
-Date:   Tue, 18 Dec 2018 12:22:17 +0800
-Message-Id: <20181218042218.8653-2-aubrey.li@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181218042218.8653-1-aubrey.li@intel.com>
-References: <20181218042218.8653-1-aubrey.li@intel.com>
+        id S1726540AbeLRLlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 06:41:21 -0500
+Received: from zn.tnic (p200300EC2BD17800B0C9856CE6A48B11.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:7800:b0c9:856c:e6a4:8b11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AAD471EC0230;
+        Tue, 18 Dec 2018 12:41:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1545133279;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=l5JRiN5uznoDQAqFX3WDLhur2EpQtG6ZJJkRqN6BZS4=;
+        b=hJpxFsnZvkskd/BhWAGFdReWrs+BWo5midiD787gd/EQtDEQftvUpzl12gK6ZiL/JxiHvJ
+        sSP+U1B9W7XhlU/eyHww9tpyLPjm3hcTWONZObC+1Q2l4yNZCtjWESqiOgJ0szJG1gqj3D
+        n+u0ky1BJJDtTaGDFMWk2UtRuiDdjyI=
+Date:   Tue, 18 Dec 2018 12:41:18 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     lijiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2 v3] kdump: add the vmcoreinfo documentation
+Message-ID: <20181218114118.GE7485@zn.tnic>
+References: <20181216131617.2612-1-lijiang@redhat.com>
+ <20181216131617.2612-2-lijiang@redhat.com>
+ <20181217130024.GD12165@zn.tnic>
+ <826c1a6b-41da-bc1a-f9c2-0d52e774b572@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <826c1a6b-41da-bc1a-f9c2-0d52e774b572@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AVX-512 components use could cause core turbo frequency drop. So
-it's useful to expose AVX-512 usage elapsed time as a heuristic hint
-for the user space job scheduler to cluster the AVX-512 using tasks
-together.
+On Tue, Dec 18, 2018 at 03:31:32PM +0800, lijiang wrote:
+> The printk_log is used to output human readable text, it will encapsulate header
+> information for log_buf, such as timestamp, syslog level, etc.
 
-Example:
-$ cat /proc/pid/status | grep AVX512_elapsed_ms
-AVX512_elapsed_ms:	1020
+Me asking those questions is supposed to hint that the explanations need
+improvement. But you get the idea...
 
-The number '1020' denotes 1020 millisecond elapsed since last time
-context switch the off-CPU task using AVX-512 components, thus the
-task could cause core frequency drop.
+> >> +PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|
+> >> +PG_hwpoision|PG_head_mask
+> >> +=====================================================
+> >> +It means the attribute of a page. These flags will be used to filter
+> >> +the free pages.
+> >> +
+> >> +PAGE_BUDDY_MAPCOUNT_VALUE or ~PG_buddy
+> >> +======================================
+> >> +The 'PG_buddy' flag indicates that the page is free and in the buddy
+> >> +system. Makedumpfile can exclude the free pages managed by a buddy.
+> > 
+> > That text belongs with the one above?
+> > 
+> It exported the value of (~PG_buddy), so it is placed here independently.
 
-Or:
-$ cat /proc/pid/status | grep AVX512_elapsed_ms
-AVX512_elapsed_ms:	-1
+Then make that obvious in the description. The one above talks about the
+PG flags and this one should talk about PAGE_BUDDY_MAPCOUNT_VALUE and
+what it is used for. The fact that it is computed by negating PG_buddy
+is an implementation detail.
 
-The number '-1' indicates the task didn't use AVX-512 components
-before thus unlikely has frequency drop issue.
+> These two variables are somewhat similar, but they are used in
+> different scenarios.
 
-User space tools may want to further check by:
+Those different scenarious need to be part of the description.
 
-$ perf stat --pid <pid> -e core_power.lvl2_turbo_license -- sleep 1
+> >> +KERNEL_IMAGE_SIZE
+> >> +=================
+> >> +The size of 'KERNEL_IMAGE_SIZE', currently unused.
+> > 
+> > So remove?
+> > 
+> 
+> I'm not sure whether it should be removed, so i keep it.
 
- Performance counter stats for process id '3558':
+If it is unused, it should be removed as an VMCOREINFO export and from
+the docs. But that can be done later, as a separate patch.
 
-     3,251,565,961      core_power.lvl2_turbo_license
-
-       1.004031387 seconds time elapsed
-
-Non-zero counter value confirms that the task causes frequency drop.
-
-Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
----
- arch/x86/kernel/fpu/xstate.c | 34 ++++++++++++++++++++++++++++++++++
- fs/proc/array.c              |  5 +++++
- 2 files changed, 39 insertions(+)
-
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index 87a57b7642d3..d084b1dc80a6 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -7,6 +7,7 @@
- #include <linux/cpu.h>
- #include <linux/mman.h>
- #include <linux/pkeys.h>
-+#include <linux/seq_file.h>
- 
- #include <asm/fpu/api.h>
- #include <asm/fpu/internal.h>
-@@ -1245,3 +1246,36 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
- 
- 	return 0;
- }
-+
-+/*
-+ * Report the amount of time elapsed in millisecond since last AVX512
-+ * use in the task.
-+ */
-+void avx512_state(struct seq_file *m, struct task_struct *task)
-+{
-+	u64	timestamp = task->thread.fpu.avx512_timestamp;
-+	s64	delta;
-+
-+	if (!timestamp)
-+		delta = -1;
-+	else {
-+		WARN_ON_ONCE(jiffies_64 < timestamp);
-+		delta = div_u64(jiffies64_to_nsecs(jiffies_64 - timestamp),
-+				NSEC_PER_MSEC);
-+	}
-+
-+	seq_put_decimal_ll(m, "AVX512_elapsed_ms:\t", delta);
-+	seq_putc(m, '\n');
-+}
-+
-+/*
-+ * Report CPU specific thread state
-+ */
-+void arch_task_state(struct seq_file *m, struct task_struct *task)
-+{
-+	/*
-+	 * Report AVX512 state if the processor and build option supported.
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_AVX512F))
-+		avx512_state(m, task);
-+}
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 0ceb3b6b37e7..dd88c2219f08 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -392,6 +392,10 @@ static inline void task_core_dumping(struct seq_file *m, struct mm_struct *mm)
- 	seq_putc(m, '\n');
- }
- 
-+void __weak arch_task_state(struct seq_file *m, struct task_struct *task)
-+{
-+}
-+
- int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 			struct pid *pid, struct task_struct *task)
- {
-@@ -414,6 +418,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
- 	task_cpus_allowed(m, task);
- 	cpuset_task_status_allowed(m, task);
- 	task_context_switch_counts(m, task);
-+	arch_task_state(m, task);
- 	return 0;
- }
- 
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
