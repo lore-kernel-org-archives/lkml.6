@@ -2,116 +2,125 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105DBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CC6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A91AE21852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:44:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="bOXKUD+i"
+	by mail.kernel.org (Postfix) with ESMTP id 1BF5121852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeLRPoR (ORCPT
+        id S1727104AbeLRPoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:44:17 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38628 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbeLRPoR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:44:17 -0500
-Received: by mail-io1-f66.google.com with SMTP id l14so13098869ioj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 07:44:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1/zhACGiqYxD973F16CJgW7lHQ7NOo+F2AGOaW1Tmr0=;
-        b=bOXKUD+ium5IZD/ej6gBo6AoeyCaxHe8W9E5ZCZ9r7rduXf5QJjE0bAwXxg5B+JEfK
-         WS01OpHBsjkNblLxpp6gAfnuzn6KtYTbtpH0ctGniiWx9TjXXVTgeEuZn9Iu+P9Xowri
-         3MGz/BfMlSZXAHytSqm5GvouhhTxIq6b0pQV0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1/zhACGiqYxD973F16CJgW7lHQ7NOo+F2AGOaW1Tmr0=;
-        b=RUronwX2CVcFvdp9rhIPVK3szLiynKruxg55Y1GdHr9Ubmlrx9YaWBmPtz4+BeQth0
-         Ules4phsgBRGZqxmgcAwT4/MkIfDwdgW8QrydlrWtPGt2n1p1q+GclgqwJUmezJXKKDX
-         ECAR9qTlbF9SY3eTRDgrzRIyGkutu6u99FN0xsz1blRXPpQHX30MKlYRUoIQYf/Ewprx
-         4h72igpBcazMc2jVUwcApsKgKLqlIAdkZifxdu+nwHT7hRDAReHKkoKKhE3Dx8pphx0Q
-         1ADaw8CgCx/hkcY43WCHHOcRnOq1jYBqeO5ifWswtHeKoOxI7bTHV+DEuwIzXEi3fArU
-         vuHw==
-X-Gm-Message-State: AA+aEWaca/rRgzEE6zaFW5kfLQiwS0+DUXzj5vTd98N6AhQC7zYw8pSz
-        orVMkc5SMaNxRbnxmQA9GeUkKAPCK7EJvqpQDB3bTw==
-X-Google-Smtp-Source: AFSGD/Vw0JOZ8RKR8b2+LlUMZj0hoUL5Xw8rRsU9Uzbab7HLMC2KsHzEDHMZE7NyQ0gEePst9K8pHK0stt+GL7m2nTU=
-X-Received: by 2002:a5e:c609:: with SMTP id f9mr13929097iok.114.1545147508734;
- Tue, 18 Dec 2018 07:38:28 -0800 (PST)
+        Tue, 18 Dec 2018 10:44:21 -0500
+Received: from mga05.intel.com ([192.55.52.43]:59200 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726999AbeLRPoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:44:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 07:44:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
+   d="scan'208";a="101613051"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga006.jf.intel.com with ESMTP; 18 Dec 2018 07:44:18 -0800
+Date:   Tue, 18 Dec 2018 07:44:18 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181218154417.GC28326@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <20181217222047.GG12491@linux.intel.com>
+ <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181218113320.4856-1-jagan@amarulasolutions.com>
- <20181218113320.4856-4-jagan@amarulasolutions.com> <20181218152318.duynff7f5m2gxtv4@flea>
-In-Reply-To: <20181218152318.duynff7f5m2gxtv4@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 18 Dec 2018 21:08:17 +0530
-Message-ID: <CAMty3ZCS+QT_YqbJueR-qeityaDxNbQ7p_d3D6bNATSJLQpRnQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] media: sun6i: Update default CSI_SCLK for A64
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 8:53 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Dec 18, 2018 at 05:03:17PM +0530, Jagan Teki wrote:
-> > Unfortunately A64 CSI cannot work with default CSI_SCLK rate.
+On Mon, Dec 17, 2018 at 08:59:54PM -0800, Andy Lutomirski wrote:
+> On Mon, Dec 17, 2018 at 2:20 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
 > >
-> > A64 BSP is using 300MHz clock rate as default csi clock,
-> > so sun6i_csi require explicit change to update CSI_SCLK
-> > rate to 300MHZ for A64 SoC's.
+> 
+> > My brain is still sorting out the details, but I generally like the idea
+> > of allocating an anon inode when creating an enclave, and exposing the
+> > other ioctls() via the returned fd.  This is essentially the approach
+> > used by KVM to manage multiple "layers" of ioctls across KVM itself, VMs
+> > and vCPUS.  There are even similarities to accessing physical memory via
+> > multiple disparate domains, e.g. host kernel, host userspace and guest.
 > >
-> > So, set the clk_mod to 300MHz only for A64.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > index 9ff61896e4bb..91470edf7581 100644
-> > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-> > @@ -822,6 +822,11 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
-> >               return PTR_ERR(sdev->clk_mod);
-> >       }
-> >
-> > +     /* A64 require 300MHz mod clock to operate properly */
-> > +     if (of_device_is_compatible(pdev->dev.of_node,
-> > +                                 "allwinner,sun50i-a64-csi"))
-> > +             clk_set_rate_exclusive(sdev->clk_mod, 300000000);
-> > +
->
-> If you're using clk_set_rate_exclusive, you need to put back the
-> "exclusive" reference once you're not using the clock.
->
-> Doing it here is not really optimal either, since you'll put a
-> constraint on the system (maintaining that clock at 300MHz), while
-> it's not in use.
+> 
+> In my mind, opening /dev/sgx would give you the requisite inode.  I'm
+> not 100% sure that the chardev infrastructure allows this, but I think
+> it does.
 
-I think we can handle via clk_rate_exclusive_put for those errors
-cases? If I'm not wrong
+My fd/inode knowledge is lacking, to say the least.  Whatever works, so
+long as we have a way to uniquely identify enclaves.
+
+> > The only potential hiccup I can see is the build flow.  Currently,
+> > EADD+EEXTEND is done via a work queue to avoid major performance issues
+> > (10x regression) when userspace is building multiple enclaves in parallel
+> > using goroutines to wrap Cgo (the issue might apply to any M:N scheduler,
+> > but I've only confirmed the Golang case).  The issue is that allocating
+> > an EPC page acts like a blocking syscall when the EPC is under pressure,
+> > i.e. an EPC page isn't immediately available.  This causes Go's scheduler
+> > to thrash and tank performance[1].
+> 
+> What's the issue, and how does a workqueue help?  I'm wondering if a
+> nicer solution would be an ioctl to add lots of pages in a single
+> call.
+
+Adding pages via workqueue makes the ioctl itself fast enough to avoid
+triggering Go's rescheduling.  A batched EADD flow would likely help,
+I just haven't had the time to rework the userspace side to be able to
+test the performance.
+
+> >
+> > Alternatively, we could change the EADD+EEXTEND flow to not insert the
+> > added page's PFN into the owner's process space, i.e. force userspace to
+> > fault when it runs the enclave.  But that only delays the issue because
+> > eventually we'll want to account EPC pages, i.e. add a cgroup, at which
+> > point we'll likely need current->mm anyways.
+> 
+> You should be able to account the backing pages to a cgroup without
+> actually sticking them into the EPC, no?  Or am I misunderstanding?  I
+> guess we'll eventually want a cgroup to limit use of the limited EPC
+> resources.
+
+It's the latter, a cgroup to limit EPC.  The mm is used to retrieve the
+cgroup without having track e.g. the task_struct.
