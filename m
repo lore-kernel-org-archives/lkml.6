@@ -2,98 +2,109 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 628C2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA44C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A0E6214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:25:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="ckuzd2hi"
+	by mail.kernel.org (Postfix) with ESMTP id C35D2217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:26:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeLRIZO (ORCPT
+        id S1726531AbeLRI0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:25:14 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33554 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbeLRIZN (ORCPT
+        Tue, 18 Dec 2018 03:26:19 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39488 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726316AbeLRI0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:25:13 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so6549621wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:25:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IpykpJoy63zv5Qr2sa4YjvLcDK9nBwqseXtSqQ+mgA4=;
-        b=ckuzd2hi1aO4C8vNbcH8WxP+w7qciNjsquy0ycxsGqWOI6gOBgVIjVsQFl6ZSWQVGs
-         lWwHW3bTLXqVisGxPiE7aBUIiVdI+837SUHideezgE207xsd/2/kLnpW8MteUDN2czcn
-         y2pOL5akqm2QyqUN56z4gTA9xBjpfEh8qRdvJnKolRUHnuNXCOgDZNf9ysTBluFn4DbE
-         IQUqgG5rZsVbpyIaIMTj68UDbNv1B//FsMx4v7xa3mYtvYseeTsSV8qNXFnV8+EyrEb2
-         /YCC20RwHcB3p7U0NcG116a4U5Vix0bff50v5bt27uB+wHPeJBv1D+eNYVyg4yZwV7XZ
-         bgFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IpykpJoy63zv5Qr2sa4YjvLcDK9nBwqseXtSqQ+mgA4=;
-        b=UTZAYSfpPGUttPCHpPJ3ryo0oD2eM5ZBTGwpc/mc2hp2GUHVn5QHKt1UCX4DyOMZMX
-         lm7pGLkzti4HdhlzMQdFLWf520xkm5AO9OFLtSEyIYv1sZInKhWs79CvklUjyd2r7LGY
-         v6S+fTHtL3ATXDoB10XogpjVWE3Kkdo5uHJM+TzTxLXOk6GAzMD+zDno0lQtztt+iGCZ
-         tLxBPTolinPsDZcTklh1O+jaELIH4Bdnd/65pT8pqNpeRDbtoZVM8Ae85/428Kpu91wq
-         OhXTi18DWtlBn/QaSiZdAhz1f1bVBl34gTklQnrfBPMhKbUqGE1XNJgqIVpZopHy8llR
-         54xQ==
-X-Gm-Message-State: AA+aEWb7kSKw/q8AL6ynL15B30zIlM+TGkLME1b13wHMzkcpba/hZN1x
-        m5gxl2bFFpRMxyI62lJgHgL3dAH8WjZdHUNbZTFwHA==
-X-Google-Smtp-Source: AFSGD/Xp7ENy9UfdLu8zRnlO/IIwh2pr5bRJHzoRtpL31TWpNg0VyqLScnkpaYCx3/pvVXpDDqt+B2rDV0m3mLJp3yw=
-X-Received: by 2002:a1c:a3c3:: with SMTP id m186mr2205887wme.16.1545121511510;
- Tue, 18 Dec 2018 00:25:11 -0800 (PST)
+        Tue, 18 Dec 2018 03:26:19 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBI8LJeU010259;
+        Tue, 18 Dec 2018 09:26:17 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2pcsckxt4d-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 18 Dec 2018 09:26:17 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3B8FB38;
+        Tue, 18 Dec 2018 08:26:16 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 26CC21C45;
+        Tue, 18 Dec 2018 08:26:16 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.44) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 18 Dec
+ 2018 09:26:15 +0100
+Subject: Re: [PATCH v2 18/19] mailbox: stm32-ipcc: Use device-managed
+ registration API
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>
+References: <20181217150217.32435-1-thierry.reding@gmail.com>
+ <20181217150217.32435-19-thierry.reding@gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <e342d360-8b3e-f9a1-fef4-4e53b346cf5e@st.com>
+Date:   Tue, 18 Dec 2018 09:26:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181130080207.20505-1-anup@brainfault.org> <20181130080207.20505-3-anup@brainfault.org>
- <20181217182415.GA7086@infradead.org>
-In-Reply-To: <20181217182415.GA7086@infradead.org>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 18 Dec 2018 13:55:00 +0530
-Message-ID: <CAAhSdy0_m-TfBYTEBw_k5+n9WC8c_ASg0A=_0S2TPHppCFCWgw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] irqchip: sifive-plic: Add struct plic_hw for
- global PLIC HW details
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181217150217.32435-19-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:54 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> > +struct plic_hw {
-> > +     u32                     nr_irqs;
-> > +     u32                     nr_handlers;
-> > +     u32                     nr_mapped;
-> > +     void __iomem            *regs;
-> > +     struct irq_domain       *irqdomain;
-> > +};
-> > +
-> > +static struct plic_hw plic;
->
-> Please use local variables instead of a single instance struct.
-> And only add these variables in the patches where you actually need
-> them.
 
-I am sure it will be useful in-future but for now I will
-remove the struct instance.
+
+On 12/17/18 4:02 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Get rid of some boilerplate driver removal code by using the newly added
+> device-managed registration API.
+> 
+> Cc: Fabien Dessenne <fabien.dessenne@st.com>
+> Cc: Ludovic Barre <ludovic.barre@st.com>
+
+Reviewed-by: Ludovic Barre <ludovic.barre@st.com>
 
 Regards,
-Anup
+Ludo
+
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   drivers/mailbox/stm32-ipcc.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mailbox/stm32-ipcc.c b/drivers/mailbox/stm32-ipcc.c
+> index 533b0da5235d..a338bd4cd7db 100644
+> --- a/drivers/mailbox/stm32-ipcc.c
+> +++ b/drivers/mailbox/stm32-ipcc.c
+> @@ -299,7 +299,7 @@ static int stm32_ipcc_probe(struct platform_device *pdev)
+>   	for (i = 0; i < ipcc->controller.num_chans; i++)
+>   		ipcc->controller.chans[i].con_priv = (void *)i;
+>   
+> -	ret = mbox_controller_register(&ipcc->controller);
+> +	ret = devm_mbox_controller_register(dev, &ipcc->controller);
+>   	if (ret)
+>   		goto err_irq_wkp;
+>   
+> @@ -329,8 +329,6 @@ static int stm32_ipcc_remove(struct platform_device *pdev)
+>   {
+>   	struct stm32_ipcc *ipcc = platform_get_drvdata(pdev);
+>   
+> -	mbox_controller_unregister(&ipcc->controller);
+> -
+>   	if (ipcc->wkp)
+>   		dev_pm_clear_wake_irq(&pdev->dev);
+>   
+> 
