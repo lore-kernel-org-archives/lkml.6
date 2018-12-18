@@ -2,136 +2,111 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7592CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9125FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49404217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F72F2184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:45:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DNE2olsz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbeLRKpa (ORCPT
+        id S1726590AbeLRKpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:45:30 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60817 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRKpa (ORCPT
+        Tue, 18 Dec 2018 05:45:39 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40040 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeLRKpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:45:30 -0500
-Received: from 79.184.255.25.ipv4.supernova.orange.pl (79.184.255.25) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 064717ec78b54996; Tue, 18 Dec 2018 11:45:27 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>, X86 ML <x86@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] mm: Randomize free memory
-Date:   Tue, 18 Dec 2018 11:45:02 +0100
-Message-ID: <11122411.AfX3tQF1aD@aspire.rjw.lan>
-In-Reply-To: <CAPcyv4iW1812gtiuKz8UTPJPhT0_fg+jgo6Z_6Kt9CR2N0Z4Jg@mail.gmail.com>
-References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com> <2153922.MoOcIFpNeT@aspire.rjw.lan> <CAPcyv4iW1812gtiuKz8UTPJPhT0_fg+jgo6Z_6Kt9CR2N0Z4Jg@mail.gmail.com>
+        Tue, 18 Dec 2018 05:45:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lHWQL5ZkkZOHZm9RFneFu3rdbyqynYoSp+SPVhSSX/c=; b=DNE2olszgXnx60fA2Bvm2RYpY
+        QJqTcKlCT3V6v6EugC5mEfj8zAfVfmnHLp+TaKsQqxW/sJHG7m4gabMVbXZ2jLMcLY5mMHU8XMK79
+        9//45ZtPtLHbnLFpMoyYgLN/jdIddpExzHPIQRiTAK6Urk4TteJf7EGc5C5QI1JIYm4xk=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:38318)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gZCsP-0005eW-7v; Tue, 18 Dec 2018 10:45:25 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gZCsH-0006Bp-Ry; Tue, 18 Dec 2018 10:45:18 +0000
+Date:   Tue, 18 Dec 2018 10:45:13 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        stefanr@s5r6.in-berlin.de, linux-mm@kvack.org,
+        linux1394-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 3/9] drivers/firewire/core-iso.c: Convert to use
+ vm_insert_range
+Message-ID: <20181218104513.GM26090@n2100.armlinux.org.uk>
+References: <20181217202246.GA10500@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217202246.GA10500@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, December 17, 2018 5:32:10 PM CET Dan Williams wrote:
-> On Mon, Dec 17, 2018 at 2:12 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Saturday, December 15, 2018 2:48:30 AM CET Dan Williams wrote:
-> > > Changes since v4: [1]
-> > > * Default the randomization to off and enable it dynamically based on
-> > >   the detection of a memory side cache advertised by platform firmware.
-> > >   In the case of x86 this enumeration comes from the ACPI HMAT. (Michal
-> > >   and Mel)
-> > > * Improve the changelog of the patch that introduces the shuffling to
-> > >   clarify the motivation and better explain the tradeoffs. (Michal and
-> > >   Mel)
-> > > * Include the required HMAT enabling in the series.
-> > >
-> > > [1]: https://lkml.kernel.org/r/153922180166.838512.8260339805733812034.stgit@dwillia2-desk3.amr.corp.intel.com
-> > >
-> > > ---
-> > >
-> > > Quote patch 3:
-> > >
-> > > Randomization of the page allocator improves the average utilization of
-> > > a direct-mapped memory-side-cache. Memory side caching is a platform
-> > > capability that Linux has been previously exposed to in HPC
-> > > (high-performance computing) environments on specialty platforms. In
-> > > that instance it was a smaller pool of high-bandwidth-memory relative to
-> > > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-> > > be found on general purpose server platforms where DRAM is a cache in
-> > > front of higher latency persistent memory [2].
-> > >
-> > > Robert offered an explanation of the state of the art of Linux
-> > > interactions with memory-side-caches [3], and I copy it here:
-> > >
-> > >     It's been a problem in the HPC space:
-> > >     http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
-> > >
-> > >     A kernel module called zonesort is available to try to help:
-> > >     https://software.intel.com/en-us/articles/xeon-phi-software
-> > >
-> > >     and this abandoned patch series proposed that for the kernel:
-> > >     https://lkml.org/lkml/2017/8/23/195
-> > >
-> > >     Dan's patch series doesn't attempt to ensure buffers won't conflict, but
-> > >     also reduces the chance that the buffers will. This will make performance
-> > >     more consistent, albeit slower than "optimal" (which is near impossible
-> > >     to attain in a general-purpose kernel).  That's better than forcing
-> > >     users to deploy remedies like:
-> > >         "To eliminate this gradual degradation, we have added a Stream
-> > >          measurement to the Node Health Check that follows each job;
-> > >          nodes are rebooted whenever their measured memory bandwidth
-> > >          falls below 300 GB/s."
-> > >
-> > > A replacement for zonesort was merged upstream in commit cc9aec03e58f
-> > > "x86/numa_emulation: Introduce uniform split capability". With this
-> > > numa_emulation capability, memory can be split into cache sized
-> > > ("near-memory" sized) numa nodes. A bind operation to such a node, and
-> > > disabling workloads on other nodes, enables full cache performance.
-> > > However, once the workload exceeds the cache size then cache conflicts
-> > > are unavoidable. While HPC environments might be able to tolerate
-> > > time-scheduling of cache sized workloads, for general purpose server
-> > > platforms, the oversubscribed cache case will be the common case.
-> > >
-> > > The worst case scenario is that a server system owner benchmarks a
-> > > workload at boot with an un-contended cache only to see that performance
-> > > degrade over time, even below the average cache performance due to
-> > > excessive conflicts. Randomization clips the peaks and fills in the
-> > > valleys of cache utilization to yield steady average performance.
-> > >
-> > > See patch 3 for more details.
-> > >
-> > > [2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
-> > > [3]: https://lkml.org/lkml/2018/9/22/54
-> >
-> > Has this hibernation been tested with this series applied?
+On Tue, Dec 18, 2018 at 01:52:46AM +0530, Souptick Joarder wrote:
+> Convert to use vm_insert_range to map range of kernel memory
+> to user vma.
 > 
-> It has not. Is QEMU sufficient? What's your concern?
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  drivers/firewire/core-iso.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
+> index 35e784c..7bf28bb 100644
+> --- a/drivers/firewire/core-iso.c
+> +++ b/drivers/firewire/core-iso.c
+> @@ -107,19 +107,8 @@ int fw_iso_buffer_init(struct fw_iso_buffer *buffer, struct fw_card *card,
+>  int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
+>  			  struct vm_area_struct *vma)
+>  {
+> -	unsigned long uaddr;
+> -	int i, err;
+> -
+> -	uaddr = vma->vm_start;
+> -	for (i = 0; i < buffer->page_count; i++) {
+> -		err = vm_insert_page(vma, uaddr, buffer->pages[i]);
+> -		if (err)
+> -			return err;
+> -
+> -		uaddr += PAGE_SIZE;
+> -	}
+> -
+> -	return 0;
+> +	return vm_insert_range(vma, vma->vm_start, buffer->pages,
+> +				buffer->page_count);
 
-Well, hibernation does quite a bit of memory management and that involves
-free memory too.  I'm not expecting any particular issues, but I may be
-overlooking something and I would like to know that it doesn't break before
-the changes go in.
+This looks functionally equivalent.  Note that if we go with my
+proposal to your patch 4, that would cause an issue for this
+implementation.
 
-QEMU should be sufficient, but let me talk to the power lab folks if they can
-test that for you.
+Maybe we need two functions, but that then causes problems with
+which function should be used (which makes it easy to get wrong.)
 
-Is there a git branch with these changes available somewhere?
+I'm beginning to wonder if the risks of causing regressions and
+introducing bugs is actually worth the effort of trying to clean
+this up.
 
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
