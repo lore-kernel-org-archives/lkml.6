@@ -2,151 +2,178 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BDAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9218C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C13D21874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69ECA21871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:25:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VyzvxQwP"
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="wSflzVMb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeLRNXt (ORCPT
+        id S1726715AbeLRNZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:23:49 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:33024 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbeLRNXs (ORCPT
+        Tue, 18 Dec 2018 08:25:32 -0500
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:45586 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726592AbeLRNZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:23:48 -0500
-Received: by mail-it1-f195.google.com with SMTP id m8so8255441itk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:23:47 -0800 (PST)
+        Tue, 18 Dec 2018 08:25:29 -0500
+Received: by mail-ed1-f49.google.com with SMTP id d39so13824207edb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:25:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0YPqw90N2rIV4uMrjzHub2HxaDHhqjxG3rH9jd06+FM=;
-        b=VyzvxQwPCHWLEpv17UdDWo5cWpABpUFOjGAz9kSuJ+ZfMj2BJTYi10LhCYNNvzwU8j
-         wP6QVQE6OTCC1wdhQ5ceWyxkqWNQtA82ye10vdv/iv+IB4XhezILkxkdDX9GaDB3Bbp0
-         184aGNwRcl6HwXERXEPxzn0tEXaZ+vGbxnU9c=
+        bh=cNrZzCdSzJul9lYEmCL2riuXLfAAAq+ZivQLGwqcpMo=;
+        b=wSflzVMbLQqkTKe9j7woq7Is7YLc1acLIcH+6qd8bswo6jGBp6WnyiD+S5tw0ruP7X
+         AVjq2ASDhdZ5RW9OH6NWLb0SR78yHxlc3Vy2C7qXPVlfVCdf1ikAT+xwGwNWWjjFyX92
+         6YQOYy3+G/mh9parz1UGbeul7SAvw8NFZU+8/DYTZ/JfJ0WHxnyJALhrgmzY0UDPL975
+         nPwCQAvPUuOaadlvKgBIwrvCXdT7OG0F8p+MzxtPyenSDvptNtBB2iuLhbuwS7xxARqf
+         wnK1ax3WwPnzGjoDSrHS6ob/trFCFKyFLx/rJEeX8FNfcKs/dLB0Op/m4LEZyTK071q9
+         sk2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0YPqw90N2rIV4uMrjzHub2HxaDHhqjxG3rH9jd06+FM=;
-        b=mYm+05OxTQK1CrXsR04uHbIOflFCuUORtxAG637JSAW/rJoof5QcRRXEIRKD+8xeH7
-         dO9hZpQjLripwNZ6NVXn2LBizGMm8knj4gvxlf30aMlgsl/lRCzlI7Xy/zWGwCSF8IAR
-         31HSDwAnMX9CemkcxXUQ7ezTMV5E50ccdW1ZAc9Gztho4vYx8gF/WlFD/xY9LykdUOAs
-         2HMNbIPhb4k/jazmDW/SScjyJYIDxD3epNM+GVyHxBe3yLTnxzWsgSjrbMyrPIJlmnAj
-         tEPygO9rH8zQTYdeHSdV9uzrNen6HkMP/oJGXyDDbSQRmTfJ0X6L6+YS75HKTUxLlrm2
-         2Jlg==
-X-Gm-Message-State: AA+aEWbQCiJRfZFOlhURshMJkJVhXwM8xuTkY+q6vY6yy4OHb6NLV8hC
-        ofb/94+Xubf7P3pdk28ZVLnYT8bQSZR5Aw+GaFlWjw==
-X-Google-Smtp-Source: AFSGD/WSKJe/vyJQVSCteYcPaoqdkFbmYf7v1aNwq2+okv4KikeUiEt7MxQ3yT/abGi6BIfJLPtGw2lDWwyff0Z/q+k=
-X-Received: by 2002:a02:98d2:: with SMTP id c18mr14773500jak.11.1545139427285;
- Tue, 18 Dec 2018 05:23:47 -0800 (PST)
+        bh=cNrZzCdSzJul9lYEmCL2riuXLfAAAq+ZivQLGwqcpMo=;
+        b=E9lNoyljjlv9L32QT1mXCiDqAz1cxi148dla90tll/jW2I86swPKpmIrZY6jXSucYc
+         iGJnu5vVZKzJSQVm4B0v1b9zAO9jr/ifP5wcBCvozTg8UYaiBhNTFozRhrKOmn+9Llyc
+         /aMhJRNzPiuq498zjRxyOniNdRGnP7kxULr/2Wg0Hr/l3Cy0k8FhsKsKuJNqblaAGuR7
+         Hx/yDndtf10e3Bzxs8mnAt9dGMUGonYOoCWipXFoZ5PyoS6HvCCFoYHTCYT1ZwWaWXHW
+         CiQID972Gm+HDVu8vZNZzOqpqlwpWvd1bLeyGG6iQw/WfNTTFCqzpstqFbLHFnZqHDBw
+         AK8w==
+X-Gm-Message-State: AA+aEWZVB1esSgpGcF9uyt3z5E5sIfB8ivjW62hCpYlYxd4+EpKEb3kd
+        YIyXeZBS6Ta6YXJMnM+nR4rHYidowVjgJ1Dp/Ilhfg==
+X-Google-Smtp-Source: AFSGD/XZR3iFOkwJARI/fpsxX7slC0p/yWVmg/x9SQ2MVnYYBZtN0rHfyyZMNuTViapnchtJc8Uys66aHSrUmOTo+w0=
+X-Received: by 2002:a17:906:798e:: with SMTP id c14-v6mr7396716ejo.123.1545139526688;
+ Tue, 18 Dec 2018 05:25:26 -0800 (PST)
 MIME-Version: 1.0
-References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
- <1544803317-7610-4-git-send-email-vincent.guittot@linaro.org>
- <f6443ca2-3e82-d4eb-deb8-2aff44c618e2@arm.com> <CAKfTPtCJBGtmx7pQJCwhcMaxyXWoh04o_C+pR6z+YVykXwvv5Q@mail.gmail.com>
- <07400c1b-d9d7-7619-57fb-b09276d7da92@arm.com>
-In-Reply-To: <07400c1b-d9d7-7619-57fb-b09276d7da92@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 18 Dec 2018 14:23:36 +0100
-Message-ID: <CAKfTPtA0HQL9xsMbAH-2u63XaEJ-4mwzdBzNzvVSA8_3XyQ89g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] sched/fair: fix unnecessary increase of balance interval
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
+References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
+ <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
+ <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com> <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
+ <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
+In-Reply-To: <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Tue, 18 Dec 2018 21:25:15 +0800
+Message-ID: <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
+Subject: Re: A weird problem of Realtek r8168 after resume from S3
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
+        netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 at 12:46, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
+On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
 >
-> On 18/12/2018 09:32, Vincent Guittot wrote:
-> [...]
-> > In this asym packing case, It has nothing to do with pinned tasks and
-> > that's the root cause of the problem:
-> > the active balance triggered by asym packing is wrongly assumed to be
-> > an active balance due to pinned task(s) and the load balance interval
-> > is increased without any reason
+> On 17.12.2018 14:25, Chris Chiu wrote:
+> > On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>
+> >> On 14.12.2018 04:33, Chris Chiu wrote:
+> >>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
+> >>>>
+> >>>> Hi,
+> >>>>     We got an acer laptop which has a problem with ethernet networking after
+> >>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
+> >>>> follows.
+> >>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+> >>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
+> >>>>
+> >> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
+> >>
+> > [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
+> > (uninitialized): mac_version = 0x2b
+> > [   22.365580] libphy: r8169: probed
+> > [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
+> > XID 5c800800, IRQ 38
+> > [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
+> > bytes, tx checksumming: ko]
 > >
-> [...]> hmm the increase of balance interval is not linked to cpu stopper but
-> > to increase the load balance interval when we know that there is no
-> > possible load balance to perform
+> Thanks for the info.
+>
+> >>>>     The problem is the ethernet is not accessible after resume. Pinging via
+> >>>> ethernet always shows the response `Destination Host Unreachable`. However,
+> >>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
+> >>>> interface, the networking is back to alive. But it's dead again after
+> >>>> I stop tcpdump.
+> >>>> One more thing, if I ping the problematic machine from others, it achieves the
+> >>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
+> >>>>
+> >> You could compare the register dumps (ethtool -d) before and after S3 sleep
+> >> to find out whether there's a difference.
+> >>
 > >
-> > Regards,
-> > Vincent
+> > Actually, I just found I lead the wrong direction. The S3 suspend does
+> > help to reproduce,
+> > but it's not necessary. All I need to do is ping around 5 mins and the
+> > network connection
+> > fails.  And I also find one thing interesting, disabling the  MSI-X
+> > interrupt like commit
+> > [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
+> > Although I don't
+> > understand the root cause. Anything I can do to help?
+> >
+> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
+> the issue, but also pinging the machine from outside brings back the network.
+> Both actions affect totally different corners.
 >
-> Ah, I think I get it: you're saying that this balance_interval increase
-> is done because it is always assumed we do an active balance with
-> busiest->nr_running > 1 && pinned tasks, and that all that is left to
-> migrate after the active_balance is pinned tasks that we can't actually
-> migrate.
+> The commit and related issue you mention was a workaround in the driver,
+> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
+> in the PCI core. After this was fixed we removed the workaround again.
+> This shouldn't be related to your issue.
 >
-> Maybe that's what we should target (as always, totally untested):
+> Hard to say for now is whether the issue is:
+> - a driver issue
+> - a hardware issue in the RTL8411
+> - an issue with the chipset on your mainboard
 >
-> -----8<-----
-> @@ -9131,18 +9144,16 @@ static int load_balance(int this_cpu, struct rq *this_rq,
->         } else
->                 sd->nr_balance_failed = 0;
+> According to your description it doesn't take a special scenario to trigger
+> the issue, so most likely also other users of Acer notebooks with RTL8411
+> should be affected (after briefly checking this should be at least Aspire
+> F15, V15, V7). Therefore I wonder why there aren't more reports.
 >
-> -       if (likely(!active_balance)) {
-> -               /* We were unbalanced, so reset the balancing interval */
-> -               sd->balance_interval = sd->min_interval;
-> -       } else {
-> +       if (unlikely(active_balance && (env.flags & LBF_ALL_PINNED))) {
+> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
+> So you could test this revision and the one before.
+>
+> Eventually, if the issue really should be caused by a side effect of using
+> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
+> in general or just for RTL8411 and a certain subsystem id.
+>
 
-So it's not exactly LBF_ALL_PINNED but also some pinned tasks
+I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
+interrupt handling"),
+the problem still there. Then I revert to the previous revision, the
+problem goes away.
+So I think it's pretty much the side effect of MSI-X. However, as you
+mentioned that
+you didn't hit this problem, I'll ask the vendor to verify if this
+problem also happens on
+other machines with the same chip. Then we can determine to disable for specific
+mac version or just a certain subsystem id.
 
-but IIUC, you would like to extend the reset of balance  interval  to
-all the "good" reasons to trig active load balance
-In fact the condition used in need_active_balance except the last
-remaining one. Good reasons are:
-- asym packing
-- /*
-* The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
-* It's worth migrating the task if the src_cpu's capacity is reduced
-* because of other sched_class or IRQs if more capacity stays
-* available on dst_cpu.
-*/
-- misfit task
-
-I can extend the test for these conditions
-
-
->                 /*
-> -                * If we've begun active balancing, start to back off. This
-> -                * case may not be covered by the all_pinned logic if there
-> -                * is only 1 task on the busy runqueue (because we don't call
-> -                * detach_tasks).
-> +                * We did an active balance as a last resort (all other tasks
-> +                * were pinned), start to back off.
->                  */
->                 if (sd->balance_interval < sd->max_interval)
->                         sd->balance_interval *= 2;
-> +       } else {
-> +               /* We were unbalanced, so reset the balancing interval */
-> +               sd->balance_interval = sd->min_interval;
->         }
+> >>>>     I tried the latest 4.20 rc version but the problem still there. I
+> >>>> also tried some
+> >>>> hw_reset or init thing in the resume path but no effect. Any
+> >>>> suggestion for this?
+> >>>> Thanks
+> >>>>
+> >> Did previous kernel versions work? If it's a regression, a bisect would be
+> >> appreciated, because with the chip versions I've got I can't reproduce the issue.
+> >>
+> >>>> Chris
+> >>>
+> >>> Gentle ping. Any additional information required?
+> >>>
+> >>> Chris
+> >>>
+> >> Heiner
+> >
 >
->         goto out;
-> ----->8-----
->
-> can_migrate_task() called by detach_tasks() in the
-> 'if (busiest->nr_running > 1)' block should clear that LBF_ALL_PINNED flag
-> if there is any migratable task (even if we don't end up migrating it),
-> and it's not set if (busiest->nr_running == 1), so that *should* work.
->
-> I believe the argument that this applies to all kinds of active balances
-> is still valid - this shouldn't be changed just for asym packing active
-> balance.
