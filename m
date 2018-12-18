@@ -2,122 +2,93 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D837CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCBAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2FFB21852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59F721873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545147802;
+	bh=m2DB6QqWu8SEUESKErQD/rr7f13p+Lqxt8lAYe2ja6Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=UESEZv6aQMNUBzJoUJ+REYku6xjJjk2xxh07wJANBcxVFzVTENIbrP53WEGd+/He8
+	 BL08UC2Fl+djnPYCSP/427hmzE61K6N9iY5dNhEmzCs5dRh0rULfz1wK1O2yH9w6++
+	 eWc0FVJgqiC/loQk6COra6eqijVgC6U+HOlC0gA4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeLRPjV (ORCPT
+        id S1727048AbeLRPnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:39:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:48402 "EHLO foss.arm.com"
+        Tue, 18 Dec 2018 10:43:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeLRPjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:39:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB0BCA78;
-        Tue, 18 Dec 2018 07:39:19 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17D363F5C0;
-        Tue, 18 Dec 2018 07:39:17 -0800 (PST)
-Subject: Re: [PATCH v3 0/3] Make STM32 interrupt controller use hwspinlock
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        alexandre.torgue@st.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-References: <20181217142215.17493-1-benjamin.gaignard@st.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <297d3207-7302-674e-5acd-30dc7b2df408@arm.com>
-Date:   Tue, 18 Dec 2018 15:39:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1727012AbeLRPnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:43:20 -0500
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA0ED218A3;
+        Tue, 18 Dec 2018 15:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545147800;
+        bh=m2DB6QqWu8SEUESKErQD/rr7f13p+Lqxt8lAYe2ja6Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yuKKblqCgjQX95iSWznF6Mt5m86MeOqoVMzY+QICMc7Y9+4z22J83gW/ormQ7gdlY
+         ocGCeHz6YipSoHAnQEHCv7jzBta7tlsEhXbz52KpyOvEmwxUQFzMhmBrh7yLMzwpiR
+         BaMcen7mIv+Fn/3q0J4XU+1RgGvnturQl9n8/So4=
+Received: by mail-qt1-f173.google.com with SMTP id e5so18606156qtr.12;
+        Tue, 18 Dec 2018 07:43:19 -0800 (PST)
+X-Gm-Message-State: AA+aEWZPsGO+kCRLjwWdkRKY5xmWmjK/bSxr1ZSEZYxzgImpEz7jE/kh
+        KU32wVu39rW2Dlaszxpq6n9nrWrGNewy6K7R5g==
+X-Google-Smtp-Source: AFSGD/V2hEjckYCxFUw27PJsHhsjEZMqOsEiophnQQNx600vkpI9LvKFo1eb75w7FOXBIPfsAt2nnwvz+nqiFMumJDA=
+X-Received: by 2002:ac8:6b18:: with SMTP id w24mr18229770qts.144.1545147799172;
+ Tue, 18 Dec 2018 07:43:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181217142215.17493-1-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1545033396-24485-1-git-send-email-frowand.list@gmail.com>
+In-Reply-To: <1545033396-24485-1-git-send-email-frowand.list@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 18 Dec 2018 09:43:07 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKZ=g16jZ_SZX2qi-ecE-hvQ+-UfUw40=+ztiM-Zpsq9A@mail.gmail.com>
+Message-ID: <CAL_JsqKZ=g16jZ_SZX2qi-ecE-hvQ+-UfUw40=+ztiM-Zpsq9A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] of: phandle_cache, fix refcounts, remove stale entry
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     mwb@linux.vnet.ibm.com,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        tlfalcon@linux.vnet.ibm.com, minkim@us.ibm.com,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/12/2018 14:22, Benjamin Gaignard wrote:
-> This series allow to protect STM32 interrupt controller configuration registers
-> with a hwspinlock to avoid conflicting accesses between processors. 
-> 
-> version 3:
-> - with bindings patch
-> 
-> version 2:
-> - rework hwspinlock locking sequence in stm32 irqchip to take care of the
->   cases where hwspinlock node is disabled or not yet probed
-> 
-> Benjamin Gaignard (3):
->   dt-bindings: interrupt-controller: stm32: Document hwlock properties
->   irqchip: stm32: protect configuration registers with hwspinlock
->   ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
-> 
->  .../interrupt-controller/st,stm32-exti.txt         |   4 +
->  arch/arm/boot/dts/stm32mp157c.dtsi                 |   1 +
->  drivers/irqchip/irq-stm32-exti.c                   | 116 ++++++++++++++++++---
->  3 files changed, 105 insertions(+), 16 deletions(-)
-> 
+On Mon, Dec 17, 2018 at 1:56 AM <frowand.list@gmail.com> wrote:
+>
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> Non-overlay dynamic devicetree node removal may leave the node in
+> the phandle cache.  Subsequent calls to of_find_node_by_phandle()
+> will incorrectly find the stale entry.  This bug exposed the foloowing
+> phandle cache refcount bug.
+>
+> The refcount of phandle_cache entries is not incremented while in
+> the cache, allowing use after free error after kfree() of the
+> cached entry.
+>
+> Changes since v1:
+>   - make __of_free_phandle_cache() static
+>   - add WARN_ON(1) for unexpected condition in of_find_node_by_phandle()
+>
+> Frank Rowand (2):
+>   of: of_node_get()/of_node_put() nodes held in phandle cache
+>   of: __of_detach_node() - remove node from phandle cache
 
-I've taken the first two patches. Please route the DTS patch to the
-appropriate tree.
+I'll send this to Linus this week if I get a tested by. Otherwise, it
+will go in for 4.21.
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Rob
