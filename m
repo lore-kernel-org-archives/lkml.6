@@ -2,176 +2,105 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2C0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F79AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72AD82184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 626692184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545131436;
-	bh=2HGD8MI5ioJhJYUpwHis9FGuNZENSUGMQ7noMzYWIkw=;
+	s=default; t=1545131514;
+	bh=xU+tvzQlXqSCsQ2lxQTIc4gTZWJ+tfh7mNnYBB0EEPY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2o2/NwO2YqJwNaRBQtymgGQw4F6ImPnetN3f5M45VnPmhshtV2z4O7kPvVu84VH4v
-	 CRcnFkomwjY6z+tKYhIiJcWHgzzCZIFars3xoqIpwejJS9lh/6VWgd8LSbOK2fyfxp
-	 rVpIGeBk4uMt1MC7ilaqrmiV0zg2+NtI5GA14wog=
+	b=Zr25y2mk0gI3FmM3RcKOSQHGEbeiWMbaB8x/P7RQ2FHS3iGl8h9A0WbXG8aYHaKen
+	 pTv6n7qSHFFOi/5DrKmduyAoJI8hmh2ERtmgfd7g2zZkSKRc3xMIq3PPBYL0FyKgHg
+	 x0+wVSy8zvOR88WCxs1dzVnc0PdO+ZcRzqNLIM+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeLRLKf (ORCPT
+        id S1726553AbeLRLLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:10:35 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34560 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRLKf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:10:35 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u89-v6so3141321lje.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 03:10:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q8pX42wrj24jWbglSgaxkOqshMnKp4WI7Qxnj5pOWP4=;
-        b=tBTKpk2mg1ln0dcLMUFI+wPLSUtDBSK7csd1pYID6yZHKrerUxBiRDpxxvRb+PzBud
-         2iPGaQ3f5wgk1EXHm8JvwE1N0cmoccpswFqFMTg1cdxn1gYBbIuLHAlFVfT1+FSxFgeW
-         uyWpoxGJZZhwmtFwJ6iHtHVvrZGt2UckclUBLWs8a8C3HtdYvvHZ/t79rQR2oBlib4Dd
-         y2veaMf3RqbUFrEkVvybhLi/SKty2n6UerFOIlksAhC2q4BYuEvNj+wFzU38zYhoMW5M
-         3CGxggLJn+pXIpSGClqx9kzKgcy6/IRqhvOtRkUhnCDVe4NQmLdf6L4gFt9k34YAlgMP
-         2MJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q8pX42wrj24jWbglSgaxkOqshMnKp4WI7Qxnj5pOWP4=;
-        b=G8w4rsytLKsLbpg9Hr8ID7fP3D/e8GG0WsIzUH1HaTWqt202j/dMHae0fkrliizAKa
-         NtEpvcG+mmkYer1Pvp9Y1jUgyTVI+CjBO/2SJuDN8/w51itWLnuKfqgBYaaV5zyxDYAh
-         7qAkP947RgewfhQ0BLrEP4bTLyvSBe9pFXB/jM9I6xbq7RKzFmyxENnfnh1yHUpnpTzn
-         3s6VrNdLFcVwY3ycGBBdioR6nh1T7LgvkdZZ9gyfTnT1erlSxn+8ezYJqCD6ziYpRIwN
-         63AZgJf9PHW8dZ0V6RrGqOrwAIsqAEOS44QAKbM8Pita8jHBQy9FxH+dgnF7K1dG0ECB
-         1cOg==
-X-Gm-Message-State: AA+aEWaOOr3+DqlYdqLXaUlklBVCjqF5XpeSlB3bMCgrc/zJt10BKxix
-        Cp9uXu3nrMVWUHvz8G6xYBE=
-X-Google-Smtp-Source: AFSGD/VuDlEeYfsl8vZfelAP3YzgrqoQoiBL40ZYmRaCL1CkxsoJIBzD165s3tlGCNTxRQawG/Sjsg==
-X-Received: by 2002:a2e:9f56:: with SMTP id v22-v6mr4172069ljk.114.1545131432116;
-        Tue, 18 Dec 2018 03:10:32 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id s24sm3047342lfc.30.2018.12.18.03.10.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 03:10:31 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gZDGk-000402-Gm; Tue, 18 Dec 2018 12:10:34 +0100
-Date:   Tue, 18 Dec 2018 12:10:34 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] staging: greybus: gpio: switch GPIO portions to
- use GPIOLIB_IRQCHIP
-Message-ID: <20181218111034.GM20658@localhost>
-References: <cover.1542898267.git.nishadkamdar@gmail.com>
- <e12d2f21115c71820d4d68168181e5ebe4340f0f.1542898267.git.nishadkamdar@gmail.com>
+        Tue, 18 Dec 2018 06:11:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726341AbeLRLLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 06:11:52 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 894652184C;
+        Tue, 18 Dec 2018 11:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545131512;
+        bh=xU+tvzQlXqSCsQ2lxQTIc4gTZWJ+tfh7mNnYBB0EEPY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nwLW9/TR+UsczpbCs2Lfubp5yymukaxGjlRByNvSvMQvt18+e9tmoeBhpejRQObuJ
+         wC+vFoCl+Tofs0HkilJc1cEaMUcY79aBhZlXytis4nLt9oQGJAp/Ko7aNYxsER3IAQ
+         Vc1tGda53CvWhfLb1SNq9ZV7RSa5QAMLZLC+E00U=
+Date:   Tue, 18 Dec 2018 12:11:49 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] r8a66597: Fix a possible concurrency use-after-free bug
+ in r8a66597_endpoint_disable()
+Message-ID: <20181218111149.GA979@kroah.com>
+References: <20181218100020.26250-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e12d2f21115c71820d4d68168181e5ebe4340f0f.1542898267.git.nishadkamdar@gmail.com>
+In-Reply-To: <20181218100020.26250-1-baijiaju1990@gmail.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 10:37:16PM +0530, Nishad Kamdar wrote:
-> Convert the GPIO driver to use the GPIO irqchip library
-> GPIOLIB_IRQCHIP instead of reimplementing the same.
+On Tue, Dec 18, 2018 at 06:00:20PM +0800, Jia-Ju Bai wrote:
+> The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
+> be concurrently executed.
+> The two functions both access a possible shared variable "hep->hcpriv".
 > 
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
-> Changes in v2:
->  - Retained irq.h and irqdomain.h headers.
->  - Dropped function gb_gpio_irqchip_add() and
->    called gpiochip_irqchip_add() from probe().
->  - Referred https://lkml.kernel.org/r/1476054589-28422-1-git-send-email-linus.walleij@linaro.org.
-
-Thanks for the update, and sorry about the late review. This looks
-mostly good now, except for a couple minor things pointed out below.
-
-You also included the conversion to gpiochip_get_data() (as Linus also
-did in his patch) although that's really a separate change and should go
-in its own patch. Please break that bit out in a follow-up patch.
-
-Also note that someone did a bunch random white space changes to this
-file in the staging tree, so it will not apply cleanly any more.
-
-> ---
->  drivers/staging/greybus/Kconfig |   1 +
->  drivers/staging/greybus/gpio.c  | 184 ++++----------------------------
->  2 files changed, 24 insertions(+), 161 deletions(-)
+> This shared variable is freed by r8a66597_endpoint_disable() via the
+> call path:
+> r8a66597_endpoint_disable
+>   kfree(hep->hcpriv) (line 1995 in Linux-4.19)
 > 
-> diff --git a/drivers/staging/greybus/Kconfig b/drivers/staging/greybus/Kconfig
-> index ab096bcef98c..b571e4e8060b 100644
-> --- a/drivers/staging/greybus/Kconfig
-> +++ b/drivers/staging/greybus/Kconfig
-> @@ -148,6 +148,7 @@ if GREYBUS_BRIDGED_PHY
->  config GREYBUS_GPIO
->  	tristate "Greybus GPIO Bridged PHY driver"
->  	depends on GPIOLIB
-> +	select GPIOLIB_IRQCHIP
->  	---help---
->  	  Select this option if you have a device that follows the
->  	  Greybus GPIO Bridged PHY Class specification.
-> diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
-> index b1d4698019a1..2ec54744171d 100644
-> --- a/drivers/staging/greybus/gpio.c
-> +++ b/drivers/staging/greybus/gpio.c
-> @@ -9,9 +9,9 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
-> -#include <linux/gpio.h>
->  #include <linux/irq.h>
->  #include <linux/irqdomain.h>
-> +#include <linux/gpio/driver.h>
->  #include <linux/mutex.h>
+> This variable is read by r8a66597_urb_enqueue() via the call path:
+> r8a66597_urb_enqueue
+>   spin_lock_irqsave(&r8a66597->lock);
+>   init_pipe_info
+>     enable_r8a66597_pipe
+>       pipe = hep->hcpriv (line 802 in Linux-4.19)
+> 
+> The read operation is protected by a spinlock, but the free operation
+> is not protected by this spinlock, thus a concurrency use-after-free bug
+> may occur.
+> 
+> To fix this bug, the spin-lock and spin-unlock function calls in
+> r8a66597_endpoint_disable() are moved to protect the free operation.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/usb/host/r8a66597-hcd.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+> index 984892dd72f5..1495ce14ad22 100644
+> --- a/drivers/usb/host/r8a66597-hcd.c
+> +++ b/drivers/usb/host/r8a66597-hcd.c
+> @@ -1991,13 +1991,14 @@ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
+>  		return;
+>  	pipenum = pipe->info.pipenum;
 >  
->  #include "greybus.h"
-> @@ -39,15 +39,8 @@ struct gb_gpio_controller {
->  
->  	struct gpio_chip	chip;
->  	struct irq_chip		irqc;
+> +	spin_lock_irqsave(&r8a66597->lock, flags);
 
-Turns out struct gpio_chip will have an irqchip whenever
-CONFIG_GPIOLIB_IRQCHIP is selected so you can drop this one too.
+Don't you also need the __aquires/__releases markings on this function
+in order to properly annotate it, like the rest of the driver has?
 
-> -	struct irq_chip		*irqchip;
-> -	struct irq_domain	*irqdomain;
-> -	unsigned int		irq_base;
-> -	irq_flow_handler_t	irq_handler;
-> -	unsigned int		irq_default_type;
->  	struct mutex		irq_lock;
->  };
-> -#define gpio_chip_to_gb_gpio_controller(chip) \
-> -	container_of(chip, struct gb_gpio_controller, chip)
->  #define irq_data_to_gpio_chip(d) (d->domain->host_data)
->  
->  static int gb_gpio_line_count_operation(struct gb_gpio_controller *ggc)
-> @@ -276,7 +269,7 @@ static void _gb_gpio_irq_set_type(struct gb_gpio_controller *ggc,
->  static void gb_gpio_irq_mask(struct irq_data *d)
->  {
->  	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
-> -	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-> +	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
+Otherwise this seems to look good to me.
 
-So please split these changes into a separate patch as they are not
-related to the irqchip changes.
+thanks,
 
-Oh, and don't forget to update the TODO file now that the conversion is
-done. :)
-
-Thanks,
-Johan
+greg k-h
