@@ -2,111 +2,71 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE6AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C09C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F3B821841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:37:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cWA014dA"
+	by mail.kernel.org (Postfix) with ESMTP id C5278217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeLRIh4 (ORCPT
+        id S1726792AbeLRIiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:37:56 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:41900 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbeLRIhz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:37:55 -0500
-Received: by mail-vk1-f193.google.com with SMTP id t127so3495146vke.8
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:37:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=G8+vTGP3sXeYUw9pDEwZA8ohjuWj3lDY3Z0PkVoQRM8=;
-        b=cWA014dAUj+zJbxvwo7kjB2WfJrF5fZLmYUjRt2W6BFfUKGqXecKbav5o3+xLc1DcK
-         IdIN2Q1ZWYNUSKB/s91PgtVAYhGYrbJ48u3G4dhdeN3a+eQdmRSsRBh1weR/+2dPtZPv
-         Adi0T/3B72Lu19ursQ0LFFMN881J67uYO151o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=G8+vTGP3sXeYUw9pDEwZA8ohjuWj3lDY3Z0PkVoQRM8=;
-        b=KO/z+Ja8N0Dd3AMHt5jR0411EEeaaPPYJmyV4PYMZT34MOH61SYL6kkE5IJFgLikvp
-         nsYFSWu2L+fDY6bZq1AcevUAOCphkNOz91s3Sri8rSnvAydxw23UMkGPvcdpdUb3nUGb
-         NOd/jZqMcYyhdVlYW9jT4db7XMUeovHBv+ois8AS2aQEgEMdHBu0kXP4V9UJ+mjDY/ni
-         wgqimVttopQcW2JKy/Vk5DRB0iOJfKVrslVV3lPU/w5uNb6/yWTBSi/++6XqcaTuW9Fz
-         uO+VRlJ+vUxfx19ZkYJEygikqfd98ugedCxlJG/YWmt0SZ8zzSnAaZ0z0omB6//eKWDT
-         N6BA==
-X-Gm-Message-State: AA+aEWb0C0klh36wbjnrS1j5+sllWBI4SSr+tIyzfPyaDnHn2RSlqKDw
-        Y84P+mxhVB7l1Pw2HdELxPK3NFTGqIWZfdBjJRgvog==
-X-Google-Smtp-Source: AFSGD/WfEHA/V5ZNYRywdTk92+WpGTgPCMERR8lfmP7cl6LeuBt9OcvtU2sn/92dZsvqp/xDfbGoLKf6YTQOrHG+zKA=
-X-Received: by 2002:a1f:1c2:: with SMTP id 185mr5257262vkb.57.1545122274043;
- Tue, 18 Dec 2018 00:37:54 -0800 (PST)
+        Tue, 18 Dec 2018 03:38:02 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16589 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726354AbeLRIiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:38:01 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 30302A5447EB7;
+        Tue, 18 Dec 2018 16:37:58 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Dec 2018
+ 16:37:58 +0800
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: use kvmalloc, if kmalloc is failed
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20181214050127.45025-1-jaegeuk@kernel.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a56ea91f-892d-a663-d4f2-6da8b851ec22@huawei.com>
+Date:   Tue, 18 Dec 2018 16:37:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181206040540.84632-1-cychiang@chromium.org> <20181214122156.GT4497@dell>
- <20181214122245.GU4497@dell>
-In-Reply-To: <20181214122245.GU4497@dell>
-From:   Cheng-yi Chiang <cychiang@chromium.org>
-Date:   Tue, 18 Dec 2018 16:37:27 +0800
-Message-ID: <CAFv8Nw+RbzKrjE1tsgxdRntXKWp9XVq8hbP7MZ3mZ=a2rMyG2Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mfd: cros_ec: Add commands to control codec
-To:     Lee Jones <lee.jones@linaro.org>, bleung@chromium.org,
-        groeck@chromium.org
-Cc:     linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
-        tzungbi@chromium.org, Rohit kumar <rohitkr@codeaurora.org>,
-        scollyer@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181214050127.45025-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Benson, Guenter, Scott
+On 2018/12/14 13:01, Jaegeuk Kim wrote:
+> One report says memalloc failure during mount.
+> 
+>  (unwind_backtrace) from [<c010cd4c>] (show_stack+0x10/0x14)
+>  (show_stack) from [<c049c6b8>] (dump_stack+0x8c/0xa0)
+>  (dump_stack) from [<c024fcf0>] (warn_alloc+0xc4/0x160)
+>  (warn_alloc) from [<c0250218>] (__alloc_pages_nodemask+0x3f4/0x10d0)
+>  (__alloc_pages_nodemask) from [<c0270450>] (kmalloc_order_trace+0x2c/0x120)
+>  (kmalloc_order_trace) from [<c03fa748>] (build_node_manager+0x35c/0x688)
+>  (build_node_manager) from [<c03de494>] (f2fs_fill_super+0xf0c/0x16cc)
+>  (f2fs_fill_super) from [<c02a5864>] (mount_bdev+0x15c/0x188)
+>  (mount_bdev) from [<c03da624>] (f2fs_mount+0x18/0x20)
+>  (f2fs_mount) from [<c02a68b8>] (mount_fs+0x158/0x19c)
+>  (mount_fs) from [<c02c3c9c>] (vfs_kern_mount+0x78/0x134)
+>  (vfs_kern_mount) from [<c02c76ac>] (do_mount+0x474/0xca4)
+>  (do_mount) from [<c02c8264>] (SyS_mount+0x94/0xbc)
+>  (SyS_mount) from [<c0108180>] (ret_fast_syscall+0x0/0x48)
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-On Fri, Dec 14, 2018 at 8:22 PM Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Fri, 14 Dec 2018, Lee Jones wrote:
->
-> > On Thu, 06 Dec 2018, Cheng-Yi Chiang wrote:
-> >
-> > > Add EC host commands to control codec on EC.
-> > >
-> > > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> > > ---
-> > >  V2 fixed the wrong ancestor issue so the patch can be applied cleanl=
-y on mfd tree.
-> > >  Codec driver that uses these commands will be sent separately.
-> > >  Thanks!
-> > >
-> > >  include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++=
-++
-> > >  1 file changed, 94 insertions(+)
-> >
-> > Would be good to have this reviewed by some more Chrome people.
->
-> See this for reference:
->
->   https://lore.kernel.org/patchwork/patch/1024985/
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Hi Benson and Guenter,
-Could you please review this patch ?
-The corresponding implementation at EC side by Scott is at
-https://chromium-review.googlesource.com/c/chromiumos/platform/ec/+/1356185
+Thanks,
 
-Thanks a lot!
-
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
