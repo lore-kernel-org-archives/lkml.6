@@ -2,120 +2,69 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A498C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE265C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2201C20815
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 909C321873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545155704;
+	bh=IoMiYz+gSBEtmjBCTyyXjEIwy5z1s+RId0CWejJZEDs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=uaLX3Pcpa47IpDtRgdr1z+iMYLXVMgTAwzF+zbjCTndHdX7eowoLASucyl3sG50d1
+	 E091mEBEXq5EWyWo76WHClRjlAR6ZtyZ04Go1+H2pmVPxmodlI+16y2qRPGTOJLNwz
+	 E5kvcM/BVpkSW90Ha9s6EtbMOhLn3Aw7lTZRxlic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbeLRRwT (ORCPT
+        id S1727474AbeLRRzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:52:19 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.39]:49161 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726446AbeLRRwT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:52:19 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 5C4194B798
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:52:18 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZJXWgsHzk4FKpZJXWgNroP; Tue, 18 Dec 2018 11:52:18 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=32796 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZJXV-002P9c-Dr; Tue, 18 Dec 2018 11:52:17 -0600
-Date:   Tue, 18 Dec 2018 11:52:16 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
-Message-ID: <20181218175216.GA16070@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZJXV-002P9c-Dr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.44]:32796
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 13
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 18 Dec 2018 12:55:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbeLRRzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:55:02 -0500
+Subject: Re: [GIT PULL] SCSI fixes for 4.20-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545155702;
+        bh=IoMiYz+gSBEtmjBCTyyXjEIwy5z1s+RId0CWejJZEDs=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=aZlHRobC3riT9KI8yik7jVWGCuRprDDgYJ1sQw+hT4gWK1TE2rugD7ogl2OtPFvVq
+         m6YAnaJTZSA2CgyTpt5I63yFxuFWOlt8InWE0fMUZOJlTGNA+B2Ox6GX7Of0263p55
+         L56AZRRr7VCcpfa3usehURJMBuO7yI05zUYm9mFY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1545148634.2837.6.camel@HansenPartnership.com>
+References: <1545148634.2837.6.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1545148634.2837.6.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: 60a89a3ce0cce515dc663bc1b45ac89202ad6c79
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ddfbab46539f2d37a9e9d357b054486b51f7dc27
+Message-Id: <20181218175502.21421.6167.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Tue, 18 Dec 2018 17:55:02 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ipcm->substream is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+The pull request you sent on Tue, 18 Dec 2018 07:57:14 -0800:
 
-This issue was detected with the help of Smatch:
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
-sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ddfbab46539f2d37a9e9d357b054486b51f7dc27
 
-Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
+Thank you!
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/pci/emu10k1/emufx.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
-index 6ebe817801ea..1f25e6d029d8 100644
---- a/sound/pci/emu10k1/emufx.c
-+++ b/sound/pci/emu10k1/emufx.c
-@@ -36,6 +36,7 @@
- #include <linux/init.h>
- #include <linux/mutex.h>
- #include <linux/moduleparam.h>
-+#include <linux/nospec.h>
- 
- #include <sound/core.h>
- #include <sound/tlv.h>
-@@ -1026,6 +1027,8 @@ static int snd_emu10k1_ipcm_poke(struct snd_emu10k1 *emu,
- 
- 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
- 		return -EINVAL;
-+	ipcm->substream = array_index_nospec(ipcm->substream,
-+					     EMU10K1_FX8010_PCM_COUNT);
- 	if (ipcm->channels > 32)
- 		return -EINVAL;
- 	pcm = &emu->fx8010.pcm[ipcm->substream];
-@@ -1072,6 +1075,8 @@ static int snd_emu10k1_ipcm_peek(struct snd_emu10k1 *emu,
- 
- 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
- 		return -EINVAL;
-+	ipcm->substream = array_index_nospec(ipcm->substream,
-+					     EMU10K1_FX8010_PCM_COUNT);
- 	pcm = &emu->fx8010.pcm[ipcm->substream];
- 	mutex_lock(&emu->fx8010.lock);
- 	spin_lock_irq(&emu->reg_lock);
 -- 
-2.19.2
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
