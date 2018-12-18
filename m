@@ -6,185 +6,134 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E370C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF70C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A00217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68CF7214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:38:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbeLREgd (ORCPT
+        id S1726588AbeLREii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 23:36:33 -0500
-Received: from mga02.intel.com ([134.134.136.20]:45556 "EHLO mga02.intel.com"
+        Mon, 17 Dec 2018 23:38:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52620 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726734AbeLREgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 23:36:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 20:36:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
-   d="scan'208";a="110266003"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Dec 2018 20:36:30 -0800
-Subject: [PATCH v6 6/6] mm: Maintain randomization of page free lists
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        peterz@infradead.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, mgorman@suse.de
-Date:   Mon, 17 Dec 2018 20:23:55 -0800
-Message-ID: <154510703541.1941238.6053320635908576300.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154510700291.1941238.817190985966612531.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154510700291.1941238.817190985966612531.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1726316AbeLREii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 23:38:38 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5CA7386668;
+        Tue, 18 Dec 2018 04:38:37 +0000 (UTC)
+Received: from redhat.com (ovpn-120-67.rdu2.redhat.com [10.10.120.67])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CC8661001F50;
+        Tue, 18 Dec 2018 04:38:35 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 23:38:35 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     gchen.guomin@gmail.com
+Cc:     Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, guominchen@tencent.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] Export mm_update_next_owner function for unuse_mm.
+Message-ID: <20181217233821-mutt-send-email-mst@kernel.org>
+References: <1545104531-30658-1-git-send-email-gchen.guomin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545104531-30658-1-git-send-email-gchen.guomin@gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 18 Dec 2018 04:38:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing a page with an order >= shuffle_page_order randomly select
-the front or back of the list for insertion.
+On Tue, Dec 18, 2018 at 11:42:11AM +0800, gchen.guomin@gmail.com wrote:
+> From: guomin chen <gchen.guomin@gmail.com>
+> 
+> When mm->owner is modified by exit_mm, if the new owner directly calls
+> unuse_mm to exit, it will cause Use-After-Free. Due to the unuse_mm()
+> directly sets tsk->mm=NULL.
+> 
+>  Under normal circumstances,When do_exit exits, mm->owner will
+>  be updated on exit_mm(). but when the kernel process calls
+>  unuse_mm() and then exits,mm->owner cannot be updated. And it
+>  will point to a task that has been released.
+> 
+> The current issue flow is as follows:
+> Process C              Process A         Process B
+> qemu-system-x86_64:     kernel:vhost_net  kernel: vhost_net
+> open /dev/vhost-net
+>   VHOST_SET_OWNER   create kthread vhost-%d  create kthread vhost-%d
+>   network init           use_mm()          use_mm()
+>    ...                   ...
+>    Abnormal exited
+>    ...
+>   do_exit
+>   exit_mm()
+>   update mm->owner to A
+>   exit_files()
+>    close_files()
+>    kthread_should_stop() unuse_mm()
+>     Stop Process A       tsk->mm=NULL
+>                          do_exit()
+>                          can't update owner
+>                          A exit completed  vhost-%d  rcv first package
+>                                            vhost-%d build rcv buffer for vq
+>                                            page fault
+>                                            access mm & mm->owner
+>                                            NOW,mm->owner still pointer A
+>                                            kernel UAF
+>     stop Process B
+> 
+> Although I am having this issue on vhost_net,But it affects all users of
+> unuse_mm.
+> 
+> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: guomin chen <gchen.guomin@gmail.com>
+> ---
+>  kernel/exit.c    | 1 +
+>  mm/mmu_context.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 0e21e6d..9e046dd 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -486,6 +486,7 @@ void mm_update_next_owner(struct mm_struct *mm)
+>  	task_unlock(c);
+>  	put_task_struct(c);
+>  }
+> +EXPORT_SYMBOL(mm_update_next_owner);
+>  #endif /* CONFIG_MEMCG */
+>  
+>  /*
 
-While the mm tries to defragment physical pages into huge pages this can
-tend to make the page allocator more predictable over time. Inject the
-front-back randomness to preserve the initial randomness established by
-shuffle_free_memory() when the kernel was booted.
+So why export it? Is that still needed?
 
-The overhead of this manipulation is constrained by only being applied
-for MAX_ORDER sized pages by default.
-
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/mmzone.h  |   10 ++++++++++
- include/linux/shuffle.h |   12 ++++++++++++
- mm/page_alloc.c         |   11 +++++++++--
- mm/shuffle.c            |   16 ++++++++++++++++
- 4 files changed, 47 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 35cc33af87f2..338929647eea 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -98,6 +98,8 @@ extern int page_group_by_mobility_disabled;
- struct free_area {
- 	struct list_head	free_list[MIGRATE_TYPES];
- 	unsigned long		nr_free;
-+	u64			rand;
-+	u8			rand_bits;
- };
- 
- /* Used for pages not on another list */
-@@ -116,6 +118,14 @@ static inline void add_to_free_area_tail(struct page *page, struct free_area *ar
- 	area->nr_free++;
- }
- 
-+#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
-+/* Used to preserve page allocation order entropy */
-+void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype);
-+#else
-+#define add_to_free_area_random add_to_free_area
-+#endif
-+
- /* Used for pages which are on another list */
- static inline void move_to_free_area(struct page *page, struct free_area *area,
- 			     int migratetype)
-diff --git a/include/linux/shuffle.h b/include/linux/shuffle.h
-index a8a168919cb5..8b3941a87c2c 100644
---- a/include/linux/shuffle.h
-+++ b/include/linux/shuffle.h
-@@ -29,6 +29,13 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
- 		return;
- 	__shuffle_zone(z, start_pfn, end_pfn);
- }
-+
-+static inline bool is_shuffle_order(int order)
-+{
-+	if (!static_branch_unlikely(&page_alloc_shuffle_key))
-+                return false;
-+	return order >= CONFIG_SHUFFLE_PAGE_ORDER;
-+}
- #else
- static inline void shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
- 		unsigned long end_pfn)
-@@ -43,5 +50,10 @@ static inline void shuffle_zone(struct zone *z, unsigned long start_pfn,
- static inline void page_alloc_shuffle(void)
- {
- }
-+
-+static inline bool is_shuffle_order(int order)
-+{
-+	return false;
-+}
- #endif
- #endif /* _MM_SHUFFLE_H */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index de8b5eb78d13..3a932ba23daf 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -42,6 +42,7 @@
- #include <linux/mempolicy.h>
- #include <linux/memremap.h>
- #include <linux/stop_machine.h>
-+#include <linux/random.h>
- #include <linux/sort.h>
- #include <linux/pfn.h>
- #include <linux/backing-dev.h>
-@@ -851,7 +852,8 @@ static inline void __free_one_page(struct page *page,
- 	 * so it's less likely to be used soon and more likely to be merged
- 	 * as a higher order page
- 	 */
--	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
-+	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
-+			&& !is_shuffle_order(order)) {
- 		struct page *higher_page, *higher_buddy;
- 		combined_pfn = buddy_pfn & pfn;
- 		higher_page = page + (combined_pfn - pfn);
-@@ -865,7 +867,12 @@ static inline void __free_one_page(struct page *page,
- 		}
- 	}
- 
--	add_to_free_area(page, &zone->free_area[order], migratetype);
-+	if (is_shuffle_order(order))
-+		add_to_free_area_random(page, &zone->free_area[order],
-+				migratetype);
-+	else
-+		add_to_free_area(page, &zone->free_area[order], migratetype);
-+
- }
- 
- /*
-diff --git a/mm/shuffle.c b/mm/shuffle.c
-index 07961ff41a03..4cadf51c9b40 100644
---- a/mm/shuffle.c
-+++ b/mm/shuffle.c
-@@ -213,3 +213,19 @@ void __meminit __shuffle_free_memory(pg_data_t *pgdat, unsigned long start_pfn,
- 	for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
- 		shuffle_zone(z, start_pfn, end_pfn);
- }
-+
-+void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype)
-+{
-+	if (area->rand_bits == 0) {
-+		area->rand_bits = 64;
-+		area->rand = get_random_u64();
-+	}
-+
-+	if (area->rand & 1)
-+		add_to_free_area(page, area, migratetype);
-+	else
-+		add_to_free_area_tail(page, area, migratetype);
-+	area->rand_bits--;
-+	area->rand >>= 1;
-+}
-
+> diff --git a/mm/mmu_context.c b/mm/mmu_context.c
+> index 3e612ae..9eb81aa 100644
+> --- a/mm/mmu_context.c
+> +++ b/mm/mmu_context.c
+> @@ -60,5 +60,6 @@ void unuse_mm(struct mm_struct *mm)
+>  	/* active_mm is still 'mm' */
+>  	enter_lazy_tlb(mm, tsk);
+>  	task_unlock(tsk);
+> +	mm_update_next_owner(mm);
+>  }
+>  EXPORT_SYMBOL_GPL(unuse_mm);
+> -- 
+> 1.8.3.1
