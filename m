@@ -2,288 +2,271 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A54B6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF53C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6966620675
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A359320675
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545165352;
+	bh=Wk5mmyn6yxs4A46NsWxtx+4SDSpEUJSZm6n/g57rtng=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+	 References:List-ID:From;
+	b=Mr0Z47Sy4/DLR6760xYYznFnw76uSDNmkdytYkTf6VR3RSrnaPj5wLzD/8Zle7F/B
+	 020kmbr2A8CogYANuQRoEINb0sST4pamIZztDEloIvys7tHVF4mcDW6mwBBJdHA/Mr
+	 A/XMqptWv/kjaokA3y/BvILDvaRFZjZJKwKF1JJ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbeLRUfi (ORCPT
+        id S1727260AbeLRUfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:35:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34398 "EHLO mx1.redhat.com"
+        Tue, 18 Dec 2018 15:35:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbeLRUfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:35:32 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726638AbeLRUe4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:34:56 -0500
+Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4F77E58E45;
-        Tue, 18 Dec 2018 20:35:32 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC4277A5FC;
-        Tue, 18 Dec 2018 20:35:30 +0000 (UTC)
-Subject: Re: [PATCH v4] sched/wake_q: Reduce reference counting for special
- users
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        Xie Yongji <xieyongji@baidu.com>, zhangyu31@baidu.com,
-        liuqi16@baidu.com, yuanlinsi01@baidu.com, nixun@baidu.com,
-        lilin24@baidu.com, andrea.parri@amarulasolutions.com
-References: <20181129221714.GF11632@hirez.programming.kicks-ass.net>
- <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
- <20181217113718.GB4900@worktop.programming.kicks-ass.net>
- <20181217205310.pvwcryyaqlrzmaex@linux-r8p5>
- <20181218131031.GJ15430@hirez.programming.kicks-ass.net>
- <20181218131419.GD16284@hirez.programming.kicks-ass.net>
- <20181218185443.g5jzinm3vnrkznmm@linux-r8p5>
- <a8767197-21b9-f470-b864-be88e020c647@redhat.com>
- <20181218193009.ytzz5rlrsh27rjre@linux-r8p5>
- <20181218193957.cjx34nn5tku2eaps@linux-r8p5>
- <20181218195352.7orq3upiwfdbrdne@linux-r8p5>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <772085e9-35f3-1c32-1b87-f101cbc5f8f7@redhat.com>
-Date:   Tue, 18 Dec 2018 15:35:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181218195352.7orq3upiwfdbrdne@linux-r8p5>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Dec 2018 20:35:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1703220675;
+        Tue, 18 Dec 2018 20:34:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545165295;
+        bh=Wk5mmyn6yxs4A46NsWxtx+4SDSpEUJSZm6n/g57rtng=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=o6PHKoALJa2bg4UJ/d6v+IbZLXsJ9hxNGZocARauEV3hUiYKndepoXUCxEAr6juVA
+         Kcgw0/GFsPQYJJfynJHfpwqbOXppn2gV+v97Kkorh4VkvWdLOvcbPOstQPhvRUp4Db
+         mWEZSReWIHnNOT70wnN7pOBhHZZ9jREo6b9QoWHM=
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     rostedt@goodmis.org
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v9 08/15] tracing: Add hist trigger onchange() handler
+Date:   Tue, 18 Dec 2018 14:34:07 -0600
+Message-Id: <46a49a9a173e5ed687e4ea236b372e1739d94dd9.1545161056.git.tom.zanussi@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
+References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
+In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
+References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/2018 02:53 PM, Davidlohr Bueso wrote:
-> Some users, specifically futexes and rwsems, required fixes
-> that allowed the callers to be safe when wakeups occur before
-> they are expected by wake_up_q(). Such scenarios also play
-> games and rely on reference counting, and until now were
-> pivoting on wake_q doing it. With the wake_q_add() call being
-> moved down, this can no longer be the case. As such we end up
-> with a a double task refcounting overhead; and these callers
-> care enough about this (being rather core-ish).
->
-> This patch introduces a wake_q_add_safe() call that serves
-> for callers that have already done refcounting and therefore the
-> task is 'safe' from wake_q point of view (int that it requires
-> reference throughout the entire queue/>wakeup cycle). In the one
-> case it has internal reference counting, in the other case it
-> consumes the reference counting.
->
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> ---
->
-> - Changes from v3: fixed wake_q_add_safe. While previous version
->  had been tested with a bootup, the failed cmpxchg path obviously
->  hadn't been exercised.  Sorry about the noise.
->
-> include/linux/sched/wake_q.h |  4 +--
-> kernel/futex.c               |  3 +--
-> kernel/locking/rwsem-xadd.c  |  4 +--
-> kernel/sched/core.c          | 60
-> ++++++++++++++++++++++++++++++++------------
-> 4 files changed, 48 insertions(+), 23 deletions(-)
->
-> diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
-> index 545f37138057..ad826d2a4557 100644
-> --- a/include/linux/sched/wake_q.h
-> +++ b/include/linux/sched/wake_q.h
-> @@ -51,8 +51,8 @@ static inline void wake_q_init(struct wake_q_head
-> *head)
->     head->lastp = &head->first;
-> }
->
-> -extern void wake_q_add(struct wake_q_head *head,
-> -               struct task_struct *task);
-> +extern void wake_q_add(struct wake_q_head *head, struct task_struct
-> *task);
-> +extern void wake_q_add_safe(struct wake_q_head *head, struct
-> task_struct *task);
-> extern void wake_up_q(struct wake_q_head *head);
->
-> #endif /* _LINUX_SCHED_WAKE_Q_H */
-> diff --git a/kernel/futex.c b/kernel/futex.c
-> index d14971f6ed3d..6218d98f649b 100644
-> --- a/kernel/futex.c
-> +++ b/kernel/futex.c
-> @@ -1402,8 +1402,7 @@ static void mark_wake_futex(struct wake_q_head
-> *wake_q, struct futex_q *q)
->      * Queue the task for later wakeup for after we've released
->      * the hb->lock. wake_q_add() grabs reference to p.
->      */
-> -    wake_q_add(wake_q, p);
-> -    put_task_struct(p);
-> +    wake_q_add_safe(wake_q, p);
-> }
->
-> /*
-> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-> index 50d9af615dc4..fbe96341beee 100644
-> --- a/kernel/locking/rwsem-xadd.c
-> +++ b/kernel/locking/rwsem-xadd.c
-> @@ -211,9 +211,7 @@ static void __rwsem_mark_wake(struct rw_semaphore
-> *sem,
->          * Ensure issuing the wakeup (either by us or someone else)
->          * after setting the reader waiter to nil.
->          */
-> -        wake_q_add(wake_q, tsk);
-> -        /* wake_q_add() already take the task ref */
-> -        put_task_struct(tsk);
-> +        wake_q_add_safe(wake_q, tsk);
->     }
->
->     adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index d740d7a3608d..be977df66a21 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -396,19 +396,7 @@ static bool set_nr_if_polling(struct task_struct *p)
-> #endif
-> #endif
->
-> -/**
-> - * wake_q_add() - queue a wakeup for 'later' waking.
-> - * @head: the wake_q_head to add @task to
-> - * @task: the task to queue for 'later' wakeup
-> - *
-> - * Queue a task for later wakeup, most likely by the wake_up_q() call
-> in the
-> - * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-> - * instantly.
-> - *
-> - * This function must be used as-if it were wake_up_process(); IOW
-> the task
-> - * must be ready to be woken at this location.
-> - */
-> -void wake_q_add(struct wake_q_head *head, struct task_struct *task)
-> +static bool __wake_q_add(struct wake_q_head *head, struct task_struct
-> *task)
-> {
->     struct wake_q_node *node = &task->wake_q;
->
-> @@ -422,15 +410,55 @@ void wake_q_add(struct wake_q_head *head, struct
-> task_struct *task)
->      */
->     smp_mb__before_atomic();
->     if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
-> -        return;
-> -
-> -    get_task_struct(task);
-> +        return false;
->
->     /*
->      * The head is context local, there can be no concurrency.
->      */
->     *head->lastp = node;
->     head->lastp = &node->next;
-> +    return true;
-> +}
-> +
-> +/**
-> + * wake_q_add() - queue a wakeup for 'later' waking.
-> + * @head: the wake_q_head to add @task to
-> + * @task: the task to queue for 'later' wakeup
-> + *
-> + * Queue a task for later wakeup, most likely by the wake_up_q() call
-> in the
-> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-> + * instantly.
-> + *
-> + * This function must be used as-if it were wake_up_process(); IOW
-> the task
-> + * must be ready to be woken at this location.
-> + */
-> +void wake_q_add(struct wake_q_head *head, struct task_struct *task)
-> +{
-> +    if (__wake_q_add(head, task))
-> +        get_task_struct(task);
-> +}
-> +
-> +/**
-> + * wake_q_add_safe() - safely queue a wakeup for 'later' waking.
-> + * @head: the wake_q_head to add @task to
-> + * @task: the task to queue for 'later' wakeup
-> + *
-> + * Queue a task for later wakeup, most likely by the wake_up_q() call
-> in the
-> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
-> + * instantly.
-> + *
-> + * This function must be used as-if it were wake_up_process(); IOW
-> the task
-> + * must be ready to be woken at this location.
-> + *
-> + * This function is essentially a task-safe equivalent to
-> wake_q_add(). Callers
-> + * that already hold reference to @task can call the 'safe' version
-> and trust
-> + * wake_q to do the right thing depending whether or not the @task is
-> already
-> + * queued for wakeup.
-> + */
-> +void wake_q_add_safe(struct wake_q_head *head, struct task_struct *task)
-> +{
-> +    if (!__wake_q_add(head, task))
-> +        put_task_struct(task);
-> }
->
-> void wake_up_q(struct wake_q_head *head)
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Acked-by: Waiman Long <longman@redhat.com>
+Add support for a hist:onchange($var) handler, similar to the onmax()
+handler but triggering whenever there's any change in $var, not just a
+max.
+
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+---
+ kernel/trace/trace.c             |  3 ++-
+ kernel/trace/trace_events_hist.c | 58 ++++++++++++++++++++++++++++++++++------
+ 2 files changed, 52 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 824e43e51c3b..f3f54b268b5a 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4894,7 +4894,8 @@ static const char readme_msg[] =
+ 	"\t        <handler>.<action>\n\n"
+ 	"\t    The available handlers are:\n\n"
+ 	"\t        onmatch(matching.event)  - invoke on addition or update\n"
+-	"\t        onmax(var)               - invoke if var exceeds current max\n\n"
++	"\t        onmax(var)               - invoke if var exceeds current max\n"
++	"\t        onchange(var)            - invoke action if var changes\n\n"
+ 	"\t    The available actions are:\n\n"
+ 	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
+ 	"\t        save(field,...)                      - save current event fields\n"
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index e88dc8246e30..5203c4809c9d 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -398,6 +398,7 @@ typedef u64 (*get_track_val_fn_t) (struct hist_trigger_data *hist_data,
+ enum handler_id {
+ 	HANDLER_ONMATCH = 1,
+ 	HANDLER_ONMAX,
++	HANDLER_ONCHANGE,
+ };
+ 
+ enum action_id {
+@@ -2000,7 +2001,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
+ 		return ret;
+ 
+ 	if ((strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) ||
+-	    (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0)) {
++	    (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0) ||
++	    (strncmp(str, "onchange(", sizeof("onchange(") - 1) == 0)) {
+ 		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
+ 		if (!attrs->action_str[attrs->n_actions]) {
+ 			ret = -ENOMEM;
+@@ -3492,6 +3494,14 @@ static bool check_track_val_max(u64 track_val, u64 var_val)
+ 	return true;
+ }
+ 
++static bool check_track_val_changed(u64 track_val, u64 var_val)
++{
++	if (var_val == track_val)
++		return false;
++
++	return true;
++}
++
+ static u64 get_track_val_local(struct hist_trigger_data *hist_data,
+ 			       struct tracing_map_elt *elt,
+ 			       struct action_data *data)
+@@ -3668,6 +3678,8 @@ static void track_data_print(struct seq_file *m,
+ 
+ 	if (data->handler == HANDLER_ONMAX)
+ 		seq_printf(m, "\n\tmax: %10llu", track_val);
++	else if (data->handler == HANDLER_ONCHANGE)
++		seq_printf(m, "\n\tchanged: %10llu", track_val);
+ 
+ 	if (data->action == ACTION_SNAPSHOT)
+ 		return;
+@@ -3754,14 +3766,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
+ 
+ 	track_data_var_str = data->track_data.var_str;
+ 	if (track_data_var_str[0] != '$') {
+-		hist_err("For onmax(x), x must be a variable: ", track_data_var_str);
++		hist_err("For onmax(x) or onchange(x), x must be a variable: ", track_data_var_str);
+ 		return -EINVAL;
+ 	}
+ 	track_data_var_str++;
+ 
+ 	var_field = find_target_event_var(hist_data, NULL, NULL, track_data_var_str);
+ 	if (!var_field) {
+-		hist_err("Couldn't find onmax variable: ", track_data_var_str);
++		hist_err("Couldn't find onmax or onchange variable: ", track_data_var_str);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -3778,6 +3790,14 @@ static int track_data_create(struct hist_trigger_data *hist_data,
+ 		ret = PTR_ERR(track_var);
+ 		goto out;
+ 	}
++
++	if (data->handler == HANDLER_ONCHANGE)
++		track_var = create_var(hist_data, file, "__change", sizeof(u64), "u64");
++	if (IS_ERR(track_var)) {
++		hist_err("Couldn't create onchange variable: ", "__change");
++		ret = PTR_ERR(track_var);
++		goto out;
++	}
+ 	data->track_data.track_var = track_var;
+ 
+ 	ret = action_create(hist_data, data);
+@@ -3857,6 +3877,8 @@ static int action_parse(char *str, struct action_data *data,
+ 
+ 		if (handler == HANDLER_ONMAX)
+ 			data->track_data.check_val = check_track_val_max;
++		else if (handler == HANDLER_ONCHANGE)
++			data->track_data.check_val = check_track_val_changed;
+ 		else {
+ 			hist_err("action parsing: Handler doesn't support action: ", action_name);
+ 			ret = -EINVAL;
+@@ -3881,6 +3903,8 @@ static int action_parse(char *str, struct action_data *data,
+ 
+ 		if (handler == HANDLER_ONMAX)
+ 			data->track_data.check_val = check_track_val_max;
++		else if (handler == HANDLER_ONCHANGE)
++			data->track_data.check_val = check_track_val_changed;
+ 		else {
+ 			hist_err("action parsing: Handler doesn't support action: ", action_name);
+ 			ret = -EINVAL;
+@@ -3904,6 +3928,8 @@ static int action_parse(char *str, struct action_data *data,
+ 
+ 		if (handler == HANDLER_ONMAX)
+ 			data->track_data.check_val = check_track_val_max;
++		else if (handler == HANDLER_ONCHANGE)
++			data->track_data.check_val = check_track_val_changed;
+ 
+ 		if (handler != HANDLER_ONMATCH) {
+ 			data->track_data.save_val = save_track_val_local;
+@@ -4747,7 +4773,8 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
+ 
+ 		if (data->handler == HANDLER_ONMATCH)
+ 			onmatch_destroy(data);
+-		else if (data->handler == HANDLER_ONMAX)
++		else if (data->handler == HANDLER_ONMAX ||
++			 data->handler == HANDLER_ONCHANGE)
+ 			track_data_destroy(hist_data, data);
+ 		else
+ 			kfree(data);
+@@ -4782,6 +4809,15 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+ 				ret = PTR_ERR(data);
+ 				break;
+ 			}
++		} else if (strncmp(str, "onchange(", sizeof("onchange(") - 1) == 0) {
++			char *action_str = str + sizeof("onchange(") - 1;
++
++			data = track_data_parse(hist_data, action_str,
++						HANDLER_ONCHANGE);
++			if (IS_ERR(data)) {
++				ret = PTR_ERR(data);
++				break;
++			}
+ 		} else {
+ 			ret = -EINVAL;
+ 			break;
+@@ -4806,7 +4842,8 @@ static int create_actions(struct hist_trigger_data *hist_data)
+ 			ret = onmatch_create(hist_data, data);
+ 			if (ret)
+ 				break;
+-		} else if (data->handler == HANDLER_ONMAX) {
++		} else if (data->handler == HANDLER_ONMAX ||
++			   data->handler == HANDLER_ONCHANGE) {
+ 			ret = track_data_create(hist_data, data);
+ 			if (ret)
+ 				break;
+@@ -4834,7 +4871,8 @@ static void print_actions(struct seq_file *m,
+ 			continue;
+ 		}
+ 
+-		if (data->handler == HANDLER_ONMAX)
++		if (data->handler == HANDLER_ONMAX ||
++		    data->handler == HANDLER_ONCHANGE)
+ 			track_data_print(m, hist_data, elt, data);
+ 	}
+ }
+@@ -4866,6 +4904,8 @@ static void print_track_data_spec(struct seq_file *m,
+ {
+ 	if (data->handler == HANDLER_ONMAX)
+ 		seq_puts(m, ":onmax(");
++	else if (data->handler == HANDLER_ONCHANGE)
++		seq_puts(m, ":onchange(");
+ 	seq_printf(m, "%s", data->track_data.var_str);
+ 	seq_printf(m, ").%s(", data->action_name);
+ 
+@@ -4923,7 +4963,8 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 			if (strcmp(data->match_data.event,
+ 				   data_test->match_data.event) != 0)
+ 				return false;
+-		} else if (data->handler == HANDLER_ONMAX) {
++		} else if (data->handler == HANDLER_ONMAX ||
++			   data->handler == HANDLER_ONCHANGE) {
+ 			if (strcmp(data->track_data.var_str,
+ 				   data_test->track_data.var_str) != 0)
+ 				return false;
+@@ -4944,7 +4985,8 @@ static void print_actions_spec(struct seq_file *m,
+ 
+ 		if (data->handler == HANDLER_ONMATCH)
+ 			print_onmatch_spec(m, hist_data, data);
+-		else if (data->handler == HANDLER_ONMAX)
++		else if (data->handler == HANDLER_ONMAX ||
++			 data->handler == HANDLER_ONCHANGE)
+ 			print_track_data_spec(m, hist_data, data);
+ 	}
+ }
+-- 
+2.14.1
 
