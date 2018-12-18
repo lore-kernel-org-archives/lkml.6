@@ -2,166 +2,153 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CE8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780ACC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6643121871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:41:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LZ5QhSJY"
+	by mail.kernel.org (Postfix) with ESMTP id 4669221871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545172903;
+	bh=VQd3bMjFda8yZ+sXA29AOY7cXCpHbKhgeS0/MDfqL+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BcuBRkuetqq63GfasmUBzpFSrSLpzGdmeCab2jyM3hsP1tsyyXwPNCVNUWI8NNI/1
+	 /G7jpLxsaQhd0etc3AmbewbqDjVaw5/2scpuOS5oRtfed6M2kR0y+gv9pYNHCmCbTB
+	 0xeH/bgNdtsDqxFiNI1rA/qcOcnJDvX0tBrbqwOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbeLRWlE (ORCPT
+        id S1727848AbeLRWlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:41:04 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16335 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbeLRWlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:41:01 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1977720005>; Tue, 18 Dec 2018 14:40:50 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Dec 2018 14:40:59 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 14:40:59 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 22:40:59 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 22:40:59 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c19777b0003>; Tue, 18 Dec 2018 14:40:59 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <talho@nvidia.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1 2/2] arm64: dts: tegra186: Device Tree Updates for Tegra186 I2C
-Date:   Tue, 18 Dec 2018 14:40:56 -0800
-Message-ID: <1545172856-19509-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545172856-19509-1-git-send-email-skomatineni@nvidia.com>
-References: <1545172856-19509-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 18 Dec 2018 17:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44176 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727127AbeLRWlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:41:42 -0500
+Received: from localhost (unknown [104.132.0.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE3221871;
+        Tue, 18 Dec 2018 22:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545172900;
+        bh=VQd3bMjFda8yZ+sXA29AOY7cXCpHbKhgeS0/MDfqL+Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pJ4x/w/qSe3bBjyKqgQLG4epdA73t3k1ltg7cCYfKuv9FKJuQ+V5abkh9DQlOoxzb
+         YV71MwJArWAS+FMNLbiUyVyzVoRvjQ96uy4JxZCbdeYI3t9Pl5Wa1MQRpLnqxOa8FO
+         JALjG+j9OLlNYf5zGmzz6FE0qfjJOoPZrD4V1WNc=
+Date:   Tue, 18 Dec 2018 14:41:39 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v3] loop: drop caches if offset or block_size are changed
+Message-ID: <20181218224139.GB31062@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181214203223.7063-1-jaegeuk@kernel.org>
+ <20181217194236.GA50659@jaegeuk-macbookpro.roam.corp.google.com>
+ <29369548-df14-a5a7-2bee-a40b3479df68@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545172851; bh=TjYIi0Rj1xoGKfvWe251EO/dWGZdjZo5q5Gjzf8HXUU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=LZ5QhSJY9dCTWsWz/mPxwMsRx62Ha5FDpBXnnbJYuOw5dyQKJ/s9TewVnHRlx1e69
-         xEe7jaGvnofbG3+yT+bI5wsXY90XxP07yYMfUZ/M6fOqAHvPM03kY0Pc1COVeM32Ui
-         w3haz5uZntr1Vn+b5bB5zNvy3M0qbSmB9sHpn9vFLiCoO02UwFowtbyOQL1nCCdBP4
-         NN/2CU3AMxAykapSPW7vodmJHA5zhJy1ytrgN2CSjlXto2bBraEjAeGqhyskaNMV/k
-         HURadykRtIzKZLTgzbIBgxiBTTeTJjKStBrq0WILKMFdGT43i/qg90fqZ59ZOBJzpC
-         4DaM1Rd2Z5Ciw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29369548-df14-a5a7-2bee-a40b3479df68@kernel.dk>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update I2C Device node compatible string to be appropriate.
+If we don't drop caches used in old offset or block_size, we can get old data
+from new offset/block_size, which gives unexpected data to user.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+For example, Martijn found a loopback bug in the below scenario.
+1) LOOP_SET_FD loads first two pages on loop file
+2) LOOP_SET_STATUS64 changes the offset on the loop file
+3) mount is failed due to the cached pages having wrong superblock
+
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+Reported-by: Martijn Coenen <maco@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+v2 -> v3:
+ - avoid to submit IOs on frozen mq
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..31c7278f4c03 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -136,7 +136,7 @@
- 	};
+Jens, how about this?
+
+Thanks,
+
+ drivers/block/loop.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index cb0cc8685076..6b03121d62aa 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1126,6 +1126,12 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ 	if ((unsigned int) info->lo_encrypt_key_size > LO_KEY_SIZE)
+ 		return -EINVAL;
  
- 	gen1_i2c: i2c@3160000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x03160000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -149,7 +149,7 @@
- 	};
++	if (lo->lo_offset != info->lo_offset ||
++	    lo->lo_sizelimit != info->lo_sizelimit) {
++		sync_blockdev(lo->lo_device);
++		kill_bdev(lo->lo_device);
++	}
++
+ 	/* I/O need to be drained during transfer transition */
+ 	blk_mq_freeze_queue(lo->lo_queue);
  
- 	cam_i2c: i2c@3180000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x03180000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -163,7 +163,7 @@
+@@ -1154,6 +1160,11 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
  
- 	/* shares pads with dpaux1 */
- 	dp_aux_ch1_i2c: i2c@3190000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x03190000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -177,7 +177,7 @@
+ 	if (lo->lo_offset != info->lo_offset ||
+ 	    lo->lo_sizelimit != info->lo_sizelimit) {
++		/* kill_bdev should have truncated all the pages */
++		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
++			err = -EAGAIN;
++			goto exit;
++		}
+ 		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
+ 			err = -EFBIG;
+ 			goto exit;
+@@ -1375,22 +1386,36 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
  
- 	/* controlled by BPMP, should not be enabled */
- 	pwr_i2c: i2c@31a0000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x031a0000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -191,7 +191,7 @@
+ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+ {
++	int err = 0;
++
+ 	if (lo->lo_state != Lo_bound)
+ 		return -ENXIO;
  
- 	/* shares pads with dpaux0 */
- 	dp_aux_ch0_i2c: i2c@31b0000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x031b0000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -204,7 +204,7 @@
- 	};
+ 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
+ 		return -EINVAL;
  
- 	gen7_i2c: i2c@31c0000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x031c0000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -217,7 +217,7 @@
- 	};
++	if (lo->lo_queue->limits.logical_block_size != arg) {
++		sync_blockdev(lo->lo_device);
++		kill_bdev(lo->lo_device);
++	}
++
+ 	blk_mq_freeze_queue(lo->lo_queue);
  
- 	gen9_i2c: i2c@31e0000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x031e0000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -346,7 +346,7 @@
- 	};
++	/* kill_bdev should have truncated all the pages */
++	if (lo->lo_queue->limits.logical_block_size != arg &&
++			lo->lo_device->bd_inode->i_mapping->nrpages) {
++		err = -EAGAIN;
++		goto out;
++	}
++
+ 	blk_queue_logical_block_size(lo->lo_queue, arg);
+ 	blk_queue_physical_block_size(lo->lo_queue, arg);
+ 	blk_queue_io_min(lo->lo_queue, arg);
+ 	loop_update_dio(lo);
+-
++out:
+ 	blk_mq_unfreeze_queue(lo->lo_queue);
  
- 	gen2_i2c: i2c@c240000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x0c240000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -359,7 +359,7 @@
- 	};
+-	return 0;
++	return err;
+ }
  
- 	gen8_i2c: i2c@c250000 {
--		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
-+		compatible = "nvidia,tegra186-i2c", "nvidia,tegra210-i2c";
- 		reg = <0x0 0x0c250000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
+ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
 -- 
-2.7.4
+2.19.0.605.g01d371f741-goog
 
