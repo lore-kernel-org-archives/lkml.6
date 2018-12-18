@@ -2,136 +2,107 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431A4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D5DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFC321841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545123990;
-	bh=VqraFm2+x2Yj9V6ayZp+yL2VrH5cKJw3S6fKK1EV7gU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=YJM6UGqXEaf0SvcircB7JcVi6jw0wTLcMmgEOb4VbkaAr39pNsewWjfbb4vR6nA8F
-	 Z2ubDxqNVYIqmlfPq9iz5Xzb3VilRHdYjZbi3ums/fRMqPD4YL03lwGX4q8r4R+lj9
-	 DHnZMORZJDjUm+sBQgLdply4kvJGVBdeXSZavhNI=
+	by mail.kernel.org (Postfix) with ESMTP id 4565C217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbeLRJG3 (ORCPT
+        id S1726501AbeLRJGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:06:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726346AbeLRJG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:06:28 -0500
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A76A21848;
-        Tue, 18 Dec 2018 09:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545123987;
-        bh=VqraFm2+x2Yj9V6ayZp+yL2VrH5cKJw3S6fKK1EV7gU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BeJbW/f6Mlsyx9xMXgem+bAJkEzlDvSThM2t9zCfcQ/yxqVG/tyOzeWi1V8kPFTIl
-         PcQ1kIZ0OY+kOAcUWnoyOkrvDvePZHCXgYdtKm7MPdeOfVe2Jfj5XczQBBfkw+Aq+w
-         LyHsuR1Wbfl7Q+GfF5ULBfEZmTpaZ+D1aj6Tce/M=
-Received: by mail-lf1-f42.google.com with SMTP id l10so11630570lfh.9;
-        Tue, 18 Dec 2018 01:06:27 -0800 (PST)
-X-Gm-Message-State: AA+aEWZAZfx8JCJSLkgwSoy7L4dcsC1zlmq3KI6QYofkKvesvI/Cmrxq
-        KE7fd3eWt7lBD0aL696fwRlitf7lt9z53ILPIA8=
-X-Google-Smtp-Source: AFSGD/XX6wB7kVBonNTVJLE8BlssE/gnftnVG1gcwyk613R8eArAVwryxhPDCpcP/HAg8IXevMxE9NwXmjyFEEJhlv4=
-X-Received: by 2002:a19:660a:: with SMTP id a10mr10192399lfc.146.1545123985402;
- Tue, 18 Dec 2018 01:06:25 -0800 (PST)
+        Tue, 18 Dec 2018 04:06:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49004 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726422AbeLRJGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 04:06:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AD62FAC17;
+        Tue, 18 Dec 2018 09:06:32 +0000 (UTC)
+Subject: Re: [PATCH 06/14] mm, migrate: Immediately fail migration of a page
+ with no migration handler
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20181214230310.572-1-mgorman@techsingularity.net>
+ <20181214230310.572-7-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <0ef5c1d0-1853-8fdb-1a68-7482297cb802@suse.cz>
+Date:   Tue, 18 Dec 2018 10:06:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <1544613406-27026-1-git-send-email-krzk@kernel.org>
- <1544613406-27026-2-git-send-email-krzk@kernel.org> <20181217224029.GA16132@bogus>
-In-Reply-To: <20181217224029.GA16132@bogus>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 18 Dec 2018 10:06:14 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPd_icrPUQJhbcHkovQ7DFYM5mVZmXG_qbHv3KKjxVEdbg@mail.gmail.com>
-Message-ID: <CAJKOXPd_icrPUQJhbcHkovQ7DFYM5mVZmXG_qbHv3KKjxVEdbg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: leds: Add pattern initialization from
- Device Tree
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181214230310.572-7-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Dec 2018 at 23:40, Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Dec 12, 2018 at 12:16:42PM +0100, Krzysztof Kozlowski wrote:
-> > Document new linux,trigger-pattern property for initialization of LED
-> > pattern trigger.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/leds/common.txt | 36 +++++++++++++++++++++++
-> >  1 file changed, 36 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
-> > index aa1399814a2a..3daccd4ea8a3 100644
-> > --- a/Documentation/devicetree/bindings/leds/common.txt
-> > +++ b/Documentation/devicetree/bindings/leds/common.txt
-> > @@ -37,6 +37,42 @@ Optional properties for child nodes:
-> >       "ide-disk" - LED indicates IDE disk activity (deprecated),
-> >                    in new implementations use "disk-activity"
-> >       "timer" - LED flashes at a fixed, configurable rate
-> > +     "pattern" - LED alters the brightness for the specified duration with one
-> > +                 software timer (requires "led-pattern" property)
-> > +
-> > +- led-pattern : String with default pattern for certain triggers. Each trigger
-> > +                may parse this string differently:
-> > +                - one-shot : two numbers specifying delay on and delay off,
-> > +                - timer : two numbers specifying delay on and delay off,
->
-> I misunderstood that these triggers applied to this. Is there any point
-> to supporting these modes?
+On 12/15/18 12:03 AM, Mel Gorman wrote:
+> Pages with no migration handler use a fallback hander which sometimes
+> works and sometimes persistently fails such as blockdev pages. Migration
+> will retry a number of times on these persistent pages which is wasteful
+> during compaction. This patch will fail migration immediately unless the
+> caller is in MIGRATE_SYNC mode which indicates the caller is willing to
+> wait while being persistent.
 
-I am not sure whether I explained this clearly enough, so let me be
-more specific. The "led-pattern" is a string with pattern which will
-be interpreted differently, based on LED trigger. One-shot and timer
-triggers expect two numbers. Pattern trigger expects full pattern.
+Right.
 
-> Aren't they just a subset or simplification
-> of a pattern?
+> This is not expected to help THP allocation success rates but it does
+> reduce latencies slightly.
+> 
+> 1-socket thpfioscale
+>                                     4.20.0-rc6             4.20.0-rc6
+>                                noreserved-v1r4          failfast-v1r4
+> Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
+> Amean     fault-both-3      2276.15 (   0.00%)     3867.54 * -69.92%*
 
-Yes, they are.
+This is rather weird.
 
->
-> Can we control the timer frequency from DT? The pattern could address
-> that limitation.
+> Amean     fault-both-5      4992.20 (   0.00%)     5313.20 (  -6.43%)
+> Amean     fault-both-7      7373.30 (   0.00%)     7039.11 (   4.53%)
+> Amean     fault-both-12    11911.52 (   0.00%)    11328.29 (   4.90%)
+> Amean     fault-both-18    17209.42 (   0.00%)    16455.34 (   4.38%)
+> Amean     fault-both-24    20943.71 (   0.00%)    20448.94 (   2.36%)
+> Amean     fault-both-30    22703.00 (   0.00%)    21655.07 (   4.62%)
+> Amean     fault-both-32    22461.41 (   0.00%)    21415.35 (   4.66%)
+> 
+> The 2-socket results are not materially different. Scan rates are
+> similar as expected.
+> 
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-No, currently we cannot. This patch with pattern solves that issue.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
->
-> > +                - pattern : The pattern is given by a series of tuples, of
->
-> Don't you need one-shot vs. repeat modes for patterns too?
+> ---
+>  mm/migrate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index df17a710e2c7..0e27a10429e2 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -885,7 +885,7 @@ static int fallback_migrate_page(struct address_space *mapping,
+>  	 */
+>  	if (page_has_private(page) &&
+>  	    !try_to_release_page(page, GFP_KERNEL))
+> -		return -EAGAIN;
+> +		return mode == MIGRATE_SYNC ? -EAGAIN : -EBUSY;
+>  
+>  	return migrate_page(mapping, newpage, page, mode);
+>  }
+> 
 
-Repeat mode is defined by trigger. One-shot is one time. Timer and
-patter triggers are repeating.
-
->
-> I could imagine you'd want a pattern for any trigger.
-
-In general I think that only these three triggers require such
-initialization through pattern. Other triggers - like heartbeat or
-activity - have they own bindings (or do not need any).
-
-Following Pavel's suggestion, I could convert it to array of integers
-which still should be suitable for these and any future triggers
-operating on numbers.
-
-Best regards,
-Krzysztof
