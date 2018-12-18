@@ -7,66 +7,65 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E618C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D39FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02925217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE86A217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:01:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KwkymQCU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wk6y6ZJ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbeLRAAD (ORCPT
+        id S1726406AbeLRABO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 19:00:03 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:35419 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbeLRAAC (ORCPT
+        Mon, 17 Dec 2018 19:01:14 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37486 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeLRABN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 19:00:02 -0500
-Received: by mail-vs1-f68.google.com with SMTP id e7so8908318vsc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:00:00 -0800 (PST)
+        Mon, 17 Dec 2018 19:01:13 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n13so975676vsk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:01:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eaVvu34d0qaD97yOqEh3I+K8VrRLlvxcuACvAqx7jlY=;
-        b=KwkymQCUbl+iLWZDNn7TCTYriTJpa5IzzthK3UE8zCwWVLQYvwBDbq2yMZhxoINEFA
-         GF7hsuEpXEKsqrZtW0AGxqDAimSGRG8/ZSme91aeq+691Du33FoFGLqfLlgUuIGXL5C0
-         aHS3yNUNWMJ1PorBTHQqq9q9gsC6VG2tSVYuU=
+        bh=2ISLz8DiNoyXUnepiP7Vb7/kiH8sUvVTMQpLRE8vqHk=;
+        b=Wk6y6ZJ84Fx/KuDdDijLPbyuTP4DYDFldXVsVPVLmiAqIJvYJhPQ4AXiv3NmDjo8pv
+         SB11X64CDpGL2KC+3qtXrUv5xQmjcpFSNkkbEkXbZKVX5fD4qHWqsA15GB5A+DfykKTO
+         3ixbzLBWnpmlGJCKEYtqbIMjeKrNst4UhV/x4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eaVvu34d0qaD97yOqEh3I+K8VrRLlvxcuACvAqx7jlY=;
-        b=Z7Tiv6U0XFU4ixqKDQxEMOJzo2YonIYckZzG5tLNwbQBhyjWznN5al1TuGbkzyOBWy
-         IBfAcqEoxg1iDKPrAvRT8Ad/CF6nWXP6ibPtGfgv7l47SHCquSeIba8s785oLX/+lPJr
-         Ah83DECHwgp1I7f1YrFKIKbAFNXIHruwfFyn65Z9gU/nKgcQbKw0kFGdN2TIUpfb7H1w
-         0SSE422Iwuf5HU1wjVXncFZj1LZb3kkjbJEIK2SKUnLFzzTK/775ROxD56Fwn46xCqFY
-         HEMAIxKU0i+SvCyb7XNMwrh/4Bbb9btxjrmegaUkCvIBq6v6ZYUbTdFbnrPqlONyHi7E
-         8t1g==
-X-Gm-Message-State: AA+aEWYzrSTrNdsJ+pI5LDzsFdr/OmvPIwIOpiM0fU40+LD4ea2AoxPy
-        gToZ8AgBKmPndGhbe4/yeVW7SBhCP2g=
-X-Google-Smtp-Source: AFSGD/VIlbLzDSUaS5PVB/MUoeot7CjP+UD0KqTNcKtxg7FzI4QiAA1qZZlPGa8FbzvU5vfwwG9PHg==
-X-Received: by 2002:a67:c01d:: with SMTP id v29mr7478363vsi.124.1545091199927;
-        Mon, 17 Dec 2018 15:59:59 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id n15sm5761455vsi.5.2018.12.17.15.59.59
+        bh=2ISLz8DiNoyXUnepiP7Vb7/kiH8sUvVTMQpLRE8vqHk=;
+        b=NzJFCgnHOqHLwl1nGzfSgUYO59WvlQt5so2QFuQS/ywkYKrjHDZPFGiQzFbsA/thqc
+         oU6wiAksm8kGrhlavrcb6/OOQAoz84o6PPikVfCV5w+A9im8oVklNbdU5D9CRJqGc3zg
+         97QJ6P7/WXy7x98Cmsd5uH5Y8OkEWKgF7M8RmySf/g301tuYFioA3hj58Sgj3A07R6jh
+         bMdMIGrqryMHJUlEC9oM0QbJywa7ffzB+e4d9hRd91PyC5aP2zUJ41GWaYBnouCStt49
+         DYO0ROwq1AR9HqVig2BXlUQOd/UzPF0BktLNUDcUya+HKUtPi5XZcOVxdbtrsehM6Lan
+         tGqQ==
+X-Gm-Message-State: AA+aEWYlIq3pBbs30ZkT1DiUXK1+u/XewpPcEF57lcWBc6Z0OTS1QqD0
+        LQNMnz9i4KqOl1j7MCegvQRYlL+3BSM=
+X-Google-Smtp-Source: AFSGD/XJi8kaoSQ2WqPvxmalQAPfASHfSVg4ifipfO7xTdZ2wZnKhmMCbW76dGp6oULLjhI9kSMlEQ==
+X-Received: by 2002:a67:804e:: with SMTP id b75mr7320147vsd.226.1545091271454;
+        Mon, 17 Dec 2018 16:01:11 -0800 (PST)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
+        by smtp.gmail.com with ESMTPSA id g203sm4694142vsd.19.2018.12.17.16.01.10
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 15:59:59 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id p9so5094883uaa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 15:59:59 -0800 (PST)
-X-Received: by 2002:ab0:1c12:: with SMTP id a18mr6799230uaj.15.1545091198708;
- Mon, 17 Dec 2018 15:59:58 -0800 (PST)
+        Mon, 17 Dec 2018 16:01:10 -0800 (PST)
+Received: by mail-ua1-f49.google.com with SMTP id d19so5068660uaq.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:01:10 -0800 (PST)
+X-Received: by 2002:ab0:146b:: with SMTP id c40mr6889952uae.9.1545091269772;
+ Mon, 17 Dec 2018 16:01:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-2-sibis@codeaurora.org>
-In-Reply-To: <20181217100724.4593-2-sibis@codeaurora.org>
+References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-3-sibis@codeaurora.org>
+In-Reply-To: <20181217100724.4593-3-sibis@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 17 Dec 2018 15:59:47 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com>
-Message-ID: <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dt-bindings: remoteproc: qcom: Add clock bindings
- for Q6V5
+Date:   Mon, 17 Dec 2018 16:00:58 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XNZ5CzKXHogKEGTHgPVg_nbXxVEJR0e9F9usEY3YKEiQ@mail.gmail.com>
+Message-ID: <CAD=FV=XNZ5CzKXHogKEGTHgPVg_nbXxVEJR0e9F9usEY3YKEiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom: Fixup regulator dependencies
 To:     sibis@codeaurora.org
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -88,71 +87,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Mon, Dec 17, 2018 at 2:07 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+On Mon, Dec 17, 2018 at 2:08 AM Sibi Sankar <sibis@codeaurora.org> wrote:
 >
-> Add missing clock bindings for Q6V5 MSS on SDM845 SoCs.
+> Fixup regulator supply dependencies for Q6V5 MSS on MSM996 SoCs.
 >
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt       | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-
-Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
-on msm8996")
-Fixes: fb22022ff63d ("dt-bindings: remoteproc: Add Q6v5 Modem PIL
-binding for SDM845")
-
-...it probably doesn't matter too much but if we wanted to be really
-careful we could split into two patches, one for the msm8996 and one
-for sdm845.  I don't think people care that much about stable
-backports of bindings though (someone can feel free to correct me)...
-
-
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
 > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 9ff5b0309417..780adc043b37 100644
+> index 780adc043b37..98894e6ad456 100644
 > --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
 > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -39,13 +39,17 @@ on the Qualcomm Hexagon core.
->  - clocks:
+> @@ -76,7 +76,9 @@ on the Qualcomm Hexagon core.
 >         Usage: required
 >         Value type: <phandle>
-> -       Definition: reference to the iface, bus and mem clocks to be held on
-> -                   behalf of the booting of the Hexagon core
-> +       Definition: reference to the list of 4 clocks for the modem sub-system
-> +                   reference to the list of 8 clocks for the modem sub-system
-> +                   on SDM845 SoCs
+>         Definition: reference to the regulators to be held on behalf of the
+> -                   booting of the Hexagon core
+> +                   booting of the Hexagon core on MSM8916 SoCs
+> +                   reference to the pll-supply regulator to be held on behalf
+> +                   of the booting of the Hexagon core on MSM8996 SoCs
 
-The above is confusing because you don't list the SoCs that are
-supposed to use the 4 clocks.  How about instead:
+The prose gets in the way and doesn't add anything.  I also don't
+understand what you're saying for msm8996.  You're saying that
+"pll-supply" is required there but none of the others?  That doesn't
+seem to be true in the code I have in front of me, but maybe I'm
+missing some patch.  For me, I'd write:
 
-Definition: reference to the clocks that match clock-names
-
-
->  - clock-names:
->         Usage: required
->         Value type: <stringlist>
-> -       Definition: must be "iface", "bus", "mem"
-> +       Definition: must be "iface", "bus", "mem", "xo" for the modem sub-system
-> +                   must be "iface", "bus", "mem", "gpll0_mss", "snoc_axi",
-> +                   "mnoc_axi", "prng", "xo" for the modem sub-system on SDM845
-> +                   SoCs
-
-Same here where it's confusing.  ...but also, it it correct?  As far
-as I can tell you're missing msm8996.  It's better to just be explicit
-and list each one, ideally without all the prose.
-
-Definition: The clocks needed depend on the compatible string:
-
-qcom,sdm845-mss-pil: "xo", "prng", "iface", "snoc_axi", "bus", "mem",
-"gpll0_mss", "mnoc_axi"
-qcom,msm8996-mss-pil: "xo", "pnoc", "iface", "bus", "mem", "gpll0_mss_clk"
-qcom,msm8974-mss-pil: "xo", "iface", "bus", "mem"
-qcom,msm8916-mss-pil: "xo", "iface", "bus", "mem"
-qcom,q6v5-pil: "xo", "iface", "bus", "mem"
-
-...as far as I can tell this binding is supposed to account for
-"qcom,ipq8074-wcss-pil" too but it seems that one doesn't have
-clock-names.
+For the compatible strings below the following supplies are required:
+  "qcom,q6v5-pil"
+  "qcom,msm8916-mss-pil",
+  "qcom,msm8974-mss-pil"
+- cx-supply:
+- mss-supply:
+- mx-supply:
+- pll-supply:
+Usage: required
+Value type: <phandle>
+Definition: reference to the regulators to be held on behalf of the
+    booting of the Hexagon core
 
 
--Doug
+...and if msm8996 actually needs "pll-supply", you could add in...
+
+For the compatible strings below the following supplies are required:
+  "qcom,msm8996-mss-pil"
+- pll-supply:
+Usage: required
+Value type: <phandle>
+Definition: reference to the regulators to be held on behalf of the
+    booting of the Hexagon core
