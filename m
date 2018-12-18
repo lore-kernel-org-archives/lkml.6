@@ -2,133 +2,187 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A7FC43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3828C43444
 	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94EA72133F
+	by mail.kernel.org (Postfix) with ESMTP id C0DCD21841
 	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:23:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mX1EOumc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQrK3cxB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbeLRHXA (ORCPT
+        id S1726417AbeLRHXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 02:23:00 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:45807 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbeLRHW7 (ORCPT
+        Tue, 18 Dec 2018 02:23:12 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38586 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeLRHXL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 02:22:59 -0500
-Received: by mail-yw1-f66.google.com with SMTP id d190so6265918ywd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 23:22:58 -0800 (PST)
+        Tue, 18 Dec 2018 02:23:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so14735267wrw.5;
+        Mon, 17 Dec 2018 23:23:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rXAbq+7gPg7ftySi18RLKiOZP5ChhlNAMQPad33V3tg=;
-        b=mX1EOumciwAlufHq4kC0L/SFQ6FPBBSLMp4Zz4dyUI/cUO+3Vb+vZLK5S6GXWC2vag
-         QH+1SLYmb/7MMPajrfD6ThOUALiKhTnAs5pT71BVgXYtCyUdriG+7MSX0DvYo6sQfYZj
-         I86CbY6af+3m8NISO7eQZJZOSCLXFFUbPkiis=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version;
+        bh=D1pydGYR3lFJS+UF0iKFQCN62oPDG+bxa89EcxBNC2Q=;
+        b=SQrK3cxBrTFNvHGcYYDGts9IpGgoAaSo/E9OzOT/X+RYyjd05MSWrnlxOq+XsWaRq8
+         cMT4sVfV3zKZmF8+mUjZ0ScbmFuaGLbpkH/bZaN7RpLYTCeuJhTbyYmUCUB/Bdkn38HA
+         ZY4FFpki55z12eFEdDtElYMIAHawAr0s8BOWnn3RwWbmwXHywKV3KDvuGRlmvIMelA5L
+         8ml8kpeN2mKRNAWHTq2k4rt0HOZWLmytj9m06Q2t74/PsTLluUnNMh+GD3fmG//ljXVj
+         pAj8yAUBcKJ9vIGB4SOohPkBnTFbk/lTdYm8mpcAAy26La7IEPYyySJuKZtKXuymN3B5
+         bhMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rXAbq+7gPg7ftySi18RLKiOZP5ChhlNAMQPad33V3tg=;
-        b=PsHL9WA76M8cjzYKCQu7Efeokiv1ubuZFJmmaXbzLRdJvRAa/X428ToTst/vTqq9jn
-         4VZ2ca7KvzyiMD211udDc4ifeAItYXQ6o+ShQamBIYpxfwgyr8UV/tmkzSqctfwiJbGV
-         2s/GYCs1LOMED9Pcxl3pSb9o/RtQ6EO8Nx9BqHWL4xLwS0s3Vwm2Lw5T0R2tzhyhyFna
-         4pH+ZkxffquSYO+4ecsArc4Fl4Reqt7s9hSYE3ixb7uUPqbS4fezO2gKkN5yhNnah27Q
-         sZshBJpcwnH585zlRl7xFGAm/TGF48ueGdm+d9HBmDqOrBeh18EJx9VHb0aa4cu5MpQq
-         l4SA==
-X-Gm-Message-State: AA+aEWbII6L7CwhbvdNE+e2hQggRH0QukYidMnznBsWHjWUX8YGrQUZI
-        LGud7pcDrxSlhtoeHE8AF7srxGeuHWWz0Q==
-X-Google-Smtp-Source: AFSGD/WAFBbkLlnShCV/E1YQNpko2tCKrHapf2LUVoOB31KnAMyfi2MMN2gRisliRN+Iu2zRBouo+w==
-X-Received: by 2002:a81:110b:: with SMTP id 11mr16597393ywr.386.1545117777099;
-        Mon, 17 Dec 2018 23:22:57 -0800 (PST)
-Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
-        by smtp.gmail.com with ESMTPSA id y83sm4602298ywd.65.2018.12.17.23.22.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 23:22:55 -0800 (PST)
-Received: by mail-yw1-f51.google.com with SMTP id i73so5114692ywg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 23:22:55 -0800 (PST)
-X-Received: by 2002:a81:3194:: with SMTP id x142mr15655803ywx.92.1545117775088;
- Mon, 17 Dec 2018 23:22:55 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version;
+        bh=D1pydGYR3lFJS+UF0iKFQCN62oPDG+bxa89EcxBNC2Q=;
+        b=ni4UR+fxRLHnHRiNtCLVnDplMRo1bExnMi6SxpQ5Mgz+pBcdgJKejIm/kb/qi8e+oe
+         FO0Nc7rMa72M27Cr1I/Sws/kyalF5EZzKxB+65DJfTRwaDNAAw9uZ6f036fYCaVOGLiB
+         xzsMq4oFISfV+Uk2SvfYbX9YDMbvMfD0HEh7ftoltGT0b/7wuwf2sh6beZJFTQfPXHBk
+         W5vdpYJtY03rpPjMid+Fj9O2CtsrXvkPPN7sBeTCmh1zNWfayuJvx8Qp0cujsy6ne7lt
+         1vrAnGAoFWHSD0x3I54RBlhXmWxJatLKG73ir1+XSa46/eKrlCab/+Y/6jNbMMBQ+/tW
+         znuw==
+X-Gm-Message-State: AA+aEWb6OzrVxgG4Fe4DtKyIIpuKCsIUknylvTtqMs7CMas1rNAh0pdY
+        Cok16w6xncBovlvRK9KnlsE=
+X-Google-Smtp-Source: AFSGD/UTORMl3H7GUlXj+GShQeq+JfReYRP1P8WTlbMtdVcTmJQMZ8Leac/yvCseaLAnRqgTUQeU2Q==
+X-Received: by 2002:a05:6000:51:: with SMTP id k17mr12700870wrx.259.1545117789687;
+        Mon, 17 Dec 2018 23:23:09 -0800 (PST)
+Received: from korsan.localdomain ([95.0.155.39])
+        by smtp.gmail.com with ESMTPSA id s66sm1208666wmf.34.2018.12.17.23.23.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 23:23:09 -0800 (PST)
+Date:   Tue, 18 Dec 2018 10:23:02 +0300
+From:   Numan =?UTF-8?B?RGVtaXJkw7bEn2Vu?= <if.gnu.linux@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     jason.low2@hpe.com, Waiman.Long@hpe.com,
+        paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
+        dmitry.torokhov@gmail.com, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [regression, bisected] Keyboard not responding after resuming
+ from suspend/hibernate
+Message-ID: <20181218102302.2b029612@korsan.localdomain>
+In-Reply-To: <20181202222809.GA29467@amd>
+References: <20180831215121.1b1f66bf@korsan.localdomain>
+        <20181019102031.77015d44@korsan.localdomain>
+        <20181025074903.GA9323@amd>
+        <20181028220654.7e77e5d7@ubuntu>
+        <20181130154455.21578c4d@korsan.localdomain>
+        <20181202222809.GA29467@amd>
+X-Mailer: Claws Mail 3.17.2 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180821170629.18408-3-matwey@sai.msu.ru> <2213616.rQm4DhIJ7U@avalon>
- <20181207152502.GA30455@infradead.org> <CAAFQd5C6gUvg8p0+Gtk22Z-dmeMPytdF4HujL9evYAew15bUmA@mail.gmail.com>
- <20181212090917.GA30598@infradead.org> <CAAFQd5DhDOfk_2Dhq4MfJmoxpXP=Bm36HMZ55PSXxwkTAoCXSQ@mail.gmail.com>
- <20181212135440.GA6137@infradead.org> <CAAFQd5C4RbMxRP+ox+BDuApMusTD=WUD9Vs6aWL3u=HovuWUig@mail.gmail.com>
- <20181213140329.GA25339@infradead.org> <CAAFQd5BudF84jVaiy7KwevzBZnfYUZggDK=4W=g+Znf5VJjHsQ@mail.gmail.com>
- <20181214123624.GA5824@infradead.org>
-In-Reply-To: <20181214123624.GA5824@infradead.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 18 Dec 2018 16:22:43 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BnZHhNjOc6HKt=YVBVQFCcqN0RxAcfDp3S+gDKRvciqQ@mail.gmail.com>
-Message-ID: <CAAFQd5BnZHhNjOc6HKt=YVBVQFCcqN0RxAcfDp3S+gDKRvciqQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ug/JvfsHSZuytceYAejq0DI"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 9:36 PM Christoph Hellwig <hch@infradead.org> wrote:
+--Sig_/ug/JvfsHSZuytceYAejq0DI
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Sun, 2 Dec 2018 23:28:09 +0100 tarihinde
+Pavel Machek <pavel@ucw.cz> yazd=C4=B1:
+
+>On Fri 2018-11-30 15:44:55, Numan Demird=C3=B6=C4=9Fen wrote:
+>> Sun, 28 Oct 2018 22:06:54 +0300 tarihinde
+>> Numan Demird=C3=B6=C4=9Fen <if.gnu.linux@gmail.com> yazd=C4=B1:
+>>  =20
+>> >Thu, 25 Oct 2018 09:49:03 +0200 tarihinde
+>> >Pavel Machek <pavel@ucw.cz> yazd=C4=B1:
+>> > =20
+>> >> Hi!
+>> >>=20
+>> >> Here's problem bisected down to:
+>> >>=20
+>> >> commit 9d659ae14b545c4296e812c70493bfdc999b5c1c
+>> >> Author: Peter Zijlstra <peterz@infradead.org>
+>> >> Date:   Tue Aug 23 14:40:16 2016 +0200
+>> >>=20
+>> >>     locking/mutex: Add lock handoff to avoid starvation
+>> >>=20
+>> >>     Implement lock handoff to avoid lock starvation.
+>> >>=20
+>> >> Numan, I assume revert of that patch on the 4.18 kernel still
+>> >> makes it work?
+>> >>    =20
+>> >
+>> >Unfortunately, I could not revert
+>> >9d659ae14b545c4296e812c70493bfdc999b5c1c on kernels from 4.18.16 to
+>> >4.10-rc1 because there were too much conflicts, which I could not
+>> >solve as an "average Joe". I tried
+>> >a3ea3d9b865c2a8f7fe455c7fa26db4b6fd066e3 which is parent of
+>> >9d659ae14b545c4296e812c70493bfdc999b5c1c and succeeded to compile
+>> >kernel.
+>> >
+>> >git checkout a3ea3d9b865c2a8f7fe455c7fa26db4b6fd066e3
+>> >
+>> >Then, I compiled kernel and rebooted with it. I tried a couples of
+>> >times suspending and resuming, all of the time keyboard worked as
+>> >expected.
+>> > =20
+>>=20
+>> With this one line patch from Takashi Iwai, keyboard is working as
+>> expected after resuming from suspend/hibernate.
+>>=20
+>> --- a/kernel/locking/mutex.c
+>> +++ b/kernel/locking/mutex.c
+>> @@ -59,7 +59,7 @@ EXPORT_SYMBOL(__mutex_init);
+>>   * Bit2 indicates handoff has been done and we're waiting for
+>> pickup. */
+>>  #define MUTEX_FLAG_WAITERS	0x01
+>> -#define MUTEX_FLAG_HANDOFF	0x02
+>> +#define MUTEX_FLAG_HANDOFF	0x00
+>>  #define MUTEX_FLAG_PICKUP	0x04
+>> =20
+>>  #define MUTEX_FLAGS		0x07
+>>=20
+>>=20
+>> Thanks in advance and regards, =20
 >
-> On Fri, Dec 14, 2018 at 12:12:38PM +0900, Tomasz Figa wrote:
-> > > If the buffer always is physically contiguous, as it is in the currently
-> > > posted series, we can always map it with a single dma_map_single call
-> > > (if the hardware can handle that in a single segment is a different
-> > > question, but out of scope here).
-> >
-> > Are you sure the buffer is always physically contiguous? At least the
-> > ARM IOMMU dma_ops [1] and the DMA-IOMMU dma_ops [2] will simply
-> > allocate pages without any continuity guarantees and remap the pages
-> > into a contiguous kernel VA (unless DMA_ATTR_NO_KERNEL_MAPPING is
-> > given, which makes them return an opaque cookie instead of the kernel
-> > VA).
-> >
-> > [1] http://git.infradead.org/users/hch/misc.git/blob/2dbb028e4a3017e1b71a6ae3828a3548545eba24:/arch/arm/mm/dma-mapping.c#l1291
-> > [2] http://git.infradead.org/users/hch/misc.git/blob/2dbb028e4a3017e1b71a6ae3828a3548545eba24:/drivers/iommu/dma-iommu.c#l450
+>Ok. So it is a regression, and you can ask Linus to apply this
+>.. but... that's kind of heavy solution. Peter, do you have any other
+>ideas?
 >
-> We never end up in this allocator for the new DMA_ATTR_NON_CONSISTENT
-> case, and that is intentional.
+>									Pavel
 
-It kind of limits the usability of this API, since it enforces
-contiguous allocations even for big sizes even for devices behind
-IOMMU (contrary to the case when DMA_ATTR_NON_CONSISTENT is not set),
-but given that it's just a temporary solution for devices like these
-USB cameras, I guess that's fine.
+Hi,
 
-Note that in V4L2 we use the DMA API extensively, so that we don't
-need to embed any device-specific or integration-specific knowledge in
-the framework. Right now we're using dma_alloc_attrs() with
-driver-provided attrs [1], but current driver never request
-non-consistent memory. We're however thinking about making it possible
-to allocate non-consistent memory. What would you suggest for this?
+I did not mention the one line patch from Takashi Iwai as a means of fix
+but as a hint. Sorry for misunderstanding.
 
-[1] https://elixir.bootlin.com/linux/v4.20-rc7/source/drivers/media/common/videobuf2/videobuf2-dma-contig.c#L139
+Here is a another hint from another user:
 
-Best regards,
-Tomasz
+I found that passing the options i8042.reset=3D1 i8042.dumbkbd=3D1 i8042.di=
+rect=3D1
+results in the keyboard functioning after resume. However, there is a
+long delay before the keyboard or mouse will respond to input on the
+lock screen.[1]
+
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=3D195471#c39
+
+--=20
+Numan Demird=C3=B6=C4=9Fen
+
+--Sig_/ug/JvfsHSZuytceYAejq0DI
+Content-Type: application/pgp-signature
+Content-Description: Dijital OpenPGP imzası
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEKU9fayrDgTGfA1OV4Dh9jqVujDIFAlwYoFYACgkQ4Dh9jqVu
+jDIa7Qf/RTbkNmO3EHq+cL82Bv18SDJQFgM6haeV4uLp+VsVrwuQq8vFwUByLreW
+pYZ2kS1km16hEyJiYzigc/WAy/BvPdXw7kswsxqQMM1uMMmiKAXIgvuFQtMXiGdo
+FmRA14ufO7k03i8krnd+hFF9yQGznbIsySe2YWLvL/8zdFCQ6Fq0Qd8eRHMsIi3i
+ZufdHxtQEzgZkUtTCeYOw7S3KyjS3YujfxzH3WpFK+Mi0JGodJrla5KY+t1SXCHg
+JEk5S2O0EC/XB+oBzhUJMKc8Vw0ZGAwwc2V5o6QrOjJ7vY6ZljR6hHdQVyxUuLXF
+2gk2zDO5e9njtKA/+U1jk7ngS5bVtA==
+=Zr39
+-----END PGP SIGNATURE-----
+
+--Sig_/ug/JvfsHSZuytceYAejq0DI--
