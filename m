@@ -2,201 +2,155 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61539C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8781C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C81217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DD69217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:02:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NZRO0WBO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDAeVtdd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeLRRBD (ORCPT
+        id S1727183AbeLRRCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:01:03 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44515 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbeLRRBC (ORCPT
+        Tue, 18 Dec 2018 12:02:33 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37345 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLRRCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:01:02 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e11so7434734plt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 09:01:02 -0800 (PST)
+        Tue, 18 Dec 2018 12:02:32 -0500
+Received: by mail-pg1-f195.google.com with SMTP id c25so6581676pgb.4;
+        Tue, 18 Dec 2018 09:02:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wKfBD+1TWHumVfsMrPC4aOQgIX8YOMlpHV8EfXJQskI=;
-        b=NZRO0WBOmXYaCt2QaGafqiwF560MwTfn8c9bS3YlTlZ9ETPzDCXoiucWxPUTIC8Dqv
-         e+71xa9Ms4uoxIEVBNjUHuQ/e68465/EKuWyRUhRTId9vOInTl7W2ql2HWQz6ZhaY+he
-         qV/Ki/qcDHvcjfiPnPyOHetRCmwR5PXsBoAfXWAYSydqLCLiPIIakO3RFud65WQf3yau
-         +vPcUOOO1jQ04NBo49CRRWPH9ARxYP0uMdnZ2XMS3I0f/uc0tZYRvAwe/zNNztM7HTjo
-         UZKN1JNG5/9VGQu1cTTMrM/RkGqXQ7iJtNurEetzIPXjbdHQWemq+NiJibYhvcKbW7VH
-         OYsQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=HgIRH3ITFXhF8C3OSCxta0zkrzq8EfL6o1r8MfBFziY=;
+        b=XDAeVtddtWlYEzwScK4LVoums4b4laKEm67eMRFGo4piyrqjh3+fvXKaG7YQyaBBFu
+         oGym0W4HJZjCRO4ihLZONVJQZzWIIX3E4H5jYg5lRAuepfZGDV+Q5qLBzgmUv7BgDONS
+         hJC0VTZ8hWl5lkrW/IUp0vM0ucFGbT1G3DbA1hn6O7AefoxWny5b00LL0VVTZchR+524
+         OlJ25DFHQRbc3DUGSXGnNky4dfQolG/LDdg8UgicMaWuIHoAU4Oqdkq80p4y+wmn96my
+         4yDJuEVWBQeyTxi6a2+EJHGGV1G334UI4xIih6rHxdEdVNBnDnAoMrzIbq9i7LgmmXP2
+         YFaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wKfBD+1TWHumVfsMrPC4aOQgIX8YOMlpHV8EfXJQskI=;
-        b=GTCvthriy+g+0CXq268Fa3PnubWdiLBDNwq+08TQorUP7LTl5BMR8U060AALr+Skvi
-         c0T4BxxJruOF1doJVB9qUhFKzwRwG7IClzw4WZbvhEnymPuolr4+AjCHPJync10OOrfh
-         pq3OX645zK6BD2SfFwlcQ43C8ojfR+ZoFKpGRpOM1QXYSs4pFyL8lpOGbNzJHCC7oVzH
-         24ytdcVZsBH+QN8brLesLBOI3vg5uAmpH2fyvRp4EXPL9OSbKmvt5A11SldSNAaZnjmU
-         KYxwxJDCSDdlDGOJD+HepDS1B2L79Gfek6QORxPq5EmORTXIIXkpoEixn/AeHZYJYIz+
-         OK/w==
-X-Gm-Message-State: AA+aEWYUODuNT2gYOaYtuLQGW9W3njfY9YWzeZn2+5nuM0uy9riBXEyG
-        8X2T+R5GGJojKCZ0hIn9ItwPbw==
-X-Google-Smtp-Source: AFSGD/XqMC2UHP1KF6Zf/WkHRSbloplmM1Cp2DZmNERG9zF6MIJ7GQERboy0iAnUrJW0TzPoq//Q5Q==
-X-Received: by 2002:a17:902:3064:: with SMTP id u91mr16785746plb.325.1545152461384;
-        Tue, 18 Dec 2018 09:01:01 -0800 (PST)
-Received: from google.com ([2620:15c:17:4:f0b1:8ff5:16a0:5f15])
-        by smtp.gmail.com with ESMTPSA id e16sm20838794pfn.46.2018.12.18.09.00.59
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=HgIRH3ITFXhF8C3OSCxta0zkrzq8EfL6o1r8MfBFziY=;
+        b=o+X8hS6Xd6Waemve/+Xf3i2ujbpej8WEP8U2+OmvJ137LzA4DlNBvlkVdRd3dgZPla
+         KDHyWUV5GdW8c8EMXfG2J75eYNPj8TPLjCaqh68EXFBKGFCdDLpRiiPg/UopovpMYF8S
+         0mFioduzUxkl5J31Vber4mvjOi6xEIjMXESWMIJwhFAeeUNvJyz79bLB49YuIZU8t9hC
+         s0R3uSo+JFB6M9SPHGhOWWPidskYpy53zhisqZTREUuGBqvDIFb4C1ufEXt6PptlHtIl
+         JkfwpqDydHPGG2l6AZYzCxDXJd+JlM7DeplJw3etjaxZS8y7adSHjbxYEkSIp0/uJhJM
+         wc7w==
+X-Gm-Message-State: AA+aEWbSjnNDVZzTObLuPyv2U6maRjYPA/+3pO9oX7UOzt0ytjrm+ItB
+        MNIvpSgzc0h3utNoTtJUNs8=
+X-Google-Smtp-Source: AFSGD/V5sfuTMjSyuEYffRslh43Z7ir+/sfEdPKkDkjWEtpvKCQKt3TdlJPgtU7vj+ZXBnfkf0nEtg==
+X-Received: by 2002:a63:8c0d:: with SMTP id m13mr16637626pgd.422.1545152551330;
+        Tue, 18 Dec 2018 09:02:31 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id u126sm36191931pgb.2.2018.12.18.09.02.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:01:00 -0800 (PST)
-Date:   Tue, 18 Dec 2018 09:00:55 -0800
-From:   Tom Roeder <tmroeder@google.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scripts: add a tool to produce a compile_commands.json
- file
-Message-ID: <20181218170055.GA7794@google.com>
-References: <20181206222318.218157-1-tmroeder@google.com>
- <CAK7LNATZm6T9bjcAxB_WQw-um-Hjkhiew6qg8CRLayr8qYzLeQ@mail.gmail.com>
- <20181217214022.GA38778@google.com>
- <CAK7LNATG9y04UdJ-Z5AwLHXUcnbWo5Butee0pkL+MFzds04wCA@mail.gmail.com>
+        Tue, 18 Dec 2018 09:02:30 -0800 (PST)
+Date:   Tue, 18 Dec 2018 09:02:25 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Ursula Braun <ubraun@linux.ibm.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] net/smc: fix TCP fallback socket release
+Message-ID: <20181218170221.GA21835@myunghoj-Precision-5530>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATG9y04UdJ-Z5AwLHXUcnbWo5Butee0pkL+MFzds04wCA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:17:35AM +0900, Masahiro Yamada wrote:
-> On Tue, Dec 18, 2018 at 8:21 AM Tom Roeder <tmroeder@google.com> wrote:
-> >
-> > On Sat, Dec 15, 2018 at 06:37:49PM +0900, Masahiro Yamada wrote:
-> > > On Fri, Dec 7, 2018 at 7:24 AM Tom Roeder <tmroeder@google.com> wrote:
-> > > >
-> > > > The LLVM/Clang project provides many tools for analyzing C source code.
-> > > > Many of these tools are based on LibTooling
-> > > > (https://clang.llvm.org/docs/LibTooling.html), which depends on a
-> > > > database of compiler flags. The standard container for this database is
-> > > > compile_commands.json, which consists of a list of JSON objects, each
-> > > > with "directory", "file", and "command" fields.
-> > > >
-> > > > Some build systems, like cmake or bazel, produce this compilation
-> > > > information directly. Naturally, Makefiles don't. However, the kernel
-> > > > makefiles already create .<target>.o.cmd files that contain all the
-> > > > information needed to build a compile_commands.json file.
-> > > >
-> > > > So, this commit adds scripts/gen_compile_commands.py, which recursively
-> > > > searches through a directory for .<target>.o.cmd files and extracts
-> > > > appropriate compile commands from them. It writes a
-> > > > compile_commands.json file that LibTooling-based tools can use.
-> > > >
-> > > > By default, gen_compile_commands.py starts its search in its working
-> > > > directory and (over)writes compile_commands.json in the working
-> > > > directory. However, it also supports --output and --directory flags for
-> > > > out-of-tree use.
-> > > >
-> > > > Note that while gen_compile_commands.py enables the use of clang-based
-> > > > tools, it does not require the kernel to be compiled with clang. E.g.,
-> > > > the following sequence of commands produces a compile_commands.json file
-> > > > that works correctly with LibTooling.
-> > > >
-> > > > make defconfig
-> > > > make
-> > > > scripts/gen_compile_commands.py
-> > > >
-> > > > Also note that this script is written to work correctly in both Python 2
-> > > > and Python 3, so it does not specify the Python version in its first
-> > > > line.
-> > > >
-> > > > For an example of the utility of this script: after running
-> > > > gen_compile_commands.json on the latest kernel version, I was able to
-> > > > use Vim + the YouCompleteMe pluging + clangd to automatically jump to
-> > > > definitions and declarations. Obviously, cscope and ctags provide some
-> > > > of this functionality; the advantage of supporting LibTooling is that it
-> > > > opens the door to many other clang-based tools that understand the code
-> > > > directly and do not rely on regular expressions and heuristics.
-> > > >
-> > > > Tested: Built several recent kernel versions and ran the script against
-> > > > them, testing tools like clangd (for editor/LSP support) and clang-check
-> > > > (for static analysis). Also extracted some test .cmd files from a kernel
-> > > > build and wrote a test script to check that the script behaved correctly
-> > > > with all permutations of the --output and --directory flags.
-> > > >
-> > > > Signed-off-by: Tom Roeder <tmroeder@google.com>
-> > >
-> > >
-> > > I am fine with this,
-> > > but I have one question.
-> > >
-> > > The generated compile_commands.json
-> > > contains $(pound)
-> >
-> > To make sure we're talking about the same thing: the instances that I've
-> > seen of "#" occur in macro definitions in the "command" field in some of
-> > the JSON objects. For example, I see things like
-> > -D\"KBUILD_STR(s)=\\#s\".
-> 
-> 
-> 
-> When I ran this tool against the latest kernel
-> (specifically, since commit 9564a8cf)
-> I saw the following in "command" field.
-> 
-> -D\"BUILD_STR(s)=$(pound)s\"
-> 
-> 
-> I am not sure whether it is a problem or not.
+clcsock can be released while kernel_accept() references it in TCP
+listen worker. Also, clcsock needs to wake up before released if TCP
+fallback is used and the clcsock is blocked by accept. Add a lock to
+safely release clcsock and call kernel_sock_shutdown() to wake up
+clcsock from accept in smc_release().
 
-Thanks! I can reproduce this; I see this happening in, e.g., objtool's
-.cmd files. I guess I failed to test recent enough versions of the
-kernel or didn't notice this case. It looks like that commit changes the
-handling of the pound sign in .cmd files, so it's highly relevant.
+Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
+Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+---
+ net/smc/af_smc.c | 14 ++++++++++++--
+ net/smc/smc.h    |  4 ++++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-> 
-> I do not care about this tool much.
-> I will queue up this patch shortly if it is OK with you.
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 5fbaf1901571..82cb0e5634bc 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -147,8 +147,14 @@ static int smc_release(struct socket *sock)
+ 		sk->sk_shutdown |= SHUTDOWN_MASK;
+ 	}
+ 	if (smc->clcsock) {
++		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
++			/* wake up clcsock accept */
++			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
++		}
++		mutex_lock(&smc->clcsock_release_lock);
+ 		sock_release(smc->clcsock);
+ 		smc->clcsock = NULL;
++		mutex_unlock(&smc->clcsock_release_lock);
+ 	}
+ 	if (smc->use_fallback) {
+ 		if (sk->sk_state != SMC_LISTEN && sk->sk_state != SMC_INIT)
+@@ -205,6 +211,7 @@ static struct sock *smc_sock_alloc(struct net *net, struct socket *sock,
+ 	spin_lock_init(&smc->conn.send_lock);
+ 	sk->sk_prot->hash(sk);
+ 	sk_refcnt_debug_inc(sk);
++	mutex_init(&smc->clcsock_release_lock);
+ 
+ 	return sk;
+ }
+@@ -821,7 +828,7 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
+ 	struct socket *new_clcsock = NULL;
+ 	struct sock *lsk = &lsmc->sk;
+ 	struct sock *new_sk;
+-	int rc;
++	int rc = -EINVAL;
+ 
+ 	release_sock(lsk);
+ 	new_sk = smc_sock_alloc(sock_net(lsk), NULL, lsk->sk_protocol);
+@@ -834,7 +841,10 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
+ 	}
+ 	*new_smc = smc_sk(new_sk);
+ 
+-	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
++	mutex_lock(&lsmc->clcsock_release_lock);
++	if (lsmc->clcsock)
++		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
++	mutex_unlock(&lsmc->clcsock_release_lock);
+ 	lock_sock(lsk);
+ 	if  (rc < 0)
+ 		lsk->sk_err = -rc;
+diff --git a/net/smc/smc.h b/net/smc/smc.h
+index 08786ace6010..5721416d0605 100644
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -219,6 +219,10 @@ struct smc_sock {				/* smc sock container */
+ 						 * started, waiting for unsent
+ 						 * data to be sent
+ 						 */
++	struct mutex            clcsock_release_lock;
++						/* protects clcsock of a listen
++						 * socket
++						 * */
+ };
+ 
+ static inline struct smc_sock *smc_sk(const struct sock *sk)
+-- 
+2.17.1
 
-I'd like this tool to work properly on those files, so please don't
-queue up the patch yet. I'll get it to handle the "$(pound)" case and
-send a revised patch.
-
-> 
-> 
-> Thanks.
-> 
-> 
-> > >
-> > > How is it handled?
-> >
-> > The Python json module takes care of escaping the output to make a valid
-> > JSON string for the "command" field. The gen_compile_commands.py script
-> > doesn't take any special action for that or any other character in its
-> > output.
-> >
-> > > Should it be replaced with '\#' ?
-> >
-> > I don't think it needs to be changed, given my experience with this
-> > script and its testing so far: the output seems to work for me. However,
-> > are you running into problems due to the presence of this character or
-> > inadequate escaping? Please let me know, and I'd be happy to look into
-> > it.
-> >
-> > Tom
-> 
-> 
-> 
-> --
-> Best Regards
-> Masahiro Yamada
