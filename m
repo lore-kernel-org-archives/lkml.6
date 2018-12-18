@@ -2,190 +2,154 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA3FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB24FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEC0521852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89312218AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeLRQb7 (ORCPT
+        id S1727275AbeLRQdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:31:59 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49210 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbeLRQb7 (ORCPT
+        Tue, 18 Dec 2018 11:33:31 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40551 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbeLRQda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:31:59 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 7A83826107F
-Subject: Re: [PATCH v3 1/2] power: supply: add input voltage limit property
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     linux-pm@vger.kernel.org, sre@kernel.org,
-        Sameer Nanda <snanda@chromium.org>, bleung@chromium.org,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        groeck@chromium.org, Adam.Thomson.Opensource@diasemi.com,
-        kernel@collabora.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>
-References: <20181213120944.30967-1-enric.balletbo@collabora.com>
- <20181213222000.GA12302@amd>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <2fcfc863-3218-55e8-2a0f-75d7cb2d55db@collabora.com>
-Date:   Tue, 18 Dec 2018 17:31:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 18 Dec 2018 11:33:30 -0500
+Received: by mail-qt1-f194.google.com with SMTP id k12so18832418qtf.7;
+        Tue, 18 Dec 2018 08:33:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=th7NHMeHQoKdSHNkZdcu6ZdlLE6n9OaMOuB+SLSeVIM=;
+        b=YnWnlqUsK2idMXkZ2cl68ZucySbwB2mIdvHmce0TIygqFjvWPjr80M43PTMBPdgKLE
+         1vsp0VBzdUDk7j5ke+5Dcnrz9QRbBKnOzkwaEMg/bMEKDdut6xLiTXfFG8FZoqsAUPhx
+         b0ER/8QGtBBnOPaIo9V4FKL8r/G+POVH2zc7c5SiZakrvQ8EK+1zDxMrRtkh1kSyEKH2
+         5jTrJfizww+S7FiJ+Y/1gpu0OHNfdNI4RE3bLQR2zmALy2CJWYvFfOS0O6d2eMKJ01vR
+         uNspGwS0uFRP8aQDT6dXGr3JMDGYTYHIYV5rGvqyd8RtVjyG8G2yr6nlT+3VnwKx2mUm
+         jnXw==
+X-Gm-Message-State: AA+aEWaUu3/DLpGM05USgF0apBfq4J2CcpyMkmzm8Butx0GNGBMu27av
+        yQ7d4bM2tqSE/8Wkz8GoXsWxgDwMqa6gDPw/ZyY=
+X-Google-Smtp-Source: AFSGD/X1fIFL82Nf8GmTLH/6zhfFpdNDPUe8KNmqHsFbxXY4N9IlOUTYdEdlGguUMKpPcVx3gM9Rep2DFChQr0q7LZ4=
+X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr17551159qvk.40.1545150808554;
+ Tue, 18 Dec 2018 08:33:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181213222000.GA12302@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20181211202520.16799-1-deepa.kernel@gmail.com>
+ <20181211202520.16799-7-deepa.kernel@gmail.com> <CAF=yD-LDWrjxK+XFv-KNAoyP7NCOZiL00n5PkzQ-5aEzq+eCLQ@mail.gmail.com>
+ <CABeXuvpAZfd6gAdJbKxsOowXnDnwyQQRuYMJ-6LDo9BsRDDj-g@mail.gmail.com>
+ <CAF=yD-L4xTU-KXsQ=uU36fEKv5St=69mmKqT8sD1mAmT_hfuVQ@mail.gmail.com>
+ <CABeXuvqrZgEDF5RYQEPJ8RyXDg0uvXx_qMq=2ER8Bc9RXFPDGQ@mail.gmail.com> <CAF=yD-KFYdXRgL-HpAJLLHuywMcaBGfz7sDL35DBNs0hoq+zxQ@mail.gmail.com>
+In-Reply-To: <CAF=yD-KFYdXRgL-HpAJLLHuywMcaBGfz7sDL35DBNs0hoq+zxQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Dec 2018 17:33:11 +0100
+Message-ID: <CAK8P3a0PFQCqo2Ofce7uJeWAgssMbh8u1CNWeAmUk9LzQRn35g@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] socket: Add SO_TIMESTAMP[NS]_NEW
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Richard Henderson <rth@twiddle.net>,
+        linux-alpha@vger.kernel.org,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+On Sat, Dec 15, 2018 at 7:52 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> > 3 reasons for not doing this:
+> >
+> > 1. We do not want to break userspace. If we move this to
+> > linux/socket.h all the userspace programs now have to include
+> > linux/socket.h or get this definition through a new libc.
+> > 2. All the socket options are together in the file asm/socket.h. It
+> > doesn't seem good for maintainability to move just a few bits
+> > elsewhere.
+> > 3. There are only 4 arches (after the series is applied) that have
+> > their own asm/socket.h. And, this is because there seems to be
+> > significant differences to asm-generic/socket.h that don't seem
+> > logically obvious to group and eliminate some of the defines.
+>
+> Agreed. All good reasons to leave as is.
+>
+> > Also for the other comment. The reason the conditionals were not
+> > consistent is because they were not consistent to begin with.
+>
+> The only difference I see is an inversion of the test. Nesting order
+> is the same:
+>
+>         int need_software_tstamp = sock_flag(sk, SOCK_RCVTSTAMP);
+>         ...
+>         if (need_software_tstamp) {
+>                 if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+>                 } else {
+>                 }
+>         }
+>
+> vs
+>
+>                 if (sock_flag(sk, SOCK_RCVTSTAMP)) {
+>                         if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+>                         } else {
+>                         }
+>                 }
+>
+> I suggest just adding something like
+>
+>         if (need_software_tstamp) {
+> +              if (sock_uses_new_tstamp(sk) {
+> +                   __sock_recv_timestamp_new(msg, sk,
+> ktime_to_timespec64(skb->tstamp));
+> +              } else if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+> -               if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+>                 } else {
+>                 }
+>
+> and
+>
+>                 if (sock_flag(sk, SOCK_RCVTSTAMP)) {
+> +                      if (sock_uses_new_tstamp(sk) {
+> +                           __sock_recv_timestamp_new(msg, sk, ts);
+> +                      else if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+> -                       if (sock_flag(sk, SOCK_RCVTSTAMPNS)) {
+>                         } else {
+>                         }
 
-On 13/12/18 23:20, Pavel Machek wrote:
-> Hi!
-> 
->> This is part of the Pixel C's thermal management strategy to effectively
->> limit the input power to 5V 3A when the screen is on. When the screen is
->> on, the display, the CPU, and the GPU all contribute more heat to the
->> system than while the screen is off, and we made a tradeoff to throttle
->> the charger in order to give more of the thermal budget to those other
->> components.
->>
->> So there's nothing fundamentally broken about the hardware that would
->> cause the Pixel C to malfunction if we were charging at 9V or 12V instead
->> of 5V when the screen is on, ie if userspace doesn't change this.
->>
->> What would happen is that you wouldn't meet Google's skin temperature
->> targets on the system if the charger was allowed to run at 9V or 12V with
->> the screen on.
->>
->> For folks hacking on Pixel Cs (which is now outside of Google's official
->> support window for Android) and customizing their own kernel and userspace
->> this would be acceptable, but we wanted to expose this feature in the
->> power supply properties because the feature does exist in the Emedded
->> Controller firmware of the Pixel C and all of Google's Chromebooks with
->> USB-C made since 2015 in case someone running an up to date kernel wanted
->> to limit the charging power for thermal or other reasons.
->>
->> This patch exposes a new property, similar to input current limit, to
->> re-configure the maximum voltage from the external supply at runtime
->> based on system-level knowledge or user input.
-> 
-> Could we get power input limit, instead?
-> 
+Generally speaking, I think we want the new time handling
+to be written as the default case rather than have it hidden away
+in a separate function. If we didn't have the sparc64 quirk with its
+unusual timeval definition, we'd only need a special flag for the
+old 32-bit format, but that doesn't work as long we have to support
+two different 64-bit formats for 64-bit timeval on sparc64
+(32 or 64 bit microseconds).
 
-I'm open but I have some concerns, so lets discuss a bit about it :)
+> Note also (2) tentative helper function sock_uses_new_tstamp(const
+> struct sock *sk) instead of testing sock_flag(sk, SOCK_TSTAMP_NEW)
+> directly. Since the .._NEW variants are equivalent to .._OLD on 64-bit,
+> I wonder if we can just compile out the branch. Something like
+>
+>     static inline bool sock_uses_new_tstamp(const struct sock *sk) {
+>             return (sizeof(time_t) != sizeof(__kernel_long_t)) &&
+>                        sock_flag(sk, SOCK_TSTAMP_NEW);
+>     }
 
-According to the USB PD 2.0 specs if we limit the source at 15W we can get 5V/3A
-or 9V/1.67A, if I am not mistaken the higher voltage caused problem since the
-conversion to lower internal voltages generated more heat, so in this case
-9V/1.67A is not a valid value for us (maybe someone from ChromeOS can confirm
-this?).
+I think that would break compat handling: when we have a 32-bit
+user space process, the difference between old and new timestamps
+is meaningful even on 64-bit kernels, but the distinction is only made all
+the way down in put_cmsg_compat().
 
-There is also the USB Power Delivery Specification revision 3.0, who defines a
-programmable power supply protocol that allows granular control over VBUS power
-in 20 mV steps to facilitate constant current or constant voltage charging. So,
-maybe we might be interested on set a specific constant current or a specific
-contant voltage. I think that in this case would be interesting have the
-possibility to set voltage or current. What do you think?
-
-Thanks,
- Enric
-
-
-> That is what you really want, it is more generally useful, and it is
-> what current input limit should have been, in the first place...
-> 
-> Thanks,
-> 									Pavel
-> 
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> Reviewed-by: Guenter Roeck <groeck@chromium.org>
->> ---
->>
->> Changes in v3:
->> - Improve commit log and documentation with Benson comments.
->>
->> Changes in v2:
->> - Document the new property in ABI/testing/sysfs-class-power.
->> - Add the Reviewed-by Guenter Roeck tag.
->>
->>  Documentation/ABI/testing/sysfs-class-power | 15 +++++++++++++++
->>  Documentation/power/power_supply_class.txt  |  2 ++
->>  drivers/power/supply/power_supply_sysfs.c   |  1 +
->>  include/linux/power_supply.h                |  1 +
->>  4 files changed, 19 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
->> index 5e23e22dce1b..6dee5c105a28 100644
->> --- a/Documentation/ABI/testing/sysfs-class-power
->> +++ b/Documentation/ABI/testing/sysfs-class-power
->> @@ -335,6 +335,21 @@ Description:
->>  		Access: Read, Write
->>  		Valid values: Represented in microamps
->>  
->> +What:		/sys/class/power_supply/<supply_name>/input_voltage_limit
->> +Date:		Nov 2018
->> +Contact:	linux-pm@vger.kernel.org
->> +Description:
->> +		This entry configures the incoming VBUS voltage limit currently
->> +		set in the supply. Normally this is configured based on
->> +		system-level knowledge or user input (e.g. This is part of the
->> +		Pixel C's thermal management strategy to effectively limit the
->> +		input power to 5V when the screen is on to meet Google's skin
->> +		temperature targets). Note that this feature should not be
->> +		used for safety critical things.
->> +
->> +		Access: Read, Write
->> +		Valid values: Represented in microvolts
->> +
->>  What:		/sys/class/power_supply/<supply_name>/online,
->>  Date:		May 2007
->>  Contact:	linux-pm@vger.kernel.org
->> diff --git a/Documentation/power/power_supply_class.txt b/Documentation/power/power_supply_class.txt
->> index 300d37896e51..7b4be615b4f8 100644
->> --- a/Documentation/power/power_supply_class.txt
->> +++ b/Documentation/power/power_supply_class.txt
->> @@ -137,6 +137,8 @@ power supply object.
->>  
->>  INPUT_CURRENT_LIMIT - input current limit programmed by charger. Indicates
->>  the current drawn from a charging source.
->> +INPUT_VOLTAGE_LIMIT - input voltage limit programmed by charger. Indicates
->> +the voltage limit from a charging source.
->>  
->>  CHARGE_CONTROL_LIMIT - current charge control limit setting
->>  CHARGE_CONTROL_LIMIT_MAX - maximum charge control limit setting
->> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
->> index dce24f596160..5848742ebb59 100644
->> --- a/drivers/power/supply/power_supply_sysfs.c
->> +++ b/drivers/power/supply/power_supply_sysfs.c
->> @@ -275,6 +275,7 @@ static struct device_attribute power_supply_attrs[] = {
->>  	POWER_SUPPLY_ATTR(charge_control_limit),
->>  	POWER_SUPPLY_ATTR(charge_control_limit_max),
->>  	POWER_SUPPLY_ATTR(input_current_limit),
->> +	POWER_SUPPLY_ATTR(input_voltage_limit),
->>  	POWER_SUPPLY_ATTR(energy_full_design),
->>  	POWER_SUPPLY_ATTR(energy_empty_design),
->>  	POWER_SUPPLY_ATTR(energy_full),
->> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
->> index f80769175c56..608ba88e32ee 100644
->> --- a/include/linux/power_supply.h
->> +++ b/include/linux/power_supply.h
->> @@ -122,6 +122,7 @@ enum power_supply_property {
->>  	POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT,
->>  	POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT_MAX,
->>  	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
->> +	POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT,
->>  	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
->>  	POWER_SUPPLY_PROP_ENERGY_EMPTY_DESIGN,
->>  	POWER_SUPPLY_PROP_ENERGY_FULL,
-> 
+      Arnd
