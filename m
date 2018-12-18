@@ -2,82 +2,379 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6900EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8C3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D4A217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EA7F21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:17:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pxrW5Ysp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbeLRNPQ (ORCPT
+        id S1726723AbeLRNRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:15:16 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55929 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726451AbeLRNPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:15:15 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 28B233CC43FCA;
-        Tue, 18 Dec 2018 21:15:12 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Dec 2018
- 21:15:10 +0800
-Subject: Re: [PATCH -next] staging: fbtft: use strcmp() instead of strncmp()
- for subsystem lookup
-To:     <devel@driverdev.osuosl.org>, <gregkh@linuxfoundation.org>,
-        <leobras.c@gmail.co>, <radek.dostal@streamunlimited.co>
-References: <20181218130932.17684-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <477c3a7a-b0dd-f3f5-223c-da4e8e19d44a@huawei.com>
-Date:   Tue, 18 Dec 2018 21:15:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        Tue, 18 Dec 2018 08:17:31 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40003 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbeLRNRa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 08:17:30 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f188so2085344wmf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:17:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=sZpOglEQJHXm6l+E0U04xMqFqLZJ1bCx/aa8V/K6NrE=;
+        b=pxrW5YspGZMsERGOaI83PhrJ9DzPGOMLD0lVIuWhZTUFJnjmBW4TLs7iaCpo16SN6g
+         KwjJWhAjnpnGoKhME5K0TRfi54pTvam+eNYdBkhmUbj6+W8a2uYDg8bbwrLNvypexUgz
+         qtFEBI6ukaJHcUy6TEzt50kDez5WhUDZIyr2Xdujqhf9g4ZXu9XBmicky1q8CuqaIQ6X
+         qc3sUhqXVqzSaAJXQ9sBIOBoZnM2gPv8wJsYbe+upJ66tAIzqSdQj/pRuVWp0i42hIpT
+         +jkvQN/V7SAV3RxdKU304XufzVQlvaleWGFbXxbSzCFrc6CKSY10ZH9FxXlAaS48MqNe
+         8CaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=sZpOglEQJHXm6l+E0U04xMqFqLZJ1bCx/aa8V/K6NrE=;
+        b=M8FxtzTqnwtD6dQVO8spZPR+vbgHUooEznx2gKrmfLpDtzK0gWKd8D3l/YDv4F2As8
+         cW48ovF0ykFoZUySotq2pH4rI2ZrDkxqf7kB+yr61k19h0y2TsoTiPsHIDt0lLVvAKti
+         d0nAn+NPRkrHNaDe0XbJeHX28i1EE6w5ePNeCSEcJPcHsgBDZIeIfY6+1mcUjnMo8MRb
+         KWOvE+/ERDdiBEuVj4SyG2swN9VBVigCG/glFrdVJjuVrXoJQhIirB2RhChCUagq8jD4
+         A5nRi7n9agRhpPMItq82BW265GQNEdnsvtkmnE59HaSJVokGkemQRAlUNbHo8FrfXpV1
+         Pf6Q==
+X-Gm-Message-State: AA+aEWZ2la8xKffmtdNMvmVSAo5oarRRbnpJRFjcsxs67YCxPEqP6ahD
+        1C+r6kLXrIdRTWuF3ydgtsrSXg==
+X-Google-Smtp-Source: AFSGD/V3btMxNPAtd+cb3x/FCBNGzB1C9Q8TqiEibpmuBhHKZHvfslW/ZFchVJKDRsnXT8xZIALFow==
+X-Received: by 2002:a7b:c397:: with SMTP id s23mr3089203wmj.127.1545139047213;
+        Tue, 18 Dec 2018 05:17:27 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t76sm2980375wme.33.2018.12.18.05.17.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 05:17:26 -0800 (PST)
+Subject: Re: [PATCH RFC v2 1/8] drm/bridge: dw-hdmi: Add SCDC and TMDS
+ Scrambling support
+To:     Andrzej Hajda <a.hajda@samsung.com>, architt@codeaurora.org,
+        Laurent.pinchart@ideasonboard.com,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        maxime.ripard@bootlin.com
+Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Huicong Xu <xhc@rock-chips.com>
+References: <20181130134301.17963-1-narmstrong@baylibre.com>
+ <CGME20181130134341epcas3p330f854d94ebca73704d6582158d7d5b7@epcas3p3.samsung.com>
+ <20181130134301.17963-2-narmstrong@baylibre.com>
+ <66eb4d1d-8924-2ee7-7fa4-5b78ae8cea0f@samsung.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <23173350-170b-023e-f724-becbab469ec1@baylibre.com>
+Date:   Tue, 18 Dec 2018 14:17:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181218130932.17684-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <66eb4d1d-8924-2ee7-7fa4-5b78ae8cea0f@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sorry, Pls ignore this.  The title need fix.
+On 18/12/2018 13:25, Andrzej Hajda wrote:
+> Hi Neil,
+> 
+> 
+> On 30.11.2018 14:42, Neil Armstrong wrote:
+>> Add support for SCDC Setup for TMDS Clock > 3.4GHz and enable TMDS
+>> Scrambling when supported or mandatory.
+>>
+>> This patch also adds an helper to setup the control bit to support
+>> the high TMDS Bit Period/TMDS Clock-Period Ratio as required with
+>> TMDS Clock > 3.4GHz for HDMI2.0 3840x2160@60/50 modes.
+>>
+>> These changes were based on work done by Huicong Xu <xhc@rock-chips.com>
+>> and Nickey Yang <nickey.yang@rock-chips.com> to support HDMI2.0 modes
+>> on the Rockchip 4.4 BSP kernel at [1]
+>>
+>> [1] https://github.com/rockchip-linux/kernel/tree/release-4.4
+>>
+>> Cc: Nickey Yang <nickey.yang@rock-chips.com>
+>> Cc: Huicong Xu <xhc@rock-chips.com>
+>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>> ---
+>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 88 ++++++++++++++++++++++-
+>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  1 +
+>>  include/drm/bridge/dw_hdmi.h              |  1 +
+>>  3 files changed, 87 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> index 64c3cf027518..fcd941d52753 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> @@ -28,6 +28,7 @@
+>>  #include <drm/drm_crtc_helper.h>
+>>  #include <drm/drm_edid.h>
+>>  #include <drm/drm_encoder_slave.h>
+>> +#include <drm/drm_scdc_helper.h>
+>>  #include <drm/bridge/dw_hdmi.h>
+>>  
+>>  #include <uapi/linux/media-bus-format.h>
+>> @@ -43,6 +44,11 @@
+>>  
+>>  #define HDMI_EDID_LEN		512
+>>  
+>> +/* DW-HDMI Controller >= 0x200a are at least compliant with SCDC version 1 */
+>> +#define SCDC_MIN_SOURCE_VERSION	0x1
+>> +
+>> +#define HDMI14_MAX_TMDSCLK	340000000
+>> +
+>>  enum hdmi_datamap {
+>>  	RGB444_8B = 0x01,
+>>  	RGB444_10B = 0x03,
+>> @@ -1015,6 +1021,33 @@ void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi, unsigned short data,
+>>  }
+>>  EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_write);
+>>  
+>> +/*
+>> + * HDMI2.0 Specifies the following procedure for High TMDS Bit Rates:
+>> + * - The Source shall suspend transmission of the TMDS clock and data
+>> + * - The Source shall write to the TMDS_Bit_Clock_Ratio bit to change it
+>> + * from a 0 to a 1 or from a 1 to a 0
+>> + * - The Source shall allow a minimum of 1 ms and a maximum of 100 ms from
+>> + * the time the TMDS_Bit_Clock_Ratio bit is written until resuming
+>> + * transmission of TMDS clock and data
+>> + *
+>> + * To respect the 100ms maximum delay, the dw_hdmi_set_high_tmds_clock_ratio()
+>> + * helper should called right before enabling the TMDS Clock and Data in
+>> + * the PHY configuration callback.
+>> + */
+>> +void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi)
+>> +{
+>> +	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mpixelclock;
+>> +
+>> +	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
+>> +	if (hdmi->connector.display_info.hdmi.scdc.supported) {
+>> +		if (mtmdsclock > HDMI14_MAX_TMDSCLK)
+>> +			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 1);
+>> +		else
+>> +			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 0);
+>> +	}
+>> +}
+>> +EXPORT_SYMBOL_GPL(dw_hdmi_set_high_tmds_clock_ratio);
+>> +
+>>  static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
+>>  {
+>>  	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
+>> @@ -1216,6 +1249,8 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>>  
+>>  	dw_hdmi_phy_power_off(hdmi);
+>>  
+>> +	dw_hdmi_set_high_tmds_clock_ratio(hdmi);
+>> +
+>>  	/* Leave low power consumption mode by asserting SVSRET. */
+>>  	if (phy->has_svsret)
+>>  		dw_hdmi_phy_enable_svsret(hdmi, 1);
+>> @@ -1237,6 +1272,10 @@ static int hdmi_phy_configure(struct dw_hdmi *hdmi)
+>>  		return ret;
+>>  	}
+>>  
+>> +	/* Wait for resuming transmission of TMDS clock and data */
+>> +	if (mpixelclock > HDMI14_MAX_TMDSCLK)
+>> +		msleep(100);
+>> +
+>>  	return dw_hdmi_phy_power_on(hdmi);
+>>  }
+>>  
+>> @@ -1340,11 +1379,12 @@ static void hdmi_tx_hdcp_config(struct dw_hdmi *hdmi)
+>>  
+>>  static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+>>  {
+>> +	bool is_hdmi2_sink = hdmi->connector.display_info.hdmi.scdc.supported;
+>>  	struct hdmi_avi_infoframe frame;
+>>  	u8 val;
+>>  
+>>  	/* Initialise info frame from DRM mode */
+>> -	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, false);
+>> +	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, is_hdmi2_sink);
+>>  
+>>  	if (hdmi_bus_fmt_is_yuv444(hdmi->hdmi_data.enc_out_bus_format))
+>>  		frame.colorspace = HDMI_COLORSPACE_YUV444;
+>> @@ -1503,7 +1543,8 @@ static void hdmi_config_vendor_specific_infoframe(struct dw_hdmi *hdmi,
+>>  static void hdmi_av_composer(struct dw_hdmi *hdmi,
+>>  			     const struct drm_display_mode *mode)
+>>  {
+>> -	u8 inv_val;
+>> +	u8 inv_val, bytes;
+>> +	struct drm_hdmi_info *hdmi_info = &hdmi->connector.display_info.hdmi;
+>>  	struct hdmi_vmode *vmode = &hdmi->hdmi_data.video_mode;
+>>  	int hblank, vblank, h_de_hs, v_de_vs, hsync_len, vsync_len;
+>>  	unsigned int vdisplay;
+>> @@ -1513,7 +1554,9 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+>>  	dev_dbg(hdmi->dev, "final pixclk = %d\n", vmode->mpixelclock);
+>>  
+>>  	/* Set up HDMI_FC_INVIDCONF */
+>> -	inv_val = (hdmi->hdmi_data.hdcp_enable ?
+>> +	inv_val = (hdmi->hdmi_data.hdcp_enable ||
+>> +		   vmode->mpixelclock > HDMI14_MAX_TMDSCLK ||
+>> +		   hdmi_info->scdc.scrambling.low_rates ?
+>>  		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_ACTIVE :
+>>  		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_INACTIVE);
+>>  
+>> @@ -1562,6 +1605,45 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+>>  		vsync_len /= 2;
+>>  	}
+>>  
+>> +	/* Scrambling Control */
+>> +	if (hdmi_info->scdc.supported) {
+>> +		if (vmode->mpixelclock > HDMI14_MAX_TMDSCLK ||
+>> +		    hdmi_info->scdc.scrambling.low_rates) {
+>> +			/*
+>> +			 * HDMI2.0 Specifies the following procedure:
+>> +			 * After the Source Device has determined that
+>> +			 * SCDC_Present is set (=1), the Source Device should
+>> +			 * write the accurate Version of the Source Device
+>> +			 * to the Source Version field in the SCDCS.
+>> +			 * Source Devices compliant shall set the
+>> +			 * Source Version = 1.
+>> +			 */
+>> +			drm_scdc_readb(&hdmi->i2c->adap, SCDC_SINK_VERSION,
+>> +				       &bytes);
+>> +			drm_scdc_writeb(&hdmi->i2c->adap, SCDC_SOURCE_VERSION,
+>> +				min_t(u8, bytes, SCDC_MIN_SOURCE_VERSION));
+>> +
+>> +			/* Enabled Scrambling in the Sink */
+>> +			drm_scdc_set_scrambling(&hdmi->i2c->adap, 1);
+>> +
+>> +			/*
+>> +			 * To activate the scrambler feature, you must ensure
+>> +			 * that the quasi-static configuration bit
+>> +			 * fc_invidconf.HDCP_keepout is set at configuration
+>> +			 * time, before the required mc_swrstzreq.tmdsswrst_req
+>> +			 * reset request is issued.
+>> +			 */
+>> +			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
+> 
+> 
+> Are you sure you need casting to u8?
 
-On 2018/12/18 21:09, YueHaibing wrote:
-> strncmp() stops comparing when either the end of one of the first two 
-> arguments is reached or when 'n' characters have been compared, whichever
-> comes first.That means that strncmp(s1, s2, n) is equivalent to 
-> strcmp(s1, s2) if n exceeds the length of s1 or the length of s2.
+Not sure, it's already casted in dw_hdmi_clear_overflow() :
+
+...
+hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ, HDMI_MC_SWRSTZ);
+...
+
+I'll check if it's really needed.
+
 > 
-> This patch avoids that the following warning is reported by smatch:
 > 
-> drivers/staging/fbtft/fbtft_device.c:1458
->  fbtft_device_init() error: strncmp() '"list"' too small (5 vs 32)
+>> +				    HDMI_MC_SWRSTZ);
+>> +			hdmi_writeb(hdmi, 1, HDMI_FC_SCRAMBLER_CTRL);
+>> +		} else {
+>> +			hdmi_writeb(hdmi, 0, HDMI_FC_SCRAMBLER_CTRL);
+>> +			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
+>> +				    HDMI_MC_SWRSTZ);
+>> +			drm_scdc_set_scrambling(&hdmi->i2c->adap, 0);
+>> +		}
+>> +	}
+>> +
+>>  	/* Set up horizontal active pixel width */
+>>  	hdmi_writeb(hdmi, mode->hdisplay >> 8, HDMI_FC_INHACTV1);
+>>  	hdmi_writeb(hdmi, mode->hdisplay, HDMI_FC_INHACTV0);
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+>> index 9d90eb9c46e5..3f3c616eba97 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+>> @@ -255,6 +255,7 @@
+>>  #define HDMI_FC_MASK2                           0x10DA
+>>  #define HDMI_FC_POL2                            0x10DB
+>>  #define HDMI_FC_PRCONF                          0x10E0
+>> +#define HDMI_FC_SCRAMBLER_CTRL                  0x10E1
+>>  
+>>  #define HDMI_FC_GMD_STAT                        0x1100
+>>  #define HDMI_FC_GMD_EN                          0x1101
+>> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+>> index 9c56412bb2cf..7a02744ce0bc 100644
+>> --- a/include/drm/bridge/dw_hdmi.h
+>> +++ b/include/drm/bridge/dw_hdmi.h
+>> @@ -157,6 +157,7 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense);
+>>  void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi, unsigned int rate);
+>>  void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
+>>  void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
+>> +void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi);
+>>  
+>>  /* PHY configuration */
+>>  void dw_hdmi_phy_i2c_set_addr(struct dw_hdmi *hdmi, u8 address);
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/staging/fbtft/fbtft_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+Thanks,
+Neil
+
 > 
-> diff --git a/drivers/staging/fbtft/fbtft_device.c b/drivers/staging/fbtft/fbtft_device.c
-> index 50e97da..0e995028 100644
-> --- a/drivers/staging/fbtft/fbtft_device.c
-> +++ b/drivers/staging/fbtft/fbtft_device.c
-> @@ -1455,7 +1455,7 @@ static int __init fbtft_device_init(void)
->  	}
->  
->  	/* name=list lists all supported displays */
-> -	if (strncmp(name, "list", FBTFT_GPIO_NAME_SIZE) == 0) {
-> +	if (strcmp(name, "list") == 0) {
->  		pr_info("Supported displays:\n");
->  
->  		for (i = 0; i < ARRAY_SIZE(displays); i++)
+>  --
+> Regards
+> Andrzej
+> 
+> 
 > 
 
