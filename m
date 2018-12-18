@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5043AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7A1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2860921841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4835F218A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:08:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbeLRQIP (ORCPT
+        id S1727193AbeLRQIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:08:15 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36502 "EHLO mail.bootlin.com"
+        Tue, 18 Dec 2018 11:08:18 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36497 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727143AbeLRQIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727142AbeLRQIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 11:08:13 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EEA9B20824; Tue, 18 Dec 2018 17:08:10 +0100 (CET)
+        id ED97520AA0; Tue, 18 Dec 2018 17:08:10 +0100 (CET)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B3DE920834;
-        Tue, 18 Dec 2018 17:07:58 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1069A20A66;
+        Tue, 18 Dec 2018 17:07:59 +0100 (CET)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Shawn Guo <shawnguo@kernel.org>
 Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [RESEND PATCH v2 2/3] arm64: dts: fsl: ls1046a: disable the flash controller by default
-Date:   Tue, 18 Dec 2018 17:07:48 +0100
-Message-Id: <20181218160750.6766-3-alexandre.belloni@bootlin.com>
+Subject: [PATCH 3/3] arm64: dts: fsl: ls1046a: disable uarts by default
+Date:   Tue, 18 Dec 2018 17:07:49 +0100
+Message-Id: <20181218160750.6766-4-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181218160750.6766-1-alexandre.belloni@bootlin.com>
 References: <20181218160750.6766-1-alexandre.belloni@bootlin.com>
@@ -42,27 +42,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the Integrated Flash Controller status to disabled so each board has
-the option to enable it. All the existing users have status = "okay" so
-there is no functional change.
+Disable the UARTs by defaultto avoid registering unused UARTs. This
+effectively change the number of registered UARTS for the RDB and QDS from
+4 to 2 but this seems the right thing to do.
+
+It is especially useful when connecting other 8250 uart on PCIe for example
+as the default maximum number of 8250 UARTs that can be registered is 4.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 51cbd50012d6..90dc3b616ea7 100644
+index 90dc3b616ea7..4caf4df1c7b1 100644
 --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
 +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -200,6 +200,7 @@
- 			compatible = "fsl,ifc", "simple-bus";
- 			reg = <0x0 0x1530000 0x0 0x10000>;
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+@@ -423,6 +423,7 @@
+ 			reg = <0x00 0x21c0500 0x0 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
 +			status = "disabled";
  		};
  
- 		qspi: spi@1550000 {
+ 		duart1: serial@21c0600 {
+@@ -430,6 +431,7 @@
+ 			reg = <0x00 0x21c0600 0x0 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart2: serial@21d0500 {
+@@ -437,6 +439,7 @@
+ 			reg = <0x0 0x21d0500 0x0 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart3: serial@21d0600 {
+@@ -444,6 +447,7 @@
+ 			reg = <0x0 0x21d0600 0x0 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		gpio0: gpio@2300000 {
 -- 
 2.20.0
 
