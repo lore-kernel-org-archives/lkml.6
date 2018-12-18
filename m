@@ -2,110 +2,349 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F90AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5F4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1869021841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68790217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbeLRIjQ (ORCPT
+        id S1726675AbeLRIjt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:39:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726799AbeLRIjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:39:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BC58DAFC5;
-        Tue, 18 Dec 2018 08:39:12 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 09:39:11 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181218083911.qxvlqlwlb4eye72x@pathway.suse.cz>
-References: <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
- <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
- <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
- <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
- <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
- <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
- <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
- <20181213124255.GB3053@tigerII.localdomain>
- <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
- <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
+        Tue, 18 Dec 2018 03:39:49 -0500
+Received: from mail1.skidata.com ([91.230.2.99]:20823 "EHLO mail1.skidata.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726386AbeLRIjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:39:49 -0500
+X-IronPort-AV: E=Sophos;i="5.56,367,1539640800"; 
+   d="scan'208";a="14044693"
+From:   Richard Leitner <richard.leitner@skidata.com>
+To:     <dmitry.torokhov@gmail.com>, <mark.rutland@arm.com>
+CC:     <robh+dt@kernel.org>, <linux-input@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <richard.leitner@skidata.com>
+Subject: [RESEND PATCH v2 6/8] Input: sx8654 - add sx8650 support
+Date:   Tue, 18 Dec 2018 09:39:31 +0100
+Message-ID: <20181218083931.11549-1-richard.leitner@skidata.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181218083606.25795-1-richard.leitner@skidata.com>
+References: <20181218083606.25795-1-richard.leitner@skidata.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex3srv.skidata.net (192.168.111.81) To
+ sdex5srv.skidata.net (192.168.111.83)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-12-18 06:05:04, Tetsuo Handa wrote:
-> >From 91f85d2bd494df2f73c605d8b4747e8cc0a61ae2 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Tue, 18 Dec 2018 05:53:04 +0900
-> Subject: [PATCH] printk: Add caller information to printk() output.
-> 
-> Sometimes we want to print a series of printk() messages to consoles
-> without being disturbed by concurrent printk() from interrupts and/or
-> other threads. But we can't enforce printk() callers to use their local
-> buffers because we need to ask them to make too much changes. Also, even
-> buffering up to one line inside printk() might cause failing to emit
-> an important clue under critical situation.
-> 
-> Therefore, instead of trying to help buffering, let's try to help
-> reconstructing messages by saving caller information as of calling
-> log_store() and adding it as "[T$thread_id]" or "[C$processor_id]"
-> upon printing to consoles.
-> 
-> Some examples for console output:
-> 
->   [    1.222773][    T1] x86: Booting SMP configuration:
->   [    2.779635][    T1] pci 0000:00:01.0: PCI bridge to [bus 01]
->   [    5.069193][  T268] Fusion MPT base driver 3.04.20
->   [    9.316504][    C2] random: fast init done
->   [   13.413336][ T3355] Initialized host personality
-> 
-> Some examples for /dev/kmsg output:
-> 
->   6,496,1222773,-,caller=T1;x86: Booting SMP configuration:
->   6,968,2779635,-,caller=T1;pci 0000:00:01.0: PCI bridge to [bus 01]
->    SUBSYSTEM=pci
->    DEVICE=+pci:0000:00:01.0
->   6,1353,5069193,-,caller=T268;Fusion MPT base driver 3.04.20
->   5,1526,9316504,-,caller=C2;random: fast init done
->   6,1575,13413336,-,caller=T3355;Initialized host personality
-> 
-> Note that this patch changes max length of messages which can be printed
-> by printk() or written to /dev/kmsg interface from 992 bytes to 976 bytes,
-> based on an assumption that userspace won't try to write messages hitting
-> that border line to /dev/kmsg interface.
-> 
-> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+The sx8654 and sx8650 are quite similar, therefore add support for the
+sx8650 within the sx8654 driver.
 
-Sergey, are you okay with this squashed patch, please?
+Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+---
+ drivers/input/touchscreen/sx8654.c | 193 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 173 insertions(+), 20 deletions(-)
 
-Best Regards,
-Petr
+diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
+index afa4da138fe9..4939863efbef 100644
+--- a/drivers/input/touchscreen/sx8654.c
++++ b/drivers/input/touchscreen/sx8654.c
+@@ -29,7 +29,7 @@
+ 
+ #include <linux/input.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -44,9 +44,11 @@
+ #define I2C_REG_IRQSRC			0x23
+ #define I2C_REG_SOFTRESET		0x3f
+ 
++#define I2C_REG_SX8650_STAT		0x05
++#define SX8650_STAT_CONVIRQ		0x80
++
+ /* commands */
+ #define CMD_READ_REGISTER		0x40
+-#define CMD_MANUAL			0xc0
+ #define CMD_PENTRG			0xe0
+ 
+ /* value for I2C_REG_SOFTRESET */
+@@ -58,6 +60,7 @@
+ 
+ /* bits for RegTouch1 */
+ #define CONDIRQ				0x20
++#define RPDNT_100K			0x00
+ #define FILT_7SA			0x03
+ 
+ /* bits for I2C_REG_CHANMASK */
+@@ -71,14 +74,122 @@
+ /* power delay: lower nibble of CTRL0 register */
+ #define POWDLY_1_1MS			0x0b
+ 
++/* for sx8650, as we have no pen release IRQ there: timeout in ns following the
++ * last PENIRQ after which we assume the pen is lifted.
++ */
++#define SX8650_PENIRQ_TIMEOUT		msecs_to_jiffies(10)
++
+ #define MAX_12BIT			((1 << 12) - 1)
++#define MAX_I2C_READ_LEN		10 /* see datasheet section 5.1.5 */
++
++/* channel definition */
++#define CH_X				0x00
++#define CH_Y				0x01
++
++struct sx865x_data {
++	u8 cmd_manual;
++	u8 chan_mask;
++	u8 has_irq_penrelease;
++	u8 has_reg_irqmask;
++	irq_handler_t irqh;
++};
+ 
+ struct sx8654 {
+ 	struct input_dev *input;
+ 	struct i2c_client *client;
+ 	struct gpio_desc *gpio_reset;
++
++	spinlock_t		lock; /* for input reporting from irq/timer */
++	struct timer_list	timer;
++
++	const struct sx865x_data *data;
+ };
+ 
++static inline void sx865x_penrelease(struct sx8654 *ts)
++{
++	struct input_dev *input_dev = ts->input;
++
++	input_report_key(input_dev, BTN_TOUCH, 0);
++	input_sync(input_dev);
++}
++
++static void sx865x_penrelease_timer_handler(struct timer_list *t)
++{
++	struct sx8654 *ts = from_timer(ts, t, timer);
++	unsigned long flags;
++
++	spin_lock_irqsave(&ts->lock, flags);
++	sx865x_penrelease(ts);
++	spin_unlock_irqrestore(&ts->lock, flags);
++	dev_dbg(&ts->client->dev, "penrelease by timer\n");
++}
++
++static irqreturn_t sx8650_irq(int irq, void *handle)
++{
++	struct sx8654 *ts = handle;
++	struct device *dev = &ts->client->dev;
++	int len, i;
++	unsigned long flags;
++	u8 stat;
++	u16 x, y;
++	u8 data[MAX_I2C_READ_LEN];
++	u16 ch;
++	u16 chdata;
++	u8 readlen = hweight32(ts->data->chan_mask) * 2;
++
++	stat = i2c_smbus_read_byte_data(ts->client, CMD_READ_REGISTER
++						    | I2C_REG_SX8650_STAT);
++
++	if (!(stat & SX8650_STAT_CONVIRQ)) {
++		dev_dbg(dev, "%s ignore stat [0x%02x]", __func__, stat);
++		return IRQ_HANDLED;
++	}
++
++	len = i2c_master_recv(ts->client, data, readlen);
++	if (len != readlen) {
++		dev_dbg(dev, "ignore short recv (%d)\n", len);
++		return IRQ_HANDLED;
++	}
++
++	spin_lock_irqsave(&ts->lock, flags);
++
++	x = 0;
++	y = 0;
++	for (i = 0; (i + 1) < len; i++) {
++		chdata = data[i] << 8;
++		i++;
++		chdata += data[i];
++
++		if (unlikely(chdata == 0xFFFF)) {
++			dev_dbg(dev, "invalid qualified data @ %d\n", i);
++			continue;
++		} else if (unlikely(chdata & 0x8000)) {
++			dev_warn(dev, "hibit @ %d [0x%04x]\n", i, chdata);
++			continue;
++		}
++
++		ch = chdata >> 12;
++		if      (ch == CH_X)
++			x = chdata & MAX_12BIT;
++		else if (ch == CH_Y)
++			y = chdata & MAX_12BIT;
++		else
++			dev_warn(dev, "unknown channel %d [0x%04x]\n", ch,
++				 chdata);
++	}
++
++	input_report_abs(ts->input, ABS_X, x);
++	input_report_abs(ts->input, ABS_Y, y);
++	input_report_key(ts->input, BTN_TOUCH, 1);
++	input_sync(ts->input);
++	dev_dbg(dev, "point(%4d,%4d)\n", x, y);
++
++	mod_timer(&ts->timer, jiffies + SX8650_PENIRQ_TIMEOUT);
++	spin_unlock_irqrestore(&ts->lock, flags);
++
++	return IRQ_HANDLED;
++}
++
+ static irqreturn_t sx8654_irq(int irq, void *handle)
+ {
+ 	struct sx8654 *sx8654 = handle;
+@@ -127,6 +238,22 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
+ 	return IRQ_HANDLED;
+ }
+ 
++static const struct sx865x_data sx8650_data = {
++	.cmd_manual = 0xb0,
++	.has_irq_penrelease = 0,
++	.has_reg_irqmask = 0,
++	.chan_mask = (CONV_X | CONV_Y),
++	.irqh = sx8650_irq,
++};
++
++static const struct sx865x_data sx8654_data = {
++	.cmd_manual = 0xc0,
++	.has_irq_penrelease = 1,
++	.has_reg_irqmask = 1,
++	.chan_mask = (CONV_X | CONV_Y),
++	.irqh = sx8654_irq,
++};
++
+ static int sx8654_reset(struct sx8654 *ts)
+ {
+ 	int err;
+@@ -182,13 +309,13 @@ static void sx8654_close(struct input_dev *dev)
+ 	disable_irq(client->irq);
+ 
+ 	/* enable manual mode mode */
+-	error = i2c_smbus_write_byte(client, CMD_MANUAL);
++	error = i2c_smbus_write_byte(client, sx8654->data->cmd_manual);
+ 	if (error) {
+ 		dev_err(&client->dev, "writing command CMD_MANUAL failed");
+ 		return;
+ 	}
+ 
+-	error = i2c_smbus_write_byte_data(client, I2C_REG_TOUCH0, 0);
++	error = i2c_smbus_write_byte_data(client, I2C_REG_TOUCH0, RATE_MANUAL);
+ 	if (error) {
+ 		dev_err(&client->dev, "writing to I2C_REG_TOUCH0 failed");
+ 		return;
+@@ -221,6 +348,20 @@ static int sx8654_probe(struct i2c_client *client,
+ 	}
+ 	dev_dbg(&client->dev, "got GPIO reset pin\n");
+ 
++	sx8654->data = of_device_get_match_data(&client->dev);
++	if (!sx8654->data)
++		sx8654->data = (const struct sx865x_data *)id->driver_data;
++	if (!sx8654->data) {
++		dev_err(&client->dev, "invalid or missing device data\n");
++		return -EINVAL;
++	}
++
++	if (!sx8654->data->has_irq_penrelease) {
++		dev_dbg(&client->dev, "use timer for penrelease\n");
++		timer_setup(&sx8654->timer, sx865x_penrelease_timer_handler, 0);
++		spin_lock_init(&sx8654->lock);
++	}
++
+ 	input = devm_input_allocate_device(&client->dev);
+ 	if (!input)
+ 		return -ENOMEM;
+@@ -248,29 +389,31 @@ static int sx8654_probe(struct i2c_client *client,
+ 	}
+ 
+ 	error = i2c_smbus_write_byte_data(client, I2C_REG_CHANMASK,
+-					  CONV_X | CONV_Y);
++					  sx8654->data->chan_mask);
+ 	if (error) {
+ 		dev_err(&client->dev, "writing to I2C_REG_CHANMASK failed");
+ 		return error;
+ 	}
+ 
+-	error = i2c_smbus_write_byte_data(client, I2C_REG_IRQMASK,
+-					  IRQ_PENTOUCH_TOUCHCONVDONE |
+-						IRQ_PENRELEASE);
+-	if (error) {
+-		dev_err(&client->dev, "writing to I2C_REG_IRQMASK failed");
+-		return error;
++	if (sx8654->data->has_reg_irqmask) {
++		error = i2c_smbus_write_byte_data(client, I2C_REG_IRQMASK,
++						  IRQ_PENTOUCH_TOUCHCONVDONE |
++							IRQ_PENRELEASE);
++		if (error) {
++			dev_err(&client->dev, "writing I2C_REG_IRQMASK failed");
++			return error;
++		}
+ 	}
+ 
+ 	error = i2c_smbus_write_byte_data(client, I2C_REG_TOUCH1,
+-					  CONDIRQ | FILT_7SA);
++					  CONDIRQ | RPDNT_100K | FILT_7SA);
+ 	if (error) {
+ 		dev_err(&client->dev, "writing to I2C_REG_TOUCH1 failed");
+ 		return error;
+ 	}
+ 
+ 	error = devm_request_threaded_irq(&client->dev, client->irq,
+-					  NULL, sx8654_irq,
++					  NULL, sx8654->data->irqh,
+ 					  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+ 					  client->name, sx8654);
+ 	if (error) {
+@@ -292,18 +435,28 @@ static int sx8654_probe(struct i2c_client *client,
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id sx8654_of_match[] = {
+-	{ .compatible = "semtech,sx8654", },
+-	{ .compatible = "semtech,sx8655", },
+-	{ .compatible = "semtech,sx8656", },
+-	{ },
++	{
++		.compatible = "semtech,sx8650",
++		.data = &sx8650_data,
++	}, {
++		.compatible = "semtech,sx8654",
++		.data = &sx8654_data,
++	}, {
++		.compatible = "semtech,sx8655",
++		.data = &sx8654_data,
++	}, {
++		.compatible = "semtech,sx8656",
++		.data = &sx8654_data,
++	}, {},
+ };
+ MODULE_DEVICE_TABLE(of, sx8654_of_match);
+ #endif
+ 
+ static const struct i2c_device_id sx8654_id_table[] = {
+-	{ "semtech_sx8654", 0 },
+-	{ "semtech_sx8655", 0 },
+-	{ "semtech_sx8656", 0 },
++	{ .name = "semtech_sx8650", .driver_data = (long)&sx8650_data },
++	{ .name = "semtech_sx8654", .driver_data = (long)&sx8654_data },
++	{ .name = "semtech_sx8655", .driver_data = (long)&sx8654_data },
++	{ .name = "semtech_sx8656", .driver_data = (long)&sx8654_data },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(i2c, sx8654_id_table);
+-- 
+2.11.0
+
