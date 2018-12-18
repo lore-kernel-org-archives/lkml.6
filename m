@@ -2,189 +2,178 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A07C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CFCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B99217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03D18217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:05:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dw/V4BB8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeLRREb (ORCPT
+        id S1727296AbeLRRFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:04:31 -0500
-Received: from foss.arm.com ([217.140.101.70]:49872 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeLRREb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:04:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFA3EA78;
-        Tue, 18 Dec 2018 09:04:30 -0800 (PST)
-Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8EEF3F5C0;
-        Tue, 18 Dec 2018 09:04:26 -0800 (PST)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mesih Kilinc <mesihkilinc@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Rob Herring <robh@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [GIT PULL] irqchip updates for 4.21
-Date:   Tue, 18 Dec 2018 17:04:06 +0000
-Message-Id: <20181218170406.188119-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.19.2
+        Tue, 18 Dec 2018 12:05:16 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34094 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726658AbeLRRFQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:05:16 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so16711002wrw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 09:05:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0UABLY0sC2/dA1ONjVtKPIGM/LSKggAr8PeSdYnjYjw=;
+        b=Dw/V4BB813XemQCoYKeH6O/y+vdLVkP2MIBxVTndpyzvz84jB/4BId3RCzORb8Ygbr
+         rEjJZM0mbB9PJOShcfaKvIYVujShafVVci0H+MDQTwfIBx1ytG3tK14vRKruY2Q2sRsH
+         mi8cHw3U+rGxZ+JKCtuyWoj2MiG+mS/pYm5yM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0UABLY0sC2/dA1ONjVtKPIGM/LSKggAr8PeSdYnjYjw=;
+        b=b/faxGoUX76z2tqWXwRPw0aKtMPt5Hp9ZgizECmu/AgfWyfCyU4jQhM97Wb+D3ysAh
+         TlUNwgv23LG7dP4t6WMDbHL5Ya6D9Tdrn+Ey1N4xQfRnyTfrwmNX3uhCLaZDVHFklJsf
+         FLPE2KcYkRGPvnbIDNqtGKr728685Lb7KHWPIP09Y+LBGULl1xKkU5nTioZF3uyHwrus
+         A5oTi4rGX/dC4FQDzC+WHYVjfDKXTEqZqnEd3+BPCsN91lws72WksrNj4PNolY8XpXfR
+         zT3GD+//QICK+jparSD0Ssb3bMHwUIzJdYwDCOyT7m6c+xf7yvWk6aRo9YyIZef9SdJg
+         aVFg==
+X-Gm-Message-State: AA+aEWbkRFes2Tj6fQ8sNQICeKIxvC0HyaUz35NtxCMMgJT5QD4xBV87
+        WVBWuErDFNtJZdA1cd0H7e4z6A==
+X-Google-Smtp-Source: AFSGD/UrI19p1P8R+7IqzHfOj3Nq94unw0vGZNCDY2uzHALQKRlyakTX5qrPVQvaOi/tk2kSypBdgg==
+X-Received: by 2002:adf:efd1:: with SMTP id i17mr15131725wrp.200.1545152713727;
+        Tue, 18 Dec 2018 09:05:13 -0800 (PST)
+Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id j63sm1914884wmb.40.2018.12.18.09.05.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 09:05:12 -0800 (PST)
+Date:   Tue, 18 Dec 2018 17:05:10 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        briannorris@chromium.org, kgdb-bugreport@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] debug: Allow forcing entering debug mode on
+ panic/exception
+Message-ID: <20181218170510.GA28994@wychelm.lan>
+References: <20181210023649.229271-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210023649.229271-1-dianders@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas,
+On Sun, Dec 09, 2018 at 06:36:49PM -0800, Douglas Anderson wrote:
+> Ever since commit 5516fd7b92a7 ("debug: prevent entering debug mode on
+> panic/exception.") (yes, years ago) my kgdb workflow has been broken.
+> On Chrome OS we have 'kernel.panic = -1' in
+> '/etc/sysctl.d/00-sysctl.conf'.  That means that when userspace starts
+> up it will tell the kernel "please reboot on panic".  ...and so when I
+> get a panic then the system reboots instead of letting me debug it.
+> 
+> While I could go in an change the 'sysctl.conf' and I could go in and
+> hack the kernel myself, these things are inconvenient.  I either need
+> to keep a private kernel patch or or remember to edit a file every
+> time I install an updated version of Chrome OS.  What is convenient
+> (for me) is to have a CONFIG option that makes kgdb override the panic
+> request.  This is because the Chrome OS build system makes it very
+> easy for me to add some extra CONFIG "fragments" to my debug kernels.
+> 
+> Hopefully having this extra config option is OK and useful to others
+> who would also prefer to make sure that kgdb is always entered on a
+> panic no matter what userspace might request.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-This is the set of patches I've accumulated during the 4.20
-cycle. Although it is larger than some of the previous drops, the
-content is relatively straightforward. A few new irqchip drivers
-(because life would be boring without them), random fixes, cleanups
-and workarounds for stupid firmware implementations.
+Sorry to be late with this review. I forgot to search for "debug:" when
+I was checking for missed patches earlier.
 
-Please pull.
+Mind you... one of the reasons I deferred review when you first sent it
+in was that my gut reaction was "I don't like it" so I decided to wait
+until I could offer a head reaction instead.
 
-	M.
+Ultimately I'm not sure this should be solved within kgdb. Perhaps best
+phrased as: is the problem that kgdb *misinterprets* panic_timeout or is
+the problem that Doug wants to *override* panic_timeout?
 
-The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
+I think the answer to this question is the later meaning I'm interested
+in what happens if you introduce a CONFIG_PANIC_TIMEOUT_FORCE (c.f.
+CONFIG_CMDLINE_FORCE) to prevent the userspace changing the
+panic_timeout (either by avoiding registering the panic sysctl or, if
+that is a huge ABI problem attaching it to a different variable).
 
-  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
+TBH I'm not sure if such a patch would be accepted but I think it makes
+more semantic sense! 
 
-are available in the Git repository at:
+(there is a small review comment below but the above is more important)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-4.21
 
-for you to fetch changes up to fb94109b764e7676fa63834b9033ba97175877a0:
+> ---
+> 
+>  kernel/debug/debug_core.c |  5 +++--
+>  lib/Kconfig.kgdb          | 10 ++++++++++
+>  2 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+> index 65c0f1363788..d4a38543fcdd 100644
+> --- a/kernel/debug/debug_core.c
+> +++ b/kernel/debug/debug_core.c
+> @@ -703,7 +703,8 @@ kgdb_handle_exception(int evector, int signo, int ecode, struct pt_regs *regs)
+>  	 * reboot on panic. We don't want to get stuck waiting for input
+>  	 * on such systems, especially if its "just" an oops.
+>  	 */
+> -	if (signo != SIGTRAP && panic_timeout)
+> +	if (!IS_ENABLED(CONFIG_KGDB_ALWAYS_ENTER_ON_PANIC) &&
+> +	    signo != SIGTRAP && panic_timeout)
 
-  irqchip/stm32: protect configuration registers with hwspinlock (2018-12-18 15:38:31 +0000)
+This code path is called via notify_die() rather than a panic().
 
-----------------------------------------------------------------
-irqchip updates for 4.21
 
-- A bunch of new irqchip drivers (RDA8810PL, Madera, imx-irqsteer)
-- Updates for new (and old) platforms (i.MX8MQ, F1C100s)
-- A number of SPDX cleanups
-- A workaround for a very broken GICv3 implementation
-- A platform-msi fix
-- Various cleanups
+Daniel.
 
-----------------------------------------------------------------
-Andrey Smirnov (5):
-      irqchip/irq-imx-gpcv2: Remove unused code
-      irqchip/irq-imx-gpcv2: Share reg offset calculation code
-      irqchip/irq-imx-gpcv2: Make use of BIT() macro
-      irqchip/irq-imx-gpcv2: Make error messages more consistent
-      irqchip/irq-imx-gpcv2: Add support for i.MX8MQ
-
-Bartosz Golaszewski (1):
-      irq/irq_sim: Store multiple interrupt offsets in a bitmap
-
-Benjamin Gaignard (2):
-      dt-bindings: interrupt-controller: stm32: Document hwlock properties
-      irqchip/stm32: protect configuration registers with hwspinlock
-
-Kuninori Morimoto (2):
-      irqchip/irq-renesas-irqc: Convert to SPDX identifiers
-      irqchip/irq-renesas-intc-irqpin: Convert to SPDX identifiers
-
-Lucas Stach (3):
-      irqchip/irq-imx-gpcv2: Add IRQCHIP_DECLARE for i.MX8MQ compatible
-      dt-bindings/irq: Add binding for Freescale IRQSTEER multiplexer
-      irqchip: Add driver for imx-irqsteer controller
-
-Manivannan Sadhasivam (2):
-      dt-bindings: interrupt-controller: Document RDA8810PL intc
-      irqchip: Add RDA8810PL interrupt driver
-
-Marc Zyngier (1):
-      irqchip/irq-imx-gpcv2: Silence "fall through" warning
-
-Mesih Kilinc (4):
-      dt-bindings: interrupt-controller: Add suniv interrupt-controller
-      irqchip/sun4i: Add a struct to hold global variables
-      irqchip/sun4i: Move IC specific register offsets to struct
-      irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
-
-Miquel Raynal (1):
-      platform-msi: Free descriptors in platform_msi_domain_free()
-
-Richard Fitzgerald (1):
-      irqchip: Add driver for Cirrus Logic Madera codecs
-
-Srinivas Kandagatla (3):
-      dt-bindings/gic-v3: Add msm8996 compatible string
-      irqchip/gic: Add support to device tree based quirks
-      irqchip/gic-v3: Add quirk for msm8996 broken registers
-
-Stefan Wahren (1):
-      irqchip: bcm283x: Switch to SPDX identifier
-
-Wei Yongjun (1):
-      irqchip/irq-rda-intc: Fix return value check in rda8810_intc_init()
-
-Yangtao Li (1):
-      irqchhip: Convert to using %pOFn instead of device_node.name
-
- .../interrupt-controller/allwinner,sun4i-ic.txt    |   4 +-
- .../bindings/interrupt-controller/arm,gic-v3.txt   |   4 +-
- .../bindings/interrupt-controller/fsl,irqsteer.txt |  34 +++
- .../interrupt-controller/rda,8810pl-intc.txt       |  61 +++++
- .../interrupt-controller/st,stm32-exti.txt         |   4 +
- MAINTAINERS                                        |   2 +
- drivers/base/platform-msi.c                        |   6 +-
- drivers/irqchip/Kconfig                            |  15 ++
- drivers/irqchip/Makefile                           |   3 +
- drivers/irqchip/irq-bcm2835.c                      |  11 +-
- drivers/irqchip/irq-bcm2836.c                      |  11 +-
- drivers/irqchip/irq-gic-common.c                   |  12 +
- drivers/irqchip/irq-gic-common.h                   |   3 +
- drivers/irqchip/irq-gic-v3.c                       |  27 +++
- drivers/irqchip/irq-imx-gpcv2.c                    |  65 +++--
- drivers/irqchip/irq-imx-irqsteer.c                 | 261 +++++++++++++++++++++
- drivers/irqchip/irq-madera.c                       | 256 ++++++++++++++++++++
- drivers/irqchip/irq-mscc-ocelot.c                  |   6 +-
- drivers/irqchip/irq-rda-intc.c                     | 107 +++++++++
- drivers/irqchip/irq-renesas-intc-irqpin.c          |  14 +-
- drivers/irqchip/irq-renesas-irqc.c                 |  14 +-
- drivers/irqchip/irq-stm32-exti.c                   | 122 ++++++++--
- drivers/irqchip/irq-sun4i.c                        | 106 ++++++---
- drivers/irqchip/irq-tango.c                        |  10 +-
- include/linux/irq_sim.h                            |   2 +-
- include/linux/irqchip/irq-madera.h                 | 132 +++++++++++
- include/linux/msi.h                                |   2 +
- kernel/irq/irq_sim.c                               |  23 +-
- 28 files changed, 1190 insertions(+), 127 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
- create mode 100644 drivers/irqchip/irq-imx-irqsteer.c
- create mode 100644 drivers/irqchip/irq-madera.c
- create mode 100644 drivers/irqchip/irq-rda-intc.c
- create mode 100644 include/linux/irqchip/irq-madera.h
+>  		return 1;
+>  
+>  	memset(ks, 0, sizeof(struct kgdb_state));
+> @@ -843,7 +844,7 @@ static int kgdb_panic_event(struct notifier_block *self,
+>  	 * panic_timeout indicates the system should automatically
+>  	 * reboot on panic.
+>  	 */
+> -	if (panic_timeout)
+> +	if (!IS_ENABLED(CONFIG_KGDB_ALWAYS_ENTER_ON_PANIC) && panic_timeout)
+>  		return NOTIFY_DONE;
+>  
+>  	if (dbg_kdb_mode)
+> diff --git a/lib/Kconfig.kgdb b/lib/Kconfig.kgdb
+> index ab4ff0eea776..f12c6e1394c6 100644
+> --- a/lib/Kconfig.kgdb
+> +++ b/lib/Kconfig.kgdb
+> @@ -67,6 +67,16 @@ config KGDB_LOW_LEVEL_TRAP
+>           exception handler which will allow kgdb to step through a
+>           notify handler.
+>  
+> +config KGDB_ALWAYS_ENTER_ON_PANIC
+> +       bool "KGDB: Enter kgdb on panic even if reboot specified"
+> +       default n
+> +       help
+> +         If kgdb is enabled and the system is configured to reboot on
+> +         panic then there's a question of whether we should drop into
+> +         kgdb on panic or whether we should reboot on panic.  If you
+> +         say yes here then we'll enter kgdb.  If you say no here then
+> +         we'll reboot.
+> +
+>  config KGDB_KDB
+>  	bool "KGDB_KDB: include kdb frontend for kgdb"
+>  	default n
+> -- 
+> 2.20.0.rc2.403.gdbc3b29805-goog
+> 
