@@ -2,276 +2,217 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 499FBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5C8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B742184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DDEF21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:20:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bteUZUk2"
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="IvBnaQXg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeLRTTy (ORCPT
+        id S1727085AbeLRTUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:19:54 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1143 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbeLRTTw (ORCPT
+        Tue, 18 Dec 2018 14:20:33 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:60364 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbeLRTUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:19:52 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1948500000>; Tue, 18 Dec 2018 11:19:44 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 18 Dec 2018 11:19:50 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 18 Dec 2018 11:19:50 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 19:19:50 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 19:19:50 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c1948550004>; Tue, 18 Dec 2018 11:19:49 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
-        <ulf.hansson@linaro.org>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1 2/2] mmc: tegra: SDMMC pads auto-calibration
-Date:   Tue, 18 Dec 2018 11:19:47 -0800
-Message-ID: <1545160787-3157-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
-References: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 18 Dec 2018 14:20:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=8do4X7Uz9PMiaMztRi95Zr0NPZOgiH8juAmY4uRymXk=;
+        b=IvBnaQXgjAabOaJXljCiTZYu/NRrzGH6JGHTSmN0YSmGN7uouVlNjFhoeWn/iFJBYXcPvefyunTiCiqeNMnk7lJMfFoYKWrws2dAa0qpGh1gK63sigkJxww3VcMjwBZodaM/elzzVx5onM0QB7LRkRZIS0u9jqdhx+HJesbeSD3/qZXbLczuOJYrNqLJC6u4dqfAm7I4bvCRZkfJ2oNh6zqc+Tv+vMgtzgAcqZwxm6bS4ugx1SpdI58MUsIUZJv2qsyTCgbbfiEc72awk7MQHxqt2MVaTvy6JgL1x0BfhjhemcB7PF9dcrd2VzcNoaYYOcrihPBRj4yH7QWrme91yw==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:62873 helo=[192.168.10.173])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gZKup-0007MS-TY; Tue, 18 Dec 2018 20:20:27 +0100
+Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20181127103252.20994-1-andr2000@gmail.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
+Date:   Tue, 18 Dec 2018 20:20:22 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545160784; bh=SJfaBn+4ArOyPLdhrQenFdhRRCgjBmT4n1F0edKIZ0c=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=bteUZUk2ZCHDdklyc9KWAHKq+lh+/TbA/UT/stoBVx+jmc9BwR7UYzUKqAOAOD9Rk
-         8yt1I2uzaBnDh/8GhFPG/K+nKCqJY2oi55xoiMuEqYHck+YTbN7tYut85EdhyJ/jMm
-         p0Q8ENm2xjE7+FLJX+j0IGV8MZv+KZm89JJwCnWt6S1LJfPoLR+oIUsyvX6sI+fzam
-         F+AQcZHsukstbMjElNiMfpZNyZNJn5V11zDHCdAStdZtOVyez9U0BsdJtnpqwgxn9a
-         H9y7KbKD4v9lyvQ/nW0y3uhnUwjhZ4i8SYP1XJpjOswy0ePzg4ZyHmzVcSRbpJRJFu
-         QYAEEvIcWG1vA==
+In-Reply-To: <20181127103252.20994-1-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Programs initial drive code offsets which will be used by auto
-calibration process.
 
-Programs fixed drive strengths for SDMMC pads when auto cal
-timeouts. Fixed settings are based on Pre-SI analysis of the
-pad design.
+Den 27.11.2018 11.32, skrev Oleksandr Andrushchenko:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>
+> When GEM backing storage is allocated with drm_gem_get_pages
+> the backing pages may be cached, thus making it possible that
+> the backend sees only partial content of the buffer which may
+> lead to screen artifacts. Make sure that the frontend's
+> memory is coherent and the backend always sees correct display
+> buffer content.
+>
+> Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
+>
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> ---
+>   drivers/gpu/drm/xen/xen_drm_front_gem.c | 62 +++++++++++++++++++------
+>   1 file changed, 48 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+> index 47ff019d3aef..c592735e49d2 100644
+> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
+> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+> @@ -33,8 +33,11 @@ struct xen_gem_object {
+>   	/* set for buffers allocated by the backend */
+>   	bool be_alloc;
+>   
+> -	/* this is for imported PRIME buffer */
+> -	struct sg_table *sgt_imported;
+> +	/*
+> +	 * this is for imported PRIME buffer or the one allocated via
+> +	 * drm_gem_get_pages.
+> +	 */
+> +	struct sg_table *sgt;
+>   };
+>   
+>   static inline struct xen_gem_object *
+> @@ -77,10 +80,21 @@ static struct xen_gem_object *gem_create_obj(struct drm_device *dev,
+>   	return xen_obj;
+>   }
+>   
+> +struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
+> +{
+> +	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+> +
+> +	if (!xen_obj->pages)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
+> +}
+> +
+>   static struct xen_gem_object *gem_create(struct drm_device *dev, size_t size)
+>   {
+>   	struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>   	struct xen_gem_object *xen_obj;
+> +	struct address_space *mapping;
+>   	int ret;
+>   
+>   	size = round_up(size, PAGE_SIZE);
+> @@ -113,10 +127,14 @@ static struct xen_gem_object *gem_create(struct drm_device *dev, size_t size)
+>   		xen_obj->be_alloc = true;
+>   		return xen_obj;
+>   	}
+> +
+>   	/*
+>   	 * need to allocate backing pages now, so we can share those
+>   	 * with the backend
+>   	 */
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 112 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 84 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 7b95d088fdef..2524654282d1 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -75,6 +75,7 @@
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD	BIT(31)
-+#define SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK		0x07FFF000
- 
- #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
- #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
-@@ -121,6 +122,8 @@ struct sdhci_tegra {
- 	struct pinctrl *pinctrl_sdmmc;
- 	struct pinctrl_state *pinctrl_state_3v3;
- 	struct pinctrl_state *pinctrl_state_1v8;
-+	struct pinctrl_state *pinctrl_state_3v3_drv;
-+	struct pinctrl_state *pinctrl_state_1v8_drv;
- 
- 	struct sdhci_tegra_autocal_offsets autocal_offsets;
- 	ktime_t last_calib;
-@@ -130,6 +133,9 @@ struct sdhci_tegra {
- 	u32 dqs_trim;
- };
- 
-+static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
-+							bool state_drvupdn);
-+
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -437,6 +443,7 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- 			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
- 	}
- 
-+	/* Set initial offset before auto-calibration */
- 	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
- 
- 	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
-@@ -460,19 +467,15 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- 	if (ret) {
- 		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
- 
--		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
--			pdpu = offsets.pull_down_1v8_timeout << 8 |
--			       offsets.pull_up_1v8_timeout;
--		else
--			pdpu = offsets.pull_down_3v3_timeout << 8 |
--			       offsets.pull_up_3v3_timeout;
--
--		/* Disable automatic calibration and use fixed offsets */
-+		/* Disable automatic cal and use fixed Drive Strengths */
- 		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
- 		reg &= ~SDHCI_AUTO_CAL_ENABLE;
- 		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
- 
--		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
-+		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, false);
-+		if (ret < 0)
-+			dev_err(mmc_dev(host->mmc),
-+			"Setting drive strengths failed %d\n", PTR_ERR(ret));
- 	}
- }
- 
-@@ -743,27 +746,73 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	return mmc_send_tuning(host->mmc, opcode, NULL);
- }
- 
--static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
-+static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
-+							bool state_drvupdn)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
--	int ret;
-+	struct sdhci_tegra_autocal_offsets offsets =
-+					tegra_host->autocal_offsets;
-+	struct pinctrl_state *pinctrl_drvupdn = NULL;
-+	int ret = 0;
-+	u8 drvup = 0, drvdn = 0;
-+	u32 reg;
- 
--	if (!tegra_host->pad_control_available)
--		return 0;
-+	if (!state_drvupdn) {
-+		/* PADS Drive Strength */
-+		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
-+			if (!IS_ERR(tegra_host->pinctrl_state_1v8_drv) &&
-+				(tegra_host->pinctrl_state_1v8_drv != NULL)) {
-+				pinctrl_drvupdn =
-+					tegra_host->pinctrl_state_1v8_drv;
-+			} else {
-+				drvup = offsets.pull_up_1v8_timeout;
-+				drvdn = offsets.pull_down_1v8_timeout;
-+			}
-+		} else {
-+			if (!IS_ERR(tegra_host->pinctrl_state_3v3_drv) &&
-+				(tegra_host->pinctrl_state_3v3_drv != NULL)) {
-+				pinctrl_drvupdn =
-+					tegra_host->pinctrl_state_3v3_drv;
-+			} else {
-+				drvup = offsets.pull_up_3v3_timeout;
-+				drvdn = offsets.pull_down_3v3_timeout;
-+			}
-+		}
-+
-+		if (pinctrl_drvupdn != NULL) {
-+			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-+							pinctrl_drvupdn);
-+			if (ret < 0)
-+				dev_err(mmc_dev(host->mmc),
-+					"failed pads drvupdn, ret: %d\n", ret);
-+		} else if ((drvup) || (drvdn)) {
-+			reg = sdhci_readl(host,
-+					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-+			reg &= ~SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK;
-+			reg |= (drvup << 20) | (drvdn << 12);
-+			sdhci_writel(host, reg,
-+					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-+		}
- 
--	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
--		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
--					   tegra_host->pinctrl_state_1v8);
--		if (ret < 0)
--			dev_err(mmc_dev(host->mmc),
--				"setting 1.8V failed, ret: %d\n", ret);
- 	} else {
--		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
--					   tegra_host->pinctrl_state_3v3);
--		if (ret < 0)
--			dev_err(mmc_dev(host->mmc),
--				"setting 3.3V failed, ret: %d\n", ret);
-+		/* Dual Voltage PADS Voltage selection */
-+		if (!tegra_host->pad_control_available)
-+			return 0;
-+
-+		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
-+			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-+						tegra_host->pinctrl_state_1v8);
-+			if (ret < 0)
-+				dev_err(mmc_dev(host->mmc),
-+					"setting 1.8V failed, ret: %d\n", ret);
-+		} else {
-+			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-+						tegra_host->pinctrl_state_3v3);
-+			if (ret < 0)
-+				dev_err(mmc_dev(host->mmc),
-+					"setting 3.3V failed, ret: %d\n", ret);
-+		}
- 	}
- 
- 	return ret;
-@@ -778,7 +827,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 	int ret = 0;
- 
- 	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
--		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-+		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
- 		if (ret < 0)
- 			return ret;
- 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
-@@ -786,7 +835,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
- 		if (ret < 0)
- 			return ret;
--		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-+		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
- 	}
- 
- 	if (tegra_host->pad_calib_required)
-@@ -805,8 +854,15 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
- 		return -1;
- 	}
- 
--	tegra_host->pinctrl_state_3v3 =
--		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
-+	tegra_host->pinctrl_state_1v8_drv = pinctrl_lookup_state(
-+				tegra_host->pinctrl_sdmmc, "sdmmc-1v8-drv");
-+
-+	tegra_host->pinctrl_state_3v3_drv = pinctrl_lookup_state(
-+				tegra_host->pinctrl_sdmmc, "sdmmc-3v3-drv");
-+
-+	tegra_host->pinctrl_state_3v3 = pinctrl_lookup_state(
-+				tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
-+
- 	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
- 		dev_warn(dev, "Missing 3.3V pad state, err: %ld\n",
- 			 PTR_ERR(tegra_host->pinctrl_state_3v3));
--- 
-2.7.4
+Let's see if I understand what you're doing:
 
+Here you say that the pages should be DMA accessible for devices that can
+only see 4GB.
+
+> +	mapping = xen_obj->base.filp->f_mapping;
+> +	mapping_set_gfp_mask(mapping, GFP_USER | __GFP_DMA32);
+> +
+>   	xen_obj->num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
+>   	xen_obj->pages = drm_gem_get_pages(&xen_obj->base);
+>   	if (IS_ERR_OR_NULL(xen_obj->pages)) {
+> @@ -125,8 +143,27 @@ static struct xen_gem_object *gem_create(struct drm_device *dev, size_t size)
+>   		goto fail;
+>   	}
+>   
+> +	xen_obj->sgt = xen_drm_front_gem_get_sg_table(&xen_obj->base);
+> +	if (IS_ERR_OR_NULL(xen_obj->sgt)){
+> +		ret = PTR_ERR(xen_obj->sgt);
+> +		xen_obj->sgt = NULL;
+> +		goto fail_put_pages;
+> +	}
+> +
+> +	if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
+> +			DMA_BIDIRECTIONAL)) {
+
+
+Are you using the DMA streaming API as a way to flush the caches?
+Does this mean that GFP_USER isn't making the buffer coherent?
+
+Noralf.
+
+> +		ret = -EFAULT;
+> +		goto fail_free_sgt;
+> +	}
+> +
+>   	return xen_obj;
+>   
+> +fail_free_sgt:
+> +	sg_free_table(xen_obj->sgt);
+> +	xen_obj->sgt = NULL;
+> +fail_put_pages:
+> +	drm_gem_put_pages(&xen_obj->base, xen_obj->pages, true, false);
+> +	xen_obj->pages = NULL;
+>   fail:
+>   	DRM_ERROR("Failed to allocate buffer with size %zu\n", size);
+>   	return ERR_PTR(ret);
+> @@ -149,7 +186,7 @@ void xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj)
+>   	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>   
+>   	if (xen_obj->base.import_attach) {
+> -		drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt_imported);
+> +		drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt);
+>   		gem_free_pages_array(xen_obj);
+>   	} else {
+>   		if (xen_obj->pages) {
+> @@ -158,6 +195,13 @@ void xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj)
+>   							xen_obj->pages);
+>   				gem_free_pages_array(xen_obj);
+>   			} else {
+> +				if (xen_obj->sgt) {
+> +					dma_unmap_sg(xen_obj->base.dev->dev,
+> +						     xen_obj->sgt->sgl,
+> +						     xen_obj->sgt->nents,
+> +						     DMA_BIDIRECTIONAL);
+> +					sg_free_table(xen_obj->sgt);
+> +				}
+>   				drm_gem_put_pages(&xen_obj->base,
+>   						  xen_obj->pages, true, false);
+>   			}
+> @@ -174,16 +218,6 @@ struct page **xen_drm_front_gem_get_pages(struct drm_gem_object *gem_obj)
+>   	return xen_obj->pages;
+>   }
+>   
+> -struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
+> -{
+> -	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+> -
+> -	if (!xen_obj->pages)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
+> -}
+> -
+>   struct drm_gem_object *
+>   xen_drm_front_gem_import_sg_table(struct drm_device *dev,
+>   				  struct dma_buf_attachment *attach,
+> @@ -203,7 +237,7 @@ xen_drm_front_gem_import_sg_table(struct drm_device *dev,
+>   	if (ret < 0)
+>   		return ERR_PTR(ret);
+>   
+> -	xen_obj->sgt_imported = sgt;
+> +	xen_obj->sgt = sgt;
+>   
+>   	ret = drm_prime_sg_to_page_addr_arrays(sgt, xen_obj->pages,
+>   					       NULL, xen_obj->num_pages);
