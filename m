@@ -2,171 +2,78 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F53C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFA3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A263218A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7987C218AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbeLRPRo (ORCPT
+        id S1726880AbeLRPSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:17:44 -0500
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:35891 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbeLRPRo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:17:44 -0500
-X-IronPort-AV: E=Sophos;i="5.56,368,1539648000"; 
-   d="scan'208";a="83498840"
-Date:   Tue, 18 Dec 2018 16:13:31 +0100
-From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To:     Dongli Zhang <dongli.zhang@oracle.com>
-CC:     <axboe@kernel.dk>, <konrad.wilk@oracle.com>,
-        <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <paul.durrant@citrix.com>, <xen-devel@lists.xenproject.org>
-Subject: Re: [Xen-devel] [PATCH v2 1/1] xen/blkback: rework connect_ring() to
- avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
-Message-ID: <20181218151331.iwkq3roqwigf3e2r@mac>
-References: <1545094538-31426-1-git-send-email-dongli.zhang@oracle.com>
- <20181218093300.qfslnloxooqnu2im@mac>
- <51ea8086-e5fd-b1db-f935-101160ca9359@oracle.com>
+        Tue, 18 Dec 2018 10:18:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33029 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbeLRPSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:18:38 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B454389AD7;
+        Tue, 18 Dec 2018 15:18:38 +0000 (UTC)
+Received: from jlaw-desktop.bos.csb (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C976672CE;
+        Tue, 18 Dec 2018 15:18:37 +0000 (UTC)
+Subject: Re: [PATCH V2] livepatch: fix non-static warnings
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544965657-26804-1-git-send-email-hofrat@osadl.org>
+ <alpine.LSU.2.21.1812171256390.3087@pobox.suse.cz>
+ <20ef1d3a-2916-ce00-2938-3397746efac9@redhat.com>
+ <alpine.LSU.2.21.1812180934090.9644@pobox.suse.cz>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <adeb1bca-9fa1-b150-d551-a9cf0853a63b@redhat.com>
+Date:   Tue, 18 Dec 2018 10:18:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <51ea8086-e5fd-b1db-f935-101160ca9359@oracle.com>
-User-Agent: NeoMutt/20180716
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL01.citrite.net (10.69.22.125)
+In-Reply-To: <alpine.LSU.2.21.1812180934090.9644@pobox.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 18 Dec 2018 15:18:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 07:31:59PM +0800, Dongli Zhang wrote:
-> Hi Roger,
+On 12/18/2018 03:49 AM, Miroslav Benes wrote:
+> On Mon, 17 Dec 2018, Joe Lawrence wrote:
 > 
-> On 12/18/2018 05:33 PM, Roger Pau Monné wrote:
-> > On Tue, Dec 18, 2018 at 08:55:38AM +0800, Dongli Zhang wrote:
-> >> The xenstore 'ring-page-order' is used globally for each blkback queue and
-> >> therefore should be read from xenstore only once. However, it is obtained
-> >> in read_per_ring_refs() which might be called multiple times during the
-> >> initialization of each blkback queue.
-> >>
-> >> If the blkfront is malicious and the 'ring-page-order' is set in different
-> >> value by blkfront every time before blkback reads it, this may end up at
-> >> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
-> >> xen_blkif_disconnect() when frontend is destroyed.
-> >>
-> >> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
-> >> once.
-> >>
-> >> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-> >> ---
-> >> Changed since v1:
-> >>   * change the order of xenstore read in read_per_ring_refs(suggested by Roger Pau Monne)
-> >>   * use xenbus_read_unsigned() in connect_ring() (suggested by Roger Pau Monne)
-> >>
-> >>  drivers/block/xen-blkback/xenbus.c | 70 ++++++++++++++++++++++----------------
-> >>  1 file changed, 40 insertions(+), 30 deletions(-)
-> >>
-> >> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-> >> index a4bc74e..7178f0f 100644
-> >> --- a/drivers/block/xen-blkback/xenbus.c
-> >> +++ b/drivers/block/xen-blkback/xenbus.c
-> >> @@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
-> >>  	int err, i, j;
-> >>  	struct xen_blkif *blkif = ring->blkif;
-> >>  	struct xenbus_device *dev = blkif->be->dev;
-> >> -	unsigned int ring_page_order, nr_grefs, evtchn;
-> >> +	unsigned int nr_grefs, evtchn;
-> >>  
-> >>  	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
-> >>  			  &evtchn);
-> >> @@ -936,43 +936,38 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
-> >>  		return err;
-> >>  	}
-> >>  
-> >> -	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
-> >> -			  &ring_page_order);
-> >> -	if (err != 1) {
-> >> -		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
-> >> -		if (err != 1) {
-> >> +	nr_grefs = blkif->nr_ring_pages;
-> >> +	WARN_ON(!nr_grefs);
-> >> +
-> >> +	for (i = 0; i < nr_grefs; i++) {
-> >> +		char ring_ref_name[RINGREF_NAME_LEN];
-> >> +
-> >> +		snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
-> >> +		err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
-> >> +				   "%u", &ring_ref[i]);
-> >> +
-> >> +		if (err != 1 && (i || (!i && nr_grefs > 1))) {
-> > 
-> > AFAICT the above condition can be simplified as "err != 1 &&
-> > nr_grefs".
-> > 
-> >>  			err = -EINVAL;
-> > 
-> > There's no point in setting err here...
-> > 
-> >> -			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
-> >> +			xenbus_dev_fatal(dev, err, "reading %s/%s",
-> >> +					 dir, ring_ref_name);
-> >>  			return err;
-> > 
-> > ...since you can just return -EINVAL (same applies to the other
-> > instance below).
+>> I'm just being picky about its documentation and how we should note its
+>> usage in the v3 patch.  Think that s/__noclone/used/g of the v2 commit
+>> message would be sufficient?
 > 
-> I would like to confirm if I would keep the err = -EINVAL in below because most
-> of the below code is copied from original implementation without modification.
+> We could rephrase it. After all it is not only about symbol names in the 
+> symbol table. The traceable/patchable code has to be present...
 > 
-> There is no err set by xenbus_read_unsigned().
+> "Sparse reported warnings about non-static symbols. For the variables
+> a simple static attribute is fine - for the functions referenced by
+> livepatch via klp_func the symbol-names must be unmodified in the
+> symbol table and the patchable code has to be emitted.
+> 
+> Attach __used attribute to the shared statically declared functions."
+> 
+> ?
 
-Right, but instead of doing:
+That works for me.
 
-err = -EINVAL;
-return err;
-
-You can just do:
-
-return -EINVAL;
-
-Which is one line shorter :).
-
-> +       ring_page_order = xenbus_read_unsigned(dev->otherend,
-> +                                              "ring-page-order", 0);
-> +
-> +       if (ring_page_order > xen_blkif_max_ring_order) {
-> +               err = -EINVAL;
-> +               xenbus_dev_fatal(dev, err,
-> +                                "requested ring page order %d exceed max:%d",
-> +                                ring_page_order,
-> +                                xen_blkif_max_ring_order);
-> +               return err;
-> +       }
-> +
-> +       be->blkif->nr_ring_pages = 1 << ring_page_order;
-> 
-> 
-> For the rest, I would do something like:
-> 
-> +               err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
-> +                                  "%u", &ring_ref[i]);
-> +
-> +               if (err != 1 && nr_grefs > 1) {
-> +                       xenbus_dev_fatal(dev, err, "reading %s/%s",
-> +                                        dir, ring_ref_name);
-> +                       return -EINVAL;
-> +               }
-> 
-> 
-> Thank you very much!
-
-Thanks!
+-- Joe
