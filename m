@@ -2,176 +2,102 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00C8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38614C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11FA21841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AED7C2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="MXga1/QJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeLRStL (ORCPT
+        id S1726714AbeLRSxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:49:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50216 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726822AbeLRStK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:49:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8D859B0FB;
-        Tue, 18 Dec 2018 18:49:07 +0000 (UTC)
-Subject: Re: [PATCH v5 5/6] net: maclorawan: Implement maclorawan class module
-To:     Jian-Hong Pan <starnight@g.ncu.edu.tw>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Ben Whitten <ben.whitten@lairdtech.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>
-References: <CAC=mGziyi1ierhg++SUcHMrq1JQ0vH4gZCKUZgchzb8aD1Rv5Q@mail.gmail.com>
- <20181216101858.9585-6-starnight@g.ncu.edu.tw>
- <20181217140233.GG2096@nanopsycho>
- <CAC=mGziN5KrXPMAXoN_hhfQrtofCeyzTr4AjbbJLOoJ+p2+Nng@mail.gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <60ff6940-4bcc-750c-ad38-0a183375169f@suse.de>
-Date:   Tue, 18 Dec 2018 19:49:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 18 Dec 2018 13:53:05 -0500
+Received: from cock.li ([185.100.85.212]:46576 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726575AbeLRSxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 13:53:05 -0500
 MIME-Version: 1.0
-In-Reply-To: <CAC=mGziN5KrXPMAXoN_hhfQrtofCeyzTr4AjbbJLOoJ+p2+Nng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1545159181; bh=wKjWMkWYpJJOvxB+NnVrwA5kb/0iy36b1XIn2YRD2Zs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MXga1/QJt0NytvfkDyWvsgn6xF19Y0Ncs9o308327JDX2sIDGXQZq+kIGT6KnRCiC
+         Smtntq6FRCZ8p7EhMpWbm9lVTEJyYVZvtf2qSUd4+R6mzuw/iozVB3P25DKtn4aG10
+         qFuchk8daRDjX4nyA9nvrjQCHtUuARuG+hCqeBSo5RWro0kzX9c7LlYbbAp287aUNn
+         BbGvwI4dxbqAYFmiaJSjivmoBOwjvK3s4L+/S8hPuF364k7q8TKqMguXsLDVq95KPI
+         j3V2HBsDhWhg9RXdEehe2QF6cqmAWIIGBs+ppElJWRt1W+Bdt0b2ZfNIN1tdIKsmYp
+         PIkXJx5pLp39g==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 18 Dec 2018 18:53:00 +0000
+From:   visionsofalice@redchan.it
+To:     Eben Moglen <moglen@columbia.edu>
+Cc:     linux-kernel@vger.kernel.org, esr@thyrsus.com,
+        gregkh@linuxfoundation.org, rms@gnu.org, bruce@perens.com,
+        bkuhn@sfconservancy.org, editor@lwn.net, neil@brown.name,
+        labbott@redhat.com, torvalds@linux-foundation.org,
+        ksummit-discuss@lists.linuxfoundation.org, tglx@linutronix.de,
+        olof@lixom.net, clm@fb.com, mishi@linux.com,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: The linux devs can rescind their license grant. -  Analysis
+ published?
+In-Reply-To: <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
+References: <20181020134908.GA32218@kroah.com>
+ <87y3ar80ac.fsf@notabene.neil.brown.name>
+ <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
+ <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
+ <20181025081911.GB11343@kroah.com> <20181025193901.GD26403@thyrsus.com>
+ <849-Fri26Oct2018091533-0400-eben@harlan.sflc-vpn>
+ <4c023302875de71cc58007301b180940@redchan.it>
+ <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
+Message-ID: <12836077374501b01a0c74a4e3f6276f@redchan.it>
+X-Sender: visionsofalice@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 18.12.18 um 15:27 schrieb Jian-Hong Pan:
->> Sun, Dec 16, 2018 at 11:18:59AM CET, starnight@g.ncu.edu.tw wrote:
->>> LoRaWAN defined by LoRa Alliance(TM) is the MAC layer over LoRa devices.
->>>
->>> This patch implements part of Class A end-devices SoftMAC defined in
->>> LoRaWAN(TM) Specification Ver. 1.0.2:
->>> 1. End-device receive slot timing
->>> 2. Only single channel and single data rate for now
->>> 3. Unconfirmed data up/down message types
->>>
->>> On the other side, it defines the basic interface and operation
->>> functions for compatible LoRa device drivers.
->>>
->>> Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-[...]
->>> net/maclorawan/Kconfig  |  14 +
->>> net/maclorawan/Makefile |   2 +
->>> net/maclorawan/mac.c    | 555 ++++++++++++++++++++++++++++++++++++
->>> net/maclorawan/main.c   | 606 ++++++++++++++++++++++++++++++++++++++++
->>> 4 files changed, 1177 insertions(+)
->>> create mode 100644 net/maclorawan/Kconfig
->>> create mode 100644 net/maclorawan/Makefile
->>> create mode 100644 net/maclorawan/mac.c
->>> create mode 100644 net/maclorawan/main.c
->>
->> I don't get it. In patch "Add LoRaWAN API declaration for LoRa devices"
->> you add headers for "API" and here you implement functions. That is just
->> weird. Does it mean you can have other implementations?
+Has the analysis been published yet?
+
+I have been away on an artistic sabbatical, but I don't see it in the 
+inbox using searches, this was the last mail I received on the subject.
+
+On 2018-10-26 18:31, Eben Moglen wrote:
+> On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
 > 
-> LoRaWAN defined by LoRa Alliance(TM) is the MAC layer over LoRa PHY.
-> This part is soft-MAC as Andreas mentioned
-> http://lists.infradead.org/pipermail/linux-lpwan/2018-December/000010.html
+>   You are conflating case law dealing with commercial software and
+>   non-gratuitous licenses with the present situation, which would 
+> likely
+>   be a case of first-impression in nearly any jurisdiction.
 > 
->> Also, you don't really have any user of this API in the set. Please
->> introduce at least 1 driver, preferably more (I see that Andreas has
->> multiple ones in his patchset). You cannot push kernel infrastructure
->> without kernel user.
+> I think the best procedure would be for me to publish my analysis and
+> for you then to tell me what is wrong with it.  What you say here
+> sounds like what a lawyer might say, but isn't.  I have been teaching
+> this stuff for about thirty years, so if I am conflating or confusing
+> anything I will be grateful for help in seeing my mistake.
 > 
-> The soft-MAC is suitable for the LoRa chips' device drivers, like
-> sx1276/77/78/79, RFM95/96/97/98W ...
-> Still waiting for Andreas' sx1276 version 2 patch and more discussion.
-
-sx1276 regmap conversion was pushed to my staging tree together with
-Ben's sx1301 final conversion last night, lightly tested.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-lora.git/log/?h=lora-next
-
-TBD: rename to sx127x, implement regmap fields, only auto-detect reset
-when no OF node available (all low priority atm, patches welcome)
-
-(and for sx1301 I still need to update my DT overlays with the new clk)
-
-> For example, how to make PF_LORA and PF_LORAWAN like Ethernet, PF_INET
-> and PF_INET6 don't need separate devices either, both use eth0.
-> https://lkml.org/lkml/2018/8/3/266
-
-Jiri, I am expecting the maclorawan driver to lower packets from
-ETH_P_LORAWAN to ETH_P_LORA in a generic way, so that any of the LoRa
-device drivers can benefit of it, with maclorawan using the LoRa netlink
-commands that the individual drivers implement.
-Not sure what if anything is missing for that in the current revision?
-Still dealing with the lower-level infrastructure and my test setup ...
-progressing slowly.
-
-I'll probably need to queue the remaining generic LoRaWAN part 1/6 in my
-tree to resolve this circular dependency between Jian-Hong and me, so
-that only the soft-MAC implementation remains a separate patch series.
-The hard-MAC implementations will be on my plate mostly, as both SX1276
-and SX1301 need the soft-MAC.
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+>   The rule for gratuitous licenses is that they are revocable at the 
+> will
+>   of the grantor.
+> 
+> That's not actually "the rule."  It sounds like it might be the rule,
+> but it so happens that it's not.  When I have given the explanation as
+> I have learned, taught and depended on it, you will be able to show me
+> what I am wrong about.
+> 
+>   Raymond Nimmer (God rest his soul) was in agreement on this point,
+>   vis-a-vis the GPL and similar licenses.
+> 
+> You have your Nimmers confused.  The primary author of the treatise
+> Nimmer on Copyright (a book about the law, not in itself an authority)
+> was Melville Nimmer.  The treatise is continued by his son, David, a
+> fine lawyer with whom I do from time to time politely disagree about
+> something.  Ray Nimmer is quite another person.
+> 
+> Eben
