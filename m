@@ -2,78 +2,75 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A7AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D484BC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2807E2184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A23492184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbeLRVv1 (ORCPT
+        id S1727209AbeLRVw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:51:27 -0500
-Received: from nat.nue.novell.com ([195.135.221.2]:60301 "EHLO suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbeLRVv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:51:27 -0500
-Received: by suse.de (Postfix, from userid 1000)
-        id A289B3C70; Tue, 18 Dec 2018 22:51:25 +0100 (CET)
-Date:   Tue, 18 Dec 2018 22:51:25 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     mhocko@suse.com, vbabka@suse.cz, pavel.tatashin@microsoft.com,
-        rppt@linux.vnet.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm, page_alloc: Fix has_unmovable_pages for HugePages
-Message-ID: <20181218215118.smplwk4qhptsoyer@d104.suse.de>
-References: <20181217225113.17864-1-osalvador@suse.de>
- <20181217150726.6eea4942005516d565dae488@linux-foundation.org>
+        Tue, 18 Dec 2018 16:52:27 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44215 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726746AbeLRVw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:52:27 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E418C207BE; Tue, 18 Dec 2018 22:52:24 +0100 (CET)
+Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BBCE3206FF;
+        Tue, 18 Dec 2018 22:52:14 +0100 (CET)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] rtc: pcf8523: Add rv8523 compatible
+Date:   Tue, 18 Dec 2018 22:52:12 +0100
+Message-Id: <20181218215212.17039-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217150726.6eea4942005516d565dae488@linux-foundation.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:07:26PM -0800, Andrew Morton wrote:
-> On Mon, 17 Dec 2018 23:51:13 +0100 Oscar Salvador <osalvador@suse.de> wrote:
-> 
-> > v1 -> v2:
-> > 	- Fix the logic for skipping pages by Michal
-> > 
-> > ---
-> 
-> Please be careful with the "^---$".  It signifies end-of-changelog, so
-> I ended up without a changelog!
+The Microcrystal RV-8523 is compatible with the PCF8523.
 
-Sorry Andrew, somehow I screwed it up!
-I will be more careful next time.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ Documentation/devicetree/bindings/rtc/rtc.txt | 1 +
+ drivers/rtc/rtc-pcf8523.c                     | 1 +
+ 2 files changed, 2 insertions(+)
 
-> 
-> > >From e346b151037d3c37feb10a981a4d2a25018acf81 Mon Sep 17 00:00:00 2001
-> > From: Oscar Salvador <osalvador@suse.de>
-> > Date: Mon, 17 Dec 2018 14:53:35 +0100
-> > Subject: [PATCH] mm, page_alloc: Fix has_unmovable_pages for HugePages
-> > 
-> > While playing with gigantic hugepages and memory_hotplug, I triggered
-> > the following #PF when "cat memoryX/removable":
-> > 
-> > ...
-> >
-> > Also, since gigantic pages span several pageblocks, re-adjust the logic
-> > for skipping pages.
-> > 
-> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> 
-> cc:stable?
-> 
-
+diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
+index 7c8da6926095..21d885fa56a8 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc.txt
+@@ -49,6 +49,7 @@ isil,isl1208		Intersil ISL1208 Low Power RTC with Battery Backed SRAM
+ isil,isl1218		Intersil ISL1218 Low Power RTC with Battery Backed SRAM
+ isil,isl12022		Intersil ISL12022 Real-time Clock
+ microcrystal,rv3029	Real Time Clock Module with I2C-Bus
++microcrystal,rv8523	Real Time Clock
+ nxp,pcf2127		Real-time clock
+ nxp,pcf2129		Real-time clock
+ nxp,pcf8523		Real-time Clock
+diff --git a/drivers/rtc/rtc-pcf8523.c b/drivers/rtc/rtc-pcf8523.c
+index 3fcd2cbafc84..fb13933f4006 100644
+--- a/drivers/rtc/rtc-pcf8523.c
++++ b/drivers/rtc/rtc-pcf8523.c
+@@ -374,6 +374,7 @@ MODULE_DEVICE_TABLE(i2c, pcf8523_id);
+ #ifdef CONFIG_OF
+ static const struct of_device_id pcf8523_of_match[] = {
+ 	{ .compatible = "nxp,pcf8523" },
++	{ .compatible = "microcrystal,rv8523" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, pcf8523_of_match);
 -- 
-Oscar Salvador
-SUSE L3
+2.20.0
+
