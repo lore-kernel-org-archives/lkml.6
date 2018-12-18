@@ -2,202 +2,180 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9906C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C401C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FF621850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:24:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 487072184E
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:25:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tLxWo5EI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbeLRLY0 (ORCPT
+        id S1726628AbeLRLZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:24:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35140 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726390AbeLRLY0 (ORCPT
+        Tue, 18 Dec 2018 06:25:00 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53425 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeLRLY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:24:26 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBIBONUo045023
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 06:24:24 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2peyysr06v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 06:24:24 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
-        Tue, 18 Dec 2018 11:24:14 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Dec 2018 11:24:11 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBIBOAvb56098868
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Dec 2018 11:24:10 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E7F14C044;
-        Tue, 18 Dec 2018 11:24:10 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB36C4C046;
-        Tue, 18 Dec 2018 11:24:09 +0000 (GMT)
-Received: from oc5311105230.ibm.com (unknown [9.152.224.151])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Dec 2018 11:24:09 +0000 (GMT)
-Subject: Re: [PATCH v2] net/smc: fix TCP fallback socket release
-To:     Myungho Jung <mhjungk@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181217052122.GA26299@myunghoj-Precision-5530>
- <a9ad19c4-1ef7-4dc9-639e-03b3459457e2@linux.ibm.com>
- <20181218070339.GA20290@myunghoj-Precision-5530>
-From:   Ursula Braun <ubraun@linux.ibm.com>
-Openpgp: preference=signencrypt
-Date:   Tue, 18 Dec 2018 12:24:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 18 Dec 2018 06:24:59 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181218112457euoutp017a4101780afdcb3fb540ef337bc8b5ed~xaaNyYQe80259602596euoutp01W
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:24:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181218112457euoutp017a4101780afdcb3fb540ef337bc8b5ed~xaaNyYQe80259602596euoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545132297;
+        bh=Fn2lPujTaFWPaBPTiAGvyln8G1YyYThIpI0wJbDCuyw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=tLxWo5EIDRBqnRDh7xjmvJ7kULVpTJoj2KCdVB7JQspn6cSrNb20oKVsxC1DKLjkp
+         5U2fULvdtv/vzGXPGGfScaO6TLSDQjceremlxB/BviKb+fkLRhDtEsC8lMbFqtS4oO
+         VbDt+vpvC3YKl7tQZ+7pxgxBzl/bsNFYYvvfK8q4=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181218112457eucas1p1591ca5aa0a3e3cdea6268224ca7adbca~xaaNJJ-Ms1106911069eucas1p1N;
+        Tue, 18 Dec 2018 11:24:57 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 2E.E2.04441.809D81C5; Tue, 18
+        Dec 2018 11:24:56 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181218112456eucas1p20bf31d210625499084754ad815be677c~xaaMaXtIb2617226172eucas1p2M;
+        Tue, 18 Dec 2018 11:24:56 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181218112456eusmtrp2dc76df3486418d3280e6832867527508~xaaMLvBx90147001470eusmtrp2I;
+        Tue, 18 Dec 2018 11:24:56 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-9b-5c18d9087ef2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 39.C0.04128.809D81C5; Tue, 18
+        Dec 2018 11:24:56 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181218112455eusmtip265670bd80d3afdcde1d5c36ecfb2a929~xaaLshy1A3126131261eusmtip21;
+        Tue, 18 Dec 2018 11:24:55 +0000 (GMT)
+Subject: Re: [RFC/RFT 09/10] i2c: s3c2410: use core helper to mark adapter
+ suspended
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <2b73c71b-2b73-7132-3629-cf700b251fdb@samsung.com>
+Date:   Tue, 18 Dec 2018 12:24:56 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181218070339.GA20290@myunghoj-Precision-5530>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121811-0008-0000-0000-000002A2FDEF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121811-0009-0000-0000-0000220D90E4
-Message-Id: <8cb0dcc2-4341-f56a-8465-303d238bc5f5@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812180101
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djPc7ocNyViDF4ds7R4c3w6k0X/49fM
+        FufPb2C32PT4GqtFx98vjBaXd81hs/jce4TRYuvLd0wWM87vY7LoO+fuwOWxaVUnm8fmJfUe
+        7/ddZfN4tnA9i8fnTXIBrFFcNimpOZllqUX6dglcGWuOxhfs5au4tOUtUwPjLe4uRk4OCQET
+        ieddmxlBbCGBFYwSK5eoQ9hfGCVa1nh2MXIB2Z8ZJSa1NDHBNNxYOIUZIrGcUWLumy/sEB3v
+        GSWmT5QFsYUFwiSWHP4JFhcRCJCY8H8hK0gDs8B0Jonmt6vAJrEJGEp0ve1iA7F5BewkDi45
+        wApiswioSkxbMBksLioQI/G0YR8LRI2gxMmZT4BsDg5OAXeJCzvtQcLMAvIS29/OYYawxSVu
+        PZnPBLJLQuAQu8TshmPsEFe7SGxY94kNwhaWeHV8C1RcRuL/TpiGZkaJ9hmz2CGcHkaJrXN2
+        QHVYSxw+fpEVZDOzgKbE+l36EGFHiUezFzCDhCUE+CRuvBWEOIJPYtK26VBhXomONiGIajWJ
+        WcfXwa09eOES8wRGpVlIPpuF5J1ZSN6ZhbB3ASPLKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k
+        /NxNjMDEdPrf8U87GL9eSjrEKMDBqMTDy3BCPEaINbGsuDL3EKMEB7OSCO+tUokYId6UxMqq
+        1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYyBP81FZ6YeLqhZukv5
+        Ie/DHd81p3jI28W1z9m4fV56n7tjyLraxcrP8mJFd/w6p3NAcW21cxXPCfcGzg1O0mc3pa5f
+        JOj0+JHn48Zlk3e4GL8+4uq49d37W+FpblukAve0mm/f+lOQTeLpvurox1WbMie6h2ronRAP
+        uzFpSaLdj4PeipNXW2YqsRRnJBpqMRcVJwIA+moES0gDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xe7ocNyViDF4/Z7Z4c3w6k0X/49fM
+        FufPb2C32PT4GqtFx98vjBaXd81hs/jce4TRYuvLd0wWM87vY7LoO+fuwOWxaVUnm8fmJfUe
+        7/ddZfN4tnA9i8fnTXIBrFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2
+        NimpOZllqUX6dgl6GWuOxhfs5au4tOUtUwPjLe4uRk4OCQETiRsLpzB3MXJxCAksZZRo2nmJ
+        ESIhI3FyWgMrhC0s8edaFxtE0VtGiTMXIYqEBcIklhz+yQ5iiwj4SRxa9o4ZxGYWmM4kcekH
+        H4gtJHCNUWL1XXkQm03AUKLrLcggTg5eATuJg0sOgC1gEVCVmLZgMlCcg0NUIEbi2YJqiBJB
+        iZMzn7CAhDkF3CUu7LSHmK4u8WfeJahN8hLb386BssUlbj2ZzzSBUWgWku5ZSFpmIWmZhaRl
+        ASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMBI3Hbs55YdjF3vgg8xCnAwKvHwMpwQjxFi
+        TSwrrsw9xCjBwawkwnurVCJGiDclsbIqtSg/vqg0J7X4EKMp0GsTmaVEk/OBSSKvJN7Q1NDc
+        wtLQ3Njc2MxCSZz3vEFllJBAemJJanZqakFqEUwfEwenVAMj0/27906duHZnxhyLbUfzW4R/
+        yGuuWHTq65aIlAkzq+a1b1h3xGDx6zrfrYeljKb1XLjVt33LIdbKxnebdKIfvtyTZbV5pnT3
+        dlkvH/PDnjxd1ezsK1RYvmgIzjqwpIbppW3rSctrt0x9oxTuHDiVvOecYu+f/rvbPPZPt/DW
+        k3jzmdU7807+bSWW4oxEQy3mouJEAKQ1mpjaAgAA
+X-CMS-MailID: 20181218112456eucas1p20bf31d210625499084754ad815be677c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+        <CGME20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709@epcas5p2.samsung.com>
+        <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On 2018-12-10 22:03, Wolfram Sang wrote:
+> Rejecting transfers should be handled by the core. Also, this will
+> ensure proper locking which was forgotten in this open coded version.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 12/18/2018 08:03 AM, Myungho Jung wrote:
-> On Mon, Dec 17, 2018 at 03:58:58PM +0100, Ursula Braun wrote:
->>
-> 
-> Hi Ursula,
-> 
-> Thank you for your suggestion. I have a question on your comment.
-> 
->>
->> On 12/17/2018 06:21 AM, Myungho Jung wrote:
->>> clcsock can be released while kernel_accept() references it in TCP
->>> listen worker. Also, clcsock needs to wake up before released if TCP
->>> fallback is used and the clcsock is blocked by accept. Add a lock to
->>> safely release clcsock and call kernel_sock_shutdown() to wake up
->>> clcsock from accept in smc_release().
->>
->> Thanks for your effort to solve this problem. I have some minor
->> improvement proposals:
->>
->>>
->>> Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
->>> Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
->>> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
->>> ---
->>>  net/smc/af_smc.c | 14 ++++++++++++--
->>>  net/smc/smc.h    |  2 ++
->>>  2 files changed, 14 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
->>> index 5fbaf1901571..5d06fb1bbccf 100644
->>> --- a/net/smc/af_smc.c
->>> +++ b/net/smc/af_smc.c
->>> @@ -147,8 +147,14 @@ static int smc_release(struct socket *sock)
->>>  		sk->sk_shutdown |= SHUTDOWN_MASK;
->>>  	}
->>>  	if (smc->clcsock) {
->>> +		if (smc->use_fallback && sk->sk_state == SMC_LISTEN) {
->>> +			/* wake up clcsock accept */
->>> +			rc = kernel_sock_shutdown(smc->clcsock, SHUT_RDWR);
->>> +		}
->>
->> This part is not needed, since an SMC socket in state SMC_LISTEN is never
->> a use_fallback socket.
-> 
-> In smc_sendmsg(), set use_fallback to true if SMC socket is SMC_INIT
-> state and the message has MSG_FASTOPEN flag. After this, smc_listen()
-> would trigger smc_tcp_listen_work(). Is this not an expected scenario?
-> Then, what is the reason for not skipping smc_sendmsg() in SMC_INIT
-> state?
-> 
+Works fine on Odroid U3.
 
-You are right, I have not had the FASTOPEN case in mind, sorry. If we want
-to allow fallback in case of FASTOPEN, we need the kernel_sock_shutdown() here
-for proper cleanup. Nice!
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index 2f2e28d60ef5..7c76edb25514 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -104,7 +104,6 @@ enum s3c24xx_i2c_state {
+>  struct s3c24xx_i2c {
+>  	wait_queue_head_t	wait;
+>  	kernel_ulong_t		quirks;
+> -	unsigned int		suspended:1;
+>  
+>  	struct i2c_msg		*msg;
+>  	unsigned int		msg_num;
+> @@ -703,9 +702,6 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+>  	unsigned long timeout;
+>  	int ret;
+>  
+> -	if (i2c->suspended)
+> -		return -EIO;
+> -
+>  	ret = s3c24xx_i2c_set_master(i2c);
+>  	if (ret != 0) {
+>  		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
+> @@ -1246,7 +1242,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+>  {
+>  	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
+>  
+> -	i2c->suspended = 1;
+> +	i2c_mark_adapter_suspended(&i2c->adap, true);
+>  
+>  	if (!IS_ERR(i2c->sysreg))
+>  		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
+> @@ -1267,7 +1263,7 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+>  		return ret;
+>  	s3c24xx_i2c_init(i2c);
+>  	clk_disable(i2c->clk);
+> -	i2c->suspended = 0;
+> +	i2c_mark_adapter_suspended(&i2c->adap, false);
+>  
+>  	return 0;
+>  }
 
->>
->>> +		mutex_lock(&smc->clcsock_release_lock);
->>>  		sock_release(smc->clcsock);
->>>  		smc->clcsock = NULL;
->>> +		mutex_unlock(&smc->clcsock_release_lock);
->>>  	}
->>>  	if (smc->use_fallback) {
->>>  		if (sk->sk_state != SMC_LISTEN && sk->sk_state != SMC_INIT)
->>> @@ -205,6 +211,7 @@ static struct sock *smc_sock_alloc(struct net *net, struct socket *sock,
->>>  	spin_lock_init(&smc->conn.send_lock);
->>>  	sk->sk_prot->hash(sk);
->>>  	sk_refcnt_debug_inc(sk);
->>> +	mutex_init(&smc->clcsock_release_lock);
->>>  
->>>  	return sk;
->>>  }
->>> @@ -821,7 +828,7 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
->>>  	struct socket *new_clcsock = NULL;
->>>  	struct sock *lsk = &lsmc->sk;
->>>  	struct sock *new_sk;
->>> -	int rc;
->>> +	int rc = 0;
->>
->> Without clcsock the good path should not be executed. Thus I suggest
->> to initialize with something negative like -EINVAL.
->>
->>>  
->>>  	release_sock(lsk);
->>>  	new_sk = smc_sock_alloc(sock_net(lsk), NULL, lsk->sk_protocol);
->>> @@ -834,7 +841,10 @@ static int smc_clcsock_accept(struct smc_sock *lsmc, struct smc_sock **new_smc)
->>>  	}
->>>  	*new_smc = smc_sk(new_sk);
->>>  
->>> -	rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
->>> +	mutex_lock(&lsmc->clcsock_release_lock);
->>> +	if (lsmc->clcsock)
->>> +		rc = kernel_accept(lsmc->clcsock, &new_clcsock, 0);
->>> +	mutex_unlock(&lsmc->clcsock_release_lock);
->>>  	lock_sock(lsk);
->>>  	if  (rc < 0)
->>>  		lsk->sk_err = -rc;
->>> diff --git a/net/smc/smc.h b/net/smc/smc.h
->>> index 08786ace6010..9a2795cf5d30 100644
->>> --- a/net/smc/smc.h
->>> +++ b/net/smc/smc.h
->>> @@ -219,6 +219,8 @@ struct smc_sock {				/* smc sock container */
->>>  						 * started, waiting for unsent
->>>  						 * data to be sent
->>>  						 */
->>> +	struct mutex            clcsock_release_lock;
->>> +						/* protects clcsock */
->>
->> I suggest to be more precise: "protects clcsock of a listen socket" 
->>
->>>  };
->>>  
->>>  static inline struct smc_sock *smc_sk(const struct sock *sk)
->>>
->>
-> 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
