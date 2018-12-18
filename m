@@ -2,52 +2,51 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746DFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76068C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450B221873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4310B21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151451;
-	bh=40HQvD5gtbJ5c7qycQ2+xgh0rBixMUc+dX842omhrrk=;
+	s=default; t=1545151467;
+	bh=RMGm6UpwFi1cNsoVXjGjVirKmwU1Q/PrmHuQAq+7J8k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SHbMEw2E5pay8sajKxpkpCE/TrrI5gsVPNbhvvbWCAtMSFinoQrX+QSkhcenS9qw/
-	 2EpzKKgs0A0xbzpynk/6hvlCVS/hLj+X4y8cO8xzyvksgS9zK5ByVZ7WSuaZ8tCy5S
-	 8GJcvpxG+oyJgcsVxupOFMDgzKfD+xQXU2hjOwLU=
+	b=DcBPGehbae3tYn+LqqyAT3zY1ktWJG6l174+ku0WAv/65kX6RXyRdfu+BO6hvpyE+
+	 Z4dp5r7rWBRPJ0bz7BByqjYMdYWFulR0x/jMgSUWZMcdv4yNos4uZEFxe495H7h077
+	 fhAbrTfuW/+ffK0JbyqdhiVnMh37O1blFhoEu0DY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbeLRQkh (ORCPT
+        id S1727307AbeLRQoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:40:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37696 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:44:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727153AbeLRQkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:40:35 -0500
+        id S1727059AbeLRQkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:40:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0387218A5;
-        Tue, 18 Dec 2018 16:40:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F43A218A3;
+        Tue, 18 Dec 2018 16:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151234;
-        bh=40HQvD5gtbJ5c7qycQ2+xgh0rBixMUc+dX842omhrrk=;
+        s=default; t=1545151220;
+        bh=RMGm6UpwFi1cNsoVXjGjVirKmwU1Q/PrmHuQAq+7J8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mYDJqJhSOg6walClAGmcwERfp0QM8o9dBy4tW8CMv2gTYvoYY8YtMKxPYxeOauieq
-         B+o1qOucQnxO71kTq56WjdE6mvA1fslZwPdCRXYGdGjKZA7HyOXfoiXqNIBvYG+bAn
-         0F2XHO/Ug2VGdDiE0+jpnx3wBcLhjjymyIofaNcc=
+        b=gmNf8J3ZKbjV2y2+B38d221dC0U/wwqqExkD6S5ZfznKo1YV5ZkRNntQczBKpUtSl
+         QQZmvefZmnoNbxiWp35rPP0PnlmeCtwv3stBmg6luDU/lJgvno89LUv8m4DBz0mHxg
+         E3bMwZ9nqnofkZ1RsKdkm8vd7M8En8diEAT6gcps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alek Du <alek.du@intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.19 20/44] mmc: sdhci: fix the timeout check window for clock and reset
-Date:   Tue, 18 Dec 2018 17:39:32 +0100
-Message-Id: <20181218163929.871016709@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 06/44] ARM: dts: qcom-apq8064-arrow-sd-600eval fix graph_endpoint warning
+Date:   Tue, 18 Dec 2018 17:39:18 +0100
+Message-Id: <20181218163927.871563872@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -66,75 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alek Du <alek.du@intel.com>
+Upstream commit 972910948fb6 ("ARM: dts: qcom: Remove Arrow SD600
+eval board") removed this file because there are no known users,
+but in linux-4.19.y, we still get a compile-time warnign for it:
 
-commit b704441e38f645dcfba1348ca3cc1ba43d1a9f31 upstream.
+arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dtb: Warning (graph_endpoint): /soc/mdp@5100000/ports/port@3/endpoint: graph connection to node '/soc/hdmi-tx@4a00000/ports/port@0/endpoint' is not bidirectional
 
-We observed some premature timeouts on a virtualization platform, the log
-is like this:
+Address the warning by adding the remote endpoint that makes the link
+bidirectional. This is the same property that other boards use.
 
-case 1:
-[159525.255629] mmc1: Internal clock never stabilised.
-[159525.255818] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-[159525.256049] mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00001002
-...
-[159525.257205] mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
->From the clock control register dump, we are pretty sure the clock was
-stablized.
-
-case 2:
-[  914.550127] mmc1: Reset 0x2 never completed.
-[  914.550321] mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-[  914.550608] mmc1: sdhci: Sys addr:  0x00000010 | Version:  0x00001002
-
-After checking the sdhci code, we found the timeout check actually has a
-little window that the CPU can be scheduled out and when it comes back,
-the original time set or check is not valid.
-
-Fixes: 5a436cc0af62 ("mmc: sdhci: Optimize delay loops")
-Cc: stable@vger.kernel.org      # v4.12+
-Signed-off-by: Alek Du <alek.du@intel.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -193,8 +193,12 @@ void sdhci_reset(struct sdhci_host *host
- 	timeout = ktime_add_ms(ktime_get(), 100);
+diff --git a/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts b/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts
+index 76b56eafaab9..f714a20649d7 100644
+--- a/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts
++++ b/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts
+@@ -387,6 +387,11 @@
+ 			hpd-gpio = <&tlmm_pinmux 72 GPIO_ACTIVE_HIGH>;
  
- 	/* hw clears the bit when it's done */
--	while (sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		if (!(sdhci_readb(host, SDHCI_SOFTWARE_RESET) & mask))
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Reset 0x%x never completed.\n",
- 				mmc_hostname(host->mmc), (int)mask);
- 			sdhci_dumpregs(host);
-@@ -1495,9 +1499,13 @@ void sdhci_enable_clk(struct sdhci_host
- 
- 	/* Wait max 20 ms */
- 	timeout = ktime_add_ms(ktime_get(), 20);
--	while (!((clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
--		& SDHCI_CLOCK_INT_STABLE)) {
--		if (ktime_after(ktime_get(), timeout)) {
-+	while (1) {
-+		bool timedout = ktime_after(ktime_get(), timeout);
-+
-+		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+		if (clk & SDHCI_CLOCK_INT_STABLE)
-+			break;
-+		if (timedout) {
- 			pr_err("%s: Internal clock never stabilised.\n",
- 			       mmc_hostname(host->mmc));
- 			sdhci_dumpregs(host);
+ 			ports {
++				port@0 {
++					endpoint {
++						remote-endpoint = <&mdp_dtv_out>;
++					};
++				};
+ 				port@1 {
+ 					endpoint {
+ 						remote-endpoint = <&hdmi_con>;
+-- 
+2.19.1
+
 
 
