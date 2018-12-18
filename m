@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA779C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31070C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF28218A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F38B121873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151224;
-	bh=JAz3KF9eotQYq14cZdWM9jc3/3OIqvKcqhwxtAL3HHo=;
+	s=default; t=1545151228;
+	bh=HFs5I83Qckr8sT1bbamUWInQBw8FnIMu7cRDmFxuZqM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0bSglPKOgDi7191xhZQfBjiEakTBX0wGZ4W52+tHzX6gmz7KiYq9cQhtcioySgynB
-	 X99SiRdlbF21Jc1mIDQhnzs2Z+21UJe8Qa3pkafAcWfzBvBlwfLe/o6hPWBmfgXoZK
-	 RfR6d4gwQ1+/AKw5XXA0MNa7P4cj1bNweJM48fyM=
+	b=t1WYs6YcTA0QsW1OPGDc+4Ab3pmBz7zKMKwcgBovcq2rnTw6vT2TqI5IIWCrTQuzG
+	 YHXs3r1sjb6s4W3W/K298SKxI4TOGMK5tyxeIqOt7nkUXdu5c3NsZxYp/4+g0YEHu4
+	 UJ9foSgqv5FlUkYj3w9bHdJdxB7ldVJkwub8pwNI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbeLRQkX (ORCPT
+        id S1727171AbeLRQk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:40:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37268 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:40:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbeLRQkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:40:18 -0500
+        id S1727112AbeLRQkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:40:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E053218A4;
-        Tue, 18 Dec 2018 16:40:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E791B21873;
+        Tue, 18 Dec 2018 16:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151218;
-        bh=JAz3KF9eotQYq14cZdWM9jc3/3OIqvKcqhwxtAL3HHo=;
+        s=default; t=1545151223;
+        bh=HFs5I83Qckr8sT1bbamUWInQBw8FnIMu7cRDmFxuZqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UF3cPhkTULHRscYxi9Js4khZ33AQrqu6h+Y918bdzh/4npAs6txBQdHIM1bSDNiLq
-         CkU0nZfor9Tmz7ksOg8x+w8w/+oJassBGKJkYGjrALOJ0XIy23vi70jf4qoD03VeWk
-         uOO++8dNspEfOjCuCKbGNUM7I5Hw8FXFl0c7YAmQ=
+        b=XWXV3nwPjoFkho7HnVtFCVWcVkl7TZohfz+Q59+eEUauLu3OfrDfuGfjhgRaIEDsm
+         et+D+lLrJgvaXGqbXzWRib3C0TrdzhXevLiRE94WftQzKCjZMcAgFkYcpSpuJlwExL
+         LDGLuHDRbyerroiqVUfEfpEzFNvrmVLc40vqbcr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Brendan Higgins <brendanhiggins@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 05/44] i2c: aspeed: fix build warning
-Date:   Tue, 18 Dec 2018 17:39:17 +0100
-Message-Id: <20181218163927.733959335@linuxfoundation.org>
+Subject: [PATCH 4.19 07/44] drm/msm: fix address space warning
+Date:   Tue, 18 Dec 2018 17:39:19 +0100
+Message-Id: <20181218163928.146556875@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -66,48 +65,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Upstream commit 3e9efc3299dd ("i2c: aspeed: Handle master/slave combined irq events
-properly") reworked the interrupt handling and fixed a warning in the process:
+In the linux-4.19 stable kernel, we get a warning about a type
+mismatch between phys_addr_t and dma_addr_t:
 
-drivers/i2c/busses/i2c-aspeed.c: In function 'aspeed_i2c_bus_irq':
-drivers/i2c/busses/i2c-aspeed.c:567:1: error: label 'out' defined but not used [-Werror=unused-label]
+drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c: In function '_dpu_dbg_dump_dpu_dbg_bus':
+drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c:2003:16: error: passing argument 3 of 'dma_alloc_coherent' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     list_size, &phys, GFP_KERNEL);
+                ^~~~~
+In file included from include/linux/dma-buf.h:31,
+                 from drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c:20:
+include/linux/dma-mapping.h:561:15: note: expected 'dma_addr_t *' {aka 'long long unsigned int *'} but argument is of type 'phys_addr_t *' {aka 'unsigned int *'}
+   dma_addr_t *dma_handle, gfp_t flag)
+   ~~~~~~~~~~~~^~~~~~~~~~
+drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c: In function '_dpu_dbg_dump_vbif_dbg_bus':
+drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c:2154:16: error: passing argument 3 of 'dma_alloc_coherent' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     list_size, &phys, GFP_KERNEL);
+                ^~~~~
+In file included from include/linux/dma-buf.h:31,
+                 from drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c:20:
+include/linux/dma-mapping.h:561:15: note: expected 'dma_addr_t *' {aka 'long long unsigned int *'} but argument is of type 'phys_addr_t *' {aka 'unsigned int *'}
 
-The warning is still present in v4.19.8 and can be fixed either by applying
-that original patch, or by adding a simple #ifdef.
+This code was removed in linux-4.20 with upstream commit effec874792f
+("drm/msm/dpu: Remove dpu_dbg"). Rather than backporting the large
+patch, this just fixes the warning by using the correct type.
 
-Here, I choose the second simpler option as the original patch seems too
-invasive for a stable backport.
-
+Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-aspeed.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index a4f956c6d567..a19fbff16861 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -555,7 +555,7 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
- 	spin_lock(&bus->lock);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c
+index ae2aee7ed9e1..e741d26185df 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_dbg.c
+@@ -1962,7 +1962,7 @@ static void _dpu_dbg_dump_dpu_dbg_bus(struct dpu_dbg_dpu_debug_bus *bus)
+ 	u32 *dump_addr = NULL;
+ 	u32 status = 0;
+ 	struct dpu_debug_bus_entry *head;
+-	phys_addr_t phys = 0;
++	dma_addr_t dma = 0;
+ 	int list_size;
+ 	int i;
+ 	u32 offset;
+@@ -2000,7 +2000,7 @@ static void _dpu_dbg_dump_dpu_dbg_bus(struct dpu_dbg_dpu_debug_bus *bus)
+ 	if (in_mem) {
+ 		if (!(*dump_mem))
+ 			*dump_mem = dma_alloc_coherent(dpu_dbg_base.dev,
+-				list_size, &phys, GFP_KERNEL);
++				list_size, &dma, GFP_KERNEL);
  
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
--	if (aspeed_i2c_slave_irq(bus)) {
-+	if (IS_ENABLED(CONFIG_I2C_SLAVE) && aspeed_i2c_slave_irq(bus)) {
- 		dev_dbg(bus->dev, "irq handled by slave.\n");
- 		ret = true;
- 		goto out;
-@@ -564,7 +564,9 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
+ 		if (*dump_mem) {
+ 			dump_addr = *dump_mem;
+@@ -2101,7 +2101,7 @@ static void _dpu_dbg_dump_vbif_dbg_bus(struct dpu_dbg_vbif_debug_bus *bus)
+ 	u32 value, d0, d1;
+ 	unsigned long reg, reg1, reg2;
+ 	struct vbif_debug_bus_entry *head;
+-	phys_addr_t phys = 0;
++	dma_addr_t dma = 0;
+ 	int i, list_size = 0;
+ 	void __iomem *mem_base = NULL;
+ 	struct vbif_debug_bus_entry *dbg_bus;
+@@ -2151,7 +2151,7 @@ static void _dpu_dbg_dump_vbif_dbg_bus(struct dpu_dbg_vbif_debug_bus *bus)
+ 	if (in_mem) {
+ 		if (!(*dump_mem))
+ 			*dump_mem = dma_alloc_coherent(dpu_dbg_base.dev,
+-				list_size, &phys, GFP_KERNEL);
++				list_size, &dma, GFP_KERNEL);
  
- 	ret = aspeed_i2c_master_irq(bus);
- 
-+#if IS_ENABLED(CONFIG_I2C_SLAVE)
- out:
-+#endif
- 	spin_unlock(&bus->lock);
- 	return ret ? IRQ_HANDLED : IRQ_NONE;
- }
+ 		if (*dump_mem) {
+ 			dump_addr = *dump_mem;
 -- 
 2.19.1
 
