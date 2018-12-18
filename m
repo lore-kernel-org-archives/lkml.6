@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AC2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991E9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F823218A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 688DD218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151286;
-	bh=hnKGnV5MQDsOv4ePtnKlc1/Hfeuo64rECF3DFjHMFDc=;
+	s=default; t=1545151291;
+	bh=RTGjUgXmLk3+fJYRp0agh7q+R0Cs/2uN3T/tUCsbrKA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WuqqzQMiCZpO1c+Dq9r68fyYcryLILmCJvRtL7hZqrstQGJlY8e2XaPQ1LdxyZqpQ
-	 eY7Mo2nTjgzIA30YcEepSmyz7luaMBHbWfI3vYF3XtChZK1dBV5woRJ15RRpSpEFqd
-	 fP5igCuIy87K+V8NBSX3VPlrKJQddWTP1GMghGWk=
+	b=osarwAVJEJ0oXb/9qNeN5TWmbd8LApFOJOHs/dZNFv+Nf9F9zEq5SFiN0+twtprKj
+	 nwATcLCLM6fjxMGnLkxId9Ed7v5d9NrYh4Tw0LJf9mYB9Fsu/T/F2Aq0E5ihg8yFQD
+	 66oBK5hUKJgS7fzjLAvtuss3Lesqt45H+zpzu1cI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbeLRQlZ (ORCPT
+        id S1727535AbeLRQla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38822 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727494AbeLRQlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:22 -0500
+        id S1727518AbeLRQl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DACD21873;
-        Tue, 18 Dec 2018 16:41:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4194F218A2;
+        Tue, 18 Dec 2018 16:41:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151281;
-        bh=hnKGnV5MQDsOv4ePtnKlc1/Hfeuo64rECF3DFjHMFDc=;
+        s=default; t=1545151286;
+        bh=RTGjUgXmLk3+fJYRp0agh7q+R0Cs/2uN3T/tUCsbrKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VlmAyBAoEWmJ7vXKGIX0wKc2zrOcVh2R5E7cVU77zzPqI1k0DpOAEAyYdySXrjC2P
-         MtQexyBdG8Nvy8+9HSOTO6/VqA+tHbA52m0o1CUfDSZK6s2FBDA5q34M733VdGCSUG
-         oc4wzEhsTQ2ghAZFQQENInlXAmSDVkmo+t+cpLrM=
+        b=egKN3NrfVKgPD62WMWD6vRsqOIZD12ll7CJxRaLHIxSIw0jcSU9jd8naC2pGAIgra
+         BHH/T2pcg4EHvSCf1mqgZ6TPQa9o+X5JKpP5UUOwYTZWz8r2OScKFkS5WQ1nHvmFps
+         us8aYJsEJy7G1gzlt4hyRKFueM99I2Di9OledQ6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.19 35/44] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
-Date:   Tue, 18 Dec 2018 17:39:47 +0100
-Message-Id: <20181218163931.565097667@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.19 37/44] drm/i915/execlists: Apply a full mb before execution for Braswell
+Date:   Tue, 18 Dec 2018 17:39:49 +0100
+Message-Id: <20181218163931.750845579@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -68,91 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 63238173b2faf3d6b85a416f1c69af6c7be2413f upstream.
+commit cf66b8a0ba142fbd1bf10ac8f3ae92d1b0cb7b8f upstream.
 
-This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
+Braswell is really picky about having our writes posted to memory before
+we execute or else the GPU may see stale values. A wmb() is insufficient
+as it only ensures the writes are visible to other cores, we need a full
+mb() to ensure the writes are in memory and visible to the GPU.
 
-It causes new warnings [1] on shutdown when running the Google Kevin or
-Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
-different than what Marc and Heiko test.
+The most frequent failure in flushing before execution is that we see
+stale PTE values and execute the wrong pages.
 
-We're looking at a different approach (e.g., [2]) to replace this, but
-IMO the revert should be taken first, as it already propagated to
--stable.
-
-[1] Report here:
-http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
-
-WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
-...
- Call trace:
-  drm_mode_config_cleanup+0x1c4/0x294
-  rockchip_drm_unbind+0x4c/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
- Memory manager not clean during takedown.
- WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
-...
-  drm_mm_takedown+0x34/0x44
-  rockchip_drm_unbind+0x64/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
-
-[2] https://patchwork.kernel.org/patch/10556151/
-    https://www.spinics.net/lists/linux-rockchip/msg21342.html
-    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
-
-Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Vicente Bergas <vicencb@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
+References: 987abd5c62f9 ("drm/i915/execlists: Force write serialisation into context image vs execution")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181205181657.177703-1-briannorris@chromium.org
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181206084431.9805-3-chris@chris-wilson.co.uk
+(cherry picked from commit 490b8c65b9db45896769e1095e78725775f47b3e)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/gpu/drm/i915/intel_lrc.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -442,11 +442,6 @@ static int rockchip_drm_platform_remove(
- 	return 0;
+--- a/drivers/gpu/drm/i915/intel_lrc.c
++++ b/drivers/gpu/drm/i915/intel_lrc.c
+@@ -442,8 +442,13 @@ static u64 execlists_update_context(stru
+ 	 * may not be visible to the HW prior to the completion of the UC
+ 	 * register write and that we may begin execution from the context
+ 	 * before its image is complete leading to invalid PD chasing.
++	 *
++	 * Furthermore, Braswell, at least, wants a full mb to be sure that
++	 * the writes are coherent in memory (visible to the GPU) prior to
++	 * execution, and not just visible to other CPUs (as is the result of
++	 * wmb).
+ 	 */
+-	wmb();
++	mb();
+ 	return ce->lrc_desc;
  }
  
--static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
--{
--	rockchip_drm_platform_remove(pdev);
--}
--
- static const struct of_device_id rockchip_drm_dt_ids[] = {
- 	{ .compatible = "rockchip,display-subsystem", },
- 	{ /* sentinel */ },
-@@ -456,7 +451,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
- static struct platform_driver rockchip_drm_platform_driver = {
- 	.probe = rockchip_drm_platform_probe,
- 	.remove = rockchip_drm_platform_remove,
--	.shutdown = rockchip_drm_platform_shutdown,
- 	.driver = {
- 		.name = "rockchip-drm",
- 		.of_match_table = rockchip_drm_dt_ids,
 
 
