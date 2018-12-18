@@ -2,75 +2,101 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C28C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E95C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9D8218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0915321850
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbeLRPTu (ORCPT
+        id S1726795AbeLRPVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:19:50 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33021 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbeLRPTu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:19:50 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gZH9v-00050O-Ga; Tue, 18 Dec 2018 15:19:47 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jon Mason <jdmason@kudzu.us>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] vxge: ensure data0 is initialized in when fetching firmware version information
-Date:   Tue, 18 Dec 2018 15:19:47 +0000
-Message-Id: <20181218151947.31406-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 18 Dec 2018 10:21:35 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34080 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbeLRPVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:21:34 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DF1C4207D9; Tue, 18 Dec 2018 16:21:31 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B02A520717;
+        Tue, 18 Dec 2018 16:21:21 +0100 (CET)
+Date:   Tue, 18 Dec 2018 16:21:22 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Subject: Re: [PATCH v4 0/6] media/sun6i: Allwinner A64 CSI support
+Message-ID: <20181218152122.4zj6wgbukhrl6ly6@flea>
+References: <20181218113320.4856-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3jygq7kzqfz5lk2a"
+Content-Disposition: inline
+In-Reply-To: <20181218113320.4856-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently variable data0 is not being initialized so a garbage value is
-being passed to vxge_hw_vpath_fw_api and this value is being written to
-the rts_access_steer_data0 register.  There are other occurrances where
-data0 is being initialized to zero (e.g. in function
-vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
-is initialized likewise to 0.
+--3jygq7kzqfz5lk2a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
+On Tue, Dec 18, 2018 at 05:03:14PM +0530, Jagan Teki wrote:
+> This series support CSI on Allwinner A64.
+>=20
+> Tested 640x480, 320x240, 720p, 1080p resolutions UYVY8_2X8 format.
+>=20
+> Changes for v4:
+> - update the compatible string order
+> - add proper commit message
+> - included BPI-M64 patch
+> - skipped amarula-a64 patch
+> Changes for v3:
+> - update dt-bindings for A64
+> - set mod clock via csi driver
+> - remove assign clocks from dtsi
+> - remove i2c-gpio opendrian
+> - fix avdd and dovdd supplies
+> - remove vcc-csi pin group supply
+>=20
+> Note: This series created on top of H3 changes [1]
+>=20
+> [1] https://patchwork.kernel.org/cover/10705905/
 
-Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You had memory corruption before, how was this fixed?
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 4c1fb7e57888..7cde387e5ec6 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
- 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
- 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
- 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
--	u64 data0, data1 = 0, steer_ctrl = 0;
-+	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
- 	enum vxge_hw_status status;
- 
- 	status = vxge_hw_vpath_fw_api(vpath,
--- 
-2.19.1
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--3jygq7kzqfz5lk2a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXBkQcgAKCRDj7w1vZxhR
+xWb3AQC8q265ZMAVuhoTZ8pMHZUKhmZQ8/4stdIQXP1f0auOLgD+La+k8HKFfCu5
+0oo3sjmrYWVWitbbjOhbURpB5iLNkQ8=
+=vneK
+-----END PGP SIGNATURE-----
+
+--3jygq7kzqfz5lk2a--
