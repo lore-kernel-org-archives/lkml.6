@@ -2,152 +2,131 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A11FC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F24C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2806121871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545165385;
-	bh=OsA0utCZfyYV9YNN6vd8kJm4nnE+IBKjN6Og11Sj9lQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=PhGdCuBKMaG28vzfmHaGgFTezOuVPW1fj27jpzJR0VcKPsbg6zpipQ85bAFsLBrj2
-	 j2m+ll+nhchCjbafR3MEfUVdfJdAAiiDnCtrspYJRcWWeYqjX8emVdyDm40owDAkWB
-	 mO5XUtAf4UiPdJQO3ZwY6Nsl0Oswu6NzNUZT54GA=
+	by mail.kernel.org (Postfix) with ESMTP id 3C8542184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeLRUgX (ORCPT
+        id S1727130AbeLRUki convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:36:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56188 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 15:40:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbeLRUep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:34:45 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726981AbeLRUkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:40:37 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE706218D3;
-        Tue, 18 Dec 2018 20:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545165284;
-        bh=OsA0utCZfyYV9YNN6vd8kJm4nnE+IBKjN6Og11Sj9lQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=Xu4umGXYVyTZR1UgxNGgijJqoBS9jOh2lo+Q0kcgMNSqnDPa+AWz8q1Hk531xOBx6
-         sLXGl4D/Sq/zprYjbHMawPEiF1FkXo1cIqQgHNp0ROcaZIaT6K227nqqheS0sgwB5q
-         OmKNUjHYf4rSikl6I3DTHP+4eyqL0SRFqDERsh2g=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v9 02/15] tracing: Make hist trigger Documentation better reflect actions/handlers
-Date:   Tue, 18 Dec 2018 14:34:01 -0600
-Message-Id: <d5bd74bfb010d76a92630f81c5950e0fbd7aa3fb.1545161056.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
-References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
-References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 871A9217D9;
+        Tue, 18 Dec 2018 20:40:36 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 15:40:34 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [ANNOUNCE] 4.14.87-rt49
+Message-ID: <20181218154034.612d729d@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-The action/handler code refactoring didn't change the action/handler
-syntax, but did generalize it - the Documentation should reflect that.
+Dear RT Folks,
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+I'm pleased to announce the 4.14.87-rt49 stable release.
+
+Sorry for taking so long, I've just been swamped (like everyone else)
+
+*** PLEASE NOTE ***
+
+This release is **NOT** just an update to the new stable 4.14.87 version
+as there was a small RT specific change that has been made.
+
+I had to make an update to handle a backport of adding
+preempt_disable() around the console_unlock() code. That patch is below.
+
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.14-rt
+  Head SHA1: c3fb62599cb0bf9ea0223433ccf7c0c37056c392
+
+
+Or to build 4.14.87-rt49 directly, the following patches should be applied:
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.14.tar.xz
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.14.87.xz
+
+  http://www.kernel.org/pub/linux/kernel/projects/rt/4.14/patch-4.14.87-rt49.patch.xz
+
+
+
+
+Enjoy,
+
+-- Steve
+
+
+From 0ab3459b0a8b8d19054aa813611c8dc22ce04af8 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Fri, 14 Dec 2018 21:36:55 -0500
+Subject: [PATCH] printk: Do not disable preemption when calling consoles in RT
+
+console_unlock() may call consoles that call spin_lock(), where spin_lock is
+a mutex in PREEMPT_RT. Although mainline may be worried about preempted
+holders of the console lock from preventing printk() output, the RT kernel
+does not.
+
+Use migrate_disable() to disable preemption when !RT, but we really don't
+care if the task stays on the CPU or not for RT. It just has to be able to
+schedule.
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/histogram.rst | 56 ++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 13 deletions(-)
+ kernel/printk/printk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 7dda76503127..63e522107e59 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -25,7 +25,7 @@ Documentation written by Tom Zanussi
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 8a7c4f79fca0..029ae3caa80e 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1811,7 +1811,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		 * console_sem which would prevent anyone from printing to
+ 		 * console
+ 		 */
+-		preempt_disable();
++		migrate_disable();
+ 		/*
+ 		 * Try to acquire and then immediately release the console
+ 		 * semaphore.  The release will print out buffers and wake up
+@@ -1819,7 +1819,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		 */
+ 		if (may_trylock && console_trylock())
+ 			console_unlock();
+-		preempt_enable();
++		migrate_enable();
+ 	}
  
-         hist:keys=<field1[,field2,...]>[:values=<field1[,field2,...]>]
-           [:sort=<field1[,field2,...]>][:size=#entries][:pause][:continue]
--          [:clear][:name=histname1] [if <filter>]
-+          [:clear][:name=histname1][:<handler>.<action>] [if <filter>]
- 
-   When a matching event is hit, an entry is added to a hash table
-   using the key(s) and value(s) named.  Keys and values correspond to
-@@ -1831,21 +1831,51 @@ and looks and behaves just like any other event::
- Like any other event, once a histogram is enabled for the event, the
- output can be displayed by reading the event's 'hist' file.
- 
--2.2.3 Hist trigger 'actions'
------------------------------
-+2.2.3 Hist trigger 'handlers' and 'actions'
-+-------------------------------------------
- 
--A hist trigger 'action' is a function that's executed whenever a
--histogram entry is added or updated.
-+A hist trigger 'action' is a function that's executed (in most cases
-+conditionally) whenever a histogram entry is added or updated.
- 
--The default 'action' if no special function is explicitly specified is
--as it always has been, to simply update the set of values associated
--with an entry.  Some applications, however, may want to perform
--additional actions at that point, such as generate another event, or
--compare and save a maximum.
-+When a histogram entry is added or updated, a hist trigger 'handler'
-+is what decides whether the corresponding action is actually invoked
-+or not.
- 
--The following additional actions are available.  To specify an action
--for a given event, simply specify the action between colons in the
--hist trigger specification.
-+Hist trigger handlers and actions are paired together in the general
-+form:
-+
-+  <handler>.<action>
-+
-+To specify a handler.action pair for a given event, simply specify
-+that handler.action pair between colons in the hist trigger
-+specification.
-+
-+In theory, any handler can be combined with any action, but in
-+practice, not every handler.action combination is currently supported;
-+if a given handler.action combination isn't supported, the hist
-+trigger will fail with -EINVAL;
-+
-+The default 'handler.action' if none is explicity specified is as it
-+always has been, to simply update the set of values associated with an
-+entry.  Some applications, however, may want to perform additional
-+actions at that point, such as generate another event, or compare and
-+save a maximum.
-+
-+The supported handlers and actions are listed below, and each is
-+described in more detail in the following paragraphs, in the context
-+of descriptions of some common and useful handler.action combinations.
-+
-+The available handlers are:
-+
-+  - onmatch(matching.event)    - invoke action on any addition or update
-+  - onmax(var)                 - invoke action if var exceeds current max
-+
-+The available actions are:
-+
-+  - <synthetic_event_name>(param list)         - generate synthetic event
-+  - save(field,...)                            - save current event fields
-+
-+The following commonly-used handler.action pairs are available:
- 
-   - onmatch(matching.event).<synthetic_event_name>(param list)
- 
+ 	return printed_len;
 -- 
-2.14.1
+2.19.2
 
