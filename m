@@ -2,251 +2,135 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3831C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FEBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9BB218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545169251;
-	bh=pUOYrr9MPMPIplizYxf3hlbSzc/vgk9BddWeuUtBEG4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=oHJysX17kB1BU8gTu4raVNezyA2vTcGt00atluz1y6Bvw8naALXVw3hGw/p33BH7s
-	 ENbJgQnBa+jRuwc7gE01S8cMmFqL9NUOpGHm0jmWeUump8McURUjimq6c3r+KNviL9
-	 EQUY6UDzFeXB0dPJXRm++7GauuOg3kqy+W/Ux9DM=
+	by mail.kernel.org (Postfix) with ESMTP id E58A8218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeLRVku (ORCPT
+        id S1727398AbeLRVlT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:40:50 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45793 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbeLRVkt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:40:49 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y1so3195142oie.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 13:40:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IIXaUUd3iN6SGQAMtcDUUcvX+a/mGjDT/KJH5i6GVQQ=;
-        b=N+vvZ5zTJtmJ81mysi83aHqoG3dVTvvr9xTiBqEdkRnJSxZK4QJJFb0Y8meqmldZEc
-         sakkclTtphPvch+KS8tw3BUV1+EKkk/EMUJk2rQSb68nOHbZdDDYBh4e3zLCH9wNK8/N
-         l8WWbeOs1UqwO18ixnSzgmNFbkiRzsaJkCxpcwTVQN/pIAal59uKnvAx16vcltCUdgdY
-         qS2uPFmr+pupa5/IR+sAL4G9aIK6jXo4bpCTSkl9MxIvLfhoFugq7gGZQoOy9+DhcFq6
-         tuilOnNGnkXVyzgSehLhFEPzMfXyfCxaC4OeDtjkns0F33Td8x6cplcrDuG0DPXwZSFZ
-         l3OQ==
-X-Gm-Message-State: AA+aEWb9qDAnVdk7Yn0U3WpP32qIVXM3MhDQ+X+h7uF+1JWYMm29JfMq
-        W0KwJEoVciFDrNAFCgXs94BmdsNJ+yjqNX8UrHF5PQ==
-X-Google-Smtp-Source: AFSGD/UkXOl9KbvEIESVvZFhcEngqgFQwcYHhsoZ9LVlJG5P7h1j9Uy3F5tpxWgyVTiWjxUjGHRryfWJyEXSrjVQysc=
-X-Received: by 2002:aca:368a:: with SMTP id d132mr9219603oia.193.1545169248272;
- Tue, 18 Dec 2018 13:40:48 -0800 (PST)
+        Tue, 18 Dec 2018 16:41:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58398 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726675AbeLRVlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:41:19 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 048F685550;
+        Tue, 18 Dec 2018 21:41:19 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A0E768B20;
+        Tue, 18 Dec 2018 21:41:18 +0000 (UTC)
+Subject: Re: [PATCH] include/linux/nodemask.h: Use nr_node_ids instead of
+ MAX_NUMNODES in nodemask_pr_args
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Oscar Salvador <osalvador@suse.de>, linux-kernel@vger.kernel.org
+References: <1545154231-22824-1-git-send-email-longman@redhat.com>
+ <20181218124113.c5179c675dd217be7bed7d80@linux-foundation.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <8f6a310d-6609-fa1e-114d-32043eb22aea@redhat.com>
+Date:   Tue, 18 Dec 2018 16:41:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181218201443.4950-1-daniel.vetter@ffwll.ch>
-In-Reply-To: <20181218201443.4950-1-daniel.vetter@ffwll.ch>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 18 Dec 2018 22:40:37 +0100
-Message-ID: <CAJZ5v0ipnH6sZEuPUQkG_TBvHcyOdtYUFumQy=_6p0T3eQ+LXQ@mail.gmail.com>
-Subject: Re: [PATCH] sysfs: Disable lockdep for driver bind/unbind files
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ramalingam.c@intel.com, aspriel@gmail.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>, brgl@bgdev.pl,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181218124113.c5179c675dd217be7bed7d80@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 18 Dec 2018 21:41:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 9:14 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+On 12/18/2018 03:41 PM, Andrew Morton wrote:
+> On Tue, 18 Dec 2018 12:30:31 -0500 Waiman Long <longman@redhat.com> wrote:
 >
-> This is the much more correct fix for my earlier attempt at:
+>> When viewing the /proc/<pid>/status file, one can see output lines like
+>>
+>>   Cpus_allowed:	ffffffff,ffffffff,ffffffff
+>>   Cpus_allowed_list:	0-95
+>>   Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f
+>>   Mems_allowed_list:	0-3
+> Oh dear.
 >
-> https://lkml.org/lkml/2018/12/10/118
+>> It looks really strange that so many bits are displayed in the
+>> "Mems_allowed:" line.  Whereas the "Cpus_allowed:" line is perfectly
+>> fine.
+>>
+>> It is because the nodemask_pr_args() macro uses MAX_NUMNODES as the
+>> number of nodes to iterate. The cpumask_pr_args() macro uses nr_cpu_ids
+>> instead of MAX_CPUS. For nodes, there is a corresponding nr_node_ids.
+>> So it makes sense to use nr_node_ids instead to be consistent with
+>> "Cpus_allowed:".
+>>
+>> With that change, the "Mems_allowed:" line becomes
+>>
+>>   Mems_allowed:	f
+> OK, I guess.  There is a risk of breaking existing userspace, but any
+> half-decent parser should treat the above as equivalent.
 >
-> Short recap:
+> However there are quite a lot of nodemask_pr_args() callers in the tree
+> and this patch potentially changes behaviour at all those sites. 
+> Please work through all those callers and show how the output is
+> altered so we can consider the patch's complete effect.
 >
-> - There's not actually a locking issue, it's just lockdep being a bit
->   too eager to complain about a possible deadlock.
 >
-> - Contrary to what I claimed the real problem is recursion on
->   kn->count. Greg pointed me at sysfs_break_active_protection(), used
->   by the scsi subsystem to allow a sysfs file to unbind itself. That
->   would be a real deadlock, which isn't what's happening here. Also,
->   breaking the active protection means we'd need to manually handle
->   all the lifetime fun.
->
-> - With Rafael we discussed the task_work approach, which kinda works,
->   but has two downsides: It's a functional change for a lockdep
->   annotation issue, and it won't work for the bind file (which needs
->   to get the errno from the driver load function back to userspace).
->
-> - Greg also asked why this never showed up: To hit this you need to
->   unregister a 2nd driver from the unload code of your first driver. I
->   guess only gpus do that. The bug has always been there, but only
->   with a recent patch series did we add more locks so that lockdep
->   built a chain from unbinding the snd-hda driver to the
->   acpi_video_unregister call.
->
-> Full lockdep splat:
->
-> [12301.898799] ============================================
-> [12301.898805] WARNING: possible recursive locking detected
-> [12301.898811] 4.20.0-rc7+ #84 Not tainted
-> [12301.898815] --------------------------------------------
-> [12301.898821] bash/5297 is trying to acquire lock:
-> [12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.898841] but task is already holding lock:
-> [12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> [12301.898856] other info that might help us debug this:
-> [12301.898862]  Possible unsafe locking scenario:
-> [12301.898867]        CPU0
-> [12301.898870]        ----
-> [12301.898874]   lock(kn->count#39);
-> [12301.898879]   lock(kn->count#39);
-> [12301.898883] *** DEADLOCK ***
-> [12301.898891]  May be due to missing lock nesting notation
-> [12301.898899] 5 locks held by bash/5297:
-> [12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-> [12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-> [12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> [12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-> [12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-> [12301.898960] stack backtrace:
-> [12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-> [12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-> [12301.898982] Call Trace:
-> [12301.898989]  dump_stack+0x67/0x9b
-> [12301.898997]  __lock_acquire+0x6ad/0x1410
-> [12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899010]  ? find_held_lock+0x2d/0x90
-> [12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-> [12301.899023]  ? find_held_lock+0x2d/0x90
-> [12301.899030]  ? lock_acquire+0x90/0x180
-> [12301.899036]  lock_acquire+0x90/0x180
-> [12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899049]  __kernfs_remove+0x296/0x310
-> [12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899060]  ? kernfs_name_hash+0xd/0x80
-> [12301.899066]  ? kernfs_find_ns+0x6c/0x100
-> [12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899080]  bus_remove_driver+0x92/0xa0
-> [12301.899085]  acpi_video_unregister+0x24/0x40
-> [12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-> [12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-> [12301.899169]  pci_device_remove+0x36/0xb0
-> [12301.899176]  device_release_driver_internal+0x185/0x240
-> [12301.899183]  unbind_store+0xaf/0x180
-> [12301.899189]  kernfs_fop_write+0x104/0x190
-> [12301.899195]  __vfs_write+0x31/0x180
-> [12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-> [12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-> [12301.899216]  ? __sb_start_write+0x13c/0x1a0
-> [12301.899221]  ? vfs_write+0x17f/0x1b0
-> [12301.899227]  vfs_write+0xb9/0x1b0
-> [12301.899233]  ksys_write+0x50/0xc0
-> [12301.899239]  do_syscall_64+0x4b/0x180
-> [12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [12301.899253] RIP: 0033:0x7f452ac7f7a4
-> [12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-> [12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-> [12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-> [12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-> [12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-> [12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
->
-> Locking around I've noticed that usb and i2c already handle similar
+The /proc/<pid>/status file is the only one that will be affected by
+this patch. I believe the "Mems_allowed_list" is what most users are
+using, not the "Mems_allowed".
 
-"Looking" I suppose? ;-)
+Cheers,
+Longman
 
-Apart from this LGTM, so
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-> recursion problems, where a sysfs file can unbind the same type of
-> sysfs somewhere else in the hierarchy. Relevant commits are:
->
-> commit 356c05d58af05d582e634b54b40050c73609617b
-> Author: Alan Stern <stern@rowland.harvard.edu>
-> Date:   Mon May 14 13:30:03 2012 -0400
->
->     sysfs: get rid of some lockdep false positives
->
-> commit e9b526fe704812364bca07edd15eadeba163ebfb
-> Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-> Date:   Fri May 17 14:56:35 2013 +0200
->
->     i2c: suppress lockdep warning on delete_device
->
-> Implement the same trick for driver bind/unbind.
->
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Ramalingam C <ramalingam.c@intel.com>
-> Cc: Arend van Spriel <aspriel@gmail.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Joe Perches <joe@perches.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> ---
->  drivers/base/bus.c     | 4 ++--
->  include/linux/device.h | 4 ++++
->  2 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index 8bfd27ec73d6..5d2411b848cd 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -195,7 +195,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
->         bus_put(bus);
->         return err;
->  }
-> -static DRIVER_ATTR_WO(unbind);
-> +static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
->
->  /*
->   * Manually attach a device to a driver.
-> @@ -231,7 +231,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
->         bus_put(bus);
->         return err;
->  }
-> -static DRIVER_ATTR_WO(bind);
-> +static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
->
->  static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
->  {
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 1b25c7a43f4c..d2cb1a6c5d95 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -326,6 +326,10 @@ struct driver_attribute {
->         struct driver_attribute driver_attr_##_name = __ATTR_RO(_name)
->  #define DRIVER_ATTR_WO(_name) \
->         struct driver_attribute driver_attr_##_name = __ATTR_WO(_name)
-> +#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-> +       struct driver_attribute driver_attr_##_name =           \
-> +               __ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
-> +
->
->  extern int __must_check driver_create_file(struct device_driver *driver,
->                                         const struct driver_attribute *attr);
-> --
-> 2.20.0.rc1
->
