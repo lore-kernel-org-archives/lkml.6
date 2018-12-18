@@ -4,54 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675F7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0D0C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B4F218AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC0F218A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171022;
-	bh=dsy2YhwR2nlv+p5/mn/YuJE3yOKcsU29OQ88s+1DFDU=;
+	s=default; t=1545171034;
+	bh=2XbbrSZ3VWRHzIl/rl3R6odns74eUNOIkDCSwgQAQIc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MS12y9Mq7puHdGTdAEOFpngeMMdqqiLc5oUKXMJsmY/AVu0Ll+pv/mD4oJZ8xKzmh
-	 VO/hkhU14N868prVAzkgNfZN5wb5BRtUiB7T2FhlcTpw5NH8bwQEOdZJTIlzyumnvQ
-	 c7otOEVNkaGJsuxDGFZw6pMTpyf5/wzya7XhQzd4=
+	b=wLQTncxGDbEuOYmrVHyBimQm2/Fn6Z1M7+ITAyCyVJUVm4IKz/dmznVpDqWr729Ho
+	 XtxWbGYen0n6MuQFCzQ+nRmPbcxpxKKOlQLYdEuw/mzKOVdOcJJ74viWpCYbtKsy59
+	 +C8nvAb2FXT312wyHd1QFTmV0oU/mba/qzlV+oDY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbeLRWKV (ORCPT
+        id S1728053AbeLRWKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:10:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38784 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:10:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbeLRWKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:10:20 -0500
+        id S1726706AbeLRWKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:10:31 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E462218A2;
-        Tue, 18 Dec 2018 22:10:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FC81218A4;
+        Tue, 18 Dec 2018 22:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171019;
-        bh=dsy2YhwR2nlv+p5/mn/YuJE3yOKcsU29OQ88s+1DFDU=;
+        s=default; t=1545171030;
+        bh=2XbbrSZ3VWRHzIl/rl3R6odns74eUNOIkDCSwgQAQIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fFKnYZ3JN1bjXAUhFB788+4ZJO3vDbmCk519n9yd/4PobrnbVRldeDe0EOPKSTyJx
-         MQMHSfpnnr0j5HMxSAtHFSTq0tHJPRKjBTVOFnMT5ZNrZxC5AlqzxtH30xWV0zPJt8
-         p885XvKcnP4Mlu5s8qlYzkO4wDojUkgJo3EXl5WA=
+        b=L6sUO9NNzapzceUPXET1PMApjDeULMFOzKUIn2Trz4t2WYNZ2N1rfuA/klwi52dZM
+         kxdKzO5vLQ0UFcBYxx73p903S+vZHUTIK8HUNcEGziO4fmCGBOfoEtOt+TGxk/S1hr
+         RUBI8S5NM9twPw12ki+2BImGdYvc9GWIOPmTbEFA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Mike Leach <mike.leach@linaro.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Robert Walker <robert.walker@arm.com>,
         coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 27/63] perf cs-etm: Avoid stale branch samples when flush packet
-Date:   Tue, 18 Dec 2018 19:06:57 -0300
-Message-Id: <20181218220733.15839-28-acme@kernel.org>
+Subject: [PATCH 28/63] perf cs-etm: Remove unused 'trace_on' in cs_etm_decoder
+Date:   Tue, 18 Dec 2018 19:06:58 -0300
+Message-Id: <20181218220733.15839-29-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -64,112 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Leo Yan <leo.yan@linaro.org>
 
-At the end of trace buffer handling, function cs_etm__flush() is invoked
-to flush any remaining branch stack entries.  As a side effect, it also
-generates branch sample, because the 'etmq->packet' doesn't contains any
-new coming packet but point to one stale packet after packets swapping,
-so it wrongly makes synthesize branch samples with stale packet info.
+cs_etm_decoder::trace_on is being assigned when TRACE_ON or NO_SYNC
+element is coming, but it is never used hence it is redundant and can
+be removed.
 
-We could review below detailed flow which causes issue:
+So let's remove 'trace_on' field from cs_etm_decoder struct.
 
-  Packet1: start_addr=0xffff000008b1fbf0 end_addr=0xffff000008b1fbfc
-  Packet2: start_addr=0xffff000008b1fb5c end_addr=0xffff000008b1fb6c
-
-  step 1: cs_etm__sample():
-	sample: ip=(0xffff000008b1fbfc-4) addr=0xffff000008b1fb5c
-
-  step 2: flush packet in cs_etm__run_decoder():
-	cs_etm__run_decoder()
-	  `-> err = cs_etm__flush(etmq, false);
-	sample: ip=(0xffff000008b1fb6c-4) addr=0xffff000008b1fbf0
-
-Packet1 and packet2 are two continuous packets, when packet2 is the new
-coming packet, cs_etm__sample() generates branch sample for these two
-packets and use [packet1::end_addr - 4 => packet2::start_addr] as branch
-jump flow, thus we can see the first generated branch sample in step 1.
-At the end of cs_etm__sample() it swaps packets so 'etm->prev_packet'=
-packet2 and 'etm->packet'=packet1, so far it's okay for branch sample.
-
-If packet2 is the last one packet in trace buffer, even there have no
-any new coming packet, cs_etm__run_decoder() invokes cs_etm__flush() to
-flush branch stack entries as expected, but it also generates branch
-samples by taking 'etm->packet' as a new coming packet, thus the branch
-jump flow is as [packet2::end_addr - 4 =>  packet1::start_addr]; this
-is the second sample which is generated in step 2.  So actually the
-second sample is a stale sample and we should not generate it.
-
-This patch introduces a new function cs_etm__end_block(), at the end of
-trace block this function is invoked to only flush branch stack entries
-and thus can avoid to generate branch sample for stale packet.
-
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Mike Leach <mike.leach@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Robert Walker <robert.walker@arm.com>
 Cc: coresight@lists.linaro.org
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1544513908-16805-3-git-send-email-leo.yan@linaro.org
+Link: http://lkml.kernel.org/r/1544513908-16805-4-git-send-email-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm.c | 35 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 789707bc4e9e..ffc4fe5c0b7e 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1055,6 +1055,39 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
- 	return err;
- }
- 
-+static int cs_etm__end_block(struct cs_etm_queue *etmq)
-+{
-+	int err;
-+
-+	/*
-+	 * It has no new packet coming and 'etmq->packet' contains the stale
-+	 * packet which was set at the previous time with packets swapping;
-+	 * so skip to generate branch sample to avoid stale packet.
-+	 *
-+	 * For this case only flush branch stack and generate a last branch
-+	 * event for the branches left in the circular buffer at the end of
-+	 * the trace.
-+	 */
-+	if (etmq->etm->synth_opts.last_branch &&
-+	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-+		/*
-+		 * Use the address of the end of the last reported execution
-+		 * range.
-+		 */
-+		u64 addr = cs_etm__last_executed_instr(etmq->prev_packet);
-+
-+		err = cs_etm__synth_instruction_sample(
-+			etmq, addr,
-+			etmq->period_instructions);
-+		if (err)
-+			return err;
-+
-+		etmq->period_instructions = 0;
-+	}
-+
-+	return 0;
-+}
-+
- static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- {
- 	struct cs_etm_auxtrace *etm = etmq->etm;
-@@ -1137,7 +1170,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- 
- 		if (err == 0)
- 			/* Flush any remaining branch stack entries */
--			err = cs_etm__flush(etmq);
-+			err = cs_etm__end_block(etmq);
- 	}
- 
- 	return err;
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 0b4c8629f578..97b39b1f5759 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -36,7 +36,6 @@
+ struct cs_etm_decoder {
+ 	void *data;
+ 	void (*packet_printer)(const char *msg);
+-	bool trace_on;
+ 	dcd_tree_handle_t dcd_tree;
+ 	cs_etm_mem_cb_type mem_access;
+ 	ocsd_datapath_resp_t prev_return;
+@@ -411,12 +410,10 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+ 	case OCSD_GEN_TRC_ELEM_UNKNOWN:
+ 		break;
+ 	case OCSD_GEN_TRC_ELEM_NO_SYNC:
+-		decoder->trace_on = false;
+ 		break;
+ 	case OCSD_GEN_TRC_ELEM_TRACE_ON:
+ 		resp = cs_etm_decoder__buffer_trace_on(decoder,
+ 						       trace_chan_id);
+-		decoder->trace_on = true;
+ 		break;
+ 	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
+ 		resp = cs_etm_decoder__buffer_range(decoder, elem,
 -- 
 2.19.2
 
