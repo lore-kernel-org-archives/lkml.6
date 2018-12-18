@@ -6,47 +6,52 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC13C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8210C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409E221855
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B78A421848
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545101781;
-	bh=huE7+kw7prZWjnTByz2rTYX+7JxBV1By3zjE6tcZvOQ=;
+	s=default; t=1545101784;
+	bh=JSnqW4EVNCLR8clO+ZtGh9AaHwHlbjePrfHlvSYS+c0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c3+pFIl0cox5YGaDzyzq/eiM+4LxkNOgUEqcN68fknby+AjWZdwnycYKrTxuMPGly
-	 NmjZ0BatgdK93huCb/MdV0b5cSY5X/z6VA1jUhgYmmMMJNmBlKVmnStSr6TH59kLvJ
-	 rCV00YokbUNrk0gStdRXAYHwfnNmZIPyhaRVQwHY=
+	b=fAqnllnz1Bd/2QCN2hkD5ciIkP/60i54qXPr1H9gyy+dTfbnE/3GJaBEY4lxRGpD3
+	 8jsQJiZyMIX5YEgVmhBVTP6LKtTHQQyPwEEz3nhZmLbCVIhUqyt0IjK13U4zt0RTvZ
+	 3z2Sl5y1LwAsrqhQt+IEmJFofyoDezE3drIxjap0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeLRC4U (ORCPT
+        id S1726661AbeLRC4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:56:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 21:56:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbeLRC4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:56:11 -0500
+        id S1726588AbeLRC4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 21:56:18 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.76.210.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1A5F217D9;
-        Tue, 18 Dec 2018 02:56:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FA24217D9;
+        Tue, 18 Dec 2018 02:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545101770;
-        bh=huE7+kw7prZWjnTByz2rTYX+7JxBV1By3zjE6tcZvOQ=;
+        s=default; t=1545101778;
+        bh=JSnqW4EVNCLR8clO+ZtGh9AaHwHlbjePrfHlvSYS+c0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LN/9WacbMPk1VvyOEwSVccMq2nohKmzjHhc7vfd08wxztCnlccAj1ekWYTaUK3DP0
-         h15vtQVKLFu60KBu7XGblbOLgwvwrmRdkRfFLIRC/VsruHl5TRSaxqIm6MS+FxaIyn
-         dlJMPhiP8LnSSv2RN6YjHzFD8Y8L5tI7J01n+Scc=
+        b=dDJ6scEJcsvTCaxGNo6kmtsu5zIajhjdqp4cOfaoDAXf+B1/FnYQ5uYIO8mHanZah
+         RAxCiNBKu8Dqv6WbZDntgf47R8DEKgaWXipJDaJjON2r2b47ERW2hXtTafjH6nDdIw
+         AKwCFpoj3SCmGWkesn7Z4vHDqzYFYco39hAXKv7c=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-acpi@vger.kernel.org
 Cc:     Sinan Kaya <okaya@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>, Lv Zheng <lv.zheng@intel.com>,
+        Anuj Mittal <anuj.mittal@intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        devel@acpica.org (open list:ACPI COMPONENT ARCHITECTURE (ACPICA)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v11 2/7] ACPI / OSL: Stub out acpi_os_(read/write)_pci_configurations()
-Date:   Tue, 18 Dec 2018 02:56:01 +0000
-Message-Id: <20181218025606.32668-3-okaya@kernel.org>
+Subject: [PATCH v11 4/7] ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is unset
+Date:   Tue, 18 Dec 2018 02:56:03 +0000
+Message-Id: <20181218025606.32668-5-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181218025606.32668-1-okaya@kernel.org>
 References: <20181218025606.32668-1-okaya@kernel.org>
@@ -57,60 +62,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Getting ready to allow CONFIG_PCI to be unset with ACPI enabled. Stub out
-acpi_os_read_pci_configuration and acpi_os_write_pci_configuration
-functions when CONFIG_PCI is not defined.
+Now that we allow CONFIG_PCI to be unset, remove useless code from ACPICA
+too.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/acpi/osl.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/acpi/acpica/Makefile    | 2 +-
+ drivers/acpi/acpica/achware.h   | 9 +++++++++
+ include/acpi/platform/aclinux.h | 4 ++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index b48874b8e1ea..524fd5f33ea4 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -773,6 +773,7 @@ acpi_status
- acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
- 			       u64 *value, u32 width)
- {
-+#ifdef CONFIG_PCI
- 	int result, size;
- 	u32 value32;
+diff --git a/drivers/acpi/acpica/Makefile b/drivers/acpi/acpica/Makefile
+index b14621da5413..59700433a96e 100644
+--- a/drivers/acpi/acpica/Makefile
++++ b/drivers/acpi/acpica/Makefile
+@@ -77,13 +77,13 @@ acpi-y +=		\
+ 	hwacpi.o	\
+ 	hwesleep.o	\
+ 	hwgpe.o		\
+-	hwpci.o		\
+ 	hwregs.o	\
+ 	hwsleep.o	\
+ 	hwvalid.o	\
+ 	hwxface.o	\
+ 	hwxfsleep.o
  
-@@ -799,12 +800,19 @@ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
- 	*value = value32;
++acpi-$(CONFIG_PCI) += hwpci.o
+ acpi-$(ACPI_FUTURE_USAGE) += hwtimer.o
  
- 	return (result ? AE_ERROR : AE_OK);
-+#else
-+	int rc;
-+
-+	rc = pr_warn_once("PCI configuration space access is not supported\n");
-+	return rc ? AE_SUPPORT : AE_OK;
-+#endif
- }
+ acpi-y +=		\
+diff --git a/drivers/acpi/acpica/achware.h b/drivers/acpi/acpica/achware.h
+index 43ce67a9da1f..ef99e2fc37f8 100644
+--- a/drivers/acpi/acpica/achware.h
++++ b/drivers/acpi/acpica/achware.h
+@@ -106,11 +106,20 @@ acpi_hw_enable_runtime_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
+ 				 struct acpi_gpe_block_info *gpe_block,
+ 				 void *context);
  
++#ifdef ACPI_PCI_CONFIGURED
+ /*
+  * hwpci - PCI configuration support
+  */
  acpi_status
- acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
- 				u64 value, u32 width)
- {
-+#ifdef CONFIG_PCI
- 	int result, size;
- 
- 	switch (width) {
-@@ -826,6 +834,12 @@ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
- 				reg, size, value);
- 
- 	return (result ? AE_ERROR : AE_OK);
+ acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id,
+ 		      acpi_handle root_pci_device, acpi_handle pci_region);
 +#else
-+	int rc;
-+
-+	rc = pr_warn_once("PCI configuration space access is not supported\n");
-+	return rc ? AE_SUPPORT : AE_OK;
++static inline acpi_status
++acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id, acpi_handle root_pci_device,
++		      acpi_handle pci_region)
++{
++	return AE_SUPPORT;
++}
 +#endif
- }
  
- static void acpi_os_execute_deferred(struct work_struct *work)
+ #endif				/* __ACHWARE_H__ */
+diff --git a/include/acpi/platform/aclinux.h b/include/acpi/platform/aclinux.h
+index 7451b3bca83a..e3d21d014fcc 100644
+--- a/include/acpi/platform/aclinux.h
++++ b/include/acpi/platform/aclinux.h
+@@ -33,6 +33,10 @@
+ 
+ /* Kernel specific ACPICA configuration */
+ 
++#ifdef CONFIG_PCI
++#define ACPI_PCI_CONFIGURED
++#endif
++
+ #ifdef CONFIG_ACPI_REDUCED_HARDWARE_ONLY
+ #define ACPI_REDUCED_HARDWARE 1
+ #endif
 -- 
 2.19.0
 
