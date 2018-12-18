@@ -2,90 +2,132 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0FDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072F4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D997B2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D659B2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbeLRItO (ORCPT
+        id S1726588AbeLRItU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:49:14 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16149 "EHLO huawei.com"
+        Tue, 18 Dec 2018 03:49:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46588 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726316AbeLRItM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:49:12 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 04226EBF28B95;
-        Tue, 18 Dec 2018 16:49:08 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Dec 2018
- 16:49:08 +0800
-Subject: Re: [f2fs-dev] [PATCH 3/3] f2fs: flush stale issued discard
- candidates
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20181214050127.45025-1-jaegeuk@kernel.org>
- <20181214050127.45025-3-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <639940cc-f7a8-e679-3b28-3b3b2485652b@huawei.com>
-Date:   Tue, 18 Dec 2018 16:49:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726316AbeLRItS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 03:49:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 48E85AFD3;
+        Tue, 18 Dec 2018 08:49:16 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 09:49:14 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] livepatch: fix non-static warnings
+In-Reply-To: <20ef1d3a-2916-ce00-2938-3397746efac9@redhat.com>
+Message-ID: <alpine.LSU.2.21.1812180934090.9644@pobox.suse.cz>
+References: <1544965657-26804-1-git-send-email-hofrat@osadl.org> <alpine.LSU.2.21.1812171256390.3087@pobox.suse.cz> <20ef1d3a-2916-ce00-2938-3397746efac9@redhat.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181214050127.45025-3-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/14 13:01, Jaegeuk Kim wrote:
-> Sometimes, I could observe # of issuing_discard to be 1 which blocks background
-> jobs due to is_idle()=false.
-> The only way to get out of it was to trigger gc_urgent. This patch avoids that
-> by checking any candidates as done in the list.
+On Mon, 17 Dec 2018, Joe Lawrence wrote:
 
-Well, as below code, once we issued discard commands, we will wait all
-queued discard end their IO, so do you know what flow can cause such
-condition...?
-
-		issued = __issue_discard_cmd(sbi, &dpolicy);
-		if (issued > 0) {
-			__wait_all_discard_cmd(sbi, &dpolicy);
-
-Or, I doubt that 'issued' statistical info could be wrong.
-
-Thanks,
-
+> On 12/17/2018 07:03 AM, Miroslav Benes wrote:
+> > Hi,
+> > 
+> > I'm sorry for being late to the party.
+> > 
+> > On Sun, 16 Dec 2018, Nicholas Mc Guire wrote:
+> > 
+> >> Sparse reported warnings about non-static symbols. For the variables
+> >> a simple static attribute is fine - for those symbols referenced by
+> >> livepatch via klp_func the symbol-names must be unmodified in the
+> >> symbol table - to resolve this the __noclone attribute is used
+> >> for the shared statically declared functions.
+> >>
+> >> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> >> Suggested-by: Joe Lawrence <joe.lawrence@redhat.com>
+> >> Link: https://lkml.org/lkml/2018/12/13/827
+> > 
+> > A nit, but I'd reorder the tags. Link, Suggested-by:, Signed-off-by:. Also 
+> > it would be great if you used https://lkml.kernel.org/r/${Msg-ID} 
+> > redirection.
+> > 
+> >> ---
+> >>
+> >> V2: not all static functions shared need to carry the __noclone
+> >>     attribute only those that need to be resolved at runtime by
+> >>     livepatch - so drop the unnecessary __noclone attributes as
+> >>     well as the Note on __noclone as suggested by Joe Lawrence
+> >>     <joe.lawrence@redhat.com> - thanks !
+> > 
+> > I talked to Martin Jambor (GCC) and he suggested __attribute__((used)). It 
+> > should be better than __noclone, which was reportedly implemented only for 
+> > testing purposes (which is why it does not imply noinline, although 
+> > inlining internally uses cloning). Newer gcc also has "noipa" attribute, 
+> > but "used" would definitely be safe.
+> > 
+> > Sorry for not responding earlier.
+> >
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/segment.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> Hi Miroslav,
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 49ea9009ab5a..acbbc924e518 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -1651,6 +1651,10 @@ static int issue_discard_thread(void *data)
->  		if (dcc->discard_wake)
->  			dcc->discard_wake = 0;
->  
-> +		/* clean up pending candidates before going to sleep */
-> +		if (atomic_read(&dcc->queued_discard))
-> +			__wait_all_discard_cmd(sbi, NULL);
-> +
->  		if (try_to_freeze())
->  			continue;
->  		if (f2fs_readonly(sbi->sb))
+> Thanks for following up on this. "noipa" would have been nice to use,
+> but as you say, is a newer gcc attribute.
 > 
+> Regarding "used" vs. "noclone", can we assume that "used" implies that
+> the function name remains unchanged?
 
+I am not sure. I'd argue that it does imply that, but it could just be 
+a consequence without any guarantees. My understanding is that gcc cannot 
+assume about a symbol and its references. So it should be preserved as is.
+ 
+> The gcc online doc [1] speaks about ensuring that "code must be
+> emitted".  This reads like it solves our
+> static-function-not-directly-referenced problem, but isn't explicit
+> about naming.
+
+Correct.
+
+>     used
+> 
+>     This attribute, attached to a function, means that code must be
+>     emitted for the function even if it appears that the function is not
+>     referenced. This is useful, for example, when the function is
+>     referenced only in inline assembly.
+> 
+> Perhaps it's equivalent to a "I want to keep this function and leave
+> it's symbols alone" attribute.  FWIW, I modified Nicholas' change on my
+> box to use "used" and it worked as Martin advertised, so it would get my
+> Ack.
+> 
+> I'm just being picky about its documentation and how we should note its
+> usage in the v3 patch.  Think that s/__noclone/used/g of the v2 commit
+> message would be sufficient?
+
+We could rephrase it. After all it is not only about symbol names in the 
+symbol table. The traceable/patchable code has to be present...
+
+"Sparse reported warnings about non-static symbols. For the variables
+a simple static attribute is fine - for the functions referenced by
+livepatch via klp_func the symbol-names must be unmodified in the
+symbol table and the patchable code has to be emitted.
+
+Attach __used attribute to the shared statically declared functions."
+
+?
+
+Miroslav
