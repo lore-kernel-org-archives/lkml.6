@@ -2,103 +2,117 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8A9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF36C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA3432133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3695D218A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbeLRRal (ORCPT
+        id S1727196AbeLRRbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:30:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43360 "EHLO mx1.redhat.com"
+        Tue, 18 Dec 2018 12:31:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbeLRRal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:30:41 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726555AbeLRRbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:31:38 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67374DC8FF;
-        Tue, 18 Dec 2018 17:30:41 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 49951679F0;
-        Tue, 18 Dec 2018 17:30:38 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>
-Cc:     linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH] include/linux/nodemask.h: Use nr_node_ids instead of MAX_NUMNODES in nodemask_pr_args
-Date:   Tue, 18 Dec 2018 12:30:31 -0500
-Message-Id: <1545154231-22824-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 18 Dec 2018 17:30:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66D222133F;
+        Tue, 18 Dec 2018 17:31:36 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 12:31:34 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Zhou Chengming <zhouchengming1@huawei.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V2 7/9] x86/alternative: Batch of patch operations
+Message-ID: <20181218123134.2bdcc042@gandalf.local.home>
+In-Reply-To: <327a30e43e27ed3a0300952126bf36fae6652b74.1545149539.git.bristot@redhat.com>
+References: <cover.1545149539.git.bristot@redhat.com>
+        <327a30e43e27ed3a0300952126bf36fae6652b74.1545149539.git.bristot@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When viewing the /proc/<pid>/status file, one can see output lines like
+On Tue, 18 Dec 2018 17:46:36 +0100
+Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
 
-  Cpus_allowed:	ffffffff,ffffffff,ffffffff
-  Cpus_allowed_list:	0-95
-  Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f
-  Mems_allowed_list:	0-3
+> +void text_poke_bp_batch(struct text_to_poke *tp, unsigned int nr_entries)
+> +{
+> +	unsigned int i;
+> +	unsigned char int3 = 0xcc;
+> +	int patched_all_but_first = 0;
+> +
+> +	bp_int3_tpv = tp;
+> +	bp_int3_tpv_nr = nr_entries;
+> +	bp_patching_in_progress = true;
+> +	/*
+> +	 * Corresponding read barrier in int3 notifier for making sure the
+> +	 * in_progress and handler are correctly ordered wrt. patching.
+> +	 */
+> +	smp_wmb();
+> +
+> +	for (i = 0; i < nr_entries; i++)
+> +		text_poke_bp_set_handler(tp[i].addr, tp[i].handler, int3);
+> +
+> +	on_each_cpu(do_sync_core, NULL, 1);
+> +
+> +	for (i = 0; i < nr_entries; i++) {
+> +		if (tp->len - sizeof(int3) > 0) {
 
-It looks really strange that so many bits are displayed in the
-"Mems_allowed:" line.  Whereas the "Cpus_allowed:" line is perfectly
-fine.
+Should this be:
 
-It is because the nodemask_pr_args() macro uses MAX_NUMNODES as the
-number of nodes to iterate. The cpumask_pr_args() macro uses nr_cpu_ids
-instead of MAX_CPUS. For nodes, there is a corresponding nr_node_ids.
-So it makes sense to use nr_node_ids instead to be consistent with
-"Cpus_allowed:".
+		if (tp[i].len - sizeof(int3) > 0) {
 
-With that change, the "Mems_allowed:" line becomes
+?
 
-  Mems_allowed:	f
+-- Steve
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/nodemask.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
-index 5a30ad5..ba07661 100644
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -97,6 +97,8 @@
- 
- typedef struct { DECLARE_BITMAP(bits, MAX_NUMNODES); } nodemask_t;
- extern nodemask_t _unused_nodemask_arg_;
-+extern int nr_node_ids;
-+extern int nr_online_nodes;
- 
- /**
-  * nodemask_pr_args - printf args to output a nodemask
-@@ -108,7 +110,7 @@
- 				__nodemask_pr_bits(maskp)
- static inline unsigned int __nodemask_pr_numnodes(const nodemask_t *m)
- {
--	return m ? MAX_NUMNODES : 0;
-+	return m ? nr_node_ids : 0;
- }
- static inline const unsigned long *__nodemask_pr_bits(const nodemask_t *m)
- {
-@@ -444,9 +446,6 @@ static inline int next_memory_node(int nid)
- 	return next_node(nid, node_states[N_MEMORY]);
- }
- 
--extern int nr_node_ids;
--extern int nr_online_nodes;
--
- static inline void node_set_online(int nid)
- {
- 	node_set_state(nid, N_ONLINE);
--- 
-1.8.3.1
+> +			patch_all_but_first_byte(tp[i].addr, tp[i].opcode,
+> +						 tp[i].len, int3);
+> +			patched_all_but_first++;
+> +		}
+> +	}
+> +
+> +	if (patched_all_but_first) {
+> +		/*
+> +		 * According to Intel, this core syncing is very likely
+> +		 * not necessary and we'd be safe even without it. But
+> +		 * better safe than sorry (plus there's not only Intel).
+> +		 */
+> +		on_each_cpu(do_sync_core, NULL, 1);
+> +	}
+> +
+> +	for (i = 0; i < nr_entries; i++)
+> +		patch_first_byte(tp[i].addr, tp[i].opcode, int3);
+> +
+> +	on_each_cpu(do_sync_core, NULL, 1);
+> +	/*
+> +	 * sync_core() implies an smp_mb() and orders this store against
+> +	 * the writing of the new instruction.
+> +	 */
+> +	bp_int3_tpv_nr = 0;
+> +	bp_int3_tpv = NULL;
+> +	bp_patching_in_progress = false;
+> +}
 
