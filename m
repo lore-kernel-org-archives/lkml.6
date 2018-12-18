@@ -2,151 +2,182 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 195D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000A7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27FE21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37C72184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:13:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="xrTzBWzr"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N5M5NqY0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeLRTIH (ORCPT
+        id S1726719AbeLRTNF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:08:07 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39520 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbeLRTIH (ORCPT
+        Tue, 18 Dec 2018 14:13:05 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46556 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726575AbeLRTNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:08:07 -0500
-Received: by mail-ot1-f67.google.com with SMTP id n8so16719270otl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:08:06 -0800 (PST)
+        Tue, 18 Dec 2018 14:13:04 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so8232308ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:13:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7C9qK6ZnGrnhIYBcuzbzCgP7C9CgQGqy2EGw/nx6yD8=;
-        b=xrTzBWzrT6wsl3MijPV/2h945llENr46VN3J8AQGgHc5lobX1FoGihRtW+aFZluOUE
-         prnSWmd7WvNdZVt89qhiHGQibKc+rGJ5st1ppqxBgUWRogmStnh5RUJOU1+Mv43UeKNB
-         x35phab8o0JpYf9UAm5PI8nB+ozU91IXFlfCxd3Am3HOGxQOyg70G61f7nMKTzzYDJWg
-         x153EWn/4MW5zcdg8vLaQJC7bCU+TF1lq+OEejXFPqeHn5RB2n5eu//wrWsOWuuurLNe
-         Dug1i4Y8MzXlNT9nuXKDDOqWiyESKXLcWc8wFha1p5NdsdJKlZm3IqXZK/rVb1AnX7bu
-         4AFw==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:references:message-id
+         :in-reply-to:to:cc:user-agent:subject:from:date;
+        bh=U45WOpdJOI0IuCowowF4NcoMlzPRGfjJKE4V0ZrtBVI=;
+        b=N5M5NqY00D9UqGa+WBNQZwhP9X4edSJ+CSEHskLt89QCo5TZ6cIo7CTNtrP+8FzpF/
+         l6ajtmX5beAwtxzX5fkno4Mb0pxm4yHSVo4gT2lDFWIKgqJAeL1U3d5SKNUdCuF5gXTD
+         4+RM4LwUuw7Zkw0RETUyUQrst8pAOUv3fmd3k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7C9qK6ZnGrnhIYBcuzbzCgP7C9CgQGqy2EGw/nx6yD8=;
-        b=kh2qjAej7rBnmx/ddNd984oESgEy1dcqEyJxq6nYXWGTCRVPa3ou/WPAGAdfTkvXhN
-         dhvo5xflt6cz2re6wEBx9qHTyIucBAoyYDAvdzBmgHFnKVcO4GlBFM/3VL6XdSVHaz7V
-         3BGbcQMgklZU3YNp+jImSB8ULYVVveOUHsTwGUB3QlzykAnJNao9/j6oJa4xPBDFSnpO
-         gSwODdWyfPVsc+AWCT571iJclbb1W+X6kMvmu4ZgpBRObJQ0J9bAB5kBxNr6atuDQoHY
-         1l0vBWCb8IK/0uDSBgjcxn0rymFVqP/EYabvtPC9hCmlnjxNtywNPkG5XFBAoVkIwb98
-         214w==
-X-Gm-Message-State: AA+aEWYb9lvgIh0gPgde3eNCcORSVDSixihjoaj9aRuIwcouu6nWl6QS
-        c0Px2oLa0bCL7V8INjP8ul68I6Bi0F0BldyPjAXnSw==
-X-Google-Smtp-Source: AFSGD/WBrSTyTvdB7ZEFeOdrbyJMhNX5NI3eoXB+h5HzcbkbHUYoHkKpqlqeJ3s3YYpu5KW8tGc4ygoeQWuMJIFmwBY=
-X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr13173113oti.367.1545160086563;
- Tue, 18 Dec 2018 11:08:06 -0800 (PST)
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :references:message-id:in-reply-to:to:cc:user-agent:subject:from
+         :date;
+        bh=U45WOpdJOI0IuCowowF4NcoMlzPRGfjJKE4V0ZrtBVI=;
+        b=pTRCHUBCR53E9DKhIDLz5qiS/EZR4u098kbBkkkblrdgOYehAxZLeF6ujpbCvqbSzM
+         UvZvJs35N81xU92TtJmaMx8W9kqIyJQvLQCX4sw2BEWRQ5ImbO93ongRe2koqm2limnm
+         uRD4XoFJhv20GITnT+ToQUS8TZEYDfsmWkscAIJOJnBjB8Ch+qpfMIDfh2IgRTtMB/iG
+         zFpuCLCS3F2+qZujt+iTXIM6x6AXTowc5bGQZgR7IT8+Mdge1mCDIRoBV//29hv04iQH
+         6FaGS2CPDMhq9d+F/mZtxluGzFsZ64frehnrLAALDerbbUXapvmmT66P4YcC0lIQBh7T
+         jHbw==
+X-Gm-Message-State: AA+aEWYJoVicwdPHdZaU/uCJpDn4gkHx7jS8sQUylkOOnSslojaiUUb1
+        XSWNXcqAe+SJqv3Cpb5kmk+UEw==
+X-Google-Smtp-Source: AFSGD/WHGTqbo4viKbWozYOjYU/Qtow0vcjbL/+Nd0TEOPK55rvaWCL9cPuAj2yfG254cW8A+yW8Ow==
+X-Received: by 2002:a17:902:b48b:: with SMTP id y11mr16924122plr.200.1545160383404;
+        Tue, 18 Dec 2018 11:13:03 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id h8sm23368405pfo.162.2018.12.18.11.13.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 11:13:02 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154483852617.1672629.2068988045031389440.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181216124335.GB30212@rapoport-lnx> <CAPcyv4hXPm4GnBheTZ5WN6s5Kiw02MW1aWA-s2qC8BqfthT3Yg@mail.gmail.com>
- <20181218091121.GA25499@rapoport-lnx>
-In-Reply-To: <20181218091121.GA25499@rapoport-lnx>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 18 Dec 2018 11:07:55 -0800
-Message-ID: <CAPcyv4iDkEo+xG-AJetOfp12RO8qDV0t=AF3rvoq5GKc5VFuzw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+References: <1544687394-331-1-git-send-email-tdas@codeaurora.org> <1544687394-331-3-git-send-email-tdas@codeaurora.org> <154469510700.19322.7762676027024031719@swboyd.mtv.corp.google.com> <20181213100506.sy3haqjbxtmkthvt@vireshk-i7> <154469596755.19322.16319349046735344084@swboyd.mtv.corp.google.com> <20181218054545.k77jh5lxvmj2zott@vireshk-i7>
+Message-ID: <154516038159.238328.2917665370794230521@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181218054545.k77jh5lxvmj2zott@vireshk-i7>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        evgreen@google.com, Matthias Kaehlcke <mka@chromium.org>,
+        vincent.guittot@linaro.org
+User-Agent: alot/0.8
+Subject: Re: [PATCH v12 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Tue, 18 Dec 2018 11:13:01 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 1:11 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Mon, Dec 17, 2018 at 11:56:36AM -0800, Dan Williams wrote:
-> > On Sun, Dec 16, 2018 at 4:43 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > >
-> > > On Fri, Dec 14, 2018 at 05:48:46PM -0800, Dan Williams wrote:
-> > > > Randomization of the page allocator improves the average utilization of
-> > > > a direct-mapped memory-side-cache. Memory side caching is a platform
-> > > > capability that Linux has been previously exposed to in HPC
-> > > > (high-performance computing) environments on specialty platforms. In
-> > > > that instance it was a smaller pool of high-bandwidth-memory relative to
-> > > > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-> > > > be found on general purpose server platforms where DRAM is a cache in
-> > > > front of higher latency persistent memory [1].
-> > [..]
-> > > > diff --git a/mm/memblock.c b/mm/memblock.c
-> > > > index 185bfd4e87bb..fd617928ccc1 100644
-> > > > --- a/mm/memblock.c
-> > > > +++ b/mm/memblock.c
-> > > > @@ -834,8 +834,16 @@ int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
-> > > >               return ret;
-> > > >
-> > > >       for (i = start_rgn; i < end_rgn; i++) {
-> > > > -             type->regions[i].cache_size = cache_size;
-> > > > -             type->regions[i].direct_mapped = direct_mapped;
-> > > > +             struct memblock_region *r = &type->regions[i];
-> > > > +
-> > > > +             r->cache_size = cache_size;
-> > > > +             r->direct_mapped = direct_mapped;
-> > >
-> > > I think this change can be merged into the previous patch
-> >
-> > Ok, will do.
-> >
-> > > > +             /*
-> > > > +              * Enable randomization for amortizing direct-mapped
-> > > > +              * memory-side-cache conflicts.
-> > > > +              */
-> > > > +             if (r->size > r->cache_size && r->direct_mapped)
-> > > > +                     page_alloc_shuffle_enable();
-> > >
-> > > It seems that this is the only use for ->direct_mapped in the memblock
-> > > code. Wouldn't cache_size != 0 suffice? I.e., in the code that sets the
-> > > memblock region attributes, the cache_size can be set to 0 for the non
-> > > direct mapped caches, isn't it?
-> > >
-> >
-> > The HMAT specification allows for other cache-topologies, so it's not
-> > sufficient to just look for non-zero size when a platform implements a
-> > set-associative cache. The expectation is that a set-associative cache
-> > would not need the kernel to perform memory randomization to improve
-> > the cache utilization.
-> >
-> > The check for memory size > cache-size is a sanity check for a
-> > platform BIOS or system configuration that mis-reports or mis-sizes
-> > the cache.
->
-> Apparently I didn't explain my point well.
->
-> The acpi_numa_memory_affinity_init() already knows whether the cache is
-> direct mapped or a set-associative. It can just skip calling
-> memblock_set_sidecache() for the set-associative case.
->
-> Another thing I've noticed only now, is that memory randomization is
-> enabled if there is at least one memory region with a direct mapped side
-> cache attached and once the randomization is on the cache size and the
-> mapping mode do not matter. So, I think it's not necessary to store them in
-> the memory region at all.
+Quoting Viresh Kumar (2018-12-17 21:45:45)
+> Hi Stephen,
+>=20
+> On 13-12-18, 02:12, Stephen Boyd wrote:
+> > Quoting Viresh Kumar (2018-12-13 02:05:06)
+> > > On 13-12-18, 01:58, Stephen Boyd wrote:
+> > > > BTW, Viresh, I see a lockdep splat when cpufreq_init returns an err=
+or
+> > > > upon bringing the policy online the second time. I guess cpufreq_st=
+ats
+> > > > aren't able to be freed from there because they take locks in diffe=
+rent
+> > > > order vs. the normal path?
+> > >=20
+> > > Please share the lockdep report and the steps to reproduce it. I will
+> > > see if I can simulate the failure forcefully..
+> > >=20
+> >=20
+> > It's on a v4.19 kernel with this cpufreq hw driver backported to it. I
+> > think all it takes is to return an error the second time the policy is
+> > initialized when cpufreq_online() calls into the cpufreq driver.
+> >=20
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> >  WARNING: possible circular locking dependency detected
+> >  4.19.8 #61 Tainted: G        W
+> >  ------------------------------------------------------
+> >  cpuhp/5/36 is trying to acquire lock:
+> >  000000003e901e8a (kn->count#326){++++}, at: kernfs_remove_by_name_ns+0=
+x44/0x80
+> >=20
+> >  but task is already holding lock:
+> >  00000000dd7f52c3 (&policy->rwsem){++++}, at: cpufreq_policy_free+0x17c=
+/0x1cc
+> >=20
+> >  which lock already depends on the new lock.
+> >=20
+> >=20
+> >  the existing dependency chain (in reverse order) is:
+> >=20
+> >  -> #1 (&policy->rwsem){++++}:
+> >         down_read+0x50/0xcc
+> >         show+0x30/0x78
+> >         sysfs_kf_seq_show+0x17c/0x25c
+> >         kernfs_seq_show+0xb4/0xf8
+> >         seq_read+0x4a8/0x8f0
+> >         kernfs_fop_read+0xe0/0x360
+> >         __vfs_read+0x80/0x328
+> >         vfs_read+0xd0/0x1d4
+> >         ksys_read+0x88/0x118
+> >         __arm64_sys_read+0x4c/0x5c
+> >         el0_svc_common+0x124/0x1c4
+> >         el0_svc_compat_handler+0x64/0x8c
+> >         el0_svc_compat+0x8/0x18
+>=20
+> I failed to reproduce it over linux/next.
+>=20
+> I had the following changes over linux/next:
+> https://pastebin.ubuntu.com/p/zkVm77PGdY/
 
-Fair enough. I was anticipating the case when non-ACPI systems gain
-this capability, but you're right no need to design that now. The size
-sanity check has some small value, but given there is an override and
-broken platform firmware would need to be fixed I don't think we lose
-much by getting rid of it. Will re-flow without memblock integration.
+I don't see any failure returned from cpufreq_dt's cpufreq_init()
+function. Maybe put a static int counter =3D 0 and then fail
+cpufreq_init() the second time that it's called for the same policy
+pointer? I have a system with two policies, so I made it fail and return
+-EINVAL when the counter =3D=3D 2 and I see the lockdep splat.
+
+>=20
+> I also did savedefconfig to show what all I changed in it. I faked multip=
+le
+> clusters on my hikey960 board, which is not big little..
+>=20
+> And here is the command list from history that I ran after boot.
+>=20
+>   501  grep . /sys/devices/system/cpu/cpufreq/*/*
+>   502  grep . /sys/devices/system/cpu/cpufreq/*/*/*
+>   503  grep . /sys/devices/system/cpu/cpufreq/*/*/*
+>   504  grep . /sys/devices/system/cpu/cpufreq/*/*/*
+>   505  grep . /sys/devices/system/cpu/cpufreq/*/*/*
+>   506  grep . /sys/devices/system/cpu/cpufreq/*/*
+>   507  grep . /sys/devices/system/cpu/cpufreq/*/*
+>   508  echo 0 > /sys/devices/system/cpu/cpu4/online=20
+>   509  echo 0 > /sys/devices/system/cpu/cpu5/online=20
+>   510  echo 0 > /sys/devices/system/cpu/cpu6/online=20
+>   511  echo 0 > /sys/devices/system/cpu/cpu7/online=20
+>   512  grep . /sys/devices/system/cpu/cpufreq/*/*
+>   513  grep . /sys/devices/system/cpu/cpufreq/*/*/*
+>   514  grep . /sys/devices/system/cpu/cpufreq/*/*
+>   515  echo 1 > /sys/devices/system/cpu/cpu4/online=20
+>   516  grep . /sys/devices/system/cpu/cpufreq/*/*
+>   517  grep . /sys/devices/system/cpu/cpufreq/*/*/*
+>   518  dmesg=20
+>=20
+
+I did the following:
+
+  grep . /sys/devices/system/cpu/cpufreq/*/* >/dev/null
+  echo 0 > /sys/devices/system/cpu/cpu4/online=20
+  echo 0 > /sys/devices/system/cpu/cpu5/online=20
+  echo 0 > /sys/devices/system/cpu/cpu6/online=20
+  echo 0 > /sys/devices/system/cpu/cpu7/online=20
+  echo 1 > /sys/devices/system/cpu/cpu4/online=20
+  dmesg
+
+And boom, lockdep splat.
