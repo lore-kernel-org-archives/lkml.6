@@ -2,81 +2,119 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0309FC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD5DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A1F218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B75FC21871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbeLRNvv (ORCPT
+        id S1726691AbeLRNv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:51:51 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41285 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbeLRNvu (ORCPT
+        Tue, 18 Dec 2018 08:51:58 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39843 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbeLRNv5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:51:50 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l12so16286771qtf.8;
-        Tue, 18 Dec 2018 05:51:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LAmHWC5m3+BzfvmFaoVDZqSBTTFMzpVyTUIeG9Pxoic=;
-        b=KHgNIo3A4F6fppV/PNb61fWojhzGRae4PLpv0uGO6a+kSsQbkDQ+Oz3S1vB/1Tacyb
-         9s82VCwGnN+QdetaCCNyPNqCjrgCviVTd9bllmprfmwew6TwZQrey3PfFBhA05pBBJVo
-         4WfbBFtAhkQS+/pY0yuAoApfwhc0qzoPbWk8oZx32KGm8zdeVxVRCwuzGU+kYPzoYVPn
-         73TH/8YR7qAMqU6Y/j0vB4HJ4FM5lgjfk7ypljGPH9UBhFkhK5YbnFycqpfQmu/76dot
-         0GbV1HBb211MpY8q67NgL3G0vWE18YYKRbyra+BqlRDBvH+3+mrTatlHkGCDGaBcdfWf
-         rrUA==
-X-Gm-Message-State: AA+aEWboJqK+bNa1bE/9NdhCE9uc1DKBOKOXeBrDHuxPOfHBQlzMFDKe
-        o3kU54XLC8zUnB9CbxDhQnJAwsyUdFQaf9bmreg=
-X-Google-Smtp-Source: AFSGD/XTQcPAIaUGAF/nZ6n7tGNcZaDFf9X/Q/LIIFoOeXyKkIjelnOp+NUCP9WsZURPwXegKJNLGoi/eizllmInz6A=
-X-Received: by 2002:a0c:f50c:: with SMTP id j12mr16731590qvm.149.1545141108624;
- Tue, 18 Dec 2018 05:51:48 -0800 (PST)
+        Tue, 18 Dec 2018 08:51:57 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIDpoYT2850929
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 05:51:51 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIDpoBS2850926;
+        Tue, 18 Dec 2018 05:51:50 -0800
+Date:   Tue, 18 Dec 2018 05:51:50 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-2aac9f9d5b85da1cc77c51d78aa41012244f7518@git.kernel.org>
+Cc:     jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+        hpa@zytor.com, adrian.hunter@intel.com, mingo@kernel.org,
+        tglx@linutronix.de
+Reply-To: jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+          hpa@zytor.com, adrian.hunter@intel.com, tglx@linutronix.de,
+          mingo@kernel.org
+In-Reply-To: <20181122135545.16295-1-adrian.hunter@intel.com>
+References: <20181122135545.16295-1-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tests record: Allow for 'sleep' being
+ 'coreutils'
+Git-Commit-ID: 2aac9f9d5b85da1cc77c51d78aa41012244f7518
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20181218034132.5070-1-manivannan.sadhasivam@linaro.org> <20181218034132.5070-4-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181218034132.5070-4-manivannan.sadhasivam@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 18 Dec 2018 14:51:32 +0100
-Message-ID: <CAK8P3a3h8upNttd15EfBTAAP_EQEbQ0fsqtjjzYy9QZdzj=jmQ@mail.gmail.com>
-Subject: Re: [PATCH v5 03/11] ARM: Prepare RDA8810PL SoC
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-unisoc@lists.infradead.org,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-serial@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, zhao_steven@263.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 4:42 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+Commit-ID:  2aac9f9d5b85da1cc77c51d78aa41012244f7518
+Gitweb:     https://git.kernel.org/tip/2aac9f9d5b85da1cc77c51d78aa41012244f7518
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Thu, 22 Nov 2018 15:55:45 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 17 Dec 2018 14:54:26 -0300
 
-> --- /dev/null
-> +++ b/arch/arm/mach-rda/Kconfig
-> @@ -0,0 +1,9 @@
-> +menuconfig ARCH_RDA
-> +       bool "RDA Micro SoCs"
-> +       depends on ARCH_MULTI_V7
-> +       select COMMON_CLK
-> +       select GENERIC_IRQ_CHIP
-> +       select RDA_INTC
-> +       select RDA_TIMER
-> +       help
-> +         This enables support for the RDA Micro 8810PL SoC family.
+perf tests record: Allow for 'sleep' being 'coreutils'
 
-I would drop the 'COMMON_CLK' and 'GENERIC_IRQ_CHIP' selects here,
-as they are implied by ARCH_MULTI_V7.
+If the 'sleep' command is provided by coreutils, then the "PERF_RECORD_*
+events & perf_sample fields" test will fail because the MMAP name is
+'coreutils' not 'sleep', and there is an extra COMM event. Fix the test
+to detect that case.
 
-      Arnd
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20181122135545.16295-1-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/perf-record.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+index 34394cc05077..07f6bd8ed719 100644
+--- a/tools/perf/tests/perf-record.c
++++ b/tools/perf/tests/perf-record.c
+@@ -58,6 +58,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 	char *bname, *mmap_filename;
+ 	u64 prev_time = 0;
+ 	bool found_cmd_mmap = false,
++	     found_coreutils_mmap = false,
+ 	     found_libc_mmap = false,
+ 	     found_vdso_mmap = false,
+ 	     found_ld_mmap = false;
+@@ -254,6 +255,8 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 					if (bname != NULL) {
+ 						if (!found_cmd_mmap)
+ 							found_cmd_mmap = !strcmp(bname + 1, cmd);
++						if (!found_coreutils_mmap)
++							found_coreutils_mmap = !strcmp(bname + 1, "coreutils");
+ 						if (!found_libc_mmap)
+ 							found_libc_mmap = !strncmp(bname + 1, "libc", 4);
+ 						if (!found_ld_mmap)
+@@ -292,7 +295,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
+ 	}
+ 
+ found_exit:
+-	if (nr_events[PERF_RECORD_COMM] > 1) {
++	if (nr_events[PERF_RECORD_COMM] > 1 + !!found_coreutils_mmap) {
+ 		pr_debug("Excessive number of PERF_RECORD_COMM events!\n");
+ 		++errs;
+ 	}
+@@ -302,7 +305,7 @@ found_exit:
+ 		++errs;
+ 	}
+ 
+-	if (!found_cmd_mmap) {
++	if (!found_cmd_mmap && !found_coreutils_mmap) {
+ 		pr_debug("PERF_RECORD_MMAP for %s missing!\n", cmd);
+ 		++errs;
+ 	}
