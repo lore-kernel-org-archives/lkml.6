@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76068C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAA3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4310B21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67DC21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:44:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151467;
-	bh=RMGm6UpwFi1cNsoVXjGjVirKmwU1Q/PrmHuQAq+7J8k=;
+	s=default; t=1545151473;
+	bh=+SWDljD28IHnvkjfYP6C7tteAO4WliehamUM7h0AeYo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DcBPGehbae3tYn+LqqyAT3zY1ktWJG6l174+ku0WAv/65kX6RXyRdfu+BO6hvpyE+
-	 Z4dp5r7rWBRPJ0bz7BByqjYMdYWFulR0x/jMgSUWZMcdv4yNos4uZEFxe495H7h077
-	 fhAbrTfuW/+ffK0JbyqdhiVnMh37O1blFhoEu0DY=
+	b=gM93VeF/fskoJrfRseNRcNwiMyXI1fHawiLTe9gMNI5gPcxlboWhJSFDxsAHlnzSm
+	 oJnUFOobP7TkgDlZ9wrjFD0AjvClaEF6c0UHxKCOJtV1lycvu4VxscLVNY8NRNKen2
+	 DTfp1p/gCxFKZOfx1qhRcDHttr8tD6EEBtc7/7zw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeLRQoZ (ORCPT
+        id S1727397AbeLRQoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:44:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37310 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbeLRQkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:40:21 -0500
+        id S1726984AbeLRQkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:40:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F43A218A3;
-        Tue, 18 Dec 2018 16:40:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1EE7218A5;
+        Tue, 18 Dec 2018 16:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151220;
-        bh=RMGm6UpwFi1cNsoVXjGjVirKmwU1Q/PrmHuQAq+7J8k=;
+        s=default; t=1545151215;
+        bh=+SWDljD28IHnvkjfYP6C7tteAO4WliehamUM7h0AeYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gmNf8J3ZKbjV2y2+B38d221dC0U/wwqqExkD6S5ZfznKo1YV5ZkRNntQczBKpUtSl
-         QQZmvefZmnoNbxiWp35rPP0PnlmeCtwv3stBmg6luDU/lJgvno89LUv8m4DBz0mHxg
-         E3bMwZ9nqnofkZ1RsKdkm8vd7M8En8diEAT6gcps=
+        b=q0rkgxhjR0IZwnB1TRour7yL54GVyvqoD8ZXwXhYUmNg9AJGBRc/4YhTjJg1prcnp
+         mTqO7qEj9zxYCPJccPMltePBDNbOvgxkJa+REA6l5ap/WCr8i35ZdTyzVl3SwJZbdp
+         zZHHTNj5330lMhnyw/2hUU1XtiJVZHRAMBIuQThY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 06/44] ARM: dts: qcom-apq8064-arrow-sd-600eval fix graph_endpoint warning
-Date:   Tue, 18 Dec 2018 17:39:18 +0100
-Message-Id: <20181218163927.871563872@linuxfoundation.org>
+Subject: [PATCH 4.19 04/44] slimbus: ngd: mark PM functions as __maybe_unused
+Date:   Tue, 18 Dec 2018 17:39:16 +0100
+Message-Id: <20181218163927.624364063@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,37 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Upstream commit 972910948fb6 ("ARM: dts: qcom: Remove Arrow SD600
-eval board") removed this file because there are no known users,
-but in linux-4.19.y, we still get a compile-time warnign for it:
+Commit 2e6ae11dd0d1c37f44cec51a58fb2092e55ed0f5 upstream.
 
-arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dtb: Warning (graph_endpoint): /soc/mdp@5100000/ports/port@3/endpoint: graph connection to node '/soc/hdmi-tx@4a00000/ports/port@0/endpoint' is not bidirectional
+qcom_slim_ngd_runtime_suspend is protected by an #ifdef,
+qcom_slim_ngd_runtime_idle is now, which causes a build time warning:
 
-Address the warning by adding the remote endpoint that makes the link
-bidirectional. This is the same property that other boards use.
+drivers/slimbus/qcom-ngd-ctrl.c:1470:12: error: 'qcom_slim_ngd_runtime_idle' defined but not used [-Werror=unused-function]
 
+Marking both as __maybe_unused lets us get rid of the warning
+as well as the #ifdef.
+
+Fixes: 917809e2280b ("slimbus: ngd: Add qcom SLIMBus NGD driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/slimbus/qcom-ngd-ctrl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts b/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts
-index 76b56eafaab9..f714a20649d7 100644
---- a/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts
-+++ b/arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dts
-@@ -387,6 +387,11 @@
- 			hpd-gpio = <&tlmm_pinmux 72 GPIO_ACTIVE_HIGH>;
+diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+index 8be4d6786c61..14a9d18306cb 100644
+--- a/drivers/slimbus/qcom-ngd-ctrl.c
++++ b/drivers/slimbus/qcom-ngd-ctrl.c
+@@ -1467,7 +1467,7 @@ static int qcom_slim_ngd_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 			ports {
-+				port@0 {
-+					endpoint {
-+						remote-endpoint = <&mdp_dtv_out>;
-+					};
-+				};
- 				port@1 {
- 					endpoint {
- 						remote-endpoint = <&hdmi_con>;
+-static int qcom_slim_ngd_runtime_idle(struct device *dev)
++static int __maybe_unused qcom_slim_ngd_runtime_idle(struct device *dev)
+ {
+ 	struct qcom_slim_ngd_ctrl *ctrl = dev_get_drvdata(dev);
+ 
+@@ -1477,8 +1477,7 @@ static int qcom_slim_ngd_runtime_idle(struct device *dev)
+ 	return -EAGAIN;
+ }
+ 
+-#ifdef CONFIG_PM
+-static int qcom_slim_ngd_runtime_suspend(struct device *dev)
++static int __maybe_unused qcom_slim_ngd_runtime_suspend(struct device *dev)
+ {
+ 	struct qcom_slim_ngd_ctrl *ctrl = dev_get_drvdata(dev);
+ 	int ret = 0;
+@@ -1491,7 +1490,6 @@ static int qcom_slim_ngd_runtime_suspend(struct device *dev)
+ 
+ 	return ret;
+ }
+-#endif
+ 
+ static const struct dev_pm_ops qcom_slim_ngd_dev_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
 -- 
 2.19.1
 
