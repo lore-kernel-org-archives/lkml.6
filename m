@@ -2,114 +2,158 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077E0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDD2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB63121852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:04:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5Oa3zfV"
+	by mail.kernel.org (Postfix) with ESMTP id 446EB21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbeLRPEc (ORCPT
+        id S1727034AbeLRPEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:04:32 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38523 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbeLRPEa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:04:30 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so7953484plb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 07:04:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0jyh8TbRs+ubBftXUDu/ZeKR3wTzPoQdZ/y0YGX+yt4=;
-        b=D5Oa3zfVcAufguxSRzGRil09A8Zh04Xom2E0ByjblKOSRs6lYPjhNGtxmLEbRO8oJ3
-         QavOgFqqqDHwTEuq3nNEwKyW9JQwbh/mVkv9xc4dp5uEqrjF+gIKN+eagAdqmqQwU4E8
-         uLU/B9pKY5la5s/4V0EZATDJRZ05fEcF7qk8U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0jyh8TbRs+ubBftXUDu/ZeKR3wTzPoQdZ/y0YGX+yt4=;
-        b=fM89LM9xpgVigShq33FPS4j3hO55zL8xMRX9TVBiGskKPLoEwEP3RZwHwaOgeFYY3H
-         vHYhjV90wHl9y5/65l7bjloE8g6SoNui3hiHVhoXFEiTE7IPmV2Mcw49YMxPIm4N/4pm
-         zcOu6buqbVgjpp7I44f5ZtuexzZqLQsxwRXYM97Qhj4CxdkZNaV69gHT9/xzVkzxKWjH
-         okxXMJYXSGhFbruBgteZFlbEc9w1MUEdqyb/v0UZBByT+4qtRI3POUNJG/Tws/bnpH1Y
-         iZuV3mFzdU4zxfKygeEjnIiRpys+6La6P8i3mnL12XIY4x9G+tkQaJVNhlbJT49WRe9s
-         +zkQ==
-X-Gm-Message-State: AA+aEWbG0Z+Jd628UcX649easwZtfNWupBVGaUT4k/1SjrdsEqVUsGCY
-        QqsPF637PD2d9B3f1buHOTY4
-X-Google-Smtp-Source: AFSGD/VyU784cM7cGnfB1aooBbjFAv1aJg6D7/Z6N2CMXMr5r5RAkWIl3cWKMw7FgKAckum2B5UzOA==
-X-Received: by 2002:a17:902:ba89:: with SMTP id k9mr16974772pls.189.1545145469147;
-        Tue, 18 Dec 2018 07:04:29 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id m198sm28798688pga.10.2018.12.18.07.04.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 07:04:28 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     olof@lixom.net, arnd@arndb.de, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-unisoc@lists.infradead.org, afaerber@suse.de,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, zhao_steven@263.net,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v7 11/11] MAINTAINERS: Add entry for RDA Micro SoC architecture
-Date:   Tue, 18 Dec 2018 20:32:38 +0530
-Message-Id: <20181218150238.23010-12-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181218150238.23010-1-manivannan.sadhasivam@linaro.org>
-References: <20181218150238.23010-1-manivannan.sadhasivam@linaro.org>
+        Tue, 18 Dec 2018 10:04:45 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:15741 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726814AbeLRPEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:04:44 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43K1X93cMnz9v13J;
+        Tue, 18 Dec 2018 16:04:41 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 0BvmFGjwrw8m; Tue, 18 Dec 2018 16:04:41 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43K1X92vb5z9v136;
+        Tue, 18 Dec 2018 16:04:41 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D95F78B852;
+        Tue, 18 Dec 2018 16:04:42 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 9Db4sQfaWZbV; Tue, 18 Dec 2018 16:04:42 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 669108B754;
+        Tue, 18 Dec 2018 16:04:42 +0100 (CET)
+Subject: Re: [PATCH v1 03/13] powerpc/mm/32s: rework mmu_mapin_ram()
+To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
+Cc:     linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
+        linux-kernel@vger.kernel.org
+References: <cover.1543517818.git.christophe.leroy@c-s.fr>
+ <8835330baa77d88e0267b0b1215b78c991e6d17a.1543517818.git.christophe.leroy@c-s.fr>
+ <20181203215558.GK15324@latitude>
+ <84624899-bbda-9f08-2527-151fddbd1b01@c-s.fr>
+ <a253e9f8-1e0a-1596-e0ea-54261ac62212@c-s.fr>
+ <20181217012837.GT15324@latitude>
+ <18ba3a7c-ebfa-66aa-e231-b56985d0e89a@c-s.fr>
+ <20181218030538.GA24278@latitude>
+ <9a39d910-2a05-3ce7-c949-296db2d458b9@c-s.fr>
+ <20181218140714.GC24278@latitude>
+ <96539c09-ea57-43d6-bae9-7371235b175f@c-s.fr>
+ <ee4322c4-60e1-94c5-1e55-5d4c3e4de03b@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <c1ee5c7f-d683-924f-68cb-43e1fe14363a@c-s.fr>
+Date:   Tue, 18 Dec 2018 16:04:42 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <ee4322c4-60e1-94c5-1e55-5d4c3e4de03b@c-s.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for RDA Micro SoC architecture with myself
-as the maintainer.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- MAINTAINERS | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3318f30903b2..da2149949fd7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1950,6 +1950,20 @@ M:	Lennert Buytenhek <kernel@wantstofly.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- 
-+ARM/RDA MICRO ARCHITECTURE
-+M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-unisoc@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	arch/arm/boot/dts/rda8810pl-*
-+F:	drivers/clocksource/timer-rda.c
-+F:	drivers/irqchip/irq-rda-intc.c
-+F:	drivers/tty/serial/rda-uart.c
-+F:	Documentation/devicetree/bindings/arm/rda.txt
-+F:	Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
-+F:	Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
-+F:	Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
-+
- ARM/REALTEK ARCHITECTURE
- M:	Andreas FÃ¤rber <afaerber@suse.de>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.17.1
+Le 18/12/2018 à 15:55, Christophe Leroy a écrit :
+> 
+> 
+> Le 18/12/2018 à 15:15, Christophe Leroy a écrit :
+>>
+>>
+>> Le 18/12/2018 à 15:07, Jonathan Neuschäfer a écrit :
+>>> On Tue, Dec 18, 2018 at 09:18:42AM +0000, Christophe Leroy wrote:
+>>>> The only difference I see then are the flags. Everything else is seems
+>>>> identical.
+>>>>
+>>>> I know you tried already, but would you mind trying once more with the
+>>>> following change ?
+>>>>
+>>> [...]
+>>>> -        setbat(idx, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
+>>>> +        setbat(idx, PAGE_OFFSET + base, base, size, PAGE_KERNEL_X);
+>>>
+>>> Good call, with this workaround on top of patches 1-3, it boots again:
+>>>
+>>>     # mount -t debugfs d /sys/kernel/debug
+>>>     # cat /sys/kernel/debug/powerpc/block_address_translation
+>>>     ---[ Instruction Block Address Translation ]---
+>>>     0: 0xc0000000-0xc0ffffff 0x00000000 Kernel EXEC
+>>>     1:         -
+>>>     2: 0xc1000000-0xc17fffff 0x01000000 Kernel EXEC
+>>>     3:         -
+>>>     4: 0xd0000000-0xd1ffffff 0x10000000 Kernel EXEC
+>>>     5:         -
+>>>     6:         -
+>>>     7:         -
+>>>
+>>>     ---[ Data Block Address Translation ]---
+>>>     0: 0xc0000000-0xc0ffffff 0x00000000 Kernel RW
+>>>     1: 0xfffe0000-0xffffffff 0x0d000000 Kernel RW no cache guarded
+>>>     2: 0xc1000000-0xc17fffff 0x01000000 Kernel RW
+>>>     3:         -
+>>>     4: 0xd0000000-0xd1ffffff 0x10000000 Kernel RW
+>>>     5:         -
+>>>     6:         -
+>>>     7:         -
+>>>
+>>>> I think we may have some code trying to modify the kernel text 
+>>>> without using
+>>>> code patching functions.
+>>>
+>>> Is there any faster way than to sprinkle some printks in setup_kernel
+>>> and try to find the guilty piece of code this way?
+>>
+>> Can you start with the serie 
+>> https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=75072 ?
+> 
+> Ok, the thing I was thinking about was the MMU_init_hw() but it is 
+> called before mapin_ram() so it should not be a problem. Not sure that 
+> serie improves anything at all here.
+> 
+> So there must be something else, pretty early (before the system is able 
+> to properly handle and display an Oops for write to RO area.)
+> 
+> Does anybody have an idea of what it can be ?
 
+
+Stupid of me. In fact at the time being, BATS cover both RO and RW data 
+areas, so it can definitly not be mapped with PAGE_KERNEL_ROX.
+
+In fact, as I have CONFIG_BDI_SWITCH in my setup, PAGE_KERNEL_TEXT is 
+PAGE_KERNEL_X on my side. That's the reason why I missed it.
+
+With this change being done to patch 3, does the overall serie works for 
+you ?
+
+Thanks
+Christophe
+
+
+
+> 
+> Christophe
+> 
+>>
+>> Christophe
+>>
+>>>
+>>>
+>>> Jonathan
+>>>
