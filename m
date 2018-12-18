@@ -2,97 +2,74 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C91C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A11C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8CEE21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171381;
-	bh=GDjfDt6CZ6YYqdOC892rodOqEWiE8Ix3jV6dZeNz79I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=amJUF/oDyl9BlyR3hA++h1kopfUcBSs0Q3Jt0/kmr7zMfWOfiwlgAMI08GeQU4r9c
-	 BRR2IC27ARL1P02QX92z9u3nxHRg+8j2JnrtQP3/LhxcJcJT8IoYXVyXpLMXglwKNO
-	 V35EPkrrjj+iflh7CHtfoPSmiVufGeG16Gjpl6A8=
+	by mail.kernel.org (Postfix) with ESMTP id 7F1A421871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:16:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeLRWQU (ORCPT
+        id S1728159AbeLRWQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:16:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46432 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:16:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726904AbeLRWQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:16:19 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
+        id S1726704AbeLRWQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:16:23 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7166E218A2;
-        Tue, 18 Dec 2018 22:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171379;
-        bh=GDjfDt6CZ6YYqdOC892rodOqEWiE8Ix3jV6dZeNz79I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xjWXuba9pKREa9JJ7bhWsZ+VspIk0vN1L5w/PLNhqok16tDsDALiTqexMmYk9xo1i
-         wZl9JjVdsHkgvBnbcJkQJ/iswMX1670WQq3c5DuIy8rtn/QsdJ5OIno8JlwdsKutcj
-         eCX/vZT1KKyJVo/wSNHk88ugwYTPpaMVhBikyArw=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 57/63] perf beauty mmap: Print PROT_READ before PROT_EXEC to match strace output
-Date:   Tue, 18 Dec 2018 19:07:27 -0300
-Message-Id: <20181218220733.15839-58-acme@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
-References: <20181218220733.15839-1-acme@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E537218A4;
+        Tue, 18 Dec 2018 22:16:22 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 17:16:20 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Martin Jambor <mjambor@suse.cz>, Miroslav Benes <mbenes@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
+Message-ID: <20181218171620.365c1c51@gandalf.local.home>
+In-Reply-To: <20181218221338.GK25620@tassilo.jf.intel.com>
+References: <20181217181638.dfexg6mkmbfyzfli@treble>
+        <20181217192938.GF2218@hirez.programming.kicks-ass.net>
+        <20181217213126.lsqhyszoulel6uq6@treble>
+        <20181217173644.391c2070@gandalf.local.home>
+        <20181218000618.GA25620@tassilo.jf.intel.com>
+        <20181218024916.vmfnyqzouhfxhyvc@treble>
+        <alpine.LSU.2.21.1812181022570.9644@pobox.suse.cz>
+        <ri6h8fbqbdf.fsf@suse.cz>
+        <20181218211501.GD25620@tassilo.jf.intel.com>
+        <20181218165713.4309797a@gandalf.local.home>
+        <20181218221338.GK25620@tassilo.jf.intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Tue, 18 Dec 2018 14:13:38 -0800
+Andi Kleen <ak@linux.intel.com> wrote:
 
-Helps with comparing 'strace' and 'perf trace' output, for mutual
-regression testing.
+> > Again, that's not the ftrace case. It doesn't care about more than one
+> > out of line instance. Thus, for this particular use, "used" should be
+> > good enough.  
+> 
+> You mean noinline used? 
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-va0qe95xbhep5hy52aq5qe0v@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/mmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I thought that someone said that "used" would also prevent inlining.
+But regardless, whatever it takes to not let the functions be inlined
+is indeed good enough.
 
-diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
-index 138f36a47fb1..eb31089790e3 100644
---- a/tools/perf/trace/beauty/mmap.c
-+++ b/tools/perf/trace/beauty/mmap.c
-@@ -17,8 +17,8 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
- 		prot &= ~PROT_##n; \
- 	}
- 
--	P_MMAP_PROT(EXEC);
- 	P_MMAP_PROT(READ);
-+	P_MMAP_PROT(EXEC);
- 	P_MMAP_PROT(WRITE);
- 	P_MMAP_PROT(SEM);
- 	P_MMAP_PROT(GROWSDOWN);
--- 
-2.19.2
+-- Steve
 
+> 
+> Inlining would certainly break the test.
