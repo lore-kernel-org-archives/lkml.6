@@ -2,186 +2,123 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AC4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94A0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB6C21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79ACD21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545145955;
+	bh=8Q4eZ8594DtSKWB2e+2mmCyVzsNilZD31iQ4WDodpxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Pg0oCFSbrp0cPPzH2hKsuS+AVv160Mb1KN48bUHAO6BJK8mxxCJL9qQM6D9QoORJD
+	 jI/0TrCtC9N30jqX0BA17GQc3MsPEqu2Jfxmf3Qp2IE+f+4eZbnneFgb4hE1EHCfbb
+	 8xpB94ix0gsI3fKFw1lM+d+cdJpoKmq1J/eOVsZk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeLRPML (ORCPT
+        id S1726857AbeLRPMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:12:11 -0500
-Received: from foss.arm.com ([217.140.101.70]:47722 "EHLO foss.arm.com"
+        Tue, 18 Dec 2018 10:12:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726651AbeLRPMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:12:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84BF180D;
-        Tue, 18 Dec 2018 07:12:10 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07FDC3F5C0;
-        Tue, 18 Dec 2018 07:12:08 -0800 (PST)
-Date:   Tue, 18 Dec 2018 15:12:06 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     zhe.he@windriver.com
-Cc:     bigeasy@linutronix.de, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v2] kmemleak: Turn kmemleak_lock to raw spinlock on RT
-Message-ID: <20181218151206.GC20197@arrakis.emea.arm.com>
-References: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
+        id S1726651AbeLRPMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 10:12:34 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1EC121871;
+        Tue, 18 Dec 2018 15:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545145952;
+        bh=8Q4eZ8594DtSKWB2e+2mmCyVzsNilZD31iQ4WDodpxc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QPjz+9iGGOhxNQdjSkLMzgPocoibi5BIHhy1Z84bN4AJcyiNC4g2lJz3+xC42LuKF
+         zFtR0FA8SbiZsfzY1cRh5uWT9kDVc9GH0qT6ZJ0x1EuF1ESSnicdnIhghWfVWPsii1
+         uEW82Bug+Q8YAmH60lGSk41VmrGb5Tk6x2/PhSnM=
+Date:   Tue, 18 Dec 2018 16:12:30 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Andy Gross <andy.gross@linaro.org>, bp@alien8.de,
+        Daniel Drake <dsd@laptop.org>,
+        David Brown <david.brown@linaro.org>, dou_liyang@163.com,
+        Ingo Molnar <mingo@redhat.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        Jens Frederich <jfrederich@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 0/7] v4.19-stable randconfig fixes
+Message-ID: <20181218151230.GA30844@kroah.com>
+References: <20181214221023.3878670-1-arnd@arndb.de>
+ <20181218002028.GX2746@sasha-vm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181218002028.GX2746@sasha-vm>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 05:04:19PM +0800, zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
+On Mon, Dec 17, 2018 at 07:20:28PM -0500, Sasha Levin wrote:
+> On Fri, Dec 14, 2018 at 11:10:05PM +0100, Arnd Bergmann wrote:
+> > Hi Greg,
+> > 
+> > I did some randconfig testing on linux-4.19 arm/arm64/x86. So far I needed
+> > 27 patches, most of which are also still needed in mainline Linux. I
+> > had submitted some before, and others were not submitted previously
+> > for some reason. I'll try to get those fixed in mainline and then
+> > make sure we get them into 4.19 as well.
+> > 
+> > This series for now contains four patches that did make it into mainline:
+> > 
+> > 2e6ae11dd0d1 ("slimbus: ngd: mark PM functions as __maybe_unused")
+> > 33f49571d750 ("staging: olpc_dcon: add a missing dependency")
+> > 0eeec01488da ("scsi: raid_attrs: fix unused variable warning")
+> > 11d4afd4ff66 ("sched/pelt: Fix warning and clean up IRQ PELT config")
+> > 
+> > Feel free to either cherry-pick those from mainline or apply the
+> > patch from this series, whichever works best for you.
+> > 
+> > The other three patches are for warnings in code that got removed in
+> > mainline kernels:
+> > 
+> > 3e9efc3299dd ("i2c: aspeed: Handle master/slave combined irq events properly")
+> > 972910948fb6 ("ARM: dts: qcom: Remove Arrow SD600 eval board")
+> > effec874792f ("drm/msm/dpu: Remove dpu_dbg")
+> > 
+> > My feeling was that it's safer to just address the warning by fixing
+> > the code correctly in each of these cases, but if you disagree,
+> > applying the mainline change should work equally well, so decide
+> > for yourself.
 > 
-> kmemleak_lock, as a rwlock on RT, can possibly be held in atomic context and
-> causes the follow BUG.
+> Thanks Arnd, I took the series as is.
 > 
-> BUG: scheduling while atomic: migration/15/132/0x00000002
-> Modules linked in: iTCO_wdt iTCO_vendor_support intel_rapl pcc_cpufreq
-> pnd2_edac intel_powerclamp coretemp crct10dif_pclmul crct10dif_common
-> aesni_intel matroxfb_base aes_x86_64 matroxfb_g450 matroxfb_accel
-> crypto_simd matroxfb_DAC1064 cryptd glue_helper g450_pll matroxfb_misc
-> i2c_ismt i2c_i801 acpi_cpufreq
-> Preemption disabled at:
-> [<ffffffff8c927c11>] cpu_stopper_thread+0x71/0x100
-> CPU: 15 PID: 132 Comm: migration/15 Not tainted 4.19.0-rt1-preempt-rt #1
-> Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017
-> Call Trace:
->  dump_stack+0x4f/0x6a
->  ? cpu_stopper_thread+0x71/0x100
->  __schedule_bug.cold.16+0x38/0x55
->  __schedule+0x484/0x6c0
->  schedule+0x3d/0xe0
->  rt_spin_lock_slowlock_locked+0x118/0x2a0
->  rt_spin_lock_slowlock+0x57/0x90
->  __rt_spin_lock+0x26/0x30
->  __write_rt_lock+0x23/0x1a0
->  ? intel_pmu_cpu_dying+0x67/0x70
->  rt_write_lock+0x2a/0x30
->  find_and_remove_object+0x1e/0x80
->  delete_object_full+0x10/0x20
->  kmemleak_free+0x32/0x50
->  kfree+0x104/0x1f0
->  ? x86_pmu_starting_cpu+0x30/0x30
->  intel_pmu_cpu_dying+0x67/0x70
->  x86_pmu_dying_cpu+0x1a/0x30
->  cpuhp_invoke_callback+0x92/0x700
->  take_cpu_down+0x70/0xa0
->  multi_cpu_stop+0x62/0xc0
->  ? cpu_stop_queue_work+0x130/0x130
->  cpu_stopper_thread+0x79/0x100
->  smpboot_thread_fn+0x20f/0x2d0
->  kthread+0x121/0x140
->  ? sort_range+0x30/0x30
->  ? kthread_park+0x90/0x90
->  ret_from_fork+0x35/0x40
-> 
-> And on v4.18 stable tree the following call trace, caused by grabbing
-> kmemleak_lock again, is also observed.
-> 
-> kernel BUG at kernel/locking/rtmutex.c:1048! 
-> invalid opcode: 0000 [#1] PREEMPT SMP PTI 
-> CPU: 5 PID: 689 Comm: mkfs.ext4 Not tainted 4.18.16-rt9-preempt-rt #1 
-> Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017 
-> RIP: 0010:rt_spin_lock_slowlock_locked+0x277/0x2a0 
-> Code: e8 5e 64 61 ff e9 bc fe ff ff e8 54 64 61 ff e9 b7 fe ff ff 0f 0b e8 98 57 53 ff e9 43 fe ff ff e8 8e 57 53 ff e9 74 ff ff ff <0f> 0b 0f 0b 0f 0b 48 8b 43 10 48 85 c0 74 06 48 3b 58 38 75 0b 49 
-> RSP: 0018:ffff936846d4f3b0 EFLAGS: 00010046 
-> RAX: ffff8e3680361e00 RBX: ffffffff83a8b240 RCX: 0000000000000001 
-> RDX: 0000000000000000 RSI: ffff8e3680361e00 RDI: ffffffff83a8b258 
-> RBP: ffff936846d4f3e8 R08: ffff8e3680361e01 R09: ffffffff82adfdf0 
-> R10: ffffffff827ede18 R11: 0000000000000000 R12: ffff936846d4f3f8 
-> R13: ffff8e3680361e00 R14: ffff936846d4f3f8 R15: 0000000000000246 
-> FS: 00007fc8b6bfd780(0000) GS:ffff8e369f340000(0000) knlGS:0000000000000000 
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
-> CR2: 000055fb5659e000 CR3: 00000007fdd14000 CR4: 00000000003406e0 
-> Call Trace: 
->  ? preempt_count_add+0x74/0xc0 
->  rt_spin_lock_slowlock+0x57/0x90 
->  ? __kernel_text_address+0x12/0x40 
->  ? __save_stack_trace+0x75/0x100 
->  __rt_spin_lock+0x26/0x30 
->  __write_rt_lock+0x23/0x1a0 
->  rt_write_lock+0x2a/0x30 
->  create_object+0x17d/0x2b0 
->  kmemleak_alloc+0x34/0x50 
->  kmem_cache_alloc+0x146/0x220 
->  ? mempool_alloc_slab+0x15/0x20 
->  mempool_alloc_slab+0x15/0x20 
->  mempool_alloc+0x65/0x170 
->  sg_pool_alloc+0x21/0x60 
->  __sg_alloc_table+0x101/0x160 
->  ? sg_free_table_chained+0x30/0x30 
->  sg_alloc_table_chained+0x8b/0xb0 
->  scsi_init_sgtable+0x31/0x90 
->  scsi_init_io+0x44/0x130 
->  sd_setup_write_same16_cmnd+0xef/0x150 
->  sd_init_command+0x6bf/0xaa0 
->  ? cgroup_base_stat_cputime_account_end.isra.0+0x26/0x60 
->  ? elv_rb_del+0x2a/0x40 
->  scsi_setup_cmnd+0x8e/0x140 
->  scsi_prep_fn+0x5d/0x140 
->  blk_peek_request+0xda/0x2f0 
->  scsi_request_fn+0x33/0x550 
->  ? cfq_rb_erase+0x23/0x40 
->  __blk_run_queue+0x43/0x60 
->  cfq_insert_request+0x2f3/0x5d0 
->  __elv_add_request+0x160/0x290 
->  blk_flush_plug_list+0x204/0x230 
->  schedule+0x87/0xe0 
->  __write_rt_lock+0x18b/0x1a0 
->  rt_write_lock+0x2a/0x30 
->  create_object+0x17d/0x2b0 
->  kmemleak_alloc+0x34/0x50 
->  __kmalloc_node+0x1cd/0x340 
->  alloc_request_size+0x30/0x70 
->  mempool_alloc+0x65/0x170 
->  ? ioc_lookup_icq+0x54/0x70 
->  get_request+0x4e3/0x8d0 
->  ? wait_woken+0x80/0x80 
->  blk_queue_bio+0x153/0x470 
->  generic_make_request+0x1dc/0x3f0 
->  submit_bio+0x49/0x140 
->  ? next_bio+0x38/0x40 
->  submit_bio_wait+0x59/0x90 
->  blkdev_issue_discard+0x7a/0xd0 
->  ? _raw_spin_unlock_irqrestore+0x18/0x50 
->  blk_ioctl_discard+0xc7/0x110 
->  blkdev_ioctl+0x57e/0x960 
->  ? __wake_up+0x13/0x20 
->  block_ioctl+0x3d/0x50 
->  do_vfs_ioctl+0xa8/0x610 
->  ? vfs_write+0x166/0x1b0 
->  ksys_ioctl+0x67/0x90 
->  __x64_sys_ioctl+0x1a/0x20 
->  do_syscall_64+0x4d/0xf0 
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> kmemleak is an error detecting feature. We would not expect as good performance
-> as without it. As there is no raw rwlock defining helpers, we turn kmemleak_lock
-> to a raw spinlock.
-> 
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> Cc: catalin.marinas@arm.com
-> Cc: bigeasy@linutronix.de
-> Cc: tglx@linutronix.de
-> Cc: rostedt@goodmis.org
+> We really need to discuss how -stable deals with removed code upstream.
+> For some cases, we should probably follow suit and remove it from
+> -stable as well (I'm mostly thinking dodgy code with potential security
+> issues).
 
-As I replied already, I don't think this patch would increase the
-kmemleak latency (or performance), although I haven't actually tested
-it. FWIW:
+It would be nice to do that at times (like lustre and ipx), but it's
+good to keep that code around as maybe someone is using it?  I don't
+know, it's a tough call...
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+thanks,
+
+greg k-h
