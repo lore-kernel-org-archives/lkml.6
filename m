@@ -2,105 +2,95 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9D8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED673C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81EE2218A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nx60SSKl"
+	by mail.kernel.org (Postfix) with ESMTP id C3E26218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbeLRPPA (ORCPT
+        id S1726827AbeLRPPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:15:00 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41905 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbeLRPPA (ORCPT
+        Tue, 18 Dec 2018 10:15:05 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41280 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbeLRPPF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:15:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u6so7949079plm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 07:14:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7ql5UQqkPsmc6hjEQiMVZaRSE5McJsjTh1vL28v+6tU=;
-        b=Nx60SSKlr2xZFQpL8uAKvMqa3/t/TBCVSrgg+HUwkl86VegzhLrBJIwEuBxjtYAfeL
-         gt2jLVEaHD2uOiUk/VcEvumjTI1Dg229/K2ac4gPTkrncG73sT8s6SeETaJJLAR6U0bQ
-         RwwXM+kgIIZzSiAKnBNCJrDriCtSKZCuYTSV8mRPXpe+iOsJLObwJbFlYjGt4Vs01nNe
-         k92P2nhQAb3JO+pJXgzxHCo4hqvywVc4IRCARfpzpIzbN3CI2/fmTwCkSDkR9WYbtfab
-         CnPb8RM1yl7+X3RWtEICFQpEBQRlJ5zPNO6A706oAftU9fygrNDg9I0In6VZjaRLUjls
-         BmvA==
+        Tue, 18 Dec 2018 10:15:05 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l12so16618987qtf.8;
+        Tue, 18 Dec 2018 07:15:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7ql5UQqkPsmc6hjEQiMVZaRSE5McJsjTh1vL28v+6tU=;
-        b=r24wGY53ZNgruhTL7HPH8Iuvvpp+lAnCos59Ou1jGR+JJpo+oNHAfiJUD7ZVQR+1GF
-         D9VW1Bcw9q7KYwSTwiD/gnr4WjUNdE72F89ktEqInrf1z1QiVkMdRaAZO0A0mf0eEEXl
-         h6Oc2/iorlJXJ2hPfpKoDB8UQoa6WhmdxEnDnspsggHtJPy/IfiL7N7yjgPmHoK8tgGO
-         jm3o8+nUuMrUvzHtN8F5fAM7h0DFtf8TiW9KM2qEIcKjaaOW8Z0Y6LIwULHEusI1EB+E
-         OZDNqs2C9L1DheM6/N8kc5Nold3EZuh/4051Mz1RS44w4gN9ROdWLm42qwGTex5TwVNk
-         QFcw==
-X-Gm-Message-State: AA+aEWa5d1Ua0x2F907FAl1BtO+/sYN9OZMqIRMELrHg+cMQXw7UPce9
-        ULUkCmNV93/4c5NIc/k5wxQ=
-X-Google-Smtp-Source: AFSGD/Vi+5HnAv+AaAm758EiFt7VybpmjPNxLSHf136+Mx6PP09lj39fCty1SeGT8RVaXhLaVguCEA==
-X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr16672347pll.320.1545146099107;
-        Tue, 18 Dec 2018 07:14:59 -0800 (PST)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id t21sm22288690pgg.24.2018.12.18.07.14.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 07:14:58 -0800 (PST)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Wed, 19 Dec 2018 00:14:55 +0900
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181218151455.GE665@tigerII.localdomain>
-References: <20181218091842.4996-1-sergey.senozhatsky@gmail.com>
- <20181218104812.GC15430@hirez.programming.kicks-ass.net>
- <20181218111701.GA32522@jagdpanzerIV>
- <20181218114709.GF7485@zn.tnic>
- <20181218130750.GA665@tigerII.localdomain>
- <20181218142623.GH7485@zn.tnic>
- <20181218145558.GD665@tigerII.localdomain>
- <20181218150313.GI7485@zn.tnic>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ecrRTW8cnwJLggp6bmuNjzdzyOyHWgpci+BQNwnWe/4=;
+        b=FsdnmZOfRblz8dw2/RrMbJucGAGMiJ9z4ZqY9KMYd1XH6nX1/jNS97F/ozt6FMRcJL
+         PUzNIc94GCpZznIJnXdbn1rBvy/WJx/5W+LtaVCV6aPuSX2Iz9yzYHb0++7Qrx50Haue
+         O757JxgtANQ47R1HdryHedHY/F1Np64IrNEVW+0mKcFHzXaDtFp02yDdwQz7CVVEGXBV
+         lL6lfUkFuD9naoVaOftdpc6/wYvR7rCy4tD/b85aqocZLFmWNQjjziiu+TkieyvLejgM
+         b31Ak5xxlZSP8qBRYuIqvihMx2A/bOsvsxF+NwpcbVBJD4ZcdD85W2nw7ovGdGnFaY4H
+         5q3Q==
+X-Gm-Message-State: AA+aEWaeKaBsVp2jD+MhI30lLP5OLCRP3wtpTcydRsWQSbmpG0LoTizg
+        8V2tYOBNzYvk8VOBz6x89KoRSHRMa+MwGot4gHs=
+X-Google-Smtp-Source: AFSGD/Vomr7uJnASNHKb8D15NyrhrJDg36EUHBf+0iF/Grllnv0IbJpNWUXLWj77k3YegABlY1jvuB+HOhrPrCcNlC8=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr17657446qte.212.1545146104039;
+ Tue, 18 Dec 2018 07:15:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218150313.GI7485@zn.tnic>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20181217130646.GB3560@osiris> <CAK8P3a0kLHcfAtVVuVBqwcQJE+qk6LAO9TBJO2Sb2_m6z5cn8g@mail.gmail.com>
+ <CAK8P3a3buLM8aKdN8PATzx_mQqFrrLcJmPjbeiJ8uCzx2GwS2Q@mail.gmail.com> <20181218075653.GB3590@osiris>
+In-Reply-To: <20181218075653.GB3590@osiris>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Dec 2018 16:14:47 +0100
+Message-ID: <CAK8P3a239wziapVWTuPN09-FZ-fip_f3uhFD6B0=92Rw+=zWzw@mail.gmail.com>
+Subject: Re: [-next] strace tests fail because of "y2038: socket: Add compat_sys_recvmmsg_time64"
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/18/18 16:03), Borislav Petkov wrote:
-> On Tue, Dec 18, 2018 at 11:55:58PM +0900, Sergey Senozhatsky wrote:
-> > Good question. Theoretically, there can be some interesting stuff.
-> > Examples: https://bugzilla.redhat.com/show_bug.cgi?id=1515373#c6
-> > or        https://github.com/systemd/systemd/issues/5433
-> 
-> Just like that last page says, people should use the printk.devkmsg=
-> option when they wanna see all messages. Normally, we do add cmdline
-> options to the kernel cmdline when debugging, like
-> 
-> debug ignore_loglevel log_buf_len=16M ...
+On Tue, Dec 18, 2018 at 8:57 AM Heiko Carstens
+<heiko.carstens@de.ibm.com> wrote:
+>
+> On Mon, Dec 17, 2018 at 11:05:06PM +0100, Arnd Bergmann wrote:
+> > On Mon, Dec 17, 2018 at 10:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Mon, Dec 17, 2018 at 2:06 PM Heiko Carstens
+> > > <heiko.carstens@de.ibm.com> wrote:
+> > > >
+> > > > Hi Arnd,
+> > > >
+> > > > in linux-next as of today 16 strace self tests fail on s390. I could
+> > > > bisect this to b136972b063b ("y2038: socket: Add compat_sys_recvmmsg_time64").
+> > > >
+> > > > The following tests fail:
+> > >
+> > > Hi Heiko,
+> > >
+> > > Thanks for the report and sorry I broke things. I'll have a closer look
+> > > tomorrow if I don't find it right away. I suppose the regression was in
+> > > native system calls, not the compat syscalls with 31-bit user space,
+> > > right?
+>
+> Yes, I was talking about 64 bit native system calls.
+>
+> > I found a bug in my patch by inspection. Can you try if the patch
+> > below makes it all work (apologies for the garbled whitespace),
+> > I'm considering a rewrite of that function now (to split it into two
+> > again), but want to make sure there isn't another problem in my
+> > original patch.
+>
+> With your patch below applied, the tests pass again.
 
-Right, but unlike log_buf_len, devkmsg is a bit close to a "binary" knob:
-either all messages or none; it's not like we can say "printk.devkmsg=100
-messages per 5 * HZ max".
+Ok, thanks for testing, I've pushed out the fixed version of that
+branch now.
 
-	-ss
+       Arnd
