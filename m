@@ -4,69 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E980C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4415CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F2A217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DCF217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="GNS6SfUp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="EqZdGbpN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeLRMTB (ORCPT
+        id S1726787AbeLRMTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:19:01 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38189 "EHLO
+        Tue, 18 Dec 2018 07:19:09 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33813 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbeLRMSz (ORCPT
+        with ESMTP id S1726633AbeLRMSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:18:55 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so15670236wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:18:54 -0800 (PST)
+        Tue, 18 Dec 2018 07:18:52 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so15712351wrw.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:18:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=gJ27nswbrpfxVG6qA2cxraDTu06pZ4WKxOLJS8Arquc=;
-        b=GNS6SfUpxj34SU85j/K3BuxG0Zrs4chu/XCYqcWqcJyjFrMfSRSyYkfJBlmDXrIxce
-         d59pyoiI4dIhRsI/aP0UGwBDu/N6ylueeIVmFMjox1+N3Sg1vXvBtKVT87orSTQM9lyL
-         O1jKMyXDsRj1De5lnPreLB7QY9XBDClvjzvtBO4cgpRSzISEF5VsESjSlNr8qyPDOAGk
-         FUVezzvflH6RoqwskrHshyXNFNe67kSJCIDkJosVYG/t2STFcZQYnieKzrrfbfKB/OlH
-         2WRqrPJL59ICy9FmTnOWsmbH4TxrB0iUb4xI+xR+ZyENkz9eTfwhg9oKG4YB2I2tnlow
-         6dcw==
+        bh=sr4wuOWXsEDaIHmkdgp5/mtEUfBN4wQ+UuMd8Oge7B4=;
+        b=EqZdGbpNUKx1T/vwDwk3desDmKTHP2e28GVlgVSY4w3rfP2d5HecQH+DYwRsvXSaa4
+         gR3blQRULTvGOsOh6gKGHfmTg10TZ2iJpOTYymZuNyU3Q47iWOPKubvcx9voiVtyOyTe
+         8fyRpPsXBLXgVSFN0TKLiDPcqVegcxdYuYGv6tpxv/FiZzf2KGFEvWZ2cSsP1p/8xnOU
+         BIDRdKUHtHP0ZCBFo6lQD2QUtMItAHlTSUmdEj1IyduV543TfP9st1nvXRTzA5ZIvSuq
+         qrH88bYKpzBKS1dtK06lfFpALG2rdomM96qTIROEwSgVw9NxVW+QxbKC7UupZW/hW4iK
+         31Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:in-reply-to:references;
-        bh=gJ27nswbrpfxVG6qA2cxraDTu06pZ4WKxOLJS8Arquc=;
-        b=GDdwHDnaXoTaqlztIE5LLl5jwQIFhGE1fFURbfbkE66iKpSpZhBF+un5WOhUOZdKeU
-         3BLK57qjoBEegjIIjEt26uNJYQtDs2ixA6DbXc90EFhDl74H2jHvKoV6p6dl2tFhOAgZ
-         3ka82NvLCj2sYb9bOCQ/CLMX7fTAUhthOyRbXO3mQyKIUcFQzDivFrX4/NBWth5KXah1
-         X5KsL5dIR5oAQooTviNQQkO1rCjMZFNm/dkrLvxWPlicxnCHWm7ftkt38AFzLIIP3jBm
-         fdZ4A/qOFmWW8KrnXerr/1oJ342LDzIcNSPjMkvd+r8HrcRZqKNApKw72newrhq8IKD0
-         HkrA==
-X-Gm-Message-State: AA+aEWbDHdAMeEwYFZnRJqhQVYdfA+HElN0PqOsOFF0g3kI31YNd42wX
-        03x+ti/pxla7sJ1vT/UK5ctDKPOPBnyF+A==
-X-Google-Smtp-Source: AFSGD/U+GdXHuT8ZzbO+PKI2ZZsyetLAgHnmfgmja5FkS8PJGNY/BwJgfkHs0I0m7mECgrCOalo2Cw==
-X-Received: by 2002:adf:f28d:: with SMTP id k13mr15173271wro.78.1545135533622;
-        Tue, 18 Dec 2018 04:18:53 -0800 (PST)
+        bh=sr4wuOWXsEDaIHmkdgp5/mtEUfBN4wQ+UuMd8Oge7B4=;
+        b=iQxCc4pyMsS6sDwk0reMwJVwpJ4UuJC+efwMZZEHMXhdNQmy5UoDNi2mivCB3b/l36
+         JSAaPTuDLD2q1tBnxfY0FdjL5re1skxc+tJ2hy5AHe/2jioqzMsiHaiHFoxqp7Fw39rY
+         mgrm5O145wWaod0x6Y6ddmcYLG3fgrFPH8aoPjTv0+Cqr3vNom2OCYUmyjIlx9KNPKzR
+         xxTUyI0qTtk1SSf5Bs/bTSNk9EtAkwOxDqLjGgN02viNcgwCeOV8vZXjCt5ZK/IcXyl4
+         1bB9ZC5QuU7DAMPFPPZcXRqURfhcQzB/GQEsnCCNE5io9XWGDgbLpgPf9fhWmiQlMqJ3
+         tc8Q==
+X-Gm-Message-State: AA+aEWbG7lxPKy+G/zlIF2Hy24D0O0kpPBLBzAUgvyCA8LwW1/b8vZ1f
+        eoTLoruLmRRiJzUL9fYiLueVsuh/boIuwg==
+X-Google-Smtp-Source: AFSGD/UCRtnbBFtHMIKnjndA6yC3das3xoHh1I4qGT2mMOH0yKDXmZ05nsOBOlnUZEpEiyBRSTBQXA==
+X-Received: by 2002:a5d:480d:: with SMTP id l13mr15450222wrq.175.1545135530534;
+        Tue, 18 Dec 2018 04:18:50 -0800 (PST)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id w80sm2290393wme.38.2018.12.18.04.18.52
+        by smtp.gmail.com with ESMTPSA id m6sm2594800wrv.24.2018.12.18.04.18.49
         (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 18 Dec 2018 04:18:52 -0800 (PST)
+        Tue, 18 Dec 2018 04:18:49 -0800 (PST)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Cc:     Nava kishore Manne <nava.manne@xilinx.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/4] serial: uartps: Fix interrupt mask issue to handle the RX interrupts properly
-Date:   Tue, 18 Dec 2018 13:18:42 +0100
-Message-Id: <b0ec59d6fb0837c316e2365b2361576d0c8a82fd.1545135519.git.michal.simek@xilinx.com>
+Subject: [PATCH v2 2/4] serial: uartps: Check if the device is a console
+Date:   Tue, 18 Dec 2018 13:18:40 +0100
+Message-Id: <863488c6f6d7f3d8c53d46f442f25ec2f46ee651.1545135519.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1545135519.git.michal.simek@xilinx.com>
 References: <cover.1545135519.git.michal.simek@xilinx.com>
@@ -77,44 +75,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nava kishore Manne <nava.manne@xilinx.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 
-This patch Correct the RX interrupt mask value to handle the
-RX interrupts properly.
+While checking for console_suspend_enabled also check if the
+device is a console.
 
-Fixes: c8dbdc842d30 ("serial: xuartps: Rewrite the interrupt handling logic")
-Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
-Changes in v2:
-- Fix Nava's email address to align with patch email address
+Changes in v2: None
 
  drivers/tty/serial/xilinx_uartps.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index c6d38617d622..094f2958cb2b 100644
+index 0140644391df..9cdc36be5b13 100644
 --- a/drivers/tty/serial/xilinx_uartps.c
 +++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -123,7 +123,7 @@
- #define CDNS_UART_IXR_RXTRIG	0x00000001 /* RX FIFO trigger interrupt */
- #define CDNS_UART_IXR_RXFULL	0x00000004 /* RX FIFO full interrupt. */
- #define CDNS_UART_IXR_RXEMPTY	0x00000002 /* RX FIFO empty interrupt. */
--#define CDNS_UART_IXR_MASK	0x00001FFF /* Valid bit mask */
-+#define CDNS_UART_IXR_RXMASK	0x000021e7 /* Valid RX bit mask */
+@@ -1255,7 +1255,7 @@ static int cdns_uart_suspend(struct device *device)
  
- 	/*
- 	 * Do not enable parity error interrupt for the following
-@@ -364,7 +364,7 @@ static irqreturn_t cdns_uart_isr(int irq, void *dev_id)
- 		cdns_uart_handle_tx(dev_id);
- 		isrstatus &= ~CDNS_UART_IXR_TXEMPTY;
- 	}
--	if (isrstatus & CDNS_UART_IXR_MASK)
-+	if (isrstatus & CDNS_UART_IXR_RXMASK)
- 		cdns_uart_handle_rx(dev_id, isrstatus);
+ 	may_wake = device_may_wakeup(device);
  
- 	spin_unlock(&port->lock);
+-	if (console_suspend_enabled && may_wake) {
++	if (console_suspend_enabled && uart_console(port) && may_wake) {
+ 		unsigned long flags = 0;
+ 
+ 		spin_lock_irqsave(&port->lock, flags);
+@@ -1293,7 +1293,7 @@ static int cdns_uart_resume(struct device *device)
+ 
+ 	may_wake = device_may_wakeup(device);
+ 
+-	if (console_suspend_enabled && !may_wake) {
++	if (console_suspend_enabled && uart_console(port) && !may_wake) {
+ 		clk_enable(cdns_uart->pclk);
+ 		clk_enable(cdns_uart->uartclk);
+ 
 -- 
 1.9.1
 
