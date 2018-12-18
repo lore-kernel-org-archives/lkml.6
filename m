@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CABC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B129821873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76422218A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151309;
-	bh=SbRbdCL7dvVt89A5l4sx8/WBqSQNEh/srwJcsTOpm0I=;
+	s=default; t=1545151313;
+	bh=qPba8Uk0y0zHYJaSx5j2SPDYnRI40m9EhfSc1vrHaHE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DZhLOtGUFRa9BUIYfqlA1NsQ3ujm/8eUyTHbhG4y4QT6s5zT5v99G1Iy7OpoLA8GR
-	 DrY80egqqgkGDyhEO6Lt0DypEUvmhG0ZvmTZeUAYdg0i82A+RSZUTp+X2tmWFiV2S6
-	 UZLmrvxu/G1xSBChVDEKxWlwWp+wezwybRcBWTog=
+	b=0+T4WU7oKUkOlrHQV45cw6W4aTE9LN14F3hPRHdfqro4S3HtKI2hXVaVm5B92UrHr
+	 763wx8L2XM6Nb8qF1gX3hTNjEHk7bYeSDAyg4829bXFTgII7o9zbI1dZI0e7ZSqWIY
+	 nQPBiAv03ms7kgzUYir1TvI2i6MT8QlOTIOOPXlM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbeLRQls (ORCPT
+        id S1727640AbeLRQlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbeLRQlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:46 -0500
+        id S1727598AbeLRQlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5593021873;
-        Tue, 18 Dec 2018 16:41:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 388FA218A4;
+        Tue, 18 Dec 2018 16:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151305;
-        bh=SbRbdCL7dvVt89A5l4sx8/WBqSQNEh/srwJcsTOpm0I=;
+        s=default; t=1545151308;
+        bh=qPba8Uk0y0zHYJaSx5j2SPDYnRI40m9EhfSc1vrHaHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ohYnpsT9v2JQPgo7iE0cw7ITHVEDTCZQ6Yur3ZuIJ1Pm5gUkH42lML2b9DJ1BwpO0
-         jpIyGntBRYMYW/7A6K5ZG54/xJcep8tlifjyGS7k2m6KSQuZfJAAVD43KJXJzkzWNA
-         Q+AS+lfo3KIppkLVf2EqP6zJx+q8QWl/Fznz2h1o=
+        b=VkihMO/En9738WyTnB/vJjIeTbUTaWYoDmgTCJBAF5dLdRJl3FdceuGQPpfdVNjtg
+         8LruLyivp8BbfaYTangmnirvr9ahoP2xCCSjnzZsqEr7ZjpxIhWPsB11d9PE7IHtM8
+         7+lSWHz03UtLRL4p2tRKDsLcxE9TjJ7bGMomWw8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 30/44] media: vb2: dont call __vb2_queue_cancel if vb2_start_streaming failed
-Date:   Tue, 18 Dec 2018 17:39:42 +0100
-Message-Id: <20181218163930.965994484@linuxfoundation.org>
+        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 31/44] powerpc/msi: Fix NULL pointer access in teardown code
+Date:   Tue, 18 Dec 2018 17:39:43 +0100
+Message-Id: <20181218163931.095810312@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -66,43 +65,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Radu Rendec <radu.rendec@gmail.com>
 
-commit 04990215dec43c424daff00d1f622167b8aafd1f upstream.
+commit 78e7b15e17ac175e7eed9e21c6f92d03d3b0a6fa upstream.
 
-vb2_start_streaming() already rolls back the buffers, so there is no
-need to call __vb2_queue_cancel(). Especially since __vb2_queue_cancel()
-does too much, such as zeroing the q->queued_count value, causing vb2
-to think that no buffers have been queued.
+The arch_teardown_msi_irqs() function assumes that controller ops
+pointers were already checked in arch_setup_msi_irqs(), but this
+assumption is wrong: arch_teardown_msi_irqs() can be called even when
+arch_setup_msi_irqs() returns an error (-ENOSYS).
 
-It appears that this call to __vb2_queue_cancel() is a left-over from
-before commit b3379c6201bb3.
+This can happen in the following scenario:
+  - msi_capability_init() calls pci_msi_setup_msi_irqs()
+  - pci_msi_setup_msi_irqs() returns -ENOSYS
+  - msi_capability_init() notices the error and calls free_msi_irqs()
+  - free_msi_irqs() calls pci_msi_teardown_msi_irqs()
 
-Fixes: b3379c6201bb3 ('vb2: only call start_streaming if sufficient buffers are queued')
+This is easier to see when CONFIG_PCI_MSI_IRQ_DOMAIN is not set and
+pci_msi_setup_msi_irqs() and pci_msi_teardown_msi_irqs() are just
+aliases to arch_setup_msi_irqs() and arch_teardown_msi_irqs().
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: <stable@vger.kernel.org>      # for v4.16 and up
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+The call to free_msi_irqs() upon pci_msi_setup_msi_irqs() failure
+seems legit, as it does additional cleanup; e.g.
+list_del(&entry->list) and kfree(entry) inside free_msi_irqs() do
+happen (MSI descriptors are allocated before pci_msi_setup_msi_irqs()
+is called and need to be cleaned up if that fails).
+
+Fixes: 6b2fd7efeb88 ("PCI/MSI/PPC: Remove arch_msi_check_device()")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Radu Rendec <radu.rendec@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/common/videobuf2/videobuf2-core.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/powerpc/kernel/msi.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -1755,10 +1755,8 @@ int vb2_core_streamon(struct vb2_queue *
- 		if (ret)
- 			return ret;
- 		ret = vb2_start_streaming(q);
--		if (ret) {
--			__vb2_queue_cancel(q);
-+		if (ret)
- 			return ret;
--		}
- 	}
+--- a/arch/powerpc/kernel/msi.c
++++ b/arch/powerpc/kernel/msi.c
+@@ -34,5 +34,10 @@ void arch_teardown_msi_irqs(struct pci_d
+ {
+ 	struct pci_controller *phb = pci_bus_to_host(dev->bus);
  
- 	q->streaming = 1;
+-	phb->controller_ops.teardown_msi_irqs(dev);
++	/*
++	 * We can be called even when arch_setup_msi_irqs() returns -ENOSYS,
++	 * so check the pointer again.
++	 */
++	if (phb->controller_ops.teardown_msi_irqs)
++		phb->controller_ops.teardown_msi_irqs(dev);
+ }
 
 
