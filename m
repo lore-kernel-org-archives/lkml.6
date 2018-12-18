@@ -6,73 +6,85 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10038C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91255C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C9A2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A2E42080D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeLRBdy (ORCPT
+        id S1726388AbeLRBjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 20:33:54 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36418 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbeLRBdy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 20:33:54 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1gZ4Gb-0003qW-0k; Tue, 18 Dec 2018 01:33:49 +0000
-Date:   Tue, 18 Dec 2018 01:33:48 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        James Morris James Morris <jmorris@namei.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ima: cleanup the match_token policy code
-Message-ID: <20181218013348.GR2217@ZenIV.linux.org.uk>
-References: <1545092089.4206.5.camel@linux.ibm.com>
- <CAHk-=whEb_vShPGCK80_tspsyw12G6mHLQkMDiSP0GWWHroqqA@mail.gmail.com>
+        Mon, 17 Dec 2018 20:39:32 -0500
+Received: from mga01.intel.com ([192.55.52.88]:9821 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726285AbeLRBjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 20:39:32 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 17:39:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
+   d="scan'208";a="102304869"
+Received: from unknown (HELO localhost) ([10.249.254.218])
+  by orsmga008.jf.intel.com with ESMTP; 17 Dec 2018 17:39:19 -0800
+Date:   Tue, 18 Dec 2018 03:39:18 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181218013918.GC333@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <20181217222047.GG12491@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whEb_vShPGCK80_tspsyw12G6mHLQkMDiSP0GWWHroqqA@mail.gmail.com>
+In-Reply-To: <20181217222047.GG12491@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 04:36:54PM -0800, Linus Torvalds wrote:
-> On Mon, Dec 17, 2018 at 4:14 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > Start the policy_tokens and the associated enumeration from zero,
-> > simplifying the pt macro.
-> 
-> I applied this directly, since I decided to just commit my own "don't
-> use negative Opt_err" patch for the test_and_set_bit() cases, and they
-> kind of go together.
-> 
-> There's still a -1 in security/keys/encrypted-keys/encrypted.c, and
-> there are also three cases of "Opt_error = -1" in the security layer.
-> 
-> All of which look pointless and wrong, but not actively buggy, so I'll
-> leave them alone.
+On Mon, Dec 17, 2018 at 02:20:48PM -0800, Sean Christopherson wrote:
+> The only potential hiccup I can see is the build flow.  Currently,
+> EADD+EEXTEND is done via a work queue to avoid major performance issues
+> (10x regression) when userspace is building multiple enclaves in parallel
+> using goroutines to wrap Cgo (the issue might apply to any M:N scheduler,
+> but I've only confirmed the Golang case).  The issue is that allocating
+> an EPC page acts like a blocking syscall when the EPC is under pressure,
+> i.e. an EPC page isn't immediately available.  This causes Go's scheduler
+> to thrash and tank performance[1].
 
-FWIW, that part of LSM shite is getting taken out and shot - LSM-related
-preps in the beginning of mount API series are, at the moment, at
- fs/btrfs/ctree.h           |   4 -
- fs/btrfs/super.c           |  82 ++-------
- fs/namespace.c             |   9 +-
- fs/nfs/internal.h          |   2 +-
- fs/nfs/super.c             |  34 ++--
- fs/super.c                 |  23 +--
- include/linux/lsm_hooks.h  |  17 +-
- include/linux/security.h   |  82 ++-------
- security/security.c        |  39 +++--
- security/selinux/hooks.c   | 798 ++++++++++++++++++++++++++++++++------------------------------------------------------
- security/smack/smack_lsm.c | 359 +++++++++++++++------------------------
- 11 files changed, 523 insertions(+), 926 deletions(-)
-and unlike the original variant there's not much touched in security/*
-further in the series...
+I don't see any major issues having that kthread. All the code that
+maps the enclave would be removed.
 
-No match_token() uses left in there after this part.
+I would only allow to map enclave to process address space after the
+enclave has been initialized i.e. SGX_IOC_ENCLAVE_ATTACH.
+
+/Jarkko
