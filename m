@@ -2,182 +2,259 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 000A7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68E7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37C72184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:13:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N5M5NqY0"
+	by mail.kernel.org (Postfix) with ESMTP id 90D6D2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbeLRTNF (ORCPT
+        id S1726785AbeLRTRJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:13:05 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46556 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbeLRTNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:13:04 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so8232308ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:13:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:references:message-id
-         :in-reply-to:to:cc:user-agent:subject:from:date;
-        bh=U45WOpdJOI0IuCowowF4NcoMlzPRGfjJKE4V0ZrtBVI=;
-        b=N5M5NqY00D9UqGa+WBNQZwhP9X4edSJ+CSEHskLt89QCo5TZ6cIo7CTNtrP+8FzpF/
-         l6ajtmX5beAwtxzX5fkno4Mb0pxm4yHSVo4gT2lDFWIKgqJAeL1U3d5SKNUdCuF5gXTD
-         4+RM4LwUuw7Zkw0RETUyUQrst8pAOUv3fmd3k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :references:message-id:in-reply-to:to:cc:user-agent:subject:from
-         :date;
-        bh=U45WOpdJOI0IuCowowF4NcoMlzPRGfjJKE4V0ZrtBVI=;
-        b=pTRCHUBCR53E9DKhIDLz5qiS/EZR4u098kbBkkkblrdgOYehAxZLeF6ujpbCvqbSzM
-         UvZvJs35N81xU92TtJmaMx8W9kqIyJQvLQCX4sw2BEWRQ5ImbO93ongRe2koqm2limnm
-         uRD4XoFJhv20GITnT+ToQUS8TZEYDfsmWkscAIJOJnBjB8Ch+qpfMIDfh2IgRTtMB/iG
-         zFpuCLCS3F2+qZujt+iTXIM6x6AXTowc5bGQZgR7IT8+Mdge1mCDIRoBV//29hv04iQH
-         6FaGS2CPDMhq9d+F/mZtxluGzFsZ64frehnrLAALDerbbUXapvmmT66P4YcC0lIQBh7T
-         jHbw==
-X-Gm-Message-State: AA+aEWYJoVicwdPHdZaU/uCJpDn4gkHx7jS8sQUylkOOnSslojaiUUb1
-        XSWNXcqAe+SJqv3Cpb5kmk+UEw==
-X-Google-Smtp-Source: AFSGD/WHGTqbo4viKbWozYOjYU/Qtow0vcjbL/+Nd0TEOPK55rvaWCL9cPuAj2yfG254cW8A+yW8Ow==
-X-Received: by 2002:a17:902:b48b:: with SMTP id y11mr16924122plr.200.1545160383404;
-        Tue, 18 Dec 2018 11:13:03 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id h8sm23368405pfo.162.2018.12.18.11.13.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 11:13:02 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 18 Dec 2018 14:17:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbeLRTRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 14:17:09 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5858C5D61D;
+        Tue, 18 Dec 2018 19:17:07 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 92DF81001F3C;
+        Tue, 18 Dec 2018 19:17:04 +0000 (UTC)
+Subject: Re: [PATCH v2] sched/wake_q: Reduce reference counting for special
+ users
+To:     Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Yongji Xie <elohimes@gmail.com>, mingo@redhat.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        Xie Yongji <xieyongji@baidu.com>, zhangyu31@baidu.com,
+        liuqi16@baidu.com, yuanlinsi01@baidu.com, nixun@baidu.com,
+        lilin24@baidu.com, andrea.parri@amarulasolutions.com
+References: <20181129180828.GA11650@hirez.programming.kicks-ass.net>
+ <729ceddb-dd9a-ec2a-f74e-03fa4d7e65e8@redhat.com>
+ <20181129213017.v3eljor54lfpoug2@linux-r8p5>
+ <20181129213421.wwvhsjql3m3lvtv4@linux-r8p5>
+ <20181129221714.GF11632@hirez.programming.kicks-ass.net>
+ <CAONzpcZ_kQ0cwit+d5uL=v2SqwP=Fo0WSihdCr23uKCAFAhTbQ@mail.gmail.com>
+ <20181217113718.GB4900@worktop.programming.kicks-ass.net>
+ <20181217205310.pvwcryyaqlrzmaex@linux-r8p5>
+ <20181218131031.GJ15430@hirez.programming.kicks-ass.net>
+ <20181218131419.GD16284@hirez.programming.kicks-ass.net>
+ <20181218185443.g5jzinm3vnrkznmm@linux-r8p5>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <a8767197-21b9-f470-b864-be88e020c647@redhat.com>
+Date:   Tue, 18 Dec 2018 14:17:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-References: <1544687394-331-1-git-send-email-tdas@codeaurora.org> <1544687394-331-3-git-send-email-tdas@codeaurora.org> <154469510700.19322.7762676027024031719@swboyd.mtv.corp.google.com> <20181213100506.sy3haqjbxtmkthvt@vireshk-i7> <154469596755.19322.16319349046735344084@swboyd.mtv.corp.google.com> <20181218054545.k77jh5lxvmj2zott@vireshk-i7>
-Message-ID: <154516038159.238328.2917665370794230521@swboyd.mtv.corp.google.com>
-In-Reply-To: <20181218054545.k77jh5lxvmj2zott@vireshk-i7>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Taniya Das <tdas@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com, Matthias Kaehlcke <mka@chromium.org>,
-        vincent.guittot@linaro.org
-User-Agent: alot/0.8
-Subject: Re: [PATCH v12 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Tue, 18 Dec 2018 11:13:01 -0800
+In-Reply-To: <20181218185443.g5jzinm3vnrkznmm@linux-r8p5>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Dec 2018 19:17:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Viresh Kumar (2018-12-17 21:45:45)
-> Hi Stephen,
->=20
-> On 13-12-18, 02:12, Stephen Boyd wrote:
-> > Quoting Viresh Kumar (2018-12-13 02:05:06)
-> > > On 13-12-18, 01:58, Stephen Boyd wrote:
-> > > > BTW, Viresh, I see a lockdep splat when cpufreq_init returns an err=
-or
-> > > > upon bringing the policy online the second time. I guess cpufreq_st=
-ats
-> > > > aren't able to be freed from there because they take locks in diffe=
-rent
-> > > > order vs. the normal path?
-> > >=20
-> > > Please share the lockdep report and the steps to reproduce it. I will
-> > > see if I can simulate the failure forcefully..
-> > >=20
-> >=20
-> > It's on a v4.19 kernel with this cpufreq hw driver backported to it. I
-> > think all it takes is to return an error the second time the policy is
-> > initialized when cpufreq_online() calls into the cpufreq driver.
-> >=20
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-> >  WARNING: possible circular locking dependency detected
-> >  4.19.8 #61 Tainted: G        W
-> >  ------------------------------------------------------
-> >  cpuhp/5/36 is trying to acquire lock:
-> >  000000003e901e8a (kn->count#326){++++}, at: kernfs_remove_by_name_ns+0=
-x44/0x80
-> >=20
-> >  but task is already holding lock:
-> >  00000000dd7f52c3 (&policy->rwsem){++++}, at: cpufreq_policy_free+0x17c=
-/0x1cc
-> >=20
-> >  which lock already depends on the new lock.
-> >=20
-> >=20
-> >  the existing dependency chain (in reverse order) is:
-> >=20
-> >  -> #1 (&policy->rwsem){++++}:
-> >         down_read+0x50/0xcc
-> >         show+0x30/0x78
-> >         sysfs_kf_seq_show+0x17c/0x25c
-> >         kernfs_seq_show+0xb4/0xf8
-> >         seq_read+0x4a8/0x8f0
-> >         kernfs_fop_read+0xe0/0x360
-> >         __vfs_read+0x80/0x328
-> >         vfs_read+0xd0/0x1d4
-> >         ksys_read+0x88/0x118
-> >         __arm64_sys_read+0x4c/0x5c
-> >         el0_svc_common+0x124/0x1c4
-> >         el0_svc_compat_handler+0x64/0x8c
-> >         el0_svc_compat+0x8/0x18
->=20
-> I failed to reproduce it over linux/next.
->=20
-> I had the following changes over linux/next:
-> https://pastebin.ubuntu.com/p/zkVm77PGdY/
+On 12/18/2018 01:54 PM, Davidlohr Bueso wrote:
+> Some users, specifically futexes and rwsems, required fixes
+> that allowed the callers to be safe when wakeups occur before
+> they are expected by wake_up_q(). Such scenarios also play
+> games and rely on reference counting, and until now were
+> pivoting on wake_q doing it. With the wake_q_add() call being
+> moved down, this can no longer be the case. As such we end up
+> with a a double task refcounting overhead; and these callers
+> care enough about this (being rather core-ish).
+>
+> This patch introduces a wake_q_add_safe() call that serves
+> for callers that have already done refcounting and therefore the
+> task is 'safe' from wake_q point of view (int that it requires
+> reference throughout the entire queue/>wakeup cycle). In the one
+> case it has internal reference counting, in the other case it
+> consumes the reference counting.
+>
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> ---
+>
+> Changes from v1:
+> - Simplify some of the interface allowing callers to not worry
+>   about the return value of the add operation. This makes caller
+>   refcouting two levels/asymm by putting the refcouting in the
+>   wake_q's hands, but the benefits are worth it.
+>
+> Applies on peterz' queue tree.
+>
+> include/linux/sched/wake_q.h |  4 +--
+> kernel/futex.c               |  3 +--
+> kernel/locking/rwsem-xadd.c  |  4 +--
+> kernel/sched/core.c          | 62
+> ++++++++++++++++++++++++++++++++------------
+> 4 files changed, 50 insertions(+), 23 deletions(-)
+>
+> diff --git a/include/linux/sched/wake_q.h b/include/linux/sched/wake_q.h
+> index 545f37138057..ad826d2a4557 100644
+> --- a/include/linux/sched/wake_q.h
+> +++ b/include/linux/sched/wake_q.h
+> @@ -51,8 +51,8 @@ static inline void wake_q_init(struct wake_q_head
+> *head)
+>     head->lastp = &head->first;
+> }
+>
+> -extern void wake_q_add(struct wake_q_head *head,
+> -               struct task_struct *task);
+> +extern void wake_q_add(struct wake_q_head *head, struct task_struct
+> *task);
+> +extern void wake_q_add_safe(struct wake_q_head *head, struct
+> task_struct *task);
+> extern void wake_up_q(struct wake_q_head *head);
+>
+> #endif /* _LINUX_SCHED_WAKE_Q_H */
+> diff --git a/kernel/futex.c b/kernel/futex.c
+> index d14971f6ed3d..6218d98f649b 100644
+> --- a/kernel/futex.c
+> +++ b/kernel/futex.c
+> @@ -1402,8 +1402,7 @@ static void mark_wake_futex(struct wake_q_head
+> *wake_q, struct futex_q *q)
+>      * Queue the task for later wakeup for after we've released
+>      * the hb->lock. wake_q_add() grabs reference to p.
+>      */
+> -    wake_q_add(wake_q, p);
+> -    put_task_struct(p);
+> +    wake_q_add_safe(wake_q, p);
+> }
+>
+> /*
+> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+> index 50d9af615dc4..fbe96341beee 100644
+> --- a/kernel/locking/rwsem-xadd.c
+> +++ b/kernel/locking/rwsem-xadd.c
+> @@ -211,9 +211,7 @@ static void __rwsem_mark_wake(struct rw_semaphore
+> *sem,
+>          * Ensure issuing the wakeup (either by us or someone else)
+>          * after setting the reader waiter to nil.
+>          */
+> -        wake_q_add(wake_q, tsk);
+> -        /* wake_q_add() already take the task ref */
+> -        put_task_struct(tsk);
+> +        wake_q_add_safe(wake_q, tsk);
+>     }
+>
+>     adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index d740d7a3608d..ef85c6ad4caa 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -396,19 +396,7 @@ static bool set_nr_if_polling(struct task_struct *p)
+> #endif
+> #endif
+>
+> -/**
+> - * wake_q_add() - queue a wakeup for 'later' waking.
+> - * @head: the wake_q_head to add @task to
+> - * @task: the task to queue for 'later' wakeup
+> - *
+> - * Queue a task for later wakeup, most likely by the wake_up_q() call
+> in the
+> - * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
+> - * instantly.
+> - *
+> - * This function must be used as-if it were wake_up_process(); IOW
+> the task
+> - * must be ready to be woken at this location.
+> - */
+> -void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+> +static bool __wake_q_add(struct wake_q_head *head, struct task_struct
+> *task)
+> {
+>     struct wake_q_node *node = &task->wake_q;
+>
+> @@ -422,15 +410,57 @@ void wake_q_add(struct wake_q_head *head, struct
+> task_struct *task)
+>      */
+>     smp_mb__before_atomic();
+>     if (unlikely(cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL)))
+> -        return;
+> -
+> -    get_task_struct(task);
+> +        return false;
+>
+>     /*
+>      * The head is context local, there can be no concurrency.
+>      */
+>     *head->lastp = node;
+>     head->lastp = &node->next;
+> +    return true;
+> +}
+> +
+> +/**
+> + * wake_q_add() - queue a wakeup for 'later' waking.
+> + * @head: the wake_q_head to add @task to
+> + * @task: the task to queue for 'later' wakeup
+> + *
+> + * Queue a task for later wakeup, most likely by the wake_up_q() call
+> in the
+> + * same context, _HOWEVER_ this is not guaranteed, the wakeup can come
+> + * instantly.
+> + *
+> + * This function must be used as-if it were wake_up_process(); IOW
+> the task
+> + * must be ready to be woken at this location.
+> + *
+> + * The @task will be refcounted upon a
 
-I don't see any failure returned from cpufreq_dt's cpufreq_init()
-function. Maybe put a static int counter =3D 0 and then fail
-cpufreq_init() the second time that it's called for the same policy
-pointer? I have a system with two policies, so I made it fail and return
--EINVAL when the counter =3D=3D 2 and I see the lockdep splat.
+Are you missing some text here?
 
->=20
-> I also did savedefconfig to show what all I changed in it. I faked multip=
-le
-> clusters on my hikey960 board, which is not big little..
->=20
-> And here is the command list from history that I ran after boot.
->=20
->   501  grep . /sys/devices/system/cpu/cpufreq/*/*
->   502  grep . /sys/devices/system/cpu/cpufreq/*/*/*
->   503  grep . /sys/devices/system/cpu/cpufreq/*/*/*
->   504  grep . /sys/devices/system/cpu/cpufreq/*/*/*
->   505  grep . /sys/devices/system/cpu/cpufreq/*/*/*
->   506  grep . /sys/devices/system/cpu/cpufreq/*/*
->   507  grep . /sys/devices/system/cpu/cpufreq/*/*
->   508  echo 0 > /sys/devices/system/cpu/cpu4/online=20
->   509  echo 0 > /sys/devices/system/cpu/cpu5/online=20
->   510  echo 0 > /sys/devices/system/cpu/cpu6/online=20
->   511  echo 0 > /sys/devices/system/cpu/cpu7/online=20
->   512  grep . /sys/devices/system/cpu/cpufreq/*/*
->   513  grep . /sys/devices/system/cpu/cpufreq/*/*/*
->   514  grep . /sys/devices/system/cpu/cpufreq/*/*
->   515  echo 1 > /sys/devices/system/cpu/cpu4/online=20
->   516  grep . /sys/devices/system/cpu/cpufreq/*/*
->   517  grep . /sys/devices/system/cpu/cpufreq/*/*/*
->   518  dmesg=20
->=20
-
-I did the following:
-
-  grep . /sys/devices/system/cpu/cpufreq/*/* >/dev/null
-  echo 0 > /sys/devices/system/cpu/cpu4/online=20
-  echo 0 > /sys/devices/system/cpu/cpu5/online=20
-  echo 0 > /sys/devices/system/cpu/cpu6/online=20
-  echo 0 > /sys/devices/system/cpu/cpu7/online=20
-  echo 1 > /sys/devices/system/cpu/cpu4/online=20
-  dmesg
-
-And boom, lockdep splat.
+-Longman
