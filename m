@@ -2,156 +2,106 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B93C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EFFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED18E21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF7A21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:54:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="At3kEbol";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CtSm1Ec4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeLRSxv (ORCPT
+        id S1726859AbeLRSyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:53:51 -0500
-Received: from mga07.intel.com ([134.134.136.100]:20846 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbeLRSxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:53:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 10:53:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
-   d="scan'208";a="108376886"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Dec 2018 10:53:49 -0800
-Date:   Tue, 18 Dec 2018 10:53:49 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181218185349.GC30082@linux.intel.com>
-References: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
- <20181217180102.GA12560@linux.intel.com>
- <20181217183613.GD12491@linux.intel.com>
- <20181217184333.GA26920@linux.intel.com>
- <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
- <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
- <20181217222047.GG12491@linux.intel.com>
- <CALCETrX1HXZvMk8UM6wV5StTj+vvqehAvybJYk66At60t91QGQ@mail.gmail.com>
- <20181218154417.GC28326@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218154417.GC28326@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 18 Dec 2018 13:54:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41598 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbeLRSyH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 13:54:07 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 742BD6058E; Tue, 18 Dec 2018 18:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545159246;
+        bh=SYepN5HlQz2x6xfgmINiiOr9CUb2ElNHXFcXVXIpe3c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=At3kEboluPmk0kaNl3ehpL/HhEpI+9iBt2H9g2Ud4h/23wL5phvxfZ8BgLMq9Ofgd
+         580eughzxUsNHqHYVxEV/mIQ4WaUUZ8vBK/fBNyAon3vSJPAyxRCR9/uD7AxaQjf11
+         T9R2ozPapZ63Eew5P7vo1kjfodhh3MzXiPVTw5ug=
+Received: from jshekhar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jshekhar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71D846058E;
+        Tue, 18 Dec 2018 18:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545159244;
+        bh=SYepN5HlQz2x6xfgmINiiOr9CUb2ElNHXFcXVXIpe3c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CtSm1Ec4tBoYmkqC9aMT/hPiICIMn1V3DaVn94jMT7jYCZmd3P5qjhCOdNd9uALKV
+         Z7Zufvm4ywVL3XHiyHGxlCKXH5u2rmYNb0y4i2EUnqlBtUcSAxJKwWKoHidqrmbUGE
+         xuErqe+6EENiM5MFrPjfexWeEwbvT+VaC8wLHgRU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71D846058E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jshekhar@codeaurora.org
+From:   Jayant Shekhar <jshekhar@codeaurora.org>
+To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     Jayant Shekhar <jshekhar@codeaurora.org>,
+        linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, hoegsberg@chromium.org,
+        abhinavk@codeaurora.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Subject: [v1] drm/msm/dpu: Remove unused enum and comment from dpu mdss
+Date:   Wed, 19 Dec 2018 00:23:53 +0530
+Message-Id: <1545159233-21580-1-git-send-email-jshekhar@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 07:44:18AM -0800, Sean Christopherson wrote:
-> On Mon, Dec 17, 2018 at 08:59:54PM -0800, Andy Lutomirski wrote:
-> > On Mon, Dec 17, 2018 at 2:20 PM Sean Christopherson
-> > <sean.j.christopherson@intel.com> wrote:
-> > >
-> > 
-> > > My brain is still sorting out the details, but I generally like the idea
-> > > of allocating an anon inode when creating an enclave, and exposing the
-> > > other ioctls() via the returned fd.  This is essentially the approach
-> > > used by KVM to manage multiple "layers" of ioctls across KVM itself, VMs
-> > > and vCPUS.  There are even similarities to accessing physical memory via
-> > > multiple disparate domains, e.g. host kernel, host userspace and guest.
-> > >
-> > 
-> > In my mind, opening /dev/sgx would give you the requisite inode.  I'm
-> > not 100% sure that the chardev infrastructure allows this, but I think
-> > it does.
-> 
-> My fd/inode knowledge is lacking, to say the least.  Whatever works, so
-> long as we have a way to uniquely identify enclaves.
+Remove enum dpu_iommu_domain from dpu mdss as its unused.
 
-Actually, while we're dissecting the interface...
+Remove unnecessary comment for variable which is already
+removed.
 
-What if we re-organize the ioctls in such a way that we leave open the
-possibility of allocating raw EPC for KVM via /dev/sgx?  I'm not 100%
-positive this approach will work[1], but conceptually it fits well with
-KVM's memory model, e.g. KVM is aware of the GPA<->HVA association but
-generally speaking doesn't know what's physically backing each memory
-region.
+Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
-Tangentially related, I think we should support allocating multiple
-enclaves from a single /dev/sgx fd, i.e. a process shouldn't have to
-open /dev/sgx every time it wants to create a new enclave.
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+index 68c54d2..1ab8d4a 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
+@@ -258,12 +258,6 @@ enum dpu_vbif {
+ 	VBIF_NRT = VBIF_1
+ };
+ 
+-enum dpu_iommu_domain {
+-	DPU_IOMMU_DOMAIN_UNSECURE,
+-	DPU_IOMMU_DOMAIN_SECURE,
+-	DPU_IOMMU_DOMAIN_MAX
+-};
+-
+ /**
+  * DPU HW,Component order color map
+  */
+@@ -358,7 +352,6 @@ enum dpu_3d_blend_mode {
+  * @alpha_enable: whether the format has an alpha channel
+  * @num_planes: number of planes (including meta data planes)
+  * @fetch_mode: linear, tiled, or ubwc hw fetch behavior
+- * @is_yuv: is format a yuv variant
+  * @flag: usage bit flags
+  * @tile_width: format tile width
+  * @tile_height: format tile height
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-Something like this:
-
-/dev/sgx
-  |
-  -> mmap() { return -EINVAL; }
-  |
-  -> unlocked_ioctl()
-     |
-     -> SGX_CREATE_ENCLAVE: { return alloc_enclave_fd(); }
-     |  |
-     |   -> mmap() { ... }
-     |  | 
-     |   -> get_unmapped_area() { 
-     |  |           if (enclave->size) {
-     |  |                   if (!addr)
-     |  |                           addr = enclave->base;
-     |  |                   if (addr + len + pgoff > enclave->base + enclave->size)
-     |  |                           return -EINVAL;
-     |  |           } else {
-     |  |                   if (!validate_size(len))
-     |  |                           return -EINVAL;
-     |  |                   addr = naturally_align(len);
-     |  |           }
-     |  |   }
-     |  |
-     |   -> unlocked_ioctl() {
-     |              SGX_ENCLAVE_ADD_PAGE: { ... }
-     |              SGX_ENCLAVE_INIT: { ... }
-     |              SGX_ENCLAVE_REMOVE_PAGES: { ... }
-     |              SGX_ENCLAVE_MODIFY_PAGES: { ... }
-     |      }
-     |
-     -> SGX_CREATE_VIRTUAL_EPC: {return alloc_epc_fd(); }
-        |
-         -> mmap() { ... }
-        |
-	 -> get_unmapped_area() {<page aligned/sized> }
-        |
-         -> unlocked_ioctl() {
-                    SGX_VIRTUAL_EPC_???:
-		    SGX_VIRTUAL_EPC_???:
-	    }
-
-
-[1] Delegating EPC management to /dev/sgx is viable for virtualizing SGX
-    without oversubscribing EPC to guests, but oversubscribing EPC in a
-    VMM requires handling EPC-related VM-Exits and using instructions
-    that will #UD if the CPU is not post-VMXON.  I *think* having KVM
-    forward VM-Exits to x86/sgx would work, but it's entirely possible
-    it'd be a complete cluster.
