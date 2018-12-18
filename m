@@ -2,201 +2,173 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B1DC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00752C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31132080D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744682080D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:18:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Wf8j9kUG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Kcodba2B"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HMR5bTEU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbeLRCPw (ORCPT
+        id S1726458AbeLRCS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:15:52 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59466 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeLRCPv (ORCPT
+        Mon, 17 Dec 2018 21:18:29 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:40861 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeLRCS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:15:51 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 049EF60860; Tue, 18 Dec 2018 02:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545099350;
-        bh=ErmrL16E0heg/giXRM5GLnAO5thNlkvBcDzW7GSfOxk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Wf8j9kUGfkB6ylSV042GTNRgg3rxBoAb8cL0o/M1F2QnoZKzhvgiL46EOIXHVW8GX
-         2sjuEiHsPkboUCUGb42qvdt3HmSDQRNv4U1qsYtDQKktkBgydCIqwGzNPWY8pWAjPT
-         +hnZy+rtElU/cUD2QFUGzu/LQd/4khHnSWpVaDIU=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EF637601D7;
-        Tue, 18 Dec 2018 02:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545099348;
-        bh=ErmrL16E0heg/giXRM5GLnAO5thNlkvBcDzW7GSfOxk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Kcodba2BNPF5ewrkiklFRpmnaGAj1mvlwGiESF3Y1nVtuV6VZ8SVyNhXAjXzPmH7K
-         nB4YNR99K7jBUBVijnT2fpCZTjb8yKb6+DME+wDT0dion5bBcURjiSPYNUQrNAyPuB
-         OVEl0jgeTSNB08IGpO4r804OxzWOwhN4OjiOKkm8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF637601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v4] clk: qcom: smd: Add support for MSM8998 rpm clocks
-Date:   Mon, 17 Dec 2018 19:15:36 -0700
-Message-Id: <1545099336-5615-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 17 Dec 2018 21:18:28 -0500
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id wBI2IBtk004163;
+        Tue, 18 Dec 2018 11:18:12 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBI2IBtk004163
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1545099492;
+        bh=VzYyZlBs9l9a4wKUe+GOU2F9FqBEVqzHNMXtuwDeOwM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HMR5bTEUqaGe3jwKM9p4RShBtgirwR8HAGNfBHzi4ac2ANfX7V0T69/jk9Fa+R9T4
+         IoMBdNt18co1hUyT6imHxO1JH/OWU08AK6GOoRT5dsHhxlu18VJeuEAZf8dFMhGiAo
+         rLn4TGXE2/qqcWvmr6F2ydqyzD09oEEwLieIKzttz8Zpe4QAux8MrWFEGjCCGoEZ0X
+         973PkJ0MJnFO0BiwxFG8OrcDcuSXZrPjL/UBJZuzqRCkI9Qqn5kI7jl4Ku7DJF6SP/
+         d83vF2g3TSZnYI/KoWAaB8C1k1ERq3FzdTJyhx4IGvkifcRHSY5tBp0RaGr1ydvv0e
+         uF3jpRTXTdtlA==
+X-Nifty-SrcIP: [209.85.221.172]
+Received: by mail-vk1-f172.google.com with SMTP id 185so1658788vkc.3;
+        Mon, 17 Dec 2018 18:18:12 -0800 (PST)
+X-Gm-Message-State: AA+aEWZdCWI4g5gg2RnmdNUVPyWo7XHLPRg7fNWQg0wHneQ4jZYYdKuP
+        fZRwDc9RB1swQfyMNTp8BFsY/0KJTK3nrtWjGe4=
+X-Google-Smtp-Source: AFSGD/V/rM2GgwQXgK74GxSia7e42Zhxk+WqDbfO+L9odRM0J7yX3uL6RV+QiD7z5+G9e7VPe6bqKOgMspQrQeXEKfs=
+X-Received: by 2002:a1f:4d47:: with SMTP id a68mr6764028vkb.34.1545099491241;
+ Mon, 17 Dec 2018 18:18:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20181206222318.218157-1-tmroeder@google.com> <CAK7LNATZm6T9bjcAxB_WQw-um-Hjkhiew6qg8CRLayr8qYzLeQ@mail.gmail.com>
+ <20181217214022.GA38778@google.com>
+In-Reply-To: <20181217214022.GA38778@google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 18 Dec 2018 11:17:35 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATG9y04UdJ-Z5AwLHXUcnbWo5Butee0pkL+MFzds04wCA@mail.gmail.com>
+Message-ID: <CAK7LNATG9y04UdJ-Z5AwLHXUcnbWo5Butee0pkL+MFzds04wCA@mail.gmail.com>
+Subject: Re: [PATCH] scripts: add a tool to produce a compile_commands.json file
+To:     Tom Roeder <tmroeder@google.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
-for clients to vote on.
+On Tue, Dec 18, 2018 at 8:21 AM Tom Roeder <tmroeder@google.com> wrote:
+>
+> On Sat, Dec 15, 2018 at 06:37:49PM +0900, Masahiro Yamada wrote:
+> > On Fri, Dec 7, 2018 at 7:24 AM Tom Roeder <tmroeder@google.com> wrote:
+> > >
+> > > The LLVM/Clang project provides many tools for analyzing C source code.
+> > > Many of these tools are based on LibTooling
+> > > (https://clang.llvm.org/docs/LibTooling.html), which depends on a
+> > > database of compiler flags. The standard container for this database is
+> > > compile_commands.json, which consists of a list of JSON objects, each
+> > > with "directory", "file", and "command" fields.
+> > >
+> > > Some build systems, like cmake or bazel, produce this compilation
+> > > information directly. Naturally, Makefiles don't. However, the kernel
+> > > makefiles already create .<target>.o.cmd files that contain all the
+> > > information needed to build a compile_commands.json file.
+> > >
+> > > So, this commit adds scripts/gen_compile_commands.py, which recursively
+> > > searches through a directory for .<target>.o.cmd files and extracts
+> > > appropriate compile commands from them. It writes a
+> > > compile_commands.json file that LibTooling-based tools can use.
+> > >
+> > > By default, gen_compile_commands.py starts its search in its working
+> > > directory and (over)writes compile_commands.json in the working
+> > > directory. However, it also supports --output and --directory flags for
+> > > out-of-tree use.
+> > >
+> > > Note that while gen_compile_commands.py enables the use of clang-based
+> > > tools, it does not require the kernel to be compiled with clang. E.g.,
+> > > the following sequence of commands produces a compile_commands.json file
+> > > that works correctly with LibTooling.
+> > >
+> > > make defconfig
+> > > make
+> > > scripts/gen_compile_commands.py
+> > >
+> > > Also note that this script is written to work correctly in both Python 2
+> > > and Python 3, so it does not specify the Python version in its first
+> > > line.
+> > >
+> > > For an example of the utility of this script: after running
+> > > gen_compile_commands.json on the latest kernel version, I was able to
+> > > use Vim + the YouCompleteMe pluging + clangd to automatically jump to
+> > > definitions and declarations. Obviously, cscope and ctags provide some
+> > > of this functionality; the advantage of supporting LibTooling is that it
+> > > opens the door to many other clang-based tools that understand the code
+> > > directly and do not rely on regular expressions and heuristics.
+> > >
+> > > Tested: Built several recent kernel versions and ran the script against
+> > > them, testing tools like clangd (for editor/LSP support) and clang-check
+> > > (for static analysis). Also extracted some test .cmd files from a kernel
+> > > build and wrote a test script to check that the script behaved correctly
+> > > with all permutations of the --output and --directory flags.
+> > >
+> > > Signed-off-by: Tom Roeder <tmroeder@google.com>
+> >
+> >
+> > I am fine with this,
+> > but I have one question.
+> >
+> > The generated compile_commands.json
+> > contains $(pound)
+>
+> To make sure we're talking about the same thing: the instances that I've
+> seen of "#" occur in macro definitions in the "command" field in some of
+> the JSON objects. For example, I see things like
+> -D\"KBUILD_STR(s)=\\#s\".
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
-v4
--Fix compile issue
 
-v3
--Ensure Marc's hang was addressed by GCC fixes
--Renamed the bb clks to ln_bb to match the schematics
 
-v2
--fix compatible ordering nits per Stephen 
+When I ran this tool against the latest kernel
+(specifically, since commit 9564a8cf)
+I saw the following in "command" field.
 
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 63 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             | 10 ++++
- 3 files changed, 74 insertions(+)
+-D\"BUILD_STR(s)=$(pound)s\"
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 87b4949..944719b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -16,6 +16,7 @@ Required properties :
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
-+			"qcom,rpmcc-msm8998", "qcom,rpmcc"
- 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
- 
- - #clock-cells : shall contain 1
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index d3aadae..22dd42a 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -655,10 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
- 	.num_clks = ARRAY_SIZE(qcs404_clks),
- };
- 
-+/* msm8998 */
-+DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
-+DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk1, ln_bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk2, ln_bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3_pin, ln_bb_clk3_a_pin,
-+				     3);
-+DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
-+		   QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
-+			QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
-+static struct clk_smd_rpm *msm8998_clks[] = {
-+	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
-+	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
-+	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
-+	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
-+	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
-+	[RPM_SMD_LN_BB_CLK1] = &msm8998_ln_bb_clk1,
-+	[RPM_SMD_LN_BB_CLK1_A] = &msm8998_ln_bb_clk1_a,
-+	[RPM_SMD_LN_BB_CLK2] = &msm8998_ln_bb_clk2,
-+	[RPM_SMD_LN_BB_CLK2_A] = &msm8998_ln_bb_clk2_a,
-+	[RPM_SMD_LN_BB_CLK3_PIN] = &msm8998_ln_bb_clk3_pin,
-+	[RPM_SMD_LN_BB_CLK3_A_PIN] = &msm8998_ln_bb_clk3_a_pin,
-+	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
-+	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
-+	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
-+	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
-+	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
-+	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
-+	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
-+	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
-+	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
-+	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
-+	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
-+	.clks = msm8998_clks,
-+	.num_clks = ARRAY_SIZE(msm8998_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
-+	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
- 	{ }
- };
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 3658b0c..ede93a0 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -127,5 +127,15 @@
- #define RPM_SMD_BIMC_GPU_A_CLK			77
- #define RPM_SMD_QPIC_CLK			78
- #define RPM_SMD_QPIC_CLK_A			79
-+#define RPM_SMD_LN_BB_CLK1			80
-+#define RPM_SMD_LN_BB_CLK1_A			81
-+#define RPM_SMD_LN_BB_CLK2			82
-+#define RPM_SMD_LN_BB_CLK2_A			83
-+#define RPM_SMD_LN_BB_CLK3_PIN			84
-+#define RPM_SMD_LN_BB_CLK3_A_PIN		85
-+#define RPM_SMD_RF_CLK3				86
-+#define RPM_SMD_RF_CLK3_A			87
-+#define RPM_SMD_RF_CLK3_PIN			88
-+#define RPM_SMD_RF_CLK3_A_PIN			89
- 
- #endif
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
 
+I am not sure whether it is a problem or not.
+
+I do not care about this tool much.
+I will queue up this patch shortly if it is OK with you.
+
+
+Thanks.
+
+
+> >
+> > How is it handled?
+>
+> The Python json module takes care of escaping the output to make a valid
+> JSON string for the "command" field. The gen_compile_commands.py script
+> doesn't take any special action for that or any other character in its
+> output.
+>
+> > Should it be replaced with '\#' ?
+>
+> I don't think it needs to be changed, given my experience with this
+> script and its testing so far: the output seems to work for me. However,
+> are you running into problems due to the presence of this character or
+> inadequate escaping? Please let me know, and I'd be happy to look into
+> it.
+>
+> Tom
+
+
+
+--
+Best Regards
+Masahiro Yamada
