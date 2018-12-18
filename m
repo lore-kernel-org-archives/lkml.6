@@ -2,42 +2,42 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C57C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499FBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16692218AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11B742184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="U3NsNR1K"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bteUZUk2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeLRTTw (ORCPT
+        id S1727061AbeLRTTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:19:52 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4875 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbeLRTTv (ORCPT
+        Tue, 18 Dec 2018 14:19:54 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1143 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeLRTTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:19:51 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c19484c0000>; Tue, 18 Dec 2018 11:19:41 -0800
+        Tue, 18 Dec 2018 14:19:52 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1948500000>; Tue, 18 Dec 2018 11:19:44 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Dec 2018 11:19:49 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 18 Dec 2018 11:19:50 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 11:19:49 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+        by hqpgpgate102.nvidia.com on Tue, 18 Dec 2018 11:19:50 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 19:19:49 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 19:19:49 +0000
+ 2018 19:19:50 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 19:19:50 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c1948540001>; Tue, 18 Dec 2018 11:19:48 -0800
+        id <B5c1948550004>; Tue, 18 Dec 2018 11:19:49 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
@@ -46,212 +46,232 @@ To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1 1/2] arm64: dts: tegra210: Add SDMMC Auto-cal settings
-Date:   Tue, 18 Dec 2018 11:19:46 -0800
-Message-ID: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1 2/2] mmc: tegra: SDMMC pads auto-calibration
+Date:   Tue, 18 Dec 2018 11:19:47 -0800
+Message-ID: <1545160787-3157-2-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
+References: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545160781; bh=upXbqvh8OsNTt3xEaujgxEKb32gDOotj2vmCgyrGlPk=;
+        t=1545160784; bh=SJfaBn+4ArOyPLdhrQenFdhRRCgjBmT4n1F0edKIZ0c=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=U3NsNR1K+A14f15qOG+s8yaqVG0JovSNUqbBtPaNf2tpjJCcthpSvkJCx0r28IGiK
-         Glqib1mY479tp+fBPdRatKe6TnPE8AZgtDBTH50cfRru5dUDcHVpBqLAWkorsvid5D
-         jYz/l4lJjZmsw/Cxd15ZnrI7vksX6U1gVAttQT6bFi27fqI9vxhRYJejj43+FxF0z8
-         ReiASCgdU/NbpiElzaevEmfzt0S8MauK2d77riZGaYzDu7+4ee5qwvRrOpZ6VAAGEi
-         UikdKzYtfsu3dSEMqMe0SBxzVEI9Bzm3XBUl8AQZfS/0e5/cw4f7cnTydogekKeXxf
-         2/5ZDu2JjY2Bw==
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=bteUZUk2ZCHDdklyc9KWAHKq+lh+/TbA/UT/stoBVx+jmc9BwR7UYzUKqAOAOD9Rk
+         8yt1I2uzaBnDh/8GhFPG/K+nKCqJY2oi55xoiMuEqYHck+YTbN7tYut85EdhyJ/jMm
+         p0Q8ENm2xjE7+FLJX+j0IGV8MZv+KZm89JJwCnWt6S1LJfPoLR+oIUsyvX6sI+fzam
+         F+AQcZHsukstbMjElNiMfpZNyZNJn5V11zDHCdAStdZtOVyez9U0BsdJtnpqwgxn9a
+         H9y7KbKD4v9lyvQ/nW0y3uhnUwjhZ4i8SYP1XJpjOswy0ePzg4ZyHmzVcSRbpJRJFu
+         QYAEEvIcWG1vA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SDMMC initial pad offsets used by auto calibration process.
+Programs initial drive code offsets which will be used by auto
+calibration process.
 
-Add SDMMC fixed drive strengths used when calibration timeouts.
-Fixed drive strengths are based on Pre SI Analysis of the pads.
+Programs fixed drive strengths for SDMMC pads when auto cal
+timeouts. Fixed settings are based on Pre-SI analysis of the
+pad design.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi |  2 ++
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 57 ++++++++++++++++++++++++++++++--
- 3 files changed, 91 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-tegra.c | 112 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 84 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..0631bb9bfcc3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -311,6 +311,8 @@
- 		nvidia,pad-autocal-pull-down-offset-hs400 = <0x05>;
- 		nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
- 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
-+		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
-+		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
- 		nvidia,default-tap = <0x5>;
- 		nvidia,default-trim = <0x9>;
- 		nvidia,dqs-trim = <63>;
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..3fab6802c335 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -301,6 +301,17 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <0x9>;
-+			nvidia,default-trim = <0x5>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 7b95d088fdef..2524654282d1 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -75,6 +75,7 @@
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
+ #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD	BIT(31)
++#define SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK		0x07FFF000
  
-@@ -312,6 +323,18 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x07>;
-+			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
-+			nvidia,default-tap = <0x9>;
-+			nvidia,default-trim = <0x5>;
- 			status = "disabled";
- 		};
+ #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
+ #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
+@@ -121,6 +122,8 @@ struct sdhci_tegra {
+ 	struct pinctrl *pinctrl_sdmmc;
+ 	struct pinctrl_state *pinctrl_state_3v3;
+ 	struct pinctrl_state *pinctrl_state_1v8;
++	struct pinctrl_state *pinctrl_state_3v3_drv;
++	struct pinctrl_state *pinctrl_state_1v8_drv;
  
-@@ -323,6 +346,17 @@
- 			clock-names = "sdhci";
- 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
- 			reset-names = "sdhci";
-+			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
-+			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
-+			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
-+			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
-+									<0x0a>;
-+			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
-+			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
-+									<0x0a>;
-+			nvidia,default-tap = <0x8>;
-+			nvidia,default-trim = <0x14>;
-+			nvidia,dqs-trim = <40>;
- 			status = "disabled";
- 		};
+ 	struct sdhci_tegra_autocal_offsets autocal_offsets;
+ 	ktime_t last_calib;
+@@ -130,6 +133,9 @@ struct sdhci_tegra {
+ 	u32 dqs_trim;
+ };
  
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 2205d66b0443..41408df9d4e9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -476,6 +476,48 @@
- 		compatible = "nvidia,tegra210-pinmux";
- 		reg = <0x0 0x700008d4 0x0 0x29c>, /* Pad control registers */
- 		      <0x0 0x70003000 0x0 0x294>; /* Mux registers */
-+		sdmmc1_3v3_drv: sdmmc1-3v3-drv {
-+			sdmmc1 {
-+				nvidia,pins = "drive_sdmmc1";
-+				nvidia,pull-down-strength = <0x8>;
-+				nvidia,pull-up-strength = <0x8>;
-+			};
-+		};
-+		sdmmc1_1v8_drv: sdmmc1-1v8-drv {
-+			sdmmc1 {
-+				nvidia,pins = "drive_sdmmc1";
-+				nvidia,pull-down-strength = <0x4>;
-+				nvidia,pull-up-strength = <0x3>;
-+			};
-+		};
-+		sdmmc2_1v8_drv: sdmmc2-1v8-drv {
-+			sdmmc2 {
-+				nvidia,pins = "drive_sdmmc2";
-+				nvidia,pull-down-strength = <0x10>;
-+				nvidia,pull-up-strength = <0x10>;
-+			};
-+		};
-+		sdmmc3_3v3_drv: sdmmc3-3v3-drv {
-+			sdmmc3 {
-+				nvidia,pins = "drive_sdmmc3";
-+				nvidia,pull-down-strength = <0x8>;
-+				nvidia,pull-up-strength = <0x8>;
-+			};
-+		};
-+		sdmmc3_1v8_drv: sdmmc3-1v8-drv {
-+			sdmmc3 {
-+				nvidia,pins = "drive_sdmmc3";
-+				nvidia,pull-down-strength = <0x4>;
-+				nvidia,pull-up-strength = <0x3>;
-+			};
-+		};
-+		sdmmc4_1v8_drv: sdmmc4-1v8-drv {
-+			sdmmc4 {
-+				nvidia,pins = "drive_sdmmc4";
-+				nvidia,pull-down-strength = <0x10>;
-+				nvidia,pull-up-strength = <0x10>;
-+			};
-+		};
- 	};
++static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
++							bool state_drvupdn);
++
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -437,6 +443,7 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ 			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
+ 	}
  
- 	/*
-@@ -1050,9 +1092,12 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 14>;
- 		reset-names = "sdhci";
--		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
-+				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
- 		pinctrl-0 = <&sdmmc1_3v3>;
- 		pinctrl-1 = <&sdmmc1_1v8>;
-+		pinctrl-2 = <&sdmmc1_3v3_drv>;
-+		pinctrl-3 = <&sdmmc1_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-@@ -1075,6 +1120,8 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 9>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-1v8-drv";
-+		pinctrl-0 = <&sdmmc2_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
-@@ -1090,9 +1137,12 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 69>;
- 		reset-names = "sdhci";
--		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
-+				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
- 		pinctrl-0 = <&sdmmc3_3v3>;
- 		pinctrl-1 = <&sdmmc3_1v8>;
-+		pinctrl-2 = <&sdmmc3_3v3_drv>;
-+		pinctrl-3 = <&sdmmc3_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
-@@ -1110,6 +1160,9 @@
- 		clock-names = "sdhci";
- 		resets = <&tegra_car 15>;
- 		reset-names = "sdhci";
-+		pinctrl-names = "sdmmc-3v3-drv", "sdmmc-1v8-drv";
-+		pinctrl-0 = <&sdmmc4_1v8_drv>;
-+		pinctrl-1 = <&sdmmc4_1v8_drv>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
- 		nvidia,default-tap = <0x8>;
++	/* Set initial offset before auto-calibration */
+ 	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
+ 
+ 	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
+@@ -460,19 +467,15 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+ 	if (ret) {
+ 		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
+ 
+-		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
+-			pdpu = offsets.pull_down_1v8_timeout << 8 |
+-			       offsets.pull_up_1v8_timeout;
+-		else
+-			pdpu = offsets.pull_down_3v3_timeout << 8 |
+-			       offsets.pull_up_3v3_timeout;
+-
+-		/* Disable automatic calibration and use fixed offsets */
++		/* Disable automatic cal and use fixed Drive Strengths */
+ 		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+ 		reg &= ~SDHCI_AUTO_CAL_ENABLE;
+ 		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+ 
+-		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
++		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, false);
++		if (ret < 0)
++			dev_err(mmc_dev(host->mmc),
++			"Setting drive strengths failed %d\n", PTR_ERR(ret));
+ 	}
+ }
+ 
+@@ -743,27 +746,73 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+ 	return mmc_send_tuning(host->mmc, opcode, NULL);
+ }
+ 
+-static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
++static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
++							bool state_drvupdn)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+ 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+-	int ret;
++	struct sdhci_tegra_autocal_offsets offsets =
++					tegra_host->autocal_offsets;
++	struct pinctrl_state *pinctrl_drvupdn = NULL;
++	int ret = 0;
++	u8 drvup = 0, drvdn = 0;
++	u32 reg;
+ 
+-	if (!tegra_host->pad_control_available)
+-		return 0;
++	if (!state_drvupdn) {
++		/* PADS Drive Strength */
++		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
++			if (!IS_ERR(tegra_host->pinctrl_state_1v8_drv) &&
++				(tegra_host->pinctrl_state_1v8_drv != NULL)) {
++				pinctrl_drvupdn =
++					tegra_host->pinctrl_state_1v8_drv;
++			} else {
++				drvup = offsets.pull_up_1v8_timeout;
++				drvdn = offsets.pull_down_1v8_timeout;
++			}
++		} else {
++			if (!IS_ERR(tegra_host->pinctrl_state_3v3_drv) &&
++				(tegra_host->pinctrl_state_3v3_drv != NULL)) {
++				pinctrl_drvupdn =
++					tegra_host->pinctrl_state_3v3_drv;
++			} else {
++				drvup = offsets.pull_up_3v3_timeout;
++				drvdn = offsets.pull_down_3v3_timeout;
++			}
++		}
++
++		if (pinctrl_drvupdn != NULL) {
++			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
++							pinctrl_drvupdn);
++			if (ret < 0)
++				dev_err(mmc_dev(host->mmc),
++					"failed pads drvupdn, ret: %d\n", ret);
++		} else if ((drvup) || (drvdn)) {
++			reg = sdhci_readl(host,
++					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
++			reg &= ~SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK;
++			reg |= (drvup << 20) | (drvdn << 12);
++			sdhci_writel(host, reg,
++					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
++		}
+ 
+-	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
+-		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+-					   tegra_host->pinctrl_state_1v8);
+-		if (ret < 0)
+-			dev_err(mmc_dev(host->mmc),
+-				"setting 1.8V failed, ret: %d\n", ret);
+ 	} else {
+-		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+-					   tegra_host->pinctrl_state_3v3);
+-		if (ret < 0)
+-			dev_err(mmc_dev(host->mmc),
+-				"setting 3.3V failed, ret: %d\n", ret);
++		/* Dual Voltage PADS Voltage selection */
++		if (!tegra_host->pad_control_available)
++			return 0;
++
++		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
++			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
++						tegra_host->pinctrl_state_1v8);
++			if (ret < 0)
++				dev_err(mmc_dev(host->mmc),
++					"setting 1.8V failed, ret: %d\n", ret);
++		} else {
++			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
++						tegra_host->pinctrl_state_3v3);
++			if (ret < 0)
++				dev_err(mmc_dev(host->mmc),
++					"setting 3.3V failed, ret: %d\n", ret);
++		}
+ 	}
+ 
+ 	return ret;
+@@ -778,7 +827,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+ 	int ret = 0;
+ 
+ 	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+-		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
++		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
+ 		if (ret < 0)
+ 			return ret;
+ 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+@@ -786,7 +835,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+ 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+ 		if (ret < 0)
+ 			return ret;
+-		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
++		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
+ 	}
+ 
+ 	if (tegra_host->pad_calib_required)
+@@ -805,8 +854,15 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
+ 		return -1;
+ 	}
+ 
+-	tegra_host->pinctrl_state_3v3 =
+-		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
++	tegra_host->pinctrl_state_1v8_drv = pinctrl_lookup_state(
++				tegra_host->pinctrl_sdmmc, "sdmmc-1v8-drv");
++
++	tegra_host->pinctrl_state_3v3_drv = pinctrl_lookup_state(
++				tegra_host->pinctrl_sdmmc, "sdmmc-3v3-drv");
++
++	tegra_host->pinctrl_state_3v3 = pinctrl_lookup_state(
++				tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
++
+ 	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
+ 		dev_warn(dev, "Missing 3.3V pad state, err: %ld\n",
+ 			 PTR_ERR(tegra_host->pinctrl_state_3v3));
 -- 
 2.7.4
 
