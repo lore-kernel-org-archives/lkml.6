@@ -5,119 +5,170 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90778C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B27C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 673DE218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3611621873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeLRROF (ORCPT
+        id S1727356AbeLRROY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:14:05 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58124 "EHLO mga06.intel.com"
+        Tue, 18 Dec 2018 12:14:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60374 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726899AbeLRROE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:14:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 09:14:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
-   d="scan'208";a="101635112"
-Received: from ray.jf.intel.com (HELO [10.7.201.140]) ([10.7.201.140])
-  by orsmga006.jf.intel.com with ESMTP; 18 Dec 2018 09:14:02 -0800
-Subject: Re: [PATCH v6 1/3] x86/fpu: track AVX-512 usage of tasks
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>
-Cc:     Aubrey Li <aubrey.li@intel.com>, mingo@redhat.com,
-        peterz@infradead.org, hpa@zytor.com, ak@linux.intel.com,
-        tim.c.chen@linux.intel.com, arjan@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <20181218042218.8653-1-aubrey.li@intel.com>
- <alpine.DEB.2.21.1812181448170.12686@nanos.tec.linutronix.de>
- <62997df2-0817-b54d-b11e-00a567f1d67c@linux.intel.com>
- <alpine.DEB.2.21.1812181630530.14031@nanos.tec.linutronix.de>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <f0390c3a-2332-6e7c-0f0d-f3d25e4cf0bc@intel.com>
-Date:   Tue, 18 Dec 2018 09:14:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727321AbeLRROW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:14:22 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 877A5A04AE;
+        Tue, 18 Dec 2018 17:14:21 +0000 (UTC)
+Received: from gondolin (ovpn-116-115.ams2.redhat.com [10.36.116.115])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3776E105B200;
+        Tue, 18 Dec 2018 17:14:13 +0000 (UTC)
+Date:   Tue, 18 Dec 2018 18:13:58 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        miklos@szeredi.hu, sweil@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
+ capabilities
+Message-ID: <20181218181358.3bc2615a.cohuck@redhat.com>
+In-Reply-To: <20181217145638.GH6785@stefanha-x1.localdomain>
+References: <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
+        <20181213091320.GA2313@work-vm>
+        <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
+        <20181213100058.GC2313@work-vm>
+        <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+        <20181213121548.GN2313@work-vm>
+        <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+        <20181213133823.2272736b.cohuck@redhat.com>
+        <20181214134434.GA3882@stefanha-x1.localdomain>
+        <cf910f77-203c-8efd-fed1-6b041b078d63@redhat.com>
+        <20181217145638.GH6785@stefanha-x1.localdomain>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1812181630530.14031@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9D+IRyZBh7miHo=qk+bbEef"; protocol="application/pgp-signature"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 18 Dec 2018 17:14:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 7:32 AM, Thomas Gleixner wrote:
-> What exactly prevents a 32bit kernel from having the AVX512 feature bit
-> set? And if it cannot be set on 32bit, then why are you compiling that code
-> in at all?
+--Sig_/9D+IRyZBh7miHo=qk+bbEef
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There are three different AVX-512 states (and three bits) which Aubrey's
-patch checks.  All three have different rules.  Here's a summary along
-with some relevant SDM quotes from Vol1-13.6.
+On Mon, 17 Dec 2018 14:56:38 +0000
+Stefan Hajnoczi <stefanha@redhat.com> wrote:
 
-Opmask state: All opmask registers can be set in 32-bit mode.
-ZMM_Hi256 state: "An execution of XRSTOR or XRSTORS outside 64-bit mode
-		  does not update ZMM8_H–ZMM15_H."  This implies that
-		  ZMM0_H-ZMM7_H *are* updated in 32-bit mode.
-Hi16_ZMM state: "Outside 64-bit mode, Hi16_ZMM state is always in its
-		 initial configuration."
+> On Mon, Dec 17, 2018 at 11:53:46AM +0100, David Hildenbrand wrote:
+> > On 14.12.18 14:44, Stefan Hajnoczi wrote: =20
+> > > On Thu, Dec 13, 2018 at 01:38:23PM +0100, Cornelia Huck wrote: =20
+> > >> On Thu, 13 Dec 2018 13:24:31 +0100
+> > >> David Hildenbrand <david@redhat.com> wrote:
 
-All of Hi16_ZMM and *part* of ZMM_Hi256 can not be practically used in
-32-bit mode.  But, even using part of ZMM_Hi256 means the xfeature bit
-will be set.
+> > >>> As s390x does not have the concept of memory mapped io (RAM is RAM,
+> > >>> nothing else), this is not architectured. vitio-ccw can therefore n=
+ot
+> > >>> define anything similar like that. However, in virtual environments=
+ we
+> > >>> can do whatever we want on top of the pure transport (e.g. on the v=
+irtio
+> > >>> layer).
+> > >>>
+> > >>> Conny can correct me if I am wrong. =20
+> > >>
+> > >> I don't think you're wrong, but I haven't read the code yet and I'm
+> > >> therefore not aware of the purpose of this BAR.
+> > >>
+> > >> Generally, if there is a memory location shared between host and gue=
+st,
+> > >> we need a way to communicate its location, which will likely differ
+> > >> between transports. For ccw, I could imagine a new channel command
+> > >> dedicated to exchanging configuration information (similar to what
+> > >> exists today to communicate the locations of virtqueues), but I'd
+> > >> rather not go down this path.
+> > >>
+> > >> Without reading the code/design further, can we use one of the
+> > >> following instead of a BAR:
+> > >> - a virtqueue;
+> > >> - something in config space?
+> > >> That would be implementable by any virtio transport. =20
+> > >=20
+> > > The way I think about this is that we wish to extend the VIRTIO device
+> > > model with the concept of shared memory.  virtio-fs, virtio-gpu, and
+> > > virtio-vhost-user all have requirements for shared memory.
+> > >=20
+> > > This seems like a transport-level issue to me.  PCI supports
+> > > memory-mapped I/O and that's the right place to do it.  If you try to
+> > > put it into config space or the virtqueue, you'll end up with somethi=
+ng
+> > > that cannot be realized as a PCI device because it bypasses PCI bus
+> > > address translation.
+> > >=20
+> > > If CCW needs a side-channel, that's fine.  But that side-channel is a
+> > > CCW-specific mechanism and probably doesn't apply to all other
+> > > transports.
+> > >=20
+> > > Stefan
+> > >  =20
+> >=20
+> > I think the problem is more fundamental. There is no iommu. Whatever
+> > shared region you want to indicate, you want it to be assigned a memory
+> > region in guest physical memory. Like a DIMM/NVDIMM. And this should be
+> > different to the concept of a BAR. Or am I missing something? =20
+>=20
+> If you implement a physical virtio PCI adapter then there is bus
+> addressing and an IOMMU and VIRTIO has support for that.  I'm not sure I
+> understand what you mean by "there is no iommu"?
 
-So, 2/3 of the features can be used in 32-bit mode.  Nothing that I can
-find _prevents_ those features from being used in 32-bit mode.
+For ccw, there is no iommu; channel-program translation is doing
+similar things. (I hope that is what David meant :)
 
-Aubrey, do you have information to the contrary?
+>=20
+> > I am ok with using whatever other channel to transport such information.
+> > But I believe this is different to a typical BAR. (I wish I knew more
+> > about PCI internals ;) ).
+> >=20
+> > I would also like to know how shared memory works as of now for e.g.
+> > virtio-gpu. =20
+>=20
+> virtio-gpu currently does not use shared memory, it needs it for future
+> features.
+
+OK, that all sounds like we need to define a generic, per transport,
+device agnostic way to specify shared memory.
+
+Where is that memory situated? Is it something in guest memory (like
+virtqueues)? If it is something provided by the device, things will get
+tricky for ccw (remember that there's no mmio on s390; pci on s390 uses
+special instructions for that.)
+
+--Sig_/9D+IRyZBh7miHo=qk+bbEef
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEw9DWbcNiT/aowBjO3s9rk8bwL68FAlwZKtYACgkQ3s9rk8bw
+L69vgRAAj9BVcoVfCIc4Aoyf/doQcUfdv2JytRFYbJFlHKvWWWoA6MePTWchtico
+BNPjr1QC0dDHCBC3m9ubm/EX1jIclQlX/VUEy55/f7REMKus7tLJLvekxqLHjKFW
+i8DdG2yfy1pyJchq76nbvpeYkO9NldX0JWOD4bcfxuuREjKGiLOVWP9jUt0HzNCd
+OZr7br2w1YRh1t2Zr0K75aW8qnMSv0Rbh7e4aQJK6TDfEszP7Ne5/0YcmDZSKWbI
+SzoCHiRGC8W8peZYBTtX18lvBHYtoNKr4uHDIXnKa2BC59KVZOYE7zJNplzE5FqE
+CwoyxQKnDbEpeeUl2m+cmrKpMp8ATanzdd0ien6DaufgnOmOraCvXlk7LWNDrCjH
+KxGMfbG6JLxQdECCXV67Rh6tR0NPWADzNJZ/mnBrUDdZ8iJ/C/lLiv5EAzX7Mn4D
+uS+guDA07fPa6aZATP4QxjiKW7HzZ4SuNOAt+48TP9iqohzcUWws9rRWNd7HQ1ru
+SSeffxLLsq9CCOjvdhyCSTo7T6QiexvZat6+LDHJi9rzNgXv/iqUBp7UY77gfVoO
+BtKk8iwyaz3LvDM3GU8ECco1gmr7odzu08SvO4x1yuJ41pyu7QNvNNH/YEy15qxa
+pn80JriRNy2oXSLN6MCmKmNffTSsbbdvnpMFRJapjm1bYk6I/jo=
+=TIKw
+-----END PGP SIGNATURE-----
+
+--Sig_/9D+IRyZBh7miHo=qk+bbEef--
