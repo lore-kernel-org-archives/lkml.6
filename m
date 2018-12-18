@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED005C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF06C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2976218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5474218AF
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545165298;
-	bh=YwpG66b1PbbNfHWKoWOhJAYkAamckUuMJ0ABZ58yDWU=;
+	s=default; t=1545165301;
+	bh=0kAK0tFAZSnIPth6D3BqF/ptRH/oVU7SV1k7/wzNJcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=YsuBkgVH0gky/zEzjoSDWI+kZ2WF53Hmapa1f4dhcyQq8jUOcvTOHVlGpVw8gVpK0
-	 8m8w8/ZLt8R42+6mmhK4pmgNUyxXoilklycLh5FKgnBVi74qj4VuuumRUNVcTb5nI8
-	 azIbms1trc1fYJ2R7sDMyVEYsdBbGbSnZiRgblsY=
+	b=pV2US2ka2vg4iFkdoj3rXpMvAW5aGof8CPQXgYisrD54Gx2/+SJuWUS6CWOO1Q7Xe
+	 bcO+n8LXzPhtWW0l6L39zzCgDYBTpF/G890xdXfz8Co/eVuj+bykT0sAZ/I7Bb6SlL
+	 2pV08RsMtyK1Db3NagW4QOftRB2mhIn1MiyRiNGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbeLRUe5 (ORCPT
+        id S1727666AbeLRUfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:34:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 15:35:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727631AbeLRUey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:34:54 -0500
+        id S1727640AbeLRUe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:34:57 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40D1D218AE;
-        Tue, 18 Dec 2018 20:34:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3F6B218AC;
+        Tue, 18 Dec 2018 20:34:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545165293;
-        bh=YwpG66b1PbbNfHWKoWOhJAYkAamckUuMJ0ABZ58yDWU=;
+        s=default; t=1545165296;
+        bh=0kAK0tFAZSnIPth6D3BqF/ptRH/oVU7SV1k7/wzNJcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=jIM1qg/DLEXudzihcJkXyIEF1TAmkt6Hj8mH7VAYb5jf8p/fcpwUXeRj4El+4XSEv
-         zKzvsf65oK8WZNs7voAZjQTGP0gFXf7IVaYQGBbH9QG4q1+uO+cemZwBAt8mo1VH7F
-         +tWH8HxEF039UOJy7edONPFfZlIgY7CqxDYE+j3M=
+        b=S3o8auHDwXdryfpNGN7wyI01Q5ku2qGk/ymLhsAdgEG7YESsjxW8FLeDKUGORwDgx
+         oVUGVSg3mOxf9YBO+SFINOnXN0xZJuqaFDH/KXuPyltr5ePUVqwfEiRJwqUpJh2zQs
+         cOZyDnLMUnz7lxvOkk+wHgWWCAXehh+xJ/CQMaow=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v9 07/15] tracing: Add hist trigger snapshot() action Documentation
-Date:   Tue, 18 Dec 2018 14:34:06 -0600
-Message-Id: <6f732396a9a6c514e13a24250d3d94fb101561c3.1545161056.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v9 09/15] tracing: Add hist trigger onchange() handler Documentation
+Date:   Tue, 18 Dec 2018 14:34:08 -0600
+Message-Id: <be37a4c0f1e74128ddfe917f1d1dd809f1d06f6f.1545161056.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1545161056.git.tom.zanussi@linux.intel.com>
 References: <cover.1545161056.git.tom.zanussi@linux.intel.com>
@@ -63,137 +63,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add Documentation for the hist:handlerXXX($var).snapshot() action.
+Add Documentation for the hist:onchange($var) handler.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- Documentation/trace/histogram.rst | 110 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ Documentation/trace/histogram.rst | 98 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
 diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 63e522107e59..353317bc3825 100644
+index 353317bc3825..79476c906b1a 100644
 --- a/Documentation/trace/histogram.rst
 +++ b/Documentation/trace/histogram.rst
-@@ -1874,6 +1874,7 @@ The available actions are:
+@@ -1869,6 +1869,7 @@ The available handlers are:
  
-   - <synthetic_event_name>(param list)         - generate synthetic event
-   - save(field,...)                            - save current event fields
-+  - snapshot()                                 - snapshot the trace buffer
+   - onmatch(matching.event)    - invoke action on any addition or update
+   - onmax(var)                 - invoke action if var exceeds current max
++  - onchange(var)              - invoke action if var changes
  
- The following commonly-used handler.action pairs are available:
+ The available actions are:
  
-@@ -2030,6 +2031,115 @@ The following commonly-used handler.action pairs are available:
-             Entries: 2
-             Dropped: 0
+@@ -2140,6 +2141,103 @@ The following commonly-used handler.action pairs are available:
+       <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
+      <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
  
-+  - onmax(var).snapshot()
++  - onchange(var).save(field,..	.)
 +
-+    The 'onmax(var).snapshot()' hist trigger action is invoked
++    The 'onchange(var).save(field,...)' hist trigger action is invoked
 +    whenever the value of 'var' associated with a histogram entry
-+    exceeds the current maximum contained in that variable.
++    changes.
++
++    The end result is that the trace event fields specified as the
++    onchange.save() params will be saved if 'var' changes for that
++    hist trigger entry.  This allows context from the event that
++    changed the value to be saved for later reference.  When the
++    histogram is displayed, additional fields displaying the saved
++    values will be printed.
++
++  - onchange(var).snapshot()
++
++    The 'onchange(var).snapshot()' hist trigger action is invoked
++    whenever the value of 'var' associated with a histogram entry
++    changes.
 +
 +    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' exceeds the current
-+    maximum for any hist trigger entry.
++    be saved in the tracing/snapshot file if 'var' changes for any
++    hist trigger entry.
 +
-+    Note that in this case the maximum is a global maximum for the
-+    current trace instance, which is the maximum across all buckets of
-+    the histogram.  The key of the specific trace event that caused
-+    the global maximum and the global maximum itself are displayed,
-+    along with a message stating that a snapshot has been taken and
-+    where to find it.  The user can use the key information displayed
-+    to locate the corresponding bucket in the histogram for even more
-+    detail.
++    Note that in this case the changed value is a global variable
++    associated withe current trace instance.  The key of the specific
++    trace event that caused the value to change and the global value
++    itself are displayed, along with a message stating that a snapshot
++    has been taken and where to find it.  The user can use the key
++    information displayed to locate the corresponding bucket in the
++    histogram for even more detail.
 +
-+    As an example the below defines a couple of hist triggers, one for
-+    sched_waking and another for sched_switch, keyed on pid.  Whenever
-+    a sched_waking event occurs, the timestamp is saved in the entry
-+    corresponding to the current pid, and when the scheduler switches
-+    back to that pid, the timestamp difference is calculated.  If the
-+    resulting latency, stored in wakeup_lat, exceeds the current
-+    maximum latency, a snapshot is taken.  As part of the setup, all
-+    the scheduler events are also enabled, which are the events that
-+    will show up in the snapshot when it is taken at some point:
++    As an example the below defines a hist trigger on the tcp_probe
++    event, keyed on dport.  Whenever a tcp_probe event occurs, the
++    cwnd field is checked against the current value stored in the
++    $cwnd variable.  If the value has changed, a snapshot is taken.
++    As part of the setup, all the scheduler and tcp events are also
++    enabled, which are the events that will show up in the snapshot
++    when it is taken at some point:
 +
 +    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
++    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
 +
-+    # echo 'hist:keys=pid:ts0=common_timestamp.usecs \
-+            if comm=="cyclictest"' >> \
-+            /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
++    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
++            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
++	    onchange($cwnd).snapshot()' >> \
++	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
 +
-+    # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0: \
-+            onmax($wakeup_lat).save(next_prio,next_comm,prev_pid,prev_prio, \
-+	    prev_comm):onmax($wakeup_lat).snapshot() \
-+	    if next_comm=="cyclictest"' >> \
-+	    /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
-+
-+    When the histogram is displayed, for each bucket the max value
-+    and the saved values corresponding to the max are displayed
++    When the histogram is displayed, for each bucket the tracked value
++    and the saved values corresponding to that value are displayed
 +    following the rest of the fields.
 +
 +    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the global maximum:
++    along with the value and event that triggered the snapshot:
 +
-+    # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
-+      { next_pid:       2101 } hitcount:        200
-+	max:         52  next_prio:        120  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/6
++    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
++      { dport:       1521 } hitcount:          8
++	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
 +
-+      { next_pid:       2103 } hitcount:       1326
-+	max:        572  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/1
++      { dport:         80 } hitcount:         23
++	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
 +
-+      { next_pid:       2102 } hitcount:       1982 \
-+	max:         74  next_prio:         19  next_comm: cyclictest \
-+        prev_pid:          0  prev_prio:        120  prev_comm: swapper/5
++      { dport:       9001 } hitcount:        172
++	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
++
++      { dport:        443 } hitcount:        211
++	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
 +
 +    Snapshot taken (see tracing/snapshot).  Details:
-+	triggering value { onmax($wakeup_lat) }:        572	\
-+	triggered by event with key: { next_pid:       2103 }
++        triggering value { onchange($cwnd) }:         10
++        triggered by event with key: { dport:         80 }
 +
 +    Totals:
-+        Hits: 3508
-+        Entries: 3
++        Hits: 414
++        Entries: 4
 +        Dropped: 0
 +
-+    In the above case, the event that triggered the global maximum has
-+    the key with next_pid == 2103.  If you look at the bucket that has
-+    2103 as the key, you'll find the additional values save()'d along
-+    with the local maximum for that bucket, which should be the same
-+    as the global maximum (since that was the same value that
-+    triggered the global snapshot).
++    In the above case, the event that triggered the snapshot has the
++    key with dport == 80.  If you look at the bucket that has 80 as
++    the key, you'll find the additional values save()'d along with the
++    changed value for that bucket, which should be the same as the
++    global changed value (since that was the same value that triggered
++    the global snapshot).
 +
 +    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot (in this case you
-+    can verify the timestamps between the sched_waking and
-+    sched_switch events, which should match the time displayed in the
-+    global maximum):
++    the end the event that triggered the snapshot:
 +
 +    # cat /sys/kernel/debug/tracing/snapshot
 +
-+     <...>-2103  [005] d..3   309.873125: sched_switch: prev_comm=cyclictest prev_pid=2103 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.873611: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.873613: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.873616: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <...>-2102  [005] d..3   309.873625: sched_switch: prev_comm=cyclictest prev_pid=2102 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
-+     <idle>-0     [005] d.h3   309.874624: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874626: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh3   309.874628: sched_waking: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] dNh4   309.874630: sched_wakeup: comm=cyclictest pid=2103 prio=19 target_cpu=005
-+     <idle>-0     [005] d..3   309.874633: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
-+     <idle>-0     [004] d.h3   309.874757: sched_waking: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] dNh4   309.874762: sched_wakeup: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
-+     <idle>-0     [004] d..3   309.874766: sched_switch: prev_comm=swapper/4 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=gnome-terminal- next_pid=1699 next_prio=120
-+ gnome-terminal--1699  [004] d.h2   309.874941: sched_stat_runtime: comm=gnome-terminal- pid=1699 runtime=180706 [ns] vruntime=1126870572 [ns]
-+     <idle>-0     [003] d.s4   309.874956: sched_waking: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [003] d.s5   309.874960: sched_wake_idle_without_ipi: cpu=7
-+     <idle>-0     [003] d.s5   309.874961: sched_wakeup: comm=rcu_sched pid=9 prio=120 target_cpu=007
-+     <idle>-0     [007] d..3   309.874963: sched_switch: prev_comm=swapper/7 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_sched next_pid=9 next_prio=120
-+  rcu_sched-9     [007] d..3   309.874973: sched_stat_runtime: comm=rcu_sched pid=9 runtime=13646 [ns] vruntime=22531430286 [ns]
-+  rcu_sched-9     [007] d..3   309.874978: sched_switch: prev_comm=rcu_sched prev_pid=9 prev_prio=120 prev_state=R+ ==> next_comm=swapper/7 next_pid=0 next_prio=120
-+      <...>-2102  [005] d..4   309.874994: sched_migrate_task: comm=cyclictest pid=2103 prio=19 orig_cpu=5 dest_cpu=1
-+      <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-+     <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
++       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
++     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
++       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
++       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
++       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
++       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
++       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
++            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
 +
  3. User space creating a trigger
  --------------------------------
