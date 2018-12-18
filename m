@@ -2,151 +2,127 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37015C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E9FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11DBD217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 128DB21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:02:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="huVwdg5h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbeLRNBN (ORCPT
+        id S1726669AbeLRNCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:01:13 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:44813 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbeLRNBE (ORCPT
+        Tue, 18 Dec 2018 08:02:02 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:41756 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbeLRNCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:01:04 -0500
-Received: by mail-io1-f72.google.com with SMTP id v8so15161681ioh.11
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:01:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/0l0yZRg3yN1XUDF4zL8Ir5+VzxMqUZ8od9Vyhzdc5E=;
-        b=D2SWzx6JcmCvO6fZOAcPOBHkVxm+GSDE4bj0ROOMJPKw6cdlfXVXur1U3o5nsiUXVd
-         eC589w2D56F7UBny3McyKPuDCWmWewuRqkR+EY68XHRu511hO1sAzeAYWkrEkjRy7aQJ
-         +uGPJzzONssx+VNeggsURraTOmTLO7U+yxBYFGMA9Dx94nYPKenQR7luiufdN8zkXxJk
-         kKZ/ZcRxBigBOr6hLORfwzElKedjsEcozojwhy5Ko7RwD9RTbnnXg/2XfqD1w0QEWBHO
-         FJyAbUwvUzHxUvlFAGqzYqx8vhVrutlk4ImFn+4hPzYbFl3wfj87+zBH0YKa7kyuVEjJ
-         vQ6w==
-X-Gm-Message-State: AA+aEWaXK+5gpGCAhpyIWZOyKv3IdbuGNxiVvnXDFAsbLpwl46+E/Tfs
-        YPtldIypWX1KOGc4RAPyboHG0QBN/Z2IenrzseDbdJaLLczb
-X-Google-Smtp-Source: AFSGD/U8NjQ1AkGjNutwJ2L3ERUizE3Q6simkJj9jUrQMBT1ViUpDMT/ApPHmXQKq0QMWCjNWtfwQbFg03BTPDqXk8grbyvLUJ/k
+        Tue, 18 Dec 2018 08:02:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZSPtYofuOLJbbEzZt9KWJCLaMECNc3Sg0IjTDIcqrow=; b=huVwdg5hpf7Kdngv6UqAHWE8E
+        dF5KT0mvbWHNEovvbpNV/5AFkspcBEc6Apf5qWaXTnCdTmD0RmkZyF3SvWc96Mh/Li9BBr2f72lzm
+        1yjKGQyr2310MqNjOuPPvBzxE1TTOB76Sy4YSwoi+H6DWTu9MMQAO+ggYoMumncwVxSmg=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:39923)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gZF0Q-0006Dt-RI; Tue, 18 Dec 2018 13:01:50 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gZF0O-0007cq-CP; Tue, 18 Dec 2018 13:01:48 +0000
+Date:   Tue, 18 Dec 2018 13:01:46 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Michal Hocko <mhocko@suse.com>, Heiko Stuebner <heiko@sntech.de>,
+        Linux-MM <linux-mm@kvack.org>, airlied@linux.ie,
+        hjc@rock-chips.com, Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
+ vm_insert_range
+Message-ID: <20181218130146.GO26090@n2100.armlinux.org.uk>
+References: <20181217202334.GA11758@jordon-HP-15-Notebook-PC>
+ <20181218095709.GJ26090@n2100.armlinux.org.uk>
+ <CAFqt6zaVU-Fme6fErieBfBKwAm9xHUa7cXTOfqzwUJR__0JysQ@mail.gmail.com>
+ <20181218123318.GN26090@n2100.armlinux.org.uk>
+ <CAFqt6zbqaS-pFETyjRR2-1V57MiJuX65xoMjgkr-DjUnrJYzSg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:294f:: with SMTP id p76mr2346908itp.34.1545138063190;
- Tue, 18 Dec 2018 05:01:03 -0800 (PST)
-Date:   Tue, 18 Dec 2018 05:01:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000062b6fd057d4b7dc2@google.com>
-Subject: KMSAN: uninit-value in __tipc_nl_bearer_enable
-From:   syzbot <syzbot+e820fdc8ce362f2dea51@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, glider@google.com, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zbqaS-pFETyjRR2-1V57MiJuX65xoMjgkr-DjUnrJYzSg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Dec 18, 2018 at 06:24:29PM +0530, Souptick Joarder wrote:
+> On Tue, Dec 18, 2018 at 6:03 PM Russell King - ARM Linux
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Tue, Dec 18, 2018 at 05:36:04PM +0530, Souptick Joarder wrote:
+> > > On Tue, Dec 18, 2018 at 3:27 PM Russell King - ARM Linux
+> > > <linux@armlinux.org.uk> wrote:
+> > > > This looks like a change in behaviour.
+> > > >
+> > > > If user_count is zero, and offset is zero, then we pass into
+> > > > vm_insert_range() a page_count of zero, and vm_insert_range() does
+> > > > nothing and returns zero.
+> > > >
+> > > > However, as we can see from the above code, the original behaviour
+> > > > was to return -ENXIO in that case.
+> > >
+> > > I think these checks are not necessary. I am not sure if we get into mmap
+> > > handlers of driver with user_count = 0.
+> >
+> > I'm not sure either, I'm just pointing out the change of behaviour.
+> 
+> Ok. I think feedback from Heiko might be helpful here :)
+> 
+> >
+> > > > The other thing that I'm wondering is that if (eg) count is 8 (the
+> > > > object is 8 pages), offset is 2, and the user requests mapping 6
+> > > > pages (user_count = 6), then we call vm_insert_range() with a
+> > > > pages of rk_obj->pages + 2, and a pages_count of 6 - 2 = 4. So we
+> > > > end up inserting four pages.
+> > >
+> > > Considering the scenario, user_count will remain 8 (user_count =
+> > > vma_pages(vma) ). ? No ?
+> > > Then we call vm_insert_range() with a pages of rk_obj->pages + 2, and
+> > > a pages_count
+> > > of 8 - 2 = 6. So we end up inserting 6 pages.
+> > >
+> > > Please correct me if I am wrong.
+> >
+> > vma_pages(vma) is the number of pages that the user requested, it is
+> > the difference between vma->vm_end and vma->vm_start in pages.  As I
+> > said above, "the user requests mapping 6 pages", so vma_pages() will
+> > be 6, and so user_count will also be 6.  You are passing
+> > user_count - offset into vm_insert_range(), which will be 6 - 2 = 4
+> > in my example.  This is two pages short of what the user requested.
+> >
+> 
+> So, this should be the correct behavior.
+> 
+>                  return vm_insert_range(vma, vma->vm_start,
+> rk_obj->pages + offset,
+>                                                           user_count);
 
-syzbot found the following crash on:
+... and by doing so, you're introducing another instance of the same
+bug I pointed out in patch 2.
 
-HEAD commit:    0a602458c72c kmsan: random: another take at unpoisoning CR..
-git tree:       kmsan
-console output: https://syzkaller.appspot.com/x/log.txt?x=125b568b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9b071100dcf8e641
-dashboard link: https://syzkaller.appspot.com/bug?extid=e820fdc8ce362f2dea51
-compiler:       clang version 8.0.0 (trunk 348261)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139c6347400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e820fdc8ce362f2dea51@syzkaller.appspotmail.com
-
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KMSAN: uninit-value in strncpy+0x265/0x590 lib/string.c:119
-CPU: 0 PID: 8068 Comm: syz-executor5 Not tainted 4.20.0-rc5+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x220 lib/dump_stack.c:113
-  kmsan_report+0x12d/0x290 mm/kmsan/kmsan.c:682
-  __msan_warning+0x76/0xc0 mm/kmsan/kmsan_instr.c:316
-  strncpy+0x265/0x590 lib/string.c:119
-  bearer_name_validate net/tipc/bearer.c:141 [inline]
-  tipc_enable_bearer net/tipc/bearer.c:246 [inline]
-  __tipc_nl_bearer_enable+0x674/0x1da0 net/tipc/bearer.c:897
-  tipc_nl_bearer_enable+0x6c/0xb0 net/tipc/bearer.c:905
-  genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
-  genl_rcv_msg+0x185f/0x1a60 net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x444/0x640 net/netlink/af_netlink.c:2477
-  genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0xf80/0x1060 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x129d/0x1310 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xdbc/0x11d0 net/socket.c:2116
-  __sys_sendmsg net/socket.c:2154 [inline]
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-  do_syscall_64+0xcd/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x457669
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f04f1c0ac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
-RDX: 0000000000000000 RSI: 00000000200008c0 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f04f1c0b6d4
-R13: 00000000004c421b R14: 00000000004d7160 R15: 00000000ffffffff
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:247 [inline]
-  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:170
-  kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:179
-  kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:188
-  slab_post_alloc_hook mm/slab.h:446 [inline]
-  slab_alloc_node mm/slub.c:2759 [inline]
-  __kmalloc_node_track_caller+0xf06/0x1120 mm/slub.c:4383
-  __kmalloc_reserve net/core/skbuff.c:137 [inline]
-  __alloc_skb+0x318/0xa40 net/core/skbuff.c:205
-  alloc_skb include/linux/skbuff.h:998 [inline]
-  netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
-  netlink_sendmsg+0xba0/0x1310 net/netlink/af_netlink.c:1892
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg net/socket.c:631 [inline]
-  ___sys_sendmsg+0xdbc/0x11d0 net/socket.c:2116
-  __sys_sendmsg net/socket.c:2154 [inline]
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-  do_syscall_64+0xcd/0x110 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
