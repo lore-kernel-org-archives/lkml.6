@@ -3,139 +3,187 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2B1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E315BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16FA420874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB37220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbeLRMc2 (ORCPT
+        id S1726656AbeLRMda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:32:28 -0500
-Received: from smtprelay0139.hostedemail.com ([216.40.44.139]:34701 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726505AbeLRMc1 (ORCPT
+        Tue, 18 Dec 2018 07:33:30 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:61237 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726451AbeLRMda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:32:27 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id AF83C181D340F;
-        Tue, 18 Dec 2018 12:32:26 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: boot64_3224bfb460f5e
-X-Filterd-Recvd-Size: 3817
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 18 Dec 2018 12:32:24 +0000 (UTC)
-Message-ID: <8f03c13235ff5ad6f0ad6af59d4d7db501fb8c96.camel@perches.com>
-Subject: Re: [PATCH v2 1/1] MAINTAINERS: update list of qcom drivers
-From:   Joe Perches <joe@perches.com>
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        marc.w.gonzalez@free.fr, bjorn.andersson@linaro.org,
-        kvalo@adurom.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 18 Dec 2018 04:32:23 -0800
-In-Reply-To: <d153a86748f99526e7790bfc4ef8781a2016fd51.1545126964.git.amit.kucheria@linaro.org>
-References: <cover.1545126964.git.amit.kucheria@linaro.org>
-         <d153a86748f99526e7790bfc4ef8781a2016fd51.1545126964.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Dec 2018 07:33:30 -0500
+X-UUID: a8108776c0ab4862a5983a8376faf932-20181218
+X-UUID: a8108776c0ab4862a5983a8376faf932-20181218
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <jjian.zhou@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 140669473; Tue, 18 Dec 2018 20:33:21 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 18 Dec 2018 20:33:20 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 20:33:19 +0800
+From:   Jjian Zhou <jjian.zhou@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        jjian zhou <jjian.zhou@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        Yong Mao <yong.mao@mediatek.com>
+Subject: [v4] mmc: mediatek: Add MMC_CAP_SDIO_IRQ support
+Date:   Tue, 18 Dec 2018 20:33:18 +0800
+Message-ID: <1545136398-5066-1-git-send-email-jjian.zhou@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 3BC6C88DCC9F62E80C08EB68D55CED9356F19103A509790BA0BDBF5F7543B41D2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-18 at 15:29 +0530, Amit Kucheria wrote:
-> Several drivers didn't have a specific maintainer (other than the
-> subsystem maintainer). Add all drivers referring to qcom or msm to the
-> list of supported drivers.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -1929,20 +1929,61 @@ M:	Andy Gross <andy.gross@linaro.org>
->  M:	David Brown <david.brown@linaro.org>
->  L:	linux-arm-msm@vger.kernel.org
->  S:	Maintained
-> +F:	include/dt-bindings/*/qcom*
-> +F:	include/linux/*/qcom*
->  F:	Documentation/devicetree/bindings/soc/qcom/
-> +F:	Documentation/devicetree/bindings/*/qcom*
->  F:	arch/arm/boot/dts/qcom-*.dts
->  F:	arch/arm/boot/dts/qcom-*.dtsi
->  F:	arch/arm/mach-qcom/
-> -F:	arch/arm64/boot/dts/qcom/*
-> -F:	drivers/i2c/busses/i2c-qup.c
-> +F:	arch/arm64/boot/dts/qcom/
-> +F:	drivers/bluetooth/btqcomsmd.c
-> +F:	drivers/bus/qcom*
-> +F:	drivers/cpufreq/qcom*
->  F:	drivers/clk/qcom/
-> +F:	drivers/clocksource/timer-qcom.c
-> +F:	drivers/crypto/qcom-*
->  F:	drivers/dma/qcom/
-> +F:	drivers/edac/qcom*
-> +F:	drivers/extcon/extcon-qcom*
-> +F:	drivers/firmware/qcom*
-> +F:	drivers/hwspinlock/qcom_*
-> +F:	drivers/iio/adc/qcom*
-> +F:	drivers/iommu/qcom*
-> +F:	drivers/iommu/msm*
-> +F:	drivers/i2c/busses/i2c-qup.c
-> +F:	drivers/i2c/busses/i2c-qcom-geni.c
-> +F:	drivers/irqchip/qcom*
-> +F:	drivers/mailbox/qcom-*
-> +F:	drivers/media/platform/qcom/
-> +F:	drivers/mfd/qcom*
-> +F:	drivers/mfd/ssbi.c
-> +F:	drivers/misc/qcom-*
-> +F:	drivers/mmc/host/mmci_qcom*
-> +F:	drivers/mmc/host/sdhci_msm.c
-> +F:	drivers/mtd/*/qcom*
-> +F:	drivers/pci/controller/dwc/pcie-qcom.c
-> +F:	drivers/perf/qcom*
-> +F:	drivers/pinctrl/qcom/
-> +F:	drivers/phy/qualcomm/
-> +F:	drivers/power/*/qcom*
-> +F:	drivers/power/*/msm*
-> +F:	drivers/regulator/qcom*
-> +F:	drivers/reset/reset-qcom-*
-> +F:	drivers/remoteproc/qcom*
-> +F:	drivers/rpmsg/qcom*
-> +F:	drivers/scsi/ufs/ufs-qcom.*
-> +F:	drivers/slimbus/qcom*
->  F:	drivers/soc/qcom/
->  F:	drivers/spi/spi-qup.c
-> +F:	drivers/spi/spi-geni-qcom.c
-> +F:	drivers/spi/spi-qcom-qspi.c
-> +F:	drivers/thermal/qcom/
->  F:	drivers/tty/serial/msm_serial.c
-> +F:	drivers/tty/serial/qcom*
-> +F:	drivers/usb/dwc3/dwc3-qcom.c
-> +F:	drivers/watchdog/qcom*
->  F:	drivers/*/pm8???-*
-> -F:	drivers/mfd/ssbi.c
-> -F:	drivers/firmware/qcom_scm*
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+From: jjian zhou <jjian.zhou@mediatek.com>
 
-Perhaps many of these could be consolidated like
+This patch enables support SDIO IRQs. It enables
+MMC_CAP_SDIO_IRQ & MMC_CAP2_SDIO_IRQ_NOTHREAD
+and implement the ->ack_sdio_irq callback.
 
-F:	drivers/*/qcom/
-F:	drivers/*/qcom*
-F:	drivers/*/*/qcom/
-F:	drivers/*/*/qcom
-*
+Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+Signed-off-by: Yong Mao <yong.mao@mediatek.com>
+---
+ drivers/mmc/host/mtk-sd.c | 53 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 6334cc7..8afeaf8 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
+ 		struct mmc_request *mrq, struct mmc_command *cmd)
+ {
+ 	u32 rawcmd;
++	unsigned long flags;
 
+ 	WARN_ON(host->cmd);
+ 	host->cmd = cmd;
+@@ -1131,7 +1132,10 @@ static void msdc_start_command(struct msdc_host *host,
+ 	cmd->error = 0;
+ 	rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
+
++	spin_lock_irqsave(&host->lock, flags);
+ 	sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
++	spin_unlock_irqrestore(&host->lock, flags);
++
+ 	writel(cmd->arg, host->base + SDC_ARG);
+ 	writel(rawcmd, host->base + SDC_CMD);
+ }
+@@ -1351,6 +1355,31 @@ static void msdc_request_timeout(struct work_struct *work)
+ 	}
+ }
+
++static void __msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
++{
++	unsigned long flags;
++	struct msdc_host *host = mmc_priv(mmc);
++
++	spin_lock_irqsave(&host->lock, flags);
++	if (enb)
++		sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
++	else
++		sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
++	spin_unlock_irqrestore(&host->lock, flags);
++}
++
++static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
++{
++	struct msdc_host *host = mmc_priv(mmc);
++
++	__msdc_enable_sdio_irq(mmc, enb);
++
++	if (enb)
++		pm_runtime_get_noresume(host->dev);
++	else
++		pm_runtime_put_noidle(host->dev);
++}
++
+ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ {
+ 	struct msdc_host *host = (struct msdc_host *) dev_id;
+@@ -1373,7 +1402,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 		data = host->data;
+ 		spin_unlock_irqrestore(&host->lock, flags);
+
+-		if (!(events & event_mask))
++		if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
++			__msdc_enable_sdio_irq(host->mmc, 0);
++			sdio_signal_irq(host->mmc);
++		}
++
++		if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
+ 			break;
+
+ 		if (!mrq) {
+@@ -1493,8 +1527,11 @@ static void msdc_init_hw(struct msdc_host *host)
+ 	 */
+ 	sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+
+-	/* disable detect SDIO device interrupt function */
+-	sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
++	/* Config SDIO device detect interrupt function */
++	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
++		sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
++	else
++		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+
+ 	/* Configure to default data timeout */
+ 	sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+@@ -2013,6 +2050,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
+ }
+
++static void msdc_ack_sdio_irq(struct mmc_host *mmc)
++{
++	__msdc_enable_sdio_irq(mmc, 1);
++}
++
+ static const struct mmc_host_ops mt_msdc_ops = {
+ 	.post_req = msdc_post_req,
+ 	.pre_req = msdc_pre_req,
+@@ -2020,6 +2062,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	.set_ios = msdc_ops_set_ios,
+ 	.get_ro = mmc_gpio_get_ro,
+ 	.get_cd = mmc_gpio_get_cd,
++	.enable_sdio_irq = msdc_enable_sdio_irq,
++	.ack_sdio_irq = msdc_ack_sdio_irq,
+ 	.start_signal_voltage_switch = msdc_ops_switch_volt,
+ 	.card_busy = msdc_card_busy,
+ 	.execute_tuning = msdc_execute_tuning,
+@@ -2147,6 +2191,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	else
+ 		mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
+
++	if (mmc->caps & MMC_CAP_SDIO_IRQ)
++		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
++
+ 	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
+ 	/* MMC core transfer sizes tunable parameters */
+ 	mmc->max_segs = MAX_BD_NUM;
+--
+1.9.1
 
