@@ -2,127 +2,119 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B38C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC244C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C18E2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97A8C2133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jP3PWjnI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrY94FFm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbeLRIwj (ORCPT
+        id S1726439AbeLRIz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:52:39 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46172 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbeLRIwi (ORCPT
+        Tue, 18 Dec 2018 03:55:29 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37533 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRIz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:52:38 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l9so14951664wrt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:52:37 -0800 (PST)
+        Tue, 18 Dec 2018 03:55:29 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so6005263pgb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:55:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=v+RjPbOptUi4IyaEeTvFfltlERYG6SNSE8UWhypKBPM=;
-        b=jP3PWjnISnj5yvc8nCOqgPPJsEdlfPvOGucqq6MEzE0z1mxGE4pGk09S6M32xq6qyp
-         5teQBKHBhN85MTRSqzMZ1OhWQO1qciOE9ZVvm5GfXNWgXrShJcOAiEg0jmKxbBWS6avo
-         N3PSksQcckslEyJjYdurdOmTWJSnbl07xUlSE=
+         :content-disposition:in-reply-to:user-agent;
+        bh=PHw2ka3sVg6gr59qEe0pGw+4P8YqLuZzAS8Y9B4Wr58=;
+        b=MrY94FFmv3ZQibAjt5QH6Eupqg1gJ5u44ouuj6XIST6oyNruDLr2KR0rXl6ssOjtMh
+         8scfd2ElZeqTMuDw35EWbEzpP1p+iCIwTzgcglmrlWhDhzoqpbO3GALq/tHFZjUh8WT+
+         6VFUVn0M6UGglUjOxFLYEjysisqlN0lM45XlD0MdlSpnmneJReFfuRJqIFP19kEwBnJG
+         jkUEwFgoFX37/JiiTP4RVhDlBqpnXAAsjXBHIrjOw2XPKbzfhNu0munu1ZxsmUrlJAVv
+         957kf/ctsPVU8rxRp7f3Jut40Tf2I09Pg3kBN974y5nKeT3PgmQvSmYNwtZjk/1HdfvR
+         Gypw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=v+RjPbOptUi4IyaEeTvFfltlERYG6SNSE8UWhypKBPM=;
-        b=JjoZGLbdHi0Gk3n9rlmeUD09dEhUmxptOlpJ56NYePzNtCixUloX8/kVwxAx5uWKtK
-         8QzDZUhbrkKiY5I9kwa32K4x0F2xAold9aYZT3Hn80TlEzCLQrjVsaBOL197SNHVpXmx
-         BMq0bNN0E51YnCaR89r2d8V2Z1gjFsxSSnKfZb+BWZ164bi1Cx/0Y8maXVdnx5c9GMEr
-         dlGudRVzS0IhU4wYtw4iglh5i1WLf3HDHdpoc68XNWLEPncDPTQe2a0sJwwBUV7eipGz
-         Ut+WXrsE0PIs77zsFhg4oK9IyxhVwD1csj9R/QZ6b+Af5CrhM+iGU56j9VQAC1wIEXr3
-         ruiw==
-X-Gm-Message-State: AA+aEWaEMnpZ7v2KstbYA6x1GAb2WDHUo13KSCzeZ9zNH4kk8nHCahS0
-        L0Oz9ME1t3lgfc5UP4CHJk8wRA==
-X-Google-Smtp-Source: AFSGD/U1KbkOfqCD7zteercuiWSxeRn5SjADpRwt7uICkB2aKjUxGRLxpKjlztucWDjNCJ7x6WDkzg==
-X-Received: by 2002:adf:b592:: with SMTP id c18mr13579112wre.89.1545123157067;
-        Tue, 18 Dec 2018 00:52:37 -0800 (PST)
-Received: from dell ([95.149.164.119])
-        by smtp.gmail.com with ESMTPSA id 62sm2382573wra.30.2018.12.18.00.52.36
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PHw2ka3sVg6gr59qEe0pGw+4P8YqLuZzAS8Y9B4Wr58=;
+        b=aF4tNC/QEmsvdUdGoMu4uEsj7ni/g0YcyTItdeYXxq9vqTbqB3RqxHazi6ee6ZPDCF
+         pO+yO0s1A5pF7Kheu80FSH8cELFe2JvIq8jwSIFCThzUDgonahHDKOmd8mQgrUGKsGOK
+         5OScOSQVKHP916e0ygCxviJBUxGJdNLHvbz/uDH6XD1h03SLtt1xuj1amk6RLf2c6gob
+         D6GAx1Kstamn7S4pSKa8dbR2ik4IIppEfqPtaM7m4+VT4pI0mFSODwJSreDJhm5zeOWY
+         syMhJm/WSdrfYQCA7RNs1Fep06B2xeWHWHsiDR6NOJLC+U3B0oNtS7wls5j9hBk4gXpZ
+         W6VA==
+X-Gm-Message-State: AA+aEWaoqwgypjTUdlUVxP7z0bEkq6zwQFP5/guwP09+c7XylRSZSoxe
+        /9O3DoJemtNb9Om0CVSHXWA=
+X-Google-Smtp-Source: AFSGD/WX3wlSSOCCCFLfNWKN35yeALqUf4ENLeiUEu6QFHSyxFMFpTQuzTCSXhSCyffmrGfQASeNAw==
+X-Received: by 2002:a62:2f06:: with SMTP id v6mr16057100pfv.216.1545123328319;
+        Tue, 18 Dec 2018 00:55:28 -0800 (PST)
+Received: from localhost ([175.223.2.245])
+        by smtp.gmail.com with ESMTPSA id b4sm15540359pgq.65.2018.12.18.00.55.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 00:52:36 -0800 (PST)
-Date:   Tue, 18 Dec 2018 08:52:34 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Cheng-yi Chiang <cychiang@chromium.org>
-Cc:     bleung@chromium.org, groeck@chromium.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
-        tzungbi@chromium.org, Rohit kumar <rohitkr@codeaurora.org>,
-        scollyer@chromium.org
-Subject: Re: [PATCH v2] mfd: cros_ec: Add commands to control codec
-Message-ID: <20181218084307.GH4497@dell>
-References: <20181206040540.84632-1-cychiang@chromium.org>
- <20181214122156.GT4497@dell>
- <20181214122245.GU4497@dell>
- <CAFv8Nw+RbzKrjE1tsgxdRntXKWp9XVq8hbP7MZ3mZ=a2rMyG2Q@mail.gmail.com>
+        Tue, 18 Dec 2018 00:55:27 -0800 (PST)
+Date:   Tue, 18 Dec 2018 17:55:24 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [PATCH] printk: Add caller information to printk() output.
+Message-ID: <20181218085524.GA1047@jagdpanzerIV>
+References: <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
+ <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
+ <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
+ <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
+ <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
+ <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
+ <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
+ <20181213124255.GB3053@tigerII.localdomain>
+ <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
+ <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFv8Nw+RbzKrjE1tsgxdRntXKWp9XVq8hbP7MZ3mZ=a2rMyG2Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018, Cheng-yi Chiang wrote:
+On (12/18/18 06:05), Tetsuo Handa wrote:
+> +#ifdef CONFIG_PRINTK_CALLER
+> +static size_t print_caller(u32 id, char *buf)
+> +{
+> +	char from[12];
+> +
+> +	snprintf(from, sizeof(from), "%c%u",
+> +		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
+> +	return sprintf(buf, "[%6s]", from);
+> +}
 
-> +Benson, Guenter, Scott
-> 
-> On Fri, Dec 14, 2018 at 8:22 PM Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > On Fri, 14 Dec 2018, Lee Jones wrote:
-> >
-> > > On Thu, 06 Dec 2018, Cheng-Yi Chiang wrote:
-> > >
-> > > > Add EC host commands to control codec on EC.
-> > > >
-> > > > Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-> > > > ---
-> > > >  V2 fixed the wrong ancestor issue so the patch can be applied cleanly on mfd tree.
-> > > >  Codec driver that uses these commands will be sent separately.
-> > > >  Thanks!
-> > > >
-> > > >  include/linux/mfd/cros_ec_commands.h | 94 ++++++++++++++++++++++++++++
-> > > >  1 file changed, 94 insertions(+)
-> > >
-> > > Would be good to have this reviewed by some more Chrome people.
-> >
-> > See this for reference:
-> >
-> >   https://lore.kernel.org/patchwork/patch/1024985/
-> 
-> Hi Benson and Guenter,
-> Could you please review this patch ?
+A nitpick:
 
-You haven't sent them the patch.
+s/from/caller/g   :)
 
-Please resubmit as a [RESEND] and add them as recipients.
 
-> The corresponding implementation at EC side by Scott is at
-> https://chromium-review.googlesource.com/c/chromiumos/platform/ec/+/1356185
-> 
-> Thanks a lot!
-> 
-> >
+> +	  Selecting this option causes "thread id" (if in task context) or
+> +	  "processor id" (if not in task context) of the printk() messages
+> +	  to be added.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Would the following wording be a bit simpler?
+
+  "Selecting this option causes printk() to add a caller "thread id" (if
+   in task context) or a caller "processor id" (if not in task context)
+   to every message."
+
+	-ss
+
