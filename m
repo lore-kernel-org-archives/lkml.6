@@ -2,223 +2,176 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C931C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B5CC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C077C21841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 778C821871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:28:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="rWPvZC9N";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="ew/yEjb3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/lGr1k/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeLRU1c (ORCPT
+        id S1727104AbeLRU2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:27:32 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59576 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726959AbeLRU1b (ORCPT
+        Tue, 18 Dec 2018 15:28:36 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36834 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbeLRU2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:27:31 -0500
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBIKPUgA022141;
-        Tue, 18 Dec 2018 12:27:23 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=XEy3tvj3ZOieOBrka54F1q8VdxyLqmFVK1Dvngj0DtU=;
- b=rWPvZC9NSTnPQoo60EKrofnNAnA4ql9rlDe14L4wVRhtAaQ+beAbXGsyXS70q7KAK+Vx
- FicbjCgRIQQzhhfUIKABUZwrIiYQ+n8gq1PT+VAupLCruV+PoZlV/iY6Ri8RVvJ10tHP
- qg8eaPFXRtpTf7J8B3oV0tqjPSg9WqiVh5U= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pf4ts0sjb-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 18 Dec 2018 12:27:23 -0800
-Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
- frc-hub05.TheFacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 18 Dec 2018 12:27:21 -0800
-Received: from frc-hub04.TheFacebook.com (2620:10d:c021:18::174) by
- frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 18 Dec 2018 12:27:21 -0800
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 18 Dec 2018 12:27:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XEy3tvj3ZOieOBrka54F1q8VdxyLqmFVK1Dvngj0DtU=;
- b=ew/yEjb3ZxOQr462+oeuHVCRo9w2o2j1zkNd/Crl6hVt2vpb0gmR0EZSsjJz3zZBPecp6940qqavN/71Mg8THVJjWwM7lNriPRPY42lSqxr7uR/2mYrFjvzTFXyjLMJtEzSrJ/aNM59zMSTvp5d0ZQEE0GoONpWy3x/PH2kQh68=
-Received: from DM6PR15MB2635.namprd15.prod.outlook.com (20.179.161.152) by
- DM6PR15MB2937.namprd15.prod.outlook.com (20.178.230.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.17; Tue, 18 Dec 2018 20:27:19 +0000
-Received: from DM6PR15MB2635.namprd15.prod.outlook.com
- ([fe80::a9fb:37b7:baf8:f782]) by DM6PR15MB2635.namprd15.prod.outlook.com
- ([fe80::a9fb:37b7:baf8:f782%3]) with mapi id 15.20.1446.018; Tue, 18 Dec 2018
- 20:27:19 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-CC:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 4/7] cgroup: cgroup v2 freezer
-Thread-Topic: [PATCH v5 4/7] cgroup: cgroup v2 freezer
-Thread-Index: AQHUjmmlQwOP1yU/lEmjwwDF9MnbZKV5v7oA//+fV4CAAgoKAIAH1cgAgAGOAACAADZegA==
-Date:   Tue, 18 Dec 2018 20:27:19 +0000
-Message-ID: <20181218202701.GA12730@castle.DHCP.thefacebook.com>
-References: <20181207201531.1665-1-guro@fb.com>
- <20181207201531.1665-5-guro@fb.com> <20181211162632.GB8504@redhat.com>
- <20181211184033.GA8971@tower.DHCP.thefacebook.com>
- <20181212174902.GA30309@redhat.com>
- <20181218012800.GA29563@tower.DHCP.thefacebook.com>
- <20181218171230.GA11319@redhat.com>
-In-Reply-To: <20181218171230.GA11319@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR22CA0048.namprd22.prod.outlook.com
- (2603:10b6:300:69::34) To DM6PR15MB2635.namprd15.prod.outlook.com
- (2603:10b6:5:1a6::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:7a48]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR15MB2937;20:jL8cCmBqvX0cKzxMThMHNf+b6xxW5yY/DfzdlxbHFKrySKSCLWnpx3Jl4JzKDR44I1I2INzZNU5EThcHxheETP4TleUGzYrlsvysmxIi8RRk3MNp9jfZVtfhIRfZsH62GHmp3Bzjir9MudNf5OspNLEQ8GH/4DMuWdobJb1t7HQ=
-x-ms-office365-filtering-correlation-id: 14e5c35e-a358-4ea3-b61d-08d66527353a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM6PR15MB2937;
-x-ms-traffictypediagnostic: DM6PR15MB2937:
-x-microsoft-antispam-prvs: <DM6PR15MB29379F66DAB6BDC1019036D9BEBD0@DM6PR15MB2937.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(8121501046)(5005006)(823302103)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DM6PR15MB2937;BCL:0;PCL:0;RULEID:;SRVR:DM6PR15MB2937;
-x-forefront-prvs: 08902E536D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(376002)(396003)(346002)(189003)(199004)(86362001)(97736004)(106356001)(105586002)(6116002)(14454004)(6246003)(53936002)(33656002)(39060400002)(478600001)(25786009)(4326008)(102836004)(76176011)(256004)(6512007)(9686003)(93886005)(11346002)(476003)(486006)(68736007)(52116002)(6506007)(386003)(446003)(6916009)(81156014)(8676002)(6436002)(33896004)(186003)(46003)(305945005)(5660300001)(54906003)(316002)(6486002)(7736002)(99286004)(81166006)(8936002)(14444005)(71200400001)(1076003)(2906002)(229853002)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR15MB2937;H:DM6PR15MB2635.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9ybc7RB9lHmEJi9STMERBTroVhnOQkEo0Q9WYuapUHcHWktAx9PFE8yHM37km8EYCXM6CDRHDQawDgE1Rsx48SVUkWEHxzpqO77v0cuJNOBem4hfxgBgalBxTLnAs0UHVizpKtLzA7ivWLwRQMu8yQsbmLicjYfYz54Dyjfl2Pkv0LI3bFlL7W0QSrmMG08a1jlbNN+10YV1R13V+V9oyzzGsuK5bhzlU9RoBzrAnP54xLtlYWUFHKop4o04mCsLV91mx0FuI/5v3/Waa5Vi0CmmtiqIpG1wiueZq7mGOs69wcg0DzGw2cMvEmigtma1
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4FC50AD7A466F54C8135E833F88C1930@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 18 Dec 2018 15:28:35 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so13306022lfg.3;
+        Tue, 18 Dec 2018 12:28:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cxuUruPrx2AwRFhEUbpQarpz+UKvYpYbIIEbJJWLdqc=;
+        b=e/lGr1k/w/95+U93unxEl+lWozVHwKuD6Ul203ObmpJzkEyeJseYp7+zKEB4ms+kGw
+         BvdXS8MNCajO6TUO9TiGfZVhkxtT7Xj4FxH5ajv+0QjprZijYNJNoA8ZK6tkvsKINr6h
+         FakTcs8qo3GzJY79XXQTwu7jJ+MvHK5HroEI5J3WEUIdpTFW+zZtNS6uGpRIbXS24ikr
+         0K3yEONWtJ++SKUU80gWUjjgttQyz+AXSba2fTmy5JJlAAX2mzgA7fpSECso+3GLQiYB
+         A16mNZeqFRxlWfjMif/bGYkFbKGZMbnAt0MhO8+AIxMZmGZw9J4a6OBSqU6c/wSBGvhh
+         gPhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cxuUruPrx2AwRFhEUbpQarpz+UKvYpYbIIEbJJWLdqc=;
+        b=eAy82cfzy8tlXo1StbTHXGiue7KwBQP5jxx4jGLBimRqF8srNyFiBD3LS74piChP8a
+         rb9vg1L58LjWMKOgyLsGG+lRlLW4QEaZTZSWPkFDFqEk4DUpm/PE/lWQughJ6yo3Y5CJ
+         G/MrVQh69sHhKAky56v2Ly17Kj4/fo5M1Crm6N0SZVngjyuYIqdIaXhWEwLd7TmrlNhn
+         C3oOszMnF+GQjH/mQU/jJjrjFrtAnOdNIKsv7E52ZaZ1HsBnzE6df3U6nSKqyJ8GcaRI
+         Uq0EqAz8sPKJVvpp9lM2a1jbA5SZ1jBRpC+fd+KVkDb9bsbwvAvapqkLESzzdLijA7SQ
+         BJCQ==
+X-Gm-Message-State: AA+aEWYA5J2MKE+Wm2yFyFugdxlAf4i7zQw18xUfG802f9FE2J2rDwEg
+        kMniGWMtHiEc56fSV/jC+4UEcYZE
+X-Google-Smtp-Source: AFSGD/WhUKy1kgR/ctdtn5zE3hUOr/jaY6cYudO80G4hxiCJLGsx6/HyANEjAl3N2tzO6p1OLry4cw==
+X-Received: by 2002:a19:aace:: with SMTP id t197mr10642476lfe.7.1545164913349;
+        Tue, 18 Dec 2018 12:28:33 -0800 (PST)
+Received: from arch.domain.name (89-70-220-87.dynamic.chello.pl. [89.70.220.87])
+        by smtp.gmail.com with ESMTPSA id y81-v6sm3272822lje.30.2018.12.18.12.28.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 12:28:32 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH v2] iio: chemical: sps30: add support for self cleaning
+Date:   Tue, 18 Dec 2018 21:28:09 +0100
+Message-Id: <20181218202809.25822-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14e5c35e-a358-4ea3-b61d-08d66527353a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 20:27:19.4466
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB2937
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 06:12:30PM +0100, Oleg Nesterov wrote:
-> On 12/18, Roman Gushchin wrote:
-> >
-> > On Wed, Dec 12, 2018 at 06:49:02PM +0100, Oleg Nesterov wrote:
-> > > > > and btw.... what about suspend? try_to_freeze_tasks() will obviou=
-sly fail
-> > > > > if there is a ->frozen thread?
-> > > >
-> > > > I have to think a bit more here, but something like this will proba=
-bly work:
-> > > >
-> > > > diff --git a/kernel/freezer.c b/kernel/freezer.c
-> > > > index b162b74611e4..590ac4d10b02 100644
-> > > > --- a/kernel/freezer.c
-> > > > +++ b/kernel/freezer.c
-> > > > @@ -134,7 +134,7 @@ bool freeze_task(struct task_struct *p)
-> > > >                 return false;
-> > > >
-> > > >         spin_lock_irqsave(&freezer_lock, flags);
-> > > > -       if (!freezing(p) || frozen(p)) {
-> > > > +       if (!freezing(p) || frozen(p) || cgroup_task_frozen()) {
-> > > >                 spin_unlock_irqrestore(&freezer_lock, flags);
-> > > >                 return false;
-> > > >         }
-> > > >
-> > > > --
-> > > >
-> > > > If the task is already frozen by the cgroup freezer, we don't have =
-to do
-> > > > anything additionally.
-> > >
-> > > I don't think so. A cgroup_task_frozen() task can be killed after
-> > > try_to_freeze_tasks() succeeds, and the exiting task can close files,
-> > > do IO, etc. Or it can be thawed by cgroup_freeze_task(false).
-> > >
-> > > In short, if try_to_freeze_tasks() succeeds, the caller has all right=
-s
-> > > to assume that nobody can escape from __refrigerator().
-> >
-> > But this is what we do with stopped and ptraced tasks, isn't it?
->=20
-> No,
->=20
-> > We do use freezable_schedule() and the system freezer just ignores such=
- tasks.
->=20
-> 	static inline void freezable_schedule(void)
-> 	{
-> 		freezer_do_not_count();
-> 		schedule();
-> 		freezer_count();
-> 	}
->=20
-> and note that freezer_count() calls try_to_freeze().
->=20
-> IOW, the task sleeping in freezable_schedule() doesn't really differ from=
- the
-> task sleeping in __refrigerator(). It is not that "the system freezer jus=
-t
-> ignores such tasks", it ignores them because it can safely count them as =
-frozen.
+Self cleaning is especially useful in cases where sensor undergoes
+frequent power on/off cycles. In such scenarios it is recommended to
+turn self cleaning at least once per week in order to maintain reliable
+measurements.
 
-Right, so the task is sleeping peacefully, and we know, that it won't get
-anywhere, because we'll catch it in freezer_count(). We allow it to sleep
-there, we don't force it to __refrigerator(), and we treat it as frozen.
+Self cleaning is activated by writing 1 to a dedicated attribute.
+Internal fan accelerates to its maximum speed and keeps spinning
+for about 10 seconds blowing out accumulated dust.
 
-How's that different to cgroup v2 freezer? If the task is frozen by cgroup =
-v2
-freezer, let it sleep there, and catch if it tries to escape. Exactly as it
-works for SIGSTOP.
+Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+---
+v2:
+ * removed TODO item
+ * sensor cleaning is not measurement related per se so drop in_ prefix
 
-Am I missing something?
+ Documentation/ABI/testing/sysfs-bus-iio-sps30 |  8 +++++
+ drivers/iio/chemical/sps30.c                  | 35 ++++++++++++++++++-
+ 2 files changed, 42 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-sps30
 
->=20
-> > > And what about TASK_STOPPED/TASK_TRACED tasks? They can not be frozen
-> > > or thawed, right? This doesn't look good, and this differs from the
-> > > current freezer controller...
-> >
-> > Good question!
-> >
-> > It looks like cgroup v1 freezer just ignores them treating as already f=
-rozen,
-> > which doesn't look nice.
->=20
-> Not sure I understand you, but see above... cgroup v1 freezer looks fine =
-wrt
-> stopped/traced tasks.
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+new file mode 100644
+index 000000000000..e7ce2c57635e
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+@@ -0,0 +1,8 @@
++What:		/sys/bus/iio/devices/iio:deviceX/start_cleaning
++Date:		December 2018
++KernelVersion:	4.22
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Writing 1 starts sensor self cleaning. Internal fan accelerates
++		to its maximum speed and keeps spinning for about 10 seconds in
++		order to blow out accumulated dust.
+diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
+index fa3cd409b90b..f3b4390c8f5c 100644
+--- a/drivers/iio/chemical/sps30.c
++++ b/drivers/iio/chemical/sps30.c
+@@ -7,7 +7,6 @@
+  * I2C slave address: 0x69
+  *
+  * TODO:
+- *  - support for turning on fan cleaning
+  *  - support for reading/setting auto cleaning interval
+  */
 
-So, you think that v2 freezer should follow the same approach, and allow ta=
-sks
-sleeping on SIGSTOP, for instance, to be treated as frozen?
-Hm, maybe. I have to think more here.
+@@ -37,6 +36,7 @@
+ #define SPS30_READ_DATA_READY_FLAG 0x0202
+ #define SPS30_READ_DATA 0x0300
+ #define SPS30_READ_SERIAL 0xd033
++#define SPS30_START_FAN_CLEANING 0x5607
 
-Thank you!
+ enum {
+ 	PM1,
+@@ -104,6 +104,7 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+ 		break;
+ 	case SPS30_STOP_MEAS:
+ 	case SPS30_RESET:
++	case SPS30_START_FAN_CLEANING:
+ 		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
+ 		break;
+ 	case SPS30_READ_DATA_READY_FLAG:
+@@ -275,7 +276,39 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
+ 	return -EINVAL;
+ }
+
++static ssize_t start_cleaning_store(struct device *dev,
++				    struct device_attribute *attr,
++				    const char *buf, size_t len)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct sps30_state *state = iio_priv(indio_dev);
++	int val, ret;
++
++	if (kstrtoint(buf, 0, &val) || val != 1)
++		return -EINVAL;
++
++	mutex_lock(&state->lock);
++	ret = sps30_do_cmd(state, SPS30_START_FAN_CLEANING, NULL, 0);
++	mutex_unlock(&state->lock);
++	if (ret)
++		return ret;
++
++	return len;
++}
++
++static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
++
++static struct attribute *sps30_attrs[] = {
++	&iio_dev_attr_start_cleaning.dev_attr.attr,
++	NULL
++};
++
++static const struct attribute_group sps30_attr_group = {
++	.attrs = sps30_attrs,
++};
++
+ static const struct iio_info sps30_info = {
++	.attrs = &sps30_attr_group,
+ 	.read_raw = sps30_read_raw,
+ };
+
+--
+2.20.1
+
