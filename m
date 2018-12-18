@@ -7,95 +7,131 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0D7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D05FC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC6B21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DEAC218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:29:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O5rY8VCF"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TM7PWvV5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeLRV3V (ORCPT
+        id S1727465AbeLRV31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:29:21 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40583 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbeLRV3S (ORCPT
+        Tue, 18 Dec 2018 16:29:27 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42217 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbeLRV3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:29:18 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f188so3586595wmf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 13:29:17 -0800 (PST)
+        Tue, 18 Dec 2018 16:29:24 -0500
+Received: by mail-wr1-f65.google.com with SMTP id q18so17403430wrx.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 13:29:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Rr8ilS5R2vpccRIsS+2N6f0DuRbVwp+GBmj6taBD1mY=;
-        b=O5rY8VCFJBLsJjZEfMJpQbik9HuaGYFaN58CoKBHTdjKAhQV3d8PHLhhsCSB2hzRdi
-         WoH6JlYqCXGLUpQyUnT3B22Wp4yON6pwtsOaqov4kQl1uA+GtS+VMcu6phk6qfTM1uvn
-         HEPUzSfUTTHyJf1UhX2wmCROtZSxPYjlEy8cA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JDGG/ePDW8fZY0txCpV8Qva5v2tCPJZst6J7AJgbbOs=;
+        b=TM7PWvV5o0CR7i4LRPK9Tn3w4BQBKVhPkcTjFuo6ay1XVZzNlw6v6hcfZwQIg/WPUO
+         Bobb5NomveaT0M+PIXYhDxdrQf8j1O9PmV23dOcQRMYXT0xnJG+AaesogEw8cftsl8PM
+         jt7UZSVKfU20HhiWEKuhQUGuv6VzZeAwQYlGw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Rr8ilS5R2vpccRIsS+2N6f0DuRbVwp+GBmj6taBD1mY=;
-        b=g6Yf/7yJ96LjY7roF73YXeZj8ZLre2C7PsejR/h3MprDXmYKRthz6OBpQBet///xS6
-         Cc2+BgI3+M8rCkI3YtTI9Yt+QS/wVE9zXmaqEp5T3P8WNvBRWXP2XRUMbqUGo3FzAECH
-         132AuPnec6q45ixS4gYVBq6DZMqYBTD47xh+nlUTk3qWYFCyFYKnAfcCQAy5zvmdep0i
-         iqBLZYsaPA0i6FXIJQVQP7xkOZxg1n/CLn52j7pEO8CBMvWTwMgRaIH1LKfxYC+IoFEe
-         MeWVhOxvGYw3OSiKWlS9qAzsIp/JGsZX/ZRazffPd3Y9lUVx57/c3LIlAwPTnvcfSM4K
-         u58g==
-X-Gm-Message-State: AA+aEWarOtL/d9eyPuXc6VZJtMq8eYqj5WOVHjYnVll5KhZpflHR1tmn
-        +Hn0VhamEhEM6sLwxthKKNvIyw==
-X-Google-Smtp-Source: AFSGD/XBMcbGYHJexD92ZRoywtxkABvAWeCghfEYJx0q57OeF172iSaCilTJqoOUlutEheoahdvxzg==
-X-Received: by 2002:a1c:a8d2:: with SMTP id r201mr3689046wme.81.1545168556553;
-        Tue, 18 Dec 2018 13:29:16 -0800 (PST)
+         :references:mime-version:content-transfer-encoding;
+        bh=JDGG/ePDW8fZY0txCpV8Qva5v2tCPJZst6J7AJgbbOs=;
+        b=my9VfgMZPhmbKeDR7FiD69ioQPoWlmyoca88NXzGiXQJnHB4FcpNtgSwLdQPtEdWHx
+         qIzi0bUD+tbScUQuDH3Rl6wziz1/iqCJXTgm3Jkzr/GZ1tA4lCv2kN/vzCg+ZGtVgol7
+         1bJ4Z07QTbSopYud5O1mjFQU7pjUVZbiN6Y1AsIQeb7Eo4W1t6u/SGewa1cqVKmrGPfC
+         o+j6OQD+Ftpz1Ft/Xx8Bdeyz//fipDng5dCcEElKkO/2P+zEj+sOUMkSix/6lp60wv60
+         v0/V/esu4B26QSLioQkcBVXrQDKhQDtvltIp/KNgDTT06Osi4Bg20mMwlRyRLgK3FipK
+         9WBw==
+X-Gm-Message-State: AA+aEWaO5nHCO4Mrmk+0IblqszycHcE/oRdQ2mo5xFZhYZJiSPC7n/NX
+        5FySLblOWUGUIwattUY/r1vF7oMjy5M=
+X-Google-Smtp-Source: AFSGD/ViLOIMrASgWcUAz5HZW/GJiksUpzvaqT1HbtQYqLodZ0lPBAuqa4Ic+IO8vFV0QzrZjSfPcg==
+X-Received: by 2002:a5d:6187:: with SMTP id j7mr16277202wru.300.1545168562867;
+        Tue, 18 Dec 2018 13:29:22 -0800 (PST)
 Received: from localhost.localdomain (105.50.92.92.rev.sfr.net. [92.92.50.105])
-        by smtp.gmail.com with ESMTPSA id o4sm4153485wrq.66.2018.12.18.13.29.15
+        by smtp.gmail.com with ESMTPSA id o4sm4153485wrq.66.2018.12.18.13.29.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 13:29:16 -0800 (PST)
+        Tue, 18 Dec 2018 13:29:22 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT)
-Subject: [PATCH 05/25] clockevents/drivers/tegra20: Remove obsolete inclusion of <asm/smp_twd.h>
-Date:   Tue, 18 Dec 2018 22:28:23 +0100
-Message-Id: <20181218212844.30445-5-daniel.lezcano@linaro.org>
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH 09/25] clocksource/drivers/imx-gpt: Remove unnecessary irq protection
+Date:   Tue, 18 Dec 2018 22:28:27 +0100
+Message-Id: <20181218212844.30445-9-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181218212844.30445-1-daniel.lezcano@linaro.org>
 References: <d3f1255a-592d-13d9-5d3f-bd3ec7a36742@linaro.org>
  <20181218212844.30445-1-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Clément Péron <peron.clem@gmail.com>
 
-As of commit da4a686a2cfb077a ("ARM: smp_twd: convert to use CLKSRC_OF
-init"), this header file is no longer used.
+shutdown and oneshot are already protected against irq interruptions
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/tegra20_timer.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clocksource/timer-imx-gpt.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index aa624885e0e2..4293943f4e2b 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -30,7 +30,6 @@
- #include <linux/delay.h>
+diff --git a/drivers/clocksource/timer-imx-gpt.c b/drivers/clocksource/timer-imx-gpt.c
+index a3d6ccbf4a16..706c0d0ff56c 100644
+--- a/drivers/clocksource/timer-imx-gpt.c
++++ b/drivers/clocksource/timer-imx-gpt.c
+@@ -202,15 +202,8 @@ static int v2_set_next_event(unsigned long evt,
+ static int mxc_shutdown(struct clock_event_device *ced)
+ {
+ 	struct imx_timer *imxtm = to_imx_timer(ced);
+-	unsigned long flags;
+ 	u32 tcn;
  
- #include <asm/mach/time.h>
--#include <asm/smp_twd.h>
+-	/*
+-	 * The timer interrupt generation is disabled at least
+-	 * for enough time to call mxc_set_next_event()
+-	 */
+-	local_irq_save(flags);
+-
+ 	/* Disable interrupt in GPT module */
+ 	imxtm->gpt->gpt_irq_disable(imxtm);
  
- #define RTC_SECONDS            0x08
- #define RTC_SHADOW_SECONDS     0x0c
+@@ -225,21 +218,12 @@ static int mxc_shutdown(struct clock_event_device *ced)
+ 	printk(KERN_INFO "%s: changing mode\n", __func__);
+ #endif /* DEBUG */
+ 
+-	local_irq_restore(flags);
+-
+ 	return 0;
+ }
+ 
+ static int mxc_set_oneshot(struct clock_event_device *ced)
+ {
+ 	struct imx_timer *imxtm = to_imx_timer(ced);
+-	unsigned long flags;
+-
+-	/*
+-	 * The timer interrupt generation is disabled at least
+-	 * for enough time to call mxc_set_next_event()
+-	 */
+-	local_irq_save(flags);
+ 
+ 	/* Disable interrupt in GPT module */
+ 	imxtm->gpt->gpt_irq_disable(imxtm);
+@@ -264,7 +248,6 @@ static int mxc_set_oneshot(struct clock_event_device *ced)
+ 	 * mode switching
+ 	 */
+ 	imxtm->gpt->gpt_irq_enable(imxtm);
+-	local_irq_restore(flags);
+ 
+ 	return 0;
+ }
 -- 
 2.17.1
 
