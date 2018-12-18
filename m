@@ -2,137 +2,128 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB28C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F97FC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A57A21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F320221873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:19:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+md+rzU"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hkI8oW4q";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="osgzGObj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbeLRSPv (ORCPT
+        id S1727579AbeLRST5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:15:51 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55284 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeLRSPu (ORCPT
+        Tue, 18 Dec 2018 13:19:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59502 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbeLRST4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:15:50 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so3616452wmh.4;
-        Tue, 18 Dec 2018 10:15:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GVyWA65HXd1M/50UINW5Q7Np/vFk9ToXcmBqSOJROjM=;
-        b=B+md+rzU36T1mdkqANC4ixQskiu5oxWyk1G6JzHiWmI2Zj13GvKusCO90KFvzJV1ZW
-         SBS76yjmilRbsHbI0kLXl93VfUk4cuF0SA8oNS0zV/kt+nqBcarOIGOB2rNn8PRy3ivB
-         /HnnGAq2zVLQoanjSyEB3OkYVuaAliXeKDB6znZWPH7af4NhpCv/l0mXjS7ldbmn1b5Q
-         yYZ8pNxCLcjONsl9FY1XM7Ch31rCPh3T/Np60kDHrzUU43dSov3A1P1SfA+67QWlp2BX
-         N4FHvn+sjZqxR2FxVD4VrS0lKHAhHe2z7ULfGwhhltuTHO7PIj6ykQbUp+cKGH9FNcCg
-         AO5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GVyWA65HXd1M/50UINW5Q7Np/vFk9ToXcmBqSOJROjM=;
-        b=dMOikT1/mF5pujnejENLd05TV5oGE/NAmDoUctUn6dFctGvX7W0tIPqoRSXTZjqynn
-         0H1zGfcoLz0pFtg/vpeOQ+EalNGx0AmfDujTfxiAoN6Yf69JSRaJnb0qjTu2gxqH7hwW
-         7IGnKF83QPrEjMRYRVC7H7eZZO2cGunEv4FNvJc+BImqlamiwHSfkcVxNnpwarTL3s4j
-         N3QKEfsppUE6ny8fCkpefJ5FJFo78WEUuqZCzVVJKh61ukHeJeeMNx5vC0jysSY2+1YQ
-         XvRo7oNFC8FhpTTotBD4SSMb/GleTsxLsvqyIH/8zTTiSrl7nH65+Cs88c+kiNWaYOXw
-         3Dzg==
-X-Gm-Message-State: AA+aEWb33/oyIwX2pH8anihanehL1Q92PpBmXtGFJUtl5429NI1gTD1F
-        Ajbt/JQFYEu8oG58FVSdt3MhPAjF
-X-Google-Smtp-Source: AFSGD/U2Poiy0FpwCUMWPObxdZTxCPVXlCkVPQbQ/b1QYgCpjZ/r05UyIsKQoqM11ZjBTT6vENBdgg==
-X-Received: by 2002:a1c:a58a:: with SMTP id o132mr4461044wme.6.1545156948350;
-        Tue, 18 Dec 2018 10:15:48 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:d6b:eddb:42b0:da51? (p200300EA8BCFE3000D6BEDDB42B0DA51.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:d6b:eddb:42b0:da51])
-        by smtp.googlemail.com with ESMTPSA id h13sm5105805wrp.61.2018.12.18.10.15.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 10:15:47 -0800 (PST)
-Subject: Re: [PATCH net] net: phy: Fix the issue that netif always links up
- after resuming
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1545119824-30380-1-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <e8312559-2b67-eb3b-3f61-0503db90fa69@gmail.com>
-Date:   Tue, 18 Dec 2018 19:15:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <1545119824-30380-1-git-send-email-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Dec 2018 13:19:56 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D173560736; Tue, 18 Dec 2018 18:19:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545157195;
+        bh=LNgzGpUiFLm/ygBsRDMZrqTlO/PVw7/BSolccWEjytg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hkI8oW4qxHPXt3E68xtnS7deJ8wthfqy2SRHvpae2vwGiMZpUWJbOQf0AaNTb4OgI
+         oxL6zE2xUVG1zpYSFojNb6P+oKbXGv/Nt6kkRDXPr4bwh1hmlrJzOtbDlTRJNFiFfi
+         spOWac0r/H/0ImohzA2uPGA6EC+97YDMfOGIDPT8=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6D6696021A;
+        Tue, 18 Dec 2018 18:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545157194;
+        bh=LNgzGpUiFLm/ygBsRDMZrqTlO/PVw7/BSolccWEjytg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=osgzGObj0gYD4MWe+jfVeCt0qzI/aDf/MRGmof310LMvZy7MqSCrpQs2vuzXMJM2+
+         g+WySwspROE178Qy0QcmwUFGm1qBklnsF1ziPCyvITfxoH4SCaNRz7hzh3QVhLl2UB
+         EJcYEpvivwSKkhv8aacaFoAwWsnAuEbyGZSP70Ms=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D6696021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1] clk: qcom: gcc: Use active only source for CPUSS clocks
+Date:   Tue, 18 Dec 2018 23:49:41 +0530
+Message-Id: <1545157181-27095-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.12.2018 08:57, Kunihiko Hayashi wrote:
-> Even though the link is down before entering hibernation,
-> there is an issue that the network interface always links up after resuming
-> from hibernation.
-> 
-> If the link is still down before enabling the network interface,
-> and after resuming from hibernation, the phydev->state is forcibly set
-> to PHY_UP in mdio_bus_phy_restore(), and the link becomes up.
-> 
-> In suspend sequence, only if the PHY is attached, mdio_bus_phy_suspend()
-> calls phy_stop_machine(), and mdio_bus_phy_resume() calls
-> phy_start_machine().
-> In resume sequence, it's enough to do the same as mdio_bus_phy_resume()
-> because the state has been preserved.
-> 
-> This patch fixes the issue by calling phy_start_machine() in
-> mdio_bus_phy_restore() in the same way as mdio_bus_phy_resume().
-> 
-The patch itself is fine and also that you tagged it as "net".
-What's missing is a "Fixes:" line (before the Suggested-by:).
-I think it should be:
+The clocks of the CPUSS such as "gcc_cpuss_ahb_clk_src" is a CRITICAL
+clock and needs to vote on the active only source of XO, so as to keep the
+vote as long as CPUSS is active. Similar rbcpr_clk_src is also has the same
+requirement.
 
-Fixes: bc87922ff59d ("phy: Move PHY PM operations into phy_device")
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-sdm845.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-This commit didn't actually introduce the issue, but moved it to today's
-place.
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index c782e62..58fa5c2 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -115,8 +115,8 @@ enum {
+ 	"core_bi_pll_test_se",
+ };
 
-> Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
->  drivers/net/phy/phy_device.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> This patch is based on the RFC patch discussion [1].
-> [1] https://www.spinics.net/lists/netdev/msg537326.html
-> 
-> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-> index 7d5d698..3685be4 100644
-> --- a/drivers/net/phy/phy_device.c
-> +++ b/drivers/net/phy/phy_device.c
-> @@ -315,11 +315,8 @@ static int mdio_bus_phy_restore(struct device *dev)
->  	if (ret < 0)
->  		return ret;
->  
-> -	/* The PHY needs to renegotiate. */
-> -	phydev->link = 0;
-> -	phydev->state = PHY_UP;
-> -
-> -	phy_start_machine(phydev);
-> +	if (phydev->attached_dev && phydev->adjust_link)
-> +		phy_start_machine(phydev);
->  
->  	return 0;
->  }
-> 
+-static const char * const gcc_parent_names_7[] = {
+-	"bi_tcxo",
++static const char * const gcc_parent_names_7_ao[] = {
++	"bi_tcxo_ao",
+ 	"gpll0",
+ 	"gpll0_out_even",
+ 	"core_bi_pll_test_se",
+@@ -128,6 +128,12 @@ enum {
+ 	"core_bi_pll_test_se",
+ };
+
++static const char * const gcc_parent_names_8_ao[] = {
++	"bi_tcxo_ao",
++	"gpll0",
++	"core_bi_pll_test_se",
++};
++
+ static const struct parent_map gcc_parent_map_10[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_GPLL0_OUT_MAIN, 1 },
+@@ -210,7 +216,7 @@ enum {
+ 	.freq_tbl = ftbl_gcc_cpuss_ahb_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_cpuss_ahb_clk_src",
+-		.parent_names = gcc_parent_names_7,
++		.parent_names = gcc_parent_names_7_ao,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+@@ -229,7 +235,7 @@ enum {
+ 	.freq_tbl = ftbl_gcc_cpuss_rbcpr_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_cpuss_rbcpr_clk_src",
+-		.parent_names = gcc_parent_names_8,
++		.parent_names = gcc_parent_names_8_ao,
+ 		.num_parents = 3,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
