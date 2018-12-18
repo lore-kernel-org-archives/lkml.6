@@ -2,86 +2,116 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43C9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E40CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A419621850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B28E21850
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:47:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="pITo9uW8"
+	dkim=pass (1024-bit key) header.d=horus.com header.i=@horus.com header.b="JE+zqLgi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbeLRRpi (ORCPT
+        id S1727375AbeLRRrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:45:38 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34776 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbeLRRpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:45:38 -0500
-Received: by mail-io1-f65.google.com with SMTP id w21so13472916ioc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 09:45:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dC82Cs/RyQzNGzQ6zOmzJmij6whGKd/Hgj5pzQDI310=;
-        b=pITo9uW8NM2XuTXW+7QM7x19SQmlnyiU3gkHAi9Ga1mO3dDfveoVvrBHzjcccXkM4k
-         64rgeBqo0EQfswp+D1BJSh4n+LW0b1aMEfl9v36yQ3aDmoX4DmAlI+kbZbv+V+wRtIrS
-         b5L+t7mMmzsZSdy8MsdMl/4R/Y163LpTwIfAsTDxNO3Zn9QsdtrfIazhBHHSR/r8+4jB
-         fksAgAkJXwwrJxM2APs3rmuK5b+VKU1XqgHRcwp/YQmQTUf42yEQfu0fvmdAPkBvP8t/
-         44EKD99tTXAdJZihA23O+3KDlAZKkUqtmSO/Cj30uMGo22e+DFSHJc0XegICDYLyfoTj
-         esjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dC82Cs/RyQzNGzQ6zOmzJmij6whGKd/Hgj5pzQDI310=;
-        b=hs7HgrdO6KvNcvsG9pQbBSiJ3Q4LdEjWFq0qQbybBSysjFp9u9M6b+6p5LQTgJ3FNQ
-         W2ZLDFKeffhioYkXwB96J+Nw7ENasbuq2osfGlzhJmN3WzNKT+PUJV9p2qVKqfqSn9rB
-         XmvxZdBD3sb8iHsG6S3W1n339hrx8rVnw2FcE+/DDHMBgWVMXELGojWouRV5sHX5SSGU
-         btTx/J13d4Ibz/n5qU0ES9qqcyJLtva030vLzXeqe5o72Du57hgAPs//qGLHqqlgMYcH
-         upm/JN/aRwe5F/kTc/TfoLxjJ79QBgTbvWonCJKgZxAYmGwg5qmY3MqPMEE1aFi9m46F
-         c7qQ==
-X-Gm-Message-State: AA+aEWaBkZaAfqBhuGxWSgSfUmvfkCLzHLtoZKHl+e4el+QGV+aDJxt4
-        dqH1rLQU4i1K7c73eTVRKeBrDA==
-X-Google-Smtp-Source: AFSGD/W58D9pj+/ZfK0VsNIKD6TS8DPS7IZRLgCpVjfCum1VFPiSA8Nq4q6EAQDqGTRxxBW768UU4A==
-X-Received: by 2002:a6b:cf1a:: with SMTP id o26mr16380752ioa.32.1545155137511;
-        Tue, 18 Dec 2018 09:45:37 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id w26sm6773735iol.60.2018.12.18.09.45.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 09:45:36 -0800 (PST)
-Subject: Re: [PATCH] dm: give req_size precisely given by user
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     stable@vger.kernel.org, Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com
-References: <20181218172537.12300-1-jaegeuk@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <01a60138-63ab-6a9d-c0ba-b8fea551b14e@kernel.dk>
-Date:   Tue, 18 Dec 2018 10:45:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 18 Dec 2018 12:47:16 -0500
+Received: from mail.horus.com ([78.46.148.228]:41543 "EHLO mail.horus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbeLRRrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:47:16 -0500
+X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Dec 2018 12:47:14 EST
+Received: from [192.168.1.20] (62-47-205-9.adsl.highway.telekom.at [62.47.205.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "E-Mail Matthias Reichl", Issuer "HiassofT CA 2014" (verified OK))
+        by mail.horus.com (Postfix) with ESMTPSA id 705B7641D9;
+        Tue, 18 Dec 2018 18:40:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=horus.com;
+        s=20180324; t=1545154841;
+        bh=NMzcuZQjcluVah8TenQKral9o/O1+dIJaTL7AwYbMpM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JE+zqLgiemWwkHaB3yGSuCEshBTtevwRa6ktWnjfDGLED7RH1B3F3XGZGUQ845fvF
+         YNMEmvcFRDGxI/BlC6hUwB0csJAQBlIXwyNzxJ9zglTiE2QmSsGqsdjiGlqFyUr6YU
+         FbGhiDW5GFd6kWrzr4tlqnmrtaw3UGuJsAj9HUdw=
+Received: by camel2.lan (Postfix, from userid 1000)
+        id C67941C72A2; Tue, 18 Dec 2018 18:40:40 +0100 (CET)
+Date:   Tue, 18 Dec 2018 18:40:40 +0100
+From:   Matthias Reichl <hias@horus.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel@ziswiler.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name
+ vs. of_node assignement
+Message-ID: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+Mail-Followup-To: Matthias Reichl <hias@horus.com>,
+        Mark Brown <broonie@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+        alsa-devel@alsa-project.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
+References: <20181018111829.27056-1-marcel@ziswiler.com>
+ <20181018111829.27056-4-marcel@ziswiler.com>
+ <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
+ <20181021112301.GC8554@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20181218172537.12300-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181021112301.GC8554@sirena.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 10:25 AM, Jaegeuk Kim wrote:
-> This patch makes dm be aware of io_pages to assign sane req_size for reads.
+Hi Mark,
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+On Sun, Oct 21, 2018 at 12:23:01PM +0100, Mark Brown wrote:
+> On Fri, Oct 19, 2018 at 11:22:46AM +0100, Jon Hunter wrote:
+> 
+> > Looking at snd_soc_init_platform(), it seems that the platform pointer
+> > can be allocated by the machine driver and so if it is not allocated by
+> > the core, then I don't think we should clear it here. Seems we need a
+> > way to determine if this was allocated by the core.
+> 
+> Indeed, this is a bit of a mess.  We probably shouldn't be modifying the
+> data that the drivers passed in, otherwise we get into trouble like
+> this.   That suggests that we should copy the data, probably all of it.
+> I will try to have a proper look at this next week.
 
--- 
-Jens Axboe
+did you find the time to look into this?
+
+The downstream Raspberry Pi kernel contains a bunch of machine drivers
+that are implemented in a similar way as the tegra_sgtl5000 driver
+(static card and dai link structs, dai_link->platform_of_node filled
+in from device tree) which are breaking in 4.20 on deferred probing.
+
+Switching these drivers to dynamically allocated dai link structs,
+like 76836fd35492 "ASoC: omap-abe-twl6040: Fix missing audio card
+caused by deferred probing" would be a possibility, but if there's
+some solution on the horizon that doesn't require changes to the
+driver code it'd be easier to wait for that.
+
+so long,
+
+Hias
+
+> > Furthermore, it seems that it is possible that there is more than one
+> > link that might be to be cleared.
+> 
+> Yes, that's an issue as well.
+
+
+
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
 
