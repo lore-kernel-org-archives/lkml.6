@@ -2,104 +2,126 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CCCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1F3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A03D420874
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:34:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c20w6q/I"
+	by mail.kernel.org (Postfix) with ESMTP id B40CE20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeLRMef (ORCPT
+        id S1726575AbeLRMgT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:34:35 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:37746 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeLRMef (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:34:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xFn2chBMafgeDEOLbH/HQf4MPxQ3I/rnZQ44Oadr52c=; b=c20w6q/IcpZs7UCN0+L4lf2nYz
-        95hSTsO5oR4/DwH98RfxFBm5LZWVW5QYlhyfFDXucavYmspGkOWdM8LJ4lWoZnZaYBbJewM+nWwia
-        qKc5H0paFCdQ2w0Iu41F9XMxhWRZ3dk71jaX8MLuk6/pTvjmcfUBCPm6OcUnU1+42DCio7APbHfti
-        qgFu0kTpOwO15byN8dCAE4g+fg0EvzNSkcqjuxsPisTIWLbdggswxZwOZiRfYvNwzipLCfKSKDSCu
-        /nMjblikuwvErU3CKB4ryMkM8tO8+aujTlhszHM/aeGxG3jKPdMeldiUAk6Ad63FHLL12Vy8+/MYz
-        +q5rdL5w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZEZs-00084v-Id; Tue, 18 Dec 2018 12:34:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0A423205817B4; Tue, 18 Dec 2018 13:34:22 +0100 (CET)
-Date:   Tue, 18 Dec 2018 13:34:22 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     zhe.he@windriver.com, acme@kernel.org, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, bp@alien8.de, hpa@zytor.com,
-        jolsa@kernel.org, jolsa@redhat.com, kan.liang@linux.intel.com,
-        mingo@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/intel: Avoid unnecessary reallocations of
- memory allocated in cpu hotplug prepare state
-Message-ID: <20181218123421.GI15430@hirez.programming.kicks-ass.net>
-References: <1545129033-21757-1-git-send-email-zhe.he@windriver.com>
- <20181218110209.GD15430@hirez.programming.kicks-ass.net>
- <20181218111637.b53u5pi3nxnyldaq@linutronix.de>
- <20181218113119.GG15430@hirez.programming.kicks-ass.net>
- <20181218113700.GC16284@hirez.programming.kicks-ass.net>
- <20181218114708.p6fpz447brob4kzz@linutronix.de>
+        Tue, 18 Dec 2018 07:36:19 -0500
+Received: from ozlabs.org ([203.11.71.1]:39169 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726419AbeLRMgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:36:19 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43JyDw0sYVz9sC7;
+        Tue, 18 Dec 2018 23:36:14 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: powerpc syscall_set_return_value() is confused (was Re: [PATCH v6 18/27] powerpc: define syscall_get_error())
+In-Reply-To: <20181213172313.GR6024@altlinux.org>
+References: <20181213171833.GA5240@altlinux.org> <20181213172313.GR6024@altlinux.org>
+Date:   Tue, 18 Dec 2018 23:36:09 +1100
+Message-ID: <874lbbt3k6.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181218114708.p6fpz447brob4kzz@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 12:47:08PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2018-12-18 12:37:00 [+0100], Peter Zijlstra wrote:
-> > On Tue, Dec 18, 2018 at 12:31:19PM +0100, Peter Zijlstra wrote:
-> > > On Tue, Dec 18, 2018 at 12:16:37PM +0100, Sebastian Andrzej Siewior wrote:
-> > > > On 2018-12-18 12:02:09 [+0100], Peter Zijlstra wrote:
-> > > > > On Tue, Dec 18, 2018 at 06:30:33PM +0800, zhe.he@windriver.com wrote:
-> > > > > > Besides, in preempt-rt full mode, the freeing can happen in atomic context and
-> > > > > > thus cause the following BUG.
-> > > > > 
-> > > > > Hurm, I though we fixed all those long ago..
-> > > > > 
-> > > > > And no, the patch is horrible; that's what we have things like
-> > > > > x86_pmu::cpu_dead() for.
-> > > > 
-> > > > ehm, you say we keep memory allocation +free on CPU up/down?
-> > > 
-> > > Sure, why not?
-> 
-> It does not seem to be useful to allocate & free memory which you need
-> anyway. So you could avoid the refcnt for instance.
+Hi Dmitry,
 
-It makes the code simpler and hotplug is not what you'd call a fast path
-anyway.
+"Dmitry V. Levin" <ldv@altlinux.org> writes:
+> syscall_get_error() is required to be implemented on this
+> architecture in addition to already implemented syscall_get_nr(),
+> syscall_get_arguments(), syscall_get_return_value(), and
+> syscall_get_arch() functions in order to extend the generic
+> ptrace API with PTRACE_GET_SYSCALL_INFO request.
+>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Elvira Khabirova <lineprinter@altlinux.org>
+> Cc: Eugene Syromyatnikov <esyr@redhat.com>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+>
+> Notes:
+>     v6: unchanged
+>     
+>     v5:
+>     This change has been tested with
+>     tools/testing/selftests/ptrace/get_syscall_info.c and strace,
+>     so it's correct from PTRACE_GET_SYSCALL_INFO point of view.
+>     
+>     This cast doubts on commit v4.3-rc1~86^2~81 that changed
+>     syscall_set_return_value() in a way that doesn't quite match
+>     syscall_get_error(), but syscall_set_return_value() is out
+>     of scope of this series, so I'll just let you know my concerns.
 
-> Also I doubt the memory will remain unallocated for a longer period of
-> time (like you would remove the CPU for good and not boot it again a
-> minute later).
+Sorry I only just saw this comment.
 
-SMT disable comes to mind...
+It's going to take me a while to page this stuff back into my brain, but
+I think you may have a point.
 
-> *Maybe* it is different in cloud environment where you attach vcpus
-> depending on guest load at runtime but still…
+I think the way it's written now *works* but only because it's only used
+by seccomp, and we rely on the fact that the syscall exit path will
+negate the value before returning to userspace or calling ptrace etc.
 
-And that..
+eg. we do:
 
+syscall_set_return_value()
+	if (error) {
+		regs->ccr |= 0x10000000L;
+		regs->gpr[3] = error;
+
+then the asm does:
+
+	/* Return code is already in r3 thanks to do_syscall_trace_enter() */
+	b	.Lsyscall_exit
+	...
+
+.Lsyscall_exit:
+	std	r3,RESULT(r1)
+	...
+
+3:	cmpld	r3,r11
+	ld	r5,_CCR(r1)
+	bge-	.Lsyscall_error
+	...
+
+.Lsyscall_error:
+	oris	r5,r5,0x1000	/* Set SO bit in CR */
+	neg	r3,r3
+	std	r5,_CCR(r1)
+
+And we do the same before calling do_syscall_trace_leave().
+
+
+Still it's a bit confused, because in the C code we're setting r3 and
+CCR in the C code, but we're not negating the value in r3, and we're not
+setting result at all.
+
+I'll test a patch to fix it up.
+
+cheers
