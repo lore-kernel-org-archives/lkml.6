@@ -2,163 +2,256 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E973EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C57C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBDC21873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16692218AC
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:19:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+hqVbjS"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="U3NsNR1K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbeLRTSg (ORCPT
+        id S1726988AbeLRTTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:18:36 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46560 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbeLRTSg (ORCPT
+        Tue, 18 Dec 2018 14:19:52 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4875 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeLRTTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:18:36 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y20so19451713qtm.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:18:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ntVX8JGSVBRYIvxgJqMMgLRiYpA1/HXcQRgPq+xYILU=;
-        b=p+hqVbjSRoc0znn4/Ppyjld7TxzeVR+teGHodCuOXEGnphkluM9YpKGUIaPFtwT3Kb
-         n6nl8Sq0R4rwx4NTEDWbCaYL3c/k8w0eGe7f9wy/GGpqJN2FeOK+lXMOIO20iAl71ixG
-         r0EG74th5CPMI8L7WxF+1tqcFF3WEojosStDoYNaICiXbf9fVfW5ZrwqePhrzfcHIIt2
-         tSGmy7VfBPfEirLqCoDMYzGtaoZoFhR59AUAqK9a9Oka459DOGtSFLGHWa2YDqF9hKZ/
-         3kl5Sx8WAot5dP8KzHDnU3be5O99L0PTB0rzPsbH0tvSNScRQo/VqwULribFqf0lJJQG
-         RU1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ntVX8JGSVBRYIvxgJqMMgLRiYpA1/HXcQRgPq+xYILU=;
-        b=ZW1L85wQ3ii1Hwx07obq2uvAxumMM5D+h9JXD5yITT6dsFB3e/lXA6o9NfEFCCEpBn
-         a9yJIbKRXUKMQkyKuUVX9NqSBi9SE0OvMOopvtBSUkI3ISj42fwPNP0hnIPgkhu62Z4K
-         WiPsAzRGnVNpra6Ok6IzEivIjHobr6TOufqb4wbCNeqO5hXFFxFrysH+DK4h4WTY8L0V
-         /icB8i5hhma6KLv6eUkE6GPFBZOp5XnXBETUircs5NvrtGOKUNu0YWq9NYJpB3lwDY4X
-         arQpyUw5X/bwNeTgxyMWZd1vOqFhleA5RN/gfDfg1lm8ODn0fctOzN0DWgjvMn9mNCuo
-         0bBA==
-X-Gm-Message-State: AA+aEWb0Tv56qX7xt5L5QWHk9pt/1jGniazAJztvOdVu/1Fua4mHFo2Q
-        IuwGUB0IOM6xvmaFNp2cwQO3lr3S1PBGMCcg/tp/kg==
-X-Google-Smtp-Source: AFSGD/UF/dd7QWUnkAOdJx8PUrD24kz6K5IDgDuslC558FHE+Lc/lJwJ/3pSk28s7n6dZSuAJ3RWSsoGkge3teNAmOY=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr19137013qta.152.1545160713292;
- Tue, 18 Dec 2018 11:18:33 -0800 (PST)
+        Tue, 18 Dec 2018 14:19:51 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c19484c0000>; Tue, 18 Dec 2018 11:19:41 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Dec 2018 11:19:49 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 11:19:49 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 19:19:49 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 19:19:49 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c1948540001>; Tue, 18 Dec 2018 11:19:48 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
+        <ulf.hansson@linaro.org>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1 1/2] arm64: dts: tegra210: Add SDMMC Auto-cal settings
+Date:   Tue, 18 Dec 2018 11:19:46 -0800
+Message-ID: <1545160787-3157-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20181214171508.7791-1-surenb@google.com> <20181214171508.7791-7-surenb@google.com>
- <20181217162223.GD2218@hirez.programming.kicks-ass.net> <CAJuCfpHGsDnE-eAHY1QnX949stA3cvNA=078q1swqVnz95aJfg@mail.gmail.com>
- <20181218104622.GB15430@hirez.programming.kicks-ass.net> <20181218173000.GA4733@cmpxchg.org>
- <CAJuCfpGQKQ9oVKdVeLNQHY2+2XTjLXb6VHDcJKAUCtSxvd68wQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpGQKQ9oVKdVeLNQHY2+2XTjLXb6VHDcJKAUCtSxvd68wQ@mail.gmail.com>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Tue, 18 Dec 2018 11:18:21 -0800
-Message-ID: <CAJWu+oor7SzQVgo7SDKFcJS-BX+Oexj2_x_uWGsC8W=ErNGoNw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] psi: introduce psi monitor
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, lizefan@huawei.com,
-        Jens Axboe <axboe@kernel.dk>, dennis@kernel.org,
-        Dennis Zhou <dennisszhou@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545160781; bh=upXbqvh8OsNTt3xEaujgxEKb32gDOotj2vmCgyrGlPk=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=U3NsNR1K+A14f15qOG+s8yaqVG0JovSNUqbBtPaNf2tpjJCcthpSvkJCx0r28IGiK
+         Glqib1mY479tp+fBPdRatKe6TnPE8AZgtDBTH50cfRru5dUDcHVpBqLAWkorsvid5D
+         jYz/l4lJjZmsw/Cxd15ZnrI7vksX6U1gVAttQT6bFi27fqI9vxhRYJejj43+FxF0z8
+         ReiASCgdU/NbpiElzaevEmfzt0S8MauK2d77riZGaYzDu7+4ee5qwvRrOpZ6VAAGEi
+         UikdKzYtfsu3dSEMqMe0SBxzVEI9Bzm3XBUl8AQZfS/0e5/cw4f7cnTydogekKeXxf
+         2/5ZDu2JjY2Bw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 9:58 AM 'Suren Baghdasaryan' via kernel-team
-<kernel-team@android.com> wrote:
->
-> Current design supports only whole percentages and if userspace needs
-> more granularity then it has to use usecs.
-> I agree that usecs cover % usecase and "threshold * win / 100" is
-> simple enough for userspace to calculate. I'm fine with changing to
-> usecs only.
+Add SDMMC initial pad offsets used by auto calibration process.
 
-Suren, please avoid top-posting to LKML.
+Add SDMMC fixed drive strengths used when calibration timeouts.
+Fixed drive strengths are based on Pre SI Analysis of the pads.
 
-Also I was going to say the same thing, just usecs only is better.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi |  2 ++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 57 ++++++++++++++++++++++++++++++--
+ 3 files changed, 91 insertions(+), 2 deletions(-)
 
-thanks,
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 2f3c8e29520d..0631bb9bfcc3 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -311,6 +311,8 @@
+ 		nvidia,pad-autocal-pull-down-offset-hs400 = <0x05>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
++		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
+ 		nvidia,default-tap = <0x5>;
+ 		nvidia,default-trim = <0x9>;
+ 		nvidia,dqs-trim = <63>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c2091bb16546..3fab6802c335 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -301,6 +301,17 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
++			nvidia,default-tap = <0x9>;
++			nvidia,default-trim = <0x5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -312,6 +323,18 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
++			nvidia,default-tap = <0x9>;
++			nvidia,default-trim = <0x5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -323,6 +346,17 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x0a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x0a>;
++			nvidia,default-tap = <0x8>;
++			nvidia,default-trim = <0x14>;
++			nvidia,dqs-trim = <40>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2205d66b0443..41408df9d4e9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -476,6 +476,48 @@
+ 		compatible = "nvidia,tegra210-pinmux";
+ 		reg = <0x0 0x700008d4 0x0 0x29c>, /* Pad control registers */
+ 		      <0x0 0x70003000 0x0 0x294>; /* Mux registers */
++		sdmmc1_3v3_drv: sdmmc1-3v3-drv {
++			sdmmc1 {
++				nvidia,pins = "drive_sdmmc1";
++				nvidia,pull-down-strength = <0x8>;
++				nvidia,pull-up-strength = <0x8>;
++			};
++		};
++		sdmmc1_1v8_drv: sdmmc1-1v8-drv {
++			sdmmc1 {
++				nvidia,pins = "drive_sdmmc1";
++				nvidia,pull-down-strength = <0x4>;
++				nvidia,pull-up-strength = <0x3>;
++			};
++		};
++		sdmmc2_1v8_drv: sdmmc2-1v8-drv {
++			sdmmc2 {
++				nvidia,pins = "drive_sdmmc2";
++				nvidia,pull-down-strength = <0x10>;
++				nvidia,pull-up-strength = <0x10>;
++			};
++		};
++		sdmmc3_3v3_drv: sdmmc3-3v3-drv {
++			sdmmc3 {
++				nvidia,pins = "drive_sdmmc3";
++				nvidia,pull-down-strength = <0x8>;
++				nvidia,pull-up-strength = <0x8>;
++			};
++		};
++		sdmmc3_1v8_drv: sdmmc3-1v8-drv {
++			sdmmc3 {
++				nvidia,pins = "drive_sdmmc3";
++				nvidia,pull-down-strength = <0x4>;
++				nvidia,pull-up-strength = <0x3>;
++			};
++		};
++		sdmmc4_1v8_drv: sdmmc4-1v8-drv {
++			sdmmc4 {
++				nvidia,pins = "drive_sdmmc4";
++				nvidia,pull-down-strength = <0x10>;
++				nvidia,pull-up-strength = <0x10>;
++			};
++		};
+ 	};
+ 
+ 	/*
+@@ -1050,9 +1092,12 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 14>;
+ 		reset-names = "sdhci";
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
++				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
+ 		pinctrl-0 = <&sdmmc1_3v3>;
+ 		pinctrl-1 = <&sdmmc1_1v8>;
++		pinctrl-2 = <&sdmmc1_3v3_drv>;
++		pinctrl-3 = <&sdmmc1_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
+ 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
+@@ -1075,6 +1120,8 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 9>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-1v8-drv";
++		pinctrl-0 = <&sdmmc2_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
+ 		nvidia,default-tap = <0x8>;
+@@ -1090,9 +1137,12 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 69>;
+ 		reset-names = "sdhci";
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
++				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
+ 		pinctrl-0 = <&sdmmc3_3v3>;
+ 		pinctrl-1 = <&sdmmc3_1v8>;
++		pinctrl-2 = <&sdmmc3_3v3_drv>;
++		pinctrl-3 = <&sdmmc3_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
+ 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
+@@ -1110,6 +1160,9 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 15>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-3v3-drv", "sdmmc-1v8-drv";
++		pinctrl-0 = <&sdmmc4_1v8_drv>;
++		pinctrl-1 = <&sdmmc4_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
+ 		nvidia,default-tap = <0x8>;
+-- 
+2.7.4
 
- - Joel
-
-> On Tue, Dec 18, 2018 at 9:30 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Tue, Dec 18, 2018 at 11:46:22AM +0100, Peter Zijlstra wrote:
-> > > On Mon, Dec 17, 2018 at 05:21:05PM -0800, Suren Baghdasaryan wrote:
-> > > > On Mon, Dec 17, 2018 at 8:22 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > > > How well has this thing been fuzzed? Custom string parser, yay!
-> > > >
-> > > > Honestly, not much. Normal cases and some obvious corner cases. Will
-> > > > check if I can use some fuzzer to get more coverage or will write a
-> > > > script.
-> > > > I'm not thrilled about writing a custom parser, so if there is a
-> > > > better way to handle this please advise.
-> > >
-> > > The grammar seems fairly simple, something like:
-> > >
-> > >   some-full = "some" | "full" ;
-> > >   threshold-abs = integer ;
-> > >   threshold-pct = integer, { "%" } ;
-> > >   threshold = threshold-abs | threshold-pct ;
-> > >   window = integer ;
-> > >   trigger = some-full, space, threshold, space, window ;
-> > >
-> > > And that could even be expressed as two scanf formats:
-> > >
-> > >  "%4s %u%% %u" , "%4s %u %u"
-> > >
-> > > which then gets your something like:
-> > >
-> > >   char type[5];
-> > >
-> > >   if (sscanf(input, "%4s %u%% %u", &type, &pct, &window) == 3) {
-> > >       // do pct thing
-> > >   } else if (sscanf(intput, "%4s %u %u", &type, &thres, &window) == 3) {
-> > >       // do abs thing
-> > >   } else return -EFAIL;
-> > >
-> > >   if (!strcmp(type, "some")) {
-> > >       // some
-> > >   } else if (!strcmp(type, "full")) {
-> > >       // full
-> > >   } else return -EFAIL;
-> > >
-> > >   // do more
-> >
-> > We might want to drop the percentage notation.
-> >
-> > While it's somewhat convenient, it's also not unreasonable to ask
-> > userspace to do a simple "threshold * win / 100" themselves, and it
-> > would simplify the interface spec and the parser.
-> >
-> > Sure, psi outputs percentages, but only for fixed window sizes, so
-> > that actually saves us something, whereas this parser here needs to
-> > take a fractional anyway. The output is also in decimal notation,
-> > which is necessary for granularity. And I really don't think we want
-> > to add float parsing on top of this interface spec.
-> >
-> > So neither the convenience nor the symmetry argument are very
-> > compelling IMO. It might be better to just not go there.
->
-> --
-> You received this message because you are subscribed to the Google Groups "kernel-team" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
