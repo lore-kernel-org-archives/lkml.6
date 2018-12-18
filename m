@@ -3,104 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801EFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51A3C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B3520578
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD56D2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 03:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeLRDVG (ORCPT
+        id S1726518AbeLRD1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 22:21:06 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:61985 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726296AbeLRDVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 22:21:05 -0500
-X-IronPort-AV: E=Sophos;i="5.56,367,1539619200"; 
-   d="scan'208";a="50029433"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 18 Dec 2018 11:20:58 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id EC45E4B75BF7;
-        Tue, 18 Dec 2018 11:20:58 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 18 Dec 2018 11:21:04 +0800
-Date:   Tue, 18 Dec 2018 11:20:35 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Baoquan He <bhe@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <keescook@chromium.org>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
- directory instead of simple_strtoull()
-Message-ID: <20181218032034.GC10386@localhost.localdomain>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
- <20181212041218.GA28286@localhost.localdomain>
- <20181212080312.GP17340@MiWiFi-R3L-srv>
- <20181213132603.GD25287@zn.tnic>
- <20181217012728.GA31775@localhost.localdomain>
- <20181217154551.GF12165@zn.tnic>
+        Mon, 17 Dec 2018 22:27:14 -0500
+Received: from mga14.intel.com ([192.55.52.115]:21605 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbeLRD1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 22:27:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 19:27:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
+   d="scan'208";a="303033774"
+Received: from zhangxi4-mobl5.ccr.corp.intel.com (HELO localhost) ([10.249.254.207])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Dec 2018 19:27:03 -0800
+Date:   Tue, 18 Dec 2018 05:27:02 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181218032702.GA2903@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <7d5cde02-4649-546b-0f03-2d6414bb80b5@intel.com>
+ <20181217180102.GA12560@linux.intel.com>
+ <20181217183613.GD12491@linux.intel.com>
+ <20181217184333.GA26920@linux.intel.com>
+ <ccfb67a0-fd8d-82c8-8018-fd68e901f287@intel.com>
+ <CALCETrX0W4dhFJBHEbDbKed_QZxmw6ZNMajfsoVgqGqhMB0nDg@mail.gmail.com>
+ <20181217222047.GG12491@linux.intel.com>
+ <20181218013918.GC333@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217154551.GF12165@zn.tnic>
+In-Reply-To: <20181218013918.GC333@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: EC45E4B75BF7.AE278
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 04:45:51PM +0100, Borislav Petkov wrote:
->On Mon, Dec 17, 2018 at 09:27:28AM +0800, Chao Fan wrote:
->> Oops, I thought you agree with what Baoquan said, so I send the new version
->> and use simple_strtoull() back.
->
->I could've misunderstood him. Lemme repeat what I mean:
->
->- we should make kstrtoull() work because it is the right function to
->use. Which means, include this too:
->
->https://lkml.kernel.org/r/20181216203113.GA23823@zn.tnic
->
->- we should gradually start replacing simple_strtoull() in
->arch/x86/boot/ and eventually get rid of it. But that's for the TODO
->list, to take care of later.
->
-OK, got it.
-And I tested your solution(rename div_u64 as __div_u64, and div_u64_rem
-as __div_u64_rem)for the issue from test rebot, that works.
-Thank you very much.
+On Tue, Dec 18, 2018 at 03:39:18AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Dec 17, 2018 at 02:20:48PM -0800, Sean Christopherson wrote:
+> > The only potential hiccup I can see is the build flow.  Currently,
+> > EADD+EEXTEND is done via a work queue to avoid major performance issues
+> > (10x regression) when userspace is building multiple enclaves in parallel
+> > using goroutines to wrap Cgo (the issue might apply to any M:N scheduler,
+> > but I've only confirmed the Golang case).  The issue is that allocating
+> > an EPC page acts like a blocking syscall when the EPC is under pressure,
+> > i.e. an EPC page isn't immediately available.  This causes Go's scheduler
+> > to thrash and tank performance[1].
+> 
+> I don't see any major issues having that kthread. All the code that
+> maps the enclave would be removed.
+> 
+> I would only allow to map enclave to process address space after the
+> enclave has been initialized i.e. SGX_IOC_ENCLAVE_ATTACH.
 
-Thanks,
-Chao Fan
->- Take our time and stop with the hurrying and do the whole thing nice
->and clean.
->
->Ok?
->
->Or have I forgotten something?
->
->If not, I'll continue looking at your v13.
->
->Thx.
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+Some refined thoughts.
 
+PTE insertion can done in the #PF handler. In fact, we can PoC this
+already with the current architecture (and I will right after sending
+v18).
 
+The backing space is a bit more nasty issue in the add pager thread.
+The previous shmem swapping would have been a better fit. Maybe that
+should be reconsidered?
+
+If shmem was used, all the commits up to "SGX Enclave Driver" could
+be reworked to the new model.
+
+When we think about the swapping code, there uprises some difficulties.
+Namely, when a page is swapped, the enclave must unmap the PTE from all
+processes that have it mapped.
+
+I have a one compromise solution for the problem above: make enclaves
+shared BUT mutually exclusive. When you attach an enclave it gets
+detached from the previous process that had it. This would still fully
+implement the daemon example that Andy gave in earlier response.
+
+/Jarkko
