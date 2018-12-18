@@ -2,117 +2,87 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91200C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C890C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532CD218AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33CC621873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545164764;
+	bh=YvWhVvRZTvBtNNW4ep9347Rqv51Ku05+TaQgQMSV0jc=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=cn6AznCnBh3WiBEhtDSyB73HC4TYAozm1vSG3xM6FDbFCRzHJq1Pxip9OVZgQdH0g
+	 sVdeI8sF0QIGnZNym4FWv5Sxs6TB02nQGOdoNR3acb+4/wjQeKDbRuZLCmwpcpCOO3
+	 J2ncdWoowG6i0a4SoS0SD4UFD8jnt/kuyAQltgz8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbeLRUWp (ORCPT
+        id S1727052AbeLRU0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:22:45 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37115 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbeLRUWo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:22:44 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 010BE80A4E; Tue, 18 Dec 2018 21:22:38 +0100 (CET)
-Date:   Tue, 18 Dec 2018 21:22:42 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Johan Hovold <johan@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
-        Sebastian Reichel <sre@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
-Message-ID: <20181218202242.GA30831@amd>
-References: <20181217004450.GW6707@atomide.com>
- <20181218124616.GA10758@amd>
- <20181218153650.GA6707@atomide.com>
+        Tue, 18 Dec 2018 15:26:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726422AbeLRU0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 15:26:02 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D56221841;
+        Tue, 18 Dec 2018 20:26:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545164761;
+        bh=YvWhVvRZTvBtNNW4ep9347Rqv51Ku05+TaQgQMSV0jc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Lo0tKO0Pl8Sxwxf5zfoMWFIhj+4hw3TR4wfAf1au+ckGkLzS8OxIlwHtpHtArdkfn
+         VRwKAXBgr7ydvp6koBoE1oNpXnkQlKC8VNV2ZD5Nt3+SjILkOcnnEJM0ty0lIDFvde
+         rUP4V+IGlsuh2sxrrVtLexhBi6hYKIeYi5aIspwM=
+Subject: Re: [PATCH 4.19 00/44] 4.19.11-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20181218163927.119623235@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <8f3a9d68-44fe-c869-dc33-1f03f8fde091@kernel.org>
+Date:   Tue, 18 Dec 2018 13:26:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Content-Disposition: inline
-In-Reply-To: <20181218153650.GA6707@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/18/18 9:39 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.11 release.
+> There are 44 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Dec 20 16:39:02 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Compiled and booted on my test system. No dmesg regressions.
 
-Hi!
+thanks,
+-- Shuah
 
-> > # commit	    0c1bc81ba976bcd480d6e3c3009a28589f8427c0 (patch)
-> > # mfd: motmdm: Add Motorola TS 27.010 serdev driver for devices like dr=
-oid4
-> >=20
-> > Oh, that is a lot of fun. Especially state machine for parsing modem
-> > responses. I wonder how well it is going to work when modem is
-> > accessed over USB...=20
-> >=20
-> > motmdm_read_state(... size_t len)
->=20
-> That's a bit of a layering violation yeah :) But we still need to
-> do that somewhere for notifiers. And the notifications are separate
-> from the commands and start with a ~ character so from that point of
-> view it should not be too bad.
-
-Plus, you seem to assume that data will always come in suitably sized
-chunks. Aha, and as it is not plain serial but packet protocol over
-serial... I guess that is going to work?
-
-> > I did a quick test in my config... and it did not break my old setup
-> > -- voice calls still work when set up over USB and with manual mixer
-> > setup. That was good surprise.
->=20
-> OK good to hear. Using the n_gsm port instead of USB during idle
-> has a major PM advantage as the SoC can hit retention during idle
-> while still connected to the modem and getting notifications.
->=20
-> So looks like during idle we can keep USB in autosuspend mode with
-> something like the below shell script function.
-
-Yes, I should really start using serials instead of USB. But... I have
-working ofono there, and was using that phone and am little short on
-time at the moment.
-
-Thanks,
-									Pavel
-								=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwZVxIACgkQMOfwapXb+vKzsgCfe5SxXLIU0/XDhCS+NU2FI4PJ
-hT4An2GGA1G+NWauOlEvtyR5MaZm7zTd
-=oZIT
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
