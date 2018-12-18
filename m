@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD0BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D981C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830322145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C0B52145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:22:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="coXf01at"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l3yIC1z2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeLRBVU (ORCPT
+        id S1726414AbeLRBWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 20:21:20 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52722 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbeLRBVT (ORCPT
+        Mon, 17 Dec 2018 20:22:49 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40074 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbeLRBWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 20:21:19 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m1so1027043wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 17:21:17 -0800 (PST)
+        Mon, 17 Dec 2018 20:22:48 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f188so380398wmf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 17:22:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mbu7X9AToTNe0+9pY+V/zik+z11jPPNgr5XbogPquck=;
-        b=coXf01atRsTDqmB60HaGrMfJ9f0HsjrT+OHvDJEcfrJamR18DOV+C7fFynNk2ez9SJ
-         BKSH1/oXnxflTvNhg+cGiL7yWVnj2Zg4e3QNNWlkYdCVMXHb43eZnhdyZOKXEi66v+RI
-         HbljguhNMbi9EKkecWaukYVNcgrqph1g9k+fFNtG/EGhk9GizfS+fGgSN2p+Q+2PkFry
-         kY20M9dCRj/bSHJZrgrAMFb/pnNcUyHC5iIWkM57w4hvflFBtOxRZhIvwdHzRUQ/kfLF
-         JEPAfSUjM3ZhQK3CmnONs/7pVi7e5yHMB7jY8US8eK6M6y8iqmLkPsYLXVj7fTi8/b70
-         BDEQ==
+        bh=sFGWv6X8z3NwFialNaeSsACmFB5fqtUuW9oC4mugWj4=;
+        b=l3yIC1z24v0r3Yyxrmq1CCmwuEpPGGLweeNlEXuGnjDG//zHj98KJs+aO07RlEWBJu
+         EV91sC4cK59Ckg3Dws+kWuu4UFAIjAkw0VnO1ND8uINmrTH5BvLLqNQkhtg81i8LypjB
+         KDXThdLTJoDH/kvvlzp/npeS4W63wz3InzwaXy2BIv83yINt9LwsktznaONO7pjFocSS
+         TQAST/KPYuCDPGYTmFRXaJbnXYZ7CLeAwBnTCL1irL8YTL+7pPzVqT4t5Srl5QtOnK9R
+         fyhyHFu7pmHzLq7eUhESXu5N88IaFh9VOF1AfVUmQ9waNF38I/Lne4mUwBs4lKQswV9j
+         oloQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mbu7X9AToTNe0+9pY+V/zik+z11jPPNgr5XbogPquck=;
-        b=bjDoaeqVH9F1n6UiMdVO8p0tAJ0v/pXiVBUMy1hMMO0zMLUFzm4Ka0a99XRoVTAol9
-         E1BnTFGNxkljSE5mYIisTkqLqcw5G4k6QEQ8dNI+3eIfo4Db2xIgglbMUIKrGG68+klV
-         V3qV9K9bu/o0Y/Q/fUmcQsm1XPtbgivwdIIMfXVpl+RnLuhC6/6dsD2n5n/qDDFVJqXu
-         k0MqOc/YQxbURg6jr1qlROtCMMUF2fzsUeMSnSNxcCwKhmTFu4LzgFYdFaNk2aAcuvlh
-         NiBbRpvqnA1hJqzjRcWwEDEuVlMFHvdUeschgyIG0bIaTOg1hamXy/eRy90Z1cwhRCsn
-         pKgA==
-X-Gm-Message-State: AA+aEWb9tK7AE9pFt0VYvBL5OzHzJCKlYTbaYz17SYT3n0ZL22WN8u2n
-        iqrCVs5oPxtrGEe1qYRMjhjybLGQ3I60aoRI0w9X1g==
-X-Google-Smtp-Source: AFSGD/WQuBWpqw5XM8CknRTpoZaVRCQwBcnTwgV479JuaazLh4ZFif6lnrHYvMV/ULcLIANihfc+ik9seRSZOwV0lTU=
-X-Received: by 2002:a1c:1286:: with SMTP id 128mr1187179wms.70.1545096076972;
- Mon, 17 Dec 2018 17:21:16 -0800 (PST)
+        bh=sFGWv6X8z3NwFialNaeSsACmFB5fqtUuW9oC4mugWj4=;
+        b=Qq6S6wv00RLXrx01SWbcITzuyM77LYoi/WpdxZEwOdt4rg4PvgtvqSOiVUZyeKYJow
+         SF871x6+7bYENiPaL7ubL/m+W79E5VqiXik5zzCiaxNRb6/nUbsfnrckoFhGpWZS+EEa
+         A+GIyGCguTAjwwWYLDLUrCi39fpq1dLP7HGyCyQjhvDRixEFNMuu5qVEUi8sohW7eDGM
+         M7SBVeWupRNL8KAQXCC6JCnPWqaT7DhM81gWcdK1QkyjM5JOmJc5j5K0HRSFFPsNkbDT
+         /2En4mndnRIDZKJEMTJPgOoSC8YKMr0vUuO7Uc9f9oyuvefJtDrCdNwHRe6ph5wQ2unW
+         0uhQ==
+X-Gm-Message-State: AA+aEWZYWcbELUu009POjMpnLCCJiOoTnK3JROq++lsDQxItKPoqSEML
+        XmLgQgcVdsiT8NPnM8MXDZ1+f0V6aBhswqKigSCluA==
+X-Google-Smtp-Source: AFSGD/Vt9bgOssRGjNM9g+zQkLmLmYp5ME/owlqbM1CoOLLX7DTPeAXAfe9QJ6+u0RyB5DzFmI7RL5z9zjuXz+1kFIg=
+X-Received: by 2002:a1c:6442:: with SMTP id y63mr1042938wmb.143.1545096166849;
+ Mon, 17 Dec 2018 17:22:46 -0800 (PST)
 MIME-Version: 1.0
 References: <20181214171508.7791-1-surenb@google.com> <20181214171508.7791-7-surenb@google.com>
- <20181217162223.GD2218@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181217162223.GD2218@hirez.programming.kicks-ass.net>
+ <20181217162713.GE2218@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181217162713.GE2218@hirez.programming.kicks-ass.net>
 From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 17 Dec 2018 17:21:05 -0800
-Message-ID: <CAJuCfpHGsDnE-eAHY1QnX949stA3cvNA=078q1swqVnz95aJfg@mail.gmail.com>
+Date:   Mon, 17 Dec 2018 17:22:35 -0800
+Message-ID: <CAJuCfpFp7v4oc9LL0TVMiYavOMOvDs5y=kQ8S7URtKojkWmH7Q@mail.gmail.com>
 Subject: Re: [PATCH 6/6] psi: introduce psi monitor
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -76,104 +76,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 8:22 AM Peter Zijlstra <peterz@infradead.org> wrote:
+On Mon, Dec 17, 2018 at 8:37 AM Peter Zijlstra <peterz@infradead.org> wrote:
 >
 > On Fri, Dec 14, 2018 at 09:15:08AM -0800, Suren Baghdasaryan wrote:
-> > +ssize_t psi_trigger_parse(char *buf, size_t nbytes, enum psi_res res,
-> > +     enum psi_states *state, u32 *threshold_us, u32 *win_sz_us)
-> > +{
-> > +     bool some;
-> > +     bool threshold_pct;
-> > +     u32 threshold;
-> > +     u32 win_sz;
-> > +     char *p;
-> > +
-> > +     p = strsep(&buf, " ");
-> > +     if (p == NULL)
-> > +             return -EINVAL;
-> > +
-> > +     /* parse type */
-> > +     if (!strcmp(p, "some"))
-> > +             some = true;
-> > +     else if (!strcmp(p, "full"))
-> > +             some = false;
-> > +     else
-> > +             return -EINVAL;
-> > +
-> > +     switch (res) {
-> > +     case (PSI_IO):
-> > +             *state = some ? PSI_IO_SOME : PSI_IO_FULL;
-> > +             break;
-> > +     case (PSI_MEM):
-> > +             *state = some ? PSI_MEM_SOME : PSI_MEM_FULL;
-> > +             break;
-> > +     case (PSI_CPU):
-> > +             if (!some)
-> > +                     return -EINVAL;
-> > +             *state = PSI_CPU_SOME;
-> > +             break;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     while (isspace(*buf))
-> > +             buf++;
-> > +
-> > +     p = strsep(&buf, "%");
-> > +     if (p == NULL)
-> > +             return -EINVAL;
-> > +
-> > +     if (buf == NULL) {
-> > +             /* % sign was not found, threshold is specified in us */
-> > +             buf = p;
-> > +             p = strsep(&buf, " ");
-> > +             if (p == NULL)
-> > +                     return -EINVAL;
-> > +
-> > +             threshold_pct = false;
-> > +     } else
-> > +             threshold_pct = true;
-> > +
-> > +     /* parse threshold */
-> > +     if (kstrtouint(p, 0, &threshold))
-> > +             return -EINVAL;
-> > +
-> > +     while (isspace(*buf))
-> > +             buf++;
-> > +
-> > +     p = strsep(&buf, " ");
-> > +     if (p == NULL)
-> > +             return -EINVAL;
-> > +
-> > +     /* Parse window size */
-> > +     if (kstrtouint(p, 0, &win_sz))
-> > +             return -EINVAL;
-> > +
-> > +     /* Check window size */
-> > +     if (win_sz < PSI_TRIG_MIN_WIN_US || win_sz > PSI_TRIG_MAX_WIN_US)
-> > +             return -EINVAL;
-> > +
-> > +     if (threshold_pct)
-> > +             threshold = (threshold * win_sz) / 100;
-> > +
-> > +     /* Check threshold */
-> > +     if (threshold == 0 || threshold > win_sz)
-> > +             return -EINVAL;
-> > +
-> > +     *threshold_us = threshold;
-> > +     *win_sz_us = win_sz;
-> > +
-> > +     return 0;
-> > +}
+> > @@ -358,28 +526,23 @@ static void psi_update_work(struct work_struct *work)
+> >  {
+> >       struct delayed_work *dwork;
+> >       struct psi_group *group;
+> > +     u64 next_update;
+> >
+> >       dwork = to_delayed_work(work);
+> >       group = container_of(dwork, struct psi_group, clock_work);
+> >
+> >       /*
+> > +      * Periodically fold the per-cpu times and feed samples
+> > +      * into the running averages.
+> >        */
+> >
+> > +     psi_update(group);
+> >
+> > +     /* Calculate closest update time */
+> > +     next_update = min(group->polling_next_update,
+> > +                             group->avg_next_update);
+> > +     schedule_delayed_work(dwork, min(PSI_FREQ,
+> > +             nsecs_to_jiffies(next_update - sched_clock()) + 1));
 >
-> How well has this thing been fuzzed? Custom string parser, yay!
+> See, so I don't at _all_ like how there is no idle option..
 
-Honestly, not much. Normal cases and some obvious corner cases. Will
-check if I can use some fuzzer to get more coverage or will write a
-script.
-I'm not thrilled about writing a custom parser, so if there is a
-better way to handle this please advise.
+Copy that. Will see what we can do to bring it back.
+Thanks!
 
+> >  }
+>
+>
 > --
 > You received this message because you are subscribed to the Google Groups "kernel-team" group.
 > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
