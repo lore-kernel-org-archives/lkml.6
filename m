@@ -2,93 +2,104 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B11C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABC6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BFBA2080D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:23:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCHYiwT2"
+	by mail.kernel.org (Postfix) with ESMTP id 8C45B214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 02:29:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbeLRCXY (ORCPT
+        id S1726324AbeLRC3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:23:24 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32825 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbeLRCXY (ORCPT
+        Mon, 17 Dec 2018 21:29:20 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:65258 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726276AbeLRC3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 21:23:24 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so7347817pfb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 18:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LfGPyXUcMknKtJVZJHJXZusXAGI7tOUVlnsh99ett9o=;
-        b=PCHYiwT2tfxxwC5gIKneGmugTWjahRblKrpOwfx3UzWKIQbOoBV0G6DzhAiGC/eK/x
-         mt1bGe1NHGgM1+v+C0ItxnLaHldM+dVAdbSasyPIIEys/4IXm45UWGtFJ6bH/gMbhW+f
-         JoD1gZuYgKTZRZw5GekoaHvcXbTZRpwwKij4A5M4M3Na9cdEqWeFSH4yGPf88EvKn9xt
-         VZM74piPaqi6mL1yRVEZjILpTxfx1FqPkMj5riHUDRehNp8EZnY2RKpuIYQUkLY5z0T9
-         5/LzZuS8TcQBj2fX5lL0iJtuirAloFT84ytMnWbsiXex5CkAVMhUHad9WLkKmynDNsLE
-         xwNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LfGPyXUcMknKtJVZJHJXZusXAGI7tOUVlnsh99ett9o=;
-        b=b+WOdoS9IO4IHCcv9Mm9qA6BHtG1hm+83QKO4nQYwgyw1DZYGbWOdKTHZ0sJ0lwnkQ
-         byJCBGd7i7Pzew3wNxa+5q1Ob+npjilxPGfItY5Tarcd2HTINugTMloDnP7E/9RVHuYa
-         v67CdhtyM8cVMk+YM6m1MOT+YSKzta9ouBPLqLgXA/U/DCUMatXc2EijK+ly5F3nfxAD
-         KOsHBhLES0kDraZWGa7g3Hx80whDr3Ur3A/dh2Q6KJzPm6T/h/xI5ufNlY3n9YkFbK4m
-         Z1fyZJLBJ3LIcWwt/soh4n7e3z46TNHedIlqWtIMvnHdAHVUyEMq1iWEwOHUXn3Ydxgf
-         41Ag==
-X-Gm-Message-State: AA+aEWa5jzq7ibMhlq97QcstNWMMMqpA69kpof5OdCJj1b5J3JcnMBDR
-        4X6cQk3lSFiXJNRrOfl1puA=
-X-Google-Smtp-Source: AFSGD/W1IbiYSTraMSCLwY4fBXXAvZxL8Ewz3Jo3BOrWu7R+T/5/7V9sBMGXn0Je1gJsMKJWii8epw==
-X-Received: by 2002:a62:6303:: with SMTP id x3mr15549485pfb.110.1545099803498;
-        Mon, 17 Dec 2018 18:23:23 -0800 (PST)
-Received: from localhost ([175.223.2.245])
-        by smtp.gmail.com with ESMTPSA id 186sm24600132pga.36.2018.12.17.18.23.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 18:23:22 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:23:19 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+        Mon, 17 Dec 2018 21:29:20 -0500
+X-IronPort-AV: E=Sophos;i="5.56,367,1539619200"; 
+   d="scan'208";a="50025732"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 18 Dec 2018 10:29:18 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 6D6B64B6ED69;
+        Tue, 18 Dec 2018 10:29:14 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 18 Dec 2018 10:29:19 +0800
+Date:   Tue, 18 Dec 2018 10:28:51 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v2] debugobjects: Move printk out of db lock critical
- sections
-Message-ID: <20181218022319.GA5693@jagdpanzerIV>
-References: <1544738377-3848-1-git-send-email-longman@redhat.com>
- <20181217181712.GA5114@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v14 3/5] x86/boot: Introduce bios_get_rsdp_addr() to
+ search RSDP in memory
+Message-ID: <20181218022851.GD31775@localhost.localdomain>
+References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+ <20181214093013.13370-4-fanc.fnst@cn.fujitsu.com>
+ <20181217173837.GC90818@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181217181712.GA5114@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181217173837.GC90818@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 6D6B64B6ED69.ABB2D
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/17/18 19:17), Ingo Molnar wrote:
-> This makes me sad - whatever happened to the principle of keeping printk
-> simple?
+On Mon, Dec 17, 2018 at 06:38:37PM +0100, Ingo Molnar wrote:
+>
+>* Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>
+>> +		/* Check the standard checksum */
+>> +		if (compute_checksum((u8 *) rsdp, ACPI_RSDP_CHECKSUM_LENGTH))
+>> +			continue;
+>
+>Could you please run your patches through checkpatch, does it not 
+>complain about this line?
 
-printk() is still simple. Console drivers are not, tho.
+I did,  0 errors, 0 warnings.
+If you mean the useless space, I can drop it.
+But it's from acpi_tb_validate_rsdp() of drivers/acpi/acpica/tbxfroot.c.
+>
+>> +/* Search RSDP address, based on acpi_find_root_pointer(). */
+>> +static acpi_physical_address bios_get_rsdp_addr(void)
+>> +{
+>> +	u8 *table_ptr;
+>> +	u32 address;
+>> +	u8 *rsdp;
+>> +
+>> +	/* Get the location of the Extended BIOS Data Area (EBDA) */
+>> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
+>> +	*(u32 *)(void *)&address = *(u16 *)(void *)table_ptr;
+>
+>what? So you take the address of 'u32 address', which turns it into an 
+>u32 * - then you cast it to void *, then back to u32 * and then deference 
+>it???
 
-	-ss
+I will clean it, it's from
+#define ACPI_MOVE_16_TO_32(d, s)        *(u32 *)(void *)(d) = *(u16 *)(void *)(s)
+in acpi_find_root_pointer().
+I thought it is safe to use the code existing in kernel.
+
+Thanks,
+Chao Fan
+
+>
+>Thanks,
+>
+>	Ingo
+>
+>
+
+
