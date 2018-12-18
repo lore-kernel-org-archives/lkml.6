@@ -2,88 +2,132 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B9AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC46C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76C22184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D5D2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:04:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQ+3FJWj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbeLRMEE (ORCPT
+        id S1726674AbeLRMEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:04:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51973 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbeLRMEE (ORCPT
+        Tue, 18 Dec 2018 07:04:38 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43204 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbeLRMEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:04:04 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIC3qGJ2823748
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 04:03:52 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIC3pra2823745;
-        Tue, 18 Dec 2018 04:03:51 -0800
-Date:   Tue, 18 Dec 2018 04:03:51 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for YueHaibing <tipbot@zytor.com>
-Message-ID: <tip-07daef8b41e0d9e7802a448f6766504e7641a234@git.kernel.org>
-Cc:     john.stultz@linaro.org, tglx@linutronix.de, yuehaibing@huawei.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, sboyd@kernel.org,
-        mingo@kernel.org
-Reply-To: sboyd@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, john.stultz@linaro.org, yuehaibing@huawei.com,
-          tglx@linutronix.de
-In-Reply-To: <20181209062225.4344-1-yuehaibing@huawei.com>
-References: <20181209062225.4344-1-yuehaibing@huawei.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] ntp: Remove duplicated include
-Git-Commit-ID: 07daef8b41e0d9e7802a448f6766504e7641a234
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 18 Dec 2018 07:04:37 -0500
+Received: by mail-pg1-f193.google.com with SMTP id v28so7713931pgk.10;
+        Tue, 18 Dec 2018 04:04:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=QTN9L3fTpeWsyJZhvZ1DPbDaK2OWdDpzdc4ujHbndYM=;
+        b=fQ+3FJWjXv8sUaA+gUOmv+KdLKDL6Yq0l+9QpUbnPVDuxp3l5wd1IdSqSeJ59K4blO
+         S3WUWTDQN9/nlvSsChNgNCKjroOwzviLHjS+NyDjpF1ZpNhYQIu/xHdfRtNQFSifDy2v
+         8NYD7gSS43tWzkjL1VQp5Rvql7RxvVEKVuiFPd2JnTCcnauFBE3xDlWN2Pz8CaV/t9sk
+         1jyfK0H28nr369RQoazRdEICzfKFp0xJESS/ggqS3+50i3AXAI/Sx8bTc+iccPAN5eMF
+         zC68MHkN3+V07WtzoYzqOuHO1lW2mGeTYkAu0+guga/j+U5Yc1YAmcjyC4owx3Z+rksh
+         1DJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QTN9L3fTpeWsyJZhvZ1DPbDaK2OWdDpzdc4ujHbndYM=;
+        b=RVt8MTUF9TzZLiTnu2FCVYTGl+ASOI9u66OPv87V6uvRMblrjEND8q4XEtURsU4wlZ
+         qbG0KRg/ZK4qXv8xX62Tzogsu9pPUW4DiSGSxDIF00RMG4OOosqygl5KqhbaiKoSy8Mo
+         uGAOyabVJFomeDgYGJb8w4KCfnQcvN/vNJKbbPIUKp1HZL3xf5eY4aXAidO2jOHxzJm8
+         CCqBBFwy0xVNR70E0S1fOlKxeheYmbiz7yvA1NvHhjK0I94I88x6+FPjsix8AZO9Is3A
+         TMeKR5KVvJYu7Cp1HudM53f93U/aULUXyTCa5KhC5bo/I/+f4dMHyjS99/16hD2w84YQ
+         slWw==
+X-Gm-Message-State: AA+aEWa9YPv1tBt6ICXWP3IK2rwi9vg5sqrPN0fwLpeAdhMmeJWMercz
+        iok6zPM+wugnHK/7e6edvbw=
+X-Google-Smtp-Source: AFSGD/VG1THwofgVwusUFLGl/A1DcZe54dwyEVQ5X7hGKo+YJ2suO8FiDWmGlRkTOukCu2CrQ+nKJA==
+X-Received: by 2002:a65:40c5:: with SMTP id u5mr14996139pgp.46.1545134676768;
+        Tue, 18 Dec 2018 04:04:36 -0800 (PST)
+Received: from localhost.localdomain ([2402:f000:1:4414:3dd3:3693:8487:3f39])
+        by smtp.gmail.com with ESMTPSA id 4sm30871885pfq.10.2018.12.18.04.04.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 04:04:36 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] usb: r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
+Date:   Tue, 18 Dec 2018 20:04:25 +0800
+Message-Id: <20181218120425.32223-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  07daef8b41e0d9e7802a448f6766504e7641a234
-Gitweb:     https://git.kernel.org/tip/07daef8b41e0d9e7802a448f6766504e7641a234
-Author:     YueHaibing <yuehaibing@huawei.com>
-AuthorDate: Sun, 9 Dec 2018 14:22:25 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 18 Dec 2018 12:59:33 +0100
+The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
+be concurrently executed.
+The two functions both access a possible shared variable "hep->hcpriv".
 
-ntp: Remove duplicated include
+This shared variable is freed by r8a66597_endpoint_disable() via the
+call path:
+r8a66597_endpoint_disable
+  kfree(hep->hcpriv) (line 1995 in Linux-4.19)
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: <john.stultz@linaro.org>
-Cc: <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20181209062225.4344-1-yuehaibing@huawei.com
+This variable is read by r8a66597_urb_enqueue() via the call path:
+r8a66597_urb_enqueue
+  spin_lock_irqsave(&r8a66597->lock)
+  init_pipe_info
+    enable_r8a66597_pipe
+      pipe = hep->hcpriv (line 802 in Linux-4.19)
 
+The read operation is protected by a spinlock, but the free operation
+is not protected by this spinlock, thus a concurrency use-after-free bug
+may occur.
+
+To fix this bug, the spin-lock and spin-unlock function calls in
+r8a66597_endpoint_disable() are moved to protect the free operation.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- kernel/time/ntp.c | 1 -
- 1 file changed, 1 deletion(-)
+v2:
+* Add __acquires/__releases markings for r8a66597_endpoint_disable().
+  Thanks Greg for good advice.
+---
+ drivers/usb/host/r8a66597-hcd.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index c5e0cba3b39c..bc3a3c37ec9c 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -17,7 +17,6 @@
- #include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/rtc.h>
--#include <linux/math64.h>
+diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+index 984892dd72f5..42668aeca57c 100644
+--- a/drivers/usb/host/r8a66597-hcd.c
++++ b/drivers/usb/host/r8a66597-hcd.c
+@@ -1979,6 +1979,8 @@ static int r8a66597_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
  
- #include "ntp_internal.h"
- #include "timekeeping_internal.h"
+ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
+ 				      struct usb_host_endpoint *hep)
++__acquires(r8a66597->lock)
++__releases(r8a66597->lock)
+ {
+ 	struct r8a66597 *r8a66597 = hcd_to_r8a66597(hcd);
+ 	struct r8a66597_pipe *pipe = (struct r8a66597_pipe *)hep->hcpriv;
+@@ -1991,13 +1993,14 @@ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
+ 		return;
+ 	pipenum = pipe->info.pipenum;
+ 
++	spin_lock_irqsave(&r8a66597->lock, flags);
+ 	if (pipenum == 0) {
+ 		kfree(hep->hcpriv);
+ 		hep->hcpriv = NULL;
++		spin_unlock_irqrestore(&r8a66597->lock, flags);
+ 		return;
+ 	}
+ 
+-	spin_lock_irqsave(&r8a66597->lock, flags);
+ 	pipe_stop(r8a66597, pipe);
+ 	pipe_irq_disable(r8a66597, pipenum);
+ 	disable_irq_empty(r8a66597, pipenum);
+-- 
+2.17.0
+
