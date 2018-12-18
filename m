@@ -2,606 +2,500 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAF2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59434C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C96F5217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09095217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:05:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZ1dXtVz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbeLRVEv (ORCPT
+        id S1727617AbeLRVFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 18 Dec 2018 16:05:00 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35573 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeLRVEv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 16:04:51 -0500
-Received: from mga04.intel.com ([192.55.52.120]:32558 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727220AbeLRVEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:04:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 13:04:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,370,1539673200"; 
-   d="scan'208";a="131061931"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Dec 2018 13:04:43 -0800
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+Received: by mail-io1-f66.google.com with SMTP id o13so13922304ioh.2;
+        Tue, 18 Dec 2018 13:04:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8j61t33t219G9enMzVJBPywie4i7NA5zZxu9ZGiF+lc=;
+        b=eZ1dXtVz2T0Biyr8K6KuXwcTb0WgL7j451SwpU9bxFzGDQfzVWWXh69sB8AERZ0sie
+         s1uIAWc+CKLh0wMDoXqn75sz/b5Xu/ZHfA5lzEwNJ7ZooFbZjPPGwQjpSdf3niF93Re2
+         HyEh/8JKKbkQZGj2IsTgZFUMiVNiLKGzCAWPzGMrg6iDv0H8Z8EO1gr2W//lwhhE3OMK
+         1Z2VzKS2It1SGFbLXByLOVmw3jKvS86UzImI8nDhGx7D1qFCaMe2Hd8YGyVsYBEdqK8w
+         m578IW8A+EIM5d3iXamlLGLs664nNp4yp7uP1SYmkitcKoortyATlFMxjslXYDETW9Xk
+         IMvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8j61t33t219G9enMzVJBPywie4i7NA5zZxu9ZGiF+lc=;
+        b=FSHvAh6CbFVdJWzrV5FFvNlahQUSJoFFtug50DhfZaRBCX9+qtJ5+DOq9Zm3Ahjt0o
+         MPA2OHYkrl0PBF6LKxlDqUa4AY3gdlZ5rO8WlkUsxdEiw4ZZwxIar+M44qsVK9+gEv+1
+         vkXsREeCWA6gGP/SOze2oTzipand9qpcXyADHTDH2+6sa0IYl8CjAJFVc7ltkP4WmYUf
+         /SEe9Z9j7UBAXxrGr3FHCNKsCPcUjpGaqpw9lSu2o1+tyXpSfj/AVC+gaMdkT9wn23iQ
+         70w5RXKsywv8pguhpEzqlY35kmsC8CfRDWY0rwb+eDFc4tG3dr6+nCBpxK20mAiEbmyB
+         CgvQ==
+X-Gm-Message-State: AA+aEWaFMs7AnsNqB9+DuD0hDCQw13BMqzV2WBdXHWC7Be54HyS0DvqS
+        sMCCFsmptTrkuKCnb8x+H3E=
+X-Google-Smtp-Source: AFSGD/W4jPe7rsbrTnfY2EyN0IQOB7wpilNwEi5ryhOsLWLiOEJ2zuD/9w9IVTEhw59SFzngWVY2Jw==
+X-Received: by 2002:a5d:97cf:: with SMTP id k15mr7738739ios.209.1545167088777;
+        Tue, 18 Dec 2018 13:04:48 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id o21sm7603609ioa.71.2018.12.18.13.04.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 13:04:48 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Stef van Os <stef.van.os@prodrive-technologies.com>
-Subject: [PATCH v9 10/12] hwmon: Add PECI cputemp driver
-Date:   Tue, 18 Dec 2018 13:04:15 -0800
-Message-Id: <20181218210417.30140-11-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181218210417.30140-1-jae.hyun.yoo@linux.intel.com>
-References: <20181218210417.30140-1-jae.hyun.yoo@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC BUG] pci: Freescale i.MX6 PCIe controller: revert mainline regression
+Date:   Tue, 18 Dec 2018 16:04:44 -0500
+Message-Id: <20181218210444.5950-1-TheSven73@googlemail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds PECI cputemp hwmon driver.
+We are using a Broadcom BCM57780 ethernet adapter (Tigon3) connected
+to a i.MX6 PCIe controller. On a Freescale i.MX6 SoC.
 
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Alan Cox <alan@linux.intel.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Stef van Os <stef.van.os@prodrive-technologies.com>
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-Reviewed-by: James Feist <james.feist@linux.intel.com>
-Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+This combo worked ok on mainline v4.17.
+On mainline v4.18-rc1, a regression was introduced that caused a crash.
+This regression is still present in current mainline as of v4.20-rc7
+
+Bisected the regression to the following merge head:
+commit 0ecda3a08746 ("Merge branch 'pci/kconfig'")
+When this merge head is removed, the regression disappears. This commit
+reverts the changes introduced by the offending merge head.
+
+Crash message:
+
+<insert live network cable into Broadcom Tigon3 NIC>
+
+[   18.249814] tg3 0000:03:00.0 eth20: Link is up at 1000 Mbps, full duplex
+[   18.256589] tg3 0000:03:00.0 eth20: Flow control is on for TX and on for RX
+[   18.263856] IPv6: ADDRCONF(NETDEV_CHANGE): eth20: link becomes ready
+
+<wait ~5s>
+
+[   28.088219] ------------[ cut here ]------------
+[   28.093349] WARNING: CPU: 0 PID: 0 at net/sched/sch_generic.c:461 dev_watchdog+0x27c/0x29c
+[   28.101693] NETDEV WATCHDOG: eth20 (tg3): transmit queue 0 timed out
+[   28.108110] Modules linked in:
+[   28.111236] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.17.0-07573-g8690f53b2719 #92
+[   28.118993] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[   28.125533] Backtrace:
+[   28.128012] [<c010d14c>] (dump_backtrace) from [<c010d41c>] (show_stack+0x18/0x1c)
+[   28.135595]  r7:00000000 r6:600f0113 r5:00000000 r4:c107d53c
+[   28.141276] [<c010d404>] (show_stack) from [<c0a6a5d0>] (dump_stack+0xb4/0xec)
+[   28.148519] [<c0a6a51c>] (dump_stack) from [<c0126d58>] (__warn+0xe0/0x10c)
+[   28.155496]  r10:ec57b440 r9:c08686b4 r8:000001cd r7:00000009 r6:c0dbbb80 r5:00000000
+[   28.163337]  r4:c1001c8c r3:96a0b125
+[   28.166930] [<c0126c78>] (__warn) from [<c0126dd0>] (warn_slowpath_fmt+0x4c/0x6c)
+[   28.174428]  r9:ffffffff r8:c1005900 r7:ec496254 r6:ec496000 r5:c0dbbb44 r4:c1008908
+[   28.182189] [<c0126d88>] (warn_slowpath_fmt) from [<c08686b4>] (dev_watchdog+0x27c/0x29c)
+[   28.190377]  r3:ec496000 r2:c0dbbb44
+[   28.193965]  r5:ec49627c r4:00000000
+[   28.197566] [<c0868438>] (dev_watchdog) from [<c0198ea4>] (call_timer_fn+0x7c/0x120)
+[   28.205325]  r10:c0868438 r9:00000100 r8:ec49627c r7:c1008908 r6:00000001 r5:ffffe000
+[   28.213165]  r4:c1001d04
+[   28.215716] [<c0198e28>] (call_timer_fn) from [<c0198fd8>] (expire_timers+0x90/0x9c)
+[   28.223473]  r10:40000001 r9:c0868438 r8:00000000 r7:00000200 r6:c1001d74 r5:eef92500
+[   28.231312]  r4:ec49627c
+[   28.233863] [<c0198f48>] (expire_timers) from [<c0199334>] (run_timer_softirq+0xf4/0x1d4)
+[   28.242054]  r9:c1008a90 r8:c1001d70 r7:eef92500 r6:c1008908 r5:c1005900 r4:c1001d70
+[   28.249816] [<c0199240>] (run_timer_softirq) from [<c01022e0>] (__do_softirq+0xf8/0x2d4)
+[   28.257923]  r9:00000100 r8:c1003080 r7:c1003084 r6:ffffe000 r5:00000001 r4:00000020
+[   28.265687] [<c01021e8>] (__do_softirq) from [<c012ca40>] (irq_exit+0x100/0x1a0)
+[   28.273097]  r10:c1027f70 r9:ec008400 r8:00000001 r7:00000000 r6:c1008a90 r5:00000000
+[   28.280936]  r4:ffffe000
+[   28.283492] [<c012c940>] (irq_exit) from [<c01830f0>] (__handle_domain_irq+0x74/0xe8)
+[   28.291333]  r5:00000000 r4:c0f8206c
+[   28.294930] [<c018307c>] (__handle_domain_irq) from [<c046c558>] (gic_handle_irq+0x60/0xc4)
+[   28.303296]  r9:c1001e80 r8:c1008cbc r7:f4000100 r6:000003ff r5:000003eb r4:f400010c
+[   28.311055] [<c046c4f8>] (gic_handle_irq) from [<c0101a30>] (__irq_svc+0x70/0x98)
+[   28.318550] Exception stack(0xc1001e80 to 0xc1001ec8)
+[   28.323618] 1e80: 00000001 00000001 00000000 c100bfc0 ffffe000 c100892c 00000000 eef95978
+[   28.331811] 1ea0: 8a2e347f 6dd05e8c 00000006 c1001f04 00000000 c1001ed0 c0174d94 c0746684
+[   28.339999] 1ec0: 200f0013 ffffffff
+[   28.343506]  r10:00000006 r9:c1000000 r8:8a2e347f r7:c1001eb4 r6:ffffffff r5:200f0013
+[   28.351346]  r4:c0746684
+[   28.353903] [<c074650c>] (cpuidle_enter_state) from [<c0746860>] (cpuidle_enter+0x1c/0x20)
+[   28.362183]  r10:c1008908 r9:c100f050 r8:eef95978 r7:c100896c r6:00000001 r5:c100892c
+[   28.370022]  r4:ffffe000
+[   28.372578] [<c0746844>] (cpuidle_enter) from [<c01582d8>] (call_cpuidle+0x28/0x44)
+[   28.380252] [<c01582b0>] (call_cpuidle) from [<c01586a0>] (do_idle+0x228/0x2bc)
+[   28.387579] [<c0158478>] (do_idle) from [<c0158ae8>] (cpu_startup_entry+0x20/0x28)
+[   28.395162]  r10:c0f63a4c r9:c1008908 r8:c107f1c0 r7:c1008900 r6:c107f1c0 r5:00000002
+[   28.403002]  r4:000000c2
+[   28.405559] [<c0158ac8>] (cpu_startup_entry) from [<c0a7eb34>] (rest_init+0x214/0x260)
+[   28.413499] [<c0a7e920>] (rest_init) from [<c0f00d50>] (start_kernel+0x390/0x41c)
+[   28.420993]  r5:ffffffff r4:c107f218
+[   28.424585] [<c0f009c0>] (start_kernel) from [<00000000>] (  (null))
+[   28.430982] irq event stamp: 299956
+[   28.434494] hardirqs last  enabled at (299964): [<c01806ac>] console_unlock+0x3e8/0x4f8
+[   28.442525] hardirqs last disabled at (299973): [<c0101a20>] __irq_svc+0x60/0x98
+[   28.449950] softirqs last  enabled at (299900): [<c012c29c>] _local_bh_enable+0x2c/0x60
+[   28.457979] softirqs last disabled at (299901): [<c012ca40>] irq_exit+0x100/0x1a0
+[   28.465481] ---[ end trace d201cd44842cd366 ]---
+[   28.470127] tg3 0000:03:00.0 eth20: transmit timed out, resetting
+[   30.446049] tg3 0000:03:00.0 eth20: 0x00000000: 0x169214e4, 0x00180146, 0x02000001, 0x00000010
+[   30.454703] tg3 0000:03:00.0 eth20: 0x00000010: 0x01100004, 0x00000000, 0x00000000, 0x00000000
+[   30.463341] tg3 0000:03:00.0 eth20: 0x00000020: 0x00000000, 0x00000000, 0x00000000, 0x969214e4
+[   30.471977] tg3 0000:03:00.0 eth20: 0x00000030: 0x00000000, 0x00000048, 0x00000000, 0x00000134
+[   30.480613] tg3 0000:03:00.0 eth20: 0x00000040: 0x00000000, 0x00000000, 0xc0036001, 0x08002008
+[   30.489249] tg3 0000:03:00.0 eth20: 0x00000050: 0x0080cc05, 0x00000000, 0x00000000, 0x00000000
+[   30.497884] tg3 0000:03:00.0 eth20: 0x00000060: 0x006c5009, 0xad29c367, 0xf0010298, 0x76180000
+[   30.506519] tg3 0000:03:00.0 eth20: 0x00000070: 0x000010f0, 0x00000000, 0x00000000, 0x00000000
+[   30.515154] tg3 0000:03:00.0 eth20: 0x00000080: 0x169214e4, 0x4000000e, 0x00000000, 0x00000000
+[   30.523788] tg3 0000:03:00.0 eth20: 0x000000b0: 0x00000000, 0x00000000, 0x00000000, 0x57780001
+[   30.532422] tg3 0000:03:00.0 eth20: 0x000000c0: 0x00000000, 0x00000000, 0x0000800e, 0x00020010
+[   30.541057] tg3 0000:03:00.0 eth20: 0x000000d0: 0x00008fa0, 0x00102100, 0x0006cc11, 0x10110000
+[   30.549691] tg3 0000:03:00.0 eth20: 0x000000f0: 0x0000001f, 0x00000000, 0x00000000, 0x00000000
+[   30.558325] tg3 0000:03:00.0 eth20: 0x00000100: 0x13c10001, 0x00000000, 0x00000000, 0x00062031
+[   30.566959] tg3 0000:03:00.0 eth20: 0x00000110: 0x00000000, 0x00002000, 0x000000a0, 0x00000000
+[   30.575595] tg3 0000:03:00.0 eth20: 0x00000130: 0x00000000, 0x00000000, 0x00000000, 0x16010002
+[   30.584230] tg3 0000:03:00.0 eth20: 0x00000150: 0x800000ff, 0x00000000, 0x00000000, 0x00000000
+[   30.592868] tg3 0000:03:00.0 eth20: 0x00000160: 0x16c10003, 0xfe000000, 0x001018ff, 0x00010004
+[   30.601502] tg3 0000:03:00.0 eth20: 0x00000170: 0x00000000, 0x00078116, 0x00000001, 0x00000000
+[   30.610138] tg3 0000:03:00.0 eth20: 0x00000180: 0x00000000, 0x00000000, 0x00000000, 0xffffffff
+[   30.618773] tg3 0000:03:00.0 eth20: 0x00000260: 0x00000000, 0x00000000, 0x00000000, 0x000000c8
+[   30.627410] tg3 0000:03:00.0 eth20: 0x00000300: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.636045] tg3 0000:03:00.0 eth20: 0x00000310: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.644680] tg3 0000:03:00.0 eth20: 0x00000320: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.653316] tg3 0000:03:00.0 eth20: 0x00000330: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.661951] tg3 0000:03:00.0 eth20: 0x00000340: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.670585] tg3 0000:03:00.0 eth20: 0x00000350: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.679222] tg3 0000:03:00.0 eth20: 0x00000360: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.687857] tg3 0000:03:00.0 eth20: 0x00000370: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.696491] tg3 0000:03:00.0 eth20: 0x00000380: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.705126] tg3 0000:03:00.0 eth20: 0x00000390: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.713761] tg3 0000:03:00.0 eth20: 0x000003a0: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.722396] tg3 0000:03:00.0 eth20: 0x000003b0: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.731032] tg3 0000:03:00.0 eth20: 0x000003c0: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.739667] tg3 0000:03:00.0 eth20: 0x000003d0: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.748300] tg3 0000:03:00.0 eth20: 0x000003e0: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.756934] tg3 0000:03:00.0 eth20: 0x000003f0: 0x00000000, 0x00000001, 0x00000000, 0x00000001
+[   30.765568] tg3 0000:03:00.0 eth20: 0x00000400: 0x00e04808, 0x00401000, 0x00000000, 0x00000880
+[   30.774202] tg3 0000:03:00.0 eth20: 0x00000410: 0x00000010, 0x18000000, 0x00000010, 0x18000000
+[   30.782837] tg3 0000:03:00.0 eth20: 0x00000420: 0x00000010, 0x18000000, 0x00000010, 0x18000000
+[   30.791473] tg3 0000:03:00.0 eth20: 0x00000430: 0x00000000, 0x00000000, 0x00000295, 0x000005f2
+[   30.800106] tg3 0000:03:00.0 eth20: 0x00000440: 0x00000000, 0x00000000, 0x00000000, 0x08240de1
+[   30.808741] tg3 0000:03:00.0 eth20: 0x00000450: 0x00000001, 0x00008000, 0x00000000, 0x00000112
+[   30.817377] tg3 0000:03:00.0 eth20: 0x00000460: 0x00000008, 0x00002620, 0x01000406, 0x00000000
+[   30.826014] tg3 0000:03:00.0 eth20: 0x00000470: 0x80000000, 0x00000000, 0x00000000, 0x41000000
+[   30.834648] tg3 0000:03:00.0 eth20: 0x00000480: 0x42000000, 0x7fffffff, 0x06000004, 0x7fffffff
+[   30.843285] tg3 0000:03:00.0 eth20: 0x00000500: 0x00000008, 0x00000002, 0x00000000, 0x00000000
+[   30.851920] tg3 0000:03:00.0 eth20: 0x00000590: 0x00900111, 0x00000000, 0x00000000, 0x00000000
+[   30.860555] tg3 0000:03:00.0 eth20: 0x00000600: 0xffffffff, 0x00f80011, 0x00000000, 0x00001f04
+[   30.869189] tg3 0000:03:00.0 eth20: 0x00000610: 0xffffffff, 0x00000000, 0x07c00004, 0xa3848000
+[   30.877822] tg3 0000:03:00.0 eth20: 0x00000620: 0x000006a1, 0x00000000, 0x00000000, 0x00000000
+[   30.886458] tg3 0000:03:00.0 eth20: 0x00000800: 0x00000000, 0xffffffff, 0x00000000, 0x00000000
+[   30.895092] tg3 0000:03:00.0 eth20: 0x00000810: 0x00000000, 0xffffffff, 0x00000000, 0x00000000
+[   30.903727] tg3 0000:03:00.0 eth20: 0x00000820: 0x00000000, 0x00000000, 0xffffffff, 0x00000000
+[   30.912361] tg3 0000:03:00.0 eth20: 0x00000830: 0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
+[   30.920997] tg3 0000:03:00.0 eth20: 0x00000840: 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff
+[   30.929631] tg3 0000:03:00.0 eth20: 0x00000850: 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff
+[   30.938266] tg3 0000:03:00.0 eth20: 0x00000860: 0xffffffff, 0xffffffff, 0xffffffff, 0x00000000
+[   30.946899] tg3 0000:03:00.0 eth20: 0x00000880: 0x00000000, 0x000008b4, 0x00000000, 0x00000000
+[   30.955534] tg3 0000:03:00.0 eth20: 0x000008f0: 0x00000001, 0x00000000, 0x00000000, 0x00000000
+[   30.964171] tg3 0000:03:00.0 eth20: 0x00000c00: 0x0000000a, 0x00000000, 0x00000003, 0x00000001
+[   30.972806] tg3 0000:03:00.0 eth20: 0x00000c10: 0x00000000, 0x00000000, 0x00000000, 0x005a0000
+[   30.981441] tg3 0000:03:00.0 eth20: 0x00000c80: 0x00000001, 0x00000000, 0x00000000, 0x00000000
+[   30.990075] tg3 0000:03:00.0 eth20: 0x00000ce0: 0x3c57f002, 0x00000000, 0x0000005a, 0x00040028
+[   30.998709] tg3 0000:03:00.0 eth20: 0x00000cf0: 0x00000000, 0x50000001, 0x00000000, 0x00000000
+[   31.007345] tg3 0000:03:00.0 eth20: 0x00001000: 0x00000002, 0x00000000, 0xa0000001, 0x00000000
+[   31.015979] tg3 0000:03:00.0 eth20: 0x00001010: 0x00010010, 0x00000001, 0x00000000, 0x00000000
+[   31.024617] tg3 0000:03:00.0 eth20: 0x00001400: 0x00000006, 0x00000000, 0x00000000, 0x00000000
+[   31.033252] tg3 0000:03:00.0 eth20: 0x00001440: 0x00000001, 0x00000001, 0x00000001, 0x00000001
+[   31.041886] tg3 0000:03:00.0 eth20: 0x00001450: 0x00000001, 0x00000001, 0x00000001, 0x00000001
+[   31.050522] tg3 0000:03:00.0 eth20: 0x00001460: 0x00000001, 0x00000001, 0x00000001, 0x00000001
+[   31.059156] tg3 0000:03:00.0 eth20: 0x00001470: 0x00000001, 0x00000001, 0x00000001, 0x00000001
+[   31.067789] tg3 0000:03:00.0 eth20: 0x00001480: 0x00000005, 0x00000000, 0x00000000, 0x00000000
+[   31.076424] tg3 0000:03:00.0 eth20: 0x00001800: 0x00000016, 0x00000000, 0x00000001, 0x00000000
+[   31.085059] tg3 0000:03:00.0 eth20: 0x00001840: 0x00000000, 0x00000000, 0x00000200, 0x00000010
+[   31.093693] tg3 0000:03:00.0 eth20: 0x00001850: 0x8c506000, 0x00000000, 0x00004000, 0x00010001
+[   31.102327] tg3 0000:03:00.0 eth20: 0x00001860: 0x01000000, 0x00000000, 0x00000000, 0x00000000
+[   31.110964] tg3 0000:03:00.0 eth20: 0x00001c00: 0x00000002, 0x00000000, 0x00000000, 0x00000000
+[   31.119602] tg3 0000:03:00.0 eth20: 0x00002000: 0x00000002, 0x00000000, 0x00000000, 0x00000000
+[   31.128239] tg3 0000:03:00.0 eth20: 0x00002010: 0x00000181, 0x00000001, 0x007bfffd, 0x00000000
+[   31.136874] tg3 0000:03:00.0 eth20: 0x00002100: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.145508] tg3 0000:03:00.0 eth20: 0x00002110: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.154141] tg3 0000:03:00.0 eth20: 0x00002120: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.162776] tg3 0000:03:00.0 eth20: 0x00002130: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.171410] tg3 0000:03:00.0 eth20: 0x00002140: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.180045] tg3 0000:03:00.0 eth20: 0x00002150: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.188678] tg3 0000:03:00.0 eth20: 0x00002160: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.197313] tg3 0000:03:00.0 eth20: 0x00002170: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.205947] tg3 0000:03:00.0 eth20: 0x00002180: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.214584] tg3 0000:03:00.0 eth20: 0x00002190: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.223222] tg3 0000:03:00.0 eth20: 0x000021a0: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.231856] tg3 0000:03:00.0 eth20: 0x000021b0: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.240491] tg3 0000:03:00.0 eth20: 0x000021c0: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.249127] tg3 0000:03:00.0 eth20: 0x000021d0: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.257762] tg3 0000:03:00.0 eth20: 0x000021e0: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.266399] tg3 0000:03:00.0 eth20: 0x000021f0: 0x00082211, 0x00082211, 0x00000000, 0x00000000
+[   31.275034] tg3 0000:03:00.0 eth20: 0x00002200: 0x00000012, 0x00000000, 0x00000000, 0x00000000
+[   31.283670] tg3 0000:03:00.0 eth20: 0x00002400: 0x00000012, 0x00000000, 0x00000000, 0x00000000
+[   31.292305] tg3 0000:03:00.0 eth20: 0x00002450: 0x00000000, 0x8c508000, 0x02000000, 0x00006000
+[   31.300941] tg3 0000:03:00.0 eth20: 0x000024c0: 0x08000001, 0x00000000, 0x00000000, 0x00000000
+[   31.309576] tg3 0000:03:00.0 eth20: 0x00002800: 0x00000006, 0x00000000, 0x00000000, 0x00000000
+[   31.318214] tg3 0000:03:00.0 eth20: 0x00002c00: 0x00000006, 0x00000000, 0x00000000, 0x0000003f
+[   31.326851] tg3 0000:03:00.0 eth20: 0x00002c10: 0x00000000, 0x00000000, 0x00000010, 0x00000000
+[   31.335485] tg3 0000:03:00.0 eth20: 0x00002c20: 0x00000004, 0x00000000, 0x00000000, 0x00000000
+[   31.344122] tg3 0000:03:00.0 eth20: 0x00003000: 0x00000006, 0x00000000, 0x00000000, 0x0000003f
+[   31.352760] tg3 0000:03:00.0 eth20: 0x00003600: 0xe0236600, 0x00170000, 0x00110000, 0x00000000
+[   31.361396] tg3 0000:03:00.0 eth20: 0x00003610: 0x00170000, 0x00130000, 0x00150000, 0x00000000
+[   31.370031] tg3 0000:03:00.0 eth20: 0x00003620: 0x00000000, 0x00000000, 0x00000000, 0x00002080
+[   31.378666] tg3 0000:03:00.0 eth20: 0x00003630: 0x00000000, 0x30000000, 0x00001080, 0x00000000
+[   31.387303] tg3 0000:03:00.0 eth20: 0x00003640: 0x00000000, 0x00000000, 0x00000020, 0x0000004b
+[   31.395938] tg3 0000:03:00.0 eth20: 0x00003650: 0x00000171, 0x00000bff, 0x57780001, 0x00000000
+[   31.404572] tg3 0000:03:00.0 eth20: 0x00003660: 0x00000000, 0x00000000, 0x000000af, 0x00000000
+[   31.413207] tg3 0000:03:00.0 eth20: 0x00003670: 0x0000002a, 0xfefffff7, 0x00000000, 0x00000000
+[   31.421842] tg3 0000:03:00.0 eth20: 0x000036a0: 0x00000000, 0x42000000, 0x00000000, 0x00000041
+[   31.430481] tg3 0000:03:00.0 eth20: 0x00003c00: 0x00000302, 0x00000000, 0x00000014, 0x00000048
+[   31.439118] tg3 0000:03:00.0 eth20: 0x00003c10: 0x00000005, 0x00000035, 0x00000000, 0x00000000
+[   31.447752] tg3 0000:03:00.0 eth20: 0x00003c20: 0x00000005, 0x00000005, 0x00000000, 0x00000000
+[   31.456387] tg3 0000:03:00.0 eth20: 0x00003c30: 0x00000000, 0x00000000, 0x00000000, 0x8c504000
+[   31.465021] tg3 0000:03:00.0 eth20: 0x00003c40: 0x00000000, 0x00000b00, 0x00000000, 0x00000000
+[   31.473655] tg3 0000:03:00.0 eth20: 0x00003cc0: 0x00000001, 0x00000000, 0x00000000, 0x00000000
+[   31.482292] tg3 0000:03:00.0 eth20: 0x00004000: 0x00000002, 0x00000000, 0x00190e7e, 0x00069e7f
+[   31.490925] tg3 0000:03:00.0 eth20: 0x00004010: 0x00401030, 0x00211012, 0x008004c0, 0x00400062
+[   31.499561] tg3 0000:03:00.0 eth20: 0x00004020: 0x00000000, 0x00000000, 0x00000010, 0x00000000
+[   31.508196] tg3 0000:03:00.0 eth20: 0x00004030: 0x00000010, 0x00000030, 0x00000000, 0x00000000
+[   31.516832] tg3 0000:03:00.0 eth20: 0x00004040: 0x00000000, 0x00000000, 0x01080020, 0x00000000
+[   31.525467] tg3 0000:03:00.0 eth20: 0x00004050: 0x00000000, 0x00000000, 0x002fe440, 0x00401002
+[   31.534103] tg3 0000:03:00.0 eth20: 0x00004060: 0x00402000, 0x00000000, 0x00000000, 0x00000000
+[   31.542739] tg3 0000:03:00.0 eth20: 0x00004400: 0x00000006, 0x00000000, 0x00010000, 0x00004000
+[   31.551372] tg3 0000:03:00.0 eth20: 0x00004410: 0x00000000, 0x00000010, 0x00000060, 0x00000000
+[   31.560005] tg3 0000:03:00.0 eth20: 0x00004420: 0x0000003d, 0x00000000, 0x00000000, 0x00000000
+[   31.568640] tg3 0000:03:00.0 eth20: 0x00004440: 0x00000000, 0x00000000, 0x00000000, 0x00000403
+[   31.577275] tg3 0000:03:00.0 eth20: 0x00004450: 0x0001027f, 0x00120013, 0x00000000, 0x00000000
+[   31.585909] tg3 0000:03:00.0 eth20: 0x00004800: 0x18033bfe, 0x00000000, 0x00000000, 0x00000020
+[   31.594544] tg3 0000:03:00.0 eth20: 0x00004810: 0x00000000, 0x00000004, 0x07e003c8, 0x00000000
+[   31.603177] tg3 0000:03:00.0 eth20: 0x00004820: 0x00000002, 0x00000000, 0xf0330000, 0x3c57f060
+[   31.611812] tg3 0000:03:00.0 eth20: 0x00004830: 0x00000000, 0x0000000a, 0x0000000a, 0x00000000
+[   31.620448] tg3 0000:03:00.0 eth20: 0x00004840: 0x00000001, 0x00000001, 0x030e0000, 0x02000000
+[   31.629084] tg3 0000:03:00.0 eth20: 0x00004850: 0x00009fcb, 0x0000005a, 0x01000100, 0x00000000
+[   31.637719] tg3 0000:03:00.0 eth20: 0x00004860: 0x01000002, 0x00000000, 0x00000000, 0x00000000
+[   31.646356] tg3 0000:03:00.0 eth20: 0x00004900: 0x00028207, 0x50200e08, 0x00000000, 0x00000000
+[   31.654990] tg3 0000:03:00.0 eth20: 0x00004910: 0x00000018, 0x00000000, 0x00000000, 0x00000000
+[   31.663628] tg3 0000:03:00.0 eth20: 0x00004c00: 0x200003fe, 0x00000000, 0x00000000, 0x00000000
+[   31.672262] tg3 0000:03:00.0 eth20: 0x00004c10: 0x0000002a, 0x00000000, 0x00000006, 0x00000823
+[   31.680896] tg3 0000:03:00.0 eth20: 0x00004c20: 0x00000000, 0x00000000, 0x00000000, 0x00000006
+[   31.689531] tg3 0000:03:00.0 eth20: 0x00004c30: 0x0000dff7, 0x00000000, 0x00000008, 0x00000008
+[   31.698165] tg3 0000:03:00.0 eth20: 0x00004c40: 0x00000000, 0x8c504000, 0x000124af, 0x00000020
+[   31.706800] tg3 0000:03:00.0 eth20: 0x00004c50: 0x07ffffff, 0x0003ffff, 0x80000000, 0x00000202
+[   31.715436] tg3 0000:03:00.0 eth20: 0x00005000: 0x00009800, 0x80000000, 0x00000000, 0x00000000
+[   31.724071] tg3 0000:03:00.0 eth20: 0x00005010: 0x00000000, 0x00000000, 0x00000000, 0x40002c80
+[   31.732706] tg3 0000:03:00.0 eth20: 0x00005020: 0x00000000, 0x00000000, 0x00000000, 0x40000020
+[   31.741340] tg3 0000:03:00.0 eth20: 0x00005030: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   31.749974] tg3 0000:03:00.0 eth20: 0x00005040: 0x00000000, 0x00000000, 0x40002e28, 0x00000000
+[   31.758610] tg3 0000:03:00.0 eth20: 0x00005080: 0x00009800, 0x80008000, 0x00000000, 0x00000000
+[   31.767244] tg3 0000:03:00.0 eth20: 0x00005090: 0x00000000, 0x00000000, 0x00000000, 0x40001d60
+[   31.775878] tg3 0000:03:00.0 eth20: 0x000050a0: 0x00008021, 0x00000000, 0x00000000, 0x40000020
+[   31.784513] tg3 0000:03:00.0 eth20: 0x000050b0: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   31.793146] tg3 0000:03:00.0 eth20: 0x000050c0: 0x00000000, 0x00000000, 0x40002cd4, 0x00000000
+[   31.801780] tg3 0000:03:00.0 eth20: 0x00005100: 0x00009800, 0x80000000, 0x00000000, 0x00000000
+[   31.810415] tg3 0000:03:00.0 eth20: 0x00005110: 0x00000000, 0x00000000, 0x00000000, 0x40002cb8
+[   31.819049] tg3 0000:03:00.0 eth20: 0x00005120: 0x00008021, 0x00000000, 0x00000000, 0x40000020
+[   31.827683] tg3 0000:03:00.0 eth20: 0x00005130: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   31.836318] tg3 0000:03:00.0 eth20: 0x00005140: 0x00000000, 0x00000000, 0x40002cc4, 0x00000000
+[   31.844952] tg3 0000:03:00.0 eth20: 0x00005180: 0x00009800, 0x80008000, 0x00000000, 0x00000000
+[   31.853586] tg3 0000:03:00.0 eth20: 0x00005190: 0x00000000, 0x00000000, 0x00000000, 0x40002c84
+[   31.862221] tg3 0000:03:00.0 eth20: 0x000051a0: 0x52220001, 0x00000000, 0x00000000, 0x40000020
+[   31.870855] tg3 0000:03:00.0 eth20: 0x000051b0: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   31.879490] tg3 0000:03:00.0 eth20: 0x000051c0: 0x00000000, 0x00000000, 0x40002ca8, 0x00000000
+[   31.888125] tg3 0000:03:00.0 eth20: 0x00005200: 0x00000000, 0x00000000, 0x08004c80, 0x40001d2c
+[   31.896760] tg3 0000:03:00.0 eth20: 0x00005210: 0x20085082, 0x00000000, 0x08005fc8, 0x08005fe8
+[   31.905394] tg3 0000:03:00.0 eth20: 0x00005220: 0x00000000, 0x81020000, 0x08004c80, 0x08005fc8
+[   31.914028] tg3 0000:03:00.0 eth20: 0x00005230: 0x00000002, 0x00000000, 0x08005fc8, 0x08005fc8
+[   31.922663] tg3 0000:03:00.0 eth20: 0x00005240: 0x00000000, 0x00000000, 0x08005fc8, 0x00000000
+[   31.931297] tg3 0000:03:00.0 eth20: 0x00005250: 0x00000000, 0x00000000, 0x00000000, 0x40001d2c
+[   31.939933] tg3 0000:03:00.0 eth20: 0x00005260: 0x00000000, 0x00000b50, 0x00000000, 0x40001d2c
+[   31.948567] tg3 0000:03:00.0 eth20: 0x00005270: 0x20085082, 0x00000000, 0x08005fc8, 0x00000000
+[   31.957203] tg3 0000:03:00.0 eth20: 0x00005280: 0x00009800, 0x80004000, 0x00000000, 0x00000000
+[   31.965836] tg3 0000:03:00.0 eth20: 0x00005290: 0x00000000, 0x00000000, 0x00000000, 0x40003544
+[   31.974470] tg3 0000:03:00.0 eth20: 0x000052a0: 0x16220003, 0x00000000, 0x00000000, 0x40000020
+[   31.983102] tg3 0000:03:00.0 eth20: 0x000052b0: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   31.991737] tg3 0000:03:00.0 eth20: 0x000052c0: 0x00000000, 0x00000000, 0x40002cc4, 0x00000000
+[   32.000373] tg3 0000:03:00.0 eth20: 0x00005300: 0x00009800, 0x80000000, 0x00000000, 0x00000000
+[   32.009008] tg3 0000:03:00.0 eth20: 0x00005310: 0x00000000, 0x00000000, 0x00000000, 0x40002c90
+[   32.017643] tg3 0000:03:00.0 eth20: 0x00005320: 0x00000000, 0x00000000, 0x00000000, 0x40000020
+[   32.026277] tg3 0000:03:00.0 eth20: 0x00005330: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   32.034913] tg3 0000:03:00.0 eth20: 0x00005340: 0x00000000, 0x00000000, 0x40002ca8, 0x00000000
+[   32.043549] tg3 0000:03:00.0 eth20: 0x00005380: 0x00009800, 0x80008000, 0x00000000, 0x00000000
+[   32.052185] tg3 0000:03:00.0 eth20: 0x00005390: 0x00000000, 0x00000000, 0x00000000, 0x40002e1c
+[   32.060819] tg3 0000:03:00.0 eth20: 0x000053a0: 0x24020002, 0x00000000, 0x00000000, 0x40000020
+[   32.069453] tg3 0000:03:00.0 eth20: 0x000053b0: 0x00000000, 0x00000051, 0x00000000, 0x00000000
+[   32.078087] tg3 0000:03:00.0 eth20: 0x000053c0: 0x00000000, 0x00000000, 0x40002e20, 0x00000000
+[   32.086723] tg3 0000:03:00.0 eth20: 0x00005600: 0x169214e4, 0x00180146, 0x02000001, 0x00000010
+[   32.095360] tg3 0000:03:00.0 eth20: 0x00005610: 0x01100004, 0x00000000, 0x00000000, 0x00000000
+[   32.103996] tg3 0000:03:00.0 eth20: 0x00005620: 0x00000000, 0x00000000, 0x00000000, 0x969214e4
+[   32.112632] tg3 0000:03:00.0 eth20: 0x00005630: 0x00000000, 0x00000048, 0x00000000, 0x00000134
+[   32.121268] tg3 0000:03:00.0 eth20: 0x00005640: 0x00000000, 0x00000000, 0xc0036001, 0x08002008
+[   32.129902] tg3 0000:03:00.0 eth20: 0x00005650: 0x0080cc05, 0x00000000, 0x00000000, 0x00000000
+[   32.138537] tg3 0000:03:00.0 eth20: 0x00005660: 0x006c5009, 0xad29c367, 0xf0010298, 0x76180000
+[   32.147171] tg3 0000:03:00.0 eth20: 0x00005670: 0x000010f0, 0x00000000, 0x00000000, 0x00000000
+[   32.155805] tg3 0000:03:00.0 eth20: 0x00005680: 0x40000008, 0x40000008, 0x00000000, 0x00000000
+[   32.164441] tg3 0000:03:00.0 eth20: 0x000056b0: 0x00000000, 0x00000000, 0x00000000, 0x57780001
+[   32.173076] tg3 0000:03:00.0 eth20: 0x000056c0: 0x00000000, 0x00000000, 0x0000800e, 0x00020010
+[   32.181711] tg3 0000:03:00.0 eth20: 0x000056d0: 0x00008fa0, 0x00102100, 0x0006cc11, 0x10110000
+[   32.190347] tg3 0000:03:00.0 eth20: 0x000056f0: 0x0000001f, 0x00000000, 0x00000000, 0x00000000
+[   32.198984] tg3 0000:03:00.0 eth20: 0x00005700: 0x13c10001, 0x00000000, 0x00000000, 0x00062031
+[   32.207619] tg3 0000:03:00.0 eth20: 0x00005710: 0x00000000, 0x00002000, 0x000000a0, 0x00000000
+[   32.216253] tg3 0000:03:00.0 eth20: 0x00005730: 0x00000000, 0x00000000, 0x00000000, 0x16010002
+[   32.224889] tg3 0000:03:00.0 eth20: 0x00005750: 0x800000ff, 0x00000000, 0x00000000, 0x00000000
+[   32.233525] tg3 0000:03:00.0 eth20: 0x00005760: 0x16c10003, 0xfe000000, 0x001018ff, 0x00010004
+[   32.242158] tg3 0000:03:00.0 eth20: 0x00005770: 0x00000000, 0x00078116, 0x00000001, 0x00000000
+[   32.250794] tg3 0000:03:00.0 eth20: 0x00005780: 0x00000000, 0x00000000, 0x00000000, 0xffffffff
+[   32.259429] tg3 0000:03:00.0 eth20: 0x00005860: 0x00000000, 0x00000000, 0x00000000, 0x000000c8
+[   32.268064] tg3 0000:03:00.0 eth20: 0x00005900: 0x00000000, 0x00000001, 0x00000000, 0x00000000
+[   32.276698] tg3 0000:03:00.0 eth20: 0x00005980: 0x00000000, 0x00000001, 0x00000000, 0x00000000
+[   32.285333] tg3 0000:03:00.0 eth20: 0x00005a00: 0x00012001, 0x00000000, 0x00010000, 0x00000000
+[   32.293971] tg3 0000:03:00.0 eth20: 0x00006000: 0x00000002, 0x00000000, 0x00000000, 0x00000000
+[   32.302609] tg3 0000:03:00.0 eth20: 0x00006800: 0x04130034, 0x20085082, 0x01009218, 0x012c07a3
+[   32.311246] tg3 0000:03:00.0 eth20: 0x00006810: 0x81020000, 0xffffffff, 0x00000000, 0x00000000
+[   32.319881] tg3 0000:03:00.0 eth20: 0x000068a0: 0x00000000, 0x20010001, 0x00000000, 0x00000000
+[   32.328516] tg3 0000:03:00.0 eth20: 0x000068b0: 0x00040000, 0x00000000, 0x00000000, 0x00000000
+[   32.337151] tg3 0000:03:00.0 eth20: 0x00006c20: 0x00000000, 0x00200000, 0x00000000, 0x00000000
+[   32.345788] tg3 0000:03:00.0 eth20: 0x00007000: 0x08000188, 0x00000000, 0x00000000, 0x00000000
+[   32.354422] tg3 0000:03:00.0 eth20: 0x00007010: 0xffffffff, 0x00008200, 0x000500db, 0x03000a00
+[   32.363056] tg3 0000:03:00.0 eth20: 0x00007020: 0x00000000, 0x00000000, 0x00000406, 0x10004000
+[   32.371690] tg3 0000:03:00.0 eth20: 0x00007030: 0x00020000, 0x00000004, 0x001f0010, 0x00000000
+[   32.380327] tg3 0000:03:00.0 eth20: 0x00007500: 0x00000000, 0x00000000, 0x0000008b, 0x00000080
+[   32.388961] tg3 0000:03:00.0 eth20: 0x00007510: 0x00000000, 0x00000800, 0x00000000, 0x00000000
+[   32.397609] tg3 0000:03:00.0 eth20: 0: Host status block [00000003:00000002:(0000:0000:0000):(0000:0001)]
+[   32.407205] tg3 0000:03:00.0 eth20: 0: NAPI info [00000000:00000000:(0001:0000:01ff):0000:(00c8:0000:0000:0000)]
+[   32.521509] tg3 0000:03:00.0: tg3_stop_block timed out, ofs=1400 enable_bit=2
+[   32.533646] tg3 0000:03:00.0 eth20: Link is down
+[   32.551044] tg3 0000:03:00.0 eth20: Link is down
+
+Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
 ---
- drivers/hwmon/Kconfig        |  14 ++
- drivers/hwmon/Makefile       |   1 +
- drivers/hwmon/peci-cputemp.c | 394 +++++++++++++++++++++++++++++++++++
- drivers/hwmon/peci-hwmon.h   |  49 +++++
- 4 files changed, 458 insertions(+)
- create mode 100644 drivers/hwmon/peci-cputemp.c
- create mode 100644 drivers/hwmon/peci-hwmon.h
+ drivers/pci/controller/Kconfig     |  2 ++
+ drivers/pci/controller/dwc/Kconfig | 10 ++++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 81da17a42dc9..f08b4a670ac5 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1306,6 +1306,20 @@ config SENSORS_PCF8591
- 	  These devices are hard to detect and rarely found on mainstream
- 	  hardware.  If unsure, say N.
+diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+index 6671946dbf66..6e4241ac0a1e 100644
+--- a/drivers/pci/controller/Kconfig
++++ b/drivers/pci/controller/Kconfig
+@@ -113,6 +113,7 @@ config PCI_XGENE
+ 	bool "X-Gene PCIe controller"
+ 	depends on ARM64 || COMPILE_TEST
+ 	depends on OF || (ACPI && PCI_QUIRKS)
++	select PCIEPORTBUS
+ 	help
+ 	  Say Y here if you want internal PCI support on APM X-Gene SoC.
+ 	  There are 5 internal PCIe ports available. Each port is GEN3 capable
+@@ -237,6 +238,7 @@ config PCIE_MEDIATEK
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	depends on OF
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	help
+ 	  Say Y here if you want to enable PCIe controller support on
+ 	  MediaTek SoCs.
+diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+index 91b0194240a5..6cda3322b90b 100644
+--- a/drivers/pci/controller/dwc/Kconfig
++++ b/drivers/pci/controller/dwc/Kconfig
+@@ -86,18 +86,21 @@ config PCI_EXYNOS
+ 	bool "Samsung Exynos PCIe controller"
+ 	depends on SOC_EXYNOS5440 || COMPILE_TEST
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
  
-+config SENSORS_PECI_CPUTEMP
-+	tristate "PECI CPU temperature monitoring support"
-+	depends on PECI
-+	select MFD_INTEL_PECI_CLIENT
-+	help
-+	  If you say yes here you get support for the generic Intel PECI
-+	  cputemp driver which provides Digital Thermal Sensor (DTS) thermal
-+	  readings of the CPU package and CPU cores that are accessible using
-+	  the PECI Client Command Suite via the processor PECI client.
-+	  Check Documentation/hwmon/peci-cputemp for details.
-+
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called peci-cputemp.
-+
- source drivers/hwmon/pmbus/Kconfig
+ config PCI_IMX6
+ 	bool "Freescale i.MX6 PCIe controller"
+ 	depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
  
- config SENSORS_PWM_FAN
-diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-index 93f7f41ea4ad..13ebde089ad5 100644
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@ -141,6 +141,7 @@ obj-$(CONFIG_SENSORS_NTC_THERMISTOR)	+= ntc_thermistor.o
- obj-$(CONFIG_SENSORS_PC87360)	+= pc87360.o
- obj-$(CONFIG_SENSORS_PC87427)	+= pc87427.o
- obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
-+obj-$(CONFIG_SENSORS_PECI_CPUTEMP)	+= peci-cputemp.o
- obj-$(CONFIG_SENSORS_POWR1220)  += powr1220.o
- obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
- obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
-diff --git a/drivers/hwmon/peci-cputemp.c b/drivers/hwmon/peci-cputemp.c
-new file mode 100644
-index 000000000000..11880c86a854
---- /dev/null
-+++ b/drivers/hwmon/peci-cputemp.c
-@@ -0,0 +1,394 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 Intel Corporation
-+
-+#include <linux/hwmon.h>
-+#include <linux/jiffies.h>
-+#include <linux/mfd/intel-peci-client.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include "peci-hwmon.h"
-+
-+#define DEFAULT_CHANNEL_NUMS   4
-+#define CORETEMP_CHANNEL_NUMS  CORE_NUMS_MAX
-+#define CPUTEMP_CHANNEL_NUMS   (DEFAULT_CHANNEL_NUMS + CORETEMP_CHANNEL_NUMS)
-+
-+/* The RESOLVED_CORES register in PCU of a client CPU */
-+#define REG_RESOLVED_CORES_BUS       1
-+#define REG_RESOLVED_CORES_DEVICE    30
-+#define REG_RESOLVED_CORES_FUNCTION  3
-+#define REG_RESOLVED_CORES_OFFSET    0xB4
-+
-+struct temp_group {
-+	struct temp_data die;
-+	struct temp_data tcontrol;
-+	struct temp_data tthrottle;
-+	struct temp_data tjmax;
-+	struct temp_data core[CORETEMP_CHANNEL_NUMS];
-+};
-+
-+struct peci_cputemp {
-+	struct peci_client_manager *mgr;
-+	struct device *dev;
-+	char name[PECI_NAME_SIZE];
-+	const struct cpu_gen_info *gen_info;
-+	struct temp_group temp;
-+	u32 core_mask;
-+	u32 temp_config[CPUTEMP_CHANNEL_NUMS + 1];
-+	uint config_idx;
-+	struct hwmon_channel_info temp_info;
-+	const struct hwmon_channel_info *info[2];
-+	struct hwmon_chip_info chip;
-+};
-+
-+enum cputemp_channels {
-+	channel_die,
-+	channel_tcontrol,
-+	channel_tthrottle,
-+	channel_tjmax,
-+	channel_core,
-+};
-+
-+static const u32 config_table[DEFAULT_CHANNEL_NUMS + 1] = {
-+	/* Die temperature */
-+	HWMON_T_LABEL | HWMON_T_INPUT | HWMON_T_MAX | HWMON_T_CRIT |
-+	HWMON_T_CRIT_HYST,
-+
-+	/* Tcontrol temperature */
-+	HWMON_T_LABEL | HWMON_T_INPUT | HWMON_T_CRIT,
-+
-+	/* Tthrottle temperature */
-+	HWMON_T_LABEL | HWMON_T_INPUT,
-+
-+	/* Tjmax temperature */
-+	HWMON_T_LABEL | HWMON_T_INPUT,
-+
-+	/* Core temperature - for all core channels */
-+	HWMON_T_LABEL | HWMON_T_INPUT | HWMON_T_MAX | HWMON_T_CRIT |
-+	HWMON_T_CRIT_HYST,
-+};
-+
-+static const char *cputemp_label[CPUTEMP_CHANNEL_NUMS] = {
-+	"Die",
-+	"Tcontrol",
-+	"Tthrottle",
-+	"Tjmax",
-+	"Core 0", "Core 1", "Core 2", "Core 3",
-+	"Core 4", "Core 5", "Core 6", "Core 7",
-+	"Core 8", "Core 9", "Core 10", "Core 11",
-+	"Core 12", "Core 13", "Core 14", "Core 15",
-+	"Core 16", "Core 17", "Core 18", "Core 19",
-+	"Core 20", "Core 21", "Core 22", "Core 23",
-+	"Core 24", "Core 25", "Core 26", "Core 27",
-+};
-+
-+static s32 ten_dot_six_to_millidegree(s32 val)
-+{
-+	return ((val ^ 0x8000) - 0x8000) * 1000 / 64;
-+}
-+
-+static int get_temp_targets(struct peci_cputemp *priv)
-+{
-+	s32 tthrottle_offset;
-+	s32 tcontrol_margin;
-+	u8  pkg_cfg[4];
-+	int rc;
-+
-+	/**
-+	 * Just use only the tcontrol marker to determine if target values need
-+	 * update.
-+	 */
-+	if (!peci_temp_need_update(&priv->temp.tcontrol))
-+		return 0;
-+
-+	rc = peci_client_read_package_config(priv->mgr,
-+					     MBX_INDEX_TEMP_TARGET, 0, pkg_cfg);
-+	if (rc)
-+		return rc;
-+
-+	priv->temp.tjmax.value = pkg_cfg[2] * 1000;
-+
-+	tcontrol_margin = pkg_cfg[1];
-+	tcontrol_margin = ((tcontrol_margin ^ 0x80) - 0x80) * 1000;
-+	priv->temp.tcontrol.value = priv->temp.tjmax.value - tcontrol_margin;
-+
-+	tthrottle_offset = (pkg_cfg[3] & 0x2f) * 1000;
-+	priv->temp.tthrottle.value = priv->temp.tjmax.value - tthrottle_offset;
-+
-+	peci_temp_mark_updated(&priv->temp.tcontrol);
-+
-+	return 0;
-+}
-+
-+static int get_die_temp(struct peci_cputemp *priv)
-+{
-+	struct peci_get_temp_msg msg;
-+	int rc;
-+
-+	if (!peci_temp_need_update(&priv->temp.die))
-+		return 0;
-+
-+	msg.addr = priv->mgr->client->addr;
-+
-+	rc = peci_command(priv->mgr->client->adapter, PECI_CMD_GET_TEMP,
-+			  &msg);
-+	if (rc)
-+		return rc;
-+
-+	/* Note that the tjmax should be available before calling it */
-+	priv->temp.die.value = priv->temp.tjmax.value +
-+			       (msg.temp_raw * 1000 / 64);
-+
-+	peci_temp_mark_updated(&priv->temp.die);
-+
-+	return 0;
-+}
-+
-+static int get_core_temp(struct peci_cputemp *priv, int core_index)
-+{
-+	s32 core_dts_margin;
-+	u8  pkg_cfg[4];
-+	int rc;
-+
-+	if (!peci_temp_need_update(&priv->temp.core[core_index]))
-+		return 0;
-+
-+	rc = peci_client_read_package_config(priv->mgr,
-+					     MBX_INDEX_PER_CORE_DTS_TEMP,
-+					     core_index, pkg_cfg);
-+	if (rc)
-+		return rc;
-+
-+	core_dts_margin = le16_to_cpup((__le16 *)pkg_cfg);
-+
-+	/**
-+	 * Processors return a value of the core DTS reading in 10.6 format
-+	 * (10 bits signed decimal, 6 bits fractional).
-+	 * Error codes:
-+	 *   0x8000: General sensor error
-+	 *   0x8001: Reserved
-+	 *   0x8002: Underflow on reading value
-+	 *   0x8003-0x81ff: Reserved
-+	 */
-+	if (core_dts_margin >= 0x8000 && core_dts_margin <= 0x81ff)
-+		return -EIO;
-+
-+	core_dts_margin = ten_dot_six_to_millidegree(core_dts_margin);
-+
-+	/* Note that the tjmax should be available before calling it */
-+	priv->temp.core[core_index].value = priv->temp.tjmax.value +
-+					    core_dts_margin;
-+
-+	peci_temp_mark_updated(&priv->temp.core[core_index]);
-+
-+	return 0;
-+}
-+
-+static int cputemp_read_string(struct device *dev,
-+			       enum hwmon_sensor_types type,
-+			       u32 attr, int channel, const char **str)
-+{
-+	if (attr != hwmon_temp_label)
-+		return -EOPNOTSUPP;
-+
-+	*str = cputemp_label[channel];
-+	return 0;
-+}
-+
-+static int cputemp_read(struct device *dev,
-+			enum hwmon_sensor_types type,
-+			u32 attr, int channel, long *val)
-+{
-+	struct peci_cputemp *priv = dev_get_drvdata(dev);
-+	int rc, core_index;
-+
-+	if (channel >= CPUTEMP_CHANNEL_NUMS ||
-+	    !(priv->temp_config[channel] & BIT(attr)))
-+		return -EOPNOTSUPP;
-+
-+	rc = get_temp_targets(priv);
-+	if (rc)
-+		return rc;
-+
-+	switch (attr) {
-+	case hwmon_temp_input:
-+		switch (channel) {
-+		case channel_die:
-+			rc = get_die_temp(priv);
-+			if (rc)
-+				break;
-+
-+			*val = priv->temp.die.value;
-+			break;
-+		case channel_tcontrol:
-+			*val = priv->temp.tcontrol.value;
-+			break;
-+		case channel_tthrottle:
-+			*val = priv->temp.tthrottle.value;
-+			break;
-+		case channel_tjmax:
-+			*val = priv->temp.tjmax.value;
-+			break;
-+		default:
-+			core_index = channel - DEFAULT_CHANNEL_NUMS;
-+			rc = get_core_temp(priv, core_index);
-+			if (rc)
-+				break;
-+
-+			*val = priv->temp.core[core_index].value;
-+			break;
-+		}
-+		break;
-+	case hwmon_temp_max:
-+		*val = priv->temp.tcontrol.value;
-+		break;
-+	case hwmon_temp_crit:
-+		*val = priv->temp.tjmax.value;
-+		break;
-+	case hwmon_temp_crit_hyst:
-+		*val = priv->temp.tjmax.value - priv->temp.tcontrol.value;
-+		break;
-+	default:
-+		rc = -EOPNOTSUPP;
-+		break;
-+	}
-+
-+	return rc;
-+}
-+
-+static umode_t cputemp_is_visible(const void *data,
-+				  enum hwmon_sensor_types type,
-+				  u32 attr, int channel)
-+{
-+	const struct peci_cputemp *priv = data;
-+
-+	if (priv->temp_config[channel] & BIT(attr))
-+		if (channel < DEFAULT_CHANNEL_NUMS ||
-+		    (channel >= DEFAULT_CHANNEL_NUMS &&
-+		     (priv->core_mask & BIT(channel - DEFAULT_CHANNEL_NUMS))))
-+			return 0444;
-+
-+	return 0;
-+}
-+
-+static const struct hwmon_ops cputemp_ops = {
-+	.is_visible = cputemp_is_visible,
-+	.read_string = cputemp_read_string,
-+	.read = cputemp_read,
-+};
-+
-+static int check_resolved_cores(struct peci_cputemp *priv)
-+{
-+	struct peci_rd_pci_cfg_local_msg msg;
-+	int rc;
-+
-+	/* Get the RESOLVED_CORES register value */
-+	msg.addr = priv->mgr->client->addr;
-+	msg.bus = REG_RESOLVED_CORES_BUS;
-+	msg.device = REG_RESOLVED_CORES_DEVICE;
-+	msg.function = REG_RESOLVED_CORES_FUNCTION;
-+	msg.reg = REG_RESOLVED_CORES_OFFSET;
-+	msg.rx_len = 4;
-+
-+	rc = peci_command(priv->mgr->client->adapter,
-+			  PECI_CMD_RD_PCI_CFG_LOCAL, &msg);
-+	if (rc)
-+		return rc;
-+
-+	priv->core_mask = le32_to_cpup((__le32 *)msg.pci_config);
-+	if (!priv->core_mask)
-+		return -EAGAIN;
-+
-+	dev_dbg(priv->dev, "Scanned resolved cores: 0x%x\n", priv->core_mask);
-+	return 0;
-+}
-+
-+static int create_core_temp_info(struct peci_cputemp *priv)
-+{
-+	int rc, i;
-+
-+	rc = check_resolved_cores(priv);
-+	if (rc)
-+		return rc;
-+
-+	for (i = 0; i < priv->gen_info->core_max; i++)
-+		if (priv->core_mask & BIT(i))
-+			while (i + DEFAULT_CHANNEL_NUMS >= priv->config_idx)
-+				priv->temp_config[priv->config_idx++] =
-+					config_table[channel_core];
-+
-+	return 0;
-+}
-+
-+static int peci_cputemp_probe(struct platform_device *pdev)
-+{
-+	struct peci_client_manager *mgr = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct peci_cputemp *priv;
-+	struct device *hwmon_dev;
-+	int rc;
-+
-+	if ((mgr->client->adapter->cmd_mask &
-+	    (BIT(PECI_CMD_GET_TEMP) | BIT(PECI_CMD_RD_PKG_CFG))) !=
-+	    (BIT(PECI_CMD_GET_TEMP) | BIT(PECI_CMD_RD_PKG_CFG)))
-+		return -ENODEV;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, priv);
-+	priv->mgr = mgr;
-+	priv->dev = dev;
-+	priv->gen_info = mgr->gen_info;
-+
-+	snprintf(priv->name, PECI_NAME_SIZE, "peci_cputemp.cpu%d",
-+		 mgr->client->addr - PECI_BASE_ADDR);
-+
-+	priv->temp_config[priv->config_idx++] = config_table[channel_die];
-+	priv->temp_config[priv->config_idx++] = config_table[channel_tcontrol];
-+	priv->temp_config[priv->config_idx++] = config_table[channel_tthrottle];
-+	priv->temp_config[priv->config_idx++] = config_table[channel_tjmax];
-+
-+	rc = create_core_temp_info(priv);
-+	if (rc)
-+		dev_dbg(dev, "Skipped creating core temp info\n");
-+
-+	priv->chip.ops = &cputemp_ops;
-+	priv->chip.info = priv->info;
-+
-+	priv->info[0] = &priv->temp_info;
-+
-+	priv->temp_info.type = hwmon_temp;
-+	priv->temp_info.config = priv->temp_config;
-+
-+	hwmon_dev = devm_hwmon_device_register_with_info(priv->dev,
-+							 priv->name,
-+							 priv,
-+							 &priv->chip,
-+							 NULL);
-+
-+	if (IS_ERR(hwmon_dev))
-+		return PTR_ERR(hwmon_dev);
-+
-+	dev_dbg(dev, "%s: sensor '%s'\n", dev_name(hwmon_dev), priv->name);
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id peci_cputemp_ids[] = {
-+	{ .name = "peci-cputemp", .driver_data = 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, peci_cputemp_ids);
-+
-+static struct platform_driver peci_cputemp_driver = {
-+	.probe    = peci_cputemp_probe,
-+	.id_table = peci_cputemp_ids,
-+	.driver   = { .name = "peci-cputemp", },
-+};
-+module_platform_driver(peci_cputemp_driver);
-+
-+MODULE_AUTHOR("Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>");
-+MODULE_DESCRIPTION("PECI cputemp driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/hwmon/peci-hwmon.h b/drivers/hwmon/peci-hwmon.h
-new file mode 100644
-index 000000000000..6ca1855a86bb
---- /dev/null
-+++ b/drivers/hwmon/peci-hwmon.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018 Intel Corporation */
-+
-+#ifndef __PECI_HWMON_H
-+#define __PECI_HWMON_H
-+
-+#include <linux/peci.h>
-+
-+#define TEMP_TYPE_PECI   6 /* Sensor type 6: Intel PECI */
-+#define UPDATE_INTERVAL  HZ
-+
-+/**
-+ * struct temp_data - PECI temperature information
-+ * @valid: flag to indicate the temperature value is valid
-+ * @value: temperature value in millidegree Celsius
-+ * @last_updated: time of the last update in jiffies
-+ */
-+struct temp_data {
-+	uint  valid;
-+	s32   value;
-+	ulong last_updated;
-+};
-+
-+/**
-+ * peci_temp_need_update - check whether temperature update is needed or not
-+ * @temp: pointer to temperature data struct
-+ *
-+ * Return: true if update is needed, false if not.
-+ */
-+static inline bool peci_temp_need_update(struct temp_data *temp)
-+{
-+	if (temp->valid &&
-+	    time_before(jiffies, temp->last_updated + UPDATE_INTERVAL))
-+		return false;
-+
-+	return true;
-+}
-+
-+/**
-+ * peci_temp_mark_updated - mark the temperature is updated
-+ * @temp: pointer to temperature data struct
-+ */
-+static inline void peci_temp_mark_updated(struct temp_data *temp)
-+{
-+	temp->valid = 1;
-+	temp->last_updated = jiffies;
-+}
-+
-+#endif /* __PECI_HWMON_H */
+ config PCIE_SPEAR13XX
+ 	bool "STMicroelectronics SPEAr PCIe controller"
+ 	depends on ARCH_SPEAR13XX || COMPILE_TEST
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want PCIe support on SPEAr13XX SoCs.
+@@ -106,6 +109,7 @@ config PCI_KEYSTONE
+ 	bool "TI Keystone PCIe controller"
+ 	depends on ARCH_KEYSTONE || (ARM && COMPILE_TEST)
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want to enable PCI controller support on Keystone
+@@ -126,6 +130,7 @@ config PCI_HISI
+ 	depends on OF && (ARM64 || COMPILE_TEST)
+ 	bool "HiSilicon Hip05 and Hip06 SoCs PCIe controllers"
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	select PCI_HOST_COMMON
+ 	help
+@@ -136,6 +141,7 @@ config PCIE_QCOM
+ 	bool "Qualcomm PCIe controller"
+ 	depends on OF && (ARCH_QCOM || COMPILE_TEST)
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
+@@ -146,6 +152,7 @@ config PCIE_ARMADA_8K
+ 	bool "Marvell Armada-8K PCIe controller"
+ 	depends on ARCH_MVEBU || COMPILE_TEST
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want to enable PCIe controller support on
+@@ -160,6 +167,7 @@ config PCIE_ARTPEC6_HOST
+ 	bool "Axis ARTPEC-6 PCIe controller Host Mode"
+ 	depends on MACH_ARTPEC6 || COMPILE_TEST
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	select PCIE_ARTPEC6
+ 	help
+@@ -180,6 +188,7 @@ config PCIE_KIRIN
+ 	depends on OF && (ARM64 || COMPILE_TEST)
+ 	bool "HiSilicon Kirin series SoCs PCIe controllers"
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	help
+ 	  Say Y here if you want PCIe controller support
+@@ -189,6 +198,7 @@ config PCIE_HISI_STB
+ 	bool "HiSilicon STB SoCs PCIe controllers"
+ 	depends on ARCH_HISI || COMPILE_TEST
+ 	depends on PCI_MSI_IRQ_DOMAIN
++	select PCIEPORTBUS
+ 	select PCIE_DW_HOST
+ 	help
+           Say Y here if you want PCIe controller support on HiSilicon STB SoCs
 -- 
-2.19.1
+2.17.1
 
