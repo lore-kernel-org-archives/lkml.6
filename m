@@ -2,136 +2,127 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA95DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D82C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A203721852
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:58:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDjcJXXx"
+	by mail.kernel.org (Postfix) with ESMTP id 36125217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbeLRM6B (ORCPT
+        id S1726610AbeLRM6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:58:01 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36179 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbeLRM6A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:58:00 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so14129795ljk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:57:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LJEXeZy7r0kYuKM3hPFGswkGYVdPGlEwNSsUSbfadm8=;
-        b=cDjcJXXxCqen79XtD8Eix24NpVMSUzZxn384UkAKmRCmq1v6wldgZEpj7uppmDQfUk
-         lprFRzF1bSYLx3s4wPPJWpkO5Ag90kGJ8kxxvPx3eiqZXY+msiVZUCygUQC2uYwWlUVt
-         bRJxDBlu5z6K0N0KojeXDy+FnEhAVf874SD83FzfFuWXJk+95BIltIf36IGx9zCd7S4Y
-         NRjZcdEf4wH5kmk+Sdy70AzQLXJeZAIEO7P+sMRSqFlrDmEH+hTDHaCq7ZZspYQIJ+Vb
-         lajs0tnqnckYIGF6dqp1qoge1YmIx+qnkzngzhe6el+i2mPPuXHKw4qiBdzNiTbwoY3v
-         2URw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LJEXeZy7r0kYuKM3hPFGswkGYVdPGlEwNSsUSbfadm8=;
-        b=TatGiNiRZml5hBkcTBtNURdGVAK0IYPbLHwkBBIEwB/aPmZtFQATNC2/oheOiU8IXK
-         mSJWIxrKvghcGivh6iK/NmlNexu7VSue/0syN+SwFPe+GW5AX3upmB6LWx6r6Zb8HXrQ
-         hHOug+3UHCvVa3O7BiUaURspmpzSWHAL4h+AutEPxVSfyf9yDSEY4JrzZPKv1vg0litC
-         dsx+qwpQU6AO8sx+sGq1qZqAiSkSQzejr63lRBj+oiliVi6nthyWHzNLurBpxWeLuzpX
-         8RfPt2g/GtwWRC46ZWwlydhCJzFZNheCC0Zti2pcF+qYIXGx+wmtDM0xcZdSrYJ5w84g
-         X5Pg==
-X-Gm-Message-State: AA+aEWZ/NUiqJ9YRaGHhA5E2hK9UcP6wnOijUB4EBr13l/rjiSsFcP5v
-        mLkR8FbSipz2cC2Om8WMT18vlskx3T+NP6cUjUM=
-X-Google-Smtp-Source: AFSGD/X1xQ2Y9yxGJNmnMra79GQM3gQrWIMtM2z1d/6UhNzHyUugtcxF1fs5kkuErNtpFv8H03bwisOZxtLr8o/ws2A=
-X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr921004lji.93.1545137879090;
- Tue, 18 Dec 2018 04:57:59 -0800 (PST)
+        Tue, 18 Dec 2018 07:58:14 -0500
+Received: from foss.arm.com ([217.140.101.70]:45160 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726390AbeLRM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 07:58:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B96080D;
+        Tue, 18 Dec 2018 04:58:13 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D6323F575;
+        Tue, 18 Dec 2018 04:58:12 -0800 (PST)
+Subject: Re: [PATCH -next] irqchip/irq-rda-intc: Fix return value check in
+ rda8810_intc_init()
+To:     YueHaibing <yuehaibing@huawei.com>, tglx@linutronix.de,
+        jason@lakedaemon.net
+Cc:     linux-kernel@vger.kernel.org
+References: <20181218121542.15500-1-yuehaibing@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <fcacb2b1-7b49-b6bc-f64a-29f6a21be7f9@arm.com>
+Date:   Tue, 18 Dec 2018 12:58:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181217202209.GA8859@jordon-HP-15-Notebook-PC> <20181218093754.GI26090@n2100.armlinux.org.uk>
-In-Reply-To: <20181218093754.GI26090@n2100.armlinux.org.uk>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 18 Dec 2018 18:27:45 +0530
-Message-ID: <CAFqt6zbQkFbX57D2kJqZa_gMH7tGzY6FGUJE7Y14kmiiHEv1AA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/9] arch/arm/mm/dma-mapping.c: Convert to use vm_insert_range
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181218121542.15500-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 3:08 PM Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Dec 18, 2018 at 01:52:09AM +0530, Souptick Joarder wrote:
-> > Convert to use vm_insert_range() to map range of kernel
-> > memory to user vma.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > ---
-> >  arch/arm/mm/dma-mapping.c | 21 +++++++--------------
-> >  1 file changed, 7 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> > index 661fe48..7cbcde5 100644
-> > --- a/arch/arm/mm/dma-mapping.c
-> > +++ b/arch/arm/mm/dma-mapping.c
-> > @@ -1582,31 +1582,24 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
-> >                   void *cpu_addr, dma_addr_t dma_addr, size_t size,
-> >                   unsigned long attrs)
-> >  {
-> > -     unsigned long uaddr = vma->vm_start;
-> > -     unsigned long usize = vma->vm_end - vma->vm_start;
-> > +     unsigned long page_count = vma_pages(vma);
-> >       struct page **pages = __iommu_get_pages(cpu_addr, attrs);
-> >       unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> >       unsigned long off = vma->vm_pgoff;
-> > +     int err;
-> >
-> >       if (!pages)
-> >               return -ENXIO;
-> >
-> > -     if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
-> > +     if (off >= nr_pages)
-> >               return -ENXIO;
->
-> Are you sure you can make this change?
->
-> You are restricting the offset to be within 0..nr_pages which ensures
-> that the initial struct page that is passed to vm_insert_range() is
-> valid, but I think the removal of the following check is unsafe.
->
-> Your new vm_insert_range() function only checks page_count <=
-> vma_pages(vma), which it will be since it _is_ vma_pages(vma).  With
-> the removal of the second condition, there will be nothing checking
-> that (eg) off may be nr_pages - 1, and page_count=50, meaning that
-> vm_insert_range() will walk off the end of the page array.
->
-> Please take another look at this.
+On 18/12/2018 12:15, YueHaibing wrote:
+> In case of error, the function of_io_request_and_map() returns ERR_PTR()
+> and never returns NULL. The NULL test in the return value check should
+> be replaced with IS_ERR().
+> 
+> Fixes: d852e62ad689 ("irqchip: Add RDA8810PL interrupt driver")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/irqchip/irq-rda-intc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-rda-intc.c b/drivers/irqchip/irq-rda-intc.c
+> index 1176291..f80c424 100644
+> --- a/drivers/irqchip/irq-rda-intc.c
+> +++ b/drivers/irqchip/irq-rda-intc.c
+> @@ -85,7 +85,7 @@ static int __init rda8810_intc_init(struct device_node *node,
+>  				    struct device_node *parent)
+>  {
+>  	rda_intc_base = of_io_request_and_map(node, 0, "rda-intc");
+> -	if (!rda_intc_base)
+> +	if (IS_ERR(rda_intc_base))
+>  		return -ENXIO;
+>  
+>  	/* Mask all interrupt sources */
+> 
 
-This check shouldn't be removed.
->
-> What about the other callsites of your new function - do they have
-> the same issue?
+Already posted as
+https://lore.kernel.org/lkml/1545047898-153890-1-git-send-email-weiyongjun1@huawei.com/
 
-I think other callsites don't have the same issue.
+You may want to synchronize with your colleagues running the same scripts.
 
->
-> --
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-> According to speedtest.net: 11.9Mbps down 500kbps up
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
