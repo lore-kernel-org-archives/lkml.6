@@ -2,88 +2,110 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9BBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC175C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2F19218AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545149625;
-	bh=/099VrXkXSUllqd98g/tHds7GvGT+pyPdawwrtm67GA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=j9M5pmtbjKVFid/rdMb5jJThXHkVd/c+k8ntM+Bq1LMmtorPkgnagYYle3GIV7O8r
-	 hVy57WUMahW4EBJI694pSnFPfKFIc3bjdK7vOQza723qsZcWIwAazvT3xLjOgyo8zI
-	 l13QOmxmlwdwWOMxulpHfI9QZpEWy7l9S/yFRJ3g=
+	by mail.kernel.org (Postfix) with ESMTP id A354821841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:14:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbeLRQNo (ORCPT
+        id S1727126AbeLRQOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:13:44 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34533 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbeLRQNn (ORCPT
+        Tue, 18 Dec 2018 11:14:48 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.79]:19418 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726471AbeLRQOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:13:43 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t5so16221480otk.1;
-        Tue, 18 Dec 2018 08:13:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=tSjoTxoGv235BBzqJEt372NZWsn6e4Eg1sBMXs5E6uM=;
-        b=po99Cp2s7yat+LM61WrGHwMAXd7xaZAJLF3XWAet400SzLP90Dz1t9YRVbls99GLJJ
-         Q9/8TNO4YD+KKePz/wBg1KukYTJBfO/hsFp/k9kYpVTaRP0txVjN2B4FH+eXJdn7Amfb
-         xEXTBHBFIQJ/Tm+f19qhJjP80OEauMpA4qWtJIilTds0mM6N29Y1Vjpc61lAyrlQ7sSq
-         ytXTNwg686Dj3suUaIp6uodtlT3OX4R2DGK2FvJB5x51ivEcI6e2foRaj0ZHGb2Buro6
-         XPObCJDh4236tDV8hhHahq/8Fy+czSc0pcDM1zUq2jZMva7zUgqT+/MExZoYCSIrVW3T
-         b8NQ==
-X-Gm-Message-State: AA+aEWYI/stCDiO+4CBvBaJ40bNRN1O+n+nwl3LNgBlJ9k38GD0rXqz/
-        MuSU7wmR1eSnSsSstnZTsg==
-X-Google-Smtp-Source: AFSGD/XDuaS5YANnWoRjWw+BPNJxkLvgpmeqzjFBjnRAv9dkYIw+8dv+BWWc+DiZQjchIGwew+87wQ==
-X-Received: by 2002:a05:6830:c7:: with SMTP id x7mr816850oto.31.1545149622604;
-        Tue, 18 Dec 2018 08:13:42 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h24sm9546527otm.72.2018.12.18.08.13.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 08:13:41 -0800 (PST)
-Date:   Tue, 18 Dec 2018 10:13:41 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        hverkuil@xs4all.nl, fischerdouglasc@gmail.com,
-        keescook@chromium.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Subject: Re: [PATCH v2 4/4] media: dt-bindings: Add binding for si470x radio
-Message-ID: <20181218161341.GA5282@bogus>
-References: <20181207135812.12842-1-pawel.mikolaj.chmiel@gmail.com>
- <20181207135812.12842-5-pawel.mikolaj.chmiel@gmail.com>
+        Tue, 18 Dec 2018 11:14:48 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 1D9232768C
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:14:47 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZI19gT5XB2PzOZI19gDbKx; Tue, 18 Dec 2018 10:14:47 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=57630 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gZI18-000jNo-FI; Tue, 18 Dec 2018 10:14:46 -0600
+Date:   Tue, 18 Dec 2018 10:14:45 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] loop: Fix potential Spectre v1 vulnerability
+Message-ID: <20181218161445.GA10311@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181207135812.12842-5-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gZI18-000jNo-FI
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.106.44]:57630
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  7 Dec 2018 14:58:12 +0100, =?UTF-8?q?Pawe=C5=82=20Chmiel?= wrote:
-> Add device tree bindings for si470x family radio receiver driver.
-> 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
-> Changes from v1:
-> 	- squashed with patch adding reset-gpio documentation
-> ---
->  .../devicetree/bindings/media/si470x.txt      | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/si470x.txt
-> 
+type is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This issue was detected with the help of Smatch:
+
+drivers/block/loop.c:1208 loop_set_status() warn: potential spectre issue 'xfer_funcs' [r] (local cap)
+
+Fix this by sanitizing type before using it to index xfer_funcs.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/block/loop.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 0939f36548c9..015d255f451b 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -83,6 +83,8 @@
+ 
+ #include <linux/uaccess.h>
+ 
++#include <linux/nospec.h>
++
+ static DEFINE_IDR(loop_index_idr);
+ static DEFINE_MUTEX(loop_ctl_mutex);
+ 
+@@ -1205,6 +1207,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ 			err = -EINVAL;
+ 			goto out_unfreeze;
+ 		}
++		type = array_index_nospec(type, MAX_LO_CRYPT);
+ 		xfer = xfer_funcs[type];
+ 		if (xfer == NULL) {
+ 			err = -EINVAL;
+-- 
+2.19.2
+
