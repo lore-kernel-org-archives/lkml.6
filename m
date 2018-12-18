@@ -2,73 +2,73 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D749C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE30C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ED3217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9854214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VAMKn/y8"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bIB3b60/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbeLRABq (ORCPT
+        id S1726487AbeLRACf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 19:01:46 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:37501 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbeLRABq (ORCPT
+        Mon, 17 Dec 2018 19:02:35 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42805 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbeLRACe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 19:01:46 -0500
-Received: by mail-vs1-f65.google.com with SMTP id n13so976413vsk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:01:45 -0800 (PST)
+        Mon, 17 Dec 2018 19:02:34 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b74so8898909vsd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:02:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tU5zb32D1NlDI1ewRK0QXbFSN4oQONEvOQ6pAXCHjIg=;
-        b=VAMKn/y8S6cAIfDkt+ISmgGCAZ8o+7gRk7nBqOwhuppd/WiSI1RJzkhxV2OX4yKXCI
-         fW3k69YfvISpPaeL8rDlXmW1vIrBjM6jp33GapC3ti+7Zc+1qcUAcjEZh35VEWkVp0mL
-         tjqqxjD7OAv9lbGDPohmcr+DOYy200lnLJXVQ=
+        bh=cps7q1gt0KIoGTt/u3zzUoFyefZOmClzVgwxqKj7S1M=;
+        b=bIB3b60/q1gMWlLIjgNEYf9kY6byYpqlnkAXWJkajIhcD3x6B1143JBkXW2O/N5N9B
+         XUI54PFTHpg4+pbSAMpVFskocRw4MUSdp2g6LED9YpL9aXVFik8m607nf+cCBBpmr2ih
+         xEVlARFbdNOxyHMi1XIle0VopcpVeJSYhR6HY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tU5zb32D1NlDI1ewRK0QXbFSN4oQONEvOQ6pAXCHjIg=;
-        b=CI7NA5pD00lkt11Q3gPdtIcmBKkxVpSWAgTpBVE0+hbkvDtqX4HhT5ejfyhllhYWut
-         K4vmPLuhW+4pxZWGj0bzMtKRvORe3BdS5oHLguEvnMnB1VTVRwt35B9YKY9g/bZznIna
-         +gaLFjokDRxftLsTaE9CMiGw1NT73dBz6uxByINWbEk3RRFSVJ/ODME5y2HscUyJ4I9Z
-         aVzx5z3dzo7/JR2pgBIR23qG7DpPi2rvBof2IpvmcQrKR3eim58mD7uKnU1PWLfz+6y4
-         VScAtxUDFmcbr5GBDJcXlJhaHmEjKa4w6jSL5mKr+pzyLTqpZAy7oFAIYGpuErMvLRkM
-         VYCQ==
-X-Gm-Message-State: AA+aEWYrtIq/3VdxO0QWy0UY07BX6+X4Eb+a7w3G5ZbmyWtJZAt5PAZt
-        7Q5OUENXc/dfddUg6LH86D3LPaQJlNo=
-X-Google-Smtp-Source: AFSGD/VplyHbHOCRx4IzkdlwnJ8rSAtctFFKjQTSuZF3T0Ra7FtWBbAj1A+yHj9xvGdApZm2XjhwEw==
-X-Received: by 2002:a67:8a81:: with SMTP id m123mr7478580vsd.206.1545091304742;
-        Mon, 17 Dec 2018 16:01:44 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id n200sm4534594vke.44.2018.12.17.16.01.43
+        bh=cps7q1gt0KIoGTt/u3zzUoFyefZOmClzVgwxqKj7S1M=;
+        b=Ldd6CxO443LBO/qYECF8YpDKGhPjjc/XpBetjE+Gg1bj6pwIOXl/rUctExe8d/isNZ
+         fsW0qQ/8wFUJvdxC8SxTp8SWif6RlCVLU3tR8rD9TaPuJot/xI5Iq1LJdyBVhYr7n2sK
+         3+HuQyNlTlqoXyE+NtbeAauugAgsl5t3r/5CRKxlAkPANGuKdJlnvZSMFWMNmqcMn5Af
+         QHVfwwicxTppEkf+qO21tyZv1JTwCVqYmsK4R6L2MglSeEjX6wivj44yph99K8LhdFwp
+         EzxZ8jjyzidMlce3kvZxgsv0XxVil/IMFPJ9J7n1D6Os2KinfCuTtc3VWePN6Az9e15M
+         Mf3A==
+X-Gm-Message-State: AA+aEWaG0TRYorJw7vLeUPmqmSBYwHQavIxG73cjHuhY2ewe8ZPd0m8J
+        JZOIhz35xg6vuHS4YvULFgrtP78S4jA=
+X-Google-Smtp-Source: AFSGD/WVEmCGzAotgzsLolKTFEz9BXKCdaREWZD2lBTCbzdNMk2rLW4O99x/1QjVV4WZPTNRxNfKRA==
+X-Received: by 2002:a67:fa98:: with SMTP id f24mr1801503vsq.125.1545091353054;
+        Mon, 17 Dec 2018 16:02:33 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id y78sm4568679vsc.6.2018.12.17.16.02.32
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 16:01:44 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id z24so5092049ual.8
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:01:43 -0800 (PST)
-X-Received: by 2002:a9f:2b44:: with SMTP id q4mr6719130uaj.126.1545091303183;
- Mon, 17 Dec 2018 16:01:43 -0800 (PST)
+        Mon, 17 Dec 2018 16:02:32 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id x64so8910829vsa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:02:32 -0800 (PST)
+X-Received: by 2002:a67:1505:: with SMTP id 5mr6575650vsv.20.1545091351487;
+ Mon, 17 Dec 2018 16:02:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-4-sibis@codeaurora.org>
-In-Reply-To: <20181217100724.4593-4-sibis@codeaurora.org>
+References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-5-sibis@codeaurora.org>
+In-Reply-To: <20181217100724.4593-5-sibis@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 17 Dec 2018 16:01:31 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UVm=p4Vo7g5-9z0mEN2xD1JXHK-_1tj8WLvxzr04M0RQ@mail.gmail.com>
-Message-ID: <CAD=FV=UVm=p4Vo7g5-9z0mEN2xD1JXHK-_1tj8WLvxzr04M0RQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] dt-bindings: remoteproc: qcom: Add power-domain
- bindings for Q6V5
-To:     sibis@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Date:   Mon, 17 Dec 2018 16:02:20 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=X9KmE60vdkGahRGoEahr6Gufi1Qg0Qa+v6wQtdDVFvcQ@mail.gmail.com>
+Message-ID: <CAD=FV=X9KmE60vdkGahRGoEahr6Gufi1Qg0Qa+v6wQtdDVFvcQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+To:     sibis@codeaurora.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
@@ -89,58 +89,30 @@ Hi,
 
 On Mon, Dec 17, 2018 at 2:08 AM Sibi Sankar <sibis@codeaurora.org> wrote:
 >
-> Add power-domain bindings for Q6V5 MSS on MSM8996 and SDM845 SoCs.
+> This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
 >
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
 >
 > v2:
->   * Add load_state power-domain
->   * List cx and mx power-domains for MSM8996
->
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 98894e6ad456..50695cd86397 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -80,6 +80,22 @@ on the Qualcomm Hexagon core.
->                     reference to the pll-supply regulator to be held on behalf
->                     of the booting of the Hexagon core on MSM8996 SoCs
->
-> +- power-domains:
-> +       Usage: required
-> +       Value type: <phandle>
-> +       Definition: reference to the list of 2 power-domains for the modem
-> +                   sub-system on MSM8996 SoCs
+>   * Fixed style changes
+>   * Added missing clocks in the dt-bindings
+>   * Split mss remoteproc node into a number of patches
 
-This is truly required for msm8996 SoCs?  The code I'm looking at
-doesn't try to get these power domains for 8996 so presumably you're
-breaking backward compatibility with old device tree files by making
-this required now.  I don't personally know how widespread msm8996
-usage is w/ upstream, so I'd let Bjorn comment on whether he thinks
-this is OK.
+I know there was some off-list suggestion to split this into a number
+of patches, but to actually make that useful to anyone we'd actually
+need to _also_ post up patches to make the driver probe / work without
+these power domains.  ...and as per other discussions it's kinda
+"lucky" that it happens to work without them and Bjorn wasn't
+supportive of making this optional.
 
-As with the other patches in this series, I personally prefer less
-prose and more lists / tables of exactly what is required for which
-compatible string.
+So I'd actually fold patch 6 into patch 5 and focus on getting the
+"aoss_qmp_pd" landed sooner rather than later.
 
 
-> +                   reference to the list of 4 power-domains for the modem
-> +                   sub-system on SDM845 SoCs
-> +
-> +- power-domain-names:
-> +       Usage: required
-> +       Value type: <stringlist>
-> +       Definition: must be "cx", "mx" for the modem sub-system on MSM8996
-> +                   SoCs
-> +                   must be "cx", "mx", "mss", "load_state" for the modem
-> +                   sub-system on SDM845 SoCs
-
-I haven't see a patch for using "load_state".  Can you point at it?  I
-guess this was "aop" in your last version?
+Keeping the "shutdown-ack" as a separate patch makes sense though
+since the bindings currently list that as "optional" and I guess
+things work OK w/out it.
 
 
--Doug
+Once patch #6 is folded into patch #5 feel free to add my Reviewed-by tag.
