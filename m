@@ -2,150 +2,115 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F69DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1B6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 311E221841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69399217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:38:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="WPVglQjf"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="T/XXcNpm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbeLRJh3 (ORCPT
+        id S1726479AbeLRJia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:37:29 -0500
-Received: from mail-it1-f170.google.com ([209.85.166.170]:53466 "EHLO
-        mail-it1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRJh2 (ORCPT
+        Tue, 18 Dec 2018 04:38:30 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39152 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeLRJi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:37:28 -0500
-Received: by mail-it1-f170.google.com with SMTP id g85so3130819ita.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 01:37:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0ZMTJs4r+syibkFmbdJc+GgDoZ7sB1XfYWUrhnSVLDU=;
-        b=WPVglQjfze+9y/oOcViyFJmm5O8je0BzwVxsLhE+rf0hzIfJOCdpM9Y/dpKrXE/l6z
-         Q2EtxMZVOdjnpOHUTinniL3uaWb6IS7sl0eUz153ykVnDWfNq0idmp9LyiHCKTEq4BSe
-         ngB/WPmKtzEAH6LxvTjryMqOf5Vnh/pOr0ZZg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0ZMTJs4r+syibkFmbdJc+GgDoZ7sB1XfYWUrhnSVLDU=;
-        b=cksfAXqgM0gU32PXVqDXSC9mZGSmhIaEv0dK47Exd/UC7BI+PHcstdi5j2bIH9o7de
-         jg2zpbMH3ZtmeBDpgHyyOfQQ9rXNkKyPa+/3oa5VqWmw9DiV53zwwLfcl/IHUyiAgTEV
-         0PnDTsi8E+429slAWgtEcJMHggwxX2/c0Syx8DxlQoEW06exERqUkJpgWU9UtI+j4hMT
-         /MI0r0g6lGu+kqmcaWto68PWKwXw9D7Dp2PQgOVuBLs/1P9a3D69gcgrUJ6hk6oHv58C
-         vee28OsFHyCJ7RUVW8wRLnO+p3nAYkHbNNZlUIFphWqPGt93jcCsfmk8V+2PnaOUlfw9
-         E4bg==
-X-Gm-Message-State: AA+aEWZuyAxaqoaBg5g5FQRkXQbYoNenU9EI4bXiYgfM52RGxfD2qG0S
-        opOeUCkdtMtAYm8hqFaWWnKAaofH1CKM6maPFJiI0zeLgJM=
-X-Google-Smtp-Source: AFSGD/V7SOkl2nx4shNZlzqycCNsNBkU3diH4tQSNN+zgWI4iWFKZfJ1faIl85oMxYRuGZGHqI5Y6GYQziWficJNVPw=
-X-Received: by 2002:a05:660c:344:: with SMTP id b4mr2207766itl.51.1545125845834;
- Tue, 18 Dec 2018 01:37:25 -0800 (PST)
+        Tue, 18 Dec 2018 04:38:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Idm6aAp6sVxp+WzgidWgoDIbk+vjPvG/6DZo0UnmYpo=; b=T/XXcNpmpTPZ2JEB0Sab25zLX
+        8/xz1L5y6CBdrCarLdVWa9xCmzsYdsdpj5Z8Wy2pTnnCyfpW+ueh3jUrQtw9wBkbGwVN2h9oS17qc
+        bKKyMsK3KSduRHRMpdKMfYPSXTU3QsErFZnmqgRirzRJASjsPEHOTiOfzZ5t806tbIQ3M=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:42644)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gZBp9-0005ML-2L; Tue, 18 Dec 2018 09:37:59 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gZBp6-0005U0-8m; Tue, 18 Dec 2018 09:37:56 +0000
+Date:   Tue, 18 Dec 2018 09:37:54 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        keescook@chromium.org, m.szyprowski@samsung.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 2/9] arch/arm/mm/dma-mapping.c: Convert to use
+ vm_insert_range
+Message-ID: <20181218093754.GI26090@n2100.armlinux.org.uk>
+References: <20181217202209.GA8859@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-References: <87lg4n1izg.wl-kuninori.morimoto.gx@renesas.com> <1545127003.YuAFZ7QVEK@avalon>
-In-Reply-To: <1545127003.YuAFZ7QVEK@avalon>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 18 Dec 2018 10:37:14 +0100
-Message-ID: <CAKMK7uEJbMDRdGq1g6i+EqYjgsYDO0RFH64WrUjaW=16Th49ig@mail.gmail.com>
-Subject: Re: [PATCH][resend] drm: dw-hdmi-i2s: convert to SPDX identifiers
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217202209.GA8859@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 7:47 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Morimoto-san,
->
-> Thank you for the patch.
->
-> On Tuesday, 18 December 2018 08:00:24 EET Kuninori Morimoto wrote:
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >
-> > This patch updates license to use SPDX-License-Identifier
-> > instead of verbose license text.
-> >
-> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> > ---
-> > few weeks passed, nothing happen. I re-post this patch again.
-> > I added Andrew on Cc
->
-> The driver seems to be lacking a maintainer :-S
+On Tue, Dec 18, 2018 at 01:52:09AM +0530, Souptick Joarder wrote:
+> Convert to use vm_insert_range() to map range of kernel
+> memory to user vma.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  arch/arm/mm/dma-mapping.c | 21 +++++++--------------
+>  1 file changed, 7 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 661fe48..7cbcde5 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -1582,31 +1582,24 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
+>  		    void *cpu_addr, dma_addr_t dma_addr, size_t size,
+>  		    unsigned long attrs)
+>  {
+> -	unsigned long uaddr = vma->vm_start;
+> -	unsigned long usize = vma->vm_end - vma->vm_start;
+> +	unsigned long page_count = vma_pages(vma);
+>  	struct page **pages = __iommu_get_pages(cpu_addr, attrs);
+>  	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>  	unsigned long off = vma->vm_pgoff;
+> +	int err;
+>  
+>  	if (!pages)
+>  		return -ENXIO;
+>  
+> -	if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
+> +	if (off >= nr_pages)
+>  		return -ENXIO;
 
-bridge drivers all have a fallback maintainer, but none of them are
-cc'ed. It's maintained in drm-misc, so you could just push the patch
-too :-) Especially since you're listed:
+Are you sure you can make this change?
 
-DRM DRIVERS FOR BRIDGE CHIPS
-M:    Archit Taneja <architt@codeaurora.org>
-M:    Andrzej Hajda <a.hajda@samsung.com>
-R:    Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-S:    Maintained
-T:    git git://anongit.freedesktop.org/drm/drm-misc
-F:    drivers/gpu/drm/bridge/
+You are restricting the offset to be within 0..nr_pages which ensures
+that the initial struct page that is passed to vm_insert_range() is
+valid, but I think the removal of the following check is unsafe.
 
+Your new vm_insert_range() function only checks page_count <=
+vma_pages(vma), which it will be since it _is_ vma_pages(vma).  With
+the removal of the second condition, there will be nothing checking
+that (eg) off may be nr_pages - 1, and page_count=50, meaning that
+vm_insert_range() will walk off the end of the page array.
 
-Cheers, Daniel
+Please take another look at this.
 
->
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c index
-> > 8f9c8a6..2228689 100644
-> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> > @@ -1,12 +1,9 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> >  /*
-> >   * dw-hdmi-i2s-audio.c
-> >   *
-> >   * Copyright (c) 2017 Renesas Solutions Corp.
-> >   * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > - *
-> > - * This program is free software; you can redistribute it and/or modify
-> > - * it under the terms of the GNU General Public License version 2 as
-> > - * published by the Free Software Foundation.
-> >   */
-> >  #include <drm/bridge/dw_hdmi.h>
->
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
+What about the other callsites of your new function - do they have
+the same issue?
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
