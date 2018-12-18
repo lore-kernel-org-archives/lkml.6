@@ -2,70 +2,70 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64070C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE00B214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BB44214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:03:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YC0DblCz"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IvnMYime"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbeLRACv (ORCPT
+        id S1726562AbeLRAC6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 19:02:51 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:44314 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbeLRACv (ORCPT
+        Mon, 17 Dec 2018 19:02:58 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40398 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbeLRAC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 19:02:51 -0500
-Received: by mail-vk1-f194.google.com with SMTP id h128so3270122vkg.11
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:02:49 -0800 (PST)
+        Mon, 17 Dec 2018 19:02:57 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z3so8893486vsf.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:02:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Bs/yh5T6L+JfszVJt9/gLFo3oXU7dwETfDz+PIBmpB8=;
-        b=YC0DblCzylYUlvhQht4wduCPVGt4disnpRCiq1IMuE8KftbT+kiTsOWScWCxurJzg5
-         IwlgJHOxl/GnbC5dKT8XIOHOBEuTBr0g1mZtAr3R1nAM4tMkR/2PBG/YrB8Q/xsaR8HY
-         1mUaOUw4O9Mp5UWftFcxSwY/an/2smJrw4Yc0=
+        bh=UKz98X88wWtfeef1wceeSVvlOPemRta0LHzIPR4H0co=;
+        b=IvnMYimew4ul7RGmgcb5fVwFenzS/c7A1nVnpRAF0pnDptkt51Vc/mVx/BK5n5PfSB
+         /bmtpg3t4wDddNW5Q4HHMtbp5xKKRcLX46CJsOVlzb5xQ66WSFJyeTfYUJIAci0Q657X
+         urU2WZAnuaHL6yqwP+SndxDvWvUOmQq8K0D+0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Bs/yh5T6L+JfszVJt9/gLFo3oXU7dwETfDz+PIBmpB8=;
-        b=GiVV3UK1Hb7eUjZQbFspZG0CS1AHKgT23T6g3oe6itFq1ww6DaCh6IxT+uaIdSBgUA
-         SiLGRRsMcnbXQ0jQP5zn679KgIiG1K5Sp9bxHiPLCO27uLXIJPgM2XMHN0p3PgZisMyD
-         Lm7fXdA+/E9DFVqZb3M600IaS8n/LgXE2yzHdceLIEXJm4TBl2NtKIEEAaO0eSoM8Nsc
-         Pk72wGVTkgjiVT+uH1rJ1U2OG12Nuw7+CkemIRy0xm0DNYyT+PeAyeODIsf50GpsK5gZ
-         RylagxV8YeoKEY7YIiYD6OozTZaH9JyXUpQveo9tCPw3ikiBgGv6yDrcx+tJQps7x3Yh
-         5UpQ==
-X-Gm-Message-State: AA+aEWZBNmjwb4k0n7OaOJnESka9ArrAZ7s2e2qx31Y59MgLbp7hXF8U
-        6tzoXhgJC1NhvctkfetvZMlltofxQPY=
-X-Google-Smtp-Source: AFSGD/VdePupVVzkzt7U721TJtg3Iqwx9VlJJicm9seBzlaTChY2zDDRsogLuraqFlUIECC/O47+XA==
-X-Received: by 2002:a1f:f8cf:: with SMTP id w198mr6676990vkh.82.1545091368421;
-        Mon, 17 Dec 2018 16:02:48 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id n15sm5764687vsi.5.2018.12.17.16.02.47
+        bh=UKz98X88wWtfeef1wceeSVvlOPemRta0LHzIPR4H0co=;
+        b=mksHOnpzXpJV71/oMNxnwLCoWx9D+NUZJOkID/45qFiqKXAjdB+ONclqaUOyWU3/20
+         CoQl5WXJvsZFVqv6XTO25GCGfobxJapmIcTe5oTK/aVfu/p3lvn3eTkqhAj7zhujo+Mi
+         5RRwuFppE5dgVHm+Yz+vfo0DyNwZW+Zlg2sz1PFu6VOJRThG8e/d6fMDE7FND9nf0iTL
+         2RgTAaHB2BMg1FtgjpGawul7sIupNPkqdUq3/8zOze0wvymUQx7SdLMTilwkZiH8jjXq
+         0cPGVVE4UOORACThoPGUmt09O6SPb3se/CJzOQ1g1nFK+vHQvC5t6mlOf7otyOxgBFex
+         RWiA==
+X-Gm-Message-State: AA+aEWYW2CiYWuBLinjfJ1tKkW9uRIKXOupEcwF2253yMtOq46t0rK3F
+        1/5PSc2IbQ4VR8+zXipaSCfxSQPZvmk=
+X-Google-Smtp-Source: AFSGD/Wli8i9O4UWsYA+2UA88dMNBMtH/qthp3bNcPvlDzBJPmUxaB99BQPMsQeNiA828ly9p9RsIA==
+X-Received: by 2002:a67:b904:: with SMTP id q4mr6871937vsn.148.1545091376024;
+        Mon, 17 Dec 2018 16:02:56 -0800 (PST)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id l22sm6772800vsa.25.2018.12.17.16.02.55
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 16:02:48 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id n13so977883vsk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:02:47 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr7369738vsj.144.1545091366712;
- Mon, 17 Dec 2018 16:02:46 -0800 (PST)
+        Mon, 17 Dec 2018 16:02:55 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id n126so3272053vke.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:02:55 -0800 (PST)
+X-Received: by 2002:a1f:e807:: with SMTP id f7mr6720607vkh.16.1545091374529;
+ Mon, 17 Dec 2018 16:02:54 -0800 (PST)
 MIME-Version: 1.0
-References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-6-sibis@codeaurora.org>
-In-Reply-To: <20181217100724.4593-6-sibis@codeaurora.org>
+References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-7-sibis@codeaurora.org>
+In-Reply-To: <20181217100724.4593-7-sibis@codeaurora.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 17 Dec 2018 16:02:35 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WEhobH=fBTonJdABYzOqykgk6XYt9=3eoHap8K6rAQKA@mail.gmail.com>
-Message-ID: <CAD=FV=WEhobH=fBTonJdABYzOqykgk6XYt9=3eoHap8K6rAQKA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: sdm845: Add power-domain for
+Date:   Mon, 17 Dec 2018 16:02:43 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WYda6Th_bjoYsnkzUjcYj7uGb0=3Be-EVu4VHvzxNymQ@mail.gmail.com>
+Message-ID: <CAD=FV=WYda6Th_bjoYsnkzUjcYj7uGb0=3Be-EVu4VHvzxNymQ@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: qcom: sdm845: Add shutdown-ack for
  Q6V5 MSS node
 To:     sibis@codeaurora.org
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -90,41 +90,15 @@ Hi,
 
 On Mon, Dec 17, 2018 at 2:08 AM Sibi Sankar <sibis@codeaurora.org> wrote:
 >
-> Add power-domains cx, mx, mss and load_state for Q6V5 MSS node.
+> Add shutdown-ack smp2p interrupt for Q6V5 MSS node.
 >
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
 >
-> This patch depends on the following bindings:
-> https://patchwork.kernel.org/patch/10725801/ - rpmhpd dt bindings
-> https://patchwork.kernel.org/patch/10725793/ - rpmhpd dt node
-> https://patchwork.kernel.org/patch/10678301/ - AOP QMP dt bindings
+> This patch depends on:
+> https://patchwork.kernel.org/patch/10691213/ - shutdown-ack dt bindings
 >
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-As per my comments on patch #5, I think this patch (AKA patch #6)
-should be folded in there.
-
-
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 33ff8668828f..56f5f55db9e2 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1401,6 +1401,12 @@
->                         qcom,halt-regs = <&tcsr_mutex_regs
->                                                 0x23000 0x25000 0x24000>;
->
-> +                       power-domains = <&aoss_qmp_pd AOSS_QMP_LS_MODEM>,
-> +                                       <&rpmhpd SDM845_CX>,
-> +                                       <&rpmhpd SDM845_MX>,
-> +                                       <&rpmhpd SDM845_MSS>;
-> +                       power-domain-names = "load_state", "cx", "mx", "mss";
-
-I guess you changed this to "load_state" from "aop" before?  Is there
-code that actually uses this?
-
-
--Doug
-
--Doug
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
