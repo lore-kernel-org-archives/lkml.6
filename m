@@ -2,166 +2,280 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83C3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3AEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89EF0218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:33:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="XHAtmvd+"
+	by mail.kernel.org (Postfix) with ESMTP id 3F9DC218AC
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 19:34:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeLRTdN (ORCPT
+        id S1727305AbeLRTeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 14:33:13 -0500
-Received: from mail-eopbgr710060.outbound.protection.outlook.com ([40.107.71.60]:12925
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726740AbeLRTdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 14:33:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hgQxnd4x2okF2okxsQh1Dx9xDhPu0Z5/2UdqOFO03wQ=;
- b=XHAtmvd+YFGfGOncAKBbmOhOFOhRPqfh1v0t0d2axs42qV5CRuIZ3f3ez1ZN/pU4krwiqdICmFlK0Y8H19rVN637dt3tTyCScl3a4H212FMmxtJHJHR67xJ51+r1Ajo5MBL5vChzNTZTZyYpD56MkYRYk8r33gLqUl5WojwdiHg=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB5064.namprd05.prod.outlook.com (20.177.230.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.15; Tue, 18 Dec 2018 19:33:08 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7%4]) with mapi id 15.20.1446.015; Tue, 18 Dec 2018
- 19:33:08 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-CC:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Richard Biener <rguenther@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Juergen Gross <jgross@suse.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH] kbuild, x86: revert macros in extended asm workarounds
-Thread-Topic: [PATCH] kbuild, x86: revert macros in extended asm workarounds
-Thread-Index: AQHUksVBZzHOPXiLTkuUqtDHy4jwBqWCrNsAgAI+mgA=
-Date:   Tue, 18 Dec 2018 19:33:07 +0000
-Message-ID: <A6321F73-0084-423B-8BEE-C23BF6BD1544@vmware.com>
-References: <1544692661-9455-1-git-send-email-yamada.masahiro@socionext.com>
- <CA+icZUUnkGBp-3pJxE_s_Oc+pdNBrVc_ngYUwpv7zLEbtE_eVg@mail.gmail.com>
-In-Reply-To: <CA+icZUUnkGBp-3pJxE_s_Oc+pdNBrVc_ngYUwpv7zLEbtE_eVg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB5064;20:obmPZL1SPc6sBp5edV1GnWH95oa+Vvq9UuwUuBRP2HVRvDE7tfaaeyBpqU1Rj02BVyEvUX/fJ9lBwPw90MpTX2K4c3jk3dHR0RYdOldyGSImkSqH+eQbQ8rpbqjkDXVKYVMBG7xuoX1f9yYU0sXxE+arw4FWRgTs3s5/epfNnoc=
-x-ms-office365-filtering-correlation-id: fb67348f-dcf8-4bfb-74c8-08d6651fa394
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5064;
-x-ms-traffictypediagnostic: BYAPR05MB5064:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-microsoft-antispam-prvs: <BYAPR05MB5064B14CA6343731C5045037D0BD0@BYAPR05MB5064.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB5064;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB5064;
-x-forefront-prvs: 08902E536D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(199004)(189003)(51914003)(7416002)(14444005)(3846002)(71190400001)(71200400001)(256004)(6506007)(106356001)(53936002)(102836004)(53546011)(83716004)(105586002)(446003)(6246003)(11346002)(6512007)(33656002)(6306002)(486006)(476003)(2616005)(186003)(39060400002)(76176011)(36756003)(6116002)(26005)(4326008)(7736002)(97736004)(99286004)(66066001)(305945005)(478600001)(45080400002)(316002)(54906003)(966005)(82746002)(6916009)(25786009)(6486002)(229853002)(5660300001)(68736007)(6436002)(8936002)(8676002)(81166006)(575784001)(86362001)(81156014)(14454004)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5064;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 248K8SkUsozHsvXscHbVe+PUQ0lSk/nhnOL7/mTLHgV8JrXNJ3efbjyfaw2XI2Yzu3q5VCfBu38R0H9fzKJ1/OiXLiDU0r7FCLUquJptdFo6gQR/JrkYk/QoxhEF7bTq9WS9aFtsyMR1TWsgR7yujp3g2ECUBfgju5gIQ7NM7p3LM9E1yRO86WWRSJMaogQMo8/JSVp7Wnf+bMletdh2ppDD8RFEjATWqRoHjhD4lIpe2iKY4A4Tdi1R3x56+/p4AT22HE4dxHAxyBevpYoO1VyXqLN8OewE8i+DNuZpdKE6VUx15R3MLzFyhhw8B530
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9A9EC197CE14A34A9CB0F37FE152FCC3@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 18 Dec 2018 14:34:01 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38237 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeLRTeA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 14:34:00 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m22so4004446wml.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:33:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PCzgjLwpUkqadfqZi//nh5Nx/OlMm9/ZwJTnph0XhqY=;
+        b=qhl4l6rskaYd2Z0tIxUIszCIfYOkJNAMCPeIazCfiKs4oPcONesX8rC2Y5z4XrbLx8
+         p+OGp6oklCEJI7vx7EaErU7CBSm4URTXkeUK7HoZjDNeKKBMz+36yEpZg+heuE6qbQyq
+         kxUDcqkmZyLP4byQ5C3XdC/thZ6YIZYwrmdptefI9PSNyhrIN5mTpA0CW92rZxViW+Gj
+         bYoxCqHXJ9+NhrGGdUBHzfyXew3ddSKz0oV0ArzMndAUC5EcrryoNnyKqzQEz3H331UH
+         XmRhvyjTD+XOB2W8wFbrTrxg/P54GZTL4ln0cGESOYBRKo3/SrGCFfb1o3DhOLIcXZ8w
+         54LQ==
+X-Gm-Message-State: AA+aEWZWpY7N6cgaZEw5sgsuiiXj2a6ZO02l/a//+/4Fn382J6HYcy3X
+        mL3rR+Cq1KV8pylR5+DJ4ERU0g==
+X-Google-Smtp-Source: AFSGD/We7X33alCzcuEnYvRIr93ayQUI9KYWva3+TeqZ60ojkxPafAQuivTPoPV1ny3SJrJ1UxKRww==
+X-Received: by 2002:a7b:cb0a:: with SMTP id u10mr4628020wmj.0.1545161637937;
+        Tue, 18 Dec 2018 11:33:57 -0800 (PST)
+Received: from t460s.bristot.redhat.com (host252-226-dynamic.249-95-r.retail.telecomitalia.it. [95.249.226.252])
+        by smtp.gmail.com with ESMTPSA id l19sm3699600wme.21.2018.12.18.11.33.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 11:33:57 -0800 (PST)
+Subject: Re: [PATCH V2 9/9] jump_label: Batch up if arch supports it
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Zhou Chengming <zhouchengming1@huawei.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+References: <cover.1545149539.git.bristot@redhat.com>
+ <3c212982833e3b27f8610c8389413b81ed5fb0e1.1545149539.git.bristot@redhat.com>
+ <20181218123556.5257b1a7@gandalf.local.home>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Message-ID: <d8a417e9-eb0f-d087-f0c5-7405b030e51c@redhat.com>
+Date:   Tue, 18 Dec 2018 20:33:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb67348f-dcf8-4bfb-74c8-08d6651fa394
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 19:33:07.8788
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5064
+In-Reply-To: <20181218123556.5257b1a7@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBEZWMgMTcsIDIwMTgsIGF0IDE6MTYgQU0sIFNlZGF0IERpbGVrIDxzZWRhdC5kaWxla0Bn
-bWFpbC5jb20+IHdyb3RlOg0KPiANCj4gT24gVGh1LCBEZWMgMTMsIDIwMTggYXQgMTA6MTkgQU0g
-TWFzYWhpcm8gWWFtYWRhDQo+IDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT4gd3JvdGU6
-DQo+PiBSZXZlcnQgdGhlIGZvbGxvd2luZyBjb21taXRzOg0KPj4gDQo+PiAtIDViZGNkNTEwYzJh
-YzllZmFmNTVjNGNiZDhkNDY0MjFkOGUyMzIwY2QNCj4+ICAoIng4Ni9qdW1wLWxhYmVsczogTWFj
-cm9meSBpbmxpbmUgYXNzZW1ibHkgY29kZSB0byB3b3JrIGFyb3VuZCBHQ0MgaW5saW5pbmcgYnVn
-cyIpDQo+PiANCj4+IC0gZDVhNTgxZDg0YWU2YjhhNGE3NDA0NjRiODBkOGQ5Y2YxZTc5NDdiMg0K
-Pj4gICgieDg2L2NwdWZlYXR1cmU6IE1hY3JvZnkgaW5saW5lIGFzc2VtYmx5IGNvZGUgdG8gd29y
-ayBhcm91bmQgR0NDIGlubGluaW5nIGJ1Z3MiKQ0KPj4gDQo+PiAtIDA0NzRkNWQ5ZDJmN2YzYjEx
-MjYyZjdiZjg3ZDBlNzMxNGVhZDkyMDAuDQo+PiAgKCJ4ODYvZXh0YWJsZTogTWFjcm9meSBpbmxp
-bmUgYXNzZW1ibHkgY29kZSB0byB3b3JrIGFyb3VuZCBHQ0MgaW5saW5pbmcgYnVncyIpDQo+PiAN
-Cj4+IC0gNDk0YjUxNjhmMmRlMDA5ZWI4MGYxOThmNjY4ZGEzNzQyOTUwOThkZC4NCj4+ICAoIng4
-Ni9wYXJhdmlydDogV29yayBhcm91bmQgR0NDIGlubGluaW5nIGJ1Z3Mgd2hlbiBjb21waWxpbmcg
-cGFyYXZpcnQgb3BzIikNCj4+IA0KPj4gLSBmODFmOGFkNTZmZDFjN2I5OWIyZWQxYzMxNDUyN2Y3
-ZDlhYzQ0N2M2Lg0KPj4gICgieDg2L2J1ZzogTWFjcm9meSB0aGUgQlVHIHRhYmxlIHNlY3Rpb24g
-aGFuZGxpbmcsIHRvIHdvcmsgYXJvdW5kIEdDQyBpbmxpbmluZyBidWdzIikNCj4+IA0KPj4gLSA3
-N2Y0OGVjMjhlNGNjZmY5NGQyZTVmNDI2MGE4M2FjMjdhN2YzMDk5Lg0KPj4gICgieDg2L2FsdGVy
-bmF0aXZlczogTWFjcm9meSBsb2NrIHByZWZpeGVzIHRvIHdvcmsgYXJvdW5kIEdDQyBpbmxpbmlu
-ZyBidWdzIikNCj4+IA0KPj4gLSA5ZTE3MjViNDEwNTk0OTExY2M1OTgxYjZjN2I0Y2VhNGVjMDU0
-Y2E4Lg0KPj4gICgieDg2L3JlZmNvdW50OiBXb3JrIGFyb3VuZCBHQ0MgaW5saW5pbmcgYnVnIikN
-Cj4+ICAoQ29uZmxpY3RzOiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9yZWZjb3VudC5oKQ0KPj4gDQo+
-PiAtIGMwNmM0ZDgwOTA1MTNmMjk3NGRmZGJlZDJhYzk4NjM0MzU3YWM0NzUuDQo+PiAgKCJ4ODYv
-b2JqdG9vbDogVXNlIGFzbSBtYWNyb3MgdG8gd29yayBhcm91bmQgR0NDIGlubGluaW5nIGJ1Z3Mi
-KQ0KPj4gDQo+PiAtIDc3YjBiZjU1YmM2NzUyMzNkMjJjZDVkZjk3NjA1ZDUxNmQ2NDUyNWUuDQo+
-PiAgKCJrYnVpbGQvTWFrZWZpbGU6IFByZXBhcmUgZm9yIHVzaW5nIG1hY3JvcyBpbiBpbmxpbmUg
-YXNzZW1ibHkgY29kZSB0byB3b3JrIGFyb3VuZCBhc20oKSByZWxhdGVkIEdDQyBpbmxpbmluZyBi
-dWdzIikNCj4+IA0KPj4gQSBmZXcgZGF5cyBhZnRlciB0aG9zZSBjb21taXRzIGFwcGxpZWQsIGRp
-c2N1c3Npb24gc3RhcnRlZCB0byBzb2x2ZQ0KPj4gdGhlIGlzc3VlIG1vcmUgZWxlZ2FudGx5IG9u
-IHRoZSBjb21waWxlciBzaWRlOg0KPj4gDQo+PiAgaHR0cHM6Ly9uYTAxLnNhZmVsaW5rcy5wcm90
-ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZsa21sLm9yZyUyRmxrbWwlMkYy
-MDE4JTJGMTAlMkY3JTJGOTImYW1wO2RhdGE9MDIlN0MwMSU3Q25hbWl0JTQwdm13YXJlLmNvbSU3
-QzQwYjVkZjhhMzhlNTRmMzEwYWI3MDhkNjY0MDA1ZWUwJTdDYjM5MTM4Y2EzY2VlNGI0YWE0ZDZj
-ZDgzZDlkZDYyZjAlN0MwJTdDMSU3QzYzNjgwNjM1MDExMzEzNjIyMyZhbXA7c2RhdGE9UmxZWFN5
-aHpNNkhMUXVLQzJOdXlEcXZrZTlxWjExdHZNRE5kMzJOaUYyVSUzRCZhbXA7cmVzZXJ2ZWQ9MA0K
-Pj4gDQo+PiBUaGUgImFzbSBpbmxpbmUiIHdhcyBpbXBsZW1lbnRlZCBieSBTZWdoZXIgQm9lc3Nl
-bmtvb2wsIGFuZCBub3cgcXVldWVkDQo+PiB1cCBmb3IgR0NDIDkuIChQZW9wbGUgd2VyZSBwb3Np
-dGl2ZSBldmVuIGZvciBiYWNrLXBvcnRpbmcgaXQgdG8gb2xkZXINCj4+IGNvbXBpbGVycykuDQo+
-PiANCj4+IFNpbmNlIHRoZSBpbi1rZXJuZWwgd29ya2Fyb3VuZHMgbWVyZ2VkLCBzb21lIGlzc3Vl
-cyBoYXZlIGJlZW4gcmVwb3J0ZWQ6DQo+PiBicmVha2FnZSBvZiBidWlsZGluZyB3aXRoIGRpc3Rj
-Yy9pY2VjYywgYnJlYWthZ2Ugb2YgZGlzdHJvIHBhY2thZ2VzIGZvcg0KPj4gbW9kdWxlIGJ1aWxk
-aW5nLiAoTW9yZSBmdW5kYW1lbnRhbGx5LCB3ZSBjYW5ub3QgYnVpbGQgZXh0ZXJuYWwgbW9kdWxl
-cw0KPj4gYWZ0ZXIgJ21ha2UgY2xlYW4nKQ0KPj4gDQo+PiBQYXRjaGluZyBhcm91bmQgdGhlIGJ1
-aWxkIHN5c3RlbSB3b3VsZCBtYWtlIHRoZSBjb2RlIGV2ZW4gdWdsaWVyLg0KPj4gDQo+PiBHaXZl
-biB0aGF0IHRoaXMgaXNzdWUgd2lsbCBiZSBzb2x2ZWQgaW4gYSBjbGVhbmVyIHdheSBzb29uZXIg
-b3IgbGF0ZXIsDQo+PiBsZXQncyByZXZlcnQgdGhlIGluLWtlcm5lbCB3b3JrYXJvdW5kcywgYW5k
-IHdhaXQgZm9yIEdDQyA5Lg0KPj4gDQo+PiBSZXBvcnRlZC1ieTogTG9nYW4gR3VudGhvcnBlIDxs
-b2dhbmdAZGVsdGF0ZWUuY29tPiAjIGRpc3RjYw0KPj4gUmVwb3J0ZWQtYnk6IFNlZGF0IERpbGVr
-IDxzZWRhdC5kaWxla0BnbWFpbC5jb20+ICMgZGViaWFuL3JwbSBwYWNrYWdlDQo+IA0KPiBIaSwN
-Cj4gDQo+IEkgcmVwb3J0ZWQgdGhlIGlzc3VlIHdpdGggZGViaWFuIHBhY2thZ2UgYnJlYWthZ2Ug
-aW4gWzFdLg0KPiANCj4gSSBhbSBub3Qgc3Vic2NyaWJlZCB0byBhbnkgaW52b2x2ZWQgbWFpbGlu
-Zy1saXN0IGFuZCBub3QgZm9sbG93aW5nIGFsbA0KPiB0aGUgZGlzY3Vzc2lvbnMuDQo+IEkgc2Vl
-IHRoZSBzaXR1YXRpb24gaXMgbm90IGVhc3kgYXMgdGhlcmUgaXMgZXNwZWNpYWxseSBsaW51eC1r
-YnVpbGQNCj4gYW5kIGxpbnV4L3g4NiBpbnZvbHZlZCBhbmQgbWF5YmUgb3RoZXIgaW50ZXJlc3Rz
-Lg0KPiBCdXQgSSBhbSBpbnRlcmVzdGVkIGluIGhhdmluZyBhIGZpeCBpbiB2NC4yMCBmaW5hbCBh
-bmQgaG9wZSB0aGlzIGFsbA0KPiBzdGlsbCB3b3JrcyB3aXRoIExMVk0vQ2xhbmcuDQo+IA0KPiBJ
-IGNhbiBvZmZlciBteSBoZWxwIGluIHRlc3RpbmcgLSBhZ2FpbnN0IExpbnV4IHY0LjIwLXJjNy4N
-Cj4gTm90IHN1cmUgaWYgYWxsIGRpc2N1c3NlZCBtYXRlcmlhbCBpcyBpbiB1cHN0cmVhbSBvciBl
-bHNld2hlcmUuDQo+IFdoYXQgaXMgeW91ciBzdWdnZXN0aW9uIGZvciBtZSBhcyBhIHRlc3Rlcj8N
-Cj4gDQo+IFdpbGwgd2UgaGF2ZSBhIHNvbHV0aW9uIGluIExpbnV4IHY0LjIwIGZpbmFsPw0KDQpU
-aGFua3MgZm9yIHRoZSByZWZlcmVuY2UuIEkgc2VlIHNvbHV0aW9ucyBoYXZlIGFscmVhZHkgYmVl
-biBkZXZlbG9wZWQuIFNvDQppdOKAmXMgTWFzYWhpcm/igJlzIGNhbGwuDQoNCg==
+On 12/18/18 6:35 PM, Steven Rostedt wrote:
+> On Tue, 18 Dec 2018 17:46:38 +0100
+> Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
+> 
+> 
+> I'd say add this file first, before x86 supports it. That way it's easy
+> for you to test if this file is correct for other archs that do not
+> support it.
+> 
+> When x86 supports it, the "on switch" for that should be the added
+> config, just like what other architectures will do.
+
+right!
+
+>> If the architecture supports the batching of jump label updates, use it!
+>>
+>> An easy way to see the benefits of this patch is switching the
+>> schedstats on and off. For instance:
+>>
+>> -------------------------- %< ---------------------------- 
+>> #!/bin/bash
+>>
+>> while [ true ]; do 
+>>     sysctl -w kernel.sched_schedstats=1
+>>     sleep 2
+>>     sysctl -w kernel.sched_schedstats=0
+>>     sleep 2
+>> done
+>> -------------------------- >% ----------------------------  
+>>
+>> while watching the IPI count:
+>>
+>> -------------------------- %< ---------------------------- 
+>> # watch -n1 "cat /proc/interrupts | grep Function"
+>> -------------------------- >% ----------------------------  
+>>
+>> With the current mode, it is possible to see +- 168 IPIs each 2 seconds,
+>> while with this patch the number of IPIs goes to 3 each 2 seconds.
+>>
+>> Regarding the performance impact of this patch set, I made two measurements:
+>>
+>>     The time to update a key (the task that is causing the change)
+>>     The time to run the int3 handler (the side effect on a thread that
+>>                                       hits the code being changed)
+>>
+>> The schedstats static key was chosen as the key to being switched on and off.
+>> The reason being is that it is used in more than 56 places, in a hot path. The
+>> change in the schedstats static key will be done with the following command:
+>>
+>> while [ true ]; do
+>>     sysctl -w kernel.sched_schedstats=1
+>>     usleep 500000
+>>     sysctl -w kernel.sched_schedstats=0
+>>     usleep 500000
+>> done
+>>
+>> In this way, they key will be updated twice per second. To force the hit of the
+>> int3 handler, the system will also run a kernel compilation with two jobs per
+>> CPU. The test machine is a two nodes/24 CPUs box with an Intel Xeon processor
+>> @2.27GHz.
+>>
+>> Regarding the update part, on average, the regular kernel takes 57 ms to update
+>> the schedstats key, while the kernel with the batch updates takes just 1.4 ms
+>> on average. Although it seems to be too good to be true, it makes sense: the
+>> schedstats key is used in 56 places, so it was expected that it would take
+>> around 56 times to update the keys with the current implementation, as the
+>> IPIs are the most expensive part of the update.
+>>
+>> Regarding the int3 handler, the non-batch handler takes 45 ns on average, while
+>> the batch version takes around 180 ns. At first glance, it seems to be a high
+>> value. But it is not, considering that it is doing 56 updates, rather than one!
+>> It is taking four times more, only. This gain is possible because the patch
+>> uses a binary search in the vector: log2(56)=5.8. So, it was expected to have
+>> an overhead within four times.
+>>
+>> (voice of tv propaganda) But, that is not all! As the int3 handler keeps on for
+>> a shorter period (because the update part is on for a shorter time), the number
+>> of hits in the int3 handler decreased by 10%.
+>>
+>> The question then is: Is it worth paying the price of "135 ns" more in the int3
+>> handler?
+>>
+>> Considering that, in this test case, we are saving the handling of 53 IPIs,
+>> that takes more than these 135 ns, it seems to be a meager price to be paid.
+>> Moreover, the test case was forcing the hit of the int3, in practice, it
+>> does not take that often. While the IPI takes place on all CPUs, hitting
+>> the int3 handler or not!
+>>
+>> For instance, in an isolated CPU with a process running in user-space
+>> (nohz_full use-case), the chances of hitting the int3 handler is barely zero,
+>> while there is no way to avoid the IPIs. By bounding the IPIs, we are improving
+>> a lot this scenario.
+>>
+>> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Borislav Petkov <bp@alien8.de>
+>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+>> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+>> Cc: Zhou Chengming <zhouchengming1@huawei.com>
+>> Cc: Jiri Kosina <jkosina@suse.cz>
+>> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+>> Cc: Chris von Recklinghausen <crecklin@redhat.com>
+>> Cc: Jason Baron <jbaron@akamai.com>
+>> Cc: Scott Wood <swood@redhat.com>
+>> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+>> Cc: Clark Williams <williams@redhat.com>
+>> Cc: x86@kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>  include/linux/jump_label.h |  3 +++
+>>  kernel/jump_label.c        | 29 +++++++++++++++++++++++++++++
+>>  2 files changed, 32 insertions(+)
+>>
+>> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+>> index c88d903befc0..ed51ef3e1abd 100644
+>> --- a/include/linux/jump_label.h
+>> +++ b/include/linux/jump_label.h
+>> @@ -219,6 +219,9 @@ extern void arch_jump_label_transform(struct jump_entry *entry,
+>>  				      enum jump_label_type type);
+>>  extern void arch_jump_label_transform_static(struct jump_entry *entry,
+>>  					     enum jump_label_type type);
+>> +extern int arch_jump_label_transform_queue(struct jump_entry *entry,
+>> +					    enum jump_label_type type);
+>> +extern void arch_jump_label_transform_apply(void);
+>>  extern int jump_label_text_reserved(void *start, void *end);
+>>  extern void static_key_slow_inc(struct static_key *key);
+>>  extern void static_key_slow_dec(struct static_key *key);
+>> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+>> index 22093b5f57c9..08ace142af0a 100644
+>> --- a/kernel/jump_label.c
+>> +++ b/kernel/jump_label.c
+>> @@ -409,6 +409,7 @@ bool jump_label_can_update_check(struct jump_entry *entry, bool init)
+>>  	return 0;
+>>  }
+>>  
+>> +#ifndef HAVE_JUMP_LABEL_BATCH
+>>  static void __jump_label_update(struct static_key *key,
+>>  				struct jump_entry *entry,
+>>  				struct jump_entry *stop,
+>> @@ -421,6 +422,34 @@ static void __jump_label_update(struct static_key *key,
+>>  		}
+>>  	}
+>>  }
+>> +#else
+>> +static void __jump_label_update(struct static_key *key,
+>> +				struct jump_entry *entry,
+>> +				struct jump_entry *stop,
+>> +				bool init)
+>> +{
+>> +	for_each_label_entry(key, entry, stop) {
+>> +
+>> +		if (!jump_label_can_update_check(entry, init))
+>> +			continue;
+>> +
+>> +		if (arch_jump_label_transform_queue(entry,
+>> +						    jump_label_type(entry)))
+>> +			continue;
+>> +
+>> +		/*
+>> +		 * Queue's overflow: Apply the current queue, and then
+>> +		 * queue again. If it stills not possible to queue, BUG!
+>> +		 */
+>> +		arch_jump_label_transform_apply();
+>> +		if (!arch_jump_label_transform_queue(entry,
+>> +						     jump_label_type(entry))) {
+>> +			BUG();
+> 
+> Why BUG()? Do you really want to crash Linus's machine?
+
+I am using BUG() because that is what I see in other part of jump_label code:
+	If something goes wrong:
+		BUG().
+
+What I could do here is:
+
+Add a "fallback" boll that is disabled by default.
+If I hit this case:
+	WARN()
+	turn "fallback" on, returning to the old mode (without batch)
+
+Sound better?
+
+Thanks!
+-- Daniel
+
+> -- Steve
+> 
+>> +		}
+>> +	}
+>> +	arch_jump_label_transform_apply();
+>> +}
+>> +#endif
+>>  
+>>  void __init jump_label_init(void)
+>>  {
+> 
+
