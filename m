@@ -2,131 +2,106 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF70C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E870BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AB112133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B72482133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:50:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WXe/YzAP"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="XfODicEZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbeLRItc (ORCPT
+        id S1726679AbeLRIuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:49:32 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38955 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeLRItb (ORCPT
+        Tue, 18 Dec 2018 03:50:24 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40221 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRIuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:49:31 -0500
-Received: by mail-io1-f67.google.com with SMTP id k7so12146792iob.6
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:49:30 -0800 (PST)
+        Tue, 18 Dec 2018 03:50:24 -0500
+Received: by mail-wr1-f65.google.com with SMTP id p4so14991908wrt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:50:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SZLy9GtLOSPmcm1TJ/4tu3KIUYhdGwri89QEAb8LxHc=;
-        b=WXe/YzAPHLcvASI/w2eqvGMXzNzvNE5ELfJNOM5WLMY5n+q3NbLZyhRFIzeFtlnlFC
-         lOjSbUy4Z4Ws2aqFCBe0Rz2ROZWW0EccYxtemcqgm2tw2+hqtMh/gVAk8R8q1OBk6kRc
-         CYvQ7rtgWlswuNWC8cBqcnWzBSH9+GnzMTWam8VVR+PNOUdTsODR2oTe5sSY4BxwwfY8
-         8poPnSTQmFhvfE6r9IPzvvgg1zRCObZYdx9cxmFm6CkUwITFkuySyIF1JZ+a5YuW6GWP
-         aRtY4Ij/I17Dusn6Vjz9Ws38HXds86PKnvQkdKjuJgbPGQ+hD7IMsu8JS6nfjz/tX9xx
-         crJQ==
+        bh=c8CVInH/SbEiauJpAH+701m4etUfcrFaiMTk9o+WaXM=;
+        b=XfODicEZuXglLaLhb0Mx6r7CDHrVRQnpjHtTqVFRqLzKs93Q0/5G4JzUMttOtwTm3o
+         gc2OMYxj7QZGuMJcOljt/AmxYq3qXSQRbXsBouoG7CGwqx+r5TYjJAd54HEmGzSSWA0l
+         j3zRwkHxrZK2ueV2l+hIUopDlMjeTc8jeUkvUiEUjryHrQp/UaFMNPzgHSgtXoX8EelP
+         FyADUBTcXXqbIL4usyRZUeQaDXeB9rhIgdH9w6eyeY1BwR0g1DL1XdpuTbv7kmTvUCCl
+         2KONdXA43hKkLnPm+0cSMGvigCY0P2CdWvAjKlkTxERmGZ+SuGE+l0YKyQg461siaRpH
+         sCCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SZLy9GtLOSPmcm1TJ/4tu3KIUYhdGwri89QEAb8LxHc=;
-        b=fENkSPdZcsYsvNwcXkHcoVEqfk/TcbO3x3xs1vGME8PFedPo1ycVnargp1tAbwlKS5
-         fhubx/bo5g2xtxXHgptR9OVpOSqXeYwnLEJzxIOuhzOqDdfQ0fnqVoTBMZj+R7LyMVrR
-         fbI9NaPjC/w37FNnhojKOgXy0dzyc7snA8yHYa+PGDxNwfg/KBvpNKJpl3a4U47JSlcO
-         OV9Y7TY3MzCSEaCV55WdxZyHa9s7p7krLv24nE7xBxonkoJMdwKHUDjKG3fjInxuq1V7
-         h2K8vgS0YgeJm5ovSr4Z+R2TkLi40k3Z8wujoBtN3ec5VknCJv2x5yY7jf3xSptAUhUi
-         j9ug==
-X-Gm-Message-State: AA+aEWYuUf17i3VyJFpmKgut+kiVMdpUTQTnMiWcimqbwBEzjPdcWDqn
-        QvFIaATm0oTQU99ebeeBAZ9LZOaicgpolctK+jeySg==
-X-Google-Smtp-Source: AFSGD/X4DGpmf2bUrpUvzmSBYZ9I1hlsB53MB6ETVAZew1z7m5U9ukFwrbx1EVNRwJPBkvzn3A5ccj+w0dV8ys8Hwvw=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr13624225iom.11.1545122969450;
- Tue, 18 Dec 2018 00:49:29 -0800 (PST)
+        bh=c8CVInH/SbEiauJpAH+701m4etUfcrFaiMTk9o+WaXM=;
+        b=Ip1BN3tX5ssgS4FffE+gTrBznFHa9KDRqPGW72lzc0pFBLbo/V0AvIQqdv3iseU+di
+         fkeYD03rIjljJRhOrHdDQG5O/wQLNCivLpiFnnrCwvmz7y8jYS6mQw6sNLw0o+Xfowoz
+         nhDyzVVowosIp8D8uH6hoJ/kV/s4zBDSPJF5Xr6lgU3NaPaPKN0ORWBQNJpV5NkjHoGa
+         itcidYPN/Uem6UUf0K99CglCHZnroxjBBJa/LVZIMqthDQJWwHIMO1YutRn4hODaAwwo
+         swf+UlJSg7mD3Y4otgEeWpHBXPHZFMOjpfv2ZcIj8XQ+N+aHULKC/DHG8pAyg8uz481p
+         dqlA==
+X-Gm-Message-State: AA+aEWalh9B7o+J82e95TpVmGwumCgebg1PXjN8796P0VpMJQ17iYlKz
+        cpjYZ9/alZ0agWylEmFTCvwo58g0w6AdLWAD8AQztg==
+X-Google-Smtp-Source: AFSGD/WKPPe/HQ7gZY5Aorl6zhP8OTNnHT2P8RntasKyZaqkXlwXzXL63KPV/JNloZx6uWTkOxX5DeUECoCrRzBIF/U=
+X-Received: by 2002:adf:f785:: with SMTP id q5mr14616682wrp.9.1545123021978;
+ Tue, 18 Dec 2018 00:50:21 -0800 (PST)
 MIME-Version: 1.0
-References: <0000000000005e47a2057d0edc49@google.com> <20181216190412.GE4170@linux.ibm.com>
- <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
- <20181217112916.GG4170@linux.ibm.com> <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
- <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
- <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com> <20181217162421.6d636ee5@redhat.com>
- <CACT4Y+YXFrnQh9h1KQf8=NcHugmxTj+d7AQdGCvRX_xsHwr1qA@mail.gmail.com> <20181218001828.49cea463@redhat.com>
-In-Reply-To: <20181218001828.49cea463@redhat.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 18 Dec 2018 09:49:17 +0100
-Message-ID: <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
-Subject: Re: WARNING in __rcu_read_unlock
-To:     Stefano Brivio <sbrivio@redhat.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>
+References: <20181130080207.20505-1-anup@brainfault.org> <20181130080207.20505-4-anup@brainfault.org>
+ <20181217182719.GC7086@infradead.org>
+In-Reply-To: <20181217182719.GC7086@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 18 Dec 2018 14:20:10 +0530
+Message-ID: <CAAhSdy3i+ap2J0By3nRqK6yvb8oD4-+2QwUO9PH9GM+0odKqSA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] irqchip: sifive-plic: More flexible plic_irq_toggle()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 12:18 AM Stefano Brivio <sbrivio@redhat.com> wrote:
+On Mon, Dec 17, 2018 at 11:57 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> On Mon, 17 Dec 2018 16:53:36 +0100
-> Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> > On Mon, Dec 17, 2018 at 4:24 PM Stefano Brivio <sbrivio@redhat.com> wrote:
-> > >
-> > > On Mon, 17 Dec 2018 06:57:35 -0800
-> > > Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> > >
-> > > > Might be cause by commit b8a51b38e4d4dec3e379d52c0fe1a66827f7cf1e
-> > > > fou, fou6: ICMP error handlers for FoU and GUE
-> > >
-> > > This:
-> > >
-> > > diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
-> > > index 0d0ad19ecb87..20a6de26d146 100644
-> > > --- a/net/ipv4/fou.c
-> > > +++ b/net/ipv4/fou.c
-> > > @@ -1008,6 +1008,9 @@ static int gue_err_proto_handler(int proto, struct sk_buff *skb, u32 info)
-> > >  {
-> > >         const struct net_protocol *ipprot = rcu_dereference(inet_protos[proto]);
-> > >
-> > > +       if (ipprot == IPPROTO_UDP)
-> > > +               return -EINVAL;
-> > > +
-> > >         if (ipprot && ipprot->err_handler) {
-> > >                 if (!ipprot->err_handler(skb, info))
-> > >                         return 0;
-> > >
-> > > should fix the issue, but I still have to run tests and make sure we
-> > > don't hit similar cases.
+> > -static inline void plic_toggle(struct plic_handler *handler,
+> > -                             int hwirq, int enable)
+> > +static void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
+> >  {
+> >       u32 __iomem *reg = handler->enable_base + (hwirq / 32) * sizeof(u32);
+> >       u32 hwirq_mask = 1 << (hwirq % 32);
+> > @@ -92,27 +91,27 @@ static inline void plic_toggle(struct plic_handler *handler,
+> >       raw_spin_unlock(&handler->enable_lock);
+> >  }
 > >
-> > Please don't forget to add a regression test for it too ;)
+> > -static inline void plic_irq_toggle(struct irq_data *d, int enable)
+> > +static void plic_irq_toggle(const struct cpumask *mask, int hwirq, int enable)
 >
-> Where would you suggest to add this? The only selftest that goes
+> It also removes inline statements which seems rather unrelated to
+> the patch description.
 
-I dunno. But there must be some place for such tests, right?
+Actually these functions should not be inline because plic_toggle() uses
+raw_spin_lock() and plic_irq_toggle() uses for-loop.
 
-> through this path currently is net/pmtu.sh, but as configuration of an
-> actual UDP-in-GUE tunnel is currently not supported, I would really
-> need to forge that specific packet, so that doesn't seem to be a good
-> fit.
 >
-> Won't syzbot add this to some list of reproducers that are checked in
-> the future?
+> Also the actual addintion of the single cpumask argument is simple
+> enough that it should probably go into the patch that makes use of it.
 
-It won't. Also fuzzing is complementary to testing, not a replacement:
-https://twitter.com/dvyukov/status/1074719682962358272
+OK, I will have separate patch for removing "inline" and move addition
+of cpumask argument to last patch.
+
+Regards,
+Anup
