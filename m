@@ -2,106 +2,145 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9B7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E270EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3577217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QOqVccZX"
+	by mail.kernel.org (Postfix) with ESMTP id C0285217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbeLROQh (ORCPT
+        id S1727024AbeLROQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:16:37 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39828 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbeLROQh (ORCPT
+        Tue, 18 Dec 2018 09:16:50 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37489 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbeLROQt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:16:37 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBIEGXB4097641;
-        Tue, 18 Dec 2018 08:16:33 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545142593;
-        bh=koW5A0MOKjpLpNAdQ409QHyU+/6NDKapR1otcInDHV4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=QOqVccZXVOem8Q+LK4uzSkgZH+U+nnl0NepXOGBIUZeqGQXm0l/gxcjrRnH8LD7Si
-         lfuusqLxI/lZxRGZLwXvULAZk1aLShujrokLN8wo9+g2AHTYcv1UgwEMQrGPeWLZdm
-         pcL0cy56IX0WcxbiOX5A1HWrjvYvSzKcgI3Vi6n8=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBIEGXdL081187
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Dec 2018 08:16:33 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 18
- Dec 2018 08:16:32 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 18 Dec 2018 08:16:32 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBIEGT0I031344;
-        Tue, 18 Dec 2018 08:16:30 -0600
-Subject: Re: [PATCH v5 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY
- driver
-To:     Shawn Guo <shawn.guo@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Sriharsha Allenki <sallenki@codeaurora.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20181127100722.9993-1-shawn.guo@linaro.org>
- <20181127100722.9993-3-shawn.guo@linaro.org>
- <b0d02b1c-cc44-69fe-0765-84caf76eaea1@ti.com> <20181204060104.GA11391@dragon>
- <20181217003434.GA7208@dragon>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <c5ccf173-d0f3-70f4-f8e3-777fd3339b68@ti.com>
-Date:   Tue, 18 Dec 2018 19:46:13 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 18 Dec 2018 09:16:49 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEGSI72855001
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 06:16:28 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEGSkP2854998;
+        Tue, 18 Dec 2018 06:16:28 -0800
+Date:   Tue, 18 Dec 2018 06:16:28 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-x533ra5c1pgofvbtsizzuydd@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
+        acme@redhat.com, davem@davemloft.net, namhyung@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
+          namhyung@kernel.org, davem@davemloft.net, jolsa@kernel.org,
+          alexander.shishkin@linux.intel.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf top: Drop samples which are behind the refresh
+ rate
+Git-Commit-ID: d63b9f6fea7613e2fdc8a5ef7e17ecc9cf24bf9d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20181217003434.GA7208@dragon>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20181218141628.tyltgGuYiSvNkT5UrR28IfAuNLHmfDHQ6882ecLM6p0@z>
 
+Commit-ID:  d63b9f6fea7613e2fdc8a5ef7e17ecc9cf24bf9d
+Gitweb:     https://git.kernel.org/tip/d63b9f6fea7613e2fdc8a5ef7e17ecc9cf24bf9d
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 11 Nov 2018 19:52:06 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 17 Dec 2018 14:58:26 -0300
 
+perf top: Drop samples which are behind the refresh rate
 
-On 17/12/18 6:04 AM, Shawn Guo wrote:
-> On Tue, Dec 04, 2018 at 02:01:07PM +0800, Shawn Guo wrote:
->> Hi Kishon,
->>
->> On Tue, Dec 04, 2018 at 10:38:19AM +0530, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On 27/11/18 3:37 PM, Shawn Guo wrote:
->>>> It adds Synopsys 28nm Femto High-Speed USB PHY driver support, which
->>>> is usually paired with Synopsys DWC3 USB controllers on Qualcomm SoCs.
->>>
->>> Is this Synopsys PHY specific to Qualcomm or could it be used by other vendors
->>> (with just changing tuning parameters)? If it could be used by other vendors
->>> then it would make sense to add this PHY driver in synopsys directory.
->>
->> My knowledge is that this Synopsys PHY is specific to Qualcomm SoCs.
->> @Sriharsha, correct me if I'm wrong.
-> 
-> Kishon,
-> 
-> Do you have any further comments on the patches?  We are close the 4.21
-> merge window, and I really hope they can hit mainline with 4.21 release.
-> Thanks.
+Drop samples from processing thread if they get behind the latest event
+read from the kernel maps. If it gets behind more than the refresh rate
+(-d option), drop the sample.
 
-Aren't we waiting for feedback from Sriharsha?
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: David S. Miller <davem@davemloft.net>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/n/tip-x533ra5c1pgofvbtsizzuydd@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-top.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
--Kishon
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 50ec01eb7f57..234232d538c2 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -833,6 +833,8 @@ perf_top__process_lost_samples(struct perf_top *top,
+ 	hists->stats.total_lost_samples += event->lost_samples.lost;
+ }
+ 
++static u64 last_timestamp;
++
+ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
+ {
+ 	struct record_opts *opts = &top->record_opts;
+@@ -845,14 +847,13 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
+ 		return;
+ 
+ 	while ((event = perf_mmap__read_event(md)) != NULL) {
+-		u64 timestamp = -1ULL;
+ 		int ret;
+ 
+-		ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
++		ret = perf_evlist__parse_sample_timestamp(evlist, event, &last_timestamp);
+ 		if (ret && ret != -1)
+ 			break;
+ 
+-		ret = ordered_events__queue(top->qe.in, event, timestamp, 0);
++		ret = ordered_events__queue(top->qe.in, event, last_timestamp, 0);
+ 		if (ret)
+ 			break;
+ 
+@@ -1084,6 +1085,21 @@ static void *process_thread(void *arg)
+ 	return NULL;
+ }
+ 
++/*
++ * Allow only 'top->delay_secs' seconds behind samples.
++ */
++static int should_drop(struct ordered_event *qevent, struct perf_top *top)
++{
++	union perf_event *event = qevent->event;
++	u64 delay_timestamp;
++
++	if (event->header.type != PERF_RECORD_SAMPLE)
++		return false;
++
++	delay_timestamp = qevent->timestamp + top->delay_secs * NSEC_PER_SEC;
++	return delay_timestamp < last_timestamp;
++}
++
+ static int deliver_event(struct ordered_events *qe,
+ 			 struct ordered_event *qevent)
+ {
+@@ -1096,6 +1112,9 @@ static int deliver_event(struct ordered_events *qe,
+ 	struct machine *machine;
+ 	int ret = -1;
+ 
++	if (should_drop(qevent, top))
++		return 0;
++
+ 	ret = perf_evlist__parse_sample(evlist, event, &sample);
+ 	if (ret) {
+ 		pr_err("Can't parse sample, err = %d\n", ret);
