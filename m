@@ -2,188 +2,238 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF94C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA081C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1BA2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:52:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BNjXcXN/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GArBNeEB"
+	by mail.kernel.org (Postfix) with ESMTP id 6CB432133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 05:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545112526;
+	bh=RO+qVZqc56lHf609ezk3owYaE70TiFxtMxpkPgvQVRo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kpd5EMUE/4QmmH6iuI3G/ZkvYHHEvHzHr9YyJkwpUIJwF8z7I39rDEJ0ztJWcoedh
+	 sqz7eiZMU/1gughvQDnNeMs/XZPq6dq4jOJY82SJ9udaFB8aB2VzTbnbDbYH2bZSsE
+	 VBFhzq4ZbJM7rVKHmLGmC6jdHxxb+SECRywnTflA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeLRFws (ORCPT
+        id S1726379AbeLRFzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 00:52:48 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42642 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbeLRFwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 00:52:47 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0EE146058E; Tue, 18 Dec 2018 05:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545112366;
-        bh=p1tw1Z0LFPM3iluJj1jUZWm89hLe4jawIyRafF1rI50=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BNjXcXN/FIJVF/SroKEUxebBnUlP/r3qz5YcCDMJ0Z8gD9IFOg/0u7bhB0+j0qUXz
-         h2sd6Y4FN3SGoJdg5laIXnTIzpa9wK9rdz1OfIk6NwjlvyNm07tCgJBbKsUO5OUpUq
-         ZzpNe8NF+Xz9xsZFEJKWVzfF6VuacnEn8grT4qVc=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 95CF66058E;
-        Tue, 18 Dec 2018 05:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545112364;
-        bh=p1tw1Z0LFPM3iluJj1jUZWm89hLe4jawIyRafF1rI50=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GArBNeEBQFE6G3LxAujRE3Ofh5oCibz7zeNv6hU0k60B2A2dy4FwVaCD89xLj1Vpx
-         wblVecoWHP9BHKfrUQqIBATNBrbNnj6akeOWGKWRBn9/Tgn/+cBgABQfcHSARcJSRU
-         7xr/AM+IosxzyDCbyvml3dBwS7RxAUq3i7W82Nd0=
+        Tue, 18 Dec 2018 00:55:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726314AbeLRFzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 00:55:25 -0500
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F0582133F
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545112523;
+        bh=RO+qVZqc56lHf609ezk3owYaE70TiFxtMxpkPgvQVRo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=l9J1q18fQmFnvw+2Ia5V6jotnOcEXKeFBjejk0uCsnXOwQT9oCaCQhQDydVvPssR4
+         P/rPc/SACe1h+rvTnITK7F9ytJhpOLXE2gFpYUWn8DwUgBW4WkFoZlmLJgvUyVaYqy
+         o6y9OZipAHfxPax4p5ZCiaDeC6HDrq7Ex7sfjRFE=
+Received: by mail-wr1-f48.google.com with SMTP id j2so14597210wrw.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 21:55:23 -0800 (PST)
+X-Gm-Message-State: AA+aEWZnTYJklLTbUOefSBgdahgDNGz/U74G5MkZZoGjBSMJU4ECQZss
+        GMhZ6pc9Big/jfWQZnlVTTrabSZ5fa0QOFTGzZrlew==
+X-Google-Smtp-Source: AFSGD/VAGbeu4zHizrDiiOyqfyzKT7Sbq4qqUaIbgL5AkBMjvoW2w4fErOn0Vkww1rCPPjaGVVervLvuCIgh9TDSJFM=
+X-Received: by 2002:adf:e08c:: with SMTP id c12mr12348514wri.199.1545112520053;
+ Mon, 17 Dec 2018 21:55:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 18 Dec 2018 11:22:44 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-remoteproc@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: remoteproc: qcom: Add clock bindings
- for Q6V5
-In-Reply-To: <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
- <20181217100724.4593-2-sibis@codeaurora.org>
- <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com>
-Message-ID: <8decd38d8e28c6657949f3c140947977@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 17 Dec 2018 21:55:08 -0800
+X-Gmail-Original-Message-ID: <CALCETrX1XG1kCrVfx1athBaCWp4H0xoKnjoDjFOqR4nf_VqBrA@mail.gmail.com>
+Message-ID: <CALCETrX1XG1kCrVfx1athBaCWp4H0xoKnjoDjFOqR4nf_VqBrA@mail.gmail.com>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
-Thanks for the review :)
+On Thu, Nov 15, 2018 at 5:08 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> can be used by applications to set aside private regions of code and
+> data. The code outside the enclave is disallowed to access the memory
+> inside the enclave by the CPU access control.
 
-On 2018-12-18 05:29, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Dec 17, 2018 at 2:07 AM Sibi Sankar <sibis@codeaurora.org> 
-> wrote:
->> 
->> Add missing clock bindings for Q6V5 MSS on SDM845 SoCs.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt       | 10 
->> +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
-> on msm8996")
-> Fixes: fb22022ff63d ("dt-bindings: remoteproc: Add Q6v5 Modem PIL
-> binding for SDM845")
-> 
-> ...it probably doesn't matter too much but if we wanted to be really
-> careful we could split into two patches, one for the msm8996 and one
-> for sdm845.  I don't think people care that much about stable
-> backports of bindings though (someone can feel free to correct me)...
-> 
+This is a very partial review.
 
-I did think of splitting this up but it doesn't
-actually fix 9f058fa2efb1 yet. I noticed a few missing
-clocks for mss on 8996 when I did a diff with the
-corresponding CAF tree. Hence couldn't add bindings for
-it. Will add them once I validate mss on 8996 with the
-necessary changes.
+> +int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+> +                 struct vm_area_struct **vma)
+> +{
+> +       struct vm_area_struct *result;
+> +       struct sgx_encl *encl;
+> +
+> +       result = find_vma(mm, addr);
+> +       if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+> +               return -EINVAL;
+> +
+> +       encl = result->vm_private_data;
+> +       *vma = result;
+> +
+> +       return encl ? 0 : -ENOENT;
+> +}
 
-> 
->> diff --git 
->> a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt 
->> b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> index 9ff5b0309417..780adc043b37 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
->> @@ -39,13 +39,17 @@ on the Qualcomm Hexagon core.
->>  - clocks:
->>         Usage: required
->>         Value type: <phandle>
->> -       Definition: reference to the iface, bus and mem clocks to be 
->> held on
->> -                   behalf of the booting of the Hexagon core
->> +       Definition: reference to the list of 4 clocks for the modem 
->> sub-system
->> +                   reference to the list of 8 clocks for the modem 
->> sub-system
->> +                   on SDM845 SoCs
-> 
-> The above is confusing because you don't list the SoCs that are
-> supposed to use the 4 clocks.  How about instead:
-> 
-> Definition: reference to the clocks that match clock-names
-> 
+I realize that this function may go away entirely but, if you keep it:
+what are the locking rules?  What, if anything, prevents another
+thread from destroying the enclave after sgx_encl_find() returns?
 
-AFAIK, only the exceptions are captured. I am fine
-with both, I'll wait for Bjorn/Rob's preference.
+> +static int sgx_validate_secs(const struct sgx_secs *secs,
+> +                            unsigned long ssaframesize)
+> +{
 
-> 
->>  - clock-names:
->>         Usage: required
->>         Value type: <stringlist>
->> -       Definition: must be "iface", "bus", "mem"
->> +       Definition: must be "iface", "bus", "mem", "xo" for the modem 
->> sub-system
->> +                   must be "iface", "bus", "mem", "gpll0_mss", 
->> "snoc_axi",
->> +                   "mnoc_axi", "prng", "xo" for the modem sub-system 
->> on SDM845
->> +                   SoCs
-> 
-> Same here where it's confusing.  ...but also, it it correct?  As far
-> as I can tell you're missing msm8996.  It's better to just be explicit
-> and list each one, ideally without all the prose.
-> 
-> Definition: The clocks needed depend on the compatible string:
-> 
+...
 
-ditto
+> +       if (secs->attributes & SGX_ATTR_MODE64BIT) {
+> +               if (secs->size > sgx_encl_size_max_64)
+> +                       return -EINVAL;
+> +       } else {
+> +               /* On 64-bit architecture allow 32-bit encls only in
+> +                * the compatibility mode.
+> +                */
+> +               if (!test_thread_flag(TIF_ADDR32))
+> +                       return -EINVAL;
+> +               if (secs->size > sgx_encl_size_max_32)
+> +                       return -EINVAL;
+> +       }
 
-> qcom,sdm845-mss-pil: "xo", "prng", "iface", "snoc_axi", "bus", "mem",
-> "gpll0_mss", "mnoc_axi"
-> qcom,msm8996-mss-pil: "xo", "pnoc", "iface", "bus", "mem", 
-> "gpll0_mss_clk"
+Why do we need the 32-bit-on-64-bit check?  In general, anything that
+checks per-task or per-mm flags like TIF_ADDR32 is IMO likely to be
+problematic.  You're allowing 64-bit enclaves in 32-bit tasks, so I'm
+guessing you could just delete the check.
 
-ditto
+> +
+> +       if (!(secs->xfrm & XFEATURE_MASK_FP) ||
+> +           !(secs->xfrm & XFEATURE_MASK_SSE) ||
+> +           (((secs->xfrm >> XFEATURE_BNDREGS) & 1) !=
+> +            ((secs->xfrm >> XFEATURE_BNDCSR) & 1)) ||
+> +           (secs->xfrm & ~sgx_xfrm_mask))
+> +               return -EINVAL;
 
-> qcom,msm8974-mss-pil: "xo", "iface", "bus", "mem"
-> qcom,msm8916-mss-pil: "xo", "iface", "bus", "mem"
-> qcom,q6v5-pil: "xo", "iface", "bus", "mem"
-> 
-> ...as far as I can tell this binding is supposed to account for
-> "qcom,ipq8074-wcss-pil" too but it seems that one doesn't have
-> clock-names.
-> 
+Do we need to check that the enclave doesn't use xfeatures that the
+kernel doesn't know about?  Or are they all safe by design in enclave
+mode?
 
-Yeah the lack of clocks have to be documented
-for ipq8074-wcss-pil.. will do it in v3
+> +static int sgx_encl_pm_notifier(struct notifier_block *nb,
+> +                               unsigned long action, void *data)
+> +{
+> +       struct sgx_encl *encl = container_of(nb, struct sgx_encl, pm_notifier);
+> +
+> +       if (action != PM_SUSPEND_PREPARE && action != PM_HIBERNATION_PREPARE)
+> +               return NOTIFY_DONE;
 
-> 
-> -Doug
+Hmm.  There's an argument to made that omitting this would better
+exercise the code that handles fully asynchronous loss of an enclave.
+Also, I think you're unnecessarily killing enclaves when suspend is
+attempted but fails.
 
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+> +
+> +static int sgx_get_key_hash(const void *modulus, void *hash)
+> +{
+> +       struct crypto_shash *tfm;
+> +       int ret;
+> +
+> +       tfm = crypto_alloc_shash("sha256", 0, CRYPTO_ALG_ASYNC);
+> +       if (IS_ERR(tfm))
+> +               return PTR_ERR(tfm);
+> +
+> +       ret = __sgx_get_key_hash(tfm, modulus, hash);
+> +
+> +       crypto_free_shash(tfm);
+> +       return ret;
+> +}
+> +
+
+I'm so sorry you had to deal with this API.  Once Zinc lands, you
+could clean this up :)
+
+
+> +static int sgx_encl_get(unsigned long addr, struct sgx_encl **encl)
+> +{
+> +       struct mm_struct *mm = current->mm;
+> +       struct vm_area_struct *vma;
+> +       int ret;
+> +
+> +       if (addr & (PAGE_SIZE - 1))
+> +               return -EINVAL;
+> +
+> +       down_read(&mm->mmap_sem);
+> +
+> +       ret = sgx_encl_find(mm, addr, &vma);
+> +       if (!ret) {
+> +               *encl = vma->vm_private_data;
+> +
+> +               if ((*encl)->flags & SGX_ENCL_SUSPEND)
+> +                       ret = SGX_POWER_LOST_ENCLAVE;
+> +               else
+> +                       kref_get(&(*encl)->refcount);
+> +       }
+
+Hmm.  This version has explicit refcounting.
+
+> +static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +       vma->vm_ops = &sgx_vm_ops;
+> +       vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO |
+> +                        VM_DONTCOPY;
+> +
+> +       return 0;
+> +}
+> +
+> +static unsigned long sgx_get_unmapped_area(struct file *file,
+> +                                          unsigned long addr,
+> +                                          unsigned long len,
+> +                                          unsigned long pgoff,
+> +                                          unsigned long flags)
+> +{
+> +       if (len < 2 * PAGE_SIZE || (len & (len - 1)))
+> +               return -EINVAL;
+> +
+> +       if (len > sgx_encl_size_max_64)
+> +               return -EINVAL;
+> +
+> +       if (len > sgx_encl_size_max_32 && test_thread_flag(TIF_ADDR32))
+> +               return -EINVAL;
+
+Generally speaking, this type of check wants to be
+in_compat_syscall().  But I'm not sure I understand why you need it at
+all.
+
+> +static void sgx_ipi_cb(void *info)
+> +{
+> +}
+> +
+> +void sgx_flush_cpus(struct sgx_encl *encl)
+> +{
+> +       on_each_cpu_mask(mm_cpumask(encl->mm), sgx_ipi_cb, NULL, 1);
+> +}
+
+Please add a comment explaining what this promises to do.
