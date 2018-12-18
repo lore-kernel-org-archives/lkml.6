@@ -2,439 +2,191 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D829C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A71F217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CDEF217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:05:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="px+WCovD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbeLRVFR (ORCPT
+        id S1727703AbeLRVF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:05:17 -0500
-Received: from mga04.intel.com ([192.55.52.120]:32596 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727537AbeLRVEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:04:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 13:04:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,370,1539673200"; 
-   d="scan'208";a="131061938"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Dec 2018 13:04:45 -0800
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Stef van Os <stef.van.os@prodrive-technologies.com>
-Subject: [PATCH v9 11/12] hwmon: Add PECI dimmtemp driver
-Date:   Tue, 18 Dec 2018 13:04:16 -0800
-Message-Id: <20181218210417.30140-12-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181218210417.30140-1-jae.hyun.yoo@linux.intel.com>
-References: <20181218210417.30140-1-jae.hyun.yoo@linux.intel.com>
+        Tue, 18 Dec 2018 16:05:26 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51620 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbeLRVFY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 16:05:24 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b11so3978417wmj.1;
+        Tue, 18 Dec 2018 13:05:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=F+1Jl4CIRfiPBTM5FoEi5pium7S9mvLaBFwu+RPulf4=;
+        b=px+WCovDxwA2RPpCvj+PiecdaWNWnxA01VWg15aaLK/Mn1VkZncszjTUN4IO59VNDS
+         rabe5nTCpoD70Nai+AGTqGm0yehilAtrAxtMXgUzRS+YX+0Rpv6JStJp1r4/611rQdfJ
+         3Pib/Igna6I4y9q+1T7FkzFsUOQ90Y61QmUZwDDKSj+Yl2f1gcVvSJw0haAXt+Fik0hu
+         NnHf83WI6CKu+otoBhrQz7SLiY8qrpddlpQvIyS2uN898LA3NLQvPrT90Mhz+FhO1eu1
+         jEmQWIS+YJ8eTkQgI2FQcI00DtvIhgqJKOSu+02Fd1BqgA0KkWEqfBMatJQJxM55Ykbb
+         qmTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=F+1Jl4CIRfiPBTM5FoEi5pium7S9mvLaBFwu+RPulf4=;
+        b=ZUaJW3YaIbTUODFGG/4jWw/2r8mPictjw/SaaYcy1FkExzzNaOWuL5YfOdrzyOxRqI
+         5eIQRO6uttMxtH9QA1tdkHZe1j9Y+NSsYhQi0muoqOViKRi2GeOmSh3KoMpkhMPsEm67
+         irHSsP9HH4DK578AMXz4HGXjb7N6GErDvCyrQS82i9tt57HTv0Ey5JjYqesIgWALn0R7
+         RLGESa4cSntfYAD7vswSYc5Uz6i3Sayg6A+6HXqT2cgkbaKXwFZpSQNeyWzCc3O1rkWD
+         BrHY+l7VDlp+PpP7EvhWXUSYNVyt44UEJHHo7ZgPeOJv0Pv49zZWSXqMmqkfZjoL6HRQ
+         JadQ==
+X-Gm-Message-State: AA+aEWaYyxgZ6n2FET2oehedBFbRRAA/lXiusDqadWseXN/nTFkfDwV0
+        KhVj1E+MShrpW83GnQd4Nog=
+X-Google-Smtp-Source: AFSGD/UOQDWJWXMSnCFelIM0WHDuP0g4S9I1OdAVGnVAvz8a62YfDfPIGQ4ofzUEQCB542BWyl2fjw==
+X-Received: by 2002:a1c:7fca:: with SMTP id a193mr4695894wmd.36.1545167121632;
+        Tue, 18 Dec 2018 13:05:21 -0800 (PST)
+Received: from [192.168.10.165] ([93.56.166.5])
+        by smtp.googlemail.com with ESMTPSA id a1sm4378137wrw.76.2018.12.18.13.05.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 13:05:20 -0800 (PST)
+Subject: Re: [PATCH] KVM: X86: Fix NULL deref in vcpu_scan_ioapic
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1545014603-4109-1-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <a5284a1f-fa99-b0f3-4cb6-3115328aa3e8@redhat.com>
+Date:   Tue, 18 Dec 2018 22:03:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <1545014603-4109-1-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds PECI dimmtemp hwmon driver.
+On 17/12/18 03:43, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Reported by syzkaller:
+> 
+>     CPU: 1 PID: 5962 Comm: syz-executor118 Not tainted 4.20.0-rc6+ #374
+>     Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+>     RIP: 0010:kvm_apic_hw_enabled arch/x86/kvm/lapic.h:169 [inline]
+>     RIP: 0010:vcpu_scan_ioapic arch/x86/kvm/x86.c:7449 [inline]
+>     RIP: 0010:vcpu_enter_guest arch/x86/kvm/x86.c:7602 [inline]
+>     RIP: 0010:vcpu_run arch/x86/kvm/x86.c:7874 [inline]
+>     RIP: 0010:kvm_arch_vcpu_ioctl_run+0x5296/0x7320 arch/x86/kvm/x86.c:8074
+>     Call Trace:
+> 	 kvm_vcpu_ioctl+0x5c8/0x1150 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2596
+> 	 vfs_ioctl fs/ioctl.c:46 [inline]
+> 	 file_ioctl fs/ioctl.c:509 [inline]
+> 	 do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+> 	 ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+> 	 __do_sys_ioctl fs/ioctl.c:720 [inline]
+> 	 __se_sys_ioctl fs/ioctl.c:718 [inline]
+> 	 __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+> 	 do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> 	 entry_SYSCALL_64_after_hwframe+0x49/0xbe 
+> 
+> The reason is that the testcase writes hyperv synic HV_X64_MSR_SINT14 msr
+> and triggers scan ioapic logic to load synic vectors into EOI exit bitmap.
+> However, irqchip is not initialized by this simple testcase, ioapic/apic
+> objects should not be accessed.
+> 
+> This patch fixes it by also considering whether or not apic is present.
+> 
+> Reported-by: syzbot+39810e6c400efadfef71@syzkaller.appspotmail.com
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+>  arch/x86/kvm/x86.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 4f786fc..c7c1197 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7510,7 +7510,7 @@ void kvm_make_scan_ioapic_request(struct kvm *kvm)
+>  
+>  static void vcpu_scan_ioapic(struct kvm_vcpu *vcpu)
+>  {
+> -	if (!kvm_apic_hw_enabled(vcpu->arch.apic))
+> +	if (!kvm_apic_present(vcpu))
+>  		return;
+>  
+>  	bitmap_zero(vcpu->arch.ioapic_handled_vectors, 256);
+> 
 
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Alan Cox <alan@linux.intel.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Stef van Os <stef.van.os@prodrive-technologies.com>
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-Reviewed-by: James Feist <james.feist@linux.intel.com>
-Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/hwmon/Kconfig         |  14 ++
- drivers/hwmon/Makefile        |   1 +
- drivers/hwmon/peci-dimmtemp.c | 284 ++++++++++++++++++++++++++++++++++
- 3 files changed, 299 insertions(+)
- create mode 100644 drivers/hwmon/peci-dimmtemp.c
+Queued, thanks.
 
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index f08b4a670ac5..d2299d850508 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1320,6 +1320,20 @@ config SENSORS_PECI_CPUTEMP
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called peci-cputemp.
- 
-+config SENSORS_PECI_DIMMTEMP
-+	tristate "PECI DIMM temperature monitoring support"
-+	depends on PECI
-+	select MFD_INTEL_PECI_CLIENT
-+	help
-+	  If you say yes here you get support for the generic Intel PECI hwmon
-+	  driver which provides Digital Thermal Sensor (DTS) thermal readings of
-+	  DIMM components that are accessible using the PECI Client Command
-+	  Suite via the processor PECI client.
-+	  Check Documentation/hwmon/peci-dimmtemp for details.
-+
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called peci-dimmtemp.
-+
- source drivers/hwmon/pmbus/Kconfig
- 
- config SENSORS_PWM_FAN
-diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-index 13ebde089ad5..b7cf35bcfbaf 100644
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@ -142,6 +142,7 @@ obj-$(CONFIG_SENSORS_PC87360)	+= pc87360.o
- obj-$(CONFIG_SENSORS_PC87427)	+= pc87427.o
- obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
- obj-$(CONFIG_SENSORS_PECI_CPUTEMP)	+= peci-cputemp.o
-+obj-$(CONFIG_SENSORS_PECI_DIMMTEMP)	+= peci-dimmtemp.o
- obj-$(CONFIG_SENSORS_POWR1220)  += powr1220.o
- obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
- obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
-diff --git a/drivers/hwmon/peci-dimmtemp.c b/drivers/hwmon/peci-dimmtemp.c
-new file mode 100644
-index 000000000000..86a45a90805b
---- /dev/null
-+++ b/drivers/hwmon/peci-dimmtemp.c
-@@ -0,0 +1,284 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 Intel Corporation
-+
-+#include <linux/hwmon.h>
-+#include <linux/jiffies.h>
-+#include <linux/mfd/intel-peci-client.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/workqueue.h>
-+#include "peci-hwmon.h"
-+
-+#define DIMM_MASK_CHECK_DELAY_JIFFIES  msecs_to_jiffies(5000)
-+#define DIMM_MASK_CHECK_RETRY_MAX      60 /* 60 x 5 secs = 5 minutes */
-+
-+struct peci_dimmtemp {
-+	struct peci_client_manager *mgr;
-+	struct device *dev;
-+	char name[PECI_NAME_SIZE];
-+	const struct cpu_gen_info *gen_info;
-+	struct workqueue_struct *work_queue;
-+	struct delayed_work work_handler;
-+	struct temp_data temp[DIMM_NUMS_MAX];
-+	u32 dimm_mask;
-+	int retry_count;
-+	u32 temp_config[DIMM_NUMS_MAX + 1];
-+	struct hwmon_channel_info temp_info;
-+	const struct hwmon_channel_info *info[2];
-+	struct hwmon_chip_info chip;
-+};
-+
-+static const char *dimmtemp_label[CHAN_RANK_MAX][DIMM_IDX_MAX] = {
-+	{ "DIMM A1", "DIMM A2", "DIMM A3" },
-+	{ "DIMM B1", "DIMM B2", "DIMM B3" },
-+	{ "DIMM C1", "DIMM C2", "DIMM C3" },
-+	{ "DIMM D1", "DIMM D2", "DIMM D3" },
-+	{ "DIMM E1", "DIMM E2", "DIMM E3" },
-+	{ "DIMM F1", "DIMM F2", "DIMM F3" },
-+	{ "DIMM G1", "DIMM G2", "DIMM G3" },
-+	{ "DIMM H1", "DIMM H2", "DIMM H3" },
-+};
-+
-+static int get_dimm_temp(struct peci_dimmtemp *priv, int dimm_no)
-+{
-+	int dimm_order = dimm_no % priv->gen_info->dimm_idx_max;
-+	int chan_rank = dimm_no / priv->gen_info->dimm_idx_max;
-+	u8  cfg_data[4];
-+	int rc;
-+
-+	if (!peci_temp_need_update(&priv->temp[dimm_no]))
-+		return 0;
-+
-+	rc = peci_client_read_package_config(priv->mgr,
-+					     MBX_INDEX_DDR_DIMM_TEMP,
-+					     chan_rank, cfg_data);
-+	if (rc)
-+		return rc;
-+
-+	priv->temp[dimm_no].value = cfg_data[dimm_order] * 1000;
-+
-+	peci_temp_mark_updated(&priv->temp[dimm_no]);
-+
-+	return 0;
-+}
-+
-+static int dimmtemp_read_string(struct device *dev,
-+				enum hwmon_sensor_types type,
-+				u32 attr, int channel, const char **str)
-+{
-+	struct peci_dimmtemp *priv = dev_get_drvdata(dev);
-+	u32 dimm_idx_max = priv->gen_info->dimm_idx_max;
-+	int chan_rank, dimm_idx;
-+
-+	if (attr != hwmon_temp_label)
-+		return -EOPNOTSUPP;
-+
-+	chan_rank = channel / dimm_idx_max;
-+	dimm_idx = channel % dimm_idx_max;
-+	*str = dimmtemp_label[chan_rank][dimm_idx];
-+	return 0;
-+}
-+
-+static int dimmtemp_read(struct device *dev, enum hwmon_sensor_types type,
-+			 u32 attr, int channel, long *val)
-+{
-+	struct peci_dimmtemp *priv = dev_get_drvdata(dev);
-+	int rc;
-+
-+	if (attr != hwmon_temp_input)
-+		return -EOPNOTSUPP;
-+
-+	rc = get_dimm_temp(priv, channel);
-+	if (rc)
-+		return rc;
-+
-+	*val = priv->temp[channel].value;
-+	return 0;
-+}
-+
-+static umode_t dimmtemp_is_visible(const void *data,
-+				   enum hwmon_sensor_types type,
-+				   u32 attr, int channel)
-+{
-+	const struct peci_dimmtemp *priv = data;
-+
-+	if (priv->temp_config[channel] & BIT(attr) &&
-+	    priv->dimm_mask & BIT(channel))
-+		return 0444;
-+
-+	return 0;
-+}
-+
-+static const struct hwmon_ops dimmtemp_ops = {
-+	.is_visible = dimmtemp_is_visible,
-+	.read_string = dimmtemp_read_string,
-+	.read = dimmtemp_read,
-+};
-+
-+static int check_populated_dimms(struct peci_dimmtemp *priv)
-+{
-+	u32 chan_rank_max = priv->gen_info->chan_rank_max;
-+	u32 dimm_idx_max = priv->gen_info->dimm_idx_max;
-+	int chan_rank, dimm_idx, rc;
-+	u8  cfg_data[4];
-+
-+	for (chan_rank = 0; chan_rank < chan_rank_max; chan_rank++) {
-+		rc = peci_client_read_package_config(priv->mgr,
-+						     MBX_INDEX_DDR_DIMM_TEMP,
-+						     chan_rank, cfg_data);
-+		if (rc) {
-+			priv->dimm_mask = 0;
-+			return rc;
-+		}
-+
-+		for (dimm_idx = 0; dimm_idx < dimm_idx_max; dimm_idx++)
-+			if (cfg_data[dimm_idx])
-+				priv->dimm_mask |= BIT(chan_rank *
-+						       dimm_idx_max +
-+						       dimm_idx);
-+	}
-+
-+	if (!priv->dimm_mask)
-+		return -EAGAIN;
-+
-+	dev_dbg(priv->dev, "Scanned populated DIMMs: 0x%x\n", priv->dimm_mask);
-+	return 0;
-+}
-+
-+static int create_dimm_temp_info(struct peci_dimmtemp *priv)
-+{
-+	int rc, i, config_idx, channels;
-+	struct device *hwmon_dev;
-+
-+	rc = check_populated_dimms(priv);
-+	if (rc) {
-+		if (rc == -EAGAIN) {
-+			if (priv->retry_count < DIMM_MASK_CHECK_RETRY_MAX) {
-+				queue_delayed_work(priv->work_queue,
-+						   &priv->work_handler,
-+						 DIMM_MASK_CHECK_DELAY_JIFFIES);
-+				priv->retry_count++;
-+				dev_dbg(priv->dev,
-+					"Deferred DIMM temp info creation\n");
-+			} else {
-+				dev_err(priv->dev,
-+					"Timeout DIMM temp info creation\n");
-+				rc = -ETIMEDOUT;
-+			}
-+		}
-+
-+		return rc;
-+	}
-+
-+	channels = priv->gen_info->chan_rank_max *
-+		   priv->gen_info->dimm_idx_max;
-+	for (i = 0, config_idx = 0; i < channels; i++)
-+		if (priv->dimm_mask & BIT(i))
-+			while (i >= config_idx)
-+				priv->temp_config[config_idx++] =
-+					HWMON_T_LABEL | HWMON_T_INPUT;
-+
-+	priv->chip.ops = &dimmtemp_ops;
-+	priv->chip.info = priv->info;
-+
-+	priv->info[0] = &priv->temp_info;
-+
-+	priv->temp_info.type = hwmon_temp;
-+	priv->temp_info.config = priv->temp_config;
-+
-+	hwmon_dev = devm_hwmon_device_register_with_info(priv->dev,
-+							 priv->name,
-+							 priv,
-+							 &priv->chip,
-+							 NULL);
-+	rc = PTR_ERR_OR_ZERO(hwmon_dev);
-+	if (!rc)
-+		dev_dbg(priv->dev, "%s: sensor '%s'\n",
-+			dev_name(hwmon_dev), priv->name);
-+
-+	return rc;
-+}
-+
-+static void create_dimm_temp_info_delayed(struct work_struct *work)
-+{
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct peci_dimmtemp *priv = container_of(dwork, struct peci_dimmtemp,
-+						  work_handler);
-+	int rc;
-+
-+	rc = create_dimm_temp_info(priv);
-+	if (rc && rc != -EAGAIN)
-+		dev_dbg(priv->dev, "Failed to create DIMM temp info\n");
-+}
-+
-+static int peci_dimmtemp_probe(struct platform_device *pdev)
-+{
-+	struct peci_client_manager *mgr = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct peci_dimmtemp *priv;
-+	int rc;
-+
-+	if ((mgr->client->adapter->cmd_mask &
-+	    (BIT(PECI_CMD_GET_TEMP) | BIT(PECI_CMD_RD_PKG_CFG))) !=
-+	    (BIT(PECI_CMD_GET_TEMP) | BIT(PECI_CMD_RD_PKG_CFG)))
-+		return -ENODEV;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, priv);
-+	priv->mgr = mgr;
-+	priv->dev = dev;
-+	priv->gen_info = mgr->gen_info;
-+
-+	snprintf(priv->name, PECI_NAME_SIZE, "peci_dimmtemp.cpu%d",
-+		 priv->mgr->client->addr - PECI_BASE_ADDR);
-+
-+	priv->work_queue = alloc_ordered_workqueue(priv->name, 0);
-+	if (!priv->work_queue)
-+		return -ENOMEM;
-+
-+	INIT_DELAYED_WORK(&priv->work_handler, create_dimm_temp_info_delayed);
-+
-+	rc = create_dimm_temp_info(priv);
-+	if (rc && rc != -EAGAIN) {
-+		dev_err(dev, "Failed to create DIMM temp info\n");
-+		goto err_free_wq;
-+	}
-+
-+	return 0;
-+
-+err_free_wq:
-+	destroy_workqueue(priv->work_queue);
-+	return rc;
-+}
-+
-+static int peci_dimmtemp_remove(struct platform_device *pdev)
-+{
-+	struct peci_dimmtemp *priv = dev_get_drvdata(&pdev->dev);
-+
-+	cancel_delayed_work_sync(&priv->work_handler);
-+	destroy_workqueue(priv->work_queue);
-+
-+	return 0;
-+}
-+
-+static const struct platform_device_id peci_dimmtemp_ids[] = {
-+	{ .name = "peci-dimmtemp", .driver_data = 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, peci_dimmtemp_ids);
-+
-+static struct platform_driver peci_dimmtemp_driver = {
-+	.probe    = peci_dimmtemp_probe,
-+	.remove   = peci_dimmtemp_remove,
-+	.id_table = peci_dimmtemp_ids,
-+	.driver   = { .name = "peci-dimmtemp", },
-+};
-+module_platform_driver(peci_dimmtemp_driver);
-+
-+MODULE_AUTHOR("Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>");
-+MODULE_DESCRIPTION("PECI dimmtemp driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.19.1
-
+Paolo
