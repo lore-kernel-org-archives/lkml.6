@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC55C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EC8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A72921871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9A4021871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 21:31:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JT/ZsqfQ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xuuc6c3A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbeLRV3Y (ORCPT
+        id S1727866AbeLRVbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 16:29:24 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55290 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbeLRV3W (ORCPT
+        Tue, 18 Dec 2018 16:31:06 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39039 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbeLRV3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 16:29:22 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so4087825wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 13:29:20 -0800 (PST)
+        Tue, 18 Dec 2018 16:29:21 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f81so4262104wmd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 13:29:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+kk49u2E8Mo1JNxE8BrR9oOARp9WmK1DmRN/2CO3j/8=;
-        b=JT/ZsqfQLVVSX+jbMOMwvdmTraAUh2j/2iIoSl0jGXgA15MSLhzzoSfM9jCn+rNy9i
-         k0FnfddkVZjRaa3CS8Q2P9eoYYMhlpkT6CslTRnZ7GLniqwBtx4ehL/B93ISFzEMf//6
-         fG7g3U/ReKJQHa6S/EMTgVhtGkPbKfd0r9bC4=
+        bh=AThSIIFr1MNxei6GzfPPmaTqIlS3Gkxg7bofXJUPBLQ=;
+        b=Xuuc6c3Am0E7BW1mAxndCishUpk7F/3ellKRyWJ60Hqb0Ilw8EspLunAVKiphs7Ilt
+         rfYUSl/KTHJf1K8nYbJQsRT5yKW7+EpXirivoVidQ+KaybG+awYy6FtANxiJJzioXvxd
+         yDqbD+dFdDgdbak1lon3SwCvI1hBGlX82lFWU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+kk49u2E8Mo1JNxE8BrR9oOARp9WmK1DmRN/2CO3j/8=;
-        b=KKkV3cuvjnkxSbMvMidKBKFY4TKZZjaxNbg2wGA3uDbS9UoHDeSMzJbOK3X92yLJ3I
-         287YW/VeG/6PXWa8HZDpzUEoPmQh8ETHKcDpV+S64V9oxV8hG2XejsVYE76YGR/TmKfs
-         rZYXAhRplCZB0465YrgPUX3moKR1Vr6IkieJqHATxliPOtuYtQ6QuchT9sWgo1B8xvXZ
-         v0y8VM0nw9g1dTqUp5o1WJvmz1l7JwWiQtmmEru6kNcuV0Rxwsssqa2N8oT6zqsFsIyL
-         ms0R6wvQtArFPTUavhOXN6nEcJj2aBQMgEhih5/xXMcypj1aj8f8FLLboA/gVdiX2e4S
-         9bDA==
-X-Gm-Message-State: AA+aEWY5lH1RBxYrfdMwjsm76pZ6jW9gXoKow6aIJQhaXo1dOh/o4QMu
-        TxngHLuTbmvpkeWH9WsQYkIJmA==
-X-Google-Smtp-Source: AFSGD/XiEeq+vDeKGNZkt57dLzm/xXk4gUU9JTvpHHo4mRvG7y+KrZgN/UlfX6m1Ak8NNfX0sYi5hg==
-X-Received: by 2002:a1c:ae88:: with SMTP id x130mr4442834wme.91.1545168559808;
-        Tue, 18 Dec 2018 13:29:19 -0800 (PST)
+        bh=AThSIIFr1MNxei6GzfPPmaTqIlS3Gkxg7bofXJUPBLQ=;
+        b=IdkTDC1lkTaFXn6MCsNpdYYaTzCJNLGNXBjIMFacQ00xnR2aBLisvTelxdYwmD86C1
+         YOG3qeZkalSWKHLBc+ewp17BHRlSIK5WAwsNCz94Q/vxC+gFsYhbbemWgtgvo5ijObY3
+         PkDIMfICeSszMRyQpGpjkRNiiVzSZctvbkzNv+4EteicRlGR+Fq2xp+uytYc6QzHbFEJ
+         mCzr5yscjSQsejSpZg3Au2zxsnsqJv8UZfiPFIaW4ZNUt5MO+5/NnIW7Z6u3Gb2OmnL8
+         x0XycjZ7XM+DyGCgoOXe4/S15ojWSp+yr3NJ/abw/FxL90Ook3t2fEdexd8g58iOXQF8
+         B9KQ==
+X-Gm-Message-State: AA+aEWZtYiKzrLamwG8EsQ1IFthJPM9Q67G4rzHxTRIhmdkjOZGvhtbL
+        NsYb78EakT25LBzm2X9Wyy/7HuhWL4g=
+X-Google-Smtp-Source: AFSGD/XlJFMb8pCOldKf4yp8Gv1pJSXtxZVgStptL9MrboBXq1sRY+Vndrz6294rueUwqD5NzS6udQ==
+X-Received: by 2002:a1c:f605:: with SMTP id w5mr4863537wmc.116.1545168558247;
+        Tue, 18 Dec 2018 13:29:18 -0800 (PST)
 Received: from localhost.localdomain (105.50.92.92.rev.sfr.net. [92.92.50.105])
-        by smtp.gmail.com with ESMTPSA id o4sm4153485wrq.66.2018.12.18.13.29.18
+        by smtp.gmail.com with ESMTPSA id o4sm4153485wrq.66.2018.12.18.13.29.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 13:29:19 -0800 (PST)
+        Tue, 18 Dec 2018 13:29:17 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc:     linux-kernel@vger.kernel.org,
         SoC support),
         linux-amlogic@lists.infradead.org (open list:ARM/Amlogic Meson SoC
         support)
-Subject: [PATCH 07/25] clocksource/drivers/meson6_timer: Implement the ARM delay timer
-Date:   Tue, 18 Dec 2018 22:28:25 +0100
-Message-Id: <20181218212844.30445-7-daniel.lezcano@linaro.org>
+Subject: [PATCH 06/25] clocksource/drivers/meson6_timer: Use register names from the datasheet
+Date:   Tue, 18 Dec 2018 22:28:24 +0100
+Message-Id: <20181218212844.30445-6-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181218212844.30445-1-daniel.lezcano@linaro.org>
 References: <d3f1255a-592d-13d9-5d3f-bd3ec7a36742@linaro.org>
@@ -76,71 +76,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Implement an ARM delay timer to be used for udelay(). This allows us to
-skip the delay loop calibration at boot.
+This makes the driver use the names from S805 datasheet for the
+preprocessor #defines. This makes it easier to spot that the driver
+currently only supports Timer A (as clockevent with interrupt support)
+and Timer E (as clocksource without interrupts). Timer B, C and D (which
+are similar to Timer A) are currently not supported by the driver.
 
-With this patch udelay() is now independent of CPU frequency changes.
-This is a good thing on Meson8, Meson8b and Meson8m2 because changing
-the CPU frequency requires running the CPU clock off the XTAL while
-changing the PLL or it's dividers. After changing the CPU clocks we need
-to wait a few usecs for the clock to become stable. So having an
-udelay() implementation that doesn't depend on the CPU frequency is
-beneficial.
+While here, this also removes the internal "CED_ID" and "CSD_ID" defines
+which are used to identify the timer. These IDs are not described in the
+datasheet and thus make it harder to compare the code to what's written
+in the datasheet.
 
-Suggested-by: Jianxin Pan <jianxin.pan@amlogic.com>
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/meson6_timer.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/clocksource/meson6_timer.c | 108 +++++++++++++++++------------
+ 1 file changed, 64 insertions(+), 44 deletions(-)
 
 diff --git a/drivers/clocksource/meson6_timer.c b/drivers/clocksource/meson6_timer.c
-index 23c7638e2bb3..84bd9479c3f8 100644
+index 92f20991a937..23c7638e2bb3 100644
 --- a/drivers/clocksource/meson6_timer.c
 +++ b/drivers/clocksource/meson6_timer.c
-@@ -22,6 +22,10 @@
+@@ -10,6 +10,8 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
+ #include <linux/clk.h>
+ #include <linux/clockchips.h>
+ #include <linux/interrupt.h>
+@@ -20,80 +22,96 @@
  #include <linux/of_address.h>
  #include <linux/of_irq.h>
  
-+#ifdef CONFIG_ARM
-+#include <linux/delay.h>
-+#endif
+-#define CED_ID			0
+-#define CSD_ID			4
+-
+-#define TIMER_ISA_MUX		0
+-#define TIMER_ISA_VAL(t)	(((t) + 1) << 2)
+-
+-#define TIMER_INPUT_BIT(t)	(2 * (t))
+-#define TIMER_ENABLE_BIT(t)	(16 + (t))
+-#define TIMER_PERIODIC_BIT(t)	(12 + (t))
+-
+-#define TIMER_CED_INPUT_MASK	(3UL << TIMER_INPUT_BIT(CED_ID))
+-#define TIMER_CSD_INPUT_MASK	(7UL << TIMER_INPUT_BIT(CSD_ID))
+-
+-#define TIMER_CED_UNIT_1US	0
+-#define TIMER_CSD_UNIT_1US	1
++#define MESON_ISA_TIMER_MUX					0x00
++#define MESON_ISA_TIMER_MUX_TIMERD_EN				BIT(19)
++#define MESON_ISA_TIMER_MUX_TIMERC_EN				BIT(18)
++#define MESON_ISA_TIMER_MUX_TIMERB_EN				BIT(17)
++#define MESON_ISA_TIMER_MUX_TIMERA_EN				BIT(16)
++#define MESON_ISA_TIMER_MUX_TIMERD_MODE				BIT(15)
++#define MESON_ISA_TIMER_MUX_TIMERC_MODE				BIT(14)
++#define MESON_ISA_TIMER_MUX_TIMERB_MODE				BIT(13)
++#define MESON_ISA_TIMER_MUX_TIMERA_MODE				BIT(12)
++#define MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_MASK		GENMASK(10, 8)
++#define MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_SYSTEM_CLOCK	0x0
++#define MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_1US		0x1
++#define MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_10US		0x2
++#define MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_100US		0x3
++#define MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_1MS		0x4
++#define MESON_ISA_TIMER_MUX_TIMERD_INPUT_CLOCK_MASK		GENMASK(7, 6)
++#define MESON_ISA_TIMER_MUX_TIMERC_INPUT_CLOCK_MASK		GENMASK(5, 4)
++#define MESON_ISA_TIMER_MUX_TIMERB_INPUT_CLOCK_MASK		GENMASK(3, 2)
++#define MESON_ISA_TIMER_MUX_TIMERA_INPUT_CLOCK_MASK		GENMASK(1, 0)
++#define MESON_ISA_TIMER_MUX_TIMERABCD_INPUT_CLOCK_1US		0x0
++#define MESON_ISA_TIMER_MUX_TIMERABCD_INPUT_CLOCK_10US		0x1
++#define MESON_ISA_TIMER_MUX_TIMERABCD_INPUT_CLOCK_100US		0x0
++#define MESON_ISA_TIMER_MUX_TIMERABCD_INPUT_CLOCK_1MS		0x3
 +
- #define MESON_ISA_TIMER_MUX					0x00
- #define MESON_ISA_TIMER_MUX_TIMERD_EN				BIT(19)
- #define MESON_ISA_TIMER_MUX_TIMERC_EN				BIT(18)
-@@ -54,6 +58,18 @@
++#define MESON_ISA_TIMERA					0x04
++#define MESON_ISA_TIMERB					0x08
++#define MESON_ISA_TIMERC					0x0c
++#define MESON_ISA_TIMERD					0x10
++#define MESON_ISA_TIMERE					0x14
  
  static void __iomem *timer_base;
  
-+#ifdef CONFIG_ARM
-+static unsigned long meson6_read_current_timer(void)
-+{
-+	return readl_relaxed(timer_base + MESON_ISA_TIMERE);
-+}
-+
-+static struct delay_timer meson6_delay_timer = {
-+	.read_current_timer = meson6_read_current_timer,
-+	.freq = 1000 * 1000,
-+};
-+#endif
-+
  static u64 notrace meson6_timer_sched_read(void)
  {
- 	return (u64)readl(timer_base + MESON_ISA_TIMERE);
-@@ -192,6 +208,12 @@ static int __init meson6_timer_init(struct device_node *node)
+-	return (u64)readl(timer_base + TIMER_ISA_VAL(CSD_ID));
++	return (u64)readl(timer_base + MESON_ISA_TIMERE);
+ }
  
- 	clockevents_config_and_register(&meson6_clockevent, USEC_PER_SEC,
- 					1, 0xfffe);
-+
-+#ifdef CONFIG_ARM
-+	/* Also use MESON_ISA_TIMERE for delays */
-+	register_current_timer_delay(&meson6_delay_timer);
-+#endif
-+
+-static void meson6_clkevt_time_stop(unsigned char timer)
++static void meson6_clkevt_time_stop(void)
+ {
+-	u32 val = readl(timer_base + TIMER_ISA_MUX);
++	u32 val = readl(timer_base + MESON_ISA_TIMER_MUX);
+ 
+-	writel(val & ~TIMER_ENABLE_BIT(timer), timer_base + TIMER_ISA_MUX);
++	writel(val & ~MESON_ISA_TIMER_MUX_TIMERA_EN,
++	       timer_base + MESON_ISA_TIMER_MUX);
+ }
+ 
+-static void meson6_clkevt_time_setup(unsigned char timer, unsigned long delay)
++static void meson6_clkevt_time_setup(unsigned long delay)
+ {
+-	writel(delay, timer_base + TIMER_ISA_VAL(timer));
++	writel(delay, timer_base + MESON_ISA_TIMERA);
+ }
+ 
+-static void meson6_clkevt_time_start(unsigned char timer, bool periodic)
++static void meson6_clkevt_time_start(bool periodic)
+ {
+-	u32 val = readl(timer_base + TIMER_ISA_MUX);
++	u32 val = readl(timer_base + MESON_ISA_TIMER_MUX);
+ 
+ 	if (periodic)
+-		val |= TIMER_PERIODIC_BIT(timer);
++		val |= MESON_ISA_TIMER_MUX_TIMERA_MODE;
+ 	else
+-		val &= ~TIMER_PERIODIC_BIT(timer);
++		val &= ~MESON_ISA_TIMER_MUX_TIMERA_MODE;
+ 
+-	writel(val | TIMER_ENABLE_BIT(timer), timer_base + TIMER_ISA_MUX);
++	writel(val | MESON_ISA_TIMER_MUX_TIMERA_EN,
++	       timer_base + MESON_ISA_TIMER_MUX);
+ }
+ 
+ static int meson6_shutdown(struct clock_event_device *evt)
+ {
+-	meson6_clkevt_time_stop(CED_ID);
++	meson6_clkevt_time_stop();
  	return 0;
  }
- TIMER_OF_DECLARE(meson6, "amlogic,meson6-timer",
+ 
+ static int meson6_set_oneshot(struct clock_event_device *evt)
+ {
+-	meson6_clkevt_time_stop(CED_ID);
+-	meson6_clkevt_time_start(CED_ID, false);
++	meson6_clkevt_time_stop();
++	meson6_clkevt_time_start(false);
+ 	return 0;
+ }
+ 
+ static int meson6_set_periodic(struct clock_event_device *evt)
+ {
+-	meson6_clkevt_time_stop(CED_ID);
+-	meson6_clkevt_time_setup(CED_ID, USEC_PER_SEC / HZ - 1);
+-	meson6_clkevt_time_start(CED_ID, true);
++	meson6_clkevt_time_stop();
++	meson6_clkevt_time_setup(USEC_PER_SEC / HZ - 1);
++	meson6_clkevt_time_start(true);
+ 	return 0;
+ }
+ 
+ static int meson6_clkevt_next_event(unsigned long evt,
+ 				    struct clock_event_device *unused)
+ {
+-	meson6_clkevt_time_stop(CED_ID);
+-	meson6_clkevt_time_setup(CED_ID, evt);
+-	meson6_clkevt_time_start(CED_ID, false);
++	meson6_clkevt_time_stop();
++	meson6_clkevt_time_setup(evt);
++	meson6_clkevt_time_start(false);
+ 
+ 	return 0;
+ }
+@@ -144,22 +162,24 @@ static int __init meson6_timer_init(struct device_node *node)
+ 	}
+ 
+ 	/* Set 1us for timer E */
+-	val = readl(timer_base + TIMER_ISA_MUX);
+-	val &= ~TIMER_CSD_INPUT_MASK;
+-	val |= TIMER_CSD_UNIT_1US << TIMER_INPUT_BIT(CSD_ID);
+-	writel(val, timer_base + TIMER_ISA_MUX);
++	val = readl(timer_base + MESON_ISA_TIMER_MUX);
++	val &= ~MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_MASK;
++	val |= FIELD_PREP(MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_MASK,
++			  MESON_ISA_TIMER_MUX_TIMERE_INPUT_CLOCK_1US);
++	writel(val, timer_base + MESON_ISA_TIMER_MUX);
+ 
+ 	sched_clock_register(meson6_timer_sched_read, 32, USEC_PER_SEC);
+-	clocksource_mmio_init(timer_base + TIMER_ISA_VAL(CSD_ID), node->name,
++	clocksource_mmio_init(timer_base + MESON_ISA_TIMERE, node->name,
+ 			      1000 * 1000, 300, 32, clocksource_mmio_readl_up);
+ 
+ 	/* Timer A base 1us */
+-	val &= ~TIMER_CED_INPUT_MASK;
+-	val |= TIMER_CED_UNIT_1US << TIMER_INPUT_BIT(CED_ID);
+-	writel(val, timer_base + TIMER_ISA_MUX);
++	val &= ~MESON_ISA_TIMER_MUX_TIMERA_INPUT_CLOCK_MASK;
++	val |= FIELD_PREP(MESON_ISA_TIMER_MUX_TIMERA_INPUT_CLOCK_MASK,
++			  MESON_ISA_TIMER_MUX_TIMERABCD_INPUT_CLOCK_1US);
++	writel(val, timer_base + MESON_ISA_TIMER_MUX);
+ 
+ 	/* Stop the timer A */
+-	meson6_clkevt_time_stop(CED_ID);
++	meson6_clkevt_time_stop();
+ 
+ 	ret = setup_irq(irq, &meson6_timer_irq);
+ 	if (ret) {
 -- 
 2.17.1
 
