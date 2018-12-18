@@ -2,96 +2,120 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E95C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A498C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07BA821850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545155323;
-	bh=pu8T7pdviGJYwDdKeTH8/zAyrPY2jn8WsfgvqOeA2mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Slz1clv/oUPfqvnkjafhH9bdbKfo0ENJG5BfDsoD5NRX+jM/5acZcrHqePqZB+SAb
-	 H4SXdklivWF5xLuJIyroWJhOnqKw5pJEf+nZwtkmsH9EU7e17utJ9snYGjwofKrlH8
-	 M/jY/2XOi1ZCemI6QqnHch9zg+iT12O+vwso2+/M=
+	by mail.kernel.org (Postfix) with ESMTP id 2201C20815
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:52:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeLRRsl (ORCPT
+        id S1727019AbeLRRwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:48:41 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35362 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbeLRRsk (ORCPT
+        Tue, 18 Dec 2018 12:52:19 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.39]:49161 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726446AbeLRRwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:48:40 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v6so2671953oif.2;
-        Tue, 18 Dec 2018 09:48:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PPQ647DNyV+MPXalzebEiBkeLN8Y6HqF40aQsm9T2+U=;
-        b=e30vzQ0ay6uzYr7LKaz9d5ADpB7AZ0YLVdo1Xl5K+dwFTIJce0pw3hiTzWumzhrAgS
-         pCXd9g4AvFLdsxvwAHj29481s8ncPVYn3znIfiVc07z4zFFtCVHj7pD8waMu0a4nPiQi
-         UMMGSz/VwNKPhIorJkbCjYUPtHWeu2WRIy3iWJyoas1I34Q8dJA0j9gihkYnVgnr6TEd
-         k3c3OnLVEg3EihhGNghBmbQst/OP6heLL3yMhahb3s4A9qk44LiJmI0v/L05fsumFuaR
-         aTU5hq2ORRlHYZcHJqfaYBhM3VVYRKVnBBM+IR2e33htd0jIpni46c1IpinxKnUljULt
-         e2mg==
-X-Gm-Message-State: AA+aEWasif1e0lmYaT3RDNVxRMXJD616Tn+vrphr/wFg3eKsnAaYLjmB
-        2LibwMjhfqahT09xlG7gKQ==
-X-Google-Smtp-Source: AFSGD/XLDho1ap/CDyYl88dGlHsrKlzBQL4zms6TE/xsgz6d7Exuf8dOpxxRzSC9s4hqlOjCgNv0wg==
-X-Received: by 2002:aca:654a:: with SMTP id j10mr7957741oiw.301.1545155319113;
-        Tue, 18 Dec 2018 09:48:39 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y25sm7320510otq.60.2018.12.18.09.48.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 09:48:38 -0800 (PST)
-Date:   Tue, 18 Dec 2018 11:48:38 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: serial: sh-sci: Document r8a774c0
- bindings
-Message-ID: <20181218174838.GA28308@bogus>
-References: <1545134590-22510-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 18 Dec 2018 12:52:19 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 5C4194B798
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:52:18 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZJXWgsHzk4FKpZJXWgNroP; Tue, 18 Dec 2018 11:52:18 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=32796 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gZJXV-002P9c-Dr; Tue, 18 Dec 2018 11:52:17 -0600
+Date:   Tue, 18 Dec 2018 11:52:16 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
+Message-ID: <20181218175216.GA16070@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545134590-22510-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gZJXV-002P9c-Dr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.106.44]:32796
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 12:03:10 +0000, Fabrizio Castro wrote:
-> RZ/G2E (R8A774C0) SoC also has the R-Car Gen3 compatible SCIF and
-> HSCIF ports, so document the SoC specific bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> v1->v2:
-> * Fixed title according to Geert's comment
-> 
-> This patch depends on:
-> https://patchwork.kernel.org/patch/10565543/
-> 
->  Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+ipcm->substream is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This issue was detected with the help of Smatch:
+
+sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+
+Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ sound/pci/emu10k1/emufx.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sound/pci/emu10k1/emufx.c b/sound/pci/emu10k1/emufx.c
+index 6ebe817801ea..1f25e6d029d8 100644
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -36,6 +36,7 @@
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/moduleparam.h>
++#include <linux/nospec.h>
+ 
+ #include <sound/core.h>
+ #include <sound/tlv.h>
+@@ -1026,6 +1027,8 @@ static int snd_emu10k1_ipcm_poke(struct snd_emu10k1 *emu,
+ 
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	if (ipcm->channels > 32)
+ 		return -EINVAL;
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+@@ -1072,6 +1075,8 @@ static int snd_emu10k1_ipcm_peek(struct snd_emu10k1 *emu,
+ 
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+ 	mutex_lock(&emu->fx8010.lock);
+ 	spin_lock_irq(&emu->reg_lock);
+-- 
+2.19.2
+
