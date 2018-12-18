@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BABC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387FEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7FF217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10924217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbeLROEw (ORCPT
+        id S1726903AbeLROFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:04:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58361 "EHLO
+        Tue, 18 Dec 2018 09:05:25 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50625 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbeLROEw (ORCPT
+        with ESMTP id S1726574AbeLROFZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:04:52 -0500
+        Tue, 18 Dec 2018 09:05:25 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIE4gKk2853100
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIE5HmR2853201
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:04:42 -0800
+        Tue, 18 Dec 2018 06:05:18 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIE4gaG2853097;
-        Tue, 18 Dec 2018 06:04:42 -0800
-Date:   Tue, 18 Dec 2018 06:04:42 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIE5Hjh2853198;
+        Tue, 18 Dec 2018 06:05:17 -0800
+Date:   Tue, 18 Dec 2018 06:05:17 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Tzvetomir Stoyanov <tipbot@zytor.com>
-Message-ID: <tip-6cd99d21741dbffb40e28ab7d955b27d09c3352f@git.kernel.org>
-Cc:     rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, acme@redhat.com, tstoyanov@vmware.com,
-        namhyung@kernel.org, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, akpm@linux-foundation.org
-Reply-To: akpm@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-          namhyung@kernel.org, hpa@zytor.com, tstoyanov@vmware.com,
-          acme@redhat.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
-          rostedt@goodmis.org
-In-Reply-To: <20181130154647.891651290@goodmis.org>
-References: <20181130154647.891651290@goodmis.org>
+From:   tip-bot for Sihyeon Jang <tipbot@zytor.com>
+Message-ID: <tip-00879763fcf21f4b32d63d2241c877f8c1df950e@git.kernel.org>
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+        uneedsihyeon@gmail.com, jolsa@kernel.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org
+Reply-To: uneedsihyeon@gmail.com, jolsa@kernel.org, acme@redhat.com,
+          hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20181202080651.4685-1-uneedsihyeon@gmail.com>
+References: <20181202080651.4685-1-uneedsihyeon@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools lib traceevent: traceevent API cleanup
-Git-Commit-ID: 6cd99d21741dbffb40e28ab7d955b27d09c3352f
+Subject: [tip:perf/core] perf beauty mmap_flags: Fixed syntax error Fixed
+ missing ']' error
+Git-Commit-ID: 00879763fcf21f4b32d63d2241c877f8c1df950e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,160 +57,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6cd99d21741dbffb40e28ab7d955b27d09c3352f
-Gitweb:     https://git.kernel.org/tip/6cd99d21741dbffb40e28ab7d955b27d09c3352f
-Author:     Tzvetomir Stoyanov <tstoyanov@vmware.com>
-AuthorDate: Fri, 30 Nov 2018 10:44:10 -0500
+Commit-ID:  00879763fcf21f4b32d63d2241c877f8c1df950e
+Gitweb:     https://git.kernel.org/tip/00879763fcf21f4b32d63d2241c877f8c1df950e
+Author:     Sihyeon Jang <uneedsihyeon@gmail.com>
+AuthorDate: Sun, 2 Dec 2018 17:06:51 +0900
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:56:10 -0300
+CommitDate: Mon, 17 Dec 2018 14:56:13 -0300
 
-tools lib traceevent: traceevent API cleanup
+perf beauty mmap_flags: Fixed syntax error Fixed missing ']' error
 
-In order to make libtraceevent into a proper library, its API should be
-straightforward. This patch hides few API functions, intended for
-internal usage only:
+Committer testing:
 
-tep_free_event(), tep_free_format_field(), __tep_data2host2(),
-__tep_data2host4() and __tep_data2host8().
-The patch also alignes the libtraceevent summary man page with
-these API changes.
+Before:
 
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
+  # tools/perf/trace/beauty/mmap_flags.sh
+  static const char *mmap_flags[] = {
+	[ilog2(0x40) + 1] = "32BIT",
+  tools/perf/trace/beauty/mmap_flags.sh: line 23: [: missing `]'
+	[ilog2(0x01) + 1] = "SHARED",
+	[ilog2(0x02) + 1] = "PRIVATE",
+	[ilog2(0x10) + 1] = "FIXED",
+	[ilog2(0x20) + 1] = "ANONYMOUS",
+	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
+  tools/perf/trace/beauty/mmap_flags.sh: line 28: [: missing `]'
+	[ilog2(0x0100) + 1] = "GROWSDOWN",
+	[ilog2(0x0800) + 1] = "DENYWRITE",
+	[ilog2(0x1000) + 1] = "EXECUTABLE",
+	[ilog2(0x2000) + 1] = "LOCKED",
+	[ilog2(0x4000) + 1] = "NORESERVE",
+	[ilog2(0x8000) + 1] = "POPULATE",
+	[ilog2(0x10000) + 1] = "NONBLOCK",
+	[ilog2(0x20000) + 1] = "STACK",
+	[ilog2(0x40000) + 1] = "HUGETLB",
+	[ilog2(0x80000) + 1] = "SYNC",
+  };
+  #
+
+After:
+
+  $ tools/perf/trace/beauty/mmap_flags.sh
+  static const char *mmap_flags[] = {
+	[ilog2(0x40) + 1] = "32BIT",
+	[ilog2(0x01) + 1] = "SHARED",
+	[ilog2(0x02) + 1] = "PRIVATE",
+	[ilog2(0x10) + 1] = "FIXED",
+	[ilog2(0x20) + 1] = "ANONYMOUS",
+	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
+	[ilog2(0x0100) + 1] = "GROWSDOWN",
+	[ilog2(0x0800) + 1] = "DENYWRITE",
+	[ilog2(0x1000) + 1] = "EXECUTABLE",
+	[ilog2(0x2000) + 1] = "LOCKED",
+	[ilog2(0x4000) + 1] = "NORESERVE",
+	[ilog2(0x8000) + 1] = "POPULATE",
+	[ilog2(0x10000) + 1] = "NONBLOCK",
+	[ilog2(0x20000) + 1] = "STACK",
+	[ilog2(0x40000) + 1] = "HUGETLB",
+	[ilog2(0x80000) + 1] = "SYNC",
+  };
+  $
+
+Signed-off-by: Sihyeon Jang <uneedsihyeon@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20181130154647.891651290@goodmis.org
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: aca70cc40a0b ("perf beauty mmap_flags: Check if the arch has a mmap.h file")
+Link: http://lkml.kernel.org/r/20181202080651.4685-1-uneedsihyeon@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse-api.c   |  6 +++---
- tools/lib/traceevent/event-parse-local.h |  7 +++++++
- tools/lib/traceevent/event-parse.c       | 13 ++++++++-----
- tools/lib/traceevent/event-parse.h       | 16 ----------------
- 4 files changed, 18 insertions(+), 24 deletions(-)
+ tools/perf/trace/beauty/mmap_flags.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse-api.c b/tools/lib/traceevent/event-parse-api.c
-index 0dc011154ee9..8b31c0e00ba3 100644
---- a/tools/lib/traceevent/event-parse-api.c
-+++ b/tools/lib/traceevent/event-parse-api.c
-@@ -51,7 +51,7 @@ void tep_set_flag(struct tep_handle *tep, int flag)
- 		tep->flags |= flag;
- }
- 
--unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data)
-+unsigned short tep_data2host2(struct tep_handle *pevent, unsigned short data)
- {
- 	unsigned short swap;
- 
-@@ -64,7 +64,7 @@ unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data)
- 	return swap;
- }
- 
--unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data)
-+unsigned int tep_data2host4(struct tep_handle *pevent, unsigned int data)
- {
- 	unsigned int swap;
- 
-@@ -80,7 +80,7 @@ unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data)
- }
- 
- unsigned long long
--__tep_data2host8(struct tep_handle *pevent, unsigned long long data)
-+tep_data2host8(struct tep_handle *pevent, unsigned long long data)
- {
- 	unsigned long long swap;
- 
-diff --git a/tools/lib/traceevent/event-parse-local.h b/tools/lib/traceevent/event-parse-local.h
-index 94746efef433..9a092dd4a86d 100644
---- a/tools/lib/traceevent/event-parse-local.h
-+++ b/tools/lib/traceevent/event-parse-local.h
-@@ -89,4 +89,11 @@ struct tep_handle {
- 	char *trace_clock;
- };
- 
-+void tep_free_event(struct tep_event *event);
-+void tep_free_format_field(struct tep_format_field *field);
-+
-+unsigned short tep_data2host2(struct tep_handle *pevent, unsigned short data);
-+unsigned int tep_data2host4(struct tep_handle *pevent, unsigned int data);
-+unsigned long long tep_data2host8(struct tep_handle *pevent, unsigned long long data);
-+
- #endif /* _PARSE_EVENTS_INT_H */
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index a3e7d0a75e11..ffa656b868a9 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -3328,15 +3328,18 @@ tep_find_any_field(struct tep_event *event, const char *name)
- unsigned long long tep_read_number(struct tep_handle *pevent,
- 				   const void *ptr, int size)
- {
-+	unsigned long long val;
-+
- 	switch (size) {
- 	case 1:
- 		return *(unsigned char *)ptr;
- 	case 2:
--		return tep_data2host2(pevent, ptr);
-+		return tep_data2host2(pevent, *(unsigned short *)ptr);
- 	case 4:
--		return tep_data2host4(pevent, ptr);
-+		return tep_data2host4(pevent, *(unsigned int *)ptr);
- 	case 8:
--		return tep_data2host8(pevent, ptr);
-+		memcpy(&val, (ptr), sizeof(unsigned long long));
-+		return tep_data2host8(pevent, val);
- 	default:
- 		/* BUG! */
- 		return 0;
-@@ -4062,7 +4065,7 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
- 			f = tep_find_any_field(event, arg->string.string);
- 			arg->string.offset = f->offset;
- 		}
--		str_offset = tep_data2host4(pevent, data + arg->string.offset);
-+		str_offset = tep_data2host4(pevent, *(unsigned int *)(data + arg->string.offset));
- 		str_offset &= 0xffff;
- 		print_str_to_seq(s, format, len_arg, ((char *)data) + str_offset);
- 		break;
-@@ -4080,7 +4083,7 @@ static void print_str_arg(struct trace_seq *s, void *data, int size,
- 			f = tep_find_any_field(event, arg->bitmask.bitmask);
- 			arg->bitmask.offset = f->offset;
- 		}
--		bitmask_offset = tep_data2host4(pevent, data + arg->bitmask.offset);
-+		bitmask_offset = tep_data2host4(pevent, *(unsigned int *)(data + arg->bitmask.offset));
- 		bitmask_size = bitmask_offset >> 16;
- 		bitmask_offset &= 0xffff;
- 		print_bitmask_to_seq(pevent, s, format, len_arg,
-diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 950ad185a5c4..35d37087d3c5 100644
---- a/tools/lib/traceevent/event-parse.h
-+++ b/tools/lib/traceevent/event-parse.h
-@@ -409,20 +409,6 @@ void tep_print_plugins(struct trace_seq *s,
- typedef char *(tep_func_resolver_t)(void *priv,
- 				    unsigned long long *addrp, char **modp);
- void tep_set_flag(struct tep_handle *tep, int flag);
--unsigned short __tep_data2host2(struct tep_handle *pevent, unsigned short data);
--unsigned int __tep_data2host4(struct tep_handle *pevent, unsigned int data);
--unsigned long long
--__tep_data2host8(struct tep_handle *pevent, unsigned long long data);
--
--#define tep_data2host2(pevent, ptr)	__tep_data2host2(pevent, *(unsigned short *)(ptr))
--#define tep_data2host4(pevent, ptr)	__tep_data2host4(pevent, *(unsigned int *)(ptr))
--#define tep_data2host8(pevent, ptr)	\
--({								\
--	unsigned long long __val;				\
--								\
--	memcpy(&__val, (ptr), sizeof(unsigned long long));	\
--	__tep_data2host8(pevent, __val);				\
--})
- 
- static inline int tep_host_bigendian(void)
- {
-@@ -475,8 +461,6 @@ enum tep_errno tep_parse_format(struct tep_handle *pevent,
- 				struct tep_event **eventp,
- 				const char *buf,
- 				unsigned long size, const char *sys);
--void tep_free_event(struct tep_event *event);
--void tep_free_format_field(struct tep_format_field *field);
- 
- void *tep_get_field_raw(struct trace_seq *s, struct tep_event *event,
- 			const char *name, struct tep_record *record,
+diff --git a/tools/perf/trace/beauty/mmap_flags.sh b/tools/perf/trace/beauty/mmap_flags.sh
+index cd41023107d7..32bac9c0d694 100755
+--- a/tools/perf/trace/beauty/mmap_flags.sh
++++ b/tools/perf/trace/beauty/mmap_flags.sh
+@@ -20,12 +20,12 @@ egrep -q $regex ${arch_mman} && \
+ (egrep $regex ${arch_mman} | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
+-[ ! -f ${arch_mman} || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.*' ${arch_mman} ] &&
++([ ! -f ${arch_mman} ] || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.*' ${arch_mman}) &&
+ (egrep $regex ${header_dir}/mman-common.h | \
+ 	egrep -vw 'MAP_(UNINITIALIZED|TYPE|SHARED_VALIDATE)' | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
+-[ ! -f ${arch_mman} || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.h>.*' ${arch_mman} ] &&
++([ ! -f ${arch_mman} ] || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.h>.*' ${arch_mman}) &&
+ (egrep $regex ${header_dir}/mman.h | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
