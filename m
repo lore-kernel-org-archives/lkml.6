@@ -2,79 +2,101 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577AFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C8BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF99214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08F9C214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:55:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bDlqugS0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbeLRGxo (ORCPT
+        id S1726393AbeLRGzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 01:53:44 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:16459 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbeLRGxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 01:53:43 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43Jpdd3XqFz9v0WH;
-        Tue, 18 Dec 2018 07:53:41 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Sebt5yWSJfvP; Tue, 18 Dec 2018 07:53:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43Jpdd2yWcz9v0WG;
-        Tue, 18 Dec 2018 07:53:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 47FF08B81B;
-        Tue, 18 Dec 2018 07:53:42 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id CEIgW4Z-8_o3; Tue, 18 Dec 2018 07:53:42 +0100 (CET)
-Received: from PO15451.localdomain (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 283388B754;
-        Tue, 18 Dec 2018 07:53:42 +0100 (CET)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id D0FBB716C2; Tue, 18 Dec 2018 06:53:41 +0000 (UTC)
-Message-Id: <8e172be53248cbc3297b345ae2ce7ddda6d5f0c5.1545070330.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/setup: display reason for not booting
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 18 Dec 2018 06:53:41 +0000 (UTC)
+        Tue, 18 Dec 2018 01:55:19 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:44220 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRGzS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 01:55:18 -0500
+Received: by mail-vk1-f195.google.com with SMTP id h128so3430936vkg.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 22:55:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a+3zlcXcLX3wHkeBoeuBfBB+LXxD6cKgLYC1CPYedmg=;
+        b=bDlqugS0zKijL5fR/Nfbm9VlmFtE/Mad8fTgHqoTj3NUWXmKlJ2rUv9igF911mVsDo
+         f91Law8zuYW3Qg5j7J0Wfr5vfHx+MVODGSfft48p7piEdXbG8OPRvXqBjLpxX38UQuXC
+         lHH4Ff2tWbJOaFsstuGVy7HKGXcBVJ6ptw/OY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a+3zlcXcLX3wHkeBoeuBfBB+LXxD6cKgLYC1CPYedmg=;
+        b=BqtOKw8Wyl2QN1GUaEUrZn0Jb3DwOfFXY1nQZdgxAnAdq10rMambr9M62xElTiEwqO
+         +BlpFZaOZKTBhyiYSw5XlJjJA8xIo8z2uudsncG9HPDG+YWWmLPTj/cUy7lLI7aP95br
+         Td1IKDZZiQqXiPa9bdYbA27kG+Wh6aagLYt2fVW7Bx7KCRxmZpr5oGkiiCzTSHUamvwk
+         WOfT7dqxBaOmd2/4fRygQMn5NY57AqXjxAO5xXHe/0Bk4wLkN91Mj/SgdCcVdV7mJHGA
+         GrIUDOFtRMOahwjIvUTjI5vf/o9K4VygLwIVHsmSXgbrBc/ML6Yj9lWG8jmclqjeZqBa
+         Id4w==
+X-Gm-Message-State: AA+aEWY1I1cRusNMYlO5orAgVDXH1GgtZ2LOo8aqqf+/02yoaAoI+4v6
+        W8c8JaPpbRQuh6FBm28TJC1KrB9ul8qQ+F6Ar/ImrmNbBM+PMw==
+X-Google-Smtp-Source: AFSGD/XNjC0vzZQmvwz1xbPqJXDU7p9v5m2oI/BSI6ogPC7VP6uYnK1Zy1xa+gjPK19NtmY/1KzoPHwPND8dgu3ySes=
+X-Received: by 2002:a1f:7244:: with SMTP id n65mr7132506vkc.75.1545116116997;
+ Mon, 17 Dec 2018 22:55:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20181128090037.257359-1-cychiang@chromium.org> <20181128090037.257359-5-cychiang@chromium.org>
+In-Reply-To: <20181128090037.257359-5-cychiang@chromium.org>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Tue, 18 Dec 2018 14:54:50 +0800
+Message-ID: <CAFv8Nw+QjXdRyiRx=AOZt65PZa5FcvJaqiDq2ormRt2dpVie0A@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] ASoC: qcom: Kconfig: select config for codec
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        Rohit kumar <rohitkr@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When no machine description matches, display it clearly
-before looping forever.
+On Wed, Nov 28, 2018 at 5:01 PM Cheng-Yi Chiang <cychiang@chromium.org> wrote:
+>
+> Select SND_SOC_RT5663 and SND_SOC_MAX98927 for SND_SOC_SDM845.
+>
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+> ---
+>  sound/soc/qcom/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+> index 2a4c912d1e484..3528c4279cbae 100644
+> --- a/sound/soc/qcom/Kconfig
+> +++ b/sound/soc/qcom/Kconfig
+> @@ -100,6 +100,8 @@ config SND_SOC_SDM845
+>         depends on QCOM_APR
+>         select SND_SOC_QDSP6
+>         select SND_SOC_QCOM_COMMON
+> +       select SND_SOC_RT5663
+> +       select SND_SOC_MAX98927
+This line is actually not needed.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/setup-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We can drop this patch as there was another patch merged already:
+https://lkml.org/lkml/2018/12/10/875.
 
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index 4fe7740917a7..ef7fb60534a8 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -634,7 +634,7 @@ void probe_machine(void)
- 	}
- 	/* What can we do if we didn't find ? */
- 	if (machine_id >= &__machine_desc_end) {
--		DBG("No suitable machine found !\n");
-+		pr_err("No suitable machine description found !\n");
- 		for (;;);
- 	}
- 
--- 
-2.13.3
+Thanks a lot for taking a look!
 
+
+>         help
+>           To add support for audio on Qualcomm Technologies Inc.
+>           SDM845 SoC-based systems.
+> --
+> 2.20.0.rc0.387.gc7a69e6b6c-goog
+>
