@@ -2,106 +2,108 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B28E6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FB8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8614E217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B2E21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbeLROJV (ORCPT
+        id S1726949AbeLROJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:09:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36719 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbeLROJV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:09:21 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIE8lkD2853658
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:08:47 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIE8lDD2853655;
-        Tue, 18 Dec 2018 06:08:47 -0800
-Date:   Tue, 18 Dec 2018 06:08:47 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-e4a8b0af5121392da2d40204ee330fd9e88d0858@git.kernel.org>
-Cc:     namhyung@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        jolsa@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, wangnan0@huawei.com, hpa@zytor.com
-Reply-To: mingo@kernel.org, namhyung@kernel.org, acme@redhat.com,
-          linux-kernel@vger.kernel.org, jolsa@redhat.com,
-          wangnan0@huawei.com, hpa@zytor.com, tglx@linutronix.de,
-          peterz@infradead.org
-In-Reply-To: <20181203102200.GA104797@gmail.com>
-References: <20181203102200.GA104797@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf bpf-loader: Fix debugging message typo
-Git-Commit-ID: e4a8b0af5121392da2d40204ee330fd9e88d0858
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 09:09:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46424 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726419AbeLROJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:09:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A386580D;
+        Tue, 18 Dec 2018 06:09:34 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B33773F675;
+        Tue, 18 Dec 2018 06:09:33 -0800 (PST)
+Subject: Re: [PATCH v2 3/3] sched/fair: fix unnecessary increase of balance
+ interval
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
+ <1544803317-7610-4-git-send-email-vincent.guittot@linaro.org>
+ <f6443ca2-3e82-d4eb-deb8-2aff44c618e2@arm.com>
+ <CAKfTPtCJBGtmx7pQJCwhcMaxyXWoh04o_C+pR6z+YVykXwvv5Q@mail.gmail.com>
+ <07400c1b-d9d7-7619-57fb-b09276d7da92@arm.com>
+ <CAKfTPtA0HQL9xsMbAH-2u63XaEJ-4mwzdBzNzvVSA8_3XyQ89g@mail.gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <9b008c93-c78c-0761-5ac9-cc1c3806f24b@arm.com>
+Date:   Tue, 18 Dec 2018 14:09:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <CAKfTPtA0HQL9xsMbAH-2u63XaEJ-4mwzdBzNzvVSA8_3XyQ89g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e4a8b0af5121392da2d40204ee330fd9e88d0858
-Gitweb:     https://git.kernel.org/tip/e4a8b0af5121392da2d40204ee330fd9e88d0858
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Mon, 3 Dec 2018 11:22:00 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:56:39 -0300
+On 18/12/2018 13:23, Vincent Guittot wrote:
+[...]
+>> Ah, I think I get it: you're saying that this balance_interval increase
+>> is done because it is always assumed we do an active balance with
+>> busiest->nr_running > 1 && pinned tasks, and that all that is left to
+>> migrate after the active_balance is pinned tasks that we can't actually
+>> migrate.
+>>
+>> Maybe that's what we should target (as always, totally untested):
+>>
+>> -----8<-----
+>> @@ -9131,18 +9144,16 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>>         } else
+>>                 sd->nr_balance_failed = 0;
+>>
+>> -       if (likely(!active_balance)) {
+>> -               /* We were unbalanced, so reset the balancing interval */
+>> -               sd->balance_interval = sd->min_interval;
+>> -       } else {
+>> +       if (unlikely(active_balance && (env.flags & LBF_ALL_PINNED))) {
+> 
+> So it's not exactly LBF_ALL_PINNED but also some pinned tasks
+> 
 
-perf bpf-loader: Fix debugging message typo
+Wouldn't LBF_ALL_PINNED cover all relevant cases? It's set at the very top
+of the 'if (busiest->nr_running > 1)' block and cleared whenever we find
+at least one task we could pull, even if we don't pull it because of 
+other reasons in can_migrate_task() (e.g. cache hotness).
 
-Go over the tools/ files that are maintained in Arnaldo's tree and
-fix common typos: half of them were in comments, the other half
-in JSON files.
+If we have LBF_SOME_PINNED but not LBF_ALL_PINNED, we currently don't
+increase the balance_interval, which is what we would want to maintain.
 
-No change in functionality intended.
+> but IIUC, you would like to extend the reset of balance  interval  to
+> all the "good" reasons to trig active load balance
 
-Committer notes:
+Right
 
-This was split from a larger patch as there are code that is,
-additionally, maintained outside the kernel tree, so to ease cherry
-picking and/or backporting, split this into multiple patches.
+> In fact the condition used in need_active_balance except the last
+> remaining one. Good reasons are:
+> - asym packing
+> - /*
+> * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
+> * It's worth migrating the task if the src_cpu's capacity is reduced
+> * because of other sched_class or IRQs if more capacity stays
+> * available on dst_cpu.
+> */
+> - misfit task
+> 
+> I can extend the test for these conditions
 
-This one has information that is presented to the user, albeit in debug
-mode.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/20181203102200.GA104797@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/bpf-loader.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
-index 9a280647d829..2f3eb6d293ee 100644
---- a/tools/perf/util/bpf-loader.c
-+++ b/tools/perf/util/bpf-loader.c
-@@ -99,7 +99,7 @@ struct bpf_object *bpf__prepare_load(const char *filename, bool source)
- 			if (err)
- 				return ERR_PTR(-BPF_LOADER_ERRNO__COMPILE);
- 		} else
--			pr_debug("bpf: successfull builtin compilation\n");
-+			pr_debug("bpf: successful builtin compilation\n");
- 		obj = bpf_object__open_buffer(obj_buf, obj_buf_sz, filename);
- 
- 		if (!IS_ERR_OR_NULL(obj) && llvm_param.dump_obj)
+So that's all the need_active_balance() cases except the last
+sd->nr_balance_failed one. I'd argue this could also be counted as a
+"good" reason to active balance which shouldn't lead to a balance_interval
+increase. Plus, it keeps to the logic of increasing the balance_interval
+only when task affinity gets in the way.
