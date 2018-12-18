@@ -2,178 +2,79 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9218C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC28AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69ECA21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:25:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="wSflzVMb"
+	by mail.kernel.org (Postfix) with ESMTP id C5B0721852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeLRNZc (ORCPT
+        id S1726733AbeLRN0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:25:32 -0500
-Received: from mail-ed1-f49.google.com ([209.85.208.49]:45586 "EHLO
-        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbeLRNZ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:25:29 -0500
-Received: by mail-ed1-f49.google.com with SMTP id d39so13824207edb.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:25:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cNrZzCdSzJul9lYEmCL2riuXLfAAAq+ZivQLGwqcpMo=;
-        b=wSflzVMbLQqkTKe9j7woq7Is7YLc1acLIcH+6qd8bswo6jGBp6WnyiD+S5tw0ruP7X
-         AVjq2ASDhdZ5RW9OH6NWLb0SR78yHxlc3Vy2C7qXPVlfVCdf1ikAT+xwGwNWWjjFyX92
-         6YQOYy3+G/mh9parz1UGbeul7SAvw8NFZU+8/DYTZ/JfJ0WHxnyJALhrgmzY0UDPL975
-         nPwCQAvPUuOaadlvKgBIwrvCXdT7OG0F8p+MzxtPyenSDvptNtBB2iuLhbuwS7xxARqf
-         wnK1ax3WwPnzGjoDSrHS6ob/trFCFKyFLx/rJEeX8FNfcKs/dLB0Op/m4LEZyTK071q9
-         sk2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cNrZzCdSzJul9lYEmCL2riuXLfAAAq+ZivQLGwqcpMo=;
-        b=E9lNoyljjlv9L32QT1mXCiDqAz1cxi148dla90tll/jW2I86swPKpmIrZY6jXSucYc
-         iGJnu5vVZKzJSQVm4B0v1b9zAO9jr/ifP5wcBCvozTg8UYaiBhNTFozRhrKOmn+9Llyc
-         /aMhJRNzPiuq498zjRxyOniNdRGnP7kxULr/2Wg0Hr/l3Cy0k8FhsKsKuJNqblaAGuR7
-         Hx/yDndtf10e3Bzxs8mnAt9dGMUGonYOoCWipXFoZ5PyoS6HvCCFoYHTCYT1ZwWaWXHW
-         CiQID972Gm+HDVu8vZNZzOqpqlwpWvd1bLeyGG6iQw/WfNTTFCqzpstqFbLHFnZqHDBw
-         AK8w==
-X-Gm-Message-State: AA+aEWZVB1esSgpGcF9uyt3z5E5sIfB8ivjW62hCpYlYxd4+EpKEb3kd
-        YIyXeZBS6Ta6YXJMnM+nR4rHYidowVjgJ1Dp/Ilhfg==
-X-Google-Smtp-Source: AFSGD/XZR3iFOkwJARI/fpsxX7slC0p/yWVmg/x9SQ2MVnYYBZtN0rHfyyZMNuTViapnchtJc8Uys66aHSrUmOTo+w0=
-X-Received: by 2002:a17:906:798e:: with SMTP id c14-v6mr7396716ejo.123.1545139526688;
- Tue, 18 Dec 2018 05:25:26 -0800 (PST)
+        Tue, 18 Dec 2018 08:26:11 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59649 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726582AbeLRN0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 08:26:11 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9EBE56931B678;
+        Tue, 18 Dec 2018 21:26:07 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Dec 2018
+ 21:26:01 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <devel@driverdev.osuosl.org>, <gregkh@linuxfoundation.org>,
+        <leobras.c@gmail.co>, <radek.dostal@streamunlimited.co>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] staging: fbtft: use strcmp() instead of strncmp() for
+Date:   Tue, 18 Dec 2018 21:25:08 +0800
+Message-ID: <20181218132508.18672-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
- <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
- <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com> <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
- <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
-In-Reply-To: <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Tue, 18 Dec 2018 21:25:15 +0800
-Message-ID: <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
-Subject: Re: A weird problem of Realtek r8168 after resume from S3
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
-        netdev@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->
-> On 17.12.2018 14:25, Chris Chiu wrote:
-> > On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> >>
-> >> On 14.12.2018 04:33, Chris Chiu wrote:
-> >>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
-> >>>>
-> >>>> Hi,
-> >>>>     We got an acer laptop which has a problem with ethernet networking after
-> >>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
-> >>>> follows.
-> >>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
-> >>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
-> >>>>
-> >> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
-> >>
-> > [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
-> > (uninitialized): mac_version = 0x2b
-> > [   22.365580] libphy: r8169: probed
-> > [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
-> > XID 5c800800, IRQ 38
-> > [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
-> > bytes, tx checksumming: ko]
-> >
-> Thanks for the info.
->
-> >>>>     The problem is the ethernet is not accessible after resume. Pinging via
-> >>>> ethernet always shows the response `Destination Host Unreachable`. However,
-> >>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
-> >>>> interface, the networking is back to alive. But it's dead again after
-> >>>> I stop tcpdump.
-> >>>> One more thing, if I ping the problematic machine from others, it achieves the
-> >>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
-> >>>>
-> >> You could compare the register dumps (ethtool -d) before and after S3 sleep
-> >> to find out whether there's a difference.
-> >>
-> >
-> > Actually, I just found I lead the wrong direction. The S3 suspend does
-> > help to reproduce,
-> > but it's not necessary. All I need to do is ping around 5 mins and the
-> > network connection
-> > fails.  And I also find one thing interesting, disabling the  MSI-X
-> > interrupt like commit
-> > [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
-> > Although I don't
-> > understand the root cause. Anything I can do to help?
-> >
-> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
-> the issue, but also pinging the machine from outside brings back the network.
-> Both actions affect totally different corners.
->
-> The commit and related issue you mention was a workaround in the driver,
-> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
-> in the PCI core. After this was fixed we removed the workaround again.
-> This shouldn't be related to your issue.
->
-> Hard to say for now is whether the issue is:
-> - a driver issue
-> - a hardware issue in the RTL8411
-> - an issue with the chipset on your mainboard
->
-> According to your description it doesn't take a special scenario to trigger
-> the issue, so most likely also other users of Acer notebooks with RTL8411
-> should be affected (after briefly checking this should be at least Aspire
-> F15, V15, V7). Therefore I wonder why there aren't more reports.
->
-> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
-> So you could test this revision and the one before.
->
-> Eventually, if the issue really should be caused by a side effect of using
-> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
-> in general or just for RTL8411 and a certain subsystem id.
->
+strncmp() stops comparing when either the end of one of the first two 
+arguments is reached or when 'n' characters have been compared, whichever
+comes first.That means that strncmp(s1, s2, n) is equivalent to 
+strcmp(s1, s2) if n exceeds the length of s1 or the length of s2.
 
-I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
-interrupt handling"),
-the problem still there. Then I revert to the previous revision, the
-problem goes away.
-So I think it's pretty much the side effect of MSI-X. However, as you
-mentioned that
-you didn't hit this problem, I'll ask the vendor to verify if this
-problem also happens on
-other machines with the same chip. Then we can determine to disable for specific
-mac version or just a certain subsystem id.
+This patch avoids that the following warning is reported by smatch:
 
-> >>>>     I tried the latest 4.20 rc version but the problem still there. I
-> >>>> also tried some
-> >>>> hw_reset or init thing in the resume path but no effect. Any
-> >>>> suggestion for this?
-> >>>> Thanks
-> >>>>
-> >> Did previous kernel versions work? If it's a regression, a bisect would be
-> >> appreciated, because with the chip versions I've got I can't reproduce the issue.
-> >>
-> >>>> Chris
-> >>>
-> >>> Gentle ping. Any additional information required?
-> >>>
-> >>> Chris
-> >>>
-> >> Heiner
-> >
->
+drivers/staging/fbtft/fbtft_device.c:1458
+ fbtft_device_init() error: strncmp() '"list"' too small (5 vs 32)
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: fix patch title
+---
+ drivers/staging/fbtft/fbtft_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/fbtft/fbtft_device.c b/drivers/staging/fbtft/fbtft_device.c
+index 50e97da..0e995028 100644
+--- a/drivers/staging/fbtft/fbtft_device.c
++++ b/drivers/staging/fbtft/fbtft_device.c
+@@ -1455,7 +1455,7 @@ static int __init fbtft_device_init(void)
+ 	}
+ 
+ 	/* name=list lists all supported displays */
+-	if (strncmp(name, "list", FBTFT_GPIO_NAME_SIZE) == 0) {
++	if (strcmp(name, "list") == 0) {
+ 		pr_info("Supported displays:\n");
+ 
+ 		for (i = 0; i < ARRAY_SIZE(displays); i++)
+-- 
+2.7.0
+
+
