@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A729C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011BEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588F421873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4AB9218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151280;
-	bh=+NB+aZVCc1dKVHrotFJ9kUvFJAzLATf4ELIfDWry5EY=;
+	s=default; t=1545151281;
+	bh=mnjMX0797Uv3UdB7xBFPnFxvakE/x4AxwlLEW37WZ00=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hFDTo2u8t47R9nwisvByPkVVu0FP4NNzlKvROhbnxGorxTz5FAxzQCA0GGna3DB5n
-	 Bz2qaZAxbiK+GXlCWK4NAActxjPIIQqsJdN2ibT4QOo1e3jOqEPYuxxCEoc8MtFmTu
-	 hR+Gv3k2msuPM81IDR3vFSp58I80uDOybqOyNuj8=
+	b=ZWSgfrlj5InYV/NjFUvNk7gLQeRFtjlyWGQ6EemWprVxemQkrbq++1Ek3qeV2NzY5
+	 J0j2H21nnIo1oIIzVDNbx+gNDwY/bt1YszUAPlNWB9jgrjHadWmiqNGeAq5ypYYGOF
+	 onb47MnL3hzeEi8M+NXYS2driBG5H56dGFkjcv0U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeLRQlS (ORCPT
+        id S1727493AbeLRQlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38644 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbeLRQlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:16 -0500
+        id S1726451AbeLRQlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF1F421873;
-        Tue, 18 Dec 2018 16:41:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DF69218B0;
+        Tue, 18 Dec 2018 16:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151276;
-        bh=+NB+aZVCc1dKVHrotFJ9kUvFJAzLATf4ELIfDWry5EY=;
+        s=default; t=1545151278;
+        bh=mnjMX0797Uv3UdB7xBFPnFxvakE/x4AxwlLEW37WZ00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gZgELyEtvwZ4jsBQNSfu475CSA90Yf6ljbDMIUOsQMlhEf2Vg534NY6XGDZv1ut/I
-         jGYrGWCoHY4/e6NkG2bpuiZyuPU/OK5yKyvk5PVsZFiwdi6SBGJ7goZSPZJxSluZCj
-         WxqD4AlUtJw/pJiGqSWVZ//eX8aWyFOOGCKU3Uwg=
+        b=loMgYHt0B/h9CmDx2B+93E9HCcCO6I8Nvj0YwJ2Q6KSdIDO67P1oWXetysTlJNUFq
+         rMYGGVSSXpnPAWyDOwRpBs5aiCR2g/urohGuuDRDI0k62o6k7UaA0bavlQq4fcJrCu
+         6ktwmEgMKMPAGsNdR5gfKj8W3APyY7mC2/MLygIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 08/44] pinctrl: sunxi: a83t: Fix IRQ offset typo for PH11
-Date:   Tue, 18 Dec 2018 17:39:20 +0100
-Message-Id: <20181218163928.314767419@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 26/44] dm: call blk_queue_split() to impose device limits on bios
+Date:   Tue, 18 Dec 2018 17:39:38 +0100
+Message-Id: <20181218163930.574401907@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -65,37 +63,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 478b6767ad26ab86d9ecc341027dd09a87b1f997 upstream.
+commit 89f5fa47476eda56402e29fff3c5097f5c2a1e19 upstream.
 
-Pin PH11 is used on various A83T board to detect a change in the OTG
-port's ID pin, as in when an OTG host cable is plugged in.
+Otherwise the incoming bios, of various types, won't be shaped based on
+the DM device's advertised limits.
 
-The incorrect offset meant the gpiochip/irqchip was activating the wrong
-pin for interrupts.
-
-Fixes: 4730f33f0d82 ("pinctrl: sunxi: add allwinner A83T PIO controller support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Depends-on: af67c31fba ("blk: remove bio_set arg from blk_queue_split()")
+Fixes: 744889b7cb ("block: don't deal with discard limit in blkdev_issue_discard()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-a83t.c
-@@ -568,7 +568,7 @@ static const struct sunxi_desc_pin sun8i
- 	SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 11),
- 		  SUNXI_FUNCTION(0x0, "gpio_in"),
- 		  SUNXI_FUNCTION(0x1, "gpio_out"),
--		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 1)),	/* PH_EINT11 */
-+		  SUNXI_FUNCTION_IRQ_BANK(0x6, 2, 11)),	/* PH_EINT11 */
- };
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1592,6 +1592,8 @@ static blk_qc_t __split_and_process_bio(
+ 		return ret;
+ 	}
  
- static const struct sunxi_pinctrl_desc sun8i_a83t_pinctrl_data = {
++	blk_queue_split(md->queue, &bio);
++
+ 	init_clone_info(&ci, md, map, bio);
+ 
+ 	if (bio->bi_opf & REQ_PREFLUSH) {
 
 
