@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F3CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D1FBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A2821871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BF1721871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171452;
-	bh=wPmZCRcuPajVxY0A5Yqjzwpa8TBaru9F2GaBl6lZTPI=;
+	s=default; t=1545171457;
+	bh=0h+ooaTAHHihevNRMBkWTu0RbdcU7TOItl827Nt1VCs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CVbNjymUCW4l216prW9QrjfVhDp6by0vmKTK3HcCepq67rBwEy380j5rota+v3Jnc
-	 T0HT1ZY7mhJZWUiS8LHOnrQ36e0v7Fi6LMmNm8hvcG/XVtsyNbJDCsAJ2rtUTqhCGc
-	 wDJQbdwTp03UcZcNcdPG4xNV1MHrOPGY9Ukak9Sk=
+	b=CejDqzcjNzwTdvpM1Jl7UlnIqPISsnKkKG3WTD6M/+d/KzPnogVg7U1dahUw0sUuG
+	 3/BCZJFgSpTIeeVPBTRmPIoz36cSRAUoiIyiQSHOYGePCijXWuJQovMeZQtT6+xKgA
+	 eDPLKZFqjxnx9dkU2tSJc+FGrzfyCBlnNJpjVzMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeLRWRb (ORCPT
+        id S1727989AbeLRWRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47964 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:17:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeLRWRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:17:30 -0500
+        id S1726590AbeLRWRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:17:35 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63EEB217D9;
-        Tue, 18 Dec 2018 22:17:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C31E218A2;
+        Tue, 18 Dec 2018 22:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171449;
-        bh=wPmZCRcuPajVxY0A5Yqjzwpa8TBaru9F2GaBl6lZTPI=;
+        s=default; t=1545171454;
+        bh=0h+ooaTAHHihevNRMBkWTu0RbdcU7TOItl827Nt1VCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u9A39saO6vj8f/xZS5gOLLFQoNl4276tqSVlZaDC5968iyCTOWowGUzV050FCDGHn
-         9JHAQadfEVfx+a6ETnqThVgjI1/bHsDSoEBN36VgthUwaPy4p5orB6hES+3mAf6efa
-         awANdxWsW0eCU5zJWpPamIdjshclv4xraviLHcu8=
+        b=zOCO5KFlihwzCcWOpwMhXyVmC9bgHfWjYbAXdM71IKHVMJlbOmdMb5iFdkycURs8C
+         K6yAmwRy5hJ++F941NOfiE1L/uMP/JzppdZGJQaGkwx5qUunPf3TZRbSnPeRcYMPxV
+         aO2qqPTLCX1RnekkO7obv1zWdLdsNZS7JKN0svpk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 60/63] perf beauty: Add generator for fadvise64's 'advice' arg constants
-Date:   Tue, 18 Dec 2018 19:07:30 -0300
-Message-Id: <20181218220733.15839-61-acme@kernel.org>
+Subject: [PATCH 61/63] perf trace: Wire up the fadvise 'advice' table generator
+Date:   Tue, 18 Dec 2018 19:07:31 -0300
+Message-Id: <20181218220733.15839-62-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -65,7 +65,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-  $ tools/perf/trace/beauty/fadvise.sh
+That ends up generating this:
+
+  $ cat /tmp/build/perf/trace/beauty/generated/fadvise_advice_array.c
   static const char *fadvise_advices[] = {
 	[0] = "NORMAL",
 	[1] = "RANDOM",
@@ -74,50 +76,52 @@ From: Arnaldo Carvalho de Melo <acme@redhat.com>
 	[4] = "DONTNEED",
 	[5] = "NOREUSE",
   };
-  $
-
-This has a hack wrt the s390 difference.
+$
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-tb7jguv01u8p570piq13eioh@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-zwbslubagram8a8zdc003u8h@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/fadvise.sh | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100755 tools/perf/trace/beauty/fadvise.sh
+ tools/perf/Makefile.perf | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/fadvise.sh b/tools/perf/trace/beauty/fadvise.sh
-new file mode 100755
-index 000000000000..b15ae3875167
---- /dev/null
-+++ b/tools/perf/trace/beauty/fadvise.sh
-@@ -0,0 +1,22 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: LGPL-2.1
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 3af432bccd3e..bd23e3f30895 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -410,6 +410,12 @@ _dummy := $(shell [ -d '$(beauty_ioctl_outdir)' ] || mkdir -p '$(beauty_ioctl_ou
+ $(drm_ioctl_array): $(drm_hdr_dir)/drm.h $(drm_hdr_dir)/i915_drm.h $(drm_ioctl_tbl)
+ 	$(Q)$(SHELL) '$(drm_ioctl_tbl)' $(drm_hdr_dir) > $@
+ 
++fadvise_advice_array := $(beauty_outdir)/fadvise_advice_array.c
++fadvise_advice_tbl := $(srctree)/tools/perf/trace/beauty/fadvise.sh
 +
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
++$(fadvise_advice_array): $(linux_uapi_dir)/in.h $(fadvise_advice_tbl)
++	$(Q)$(SHELL) '$(fadvise_advice_tbl)' $(linux_uapi_dir) > $@
 +
-+printf "static const char *fadvise_advices[] = {\n"
-+regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+POSIX_FADV_(\w+)[[:space:]]+([[:digit:]]+)[[:space:]]+.*'
-+
-+egrep $regex ${header_dir}/fadvise.h | \
-+	sed -r "s/$regex/\2 \1/g"	| \
-+	sort | xargs printf "\t[%s] = \"%s\",\n" | \
-+	grep -v "[6].*DONTNEED" | grep -v "[7].*NOREUSE"
-+printf "};\n"
-+
-+# XXX Fix this properly:
-+
-+# The grep 6/7 DONTNEED/NOREUSE are a hack to filter out the s/390 oddity See
-+# tools/include/uapi/linux/fadvise.h for details.
-+
-+# Probably fix this when generating the string tables per arch so that We can
-+# reliably process on arch FOO a perf.data file collected by 'perf trace
-+# record' on arch BAR, e.g. collect on s/390 and process on x86.
+ pkey_alloc_access_rights_array := $(beauty_outdir)/pkey_alloc_access_rights_array.c
+ asm_generic_hdr_dir := $(srctree)/tools/include/uapi/asm-generic/
+ pkey_alloc_access_rights_tbl := $(srctree)/tools/perf/trace/beauty/pkey_alloc_access_rights.sh
+@@ -605,6 +611,7 @@ __build-dir = $(subst $(OUTPUT),,$(dir $@))
+ build-dir   = $(if $(__build-dir),$(__build-dir),.)
+ 
+ prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h archheaders $(drm_ioctl_array) \
++	$(fadvise_advice_array) \
+ 	$(pkey_alloc_access_rights_array) \
+ 	$(sndrv_pcm_ioctl_array) \
+ 	$(sndrv_ctl_ioctl_array) \
+@@ -902,6 +909,7 @@ clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clea
+ 		$(OUTPUT)util/intel-pt-decoder/inat-tables.c \
+ 		$(OUTPUT)tests/llvm-src-{base,kbuild,prologue,relocation}.c \
+ 		$(OUTPUT)pmu-events/pmu-events.c \
++		$(OUTPUT)$(fadvise_advice_array) \
+ 		$(OUTPUT)$(madvise_behavior_array) \
+ 		$(OUTPUT)$(mmap_flags_array) \
+ 		$(OUTPUT)$(mount_flags_array) \
 -- 
 2.19.2
 
