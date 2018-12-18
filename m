@@ -7,87 +7,86 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 930ABC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF44FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CF8B21841
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:11:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 978AA21841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="mFWj2GaP";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="DFxfkpir"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="M6wnXSQf";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="iSb/jf2w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbeLRQLU (ORCPT
+        id S1727186AbeLRQLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:11:20 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:57358 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727137AbeLRQLR (ORCPT
+        Tue, 18 Dec 2018 11:11:18 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:40060 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726762AbeLRQLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:11:17 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBIG8kKE008745;
-        Tue, 18 Dec 2018 08:11:04 -0800
+        Tue, 18 Dec 2018 11:11:16 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBIG4Ucs019413;
+        Tue, 18 Dec 2018 08:11:06 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=DoCNLXwKYkhNsxQZhdDQ5uZZ3MLBxxWJs6aInNA8vcU=;
- b=mFWj2GaPODOozGoIDp1gnAcOwdA1Y7SsX5D3C6TeJANxN1LCH+Ru+T5xiW8g++l3uC+P
- OYKYg2hPQCU7BH6C+R+JiIpE0Lzg504nAOlJk28AKElAOPocStbQVF96Txu5oqm8bnhP
- n4RlWEjlEmB14AEBl7iwVTQ9rUTuS2qkYGZfa4HSJmNjTY+SvoHiSyxF28GxnIMzPPKP
- AnItiAPbh6dMqzfZQKk0UCB86O+dGy6dBahxQX86DUJ3U4BtQbgFFVWcsDTwjbeyngAx
- gDgXKkZ9AT7ZKmjP9RIfJTTgazu3Vu3J2YVYZZJgZw+SGgOWmg2ksTYeNtnMNyS8gwN8 UA== 
+ bh=VNCFUUtWI9a9homG13mZT1UkRPuLZr++rYtXbgG+OWY=;
+ b=M6wnXSQfB7AnurnyOI2D2V2H4yKuio3nBDzasi0h8FWaotOo3/maHPE3O3bAB/rddPl1
+ bV47uJLK+49URklr2p6WTvt+0s5bIz/9LCApFF1ef9izYdYpRqL+0RFwSmTuDrK1XQBX
+ hBAA8wJzSZjb3lCzrpnNS2Xf3K+XkdzsDjQmbjoC4YpFI7OShWG1FUyy39ImO15WGdlZ
+ V944fLZJTPMDRLWGrylsWk1ptHo2tnHEC7nfvPKnyAP1NDt3p5kg7x74m2mB4162cKb1
+ IURLFI/1w6Mnpch6QquB1AjjjxMUFabWucVkv5OadsqQL9PN3qRf9upHRRLxmpmuN/o3 Cw== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=jank@cadence.com
-Received: from nam05-by2-obe.outbound.protection.outlook.com (mail-by2nam05lp2056.outbound.protection.outlook.com [104.47.50.56])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2pde96dahv-1
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2056.outbound.protection.outlook.com [104.47.33.56])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2pdbx6nacg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 18 Dec 2018 08:11:04 -0800
+        Tue, 18 Dec 2018 08:11:06 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DoCNLXwKYkhNsxQZhdDQ5uZZ3MLBxxWJs6aInNA8vcU=;
- b=DFxfkpirXNyi3xI8Vede76lUJumjJVbPY128EWmeG04+TD8Ec+/gV4ma/ve4jUQKt3UKkZA2xeFMnITPNfrGiX647EODN6cZHXcr2i7HqOJ7/TyGb+bivTT3jMZ2nDNw/39HF97hbqEyLT4U/8D0gV8URjgt9SiHeurmw4slT6c=
-Received: from BYAPR07CA0001.namprd07.prod.outlook.com (2603:10b6:a02:bc::14)
- by DM6PR07MB4412.namprd07.prod.outlook.com (2603:10b6:5:bf::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.20; Tue, 18 Dec
- 2018 16:11:01 +0000
-Received: from DM3NAM05FT006.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::200) by BYAPR07CA0001.outlook.office365.com
- (2603:10b6:a02:bc::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1446.17 via Frontend
- Transport; Tue, 18 Dec 2018 16:11:01 +0000
+ bh=VNCFUUtWI9a9homG13mZT1UkRPuLZr++rYtXbgG+OWY=;
+ b=iSb/jf2w0z2UKl+4f858gixqdWbxlEGa0VHuu9GlSTr1Srs54c6qbo8ORtW5WObbiZ9NnRrTc+835HI+/BFTf+mbT9YyR6rqtmGVWQN+yQyfHWCADBpFx6nRj8mb4/cTBiHKGYziECEiDjcldPjyOW7cyEroe3CEEDYd8/nJDnE=
+Received: from DM6PR07CA0033.namprd07.prod.outlook.com (2603:10b6:5:94::46) by
+ BN7PR07MB4403.namprd07.prod.outlook.com (2603:10b6:406:b6::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.17; Tue, 18 Dec 2018 16:11:02 +0000
+Received: from DM3NAM05FT034.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::203) by DM6PR07CA0033.outlook.office365.com
+ (2603:10b6:5:94::46) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1425.19 via Frontend
+ Transport; Tue, 18 Dec 2018 16:11:02 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 199.43.4.28 as permitted sender)
 Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- DM3NAM05FT006.mail.protection.outlook.com (10.152.98.111) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.5 via Frontend Transport; Tue, 18 Dec 2018 16:11:00 +0000
+ DM3NAM05FT034.mail.protection.outlook.com (10.152.98.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1446.5 via Frontend Transport; Tue, 18 Dec 2018 16:11:01 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBIGAt4A031456
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBIGAt4C031456
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 18 Dec 2018 11:10:57 -0500
+        Tue, 18 Dec 2018 11:11:00 -0500
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
  15.0.1367.3; Tue, 18 Dec 2018 17:10:57 +0100
 Received: from lvloginb.cadence.com (10.165.177.11) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Tue, 18 Dec 2018 17:10:56 +0100
+ 15.0.1367.3 via Frontend Transport; Tue, 18 Dec 2018 17:10:57 +0100
 Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBIGAsin016818;
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBIGAsJV016822;
         Tue, 18 Dec 2018 16:10:54 GMT
 Received: (from jank@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBIGAsFv016817;
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBIGAsZ8016821;
         Tue, 18 Dec 2018 16:10:54 GMT
 From:   Jan Kotas <jank@cadence.com>
 To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Jan Kotas <jank@cadence.com>
-Subject: [PATCH v3 1/2] dt-bindings: gpio: Add bindings for Cadence GPIO
-Date:   Tue, 18 Dec 2018 16:10:41 +0000
-Message-ID: <20181218161042.16366-2-jank@cadence.com>
+Subject: [PATCH v3 2/2] gpio: Add Cadence GPIO driver
+Date:   Tue, 18 Dec 2018 16:10:42 +0000
+Message-ID: <20181218161042.16366-3-jank@cadence.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20181218161042.16366-1-jank@cadence.com>
 References: <20181218161042.16366-1-jank@cadence.com>
@@ -95,52 +94,53 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(2980300002)(199004)(189003)(36092001)(106466001)(486006)(2906002)(446003)(86362001)(50466002)(356004)(6666004)(53936002)(305945005)(5660300001)(105596002)(26826003)(47776003)(1076003)(107886003)(48376002)(4326008)(81156014)(36756003)(26005)(16586007)(316002)(69596002)(51416003)(186003)(87636003)(478600001)(476003)(68736007)(8676002)(50226002)(2616005)(8936002)(126002)(54906003)(76176011)(110136005)(97736004)(426003)(336012)(81166006)(42186006)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR07MB4412;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT006;1:4E00ihAEckFdJXgoPWQ4EG1m+uZFmHL4QdmVjw6Mqm9W20bOWdi1uTRe5qrAjEksDeJPHIIhNplth/VPfJUyD8jIStJ1EGOYM1j5PamWe3kdWf71E1wWoHT1po5p5EWN
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(2980300002)(36092001)(199004)(189003)(47776003)(76176011)(26005)(51416003)(5660300001)(68736007)(50226002)(81156014)(81166006)(36756003)(8936002)(2906002)(8676002)(26826003)(48376002)(16586007)(42186006)(316002)(110136005)(54906003)(478600001)(87636003)(2616005)(575784001)(86362001)(69596002)(14444005)(4326008)(6666004)(426003)(336012)(50466002)(53936002)(476003)(486006)(356004)(97736004)(126002)(446003)(11346002)(107886003)(186003)(105596002)(305945005)(1076003)(106466001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4403;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT034;1:DRq+41Sux0rhmVyZGiy99UqDw54IxBbWxshL6LbYrb+5M7Pg0egNP7eAYCTQnpqeKRMU5SAzBOHF2dbi9ddRdvCnedydsz1bCBH2aniXBliOY/TqQd4WNcLRrop8o2SN
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b5798cbb-60e7-4429-7d34-08d66503672d
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:DM6PR07MB4412;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;3:/hOA32vvRN12hCdWDBQMXF+ds/Maw1+TkTuedLlK6FuVVgWLJXgtyRaGBD/gQm0O/ld4g1jeI0stVunSh0cIdGJrly/BwjCXTzXRWNEOziA2zAtTKFBL6mtB8f86uHPoFllgmPPL1qIyGoRumAhpMm6Y1rDsTnan623ceydFz/n5+jSsyMAosYr7PmDAGWr6MpNkwicuijsweGe6ZOBMiYnjdl0i/M8K064IAAeL0g6JaHufnyQ4wr1reOkU1WOutJnUGWjBFnXCjCkT9azFtB7IhC6OYcI9mKhbdfD4epK8bhzC7J6eW+AT5htIjCzvkKCubFzT+dbsSKZ++pwJUA==;25:ijhhDByYW/1FAz8LYzfoJs6lrRYXorbqez4LZmgJ/1Yg/ZC+pH1kAi+Z+DMC764EuONkWuVYViJtHm272H6L/HaEsr0V4c4IeIQYuCX3ExbmZ5szJo+1oE0ijgu4VkrVhtvc7shoG+XHwXHjP32DH7LIheBqgrrHzZhORn8DizPix+5Iie3spLmAbl6UcUMLRq1M5GkoJ4872S7PNqmnHic2ttAlL2A7PCdp658sN4RPskU+VCjkBI536ZX5zFAz+6fjxxxfLI17hm9nAIc49urMpDa958to9GL0axBkSDDDpfIrSWbbCfekr03YgpNPq8GuxEtrxFf7pmIz402xcg==;31:ejVPwkIR17XpdcEB7gjBs/8j7DNOR1RzbtJT12q18GxC2JEm2B+MlqgIRmsbzXQYIqgV/CLYj19vLb+DF0aIhaSIyRSohG9JBVqBnL9Qv7LXdbegHgen8LwJKqVmPqVYMyLctbg9bihfkoYQxQ3RyX/9ZJE9Rn0eIiOX+PFG0Ip0eiUrJNh8D+1VAq6Se2bmuahut77Xwzq2KFxwVmtsvBnWgKW2BPeck/7bjyfwfZQ=
-X-MS-TrafficTypeDiagnostic: DM6PR07MB4412:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;20:ovdN72DscFDxRHsUON482H5Z196rF3l5p4s5qEPsZ6EUc9pCfFiDh6VWgHMV9ugQnuEMre0ShTsLlA6VdNYDDrx0pKc/bo/9bvg+xnPpPfY1xfmGy7/7ZeMDmCuDwSiMJoHC7uZfJB1jqAg3oHNJIPVnfbCKcJxQhhcJGEQtPr+5v+f5b0n/zWw5s2SzBqchT80W6nTk7vUe1n7xJzfZs5iOQRCXfV5tVAmEJsgOjV+PwrS9ZlNycXLaxf6RirBgHne9hU5X045zCAeXGBeo+4vYO17HRgw8jTcvc6Gk+lUWeoMhglIB85WnPCuit1vc4sm0T0pnYSZDW6YW0Tsj4RBqiX15J0j2lF5fTjIYkxz2N8H7K3cweJQipjL2BWl2nqBKdIPtteM2X2earSV/+keQ8cGswb9m1xDnRI2NWErgGxuhPm0L/+ylCrU6g1Ei98b98SfsSBnNyG/HoMVnUxhhlCw+ikhUN4QNmDRATTRqiHQTm7/nMYePuIAcvOx5;4:jiyNFfmYjKiNLhnOwSNhPik0Fycctq2+SvvIMWM99efKY5IDhaqh9gb9DT01RKrvheDvr2iCFgEcWuYnlbOX+xCnHAj4CSUpenHfxVxEUSJggAO5AiU7V5eFiLD7gDdHOqUAEZQTrCOTNf0DXxDELFljZxiDP9HqrqCCQYDseH0boNiyJANeOP1t8ROajFDFruHj+U8a1thqoqDeEIq3ErclxrccxLm2v2jM/CqB4DJMMuvP2oPg9a4yvkV8jXNYTu6j2wA2MltKf3sHyK0KwA==
-X-Microsoft-Antispam-PRVS: <DM6PR07MB441203BABDAED93BAE860B69D0BD0@DM6PR07MB4412.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 62e94218-3950-4556-2d6f-08d6650367e1
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:BN7PR07MB4403;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4403;3:z2jQ5LUKPWwUB2nxOOPBf+5qeqrn1Fdb4eQyDDPKKQFYo+ODbIkbCJwDP+ZRUxjPa70LKdPU/EDHXXBRYH+/hsIDrqDhLtowytaJ5/3frfci22sdAha/5Jni/eCHY710kd1RKMUuVnTy78cfCdadXN+74EXw9SCYwIOVFqg3mbSE8Z0NZt330Zfz6K+cdAJ4c7C5xcOCZqCuWgyifluqqYm6pMibUksB51Js/1wKTMP3B+Ax11YhVgDk5m3AlAlEG7VqRpHkD/wuBonPRhzXeW0vm7b+Opl8TMYY4HztT/3Mwqs97oD9plu2Nq7K2z/GzEpoYdfu7yCqd0zCh9S2Gw==;25:DNCpvflfR15bF0p3ZrTqiIu4voMHkoWfhkNVonBKxtbi3TPS4ujTqloMjJAVM6ewGhiAvVNlBkSuA7NZ/Eexb+6HXOsYAqrcTauSNpLDO6JXMWYRkZ2ToV3VAZn8d6QjUDlANLKWepO2u5C8w8k7pVeTDLL70qrMSnsox0819xtQPRPIYgmbAK9xtYY36u2BcFbfk2qj2KQ0dK4CIZ43h0GHVhpNXi2GZm7mLLnKjUQg6fiTLScZ4JoEso3hpxlOmEkMIKmJ8QJ5tQ3QTIuACQTh0WDigyLL9zVglEw7l9NU7Dt/+9WyL54P9ANhBV0kjC/pHJlMPx5FglP9eoWm7w==;31:Q+7IEKi9Yf0YiAYFtpynTpHFiamegjY/fGjUZWNnSfkuT3QKeH3Gwrv8mP0YxG21BDvPRI4YJNklpAoWc/r5mOSCtF1b7IQXuKKmre9zugfJ2PlGn9nQboqLjPCDaTbaPafa9V3aKlw+tgJzHJ4yblXKceQC9VlrYunVF6EZiFEPqoB2mCJBt1Vshk7bvc7zkY0ug3Uyqc3EJ5vylLHd5aI45/axLXG/NgUSgvOvrXk=
+X-MS-TrafficTypeDiagnostic: BN7PR07MB4403:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4403;20:4j8qI1LcKFb8XESkstMksDf/rr3brVLtOt7LbkXS6XHn6an28BzSY6MWNQSNVZkwEgxuZ2L7WaTuKHqPMYbRcuek/vKJRrZe+CcKwMrIuxV9G22tIdxI8ROhKrRvsW6mk0ANH/ZXCfbEa3snQZDLFUotPht6oQ1GQkG679zbS4gZsisjYdoVvdfVvSw/52RmXBY1lEKcI/nhO4cDOF+PNOEslvcjkcO+pru2gnWcO/BBSflJjiE/ZZOKwEGcquzSEcAcXbUwbtkz2NRfJJoZjBuedkPJVV+ODxKrRPfvE+Q80lMmUcD7zIAuuacxtsrrmpfx6P6RT4zrE5xtvOi1h+Uj/+pSfgPLCuPPn5wyPr0HGm3ja27k22uUqSe8hAMqky/DbRfmaOSdWk4kRn10jt0lHykETcmSJCr5DCOUDHKKBtPXcHQlZmjw9y35IJkziqNVYiOgphy5TrxrINa4L/QZyWcj0oc2JMaWoz3VxeRKbgS0aDOovBnZ+4o6c8FZ;4:Lyupro6qNdIN44+2t9yBouCeOaLVkw04yhNriJ9OEf7bynSEwnWvLwFOSeMIZ6ldYxymTBf7FIanS7GLjqj9/Qz7zwSek9mHY3XjBP/km2X0KHKnMjL542ZN94VJx16fvbAd/+Py72rxwWb4AVkFDtOV9QPkydLzCq/qvH76kwCXf82BbIOJbRvlxZcv7E61vQ4NsDlYHHvR2Lj2N7GQcI9lrsF4UEkXzMKua8WAKMnUPeQCHhWnrb+jfgBu3Jd/LtP8wfDhLQ5iBI+rdImxmg==
+X-Microsoft-Antispam-PRVS: <BN7PR07MB4403D90ED707071888DDFA9AD0BD0@BN7PR07MB4403.namprd07.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93003095)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM6PR07MB4412;BCL:0;PCL:0;RULEID:;SRVR:DM6PR07MB4412;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93003095)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BN7PR07MB4403;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4403;
 X-Forefront-PRVS: 08902E536D
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR07MB4412;23:oeuvCsMbW6Js0+qyw3sVTwKTla6zVWpIyzC5uBL6k?=
- =?us-ascii?Q?a5rvEcpdk32uVhy0v3HGyFrpgeRQ5RDAUT6/A51Ejmbx9esHpLYKzcCYnGrK?=
- =?us-ascii?Q?ZymZOO9j4yUrDkgItNDzaEBfN6YxHaYx2FXrG6feNT+n7cywT+l2Es0kFDVI?=
- =?us-ascii?Q?N8e55f8chkDL3Z+mxfXWB0VUMi+LqHmFR5HcmyQXJONP9D1ak7c4YqWl1LXQ?=
- =?us-ascii?Q?EfVQXsEYhZJXINwxnrb2Ex0jC+/s7uJOemGFLhf1QHb/UeoXftAbmu16zoBO?=
- =?us-ascii?Q?+bbrMLQDr7iZlDbHVmrb4m9prZ3oMEDi04ATTH4W91we7lXZ8DDeRnqSVoYq?=
- =?us-ascii?Q?HrbVaqdWxBL0Wpo7/6Vy/aiIBr22gBpgJPoCd61QJmKYc4k89CpXoIlnkKww?=
- =?us-ascii?Q?KoEEcOoal5jRc/oxgniOrCdphvDURSPg1RNA5HVLAQEUG52jNmNF5rd+w8D+?=
- =?us-ascii?Q?Ql8iJCyTs5o/TbofvKIX27fB9R3Ivbwr0aqIvmgBlv6tVPEp0gCk/daz4YQz?=
- =?us-ascii?Q?SaWmlC3jhtPpVr4DJi+slB9TIBzrvt6DHK6q2JNaFIlB7sMiK9VwB5F6m6V3?=
- =?us-ascii?Q?l7aqQp0VdqE4B3wnceBpu22wYVIZtVmx6+GoGiEAIfDs/gv+YNk1LfdANFzU?=
- =?us-ascii?Q?Q/ihAEDTfqzttzenSeUkRFh5T7Tisd2TIUccGIVeDt/2Ro/rJJjzPFWOvLHQ?=
- =?us-ascii?Q?uDoEqx4pVa3782pOJcMqsHy55wIW0CkdGCEpiu1XqUsdvTHa59dlKpbSMZCS?=
- =?us-ascii?Q?urs/Z9vhGr9Iet5ABoc2xiMrSUU81X5QUSX/aM3VRwYO0G0zajVIQN9aFuUB?=
- =?us-ascii?Q?iKw77Z9GjDEnm1O+ull0kQ7G4B4qJga5xMMwsrU9s5/85Vb9bOJoV11roMHt?=
- =?us-ascii?Q?lOauSOVGPNFHp1NUMJd55czp9aLTwktpC+ohNNXlcNa1Wt53VLrCeVC8iiOx?=
- =?us-ascii?Q?0/SRvpQ7JsUDurhV6mQwBgagEGOFi2wop0XQht3lzulEXQZ2gLWAYX4vZHjx?=
- =?us-ascii?Q?tAM26tyzAQaFgGHQ2/+8cVVNHwWEE4S7uabE5DbrJA3JVN9lHAfQKHWicJAw?=
- =?us-ascii?Q?oCmPTO7u6nMOJkTs2b/zGUf57Gn3jhxz7S0vaTJUDtPwZm72vQzcl2DfEJw7?=
- =?us-ascii?Q?poDnS69HSguCzgJD865gANDmQ9+ura4k41JV1iFDwSOIoSYow/a9lS+6gSQ7?=
- =?us-ascii?Q?dN45dQQ8wRlNqE=3D?=
-X-Microsoft-Antispam-Message-Info: /Pb+baM2kFEqL2zLdXfVchAe2iu90yqltKaikHE8X3eXZnpDK/14jVstKMwwxjXEkT3xA6l9BBmc7L0Eey6EON/kHD0/FDGzv3F7o1c01kW4++U//Na/GEOisNoxGgAwh+KmZfnx6fZK7Gb8GF9OLmmXWAgn5wgQbZvP3gRrONnF0gYdsbiN01sPP6vw/R8TA7rde2FxoUGY+nynndVPNoJTIYJzj2FN4Tra08G8Uulk/pBxwQP26i/RHW8ksbceIg0PyA08FKaZOFs+mY2apIPyoVqWbD8SuoTjDMtv1p3pj1LXYpqYKQuTThENWHXK
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;6:+vieLjD6Cn3CB5XuZOjSGUMXL6bUlqvROqVBXEUJhr6TdgYnkxdP8Y3H8n1bAxO07UUJ4KKI0lW7y18RP2/DKCzomJ9rfQT8brKQjx3hGA2WzPJ4LFSx4dz4LAaXz57ot84tO7NKR9NA8ODFSuCdeXlb7fAOz/lA883HCimSAYpL7SQfzIm7GlmOpeI3P4rdnuFO7RfTMKG+JirZEQwVhqGQWib1TBBXLt/HWI6HX26kqo58PpaYVbESP850L9U3Oi7U6VcmOrixqygYwm9teo95Sa1hjzULNsJ2o0/wclyehxA7rXZOyN14+9VUN40Kgfy1eVTqCHbokSH6l91PdI+h00RyLJdnH+ifsMNxXLjywMWylEctLHasCjKE1Gx8rLsvbU9Bkz47xlmfsU/VsCOvtplerCWMeXh2N8SexKws5M+iWg4MkSqmCZ/nrU1QgMPLNjYCRVYYT02u9zcwGg==;5:z9vn4nPmvn6PtkgnvutBbjtnsOEqKQVUhpdCkkE9O4h2koqS8YeDMsvxbTPxnZxulm6SYoSUJ7wkDgzSGURZiZJizbu8dzat0SptXBP3NrczNM1jyCuDJidrQsJv6h92Oj1vqbdaaJ27rF+CdXSE4r+W6dPrU6ntbUQFoHYkGtE=;7:YFafUkvKDs7Ei9UEUCmBDSsSBATkz+b64TSbkAjSaxKenc2+z+npHpE288Nm3kN3wOlpkfcOUNWlrhrjqNqO5mNgkvLw6IvPQYb78AKMNav5ruSYwehepi5Edpm5ljyABOHdXKRaniRDLWxrOOoP8A==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR07MB4403;23:ZUkxH42H2/Q+WlOGtcJOpkFyseWZJNJKR7oe1sI93?=
+ =?us-ascii?Q?uVqWW8r4PtzxfwGtT6/yAyuVoPmcyCPcetGZvohfvaBUMk8GBeIWqR1Lophm?=
+ =?us-ascii?Q?3RVdOgFXdM/2utnlFzo2HA4C6BYQTOokoVTN719lkHhb2uW0Kq1ml75EkqTt?=
+ =?us-ascii?Q?yKfLpUaVjUwbSCBjvNkpFX6KKIiTjbNvc4zPnBCQCT3JrvJRIt1kHtvIlEfw?=
+ =?us-ascii?Q?bN02XESn7obRVUzCpY1FQKHFk9M1xUbE7v0YyQzFvU0CE/pX8uy8W3quyD4g?=
+ =?us-ascii?Q?o8JQRxbF4HkWjFPWKooI+IT5o+EiDOfpxjslhLlQqmjDU3Ub1DxB62X5ChY5?=
+ =?us-ascii?Q?R7Z9HcfNiRwc58kRkWa682aLSwRziFqe/P8yvkRDl8MsGgKIzwMa1nqxwJ3m?=
+ =?us-ascii?Q?mLUIGoD1SOMzmSCD5bRbR0E2KFPjvviSeEA8L2G1i+chel/g/YSZaL/AkmbM?=
+ =?us-ascii?Q?hsfwPLYHHkIV7JMB5vKJdG39Sho0wbVoSlrbN2mUuV1wKskrAfLmKJbCToS7?=
+ =?us-ascii?Q?r4Lr9nR/s2yuKNC/WJgdBaKpFNOQUkGZZIMMiI9/G1yPTksO3i5OStVRRE9X?=
+ =?us-ascii?Q?lCyU1WIwt7JfDngTJjJEKG++sedRLEJE+Bp5CjBKrLxFUjKLRY2CmxnengnO?=
+ =?us-ascii?Q?Bwr7ZgUOioH1N0FBlCt2zi72ohH9uAkT/1nmL9co7LZIWk33oqIAb+BE4x6R?=
+ =?us-ascii?Q?mxQ40IwbcR1jAYutWEB97YDDQgxkhaLmtq6ub2w9S8/oiYh6F1b6eK1Sp9mh?=
+ =?us-ascii?Q?lghDPWBh6A3+0KX17gFea/gDK8i5f/U9kO5+8EP5UEKOI8ahb6fqnbxFMlR6?=
+ =?us-ascii?Q?Hfv3h10A3t6CWXv8wbpK9cPFaENBUenAVjcq43YGsU/ojf+c7Sh82qJe1Evq?=
+ =?us-ascii?Q?8niCTKcYT5R7ZrJEsE8P6vO3ZNYRGa1xlZpyoc8L4U79uSfAArhXaHcArmRe?=
+ =?us-ascii?Q?PF0blAfMBB/tty927lOIuo59bjIJlz7kj5vZoaUlAwkXQYQdJ2qQ6nqPgAGH?=
+ =?us-ascii?Q?Ncki/Ftxa9XlccXcz7XWtPtR/z5v9mWC2XuKaAsfPUuG0eq0rEuqYGlblq8Q?=
+ =?us-ascii?Q?INp/lOzbZfZU1BFV46hSdAlSRgSCGh2YtrMTxCogLsuhSk+BSKJofPam1tyc?=
+ =?us-ascii?Q?OESOnEDvWdVV046roadCjHIQuLZqltfRe2GrTiWGmitiRKfBP5wHkzsXXdI1?=
+ =?us-ascii?Q?bo3PbXH9CZ4V6lF5iBpZSkTfvl7qs19t9uIZJw0lTjgtQquH1ng2rWMAg=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: 0PDcQudZSfRyuG4pGryUI0bH7/rI1NrVLSLFiJwbGlDnsoA1e9SkLRn/avS2ZJZbEXnZ8kvzDZ9PP1x/YT0kzk6Y+4CIhskglOLqncYeEydXms/Bukq6z7j7DXnidkMSPTIu1XxhvhMgrlFmFLQSG2Q+N/Rdt7Q2P0kcq0iBqTCyIs3WA6Pgk87gPHGDStpeC3hyjJq9BtDp3uJuUjBVUyevSozq4QqPse0/nuRFTQkq+4LYhKGaMg17P4SF/kEo+pjQV/8GtHiA6e8T4E1SdAT4/RXnH/DwE6Q9f0PEEr1UQIJnH6PbtgbV52yogaM8
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4403;6:4pR5dw/bXlcLomFuszHsfwYuHhpMJxR/24gyKmnbUV5JfzJNsWR0oABIc3bw+zi1cVNsLJY+YJbb+nHfHaH3Mpt634jUjPr6fCnixi4XtY/6Ne0K8PI21+JUzdKDNuxs4l9x7ngNPyOTKrJWqFQwphKOZjUFR2qeE3OTjn+Xrntsfa6nqz8Inl0ta2o2scqe+k15CmIWmO0QPuBALs5yguLaqwtZGJqFyWMUWG8b78IMrnpXkkqUuBNuvlXtpttpyei/v5ITsvs3O40g75O2+OPdrvBEtSSd0xGvKYUQFNMAm+ljk0LvaKu2fxifO+FblY8hSe5bgkZ9VqMyvzkpdMXOTd36fVQxdrVI3+ev3+ON2IocgAEDd9m1cArQ+yHcNDeOWahnAE28NPHszAmYFyC6S0Ox0BLlSd4b1oNDLRI1CPLHhB4+FzKfjzSOn/9p1gxQQLqg4kNbTbXPGzK5iA==;5:BGTzN75mP238TLrA065QR+2OkQxKMloPD+L2R661uqfejOF11s2LxIp/+zDez+VseRsiQtWXO9H7TpbY62P5aN5zQJXoUsuVBOcGXRsR6HlyK6PNA82sfHrHCHEJmxJhfpOsGx6UKcR85qMCue92u70Qu1WgDmT1oVg5XFiqzVY=;7:WS2BPYKNcCV20vIiexMzofMV5FZYKTnmPhNKUBPybmNUklqC4YDUlkAb57GIrQxlC6iN4k1KZJ/gzZ9C8EL2jMGLhXTj8YFXgeIGvuK7TJSesKqR/GsBM16Yhkxqu479w6IYLzB/zBpKDFiVxqSL9A==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR07MB4412;20:tV+YlRhrBpDa62FyzWs9kfqYcy0ipPVwwklDZT8KUxBjNbkgTeTZShcoVIEOqCwVT0WEeUVgxIdpBBzkU878hu5OMDMq9C7xVp2fJaL8SbvYpJGsoDtKGbaomJmhXdwQgFvgTmz5/06u/TEZF1n1u8gVVDK/WjAs5IMp/h7hhOt2ukFGcCVkHb40MfvjJyDSGh5MpJBF6so79ehsS09ygXDtl8CbMIQQ52BUOke6HQP8tVohPjoCtl71qZmHHySd
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR07MB4403;20:yY5Q5715R0Gh9Pv6xwSFklgqwzFZigp2Is3O8nWFuvk3yIQpyyd7Wo6k4Kdz4Suc4l3ZtOU9JUHU5GHOzOfGTyv2Yp4jIUTVF4B9zSGnpEmVFlmxDMdCuh083CH4b80JJ1ne+O/JDlMqsg8Dww5U9aPkr4uf81Kny2G/pB+zZbUnBitlzjj/oGs/lJqXA9vdTeKvkdqkKEU5iUJx6NI3v5C4wvmME0cVFUbymcMPBDd3+N5NofjI7w9eJ0px4wRr
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2018 16:11:00.5626
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2018 16:11:01.7246
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5798cbb-60e7-4429-7d34-08d66503672d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62e94218-3950-4556-2d6f-08d6650367e1
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR07MB4412
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4403
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -148,74 +148,358 @@ X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=523 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812180136
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812180135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a DT binding documentation for
-Cadence GPIO controller.
+This patch adds a driver for Cadence GPIO controller.
+
+It can be enabled with GPIO_CADENCE Kconfig option.
+It uses generic GPIO infrastructure and works
+as an interrupt controller.
+At the moment it only supports level sensitive irqs.
 
 Signed-off-by: Jan Kotas <jank@cadence.com>
 ---
- .../devicetree/bindings/gpio/cdns,gpio.txt         | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/cdns,gpio.txt
+ drivers/gpio/Kconfig        |   8 ++
+ drivers/gpio/Makefile       |   1 +
+ drivers/gpio/gpio-cadence.c | 291 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 300 insertions(+)
+ create mode 100644 drivers/gpio/gpio-cadence.c
 
-diff --git a/Documentation/devicetree/bindings/gpio/cdns,gpio.txt b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 833a1b51c..8259f8f25 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -160,6 +160,14 @@ config GPIO_BRCMSTB
+ 	help
+ 	  Say yes here to enable GPIO support for Broadcom STB (BCM7XXX) SoCs.
+ 
++config GPIO_CADENCE
++	tristate "Cadence GPIO support"
++	depends on OF_GPIO
++	select GPIO_GENERIC
++	select GPIOLIB_IRQCHIP
++	help
++	  Say yes here to enable support for Cadence GPIO controller.
++
+ config GPIO_CLPS711X
+ 	tristate "CLPS711X GPIO support"
+ 	depends on ARCH_CLPS711X || COMPILE_TEST
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 671c4477c..5fce8634a 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
+ obj-$(CONFIG_GPIO_BD9571MWV)	+= gpio-bd9571mwv.o
+ obj-$(CONFIG_GPIO_BRCMSTB)	+= gpio-brcmstb.o
+ obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
++obj-$(CONFIG_GPIO_CADENCE)	+= gpio-cadence.o
+ obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
+ obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
+ obj-$(CONFIG_GPIO_CRYSTAL_COVE)	+= gpio-crystalcove.o
+diff --git a/drivers/gpio/gpio-cadence.c b/drivers/gpio/gpio-cadence.c
 new file mode 100644
-index 000000000..c87a47827
+index 000000000..aec8d5df9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/cdns,gpio.txt
-@@ -0,0 +1,44 @@
-+Cadence GPIO controller bindings
++++ b/drivers/gpio/gpio-cadence.c
+@@ -0,0 +1,291 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+Required properties:
-+- compatible: should be "cdns,gpio-r1p02".
-+- reg: the register base address and size.
-+- #gpio-cells: should be 2.
-+	* first cell is the GPIO number.
-+	* second cell specifies the GPIO flags, as defined in
-+		<dt-bindings/gpio/gpio.h>. Only the GPIO_ACTIVE_HIGH
-+		and GPIO_ACTIVE_LOW flags are supported.
-+- gpio-controller: marks the device as a GPIO controller.
-+- clocks: should contain one entry referencing the peripheral clock driving
-+	the GPIO controller.
++/*
++ * Copyright 2017-2018 Cadence
++ *
++ * Authors:
++ *  Jan Kotas <jank@cadence.com>
++ *  Boris Brezillon <boris.brezillon@free-electrons.com>
++ */
 +
-+Optional properties:
-+- ngpios: integer number of gpio lines supported by this controller, up to 32.
-+- interrupt-parent: phandle of the parent interrupt controller.
-+- interrupts: interrupt specifier for the controllers interrupt.
-+- interrupt-controller: marks the device as an interrupt controller. When
-+	defined, interrupts, interrupt-parent and #interrupt-cells
-+	are required.
-+- interrupt-cells: should be 2.
-+	* first cell is the GPIO number you want to use as an IRQ source.
-+	* second cell specifies the IRQ type, as defined in
-+		<dt-bindings/interrupt-controller/irq.h>.
-+		Currently only level sensitive IRQs are supported.
++#include <linux/gpio/driver.h>
++#include <linux/clk.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
 +
++#define CDNS_GPIO_BYPASS_MODE		0x00
++#define CDNS_GPIO_DIRECTION_MODE	0x04
++#define CDNS_GPIO_OUTPUT_EN		0x08
++#define CDNS_GPIO_OUTPUT_VALUE		0x0c
++#define CDNS_GPIO_INPUT_VALUE		0x10
++#define CDNS_GPIO_IRQ_MASK		0x14
++#define CDNS_GPIO_IRQ_EN		0x18
++#define CDNS_GPIO_IRQ_DIS		0x1c
++#define CDNS_GPIO_IRQ_STATUS		0x20
++#define CDNS_GPIO_IRQ_TYPE		0x24
++#define CDNS_GPIO_IRQ_VALUE		0x28
++#define CDNS_GPIO_IRQ_ANY_EDGE		0x2c
 +
-+Example:
-+	gpio0: gpio-controller@fd060000 {
-+		compatible = "cdns,gpio-r1p02";
-+		reg =<0xfd060000 0x1000>;
++struct cdns_gpio_chip {
++	struct gpio_chip gc;
++	struct clk *pclk;
++	void __iomem *regs;
++	u32 bypass_orig;
++};
 +
-+		clocks = <&gpio_clk>;
++static int cdns_gpio_request(struct gpio_chip *chip, unsigned int offset)
++{
++	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
++	unsigned long flags;
 +
-+		interrupt-parent = <&gic>;
-+		interrupts = <0 5 IRQ_TYPE_LEVEL_HIGH>;
++	spin_lock_irqsave(&chip->bgpio_lock, flags);
 +
-+		gpio-controller;
-+		#gpio-cells = <2>;
++	iowrite32(ioread32(cgpio->regs + CDNS_GPIO_BYPASS_MODE) & ~BIT(offset),
++		  cgpio->regs + CDNS_GPIO_BYPASS_MODE);
 +
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+	};
++	spin_unlock_irqrestore(&chip->bgpio_lock, flags);
++	return 0;
++}
++
++static void cdns_gpio_free(struct gpio_chip *chip, unsigned int offset)
++{
++	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
++	unsigned long flags;
++
++	spin_lock_irqsave(&chip->bgpio_lock, flags);
++
++	iowrite32(ioread32(cgpio->regs + CDNS_GPIO_BYPASS_MODE) |
++		  (BIT(offset) & cgpio->bypass_orig),
++		  cgpio->regs + CDNS_GPIO_BYPASS_MODE);
++
++	spin_unlock_irqrestore(&chip->bgpio_lock, flags);
++}
++
++static void cdns_gpio_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
++	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
++
++	iowrite32(BIT(d->hwirq), cgpio->regs + CDNS_GPIO_IRQ_DIS);
++}
++
++static void cdns_gpio_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
++	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
++
++	iowrite32(BIT(d->hwirq), cgpio->regs + CDNS_GPIO_IRQ_EN);
++}
++
++static int cdns_gpio_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
++	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
++	unsigned long flags;
++	u32 int_value;
++	u32 int_type;
++	u32 mask = BIT(d->hwirq);
++	int ret = 0;
++
++	spin_lock_irqsave(&chip->bgpio_lock, flags);
++
++	int_value = ioread32(cgpio->regs + CDNS_GPIO_IRQ_VALUE) & ~mask;
++	int_type = ioread32(cgpio->regs + CDNS_GPIO_IRQ_TYPE) & ~mask;
++
++	/*
++	 * The GPIO controller doesn't have an ACK register.
++	 * All interrupt statuses are cleared on a status register read.
++	 * Don't support edge interrupts for now.
++	 */
++
++	if (type == IRQ_TYPE_LEVEL_HIGH) {
++		int_type |= mask;
++		int_value |= mask;
++	} else if (type == IRQ_TYPE_LEVEL_LOW) {
++		int_type |= mask;
++	} else {
++		ret = -EINVAL;
++		goto err_irq_type;
++	}
++
++	iowrite32(int_value, cgpio->regs + CDNS_GPIO_IRQ_VALUE);
++	iowrite32(int_type, cgpio->regs + CDNS_GPIO_IRQ_TYPE);
++
++err_irq_type:
++	spin_unlock_irqrestore(&chip->bgpio_lock, flags);
++	return ret;
++}
++
++static void cdns_gpio_irq_handler(struct irq_desc *desc)
++{
++	struct gpio_chip *chip = irq_desc_get_handler_data(desc);
++	struct cdns_gpio_chip *cgpio = gpiochip_get_data(chip);
++	struct irq_chip *irqchip = irq_desc_get_chip(desc);
++	unsigned long status;
++	int hwirq;
++
++	chained_irq_enter(irqchip, desc);
++
++	status = ioread32(cgpio->regs + CDNS_GPIO_IRQ_STATUS) &
++		~ioread32(cgpio->regs + CDNS_GPIO_IRQ_MASK);
++
++	for_each_set_bit(hwirq, &status, chip->ngpio)
++		generic_handle_irq(irq_find_mapping(chip->irq.domain, hwirq));
++
++	chained_irq_exit(irqchip, desc);
++}
++
++static struct irq_chip cdns_gpio_irqchip = {
++	.name		= "cdns-gpio",
++	.irq_mask	= cdns_gpio_irq_mask,
++	.irq_unmask	= cdns_gpio_irq_unmask,
++	.irq_set_type	= cdns_gpio_irq_set_type
++};
++
++static int cdns_gpio_probe(struct platform_device *pdev)
++{
++	struct cdns_gpio_chip *cgpio;
++	struct resource *res;
++	int ret, irq;
++	u32 dir_prev;
++	u32 num_gpios = 32;
++
++	cgpio = devm_kzalloc(&pdev->dev, sizeof(*cgpio), GFP_KERNEL);
++	if (!cgpio)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	cgpio->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(cgpio->regs))
++		return PTR_ERR(cgpio->regs);
++
++	of_property_read_u32(pdev->dev.of_node, "ngpios", &num_gpios);
++
++	if (num_gpios > 32) {
++		dev_err(&pdev->dev, "ngpios must be less or equal 32\n");
++		return -EINVAL;
++	}
++
++	/*
++	 * Set all pins as inputs by default, otherwise:
++	 * gpiochip_lock_as_irq:
++	 * tried to flag a GPIO set as output for IRQ
++	 * Generic GPIO driver stores the direction value internally,
++	 * so it needs to be changed before bgpio_init() is called.
++	 */
++	dir_prev = ioread32(cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
++	iowrite32(GENMASK(num_gpios - 1, 0),
++		  cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
++
++	ret = bgpio_init(&cgpio->gc, &pdev->dev, 4,
++			 cgpio->regs + CDNS_GPIO_INPUT_VALUE,
++			 cgpio->regs + CDNS_GPIO_OUTPUT_VALUE,
++			 NULL,
++			 NULL,
++			 cgpio->regs + CDNS_GPIO_DIRECTION_MODE,
++			 BGPIOF_READ_OUTPUT_REG_SET);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to register generic gpio, %d\n",
++			ret);
++		goto err_revert_dir;
++	}
++
++	cgpio->gc.label = dev_name(&pdev->dev);
++	cgpio->gc.ngpio = num_gpios;
++	cgpio->gc.parent = &pdev->dev;
++	cgpio->gc.base = -1;
++	cgpio->gc.owner = THIS_MODULE;
++	cgpio->gc.request = cdns_gpio_request;
++	cgpio->gc.free = cdns_gpio_free;
++
++	cgpio->pclk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(cgpio->pclk)) {
++		ret = PTR_ERR(cgpio->pclk);
++		dev_err(&pdev->dev,
++			"Failed to retrieve peripheral clock, %d\n", ret);
++		goto err_revert_dir;
++	}
++
++	ret = clk_prepare_enable(cgpio->pclk);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Failed to enable the peripheral clock, %d\n", ret);
++		goto err_revert_dir;
++	}
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &cgpio->gc, cgpio);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
++		goto err_disable_clk;
++	}
++
++	/*
++	 * irq_chip support
++	 */
++	irq = platform_get_irq(pdev, 0);
++	if (irq >= 0) {
++		ret = gpiochip_irqchip_add(&cgpio->gc, &cdns_gpio_irqchip,
++					   0, handle_level_irq,
++					   IRQ_TYPE_NONE);
++		if (ret) {
++			dev_err(&pdev->dev, "Could not add irqchip, %d\n",
++				ret);
++			goto err_disable_clk;
++		}
++		gpiochip_set_chained_irqchip(&cgpio->gc, &cdns_gpio_irqchip,
++					     irq, cdns_gpio_irq_handler);
++	}
++
++	cgpio->bypass_orig = ioread32(cgpio->regs + CDNS_GPIO_BYPASS_MODE);
++
++	/*
++	 * Enable gpio outputs, ignored for input direction
++	 */
++	iowrite32(GENMASK(num_gpios - 1, 0),
++		  cgpio->regs + CDNS_GPIO_OUTPUT_EN);
++	iowrite32(0, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
++
++	platform_set_drvdata(pdev, cgpio);
++	return 0;
++
++err_disable_clk:
++	clk_disable_unprepare(cgpio->pclk);
++
++err_revert_dir:
++	iowrite32(dir_prev, cgpio->regs + CDNS_GPIO_DIRECTION_MODE);
++
++	return ret;
++}
++
++static int cdns_gpio_remove(struct platform_device *pdev)
++{
++	struct cdns_gpio_chip *cgpio = platform_get_drvdata(pdev);
++
++	iowrite32(cgpio->bypass_orig, cgpio->regs + CDNS_GPIO_BYPASS_MODE);
++	clk_disable_unprepare(cgpio->pclk);
++
++	return 0;
++}
++
++static const struct of_device_id cdns_of_ids[] = {
++	{ .compatible = "cdns,gpio-r1p02" },
++	{ /* sentinel */ },
++};
++
++static struct platform_driver cdns_gpio_driver = {
++	.driver = {
++		.name = "cdns-gpio",
++		.of_match_table = cdns_of_ids,
++	},
++	.probe = cdns_gpio_probe,
++	.remove = cdns_gpio_remove,
++};
++module_platform_driver(cdns_gpio_driver);
++
++MODULE_AUTHOR("Jan Kotas <jank@cadence.com>");
++MODULE_DESCRIPTION("Cadence GPIO driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:cdns-gpio");
 -- 
 2.15.0
 
