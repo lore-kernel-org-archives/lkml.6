@@ -2,105 +2,158 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F79AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E74DDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 626692184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545131514;
-	bh=xU+tvzQlXqSCsQ2lxQTIc4gTZWJ+tfh7mNnYBB0EEPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Zr25y2mk0gI3FmM3RcKOSQHGEbeiWMbaB8x/P7RQ2FHS3iGl8h9A0WbXG8aYHaKen
-	 pTv6n7qSHFFOi/5DrKmduyAoJI8hmh2ERtmgfd7g2zZkSKRc3xMIq3PPBYL0FyKgHg
-	 x0+wVSy8zvOR88WCxs1dzVnc0PdO+ZcRzqNLIM+M=
+	by mail.kernel.org (Postfix) with ESMTP id B8DE42184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 11:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbeLRLLx (ORCPT
+        id S1726547AbeLRLPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:11:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbeLRLLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:11:52 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 894652184C;
-        Tue, 18 Dec 2018 11:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545131512;
-        bh=xU+tvzQlXqSCsQ2lxQTIc4gTZWJ+tfh7mNnYBB0EEPY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nwLW9/TR+UsczpbCs2Lfubp5yymukaxGjlRByNvSvMQvt18+e9tmoeBhpejRQObuJ
-         wC+vFoCl+Tofs0HkilJc1cEaMUcY79aBhZlXytis4nLt9oQGJAp/Ko7aNYxsER3IAQ
-         Vc1tGda53CvWhfLb1SNq9ZV7RSa5QAMLZLC+E00U=
-Date:   Tue, 18 Dec 2018 12:11:49 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] r8a66597: Fix a possible concurrency use-after-free bug
- in r8a66597_endpoint_disable()
-Message-ID: <20181218111149.GA979@kroah.com>
-References: <20181218100020.26250-1-baijiaju1990@gmail.com>
+        Tue, 18 Dec 2018 06:15:02 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:55616 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeLRLPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 06:15:01 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gZDKZ-0007GC-F5; Tue, 18 Dec 2018 12:14:31 +0100
+Date:   Tue, 18 Dec 2018 12:14:31 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     zhe.he@windriver.com
+Cc:     acme@kernel.org, ak@linux.intel.com,
+        alexander.shishkin@linux.intel.com, bp@alien8.de, hpa@zytor.com,
+        jolsa@kernel.org, jolsa@redhat.com, kan.liang@linux.intel.com,
+        mingo@redhat.com, namhyung@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH] perf/x86/intel: Avoid unnecessary reallocations of
+ memory allocated in cpu hotplug prepare state
+Message-ID: <20181218111431.7vr7rhvr5t7xb5i2@linutronix.de>
+References: <1545129033-21757-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181218100020.26250-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <1545129033-21757-1-git-send-email-zhe.he@windriver.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 06:00:20PM +0800, Jia-Ju Bai wrote:
-> The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
-> be concurrently executed.
-> The two functions both access a possible shared variable "hep->hcpriv".
-> 
-> This shared variable is freed by r8a66597_endpoint_disable() via the
-> call path:
-> r8a66597_endpoint_disable
->   kfree(hep->hcpriv) (line 1995 in Linux-4.19)
-> 
-> This variable is read by r8a66597_urb_enqueue() via the call path:
-> r8a66597_urb_enqueue
->   spin_lock_irqsave(&r8a66597->lock);
->   init_pipe_info
->     enable_r8a66597_pipe
->       pipe = hep->hcpriv (line 802 in Linux-4.19)
-> 
-> The read operation is protected by a spinlock, but the free operation
-> is not protected by this spinlock, thus a concurrency use-after-free bug
-> may occur.
-> 
-> To fix this bug, the spin-lock and spin-unlock function calls in
-> r8a66597_endpoint_disable() are moved to protect the free operation.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/usb/host/r8a66597-hcd.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
-> index 984892dd72f5..1495ce14ad22 100644
-> --- a/drivers/usb/host/r8a66597-hcd.c
-> +++ b/drivers/usb/host/r8a66597-hcd.c
-> @@ -1991,13 +1991,14 @@ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
->  		return;
->  	pipenum = pipe->info.pipenum;
+On 2018-12-18 18:30:33 [+0800], zhe.he@windriver.com wrote:
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -3398,13 +3398,16 @@ ssize_t intel_event_sysfs_show(char *page, u64 config)
+>  	return x86_event_sysfs_show(page, config, event);
+>  }
 >  
-> +	spin_lock_irqsave(&r8a66597->lock, flags);
+> -struct intel_shared_regs *allocate_shared_regs(int cpu)
+> +void allocate_shared_regs(struct intel_shared_regs **pregs, int cpu)
+>  {
+> -	struct intel_shared_regs *regs;
+> +	struct intel_shared_regs *regs = *pregs;
+>  	int i;
+>  
+> -	regs = kzalloc_node(sizeof(struct intel_shared_regs),
+> -			    GFP_KERNEL, cpu_to_node(cpu));
+> +	if (regs)
+> +		memset(regs, 0, sizeof(struct intel_shared_regs));
+> +	else
+> +		regs = *pregs = kzalloc_node(sizeof(struct intel_shared_regs),
+> +					     GFP_KERNEL, cpu_to_node(cpu));
+>  	if (regs) {
+>  		/*
+>  		 * initialize the locks to keep lockdep happy
 
-Don't you also need the __aquires/__releases markings on this function
-in order to properly annotate it, like the rest of the driver has?
+void allocate_shared_regs(int cpu)
+{
+	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+        struct intel_shared_regs *regs = puc->shared_regs;
+        int i;
 
-Otherwise this seems to look good to me.
+	if (!regs)
+		regs = kmalloc_node(sizeof(struct intel_shared_regs),
+                            GFP_KERNEL, cpu_to_node(cpu));
+        if (!regs)
+		return;
+	memset(regs, 0, sizeof(struct intel_shared_regs));
+        for (i = 0; i < EXTRA_REG_MAX; i++)
+        	raw_spin_lock_init(&regs->regs[i].lock);
 
-thanks,
+        return regs;
+}
 
-greg k-h
+
+> @@ -3414,20 +3417,21 @@ struct intel_shared_regs *allocate_shared_regs(int cpu)
+>  
+>  		regs->core_id = -1;
+>  	}
+> -	return regs;
+>  }
+>  
+> -static struct intel_excl_cntrs *allocate_excl_cntrs(int cpu)
+> +static void allocate_excl_cntrs(struct intel_excl_cntrs **pc, int cpu)
+>  {
+> -	struct intel_excl_cntrs *c;
+> +	struct intel_excl_cntrs *c = *pc;
+>  
+> -	c = kzalloc_node(sizeof(struct intel_excl_cntrs),
+> -			 GFP_KERNEL, cpu_to_node(cpu));
+> +	if (c)
+> +		memset(c, 0, sizeof(struct intel_excl_cntrs));
+> +	else
+> +		c = *pc = kzalloc_node(sizeof(struct intel_excl_cntrs),
+> +				       GFP_KERNEL, cpu_to_node(cpu));
+>  	if (c) {
+>  		raw_spin_lock_init(&c->lock);
+>  		c->core_id = -1;
+>  	}
+> -	return c;
+>  }
+
+static void allocate_excl_cntrs(int cpu)
+{
+	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+	struct intel_excl_cntrs *c = cpuc->excl_cntrs;
+	
+	if (!c)
+		c = kmalloc_node(sizeof(struct intel_excl_cntrs),
+			 GFP_KERNEL, cpu_to_node(cpu));
+	if (!c)
+		return;
+	memset(c, 0, sizeof(struct intel_excl_cntrs));
+	raw_spin_lock_init(&c->lock);
+	c->core_id = -1;
+	cpuc->excl_cntrs = c;
+}
+
+
+>  static void intel_pmu_cpu_dying(int cpu)
+>  {
+> -	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+> -	struct intel_shared_regs *pc;
+> -
+> -	pc = cpuc->shared_regs;
+> -	if (pc) {
+> -		if (pc->core_id == -1 || --pc->refcnt == 0)
+
+I think ->refcnt member can go, too. It is only incremented now for no
+reason now.
+
+> -			kfree(pc);
+> -		cpuc->shared_regs = NULL;
+> -	}
+> -
+> -	free_excl_cntrs(cpu);
+> -
+>  	fini_debug_store_on_cpu(cpu);
+>  
+>  	if (x86_pmu.counter_freezing)
+
+Sebastian
