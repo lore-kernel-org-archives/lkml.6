@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EB4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D883C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347CB218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49176217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171434;
-	bh=2M3pmp2tmWd2z3xjT1IxORIucBG+cqy8RdO1DHtvUys=;
+	s=default; t=1545171440;
+	bh=gZ+4urcYmkxyzZYOrmG6t4xhFoNWJsDAX/qQAKzBJXg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o7OFJYYM8cJ728dHetj7baByWkvS/J8qFJp4sdeM9IeLjSR0jHP2r9JceRTGv8K6P
-	 GGV6e1qABl/uFoMYVOxsqkwcKQqZG8s8qzS1ZgQuOqEnzXJxM38QXXGjwMsZQPPTCN
-	 OoHnILTsYB28ZmLMALh/ppu0RwmYGCro98m0Raio=
+	b=2NaZmQbcpvJV9UCK5GSoPUPqvW8hlTqQdaS9BOB2HIAigqokXhE7Sy8tPB/8GaZGL
+	 KaCD2YBOBsnwCjGyNpyXMz/sdpIJgT2V8c8WtpxcLpykpTEymZ3Ompk2Q/L2jUmWbz
+	 XZCKFDM6luRirrU0NawHFIJzSi5os+DVKiEkxfQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeLRWRN (ORCPT
+        id S1727799AbeLRWRT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:17:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47524 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:17:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbeLRWRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:17:12 -0500
+        id S1726590AbeLRWRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:17:17 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF9D217D9;
-        Tue, 18 Dec 2018 22:16:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02A82218A2;
+        Tue, 18 Dec 2018 22:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171432;
-        bh=2M3pmp2tmWd2z3xjT1IxORIucBG+cqy8RdO1DHtvUys=;
+        s=default; t=1545171437;
+        bh=gZ+4urcYmkxyzZYOrmG6t4xhFoNWJsDAX/qQAKzBJXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JEmsrgUM5z6i9haoDmXCNjbYh2B2ZYEC83aA5Gtso396YjPUf/ShedjGg3T+eN3FS
-         l0m6rptYupM/cyEZ5FcGXOA3FyP+RfvIJ0MOhAGzrvTRA1cwEktJb1RMVNeea13aKY
-         L0xEYANExTGVY6KUHeJ1457Pht8TRHOR4Dmi3vNw=
+        b=pPRRfpLGzFv5gHJVHJXW8eNtdJq29UeSKIkXjNNKStdkYbt+1ii15bdSW+ATIct7e
+         88qOuLDjcnfG/dqhdNIilP3ADCEN5rrtvCJMEFMViQ3BID7BO5CZXaAZ9I0EdmGVsM
+         vufVji1e5lTHLVIsV13hLY+azGGHKAq9R/KpEF6g=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 58/63] perf beauty mmap: Print mmap's 'offset' arg in hexadecimal
-Date:   Tue, 18 Dec 2018 19:07:28 -0300
-Message-Id: <20181218220733.15839-59-acme@kernel.org>
+Subject: [PATCH 59/63] tools headers uapi: Grab a copy of fadvise.h
+Date:   Tue, 18 Dec 2018 19:07:29 -0300
+Message-Id: <20181218220733.15839-60-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -65,38 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Also to make it match 'strace' output, for regression testing.
-
-Both now produce this option, when 'perf trace' uses a .perfconfig
-asking for the strace like output:
-
-  mmap(0x7faf66e6a000, 1363968, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x22000) = 0x7faf66e6a000
+Will be used to generate the string table for fadvise64's 'advice'
+argument.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-27qhouo1kaac2iyl85nfnsf5@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-muswpnft8q9krktv052yrgsc@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/include/uapi/linux/fadvise.h | 22 ++++++++++++++++++++++
+ tools/perf/check-headers.sh        |  1 +
+ 2 files changed, 23 insertions(+)
+ create mode 100644 tools/include/uapi/linux/fadvise.h
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 2cc62ca75b2e..ebde59e61133 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -756,7 +756,8 @@ static struct syscall_fmt {
- 	.alias = "old_mmap",
- #endif
- 	  .arg = { [2] = { .scnprintf = SCA_MMAP_PROT,	/* prot */ },
--		   [3] = { .scnprintf = SCA_MMAP_FLAGS,	/* flags */ }, }, },
-+		   [3] = { .scnprintf = SCA_MMAP_FLAGS,	/* flags */ },
-+		   [5] = { .scnprintf = SCA_HEX,	/* offset */ }, }, },
- 	{ .name	    = "mount",
- 	  .arg = { [0] = { .scnprintf = SCA_FILENAME, /* dev_name */ },
- 		   [3] = { .scnprintf = SCA_MOUNT_FLAGS, /* flags */
+diff --git a/tools/include/uapi/linux/fadvise.h b/tools/include/uapi/linux/fadvise.h
+new file mode 100644
+index 000000000000..0862b87434c2
+--- /dev/null
++++ b/tools/include/uapi/linux/fadvise.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef FADVISE_H_INCLUDED
++#define FADVISE_H_INCLUDED
++
++#define POSIX_FADV_NORMAL	0 /* No further special treatment.  */
++#define POSIX_FADV_RANDOM	1 /* Expect random page references.  */
++#define POSIX_FADV_SEQUENTIAL	2 /* Expect sequential page references.  */
++#define POSIX_FADV_WILLNEED	3 /* Will need these pages.  */
++
++/*
++ * The advise values for POSIX_FADV_DONTNEED and POSIX_ADV_NOREUSE
++ * for s390-64 differ from the values for the rest of the world.
++ */
++#if defined(__s390x__)
++#define POSIX_FADV_DONTNEED	6 /* Don't need these pages.  */
++#define POSIX_FADV_NOREUSE	7 /* Data will be accessed once.  */
++#else
++#define POSIX_FADV_DONTNEED	4 /* Don't need these pages.  */
++#define POSIX_FADV_NOREUSE	5 /* Data will be accessed once.  */
++#endif
++
++#endif	/* FADVISE_H_INCLUDED */
+diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
+index 10d97dc632da..8e811ea0cf85 100755
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -4,6 +4,7 @@
+ HEADERS='
+ include/uapi/drm/drm.h
+ include/uapi/drm/i915_drm.h
++include/uapi/linux/fadvise.h
+ include/uapi/linux/fcntl.h
+ include/uapi/linux/fs.h
+ include/uapi/linux/kcmp.h
 -- 
 2.19.2
 
