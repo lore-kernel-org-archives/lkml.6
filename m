@@ -2,149 +2,140 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1A6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66546C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD30217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 367D7218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:35:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lAvPT2A4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4YF55gv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeLRScQ (ORCPT
+        id S1727613AbeLRSfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:32:16 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:50334 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727073AbeLRScQ (ORCPT
+        Tue, 18 Dec 2018 13:35:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39719 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbeLRSfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:32:16 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBIIO2iC042021;
-        Tue, 18 Dec 2018 18:31:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=lvdOyrCyj++fsmCNWhwCqjq8Z3Kcx5ZpUccbJSvK4Gk=;
- b=lAvPT2A4vPx2xmqzzDAX1SEeotuIPvXVpmQbT6jOqRRgdr/7NTGjyRoK18VT9cVJmTwP
- mOHUOKRl+xCXsiVvMxfkaTHMdOR3HSMBZQJFnlbLJmxD8UoHPg1V6JtDGQB5Gyadg+uO
- DBb3jrDjkr7J856Uo4ilCj+o3gqFQhYzcPw7Lcmyc/G+aZXoyTyjx0aWiU/ki1zyd+hR
- BBbbME5I1pfLBDfRdOT6Nt+avqqDqtAW2k+3G985JjPY9yCUDhszaBv6dYiB92JhqUm4
- Ahwk8QmkzdGBG556zhi1p7ZeOAYGGl8JGYfrOrTrPgK8hmUEGhhfzEEXBX1fKB7cu+iX ww== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2pcs1tn6qe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Dec 2018 18:31:53 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBIIVpEP023701
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Dec 2018 18:31:52 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBIIVlVJ009573;
-        Tue, 18 Dec 2018 18:31:50 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Dec 2018 10:31:47 -0800
-Subject: Re: [Xen-devel][PATCH v2 2/3] drm/xen-front: Use Xen common shared
- buffer implementation
-To:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        jgross@suse.com
-Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181130074205.20496-1-andr2000@gmail.com>
- <20181130074205.20496-2-andr2000@gmail.com>
- <75f3a715-94a0-a21d-04c1-aa3cf4cdb331@tronnes.org>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <0f699d62-41be-33ec-d62c-6fce10f8fd30@oracle.com>
-Date:   Tue, 18 Dec 2018 13:31:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 18 Dec 2018 13:35:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t27so16964776wra.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:35:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mkGU+pakA/ERLfp0HzyjltVQvmKbGRm6yLWbJSoNomg=;
+        b=K4YF55gvQ1bLPvToTdYWziwnnnDJBMZ11G6ltzaQJjLGqmvRdG89nmiwQlemUouJ0e
+         z3MnHeYMTJw3EIHnEy/KRQpOROwlnFRDi34x+MFccbCdBc3tL3JKgsxw8bdk5JiYlU8G
+         oVhy+/JcZe3kNvh+0felAObJo2l1aOgLEUbF0xtPpKVuSBVeA9Djq0U1lI/ZSTp+oFAM
+         y/valFSphME9g7iwhrfHpS//61OfIoluUTyheWm+RprAVn5UFmuzUlhz98Tv0Wcmqj31
+         dhoQ30zAeSGmmgwL18wyvj696whbA3sgTSgwcTg7KBGDU1nksMHxRdrKBysG6Y20FUYE
+         YGhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mkGU+pakA/ERLfp0HzyjltVQvmKbGRm6yLWbJSoNomg=;
+        b=nIdSq6q6YE9jjHagGJKn05sky5YNB1CdRzqXTISdhxI7o1lTIyAJixiGNNJywKm3pE
+         CZoKlM4yeMY1FpsbX7nhRrnewiRnjxeGA9fU0Q2L2FNcqXQfNZmAMlqz9iZy9J0Va87d
+         6NIg0o6runSuMrGQ6VNkrRvKrJVTxROAeTH1OP1QS8EOGi52602geCZI8japoQwxaKb/
+         LrO4mITBE6vsZAqUHoRhg5x225qfwlI9YCbYG0D17SHi5fq/nmSyoH1602EKuhTt3lrh
+         qxztIBNTDrVGaTeLmU+L8UFGWPi/x0zAVrVLq3GsO1vmTFFLjAbTWAvNnT84V2dRlmzB
+         eONA==
+X-Gm-Message-State: AA+aEWbKi1X5xJMYRIvCaepKy/gYhOxY8F9lsBu2Y7NXimt5RF4QAdDe
+        6hGk5TbDNErHwvzeGR34vPNKqEe2
+X-Google-Smtp-Source: AFSGD/XjbDjjSn8rGESWV3p8dF9Q9k+b5YE4j29ZP9gaVwjpaBHkQAWW8VV6pNo/yiW9HJKV2FxQtA==
+X-Received: by 2002:a5d:694d:: with SMTP id r13mr15076569wrw.323.1545158109419;
+        Tue, 18 Dec 2018 10:35:09 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id 202sm3614535wmt.8.2018.12.18.10.35.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 10:35:08 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH v2 02/17] staging: rtl8188eu: replace tabs with spaces in rtw_mlme_ext.c
+Date:   Tue, 18 Dec 2018 19:34:36 +0100
+Message-Id: <20181218183451.18692-2-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20181218183451.18692-1-straube.linux@gmail.com>
+References: <20181218183451.18692-1-straube.linux@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <75f3a715-94a0-a21d-04c1-aa3cf4cdb331@tronnes.org>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9111 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=746
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812180153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 11:15 AM, Noralf Trønnes wrote:
->
-> Den 30.11.2018 08.42, skrev Oleksandr Andrushchenko:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Use page directory based shared buffer implementation
->> now available as common code for Xen frontend drivers.
->>
->> Remove flushing of shared buffer on page flip as this
->> workaround needs a proper fix.
->>
->> Signed-off-by: Oleksandr Andrushchenko
->> <oleksandr_andrushchenko@epam.com>
->> ---
->
-> Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
->
+Replace tabs with spaces where appropriate.
 
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Now that all 3 have been acked/reviewed
-
-Applied to for-linus-4.21
-
+diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+index 5c485777e482..8c566180d808 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
+@@ -4025,7 +4025,7 @@ static u8 init_channel_set(struct adapter *padapter, u8 ChannelPlan,
+ 	return chanset_size;
+ }
+ 
+-int	init_mlme_ext_priv(struct adapter *padapter)
++int init_mlme_ext_priv(struct adapter *padapter)
+ {
+ 	struct registry_priv *pregistrypriv = &padapter->registrypriv;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+@@ -5205,7 +5205,7 @@ u8 setauth_hdl(struct adapter *padapter, unsigned char *pbuf)
+ 
+ 	if (pparm->mode < 4)
+ 		pmlmeinfo->auth_algo = pparm->mode;
+-	return	H2C_SUCCESS;
++	return H2C_SUCCESS;
+ }
+ 
+ u8 setkey_hdl(struct adapter *padapter, u8 *pbuf)
+@@ -5310,7 +5310,7 @@ u8 add_ba_hdl(struct adapter *padapter, unsigned char *pbuf)
+ 	struct sta_info *psta = rtw_get_stainfo(&padapter->stapriv, pparm->addr);
+ 
+ 	if (!psta)
+-		return	H2C_SUCCESS;
++		return H2C_SUCCESS;
+ 
+ 	if (((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && (pmlmeinfo->HT_enable)) ||
+ 	    ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE)) {
+@@ -5320,7 +5320,7 @@ u8 add_ba_hdl(struct adapter *padapter, unsigned char *pbuf)
+ 	} else {
+ 		psta->htpriv.candidate_tid_bitmap &= ~BIT(pparm->tid);
+ 	}
+-	return	H2C_SUCCESS;
++	return H2C_SUCCESS;
+ }
+ 
+ u8 set_tx_beacon_cmd(struct adapter *padapter)
+@@ -5471,7 +5471,7 @@ u8 set_ch_hdl(struct adapter *padapter, u8 *pbuf)
+ 
+ 	set_channel_bwmode(padapter, set_ch_parm->ch, set_ch_parm->ch_offset, set_ch_parm->bw);
+ 
+-	return	H2C_SUCCESS;
++	return H2C_SUCCESS;
+ }
+ 
+ u8 set_chplan_hdl(struct adapter *padapter, unsigned char *pbuf)
+@@ -5487,5 +5487,5 @@ u8 set_chplan_hdl(struct adapter *padapter, unsigned char *pbuf)
+ 	pmlmeext->max_chan_nums = init_channel_set(padapter, setChannelPlan_param->channel_plan, pmlmeext->channel_set);
+ 	init_channel_list(padapter, pmlmeext->channel_set, pmlmeext->max_chan_nums, &pmlmeext->channel_list);
+ 
+-	return	H2C_SUCCESS;
++	return H2C_SUCCESS;
+ }
+-- 
+2.20.1
 
