@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1930FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393E1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A0321873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06DA7218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 16:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151273;
-	bh=9ocElY8LluPiM2E2mWx2DtTXBQvT5Y4W6ZaiMPnC9Xs=;
+	s=default; t=1545151278;
+	bh=Di2zPvQ5jRklEiY3MB+7R7wiP7Yi3AthW4dNyfrTdHs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fsI3eWwBZyH3nwfInQhXu65h50aeuGxIh1QC1nsjvBiZOpgU2YsqLV/eOgva/XZ30
-	 Q9H/3z0qo5rlZzHSE+u9W11AoN3SiYpodciQMRFJ7PlWg12UqpMViAhI7oR9rb0V6D
-	 2nhfAWcVh4etSHqSn4X/H3BvYYXukKddAlCVUcVY=
+	b=saZ1oIeiRPOVIsx3SifAwMOPp48qgA+ETyRExgOUm3EKYaFXcg0UlrnJT3xoxjyN3
+	 r/qN+ShVUfj5BQ2J/tR2CI/Rqze6lCoCTqLwoEaScbLmGdI8AbAXMaZiMRXhj4duHB
+	 9+M0Q4U28gOshS5576bMHX6rO0Ubkz/TcrinDmMQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeLRQlM (ORCPT
+        id S1726638AbeLRQlQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38488 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 11:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbeLRQlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:41:11 -0500
+        id S1726718AbeLRQlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 11:41:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DB8421873;
-        Tue, 18 Dec 2018 16:41:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10ED5218A3;
+        Tue, 18 Dec 2018 16:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151270;
-        bh=9ocElY8LluPiM2E2mWx2DtTXBQvT5Y4W6ZaiMPnC9Xs=;
+        s=default; t=1545151273;
+        bh=Di2zPvQ5jRklEiY3MB+7R7wiP7Yi3AthW4dNyfrTdHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PQyzeddYZzs4Gz1nDJjWjKqzzaX975Q1qBFfZ3O3Ylt0gneROUDN/V791jJfz6AnZ
-         hOW7l9jd6d48fKt/cx2tgdCJVgOAPEC1o/RN6xcO14H9udt8sx8RLIbC8TC/G39sd7
-         v2H9eTZzzmp0ePG2+nCPD+GNE1pj163Su9W46m3U=
+        b=dZ2t8e66xIWg1g4K7QeWhLE9JpUGUZRZ6MgiKACFJWk2AKnvEPF2q2mKN8B0NTqwf
+         q0R+mn8LJo+S69MK4lXkHRzsjhZ1T6oFt/+lqWs8tqFJinci5wah5oVd5WqrtHbRW+
+         NJL5EkU/0JSnd6VCbdXtoTunmu/1XkXXtTOkvI6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Theodore Y. Tso" <tytso@mit.edu>,
-        =?UTF-8?q?Maciej=20Zi=C4=99ba?= <maciekz82@gmail.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 16/44] ovl: fix missing override creds in link of a metacopy upper
-Date:   Tue, 18 Dec 2018 17:39:28 +0100
-Message-Id: <20181218163929.431174234@linuxfoundation.org>
+        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
+        Andrzej Zaborowski <balrogg@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.19 17/44] MMC: OMAP: fix broken MMC on OMAP15XX/OMAP5910/OMAP310
+Date:   Tue, 18 Dec 2018 17:39:29 +0100
+Message-Id: <20181218163929.540357858@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
 References: <20181218163927.119623235@linuxfoundation.org>
@@ -67,82 +67,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit 91ff20f34e94424e586f57f4f593beae16504f86 upstream.
+commit e8cde625bfe8a714a856e1366bcbb259d7346095 upstream.
 
-Theodore Ts'o reported a v4.19 regression with docker-dropbox:
-https://marc.info/?l=linux-fsdevel&m=154070089431116&w=2
+Since v2.6.22 or so there has been reports [1] about OMAP MMC being
+broken on OMAP15XX based hardware (OMAP5910 and OMAP310). The breakage
+seems to have been caused by commit 46a6730e3ff9 ("mmc-omap: Fix
+omap to use MMC_POWER_ON") that changed clock enabling to be done
+on MMC_POWER_ON. This can happen multiple times in a row, and on 15XX
+the hardware doesn't seem to like it and the MMC just stops responding.
+Fix by memorizing the power mode and do the init only when necessary.
 
-"I was rebuilding my dropbox Docker container, and it failed in 4.19
- with the following error:
- ...
- dpkg: error: error creating new backup file \
-              '/var/lib/dpkg/status-old': Invalid cross-device link"
+Before the patch (on Palm TE):
 
-The problem did not reproduce with metacopy feature disabled.
-The error was caused by insufficient credentials to set
-"trusted.overlay.redirect" xattr on link of a metacopy file.
+	mmc0: new SD card at address b368
+	mmcblk0: mmc0:b368 SDC   977 MiB
+	mmci-omap mmci-omap.0: command timeout (CMD18)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
+	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
+	mmcblk0: error -110 requesting status
+	mmci-omap mmci-omap.0: command timeout (CMD8)
+	mmci-omap mmci-omap.0: command timeout (CMD18)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
+	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
+	mmcblk0: error -110 requesting status
+	mmcblk0: recovery failed!
+	print_req_error: I/O error, dev mmcblk0, sector 0
+	Buffer I/O error on dev mmcblk0, logical block 0, async page read
+	 mmcblk0: unable to read partition table
 
-Reproducer:
+After the patch:
 
- echo Y > /sys/module/overlay/parameters/redirect_dir
- echo Y > /sys/module/overlay/parameters/metacopy
- cd /tmp
- mkdir l u w m
- chmod 777 l u
- touch l/foo
- ln l/foo l/link
- chmod 666 l/foo
- mount -t overlay none -olowerdir=l,upperdir=u,workdir=w m
- su fsgqa
- ln m/foo m/bar
- [   21.455823] overlayfs: failed to set redirect (-1)
- ln: failed to create hard link 'm/bar' => 'm/foo':\
-     Invalid cross-device link
+	mmc0: new SD card at address b368
+	mmcblk0: mmc0:b368 SDC   977 MiB
+	 mmcblk0: p1
 
-Reported-by: Theodore Y. Ts'o <tytso@mit.edu>
-Reported-by: Maciej Zięba <maciekz82@gmail.com>
-Fixes: 4120fe64dce4 ("ovl: Set redirect on upper inode when it is linked")
-Cc: <stable@vger.kernel.org> # v4.19
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Acked-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+The patch is based on a fix and analysis done by Ladislav Michl.
+
+Tested on OMAP15XX/OMAP310 (Palm TE), OMAP1710 (Nokia 770)
+and OMAP2420 (Nokia N810).
+
+[1] https://marc.info/?t=123175197000003&r=1&w=2
+
+Fixes: 46a6730e3ff9 ("mmc-omap: Fix omap to use MMC_POWER_ON")
+Reported-by: Ladislav Michl <ladis@linux-mips.org>
+Reported-by: Andrzej Zaborowski <balrogg@gmail.com>
+Tested-by: Ladislav Michl <ladis@linux-mips.org>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/dir.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/mmc/host/omap.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -652,6 +652,18 @@ static int ovl_symlink(struct inode *dir
- 	return ovl_create_object(dentry, S_IFLNK, 0, link);
- }
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -104,6 +104,7 @@ struct mmc_omap_slot {
+ 	unsigned int		vdd;
+ 	u16			saved_con;
+ 	u16			bus_mode;
++	u16			power_mode;
+ 	unsigned int		fclk_freq;
  
-+static int ovl_set_link_redirect(struct dentry *dentry)
-+{
-+	const struct cred *old_cred;
-+	int err;
-+
-+	old_cred = ovl_override_creds(dentry->d_sb);
-+	err = ovl_set_redirect(dentry, false);
-+	revert_creds(old_cred);
-+
-+	return err;
-+}
-+
- static int ovl_link(struct dentry *old, struct inode *newdir,
- 		    struct dentry *new)
- {
-@@ -672,7 +684,7 @@ static int ovl_link(struct dentry *old,
- 		goto out_drop_write;
+ 	struct tasklet_struct	cover_tasklet;
+@@ -1157,7 +1158,7 @@ static void mmc_omap_set_ios(struct mmc_
+ 	struct mmc_omap_slot *slot = mmc_priv(mmc);
+ 	struct mmc_omap_host *host = slot->host;
+ 	int i, dsor;
+-	int clk_enabled;
++	int clk_enabled, init_stream;
  
- 	if (ovl_is_metacopy_dentry(old)) {
--		err = ovl_set_redirect(old, false);
-+		err = ovl_set_link_redirect(old);
- 		if (err)
- 			goto out_drop_write;
+ 	mmc_omap_select_slot(slot, 0);
+ 
+@@ -1167,6 +1168,7 @@ static void mmc_omap_set_ios(struct mmc_
+ 		slot->vdd = ios->vdd;
+ 
+ 	clk_enabled = 0;
++	init_stream = 0;
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 		mmc_omap_set_power(slot, 0, ios->vdd);
+@@ -1174,13 +1176,17 @@ static void mmc_omap_set_ios(struct mmc_
+ 	case MMC_POWER_UP:
+ 		/* Cannot touch dsor yet, just power up MMC */
+ 		mmc_omap_set_power(slot, 1, ios->vdd);
++		slot->power_mode = ios->power_mode;
+ 		goto exit;
+ 	case MMC_POWER_ON:
+ 		mmc_omap_fclk_enable(host, 1);
+ 		clk_enabled = 1;
+ 		dsor |= 1 << 11;
++		if (slot->power_mode != MMC_POWER_ON)
++			init_stream = 1;
+ 		break;
  	}
++	slot->power_mode = ios->power_mode;
+ 
+ 	if (slot->bus_mode != ios->bus_mode) {
+ 		if (slot->pdata->set_bus_mode != NULL)
+@@ -1196,7 +1202,7 @@ static void mmc_omap_set_ios(struct mmc_
+ 	for (i = 0; i < 2; i++)
+ 		OMAP_MMC_WRITE(host, CON, dsor);
+ 	slot->saved_con = dsor;
+-	if (ios->power_mode == MMC_POWER_ON) {
++	if (init_stream) {
+ 		/* worst case at 400kHz, 80 cycles makes 200 microsecs */
+ 		int usecs = 250;
+ 
+@@ -1234,6 +1240,7 @@ static int mmc_omap_new_slot(struct mmc_
+ 	slot->host = host;
+ 	slot->mmc = mmc;
+ 	slot->id = id;
++	slot->power_mode = MMC_POWER_UNDEFINED;
+ 	slot->pdata = &host->pdata->slots[id];
+ 
+ 	host->slots[id] = slot;
 
 
