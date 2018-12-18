@@ -2,89 +2,147 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13ECC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1F1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6B6218A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB1D4218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545153635;
+	bh=T5PcE17zxWrJHgtfRGz7WHwWqmcsVv3obSgIGUDebv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sozm5MXN8bYtkZj3V5fe6INvx2lS6CTw64BZZpnbmZZKv0KRVAQJGeNMvZLskzzuc
+	 Z+1P4MbE+sJwrPx0lZDdXPcraBK4vDiA892bV1aQxWL6IvqY3zygWgZSBsxye4emsh
+	 2TV3qI9E2UyhH3YUqNyg/u73iFes++W6VLWJYNxs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeLRRTh (ORCPT
+        id S1727262AbeLRRUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:19:37 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.9]:31429 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726548AbeLRRTh (ORCPT
+        Tue, 18 Dec 2018 12:20:34 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41105 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbeLRRUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:19:37 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 88BB18D14
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 11:19:36 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZJ1sgJxAMiQerZJ1sgPeA8; Tue, 18 Dec 2018 11:19:36 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=44910 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZJ1r-001mqQ-Qg; Tue, 18 Dec 2018 11:19:35 -0600
-Subject: Re: [PATCH 33/41] scsi: osd: osd_initiator: mark expected switch
- fall-throughs
-To:     Boaz Harrosh <ooo@electrozaur.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <09026c2661bf3c4bcf41dbb265cf1dae2c3487fd.1543374820.git.gustavo@embeddedor.com>
- <ee906c63-72cd-8d3c-d5c8-50dc59d984d8@electrozaur.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <172604f4-daff-48bc-2933-38b51ef1aa3a@embeddedor.com>
-Date:   Tue, 18 Dec 2018 11:19:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 18 Dec 2018 12:20:34 -0500
+Received: by mail-oi1-f193.google.com with SMTP id j21so2559337oii.8;
+        Tue, 18 Dec 2018 09:20:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ay0IswX+sRWNKX5ziAV2hvU/TN5PQDEK6pFJnClTI3Q=;
+        b=r0vz9PG7rf/48lq1Uj/rJ8zeI8pfzj0OGoOgdTd7AX/pOzJweFCDioxQUQwZstCIlk
+         cfmViT+26Nw5s4M2/SYX8TT1OSM38Iw/1y/xVmfI9VKlizahNK0AuLthvrluojV1vjYn
+         2+haJQibgiziNQIm56gwT9XbSHqse89CLVIwuGEEoE2cIeMHybHyRRDjjVefPiazhWM6
+         3PiZk1CjXZDwxNkZQh4zbIw0Ok+M2NPgWKorRo/NcajLxmwv5KSwZixW7LVU1VZds4Pd
+         0a6c+HgqljMjjdVMr3anEfwec/kssb3uFKdBE4l5+p3B4rT3XSjmvdu6nTwZ3VMLewAR
+         iOFQ==
+X-Gm-Message-State: AA+aEWai5T2ye4w//j1xVzkv+cFLlmOkKL1BMXhtubvoT3nM0yr/AQ9I
+        Yfb6xL/MdYKRzUHL33rgOpY9xxmZ+Q==
+X-Google-Smtp-Source: AFSGD/WvNjfb6eF+KnwrvCaF1Q03GxUQflfTylnXk3tkWA2mz++vItu2t/i0MNrl4EfD8GPJvPaIzA==
+X-Received: by 2002:aca:a60d:: with SMTP id p13mr8771745oie.2.1545153632929;
+        Tue, 18 Dec 2018 09:20:32 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s66sm13246235oia.55.2018.12.18.09.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 09:20:32 -0800 (PST)
+Date:   Tue, 18 Dec 2018 11:20:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Yash Shah <yash.shah@sifive.com>
+Cc:     palmer@sifive.com, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org, thierry.reding@gmail.com,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sachin.ghadi@sifive.com,
+        paul.walmsley@sifive.com
+Subject: Re: [RFC v2 1/2] pwm: sifive: Add DT documentation for SiFive PWM
+ Controller
+Message-ID: <20181218172031.GA7272@bogus>
+References: <1544768442-12530-1-git-send-email-yash.shah@sifive.com>
+ <1544768442-12530-2-git-send-email-yash.shah@sifive.com>
 MIME-Version: 1.0
-In-Reply-To: <ee906c63-72cd-8d3c-d5c8-50dc59d984d8@electrozaur.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZJ1r-001mqQ-Qg
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:44910
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544768442-12530-2-git-send-email-yash.shah@sifive.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/18/18 11:13 AM, Boaz Harrosh wrote:
-> On 28/11/18 06:32, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Fri, Dec 14, 2018 at 11:50:41AM +0530, Yash Shah wrote:
+> DT documentation for PWM controller added with updated compatible
+> string.
 > 
-> ACK-by: Boaz Harrosh <ooo@electrozaur.com>
+> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> [Atish: Compatible string update]
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
+> ---
+>  .../devicetree/bindings/pwm/pwm-sifive.txt         | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> new file mode 100644
+> index 0000000..250d8ee
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
+> @@ -0,0 +1,44 @@
+> +SiFive PWM controller
+> +
+> +Unlike most other PWM controllers, the SiFive PWM controller currently only
+> +supports one period for all channels in the PWM. This is set globally in DTS.
+> +The period also has significant restrictions on the values it can achieve,
+> +which the driver rounds to the nearest achievable frequency.
+> +
+> +Required properties:
+> +- compatible: should be something similar to "sifive,<chip>-pwm" for
+> +	      the PWM as integrated on a particular chip, and
+> +	      "sifive,pwm<version>" for the general PWM IP block
+> +	      programming model. Supported compatible strings are:
+> +	      "sifive,fu540-c000-pwm" for the SiFive PWM v0 as
+> +	      integrated onto the SiFive FU540 chip, and "sifive,pwm0"
+> +	      for the SiFive PWM v0 IP block with no chip integration
+> +	      tweaks.
 
-Thank you, Boaz.
---
-Gustavo
+This should reference the common doc Paul has written and not re-explain 
+the versioning scheme again.
+
+> +- reg: physical base address and length of the controller's registers
+> +- clocks: The frequency the controller runs at
+> +- #pwm-cells: Should be 2.
+> +  The first cell is the PWM channel number
+> +  The second cell is the PWM polarity
+> +- sifive,approx-period: the driver will get as close to this period as it can
+
+Needs a unit suffix as defined in property-units.txt
+
+> +- interrupts: one interrupt per PWM channel
+> +
+> +PWM RTL that corresponds to the IP block version numbers can be found
+> +here:
+> +
+> +https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/pwm
+> +
+> +Further information on the format of the IP
+> +block-specific version numbers can be found in
+> +Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> +
+> +Examples:
+> +
+> +pwm:  pwm@10020000 {
+> +	compatible = "sifive,fu540-c000-pwm","sifive,pwm0";
+> +	reg = <0x0 0x10020000 0x0 0x1000>;
+> +	clocks = <&tlclk>;
+> +	interrupt-parent = <&plic>;
+> +	interrupts = <42 43 44 45>;
+> +	#pwm-cells = <2>;
+> +	sifive,approx-period = <1000000>;
+> +};
+> -- 
+> 1.9.1
+> 
