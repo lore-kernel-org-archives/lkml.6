@@ -3,73 +3,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C02AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1500EC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43C43217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3716217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 04:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbeLREKH (ORCPT
+        id S1726516AbeLRESY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 23:10:07 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38006 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbeLREKH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 23:10:07 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1gZ6hm-00078N-85; Tue, 18 Dec 2018 04:10:02 +0000
-Date:   Tue, 18 Dec 2018 04:10:02 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-Message-ID: <20181218041001.GU2217@ZenIV.linux.org.uk>
-References: <20181218144858.58d8d1f8@canb.auug.org.au>
+        Mon, 17 Dec 2018 23:18:24 -0500
+Received: from mga04.intel.com ([192.55.52.120]:65095 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbeLRESY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 23:18:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 20:18:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,367,1539673200"; 
+   d="scan'208";a="304671402"
+Received: from zhangxi4-mobl5.ccr.corp.intel.com (HELO localhost) ([10.249.254.207])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Dec 2018 20:18:16 -0800
+Date:   Tue, 18 Dec 2018 06:18:15 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [RFC PATCH v5 0/5] x86: Add vDSO exception fixup for SGX
+Message-ID: <20181218041815.GA5097@linux.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218144858.58d8d1f8@canb.auug.org.au>
+In-Reply-To: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 02:48:58PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
+On Fri, Dec 14, 2018 at 01:57:24PM -0800, Sean Christopherson wrote:
+> __vdso_sgx_enter_enclave() gets another rewrite, this time to strip
+> it down to the bare minimum and explicitly break compliance with the
+> x86-64 ABI.  Feedback from v4 revealed that __vdso_sgx_enter_enclave()
+> would need to save (a lot) more than just the non-volatile GPRs to be
+> compliant with the x86-64 ABI, at which point breaking from the ABI
+> completely became much more palatable.
 > 
-> Today's linux-next merge of the selinux tree got a conflict in:
-> 
->   security/selinux/hooks.c
-> 
-> between commit:
-> 
->   2b8073b14c19 ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
-> 
-> from the vfs tree and commit:
-> 
->   2cbdcb882f97 ("selinux: always allow mounting submounts")
-> 
-> from the selinux tree.
-> 
-> I fixed it up (I used the vfs tree version, plus added the following
-> patch but I am not sure if it is correct as the latter patch only affected
-> selinux) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be mentioned
-> to your upstream maintainer when your tree is submitted for merging.
-> You may also want to consider cooperating with the maintainer of the
-> conflicting tree to minimise any particularly complex conflicts.
- 
-> -	if (!(fc->sb_flags & MS_KERNMOUNT)) {
-> +	if (!(fc->sb_flags & (MS_KERNMOUNT | MS_SUBMOUNT))) {
+> The non-standard ABI also solves the question of "which GPRs should be
+> marshalled to/from the enclave" by getting out of the way entirely and
+> letting userspace have free reign (except for RSP, which has a big ol'
+> DO NOT TOUCH sign on it).
 
-It is correct, but the long-term fix is to lift the conditional part out
-of vfs_get_tree() into the callers (as discussed a couple of weeks ago).
-I have it in a local branch, need to ripple it into the current main series...
+Can you share a reference, or is this better documented in the
+accompanied patches?
+
+/Jarkko
