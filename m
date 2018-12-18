@@ -2,141 +2,475 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8293BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7C8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B840217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:07:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A068E21852
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbeLROHX (ORCPT
+        id S1726969AbeLROHn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:07:23 -0500
-Received: from mout.gmx.net ([212.227.15.15]:40683 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726584AbeLROHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:07:20 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0M39zL-1hRlYZ06Zr-00ssDq; Tue, 18
- Dec 2018 15:07:16 +0100
-Date:   Tue, 18 Dec 2018 15:07:14 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 03/13] powerpc/mm/32s: rework mmu_mapin_ram()
-Message-ID: <20181218140714.GC24278@latitude>
-References: <cover.1543517818.git.christophe.leroy@c-s.fr>
- <8835330baa77d88e0267b0b1215b78c991e6d17a.1543517818.git.christophe.leroy@c-s.fr>
- <20181203215558.GK15324@latitude>
- <84624899-bbda-9f08-2527-151fddbd1b01@c-s.fr>
- <a253e9f8-1e0a-1596-e0ea-54261ac62212@c-s.fr>
- <20181217012837.GT15324@latitude>
- <18ba3a7c-ebfa-66aa-e231-b56985d0e89a@c-s.fr>
- <20181218030538.GA24278@latitude>
- <9a39d910-2a05-3ce7-c949-296db2d458b9@c-s.fr>
+        Tue, 18 Dec 2018 09:07:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59001 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbeLROHm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:07:42 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIE73kU2853532
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 06:07:04 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIE73ZZ2853529;
+        Tue, 18 Dec 2018 06:07:03 -0800
+Date:   Tue, 18 Dec 2018 06:07:03 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
+Message-ID: <tip-b1d6f155e1bbb67778c17aba661fb4ea4e1a3641@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org, namhyung@kernel.org, jolsa@redhat.com,
+        kan.liang@linux.intel.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        peterz@infradead.org
+Reply-To: ak@linux.intel.com, peterz@infradead.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, acme@redhat.com,
+          namhyung@kernel.org, jolsa@redhat.com,
+          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          kan.liang@linux.intel.com
+In-Reply-To: <20181203102200.GA104797@gmail.com>
+References: <20181203102200.GA104797@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf vendor events intel: Fix diverse typos
+Git-Commit-ID: b1d6f155e1bbb67778c17aba661fb4ea4e1a3641
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="f+W+jCU1fRNres8c"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <9a39d910-2a05-3ce7-c949-296db2d458b9@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:fFtgRwRJe8YMoyTCxXSwkUhQ+9RdIEnj2Yslc6ZDzegKwsX5JLH
- AZCYZor2OVamo/i9Al1egSih8qgS+ax+hAE5adEvJVeMXh9icOCc2Xkw+HsRr7U3Z4k2XGF
- +UKbQCKGR4scLv5hK1SLgG/bwHtMHCDS4K0WaTjC5Ge8pv6vuhN4UGnAXhgqirFam2B7NJt
- TdNpTLVIKj0Du68xOg+eQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:I5n8iRj++T0=:xfMZm1pCxRyjBkdzavhZp7
- hAWVMuWS7YSdBShjaUMwBiueMrNfTTCnMqG0tMuucO4EmWTv8mn4zRxI4IO12oq8UAmnf61z8
- GZrog9WtFy0QaYKpWFYRrREFi6kiLtWv/scfSguFWncfcMZna7jKRIPw81aPoH7hYTuB6xs5n
- /9SJyV5pBWjMCzb3HPTZwD31W6FFECbpUrNHxVJ0a3QX3kkgNNCgJCtKt6yjkAYTjSj0Jvalq
- m7N46k5EjbdN1+rK/8vojORILwn0Mti/1RLV72ZxxFoEBF/pHxejSJSgDKMwzS3I3ZKmC8tFs
- /9L5XarXqtt08roZ9rJddgy1AD+KUr+27hotjfs3pNhz4Tz5srOIKJjW8tRi5haHyH0KeG4WG
- a7QkOG+hsR+Ho+PQMrRu4JWphqJlG5LFxIQLGGcsre8k2JFnjsIgYOEPLaE2BQJojpboXDJdc
- 2Z571zdiJGq2b/Gb49wccEpbbj9eS4S+JykeDbOL/OEE6l/6XsfJXq2uE1+b1I5L9vkqszG44
- 1SFHCCZRhH0dtF5kQDaIrmKGtL4gg70p8ekKDfFI35o7MAJKEXDulUZAxg7uKbTTMAZMPcF5P
- SOqDxu+ezbVZDu3KQYu8YUzfU9ubLaW2xfhRlOGXMmudfj8jnvprqtLz5Bn9QUgrXdXCEv7+t
- +CilVVRe1/cJYpR0svpHnUug/Pz94A3CkALA+OZt0CcFsKEJ8AA28kxS3i0SNzFXpIKxxU21d
- Kb0Xbj0uABYS6oYml2IEfD5RQXdOxywvY3eQYkbj23N1nwyQf5YmmB3itvPwc3TC0YJdw2DEO
- orBiuOKx9h3subBkvCSroMEb/nnjPG+MWdp0gVH/yeEmAnA8tj4P9TQwuWVZfXEYY7bL2/8WX
- bWbroB/tRdURc9VD8kYXWFBAhlkMhFirnBmRjpEk/jmhyXJe6gJ/z7MdqOFVjJ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  b1d6f155e1bbb67778c17aba661fb4ea4e1a3641
+Gitweb:     https://git.kernel.org/tip/b1d6f155e1bbb67778c17aba661fb4ea4e1a3641
+Author:     Ingo Molnar <mingo@kernel.org>
+AuthorDate: Mon, 3 Dec 2018 11:22:00 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 17 Dec 2018 14:56:31 -0300
 
---f+W+jCU1fRNres8c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+perf vendor events intel: Fix diverse typos
 
-On Tue, Dec 18, 2018 at 09:18:42AM +0000, Christophe Leroy wrote:
-> The only difference I see then are the flags. Everything else is seems
-> identical.
->=20
-> I know you tried already, but would you mind trying once more with the
-> following change ?
->=20
-[...]
-> -		setbat(idx, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
-> +		setbat(idx, PAGE_OFFSET + base, base, size, PAGE_KERNEL_X);
+Go over the tools/ files that are maintained in Arnaldo's tree and
+fix common typos: half of them were in comments, the other half
+in JSON files.
 
-Good call, with this workaround on top of patches 1-3, it boots again:
+( Care should be taken not to re-import these typos in the future,
+  if the JSON files get updated by the vendor without fixing the typos. )
 
-	# mount -t debugfs d /sys/kernel/debug
-	# cat /sys/kernel/debug/powerpc/block_address_translation
-	---[ Instruction Block Address Translation ]---
-	0: 0xc0000000-0xc0ffffff 0x00000000 Kernel EXEC
-	1:         -
-	2: 0xc1000000-0xc17fffff 0x01000000 Kernel EXEC
-	3:         -
-	4: 0xd0000000-0xd1ffffff 0x10000000 Kernel EXEC
-	5:         -
-	6:         -
-	7:         -
+No change in functionality intended.
 
-	---[ Data Block Address Translation ]---
-	0: 0xc0000000-0xc0ffffff 0x00000000 Kernel RW
-	1: 0xfffe0000-0xffffffff 0x0d000000 Kernel RW no cache guarded
-	2: 0xc1000000-0xc17fffff 0x01000000 Kernel RW
-	3:         -
-	4: 0xd0000000-0xd1ffffff 0x10000000 Kernel RW
-	5:         -
-	6:         -
-	7:         -
+Committer notes:
 
-> I think we may have some code trying to modify the kernel text without us=
-ing
-> code patching functions.
+This was split from a larger patch as there are code that is,
+additionally, maintained outside the kernel tree, so to ease cherry
+picking and/or backporting, split this into multiple patches.
 
-Is there any faster way than to sprinkle some printks in setup_kernel
-and try to find the guilty piece of code this way?
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181203102200.GA104797@gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../perf/pmu-events/arch/x86/broadwell/cache.json  |  4 +--
+ .../pmu-events/arch/x86/broadwell/pipeline.json    |  2 +-
+ .../pmu-events/arch/x86/broadwellde/cache.json     |  4 +--
+ .../pmu-events/arch/x86/broadwellde/pipeline.json  |  2 +-
+ .../perf/pmu-events/arch/x86/broadwellx/cache.json |  4 +--
+ .../pmu-events/arch/x86/broadwellx/pipeline.json   |  2 +-
+ tools/perf/pmu-events/arch/x86/jaketown/cache.json |  4 +--
+ .../pmu-events/arch/x86/jaketown/pipeline.json     |  2 +-
+ .../pmu-events/arch/x86/knightslanding/cache.json  | 30 +++++++++++-----------
+ .../pmu-events/arch/x86/sandybridge/cache.json     |  4 +--
+ .../pmu-events/arch/x86/sandybridge/pipeline.json  |  2 +-
+ .../pmu-events/arch/x86/skylakex/uncore-other.json | 12 ++++-----
+ 12 files changed, 36 insertions(+), 36 deletions(-)
 
-
-Jonathan
-
---f+W+jCU1fRNres8c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlwY/wkACgkQCDBEmo7z
-X9tphw//eo4AefucR1Ifx7yXkmmJgCQhqeLD63BU/DIL9I5rw4tNFdmGvEh1AJ3y
-vdGdGaTkya/mBGvyoDJ37eh3ldt+7N9qk7W16BZc2tjYQQRJOPht1Y/ecFypqcKc
-8obxsorOVT6iAE8VoDU3ZJYZe6BZuVJCwEoPFySRl1bUYaADGIoeop5TF9ypgkrJ
-LhQDUDO2SA1nQKMJ5HFfqeO8oqyo4MYt0rJqUZRP4FCIt/3caB4hcPDFv7eRdT2F
-KSmmcLMPyYPDnC48vWkA5w8OKRbndPe3HRdtrWdwIbmVxBS+6mq+HDFu2qk7OhAV
-KZKMieNtfgg/zOuKCX+/D+NtuLOj569vxuZShdDblcnnP8etLboF7oqtFyrmBK4+
-WdoHIFLxBGiYS8QTYvPHSAkIx3e7rajrLhB+ggNXhIT7WQ71jX6KNCOYmwEJoke2
-0O3s6iuMMIFDG3Jm89kovuf5B/6n10yvrr/1d+f5tLJueamBdkMG8LOPsdcXQacE
-W60tfnzPqqD9jMUvWEmlSQgruc9sVlUz3pt9qNzbp8Q2PVUmfimpkrFh+ZkfWI5Y
-QxW5QyQW2sUwOBCtfTLBm8wi94Ho/YR8MclmLA8hx1/2onxu70hxD9fHKzi3vD1e
-ooehzWa+V46ZBr3l4pwhEJUDU2WCkxlZZTGKgspmv82r/2nQiXw=
-=2uIf
------END PGP SIGNATURE-----
-
---f+W+jCU1fRNres8c--
+diff --git a/tools/perf/pmu-events/arch/x86/broadwell/cache.json b/tools/perf/pmu-events/arch/x86/broadwell/cache.json
+index bba3152ec54a..0b080b0352d8 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwell/cache.json
++++ b/tools/perf/pmu-events/arch/x86/broadwell/cache.json
+@@ -433,7 +433,7 @@
+     },
+     {
+         "PEBS": "1",
+-        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-splitted load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-split load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "EventCode": "0xD0",
+         "Counter": "0,1,2,3",
+         "UMask": "0x41",
+@@ -445,7 +445,7 @@
+     },
+     {
+         "PEBS": "1",
+-        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-splitted store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-split store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "EventCode": "0xD0",
+         "Counter": "0,1,2,3",
+         "UMask": "0x42",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json b/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json
+index 97c5d0784c6c..999cf3066363 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json
+@@ -317,7 +317,7 @@
+         "CounterHTOff": "0,1,2,3,4,5,6,7"
+     },
+     {
+-        "PublicDescription": "This event counts stalls occured due to changing prefix length (66, 67 or REX.W when they change the length of the decoded instruction). Occurrences counting is proportional to the number of prefixes in a 16B-line. This may result in the following penalties: three-cycle penalty for each LCP in a 16-byte chunk.",
++        "PublicDescription": "This event counts stalls occurred due to changing prefix length (66, 67 or REX.W when they change the length of the decoded instruction). Occurrences counting is proportional to the number of prefixes in a 16B-line. This may result in the following penalties: three-cycle penalty for each LCP in a 16-byte chunk.",
+         "EventCode": "0x87",
+         "Counter": "0,1,2,3",
+         "UMask": "0x1",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/cache.json b/tools/perf/pmu-events/arch/x86/broadwellde/cache.json
+index bf243fe2a0ec..4ad425312bdc 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/cache.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/cache.json
+@@ -439,7 +439,7 @@
+         "PEBS": "1",
+         "Counter": "0,1,2,3",
+         "EventName": "MEM_UOPS_RETIRED.SPLIT_LOADS",
+-        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-splitted load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-split load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "SampleAfterValue": "100003",
+         "CounterHTOff": "0,1,2,3"
+     },
+@@ -451,7 +451,7 @@
+         "PEBS": "1",
+         "Counter": "0,1,2,3",
+         "EventName": "MEM_UOPS_RETIRED.SPLIT_STORES",
+-        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-splitted store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-split store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "SampleAfterValue": "100003",
+         "L1_Hit_Indication": "1",
+         "CounterHTOff": "0,1,2,3"
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json b/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json
+index 920c89da9111..0d04bf9db000 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json
+@@ -322,7 +322,7 @@
+         "BriefDescription": "Stalls caused by changing prefix length of the instruction.",
+         "Counter": "0,1,2,3",
+         "EventName": "ILD_STALL.LCP",
+-        "PublicDescription": "This event counts stalls occured due to changing prefix length (66, 67 or REX.W when they change the length of the decoded instruction). Occurrences counting is proportional to the number of prefixes in a 16B-line. This may result in the following penalties: three-cycle penalty for each LCP in a 16-byte chunk.",
++        "PublicDescription": "This event counts stalls occurred due to changing prefix length (66, 67 or REX.W when they change the length of the decoded instruction). Occurrences counting is proportional to the number of prefixes in a 16B-line. This may result in the following penalties: three-cycle penalty for each LCP in a 16-byte chunk.",
+         "SampleAfterValue": "2000003",
+         "CounterHTOff": "0,1,2,3,4,5,6,7"
+     },
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellx/cache.json b/tools/perf/pmu-events/arch/x86/broadwellx/cache.json
+index bf0c51272068..141b1080429d 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellx/cache.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellx/cache.json
+@@ -439,7 +439,7 @@
+         "PEBS": "1",
+         "Counter": "0,1,2,3",
+         "EventName": "MEM_UOPS_RETIRED.SPLIT_LOADS",
+-        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-splitted load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-split load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "SampleAfterValue": "100003",
+         "CounterHTOff": "0,1,2,3"
+     },
+@@ -451,7 +451,7 @@
+         "PEBS": "1",
+         "Counter": "0,1,2,3",
+         "EventName": "MEM_UOPS_RETIRED.SPLIT_STORES",
+-        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-splitted store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This is a precise version (that is, uses PEBS) of the event that counts line-split store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "SampleAfterValue": "100003",
+         "L1_Hit_Indication": "1",
+         "CounterHTOff": "0,1,2,3"
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellx/pipeline.json b/tools/perf/pmu-events/arch/x86/broadwellx/pipeline.json
+index 920c89da9111..0d04bf9db000 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellx/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellx/pipeline.json
+@@ -322,7 +322,7 @@
+         "BriefDescription": "Stalls caused by changing prefix length of the instruction.",
+         "Counter": "0,1,2,3",
+         "EventName": "ILD_STALL.LCP",
+-        "PublicDescription": "This event counts stalls occured due to changing prefix length (66, 67 or REX.W when they change the length of the decoded instruction). Occurrences counting is proportional to the number of prefixes in a 16B-line. This may result in the following penalties: three-cycle penalty for each LCP in a 16-byte chunk.",
++        "PublicDescription": "This event counts stalls occurred due to changing prefix length (66, 67 or REX.W when they change the length of the decoded instruction). Occurrences counting is proportional to the number of prefixes in a 16B-line. This may result in the following penalties: three-cycle penalty for each LCP in a 16-byte chunk.",
+         "SampleAfterValue": "2000003",
+         "CounterHTOff": "0,1,2,3,4,5,6,7"
+     },
+diff --git a/tools/perf/pmu-events/arch/x86/jaketown/cache.json b/tools/perf/pmu-events/arch/x86/jaketown/cache.json
+index f723e8f7bb09..ee22e4a5e30d 100644
+--- a/tools/perf/pmu-events/arch/x86/jaketown/cache.json
++++ b/tools/perf/pmu-events/arch/x86/jaketown/cache.json
+@@ -31,7 +31,7 @@
+     },
+     {
+         "PEBS": "1",
+-        "PublicDescription": "This event counts line-splitted load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This event counts line-split load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "EventCode": "0xD0",
+         "Counter": "0,1,2,3",
+         "UMask": "0x41",
+@@ -42,7 +42,7 @@
+     },
+     {
+         "PEBS": "1",
+-        "PublicDescription": "This event counts line-splitted store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This event counts line-split store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "EventCode": "0xD0",
+         "Counter": "0,1,2,3",
+         "UMask": "0x42",
+diff --git a/tools/perf/pmu-events/arch/x86/jaketown/pipeline.json b/tools/perf/pmu-events/arch/x86/jaketown/pipeline.json
+index 8a597e45ed84..34a519d9bfa0 100644
+--- a/tools/perf/pmu-events/arch/x86/jaketown/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/jaketown/pipeline.json
+@@ -778,7 +778,7 @@
+         "CounterHTOff": "0,1,2,3,4,5,6,7"
+     },
+     {
+-        "PublicDescription": "This event counts loads that followed a store to the same address, where the data could not be forwarded inside the pipeline from the store to the load.  The most common reason why store forwarding would be blocked is when a load's address range overlaps with a preceeding smaller uncompleted store.  See the table of not supported store forwards in the Intel? 64 and IA-32 Architectures Optimization Reference Manual.  The penalty for blocked store forwarding is that the load must wait for the store to complete before it can be issued.",
++        "PublicDescription": "This event counts loads that followed a store to the same address, where the data could not be forwarded inside the pipeline from the store to the load.  The most common reason why store forwarding would be blocked is when a load's address range overlaps with a preceding smaller uncompleted store.  See the table of not supported store forwards in the Intel? 64 and IA-32 Architectures Optimization Reference Manual.  The penalty for blocked store forwarding is that the load must wait for the store to complete before it can be issued.",
+         "EventCode": "0x03",
+         "Counter": "0,1,2,3",
+         "UMask": "0x2",
+diff --git a/tools/perf/pmu-events/arch/x86/knightslanding/cache.json b/tools/perf/pmu-events/arch/x86/knightslanding/cache.json
+index 88ba5994b994..e434ec723001 100644
+--- a/tools/perf/pmu-events/arch/x86/knightslanding/cache.json
++++ b/tools/perf/pmu-events/arch/x86/knightslanding/cache.json
+@@ -121,7 +121,7 @@
+         "EventName": "OFFCORE_RESPONSE.ANY_PF_L2.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts any Prefetch requests that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts any Prefetch requests that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -187,7 +187,7 @@
+         "EventName": "OFFCORE_RESPONSE.ANY_READ.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts any Read request  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts any Read request  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -253,7 +253,7 @@
+         "EventName": "OFFCORE_RESPONSE.ANY_CODE_RD.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Demand code reads and prefetch code read requests  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Demand code reads and prefetch code read requests  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -319,7 +319,7 @@
+         "EventName": "OFFCORE_RESPONSE.ANY_RFO.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Demand cacheable data write requests  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Demand cacheable data write requests  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -385,7 +385,7 @@
+         "EventName": "OFFCORE_RESPONSE.ANY_DATA_RD.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Demand cacheable data and L1 prefetch data read requests  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Demand cacheable data and L1 prefetch data read requests  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -451,7 +451,7 @@
+         "EventName": "OFFCORE_RESPONSE.ANY_REQUEST.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts any request that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts any request that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -539,7 +539,7 @@
+         "EventName": "OFFCORE_RESPONSE.PF_L1_DATA_RD.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts L1 data HW prefetches that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts L1 data HW prefetches that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -605,7 +605,7 @@
+         "EventName": "OFFCORE_RESPONSE.PF_SOFTWARE.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Software Prefetches that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Software Prefetches that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -682,7 +682,7 @@
+         "EventName": "OFFCORE_RESPONSE.BUS_LOCKS.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Bus locks and split lock requests that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Bus locks and split lock requests that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -748,7 +748,7 @@
+         "EventName": "OFFCORE_RESPONSE.UC_CODE_READS.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts UC code reads (valid only for Outstanding response type)  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts UC code reads (valid only for Outstanding response type)  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -869,7 +869,7 @@
+         "EventName": "OFFCORE_RESPONSE.PARTIAL_READS.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Partial reads (UC or WC and is valid only for Outstanding response type).  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Partial reads (UC or WC and is valid only for Outstanding response type).  that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -935,7 +935,7 @@
+         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts L2 code HW prefetches that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts L2 code HW prefetches that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -1067,7 +1067,7 @@
+         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts demand code reads and prefetch code reads that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts demand code reads and prefetch code reads that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -1133,7 +1133,7 @@
+         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts Demand cacheable data writes that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts Demand cacheable data writes that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+@@ -1199,7 +1199,7 @@
+         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.OUTSTANDING",
+         "MSRIndex": "0x1a6",
+         "SampleAfterValue": "100007",
+-        "BriefDescription": "Counts demand cacheable data and L1 prefetch data reads that are outstanding, per weighted cycle, from the time of the request to when any response is received. The oustanding response should be programmed only on PMC0. ",
++        "BriefDescription": "Counts demand cacheable data and L1 prefetch data reads that are outstanding, per weighted cycle, from the time of the request to when any response is received. The outstanding response should be programmed only on PMC0. ",
+         "Offcore": "1"
+     },
+     {
+diff --git a/tools/perf/pmu-events/arch/x86/sandybridge/cache.json b/tools/perf/pmu-events/arch/x86/sandybridge/cache.json
+index bef73c499f83..16b04a20bc12 100644
+--- a/tools/perf/pmu-events/arch/x86/sandybridge/cache.json
++++ b/tools/perf/pmu-events/arch/x86/sandybridge/cache.json
+@@ -31,7 +31,7 @@
+     },
+     {
+         "PEBS": "1",
+-        "PublicDescription": "This event counts line-splitted load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This event counts line-split load uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "EventCode": "0xD0",
+         "Counter": "0,1,2,3",
+         "UMask": "0x41",
+@@ -42,7 +42,7 @@
+     },
+     {
+         "PEBS": "1",
+-        "PublicDescription": "This event counts line-splitted store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
++        "PublicDescription": "This event counts line-split store uops retired to the architected path. A line split is across 64B cache-line which includes a page split (4K).",
+         "EventCode": "0xD0",
+         "Counter": "0,1,2,3",
+         "UMask": "0x42",
+diff --git a/tools/perf/pmu-events/arch/x86/sandybridge/pipeline.json b/tools/perf/pmu-events/arch/x86/sandybridge/pipeline.json
+index 8a597e45ed84..34a519d9bfa0 100644
+--- a/tools/perf/pmu-events/arch/x86/sandybridge/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/sandybridge/pipeline.json
+@@ -778,7 +778,7 @@
+         "CounterHTOff": "0,1,2,3,4,5,6,7"
+     },
+     {
+-        "PublicDescription": "This event counts loads that followed a store to the same address, where the data could not be forwarded inside the pipeline from the store to the load.  The most common reason why store forwarding would be blocked is when a load's address range overlaps with a preceeding smaller uncompleted store.  See the table of not supported store forwards in the Intel? 64 and IA-32 Architectures Optimization Reference Manual.  The penalty for blocked store forwarding is that the load must wait for the store to complete before it can be issued.",
++        "PublicDescription": "This event counts loads that followed a store to the same address, where the data could not be forwarded inside the pipeline from the store to the load.  The most common reason why store forwarding would be blocked is when a load's address range overlaps with a preceding smaller uncompleted store.  See the table of not supported store forwards in the Intel? 64 and IA-32 Architectures Optimization Reference Manual.  The penalty for blocked store forwarding is that the load must wait for the store to complete before it can be issued.",
+         "EventCode": "0x03",
+         "Counter": "0,1,2,3",
+         "UMask": "0x2",
+diff --git a/tools/perf/pmu-events/arch/x86/skylakex/uncore-other.json b/tools/perf/pmu-events/arch/x86/skylakex/uncore-other.json
+index de6e70e552e2..adb42c72f5c8 100644
+--- a/tools/perf/pmu-events/arch/x86/skylakex/uncore-other.json
++++ b/tools/perf/pmu-events/arch/x86/skylakex/uncore-other.json
+@@ -428,7 +428,7 @@
+         "EventCode": "0x5C",
+         "EventName": "UNC_CHA_SNOOP_RESP.RSP_WBWB",
+         "PerPkg": "1",
+-        "PublicDescription": "Counts when a transaction with the opcode type Rsp*WB Snoop Response was received which indicates which indicates the data was written back to it's home.  This is returned when a non-RFO request hits a cacheline in the Modified state. The Cache can either downgrade the cacheline to a S (Shared) or I (Invalid) state depending on how the system has been configured.  This reponse will also be sent when a cache requests E (Exclusive) ownership of a cache line without receiving data, because the cache must acquire ownership.",
++        "PublicDescription": "Counts when a transaction with the opcode type Rsp*WB Snoop Response was received which indicates which indicates the data was written back to it's home.  This is returned when a non-RFO request hits a cacheline in the Modified state. The Cache can either downgrade the cacheline to a S (Shared) or I (Invalid) state depending on how the system has been configured.  This response will also be sent when a cache requests E (Exclusive) ownership of a cache line without receiving data, because the cache must acquire ownership.",
+         "UMask": "0x10",
+         "Unit": "CHA"
+     },
+@@ -967,7 +967,7 @@
+         "EventCode": "0x57",
+         "EventName": "UNC_M2M_PREFCAM_INSERTS",
+         "PerPkg": "1",
+-        "PublicDescription": "Counts when the M2M (Mesh to Memory) recieves a prefetch request and inserts it into its outstanding prefetch queue.  Explanatory Side Note: the prefect queue is made from CAM: Content Addressable Memory",
++        "PublicDescription": "Counts when the M2M (Mesh to Memory) receives a prefetch request and inserts it into its outstanding prefetch queue.  Explanatory Side Note: the prefect queue is made from CAM: Content Addressable Memory",
+         "Unit": "M2M"
+     },
+     {
+@@ -1041,7 +1041,7 @@
+         "EventCode": "0x31",
+         "EventName": "UNC_UPI_RxL_BYPASSED.SLOT0",
+         "PerPkg": "1",
+-        "PublicDescription": "Counts incoming FLITs (FLow control unITs) which bypassed the slot0 RxQ buffer (Receive Queue) and passed directly to the Egress.  This is a latency optimization, and should generally be the common case.  If this value is less than the number of FLITs transfered, it implies that there was queueing getting onto the ring, and thus the transactions saw higher latency.",
++        "PublicDescription": "Counts incoming FLITs (FLow control unITs) which bypassed the slot0 RxQ buffer (Receive Queue) and passed directly to the Egress.  This is a latency optimization, and should generally be the common case.  If this value is less than the number of FLITs transferred, it implies that there was queueing getting onto the ring, and thus the transactions saw higher latency.",
+         "UMask": "0x1",
+         "Unit": "UPI LL"
+     },
+@@ -1051,17 +1051,17 @@
+         "EventCode": "0x31",
+         "EventName": "UNC_UPI_RxL_BYPASSED.SLOT1",
+         "PerPkg": "1",
+-        "PublicDescription": "Counts incoming FLITs (FLow control unITs) which bypassed the slot1 RxQ buffer  (Receive Queue) and passed directly across the BGF and into the Egress.  This is a latency optimization, and should generally be the common case.  If this value is less than the number of FLITs transfered, it implies that there was queueing getting onto the ring, and thus the transactions saw higher latency.",
++        "PublicDescription": "Counts incoming FLITs (FLow control unITs) which bypassed the slot1 RxQ buffer  (Receive Queue) and passed directly across the BGF and into the Egress.  This is a latency optimization, and should generally be the common case.  If this value is less than the number of FLITs transferred, it implies that there was queueing getting onto the ring, and thus the transactions saw higher latency.",
+         "UMask": "0x2",
+         "Unit": "UPI LL"
+     },
+     {
+-        "BriefDescription": "FLITs received which bypassed the Slot0 Recieve Buffer",
++        "BriefDescription": "FLITs received which bypassed the Slot0 Receive Buffer",
+         "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_UPI_RxL_BYPASSED.SLOT2",
+         "PerPkg": "1",
+-        "PublicDescription": "Counts incoming FLITs (FLow control unITs) whcih bypassed the slot2 RxQ buffer (Receive Queue)  and passed directly to the Egress.  This is a latency optimization, and should generally be the common case.  If this value is less than the number of FLITs transfered, it implies that there was queueing getting onto the ring, and thus the transactions saw higher latency.",
++        "PublicDescription": "Counts incoming FLITs (FLow control unITs) which bypassed the slot2 RxQ buffer (Receive Queue)  and passed directly to the Egress.  This is a latency optimization, and should generally be the common case.  If this value is less than the number of FLITs transferred, it implies that there was queueing getting onto the ring, and thus the transactions saw higher latency.",
+         "UMask": "0x4",
+         "Unit": "UPI LL"
+     },
