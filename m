@@ -2,187 +2,177 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558A6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF240C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A02421873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D27021873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbeLRON4 (ORCPT
+        id S1726912AbeLROOQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:13:56 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45763 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeLRONz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:13:55 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEDTBJ2854505
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:13:29 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEDTLs2854502;
-        Tue, 18 Dec 2018 06:13:29 -0800
-Date:   Tue, 18 Dec 2018 06:13:29 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-zo11rn270gij5jtp8fknpf8u@git.kernel.org>
-Cc:     jolsa@kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        acme@redhat.com, namhyung@kernel.org, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, davem@davemloft.net
-Reply-To: jolsa@kernel.org, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
-          namhyung@kernel.org, acme@redhat.com, hpa@zytor.com,
-          alexander.shishkin@linux.intel.com, davem@davemloft.net
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Save and display the lost count stats
-Git-Commit-ID: d24e3c98ac11b941669885cc09d88b3b970e9d66
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 09:14:16 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46578 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbeLROOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:14:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7091480D;
+        Tue, 18 Dec 2018 06:14:15 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 442BB3F675;
+        Tue, 18 Dec 2018 06:14:12 -0800 (PST)
+Subject: Re: [RESEND PATCH v5 4/6] coresight: Use PMU driver configuration for
+ sink selection
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>, acme@kernel.org,
+        peterz@infradead.org, gregkh@linuxfoundation.org
+Cc:     mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        suzuki.poulosi@arm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1545067306-31687-1-git-send-email-mathieu.poirier@linaro.org>
+ <1545067306-31687-5-git-send-email-mathieu.poirier@linaro.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <48afc315-d4ed-8779-a808-757fa4203bb7@arm.com>
+Date:   Tue, 18 Dec 2018 14:14:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1545067306-31687-5-git-send-email-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181218141329.8Rj4MLBHmn12-mH1PhvfTU-bUe5Zn8KGXKBsUwH7we0@z>
 
-Commit-ID:  d24e3c98ac11b941669885cc09d88b3b970e9d66
-Gitweb:     https://git.kernel.org/tip/d24e3c98ac11b941669885cc09d88b3b970e9d66
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Tue, 6 Nov 2018 15:45:14 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:57:36 -0300
+Hi Mathieu,
 
-perf top: Save and display the lost count stats
+On 17/12/2018 17:21, Mathieu Poirier wrote:
+> This patch uses the PMU driver configuration held in event::hw::drv_config
+> to select a sink for each event that is created (the old sysFS way of
+> working is kept around for backward compatibility).
+> 
+> By proceeding in this way a sink can be used by multiple sessions
+> without having to play games with entries in sysFS.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>   drivers/hwtracing/coresight/coresight-etm-perf.c | 74 ++++++++++++++++++++----
+>   1 file changed, 62 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index f21eb28b6782..a7e1fdef07f2 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -4,6 +4,7 @@
+>    * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+>    */
+>   
+> +#include <linux/amba/bus.h>
+>   #include <linux/coresight.h>
+>   #include <linux/coresight-pmu.h>
+>   #include <linux/cpumask.h>
+> @@ -11,6 +12,7 @@
+>   #include <linux/list.h>
+>   #include <linux/mm.h>
+>   #include <linux/init.h>
+> +#include <linux/ioport.h>
+>   #include <linux/perf_event.h>
+>   #include <linux/percpu-defs.h>
+>   #include <linux/slab.h>
+> @@ -177,6 +179,26 @@ static void etm_free_aux(void *data)
+>   	schedule_work(&event_data->work);
+>   }
+>   
+> +static struct coresight_device *etm_drv_config_sync(struct perf_event *event)
 
-Add a 'lost count' to 'perf top' headers:
+minor nit: The name doesn't quite imply what we do here. Did you mean
+s/sync/sink ?
 
-  # perf top --stdio
-   PerfTop:    3850 irqs/sec  kernel:49.0%  exact: 100.0% lost: 0/0 [4000Hz cycles:ppp],  (all, 8 CPUs)
+> +{
+> +	struct coresight_device *sink = NULL;
+> +	struct pmu_drv_config *drv_config = perf_event_get_drv_config(event);
+> +
+> +	/*
+> +	 * Make sure we don't race with perf_drv_config_replace() in
+> +	 * kernel/events/core.c.
+> +	 */
+> +	raw_spin_lock(&drv_config->lock);
+> +
+> +	/* Copy what we got from user space if applicable. */
+> +	if (drv_config->config)
+> +		sink = drv_config->config;
+> +
+> +	raw_spin_unlock(&drv_config->lock);
+> +
+> +	return sink;
+> +}
+> +
+>   static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   			   int nr_pages, bool overwrite)
+>   {
+> @@ -190,18 +212,11 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   		return NULL;
+>   	INIT_WORK(&event_data->work, free_event_data);
+>   
+> -	/*
+> -	 * In theory nothing prevent tracers in a trace session from being
+> -	 * associated with different sinks, nor having a sink per tracer.  But
+> -	 * until we have HW with this kind of topology we need to assume tracers
+> -	 * in a trace session are using the same sink.  Therefore go through
+> -	 * the coresight bus and pick the first enabled sink.
+> -	 *
+> -	 * When operated from sysFS users are responsible to enable the sink
+> -	 * while from perf, the perf tools will do it based on the choice made
+> -	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
+> -	 */
+> -	sink = coresight_get_enabled_sink(true);
+> +	/* First get the sink config from user space. */
+> +	sink = etm_drv_config_sync(event);
+> +	if (!sink)
+> +		sink = coresight_get_enabled_sink(true);
+> +
+>   	if (!sink || !sink_ops(sink)->alloc_buffer)
+>   		goto err;
+>   
+> @@ -454,6 +469,40 @@ static void etm_addr_filters_sync(struct perf_event *event)
+>   	filters->nr_filters = i;
+>   }
+>   
+> +static int etm_drv_config_find_sink(struct device *dev, void *data)
+> +{
+> +	struct amba_device *adev = to_amba_device(dev->parent);
+> +	struct resource *res = &adev->res;
+> +	u64 value = *((u64 *)data);
+> +
+> +	/*
+> +	 * The HW mapping of a component is unique.  If the value we've been
+> +	 * given matches the component's start address, then we must have found
+> +	 * the device we are looking for.
+> +	 */
 
-  # perf top
-  Samples: 0  of event 'cycles:ppp', 4000 Hz, Event count (approx.): 0 lost: 0/0
+To be frank, I don't quite like the idea of passing the base address of the
+component as the key to locate a device, (even though that is unique and readily
+available). I would rather prefer a programmable way to map the keys to the
+"sink" devices, which works platform agnostic (e.g, ACPI support, where the base
+address is not obvious from the name). Also if we decide to use a platform
+agnostic naming scheme, it becomes even more complex.
 
-The format is: <current period lost>/<total lost>
+We could assign a static "id/key" exported either via the device sysfs dir or
+the "pmu" dir. I prefer the latter.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: David S. Miller <davem@davemloft.net>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-zo11rn270gij5jtp8fknpf8u@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-top.c       | 27 +++++++++++++++++++++++++++
- tools/perf/ui/browsers/hists.c |  4 ++++
- tools/perf/util/top.c          |  6 +++---
- tools/perf/util/top.h          |  2 +-
- 4 files changed, 35 insertions(+), 4 deletions(-)
+Thoughts ?
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 1beb3e360521..c02ea537d5a7 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -800,6 +800,29 @@ static void perf_event__process_sample(struct perf_tool *tool,
- 	addr_location__put(&al);
- }
- 
-+static void
-+perf_top__process_lost(struct perf_top *top, union perf_event *event,
-+		       struct perf_evsel *evsel)
-+{
-+	struct hists *hists = evsel__hists(evsel);
-+
-+	top->lost += event->lost.lost;
-+	top->lost_total += event->lost.lost;
-+	hists->stats.total_lost += event->lost.lost;
-+}
-+
-+static void
-+perf_top__process_lost_samples(struct perf_top *top,
-+			       union perf_event *event,
-+			       struct perf_evsel *evsel)
-+{
-+	struct hists *hists = evsel__hists(evsel);
-+
-+	top->lost += event->lost_samples.lost;
-+	top->lost_total += event->lost_samples.lost;
-+	hists->stats.total_lost_samples += event->lost_samples.lost;
-+}
-+
- static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
- {
- 	struct record_opts *opts = &top->record_opts;
-@@ -865,6 +888,10 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
- 		if (event->header.type == PERF_RECORD_SAMPLE) {
- 			perf_event__process_sample(&top->tool, event, evsel,
- 						   &sample, machine);
-+		} else if (event->header.type == PERF_RECORD_LOST) {
-+			perf_top__process_lost(top, event, evsel);
-+		} else if (event->header.type == PERF_RECORD_LOST_SAMPLES) {
-+			perf_top__process_lost_samples(top, event, evsel);
- 		} else if (event->header.type < PERF_RECORD_MAX) {
- 			hists__inc_nr_events(evsel__hists(evsel), event->header.type);
- 			machine__process_event(machine, event, &sample);
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index a96f62ca984a..ae208c16c8a3 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2219,6 +2219,10 @@ static int hists_browser__scnprintf_title(struct hist_browser *browser, char *bf
- 	if (!is_report_browser(hbt)) {
- 		struct perf_top *top = hbt->arg;
- 
-+		printed += scnprintf(bf + printed, size - printed,
-+				     " lost: %" PRIu64 "/%" PRIu64,
-+				     top->lost, top->lost_total);
-+
- 		if (top->zero)
- 			printed += scnprintf(bf + printed, size - printed, " [z]");
- 	}
-diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
-index 8e517def925b..e6582fa6a4db 100644
---- a/tools/perf/util/top.c
-+++ b/tools/perf/util/top.c
-@@ -46,8 +46,8 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
- 							samples_per_sec;
- 		ret = SNPRINTF(bf, size,
- 			       "   PerfTop:%8.0f irqs/sec  kernel:%4.1f%%"
--			       "  exact: %4.1f%% [", samples_per_sec,
--			       ksamples_percent, esamples_percent);
-+			       "  exact: %4.1f%% lost: %" PRIu64 "/%" PRIu64 " [", samples_per_sec,
-+			       ksamples_percent, esamples_percent, top->lost, top->lost_total);
- 	} else {
- 		float us_samples_per_sec = top->us_samples / top->delay_secs;
- 		float guest_kernel_samples_per_sec = top->guest_kernel_samples / top->delay_secs;
-@@ -113,5 +113,5 @@ void perf_top__reset_sample_counters(struct perf_top *top)
- {
- 	top->samples = top->us_samples = top->kernel_samples =
- 	top->exact_samples = top->guest_kernel_samples =
--	top->guest_us_samples = 0;
-+	top->guest_us_samples = top->lost = 0;
- }
-diff --git a/tools/perf/util/top.h b/tools/perf/util/top.h
-index 9add1f72ce95..1fbcbd79720a 100644
---- a/tools/perf/util/top.h
-+++ b/tools/perf/util/top.h
-@@ -22,7 +22,7 @@ struct perf_top {
- 	 * Symbols will be added here in perf_event__process_sample and will
- 	 * get out after decayed.
- 	 */
--	u64		   samples;
-+	u64		   samples, lost, lost_total;
- 	u64		   kernel_samples, us_samples;
- 	u64		   exact_samples;
- 	u64		   guest_us_samples, guest_kernel_samples;
+And whatever we decide to choose, needs to be clearly documented under the 
+Documentation/perf/cs_etm.txt.
+
+Cheers
+Suzuki
