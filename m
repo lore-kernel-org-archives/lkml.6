@@ -2,92 +2,125 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183E5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BE0C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D10F621873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:04:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FalqUbGe";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ktRkLgVx"
+	by mail.kernel.org (Postfix) with ESMTP id 42C9121871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:05:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeLRSEy (ORCPT
+        id S1727432AbeLRSFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:04:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49550 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbeLRSEx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:04:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 135846021A; Tue, 18 Dec 2018 18:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545156293;
-        bh=2jhh6tgZMpXhQ2EjT98PY55Rv6OzcMm+VOpyOCA8iu4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FalqUbGeFbWRftnAXrZ9mEw4z3ArmlY7EYOtyNwPWWIPAK6wi782KCp2+KsKkwg7u
-         g7CZHR40bbQAFJkIj0/vClP7ir7x54dYw7/qZbjz9LzymXVBM92/Jkbu44RKo45WgS
-         osrtNL3HTVFnEDINgyziSTUdSvJeqoxFtPRdnQew=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B80BF60591;
-        Tue, 18 Dec 2018 18:04:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545156292;
-        bh=2jhh6tgZMpXhQ2EjT98PY55Rv6OzcMm+VOpyOCA8iu4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ktRkLgVxHgkb19PSuyFk8pjzqu1gRd1R95gOPD5jBmK0ZamL2ewTnqizpS0NXOXQK
-         rWvG53yzf3VpbD0dVLVO60BKpkNuZHXCFtL/nBSZGnjY1GeJ1fI1mSszUX7kR7Smiv
-         vSKQpLZSsRPc2JX/PVv4TwdRCClanteWPlMSnHDM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B80BF60591
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] arm64: dts: qcom: msm8998-mtp: Increase load on l21 for sdcard
-Date:   Tue, 18 Dec 2018 11:04:43 -0700
-Message-Id: <1545156283-5461-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 18 Dec 2018 13:05:24 -0500
+Received: from mga12.intel.com ([192.55.52.136]:41890 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726451AbeLRSFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 13:05:24 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 10:05:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,368,1539673200"; 
+   d="scan'208";a="119447245"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Dec 2018 10:05:22 -0800
+Date:   Tue, 18 Dec 2018 11:03:07 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     "hch@lst.de" <hch@lst.de>
+Cc:     yupeng <yupeng0921@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "axboe@fb.com" <axboe@fb.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "jthumshirn@suse.de" <jthumshirn@suse.de>
+Subject: Re: [PATCH v4 2/2] trace nvme submit queue status
+Message-ID: <20181218180306.GA19791@localhost.localdomain>
+References: <20181218045138.4282-1-yupeng0921@gmail.com>
+ <20181218045138.4282-2-yupeng0921@gmail.com>
+ <20181218172645.GB13768@localhost.localdomain>
+ <20181218174750.GA14416@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218174750.GA14416@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-l21 is used as sdcard vmmc, and needs the load increased to prevent
-voltage drop issues with some sdcards.  This addresses -84 errors seen
-during sdcard init with SDR104 cards.
+On Tue, Dec 18, 2018 at 06:47:50PM +0100, hch@lst.de wrote:
+> On Tue, Dec 18, 2018 at 10:26:46AM -0700, Keith Busch wrote:
+> > No need for a space after the %s. __print_disk_name already appends a
+> > space if there's a disk name, and we don't want the extra space if there
+> > isn't one. Also, every other nvme trace has a ',' after each entry. Not
+> > a big deal, just minor format consistency.
+> 
+> Yeah.  What about something like this incremental patch to make the
+> trace formatting and argument passing match what we otherwise do:
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Nice, that looks good. It's also necessary for admin commands since
+there was no other way to see which controller a completion came from
+without this.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 50e9033..288adbf 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -192,6 +192,8 @@
- 		vreg_l21a_2p95: l21 {
- 			regulator-min-microvolt = <2960000>;
- 			regulator-max-microvolt = <2960000>;
-+			regulator-allow-set-load;
-+			regulator-system-load = <800000>;
- 		};
- 		vreg_l22a_2p85: l22 {
- 			regulator-min-microvolt = <2864000>;
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Reviewed-by: Keith Busch <keith.busch@intel.com> 
 
+
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 2477bd906904..5a0bf6a24d50 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -1004,8 +1004,7 @@ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
+>  	}
+>  
+>  	req = blk_mq_tag_to_rq(*nvmeq->tags, cqe->command_id);
+> -	trace_nvme_sq(req->rq_disk, nvmeq->qid, le16_to_cpu(cqe->sq_head),
+> -			nvmeq->sq_tail);
+> +	trace_nvme_sq(req, cqe->sq_head, nvmeq->sq_tail);
+>  	nvme_end_request(req, cqe->status, cqe->result);
+>  }
+>  
+> diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace.h
+> index cf666709bc50..3564120aa7b3 100644
+> --- a/drivers/nvme/host/trace.h
+> +++ b/drivers/nvme/host/trace.h
+> @@ -185,22 +185,24 @@ TRACE_EVENT(nvme_async_event,
+>  #undef aer_name
+>  
+>  TRACE_EVENT(nvme_sq,
+> -	TP_PROTO(void *rq_disk, int qid, int sq_head, int sq_tail),
+> -	TP_ARGS(rq_disk, qid, sq_head, sq_tail),
+> +	TP_PROTO(struct request *req, __le16 sq_head, int sq_tail),
+> +	TP_ARGS(req, sq_head, sq_tail),
+>  	TP_STRUCT__entry(
+> +		__field(int, ctrl_id)
+>  		__array(char, disk, DISK_NAME_LEN)
+>  		__field(int, qid)
+> -		__field(int, sq_head)
+> -		__field(int, sq_tail)
+> +		__field(u16, sq_head)
+> +		__field(u16, sq_tail)
+>  	),
+>  	TP_fast_assign(
+> -		__assign_disk_name(__entry->disk, rq_disk);
+> -		__entry->qid = qid;
+> -		__entry->sq_head = sq_head;
+> +		__entry->ctrl_id = nvme_req(req)->ctrl->instance;
+> +		__assign_disk_name(__entry->disk, req->rq_disk);
+> +		__entry->qid = nvme_req_qid(req);
+> +		__entry->sq_head = le16_to_cpu(sq_head);
+>  		__entry->sq_tail = sq_tail;
+>  	),
+> -	TP_printk("nvme: %s qid=%d head=%d tail=%d",
+> -		__print_disk_name(__entry->disk),
+> +	TP_printk("nvme%d: %sqid=%d, head=%u, tail=%u",
+> +		__entry->ctrl_id, __print_disk_name(__entry->disk),
+>  		__entry->qid, __entry->sq_head, __entry->sq_tail
+>  	)
+>  );
