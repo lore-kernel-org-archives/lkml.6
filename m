@@ -2,45 +2,51 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B73FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8449C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21CAA217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928E4217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:21:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbeLROUj (ORCPT
+        id S1726992AbeLROVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:20:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45319 "EHLO
+        Tue, 18 Dec 2018 09:21:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60011 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeLROUi (ORCPT
+        with ESMTP id S1726469AbeLROVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:20:38 -0500
+        Tue, 18 Dec 2018 09:21:10 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEKW702855551
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEIl8k2855379
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:20:32 -0800
+        Tue, 18 Dec 2018 06:18:47 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEKWdv2855548;
-        Tue, 18 Dec 2018 06:20:32 -0800
-Date:   Tue, 18 Dec 2018 06:20:32 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEIlFe2855376;
+        Tue, 18 Dec 2018 06:18:47 -0800
+Date:   Tue, 18 Dec 2018 06:18:47 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-tl2hdxj64tt4k8btbi6a0ugw@git.kernel.org>
-Cc:     acme@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
-        adrian.hunter@intel.com, namhyung@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
-          acme@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-          adrian.hunter@intel.com, namhyung@kernel.org
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-78688342c547bb274b563e6d87ef7774c7686aaf@git.kernel.org>
+Cc:     acme@redhat.com, mathieu.poirier@linaro.org, mingo@kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org,
+        hpa@zytor.com
+Reply-To: mathieu.poirier@linaro.org, acme@redhat.com, mingo@kernel.org,
+          jolsa@redhat.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, namhyung@kernel.org, hpa@zytor.com,
+          peterz@infradead.org, alexander.shishkin@linux.intel.com
+In-Reply-To: <1543955944-10042-2-git-send-email-mathieu.poirier@linaro.org>
+References: <1543955944-10042-2-git-send-email-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf dso: Fix unchecked usage of strncpy()
-Git-Commit-ID: fca5085c15255bbde203b7322c15f07ebb12f63e
+Subject: [tip:perf/core] perf cs-etm: Add configuration for ETMv3 trace
+ protocol
+Git-Commit-ID: 78688342c547bb274b563e6d87ef7774c7686aaf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -53,52 +59,133 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181218142032.lTBPNIA4gqhVmVLGZkDskuhAaBUNFcBybsAK8Qj6-nU@z>
 
-Commit-ID:  fca5085c15255bbde203b7322c15f07ebb12f63e
-Gitweb:     https://git.kernel.org/tip/fca5085c15255bbde203b7322c15f07ebb12f63e
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 6 Dec 2018 10:49:46 -0300
+Commit-ID:  78688342c547bb274b563e6d87ef7774c7686aaf
+Gitweb:     https://git.kernel.org/tip/78688342c547bb274b563e6d87ef7774c7686aaf
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Tue, 4 Dec 2018 13:39:02 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:59:03 -0300
+CommitDate: Mon, 17 Dec 2018 14:58:53 -0300
 
-perf dso: Fix unchecked usage of strncpy()
+perf cs-etm: Add configuration for ETMv3 trace protocol
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+This patch deals with the proper initialisation of configuration
+parameters for the ETMv3 trace protocol in order to properly handle
+packets generated by tracers following this specification.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
-
-  In function 'decompress_kmodule',
-      inlined from 'dso__decompress_kmodule_fd' at util/dso.c:305:9:
-  util/dso.c:298:3: error: 'strncpy' destination unchanged after copying no bytes [-Werror=stringop-truncation]
-     strncpy(pathname, tmpbuf, len);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    CC       /tmp/build/perf/util/values.o
-    CC       /tmp/build/perf/util/debug.o
-  cc1: all warnings being treated as errors
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: c9a8a6131fb6 ("perf tools: Move the temp file processing into decompress_kmodule")
-Link: https://lkml.kernel.org/n/tip-tl2hdxj64tt4k8btbi6a0ugw@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1543955944-10042-2-git-send-email-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/dso.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  8 ++++
+ tools/perf/util/cs-etm.c                        | 54 ++++++++++++++++++-------
+ 2 files changed, 48 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index bbed90e5d9bb..cee717a3794f 100644
---- a/tools/perf/util/dso.c
-+++ b/tools/perf/util/dso.c
-@@ -295,7 +295,7 @@ static int decompress_kmodule(struct dso *dso, const char *name,
- 		unlink(tmpbuf);
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+index 9351bd10d864..6b5525410a43 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+@@ -53,6 +53,13 @@ struct cs_etm_queue;
+ typedef u32 (*cs_etm_mem_cb_type)(struct cs_etm_queue *, u64,
+ 				  size_t, u8 *);
  
- 	if (pathname && (fd >= 0))
--		strncpy(pathname, tmpbuf, len);
-+		strlcpy(pathname, tmpbuf, len);
++struct cs_etmv3_trace_params {
++	u32 reg_ctrl;
++	u32 reg_trc_id;
++	u32 reg_ccer;
++	u32 reg_idr;
++};
++
+ struct cs_etmv4_trace_params {
+ 	u32 reg_idr0;
+ 	u32 reg_idr1;
+@@ -65,6 +72,7 @@ struct cs_etmv4_trace_params {
+ struct cs_etm_trace_params {
+ 	int protocol;
+ 	union {
++		struct cs_etmv3_trace_params etmv3;
+ 		struct cs_etmv4_trace_params etmv4;
+ 	};
+ };
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 48ad217bf0df..76e509c32a28 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -114,15 +114,28 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
+ 	/* Use metadata to fill in trace parameters for trace decoder */
+ 	t_params = zalloc(sizeof(*t_params) * etm->num_cpu);
+ 	for (i = 0; i < etm->num_cpu; i++) {
+-		t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
+-		t_params[i].etmv4.reg_idr0 = etm->metadata[i][CS_ETMV4_TRCIDR0];
+-		t_params[i].etmv4.reg_idr1 = etm->metadata[i][CS_ETMV4_TRCIDR1];
+-		t_params[i].etmv4.reg_idr2 = etm->metadata[i][CS_ETMV4_TRCIDR2];
+-		t_params[i].etmv4.reg_idr8 = etm->metadata[i][CS_ETMV4_TRCIDR8];
+-		t_params[i].etmv4.reg_configr =
++		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV3;
++			t_params[i].etmv3.reg_ctrl =
++					etm->metadata[i][CS_ETM_ETMCR];
++			t_params[i].etmv3.reg_trc_id =
++					etm->metadata[i][CS_ETM_ETMTRACEIDR];
++		} else if (etm->metadata[i][CS_ETM_MAGIC] ==
++						      __perf_cs_etmv4_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
++			t_params[i].etmv4.reg_idr0 =
++					etm->metadata[i][CS_ETMV4_TRCIDR0];
++			t_params[i].etmv4.reg_idr1 =
++					etm->metadata[i][CS_ETMV4_TRCIDR1];
++			t_params[i].etmv4.reg_idr2 =
++					etm->metadata[i][CS_ETMV4_TRCIDR2];
++			t_params[i].etmv4.reg_idr8 =
++					etm->metadata[i][CS_ETMV4_TRCIDR8];
++			t_params[i].etmv4.reg_configr =
+ 					etm->metadata[i][CS_ETMV4_TRCCONFIGR];
+-		t_params[i].etmv4.reg_traceidr =
++			t_params[i].etmv4.reg_traceidr =
+ 					etm->metadata[i][CS_ETMV4_TRCTRACEIDR];
++		}
+ 	}
  
- 	return fd;
- }
+ 	/* Set decoder parameters to simply print the trace packets */
+@@ -352,15 +365,28 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ 		goto out_free;
+ 
+ 	for (i = 0; i < etm->num_cpu; i++) {
+-		t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
+-		t_params[i].etmv4.reg_idr0 = etm->metadata[i][CS_ETMV4_TRCIDR0];
+-		t_params[i].etmv4.reg_idr1 = etm->metadata[i][CS_ETMV4_TRCIDR1];
+-		t_params[i].etmv4.reg_idr2 = etm->metadata[i][CS_ETMV4_TRCIDR2];
+-		t_params[i].etmv4.reg_idr8 = etm->metadata[i][CS_ETMV4_TRCIDR8];
+-		t_params[i].etmv4.reg_configr =
++		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV3;
++			t_params[i].etmv3.reg_ctrl =
++					etm->metadata[i][CS_ETM_ETMCR];
++			t_params[i].etmv3.reg_trc_id =
++					etm->metadata[i][CS_ETM_ETMTRACEIDR];
++		} else if (etm->metadata[i][CS_ETM_MAGIC] ==
++							__perf_cs_etmv4_magic) {
++			t_params[i].protocol = CS_ETM_PROTO_ETMV4i;
++			t_params[i].etmv4.reg_idr0 =
++					etm->metadata[i][CS_ETMV4_TRCIDR0];
++			t_params[i].etmv4.reg_idr1 =
++					etm->metadata[i][CS_ETMV4_TRCIDR1];
++			t_params[i].etmv4.reg_idr2 =
++					etm->metadata[i][CS_ETMV4_TRCIDR2];
++			t_params[i].etmv4.reg_idr8 =
++					etm->metadata[i][CS_ETMV4_TRCIDR8];
++			t_params[i].etmv4.reg_configr =
+ 					etm->metadata[i][CS_ETMV4_TRCCONFIGR];
+-		t_params[i].etmv4.reg_traceidr =
++			t_params[i].etmv4.reg_traceidr =
+ 					etm->metadata[i][CS_ETMV4_TRCTRACEIDR];
++		}
+ 	}
+ 
+ 	/* Set decoder parameters to simply print the trace packets */
