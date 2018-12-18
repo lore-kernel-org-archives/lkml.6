@@ -2,112 +2,189 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124A9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A07C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF52D218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9B99217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:04:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbeLRREJ (ORCPT
+        id S1727289AbeLRREb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:04:09 -0500
-Received: from mout.gmx.net ([212.227.17.22]:58841 "EHLO mout.gmx.net"
+        Tue, 18 Dec 2018 12:04:31 -0500
+Received: from foss.arm.com ([217.140.101.70]:49872 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeLRREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:04:09 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx103
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MZU7V-1gpakj3Hjx-00LFYi; Tue, 18
- Dec 2018 18:04:04 +0100
-Date:   Tue, 18 Dec 2018 18:04:03 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 03/13] powerpc/mm/32s: rework mmu_mapin_ram()
-Message-ID: <20181218170403.GF24278@latitude>
-References: <84624899-bbda-9f08-2527-151fddbd1b01@c-s.fr>
- <a253e9f8-1e0a-1596-e0ea-54261ac62212@c-s.fr>
- <20181217012837.GT15324@latitude>
- <18ba3a7c-ebfa-66aa-e231-b56985d0e89a@c-s.fr>
- <20181218030538.GA24278@latitude>
- <9a39d910-2a05-3ce7-c949-296db2d458b9@c-s.fr>
- <20181218140714.GC24278@latitude>
- <96539c09-ea57-43d6-bae9-7371235b175f@c-s.fr>
- <ee4322c4-60e1-94c5-1e55-5d4c3e4de03b@c-s.fr>
- <c1ee5c7f-d683-924f-68cb-43e1fe14363a@c-s.fr>
+        id S1726422AbeLRREb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:04:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BFA3EA78;
+        Tue, 18 Dec 2018 09:04:30 -0800 (PST)
+Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8EEF3F5C0;
+        Tue, 18 Dec 2018 09:04:26 -0800 (PST)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mesih Kilinc <mesihkilinc@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Rob Herring <robh@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [GIT PULL] irqchip updates for 4.21
+Date:   Tue, 18 Dec 2018 17:04:06 +0000
+Message-Id: <20181218170406.188119-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RE3pQJLXZi4fr8Xo"
-Content-Disposition: inline
-In-Reply-To: <c1ee5c7f-d683-924f-68cb-43e1fe14363a@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:vOTDsAX29Qu/G5fkkoHo8SlhyFbmGZy5X7EJrcrzQXOO7NNcDE2
- +3R/hXoLqe41utdVArDd5A6yUPkXLMhXeufp4jgvhHha8AXSlcpfioAVKdcIDu0e7GqAwHG
- E02Y2QTm4O0C0tsCI8kIukmeWyOgwWQTdr+S9qgQB4IoqIkqmZbv9dVKlDNqCTBk9uG6Wxn
- Io8BsnrxT/oI+Cac6I5wQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4Whz/1x0dDc=:nLrSFRAs+ynZYFKaB95egx
- 7/Ufepo4I/DCWqzjMaNyO6MIXkCNXco9CbuIsiI34///BIiCm38npytRTd//dm9c7nPKPV1j9
- vZ1Gv+H9HQpj6p9UtxieK2keAwySBP/uZ/OThLCDt9Pi5xceb3RsNfgOAAfVx54iqYt7rWm67
- AwcGWWt6ASHuCCPkVHCgeItmkGWX23QQDcMc3FNsZoodAK/71kQVuWFSYzYki+Y6BDlhCCuy5
- cLIOdeDks4UV3v6YVw2eCK+R/X5ZTRDPHG+z+OH0S/vc+VaZIbanrH8uItYTmIgwc/ZGL6vLu
- cwxWc9kMx/+L3q5qAsvslzEmNb6oNhjXOdpwU+gMlFfXwf/M1Iwna13Fa80quoOO8I4YAs7FU
- slhsNJ8hj4JCV46ivTC1hrWrwOLJRgg1YJrEOCHtCngRU+87l9JAJOyQeh0b6ky+82iA08K2j
- Hi+seB1xIVAcbLG5ThfQSfk1kQvzYf6pFVrxXd8ePfYITL5lskNCrtakLjqUHeeOl6fP/GGuA
- wkys0oM5hafm1Lsvd9jtLJpcfVI23E9fCdUAOkD5ypv5VfVOmjrNk/Qh7no1YhSwcga6PgdE6
- gmkBtCQQkKUZ0XZRm7WldlexqU3wPYPR6grMIA3CWfluZ7aHyC+hNsZBh6WCB945w9be7XpY1
- SOxjke0WgKngeE+yCEULO3XqL4e3FflGx8Ad3D0hE5EGz1bUn096G7k8Sp8YP2A77uAleDfRv
- P5MOMQaCmfn0h1YDNX249/w6WOrT45P3CxFzO31+s7Uca757V5AcjLI932XIh2e/xMSnATUvI
- TSPHuEWIyn2FgYE7SLuXNZ6Bp8vrK7U3jhTjghGax1589waF6ckL++tSW4p+mxeezWzZm1KcY
- IrEVF0h7yfj3D8nxUotjwpo1WjHIFXLJ8agaLlryts5i+mdEqWkLkgl30E/cq3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thomas,
 
---RE3pQJLXZi4fr8Xo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is the set of patches I've accumulated during the 4.20
+cycle. Although it is larger than some of the previous drops, the
+content is relatively straightforward. A few new irqchip drivers
+(because life would be boring without them), random fixes, cleanups
+and workarounds for stupid firmware implementations.
 
-On Tue, Dec 18, 2018 at 04:04:42PM +0100, Christophe Leroy wrote:
-> Stupid of me. In fact at the time being, BATS cover both RO and RW data
-> areas, so it can definitly not be mapped with PAGE_KERNEL_ROX.
->=20
-> In fact, as I have CONFIG_BDI_SWITCH in my setup, PAGE_KERNEL_TEXT is
-> PAGE_KERNEL_X on my side. That's the reason why I missed it.
->=20
-> With this change being done to patch 3, does the overall serie works for =
-you ?
+Please pull.
 
-Yes, with the PAGE_KERNEL_X change, the whole series boots on the Wii.
+	M.
 
+The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
 
-Jonathan
+  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
 
---RE3pQJLXZi4fr8Xo
-Content-Type: application/pgp-signature; name="signature.asc"
+are available in the Git repository at:
 
------BEGIN PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git tags/irqchip-4.21
 
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlwZKHoACgkQCDBEmo7z
-X9tpig//bmhSTq1Kh7bclVY1IgUPwMgUUmIP/xkQbC91G/VM4IDeL+waD6YRYskK
-7Ab20CFU6zl6doeot+NdmiZ9vx1sg+73AsxIAIPL2bMXW/lW3CFQDtw+kWsol679
-D4WOU3+01OumtFNWKFOp/opHfAZpvudrJnK1tgaTM8Ocp4E+GRof/ZBJc142QiR5
-9jJMfY+xPTqxHRVyXg5pHZGV6WJurhb3Gp4Up9JH0AK1o1NoIYQmuxQGAacZs266
-/wSY/6j1OhWGa2iSPs9EQ5Up+YPrG7pcC4UU1rE0YsnqRE4uFaWD7rSysNgi9KlX
-g2vDlRm8mLP965W0Xr5Kg+VBqkQIhFNHdD4Gvp7ZJzIrwMtp1J0nEm+zYFxA8jt0
-LvbZxsSZyC3BhClzEDhbgBSqsqVCDXWUBpAxaKrt3RNY/8dZyvozoDifxM1YXGu2
-znJPAn7uJwJdFLSIcjwj7f90eVI8tgZ1nsHT1jtOf8IEr2av0I1Cj78wK4/80Sqg
-yvKvOdeBqFr16T8k3TLDkRylSVpLpSKdRmxz+bJ85qXg/yb0CdRLqZDThZ8cT8mK
-WLjHcVX376SybBQbI+OVTDNVXCdcUmxZme8gDu/pfPzQgLtEbI31cLc57Q2Ypm6q
-cKRKRtSZI8KvvPtSZ93kQrmlxEtaYXjCZgz5Hnl/Yn3tB0Ww+30=
-=zGQU
------END PGP SIGNATURE-----
+for you to fetch changes up to fb94109b764e7676fa63834b9033ba97175877a0:
 
---RE3pQJLXZi4fr8Xo--
+  irqchip/stm32: protect configuration registers with hwspinlock (2018-12-18 15:38:31 +0000)
+
+----------------------------------------------------------------
+irqchip updates for 4.21
+
+- A bunch of new irqchip drivers (RDA8810PL, Madera, imx-irqsteer)
+- Updates for new (and old) platforms (i.MX8MQ, F1C100s)
+- A number of SPDX cleanups
+- A workaround for a very broken GICv3 implementation
+- A platform-msi fix
+- Various cleanups
+
+----------------------------------------------------------------
+Andrey Smirnov (5):
+      irqchip/irq-imx-gpcv2: Remove unused code
+      irqchip/irq-imx-gpcv2: Share reg offset calculation code
+      irqchip/irq-imx-gpcv2: Make use of BIT() macro
+      irqchip/irq-imx-gpcv2: Make error messages more consistent
+      irqchip/irq-imx-gpcv2: Add support for i.MX8MQ
+
+Bartosz Golaszewski (1):
+      irq/irq_sim: Store multiple interrupt offsets in a bitmap
+
+Benjamin Gaignard (2):
+      dt-bindings: interrupt-controller: stm32: Document hwlock properties
+      irqchip/stm32: protect configuration registers with hwspinlock
+
+Kuninori Morimoto (2):
+      irqchip/irq-renesas-irqc: Convert to SPDX identifiers
+      irqchip/irq-renesas-intc-irqpin: Convert to SPDX identifiers
+
+Lucas Stach (3):
+      irqchip/irq-imx-gpcv2: Add IRQCHIP_DECLARE for i.MX8MQ compatible
+      dt-bindings/irq: Add binding for Freescale IRQSTEER multiplexer
+      irqchip: Add driver for imx-irqsteer controller
+
+Manivannan Sadhasivam (2):
+      dt-bindings: interrupt-controller: Document RDA8810PL intc
+      irqchip: Add RDA8810PL interrupt driver
+
+Marc Zyngier (1):
+      irqchip/irq-imx-gpcv2: Silence "fall through" warning
+
+Mesih Kilinc (4):
+      dt-bindings: interrupt-controller: Add suniv interrupt-controller
+      irqchip/sun4i: Add a struct to hold global variables
+      irqchip/sun4i: Move IC specific register offsets to struct
+      irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
+
+Miquel Raynal (1):
+      platform-msi: Free descriptors in platform_msi_domain_free()
+
+Richard Fitzgerald (1):
+      irqchip: Add driver for Cirrus Logic Madera codecs
+
+Srinivas Kandagatla (3):
+      dt-bindings/gic-v3: Add msm8996 compatible string
+      irqchip/gic: Add support to device tree based quirks
+      irqchip/gic-v3: Add quirk for msm8996 broken registers
+
+Stefan Wahren (1):
+      irqchip: bcm283x: Switch to SPDX identifier
+
+Wei Yongjun (1):
+      irqchip/irq-rda-intc: Fix return value check in rda8810_intc_init()
+
+Yangtao Li (1):
+      irqchhip: Convert to using %pOFn instead of device_node.name
+
+ .../interrupt-controller/allwinner,sun4i-ic.txt    |   4 +-
+ .../bindings/interrupt-controller/arm,gic-v3.txt   |   4 +-
+ .../bindings/interrupt-controller/fsl,irqsteer.txt |  34 +++
+ .../interrupt-controller/rda,8810pl-intc.txt       |  61 +++++
+ .../interrupt-controller/st,stm32-exti.txt         |   4 +
+ MAINTAINERS                                        |   2 +
+ drivers/base/platform-msi.c                        |   6 +-
+ drivers/irqchip/Kconfig                            |  15 ++
+ drivers/irqchip/Makefile                           |   3 +
+ drivers/irqchip/irq-bcm2835.c                      |  11 +-
+ drivers/irqchip/irq-bcm2836.c                      |  11 +-
+ drivers/irqchip/irq-gic-common.c                   |  12 +
+ drivers/irqchip/irq-gic-common.h                   |   3 +
+ drivers/irqchip/irq-gic-v3.c                       |  27 +++
+ drivers/irqchip/irq-imx-gpcv2.c                    |  65 +++--
+ drivers/irqchip/irq-imx-irqsteer.c                 | 261 +++++++++++++++++++++
+ drivers/irqchip/irq-madera.c                       | 256 ++++++++++++++++++++
+ drivers/irqchip/irq-mscc-ocelot.c                  |   6 +-
+ drivers/irqchip/irq-rda-intc.c                     | 107 +++++++++
+ drivers/irqchip/irq-renesas-intc-irqpin.c          |  14 +-
+ drivers/irqchip/irq-renesas-irqc.c                 |  14 +-
+ drivers/irqchip/irq-stm32-exti.c                   | 122 ++++++++--
+ drivers/irqchip/irq-sun4i.c                        | 106 ++++++---
+ drivers/irqchip/irq-tango.c                        |  10 +-
+ include/linux/irq_sim.h                            |   2 +-
+ include/linux/irqchip/irq-madera.h                 | 132 +++++++++++
+ include/linux/msi.h                                |   2 +
+ kernel/irq/irq_sim.c                               |  23 +-
+ 28 files changed, 1190 insertions(+), 127 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
+ create mode 100644 drivers/irqchip/irq-imx-irqsteer.c
+ create mode 100644 drivers/irqchip/irq-madera.c
+ create mode 100644 drivers/irqchip/irq-rda-intc.c
+ create mode 100644 include/linux/irqchip/irq-madera.h
