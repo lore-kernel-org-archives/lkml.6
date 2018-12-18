@@ -2,62 +2,107 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B64EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CE9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D9C218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA0C218A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:08:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545170933;
+	bh=IxWHIqmovtS+UWsrH0FlOxZaCEpiu4DkNbvZ0E8Q5LI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=q5R1oParN8xagHe7LVy6GAJNR3Sr1BuyYJ3IQabB6j9yzfo7zbhXohR67bs3npa0s
+	 vn2uMNnOE1CSiaNcZsgVqAPwLn5hSktKkxmgSv/R/XWv3dWhOq7Vhh3p/8aou6fvsS
+	 c4aAmo3XICr7PuZl9mFd0aXZ5Mzv7+IvlRZApASQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeLRWIr (ORCPT
+        id S1727820AbeLRWIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:08:47 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:57184 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727753AbeLRWIp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:08:45 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gZNXY-00082r-Cv; Tue, 18 Dec 2018 23:08:36 +0100
-Date:   Tue, 18 Dec 2018 23:08:36 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [ANNOUNCE] 4.14.87-rt49
-Message-ID: <20181218220836.y5tfo6qyuf3674vj@linutronix.de>
-References: <20181218154034.612d729d@gandalf.local.home>
+        Tue, 18 Dec 2018 17:08:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727753AbeLRWIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:08:48 -0500
+Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E5D0218AD;
+        Tue, 18 Dec 2018 22:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545170927;
+        bh=IxWHIqmovtS+UWsrH0FlOxZaCEpiu4DkNbvZ0E8Q5LI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mqLDXQU7XOnxAKZe8VFlter4yOLwqK1HBNwz926NmHRLZYNm9+G5tAWLS2VZx3+rn
+         DTUf2uhxZGTcXt5IAeP79v17CUpQCvZZrjx1TwTd9+ckTJWSfFZ5gcOWkWQLDeqsIc
+         UNfIYps3m7NOjukkgUIuLHZvOaGSAYtXE7AHmih0=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 09/63] perf beauty: Add a string table generator for renameat2's flags constants
+Date:   Tue, 18 Dec 2018 19:06:39 -0300
+Message-Id: <20181218220733.15839-10-acme@kernel.org>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
+References: <20181218220733.15839-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181218154034.612d729d@gandalf.local.home>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-18 15:40:34 [-0500], Steven Rostedt wrote:
-> 
-> Dear RT Folks,
-> 
-> I'm pleased to announce the 4.14.87-rt49 stable release.
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-This contains also commit
-  e8499ab5b93ac ("x86/fpu: Disable bottom halves while loading FPU registers")
+Using the already copied tools/include/uapi/linux/fs.h file:
 
-which means you need commit
-  [PATCH] x86/fpu: Disable preemption around local_bh_disable()
-  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/plain/patches/x86-fpu-Disable-preemption-around-local_bh_disable.patch?h=linux-4.19.y-rt-patches
+  $ tools/perf/trace/beauty/rename_flags.sh
+  static const char *rename_flags[] = {
+	[0 + 1] = "NOREPLACE",
+	[1 + 1] = "EXCHANGE",
+	[2 + 1] = "WHITEOUT",
+  };
+  $
 
-Sebastian
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-ta2jbh03spkymp4sbdh489g8@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/rename_flags.sh | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100755 tools/perf/trace/beauty/rename_flags.sh
+
+diff --git a/tools/perf/trace/beauty/rename_flags.sh b/tools/perf/trace/beauty/rename_flags.sh
+new file mode 100755
+index 000000000000..54c87c782ab2
+--- /dev/null
++++ b/tools/perf/trace/beauty/rename_flags.sh
+@@ -0,0 +1,15 @@
++#!/bin/sh
++# Copyright (C) 2018, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
++# SPDX-License-Identifier: LGPL-2.1
++
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
++
++fs_header=${header_dir}/fs.h
++
++printf "static const char *rename_flags[] = {\n"
++regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+RENAME_([[:alnum:]_]+)[[:space:]]+\(1[[:space:]]*<<[[:space:]]*([[:xdigit:]]+)[[:space:]]*\)[[:space:]]*.*'
++egrep -q $regex ${fs_header} && \
++(egrep $regex ${fs_header} | \
++	sed -r "s/$regex/\2 \1/g"	| \
++	xargs printf "\t[%d + 1] = \"%s\",\n")
++printf "};\n"
+-- 
+2.19.2
+
