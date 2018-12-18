@@ -2,101 +2,70 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB5AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE20C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100A921871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:52:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B5E121871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbeLRNwc (ORCPT
+        id S1726727AbeLRNxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:52:32 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36613 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeLRNwc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:52:32 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIDqPGf2851021
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 05:52:25 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIDqPQ92851018;
-        Tue, 18 Dec 2018 05:52:25 -0800
-Date:   Tue, 18 Dec 2018 05:52:25 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-741dad88dde296999da30332157ca47f0543747d@git.kernel.org>
-Cc:     adrian.hunter@intel.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com, hpa@zytor.com,
-        tglx@linutronix.de, acme@redhat.com
-Reply-To: adrian.hunter@intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, jolsa@redhat.com, hpa@zytor.com,
-          tglx@linutronix.de, acme@redhat.com
-In-Reply-To: <20181122140456.16817-1-adrian.hunter@intel.com>
-References: <20181122140456.16817-1-adrian.hunter@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf test: Fix perf_event_attr test failure
-Git-Commit-ID: 741dad88dde296999da30332157ca47f0543747d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 18 Dec 2018 08:53:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46150 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726426AbeLRNw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 08:52:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7489980D;
+        Tue, 18 Dec 2018 05:52:59 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A9FD3F575;
+        Tue, 18 Dec 2018 05:52:57 -0800 (PST)
+Date:   Tue, 18 Dec 2018 13:52:51 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     honghui.zhang@mediatek.com
+Cc:     bhelgaas@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        matthias.bgg@gmail.com, robh+dt@kernel.org, robh@kernel.org,
+        devicetree@vger.kernel.org, youlin.pei@mediatek.com,
+        jianjun.wang@mediatek.com
+Subject: Re: [PATCH 0/4] Cleanup un-used variant and un-used property for
+ MediaTek PCIe
+Message-ID: <20181218135251.GA3560@e107981-ln.cambridge.arm.com>
+References: <1544750742-31419-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1544750742-31419-1-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  741dad88dde296999da30332157ca47f0543747d
-Gitweb:     https://git.kernel.org/tip/741dad88dde296999da30332157ca47f0543747d
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 22 Nov 2018 16:04:56 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:54:32 -0300
+On Fri, Dec 14, 2018 at 09:25:38AM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> The "num-lanes" property in MediaTek's PCIe device node is not used by
+> its driver or anyone else, cleanup those related code.
+> 
+> Honghui Zhang (4):
+>   PCI: mediatek: Remove un-used variant in struct mtk_pcie_port
+>   dt-bindings: PCI: MediaTek: Remove un-used property
+>   arm: dts: mt7623: Remove un-used property for PCIe
+>   arm64: dts: mt7622: Remove un-used property for PCIe
+> 
+>  Documentation/devicetree/bindings/pci/mediatek-pcie.txt | 8 --------
+>  arch/arm/boot/dts/mt7623.dtsi                           | 3 ---
+>  arch/arm64/boot/dts/mediatek/mt7622.dtsi                | 2 --
+>  drivers/pci/controller/pcie-mediatek.c                  | 8 --------
+>  4 files changed, 21 deletions(-)
 
-perf test: Fix perf_event_attr test failure
+Applied to pci/mediatek for v4.21, thanks.
 
-Fix inconsistent use of tabs and spaces error:
-
-  # perf test 16 -v
-  16: Setup struct perf_event_attr                          :
-  --- start ---
-  test child forked, pid 20224
-    File "/usr/libexec/perf-core/tests/attr.py", line 119
-      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-                                                                 ^
-  TabError: inconsistent use of tabs and spaces in indentation
-  test child finished with -1
-  ---- end ----
-  Setup struct perf_event_attr: FAILED!
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/attr.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
-index ff9b60b99f52..44090a9a19f3 100644
---- a/tools/perf/tests/attr.py
-+++ b/tools/perf/tests/attr.py
-@@ -116,7 +116,7 @@ class Event(dict):
-             if not self.has_key(t) or not other.has_key(t):
-                 continue
-             if not data_equal(self[t], other[t]):
--		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-+                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
- 
- # Test file description needs to have following sections:
- # [config]
+Lorenzo
