@@ -2,137 +2,171 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AC1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F53C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D2A218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545146138;
-	bh=hL+OjmqDQsMlbbsagd8Nizmshe4fBv3fqkUyaYlrrlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2nhayHzMkm8T1I2/qM5JgnhnzpnWbs58qpVhYdXU9vd7IhjGkmW4iNOU4I6HvYBMr
-	 iObn2452wwSW8lff7C7C6LzsK6IE7k54pv7M67QKXHiB0HLr3wxgQ9iwvyeo6lYEiP
-	 6nbA4Mdah/YvQOa9/hBYYpMCN5hxUVYjZWbS3qiI=
+	by mail.kernel.org (Postfix) with ESMTP id 3A263218A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 15:17:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbeLRPPh (ORCPT
+        id S1726839AbeLRPRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 10:15:37 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45064 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbeLRPPg (ORCPT
+        Tue, 18 Dec 2018 10:17:44 -0500
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:35891 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbeLRPRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 10:15:36 -0500
-Received: by mail-oi1-f193.google.com with SMTP id y1so2174695oie.12;
-        Tue, 18 Dec 2018 07:15:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R6FiizF1WZO/jYfpHg3Lq2YG0OpoJsKc5a+tOWuKe9M=;
-        b=qpXl+P7jpxgs42NuayiPAqNS90Cl7ZBBAeOWVpM3SJa4CcHd+VWJ8C2rgsbtUamP78
-         hXfLvPauXMGwGjJlMo5a82t6hcdO9Uviu/qOfBehf5w/UtDZ9KgKc7nilUO2rUxXpH9R
-         OQRk6F7jNXVR/P25AhL2yvJws0w2WLCCSSQyRrvdHEdnQwfMYeGOo7/M0muDI5CcxF/W
-         NFM6sCIL5cq5PnmG1VgWynzrfhoInwpsAab59/XipD7Ij6Ojd/oYcbnMgMmrhTqPG5yk
-         e9yJOHPYTl+/oHBNkgEneRKko0/91bnQv5ZQWuOXOnoHY6cPVea6AKzyo16FWmDptIGn
-         eXGw==
-X-Gm-Message-State: AA+aEWZSRVN8oetjPXPwR2lu2JS7oE8JzPcpm54euwNCNNlN0TezsuVP
-        Ag7Gvu0QvdxMllYIePcqYg==
-X-Google-Smtp-Source: AFSGD/U+VViOFv01xysi619namV0zfIztq2Q1OIIQsE1SoxVMSJAxcYAiY7owRJpQ8eXZN/HS9/TOA==
-X-Received: by 2002:aca:5205:: with SMTP id g5mr8315705oib.149.1545146134892;
-        Tue, 18 Dec 2018 07:15:34 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l6sm2813042otk.51.2018.12.18.07.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 07:15:34 -0800 (PST)
-Date:   Tue, 18 Dec 2018 09:15:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, devicetree@vger.kernel.org,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] PCI: imx6: Add support for i.MX8MQ
-Message-ID: <20181218151533.GA2922@bogus>
-References: <20181218040702.29231-1-andrew.smirnov@gmail.com>
- <20181218040702.29231-4-andrew.smirnov@gmail.com>
+        Tue, 18 Dec 2018 10:17:44 -0500
+X-IronPort-AV: E=Sophos;i="5.56,368,1539648000"; 
+   d="scan'208";a="83498840"
+Date:   Tue, 18 Dec 2018 16:13:31 +0100
+From:   Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+CC:     <axboe@kernel.dk>, <konrad.wilk@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <paul.durrant@citrix.com>, <xen-devel@lists.xenproject.org>
+Subject: Re: [Xen-devel] [PATCH v2 1/1] xen/blkback: rework connect_ring() to
+ avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+Message-ID: <20181218151331.iwkq3roqwigf3e2r@mac>
+References: <1545094538-31426-1-git-send-email-dongli.zhang@oracle.com>
+ <20181218093300.qfslnloxooqnu2im@mac>
+ <51ea8086-e5fd-b1db-f935-101160ca9359@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20181218040702.29231-4-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <51ea8086-e5fd-b1db-f935-101160ca9359@oracle.com>
+User-Agent: NeoMutt/20180716
+X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
+ AMSPEX02CL01.citrite.net (10.69.22.125)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 08:07:02PM -0800, Andrey Smirnov wrote:
-> Add code needed to support i.MX8MQ variant.
+On Tue, Dec 18, 2018 at 07:31:59PM +0800, Dongli Zhang wrote:
+> Hi Roger,
 > 
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> ---
->  .../bindings/pci/fsl,imx6q-pcie.txt           |  6 +-
->  drivers/pci/controller/dwc/Kconfig            |  4 +-
->  drivers/pci/controller/dwc/pci-imx6.c         | 82 ++++++++++++++++++-
->  3 files changed, 87 insertions(+), 5 deletions(-)
+> On 12/18/2018 05:33 PM, Roger Pau Monné wrote:
+> > On Tue, Dec 18, 2018 at 08:55:38AM +0800, Dongli Zhang wrote:
+> >> The xenstore 'ring-page-order' is used globally for each blkback queue and
+> >> therefore should be read from xenstore only once. However, it is obtained
+> >> in read_per_ring_refs() which might be called multiple times during the
+> >> initialization of each blkback queue.
+> >>
+> >> If the blkfront is malicious and the 'ring-page-order' is set in different
+> >> value by blkfront every time before blkback reads it, this may end up at
+> >> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
+> >> xen_blkif_disconnect() when frontend is destroyed.
+> >>
+> >> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
+> >> once.
+> >>
+> >> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> >> ---
+> >> Changed since v1:
+> >>   * change the order of xenstore read in read_per_ring_refs(suggested by Roger Pau Monne)
+> >>   * use xenbus_read_unsigned() in connect_ring() (suggested by Roger Pau Monne)
+> >>
+> >>  drivers/block/xen-blkback/xenbus.c | 70 ++++++++++++++++++++++----------------
+> >>  1 file changed, 40 insertions(+), 30 deletions(-)
+> >>
+> >> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> >> index a4bc74e..7178f0f 100644
+> >> --- a/drivers/block/xen-blkback/xenbus.c
+> >> +++ b/drivers/block/xen-blkback/xenbus.c
+> >> @@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+> >>  	int err, i, j;
+> >>  	struct xen_blkif *blkif = ring->blkif;
+> >>  	struct xenbus_device *dev = blkif->be->dev;
+> >> -	unsigned int ring_page_order, nr_grefs, evtchn;
+> >> +	unsigned int nr_grefs, evtchn;
+> >>  
+> >>  	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
+> >>  			  &evtchn);
+> >> @@ -936,43 +936,38 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+> >>  		return err;
+> >>  	}
+> >>  
+> >> -	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+> >> -			  &ring_page_order);
+> >> -	if (err != 1) {
+> >> -		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
+> >> -		if (err != 1) {
+> >> +	nr_grefs = blkif->nr_ring_pages;
+> >> +	WARN_ON(!nr_grefs);
+> >> +
+> >> +	for (i = 0; i < nr_grefs; i++) {
+> >> +		char ring_ref_name[RINGREF_NAME_LEN];
+> >> +
+> >> +		snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
+> >> +		err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
+> >> +				   "%u", &ring_ref[i]);
+> >> +
+> >> +		if (err != 1 && (i || (!i && nr_grefs > 1))) {
+> > 
+> > AFAICT the above condition can be simplified as "err != 1 &&
+> > nr_grefs".
+> > 
+> >>  			err = -EINVAL;
+> > 
+> > There's no point in setting err here...
+> > 
+> >> -			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
+> >> +			xenbus_dev_fatal(dev, err, "reading %s/%s",
+> >> +					 dir, ring_ref_name);
+> >>  			return err;
+> > 
+> > ...since you can just return -EINVAL (same applies to the other
+> > instance below).
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> index d514c1f2365f..1a10c313e8d7 100644
-> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> @@ -9,6 +9,7 @@ Required properties:
->  	- "fsl,imx6sx-pcie",
->  	- "fsl,imx6qp-pcie"
->  	- "fsl,imx7d-pcie"
-> +	- "fsl,imx8mq-pcie"
->  - reg: base address and length of the PCIe controller
->  - interrupts: A list of interrupt outputs of the controller. Must contain an
->    entry for each entry in the interrupt-names property.
-> @@ -45,7 +46,7 @@ Additional required properties for imx6sx-pcie:
->    PCIE_PHY power domains
->  - power-domain-names: Must be "pcie", "pcie_phy"
->  
-> -Additional required properties for imx7d-pcie:
-> +Additional required properties for imx7d-pcie and imx8mq-pcie:
->  - power-domains: Must be set to a phandle pointing to PCIE_PHY power domain
->  - resets: Must contain phandles to PCIe-related reset lines exposed by SRC
->    IP block
-> @@ -54,6 +55,9 @@ Additional required properties for imx7d-pcie:
->  	       - "apps"
->  	       - "turnoff"
->  
-> +Additional required properties for imx8mq-pcie:
-> +- fsl,controller-id: Logical ID of a given PCIE controller. PCIE1 is 0, PCIE2 is 1;
+> I would like to confirm if I would keep the err = -EINVAL in below because most
+> of the below code is copied from original implementation without modification.
+> 
+> There is no err set by xenbus_read_unsigned().
+
+Right, but instead of doing:
+
+err = -EINVAL;
+return err;
+
+You can just do:
+
+return -EINVAL;
+
+Which is one line shorter :).
+
+> +       ring_page_order = xenbus_read_unsigned(dev->otherend,
+> +                                              "ring-page-order", 0);
 > +
+> +       if (ring_page_order > xen_blkif_max_ring_order) {
+> +               err = -EINVAL;
+> +               xenbus_dev_fatal(dev, err,
+> +                                "requested ring page order %d exceed max:%d",
+> +                                ring_page_order,
+> +                                xen_blkif_max_ring_order);
+> +               return err;
+> +       }
+> +
+> +       be->blkif->nr_ring_pages = 1 << ring_page_order;
+> 
+> 
+> For the rest, I would do something like:
+> 
+> +               err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
+> +                                  "%u", &ring_ref[i]);
+> +
+> +               if (err != 1 && nr_grefs > 1) {
+> +                       xenbus_dev_fatal(dev, err, "reading %s/%s",
+> +                                        dir, ring_ref_name);
+> +                       return -EINVAL;
+> +               }
+> 
+> 
+> Thank you very much!
 
-Remove this.
-
-If GPR register offset is what you need, then put that into DT. 
-Typically, we'd have a property with iomuxc phandle and offset.
-
-Rob
+Thanks!
