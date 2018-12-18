@@ -2,119 +2,108 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC244C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 923FEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A8C2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:55:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrY94FFm"
+	by mail.kernel.org (Postfix) with ESMTP id 6154021841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbeLRIz3 (ORCPT
+        id S1726414AbeLRI6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:55:29 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37533 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbeLRIz3 (ORCPT
+        Tue, 18 Dec 2018 03:58:09 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35762 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbeLRI6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:55:29 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c25so6005263pgb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:55:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PHw2ka3sVg6gr59qEe0pGw+4P8YqLuZzAS8Y9B4Wr58=;
-        b=MrY94FFmv3ZQibAjt5QH6Eupqg1gJ5u44ouuj6XIST6oyNruDLr2KR0rXl6ssOjtMh
-         8scfd2ElZeqTMuDw35EWbEzpP1p+iCIwTzgcglmrlWhDhzoqpbO3GALq/tHFZjUh8WT+
-         6VFUVn0M6UGglUjOxFLYEjysisqlN0lM45XlD0MdlSpnmneJReFfuRJqIFP19kEwBnJG
-         jkUEwFgoFX37/JiiTP4RVhDlBqpnXAAsjXBHIrjOw2XPKbzfhNu0munu1ZxsmUrlJAVv
-         957kf/ctsPVU8rxRp7f3Jut40Tf2I09Pg3kBN974y5nKeT3PgmQvSmYNwtZjk/1HdfvR
-         Gypw==
+        Tue, 18 Dec 2018 03:58:08 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so13510246ljb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:58:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PHw2ka3sVg6gr59qEe0pGw+4P8YqLuZzAS8Y9B4Wr58=;
-        b=aF4tNC/QEmsvdUdGoMu4uEsj7ni/g0YcyTItdeYXxq9vqTbqB3RqxHazi6ee6ZPDCF
-         pO+yO0s1A5pF7Kheu80FSH8cELFe2JvIq8jwSIFCThzUDgonahHDKOmd8mQgrUGKsGOK
-         5OScOSQVKHP916e0ygCxviJBUxGJdNLHvbz/uDH6XD1h03SLtt1xuj1amk6RLf2c6gob
-         D6GAx1Kstamn7S4pSKa8dbR2ik4IIppEfqPtaM7m4+VT4pI0mFSODwJSreDJhm5zeOWY
-         syMhJm/WSdrfYQCA7RNs1Fep06B2xeWHWHsiDR6NOJLC+U3B0oNtS7wls5j9hBk4gXpZ
-         W6VA==
-X-Gm-Message-State: AA+aEWaoqwgypjTUdlUVxP7z0bEkq6zwQFP5/guwP09+c7XylRSZSoxe
-        /9O3DoJemtNb9Om0CVSHXWA=
-X-Google-Smtp-Source: AFSGD/WX3wlSSOCCCFLfNWKN35yeALqUf4ENLeiUEu6QFHSyxFMFpTQuzTCSXhSCyffmrGfQASeNAw==
-X-Received: by 2002:a62:2f06:: with SMTP id v6mr16057100pfv.216.1545123328319;
-        Tue, 18 Dec 2018 00:55:28 -0800 (PST)
-Received: from localhost ([175.223.2.245])
-        by smtp.gmail.com with ESMTPSA id b4sm15540359pgq.65.2018.12.18.00.55.26
+        bh=7KYEMhs44s2ebPt+ODy3itHlgyp/NSGEcdkxPyptwYw=;
+        b=rVS7r1IMBR7rhJFZ4jSU7RkWzKLjdrnkgQOT90QPHqIzHpMxnyX181zQ6jjG2pZVM+
+         RJ85kMNKr6hSWcLQhE9MTS8qkWxaLr/0uXH623gxGTetE9+Oc4VVseWc3/iABGwU69wO
+         VvyVWbLAG3QFWw1FH/EXkmlLHiL9gNKW7t5zOpN5OBoOuqKpnuP60blB4kXd60JUS/Qm
+         k/kChWAZ2evhY6DQvOdbLIatqA+/AbrsjPZmAoZs1jVH096AuhOifbKLegGyuCtBDAkf
+         jOmwgOv0pmUszFLuPuCNrAR3L08yQAB0yQlhXlphcAwVTrOsX45kA00+rMMlM9aRCvFd
+         yZpw==
+X-Gm-Message-State: AA+aEWZ8fAqUbTQPrg16UF0e00YtGeXU3SXZRtL5BodLjeCGvgDwjBUZ
+        v2/ZlswZwaKFTF08OGSrXG4=
+X-Google-Smtp-Source: AFSGD/UJK8m/vx0UhBrwyMRtjsEBj6OqLhWy6xHLwQDIQfQXZQmtt5NV83q+TdKeKSXRn9QlcSasJw==
+X-Received: by 2002:a2e:9e95:: with SMTP id f21-v6mr9480736ljk.128.1545123486508;
+        Tue, 18 Dec 2018 00:58:06 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id d82sm3178232lfd.82.2018.12.18.00.58.05
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 00:55:27 -0800 (PST)
-Date:   Tue, 18 Dec 2018 17:55:24 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181218085524.GA1047@jagdpanzerIV>
-References: <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
- <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
- <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
- <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
- <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
- <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
- <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz>
- <20181213124255.GB3053@tigerII.localdomain>
- <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz>
- <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
+        Tue, 18 Dec 2018 00:58:05 -0800 (PST)
+Date:   Tue, 18 Dec 2018 10:58:03 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     mazziesaccount@gmail.com, gregkh@linuxfoundation.org,
+        rafael@kernel.org, linux-kernel@vger.kernel.org,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: Re: [RFC v2] regmap: regmap-irq: Add main status register support
+Message-ID: <20181218085803.GD2477@localhost.localdomain>
+References: <20181214140812.GA28723@localhost.localdomain>
+ <20181217173244.GE27909@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181217173244.GE27909@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/18/18 06:05), Tetsuo Handa wrote:
-> +#ifdef CONFIG_PRINTK_CALLER
-> +static size_t print_caller(u32 id, char *buf)
-> +{
-> +	char from[12];
-> +
-> +	snprintf(from, sizeof(from), "%c%u",
-> +		 id & 0x80000000 ? 'C' : 'T', id & ~0x80000000);
-> +	return sprintf(buf, "[%6s]", from);
-> +}
+On Mon, Dec 17, 2018 at 05:32:44PM +0000, Mark Brown wrote:
+> On Fri, Dec 14, 2018 at 04:08:12PM +0200, Matti Vaittinen wrote:
+> 
+> > This is draft for approach proposed by Mark here:
+> > http://lkml.iu.edu/hypermail/linux/kernel/1812.1/07117.html
+> 
+> > Pretty untested and diff is done against tree where the level active IRQ
+> > support for regmap-irq was added. So please consider this just as a RFC
+> > introducing the concept. I will format correct and better tested patch if
+> > this is the preferred way to go.
+> 
+> Hrm, so the parsing code is indeed quite complicated.  I suspect it
+> could be simplified if instead of trying to allocate just what's used it
+> was a bit more wasteful and allocated the biggest arrays we might need
+> but I'm not sure how much that'd really help so yeah, doing it the other
+> way around might be better.
 
-A nitpick:
+It might get a little bit simpler but not much I think. And the driver
+interface could be a little bit simpler if we drop the support for
+giving the "main bit mapping" as an array and only support giving the
+main bits in the struct regmap_irqs. Then the num_main_status_bits,
+num_main_regs and sub_reg_offsets could be made internal to regmap-irq.
 
-s/from/caller/g   :)
+OTOH dropping num_main_regs would add up one more thing requiring
+dynamic allocation as we could not compute the number of main register
+bits in advance.
 
+I will proceed with the RFC v1 approach. Nothing prevents us from
+implementing the v2 later if there is use-cases for that. But it will
+take a while before I get this thing tested and user for it.
+Additionally I guess we do need a bui-in from Lee as most of this kind
+of devices with many sub blocks are likely to be represented as MFD
+devices. I guess I should have included him in the recipient list for
+the RFCs :/
 
-> +	  Selecting this option causes "thread id" (if in task context) or
-> +	  "processor id" (if not in task context) of the printk() messages
-> +	  to be added.
+Thanks for all the support this far!
 
-Would the following wording be a bit simpler?
+Br,
+	Matti Vaittinen
 
-  "Selecting this option causes printk() to add a caller "thread id" (if
-   in task context) or a caller "processor id" (if not in task context)
-   to every message."
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-	-ss
-
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
