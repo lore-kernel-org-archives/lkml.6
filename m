@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D763C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B21C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D043C2133F
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 097C82133F
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 08:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqRxus8C"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BXJ3IW7u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbeLRIGt (ORCPT
+        id S1726849AbeLRIGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 03:06:49 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40307 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbeLRIGo (ORCPT
+        Tue, 18 Dec 2018 03:06:55 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44093 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbeLRIGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 03:06:44 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i12so7752566pfo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:06:43 -0800 (PST)
+        Tue, 18 Dec 2018 03:06:53 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u6so7749151pfh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 00:06:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=p8+PRll/69hpVBI8tPhWaAoQEyS3IrjnhvvEZdMVHBc=;
-        b=bqRxus8CEVj8x00GEJ6tPZFvSOeSdrZWpqKoGrOd+0VFFM7vST0FdEJg8tUILQR7sy
-         xEw5UQsPhlbeZQPwBN6sYCJXLHrvPQ3Q9FhomxCBftgHOuunY/McWy3g1M59/W5ypScq
-         tZzBeHz+n8n9mPud0gb81yWTanNJ3hO8J2tY4=
+        bh=D3bKyeo3jAVxlIMumLLKO1Nw9oQMRPP9y6vXm+NkQhc=;
+        b=BXJ3IW7uYVqUSFHGn6zRnfhKmpfkZyk9RGGSU8gVMDkt6L1SUxV3i93NxB8DlWLJd+
+         3Qs54lcPoImM9UuJ12mb252f4vEDdyhENsHSCl2sbEqRDEYAERrl4fTqVTqoqhn0q06z
+         44BbHOaIDGhq1lyAePS4yjP0I5A4WG3EmzMDU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=p8+PRll/69hpVBI8tPhWaAoQEyS3IrjnhvvEZdMVHBc=;
-        b=sPX2JZdHmQU01J8d3aisIEDPQdfYsJyi2a9mIuImpz4+xv26kJCgQRSVg9nGHkqtZQ
-         V+249/MFLNbdnkVrTVzHWM/2mTs26pybTKkOHEkbJCiThS9G8wVkUuI/ueE4Vr8uCqb1
-         ANQL0+AHfTSYYhqCpdq76Oh0hxXiY9Aslvizkl58n+fjXWkWnMvMLiTODlP2y6YEFGuL
-         XJrHm95ihr29hDQXCXtTP1/xGxMP1tV5siGk9eEIbn8tguIfy/cM80JJ4IuzFrFnRZUg
-         B8rExnI3mCdSaYctja0p1TDRD9Wij3R+s+z26PynX3DPFwxKV117AeMyGSSGSkXfo+4X
-         BY4Q==
-X-Gm-Message-State: AA+aEWZZQj2CzRlXzqTANsKRNWYZPxZ2FSJbdisOqN1fKQd5YrEtw5aW
-        AFqmjjOR0pYrqNRB874p/1o6
-X-Google-Smtp-Source: AFSGD/UtudcoBVycPlju1YFvp1c/6GqvVy4RLPUdo5T3hhOqyMghYv8PdFiTLmas8b2lU79LPnHrdQ==
-X-Received: by 2002:a63:d547:: with SMTP id v7mr14713880pgi.339.1545120403546;
-        Tue, 18 Dec 2018 00:06:43 -0800 (PST)
+        bh=D3bKyeo3jAVxlIMumLLKO1Nw9oQMRPP9y6vXm+NkQhc=;
+        b=Uw0oQSrBxdOxuV8ZwoIFvJhEBVsgLHqifiR/jzLQj2zIqnTbqZIJqppse5zLSO3ioU
+         rISaavtidH6fgn14gpuBExXtjLm/3whu55uxNB9rjOY4hMO1T58hXR7wnJRnPQbvFehA
+         03emOzhQToQmDfKzZxsp6zVyh15RHpXvU7R0HUFamAP/pocuB0NVloEaj2Od9RSROeYk
+         9SRHLWoA1uOVbtFb0RXxvwE04Cj7miJflK19wOQphyG62yoVaSBXD1X5AvdxQ4Fb8oB/
+         04nyRfcT5JXpF3py87FAL2Yhn8VRcWNkYSCd3cwv35BU+GhFkyKlRore3cD/ajrR07nA
+         +Bsw==
+X-Gm-Message-State: AA+aEWYEinxLnXRTMfqJOwAlD0etu9ye6gUzFfKlOmJ9lP1C1FyCI3hp
+        NETFv66UPsnncCy9lSmOmqOZ
+X-Google-Smtp-Source: AFSGD/ViSqwzomWYeiYBym8Z2HNI76a4fXi+BcPMIWXknJDVbFBJ5B5BzBFxFvSBn7vzU1uIDZj3zw==
+X-Received: by 2002:a63:4d66:: with SMTP id n38mr2049614pgl.270.1545120412681;
+        Tue, 18 Dec 2018 00:06:52 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:702:382e:8c68:d268:ed20:5f25])
-        by smtp.gmail.com with ESMTPSA id 7sm45596888pfm.8.2018.12.18.00.06.35
+        by smtp.gmail.com with ESMTPSA id 7sm45596888pfm.8.2018.12.18.00.06.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 00:06:43 -0800 (PST)
+        Tue, 18 Dec 2018 00:06:52 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         gregkh@linuxfoundation.org, jslaby@suse.com
@@ -62,9 +62,9 @@ Cc:     linux-unisoc@lists.infradead.org, afaerber@suse.de,
         amit.kucheria@linaro.org, linus.walleij@linaro.org,
         zhao_steven@263.net,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 08/11] dt-bindings: serial: Document RDA Micro UART
-Date:   Tue, 18 Dec 2018 13:35:24 +0530
-Message-Id: <20181218080527.10801-9-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 09/11] ARM: dts: rda8810pl: Add interrupt support for UART
+Date:   Tue, 18 Dec 2018 13:35:25 +0530
+Message-Id: <20181218080527.10801-10-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
 References: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
@@ -76,40 +76,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Färber <afaerber@suse.de>
-
-Add an initial binding for the UART in RDA Micro RDA8810PL SoC.
+Add interrupt support for UART in RDA Micro RDA8810PL SoC.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../bindings/serial/rda,8810pl-uart.txt         | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+ arch/arm/boot/dts/rda8810pl.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt b/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
-new file mode 100644
-index 000000000000..a08df97a69e6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
-@@ -0,0 +1,17 @@
-+RDA Micro UART
-+
-+Required properties:
-+- compatible :  "rda,8810pl-uart" for RDA8810PL SoCs.
-+- reg        :  Offset and length of the register set for the device.
-+- interrupts :  Should contain UART interrupt.
-+- clocks     :  Phandle to the input clock.
-+
-+
-+Example:
-+
-+		uart2: serial@20a90000 {
-+			compatible = "rda,8810pl-uart";
-+			reg = <0x20a90000 0x1000>;
+diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
+index 84baa4c0a14c..19cde895bf65 100644
+--- a/arch/arm/boot/dts/rda8810pl.dtsi
++++ b/arch/arm/boot/dts/rda8810pl.dtsi
+@@ -71,18 +71,21 @@
+ 		uart1: serial@0 {
+ 			compatible = "rda,8810pl-uart";
+ 			reg = <0x0 0x1000>;
++			interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart2: serial@10000 {
+ 			compatible = "rda,8810pl-uart";
+ 			reg = <0x10000 0x1000>;
++			interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart3: serial@90000 {
+ 			compatible = "rda,8810pl-uart";
+ 			reg = <0x90000 0x1000>;
 +			interrupts = <11 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&uart_clk>;
-+		};
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.17.1
 
