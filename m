@@ -2,247 +2,158 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A83B1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEA4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F6A2184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545124153;
-	bh=l13xqkBl22MmChMjIHMw0G3RJWcGq2Q3BD9C/nWoQcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MQpnumvhWoOagl0LUle3Hg53NlDQ4OB4c4AmnRVwsdGcngSPvtMVDnGCupYfQeE+7
-	 PHGuNbfl4qoaUd5CPpCMDnYygegCEox+zWr3EYsFsnbAzqO5GLxCUarTVed1SoR6kf
-	 QjaPshgEy5tFdgAzQHXrFnumwP/NTG5d2Me7DLCg=
+	by mail.kernel.org (Postfix) with ESMTP id E6EFA217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 09:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeLRJJM (ORCPT
+        id S1726424AbeLRJLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:09:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49396 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726346AbeLRJJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 04:09:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CB914AC17;
-        Tue, 18 Dec 2018 09:09:08 +0000 (UTC)
-Date:   Tue, 18 Dec 2018 10:09:07 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+        Tue, 18 Dec 2018 04:11:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726388AbeLRJLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 04:11:36 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBI94DJa128576
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:11:35 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pevdt4gud-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:11:31 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 18 Dec 2018 09:11:29 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Dec 2018 09:11:25 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBI9BOIM10354984
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Dec 2018 09:11:24 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20499A405C;
+        Tue, 18 Dec 2018 09:11:24 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64FB6A4054;
+        Tue, 18 Dec 2018 09:11:23 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.52])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 18 Dec 2018 09:11:23 +0000 (GMT)
+Date:   Tue, 18 Dec 2018 11:11:21 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [-next] lots of messages due to "mm, memory_hotplug: be more
- verbose for memory offline failures"
-Message-ID: <20181218090907.GD30879@dhcp22.suse.cz>
-References: <20181217155922.GC3560@osiris>
- <20181217160350.GV30879@dhcp22.suse.cz>
- <20181217163949.GX30879@dhcp22.suse.cz>
- <20181218075538.GA3590@osiris>
+        Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/5] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154483852617.1672629.2068988045031389440.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181216124335.GB30212@rapoport-lnx>
+ <CAPcyv4hXPm4GnBheTZ5WN6s5Kiw02MW1aWA-s2qC8BqfthT3Yg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218075538.GA3590@osiris>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAPcyv4hXPm4GnBheTZ5WN6s5Kiw02MW1aWA-s2qC8BqfthT3Yg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18121809-0028-0000-0000-0000032C1921
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121809-0029-0000-0000-000023E8740B
+Message-Id: <20181218091121.GA25499@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812180081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 18-12-18 08:55:38, Heiko Carstens wrote:
-> On Mon, Dec 17, 2018 at 05:39:49PM +0100, Michal Hocko wrote:
-> > On Mon 17-12-18 17:03:50, Michal Hocko wrote:
-> > > On Mon 17-12-18 16:59:22, Heiko Carstens wrote:
-> > > > Hi Michal,
-> > > > 
-> > > > with linux-next as of today on s390 I see tons of messages like
-> > > > 
-> > > > [   20.536664] page dumped because: has_unmovable_pages
-> > > > [   20.536792] page:000003d081ff4080 count:1 mapcount:0 mapping:000000008ff88600 index:0x0 compound_mapcount: 0
-> > > > [   20.536794] flags: 0x3fffe0000010200(slab|head)
-> > > > [   20.536795] raw: 03fffe0000010200 0000000000000100 0000000000000200 000000008ff88600
-> > > > [   20.536796] raw: 0000000000000000 0020004100000000 ffffffff00000001 0000000000000000
-> > > > [   20.536797] page dumped because: has_unmovable_pages
-> > > > [   20.536814] page:000003d0823b0000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
-> > > > [   20.536815] flags: 0x7fffe0000000000()
-> > > > [   20.536817] raw: 07fffe0000000000 0000000000000100 0000000000000200 0000000000000000
-> > > > [   20.536818] raw: 0000000000000000 0000000000000000 ffffffff00000001 0000000000000000
-> > > > 
-> > > > bisect points to b323c049a999 ("mm, memory_hotplug: be more verbose for memory offline failures")
-> > > > which is the first commit with which the messages appear.
-> > > 
-> > > I would bet this is CMA allocator. How much is tons? Maybe we want a
-> > > rate limit or the other user is not really interested in them at all?
+On Mon, Dec 17, 2018 at 11:56:36AM -0800, Dan Williams wrote:
+> On Sun, Dec 16, 2018 at 4:43 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > On Fri, Dec 14, 2018 at 05:48:46PM -0800, Dan Williams wrote:
+> > > Randomization of the page allocator improves the average utilization of
+> > > a direct-mapped memory-side-cache. Memory side caching is a platform
+> > > capability that Linux has been previously exposed to in HPC
+> > > (high-performance computing) environments on specialty platforms. In
+> > > that instance it was a smaller pool of high-bandwidth-memory relative to
+> > > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+> > > be found on general purpose server platforms where DRAM is a cache in
+> > > front of higher latency persistent memory [1].
+> [..]
+> > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > index 185bfd4e87bb..fd617928ccc1 100644
+> > > --- a/mm/memblock.c
+> > > +++ b/mm/memblock.c
+> > > @@ -834,8 +834,16 @@ int __init_memblock memblock_set_sidecache(phys_addr_t base, phys_addr_t size,
+> > >               return ret;
+> > >
+> > >       for (i = start_rgn; i < end_rgn; i++) {
+> > > -             type->regions[i].cache_size = cache_size;
+> > > -             type->regions[i].direct_mapped = direct_mapped;
+> > > +             struct memblock_region *r = &type->regions[i];
+> > > +
+> > > +             r->cache_size = cache_size;
+> > > +             r->direct_mapped = direct_mapped;
+> >
+> > I think this change can be merged into the previous patch
 > 
-> Yes, the system in question has a 4NB CMA area. "tons" translates to several hundred.
-
-OK, I guess these messages on their own without a wider context are not
-that helpful. It is still surprising to see slab pages or non-movable
-pages in the CMA area. The later might be an CMA allocation I guess but
-slab pages shouldn't be there at all AFAIU.
- 
-> > In other words, this should silence those messages.
+> Ok, will do.
 > 
-> Yes, with the patch below applied the messages don't appear anymore.
+> > > +             /*
+> > > +              * Enable randomization for amortizing direct-mapped
+> > > +              * memory-side-cache conflicts.
+> > > +              */
+> > > +             if (r->size > r->cache_size && r->direct_mapped)
+> > > +                     page_alloc_shuffle_enable();
+> >
+> > It seems that this is the only use for ->direct_mapped in the memblock
+> > code. Wouldn't cache_size != 0 suffice? I.e., in the code that sets the
+> > memblock region attributes, the cache_size can be set to 0 for the non
+> > direct mapped caches, isn't it?
+> >
+> 
+> The HMAT specification allows for other cache-topologies, so it's not
+> sufficient to just look for non-zero size when a platform implements a
+> set-associative cache. The expectation is that a set-associative cache
+> would not need the kernel to perform memory randomization to improve
+> the cache utilization.
+> 
+> The check for memory size > cache-size is a sanity check for a
+> platform BIOS or system configuration that mis-reports or mis-sizes
+> the cache.
 
-OK, I will post an official patch. Even if CMA allocator decides to
-report failures it can simply add the flag.
+Apparently I didn't explain my point well.
 
-Thanks!
+The acpi_numa_memory_affinity_init() already knows whether the cache is
+direct mapped or a set-associative. It can just skip calling
+memblock_set_sidecache() for the set-associative case.
 
-> > diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-> > index 4ae347cbc36d..4eb26d278046 100644
-> > --- a/include/linux/page-isolation.h
-> > +++ b/include/linux/page-isolation.h
-> > @@ -30,8 +30,11 @@ static inline bool is_migrate_isolate(int migratetype)
-> >  }
-> >  #endif
-> > 
-> > +#define SKIP_HWPOISON	0x1
-> > +#define REPORT_FAILURE	0x2
-> > +
-> >  bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> > -			 int migratetype, bool skip_hwpoisoned_pages);
-> > +			 int migratetype, int flags);
-> >  void set_pageblock_migratetype(struct page *page, int migratetype);
-> >  int move_freepages_block(struct zone *zone, struct page *page,
-> >  				int migratetype, int *num_movable);
-> > @@ -44,10 +47,14 @@ int move_freepages_block(struct zone *zone, struct page *page,
-> >   * For isolating all pages in the range finally, the caller have to
-> >   * free all pages in the range. test_page_isolated() can be used for
-> >   * test it.
-> > + *
-> > + * The following flags are allowed (they can be combined in a bit mask)
-> > + * SKIP_HWPOISON - ignore hwpoison pages
-> > + * REPORT_FAILURE - report details about the failure to isolate the range
-> >   */
-> >  int
-> >  start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
-> > -			 unsigned migratetype, bool skip_hwpoisoned_pages);
-> > +			 unsigned migratetype, int flags);
-> > 
-> >  /*
-> >   * Changes MIGRATE_ISOLATE to MIGRATE_MOVABLE.
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index c82193db4be6..8537429d33a6 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -1226,7 +1226,7 @@ static bool is_pageblock_removable_nolock(struct page *page)
-> >  	if (!zone_spans_pfn(zone, pfn))
-> >  		return false;
-> > 
-> > -	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, true);
-> > +	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, SKIP_HWPOISON);
-> >  }
-> > 
-> >  /* Checks if this range of memory is likely to be hot-removable. */
-> > @@ -1577,7 +1577,8 @@ static int __ref __offline_pages(unsigned long start_pfn,
-> > 
-> >  	/* set above range as isolated */
-> >  	ret = start_isolate_page_range(start_pfn, end_pfn,
-> > -				       MIGRATE_MOVABLE, true);
-> > +				       MIGRATE_MOVABLE,
-> > +				       SKIP_HWPOISON | REPORT_FAILURE);
-> >  	if (ret) {
-> >  		mem_hotplug_done();
-> >  		reason = "failure to isolate range";
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index ec2c7916dc2d..ee4043419791 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -7754,8 +7754,7 @@ void *__init alloc_large_system_hash(const char *tablename,
-> >   * race condition. So you can't expect this function should be exact.
-> >   */
-> >  bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> > -			 int migratetype,
-> > -			 bool skip_hwpoisoned_pages)
-> > +			 int migratetype, int flags)
-> >  {
-> >  	unsigned long pfn, iter, found;
-> > 
-> > @@ -7818,7 +7817,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> >  		 * The HWPoisoned page may be not in buddy system, and
-> >  		 * page_count() is not 0.
-> >  		 */
-> > -		if (skip_hwpoisoned_pages && PageHWPoison(page))
-> > +		if ((flags & SKIP_HWPOISON) && PageHWPoison(page))
-> >  			continue;
-> > 
-> >  		if (__PageMovable(page))
-> > @@ -7845,7 +7844,8 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> >  	return false;
-> >  unmovable:
-> >  	WARN_ON_ONCE(zone_idx(zone) == ZONE_MOVABLE);
-> > -	dump_page(pfn_to_page(pfn+iter), "unmovable page");
-> > +	if (flags & REPORT_FAILURE)
-> > +		dump_page(pfn_to_page(pfn+iter), "unmovable page");
-> >  	return true;
-> >  }
-> > 
-> > @@ -7972,8 +7972,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
-> >  	 */
-> > 
-> >  	ret = start_isolate_page_range(pfn_max_align_down(start),
-> > -				       pfn_max_align_up(end), migratetype,
-> > -				       false);
-> > +				       pfn_max_align_up(end), migratetype, 0);
-> >  	if (ret)
-> >  		return ret;
-> > 
-> > diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-> > index 43e085608846..ce323e56b34d 100644
-> > --- a/mm/page_isolation.c
-> > +++ b/mm/page_isolation.c
-> > @@ -15,8 +15,7 @@
-> >  #define CREATE_TRACE_POINTS
-> >  #include <trace/events/page_isolation.h>
-> > 
-> > -static int set_migratetype_isolate(struct page *page, int migratetype,
-> > -				bool skip_hwpoisoned_pages)
-> > +static int set_migratetype_isolate(struct page *page, int migratetype, int isol_flags)
-> >  {
-> >  	struct zone *zone;
-> >  	unsigned long flags, pfn;
-> > @@ -60,8 +59,7 @@ static int set_migratetype_isolate(struct page *page, int migratetype,
-> >  	 * FIXME: Now, memory hotplug doesn't call shrink_slab() by itself.
-> >  	 * We just check MOVABLE pages.
-> >  	 */
-> > -	if (!has_unmovable_pages(zone, page, arg.pages_found, migratetype,
-> > -				 skip_hwpoisoned_pages))
-> > +	if (!has_unmovable_pages(zone, page, arg.pages_found, migratetype, flags))
-> >  		ret = 0;
-> > 
-> >  	/*
-> > @@ -185,7 +183,7 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
-> >   * prevents two threads from simultaneously working on overlapping ranges.
-> >   */
-> >  int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
-> > -			     unsigned migratetype, bool skip_hwpoisoned_pages)
-> > +			     unsigned migratetype, int flags)
-> >  {
-> >  	unsigned long pfn;
-> >  	unsigned long undo_pfn;
-> > @@ -199,7 +197,7 @@ int start_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
-> >  	     pfn += pageblock_nr_pages) {
-> >  		page = __first_valid_page(pfn, pageblock_nr_pages);
-> >  		if (page &&
-> > -		    set_migratetype_isolate(page, migratetype, skip_hwpoisoned_pages)) {
-> > +		    set_migratetype_isolate(page, migratetype, flags)) {
-> >  			undo_pfn = pfn;
-> >  			goto undo;
-> >  		}
-> > -- 
-> > Michal Hocko
-> > SUSE Labs
-> > 
+Another thing I've noticed only now, is that memory randomization is
+enabled if there is at least one memory region with a direct mapped side
+cache attached and once the randomization is on the cache size and the
+mapping mode do not matter. So, I think it's not necessary to store them in
+the memory region at all.
 
 -- 
-Michal Hocko
-SUSE Labs
+Sincerely yours,
+Mike.
+
