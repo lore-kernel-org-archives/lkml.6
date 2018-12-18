@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF68FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60558C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C688C214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37219214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeLRGCy (ORCPT
+        id S1726424AbeLRGDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 01:02:54 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:63295 "EHLO
+        Tue, 18 Dec 2018 01:03:06 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:44625 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726324AbeLRGCy (ORCPT
+        by vger.kernel.org with ESMTP id S1726324AbeLRGDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 01:02:54 -0500
-Date:   18 Dec 2018 15:02:52 +0900
+        Tue, 18 Dec 2018 01:03:05 -0500
+Date:   18 Dec 2018 15:03:04 +0900
 X-IronPort-AV: E=Sophos;i="5.56,367,1539615600"; 
-   d="scan'208";a="2908142"
+   d="scan'208";a="2908178"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Dec 2018 15:02:52 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Dec 2018 15:03:04 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D5D8043A2070;
-        Tue, 18 Dec 2018 15:02:52 +0900 (JST)
-Message-ID: <87imzr1ivb.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 39D8143A2076;
+        Tue, 18 Dec 2018 15:03:04 +0900 (JST)
+Message-ID: <87h8fb1iv0.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] irqchip: irq-renesas-irqc: convert to SPDX identifiers
+Subject: [PATCH 2/2] irqchip: irq-renesas-intc-irqpin: convert to SPDX identifiers
 In-Reply-To: <87k1k71iwj.wl-kuninori.morimoto.gx@renesas.com>
 References: <87k1k71iwj.wl-kuninori.morimoto.gx@renesas.com>
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
@@ -45,7 +45,6 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
 This patch updates license to use SPDX-License-Identifier
@@ -54,17 +53,17 @@ instead of verbose license text.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/irqchip/irq-renesas-irqc.c | 14 +-------------
+ drivers/irqchip/irq-renesas-intc-irqpin.c | 14 +-------------
  1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
-index a4f1112..a449a7c 100644
---- a/drivers/irqchip/irq-renesas-irqc.c
-+++ b/drivers/irqchip/irq-renesas-irqc.c
+diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
+index c6e6c9e..8c03952 100644
+--- a/drivers/irqchip/irq-renesas-intc-irqpin.c
++++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
 @@ -1,20 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Renesas IRQC Driver
+  * Renesas INTC External IRQ Pin Driver
   *
   *  Copyright (C) 2013 Magnus Damm
 - *
