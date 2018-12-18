@@ -2,106 +2,150 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B4FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD742C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8064A214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:47:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96590214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 06:50:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="d6Ncj/+s"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WZlrHpt8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DlOkQzWZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbeLRGrI (ORCPT
+        id S1726413AbeLRGun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 01:47:08 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59324 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbeLRGrI (ORCPT
+        Tue, 18 Dec 2018 01:50:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60670 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbeLRGun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 01:47:08 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4B48653A;
-        Tue, 18 Dec 2018 07:47:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1545115625;
-        bh=yn1cRtUoAdXvNcUhj+KrX5bZkIptX7vIoFGs0GzzgGo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d6Ncj/+sz0kN1/SnfwUDpD5+9Y/wtUiVq1xJ+rtkpHE4eAeExAkYPsR+N7UQeCp+B
-         XKsMV3VbaLlybqLDZWWZhqkIvNlwr9bXsxy2UkDBHJNID33AB6DGdIY7JNW5d8r0Xc
-         sWA9yfVgYzBwtGPxi5YnpARdxwGjIHAQD/iCHDWg=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH][resend] drm: dw-hdmi-i2s: convert to SPDX identifiers
-Date:   Tue, 18 Dec 2018 08:47:56 +0200
-Message-ID: <1545127003.YuAFZ7QVEK@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <87lg4n1izg.wl-kuninori.morimoto.gx@renesas.com>
-References: <87lg4n1izg.wl-kuninori.morimoto.gx@renesas.com>
+        Tue, 18 Dec 2018 01:50:43 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2946E601C3; Tue, 18 Dec 2018 06:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545115842;
+        bh=H0DaZ3BE67kziDVoq5JA1Dy8n7BbXWVnTKzqbDCIEEU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=WZlrHpt8yI4Srlgay/lL1UiTkIoFrTXuS21E0EfxEz7AFTlgYqnQ01JAOq4oWYrSF
+         /7E7uNsT91kb1xhhCEoTgLkNQX8IVywu0BifdJUKZs6hLQf0XFi2/2YzmyRh5rtfoR
+         7jY0D59uVK5uz4W14FKf4QpoVL9qWimi2j4Ti224=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 4F8DA601C3;
+        Tue, 18 Dec 2018 06:50:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545115841;
+        bh=H0DaZ3BE67kziDVoq5JA1Dy8n7BbXWVnTKzqbDCIEEU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DlOkQzWZ1LDj58GrYV6fA82WsvFG2EiMq2enY3J4mL8husqEF+vuyFBTz3Fe3avOA
+         KMbIWbgAWBrs+d0vgDdzMuMT/sk/BFyS0Sw87vKmmWl2dg3FUiRep1tb5XSuf3z9es
+         fQqN0JD/rlkp53KH8YSHvIft2YFtHGWyQqZpeiyM=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 18 Dec 2018 12:20:41 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom: Fixup regulator
+ dependencies
+In-Reply-To: <CAD=FV=XNZ5CzKXHogKEGTHgPVg_nbXxVEJR0e9F9usEY3YKEiQ@mail.gmail.com>
+References: <20181217100724.4593-1-sibis@codeaurora.org>
+ <20181217100724.4593-3-sibis@codeaurora.org>
+ <CAD=FV=XNZ5CzKXHogKEGTHgPVg_nbXxVEJR0e9F9usEY3YKEiQ@mail.gmail.com>
+Message-ID: <13e6d8d6bb46dfc31b5bca927b71223f@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morimoto-san,
+Hi Doug,
+Thanks for the review :)
 
-Thank you for the patch.
-
-On Tuesday, 18 December 2018 08:00:24 EET Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On 2018-12-18 05:30, Doug Anderson wrote:
+> Hi,
 > 
-> This patch updates license to use SPDX-License-Identifier
-> instead of verbose license text.
+> On Mon, Dec 17, 2018 at 2:08 AM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> 
+>> Fixup regulator supply dependencies for Q6V5 MSS on MSM996 SoCs.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt 
+>> b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+>> index 780adc043b37..98894e6ad456 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+>> @@ -76,7 +76,9 @@ on the Qualcomm Hexagon core.
+>>         Usage: required
+>>         Value type: <phandle>
+>>         Definition: reference to the regulators to be held on behalf 
+>> of the
+>> -                   booting of the Hexagon core
+>> +                   booting of the Hexagon core on MSM8916 SoCs
+>> +                   reference to the pll-supply regulator to be held 
+>> on behalf
+>> +                   of the booting of the Hexagon core on MSM8996 SoCs
 > 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> few weeks passed, nothing happen. I re-post this patch again.
-> I added Andrew on Cc
-
-The driver seems to be lacking a maintainer :-S
-
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+> The prose gets in the way and doesn't add anything.  I also don't
+> understand what you're saying for msm8996.  You're saying that
+> "pll-supply" is required there but none of the others?  That doesn't
+> seem to be true in the code I have in front of me, but maybe I'm
+> missing some patch.  For me, I'd write:
 > 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c index
-> 8f9c8a6..2228689 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
-> @@ -1,12 +1,9 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * dw-hdmi-i2s-audio.c
->   *
->   * Copyright (c) 2017 Renesas Solutions Corp.
->   * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
->   */
->  #include <drm/bridge/dw_hdmi.h>
 
+AFAIK, only the exceptions are captured. But your
+suggestion seems more simple/complete. Perhaps I'll
+replace SoCs instead of compatibles? Anyway
+I'll wait for Bjorn/Rob's preference.
+
+> For the compatible strings below the following supplies are required:
+>   "qcom,q6v5-pil"
+>   "qcom,msm8916-mss-pil",
+>   "qcom,msm8974-mss-pil"
+> - cx-supply:
+> - mss-supply:
+> - mx-supply:
+> - pll-supply:
+> Usage: required
+> Value type: <phandle>
+> Definition: reference to the regulators to be held on behalf of the
+>     booting of the Hexagon core
+> 
+> 
+> ...and if msm8996 actually needs "pll-supply", you could add in...
+> 
+> For the compatible strings below the following supplies are required:
+>   "qcom,msm8996-mss-pil"
+> - pll-supply:
+> Usage: required
+> Value type: <phandle>
+> Definition: reference to the regulators to be held on behalf of the
+>     booting of the Hexagon core
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
