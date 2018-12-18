@@ -2,119 +2,141 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6978C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68797C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C27E2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350EB217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:12:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVHe0mJJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbeLRKMa (ORCPT
+        id S1726769AbeLRKMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 05:12:30 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42604 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbeLRKM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 05:12:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C8E8A78;
-        Tue, 18 Dec 2018 02:12:27 -0800 (PST)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.41.146])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 55F803F5C0;
-        Tue, 18 Dec 2018 02:12:19 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
-        akpm@linux-foundation.org, jiangqi903@gmail.com,
-        hverkuil@xs4all.nl, vkoul@kernel.org, sfr@canb.auug.org.au,
-        dledford@redhat.com, mpe@ellerman.id.au, axboe@kernel.dk,
-        jeffrey.t.kirsher@intel.com, david@redhat.com
-Subject: [PATCH V3 2/2] Tools: Replace open encodings for NUMA_NO_NODE
-Date:   Tue, 18 Dec 2018 15:42:13 +0530
-Message-Id: <1545127933-10711-3-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545127933-10711-1-git-send-email-anshuman.khandual@arm.com>
-References: <1545127933-10711-1-git-send-email-anshuman.khandual@arm.com>
+        Tue, 18 Dec 2018 05:12:34 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37964 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeLRKMc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 05:12:32 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g189so7598681pgc.5;
+        Tue, 18 Dec 2018 02:12:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eB7spxvnRVzN64veVyAd+oRPwk/YF9AvoB3zSfrDoHQ=;
+        b=PVHe0mJJnKQ4CZTVx5O10lu/FZg5OdeoH35Si01XPfW7s77k0MDM89wycUwOVedHCb
+         xOJJjTEIuNRVVSscNWQlpY7ZwziTY7ZwoSrF1WFlqu9kkIz85nLfLL16OTGSQa1VOTJ/
+         AgaAMBN507tUHv4VTjrW98LCQU0urOArODcHr7NKqQasY14kUE93FBRGqCw8Tlrn1m4u
+         Eegdu4bK396WQWdBvaKs0XIyMVKi+75ZZIjVWSkdolhjBBoA5tHB8bhJQtCnI9Zy0py/
+         IUBYNF+k9IouW05EJj1iwIfuhVwMRTPQHIQzFi3kKS17LWnX7Zot2Eky+mRpocwnSBhA
+         i24g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eB7spxvnRVzN64veVyAd+oRPwk/YF9AvoB3zSfrDoHQ=;
+        b=OXm8zowePJ4J3/wQxZErZ4uFPUh3cL72TtBSnqtvMAmkj5z4L9/tZIOOesVBotpIHm
+         YMbDkswCgdabUNiauS/s4W+E4tycjSWqaSZty86Q9ewzzKgoFH7X6PuRXMns59xbSj1T
+         z0+Vd2DWonA139yMOkAJQt3+uLDU+9HfX6qfgw7IsIGp8veMtVvlB1DCmDdkkQ9eY3QU
+         Tilji0WSQGlrFICEcdW8ZwRQDj+lIbvBQcX1v6zYy7L1aLRmHVLJVUAf4QX/ASJxkZ7n
+         iUwsUxy9uWCDP0bc0owhMH8wYS6fsgoH/FotejYmv5/JC2P80eXNJSvQO6sr/vAU//x8
+         5NtA==
+X-Gm-Message-State: AA+aEWZsBV8vQFMfGoYectTOtd2FTbRKyd7PtXB5ex7colZ/ZdEvLmAa
+        slYCmHxIPxCq9yceBUt3ghA=
+X-Google-Smtp-Source: AFSGD/UHdZ2aoK7C83n7xjxD9okxNe0z4Ssc9DY7/JWBAAIA3hO+1gwfefMLff9fYZR/YZJVb2DoFA==
+X-Received: by 2002:a62:5dd1:: with SMTP id n78mr15802212pfj.58.1545127951505;
+        Tue, 18 Dec 2018 02:12:31 -0800 (PST)
+Received: from localhost.localdomain ([2001:268:c0a5:b5e9:3c79:e26e:bf45:b953])
+        by smtp.gmail.com with ESMTPSA id t67sm26244979pfd.90.2018.12.18.02.12.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 02:12:31 -0800 (PST)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v5 4/8] gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+Date:   Tue, 18 Dec 2018 19:13:01 +0900
+Message-Id: <d0d9964fe206c68b8fa731a2be28a1e482eb9928.1545126272.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1545126272.git.vilhelm.gray@gmail.com>
+References: <cover.1545126272.git.vilhelm.gray@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+Replace verbose implementation in get_multiple/set_multiple callbacks
+with for_each_set_clump8 macro to simplify code and improve clarity.
 
-This replaces all open encodings in tools with NUMA_NO_NODE.
-Also linux/numa.h is now needed for the perf build.
-
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- tools/include/linux/numa.h | 16 ++++++++++++++++
- tools/perf/bench/numa.c    |  6 +++---
- 2 files changed, 19 insertions(+), 3 deletions(-)
- create mode 100644 tools/include/linux/numa.h
+ drivers/gpio/gpio-104-idi-48.c | 36 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 29 deletions(-)
 
-diff --git a/tools/include/linux/numa.h b/tools/include/linux/numa.h
-new file mode 100644
-index 0000000..110b0e5
---- /dev/null
-+++ b/tools/include/linux/numa.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_NUMA_H
-+#define _LINUX_NUMA_H
-+
-+
-+#ifdef CONFIG_NODES_SHIFT
-+#define NODES_SHIFT     CONFIG_NODES_SHIFT
-+#else
-+#define NODES_SHIFT     0
-+#endif
-+
-+#define MAX_NUMNODES    (1 << NODES_SHIFT)
-+
-+#define	NUMA_NO_NODE	(-1)
-+
-+#endif /* _LINUX_NUMA_H */
-diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-index 4419551..e0ad5f1 100644
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -298,7 +298,7 @@ static cpu_set_t bind_to_node(int target_node)
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 88dc6f2449f6..fdf1b8b64cc4 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -93,42 +93,20 @@ static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	unsigned long *bits)
+ {
+ 	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
+-	size_t i;
++	unsigned int offset;
++	unsigned long gpio_mask;
+ 	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
+-	const unsigned int gpio_reg_size = 8;
+-	unsigned int bits_offset;
+-	size_t word_index;
+-	unsigned int word_offset;
+-	unsigned long word_mask;
+-	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
++	unsigned int port_addr;
+ 	unsigned long port_state;
  
- 	CPU_ZERO(&mask);
+ 	/* clear bits array to a clean slate */
+ 	bitmap_zero(bits, chip->ngpio);
  
--	if (target_node == -1) {
-+	if (target_node == NUMA_NO_NODE) {
- 		for (cpu = 0; cpu < g->p.nr_cpus; cpu++)
- 			CPU_SET(cpu, &mask);
- 	} else {
-@@ -339,7 +339,7 @@ static void bind_to_memnode(int node)
- 	unsigned long nodemask;
- 	int ret;
+-	/* get bits are evaluated a gpio port register at a time */
+-	for (i = 0; i < ARRAY_SIZE(ports); i++) {
+-		/* gpio offset in bits array */
+-		bits_offset = i * gpio_reg_size;
++	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
++		port_addr = idi48gpio->base + ports[offset / 8];
++		port_state = inb(port_addr) & gpio_mask;
  
--	if (node == -1)
-+	if (node == NUMA_NO_NODE)
- 		return;
+-		/* word index for bits array */
+-		word_index = BIT_WORD(bits_offset);
+-
+-		/* gpio offset within current word of bits array */
+-		word_offset = bits_offset % BITS_PER_LONG;
+-
+-		/* mask of get bits for current gpio within current word */
+-		word_mask = mask[word_index] & (port_mask << word_offset);
+-		if (!word_mask) {
+-			/* no get bits in this port so skip to next one */
+-			continue;
+-		}
+-
+-		/* read bits from current gpio port */
+-		port_state = inb(idi48gpio->base + ports[i]);
+-
+-		/* store acquired bits at respective bits array offset */
+-		bits[word_index] |= (port_state << word_offset) & word_mask;
++		bitmap_set_value8(bits, &port_state, offset);
+ 	}
  
- 	BUG_ON(g->p.nr_nodes > (int)sizeof(nodemask)*8);
-@@ -1363,7 +1363,7 @@ static void init_thread_data(void)
- 		int cpu;
- 
- 		/* Allow all nodes by default: */
--		td->bind_node = -1;
-+		td->bind_node = NUMA_NO_NODE;
- 
- 		/* Allow all CPUs by default: */
- 		CPU_ZERO(&td->bind_cpumask);
+ 	return 0;
 -- 
-2.7.4
+2.20.1
 
