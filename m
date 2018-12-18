@@ -2,132 +2,184 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC46C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBE1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31D5D2184C
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:04:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CBE2184C
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQ+3FJWj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPVuLGto"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbeLRMEi (ORCPT
+        id S1726590AbeLRMGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:04:38 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43204 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbeLRMEh (ORCPT
+        Tue, 18 Dec 2018 07:06:21 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41203 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbeLRMGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:04:37 -0500
-Received: by mail-pg1-f193.google.com with SMTP id v28so7713931pgk.10;
-        Tue, 18 Dec 2018 04:04:37 -0800 (PST)
+        Tue, 18 Dec 2018 07:06:21 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k15-v6so13969597ljc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:06:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=QTN9L3fTpeWsyJZhvZ1DPbDaK2OWdDpzdc4ujHbndYM=;
-        b=fQ+3FJWjXv8sUaA+gUOmv+KdLKDL6Yq0l+9QpUbnPVDuxp3l5wd1IdSqSeJ59K4blO
-         S3WUWTDQN9/nlvSsChNgNCKjroOwzviLHjS+NyDjpF1ZpNhYQIu/xHdfRtNQFSifDy2v
-         8NYD7gSS43tWzkjL1VQp5Rvql7RxvVEKVuiFPd2JnTCcnauFBE3xDlWN2Pz8CaV/t9sk
-         1jyfK0H28nr369RQoazRdEICzfKFp0xJESS/ggqS3+50i3AXAI/Sx8bTc+iccPAN5eMF
-         zC68MHkN3+V07WtzoYzqOuHO1lW2mGeTYkAu0+guga/j+U5Yc1YAmcjyC4owx3Z+rksh
-         1DJg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xgH7tJU86A63ysDva0gHrk1mfC2sisonLET/9h8k1Tc=;
+        b=KPVuLGtoqVJTgTNdQBThrlDOpS4QJO1KtfxY8D0rUcWVKcmNNwiYzi7U2M1PhBtshc
+         iL/ODWxtvZIEg+D47ChA7mcCGdHLNWNcEaZp7oIadyDNNwlcch9BofU/Rvv89Lig16kw
+         HFhEJ8BjQUcqiSnTZL4mN0JmSJY2G25VfhYB09DPLaJvOc5xkJAtSKDrWphtwsmeNfgu
+         l4J/z79tVc6NUxjmphjPjBGzwmgCvRdhi9sQKuooGLO11keY3/bMybxovVqtBeKE1Owj
+         HhFqdSWrviMpp3oGUww6LbaEBTRK1NDp1Ql+gK2bqBMJum0shPqwPGPtMS2sd8oIY6/n
+         3HgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QTN9L3fTpeWsyJZhvZ1DPbDaK2OWdDpzdc4ujHbndYM=;
-        b=RVt8MTUF9TzZLiTnu2FCVYTGl+ASOI9u66OPv87V6uvRMblrjEND8q4XEtURsU4wlZ
-         qbG0KRg/ZK4qXv8xX62Tzogsu9pPUW4DiSGSxDIF00RMG4OOosqygl5KqhbaiKoSy8Mo
-         uGAOyabVJFomeDgYGJb8w4KCfnQcvN/vNJKbbPIUKp1HZL3xf5eY4aXAidO2jOHxzJm8
-         CCqBBFwy0xVNR70E0S1fOlKxeheYmbiz7yvA1NvHhjK0I94I88x6+FPjsix8AZO9Is3A
-         TMeKR5KVvJYu7Cp1HudM53f93U/aULUXyTCa5KhC5bo/I/+f4dMHyjS99/16hD2w84YQ
-         slWw==
-X-Gm-Message-State: AA+aEWa9YPv1tBt6ICXWP3IK2rwi9vg5sqrPN0fwLpeAdhMmeJWMercz
-        iok6zPM+wugnHK/7e6edvbw=
-X-Google-Smtp-Source: AFSGD/VG1THwofgVwusUFLGl/A1DcZe54dwyEVQ5X7hGKo+YJ2suO8FiDWmGlRkTOukCu2CrQ+nKJA==
-X-Received: by 2002:a65:40c5:: with SMTP id u5mr14996139pgp.46.1545134676768;
-        Tue, 18 Dec 2018 04:04:36 -0800 (PST)
-Received: from localhost.localdomain ([2402:f000:1:4414:3dd3:3693:8487:3f39])
-        by smtp.gmail.com with ESMTPSA id 4sm30871885pfq.10.2018.12.18.04.04.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 04:04:36 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH v2] usb: r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
-Date:   Tue, 18 Dec 2018 20:04:25 +0800
-Message-Id: <20181218120425.32223-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xgH7tJU86A63ysDva0gHrk1mfC2sisonLET/9h8k1Tc=;
+        b=jpD2xZczuhL8pthYaAOXCi6i7gnzLTNIMB4hhV2CN3sj/SerPeUnz3RoOIUFA10dBe
+         FJyGcBEGd1W6XaDcoX5HtFVFX4HZ+/OgKxBeVHpLpRpdkTocbagESImRzBakGoicDSDn
+         jQ661M0Cki90loVsBl4ixL8KaOIdUuinpWomMrCK2ekX9Q28CeokRNeSfJjIbcYSlDpS
+         7p5Mo+tZMZ2Er92PLwo88EnQsk59+lYz+OVYBYy4NMrXmi4xlf8CKaWZ6pkz+T9W669P
+         dA3CDi9UPCAm8OWMH9E2rmF6UYA2VEM+9nE7RYE7BW1iqXoqL3yMBlY1MkagpKv99a2o
+         fWMw==
+X-Gm-Message-State: AA+aEWY58G+3kpGlmaa0dA6XWD6MdO6kZ8BWxovrS+cn+9a4C58ebx8+
+        4MJw1uB5H24+c+yQGkhOjbJ4cXxHMbxNrwPlAU8=
+X-Google-Smtp-Source: AFSGD/WOgYL2p2sFz4uiELV6e/RpgDqDhwBfTgy+6gM5dCl5ZdB4LS9Gs48e3HBZcMt3eV1g4z05vNSOvyvNHBOQvXw=
+X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr10927299lja.111.1545134777792;
+ Tue, 18 Dec 2018 04:06:17 -0800 (PST)
+MIME-Version: 1.0
+References: <20181217202334.GA11758@jordon-HP-15-Notebook-PC> <20181218095709.GJ26090@n2100.armlinux.org.uk>
+In-Reply-To: <20181218095709.GJ26090@n2100.armlinux.org.uk>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 18 Dec 2018 17:36:04 +0530
+Message-ID: <CAFqt6zaVU-Fme6fErieBfBKwAm9xHUa7cXTOfqzwUJR__0JysQ@mail.gmail.com>
+Subject: Re: [PATCH v4 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        Linux-MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function r8a66597_endpoint_disable() and r8a66597_urb_enqueue() may
-be concurrently executed.
-The two functions both access a possible shared variable "hep->hcpriv".
+On Tue, Dec 18, 2018 at 3:27 PM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+>
+> On Tue, Dec 18, 2018 at 01:53:34AM +0530, Souptick Joarder wrote:
+> > Convert to use vm_insert_range() to map range of kernel
+> > memory to user vma.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > Acked-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 19 ++-----------------
+> >  1 file changed, 2 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> > index a8db758..8279084 100644
+> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> > @@ -221,26 +221,11 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
+> >                                             struct vm_area_struct *vma)
+> >  {
+> >       struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+> > -     unsigned int i, count = obj->size >> PAGE_SHIFT;
+> >       unsigned long user_count = vma_pages(vma);
+> > -     unsigned long uaddr = vma->vm_start;
+> >       unsigned long offset = vma->vm_pgoff;
+> > -     unsigned long end = user_count + offset;
+> > -     int ret;
+> > -
+> > -     if (user_count == 0)
+> > -             return -ENXIO;
+> > -     if (end > count)
+> > -             return -ENXIO;
+> >
+> > -     for (i = offset; i < end; i++) {
+> > -             ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
+> > -             if (ret)
+> > -                     return ret;
+> > -             uaddr += PAGE_SIZE;
+> > -     }
+> > -
+> > -     return 0;
+> > +     return vm_insert_range(vma, vma->vm_start, rk_obj->pages + offset,
+> > +                             user_count - offset);
+>
+> This looks like a change in behaviour.
+>
+> If user_count is zero, and offset is zero, then we pass into
+> vm_insert_range() a page_count of zero, and vm_insert_range() does
+> nothing and returns zero.
+>
+> However, as we can see from the above code, the original behaviour
+> was to return -ENXIO in that case.
 
-This shared variable is freed by r8a66597_endpoint_disable() via the
-call path:
-r8a66597_endpoint_disable
-  kfree(hep->hcpriv) (line 1995 in Linux-4.19)
+I think these checks are not necessary. I am not sure if we get into mmap
+handlers of driver with user_count = 0.
 
-This variable is read by r8a66597_urb_enqueue() via the call path:
-r8a66597_urb_enqueue
-  spin_lock_irqsave(&r8a66597->lock)
-  init_pipe_info
-    enable_r8a66597_pipe
-      pipe = hep->hcpriv (line 802 in Linux-4.19)
+>
+> The other thing that I'm wondering is that if (eg) count is 8 (the
+> object is 8 pages), offset is 2, and the user requests mapping 6
+> pages (user_count = 6), then we call vm_insert_range() with a
+> pages of rk_obj->pages + 2, and a pages_count of 6 - 2 = 4. So we
+> end up inserting four pages.
 
-The read operation is protected by a spinlock, but the free operation
-is not protected by this spinlock, thus a concurrency use-after-free bug
-may occur.
+Considering the scenario, user_count will remain 8 (user_count =
+vma_pages(vma) ). ? No ?
+Then we call vm_insert_range() with a pages of rk_obj->pages + 2, and
+a pages_count
+of 8 - 2 = 6. So we end up inserting 6 pages.
 
-To fix this bug, the spin-lock and spin-unlock function calls in
-r8a66597_endpoint_disable() are moved to protect the free operation.
+Please correct me if I am wrong.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
-v2:
-* Add __acquires/__releases markings for r8a66597_endpoint_disable().
-  Thanks Greg for good advice.
----
- drivers/usb/host/r8a66597-hcd.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> The original code would calculate end = 6 + 2 = 8.  i would iterate
+> from 2 through 8, inserting six pages.
+>
+> (I hadn't spotted that second issue until I'd gone through the
+> calculations manually - which is worrying.)
+>
+> I don't have patches 5 through 9 to look at, but I'm concerned that
+> similar issues also exist in those patches.
 
-diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
-index 984892dd72f5..42668aeca57c 100644
---- a/drivers/usb/host/r8a66597-hcd.c
-+++ b/drivers/usb/host/r8a66597-hcd.c
-@@ -1979,6 +1979,8 @@ static int r8a66597_urb_dequeue(struct usb_hcd *hcd, struct urb *urb,
- 
- static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
- 				      struct usb_host_endpoint *hep)
-+__acquires(r8a66597->lock)
-+__releases(r8a66597->lock)
- {
- 	struct r8a66597 *r8a66597 = hcd_to_r8a66597(hcd);
- 	struct r8a66597_pipe *pipe = (struct r8a66597_pipe *)hep->hcpriv;
-@@ -1991,13 +1993,14 @@ static void r8a66597_endpoint_disable(struct usb_hcd *hcd,
- 		return;
- 	pipenum = pipe->info.pipenum;
- 
-+	spin_lock_irqsave(&r8a66597->lock, flags);
- 	if (pipenum == 0) {
- 		kfree(hep->hcpriv);
- 		hep->hcpriv = NULL;
-+		spin_unlock_irqrestore(&r8a66597->lock, flags);
- 		return;
- 	}
- 
--	spin_lock_irqsave(&r8a66597->lock, flags);
- 	pipe_stop(r8a66597, pipe);
- 	pipe_irq_disable(r8a66597, pipenum);
- 	disable_irq_empty(r8a66597, pipenum);
--- 
-2.17.0
+yes, you were not cc'd for 5 - 9. Below are the patchwork links -
 
+https://patchwork.kernel.org/patch/10734269/
+https://patchwork.kernel.org/patch/10734271/
+https://patchwork.kernel.org/patch/10734273/
+https://patchwork.kernel.org/patch/10734277/
+https://patchwork.kernel.org/patch/10734279/
+
+>
+> I'm concerned that this series seems to be introducing subtle bugs,
+> it seems to be unnecessarily difficult to use this function correctly.
+> I think your existing proposal for vm_insert_range() provides an
+> interface that is way too easy to get wrong, and, therefore, is the
+> wrong interface.
+>
+> I think it would be way better to have vm_insert_range() take the
+> object page array without any offset adjustment, and the object
+> page_count again without any adjustment, and have vm_insert_range()
+> itself handle the offsetting and VMA size validation.  That would
+> then give a simple interface and probably give a further reduction
+> in code at each call site.
+>
+> Thanks.
+>
+> --
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> According to speedtest.net: 11.9Mbps down 500kbps up
