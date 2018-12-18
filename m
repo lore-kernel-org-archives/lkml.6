@@ -2,95 +2,73 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A76C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5924AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6CC0214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:32:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qiYkPWYI"
+	by mail.kernel.org (Postfix) with ESMTP id 30500214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 07:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbeLRHcc (ORCPT
+        id S1726422AbeLRHdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 02:32:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:32798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbeLRHcc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 02:32:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZMqnfZrCWE9/2Nbk3qE4azDAKmryf687ETOMT6/v1Do=; b=qiYkPWYIhAeaY5J4cmtxX5o6G
-        rEFweUBV4zlElaK9kyLxBu6TujQJCZG6fuZWCbsg7UGer4WSkGirrSZCsgTskCUHolqBtNNv4MwFu
-        jvUyLfTTITob/ygSP0OItynMF3SKdd82VudrIAkWunKQeWGKPSJfnzuZ4KhWNdHCqoUmLVWOdpzcS
-        CEMJEkMkjTi0ejAuc/rY1+lX2wj/peDcYjNmjW5yWVmqHeJcTVtWsyIzgsUVtLsYOyzTYrmdWPbFl
-        JkYQDZPFYEXHbbFqigOv2+8vtBpaOoeY/xN+ISua+FVju7gn5rf21sAV5nPnLs36nrbq739DTPpbC
-        KqJ3vcxpw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZ9rj-0000yd-UT; Tue, 18 Dec 2018 07:32:31 +0000
-Date:   Mon, 17 Dec 2018 23:32:31 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     linux-acpi@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 2/7] ACPI / OSL: Stub out
- acpi_os_(read/write)_pci_configurations()
-Message-ID: <20181218073231.GB8612@infradead.org>
-References: <20181218025606.32668-1-okaya@kernel.org>
- <20181218025606.32668-3-okaya@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218025606.32668-3-okaya@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 18 Dec 2018 02:33:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726316AbeLRHdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 02:33:43 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 268E213AC09;
+        Tue, 18 Dec 2018 07:33:43 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D91C5D6A6;
+        Tue, 18 Dec 2018 07:33:40 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 45C241751D; Tue, 18 Dec 2018 08:33:39 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/bochs: add edid present check
+Date:   Tue, 18 Dec 2018 08:33:39 +0100
+Message-Id: <20181218073339.12160-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 18 Dec 2018 07:33:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 02:56:01AM +0000, Sinan Kaya wrote:
-> Getting ready to allow CONFIG_PCI to be unset with ACPI enabled. Stub out
-> acpi_os_read_pci_configuration and acpi_os_write_pci_configuration
-> functions when CONFIG_PCI is not defined.
-> 
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  drivers/acpi/osl.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> index b48874b8e1ea..524fd5f33ea4 100644
-> --- a/drivers/acpi/osl.c
-> +++ b/drivers/acpi/osl.c
-> @@ -773,6 +773,7 @@ acpi_status
->  acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
->  			       u64 *value, u32 width)
->  {
-> +#ifdef CONFIG_PCI
->  	int result, size;
->  	u32 value32;
->  
-> @@ -799,12 +800,19 @@ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
->  	*value = value32;
->  
->  	return (result ? AE_ERROR : AE_OK);
-> +#else
-> +	int rc;
-> +
-> +	rc = pr_warn_once("PCI configuration space access is not supported\n");
-> +	return rc ? AE_SUPPORT : AE_OK;
-> +#endif
+Check first two header bytes before trying to read the edid blob,
+to avoid the log being spammed in case qemu has no edid support (old
+qemu or edid turned off).
 
-Normally we provide a full separate stub version.  If we have enough
-of them in a separate file.
+Fixes: 01f23459cf drm/bochs: add edid support.
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/bochs/bochs_hw.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index c90a0d492f..f91e049625 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -89,6 +89,10 @@ int bochs_hw_load_edid(struct bochs_device *bochs)
+ 	if (!bochs->mmio)
+ 		return -1;
+ 
++	if (readb(bochs->mmio + 0) != 0x00 ||
++	    readb(bochs->mmio + 1) != 0xff)
++		return -1;
++
+ 	kfree(bochs->edid);
+ 	bochs->edid = drm_do_get_edid(&bochs->connector,
+ 				      bochs_get_edid_block, bochs);
+-- 
+2.9.3
+
