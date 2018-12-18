@@ -2,134 +2,142 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E41C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E63C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC7E8217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E5862184A
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 10:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jF6JLv9T"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pTU3EHmr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbeLRKIq (ORCPT
+        id S1726506AbeLRKIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 18 Dec 2018 05:08:46 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:32836 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726374AbeLRKIp (ORCPT
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39564 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeLRKIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Dec 2018 05:08:45 -0500
-Received: by mail-it1-f194.google.com with SMTP id m8so7861432itk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 02:08:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O9iF7M+1yOkyOXucvDk5+WwCU64Agt0HB5MDM5Sn3BQ=;
-        b=jF6JLv9Tuw4Zlp77HFzrOVqfWyy+lPGRyvyLCEidbbGvOW717jU82TKOO3AOxkIXiW
-         PbMcGMnLNJ6gy9YU6YJAW4zHM0c/JDey8k32NZeV9mJxKDb6OUBxyfhcnds5Y1SXBwze
-         nzo+0EKlMn1eQBGcfEbLezY4XkvRp6o1XrPfw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O9iF7M+1yOkyOXucvDk5+WwCU64Agt0HB5MDM5Sn3BQ=;
-        b=lgV7JfdigokH3Zy65B1LnBw+GTofd4hW0uSM/xVZL6ey16JqtSUKsAhA/0E40zTtNA
-         R0yNY4cgoLfo266Lgnf9E6ZAEAbo7I/Q6rpmKYGpk1qB9tx0CO+dC78lq/0q67PIWkJD
-         7EUe59wjOKJQxiUpcD4I2s6lMZDrrASyVwaf9+OK7ER5LxkOM3g5vtK5cUvDfgu1+1gK
-         m3NoJyXBiXFYxmB6ofjwZOkjdGL+czVV/mY7+jH/o/137OQ/VkRJIS5lgHizuEZnFV7z
-         qvUuUfhgz+yJSrMR1iL994hwMhYv1j5OxDIRmvZrjdZnwYlWybtGzo1NdKk7UV6dG6/7
-         EoQQ==
-X-Gm-Message-State: AA+aEWbRCEagP5gbxbWbhnhotYVjvzuwdfxfA4EgBGtgS1i2kojFdjyp
-        fu9nZ7PDiLV3/gvmrjZJwtiyeCU2NYi6eAs9mVNCIA==
-X-Google-Smtp-Source: AFSGD/UYEDJNipjJIph+pzNktuqRDtMV3FSHJ2VxTdeHJxiYefNnkguw0MRlnZg1ES9mAYgoudiUCcwhaXz/rAj71Jw=
-X-Received: by 2002:a05:660c:a8f:: with SMTP id m15mr2262853itk.114.1545127723963;
- Tue, 18 Dec 2018 02:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OUCiSjoChwo6pFqvAnFruLEN7MYvs3SxtRQrk2w6LkE=; b=pTU3EHmrrvfwFX0Ev8iRaBgIm
+        zB/p/0G3AC7h7UNnRi7tklBp2LdRcX0Rvz3MH3otxCM/B3NgLhKr53xatef86Vd3X0IB2ZKL4Pq16
+        nE9P3ldS0fFCKOwC9H8YgyK3MYKe2wcfy9o7GGZY5lqBdoWSzj5iB7W6cjRp9MidqfjZE=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:43020)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gZCIl-0005Un-Dr; Tue, 18 Dec 2018 10:08:35 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gZCIi-0005oe-4Z; Tue, 18 Dec 2018 10:08:32 +0000
+Date:   Tue, 18 Dec 2018 10:08:30 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Yunsheng Lin <linyunsheng@huawei.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Weiwei Deng <dengweiwei@huawei.com>,
+        "Yisen.Zhuang@huawei.com" <Yisen.Zhuang@huawei.com>,
+        "huangdaode@hisilicon.com" <huangdaode@hisilicon.com>,
+        "lipeng321@huawei.com" <lipeng321@huawei.com>,
+        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
+        lijianhua 00216010 <lijianhua@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Question: pause mode disabled for marvell 88e151x phy
+Message-ID: <20181218100830.GK26090@n2100.armlinux.org.uk>
+References: <04b323d7-2a30-eaa5-8268-a7d3f30d989c@huawei.com>
+ <20181215103736.GG26090@n2100.armlinux.org.uk>
+ <1b4d7886-06c4-9d15-ef72-83318419b30e@huawei.com>
+ <20181217143633.GH26090@n2100.armlinux.org.uk>
+ <35342e11-cfb9-00ab-0abd-448054bd7564@huawei.com>
 MIME-Version: 1.0
-References: <1544797347-20601-1-git-send-email-vincent.guittot@linaro.org>
- <1544797347-20601-4-git-send-email-vincent.guittot@linaro.org>
- <CAPDyKFrvrN6+sVGc1sM+hmQo=JR=8FyAz_YRK9DzEQN2jOVX6w@mail.gmail.com>
- <CAKfTPtBbZgZtU-qZhh-nKoC=cNj=ZT_LTn=cTX4V10MCZhDFEg@mail.gmail.com>
- <CAJZ5v0i0FMw90vBH9L9EirX-mfFzh4Fb0npE8Y7rHbFn0JpZyw@mail.gmail.com>
- <CAKfTPtCNYz6a5rqvpGGGNgsAw_=HdqtpEOfXjn309saNUBjbrw@mail.gmail.com> <CAJZ5v0g9ceG=dVTTfwkqdZQ0-YMswvfHNfmryZfXAfH=yJV__g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0g9ceG=dVTTfwkqdZQ0-YMswvfHNfmryZfXAfH=yJV__g@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 18 Dec 2018 11:08:33 +0100
-Message-ID: <CAKfTPtDAnCR16dr1wkT3U1+ZfwjP=JqeBhuRKoUcN5ocB7_fpg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] drm/i915: Move to new PM core fields
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35342e11-cfb9-00ab-0abd-448054bd7564@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 at 11:03, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Dec 18, 2018 at 10:58 AM Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > On Tue, 18 Dec 2018 at 10:57, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > >
-> > > On Mon, Dec 17, 2018 at 3:22 PM Vincent Guittot
-> > > <vincent.guittot@linaro.org> wrote:
-> > > >
-> > > > On Fri, 14 Dec 2018 at 15:36, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > >
-> > > > > On Fri, 14 Dec 2018 at 15:22, Vincent Guittot
-> > > > > <vincent.guittot@linaro.org> wrote:
-> > > > > >
-> > > > > > With jiffies been replaced by raw ns in PM core accounting, 915 driver is
-> > > > > > updated to use this new time infrastructure.
-> > > > > >
-> > > > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/i915/i915_pmu.c | 12 ++++++------
-> > > > > >  drivers/gpu/drm/i915/i915_pmu.h |  4 ++--
-> > > > > >  2 files changed, 8 insertions(+), 8 deletions(-)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-> > > > > > index d6c8f8f..cf6437d 100644
-> > > > > > --- a/drivers/gpu/drm/i915/i915_pmu.c
-> > > > > > +++ b/drivers/gpu/drm/i915/i915_pmu.c
-> > > > > > @@ -493,14 +493,14 @@ static u64 get_rc6(struct drm_i915_private *i915)
-> > > > > >                  */
-> > > > > >                 if (kdev->power.runtime_status == RPM_SUSPENDED) {
-> > > > > >                         if (!i915->pmu.sample[__I915_SAMPLE_RC6_ESTIMATED].cur)
-> > > > > > -                               i915->pmu.suspended_jiffies_last =
-> > > > > > -                                                 kdev->power.suspended_jiffies;
-> > > > > > +                               i915->pmu.suspended_time_last =
-> > > > > > +                                       kdev->power.suspended_time;
-> > > > > >
-> > > > >
-> > > > > Huh, so patch 2 introduces a complier error because of removing the
-> > > > > old fields. We can't have that.
-> > > >
-> > > > I agree
-> > > > The patch was mainly to raise discussion
-> > >
-> > > OK, so patch [1/3] from this series should be applicable regardless, right?
-> >
-> > Yes
->
-> OK, I'll queue it up, then.
+On Tue, Dec 18, 2018 at 05:34:27PM +0800, Yunsheng Lin wrote:
+> On 2018/12/17 22:36, Russell King - ARM Linux wrote:
+> > As I've previously stated, the behaviour I've seen is _both_ pause bits
+> > clear:
+> > 
+> > If I set bit 10 (pause), and read back to confirm:
+> > 
+> >   MII PHY #0 transceiver registers:
+> >    1000 796d 0141 0dd1 05e1 c5e1 000d 2001
+> >                        ^^^^
+> >    4806 0200 3800 0000 0000 0003 0000 3000
+> >    3060 af48 0000 7c40 0020 0000 0000 0000
+> >    0000 0000 0040 0000 0000 0000 0000 0000.
+> > 
+> > Now if I trigger a renegotiation of any kind, and read-back the registers:
+> > 
+> >  MII PHY #0 transceiver registers:
+> >    1000 7949 0141 0dd1 01e1 0000 0004 2001
+> >                        ^^^^
+> >    0000 0200 0000 0000 0000 0003 0000 3000
+> >    3060 8000 0000 0040 0020 0000 0000 0000
+> >    0000 0000 0040 0000 0000 0000 0000 0000.
+> > ...
+> >  MII PHY #0 transceiver registers:
+> >    1000 796d 0141 0dd1 01e1 c5e1 000d 2001
+> >                        ^^^^
+> >    4806 0200 3800 0000 0000 0003 0000 3000
+> >    3060 af48 0000 7c40 0020 0000 0000 0000
+> >    0000 0000 0040 0000 0000 0000 0000 0000.
+> > 
+> > See that register 4 now has the pause bit cleared.
+> 
+> I wonder when the the pause bit was clear, is it during negotiation
+> process or after negotiation? if the partner phy see the pause bit before
+> the pause bit is clear?
 
-Thanks
+As was stated in the original commit:
 
->
-> Next time you do something like that  please mark patches for
-> discussion in a series as [RFC] so it is all clear.
+    While these bits may be correctly conveyed to the link partner on the
+    first negotiation, a subsequent negotiation (eg, due to negotiation
+    restart by the link partner, or reconnection of the cable) will result
+    in the link partner seeing these bits as zero, while the kernel
+    believes that it has advertised pause modes.
 
-ok. will do for the next version of the last 2 patches
+To state in a different way:
+
+    On the _first_ negotiation, the pause bits as seen by the link partner
+    will be what we wrote into the register.  However, during that
+    negotiation the bits in the register clear _after_ the base page has
+    been sent to the link partner.
+
+    A subsequent negotiation will send the now-clear pause bits to the
+    link partner.
+
+I hope that's now clear.
+
+> Also, it seems the phy driver always set the pause bit back before
+> begining a negotiation. But I am not sure it makes a difference here.
+
+There is a world of difference between asking the kernel to do a
+renegotiation, and unplugging/replugging the cable, or asking the
+link partner to do a renegotiation.
+
+In the former case, yes, the kernel will reprogram the advertisement
+register.  In the latter two cases, the kernel does not and this is
+where the problem occurs.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
