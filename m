@@ -2,131 +2,90 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFED2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46C4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9FFB21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3DEE21873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545144835;
-	bh=2dpshEut2yHTzIQ57or8Rxgx0kWdLvyD3iA0La9ewEs=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=hu5AAdOA6ow5QMna7ZdZfDzo/37MikQVx18eeoPghs10pRCk6gfYyJ0snyE85C9Nl
-	 qHxTGoH6nO6sWpQnmI+B3+/rnZjuR65wzZC9KH1o0OjaBOQMAtT11z7WRVFhLbIlRe
-	 VqnLMXqMxEaqOB+cT+6yHw9mR8kRGBoesZuZQzx0=
+	s=default; t=1545144886;
+	bh=AC2VOCoH+I1mPcO+voramcyQN6RJluyXpsNBdvzXQ8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=A5R3INVVnz1Q5pnadDY22exYTEuxocD1lfZ4hzu7V4m2PZMF2ZtY0bGliGLGhTJ/d
+	 tx0M0ZEnOrDL4i0MFf4yzOlgkIFR1l0PmDFm1LIwTgHeVftP3i2n0Y5bYU5JOgTz8r
+	 MyndlM18CLZ9q/4IYXih8ElyHwXhORvrUaLB35TM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbeLROxz (ORCPT
+        id S1726721AbeLROyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:53:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeLROxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:53:54 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 935F521850;
-        Tue, 18 Dec 2018 14:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545144833;
-        bh=2dpshEut2yHTzIQ57or8Rxgx0kWdLvyD3iA0La9ewEs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=R3CG8O/LI0KI9eYItvy+ZC4rKxegixVczykTeTgIgf3IkT77C58hN2I9nBYK+c76r
-         aS+UjBDVCyTyazYXTFZjpwJa/zhADG5ePDqVZ4b/byROP1JuEjKghBywMXOCSTyVOo
-         C70Wn6rrSfY3ORzRU9AaJk1W8tfw3VOPkbzvrZcM=
-Subject: Re: selftests/net: udpgso: LTS kernels supportability ?
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>,
-        Dan Rue <dan.rue@linaro.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        shuah <shuah@kernel.org>
-References: <bbabafb5-e16c-4025-31d0-d9e5feb5f39a@linaro.org>
- <1d2c9a10-6caf-49ff-b921-8b93dbe96f78@kernel.org>
- <1de7a003-0aac-1f4f-b836-267136e30a0a@linaro.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <fd4c527a-daeb-1c73-c423-95d02e1b8e86@kernel.org>
-Date:   Tue, 18 Dec 2018 07:53:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 18 Dec 2018 09:54:46 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33458 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeLROyp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 09:54:45 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so15934776otl.0;
+        Tue, 18 Dec 2018 06:54:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4k5kZxIdDFfoQz0/tRnJEj6f5m3tJzXJ5ZlNyDMUVzU=;
+        b=ncJtd25tuL3IpWsDuXXUXXmzK76yi/qpBgFuqZtRx0VCfnX6v6ENWtvOjLYnM6EQOR
+         auAyHstQY/WEiiY0FfmLC2C8gjQEaVby9/jHJkF1JOev03sZrqmOG77RPRb3qEGUyMLV
+         k/b0nJVBdHdwuzAVWPi16n7b59Ol1ci8vFRzIai9JpqkCeV/xkTPBYfLaNxFqC1gPGZJ
+         fQe4JCkAo4gQKSGlhXVAhj/Y9nCCNVlfYz9pTUyOb6d0V3IKwn3g8AKCvaQhFR8M4kMM
+         Q7gUzMQeCrS8Im/Hg8VHFpDYu+7kc60+cCrNrynvG6cvk+/vwx9vIDkhEJDAG8CSyYuM
+         t3PA==
+X-Gm-Message-State: AA+aEWbMFlVmJuFAxzt0NUCtlQafm6sFK2bh/qapAsVF5ZqQizVcuvaT
+        HNNsVStszg45kxcJ5NMEQIRRSFg=
+X-Google-Smtp-Source: AFSGD/Uoogt6H9PwWIl7a41DSxWnEZV6v8OLqxpb77pArrv1WhL4PajgKZjBCewzsiuf75V7S7OePw==
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr13253162otl.343.1545144884729;
+        Tue, 18 Dec 2018 06:54:44 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q128sm7846876oia.4.2018.12.18.06.54.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 06:54:44 -0800 (PST)
+Date:   Tue, 18 Dec 2018 08:54:43 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     olof@lixom.net, arnd@arndb.de, gregkh@linuxfoundation.org,
+        jslaby@suse.com, linux-unisoc@lists.infradead.org,
+        afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
+        linus.walleij@linaro.org, zhao_steven@263.net
+Subject: Re: [PATCH v6 08/11] dt-bindings: serial: Document RDA Micro UART
+Message-ID: <20181218145443.GA5150@bogus>
+References: <20181218080527.10801-1-manivannan.sadhasivam@linaro.org>
+ <20181218080527.10801-9-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1de7a003-0aac-1f4f-b836-267136e30a0a@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181218080527.10801-9-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 4:37 AM, Rafael David Tinoco wrote:
-> On 12/17/18 4:42 PM, shuah wrote:
->> Hi Rafael,
->>
->> On 12/17/18 10:53 AM, Rafael David Tinoco wrote:
->>> Shuah,
->>>
->>> I was recently investigating some errors coming out of our functional
->>> tests and we, Dan and I, came up with a discussion that might not be new
->>> for you, but, interests us, in defining how to better use kselftests as
->>> a regression mechanism/tool in our LKFT (https://lkft.linaro.org).
->>>
->>> David / Willem,
->>>
->>> I'm only using udpgso as an example for what I'd like to ask Shuah. Feel
->>> free to jump in in the discussion if you think its worth.
->>>
->>> All,
->>>
->>> Regarding: udpgso AND https://bugs.linaro.org/show_bug.cgi?id=3980
->>>
->>> udpgso tests are failing in kernels bellow 4.18 because of 2 main
->>> reasons:
->>>
->>> 1) udp4_ufo_fragment does not seem to demand the GSO SKB to be > than
->>> the MTU for older kernels (4th test case in udpgso.c).
->>>
->>> 2) setsockopt(...UDP_SEGMENT) support is not present for older kernels.
->>> (commits "udp: generate gso with UDP_SEGMENT" and its fixes seem to be
->>> needed).
->>
->> This case is easy right? Based on the test output below , I can see that
->> the failure is due to
->>
->> ./udpgso: setsockopt udp segment: Protocol not available. setsockopt()
->> is returning an error to clearly indicate that this options isn't
->> supported. This will be a test change to say test is a skip as opposed
->> to fail.
+On Tue, Dec 18, 2018 at 01:35:24PM +0530, Manivannan Sadhasivam wrote:
+> From: Andreas Färber <afaerber@suse.de>
 > 
-> You referred to (2). (1) isn't that straightforward.
+> Add an initial binding for the UART in RDA Micro RDA8810PL SoC.
 > 
->> We have a solution for this - test should SKIP as opposed to FAIL.
->>
->>> With that explained, finally the question/discussion:
->>>
->>> Shouldn't we enforce a versioning mechanism for tests that are testing
->>> recently added features ? I mean, some of the tests inside udpgso
->>> selftest are good enough for older kernels...
->>
->> Right - we do have generic way to handle that by detecting if feature is
->> supported and skip instead of using Kernel version which is going to be
->> hard to maintain.
-> 
-> You can't distinguish case (1) failures between real failures OR older
-> kernel behaving differently then testcase expects.
-> 
->>>
->>> But, because we have no control over "kernel features" and "supported
->>> test cases", we, Linaro, have to end up blacklisting all selftests that
->>> have new feature oriented tests, because one or two test cases only.
->>>
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../bindings/serial/rda,8810pl-uart.txt         | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
 
-Can you share the blacklisted tests?
+Please add acks/reviewed-bys when posting new versions.
 
-thanks,
--- Shuah
+Rob
