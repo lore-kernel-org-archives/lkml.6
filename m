@@ -2,115 +2,109 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF97C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00192C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1E1214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545091414;
-	bh=D8jHlLjmXRxzcTIvW3TxZ7ZbPhavp+ZGARFcFcLCZwM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=B2QLC4OPrhWHbtpHqjvxFd8wK8NIxr7RudwrCg9igZcUmMB1galncWeVQYh4e7cRW
-	 1Xo/4K7re3eqoavkagm1fE0XvtaD+bsBJUAb4Yky/jrArvPav9pEn+JNgNeY6+rjG6
-	 aUXorR/orWCAQicMM+Dt4neFz0FtKhlBZJnjnXeo=
+	by mail.kernel.org (Postfix) with ESMTP id C23D4214C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:06:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbeLRADd (ORCPT
+        id S1726354AbeLRAGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 19:03:33 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39058 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbeLRADc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 19:03:32 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so13980395otl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Dec 2018 16:03:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gIFMyLgmyom6suLlz/HLtiekX9eZbEG7ouiW+z0GYjE=;
-        b=hDjQLVYMH/jpMH0en46cQsURai21MvyleZYSJkMsoy5YfD6sGiaihuYeUbJgOE6XgC
-         v+8mEvdzrc5WAC1pGb/lhyqobIW1Ct+3SnYXVbWhn+ZtK8PprEZElT4B5rfFieBbp73H
-         LPnlTA8PO1GixjIprG2jCqv2yhoEgNHdpoB4Ko9BS1dTGl5W/sKWHjFyQXucGVHslcT/
-         dFItP5FnrxGOSL93/g8V3vz9AKdZ4gb+JLF8VIIsCC0f35hVbbZnHhu+bccqE79WkrV+
-         e8QKXQuO2qTgqs4vVcnQW/u7w8UGrEsSPxPbP2ZBbcP1kReQE4Unr9X/HqerWSk7oP71
-         YxFg==
-X-Gm-Message-State: AA+aEWY9EhhiO2g+sE5y7+RzcGUmR10a3v3KtkXyuToylyeyYZCjhe/t
-        z8Zei0oIdmsUV8IeZfu6kIfSXseodWQ/4gr/4dsQ7w==
-X-Google-Smtp-Source: AFSGD/WHeZZvStKyJEIUILLvwN6x9Yfan8ILd1Athn2CAsJUmJmIhwQO164C7K3JDxO3yrWZfbQFUBy16ClSg7V1oDI=
-X-Received: by 2002:a9d:5f06:: with SMTP id f6mr11351895oti.258.1545091411581;
- Mon, 17 Dec 2018 16:03:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20181210084653.7268-1-daniel.vetter@ffwll.ch> <CAJZ5v0jkE=Rt2ozwcTxRdUN++Sr4HXULksDeMx4jEWj1jVDcyA@mail.gmail.com>
- <20181213095814.GC21184@phenom.ffwll.local> <CAJZ5v0iWshem3kuurF53gutVJ8jFm_caAbetK2CiSCpyc6ReeQ@mail.gmail.com>
- <CAKMK7uF7noCEgwE0QYZWQFx-OPxipAF1MojUZ8KTo_SXfQW8+w@mail.gmail.com>
- <CAJZ5v0g+-R8tbbJscL-3s23UPhyNX1v1Lj3aC=QdUBzdSCrspw@mail.gmail.com>
- <CAKMK7uHACB5-ak0b_BT-HoAmXHZ9EaCNTt7WuqckNWKQM-g2fQ@mail.gmail.com>
- <CAJZ5v0hOiL1oWGCmFv2N8-0UvCibXz02DhdFMyUQsQZ1hDjV=w@mail.gmail.com> <20181217194804.GJ21184@phenom.ffwll.local>
-In-Reply-To: <20181217194804.GJ21184@phenom.ffwll.local>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 18 Dec 2018 01:03:20 +0100
-Message-ID: <CAJZ5v0gVURXg4-OGDiOo-CR8CFymSJ76Hf6TOJJJB985WjnLHw@mail.gmail.com>
-Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Mon, 17 Dec 2018 19:06:19 -0500
+Received: from mga14.intel.com ([192.55.52.115]:4520 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726271AbeLRAGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 19:06:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2018 16:06:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,366,1539673200"; 
+   d="scan'208";a="102286185"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga008.jf.intel.com with ESMTP; 17 Dec 2018 16:06:18 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 1F92B300B49; Mon, 17 Dec 2018 16:06:18 -0800 (PST)
+Date:   Mon, 17 Dec 2018 16:06:18 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ramalingam.c@intel.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+        the arch/x86 maintainers <x86@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>
+Subject: Re: objtool warnings for kernel/trace/trace_selftest_dynamic.o
+Message-ID: <20181218000618.GA25620@tassilo.jf.intel.com>
+References: <CAK8P3a2K1K21ePBFbApaTKPCk+=Bqj0LyWoK1MdFb1s9ZwjfPg@mail.gmail.com>
+ <20181217173900.ygifx7khwmzn2gv2@treble>
+ <20181217180434.GS25620@tassilo.jf.intel.com>
+ <20181217181638.dfexg6mkmbfyzfli@treble>
+ <20181217192938.GF2218@hirez.programming.kicks-ass.net>
+ <20181217213126.lsqhyszoulel6uq6@treble>
+ <20181217173644.391c2070@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217173644.391c2070@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 8:48 PM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Thu, Dec 13, 2018 at 07:09:15PM +0100, Rafael J. Wysocki wrote:
-> > On Thu, Dec 13, 2018 at 5:25 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> > >
-> > > On Thu, Dec 13, 2018 at 5:18 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> > > >
-> > > > On Thu, Dec 13, 2018 at 1:36 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> >
-> > [cut]
-> >
-> > > > > I can do the old code exactly, but afaict the non-NULL parent just
-> > > > > takes care of the parent bus locking for us, instead of hand-rolling
-> > > > > it in the caller. But if I missed something, I can easily undo that
-> > > > > part.
-> > > >
-> > > > It is different if device links are present, but I'm not worried about
-> > > > that case honestly. :-)
-> > >
-> > > What would change with device links? We have some cleanup plans to
-> > > remove our usage for early/late s/r hooks with a device link, to make
-> > > sure i915 resumes before snd_hda_intel. Digging more into the code I
-> > > only see the temporary dropping of the parent's device_lock, but I
-> > > have no idea what that even implies ...
-> >
-> > That's just it (which is why I said I was not worried).
-> >
-> > Running device_links_unbind_consumers() with the parent lock held may
-> > deadlock if another child of the same parent also is a consumer of the
-> > current device (which really is a corner case), but the current code
-> > has this problem - it goes away with your change.
-> >
-> > But dev->bus->need_parent_lock checks are missing in there AFAICS, let
-> > me cut a patch to fix that.
->
-> With your patch before this one, are you ok with mine? Or want me to
-> respin with a different flavour?
+On Mon, Dec 17, 2018 at 05:36:44PM -0500, Steven Rostedt wrote:
+> On Mon, 17 Dec 2018 15:31:26 -0600
+> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> 
+> > On Mon, Dec 17, 2018 at 08:29:38PM +0100, Peter Zijlstra wrote:
+> > > On Mon, Dec 17, 2018 at 12:16:38PM -0600, Josh Poimboeuf wrote:
+> > >   
+> > > > > Yes LTO causes the to be treated like static functions.
+> > > > > 
+> > > > > I guess noclone is unlikely to be really needed here because these
+> > > > > functions are unlikely to be cloned.
+> > > > > 
+> > > > > So as a workaround it could be removed.
+> > > > > 
+> > > > > But note we have other noclone functions in the tree (like in KVM)
+> > > > > which actually need it.  
+> > > > 
+> > > > How about we just use the __used attribute then?  It seems to have the
+> > > > same result of preventing IPA optimizations (without the weird side
+> > > > effect of missing frame pointers).  
+> > > 
+> > > AFAIK we don't have any in-tree LTO, so it can all go in the bin.
+> > > 
+> > > When/if we get the LTO trainwreck sorted -- which very much includes
+> > > getting that memory-order-consume fixed -- we can revisit all that.  
+> > 
+> > Ok, then if there are no objections I'll just send a revert of:
+> > 
+> >   dd3dad0d716d ("ftrace: Mark function tracer test functions noinline/noclone")
+> > 
+> 
+> Should it be reverted, or just remove the noclone, and keep the
+> noinline?
 
-Having reconsidered this a bit I'm leaning towards annotating the
-locks - if that works.  After all, what is problematic is the lockdep
-false-positive and addressing it that way would be most natural IMO.
+It should not be touched for now, until it is properly debugged.
 
-Thanks,
-Rafael
+IMHO Josh's explanation doesn't make much sense and there
+was a lot of handwaving 
+
+And just fixing one case isn't good enough because there are other
+noclone functions in the tree.
+
+It the problem is the plugin the plugin needs to be fixed.
+
+If the problem is gcc we need a gcc test case and bug, with 
+some analysis, and then based on that select the proper workaround.
+
+
+-Andi
