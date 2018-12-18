@@ -2,116 +2,98 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E40CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82346C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B28E21850
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5308221873
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 17:47:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=horus.com header.i=@horus.com header.b="JE+zqLgi"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="aZHPdKxR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeLRRrQ (ORCPT
+        id S1727400AbeLRRrb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:47:16 -0500
-Received: from mail.horus.com ([78.46.148.228]:41543 "EHLO mail.horus.com"
+        Tue, 18 Dec 2018 12:47:31 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41940 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726659AbeLRRrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:47:16 -0500
-X-Greylist: delayed 392 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Dec 2018 12:47:14 EST
-Received: from [192.168.1.20] (62-47-205-9.adsl.highway.telekom.at [62.47.205.9])
+        id S1726659AbeLRRra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 12:47:30 -0500
+Received: from zn.tnic (p200300EC2BD1780024767CD486D27DCB.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:7800:2476:7cd4:86d2:7dcb])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "E-Mail Matthias Reichl", Issuer "HiassofT CA 2014" (verified OK))
-        by mail.horus.com (Postfix) with ESMTPSA id 705B7641D9;
-        Tue, 18 Dec 2018 18:40:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=horus.com;
-        s=20180324; t=1545154841;
-        bh=NMzcuZQjcluVah8TenQKral9o/O1+dIJaTL7AwYbMpM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JE+zqLgiemWwkHaB3yGSuCEshBTtevwRa6ktWnjfDGLED7RH1B3F3XGZGUQ845fvF
-         YNMEmvcFRDGxI/BlC6hUwB0csJAQBlIXwyNzxJ9zglTiE2QmSsGqsdjiGlqFyUr6YU
-         FbGhiDW5GFd6kWrzr4tlqnmrtaw3UGuJsAj9HUdw=
-Received: by camel2.lan (Postfix, from userid 1000)
-        id C67941C72A2; Tue, 18 Dec 2018 18:40:40 +0100 (CET)
-Date:   Tue, 18 Dec 2018 18:40:40 +0100
-From:   Matthias Reichl <hias@horus.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel@ziswiler.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Message-ID: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
-Mail-Followup-To: Matthias Reichl <hias@horus.com>,
-        Mark Brown <broonie@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        alsa-devel@alsa-project.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel@ziswiler.com>, linux-tegra@vger.kernel.org
-References: <20181018111829.27056-1-marcel@ziswiler.com>
- <20181018111829.27056-4-marcel@ziswiler.com>
- <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
- <20181021112301.GC8554@sirena.org.uk>
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C0AF51EC0AC4;
+        Tue, 18 Dec 2018 18:47:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1545155248;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=J9FtZd02FqpcwI3gCnC/QIS1vF5PhX7bNJRnD+aEa20=;
+        b=aZHPdKxRYCvJFhywkbzutl2ZneAkhj8mHTfaDnoDIlEt/b88qqOAqg+eEqXHOkc9SBXTBf
+        n/hiMrefT5JCOceKUEoGNx3xq8HV8P605jhkcp9xtYXWNmJKMLrFcEIDT0QJYgFeUHePoW
+        G5lVhQ/fEDlD3GZelESEynmVGXFFJOc=
+Date:   Tue, 18 Dec 2018 18:47:23 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
+Message-ID: <20181218174723.GK7485@zn.tnic>
+References: <20181218104812.GC15430@hirez.programming.kicks-ass.net>
+ <20181218111701.GA32522@jagdpanzerIV>
+ <20181218114709.GF7485@zn.tnic>
+ <20181218130750.GA665@tigerII.localdomain>
+ <20181218142623.GH7485@zn.tnic>
+ <20181218145558.GD665@tigerII.localdomain>
+ <20181218150313.GI7485@zn.tnic>
+ <20181218151455.GE665@tigerII.localdomain>
+ <20181218152413.GJ7485@zn.tnic>
+ <20181218165217.GA534@tigerII.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181021112301.GC8554@sirena.org.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181218165217.GA534@tigerII.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-On Sun, Oct 21, 2018 at 12:23:01PM +0100, Mark Brown wrote:
-> On Fri, Oct 19, 2018 at 11:22:46AM +0100, Jon Hunter wrote:
+On Wed, Dec 19, 2018 at 01:52:17AM +0900, Sergey Senozhatsky wrote:
+> But devkmsg ratelimits systemd errors, so one does not even know that
+> "some debugging is required". For instance from my x86 box:
 > 
-> > Looking at snd_soc_init_platform(), it seems that the platform pointer
-> > can be allocated by the machine driver and so if it is not allocated by
-> > the core, then I don't think we should clear it here. Seems we need a
-> > way to determine if this was allocated by the core.
+>  Unmounting /home...
+>  [..]
+>  home.mount: Mount process exited, code=exited status=32
+>  Failed unmounting /home.
 > 
-> Indeed, this is a bit of a mess.  We probably shouldn't be modifying the
-> data that the drivers passed in, otherwise we get into trouble like
-> this.   That suggests that we should copy the data, probably all of it.
-> I will try to have a proper look at this next week.
+> I don't want to debug systemd, I want to know that something didn't
+> work out. 10 messages max and 5 seconds interval looks a bit too strict.
 
-did you find the time to look into this?
+So how much is not strict?
 
-The downstream Raspberry Pi kernel contains a bunch of machine drivers
-that are implemented in a similar way as the tegra_sgtl5000 driver
-(static card and dai link structs, dai_link->platform_of_node filled
-in from device tree) which are breaking in 4.20 on deferred probing.
+And what happens if you raise that ratelimiting level and the *one* line
+which is most important for debugging an issue, still doesn't get logged
+because all of a sudden, doofus is more talkative, overflows the new
+limit and we drop the important line?
 
-Switching these drivers to dynamically allocated dai link structs,
-like 76836fd35492 "ASoC: omap-abe-twl6040: Fix missing audio card
-caused by deferred probing" would be a possibility, but if there's
-some solution on the horizon that doesn't require changes to the
-driver code it'd be easier to wait for that.
+All I'm saying is, gradually raising the limit is the wrong approach
+- there will always be a case where something important doesn't get
+logged.
 
-so long,
+What we need is a different solution, maybe what Rostedt proposes or
+so...
 
-Hias
+-- 
+Regards/Gruss,
+    Boris.
 
-> > Furthermore, it seems that it is possible that there is more than one
-> > link that might be to be cleared.
-> 
-> Yes, that's an issue as well.
-
-
-
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
