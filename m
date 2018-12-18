@@ -2,107 +2,149 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862D1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1A6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 566B9218A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:32:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CD30217D7
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 18:32:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="kVUmo6PR"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lAvPT2A4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeLRScC (ORCPT
+        id S1727743AbeLRScQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 13:32:02 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34255 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbeLRScC (ORCPT
+        Tue, 18 Dec 2018 13:32:16 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50334 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727073AbeLRScQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 13:32:02 -0500
-Received: by mail-it1-f194.google.com with SMTP id x124so8906920itd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 10:32:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v96tVdiQwdCUtRJQzi2R8/Mn3AOx13ZcK5SGqbESer8=;
-        b=kVUmo6PRyyOoZ4HBmPdMsgxTgqD2Id3rOggVDgr72mATD3PRHWQ5TFiF+YTBslebmy
-         kO5GUD7yU4fOX98zeLc5mfkXPcppCnOq24IxmWfb0JbLCCs9gz3q5eJobUXqJPgtmuVl
-         5vZftMIcZLpXv59AbtzSMD+guKkQ51GhNg6kw9GozDVjUho4DbLZJ7CNxHxKCToqdZoN
-         IfsOOENaVP1HrWQ/luUrpDkLEteAa6S19SlVsppo+9fFFLSyC96H8m2dMWpc26EZwARm
-         T3ylExhI2i+WosWKjRdITN+ooWQKtSm1V6s7pnY5RZ115Jh6h6sOLZlPLEeoBX9Tc7YM
-         wHoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v96tVdiQwdCUtRJQzi2R8/Mn3AOx13ZcK5SGqbESer8=;
-        b=n8tPUbdc7KvsDnGOIZiXNSk2iI2LVwLYBYvZitwYTeoLzwVY8PHeCkzNWi36wTYp3s
-         I/IW/5IC2K+X8C4+T32s7dNuc/OR4G6u00ud/S1ixPDb8sEaMSOttSzpERJDYMrBX467
-         XmuAV/szBRLXAONb6/z9Iyf/7fDa+LrBLR+fgaGdaDFn2B74IYJrRQ4kuP+L1NfUrTqM
-         yGACqvOJXQ2unvw2htgZi6Lv99uf7smu30xBLx3Krh7a2CmXuyHNe/jtY1XGA7D59FCm
-         WSPMBF+nGMNGe6Kxuo7PZld0GxKAyRAodBTqF57kOs0cQQWo3GZqs24aDh/e68jpm0wn
-         f2LA==
-X-Gm-Message-State: AA+aEWatie5VPx1EE67MWJiyRpkJ8LezGU2bwOpksBTmP0bQLb6Cj1bS
-        NF7ui3nXpP373yeJptdZZWBZvzygOlhBiuk/Zaa5QA==
-X-Google-Smtp-Source: AFSGD/V3lrOPst3lbfFT3skINOJ3O89iBDKsIIzq3EwT9QU2TKdNSRE11SmBnpp8diGdbefLiryzppvZfITpuLLuEXk=
-X-Received: by 2002:a02:88cf:: with SMTP id b15mr17120516jak.10.1545157920754;
- Tue, 18 Dec 2018 10:32:00 -0800 (PST)
+        Tue, 18 Dec 2018 13:32:16 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBIIO2iC042021;
+        Tue, 18 Dec 2018 18:31:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=lvdOyrCyj++fsmCNWhwCqjq8Z3Kcx5ZpUccbJSvK4Gk=;
+ b=lAvPT2A4vPx2xmqzzDAX1SEeotuIPvXVpmQbT6jOqRRgdr/7NTGjyRoK18VT9cVJmTwP
+ mOHUOKRl+xCXsiVvMxfkaTHMdOR3HSMBZQJFnlbLJmxD8UoHPg1V6JtDGQB5Gyadg+uO
+ DBb3jrDjkr7J856Uo4ilCj+o3gqFQhYzcPw7Lcmyc/G+aZXoyTyjx0aWiU/ki1zyd+hR
+ BBbbME5I1pfLBDfRdOT6Nt+avqqDqtAW2k+3G985JjPY9yCUDhszaBv6dYiB92JhqUm4
+ Ahwk8QmkzdGBG556zhi1p7ZeOAYGGl8JGYfrOrTrPgK8hmUEGhhfzEEXBX1fKB7cu+iX ww== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2pcs1tn6qe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Dec 2018 18:31:53 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBIIVpEP023701
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Dec 2018 18:31:52 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBIIVlVJ009573;
+        Tue, 18 Dec 2018 18:31:50 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Dec 2018 10:31:47 -0800
+Subject: Re: [Xen-devel][PATCH v2 2/3] drm/xen-front: Use Xen common shared
+ buffer implementation
+To:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        jgross@suse.com
+Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20181130074205.20496-1-andr2000@gmail.com>
+ <20181130074205.20496-2-andr2000@gmail.com>
+ <75f3a715-94a0-a21d-04c1-aa3cf4cdb331@tronnes.org>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABtDNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT6JAjgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uuQINBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABiQIfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <0f699d62-41be-33ec-d62c-6fce10f8fd30@oracle.com>
+Date:   Tue, 18 Dec 2018 13:31:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <49a5d199-4eeb-a7c2-b539-13356162547f@free.fr> <4344b70b-41fb-5ca0-281e-d4b5500b6256@free.fr>
- <20181211154159.54yaytbp4pyjqjhg@localhost> <20181213065113.sz7ce7kpkenyu3dy@localhost>
- <78bcd495-087e-aabf-6462-8950ee986732@free.fr> <CAK8P3a0jbQoAd=q15FPFJixAKgYYiSLCarO=Zfx3zyWkWtPq0g@mail.gmail.com>
-In-Reply-To: <CAK8P3a0jbQoAd=q15FPFJixAKgYYiSLCarO=Zfx3zyWkWtPq0g@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Tue, 18 Dec 2018 10:31:48 -0800
-Message-ID: <CAOesGMjxHxgWjqCTdGsEq37tBCc=wd6MgjRX2oGkCsABv5CBrw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] Regenerate arm64 defconfig for current kernel
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <75f3a715-94a0-a21d-04c1-aa3cf4cdb331@tronnes.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9111 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=746
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812180153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 7:28 AM Arnd Bergmann <arnd@arndb.de> wrote:
+On 12/18/18 11:15 AM, Noralf Trønnes wrote:
 >
-> On Fri, Dec 14, 2018 at 4:44 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
-> >
-> > On 13/12/2018 07:51, Olof Johansson wrote:
-> >
-> > > I've applied the patches from the series that were still needed. When
-> > > re-running savedefconfig as part of patch 1, several of them were no longer
-> > > applicable.
-> >
-> > FWIW, Arnd had suggested that the first patch should only deal with the
-> > trivial case (moving options around), and subsequent patches should deal
-> > with removed options, and corner cases.
-> >
-> > IIUC, you folded "trivial + removed" into a single patch. I suppose it
-> > does make the commit log less bloated ;-)
-> >
-> > Thanks for merging the series.
+> Den 30.11.2018 08.42, skrev Oleksandr Andrushchenko:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> Use page directory based shared buffer implementation
+>> now available as common code for Xen frontend drivers.
+>>
+>> Remove flushing of shared buffer on page flip as this
+>> workaround needs a proper fix.
+>>
+>> Signed-off-by: Oleksandr Andrushchenko
+>> <oleksandr_andrushchenko@epam.com>
+>> ---
 >
-> I suppose I should have asked for the patch to reorder the series to be
-> the /last/ one in the series instead, to keep the useful changelog texts.
-
-In my case I was a bit confused about what the series did when it was
-first posted; I thought it actually enabled and disabled new
-functionality, not that it "just" reflected changes that happened
-implicit due to Kconfig changes. I.e. the patches that "fell out" of
-the series were not actually making a difference to the generated
-config, since they were setting what was now the default (or what
-dependencies were no longer fulfilled).
-
-So, I think there was a bit of miscommunication all around. Either way
--- thanks Marc for doing this work and following up on it, and
-apologies for the confusion.
+> Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
+>
 
 
--Olof
+Now that all 3 have been acked/reviewed
+
+Applied to for-linus-4.21
+
+
