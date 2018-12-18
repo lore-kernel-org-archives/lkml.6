@@ -2,114 +2,110 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7BFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483A3C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD38214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:44:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mJ6FPQ8l"
+	by mail.kernel.org (Postfix) with ESMTP id 1F3022184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 00:45:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbeLRAoZ (ORCPT
+        id S1726421AbeLRApp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 19:44:25 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33442 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726285AbeLRAoZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 19:44:25 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3D2358EE1CB;
-        Mon, 17 Dec 2018 16:44:24 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id F7V6TdXFDJAB; Mon, 17 Dec 2018 16:44:24 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 17 Dec 2018 19:45:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50278 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbeLRApo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 19:45:44 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 83AE58EE0A4;
-        Mon, 17 Dec 2018 16:44:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1545093863;
-        bh=UXoCsqDxGMQ26kVNzeM3o73fRnhRn/iTedhRTINLL5k=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mJ6FPQ8ltN+n5tWXUmoj2Kr+fNzy9Rwrh39zjRKUB1uT+hiXfUkolxRr8my7hrt6u
-         w9U7/EMJ1U2oOLsOjMBSWx8Do0T0OH0xoyprtlzOcUqMTtSpzBBQ8iwFpO+rJZh45c
-         JAO7m9jTLMkDsvhueFcbsCZpd+mXb3XA6/eNthbw=
-Message-ID: <1545093862.2878.34.camel@HansenPartnership.com>
-Subject: Re: [PATCH RESEND] KEYS: fix parsing invalid pkey info string
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ebiggers@kernel.org, James Morris James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Date:   Mon, 17 Dec 2018 16:44:22 -0800
-In-Reply-To: <CAHk-=wjPhKNKRq24wXL3wvqUgfyriDjYNXUPCumbH=64ZMXrSw@mail.gmail.com>
-References: <20181128232019.GC131170@gmail.com>
-         <20181217181244.220052-1-ebiggers@kernel.org>
-         <CAHk-=whmh8WdcKHdYjioJNjyeewv=fO1H0hxXqDh6kiX0YvzmQ@mail.gmail.com>
-         <CAHk-=wi8iGD8zHuPr38m9MUwDwf3qy2FYSbyoQ_Ygky+D-pU1Q@mail.gmail.com>
-         <CAHk-=wjsMJeEkJbE3QhM3SY-DT9VsnMWNQKMNsG9TetnjREWDQ@mail.gmail.com>
-         <CAHk-=wgGYebCEE-M-6Dnbn5MpC8BD8SLjgw8iPGrgy8zETrdJg@mail.gmail.com>
-         <1545076260.2878.15.camel@HansenPartnership.com>
-         <CAHk-=wjPhKNKRq24wXL3wvqUgfyriDjYNXUPCumbH=64ZMXrSw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id E5188C0BF2CB;
+        Tue, 18 Dec 2018 00:45:43 +0000 (UTC)
+Received: from redhat.com (ovpn-120-67.rdu2.redhat.com [10.10.120.67])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2EF601001F45;
+        Tue, 18 Dec 2018 00:45:42 +0000 (UTC)
+Date:   Mon, 17 Dec 2018 19:45:41 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     xuyandong <xuyandong2@huawei.com>, stable@vger.kernel.org,
+        Yinghai Lu <yinghai@kernel.org>,
+        Jesse Barnes <jbarnes@virtuousgeek.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Subject: [PATCH v2] PCI: avoid bridge feature re-probing on hotplug
+Message-ID: <20181218004455.20186-1-mst@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mutt-Fcc: =sent
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 18 Dec 2018 00:45:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-17 at 12:02 -0800, Linus Torvalds wrote:
-> On Mon, Dec 17, 2018 at 11:51 AM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > If this is to replace Eric's patch, didn't you want to set
-> > token_mask to (1<<Opt_err)?
-> 
-> No, let's not add any extra code that is trying to be subtle. Subtle
-> interactions was where the bug came from.
+commit 1f82de10d6b1 ("PCI/x86: don't assume prefetchable ranges are 64bit")
+added probing of bridge support for 64 bit memory each time bridge is
+re-enumerated.
 
-Sure; I suppose liking the TPM gives me a taste for subtlety.
+Unfortunately this probing is destructive if any device behind
+the bridge is in use at this time.
 
-> The code already checks the actual Opt_xyz for errors in a switch
-> statement. The token_mask should be _purely_ about duplicate options
-> (or conflicting ones).
-> 
-> Talking about the conflicting ones: Opt_hash checks that
-> Opt_policydigest isn't set. But Opt_policydigest doesn't check that
-> Opt_hash isn't set, so you can mix the two if you just do it in the
-> right order.
->
-> But that's a separate bug, and doesn't seem to be a huge deal.
+This was observed in the field, see
+https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg01711.html
+and specifically
+https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
 
-Actually, I'm afraid it's not a bug, it's a command line ordering
-thing.  To check the policy digest length, we need to know which hash
-algorithm you're using, so if you're specifying a hash algorithm, it
-has to appear *before* a policydigest as a command input.
+There's no real need to re-probe the bridge features as the
+registers in question never change - detect that using
+the memory flag being set (it's always set on the 1st pass since
+all PCI2PCI bridges support memory forwarding) and skip the probing.
+Thus, only the first call will perform the disruptive probing and sets
+the resource flags as required - which we can be reasonably sure happens
+before any devices have been configured.
+Avoiding repeated calls to pci_bridge_check_ranges might be even nicer.
+Unfortunately I couldn't come up with a clean way to do it without a
+major probing code refactoring.
 
-I take it this is another subtlety you'd like documenting ...?
+Reported-by: xuyandong <xuyandong2@huawei.com>
+Tested-by: xuyandong <xuyandong2@huawei.com>
+Cc: stable@vger.kernel.org
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
 
-> But it *is* an example of how bogus all of this stuff is. Clearly
-> people weren't really paying attention when writing any of this code.
+Please review and consider for stable.
 
-Hey, not going to argue here.  The whole policy session passed in is
-questionable because some of the actions the kernel takes on the key
-have to depend on what was in the policy (which you don't know and
-can't deduce from the hash).  The only way to get it to work
-universally is to pass the actual policy in and have the kernel
-construct the policy session itself.  Fortunately fixing it can be low
-priority because we don't seem to have any users.
+changes from v1:
+	comment and commit log updates to address comments by Bjorn.
 
-James
+ drivers/pci/setup-bus.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index ed960436df5e..d5c25d465d97 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -741,6 +741,16 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
+ 	struct resource *b_res;
+ 
+ 	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
++
++	/*
++	 * Don't re-check after this was called once already:
++	 * important since bridge might be in use.
++	 * Note: this is only reliable because as per spec all PCI to PCI
++	 * bridges support memory unconditionally so IORESOURCE_MEM is set.
++	 */
++	if (b_res[1].flags & IORESOURCE_MEM)
++		return;
++
+ 	b_res[1].flags |= IORESOURCE_MEM;
+ 
+ 	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+-- 
+MST
