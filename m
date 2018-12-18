@@ -2,140 +2,251 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0958CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9C2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77F521873
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6284B218D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 20:14:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YN37CJWJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbeLRULD convert rfc822-to-8bit (ORCPT
+        id S1726900AbeLRUOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:11:03 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:33263 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbeLRULD (ORCPT
+        Tue, 18 Dec 2018 15:14:54 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36027 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeLRUOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:11:03 -0500
-Received: from oxbsltgw05.schlund.de ([212.227.220.149]) by
- mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1Mn1mb-1hItNY2ChT-00kAKe; Tue, 18 Dec 2018 21:10:31 +0100
-Date:   Tue, 18 Dec 2018 21:10:30 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Horia Geanta <horia.geanta@nxp.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, arm-soc <arm@kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Olof Johansson <olof@lixom.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Message-ID: <2071995319.127120.1545163830046@email.ionos.de>
-In-Reply-To: <VI1PR0402MB3485A452549CF37694720A7B98BC0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <49a5d199-4eeb-a7c2-b539-13356162547f@free.fr>
- <beb32683-fbd0-fc17-8e71-4f4f51163223@free.fr>
- <VI1PR0402MB3485824A9FB3BC878E7B83D498C60@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <20181213064803.kd7p7fzsegu6nhnl@localhost>
- <1541367377.58314.1544910265605@email.ionos.de>
- <VI1PR0402MB3485A452549CF37694720A7B98BC0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-Subject: Re: [PATCH v3 7/9] arm64: defconfig: Enable FSL_MC_BUS and
- FSL_MC_DPIO
+        Tue, 18 Dec 2018 15:14:53 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so14988462edb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 12:14:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yFghFxw3nr4OtI4oH4N/5YSUwfwvEShRHt0vdSRfVEI=;
+        b=YN37CJWJFOhryo3oQCL19CFMslrpT2WVrfVLSnfuIk5PVafB803gFryrAiE+1wbLVX
+         QUek6v7f0GJAl0e7LElZQ7A33zGs4y4CFU9Gbea/JMbIskQnr9GrYkt3zwPT81VzdSs/
+         c7HuSpo1SB9GHkMy3FOmPCTOZcJ+0AJwSAvoc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yFghFxw3nr4OtI4oH4N/5YSUwfwvEShRHt0vdSRfVEI=;
+        b=KH4aahVU1+NCeIjpLC463TbHzQnaHG3zTfgVlWz+0IdzoYOa+IQc7YmUhpv4G7uWgY
+         5VUDROkN30j5az/fD4VDFOIefElfYo5vBnwv1nVyi3GIr6IKIc+X+NIrvx+9LIsMhN5T
+         q70QkGqWvLXpvYDQ+8ZvUIwghielvnbOnPW8veT+IqErwR3mzvLjTty8D6T/89K4A33i
+         5U5SD8212n8Briq0ixZ/UfLUs42vGrQccXtMojwvYH3h8QpsdNA9rB9YSZR2hBv1S0BF
+         6Cf5AosR4f2IuqZAm5Aj8G/E2wTpl1g6iR/TdOPXnRSre/GHspkA1rXvAi9ITbr2mS/D
+         NTlA==
+X-Gm-Message-State: AA+aEWbs+MCEXK6HRE6qex51uRC7s5tkcnwZTa8k02mJSIuBPXAFnWMy
+        WxSgfCGahzcEvv5IKq7kRweLRw==
+X-Google-Smtp-Source: AFSGD/V7y22/JxCNJEAetTDjZlMnDw93oCTt+ejLJIelsejcy2RnHD5y3sMrPoU9dyN2c+FF8cDm9g==
+X-Received: by 2002:a50:a3d1:: with SMTP id t17mr18101936edb.238.1545164090959;
+        Tue, 18 Dec 2018 12:14:50 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id e51sm3025988edd.35.2018.12.18.12.14.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 12:14:49 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH] sysfs: Disable lockdep for driver bind/unbind files
+Date:   Tue, 18 Dec 2018 21:14:43 +0100
+Message-Id: <20181218201443.4950-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:zKs6KogVMtyI6s8EVuQmT1/aAzgCc1dWI/BgHXOOOq2hHU+ixaQ
- AZy9BJaevHHJaeNiylfcHg2j3aTaqQWmLia+5A7N1oqeXJ7fTPMRySOW9ql9JFwmpYqawOW
- jGMY3Yc5JIvmTyY8Ol2qS6I3nI1jMnXb/xbK7UY1e61Tvy/IOd4Omq6x6w/CwwsQlWNiDWj
- z1l9iXxi6nJVrkqdMDsrg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ACpmdDnor00=:OT33SqLoMFLLzgfGbgmEy+
- LLJ+0bpp3g1zvir6EWXWDALxIaL7W5d+6PFB1u5tvY76AzFIR5Y1VzsQ/EKuVI+zkE/cm2POD
- GQfbLl5LjgmD0ob4H92UmfYKd4jbQBPS13nttPzTmVr/q4SAomRkZUjK88qGF/Ig2BR7tdjsa
- rCiq0nB/luEnNU9KA6iWHuURfNTdHzzVYutwjL35ECHH3xPsUIDoP2rE/FEvAbC2yXW70ZWk+
- fxfux/rzXB155Kygs4WHvuLQHz45l2GA6Rr0cA488bjkMzBAKNtbJKOEHyyBlij7uqA67oYfR
- VRo6OohFpLbxKEFWgermrdyMhNNWKpNwgJc8foWHSK38Pnst20MR8X2lUQ8yaaGKvtxI6UmrD
- jAYauY2PRj6ssxAGmVgVfDdLgNeln0Iu+tX9yoJCL+gmoTxdzcOl9Z6sEMlhrFlj60IQJC6FK
- sySpxUM5F86vXopK1Hf7p+ehjO7soWYmFcFds7pUwgnyMLSdR6anSrEGlTmWB+rGYguddUc3v
- MlnN0FaZieQ/tS3vpXw8KpeBVrA7lWX2ER73nqYRBjFyK/zt1xg8jiZvptHIdMi46TFdw8/2q
- TGn35DWaDgGu9OesFEeNNrxchEq/PGIu5zhbwhj/HNeqnXdy1jViNhXxv2lzANuuH1qY1PYdV
- NabF0L8uNC9eczI+V/u2L0UiPgK4QO+ryaYB4LaV/1cDYetIZVAZdYEj/fFQbI20CIgjHvAz/
- /d9NFYlU7lhHxMyvjjisK/Xqp6vGgd7SEhWSFAau6yhkkEMjEAEmYWhWOqPpBd8jD0idPU7xd
- PMmIFE4Idun6x+c2+f87yHKxoqjp/Ck0u7hiGtr5QvESpWXSGR983eHApo3KFTmGHwwoR1q+A
- 0oydXexOO8ZbKpW2Pbvw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Horia,
+This is the much more correct fix for my earlier attempt at:
 
-> Horia Geanta <horia.geanta@nxp.com> hat am 17. Dezember 2018 um 16:33 geschrieben:
-> 
-> 
-> On 12/15/2018 11:44 PM, Stefan Wahren wrote:
-> > Hi,
-> > 
-> >> Olof Johansson <olof@lixom.net> hat am 13. Dezember 2018 um 07:48 geschrieben:
-> >>
-> >>
-> >> On Fri, Nov 09, 2018 at 06:05:24AM +0000, Horia Geanta wrote:
-> >>> On 11/9/2018 3:11 AM, Marc Gonzalez wrote:
-> >>>> Commit e8342cc7954e ("enable CAAM crypto engine on QorIQ DPAA2 SoCs")
-> >>>> enabled CRYPTO_DEV_FSL_DPAA2_CAAM, which depends on FSL_MC_DPIO,
-> >>>> which is not set. Enable FSL_MC_BUS, and build FSL_MC_DPIO and
-> >>>> CRYPTO_DEV_FSL_DPAA2_CAAM as modules.
-> >>>>
-> >>>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> >>> Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
-> >>
-> >> I had to redo this one, and when I did I noticed that there's also an ethernet
-> >> driver. Should that be enabled as well?
-> >>
-> > 
-> > this patch in next-20181214 breaks "make modules_install" for arm64/defconfig on my Ubuntu machine:
-> > 
-> > DEPMOD  4.20.0-rc6-next-20181214
-> > depmod: ERROR: Found 6 modules in dependency cycles!
-> > depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> authenc
-> > depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> fsl_mc_dpio
-> > depmod: ERROR: Cycle detected: dpaa2_caam -> caamhash_desc -> dpaa2_caam
-> > depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_desc -> error
-> > depmod: ERROR: Cycle detected: caamalg_desc -> dpaa2_caam -> caamhash_desc -> caamalg_desc
-> > 
-> > After reverting of this patch the issue disappeared.
-> > 
-> Seems there's a dependency cycle b/w dpaa2_caam and caam{alg,hash}_desc, as follows:
-> 
-> A->B
-> ---
-> dpaa2_caam needs cnstr_* exported by caam{alg,hash}_desc
-> 
-> B->A
-> ---
-> caam{alg,hash}_desc need caam_imx, caam_little_end:
-> caam{hash,alg}_desc.c
-> 	--> desc_constr.h (included for descriptors generation functions)
-> 		--> regs.h (included for endianness helpers)
-> 			--> extern bool caam_imx, caam_little_end
-> caam_imx, caam_little_end are exported by dpaa2_caam - caamalg_qi2.c (when
-> CONFIG_CRYPTO_DEV_FSL_CAAM=n)
-> 
-> Could we drop this patch, until CAAM driver gets a proper fix (which is not
-> straightforward)?
+https://lkml.org/lkml/2018/12/10/118
 
-this issue still persists in 4.20.0-rc7-next-20181218. Could you please send a patch to revert this change?
+Short recap:
 
-Thanks Stefan
+- There's not actually a locking issue, it's just lockdep being a bit
+  too eager to complain about a possible deadlock.
 
-> 
-> Thanks,
-> Horia
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+- Contrary to what I claimed the real problem is recursion on
+  kn->count. Greg pointed me at sysfs_break_active_protection(), used
+  by the scsi subsystem to allow a sysfs file to unbind itself. That
+  would be a real deadlock, which isn't what's happening here. Also,
+  breaking the active protection means we'd need to manually handle
+  all the lifetime fun.
+
+- With Rafael we discussed the task_work approach, which kinda works,
+  but has two downsides: It's a functional change for a lockdep
+  annotation issue, and it won't work for the bind file (which needs
+  to get the errno from the driver load function back to userspace).
+
+- Greg also asked why this never showed up: To hit this you need to
+  unregister a 2nd driver from the unload code of your first driver. I
+  guess only gpus do that. The bug has always been there, but only
+  with a recent patch series did we add more locks so that lockdep
+  built a chain from unbinding the snd-hda driver to the
+  acpi_video_unregister call.
+
+Full lockdep splat:
+
+[12301.898799] ============================================
+[12301.898805] WARNING: possible recursive locking detected
+[12301.898811] 4.20.0-rc7+ #84 Not tainted
+[12301.898815] --------------------------------------------
+[12301.898821] bash/5297 is trying to acquire lock:
+[12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
+[12301.898841] but task is already holding lock:
+[12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
+[12301.898856] other info that might help us debug this:
+[12301.898862]  Possible unsafe locking scenario:
+[12301.898867]        CPU0
+[12301.898870]        ----
+[12301.898874]   lock(kn->count#39);
+[12301.898879]   lock(kn->count#39);
+[12301.898883] *** DEADLOCK ***
+[12301.898891]  May be due to missing lock nesting notation
+[12301.898899] 5 locks held by bash/5297:
+[12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
+[12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
+[12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
+[12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
+[12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
+[12301.898960] stack backtrace:
+[12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
+[12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
+[12301.898982] Call Trace:
+[12301.898989]  dump_stack+0x67/0x9b
+[12301.898997]  __lock_acquire+0x6ad/0x1410
+[12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899010]  ? find_held_lock+0x2d/0x90
+[12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
+[12301.899023]  ? find_held_lock+0x2d/0x90
+[12301.899030]  ? lock_acquire+0x90/0x180
+[12301.899036]  lock_acquire+0x90/0x180
+[12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899049]  __kernfs_remove+0x296/0x310
+[12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899060]  ? kernfs_name_hash+0xd/0x80
+[12301.899066]  ? kernfs_find_ns+0x6c/0x100
+[12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899080]  bus_remove_driver+0x92/0xa0
+[12301.899085]  acpi_video_unregister+0x24/0x40
+[12301.899127]  i915_driver_unload+0x42/0x130 [i915]
+[12301.899160]  i915_pci_remove+0x19/0x30 [i915]
+[12301.899169]  pci_device_remove+0x36/0xb0
+[12301.899176]  device_release_driver_internal+0x185/0x240
+[12301.899183]  unbind_store+0xaf/0x180
+[12301.899189]  kernfs_fop_write+0x104/0x190
+[12301.899195]  __vfs_write+0x31/0x180
+[12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
+[12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
+[12301.899216]  ? __sb_start_write+0x13c/0x1a0
+[12301.899221]  ? vfs_write+0x17f/0x1b0
+[12301.899227]  vfs_write+0xb9/0x1b0
+[12301.899233]  ksys_write+0x50/0xc0
+[12301.899239]  do_syscall_64+0x4b/0x180
+[12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[12301.899253] RIP: 0033:0x7f452ac7f7a4
+[12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
+[12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
+[12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
+[12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
+[12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
+[12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
+
+Locking around I've noticed that usb and i2c already handle similar
+recursion problems, where a sysfs file can unbind the same type of
+sysfs somewhere else in the hierarchy. Relevant commits are:
+
+commit 356c05d58af05d582e634b54b40050c73609617b
+Author: Alan Stern <stern@rowland.harvard.edu>
+Date:   Mon May 14 13:30:03 2012 -0400
+
+    sysfs: get rid of some lockdep false positives
+
+commit e9b526fe704812364bca07edd15eadeba163ebfb
+Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
+Date:   Fri May 17 14:56:35 2013 +0200
+
+    i2c: suppress lockdep warning on delete_device
+
+Implement the same trick for driver bind/unbind.
+
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ramalingam C <ramalingam.c@intel.com>
+Cc: Arend van Spriel <aspriel@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Joe Perches <joe@perches.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+---
+ drivers/base/bus.c     | 4 ++--
+ include/linux/device.h | 4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 8bfd27ec73d6..5d2411b848cd 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -195,7 +195,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 	bus_put(bus);
+ 	return err;
+ }
+-static DRIVER_ATTR_WO(unbind);
++static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
+ 
+ /*
+  * Manually attach a device to a driver.
+@@ -231,7 +231,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 	bus_put(bus);
+ 	return err;
+ }
+-static DRIVER_ATTR_WO(bind);
++static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
+ 
+ static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
+ {
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 1b25c7a43f4c..d2cb1a6c5d95 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -326,6 +326,10 @@ struct driver_attribute {
+ 	struct driver_attribute driver_attr_##_name = __ATTR_RO(_name)
+ #define DRIVER_ATTR_WO(_name) \
+ 	struct driver_attribute driver_attr_##_name = __ATTR_WO(_name)
++#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
++	struct driver_attribute driver_attr_##_name =		\
++		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
++
+ 
+ extern int __must_check driver_create_file(struct device_driver *driver,
+ 					const struct driver_attribute *attr);
+-- 
+2.20.0.rc1
+
