@@ -2,43 +2,43 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34232C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197F9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3047218A4
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D087B218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:16:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171353;
-	bh=ae62FjCrGGhi7S9k8IQNtLUej6CZgcP4OdKeKGRk5Yc=;
+	s=default; t=1545171375;
+	bh=BeFHCPXDKRximg4aTIT+O2VqhjVMd1rlM4OGj83MUF4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ytman3ZqCEHg1a0u+NEgDSScCtFQGeSzyl0FELebE5Ilg9/8u4E6J0G7XghoWbmCB
-	 Dlx60Txg/aAAbrwBuMtnU/vAIwpobAOMYtgZ9o77h7qSi8LNbhdasY5lnBz8umhbuZ
-	 NDoNMSxDydF0YRqO55B19tRG4VrgU2BQ3ImIjCmc=
+	b=Udxx6KVo89GQvA/RQForEjcYZyr8tQdrpJLt8aYi/adsBUTX4K4hhDIlxZBLglQL0
+	 IMinfku24VFuPDQP0gjTW1ATnAeVpRaCZgQ8h1AuCoTVPmhz8hNrWhhDf0dUt7M7Xi
+	 UyISUfD+PgHSpAjIm3oWnosUQWeiRciqSgHIrwHk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeLRWPv (ORCPT
+        id S1727821AbeLRWQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:15:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45820 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:16:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbeLRWPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:15:51 -0500
+        id S1726704AbeLRWQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:16:14 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7864221871;
-        Tue, 18 Dec 2018 22:15:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81AB1217D9;
+        Tue, 18 Dec 2018 22:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171350;
-        bh=ae62FjCrGGhi7S9k8IQNtLUej6CZgcP4OdKeKGRk5Yc=;
+        s=default; t=1545171373;
+        bh=BeFHCPXDKRximg4aTIT+O2VqhjVMd1rlM4OGj83MUF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/dNk2b17mDPW99JKHTnfgucNBVb9eKXUv9o6ij4seiyyx1FSS50npOy4vCNjtsxn
-         iCoAV7EXYeaJRleonyYw+ZaOB3rye+lZyLpn9becq9wvelSgWG354N/eqhq7TCyobL
-         SmNdsYjoaHBNO5DaPJtYi+vgj7Ei84e/FgdKSPLs=
+        b=s6/2E8eCBeBIx8oiLH5jOq2CqT7et1prUFvUY2DzCzXNdwmezFSPadd5cAN/PpC6D
+         R/+irXsM/Wl6DhFrMeTtViyVbVO/v2Swn6q6YtRpMLS6UCdoWt+YL0gfET/ouk4BGv
+         Ug380dPR5PZR385Kg8Hk+I1tHiZQOrdxgKxBIstA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 55/63] perf trace: When showing string prefixes show prefix + ??? for unknown entries
-Date:   Tue, 18 Dec 2018 19:07:25 -0300
-Message-Id: <20181218220733.15839-56-acme@kernel.org>
+Subject: [PATCH 56/63] perf trace beauty: Beautify arch_prctl()'s arguments
+Date:   Tue, 18 Dec 2018 19:07:26 -0300
+Message-Id: <20181218220733.15839-57-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -65,60 +65,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-To match 'strace' output, like in:
+This actually so far, AFAIK is available only in x86, so the code was
+put in place with x86 prefixes, in arches where it is not available it
+will just not be called, so no further mechanisms are needed at this
+time.
 
-  arch_prctl(0x3001 /* ARCH_??? */, 0x7ffc8a92dc80) = -1 EINVAL (Invalid argument)
+Later, when other arches wire this up, we'll just look at the uname
+(live sessions) or perf_env data in the perf.data header to auto-wire
+the right beautifier.
+
+With this the output is the same as produced by 'strace' when used with
+the following ~/.perfconfig:
+
+  # cat ~/.perfconfig
+  [llvm]
+	dump-obj = true
+  [trace]
+	  add_events = /home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o
+	  show_zeros = yes
+	  show_duration = no
+	  no_inherit = yes
+	  show_timestamp = no
+	  show_arg_names = no
+	  args_alignment = -40
+	  show_prefix = yes
+  #
+
+And, on fedora 29, since the string tables are generated from the kernel
+sources, we don't know about 0x3001, just like strace:
+
+  --- /tmp/strace 2018-12-17 11:22:08.707586721 -0300
+  +++ /tmp/trace  2018-12-18 11:11:32.037512729 -0300
+  @@ -1,49 +1,49 @@
+  -arch_prctl(0x3001 /* ARCH_??? */, 0x7ffc8a92dc80) = -1 EINVAL (Invalid argument)
+  +arch_prctl(0x3001 /* ARCH_??? */, 0x7ffe4eb93ae0) = -1 EINVAL (Invalid argument)
+  -arch_prctl(ARCH_SET_FS, 0x7faf6700f540) = 0
+  +arch_prctl(ARCH_SET_FS, 0x7fb507364540) = 0
+
+And that seems to be related to the CET/Shadow Stack feature, that
+userland in Fedora 29 (glibc 2.28) are querying the kernel about, that
+0x3001 seems to be ARCH_CET_STATUS, I'll check the situation and test
+with a fedora 29 kernel to see if the other codes are used.
+
+A diff that ignores the different pointers for different runs needs to
+be put in place in the upcoming regression tests comparing 'perf trace's
+output to strace's.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-kx59j2dk5l1x04ou57mt99ck@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-73a9prs8ktkrt97trtdmdjs8@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ tools/perf/builtin-trace.c           |  5 ++++-
+ tools/perf/trace/beauty/Build        |  1 +
+ tools/perf/trace/beauty/arch_prctl.c | 33 ++++++++++++++++++++++++++++
+ tools/perf/trace/beauty/beauty.h     |  3 +++
+ 4 files changed, 41 insertions(+), 1 deletion(-)
+ create mode 100644 tools/perf/trace/beauty/arch_prctl.c
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 9d30e0f3b7ea..6d9be952e3a7 100644
+index 6d9be952e3a7..2cc62ca75b2e 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -365,8 +365,12 @@ size_t strarray__scnprintf(struct strarray *sa, char *bf, size_t size, const cha
- {
- 	int idx = val - sa->offset;
+@@ -664,6 +664,9 @@ static struct syscall_fmt {
+ } syscall_fmts[] = {
+ 	{ .name	    = "access",
+ 	  .arg = { [1] = { .scnprintf = SCA_ACCMODE,  /* mode */ }, }, },
++	{ .name	    = "arch_prctl",
++	  .arg = { [0] = { .scnprintf = SCA_X86_ARCH_PRCTL_CODE, /* code */ },
++		   [1] = { .scnprintf = SCA_PTR, /* arg2 */ }, }, },
+ 	{ .name	    = "bind",
+ 	  .arg = { [1] = { .scnprintf = SCA_SOCKADDR, /* umyaddr */ }, }, },
+ 	{ .name	    = "bpf",
+@@ -793,7 +796,7 @@ static struct syscall_fmt {
+ 		   [3] = { .scnprintf = SCA_INT,	/* pkey */ }, }, },
+ 	{ .name	    = "poll", .timeout = true, },
+ 	{ .name	    = "ppoll", .timeout = true, },
+-	{ .name	    = "prctl", .alias = "arch_prctl",
++	{ .name	    = "prctl",
+ 	  .arg = { [0] = { .scnprintf = SCA_PRCTL_OPTION, /* option */ },
+ 		   [1] = { .scnprintf = SCA_PRCTL_ARG2, /* arg2 */ },
+ 		   [2] = { .scnprintf = SCA_PRCTL_ARG3, /* arg3 */ }, }, },
+diff --git a/tools/perf/trace/beauty/Build b/tools/perf/trace/beauty/Build
+index 10c85cd3eb4f..637365099b7d 100644
+--- a/tools/perf/trace/beauty/Build
++++ b/tools/perf/trace/beauty/Build
+@@ -7,6 +7,7 @@ endif
+ libperf-y += kcmp.o
+ libperf-y += mount_flags.o
+ libperf-y += pkey_alloc.o
++libperf-y += arch_prctl.o
+ libperf-y += prctl.o
+ libperf-y += renameat.o
+ libperf-y += sockaddr.o
+diff --git a/tools/perf/trace/beauty/arch_prctl.c b/tools/perf/trace/beauty/arch_prctl.c
+new file mode 100644
+index 000000000000..fe022ca67e60
+--- /dev/null
++++ b/tools/perf/trace/beauty/arch_prctl.c
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: LGPL-2.1
++/*
++ * trace/beauty/arch_prctl.c
++ *
++ *  Copyright (C) 2018, Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
++ */
++
++#include "trace/beauty/beauty.h"
++#include <linux/kernel.h>
++
++#include "trace/beauty/generated/x86_arch_prctl_code_array.c"
++
++static DEFINE_STRARRAY_OFFSET(x86_arch_prctl_codes_1, "ARCH_", x86_arch_prctl_codes_1_offset);
++static DEFINE_STRARRAY_OFFSET(x86_arch_prctl_codes_2, "ARCH_", x86_arch_prctl_codes_2_offset);
++
++static struct strarray *x86_arch_prctl_codes[] = {
++	&strarray__x86_arch_prctl_codes_1,
++	&strarray__x86_arch_prctl_codes_2,
++};
++
++static DEFINE_STRARRAYS(x86_arch_prctl_codes);
++
++static size_t x86_arch_prctl__scnprintf_code(int option, char *bf, size_t size, bool show_prefix)
++{
++	return strarrays__scnprintf(&strarrays__x86_arch_prctl_codes, bf, size, "%#x", show_prefix, option);
++}
++
++size_t syscall_arg__scnprintf_x86_arch_prctl_code(char *bf, size_t size, struct syscall_arg *arg)
++{
++	unsigned long code = arg->val;
++
++	return x86_arch_prctl__scnprintf_code(code, bf, size, arg->show_string_prefix);
++}
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 58e734b27958..83c5b202e00e 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -155,6 +155,9 @@ size_t syscall_arg__scnprintf_pkey_alloc_access_rights(char *bf, size_t size, st
+ size_t syscall_arg__scnprintf_open_flags(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_OPEN_FLAGS syscall_arg__scnprintf_open_flags
  
--	if (idx < 0 || idx >= sa->nr_entries || sa->entries[idx] == NULL)
--		return scnprintf(bf, size, intfmt, val);
-+	if (idx < 0 || idx >= sa->nr_entries || sa->entries[idx] == NULL) {
-+		size_t printed = scnprintf(bf, size, intfmt, val);
-+		if (show_prefix)
-+			printed += scnprintf(bf + printed, size - printed, " /* %s??? */", sa->prefix);
-+		return printed;
-+	}
++size_t syscall_arg__scnprintf_x86_arch_prctl_code(char *bf, size_t size, struct syscall_arg *arg);
++#define SCA_X86_ARCH_PRCTL_CODE syscall_arg__scnprintf_x86_arch_prctl_code
++
+ size_t syscall_arg__scnprintf_prctl_option(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_PRCTL_OPTION syscall_arg__scnprintf_prctl_option
  
- 	return scnprintf(bf, size, "%s%s", show_prefix ? sa->prefix : "", sa->entries[idx]);
- }
-@@ -388,6 +392,7 @@ static size_t syscall_arg__scnprintf_strarray(char *bf, size_t size,
- 
- size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const char *intfmt, bool show_prefix, int val)
- {
-+	size_t printed;
- 	int i;
- 
- 	for (i = 0; i < sas->nr_entries; ++i) {
-@@ -401,7 +406,10 @@ size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const
- 		}
- 	}
- 
--	return scnprintf(bf, size, intfmt, val);
-+	printed = scnprintf(bf, size, intfmt, val);
-+	if (show_prefix)
-+		printed += scnprintf(bf + printed, size - printed, " /* %s??? */", sas->entries[0]->prefix);
-+	return printed;
- }
- 
- size_t syscall_arg__scnprintf_strarrays(char *bf, size_t size,
 -- 
 2.19.2
 
