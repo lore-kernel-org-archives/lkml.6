@@ -2,253 +2,124 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C76FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000BBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C6A21871
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC58E21871
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeLRNrp (ORCPT
+        id S1726726AbeLRNrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:47:45 -0500
-Received: from ozlabs.org ([203.11.71.1]:52921 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeLRNro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:47:44 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43JzqH4lV2z9sC7;
-        Wed, 19 Dec 2018 00:47:39 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>, paulus@samba.org,
-        David Gibson <david@gibson.dropbear.id.au>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH V4 1/3] mm: Add get_user_pages_cma_migrate
-In-Reply-To: <20181121092259.16482-2-aneesh.kumar@linux.ibm.com>
-References: <20181121092259.16482-1-aneesh.kumar@linux.ibm.com> <20181121092259.16482-2-aneesh.kumar@linux.ibm.com>
-Date:   Wed, 19 Dec 2018 00:47:39 +1100
-Message-ID: <871s6ft090.fsf@concordia.ellerman.id.au>
+        Tue, 18 Dec 2018 08:47:55 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37973 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbeLRNrz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 08:47:55 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIDkXDs2850040
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 18 Dec 2018 05:46:33 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIDkX5q2850037;
+        Tue, 18 Dec 2018 05:46:33 -0800
+Date:   Tue, 18 Dec 2018 05:46:33 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ravi Bangoria <tipbot@zytor.com>
+Message-ID: <tip-57ddf09173c1e7d0511ead8924675c7198e56545@git.kernel.org>
+Cc:     jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        tmricht@linux.vnet.ibm.com, mingo@kernel.org,
+        yao.jin@linux.intel.com, namhyung@kernel.org, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com, acme@redhat.com,
+        ravi.bangoria@linux.ibm.com, tglx@linutronix.de, anton@samba.org
+Reply-To: yao.jin@linux.intel.com, tmricht@linux.vnet.ibm.com,
+          jolsa@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          jolsa@redhat.com, namhyung@kernel.org, acme@redhat.com,
+          alexander.shishkin@linux.intel.com, hpa@zytor.com,
+          anton@samba.org, ravi.bangoria@linux.ibm.com, tglx@linutronix.de
+In-Reply-To: <20181116042843.24067-1-ravi.bangoria@linux.ibm.com>
+References: <20181116042843.24067-1-ravi.bangoria@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf stat: Fix shadow stats for clock events
+Git-Commit-ID: 57ddf09173c1e7d0511ead8924675c7198e56545
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com> writes:
+Commit-ID:  57ddf09173c1e7d0511ead8924675c7198e56545
+Gitweb:     https://git.kernel.org/tip/57ddf09173c1e7d0511ead8924675c7198e56545
+Author:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+AuthorDate: Fri, 16 Nov 2018 09:58:43 +0530
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 17 Dec 2018 14:53:30 -0300
 
-> This helper does a get_user_pages_fast and if it find pages in the CMA area
-> it will try to migrate them before taking page reference. This makes sure that
-> we don't keep non-movable pages (due to page reference count) in the CMA area.
-> Not able to move pages out of CMA area result in CMA allocation failures.
->
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> ---
->  include/linux/hugetlb.h |   2 +
->  include/linux/migrate.h |   3 +
->  mm/hugetlb.c            |   4 +-
->  mm/migrate.c            | 132 ++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 139 insertions(+), 2 deletions(-)
+perf stat: Fix shadow stats for clock events
 
-I'd rather not merge this much mm/ code via the powerpc tree without
-acks.
+Commit 0aa802a79469 ("perf stat: Get rid of extra clock display
+function") introduced scale and unit for clock events. Thus,
+perf_stat__update_shadow_stats() now saves scaled values of clock events
+in msecs, instead of original nsecs. But while calculating values of
+shadow stats we still consider clock event values in nsecs. This results
+in a wrong shadow stat values. Ex,
 
-Anyone?
+  # ./perf stat -e task-clock,cycles ls
+    <SNIP>
+              2.60 msec task-clock:u    #    0.877 CPUs utilized
+         2,430,564      cycles:u        # 1215282.000 GHz
 
-cheers
+Fix this by saving original nsec values for clock events in
+perf_stat__update_shadow_stats(). After patch:
 
+  # ./perf stat -e task-clock,cycles ls
+    <SNIP>
+              3.14 msec task-clock:u    #    0.839 CPUs utilized
+         3,094,528      cycles:u        #    0.985 GHz
 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 087fd5f48c91..1eed0cdaec0e 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -371,6 +371,8 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
->  				nodemask_t *nmask);
->  struct page *alloc_huge_page_vma(struct hstate *h, struct vm_area_struct *vma,
->  				unsigned long address);
-> +struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
-> +				     int nid, nodemask_t *nmask);
->  int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
->  			pgoff_t idx);
->  
-> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-> index f2b4abbca55e..d82b35afd2eb 100644
-> --- a/include/linux/migrate.h
-> +++ b/include/linux/migrate.h
-> @@ -286,6 +286,9 @@ static inline int migrate_vma(const struct migrate_vma_ops *ops,
->  }
->  #endif /* IS_ENABLED(CONFIG_MIGRATE_VMA_HELPER) */
->  
-> +extern int get_user_pages_cma_migrate(unsigned long start, int nr_pages, int write,
-> +				      struct page **pages);
-> +
->  #endif /* CONFIG_MIGRATION */
->  
->  #endif /* _LINUX_MIGRATE_H */
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 7f2a28ab46d5..faf3102ae45e 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1585,8 +1585,8 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
->  	return page;
->  }
->  
-> -static struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
-> -		int nid, nodemask_t *nmask)
-> +struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
-> +				     int nid, nodemask_t *nmask)
->  {
->  	struct page *page;
->  
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index f7e4bfdc13b7..b0e47e2c5347 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2946,3 +2946,135 @@ int migrate_vma(const struct migrate_vma_ops *ops,
->  }
->  EXPORT_SYMBOL(migrate_vma);
->  #endif /* defined(MIGRATE_VMA_HELPER) */
-> +
-> +static struct page *new_non_cma_page(struct page *page, unsigned long private)
-> +{
-> +	/*
-> +	 * We want to make sure we allocate the new page from the same node
-> +	 * as the source page.
-> +	 */
-> +	int nid = page_to_nid(page);
-> +	gfp_t gfp_mask = GFP_USER | __GFP_THISNODE;
-> +
-> +	if (PageHighMem(page))
-> +		gfp_mask |= __GFP_HIGHMEM;
-> +
-> +#ifdef CONFIG_HUGETLB_PAGE
-> +	if (PageHuge(page)) {
-> +		struct hstate *h = page_hstate(page);
-> +		/*
-> +		 * We don't want to dequeue from the pool because pool pages will
-> +		 * mostly be from the CMA region.
-> +		 */
-> +		return alloc_migrate_huge_page(h, gfp_mask, nid, NULL);
-> +	}
-> +#endif
-> +	if (PageTransHuge(page)) {
-> +		struct page *thp;
-> +		gfp_t thp_gfpmask = GFP_TRANSHUGE | __GFP_THISNODE;
-> +
-> +		/*
-> +		 * Remove the movable mask so that we don't allocate from
-> +		 * CMA area again.
-> +		 */
-> +		thp_gfpmask &= ~__GFP_MOVABLE;
-> +		thp = __alloc_pages_node(nid, thp_gfpmask, HPAGE_PMD_ORDER);
-> +		if (!thp)
-> +			return NULL;
-> +		prep_transhuge_page(thp);
-> +		return thp;
-> +	}
-> +
-> +	return __alloc_pages_node(nid, gfp_mask, 0);
-> +}
-> +
-> +/**
-> + * get_user_pages_cma_migrate() - pin user pages in memory by migrating pages in CMA region
-> + * @start:	starting user address
-> + * @nr_pages:	number of pages from start to pin
-> + * @write:	whether pages will be written to
-> + * @pages:	array that receives pointers to the pages pinned.
-> + *		Should be at least nr_pages long.
-> + *
-> + * Attempt to pin user pages in memory without taking mm->mmap_sem.
-> + * If not successful, it will fall back to taking the lock and
-> + * calling get_user_pages().
-> + *
-> + * If the pinned pages are backed by CMA region, we migrate those pages out,
-> + * allocating new pages from non-CMA region. This helps in avoiding keeping
-> + * pages pinned in the CMA region for a long time thereby resulting in
-> + * CMA allocation failures.
-> + *
-> + * Returns number of pages pinned. This may be fewer than the number
-> + * requested. If nr_pages is 0 or negative, returns 0. If no pages
-> + * were pinned, returns -errno.
-> + */
-> +
-> +int get_user_pages_cma_migrate(unsigned long start, int nr_pages, int write,
-> +			       struct page **pages)
-> +{
-> +	int i, ret;
-> +	bool drain_allow = true;
-> +	bool migrate_allow = true;
-> +	LIST_HEAD(cma_page_list);
-> +
-> +get_user_again:
-> +	ret = get_user_pages_fast(start, nr_pages, write, pages);
-> +	if (ret <= 0)
-> +		return ret;
-> +
-> +	for (i = 0; i < ret; ++i) {
-> +		/*
-> +		 * If we get a page from the CMA zone, since we are going to
-> +		 * be pinning these entries, we might as well move them out
-> +		 * of the CMA zone if possible.
-> +		 */
-> +		if (is_migrate_cma_page(pages[i]) && migrate_allow) {
-> +
-> +			struct page *head = compound_head(pages[i]);
-> +
-> +			if (PageHuge(head))
-> +				isolate_huge_page(head, &cma_page_list);
-> +			else {
-> +				if (!PageLRU(head) && drain_allow) {
-> +					lru_add_drain_all();
-> +					drain_allow = false;
-> +				}
-> +
-> +				if (!isolate_lru_page(head)) {
-> +					list_add_tail(&head->lru, &cma_page_list);
-> +					mod_node_page_state(page_pgdat(head),
-> +							    NR_ISOLATED_ANON +
-> +							    page_is_file_cache(head),
-> +							    hpage_nr_pages(head));
-> +				}
-> +			}
-> +		}
-> +	}
-> +	if (!list_empty(&cma_page_list)) {
-> +		/*
-> +		 * drop the above get_user_pages reference.
-> +		 */
-> +		for (i = 0; i < ret; ++i)
-> +			put_page(pages[i]);
-> +
-> +		if (migrate_pages(&cma_page_list, new_non_cma_page,
-> +				  NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE)) {
-> +			/*
-> +			 * some of the pages failed migration. Do get_user_pages
-> +			 * without migration.
-> +			 */
-> +			migrate_allow = false;
-> +
-> +			if (!list_empty(&cma_page_list))
-> +				putback_movable_pages(&cma_page_list);
-> +		}
-> +		/*
-> +		 * We did migrate all the pages, Try to get the page references again
-> +		 * migrating any new CMA pages which we failed to isolate earlier.
-> +		 */
-> +		drain_allow = true;
-> +		goto get_user_again;
-> +	}
-> +	return ret;
-> +}
-> -- 
-> 2.17.2
+Suggested-by: Jiri Olsa <jolsa@redhat.com>
+Reported-by: Anton Blanchard <anton@samba.org>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: yuzhoujian@didichuxing.com
+Fixes: 0aa802a79469 ("perf stat: Get rid of extra clock display function")
+Link: http://lkml.kernel.org/r/20181116042843.24067-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/stat-shadow.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index f0a8cec55c47..3c22c58b3e90 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -209,11 +209,12 @@ void perf_stat__update_shadow_stats(struct perf_evsel *counter, u64 count,
+ 				    int cpu, struct runtime_stat *st)
+ {
+ 	int ctx = evsel_context(counter);
++	u64 count_ns = count;
+ 
+ 	count *= counter->scale;
+ 
+ 	if (perf_evsel__is_clock(counter))
+-		update_runtime_stat(st, STAT_NSECS, 0, cpu, count);
++		update_runtime_stat(st, STAT_NSECS, 0, cpu, count_ns);
+ 	else if (perf_evsel__match(counter, HARDWARE, HW_CPU_CYCLES))
+ 		update_runtime_stat(st, STAT_CYCLES, ctx, cpu, count);
+ 	else if (perf_stat_evsel__is(counter, CYCLES_IN_TX))
