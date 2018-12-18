@@ -2,112 +2,126 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7025BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D87AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F3A217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 414D8217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 12:54:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YO9SFjPZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+ofMn9p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeLRMvB (ORCPT
+        id S1726557AbeLRMyo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:51:01 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36241 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeLRMvA (ORCPT
+        Tue, 18 Dec 2018 07:54:44 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40657 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbeLRMyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:51:00 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x23so1843986oix.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:51:00 -0800 (PST)
+        Tue, 18 Dec 2018 07:54:44 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v5so12194183lfe.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 04:54:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=q2PNKSAhpSgYUq64TB11w1Y0vKi5UwhbWSsBx1rp4JE=;
-        b=YO9SFjPZhU7rN9QO0SO0Nrg20L4UkWq/Fi2soR1uJ1u7tQjLRhCXDQi990TqAB4yIA
-         oQ5JDe3Bq47AP0xzzkYZfa1/jnWe61HHrT3Bm/hNUUquZcyOJA4UZ2q+jfdr18vn5NaU
-         6UwAUQbBnSiv+Su7iMC7sLpSjSE5c3Liv0fpf3QjlZ8AtB6DAPx/UkemGmqMdfuL7mI2
-         haSet+Bz9fTNw/bvVEZPDHLba1GdWQVelP+YppsE/5FJj07U+NyEkLLtY0z0QwphpeDi
-         AM3rsirgUNBmly0o7OxkRyS5vQU7hprsu1mjY4XkxnZsAbSrm7YzjRX2i7BQzErX4xWZ
-         PWgg==
+         :cc;
+        bh=TiOdRpCcB5RW4TqZM074ipMTqVW9QTa6+4OEUBKgdz0=;
+        b=j+ofMn9pL7ziht+9i0YlnsPRRQqrmCSc4PVj/dbHod6e/WoLSYlDBKG1uxj4Na/pDa
+         PwE3Xpe1xLM1NPPLYmoidU0CP6z1RhTWzECLuDk5STL9DmXNbHRY9FedFR7U0szEccEb
+         ZDupnI94UxtHcmquG9+MtHI60NA7YbhcOjRYn1vWFnCUU/8jjibpTPj7Sp8R2bYWtlHH
+         mZsUFsLvcf4k/LBBr45kTtwHU726vrhdId/Kcv7KTI9HNxvdDcuSHKHWX0cWyRk73Q6z
+         84AhcUoV5K2PY43vQnajEkeBFoEnP9OJ1m6ZRmLvPu/668Te21in2Lq6PLvfjMO6fZAU
+         v3Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=q2PNKSAhpSgYUq64TB11w1Y0vKi5UwhbWSsBx1rp4JE=;
-        b=Vrt4QsJ4dpFzDrcKupFzMVfKt78cBFNFM1ggmjVmSXDPOlD00xqAVKKXdw4WozpMtt
-         LDDhY3kyo9R9FYtKRf3wpeE4tCJJAtxXIKRQ2/jAjXQKUrtsi7FWoM4w4U19hRJOXK+z
-         fdNIwataw7uuGTFsDXOnv2akTZ9/lYldYZLiQRZM+6S8YVfFtMpyiOfswlqXL9PCyEt/
-         1PV2/oLFhrAVZM77hK2jFZlPR8occ7k18JesCjrs0y/jVeV+Ps7pdlUnJLg+kvTCnKBN
-         /I9Izl5IwVqDQF7mGf/0vUy0Vn7x5RayBFjhnZyPsfdSt6RvIQlHu7GDq749foHeYRAa
-         vFfw==
-X-Gm-Message-State: AA+aEWZrzWQrdCE/BarPcOR3lP1QyeCwRXkM/+Eyys1MyBGj55VqUoe+
-        mAHnGspg+v3EcQpYgesZHb5Sf5Ch7DrEZvi45k09ew==
-X-Google-Smtp-Source: AFSGD/VgImYHxk3h3dHSgKdv9EbyMi8RrGnZ5U6+4r0Rya6QGiakTE4wAPGwU2pQ3RERjJi8uFQPZwbMnnbYUyzVCBk=
-X-Received: by 2002:aca:1e17:: with SMTP id m23mr8031817oic.332.1545137459636;
- Tue, 18 Dec 2018 04:50:59 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=TiOdRpCcB5RW4TqZM074ipMTqVW9QTa6+4OEUBKgdz0=;
+        b=YZv0ygtB4rCWs9GXG6zJpfvab0L7nVONE6oKpBeMuJgsm+hAti0jPXgBJ2gGxKsfuh
+         /pP+YA2Ba7m8Ig0sxeLke7dTKYvEBFoHEhZ0PXbSkl1yOdqjuJXmfEbe6HJKcAgin7ed
+         Cw8pB3ZdyarkTV2ShLCqyQIeJdaohHQZdlofs1nI+stoXKL05UQsVKSE15zkf0A75Xzp
+         ioBy8prvIeqNGVHFOo+iTgouR5elD0N+15s6cO/cPsowDAW1aWNyKpC7zkuntHJT5OG5
+         3otWtFc3gVcHFqQZUMeKCsbeFE+3H5tVnsKAudLxzsg2ROtUvAEaaGS58HuPjcNq3v3z
+         QVqQ==
+X-Gm-Message-State: AA+aEWZH0B5Cy3CpingGR2I0H2VF85ydMUEojVIfAxF2zh/rXjpU92uS
+        Mz8uRp20PP1o5+FYjrpV3SliJusPMfZkJbZqniY=
+X-Google-Smtp-Source: AFSGD/UIp+suEbV1Uz3/N4wGmi4vyjsGqh6gbFo1pbJjxwEbFS7gl5FTWcERUtIl1pWigBZO8qIlQd8+seR1/mcS11E=
+X-Received: by 2002:a19:6514:: with SMTP id z20mr2633604lfb.31.1545137681798;
+ Tue, 18 Dec 2018 04:54:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20181217153652.20056-1-jank@cadence.com> <20181217153652.20056-3-jank@cadence.com>
- <CAMpxmJXrjyK3m4JwgkxwkHjSj-ugb7UzwNrYcBwYjWwj+JBNxw@mail.gmail.com> <CACRpkdYq5Eg2DrwdED-yTZ4kMoCxew+0rdU-b4zuinOf7BEr6Q@mail.gmail.com>
-In-Reply-To: <CACRpkdYq5Eg2DrwdED-yTZ4kMoCxew+0rdU-b4zuinOf7BEr6Q@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 18 Dec 2018 13:50:48 +0100
-Message-ID: <CAMpxmJUnfnHmopyOfHRZrN1KoqZx_Bsra1BTiGud6UVmzz1ryA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: Add Cadence GPIO driver
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jan Kotas <jank@cadence.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20181217202334.GA11758@jordon-HP-15-Notebook-PC>
+ <20181218095709.GJ26090@n2100.armlinux.org.uk> <CAFqt6zaVU-Fme6fErieBfBKwAm9xHUa7cXTOfqzwUJR__0JysQ@mail.gmail.com>
+ <20181218123318.GN26090@n2100.armlinux.org.uk>
+In-Reply-To: <20181218123318.GN26090@n2100.armlinux.org.uk>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 18 Dec 2018 18:24:29 +0530
+Message-ID: <CAFqt6zbqaS-pFETyjRR2-1V57MiJuX65xoMjgkr-DjUnrJYzSg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Michal Hocko <mhocko@suse.com>, Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org, airlied@linux.ie,
+        hjc@rock-chips.com, Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        dri-devel@lists.freedesktop.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 17 gru 2018 o 23:22 Linus Walleij <linus.walleij@linaro.org> napisa=
-=C5=82(a):
+On Tue, Dec 18, 2018 at 6:03 PM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
 >
-> On Mon, Dec 17, 2018 at 4:51 PM Bartosz Golaszewski
-> <bgolaszewski@baylibre.com> wrote:
+> On Tue, Dec 18, 2018 at 05:36:04PM +0530, Souptick Joarder wrote:
+> > On Tue, Dec 18, 2018 at 3:27 PM Russell King - ARM Linux
+> > <linux@armlinux.org.uk> wrote:
+> > > This looks like a change in behaviour.
+> > >
+> > > If user_count is zero, and offset is zero, then we pass into
+> > > vm_insert_range() a page_count of zero, and vm_insert_range() does
+> > > nothing and returns zero.
+> > >
+> > > However, as we can see from the above code, the original behaviour
+> > > was to return -ENXIO in that case.
+> >
+> > I think these checks are not necessary. I am not sure if we get into mmap
+> > handlers of driver with user_count = 0.
 >
-> > The driver looks good but is there any particular reason not to use
-> > regmap for register IO?
+> I'm not sure either, I'm just pointing out the change of behaviour.
+
+Ok. I think feedback from Heiko might be helpful here :)
+
 >
-> I thought we only use regmap for MMIO when the register range is
-> shared (as in a system controller) so that some registers are for this,
-> some register or even bits in a register for some other driver, so they
-> need the spinlock in the regmap to protect the register range.
+> > > The other thing that I'm wondering is that if (eg) count is 8 (the
+> > > object is 8 pages), offset is 2, and the user requests mapping 6
+> > > pages (user_count = 6), then we call vm_insert_range() with a
+> > > pages of rk_obj->pages + 2, and a pages_count of 6 - 2 = 4. So we
+> > > end up inserting four pages.
+> >
+> > Considering the scenario, user_count will remain 8 (user_count =
+> > vma_pages(vma) ). ? No ?
+> > Then we call vm_insert_range() with a pages of rk_obj->pages + 2, and
+> > a pages_count
+> > of 8 - 2 = 6. So we end up inserting 6 pages.
+> >
+> > Please correct me if I am wrong.
+>
+> vma_pages(vma) is the number of pages that the user requested, it is
+> the difference between vma->vm_end and vma->vm_start in pages.  As I
+> said above, "the user requests mapping 6 pages", so vma_pages() will
+> be 6, and so user_count will also be 6.  You are passing
+> user_count - offset into vm_insert_range(), which will be 6 - 2 = 4
+> in my example.  This is two pages short of what the user requested.
 >
 
-This is what syscon is for. Regmap simply abstracts any register IO.
-For instance: there's no locking in this driver. Are we sure it's not
-needed? Regmap provides internal locking for you in the form of a
-mutex or spinlock.
+So, this should be the correct behavior.
 
-Also: it looks like the interrupts here are quite simple with a single
-bit per interrupt in the status register and the same layout in the
-mask register - it could probably profit from using the
-regmap_irq_chip and not bother with reimplementing irq_chip callbacks.
-
-> It is also nice for shadowing/caching of register contents I guess,
-> wat does this driver get from regmap MMIO?
->
-
-Code shrinkage IMO.
-
-Note that I'm not blocking this from being merged - I just think that
-using modern frameworks is always a good idea.
-
-Best regards,
-Bartosz Golaszewski
-
-> Yours,
-> Linus Walleij
+                 return vm_insert_range(vma, vma->vm_start,
+rk_obj->pages + offset,
+                                                          user_count);
