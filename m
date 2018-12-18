@@ -4,110 +4,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC88C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1D8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23872217D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622BE217D9
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 23:02:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOpKl39L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZjxV36r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbeLRW6m (ORCPT
+        id S1727869AbeLRXC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:58:42 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40371 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbeLRW6l (ORCPT
+        Tue, 18 Dec 2018 18:02:27 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43102 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbeLRXC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:58:41 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so8499865plq.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 14:58:41 -0800 (PST)
+        Tue, 18 Dec 2018 18:02:27 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a11so17315031otr.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 15:02:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8I1CdbqiMUMTrQjUpztZHkA/ZZYSa4PAWKfSX0/YUz0=;
-        b=LOpKl39LqedMXHlBQIH2JzT0HDP3T4oAxZbqqtHOncE1Nx6A3qQNp0NkrbuAPkU66n
-         Qi51itT3hUwxSyT/xl5WL1Ja5GAN9ox+rdvr+RDZm/DEhM3Ty2dBRthmfpNH7JKBw+JG
-         dMVgaqemSXuPfWaN9/kmDJI8qj9J0e+cgnAK9I/mFKcB2lg+HNDF8d9uWardnJemzJVp
-         VEDN5n0S9HW7BWBI5xysxFeR9Vw3u9XyHHNJGKdlgovAaCp0aqMdWFZbGOz3PCG/c9sZ
-         uSSacaiGHIU9sYjL5jaJlYe9ygdjv5hAysMq74qldGU1f6xxKMz8fSU0/zOrtjVHwcaS
-         eRcg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HPWfb9iZ8afkmS02Ip8gNHzya4ERG1+2P7nPA00pPFY=;
+        b=gZjxV36r5mTa/CGejfjpXjkX7eIGI9EMwlpiFYoM4/hpGUT/rmNd1hyuS/vhgv23XK
+         7MKiYsCwKDq+u+KnU2CMRI4XciWsetw9Q8okiItyIa8E7X28yVuZaeRdGkLkh8UIsX6z
+         G4jU+q21P51kCy4NIfFR2KaKOI8Lgk0NmdYVNGZNNb9d30V5fu4twxxzAqHyh76Dz3qn
+         i+kYiGlh7a7Anvft1nAWKtvPe+9GbWJEm8roG2aTKwj3jkgXpJQBTv4mjVyukctri3SL
+         BtXlnAeVURk9rrJXlekur4w+T3SZzfCQps5EM3XW+KXE3xnnf8TJhm1Ms7y+zI0eZ1PA
+         RnKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8I1CdbqiMUMTrQjUpztZHkA/ZZYSa4PAWKfSX0/YUz0=;
-        b=WxMLMy6e2x2mksrb8L8A3JY1w5L/gw8h5n3bI6pHLihBN7Lo+4T8HekL6qIBe3kBmt
-         x4LQjzWz3AawjYxqrfxFrgBQnxkd2/PoEV/Lgz+epGCJJbpttDPCcR4xZB6z+y+y3ok9
-         ESWGQ6T27uMymVMMuo8gO7claZ4jmWuAoyVqIJcEHVTQJbsz5sxkoe00mgU2AGa2u1iV
-         8m6C+QRp/qvSv55sOE77bFsiuOer003VP3kBnl+4eqI1UYwjI5SP7CAGVYmkbSEdI5wk
-         XHFhC91AwVAGddkqRvGqf6oN2oY82LEJlXZNzMbomcfLWQ1o6EG0FHvZAfJfSJbik2c8
-         lcsA==
-X-Gm-Message-State: AA+aEWYekIG0TY+/yUGUQMv68lulPVFrUz0Yi48qZQWzk80JXwRS2Snd
-        uxIsQ7Ssq4Hm5y5COXyvf7k=
-X-Google-Smtp-Source: AFSGD/Voxt2l+iTeoHOGkZ5u4kU9eQjaTD/7Jjez8YeqlLKM9EHxjjFy5y06CxOKeMcVYTmtFtZWQg==
-X-Received: by 2002:a17:902:925:: with SMTP id 34mr17425069plm.14.1545173920688;
-        Tue, 18 Dec 2018 14:58:40 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id m65sm27207728pfg.180.2018.12.18.14.58.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 14:58:39 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: eukrea-tlv320: Do not enable on ARM64
-Date:   Tue, 18 Dec 2018 14:58:24 -0800
-Message-Id: <20181218225824.20974-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HPWfb9iZ8afkmS02Ip8gNHzya4ERG1+2P7nPA00pPFY=;
+        b=aVTD4pbv7lyPPpyRQebkMYcOFdkmIHc3geg3r04S4YxgOtZ9QDOKuWkEmDc6/syx4W
+         THx4H4x8Y9Y4dLV7RSSfXZXxmsNihXLCIbu0ibDgsaPrJrsqe0TU3QuXGbm/ivekWo0i
+         AOm7XyVC86Ig6mYY38kPtb5Q2VlB0Zkt43xxvL4LZ6eVMc0fw9VFvYs6RvJJu0UAluLV
+         786jfZAJAI0gfRuavBmbROybdMw+Tk99AoT+n05ra7YFcomTLxf/V8vEbP1SSfJL/zXx
+         09cHmeXKWDK5QThcOOo+ATyIlNCTrFZYxKO0RagvxIJgAdhjMTrTgIzNUrTPE59nxxgg
+         lUog==
+X-Gm-Message-State: AA+aEWbrthvQHNfaydEYK0y8Bl+clCoNkychUvNUJslLlDnHZ2d3Nq9U
+        sSqFIxnw7W1DhPdzTkmLdkSOPWA8RfMcB4jIWo0jb3k2
+X-Google-Smtp-Source: AFSGD/UbIJFTL3tABVg03qPHNft9dPHcxfJSBEMgTb8+PHUIEc2GTcn+xSE1E6krNVkFHvBBNtu2p2D8XP7bXBBnwUQ=
+X-Received: by 2002:a9d:7e87:: with SMTP id m7mr14700563otp.225.1545174146552;
+ Tue, 18 Dec 2018 15:02:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181218225824.20974-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20181218225824.20974-1-andrew.smirnov@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 18 Dec 2018 21:02:21 -0200
+Message-ID: <CAOMZO5DxThsRyT0Bnn8zDSw-yiHT-Bokcf0DcU0mx6gu+VgzJA@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: eukrea-tlv320: Do not enable on ARM64
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ARCH_MXC is also used by i.MX8/AArch64 SoC, building the driver for
-that platform results in:
+Hi Andrey,
 
-sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
- #include <asm/mach-types.h>
-          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
+On Tue, Dec 18, 2018 at 8:58 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+>
+> ARCH_MXC is also used by i.MX8/AArch64 SoC, building the driver for
+> that platform results in:
+>
+> sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
+>  #include <asm/mach-types.h>
+>           ^~~~~~~~~~~~~~~~~~
+> compilation terminated.
+>
+> Since the code in question doesn't seem to have any use on i.MX8,
+> disable it by adding a !ARM64 as a dependecy.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>
+> Sorry for the noise if this is fixed already.
 
-Since the code in question doesn't seem to have any use on i.MX8,
-disable it by adding a !ARM64 as a dependecy.
-
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
-
-Sorry for the noise if this is fixed already.
-
-Thanks,
-Andrey Smirnov
-
- sound/soc/fsl/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index 6ec19fb4a934..2e75b5bc5f1d 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -221,7 +221,7 @@ config SND_SOC_PHYCORE_AC97
- 
- config SND_SOC_EUKREA_TLV320
- 	tristate "Eukrea TLV320"
--	depends on ARCH_MXC && I2C
-+	depends on ARCH_MXC && !ARM64 && I2C
- 	select SND_SOC_TLV320AIC23_I2C
- 	select SND_SOC_IMX_AUDMUX
- 	select SND_SOC_IMX_SSI
--- 
-2.19.1
-
+Yes, I sent a fix for this and it is linux-next already:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/sound/soc/fsl/Kconfig?h=next-20181218&id=add6883619a9e3bf9658eaff1a547354131bbcd9
