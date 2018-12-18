@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E270EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE683C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0285217D7
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81E3920656
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 14:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbeLROQu (ORCPT
+        id S1726936AbeLRORN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:16:50 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37489 "EHLO
+        Tue, 18 Dec 2018 09:17:13 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40225 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbeLROQt (ORCPT
+        with ESMTP id S1726542AbeLRORN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:16:49 -0500
+        Tue, 18 Dec 2018 09:17:13 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEGSI72855001
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBIEFpSK2854945
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Dec 2018 06:16:28 -0800
+        Tue, 18 Dec 2018 06:15:51 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEGSkP2854998;
-        Tue, 18 Dec 2018 06:16:28 -0800
-Date:   Tue, 18 Dec 2018 06:16:28 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBIEFpDE2854942;
+        Tue, 18 Dec 2018 06:15:51 -0800
+Date:   Tue, 18 Dec 2018 06:15:51 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-x533ra5c1pgofvbtsizzuydd@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        acme@redhat.com, davem@davemloft.net, namhyung@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
-          namhyung@kernel.org, davem@davemloft.net, jolsa@kernel.org,
-          alexander.shishkin@linux.intel.com
+Message-ID: <tip-r8aufbgbixr2f85s3wcoaw9v@git.kernel.org>
+Cc:     mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        davem@davemloft.net, acme@redhat.com, peterz@infradead.org,
+        jolsa@kernel.org, tglx@linutronix.de
+Reply-To: namhyung@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          davem@davemloft.net, mingo@kernel.org,
+          alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+          tglx@linutronix.de, acme@redhat.com, peterz@infradead.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Drop samples which are behind the refresh
- rate
-Git-Commit-ID: d63b9f6fea7613e2fdc8a5ef7e17ecc9cf24bf9d
+Subject: [tip:perf/core] perf top: Set the 'session_done' volatile variable
+ when exiting
+Git-Commit-ID: c94cef4beb66d3e1f4ed0f3bf6c2663a9c3cf3c0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,91 +56,70 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20181218141628.tyltgGuYiSvNkT5UrR28IfAuNLHmfDHQ6882ecLM6p0@z>
+Message-ID: <20181218141551.kSjevmcnWeNQOV0PEHMAMFKWor5ywvoKdNQdZV5nwqA@z>
 
-Commit-ID:  d63b9f6fea7613e2fdc8a5ef7e17ecc9cf24bf9d
-Gitweb:     https://git.kernel.org/tip/d63b9f6fea7613e2fdc8a5ef7e17ecc9cf24bf9d
+Commit-ID:  c94cef4beb66d3e1f4ed0f3bf6c2663a9c3cf3c0
+Gitweb:     https://git.kernel.org/tip/c94cef4beb66d3e1f4ed0f3bf6c2663a9c3cf3c0
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 11 Nov 2018 19:52:06 +0100
+AuthorDate: Wed, 7 Nov 2018 20:11:19 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 17 Dec 2018 14:58:26 -0300
+CommitDate: Mon, 17 Dec 2018 14:58:19 -0300
 
-perf top: Drop samples which are behind the refresh rate
+perf top: Set the 'session_done' volatile variable when exiting
 
-Drop samples from processing thread if they get behind the latest event
-read from the kernel maps. If it gets behind more than the refresh rate
-(-d option), drop the sample.
+So we can get out of hist processing ASAP on user request.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: David S. Miller <davem@davemloft.net>
 Acked-by: Namhyung Kim <namhyung@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-x533ra5c1pgofvbtsizzuydd@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-r8aufbgbixr2f85s3wcoaw9v@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+ tools/perf/builtin-top.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 50ec01eb7f57..234232d538c2 100644
+index aad58643102e..50ec01eb7f57 100644
 --- a/tools/perf/builtin-top.c
 +++ b/tools/perf/builtin-top.c
-@@ -833,6 +833,8 @@ perf_top__process_lost_samples(struct perf_top *top,
- 	hists->stats.total_lost_samples += event->lost_samples.lost;
+@@ -577,6 +577,12 @@ static void perf_top__sort_new_samples(void *arg)
+ 	perf_top__reset_sample_counters(t);
  }
  
-+static u64 last_timestamp;
++static void stop_top(void)
++{
++	session_done = 1;
++	done = 1;
++}
 +
- static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
+ static void *display_thread_tui(void *arg)
  {
- 	struct record_opts *opts = &top->record_opts;
-@@ -845,14 +847,13 @@ static void perf_top__mmap_read_idx(struct perf_top *top, int idx)
- 		return;
+ 	struct perf_evsel *pos;
+@@ -613,13 +619,13 @@ static void *display_thread_tui(void *arg)
+ 				      !top->record_opts.overwrite,
+ 				      &top->annotation_opts);
  
- 	while ((event = perf_mmap__read_event(md)) != NULL) {
--		u64 timestamp = -1ULL;
- 		int ret;
- 
--		ret = perf_evlist__parse_sample_timestamp(evlist, event, &timestamp);
-+		ret = perf_evlist__parse_sample_timestamp(evlist, event, &last_timestamp);
- 		if (ret && ret != -1)
- 			break;
- 
--		ret = ordered_events__queue(top->qe.in, event, timestamp, 0);
-+		ret = ordered_events__queue(top->qe.in, event, last_timestamp, 0);
- 		if (ret)
- 			break;
- 
-@@ -1084,6 +1085,21 @@ static void *process_thread(void *arg)
+-	done = 1;
++	stop_top();
  	return NULL;
  }
  
-+/*
-+ * Allow only 'top->delay_secs' seconds behind samples.
-+ */
-+static int should_drop(struct ordered_event *qevent, struct perf_top *top)
-+{
-+	union perf_event *event = qevent->event;
-+	u64 delay_timestamp;
-+
-+	if (event->header.type != PERF_RECORD_SAMPLE)
-+		return false;
-+
-+	delay_timestamp = qevent->timestamp + top->delay_secs * NSEC_PER_SEC;
-+	return delay_timestamp < last_timestamp;
-+}
-+
- static int deliver_event(struct ordered_events *qe,
- 			 struct ordered_event *qevent)
+ static void display_sig(int sig __maybe_unused)
  {
-@@ -1096,6 +1112,9 @@ static int deliver_event(struct ordered_events *qe,
- 	struct machine *machine;
- 	int ret = -1;
+-	done = 1;
++	stop_top();
+ }
  
-+	if (should_drop(qevent, top))
-+		return 0;
-+
- 	ret = perf_evlist__parse_sample(evlist, event, &sample);
- 	if (ret) {
- 		pr_err("Can't parse sample, err = %d\n", ret);
+ static void display_setup_sig(void)
+@@ -672,7 +678,7 @@ repeat:
+ 
+ 			if (perf_top__handle_keypress(top, c))
+ 				goto repeat;
+-			done = 1;
++			stop_top();
+ 		}
+ 	}
+ 
