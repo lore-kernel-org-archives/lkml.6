@@ -2,87 +2,103 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F25BC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC03C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153B0214C6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E007621841
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 01:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545098085;
-	bh=A+y/CrM43BZ3YcOatdxKgpr5Za0vAiDnD7LdkCU9ouQ=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=xK/UkPrq3daHyQpH94ymQ/umcxHgImrQzTeA91mdyELb81s9ldHwZNNavc7FpvSvP
-	 zINBpjN9SGmDjCzb0Q7jVL+VBiDNPv5RQFVq+M/DZhZNe47gmOkjadUK9zjw8Jpe6/
-	 grSVGxGQznWXqdUAjJnVSaiErJw1tjppsW3fpuas=
+	s=default; t=1545098249;
+	bh=iTEuxmTmWB0AAAB918o1so12K6vF8+GBSSsw6p/IlQ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=hhr8Vg1UgNgcUdGLqY+3MYaoE3h0Epc2en0kPOPE2Vg5+RQB/zfmm/89jhPbisr5M
+	 JBobO5KGEXquqQDdwIB6GcNWHuRvT+uCHnhPvjXFV2Lg1v0s9ZpEDU04jM2cu4p38B
+	 pjjWTxpAGpG2+hG7/gf+m3btZLNged5kx/uzsJ4Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbeLRByo (ORCPT
+        id S1726419AbeLRB52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 17 Dec 2018 20:54:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45356 "EHLO mail.kernel.org"
+        Mon, 17 Dec 2018 20:57:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeLRByn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Dec 2018 20:54:43 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726285AbeLRB51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Dec 2018 20:57:27 -0500
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 022A0214C6;
-        Tue, 18 Dec 2018 01:54:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 143BA21841;
+        Tue, 18 Dec 2018 01:57:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545098083;
-        bh=A+y/CrM43BZ3YcOatdxKgpr5Za0vAiDnD7LdkCU9ouQ=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=W1Rp2h6pPex1nUY4cN+olEH+KSuEuorunhj9goSwozP30bJTKNJ3uyLKAT2ZUx3Ix
-         n4woNwaUtmDSjcrPPz4fP340Z6AZhCMBQl0VqLxmjsJ0jKUhfrp040Xns9UjtE128H
-         D/BzODoPjyOVnOWzxMzRcNVeSX4VVCLScgE0t7N0=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1545098247;
+        bh=iTEuxmTmWB0AAAB918o1so12K6vF8+GBSSsw6p/IlQ8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nJaNRrAfxDIwikXESGUJbxFERzESP3z/L6GEHoYTjY3BnoIP770DIVK8ywXOA1/sp
+         TBn6EobyyOltBmITtZZEZz7uwXc7ui0Bfg7KFih4u8Ntfwlu5aItpNfrRBjo5Ar6BR
+         /JOIDJWxmwrosNBfdMszZUF7xypBoKh20JQP6rrU=
+Received: by mail-ot1-f44.google.com with SMTP id u16so14171109otk.8;
+        Mon, 17 Dec 2018 17:57:27 -0800 (PST)
+X-Gm-Message-State: AA+aEWaWywgc17yb3HsU5nJnU0FMH3NcOtKlPQj2ur6QRtqg0rbIfIx9
+        kAej8iwBH/Xar7SSjj8jteL6VMNhm/N6FjC9G9k=
+X-Google-Smtp-Source: AFSGD/XZm1uU94yTE3AYVkGbePZqGCZbBVMp4lHOHaLra0EQ42rMESzNWXyOkPhJLWk3e+eD5VeXOVmzS7pvkF9go/8=
+X-Received: by 2002:a9d:22a:: with SMTP id 39mr11592742otb.354.1545098246420;
+ Mon, 17 Dec 2018 17:57:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <9af950b2-036c-6afd-e31d-7eb2799e56c9@kernel.org>
-Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com> <20181204193416.24661-1-sboyd@kernel.org> <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com> <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org> <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com> <9af950b2-036c-6afd-e31d-7eb2799e56c9@kernel.org>
-Message-ID: <154509808233.19322.16971841121259793017@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 17 Dec 2018 17:54:42 -0800
+References: <20181215010247.26101-1-okaya@kernel.org> <20181215010247.26101-4-okaya@kernel.org>
+ <20181217170056.GA20499@gmail.com>
+In-Reply-To: <20181217170056.GA20499@gmail.com>
+From:   Sinan Kaya <Okaya@kernel.org>
+Date:   Tue, 18 Dec 2018 02:57:14 +0100
+X-Gmail-Original-Message-ID: <CAK9iUCN0UWRm94qiFop0Tv=i8-uZnpBkMZkXMTz-jDBke45MZw@mail.gmail.com>
+Message-ID: <CAK9iUCN0UWRm94qiFop0Tv=i8-uZnpBkMZkXMTz-jDBke45MZw@mail.gmail.com>
+Subject: Re: [PATCH v10 3/6] PCI/ACPI: Allow ACPI to be built without
+ CONFIG_PCI set
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Otavio Pontes <otavio.pontes@intel.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>,
+        "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Dinh Nguyen (2018-12-06 07:16:47)
->=20
->=20
-> On 12/5/18 9:55 AM, Stephen Boyd wrote:
-> > Quoting Dinh Nguyen (2018-12-05 07:17:41)
-> >> Hi Stephen,
-> >>
-> >> On 12/5/18 1:17 AM, Stephen Boyd wrote:
-> >>> (Adding Dinh's korg email)
-> >>>
-> >>> I also wonder if this driver is even used anymore or maybe we can del=
-ete
-> >>> it?
-> >>>
-> >>
-> >> The armv7 SoCFPGA platforms are using this driver.
-> >>
-> >=20
-> > Ok and those platforms are booting in kernelci.org as
-> > https://kernelci.org/boot/socfpga_cyclone5_de0_sockit/ perhaps?
-> >=20
->=20
-> Yes that's right.
->=20
+On Mon, Dec 17, 2018 at 6:01 PM Ingo Molnar <mingo@kernel.org> wrote:
+&gt;
+&gt;
+&gt; * Sinan Kaya <okaya@kernel.org> wrote:
+&gt;
+&gt; &gt; We are compiling PCI code today for systems with ACPI and no PCI
+&gt; &gt; device present. Remove the useless code and reduce the tight
+&gt; &gt; dependency.
+&gt; &gt;
+&gt; &gt; Signed-off-by: Sinan Kaya <okaya@kernel.org>
+&gt; &gt; Acked-by: Bjorn Helgaas <bhelgaas@google.com> # PCI parts
+&gt;
+&gt; If this is targeted for the ACPI tree:
+&gt;
 
-Ok. Dinh, can you review this patch? Or test it out? Or do I need to get
-someone in kernelci to try it out?
+Thanks, yes. Plan is to take it through ACPI tree.
 
+> Acked-by: Ingo Molnar <mingo@kernel.org>
+>
+> Thanks,
+>
+>         Ingo
