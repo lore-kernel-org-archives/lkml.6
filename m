@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0D0C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23096C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC0F218A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6DC9218A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 22:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545171034;
-	bh=2XbbrSZ3VWRHzIl/rl3R6odns74eUNOIkDCSwgQAQIc=;
+	s=default; t=1545171040;
+	bh=SqmRLABnXNmbqu4cRZLHpt48Y33TI7BUDq8tMlrlags=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wLQTncxGDbEuOYmrVHyBimQm2/Fn6Z1M7+ITAyCyVJUVm4IKz/dmznVpDqWr729Ho
-	 XtxWbGYen0n6MuQFCzQ+nRmPbcxpxKKOlQLYdEuw/mzKOVdOcJJ74viWpCYbtKsy59
-	 +C8nvAb2FXT312wyHd1QFTmV0oU/mba/qzlV+oDY=
+	b=OjAux7a+9MdGsvkx4Ksis2Zt6FATddfhsQ3Z0Bv/X0d9ZZpHA+te/86vKjgJCBj2W
+	 XpoSivhEjWgjTzxH9jI7gMZg135KcsPt5kvSyennUkVuxlYevHqOAre2f8lZDyoCkK
+	 zefpryMBmJ+Nun3R3/ns/Q4OiIrbPVLPXn5gs6Us=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbeLRWKd (ORCPT
+        id S1728067AbeLRWKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 17:10:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
+        Tue, 18 Dec 2018 17:10:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726706AbeLRWKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 17:10:31 -0500
+        id S1726706AbeLRWKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 17:10:36 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.101.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FC81218A4;
-        Tue, 18 Dec 2018 22:10:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A577218A2;
+        Tue, 18 Dec 2018 22:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545171030;
-        bh=2XbbrSZ3VWRHzIl/rl3R6odns74eUNOIkDCSwgQAQIc=;
+        s=default; t=1545171036;
+        bh=SqmRLABnXNmbqu4cRZLHpt48Y33TI7BUDq8tMlrlags=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L6sUO9NNzapzceUPXET1PMApjDeULMFOzKUIn2Trz4t2WYNZ2N1rfuA/klwi52dZM
-         kxdKzO5vLQ0UFcBYxx73p903S+vZHUTIK8HUNcEGziO4fmCGBOfoEtOt+TGxk/S1hr
-         RUBI8S5NM9twPw12ki+2BImGdYvc9GWIOPmTbEFA=
+        b=Owzfmzw1OqM47NqixnWgc+qsT0AnMzzXFjRi9+n1rKID8+SMcTf6EbWqu4XlB3g10
+         sgF3NW8dpgnRRlRDSGGZHJLKsqG51MJC3BufYPoScnHE+978Cdj5ct1gotJSi+ov3V
+         qmHlMJL9REwLeo3aCxkBf4OmErMSP2yoJdlMwgFY=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Mike Leach <mike.leach@linaro.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Robert Walker <robert.walker@arm.com>,
         coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 28/63] perf cs-etm: Remove unused 'trace_on' in cs_etm_decoder
-Date:   Tue, 18 Dec 2018 19:06:58 -0300
-Message-Id: <20181218220733.15839-29-acme@kernel.org>
+Subject: [PATCH 29/63] perf cs-etm: Refactor enumeration cs_etm_sample_type
+Date:   Tue, 18 Dec 2018 19:06:59 -0300
+Message-Id: <20181218220733.15839-30-acme@kernel.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181218220733.15839-1-acme@kernel.org>
 References: <20181218220733.15839-1-acme@kernel.org>
@@ -66,54 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Leo Yan <leo.yan@linaro.org>
 
-cs_etm_decoder::trace_on is being assigned when TRACE_ON or NO_SYNC
-element is coming, but it is never used hence it is redundant and can
-be removed.
+The values in enumeration cs_etm_sample_type are defined with setting
+bit N for each packet type, this is not suggested in the usual case.
 
-So let's remove 'trace_on' field from cs_etm_decoder struct.
+This patch refactor cs_etm_sample_type by converting from bit shifting
+values to continuous numbers.
 
-Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Mike Leach <mike.leach@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Robert Walker <robert.walker@arm.com>
 Cc: coresight@lists.linaro.org
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1544513908-16805-4-git-send-email-leo.yan@linaro.org
+Link: http://lkml.kernel.org/r/1544513908-16805-5-git-send-email-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 3 ---
- 1 file changed, 3 deletions(-)
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 0b4c8629f578..97b39b1f5759 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -36,7 +36,6 @@
- struct cs_etm_decoder {
- 	void *data;
- 	void (*packet_printer)(const char *msg);
--	bool trace_on;
- 	dcd_tree_handle_t dcd_tree;
- 	cs_etm_mem_cb_type mem_access;
- 	ocsd_datapath_resp_t prev_return;
-@@ -411,12 +410,10 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 	case OCSD_GEN_TRC_ELEM_UNKNOWN:
- 		break;
- 	case OCSD_GEN_TRC_ELEM_NO_SYNC:
--		decoder->trace_on = false;
- 		break;
- 	case OCSD_GEN_TRC_ELEM_TRACE_ON:
- 		resp = cs_etm_decoder__buffer_trace_on(decoder,
- 						       trace_chan_id);
--		decoder->trace_on = true;
- 		break;
- 	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
- 		resp = cs_etm_decoder__buffer_range(decoder, elem,
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+index b295dd2b8292..3819a04a2c27 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+@@ -23,9 +23,9 @@ struct cs_etm_buffer {
+ };
+ 
+ enum cs_etm_sample_type {
+-	CS_ETM_EMPTY = 0,
+-	CS_ETM_RANGE = 1 << 0,
+-	CS_ETM_TRACE_ON = 1 << 1,
++	CS_ETM_EMPTY,
++	CS_ETM_RANGE,
++	CS_ETM_TRACE_ON,
+ };
+ 
+ enum cs_etm_isa {
 -- 
 2.19.2
 
