@@ -2,96 +2,82 @@ Return-Path: <SRS0=vePq=O3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B686C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6900EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253A6217D8
-	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43D4A217D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 18 Dec 2018 13:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeLRNPH (ORCPT
+        id S1726730AbeLRNPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 08:15:07 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45318 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbeLRNPG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 08:15:06 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so14137700ljd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 05:15:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=c0aO4TC4hRD2MKEoawW2zSdR3EGaesWs8rMApU6dZRI=;
-        b=m0pxCWXnfmFZmu48M5GjOPz4GVkXCcYYmsVxmezWCzqR99VfM1SOSHCet3kcB9zLGV
-         ovyXLQuWtZM8Xhfb8rTiR9l9DuhdPeI+4nMVW+fUzNqIwJGbJgGPBG2TtsOLb8BSrJL+
-         Z3R5feKRw6TIouPPrSvtznJolVyOHN8sh3CzCTSveCdl2hsyKce3VQ9GOYftoTtGDB5C
-         slHZCMr8wm4TnBy7W1BacM2pwIYF+dK8hWWfAj8VgXPmb4CkplcnqNiK9GpyIA8UXoKP
-         UWt5bWb8jtnXEOPqqvjTi010xj9PZimXntzmX41oAwrldOt21WMkxya9NU8vltk3GxYO
-         Ijmg==
-X-Gm-Message-State: AA+aEWbqUmOM1Rqpi94T5w99TV2JSx9m7rPJ3o/qIlCsbUy5T61PECex
-        HRnESf9AT9pFGLz3jEzVKuM1tzwv
-X-Google-Smtp-Source: AFSGD/VkwF6OzwbgO4GicfMC0V/Dcz9gCfekrAcz7pehAGccDQ7NOdrrRQWmSGZ5TXLrKCOaHpBYhA==
-X-Received: by 2002:a2e:9556:: with SMTP id t22-v6mr11006698ljh.36.1545138904546;
-        Tue, 18 Dec 2018 05:15:04 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id c19sm3169013lfg.86.2018.12.18.05.15.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 05:15:04 -0800 (PST)
-Date:   Tue, 18 Dec 2018 15:15:01 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     mazziesaccount@gmail.com, Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>, ldewangan@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] regmap: regmap-irq: Remove default irq type setting from
- core
-Message-ID: <20181218131501.GF2477@localhost.localdomain>
-References: <20181218105813.GA6957@localhost.localdomain>
- <CAMRc=MexeOcqNgMr1Vq=T1NTeizP20fj3vx3EwxQNv20Cc6bAw@mail.gmail.com>
+        Tue, 18 Dec 2018 08:15:16 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55929 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726451AbeLRNPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 08:15:15 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 28B233CC43FCA;
+        Tue, 18 Dec 2018 21:15:12 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Dec 2018
+ 21:15:10 +0800
+Subject: Re: [PATCH -next] staging: fbtft: use strcmp() instead of strncmp()
+ for subsystem lookup
+To:     <devel@driverdev.osuosl.org>, <gregkh@linuxfoundation.org>,
+        <leobras.c@gmail.co>, <radek.dostal@streamunlimited.co>
+References: <20181218130932.17684-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <477c3a7a-b0dd-f3f5-223c-da4e8e19d44a@huawei.com>
+Date:   Tue, 18 Dec 2018 21:15:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MexeOcqNgMr1Vq=T1NTeizP20fj3vx3EwxQNv20Cc6bAw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181218130932.17684-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 02:08:41PM +0100, Bartosz Golaszewski wrote:
-> wt., 18 gru 2018 o 11:58 Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com> napisał(a):
-> >
-> > The common code should not set IRQ type. Read HW defaults to the
-> > cache at startup instead of forcing type to EDGE_BOTH. If
-> > default setting is needed this should be done via normal
-> > mechanisms or by chip specific code if normal mechanisms are not
-> > suitable for some reason. Common regmap-irq code should not have
-> > defaults hard-coded but keep the HW/boot defaults untouched.
-> >
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> > I was not able to test this change as I have no max77620 which seems to
-> > be the only user of regmap-irq type-setting in tree as of now.
-> >
+sorry, Pls ignore this.  The title need fix.
+
+On 2018/12/18 21:09, YueHaibing wrote:
+> strncmp() stops comparing when either the end of one of the first two 
+> arguments is reached or when 'n' characters have been compared, whichever
+> comes first.That means that strncmp(s1, s2, n) is equivalent to 
+> strcmp(s1, s2) if n exceeds the length of s1 or the length of s2.
 > 
-> Works with my work-in-progress max77650 driver that uses the new
-> type_in_mask flag.
+> This patch avoids that the following warning is reported by smatch:
 > 
-> Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> drivers/staging/fbtft/fbtft_device.c:1458
+>  fbtft_device_init() error: strncmp() '"list"' too small (5 vs 32)
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/staging/fbtft/fbtft_device.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/fbtft/fbtft_device.c b/drivers/staging/fbtft/fbtft_device.c
+> index 50e97da..0e995028 100644
+> --- a/drivers/staging/fbtft/fbtft_device.c
+> +++ b/drivers/staging/fbtft/fbtft_device.c
+> @@ -1455,7 +1455,7 @@ static int __init fbtft_device_init(void)
+>  	}
+>  
+>  	/* name=list lists all supported displays */
+> -	if (strncmp(name, "list", FBTFT_GPIO_NAME_SIZE) == 0) {
+> +	if (strcmp(name, "list") == 0) {
+>  		pr_info("Supported displays:\n");
+>  
+>  		for (i = 0; i < ARRAY_SIZE(displays); i++)
+> 
 
-Thanks a bunch for testing Bartosz :) Highly appreciated!
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
