@@ -2,153 +2,101 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF29C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC11DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F46F217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:59:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foyG8pJ6"
+	by mail.kernel.org (Postfix) with ESMTP id 888AD217D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545235284;
+	bh=KjVtgsaDR3fItCOlduFomsRDNTRefk72OVT5ycanHVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=glexHOS+LVX6kBHVIDpcmDhVsTzuAlbmPBVW6QZ+fkUgKg1q1qRGwfki6G66GgpMz
+	 HnGfL/Q+80AwRr4at4+UYddMMEEUO8ZcVKfF7QzOUQJAwFUCWWBsnnY0fLDn61RqXe
+	 cciVutSain4h3qLbeNTYrBfvAPojpCrIEkLY3RE8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbeLSP7Y (ORCPT
+        id S1729000AbeLSQBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:59:24 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54693 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbeLSP7X (ORCPT
+        Wed, 19 Dec 2018 11:01:23 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42464 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbeLSQBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:59:23 -0500
-Received: by mail-it1-f193.google.com with SMTP id i145so10383130ita.4;
-        Wed, 19 Dec 2018 07:59:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L9Oe0ayTRjWuO0bO25VljJGJZxyDQt7qiLMrAfR62L4=;
-        b=foyG8pJ6eYATlT3t/v3/QqPCjazxd7lRYM7EST/C+ScjOFHPmDTcrKjfJP34XdxJ6I
-         E5WVVAH/uQkJfb2Ep7MPoNiacIeEP3M+H4vUTuJ0TO/sYAbl4sYHcHQbgJER6MeIGe0B
-         GEqpaGIgebbIuVTHxWf0nBfhJcjyZcbnk4yAYyEeW9XGZ6Yyb+1SQgvU2gY22rSCBsq2
-         EuntTFjDJdpmjoZFx0twq8pIlmTN//Y/oaiFotdrESQbZCC5Xl+td7/DPBCpu2+07lZs
-         wRcRLoQyeJMF448/PZuMFaAaJWy7Xd40SnU5rhhtneTGfwojfMKbfKrVwUhaKxzal5r4
-         +M0w==
+        Wed, 19 Dec 2018 11:01:23 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v23so19537359otk.9;
+        Wed, 19 Dec 2018 08:01:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L9Oe0ayTRjWuO0bO25VljJGJZxyDQt7qiLMrAfR62L4=;
-        b=ImrkS5kPDVUJpzczdDtdCbUv+Jy+WiBcAxfpC/QOtOEzbTOB9ixV+cKFG1DEeRN+R1
-         8xTuFI7Y3qIQF7PEurk/3661Mxakm0f6Jtx2ptCDJO62XD4qyTl1F6jvit3i+FdA2CDr
-         5mt9TpXi1p3X83DGngqBgMqM57xcn/spg8ekgVGQf4buyYl0u+tPU6wZ9ds+aztCCjYK
-         0vX3Hfq3it2BOL/G++1VAiudQVJOoV0hwG1v0Bn+XBEwCVHQL3VsKPtMC736Km/46BQF
-         ZbsKv4BTITQeY8O1rBQU5d8k5z4arETbO06tJV1GviADV06v4BdiSrHFUcv+NUbR5IOR
-         xvnQ==
-X-Gm-Message-State: AA+aEWavp/wG7+U6dIkNqvFQfwFKf+94Ueb0Qq8gjomSQS0p/AJNT/a1
-        ERcfvhkIgZYobi0CTOxKwp09l/MrwNwDrXVBOyfMoA==
-X-Google-Smtp-Source: AFSGD/Wh0Jx88BKBUeeQ3uKUrVxecIc1ivCAky97eA3neZYFKgoHgdRvR4QDLmu6jZ52Wd9YF+WHP9taanbyQdX0pvw=
-X-Received: by 2002:a24:2d0b:: with SMTP id x11mr7439167itx.85.1545235162579;
- Wed, 19 Dec 2018 07:59:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IPlkvNM9GsyzZD67er9Zgb7zoKIvhVOUgUKubFfAp0k=;
+        b=T0XNbv3wG8rxqaX5c/yiuHD7N5+D7kDiiJ448IEpKp4qQDwFZ/bBlbwmd0XZUQLKBT
+         ZcWUd/7EaotkGxEBRT/oU+j0ViQTQVYKv4cczBKi48tOurN1j+Yf2I2I7xgcOSW6kvv8
+         ui1s98I3YupS6Np+IzPE8r0pUNbouKrt2e7nzs62iaFy5dd7rlDbAbvAhfl78Yern9Yd
+         /tnzk28Y2lhbzfNJjyqiZPi030X346wTsJUI2M3tQzR5762YbAZR3uo46TaXwLcgQPxC
+         UC3lLVL8gGo9pZeuUmYnpu61E4Ma462hVmjpd+VqARVFM9IsLqIhTW6VJPOv4io2QhnA
+         478w==
+X-Gm-Message-State: AA+aEWZ7luDvlrXXV2LJceQgCXIauARQnETJ60ElydyIe7yXiQMJJ5zq
+        gxlGgrfSRGLdlZ9zjTQzAQ==
+X-Google-Smtp-Source: AFSGD/WIO+D0wloRt8yliL36bwmAdCFAVBOfDeBY2iMpsNzbqObhjTxN6MgXkgLnR7hAxhfD/J/6hA==
+X-Received: by 2002:a9d:c6a:: with SMTP id 97mr14856681otr.163.1545235282296;
+        Wed, 19 Dec 2018 08:01:22 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e81sm8769551oig.8.2018.12.19.08.01.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 08:01:21 -0800 (PST)
+Date:   Wed, 19 Dec 2018 10:01:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: media: sun6i: Add vcc-csi supply
+ property
+Message-ID: <20181219160120.GB22708@bogus>
+References: <20181203100747.16442-1-jagan@amarulasolutions.com>
+ <20181203100747.16442-3-jagan@amarulasolutions.com>
+ <CAGb2v66pG0kes1_xBNUj4z85fjunjP_Fe5_pPiRja=nDSOS01A@mail.gmail.com>
 MIME-Version: 1.0
-References: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org> <CALxhOngxbsYFSbK1Y0okuiTmjWEQ8Zcd4vQ0OezhXBgXH82DtA@mail.gmail.com>
-In-Reply-To: <CALxhOngxbsYFSbK1Y0okuiTmjWEQ8Zcd4vQ0OezhXBgXH82DtA@mail.gmail.com>
-From:   Matt Turner <mattst88@gmail.com>
-Date:   Wed, 19 Dec 2018 10:59:10 -0500
-Message-ID: <CAEdQ38FQNC0mnf6UWOeandwR2guLRGmbYaJAo8MrEKFn2U61Gw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] alpha: system call table generation support
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     linux-alpha <linux-alpha@vger.kernel.org>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGb2v66pG0kes1_xBNUj4z85fjunjP_Fe5_pPiRja=nDSOS01A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 10:18 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> Hi Folks,
->
-> On Tue, 13 Nov 2018 at 15:02, Firoz Khan <firoz.khan@linaro.org> wrote:
+On Mon, Dec 03, 2018 at 06:11:35PM +0800, Chen-Yu Tsai wrote:
+> On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
 > >
-> > The purpose of this patch series is, we can easily
-> > add/modify/delete system call table support by cha-
-> > nging entry in syscall.tbl file instead of manually
-> > changing many files. The other goal is to unify the
-> > system call table generation support implementation
-> > across all the architectures.
+> > Most of the Allwinner A64 CSI controllers are supply with
+> > VCC-PE pin. which need to supply for some of the boards to
+> > trigger the power.
 > >
-> > The system call tables are in different format in
-> > all architecture. It will be difficult to manually
-> > add, modify or delete the system calls in the resp-
-> > ective files manually. To make it easy by keeping a
-> > script and which'll generate uapi header file and
-> > syscall table file.
+> > So, document the supply property as vcc-csi so-that the required
+> > board can eable it via device tree.
 > >
-> > syscall.tbl contains the list of available system
-> > calls along with system call number and correspond-
-> > ing entry point. Add a new system call in this arch-
-> > itecture will be possible by adding new entry in the
-> > syscall.tbl file.
-> >
-> > Adding a new table entry consisting of:
-> >         - System call number.
-> >         - ABI.
-> >         - System call name.
-> >         - Entry point name.
-> >
-> > ARM, s390 and x86 architecuture does exist the sim-
-> > ilar support. I leverage their implementation to
-> > come up with a generic solution.
-> >
-> > I have done the same support for work for ia64, m68k,
-> > microblaze, mips, parisc, powerpc, sh, sparc and xtensa.
-> > Below mentioned git repository contains more details
-> > about the workflow.
-> >
-> > https://github.com/frzkhn/system_call_table_generator/
-> >
-> > Finally, this is the ground work to solve the Y2038
-> > issue. We need to add two dozen of system calls to
-> > solve Y2038 issue. So this patch series will help to
-> > add new system calls easily by adding new entry in
-> > the syscall.tbl.
-> >
-> > changes since v2:
-> >  - changed from generic-y to generated-y in Kbuild.
-> >  - made changes in syscall.tbl for removing entry -
-> >    alpha_ni_syscall.
-> >
-> > changes since v1:
-> >  - optimized/updated the syscall table generation
-> >    scripts.
-> >  - fixed all mixed indentation issues in syscall.tbl.
-> >  - added "comments" in syscall.tbl.
-> >  - enclosed __NR_sycalls macro with __KERNEL__.
-> >  - added missing new line.
-> >
-> > Firoz Khan (5):
-> >   alpha: move __IGNORE* entries to non uapi header
-> >   alpha: remove CONFIG_OSF4_COMPAT flag from syscall table
-> >   alpha: add __NR_syscalls along with NR_SYSCALLS
-> >   alpha: add system call table generation support
-> >   alpha: generate uapi header and syscall table header files
->
-> Could someone review this patch series and queue it for 4.21
-> through alpha tree would be great.
+> > Used vcc-csi instead of vcc-pe to have better naming convention
+> > wrt other controller pin supplies.
+> 
+> This is not related to the CSI controller. It belongs in the pin
+> controller, but that has its own set of problems like possible
+> circular dependencies.
 
-Thank you! I'll take a look.
+That might be a better choice, but I think most platforms put the supply 
+in the module node. But that wouldn't work well if the module is not 
+used and you want to use the pins for GPIO or some other function. Maybe 
+we don't hit that property because most I/O supplies are always on.
+
+Rob
