@@ -2,111 +2,79 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0798C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6898FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9289521852
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:50:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jrxo5pCo"
+	by mail.kernel.org (Postfix) with ESMTP id 3B34B21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:57:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbeLSBrE (ORCPT
+        id S1727905AbeLSBw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 20:47:04 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42473 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727766AbeLSBrD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 20:47:03 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d72so8670591pga.9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 17:47:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8kD6cyP/Yz34GPRRH9k/hxKKfUdquCjTD7Rsnl/hgoI=;
-        b=Jrxo5pCoIxYnnIhXMkapTJyEYhdcKSeTbnC2CWAwtJKfPlnxjsb8PIUX5FQEFglMZt
-         9ShNwEpdsGG7CtUTYTiCDyyfTn6E/iQmZMi43+xtOe3JaPOrRR7BitT7A9cToJQ0lWfF
-         yJUa5YbbA37jqB3aDCLztRutIh/OIbsiKiflDkune7qQLHDpqe4eLjy2qqqf6VOOPXs2
-         rZvwsKnnRACd+pesLHfg46FQtPyfK4t68aBd8vTPShAMGmC7AaY412ObQEVXhK7/wsN9
-         7JnJAJfiF+7cR3iUFoMBzx82Ns1k3VyC3Myp+WbVOnQbe+6UfhV06h0H0rK9pYwrbXtR
-         7Qqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8kD6cyP/Yz34GPRRH9k/hxKKfUdquCjTD7Rsnl/hgoI=;
-        b=eIF7nsaGrzTZhk4NlugYodLhClGqf3CredpmXxbyq43qouHgkX1HUadfY1KXWzk2jh
-         S+L0MdkjqiTLSATxaI+WrR336N2WUru2Qt3of6a2Mc3T1l/9U7SXuLFcW0JmrJRudGpJ
-         nK86m1iXNsb3YK/d46N7y/iuVjmRhznX345KvG2bZ+dz1AMzfw+q3Cr+DFG/+CdRcYi3
-         8Qxtg1vJwXpZgGDSr8WIrf5nCjcXEoQT6jx1UlO8mJIaP2wbifhnZGSi2HKG1Sertj7c
-         FrYcoMIsoX2/Nx65PJXvn1UZGdmt1uQOTqYDMjYnHRc4e4iAEeiJ7wa935KiV0gyPLua
-         vMvg==
-X-Gm-Message-State: AA+aEWZNpyqp1ArK8TLKkJJVtl7HA9ejsiZJ3YzFYHJoCNgop1Hn1BuR
-        9hOMkEZd66cpYE/1FcWZJak=
-X-Google-Smtp-Source: AFSGD/WzVIO49eenKbZCKABTe36huh+9kZhWamzDGHpp3n0B7Kgyz63D0geYPUJ2yo9imXRbS2AxMw==
-X-Received: by 2002:a63:ae01:: with SMTP id q1mr17318544pgf.402.1545184022203;
-        Tue, 18 Dec 2018 17:47:02 -0800 (PST)
-Received: from localhost ([175.223.26.207])
-        by smtp.gmail.com with ESMTPSA id t13sm24257014pgr.42.2018.12.18.17.47.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 17:47:00 -0800 (PST)
-Date:   Wed, 19 Dec 2018 10:46:57 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
-Message-ID: <20181219014657.GA3720@jagdpanzerIV>
-References: <20181218111701.GA32522@jagdpanzerIV>
- <20181218114709.GF7485@zn.tnic>
- <20181218130750.GA665@tigerII.localdomain>
- <20181218142623.GH7485@zn.tnic>
- <20181218145558.GD665@tigerII.localdomain>
- <20181218150313.GI7485@zn.tnic>
- <20181218151455.GE665@tigerII.localdomain>
- <20181218152413.GJ7485@zn.tnic>
- <20181218165217.GA534@tigerII.localdomain>
- <20181218174723.GK7485@zn.tnic>
+        Tue, 18 Dec 2018 20:52:28 -0500
+Received: from mga12.intel.com ([192.55.52.136]:18152 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727718AbeLSBw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 20:52:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 17:52:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,370,1539673200"; 
+   d="scan'208";a="99798708"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.10])
+  by orsmga007.jf.intel.com with ESMTP; 18 Dec 2018 17:52:24 -0800
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>
+Subject: Re: [PATCH -V9 10/21] swap: Swapin a THP in one piece
+References: <20181214062754.13723-1-ying.huang@intel.com>
+        <20181214062754.13723-11-ying.huang@intel.com>
+        <20181218205638.zsoumw2ob6fxl6ub@ca-dmjordan1.us.oracle.com>
+Date:   Wed, 19 Dec 2018 09:52:24 +0800
+In-Reply-To: <20181218205638.zsoumw2ob6fxl6ub@ca-dmjordan1.us.oracle.com>
+        (Daniel Jordan's message of "Tue, 18 Dec 2018 12:56:38 -0800")
+Message-ID: <87ftuuqo4n.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218174723.GK7485@zn.tnic>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/18/18 18:47), Borislav Petkov wrote:
-> So how much is not strict?
+Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+
+> On Fri, Dec 14, 2018 at 02:27:43PM +0800, Huang Ying wrote:
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 1cec1eec340e..644cb5d6b056 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -33,6 +33,8 @@
+>>  #include <linux/page_idle.h>
+>>  #include <linux/shmem_fs.h>
+>>  #include <linux/oom.h>
+>> +#include <linux/delayacct.h>
+>> +#include <linux/swap.h>
 >
-> And what happens if you raise that ratelimiting level and the *one* line
-> which is most important for debugging an issue
+> swap.h is already #included in this file.
 
-Like you said, for debugging devkmsg=off works just fine. I don't mind
-the ratelimiting and want to keep it; I just don't want errors to be
-ratelimited.
+Will fix this, Thanks!
 
-> All I'm saying is, gradually raising the limit is the wrong approach
-> - there will always be a case where something important doesn't get
-> logged.
-
-Well, OK.
-
-> What we need is a different solution, maybe what Rostedt proposes or
-> so...
-
-Sure, a different approach and idea are welcome. This is RFC thread.
-
-	-ss
+Best Regards,
+Huang, Ying
