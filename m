@@ -2,60 +2,188 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FA9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4D8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD962184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:04:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79621217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeLSGD7 (ORCPT
+        id S1727887AbeLSGEw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 01:03:59 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:49676 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbeLSGDz (ORCPT
+        Wed, 19 Dec 2018 01:04:52 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54696 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725287AbeLSGEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 01:03:55 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 67935146F2BCA;
-        Tue, 18 Dec 2018 22:03:55 -0800 (PST)
-Date:   Tue, 18 Dec 2018 22:03:54 -0800 (PST)
-Message-Id: <20181218.220354.1029594559259847304.davem@davemloft.net>
-To:     mhjungk@gmail.com
-Cc:     ubraun@linux.ibm.com, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] net/smc: fix TCP fallback socket release
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181218170221.GA21835@myunghoj-Precision-5530>
-References: <20181218170221.GA21835@myunghoj-Precision-5530>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 19 Dec 2018 01:04:51 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBJ63ZI0109383
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:04:50 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pfg10gx68-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:04:50 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <maddy@linux.vnet.ibm.com>;
+        Wed, 19 Dec 2018 06:04:48 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Dec 2018 06:04:46 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBJ64jU761407286
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Dec 2018 06:04:45 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2FE50A405B;
+        Wed, 19 Dec 2018 06:04:45 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69200A4057;
+        Wed, 19 Dec 2018 06:04:44 +0000 (GMT)
+Received: from [9.126.27.138] (unknown [9.126.27.138])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Dec 2018 06:04:44 +0000 (GMT)
+Subject: Re: [PATCH v2 1/5] powerpc/include: Add data structures and macros
+ for IMC trace mode
+To:     Anju T Sudhakar <anju@linux.vnet.ibm.com>, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org
+Cc:     linuxppc-dev@lists.ozlabs.org
+References: <20181214091122.20992-1-anju@linux.vnet.ibm.com>
+ <20181214091122.20992-2-anju@linux.vnet.ibm.com>
+From:   Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Date:   Wed, 19 Dec 2018 11:34:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181214091122.20992-2-anju@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 18 Dec 2018 22:03:55 -0800 (PST)
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18121906-0016-0000-0000-0000023882AB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121906-0017-0000-0000-00003290D69E
+Message-Id: <1dc10184-c351-2114-5814-aac5bf2ee5c9@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812190052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Myungho Jung <mhjungk@gmail.com>
-Date: Tue, 18 Dec 2018 09:02:25 -0800
 
-> clcsock can be released while kernel_accept() references it in TCP
-> listen worker. Also, clcsock needs to wake up before released if TCP
-> fallback is used and the clcsock is blocked by accept. Add a lock to
-> safely release clcsock and call kernel_sock_shutdown() to wake up
-> clcsock from accept in smc_release().
-> 
-> Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
-> Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
-> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+On 14/12/18 2:41 PM, Anju T Sudhakar wrote:
+> Add the macros needed for IMC (In-Memory Collection Counters) trace-mode
+> and data structure to hold the trace-imc record data.
+> Also, add the new type "OPAL_IMC_COUNTERS_TRACE" in 'opal-api.h', since
+> there is a new switch case added in the opal-calls for IMC.
 
-Applied, thanks.
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+
+> Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+> ---
+>   arch/powerpc/include/asm/imc-pmu.h  | 39 +++++++++++++++++++++++++++++
+>   arch/powerpc/include/asm/opal-api.h |  1 +
+>   2 files changed, 40 insertions(+)
+>
+> diff --git a/arch/powerpc/include/asm/imc-pmu.h b/arch/powerpc/include/asm/imc-pmu.h
+> index 69f516ecb2fd..7c2ef0e42661 100644
+> --- a/arch/powerpc/include/asm/imc-pmu.h
+> +++ b/arch/powerpc/include/asm/imc-pmu.h
+> @@ -33,6 +33,7 @@
+>    */
+>   #define THREAD_IMC_LDBAR_MASK           0x0003ffffffffe000ULL
+>   #define THREAD_IMC_ENABLE               0x8000000000000000ULL
+> +#define TRACE_IMC_ENABLE		0x4000000000000000ULL
+>
+>   /*
+>    * For debugfs interface for imc-mode and imc-command
+> @@ -59,6 +60,34 @@ struct imc_events {
+>   	char *scale;
+>   };
+>
+> +/*
+> + * Trace IMC hardware updates a 64bytes record on
+> + * Core Performance Monitoring Counter (CPMC)
+> + * overflow. Here is the layout for the trace imc record
+> + *
+> + * DW 0 : Timebase
+> + * DW 1 : Program Counter
+> + * DW 2 : PIDR information
+> + * DW 3 : CPMC1
+> + * DW 4 : CPMC2
+> + * DW 5 : CPMC3
+> + * Dw 6 : CPMC4
+> + * DW 7 : Timebase
+> + * .....
+> + *
+> + * The following is the data structure to hold trace imc data.
+> + */
+> +struct trace_imc_data {
+> +	u64 tb1;
+> +	u64 ip;
+> +	u64 val;
+> +	u64 cpmc1;
+> +	u64 cpmc2;
+> +	u64 cpmc3;
+> +	u64 cpmc4;
+> +	u64 tb2;
+> +};
+> +
+>   /* Event attribute array index */
+>   #define IMC_FORMAT_ATTR		0
+>   #define IMC_EVENT_ATTR		1
+> @@ -68,6 +97,13 @@ struct imc_events {
+>   /* PMU Format attribute macros */
+>   #define IMC_EVENT_OFFSET_MASK	0xffffffffULL
+>
+> +/*
+> + * Macro to mask bits 0:21 of first double word(which is the timebase) to
+> + * compare with 8th double word (timebase) of trace imc record data.
+> + */
+> +#define IMC_TRACE_RECORD_TB1_MASK      0x3ffffffffffULL
+> +
+> +
+>   /*
+>    * Device tree parser code detects IMC pmu support and
+>    * registers new IMC pmus. This structure will hold the
+> @@ -113,6 +149,7 @@ struct imc_pmu_ref {
+>
+>   enum {
+>   	IMC_TYPE_THREAD		= 0x1,
+> +	IMC_TYPE_TRACE		= 0x2,
+>   	IMC_TYPE_CORE		= 0x4,
+>   	IMC_TYPE_CHIP           = 0x10,
+>   };
+> @@ -123,6 +160,8 @@ enum {
+>   #define IMC_DOMAIN_NEST		1
+>   #define IMC_DOMAIN_CORE		2
+>   #define IMC_DOMAIN_THREAD	3
+> +/* For trace-imc the domain is still thread but it operates in trace-mode */
+> +#define IMC_DOMAIN_TRACE	4
+>
+>   extern int init_imc_pmu(struct device_node *parent,
+>   				struct imc_pmu *pmu_ptr, int pmu_id);
+> diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
+> index 870fb7b239ea..a4130b21b159 100644
+> --- a/arch/powerpc/include/asm/opal-api.h
+> +++ b/arch/powerpc/include/asm/opal-api.h
+> @@ -1118,6 +1118,7 @@ enum {
+>   enum {
+>   	OPAL_IMC_COUNTERS_NEST = 1,
+>   	OPAL_IMC_COUNTERS_CORE = 2,
+> +	OPAL_IMC_COUNTERS_TRACE = 3,
+>   };
+>
+>
+
