@@ -3,72 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C49FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49F3C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A731218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A750D218AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730157AbeLSRVc (ORCPT
+        id S1730407AbeLSRWx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 12:21:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55494 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728199AbeLSRVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 12:21:31 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9BF2781DED;
-        Wed, 19 Dec 2018 17:21:31 +0000 (UTC)
-Received: from treble (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2DD79101E5A5;
-        Wed, 19 Dec 2018 17:21:30 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 11:21:27 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Miroslav Benes <mbenes@suse.cz>, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, jeyu@kernel.org, pmladek@suse.com,
-        linux-kbuild@vger.kernel.org, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: use -flive-patching when CONFIG_LIVEPATCH is
- enabled
-Message-ID: <20181219172127.o753af7pkrsttcgl@treble>
-References: <20181219141744.32392-1-mbenes@suse.cz>
- <20181219165428.5udrppedpdvf2u7k@treble>
- <nycvar.YFH.7.76.1812191756450.17216@cbobk.fhfr.pm>
+        Wed, 19 Dec 2018 12:22:53 -0500
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:49157 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbeLSRWx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 12:22:53 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5034428011B88;
+        Wed, 19 Dec 2018 18:22:51 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 0C4A01D378B; Wed, 19 Dec 2018 18:22:51 +0100 (CET)
+Date:   Wed, 19 Dec 2018 18:22:50 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
+ adapters
+Message-ID: <20181219172250.ytronxeq2yc4vp4r@wunner.de>
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+ <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1812191756450.17216@cbobk.fhfr.pm>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 19 Dec 2018 17:21:31 +0000 (UTC)
+In-Reply-To: <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 05:58:53PM +0100, Jiri Kosina wrote:
-> On Wed, 19 Dec 2018, Josh Poimboeuf wrote:
-> 
-> > This option only makes sense for source-based patch generation, so isn't 
-> > it a bit premature to make this change without proper source-based patch 
-> > tooling?
-> 
-> The reality is though that before the full-fledged patch tooling exists, 
-> people are actually already writing livepatches by hand, so this option is 
-> useful for them.
+On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
+> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
+> +{
+> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
+> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+> +}
 
-Fair enough.
+This looks like a duplication of the is_suspended flag in struct dev_pm_info.
+Any reason why you can't use that?  If so, it would be good to document the
+reason in the commit message.
 
-Though, upstream, almost everybody seems to use kpatch-build, for which
-this patch doesn't help.  And people will continue to do so until we
-have decent source-based tooling.  Will the klp-convert patches be
-revived soon?
+If the point is to constrain refusal of transfers in suspended state to
+certain drivers, those drivers could opt in to that functionality by
+setting a flag, and the i2c core could then gate refusal based on
+that flag and the is_suspended flag in struct dev_pm_info.
 
--- 
-Josh
+Also, why is it necessary to take a lock to perform an atomic bitop?
+(Sorry if that's a dumb question, seems non-obvious to me.)
+
+Thanks,
+
+Lukas
