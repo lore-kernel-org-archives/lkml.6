@@ -2,105 +2,118 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6160C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6C3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B2721850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:57:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfxQ8gM3"
+	by mail.kernel.org (Postfix) with ESMTP id 842DC21850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbeLSK5S (ORCPT
+        id S1729173AbeLSK5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 05:57:18 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46848 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeLSK5R (ORCPT
+        Wed, 19 Dec 2018 05:57:30 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:8380 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728297AbeLSK53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 05:57:17 -0500
-Received: by mail-io1-f67.google.com with SMTP id v10so15229151ios.13;
-        Wed, 19 Dec 2018 02:57:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=D8TIX6K1DvNn0TdyfgJH7m8Y9BK1ASgLkKSh7XWUBFw=;
-        b=dfxQ8gM3B0HVbbYNCGC/v5JY6X7Qi+x8DXNEj79UfE/1AUped+inD9en+pEOBXw036
-         8whdCnB8l/12Inx1KAhR70eXZ94K/m9NEhzY+IjSOgNF+JcGuJsudpISkkXcakOT1YA6
-         3t3wPCl4QQ/VfcpMZjyn/I3epnyEmB8VZWNKBH1M2HyaEN0170C//l8UvQmNnOk20v6P
-         pDQqV8F3OY+Y1ACMgrjGeJFGyIUjG33DPzSFRwez7JEOVQV7G1h80yFckOyOJVx0JWgR
-         WTx1nj083LAM2+ffapmaexEhQaJ/1e8fCIHoN6rm2qlJcruaCo1K9cbz80G1csSun3gO
-         vXVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=D8TIX6K1DvNn0TdyfgJH7m8Y9BK1ASgLkKSh7XWUBFw=;
-        b=HZ3HqKA2Ej1Ie4aAPGaydzNK/nHxacPfdqZf9G4KKHz+RBHlRcJFZJGOe8jScOBU9F
-         FL0/BfSf1d2ydyrlgs+eUiBTWk3JTKNOt8dKFv7OW1CY+O708JWKV5kcmkTKH6fEq+Cr
-         WGvQyENTbBOwiI+yVOr88L8VmJMXTY670UeATLh4dxIwECX874Z3dLoge+bp6nbbC1Kr
-         M+BsV8xOwDfpkJfTpIAaH2s8tVe8PyDznLb7lkKeJ8sgSkyxv3kqmIOaVdMk0vsRwx/+
-         OVJyPC6OiVtz1UTfP8g1S/KD7DeHUitpzOLddo7XvB1VlAyZbGChwwSvse2+6jVPCeUu
-         Af7A==
-X-Gm-Message-State: AA+aEWbEmRIblGPc6Cs+dqGQE/4UDqcfZ39viVgRaTAODWpNMlSAHPIK
-        i2zTz4ROimrBvJiiXtPfcpqseJo4apobEfAIJjw=
-X-Google-Smtp-Source: AFSGD/UaEcef4DcAdkNTGgAtrAikFS/ZzDOJEwrwQF02xpa28BB1fwUOyd4dRMSDQqh1smcM6k9hMcEMJLN34cOQ3R4=
-X-Received: by 2002:a6b:600b:: with SMTP id r11mr18717533iog.259.1545217036666;
- Wed, 19 Dec 2018 02:57:16 -0800 (PST)
+        Wed, 19 Dec 2018 05:57:29 -0500
+Received: from [10.18.29.147] (10.18.29.147) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 19 Dec
+ 2018 18:57:48 +0800
+Subject: Re: [PATCH v8 1/2] dt-bindings: PCI: meson: add DT bindings for
+ Amlogic Meson PCIe controller
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh@kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <devicetree@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <1545120286-129258-1-git-send-email-hanjie.lin@amlogic.com>
+ <1545120286-129258-2-git-send-email-hanjie.lin@amlogic.com>
+ <CAFBinCD1x7jcJJx78yNx87MOmKQ2HuSBeRpDRQE0hyNCwm1JAg@mail.gmail.com>
+From:   Hanjie Lin <hanjie.lin@amlogic.com>
+Message-ID: <e3cce5d7-354c-4042-bf76-c22f3893d72c@amlogic.com>
+Date:   Wed, 19 Dec 2018 18:57:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20181205004228.10714-1-peter.hutterer@who-t.net>
- <20181205004228.10714-8-peter.hutterer@who-t.net> <CAM4jgCqAh9Pck-9i8F5tO4-Kzpu+SjH-mQnGYThadSf-3b1ikw@mail.gmail.com>
- <CA+jURcuhBRYiqFYHDgK8dDycrPgvzkujTRZfnmYraiHvwE+e6w@mail.gmail.com> <CAM4jgCo483upCJWUnpP45zh2LzQWqAZmQREf2622p49a1vbnnA@mail.gmail.com>
-In-Reply-To: <CAM4jgCo483upCJWUnpP45zh2LzQWqAZmQREf2622p49a1vbnnA@mail.gmail.com>
-From:   =?UTF-8?Q?Cl=C3=A9ment_VUCHENER?= <clement.vuchener@gmail.com>
-Date:   Wed, 19 Dec 2018 11:57:05 +0100
-Message-ID: <CAM4jgCqj5gs-q7VKLm90p0a01k_tYAqxA=zxsmShxv4PSGBJ4A@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] HID: logitech: Enable high-resolution scrolling on
- Logitech mice
-To:     Harry Cutts <hcutts@chromium.org>
-Cc:     Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-input <linux-input@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>, torvalds@linux-foundation.org,
-        Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFBinCD1x7jcJJx78yNx87MOmKQ2HuSBeRpDRQE0hyNCwm1JAg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.147]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le sam. 15 d=C3=A9c. 2018 =C3=A0 15:45, Cl=C3=A9ment VUCHENER
-<clement.vuchener@gmail.com> a =C3=A9crit :
->
-> Le ven. 14 d=C3=A9c. 2018 =C3=A0 19:37, Harry Cutts <hcutts@chromium.org>=
- a =C3=A9crit :
-> >
-> > Hi Clement,
-> >
-> > On Fri, 14 Dec 2018 at 05:47, Cl=C3=A9ment VUCHENER
-> > <clement.vuchener@gmail.com> wrote:
-> > > Hi, The G500s (and the G500 too, I think) does support the "scrolling
-> > > acceleration" bit. If I set it, I get around 8 events for each wheel
-> > > "click", this is what this driver expects, right? If I understood
-> > > correctly, I should try this patch with the
-> > > HIDPP_QUIRK_HI_RES_SCROLL_1P0 quirk set for my mouse.
-> >
-> > Thanks for the info! Yes, that should work.
->
-> Well, it is not that simple. I get "Device not connected" errors for
-> both interfaces of the mouse.
 
-I suspect the device is not responding because the hid device is not
-started. When is hid_hw_start supposed to be called? It is called
-early for HID_QUIRK_CLASS_G920 but later for other device. So the
-device is not started when hidpp_is_connected is called. Is this
-because most of the device in this driver are not real HID devices but
-DJ devices? How should non-DJ devices be treated?
+
+On 2018/12/19 7:14, Martin Blumenstingl wrote:
+> Hi Rob, Hi Hanjie,
+> 
+> (sorry for being late with my question)
+> 
+> On Tue, Dec 18, 2018 at 9:05 AM Hanjie Lin <hanjie.lin@amlogic.com> wrote:
+> [...]
+>> +- reg-names: Must be
+>> +       - "elbi"        External local bus interface registers
+>> +       - "cfg"         Meson specific registers
+>> +       - "phy"         Meson PCIE PHY registers
+> I have learned that there are two PHY register designs:
+> - AXG only has a PCIe PHY
+> - G12A has a PHY which supports PCIe and USB 3.0. The PCIe part of
+> this PHY design is compatible with AXG, but this design also supports
+> a USB 3.0 port (it's an exclusive choice: either PCIe *or* USB 3.0)
+> 
+> The PCIe controller itself is identical on both, AXG and G12A.
+> This patch adds support for the AXG PCIe controller and PHY within one
+> device-tree node.
+> 
+> For G12A I propose to add a separate "phys" property with a phandle to
+> the "combo" PCIe and USB3.0 PHY - this can be part of a separate patch
+> though.
+> I would like to know whether it's OK that for AXG the PCIe PHY is
+> described in the same device-tree node as the PCIe controller (in
+> other words: we're not using a "phys" property here)?
+> 
+> 
+> Kind Regards
+> Martin
+> 
+> .
+> 
+
+hi matrin,
+
+We do had a dedicated PHY driver for a time at the begining
+of this patch series, but we decided to remove it and integrate
+into the controller driver after series reviews and disscussions,
+and the main reason is it's too overkill to have a dedicated 
+PHY driver which only do the RESET job.
+
+Of course we can consider the dedicated PHY driver for G12A upstream
+in future.
+
+thanks
+hanjie
+
