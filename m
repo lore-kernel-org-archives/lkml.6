@@ -2,244 +2,148 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3A7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3468DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D2A21873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03CC6217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:02:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVDwNNN4"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="OPxIyrUn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbeLSGCN (ORCPT
+        id S1727927AbeLSGCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 01:02:13 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40112 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbeLSGCM (ORCPT
+        Wed, 19 Dec 2018 01:02:43 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40106 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725290AbeLSGCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 01:02:12 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so8974148plq.7;
-        Tue, 18 Dec 2018 22:02:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jsdsM+RlRyjEYiOfR3l9qfrS9JfRbsBc4uOym3o91cU=;
-        b=FVDwNNN4/QEW0JxopFOPAytCm7K0c+FbApWoylTZAy6V/YU+SwJ7LYw3AkdXHZ8Itp
-         zEpdHAjegbfja/7hHlB4W7q+Lf2w6QArmUp1gEU09dMnI/8NbDNq8gUtSlQmerFU9uWm
-         lNJjFXudlbdzpFjlcWYhE/pL+O/wbm4JWyai+pSguneOq4iV5ZNZIdPwrY+74cGpuLmY
-         +n5m4d+BnHMzEefGgJhcmjmbqwPvdy1AC4GL9bJIn2nrc3D9P6xiUdIRKYLCIfNK8AQc
-         FovsZjaAxZ6Y59MOfYPm6ALbNJ6RPov6fvqY8r+LDEST1Xg+ac2Ki7/AuJTlGeLpRWCF
-         +2fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jsdsM+RlRyjEYiOfR3l9qfrS9JfRbsBc4uOym3o91cU=;
-        b=qpUoHvYTTcKCcCdXSDf2xcoGKIS1k90UW9Wle+EgHuw5e4nkU66fJNsFg6kBw7XRat
-         y0l0szot1xInr5IaBtVLJQBxTUDYJpy5C0m/PFM0gOoYUKM/HD570I/ATAyYMcichy0d
-         jSDyw8OZHz/2lnXy4hu0EzudiMiX/EJrpoOnywG8ySMRaaK75qWmku02+rFcGXW62tCR
-         YOjogMSMTatHzRr+/ZyqOHE4b6eYI2XMMLm3v8UVOyhZZUYKsHcFccupVI93H/Of9EhF
-         t6PSDeeeKGtY6N++MCfjtdur0izxhX9mFjUKu201bWrtuRFms5doLBjhmEGtVGFFKyXM
-         wJ3A==
-X-Gm-Message-State: AA+aEWZpprNzjsRSyzcJtWF0yM4088rsBC6MAty5lBVJv4aeDt8Zwaaa
-        c6JDfVFuApdHQFwWBwUDodI=
-X-Google-Smtp-Source: AFSGD/VVrN2SKlSw43k8ZzTjfFOFnm011I9x2XD7QFckTwebxE7SOjDaP/lPJtiUnAxZ5tUTVaxP4A==
-X-Received: by 2002:a17:902:e20b:: with SMTP id ce11mr18410953plb.251.1545199331909;
-        Tue, 18 Dec 2018 22:02:11 -0800 (PST)
-Received: from localhost.localdomain ([2001:268:c0a2:eb51:6018:45d4:55a2:e94b])
-        by smtp.gmail.com with ESMTPSA id y71sm35607348pfi.123.2018.12.18.22.02.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 22:02:11 -0800 (PST)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     linus.walleij@linaro.org
-Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v6 8/8] gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
-Date:   Wed, 19 Dec 2018 15:02:41 +0900
-Message-Id: <e3209836fdc9a2d7a4aad55dc5e102e7c131ac9d.1545198260.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1545198260.git.vilhelm.gray@gmail.com>
-References: <cover.1545198260.git.vilhelm.gray@gmail.com>
+        Wed, 19 Dec 2018 01:02:43 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJ5xkbB026295
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 22:02:42 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=UqRjb3iTmttK3xRw8mRK7IaETdFGfPvI5boaA1+N7bw=;
+ b=OPxIyrUnZMWyHYkrNUN5DM9pLRMt+HNNgUuNVA0gb34UBqE9POwHsxl27GML+lY/gmIF
+ c0yiePjP63EDqnyyYmerChfxPM+WyQSU7dmcZ1K+n3tAKEX4PoB1YJdzweaUn4R+8A3b
+ 57g6KZW0/ABe1XKW/3z4mlhCf1jkpKa1lMo= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pfe678961-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 22:02:42 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Tue, 18 Dec 2018 22:02:40 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 37EB062E1FCB; Tue, 18 Dec 2018 22:02:37 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v4 perf, bpf-next 0/7] reveal invisible bpf programs
+Date:   Tue, 18 Dec 2018 22:02:19 -0800
+Message-ID: <20181219060227.1057679-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_03:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace verbose implementation in get_multiple/set_multiple callbacks
-with for_each_set_clump8 macro to simplify code and improve clarity.
+This set catches symbol for all bpf programs loaded/unloaded
+before/during/after perf-record run PERF_RECORD_KSYMBOL and
+PERF_RECORD_BPF_EVENT.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-pcie-idio-24.c | 109 ++++++++++++-------------------
- 1 file changed, 40 insertions(+), 69 deletions(-)
+PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT includes key information
+of a bpf program load and unload. They are sent through perf ringbuffer,
+and stored in perf.data. PERF_RECORD_KSYMBOL includes basic information
+for simple profiling. It is ON by default. PERF_RECORD_BPF_EVENT is
+used to gather more information of the bpf program. It is necessary for
+perf-annotate of bpf programs.
 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index 52f1647a46fd..b1686b052633 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -198,52 +198,34 @@ static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
--	size_t i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
--	unsigned long port_state;
-+	unsigned int offset;
-+	unsigned long gpio_mask;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23, &idio24gpio->reg->in0_7,
- 		&idio24gpio->reg->in8_15, &idio24gpio->reg->in16_23,
- 	};
-+	size_t index;
-+	unsigned long port_state;
- 	const unsigned long out_mode_mask = BIT(1);
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports) + 1; i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
- 
- 		/* read bits from current gpio port (port 6 is TTL GPIO) */
--		if (i < 6)
--			port_state = ioread8(ports[i]);
-+		if (index < 6)
-+			port_state = ioread8(ports[index]);
- 		else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask)
- 			port_state = ioread8(&idio24gpio->reg->ttl_out0_7);
- 		else
- 			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
- 
--		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= (port_state << word_offset) & word_mask;
-+		port_state &= gpio_mask;
-+
-+		bitmap_set_value8(bits, &port_state, offset);
- 	}
- 
- 	return 0;
-@@ -294,59 +276,48 @@ static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
--	size_t i;
--	unsigned long bits_offset;
-+	unsigned int offset;
- 	unsigned long gpio_mask;
--	const unsigned int gpio_reg_size = 8;
--	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
--	unsigned long flags;
--	unsigned int out_state;
- 	void __iomem *ports[] = {
- 		&idio24gpio->reg->out0_7, &idio24gpio->reg->out8_15,
- 		&idio24gpio->reg->out16_23
- 	};
-+	size_t index;
-+	unsigned int bitmask;
-+	unsigned long flags;
-+	unsigned int out_state;
- 	const unsigned long out_mode_mask = BIT(1);
--	const unsigned int ttl_offset = 48;
--	const size_t ttl_i = BIT_WORD(ttl_offset);
--	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
--	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
--	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
--
--	/* set bits are processed a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* check if any set bits for current port */
--		gpio_mask = (*mask >> bits_offset) & port_mask;
--		if (!gpio_mask) {
--			/* no set bits for this port so move on to next port */
--			continue;
--		}
- 
--		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
- 
--		/* process output lines */
--		out_state = ioread8(ports[i]) & ~gpio_mask;
--		out_state |= (*bits >> bits_offset) & gpio_mask;
--		iowrite8(out_state, ports[i]);
-+		bitmask = bitmap_get_value8(bits, offset) & gpio_mask;
- 
--		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
--	}
-+		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
- 
--	/* check if setting TTL lines and if they are in output mode */
--	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
--		return;
-+		/* read bits from current gpio port (port 6 is TTL GPIO) */
-+		if (index < 6) {
-+			out_state = ioread8(ports[index]);
-+		} else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask) {
-+			out_state = ioread8(&idio24gpio->reg->ttl_out0_7);
-+		} else {
-+			/* skip TTL GPIO if set for input */
-+			raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+			continue;
-+		}
- 
--	/* handle TTL output */
--	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
-+		/* set requested bit states */
-+		out_state &= ~gpio_mask;
-+		out_state |= bitmask;
- 
--	/* process output lines */
--	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
--	out_state |= ttl_bits;
--	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
-+		/* write bits for current gpio port (port 6 is TTL GPIO) */
-+		if (index < 6)
-+			iowrite8(out_state, ports[index]);
-+		else
-+			iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
- 
--	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
-+	}
- }
- 
- static void idio_24_irq_ack(struct irq_data *data)
--- 
-2.20.1
+Before this patch, perf-report will not be able to recover symbols of
+bpf programs once the programs are unloaded.
 
+This is to follow up Alexei's early effort [2] to show bpf programs via
+mmap events.
+
+Thanks,
+Song
+
+
+Changes v3 -> PATCH v4:
+1. Split information about bpf program  into PERF_RECORD_KSYMBOL (with
+   name, addr, len); and PERF_RECORD_BPF_EVENT PERF_RECORD_BPF_EVENT
+   (with id, tag);
+2. Split the implementation in kernel and user space.
+
+Changes v2 -> PATCH v3:
+1. Rebase on bpf-next tree, and on top of BPF sub program tag patches [1]
+   for latest information in bpf_prog_info.
+2. Complete handling and synthesizing PERF_RECORD_BPF_EVENT in perf.
+
+Changes v1 -> PATCH v2:
+1. Only 3 of the 5 patches in v1, to focus on ABI first;
+2. Generate PERF_RECORD_BPF_EVENT per bpf sub program instead of per prog;
+3. Modify PERF_RECORD_BPF_EVENT with more details (addr, len, name),
+   so that it can be used for basic profiling without calling sys_bpf.
+
+Changes RFC -> PATCH v1:
+1. In perf-record, poll vip events in a separate thread;
+2. Add tag to bpf prog name;
+3. Small refactorings.
+
+[1] https://patchwork.ozlabs.org/project/netdev/list/?series=81037
+[2] https://www.spinics.net/lists/netdev/msg524232.html
+
+Song Liu (7):
+  perf, bpf: Introduce PERF_RECORD_KSYMBOL
+  sync tools/include/uapi/linux/perf_event.h
+  perf, bpf: introduce PERF_RECORD_BPF_EVENT
+  sync tools/include/uapi/linux/perf_event.h
+  perf util: handle PERF_RECORD_KSYMBOL
+  perf util: handle PERF_RECORD_BPF_EVENT
+  perf tools: synthesize PERF_RECORD_* for loaded BPF programs
+
+ include/linux/filter.h                |   7 +
+ include/linux/perf_event.h            |   9 ++
+ include/uapi/linux/perf_event.h       |  50 +++++-
+ kernel/bpf/core.c                     |   2 +-
+ kernel/bpf/syscall.c                  |   2 +
+ kernel/events/core.c                  | 218 ++++++++++++++++++++++++-
+ tools/include/uapi/linux/perf_event.h |  50 +++++-
+ tools/perf/builtin-record.c           |   7 +
+ tools/perf/perf.h                     |   1 +
+ tools/perf/util/Build                 |   2 +
+ tools/perf/util/bpf-event.c           | 219 ++++++++++++++++++++++++++
+ tools/perf/util/bpf-event.h           |  16 ++
+ tools/perf/util/event.c               |  40 +++++
+ tools/perf/util/event.h               |  34 ++++
+ tools/perf/util/evsel.c               |  19 +++
+ tools/perf/util/evsel.h               |   2 +
+ tools/perf/util/machine.c             |  60 +++++++
+ tools/perf/util/machine.h             |   5 +-
+ tools/perf/util/session.c             |   8 +
+ tools/perf/util/tool.h                |   5 +-
+ 20 files changed, 750 insertions(+), 6 deletions(-)
+ create mode 100644 tools/perf/util/bpf-event.c
+ create mode 100644 tools/perf/util/bpf-event.h
+
+--
+2.17.1
