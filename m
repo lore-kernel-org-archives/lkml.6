@@ -2,185 +2,85 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E16C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BC4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735482084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:36:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63CEA218C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:36:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbeLSPgl (ORCPT
+        id S1729900AbeLSPgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:36:41 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.102]:45333 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727844AbeLSPgk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:36:40 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 4E748144D5F
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:36:39 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZdtngqqGEdnCeZdtng0iEv; Wed, 19 Dec 2018 09:36:39 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=35296 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZdtm-000eqn-Tk; Wed, 19 Dec 2018 09:36:39 -0600
-Subject: Re: [PATCH 05/41] scsi: aic7xxx: aic79xx: mark expected switch
- fall-through
-To:     Hannes Reinecke <hare@suse.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <ff0ea78271abe136badebfbeba1d4373fb836bce.1543374820.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <1d73dbbd-7e8e-e5ba-6a0f-97fdd799d4c4@embeddedor.com>
-Date:   Wed, 19 Dec 2018 09:36:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Dec 2018 10:36:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728068AbeLSPgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:36:51 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 713B52084A;
+        Wed, 19 Dec 2018 15:36:49 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 10:36:47 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>, tglx@linutronix.de,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 3/7] tracing: Use var_refs[] for hist trigger reference
+ checking
+Message-ID: <20181219103647.18c61a6a@gandalf.local.home>
+In-Reply-To: <1545231703.4491.2.camel@kernel.org>
+References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
+        <becb9627fb09681960f26809961b832be9591048.1545161087.git.tom.zanussi@linux.intel.com>
+        <20181219212224.968ee0ad61aada5a8a3f634f@kernel.org>
+        <1545231703.4491.2.camel@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <ff0ea78271abe136badebfbeba1d4373fb836bce.1543374820.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZdtm-000eqn-Tk
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35296
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 19 Dec 2018 09:01:43 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-Friendly ping:
+> > > +	if (hist_field && hist_field->var.idx == var_idx &&
+> > > +	    hist_field->var.hist_data == var_data)
+> > > +		found = hist_field;
+> > >  
+> > >  	return found;  
+> > 
+> > It seems we don't need "found" var here. Just return hist_field or
+> > NULL.
+> >   
+> 
+> OK, will change these and resubmit shortly.
 
-Who can ack or review this patch, please?
+Tom,
 
-Thanks
---
-Gustavo
+If this is the only patch in the series that needs updating, can you
+just reply to this patch with the v2 of 3/7? That is have a subject of:
 
-On 11/27/18 10:26 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Notice that, in some cases, I replaced "FALLTHROUGH" with a "fall through"
-> annotation and then placed it at the bottom of the corresponding switch
-> case, which is what GCC is expecting to find.
-> 
-> Addresses-Coverity-ID: 114961 ("Missing break in switch")
-> Addresses-Coverity-ID: 114962 ("Missing break in switch")
-> Addresses-Coverity-ID: 114963 ("Missing break in switch")
-> Addresses-Coverity-ID: 114964 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/scsi/aic7xxx/aic79xx_core.c | 14 +++++++++-----
->   1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/scsi/aic7xxx/aic79xx_core.c b/drivers/scsi/aic7xxx/aic79xx_core.c
-> index 9ee75c9a9aa1..7e5044bf05c0 100644
-> --- a/drivers/scsi/aic7xxx/aic79xx_core.c
-> +++ b/drivers/scsi/aic7xxx/aic79xx_core.c
-> @@ -2285,6 +2285,7 @@ ahd_handle_seqint(struct ahd_softc *ahd, u_int intstat)
->   			switch (scb->hscb->task_management) {
->   			case SIU_TASKMGMT_ABORT_TASK:
->   				tag = SCB_GET_TAG(scb);
-> +				/* fall through */
->   			case SIU_TASKMGMT_ABORT_TASK_SET:
->   			case SIU_TASKMGMT_CLEAR_TASK_SET:
->   				lun = scb->hscb->lun;
-> @@ -2295,6 +2296,7 @@ ahd_handle_seqint(struct ahd_softc *ahd, u_int intstat)
->   				break;
->   			case SIU_TASKMGMT_LUN_RESET:
->   				lun = scb->hscb->lun;
-> +				/* fall through */
->   			case SIU_TASKMGMT_TARGET_RESET:
->   			{
->   				struct ahd_devinfo devinfo;
-> @@ -6550,8 +6552,8 @@ ahd_fini_scbdata(struct ahd_softc *ahd)
->   			kfree(sns_map);
->   		}
->   		ahd_dma_tag_destroy(ahd, scb_data->sense_dmat);
-> -		/* FALLTHROUGH */
->   	}
-> +		/* fall through */
->   	case 6:
->   	{
->   		struct map_node *sg_map;
-> @@ -6565,8 +6567,8 @@ ahd_fini_scbdata(struct ahd_softc *ahd)
->   			kfree(sg_map);
->   		}
->   		ahd_dma_tag_destroy(ahd, scb_data->sg_dmat);
-> -		/* FALLTHROUGH */
->   	}
-> +		/* fall through */
->   	case 5:
->   	{
->   		struct map_node *hscb_map;
-> @@ -7209,6 +7211,7 @@ ahd_init(struct ahd_softc *ahd)
->   		case FLX_CSTAT_OVER:
->   		case FLX_CSTAT_UNDER:
->   			warn_user++;
-> +			/* fall through */
->   		case FLX_CSTAT_INVALID:
->   		case FLX_CSTAT_OKAY:
->   			if (warn_user == 0 && bootverbose == 0)
-> @@ -8413,7 +8416,7 @@ ahd_search_scb_list(struct ahd_softc *ahd, int target, char channel,
->   			if ((scb->flags & SCB_ACTIVE) == 0)
->   				printk("Inactive SCB in Waiting List\n");
->   			ahd_done_with_status(ahd, scb, status);
-> -			/* FALLTHROUGH */
-> +			/* fall through */
->   		case SEARCH_REMOVE:
->   			ahd_rem_wscb(ahd, scbid, prev, next, tid);
->   			*list_tail = prev;
-> @@ -8422,6 +8425,7 @@ ahd_search_scb_list(struct ahd_softc *ahd, int target, char channel,
->   			break;
->   		case SEARCH_PRINT:
->   			printk("0x%x ", scbid);
-> +			/* fall through */
->   		case SEARCH_COUNT:
->   			prev = scbid;
->   			break;
-> @@ -9547,8 +9551,8 @@ ahd_download_instr(struct ahd_softc *ahd, u_int instrptr, uint8_t *dconsts)
->   	{
->   		fmt3_ins = &instr.format3;
->   		fmt3_ins->address = ahd_resolve_seqaddr(ahd, fmt3_ins->address);
-> -		/* FALLTHROUGH */
->   	}
-> +		/* fall through */
->   	case AIC_OP_OR:
->   	case AIC_OP_AND:
->   	case AIC_OP_XOR:
-> @@ -9559,7 +9563,7 @@ ahd_download_instr(struct ahd_softc *ahd, u_int instrptr, uint8_t *dconsts)
->   			fmt1_ins->immediate = dconsts[fmt1_ins->immediate];
->   		}
->   		fmt1_ins->parity = 0;
-> -		/* FALLTHROUGH */
-> +		/* fall through */
->   	case AIC_OP_ROL:
->   	{
->   		int i, count;
-> 
+[PATCH v2 3/7] tracing: Use var_refs[] for hist trigger reference checking
+
+and reply to the [PATCH 3/7]
+
+
+This isn't the normal way of updates, but I want to start taking this
+patches in ASAP, and I figured this may be the easiest for both of us.
+
+It's fine to send a v2 of the entire patch series (which other
+maintainers require), so I'll leave it up to you.
+
+If there's any other patch that needs changing, then a full v2 series
+is required. But if this is the only change and you want to send just
+this patch, then I'll take that as well.
+
+-- Steve
