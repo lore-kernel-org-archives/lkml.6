@@ -2,239 +2,227 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDC2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458F8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301B52080D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:19:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="asSYRWwR"
+	by mail.kernel.org (Postfix) with ESMTP id 0F7F72080D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbeLSTTz (ORCPT
+        id S1730316AbeLSTSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 14:19:55 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44166 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729711AbeLSTTw (ORCPT
+        Wed, 19 Dec 2018 14:18:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58024 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728995AbeLSTSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 14:19:52 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t13so9850861pgr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 11:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=t7rCqin0A4JcGVKgWQDkIVq9x7vm8QhesykNL37gXsw=;
-        b=asSYRWwRMJSHnXfKT72DSTqNaDIkEgbjz3da0Xg1tNVNc8ghEro6v6NHd8gbaT2Chg
-         RM83lyaT3ccxI3J2nQr6M5hTQ4hOi2lkXeO/Hr0fHlpTjQ6YcGXDibYl28FGEcBeysG5
-         zNvRCitSocFZA2q3UWjm0nIxpBHt8P+Ksa+WA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=t7rCqin0A4JcGVKgWQDkIVq9x7vm8QhesykNL37gXsw=;
-        b=eKOxSvppoo13dCYUxx10TXVlY0BG/0vwP9bg8BOfwuHT+ef7EbgpGdLzBKaQJnzgud
-         YoIe7gWsoki82p5poqmRtmOr64dQwER75QsNUcXLc0TJ0UhWbFAj7xcpaSvn7f/hJpDx
-         keBFd6G6DZu9gNvjpthK0nBsCtligitkajiN15Ejj9XUsyeFx7TroY9bSpBjSk8Za7zq
-         W0eVDru6mGZf8acJNTUl5dQyGsUyq1f/Oc+awfXmw9VlO4lNYdkbHuPEGvi8O9L93aOO
-         RfZixgnMuPrcEC9qOAr07HRpfvGiNKiGAUjK/HMDVIX1ZFMO31KmNXAOIqngtDLXyJK+
-         XhsA==
-X-Gm-Message-State: AA+aEWZJHd5jYFUmn2ghx1Gye9sbnfXnIpY0A7bfURZtN/sFvieezVfl
-        qmR/XWBrmLPu6/rvqJ0HfMmSfQ==
-X-Google-Smtp-Source: AFSGD/USmI+1+Ht1i8i8cx4RDtjXCfMZrrcwmmIGmgy9vzf6JVMHAgmRDIfYeYuEHH9KkAiCJTXCWg==
-X-Received: by 2002:a62:b9a:: with SMTP id 26mr21860699pfl.196.1545247191201;
-        Wed, 19 Dec 2018 11:19:51 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id 184sm25685654pfe.106.2018.12.19.11.19.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 11:19:50 -0800 (PST)
-Date:   Wed, 19 Dec 2018 11:19:49 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        Wed, 19 Dec 2018 14:18:10 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBJIwht7133446
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 14:18:09 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pfs981gkk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 14:18:08 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Wed, 19 Dec 2018 19:18:05 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Dec 2018 19:18:01 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBJJHxsW51314754
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Dec 2018 19:18:00 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BF13352050;
+        Wed, 19 Dec 2018 19:17:59 +0000 (GMT)
+Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6CA375204E;
+        Wed, 19 Dec 2018 19:17:59 +0000 (GMT)
+From:   Michael Mueller <mimu@linux.ibm.com>
+To:     KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
         linux-kernel@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Dmitry Grinberg <dmitrygr@google.com>
-Subject: Re: [PATCH RESEND v2 1/3] Bluetooth: Add quirk for reading BD_ADDR
- from fwnode property
-Message-ID: <20181219191949.GD109358@google.com>
-References: <20181204201615.245574-1-mka@chromium.org>
- <20181204201615.245574-2-mka@chromium.org>
- <5F86A55E-2893-4D16-BA5C-36A60CB46DBC@holtmann.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5F86A55E-2893-4D16-BA5C-36A60CB46DBC@holtmann.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        kvm390-list@tuxmaker.boeblingen.de.ibm.com,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: [PATCH v5 00/15] KVM: s390: make use of the GIB
+Date:   Wed, 19 Dec 2018 20:17:41 +0100
+X-Mailer: git-send-email 2.13.4
+X-TM-AS-GCONF: 00
+x-cbid: 18121919-0020-0000-0000-000002F9F02A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121919-0021-0000-0000-00002149FDD5
+Message-Id: <20181219191756.57973-1-mimu@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812190150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
+The Guest Information Area (GIB) and its mechanics is part of
+the AIV facility. It provides hardware support to process
+Adapter Interruptions (AI) for pagable storage mode guests. 
 
-thanks for the review!
+Whenever a guest cannot process an AI because none of its
+vcpus is running in SIE context, a GIB alert interruption is
+sent to and handled by the host program to dispatch a vcpu of
+the respective guest.
 
-On Wed, Dec 19, 2018 at 03:22:12PM +0100, Marcel Holtmann wrote:
+Eventually, the AI is handled by the guest.
 
-> > Add HCI_QUIRK_USE_BDADDR_PROPERTY to allow controllers to retrieve
-> > the public Bluetooth address from the firmware node property
-> > 'local-bd-address'. If quirk is set and the property does not exist
-> > or is invalid the controller is marked as unconfigured.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> > Tested-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> > ---
-> > Changes in v2:
-> > - added check for return value of ->setup()
-> > - only read BD_ADDR from the property if it isn't assigned yet. This
-> >  is needed to support configuration from user space
-> > - refactored the branch of the new quirk to get rid of 'bd_addr_set'
-> > - added 'Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>' tag
-> > ---
-> > include/net/bluetooth/hci.h | 12 ++++++++++
-> > net/bluetooth/hci_core.c    | 45 +++++++++++++++++++++++++++++++++++++
-> > net/bluetooth/mgmt.c        |  6 +++--
-> > 3 files changed, 61 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-> > index c36dc1e20556a..fbba43e9bef5b 100644
-> > --- a/include/net/bluetooth/hci.h
-> > +++ b/include/net/bluetooth/hci.h
-> > @@ -158,6 +158,18 @@ enum {
-> > 	 */
-> > 	HCI_QUIRK_INVALID_BDADDR,
-> > 
-> > +	/* When this quirk is set, the public Bluetooth address
-> > +	 * initially reported by HCI Read BD Address command
-> > +	 * is considered invalid. The public BD Address can be
-> > +	 * specified in the fwnode property 'local-bd-address'.
-> > +	 * If this property does not exist or is invalid controller
-> > +	 * configuration is required before this device can be used.
-> > +	 *
-> > +	 * This quirk can be set before hci_register_dev is called or
-> > +	 * during the hdev->setup vendor callback.
-> > +	 */
-> > +	HCI_QUIRK_USE_BDADDR_PROPERTY,
-> > +
-> > 	/* When this quirk is set, the duplicate filtering during
-> > 	 * scanning is based on Bluetooth devices addresses. To allow
-> > 	 * RSSI based updates, restart scanning if needed.
-> > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> > index 7352fe85674be..d4149005a661e 100644
-> > --- a/net/bluetooth/hci_core.c
-> > +++ b/net/bluetooth/hci_core.c
-> > @@ -30,6 +30,7 @@
-> > #include <linux/rfkill.h>
-> > #include <linux/debugfs.h>
-> > #include <linux/crypto.h>
-> > +#include <linux/property.h>
-> > #include <asm/unaligned.h>
-> > 
-> > #include <net/bluetooth/bluetooth.h>
-> > @@ -1355,6 +1356,36 @@ int hci_inquiry(void __user *arg)
-> > 	return err;
-> > }
-> > 
-> > +/**
-> > + * hci_dev_get_bd_addr_from_property - Get the Bluetooth Device Address
-> > + *				       (BD_ADDR) for a HCI device from
-> > + *				       a firmware node property.
-> > + * @hdev:	The HCI device
-> > + *
-> > + * Search the firmware node for 'local-bd-address'.
-> > + *
-> > + * All-zero BD addresses are rejected, because those could be properties
-> > + * that exist in the firmware tables, but were not updated by the firmware. For
-> > + * example, the DTS could define 'local-bd-address', with zero BD addresses.
-> > + */
-> > +static int hci_dev_get_bd_addr_from_property(struct hci_dev *hdev)
-> > +{
-> > +	struct fwnode_handle *fwnode = dev_fwnode(hdev->dev.parent);
-> > +	bdaddr_t ba;
-> > +	int ret;
-> > +
-> > +	ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
-> > +					    (u8 *)&ba, sizeof(ba));
-> > +	if (ret < 0)
-> > +		return ret;
-> > +	if (!bacmp(&ba, BDADDR_ANY))
-> > +		return -ENODATA;
-> > +
-> > +	hdev->public_addr = ba;
-> 
-> this needs to use bacpy btw.
+v4->v5:
+  Between these two versions some significant change was
+  introduced:
 
-will change
+  a) During IPM look-up, the IAM gets atomically restored
+     if the IPM is clean. (The main strategy is: As soon no
+     airqs are pending anymore, get prepared for new ones
+     arriving).
 
-> > +
-> > +	return 0;
-> > +}
-> 
-> Make this void since the return value is actually not used right now.
+  b) Kick a set of vcpus in WAIT state, that will be able
+     to handle all ISCs in IPM if possible. The main loop
+     that processes the GIB alert list is unchanged.
 
-ok
+  patches 1/15 to 6/15:
+     prepare the existing Interruption and GISA code for
+     the introduction of the GIB code.
+  patches 7/15 to 9/15:
+     kept from v4. 
+  patch 10/15:
+     restores the IAM in get_ipm() when clean on request
+     with additional parameter irq_flags
+  patch 12/15:
+     modifies kvm_s390_deliver_pending_interrupts() such
+     that the IAM is not restored during the deliverable_irqs()
+     test as we are about to enter the SIE. Restoring the
+     IAM would trigger the alert mechanism unnecessarily
+     on SIE entry.
+  patch 13/15:
+     process_gib_alert_list() now triggers a minimal set
+     of idle vcpus capable the handle all pending ISCs.
+  patch 14/15:
+     the wiring is logical similar to v4 but uses different
+     routines
+  patch 15/15: 
+     kept from v4. 
 
-> > +
-> > static int hci_dev_do_open(struct hci_dev *hdev)
-> > {
-> > 	int ret = 0;
-> > @@ -1422,6 +1453,20 @@ static int hci_dev_do_open(struct hci_dev *hdev)
-> > 		if (hdev->setup)
-> > 			ret = hdev->setup(hdev);
-> > 
-> > +		if (ret)
-> > +			goto setup_failed;
-> > +
-> > +		if (test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) {
-> > +			if (!bacmp(&hdev->public_addr, BDADDR_ANY))
-> > +				hci_dev_get_bd_addr_from_property(hdev);
-> 
-> So I would move the bacmp() into
-> hci_dev_get_bd_addr_from_property. Mainly since you also write the
-> field there.
+v3->v4:
+  The central change of v4 is that the metric "vcpus_in_sie"
+  has been dropped. A least agressive IAM restore strategy
+  is being followed now. The consequence is that potentially
+  more GAL interruptions are to be handled by the host program.
+  The assuption as made that as soon the first vcpu is trying
+  to go into wait state, this could be the last vcpu being
+  open for I/O interruptions. Thus, to not loose the initiative
+  to deliver I/O interruptions as soon as possible, the IAM
+  is restored. Adding better heuristics can be done in future.
 
-Personally I'm not a fan of functions that pretend to do something and
-then do it conditionally, IMO it obscures the actual code flow.
+  I expect this to be the last version of the series.
+ 
+  patch 01/12: Kernel msg now printed when FLIC fails
+               to register during arch inititialization.
+  patch 03/12: Commit message slightly changed with the
+  	       hint that gib initialization is called
+	       by last patch of this serias.
+  patch 09/12: IAM now restored during kvm_s390_handle_wait()
+  patch 10/12: gib destroy case now handled upon unsuccessful
+  	       arch inititialization.
 
-I'm open to change it though if you have a strong preference for not
-having the check in hci_dev_do_open().
+All other patches are unchanged.
 
-> > +			if (!bacmp(&hdev->public_addr, BDADDR_ANY) ||
-> > +			    !hdev->set_bdaddr ||
-> > +			    hdev->set_bdaddr(hdev, &hdev->public_addr))
-> > +				hci_dev_set_flag(hdev, HCI_UNCONFIGURED);
-> > +		}
-> 
-> So this one I don’t like since it makes my brain hurt when I have to read it and understand it.
+v2->v3:
+  patch 01/12: Fixes a resource dealocation issue upon
+  	       unsuccessful exit from kvm_arch_init().
+	       It is relevant for patch 11/12 as well. 
+  patch 08/12: The function process_gib_alert_list() has
+               been rewritten to reduce the number of GAL
+	       interruptions on the host for many guest
+	       scenarios.
+  patch 10/12: The IAM is now never cleared before SIE entry.
+               It will be cleared by millicode as soon the
+	       first guest interruption is made pending and
+	       not directly processed in SIE. The IAM gets
+	       restored as soon a vm is idle, i.e. no vcpu
+	       of that guest is in SIE context anymore.
+  patch 11/12: now integrates with new patch 01/12
+  patch 12/12: This patch is just experimental and shall not
+               be part of the final series.
 
-I agree, it's an ugly construct.
+The first patch of series v2: "leave AIs in IPM of GISA
+during vcpu_pre_run()" has been dropped.
 
-> I think this needs to be like this:
-> 
-> 	if (bacmp(&hdev->public_addr, BDADDR_ANY) &&
-> 	    hdev->set_bdaddr)
-> 		ret = hdev->set_bdaddr(hdev, &hdev->public_addr);
-> 	else
-> 		err = -EADDRNOTAVAIL;
-> 
-> That will fail the power on procedure which is the right thing to do if the local-bd-address is not present. The driver decided that it should be in DT and so enforce that.
+All other patches are unchanged.
 
-Ok, will change as suggested.
+v1->v2:
+  patch 01/12: New patch. Tt can go also standalone without the
+  	       rest of the GIB series presented here but is a
+	       requirement 
+  patch 03/12: kvm_s390_gib_init() now has a return code
+  patch 06/12: unlink_gib_alert_list() now uses cmpxchg() instead
+    	       of atomic_xchg()
+  patch 08/12: New patch. Foctors out __find_vcpu_for_floating_irq()
+  patch 09/12: process_gib_alert_list() has been simplified
+               the GISA clear/destroy cases have been removed
+  patch 11/12: kvm_s390_gisa_clear/destroy() now clear the IAM
+               and process the alert list directly
+	       The IAM now gets restored in vcpu_post_run() only if
+	       the GISA is not in alert list
+  patch 12/12: during kvm_arch_init() now the return code of
+    	       kvm_s390_gib_init() is honored.
 
-Thanks
+All other patches are unchanged.
 
-Matthias
+Michael Mueller (15):
+  KVM: s390: unregister debug feature on failing arch init
+  KVM: s390: coding style issue kvm_s390_gisa_init/clear()
+  KVM: s390: factor out nullify_gisa()
+  KVM: s390: use pending_irqs_no_gisa() where appropriate
+  KVM: s390: unify pending_irqs() and pending_irqs_no_gisa()
+  KVM: s390: remove prefix kvm_s390_gisa_ from static inline functions
+  s390/cio: add function chsc_sgib()
+  KVM: s390: add the GIB and its related life-cyle functions
+  KVM: s390: add kvm reference to struct sie_page2
+  KVM: s390: add functions to (un)register GISC with GISA
+  KVM: s390: restore IAM in get_ipm() when IPM is clean
+  KVM: s390: do not restore IAM immediately before SIE entry
+  KVM: s390: add function process_gib_alert_list()
+  KVM: s390: add and wire function gib_alert_irq_handler()
+  KVM: s390: start using the GIB
+
+ Documentation/kmsg/s390/kvm      |  12 ++
+ arch/s390/include/asm/cio.h      |   1 +
+ arch/s390/include/asm/irq.h      |   1 +
+ arch/s390/include/asm/isc.h      |   1 +
+ arch/s390/include/asm/kvm_host.h |  22 ++-
+ arch/s390/kernel/irq.c           |   1 +
+ arch/s390/kvm/interrupt.c        | 396 +++++++++++++++++++++++++++++++++++----
+ arch/s390/kvm/kvm-s390.c         |  25 ++-
+ arch/s390/kvm/kvm-s390.h         |   2 +
+ drivers/s390/cio/chsc.c          |  37 ++++
+ drivers/s390/cio/chsc.h          |   1 +
+ 11 files changed, 457 insertions(+), 42 deletions(-)
+ create mode 100644 Documentation/kmsg/s390/kvm
+
+-- 
+2.13.4
+
