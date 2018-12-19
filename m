@@ -2,162 +2,166 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 899E7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10AEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F86A20879
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545255704;
-	bh=lKZ25CHKlonpCz1tny4nKrDq2cxMqK+iFI1Ov1WDzkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZS7Bux3kb83ZJQh+VdYmMfl/GYmE94AwcTXjrRsYpeKwT7nxWQEhMywee7SYfVeHX
-	 C3An4LjLIWqM7TJYEBQljh2VmTYzrZmW2vVhJCzzOhKIxEosz/x0W636i74jsRHVnk
-	 P4VE6HHUSt4C5IZUMoQTBV7Ter9QqlIhq2XLXaTY=
+	by mail.kernel.org (Postfix) with ESMTP id 6405220866
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:50:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L0u2KNl8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbeLSVln (ORCPT
+        id S1729370AbeLSVuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:41:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727479AbeLSVlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:41:42 -0500
-Received: from earth.universe (unknown [185.216.33.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 038682080D;
-        Wed, 19 Dec 2018 21:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545255701;
-        bh=lKZ25CHKlonpCz1tny4nKrDq2cxMqK+iFI1Ov1WDzkE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IpX3b4+mBUSKQaf+NDMu5/g0CImyVJFU/EXUB+Qe0s/Upw+eURkaphKKTKS0CiyGt
-         ZK5I8IKzi+tVzP1NfvHU9xMZzaIeZNW56+JN1j2Ru3k3P3ZWkD5+teoMe7eDFXA3j0
-         gXG0dHNN2X+TwRmkePTHns0MF6Xo7/NF1G3hdy80=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 768973C08E4; Wed, 19 Dec 2018 22:41:38 +0100 (CET)
-Date:   Wed, 19 Dec 2018 22:41:38 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Shayenne Moura <shayenneluzmoura@gmail.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 2/7] drm: omapdrm: Cleanup drm_display_mode print str
-Message-ID: <20181219214138.hp4xos7ozlgmnzaz@earth.universe>
-References: <cover.1545254191.git.shayenneluzmoura@gmail.com>
- <fcf15d6f35c9e8e3fcc1136e55a0fa3d4fccdf57.1545254191.git.shayenneluzmoura@gmail.com>
+        Wed, 19 Dec 2018 16:50:44 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:50390 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728687AbeLSVun (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 16:50:43 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBJLoblt051435;
+        Wed, 19 Dec 2018 15:50:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1545256237;
+        bh=GdFz/SJL+ZBdweB0zYTFvVZ55s3zQDMIbxl3H9oIGcw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=L0u2KNl8uIL4qoraPMyEsm7pnyKU9qSEMTBqAolpGqM/l2CRWeRRDHcRgvFhhYoy3
+         sceMYhvkApqn0v2HY5x4JzxwmxkPMugZixlycvqI7WeA4H0+i/1gMYlfuSAa8UzAHH
+         YWKVh3kZ4619DX2BwAfQRzxWcfV+4XRKqy9hZqkM=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBJLobFO093111
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Dec 2018 15:50:37 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 19
+ Dec 2018 15:50:37 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 19 Dec 2018 15:50:37 -0600
+Received: from [172.22.106.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBJLobLe000514;
+        Wed, 19 Dec 2018 15:50:37 -0600
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+ <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
+Date:   Wed, 19 Dec 2018 15:50:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="czgalbrsb2hhfpv5"
-Content-Disposition: inline
-In-Reply-To: <fcf15d6f35c9e8e3fcc1136e55a0fa3d4fccdf57.1545254191.git.shayenneluzmoura@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/19/2018 03:36 PM, Jacek Anaszewski wrote:
+> Hi Dan and Pavel,
+> 
+> On 12/19/18 9:41 PM, Dan Murphy wrote:
+>> Pavel
+>>
+>> On 12/19/2018 02:10 PM, Pavel Machek wrote:
+>>> On Wed 2018-12-19 13:41:18, Dan Murphy wrote:
+>>>> Pavel
+>>>>
+>>>> Thanks for the review.
+>>>>
+>>>> On 12/19/2018 01:34 PM, Pavel Machek wrote:
+>>>>> Hi!
+>>>>>
+>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
+>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
+>>>>>> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
+>>>>>> +
+>>>>>> +static struct attribute *lp5024_ctrl_bank_attrs[] = {
+>>>>>> +    &dev_attr_ctrl_bank_a_mix.attr,
+>>>>>> +    &dev_attr_ctrl_bank_b_mix.attr,
+>>>>>> +    &dev_attr_ctrl_bank_c_mix.attr,
+>>>>>> +    NULL
+>>>>>> +};
+>>>>>> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
+>>>>>
+>>>>> ...
+>>>>>> +
+>>>>>> +static DEVICE_ATTR_WO(led1_mix);
+>>>>>> +static DEVICE_ATTR_WO(led2_mix);
+>>>>>> +static DEVICE_ATTR_WO(led3_mix);
+>>>>>> +
+>>>>>> +static struct attribute *lp5024_led_independent_attrs[] = {
+>>>>>> +    &dev_attr_led1_mix.attr,
+>>>>>> +    &dev_attr_led2_mix.attr,
+>>>>>> +    &dev_attr_led3_mix.attr,
+>>>>>> +    NULL
+>>>>>> +};
+>>>>>> +ATTRIBUTE_GROUPS(lp5024_led_independent);
+>>>>>
+>>>>> Ok, so you are adding new sysfs files. Are they _really_ neccessary?
+>>>>> We'd like to have uniform interfaces for the leds.
+>>>>
+>>>> Yes I am adding these for this driver.
+>>>> They adjust the individual brightness of each LED connected (what the HW guys called mixing).
+>>>>
+>>>> The standard brightness sysfs adjusts all 3 LEDs simultaneously so that all 3 LEDs brightness are
+>>>> uniform.
+>>>
+>>> 1 LED, 1 brightness file... that's what we do. Why should this one be different?
+>>>
+>>
+>> Yes I understand this and 1 DT child node per LED out but...
+>>
+>> This device has a single register to control 3 LEDs brightness as a group and individual brightness
+>> registers to control the LEDs independently to mix the LEDs to a specific color.
+>>
+>> There needs to be a way to control both so that developers can mix and adjust the individual RGB and
+>> then control the brightness of the group during run time without touching the "mixing" value.
+>>
+>> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
+>> Or with the LP5036 that would have 36 LED nodes.
+>>
+>> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
+> 
+> Some time ago we had discussion with Vesa Jääskeläinen about possible
+> approaches to RGB LEDs [0]. What seemed to be the most suitable
+> variation of the discussed out-of-tree approach was the "color" property
+> and array of color triplets defined in Device Tree per each color.
+> 
 
---czgalbrsb2hhfpv5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Why does Device tree define the color?
 
-Hi,
+Rob indicated that Device tree is supposed to define the hardware.
+This thread seems to be defining the operation.
 
-Tomi is neither in To, nor in Cc of this patch?
+Shouldn't the color be done via user space and not dt?
 
-On Wed, Dec 19, 2018 at 07:22:04PM -0200, Shayenne Moura wrote:
-> This patch adjust the print string of drm_display_mode object
-> to remove drm_mode_object dependency in omapdrm files.
->=20
-> Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-> ---
+Especially if they want to change the color real time?
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Dan
 
--- Sebastian
+> Please refer to [0] for the details.
+> 
+> [0] https://lkml.org/lkml/2018/11/9/938
+> 
 
->  drivers/gpu/drm/omapdrm/omap_connector.c | 9 ++-------
->  drivers/gpu/drm/omapdrm/omap_crtc.c      | 8 ++------
->  2 files changed, 4 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/o=
-mapdrm/omap_connector.c
-> index b81302c4bf9e..874d8f3cbff6 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_connector.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-> @@ -305,14 +305,9 @@ static int omap_connector_mode_valid(struct drm_conn=
-ector *connector,
->  	drm_mode_destroy(dev, new_mode);
-> =20
->  done:
-> -	DBG("connector: mode %s: "
-> -			"%d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
-> +	DBG("connector: mode %s: " DRM_MODE_FMT,
->  			(ret =3D=3D MODE_OK) ? "valid" : "invalid",
-> -			mode->base.id, mode->name, mode->vrefresh, mode->clock,
-> -			mode->hdisplay, mode->hsync_start,
-> -			mode->hsync_end, mode->htotal,
-> -			mode->vdisplay, mode->vsync_start,
-> -			mode->vsync_end, mode->vtotal, mode->type, mode->flags);
-> +			DRM_MODE_ARG(mode));
-> =20
->  	return ret;
->  }
-> diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdr=
-m/omap_crtc.c
-> index caffc547ef97..40acf4ce7c9f 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> @@ -427,12 +427,8 @@ static void omap_crtc_mode_set_nofb(struct drm_crtc =
-*crtc)
->  	struct omap_crtc *omap_crtc =3D to_omap_crtc(crtc);
->  	struct drm_display_mode *mode =3D &crtc->state->adjusted_mode;
-> =20
-> -	DBG("%s: set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
-> -	    omap_crtc->name, mode->base.id, mode->name,
-> -	    mode->vrefresh, mode->clock,
-> -	    mode->hdisplay, mode->hsync_start, mode->hsync_end, mode->htotal,
-> -	    mode->vdisplay, mode->vsync_start, mode->vsync_end, mode->vtotal,
-> -	    mode->type, mode->flags);
-> +	DBG("%s: set mode: " DRM_MODE_FMT,
-> +	    omap_crtc->name, DRM_MODE_ARG(mode));
-> =20
->  	drm_display_mode_to_videomode(mode, &omap_crtc->vm);
->  }
-> --=20
-> 2.17.1
->=20
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---czgalbrsb2hhfpv5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwauwcACgkQ2O7X88g7
-+pqULg/8C4gQ7GUZMIyC25wjrf/BTPzRAxrmLVnFDVxC7HGoXcTDIRluWqjxMuCL
-5K+UqDFBstzUZTsD21mowlAabwUNpSpBDCfl9ls7dlCsVjaw5cSm1/ImI//N10Oj
-HHa/4NwfU24q4zb7NrIsuXEGhelY8n7jAiUOW8m4xKNmuGDkFAeLx8DaUk3bs7pc
-XSpgkh2+cLFdQUuqsbpfyDXP8VcXTLrjo6Nh+pT/+F8z90mvO3PZ1gwhCQ2On8Sb
-PkZwE0rY2g+hCrLGH+cunFmJEANTT2rz7v1f2EfqLTdrgS6VnfoWKV3V9eZI2c93
-KBeQA4C48pO4oVD7gkF4XarhM7mroW8BTt/gEUJR7UXVR1iRVfhn6bniUlqXhf+Z
-zJ/CM5QhlzP3yJ4ECYDZdsYJV1dKgHG+/SZzvpyt+jt6y6mHvgG3t6Zd8WaSBhh8
-Dj1UTJ3hqiwfJnP5guEvjxSyaEtryFS7VxXT4ReSqKpjz1YCHwKJlVWiNVk/eZYD
-lok4girWmlHRsQXw9alVXljGM3xAq+nmHOzRFqFwtUyr1VcKbjFvNEIarbK2RrKH
-nezKkKVRTMsEE5/w3s/EbW20wzEfblQQC7qF2i9+mCVmiEcJiMkox1frRftRdmEN
-XNvFHxJeEx7CvlZLHoK4AoNVhQ+M3RPOQHDTiI5sIpfhNXUuk9U=
-=usqI
------END PGP SIGNATURE-----
-
---czgalbrsb2hhfpv5--
+-- 
+------------------
+Dan Murphy
