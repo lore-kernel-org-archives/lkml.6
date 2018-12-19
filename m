@@ -2,239 +2,173 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD1EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00B2C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786E121850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:40:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AADA221850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728680AbeLSJkt (ORCPT
+        id S1728706AbeLSJkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:40:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:59668 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728649AbeLSJks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:40:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53048A78;
-        Wed, 19 Dec 2018 01:40:48 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35E793F575;
-        Wed, 19 Dec 2018 01:40:45 -0800 (PST)
-Subject: Re: [RESEND PATCH v5 4/6] coresight: Use PMU driver configuration for
- sink selection
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        Will Deacon <will.deacon@arm.com>,
+        Wed, 19 Dec 2018 04:40:53 -0500
+Received: from mail-eopbgr780082.outbound.protection.outlook.com ([40.107.78.82]:61672
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728651AbeLSJku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 04:40:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N9MWN+B3eq53XmrTultv+i0SH5bK8RWQaixp/m/PHFU=;
+ b=AzzShvdTuz0tnG4RXKwnYswm+44b9ASNJMWngsXpnrho4rmCVAoDLnEHhk7dy5tWMfJh4c3L1QXeKdvbEg3y2mWp6amadQuXoawaOugOdzB1+5adwXRMZbYYJeudQEXYljCfdzFU/T2Tlk5iWtW9VZDbGn2jgvV/wLqfltdZ3uk=
+Received: from MWHPR02CA0025.namprd02.prod.outlook.com (2603:10b6:301:60::14)
+ by DM6PR02MB4332.namprd02.prod.outlook.com (2603:10b6:5:2a::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1446.17; Wed, 19 Dec
+ 2018 09:40:46 +0000
+Received: from CY1NAM02FT029.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::209) by MWHPR02CA0025.outlook.office365.com
+ (2603:10b6:301:60::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1446.17 via Frontend
+ Transport; Wed, 19 Dec 2018 09:40:45 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT029.mail.protection.outlook.com (10.152.75.143) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1446.11
+ via Frontend Transport; Wed, 19 Dec 2018 09:40:41 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
+        id 1gZYLI-0000UF-U8; Wed, 19 Dec 2018 01:40:40 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
+        id 1gZYLD-0006nE-Pp; Wed, 19 Dec 2018 01:40:35 -0800
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wBJ9eXWm003855;
+        Wed, 19 Dec 2018 01:40:33 -0800
+Received: from [172.23.29.77] (helo=xhdyacto-vnc1.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <maruthi.srinivas.bayyavarapu@xilinx.com>)
+        id 1gZYLA-0006jT-H9; Wed, 19 Dec 2018 01:40:33 -0800
+From:   Maruthi Srinivas Bayyavarapu 
+        <maruthi.srinivas.bayyavarapu@xilinx.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
-        linux-s390@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1545067306-31687-1-git-send-email-mathieu.poirier@linaro.org>
- <1545067306-31687-5-git-send-email-mathieu.poirier@linaro.org>
- <48afc315-d4ed-8779-a808-757fa4203bb7@arm.com>
- <CANLsYkyvq-K1M7jZ=rOEcGBySTktV_c7D4S2jBV_nS3cj8a8wg@mail.gmail.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <bb313a2d-b5fc-9329-5db6-4bf661d278bb@arm.com>
-Date:   Wed, 19 Dec 2018 09:40:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Vishal Sagar <vsagar@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Maruthi Srinivas Bayyavarapu 
+        <maruthi.srinivas.bayyavarapu@xilinx.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] ASoC: xlnx: change license header format style
+Date:   Wed, 19 Dec 2018 15:10:40 +0530
+Message-ID: <1545212440-109949-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(376002)(396003)(2980300002)(189003)(199004)(8936002)(47776003)(81156014)(81166006)(39060400002)(305945005)(8676002)(106466001)(6666004)(63266004)(356004)(36756003)(2616005)(478600001)(7416002)(50226002)(106002)(126002)(36386004)(16586007)(476003)(316002)(5660300001)(110136005)(426003)(336012)(9786002)(48376002)(50466002)(2906002)(26005)(7696005)(77096007)(51416003)(486006)(2201001)(186003)(107986001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4332;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT029;1:6ZImL+LFjR9IGkpMx8EVTMQL7nPgajNzXwfyLlwbRNNIc0VmZr0cjxYo8lsNSnuHa215QJt6retZxC0OLsGJm5MQM++k26IWf/yGuhGgK5YfqJhvK5sKFfrsUiTtSlD4
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkyvq-K1M7jZ=rOEcGBySTktV_c7D4S2jBV_nS3cj8a8wg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b6187b7b-2337-435a-4ec7-08d665960ccb
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:DM6PR02MB4332;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4332;3:a1+MkxrygJliYxGHb8Pk6hylPMIgCTIZkyxFW+y2QqBJhjGTRMLjIJ40TUSKrXys71FcNXcG3tQfm8snJoiuG0dbP4Z2sZ9OlVIIynDdKkrH7BJ5j6p5i8I16dwLgYI7d4L1U6TnVoEV1xtWXLUKu6ivncTTsDONOW2Fygp65lwMcs6YlOi8dRQi2oW3er6DG9G4XxkbSH5Jz5RFqUk5f+CkG0FSWC6C8qxuY9ZuIkEofFLjZC4K5MHFw7xnRT6nR38//+Nl+owmok/kn+NMMhSfgDKm5TML7US8PWT9fKqi38USZWW/Fyp10bGl2UuhbZIz4EUYV/7G2s1TgtS/C81HrPQnKqa94TTFPbGTgIw=;25:1fLFPzr6lj/4Jg0gKYbf2yIpD+N1qzDrbU49lJZG45MtsKy97E6nAPGTePVXvwYEdRcqRpPM/PIhLoP+Jhxq/Unyb1KZPwiIrsmo2PNSNyiXNEWCvEKHpV5mVcM8uTP0XYFFVvZxZaPDX//3Mgl9wChvv6nv/S5prTO73MK+McLch7Tbi+DYqJg2smkQb7b1rXJCUuuupa6opFhgoWihKyPmi9w0J6f0wHFGQRrbmRqFI2TSLLhsq+B7EITIVibvKCO49+oZhH/7f/S+u+AiEp0nVXS4i5JbChJ75LaT1wZosS6D4nivnueBbvOIBs6BILZkppoh2Jx6W0XJsryweg==
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4332:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4332;31:oAkOzxNDRm/TTDFvI/BxXONaaN0rywyOYvaBRHP+29iucQWu20WeqUuJbGbU59nylrnivBfemQIdLz+thJtpWwlQHAQnWnKYmmP0WBQTJh4ZtCbmOhPjtQXH3xSc2gFGr8u1qJ0BB3bC6AUXjTeG8QMPX+JjBujyJpm4Qb+7H/EzQsoUuGUEtuy3QGOeahwlbK6zt6C+7LVs5C5FVyb0nohWeYpJNGbp2xdcrwRxP6o=;20:ZLKMgrWsdyUP6cgVdeWMfXpTrnWtAk2AqsR8Lns7E+4mjAoMhNaYynr3jhfpRez9+y6qzlQmrm53Ziey2KAskNakRS1hGK9pXrUa9RifLz2R+LzZ1hoRjke1qw5lQZsMEaWVOpGWcfBU/Gt5ywEsAkcT0t/c1eRovdSKx2eZFtV58VA8I+nxO6DQwlZIo8JfRDzJVLlBu9H18KNA6Kyh1JwV7MCGbaTfs3sNcPbgHhspRs7mz5fETFd/wcXpkukcFpd0V0wxHqsXNs3Srf9FCOd/jPCraFjd1LUcNDHPRh6EI2HmXcvRe8r6B+tm8TaBZOm9aam788LKR9qm78l/J7devfUvI62HzqSQTNIwDg6O7YieYDeOMK4JgEBbfgyT0A39r3Pae7ovdc1fhsMK9KJ+yswA3XBE+8aVQI0A9wfdxYQ+ioLY/qJffx71bBAkbDjodYz1w0PPZnTag7Nw75kATnoV5G8jeieEUv7dLhnyz9EvVpiNIqbbQnqSojOB
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <DM6PR02MB433215DC9B6EAD3B00396BD8BABE0@DM6PR02MB4332.namprd02.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93004095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM6PR02MB4332;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4332;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4332;4:D1aLtaIKqbRkEpPlxoJapVfwMLMYaYafWm38QIv7aGBCd2TcECOmiXy3lQqdtizHFn42O6rtfwaw9A7rxA7jHFt3IE6fe7Q4fgxN9rbtgNr/1WYwFfIn+OwX+AmeMHE4JO56M0zdGaoRCOxrGf40BdIKqUPHNN+HiWEHwLtCn31u5WYhLUfvL38/oavVmwDQcZq4qEOAmfYQNuB/P4Is2/PVvMGJSstvwpLmrFnowlAH0x6QiBk1H06PnVDOosRT7dLCIheas/q/1smAxfo4Qw==
+X-Forefront-PRVS: 0891BC3F3D
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4332;23:ImRMxwrZGXQsuXkwIO3y2mbQ/Rr8/QHU/JSPcGaA/?=
+ =?us-ascii?Q?E8DSQt1NT25UtPgQyheSnjVoIW+OcMQRedph9L0BIc2rUuuNpWCF55zMxzk4?=
+ =?us-ascii?Q?qzsIolWf0GN4Gw9UI+uC4eE2vQ2DP1Ya0wzbgo1mxF+mb9/H5VevdF6ZMqs+?=
+ =?us-ascii?Q?9z3Hh2Vns9FVuP7+8SUFRrYy7zRkRJyr+exs6ihSjfw3OHwHNCU+qFTfglk2?=
+ =?us-ascii?Q?ljg2rijLFbaUkjPpD59mpttqr+tmMo38vkoK+hoRvobSkulUqsRa1q5KTlI+?=
+ =?us-ascii?Q?v734JbXqjSJG7lw56tfx3UWHGPILGq7FYR5WIZK1h80WKSvmVosdYmLu+4iW?=
+ =?us-ascii?Q?TlcPY0FQHBF2hg32FJvIheU6q663ut+jnK4b8/NTmHjeNPC5+iXHqCA/4eq+?=
+ =?us-ascii?Q?++92cOVZfxehgGMpYlqSbAWVf0JTQq/e0mUsGx8cwltEccH1wITFsWhm+7vK?=
+ =?us-ascii?Q?gzhLPAqNNXDMJB2GMgLfC8uI7ZT0UQCT8E67ooNbv0RJZduqCBkb7R8lFRzv?=
+ =?us-ascii?Q?1GRxWX5SmiC+we9kjHHYdzuNk/HU6oENUQlQOgtg2SNozd5IO/vKvKLwbiti?=
+ =?us-ascii?Q?YE3/IVZdmSnQBX74hoN3PisENK5wZEPHav4pYTiAvW85HHEsvGj0G1/vTXIO?=
+ =?us-ascii?Q?n/Y8CIz/D4G437vDV4F0+Ux1Jr9oFbSZ3H3iHlGq7T14/fYwoa1ZzHREDEEz?=
+ =?us-ascii?Q?DBcXeJsolEy1smccB0JZOHiFcVDZor78xMqM2cvIrsIbfR/no1uqAktsprM1?=
+ =?us-ascii?Q?bnTCelRhpX/o8f3GCJMMoYyovWfEZFfcAlr02W94DacgJrk77vc+wRq5Au3W?=
+ =?us-ascii?Q?BwXnkk1X2wk6AfUddUYau8zI3KXtUfIrtSV6guEGioSC6HWDeY8oSieOTrrB?=
+ =?us-ascii?Q?GFy/CMkGoP5aq5FNYAGgtBJEyVdjMjRgbY3LVnKa9V3dyfjq1WWl5Gf2q1hu?=
+ =?us-ascii?Q?jxtIASvdbyzhddIG1JNKQSDH5CYXLtnu03Lx9wHuU7E0n5518OPQxpKKynqw?=
+ =?us-ascii?Q?i9chunn9tgBvSEMUxC9gZeqye/VqTyZHMqwZD3U5/jZFpHd/XAeWG7E1sapQ?=
+ =?us-ascii?Q?TUvEBdgqLDKwKmF9wOJvZ5obUnW?=
+X-Microsoft-Antispam-Message-Info: 2tNUXrG04TaEWYlfjPvg+YgFkCr2DGL2Eqci28GdzvG9xXN78wzcL1ADr62owGnFnG3S+vYXHHdiKr3WldHue7DpiDxTWZJr7EImapplXovRLzqAQkAf6pr/08wMwJMDGcBBYZWAnaZR0sXjP1GZgV5PwEw1cATHRw488hbonUSe8sL/UaltJHL6tERYOBTaa85xmfYqBcq4+1BomaXpMRS2rHVSouBbJg9Jv42eMcTDpEc6KhNWWtMDOmbfO10YPmSlicPxbgma+ACKaFVg0E2CC2o3BX+ZMHbZGhHlZP6dP9/oh794SX99/p97/jFL
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4332;6:aAZ8RjfkkKWc3B3B78vDVezdGNzGUYsaV7iy0NA3lzYoTZMmKEul9ZmRmdfKFEMJ1gglqI+d/7PdkIAp81Miwi7Fwsrqgr0GB94EBsJibvsv4YOL1IWljHcCvPdBH/ej5ooZpPEy9DI1awFs19UWKERvV6cCCL4QKFXoz3M0NLwXgR1Uns/RjDfRr8yLWInz1ZWFlse12p7hBb74fbTch3yuevUZYj9ysDOcAzW3HlYD/PyUa6ngOlaFsqNYxZ/j/jXYwtRXHHDgRqYU0MAEeHilTfaM6iDBMEnmJLm3FaJ4Ew8f332idbd0cECn/MfI9zMt+3z+0V0doz4YAtSB3FnNryxZSA3Parb8LzdyY9iAaaqhPctIZm+eeBMov3+O2MJsPJw5Oh0sA++aXqy54tt5NSAKrn9F+4j+BYUREbUQqzameCXeAcbcP2cBU+yG+U+FdFcASLXqckd4iaiCpw==;5:ROWvXJv03j0GY2TxtnCv/CVGpNL8Ag4nP7kwhAyBX41U/POBik/XcAnzWjF8HXj6z/yd8wSe1AJrIy/o25FXtQQ7tbI7vdNCtC5HbmMKnP9jxROthAlO+9Pl18f5hQ1LEUNmqu0skNDHNm8b06o6ViQ3mr6pcZwK0Kk0BvDvpkQ=;7:CBQN2sMZaE6ai6qAvL4j9LZjLtu1I3lVYfwGB1bTCALd0+gr7/vGpn3OvPBhktTTJs0wWHebTbbnfZhrUAcFJEcf7kY31+U2YDqVFPvLhse+zsJajpx4FpiNpF2Gd0lZpbh8m7bRw/EVzA7HJ/4fqQ==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Dec 2018 09:40:41.6935
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6187b7b-2337-435a-4ec7-08d665960ccb
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4332
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changed License header from C to C++ style comment block.
 
+Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+---
+ sound/soc/xilinx/xlnx_i2s.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-On 18/12/2018 17:34, Mathieu Poirier wrote:
-> Good day Suzuki,
-> 
-> On Tue, 18 Dec 2018 at 07:14, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->>
->> Hi Mathieu,
->>
->> On 17/12/2018 17:21, Mathieu Poirier wrote:
->>> This patch uses the PMU driver configuration held in event::hw::drv_config
->>> to select a sink for each event that is created (the old sysFS way of
->>> working is kept around for backward compatibility).
->>>
->>> By proceeding in this way a sink can be used by multiple sessions
->>> without having to play games with entries in sysFS.
->>>
->>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>> ---
->>>    drivers/hwtracing/coresight/coresight-etm-perf.c | 74 ++++++++++++++++++++----
->>>    1 file changed, 62 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
->>> index f21eb28b6782..a7e1fdef07f2 100644
->>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->>> @@ -4,6 +4,7 @@
->>>     * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>     */
->>>
->>> +#include <linux/amba/bus.h>
->>>    #include <linux/coresight.h>
->>>    #include <linux/coresight-pmu.h>
->>>    #include <linux/cpumask.h>
->>> @@ -11,6 +12,7 @@
->>>    #include <linux/list.h>
->>>    #include <linux/mm.h>
->>>    #include <linux/init.h>
->>> +#include <linux/ioport.h>
->>>    #include <linux/perf_event.h>
->>>    #include <linux/percpu-defs.h>
->>>    #include <linux/slab.h>
->>> @@ -177,6 +179,26 @@ static void etm_free_aux(void *data)
->>>        schedule_work(&event_data->work);
->>>    }
->>>
->>> +static struct coresight_device *etm_drv_config_sync(struct perf_event *event)
->>
->> minor nit: The name doesn't quite imply what we do here. Did you mean
->> s/sync/sink ?
->>
-> 
-> I chose "sync" with "synchronisation" in mind.  I tried to keep things
-> generic since we could potentially use the same interface to convey
-> complex PMU configuration.  Arguably we could go with "sink" for now
-> and change it to "sync" in the future - I'm not strongly opinionated
-> on that part.
+diff --git a/sound/soc/xilinx/xlnx_i2s.c b/sound/soc/xilinx/xlnx_i2s.c
+index d4ae9ef..8b35316 100644
+--- a/sound/soc/xilinx/xlnx_i2s.c
++++ b/sound/soc/xilinx/xlnx_i2s.c
+@@ -1,12 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * Xilinx ASoC I2S audio support
+- *
+- * Copyright (C) 2018 Xilinx, Inc.
+- *
+- * Author: Praveen Vuppala <praveenv@xilinx.com>
+- * Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
+- */
++//
++// Xilinx ASoC I2S audio support
++//
++// Copyright (C) 2018 Xilinx, Inc.
++//
++// Author: Praveen Vuppala <praveenv@xilinx.com>
++// Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
+ 
+ #include <linux/io.h>
+ #include <linux/module.h>
+-- 
+2.7.4
 
-Ok. I thought we were trying to grab the sink information from the event
-drv_config, hence something that implies that would be slightly more
-reader friendly. Again, I am not too keen on it.
-
-> 
->>> +{
->>> +     struct coresight_device *sink = NULL;
->>> +     struct pmu_drv_config *drv_config = perf_event_get_drv_config(event);
->>> +
->>> +     /*
->>> +      * Make sure we don't race with perf_drv_config_replace() in
->>> +      * kernel/events/core.c.
->>> +      */
->>> +     raw_spin_lock(&drv_config->lock);
->>> +
->>> +     /* Copy what we got from user space if applicable. */
->>> +     if (drv_config->config)
->>> +             sink = drv_config->config;
->>> +
->>> +     raw_spin_unlock(&drv_config->lock);
->>> +
->>> +     return sink;
->>> +}
->>> +
->>>    static void *etm_setup_aux(struct perf_event *event, void **pages,
->>>                           int nr_pages, bool overwrite)
->>>    {
->>> @@ -190,18 +212,11 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
->>>                return NULL;
->>>        INIT_WORK(&event_data->work, free_event_data);
->>>
->>> -     /*
->>> -      * In theory nothing prevent tracers in a trace session from being
->>> -      * associated with different sinks, nor having a sink per tracer.  But
->>> -      * until we have HW with this kind of topology we need to assume tracers
->>> -      * in a trace session are using the same sink.  Therefore go through
->>> -      * the coresight bus and pick the first enabled sink.
->>> -      *
->>> -      * When operated from sysFS users are responsible to enable the sink
->>> -      * while from perf, the perf tools will do it based on the choice made
->>> -      * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
->>> -      */
->>> -     sink = coresight_get_enabled_sink(true);
->>> +     /* First get the sink config from user space. */
->>> +     sink = etm_drv_config_sync(event);
->>> +     if (!sink)
->>> +             sink = coresight_get_enabled_sink(true);
->>> +
->>>        if (!sink || !sink_ops(sink)->alloc_buffer)
->>>                goto err;
->>>
->>> @@ -454,6 +469,40 @@ static void etm_addr_filters_sync(struct perf_event *event)
->>>        filters->nr_filters = i;
->>>    }
->>>
->>> +static int etm_drv_config_find_sink(struct device *dev, void *data)
->>> +{
->>> +     struct amba_device *adev = to_amba_device(dev->parent);
->>> +     struct resource *res = &adev->res;
->>> +     u64 value = *((u64 *)data);
->>> +
->>> +     /*
->>> +      * The HW mapping of a component is unique.  If the value we've been
->>> +      * given matches the component's start address, then we must have found
->>> +      * the device we are looking for.
->>> +      */
->>
->> To be frank, I don't quite like the idea of passing the base address of the
->> component as the key to locate a device, (even though that is unique and readily
->> available). I would rather prefer a programmable way to map the keys to the
->> "sink" devices, which works platform agnostic (e.g, ACPI support, where the base
->> address is not obvious from the name). Also if we decide to use a platform
->> agnostic naming scheme, it becomes even more complex.
-> 
-> This mechanism doesn't rely on the naming scheme - it exploits the
-> "resource" interface exported for each amba device [1].  As such
-> whether the component is discovered using ACPI or DT, we end up on the
-> same amba bus and using the same interface.
-> 
-> [1]. https://elixir.bootlin.com/linux/latest/source/drivers/amba/bus.c#L128
-
-Ok. The only problem with this approach would be if the devices doesn't appear
-on the AMBA bus (btw, which is not true for the existing IPs).
-
-> 
->>
->> We could assign a static "id/key" exported either via the device sysfs dir or
->> the "pmu" dir. I prefer the latter.
-> 
-> Not sure what you mean by "pmu" directory - would you mind expanding
-> on that?  Using sysfs would be quite easy but I am reluctant to create
-> a new id/key mechanism and introduce another entry when we have the
-> component address that is unique and already available in the amba
-> directory structure.
-
-We could add another directory under :
-
-/sys/bus/event_source/devices/<PMU>/
-				\_ events/
-				\_ format/
-say :
-		\_ drv_config/
-		Or
-		\_ sinks/
-
-and list the sinks, eg:
-# cd $sysfs_pmu_dir/sinks
-# cat <name_of_the_sink>
-ID_of_the_sink
-
-Btw, I am always inclined to using some bits off one of the "config" fields
-("config1" or "config2") for the sink configuration. But I understand that
-you have explored that avenue and chose this approach as we have further
-configurations required for complex ETM settings.
-
-Cheers
-Suzuki
