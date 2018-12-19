@@ -2,140 +2,97 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4E4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C619C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D2E217D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TI1hBpTV"
+	by mail.kernel.org (Postfix) with ESMTP id 3CAC82133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeLSNNl (ORCPT
+        id S1728864AbeLSNOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:13:41 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34049 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbeLSNNl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:13:41 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so16939385ede.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:13:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EKc3SlJtlmBilgvFzYgz6I5TP69+W6dP+cywKRV+b8s=;
-        b=TI1hBpTVkRn1thuWl5oEOWPaXzVr0LlxC9QYSrSG3dupaMFsOO0Y+ntL9O/dFZeJbv
-         oqIf1Hsm8SuxCHFeek7b7P9R5ZueZD+AT9BVcgZI2M4D3OX2inx1Gm1iq5/03mK5xpCJ
-         +zvc1NuoR69Pcgz+wtAqPo87mNMpISlbUOQzs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=EKc3SlJtlmBilgvFzYgz6I5TP69+W6dP+cywKRV+b8s=;
-        b=FdC8VZIUsSmqg5dowVyYd5hCm8jPZ9ItaLtfgnf0035Jn9PcGD5N+l99YzXY5QnzSz
-         81i9EK85xVhFlJplHG/urQhJm9cARtFI8BAlE8Nw9eiLGE+S3VpjpkwANyFOb1btKp/G
-         S9inDRlPLxMbpeXknDsVHDdkRZy2ONVu1Yo082k/1PHMc3pekgyb41nXzJuhnCYwX2xg
-         dnexWdtMKYQ8px/3P/kLQ89rgOlfZ+VFft7zVeC0nWCrP/Bs3rle2m5SPBECgZgP7Rds
-         ISm0FPRrHU6jdaY21w5oUUmZ9VCQuV0uVo7xePN68ptLHI16LnoCfc0wQEJ7DZC37ymb
-         Wdaw==
-X-Gm-Message-State: AA+aEWYwDyJw/SfeK8UJh1p3XhwrYXOYbV03tttbHTg8acDRQUW4LpUA
-        BHOEtV7OIfh+PdVISegVL+g1kw==
-X-Google-Smtp-Source: AFSGD/XhYnRk9rR84xV4J2m+IW23aQsnfYp+7tEC5Czv62GllNYmblpb6XjXuw0EnQULVtaVtPF0Yw==
-X-Received: by 2002:a17:906:d054:: with SMTP id bo20-v6mr8735778ejb.239.1545225219472;
-        Wed, 19 Dec 2018 05:13:39 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id j23sm5156416edr.89.2018.12.19.05.13.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 05:13:38 -0800 (PST)
-Date:   Wed, 19 Dec 2018 14:13:36 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Shayenne Moura <shayenneluzmoura@gmail.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 6/7] drm: meson: Delete base.id prints
-Message-ID: <20181219131336.GT21184@phenom.ffwll.local>
-Mail-Followup-To: Shayenne Moura <shayenneluzmoura@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181218133830.tlm4ndyrefwvvdyt@smtp.gmail.com>
+        Wed, 19 Dec 2018 08:14:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbeLSNOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 08:14:54 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1AEF1C074EF9;
+        Wed, 19 Dec 2018 13:14:54 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D00D60198;
+        Wed, 19 Dec 2018 13:14:53 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id BDDC816E29; Wed, 19 Dec 2018 14:14:52 +0100 (CET)
+Date:   Wed, 19 Dec 2018 14:14:52 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc:     Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
+        jgross@suse.com, boris.ostrovsky@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
+Message-ID: <20181219131452.cehks3kabcwuuk7i@sirius.home.kraxel.org>
+References: <20181127103252.20994-1-andr2000@gmail.com>
+ <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
+ <c5fa494c-2ead-e190-6e8c-43478275f789@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181218133830.tlm4ndyrefwvvdyt@smtp.gmail.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5fa494c-2ead-e190-6e8c-43478275f789@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 19 Dec 2018 13:14:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:38:30AM -0200, Shayenne Moura wrote:
-> This patch removes base.id prints from drm_display_mode                         
-> objects in meson files. It removes dependency from drm_mode_object.
-> 
-> Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-> ---
->  drivers/gpu/drm/meson/meson_dw_hdmi.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> index d8c5cc34e22e..b203560f666d 100644
-> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> @@ -365,7 +365,7 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
->  	unsigned int wr_clk =
->  		readl_relaxed(priv->io_base + _REG(VPU_HDMI_SETTING));
->  
-> -	DRM_DEBUG_DRIVER("%d:\"%s\"\n", mode->base.id, mode->name);
-> +	DRM_DEBUG_DRIVER("\"%s\"\n", mode->name);
->  
->  	/* Enable clocks */
->  	regmap_update_bits(priv->hhi, HHI_HDMI_CLK_CNTL, 0xffff, 0x100);
-> @@ -555,8 +555,8 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
->  	int vic = drm_match_cea_mode(mode);
->  	enum drm_mode_status status;
->  
-> -	DRM_DEBUG_DRIVER("Modeline %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
-> -		mode->base.id, mode->name, mode->vrefresh, mode->clock,
-> +	DRM_DEBUG_DRIVER("Modeline \"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
+  Hi,
 
-Here we could use DRM_MODE_FMT/ARG, other 2 changes lgtm.
--Daniel
+> > > +    mapping = xen_obj->base.filp->f_mapping;
+> > > +    mapping_set_gfp_mask(mapping, GFP_USER | __GFP_DMA32);
 
-> +		mode->name, mode->vrefresh, mode->clock,
->  		mode->hdisplay, mode->hsync_start,
->  		mode->hsync_end, mode->htotal,
->  		mode->vdisplay, mode->vsync_start,
-> @@ -650,8 +650,7 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_encoder *encoder,
->  	struct meson_drm *priv = dw_hdmi->priv;
->  	int vic = drm_match_cea_mode(mode);
->  
-> -	DRM_DEBUG_DRIVER("%d:\"%s\" vic %d\n",
-> -			 mode->base.id, mode->name, vic);
-> +	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
->  
->  	/* VENC + VENC-DVI Mode setup */
->  	meson_venc_hdmi_mode_set(priv, vic, mode);
-> -- 
-> 2.17.1
+> > Let's see if I understand what you're doing:
+> > 
+> > Here you say that the pages should be DMA accessible for devices that can
+> > only see 4GB.
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> Yes, your understanding is correct. As we are a para-virtualized device we
+> do not have strict requirements for 32-bit DMA. But, via dma-buf export,
+> the buffer we create can be used by real HW, e.g. one can pass-through
+> real HW devices into a guest domain and they can import our buffer (yes,
+> they can be IOMMU backed and other conditions may apply).
+> So, this is why we are limiting to DMA32 here, just to allow more possible
+> use-cases
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Sure this actually helps?  It's below 4G in guest physical address
+space, so it can be backed by pages which are actually above 4G in host
+physical address space ...
+
+> > > +    if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
+> > > +            DMA_BIDIRECTIONAL)) {
+> > 
+> > 
+> > Are you using the DMA streaming API as a way to flush the caches?
+> Yes
+> > Does this mean that GFP_USER isn't making the buffer coherent?
+> 
+> No, it didn't help. I had a question [1] if there are any other better way
+> to achieve the same, but didn't have any response yet. So, I implemented
+> it via DMA API which helped.
+
+set_pages_array_*() ?
+
+See arch/x86/include/asm/set_memory.h
+
+HTH,
+  Gerd
+
