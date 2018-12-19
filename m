@@ -7,72 +7,72 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47337C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D407C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090612133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE7C32133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="AWTWSQJy"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="XxzFB35z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728801AbeLSNM6 (ORCPT
+        id S1729024AbeLSNNM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:12:58 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40236 "EHLO
+        Wed, 19 Dec 2018 08:13:12 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36025 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbeLSNM6 (ORCPT
+        with ESMTP id S1726833AbeLSNNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:12:58 -0500
-Received: by mail-ed1-f68.google.com with SMTP id g22so10870927edr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:12:57 -0800 (PST)
+        Wed, 19 Dec 2018 08:13:12 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so16921643edb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:13:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=sender:date:from:to:cc:subject:message-id:mail-followup-to
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d3beWpGlXWIqv3Q1J0W7TmoMyGgmDR+Q4OramTWjqhc=;
-        b=AWTWSQJyFtJd3XPQsQAvvtxz79mWmc4gDdfn7p9gQhrnlIB3fnBjtQoj4acdpmOpCM
-         gelmUQpY5GFTIZ1aMWqB3ljm8ym3TIGaSH7UDMUTqDSvGkjvrcYVblixh8itJKotYXe+
-         9bc0U5ig+v3zsSdw26x8O7Bc5PyNlXtvniskk=
+        bh=PaI8DzhmPN9dNs/dA6kaWjN+Sd43OVNvbTuboP5TM7A=;
+        b=XxzFB35z/TUQXB5q/w0fKnotPwxK6mpYQ4jaSqr27jQjI+s/Cpl9XDQkArutye9XfG
+         Owo5dPiXOOHdQT1FXAptG+lFVL5zfI9wrc4RMbI3vD1FseDye2pTx3RMfdGe7Rxh+nm6
+         RBwDNSAQhTV2TqKARmzp4C41szVT46AcMZs3Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to:user-agent;
-        bh=d3beWpGlXWIqv3Q1J0W7TmoMyGgmDR+Q4OramTWjqhc=;
-        b=ZZ9VCMf3RCpdyS50lnjZOkG0U0o/jWGahtpg+xK0ikoA0HEcwiqWWTiM5Tw3TlqKBW
-         c5fV1+buYhF9f2gkw/pfr9FwRVDoVAueFuJ5Ep4zK1x57aM+SaAo7bq8eOcoEPGuZiYE
-         bQKC96+ztVDO+ifDFxGN19q/n/pXSDDH6zw9poC/ky5j5HMX1fk0aqUuFjrCwJDrx3q5
-         qrqBQJRhgwSAK56gAoGAOl4rWgODV29UMsOhIpptA+LufelPcdhjPTrWoNlRc7W1w3K8
-         9JpEFPUQaCTiDPa9xyUQvqCz0LCAHvwheAmXdR6HPXNVznSS/LzeXjpDAAB7TA2FhoCM
-         ahVQ==
-X-Gm-Message-State: AA+aEWYoOkG9Z9Z+okh0bw4nB4a9kyAH83hez4XvGQfzmgjYDTQlOk86
-        +H4/s+uf+2wBmKUdwMCG552sQQ==
-X-Google-Smtp-Source: AFSGD/WLG2h/7j0huSU+ApuFAHPMCOMibxgD0NIJ08TFAWYHVa47wEelObU6rOfQJNLbZ6LHwsEw5g==
-X-Received: by 2002:a17:906:60b:: with SMTP id s11-v6mr16621088ejb.25.1545225176714;
-        Wed, 19 Dec 2018 05:12:56 -0800 (PST)
+        bh=PaI8DzhmPN9dNs/dA6kaWjN+Sd43OVNvbTuboP5TM7A=;
+        b=LdkxggTWrw4uSeD+Z1QV5f1fv5UWU/jkdu3IWXCfcaroUBCujAEtaM5r6uFwMIIceD
+         ZtKvADNsdcw0ytilOPa74VAKWYeAcAa7T63KCGB8lc9bV6z5TDcjYs1bfc0d7nLvOokq
+         KZpyN1GqjyA/uNTNaAH4deQe5YBZ3hUW7z2ndpW2g50Rs6wja+++BVTWcdoPV4PpW2Hn
+         eSHPhwIg9cGEHnkSR5IL6PaYCYc8ZXFQHaSqGZwA8rUPXD3//s8++xieM3brEYgft9rk
+         HbipBi8W5ufei72oqLHb9se9mk3mrYEOLJIhAOH3wSfZ4a3xh6jH6VkOE8v80Wol2Xgx
+         I0Xg==
+X-Gm-Message-State: AA+aEWaY8vc/HtzNcS9D2q8JXnDcneTnqCm8a0Gxvvnx/u9UOBYHGmt9
+        BlG0sNOoIckdIXPZIET780YWgQ==
+X-Google-Smtp-Source: AFSGD/UEUw/xzX3ZVyyd1ue6yQEetALzZkePcOtgGQdpHftV9iuOvtz+SdaNiMInt0gxq77vetxCMQ==
+X-Received: by 2002:a50:d6c5:: with SMTP id l5mr20123532edj.145.1545225190044;
+        Wed, 19 Dec 2018 05:13:10 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm2668920ejj.5.2018.12.19.05.12.55
+        by smtp.gmail.com with ESMTPSA id e7-v6sm2727760ejt.23.2018.12.19.05.13.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 05:12:56 -0800 (PST)
-Date:   Wed, 19 Dec 2018 14:12:54 +0100
+        Wed, 19 Dec 2018 05:13:09 -0800 (PST)
+Date:   Wed, 19 Dec 2018 14:13:07 +0100
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Shayenne Moura <shayenneluzmoura@gmail.com>
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 4/7] drm: i915: Delete base.id prints
-Message-ID: <20181219131254.GR21184@phenom.ffwll.local>
+Subject: Re: [PATCH 5/7] drm: sti: Delete base.id prints
+Message-ID: <20181219131307.GS21184@phenom.ffwll.local>
 Mail-Followup-To: Shayenne Moura <shayenneluzmoura@gmail.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181218133821.sykwt6wdeo7uf6o7@smtp.gmail.com>
+References: <20181218133825.rdqanhqozsnqp2fy@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218133821.sykwt6wdeo7uf6o7@smtp.gmail.com>
+In-Reply-To: <20181218133825.rdqanhqozsnqp2fy@smtp.gmail.com>
 X-Operating-System: Linux phenom 4.18.0-2-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,34 +80,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:38:21AM -0200, Shayenne Moura wrote:
+On Tue, Dec 18, 2018 at 11:38:25AM -0200, Shayenne Moura wrote:
 > This patch removes base.id prints from drm_display_mode                         
-> objects in i915 files. It removes dependency from drm_mode_object.
+> objects in sti files. It removes dependency from drm_mode_object.
 > 
 > Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
 
-Again I think better to switch to DRM_MODE_FMT/ARG.
--Daniel
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
 > ---
->  drivers/gpu/drm/i915/i915_debugfs.c | 4 ++--
+>  drivers/gpu/drm/sti/sti_crtc.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-> index 7f455bca528e..61dd7bb3fa85 100644
-> --- a/drivers/gpu/drm/i915/i915_debugfs.c
-> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
-> @@ -2948,8 +2948,8 @@ static void intel_seq_print_mode(struct seq_file *m, int tabs,
->  	for (i = 0; i < tabs; i++)
->  		seq_putc(m, '\t');
+> diff --git a/drivers/gpu/drm/sti/sti_crtc.c b/drivers/gpu/drm/sti/sti_crtc.c
+> index ed76e52eb213..ab7989bc8fa0 100644
+> --- a/drivers/gpu/drm/sti/sti_crtc.c
+> +++ b/drivers/gpu/drm/sti/sti_crtc.c
+> @@ -53,9 +53,9 @@ sti_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode)
+>  	struct clk *compo_clk, *pix_clk;
+>  	int rate = mode->clock * 1000;
 >  
-> -	seq_printf(m, "id %d:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
-> -		   mode->base.id, mode->name,
-> +	seq_printf(m, "name:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
-> +		   mode->name,
->  		   mode->vrefresh, mode->clock,
->  		   mode->hdisplay, mode->hsync_start,
->  		   mode->hsync_end, mode->htotal,
+> -	DRM_DEBUG_KMS("CRTC:%d (%s) mode:%d (%s)\n",
+> +	DRM_DEBUG_KMS("CRTC:%d (%s) mode: (%s)\n",
+>  		      crtc->base.id, sti_mixer_to_str(mixer),
+> -		      mode->base.id, mode->name);
+> +		      mode->name);
+>  
+>  	DRM_DEBUG_KMS("%d %d %d %d %d %d %d %d %d %d 0x%x 0x%x\n",
+>  		      mode->vrefresh, mode->clock,
 > -- 
 > 2.17.1
 > 
