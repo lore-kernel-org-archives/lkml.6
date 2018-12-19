@@ -2,90 +2,171 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E5DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48813C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20054218A6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545228284;
-	bh=mRoYO4y0UUPxHKtpned6Zr4N7r0hWjgoLhwwk/0aIEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CaRiKiwSinEtdSAeYCvgEUJfob4xomOGy1R+MQxLs/lRPaOtUWkCmjKqRPzCuh29r
-	 WxwzqGJFJ0iVPoOZWXp00LXeT2ldBRrDWfl3tQWjuxP98n3PRkbG5dUeCjkAqCT65t
-	 3PEt3mHP2WhQbpOq5jxfn4hGli840AUlNg1z0/ko=
+	by mail.kernel.org (Postfix) with ESMTP id 006A62084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:09:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="E8P374Oj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbeLSOEm (ORCPT
+        id S1729260AbeLSOJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:04:42 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42458 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728452AbeLSOEm (ORCPT
+        Wed, 19 Dec 2018 09:09:06 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:35892 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbeLSOJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:04:42 -0500
-Received: by mail-ot1-f67.google.com with SMTP id v23so19169575otk.9;
-        Wed, 19 Dec 2018 06:04:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/+1iwZ1k09J4X6V9hU88xagJXDo8YzrEApBpau+WViU=;
-        b=XYVF3p+zOPrOAtno3yAiTrNO2BQGMcwNsv2A066q7yhiQvvPqimQj/TYCCuKJrHNOo
-         Fumdt2etVDGI6n1lRTd2+1hTukdA/qXlD1vjne4JgljnTHtSXwKwoo1TVtEbKAyrs8il
-         IQ3iiMQBsHzmKhRZDOtksWAfTPRJl6vcrtYvn89qLk29niVb9qg/gSERL9g8YE99shWl
-         UZ4w8u45JBPIyfWgVGF63G78syjh0NTRBX30gq92a1+hi6NgH1gzcutYyGg9lgtxPF0+
-         Iu3sD3nxJFkXEkCkSkTrUZ41wOFCuUoK9VbCkSkoR7tzP7tMVTf966Db4TKocIdEdpfE
-         8myA==
-X-Gm-Message-State: AA+aEWbQU3nevf+m2Be7WI8E9XzYmdDLTlpDeUINoDSSeZJRZyDzTxah
-        Xahj1MjyS7IryCFkomF3Cg==
-X-Google-Smtp-Source: AFSGD/WWh6dPcxJsDFkewPSdC4INOdBginIV9yDAw/W/qF6KfgqdRaJNwCFb94ed9d2faE9aByHSjw==
-X-Received: by 2002:a9d:1d43:: with SMTP id m61mr15886768otm.170.1545228280726;
-        Wed, 19 Dec 2018 06:04:40 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d5sm8586713oth.78.2018.12.19.06.04.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 06:04:39 -0800 (PST)
-Date:   Wed, 19 Dec 2018 08:04:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-sunxi@googlegroups.com,
-        Vinod Koul <vkoul@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Subject: Re: [RFC PATCH 07/10] dt-bindigs: sound: Add Allwinner suniv F1C100s
- Audio Codec
-Message-ID: <20181219140439.GA6820@bogus>
-References: <cover.1543782328.git.mesihkilinc@gmail.com>
- <d0ce4b1f2a89a319d6becb5f88d7ca4184aa5595.1543782328.git.mesihkilinc@gmail.com>
+        Wed, 19 Dec 2018 09:09:06 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id C4E0310C1DAC;
+        Wed, 19 Dec 2018 06:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1545228545; bh=hrTJgRe397WXOBAxP2xVwYt/F/ApHu2Uagh6uu56ww8=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=E8P374Oj/WYuVHZfP20L5CtF/XtM3oLM2JnQGh+jABgtv29f2/ZIO/53N95mlghSD
+         bgCdwlOYP6qqPikYfUMYFNPmAIQ+o6s9JWOszI5zH42jU4LrqzSii7101GhO83K0yC
+         225/ZDwpQ/ExpxAwOgC722Zf/FsJEp/90rN+Wf9Y3P2ux7VqquNbdSYMvbWPsBCy0E
+         vxy3TWeldIrvfFIba4GsK4I5nHmKwjyDLCZYqxQ6gta4lEtU6HO8EZeZuNjOokM26e
+         DidACynsbNqaIbVdeiWzx2s0GB8RnS/BB2ifkNrIX709t4NcnCFOs7T7DbqaJS4YHw
+         dfHbdSolb9SoA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 26D3223B5;
+        Wed, 19 Dec 2018 06:09:05 -0800 (PST)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 19 Dec 2018 06:09:05 -0800
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
+ 19 Dec 2018 18:09:02 +0400
+From:   Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+To:     John Keeping <john@metanate.com>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arthur.petrosyan@synopsys.com" <arthur.petrosyan@synopsys.com>
+Subject: Re: [PATCH] usb: dwc2: gadget: fix ISOC frame overflow handling
+Thread-Topic: [PATCH] usb: dwc2: gadget: fix ISOC frame overflow handling
+Thread-Index: AQHUatZW7CBOg1jSlEOevZqXY6bG3Q==
+Date:   Wed, 19 Dec 2018 14:09:01 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7BECBB@am04wembxa.internal.synopsys.com>
+References: <20181023134355.29829-1-john@metanate.com>
+ <410670D7E743164D87FA6160E7907A56013A79E7CE@am04wembxa.internal.synopsys.com>
+ <20181108173654.118f9e3e@donbot>
+ <410670D7E743164D87FA6160E7907A56013A7A0F2B@am04wembxa.internal.synopsys.com>
+ <410670D7E743164D87FA6160E7907A56013A7A12C1@am04wembxa.internal.synopsys.com>
+ <20181109184246.33cb4487@donbot>
+ <410670D7E743164D87FA6160E7907A56013A7A27D7@am04wembxa.internal.synopsys.com>
+ <20181112224626.6b44568a@donbot>
+ <410670D7E743164D87FA6160E7907A56013A7BAB28@am04wembxa.internal.synopsys.com>
+ <20181218143504.027fc53c@donbot>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.132]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0ce4b1f2a89a319d6becb5f88d7ca4184aa5595.1543782328.git.mesihkilinc@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 12:23:14AM +0300, Mesih Kilinc wrote:
-> Add compatible string for Allwinner suniv F1C100s audio codec.
-
-Typo in the subject. Otherwise,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> ---
->  Documentation/devicetree/bindings/sound/sun4i-codec.txt | 5 +++++
->  1 file changed, 5 insertions(+)
+Hi John,=0A=
+=0A=
+On 12/18/2018 6:35 PM, John Keeping wrote:=0A=
+> Hi Minas,=0A=
+> =0A=
+> On Fri, 14 Dec 2018 09:00:08 +0000=0A=
+> Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:=0A=
+>> First of all, sorry for delayed answer.=0A=
+>> Looks like similar issue seen by Andrzej Pietrasiewicz=0A=
+>> <andrzej.p@samsung.com>: "dwc2 isochronous transfers issues". Same=0A=
+>> feedback provided to Andrzej.=0A=
+>>=0A=
+>> I run tests on 4.20.0-rc4 in DDMA. By default IN ISOC traffic failed=0A=
+>> because of BNA interrupts. It's happen because UAC2 requests count=0A=
+>> set by default to 2. Our core and driver can't work in DDMA with=0A=
+>> descriptor list length equal to 2. It's not possible on time prepare=0A=
+>> next descriptors to avoid BNA interrupt.=0A=
+>>=0A=
+>> By changing UAC2_DEF_REQ_NUM to 4 all audio gadget tests passed=0A=
+>> smoothly. Could you please apply this patch and run tests in DDMA=0A=
+>> mode:=0A=
+>>=0A=
+>> diff --git a/drivers/usb/gadget/function/u_uac2.h=0A=
+>> b/drivers/usb/gadget/function/u_uac2.h=0A=
+>> index 8362ee572e1e..5e649259ab76 100644=0A=
+>> --- a/drivers/usb/gadget/function/u_uac2.h=0A=
+>> +++ b/drivers/usb/gadget/function/u_uac2.h=0A=
+>> @@ -21,7 +21,7 @@=0A=
+>>    #define UAC2_DEF_CCHMASK 0x3=0A=
+>>    #define UAC2_DEF_CSRATE 64000=0A=
+>>    #define UAC2_DEF_CSSIZE 2=0A=
+>> -#define UAC2_DEF_REQ_NUM 2=0A=
+>> +#define UAC2_DEF_REQ_NUM 4=0A=
+>>=0A=
+>>    struct f_uac2_opts {=0A=
+>>           struct usb_function_instance    func_inst;=0A=
+>>=0A=
+>>=0A=
+>> If it will OK on your side also then will switch to BDMA mode and=0A=
+>> debug.=0A=
+> =0A=
+> With DDMA enabled, I see the following error after the stream has been=0A=
+> running for a while (anything from a few seconds to a few minutes):=0A=
+> =0A=
+> -- >8 --=0A=
+> [ 1798.836322] dwc2 ff580000.usb: dwc2_hsotg_ep_disable: called for ep0=
+=0A=
+> [ 1798.836329] dwc2 ff580000.usb: dwc2_hsotg_ep_disable: called for ep0=
+=0A=
+> [ 1798.851092] dwc2 ff580000.usb: new device is high-speed=0A=
+> [ 1798.924461] dwc2 ff580000.usb: new device is high-speed=0A=
+> [ 1798.982887] dwc2 ff580000.usb: new address 25=0A=
+> [ 1799.002463] configfs-gadget gadget: high-speed config #1: config=0A=
+> -- 8< --=0A=
+> =0A=
+> On the host side (Linux 4.18.16 Intel xHCI), I see this logged at the=0A=
+> same time:=0A=
+> =0A=
+> -- >8 --=0A=
+> [1735740.716242] retire_capture_urb: usb 1-2.2.7: frame 0 active: -71=0A=
+> [1735740.716990] retire_capture_urb: usb 1-2.2.7: frame 0 active: -71=0A=
+> [1735740.717906] retire_capture_urb: usb 1-2.2.7: frame 0 active: -71=0A=
+> [1735740.718905] retire_capture_urb: usb 1-2.2.7: frame 0 active: -71=0A=
+> [1735740.719916] retire_capture_urb: usb 1-2.2.7: frame 0 active: -71=0A=
+> [1735740.720032] usb 1-2.2-port7: disabled by hub (EMI?), re-enabling...=
+=0A=
+> [1735740.720036] usb 1-2.2.7: USB disconnect, device number 28=0A=
+> [1735740.937500] usb 1-2.2.7: new high-speed USB device number 29 using x=
+hci_hcd=0A=
+> -- 8< --=0A=
+> =0A=
+> The device does then enumerate and works for a period of time before the=
+=0A=
+> same error happens again.=0A=
+> =0A=
+ From logs not clear who initiate disconnect: host or device.  More =0A=
+probably host, after some errors in retire_capture_urb initiate =0A=
+disconnect. Do you have any idea?=0A=
+Can't you connect device to host on same platform?=0A=
+If root cause of disconnect by host is device issue, i.e. not able to =0A=
+send to host data packets in time then I need device side dmesg log with =
+=0A=
+debug enabled. USB trace around the disconnect will help to debug.=0A=
+=0A=
+Thanks,=0A=
+Minas=0A=
+=0A=
+> =0A=
+> Regards,=0A=
+> John=0A=
+> =0A=
+=0A=
