@@ -2,200 +2,148 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEE8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E7CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D9920874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:25:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWHX114T"
+	by mail.kernel.org (Postfix) with ESMTP id 4ACC620874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbeLSOZc (ORCPT
+        id S1729455AbeLSO0u convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:25:32 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35692 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbeLSOZc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:25:32 -0500
-Received: by mail-ed1-f68.google.com with SMTP id x30so17131303edx.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:25:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OtCtqnQFcaJcuPDm4e+SywOcjI8goP1g5k5lke8q0/8=;
-        b=mWHX114TMQ1HpDRuOZTW7SQg+v4An4jvyAkxDZWoxyKSnWDjX++pU1P72CGOe+IF2Q
-         QGbMjBWlfPwd1yy/ES/mf8mQlxY7EnpPfxqmvAR3Mxamdw9KzAyKzWk01N85GxMlrLpR
-         JjJZm9sfOeucRph45ASFPnT+hGCzTcqwHCzeb/fEyhpmhWYVqUCBHDlIXKSonY4m1uEP
-         wR3k4TmQnUAxxBhxv8+WuX7tkHgDikLsh45+esnMYCXMqfEGmR2lQIHqLRc73go5Bbp4
-         GiCj6P8ECs0u6lru/jcxk/XGzuciap4Pu/XrE6TmGGAQjmDQ2eorHEmA9bLjWRb6n+SZ
-         012w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OtCtqnQFcaJcuPDm4e+SywOcjI8goP1g5k5lke8q0/8=;
-        b=J3w8ONv8OxLK5775gzme7ucuHpbRG1+eyrhisG0Z7LDVlJls/AVsrUs9D04gXYNLxV
-         sCjRuLZrPpfg0ceoZfpUYF29qPakUSKkvEEq8Je5TZ6S3YRZ42a7NY2nrgxte2M3Ib1B
-         o1Rye7YOz6IVimgX7d0WrkFv/sqoSKhT/3FMq4TA7vBM+O3thLK68JDMHjMhB4Q7esj+
-         L7UIf9gwycxLcV9EV+AQgYqddFGMtPsOLtcC8F1EsJi//9tC/6+gah4ks3/GO4Ett1R6
-         jAsB4lcKKL5T4fmFOTBRDgX+yFWaiDvExGEHXvLhcGUwfaDtJ9QH3XadiCCc04S0mHSB
-         6W/g==
-X-Gm-Message-State: AA+aEWYv8hc6Tin/6cCrV2iocdTc9cJ606/ny+65hV2VG0ScmkZUHof3
-        XaFogq8J8Nn+8Y8h/zDbVGg=
-X-Google-Smtp-Source: AFSGD/WHP7PM5NDP4xoDbY2KwIBjg9vJei3RdWV7WKkvFjqBbPndWNt3nFf2/Gn2pG+Gf5BR8LCMhA==
-X-Received: by 2002:a50:b5a5:: with SMTP id a34mr19915229ede.52.1545229529579;
-        Wed, 19 Dec 2018 06:25:29 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id o6-v6sm1529236ejs.32.2018.12.19.06.25.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 06:25:28 -0800 (PST)
-Date:   Wed, 19 Dec 2018 14:25:28 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
-        pavel.tatashin@microsoft.com, rppt@linux.vnet.ibm.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm, page_alloc: Fix has_unmovable_pages for HugePages
-Message-ID: <20181219142528.yx6ravdyzcqp5wtd@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20181217225113.17864-1-osalvador@suse.de>
+        Wed, 19 Dec 2018 09:26:50 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34961 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729426AbeLSO0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:26:49 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 83D91207BE; Wed, 19 Dec 2018 15:26:47 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 20C372072C;
+        Wed, 19 Dec 2018 15:26:47 +0100 (CET)
+Date:   Wed, 19 Dec 2018 15:26:47 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        martin.lund@keep-it-simple.com
+Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20181219152647.76f77711@xps13>
+In-Reply-To: <MWHPR02MB26237B932D7F3CCEE0476FE0AFBD0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181119090246.49060019@bbrezillon>
+        <BN6PR02MB2610C7D048E4A192E041BE14AFD90@BN6PR02MB2610.namprd02.prod.outlook.com>
+        <20181120120244.7d2442b5@bbrezillon>
+        <20181120133624.3fa4742d@xps13>
+        <MWHPR02MB26238A2271B33470ABFA1023AFD40@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <MWHPR02MB26239C2B2A7050310BEF1E9CAFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212091135.1d0cc9a6@xps13>
+        <MWHPR02MB26236CEF8A2110B20C825198AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212100931.149b0cac@xps13>
+        <MWHPR02MB2623EDA15BE59304795F3034AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212141825.69711c57@xps13>
+        <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181217174114.24196d17@xps13>
+        <MWHPR02MB26237B932D7F3CCEE0476FE0AFBD0@MWHPR02MB2623.namprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217225113.17864-1-osalvador@suse.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 11:51:13PM +0100, Oscar Salvador wrote:
->v1 -> v2:
->	- Fix the logic for skipping pages by Michal
->
->---
->>From e346b151037d3c37feb10a981a4d2a25018acf81 Mon Sep 17 00:00:00 2001
->From: Oscar Salvador <osalvador@suse.de>
->Date: Mon, 17 Dec 2018 14:53:35 +0100
->Subject: [PATCH] mm, page_alloc: Fix has_unmovable_pages for HugePages
->
->While playing with gigantic hugepages and memory_hotplug, I triggered
->the following #PF when "cat memoryX/removable":
->
-><---
->kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
->kernel: #PF error: [normal kernel read fault]
->kernel: PGD 0 P4D 0
->kernel: Oops: 0000 [#1] SMP PTI
->kernel: CPU: 1 PID: 1481 Comm: cat Tainted: G            E     4.20.0-rc6-mm1-1-default+ #18
->kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
->kernel: RIP: 0010:has_unmovable_pages+0x154/0x210
->kernel: Code: 1b ff ff ff eb 32 48 8b 45 00 bf 00 10 00 00 a9 00 00 01 00 74 07 0f b6 4d 51 48 d3 e7 e8 c4 81 05 00 48 85 c0 49 89 c1 75 7e <41> 8b 41 08 83 f8 09 74 41 83 f8 1b 74 3c 4d 2b 64 24 58 49 81 ec
->kernel: RSP: 0018:ffffc90000a1fd30 EFLAGS: 00010246
->kernel: RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000009
->kernel: RDX: ffffffff82aed4f0 RSI: 0000000000001000 RDI: 0000000000001000
->kernel: RBP: ffffea0001800000 R08: 0000000000200000 R09: 0000000000000000
->kernel: R10: 0000000000001000 R11: 0000000000000003 R12: ffff88813ffd45c0
->kernel: R13: 0000000000060000 R14: 0000000000000001 R15: ffffea0000000000
->kernel: FS:  00007fd71d9b3500(0000) GS:ffff88813bb00000(0000) knlGS:0000000000000000
->kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->kernel: CR2: 0000000000000008 CR3: 00000001371c2002 CR4: 00000000003606e0
->kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->kernel: Call Trace:
->kernel:  is_mem_section_removable+0x7d/0x100
->kernel:  removable_show+0x90/0xb0
->kernel:  dev_attr_show+0x1c/0x50
->kernel:  sysfs_kf_seq_show+0xca/0x1b0
->kernel:  seq_read+0x133/0x380
->kernel:  __vfs_read+0x26/0x180
->kernel:  vfs_read+0x89/0x140
->kernel:  ksys_read+0x42/0x90
->kernel:  do_syscall_64+0x5b/0x180
->kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->kernel: RIP: 0033:0x7fd71d4c8b41
->kernel: Code: fe ff ff 48 8d 3d 27 9e 09 00 48 83 ec 08 e8 96 02 02 00 66 0f 1f 44 00 00 8b 05 ea fc 2c 00 48 63 ff 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 f3 c3 0f 1f 44 00 00 55 53 48 89 d5 48 89
->kernel: RSP: 002b:00007ffeab5f6448 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->kernel: RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fd71d4c8b41
->kernel: RDX: 0000000000020000 RSI: 00007fd71d809000 RDI: 0000000000000003
->kernel: RBP: 0000000000020000 R08: ffffffffffffffff R09: 0000000000000000
->kernel: R10: 000000000000038b R11: 0000000000000246 R12: 00007fd71d809000
->kernel: R13: 0000000000000003 R14: 00007fd71d80900f R15: 0000000000020000
->kernel: Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) drm_kms_helper(E) drm(E) aesni_intel(E) virtio_net(E) syscopyarea(E) net_failover(E) sysfillrect(E) failover(E) aes_x86_64(E) crypto_simd(E) sysimgblt(E) cryptd(E) pcspkr(E) glue_helper(E) parport_pc(E) fb_sys_fops(E) i2c_piix4(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) serio_raw(E) crc32c_intel(E) virtio_pci(E) virtio_ring(E) virtio(E) libata(E) sg(E) scsi_mod(E) autofs4(E)
->kernel: CR2: 0000000000000008
->kernel: ---[ end trace 49cade81474e40e7 ]---
->kernel: RIP: 0010:has_unmovable_pages+0x154/0x210
->kernel: Code: 1b ff ff ff eb 32 48 8b 45 00 bf 00 10 00 00 a9 00 00 01 00 74 07 0f b6 4d 51 48 d3 e7 e8 c4 81 05 00 48 85 c0 49 89 c1 75 7e <41> 8b 41 08 83 f8 09 74 41 83 f8 1b 74 3c 4d 2b 64 24 58 49 81 ec
->kernel: RSP: 0018:ffffc90000a1fd30 EFLAGS: 00010246
->kernel: RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000009
->kernel: RDX: ffffffff82aed4f0 RSI: 0000000000001000 RDI: 0000000000001000
->kernel: RBP: ffffea0001800000 R08: 0000000000200000 R09: 0000000000000000
->kernel: R10: 0000000000001000 R11: 0000000000000003 R12: ffff88813ffd45c0
->kernel: R13: 0000000000060000 R14: 0000000000000001 R15: ffffea0000000000
->kernel: FS:  00007fd71d9b3500(0000) GS:ffff88813bb00000(0000) knlGS:0000000000000000
->kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->kernel: CR2: 0000000000000008 CR3: 00000001371c2002 CR4: 00000000003606e0
->kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->--->
->
->The reason is we do not pass the Head to page_hstate(), and so,
->the call to compound_order() in page_hstate() returns 0, so
->we end up checking all hstates's size to match PAGE_SIZE.
->
->Obviously, we do not find any hstate matching that size, and we
->return NULL.
->Then, we dereference that NULL pointer in hugepage_migration_supported()
->and we got the #PF from above.
->
->Fix that by getting the head page before calling page_hstate().
->
->Also, since gigantic pages span several pageblocks, re-adjust the logic
->for skipping pages.
->
->Signed-off-by: Oscar Salvador <osalvador@suse.de>
->---
-> mm/page_alloc.c | 7 +++++--
-> 1 file changed, 5 insertions(+), 2 deletions(-)
->
->diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->index a6e7bfd18cde..90ad281f750c 100644
->--- a/mm/page_alloc.c
->+++ b/mm/page_alloc.c
->@@ -8038,11 +8038,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> 		 * handle each tail page individually in migration.
-> 		 */
-> 		if (PageHuge(page)) {
->+			struct page *head = compound_head(page);
->+			unsigned int skip_pages;
+Hi Naga,
+
++ Martin
+
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote on Tue, 18 Dec 2018
+05:33:53 +0000:
+
+> Hi Miquel,
 > 
->-			if (!hugepage_migration_supported(page_hstate(page)))
->+			if (!hugepage_migration_supported(page_hstate(head)))
-> 				goto unmovable;
+> > -----Original Message-----
+> > From: Miquel Raynal [mailto:miquel.raynal@bootlin.com]
+> > Sent: Monday, December 17, 2018 10:11 PM
+> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > Cc: Boris Brezillon <boris.brezillon@bootlin.com>; robh@kernel.org; richard@nod.at; linux-
+> > kernel@vger.kernel.org; marek.vasut@gmail.com; linux-mtd@lists.infradead.org;
+> > nagasuresh12@gmail.com; Michal Simek <michals@xilinx.com>;
+> > computersforpeace@gmail.com; dwmw2@infradead.org
+> > Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for Arasan
+> > NAND Flash Controller
+> > 
+> > Hi Naga,
+> > 
+> > [...]
+> >   
+> > > Inserted biterror @ 48/7
+> > > Successfully corrected 25 bit errors per subpage Inserted biterror @
+> > > 50/7 ECC failure, invalid data despite read success
+> > > root@xilinx-zc1751-dc2-2018_1:~#
+> > >
+> > > But even in this case also, driver is saying ECC failure but read success.
+> > > That means controller is able to detect errors on read page up to 24 bit only.
+> > > After that there is no way to say to the upper layers that the page is bad because of the  
+> > limitation in the controller.
+> > 
+> > This is more than a "limitation", the design is broken. I am not sure how to support such
+> > controller, and I am not sure if we even want to.  
 > 
->-			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
->+			skip_pages = (1 << compound_order(head)) - (page - head);
->+			iter = round_up(iter + 1, skip_pages) - 1;
-
-The comment of round_up says round up to next specified power of 2.  And
-second parameter must be a power of 2.
-
-Look skip_pages not satisfy this.
-
-> 			continue;
-> 		}
+> The number of errors that are correctable is limited by a parameter 't'(total number of errors),
+> If there is a condition that the number of errors greater than 't', then the controller won't be able to detect that.
+> I guess this concept is same for other controllers as well.
+> In Arasan it is limited to 24-bit.
 > 
->-- 
->2.13.7
+> Even, in case of Hamming, it is 1-bit error correction and 2-bit error detection.
+> What will happen if there are multiple errors(greater than 2-bit)?
 
--- 
-Wei Yang
-Help you, Help me
+Ok let's use the Hamming comparison in your ECC engine case.
+
+-> hamming:
+ * 0 bf: everything is fine
+ * 1 bf: will be detected, corrected, signaled
+ * 2 bf: will be detected, not corrected, signaled
+ * 3+ bf: don't care
+
+-> BCH:
+ * 0 bf: everything is fine
+ * 1-24 bf: will be detected, corrected, signaled
+ * 25 bf: everything is fine
+ * 26+ bf: don't care
+
+Do you see the problem?
+
+In the 25 bf case, the controller is reporting that everything went
+fine while it should report that it detected an uncorrectable
+situation.
+
+Here are two leads to solve this issue, please investigate them both:
+1/ Talk to your colleagues that developed the RTL, ask if there is a
+   hidden/reserved bit for that purpose that is not documented.
+2/ Search for a status in the registers that might indicate that an
+   error occurred, for instance "0 bf corrected" and "bf have been
+   detected".
+
+NB: I know that, with a BCH ECC engine, error detection at (strength +
+1) is not 100% sure but statistically it will almost always be detected
+and in this case we need the controller to warn the user!
+
+
+Thanks,
+Miquèl
