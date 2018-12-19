@@ -2,250 +2,188 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C962C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B32C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DD721850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:26:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IgtuiAXL"
+	by mail.kernel.org (Postfix) with ESMTP id 2DF8E2184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbeLSH0N (ORCPT
+        id S1727909AbeLSH3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:26:13 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48209 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbeLSH0N (ORCPT
+        Wed, 19 Dec 2018 02:29:41 -0500
+Received: from helmsgmaster01.f-secure.com ([193.110.108.20]:37218 "EHLO
+        helmsgmaster01.f-secure.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725290AbeLSH3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:26:13 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181219072611euoutp011497024c2521cc37f9128fac3bcd5315~xqzBz08wE0851408514euoutp01i
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:26:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181219072611euoutp011497024c2521cc37f9128fac3bcd5315~xqzBz08wE0851408514euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545204371;
-        bh=XZydJTJNuch+LWR+5h+n55h9EDe/Pg6GeJts+TEWxZo=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=IgtuiAXLKzWSxnzi9kThEV53nG6jO2L1AVBXxoL7b7nrdUweBU0cHQc8L6tSQTEzw
-         R/tXRwyx2Wub1cZLRTj1QyIjFfnk90jNjfCVWbiqqeutEmS2R89tQI200GxElqwgZX
-         EVgkUn3cNDj9vCRuJlHc6y9B1g5zz3ysqoxb5MvM=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181219072610eucas1p2f59c9423e16bbbdb9f2dbaf55605fcd2~xqzBFKxcf1353813538eucas1p2A;
-        Wed, 19 Dec 2018 07:26:10 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 01.C7.04294.292F91C5; Wed, 19
-        Dec 2018 07:26:10 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181219072610eucas1p27da804d4d3c86dd60a6aeee9e75bc90d~xqzAS-Sud1354313543eucas1p2x;
-        Wed, 19 Dec 2018 07:26:10 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181219072609eusmtrp28ef0db4cd819cfe5a89254683a7a6abd~xqzAEY4EK0347203472eusmtrp2W;
-        Wed, 19 Dec 2018 07:26:09 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-97-5c19f29270ed
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D8.37.04284.192F91C5; Wed, 19
-        Dec 2018 07:26:09 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181219072609eusmtip1c9d871f58697fe453f800fabacd1a3aa~xqy-ioI2q0318403184eusmtip1i;
-        Wed, 19 Dec 2018 07:26:09 +0000 (GMT)
-Subject: Re: [PATCH RFC v2 5/8] drm/bridge: dw-hdmi: support dynamically get
- input/out color info
-To:     Neil Armstrong <narmstrong@baylibre.com>, architt@codeaurora.org,
-        Laurent.pinchart@ideasonboard.com,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        maxime.ripard@bootlin.com
-Cc:     Zheng Yang <zhengyang@rock-chips.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <3cd791c0-8a7b-a3d1-09fa-5ddf0ea9c380@samsung.com>
-Date:   Wed, 19 Dec 2018 08:26:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+        Wed, 19 Dec 2018 02:29:40 -0500
+Received: from pps.filterd (helmsgmaster01.f-secure.com [127.0.0.1])
+        by helmsgmaster01.f-secure.com (8.16.0.27/8.16.0.27) with SMTP id wBJ6tDoG009798;
+        Wed, 19 Dec 2018 08:59:45 +0200
+Received: from helex02.fi.f-secure.com ([10.190.48.73])
+        by helmsgmaster01.f-secure.com with ESMTP id 2pfe6205b2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 19 Dec 2018 08:59:45 +0200
+Received: from lambda.inversepath.com (10.191.8.145) by
+ helex01.FI.F-Secure.com (10.190.48.70) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 19 Dec 2018 08:58:29 +0200
+Received: from lambda.inversepath.com (localhost [127.0.0.1])
+        by lambda.inversepath.com (OpenSMTPD) with ESMTP id 2747125d;
+        Wed, 19 Dec 2018 06:58:28 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 07:58:28 +0100
+From:   Andrea Barisani <andrea@inversepath.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v4.14 1/1]: nvmem: imx-ocotp: account for addressing gaps to
+ ensure consistent read/write on i.MX SoCs
+Message-ID: <20181219065828.GD2843@lambda.inversepath.com>
 MIME-Version: 1.0
-In-Reply-To: <20181130134301.17963-6-narmstrong@baylibre.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7djPc7qTPknGGGw5p27R1PGW1eLK1/ds
-        Fv8fvWa1mDup1qJz4hJ2iwWzuS0u75rDZvHg5X5Gi0N90RZ3751gsVjfou/A7fH+Riu7x7w1
-        1R6X+3qZPGZ3zGT1uN99nMlj85J6j/6/Bh5/Z+1n8dh+bR6zx+dNcgFcUVw2Kak5mWWpRfp2
-        CVwZC15fYis4plbxZst9pgbGV/JdjJwcEgImEmv+rGPtYuTiEBJYwShxZft/RgjnC6PEl0fr
-        WSCcz4wSh94eYIdpufzqJ1TLckaJk/dWQbW8ZZQ40XkGrEpYIFni6L7dzCAJEYEWJonvM54y
-        gySYBXoZJTpWx4PYbAKaEn8332QDsXkF7CSeHnzGBGKzCKhK3Ni3AiwuKhAh0XF/NVSNoMTJ
-        mU9YQGxOAVuJx8/2sUHMlJfY/nYO1HxxiVtP5jNBnPqWXeLjfCcI20ViyvtjUHFhiVfHt0C9
-        IyPxfydMfb1E08wrYEdLCHQAfbN4ORtEwlri8PGLQD9zAC3QlFi/Sx8i7Cix99IvsLCEAJ/E
-        jbeCECfwSUzaNp0ZIswr0dEmBFGtKHH/7FZmCFtcYumFr2wTGJVmIXlsFpJnZiF5ZhbC3gWM
-        LKsYxVNLi3PTU4uN8lLL9YoTc4tL89L1kvNzNzECE9rpf8e/7GDc9SfpEKMAB6MSD2+HgmSM
-        EGtiWXFl7iFGCQ5mJRHeS9FAId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NT
-        C1KLYLJMHJxSDYzhxqc3cURyhzx49oll87ZKE9f+kP32qr7r7+xfbizKsYgxZ06h+/M2xlqH
-        Uz4VV0NfT1/yNWVqziLRW3Je0zkW/ymROXnpgvaG6YUmrDyP+I/NfmXN+2NjepA3Z4yj9O2n
-        a3uWhPCxmhwrcfxwb2eS7YOlCw38A46utdVq63xakmc/Qd3xXZESS3FGoqEWc1FxIgDJINT+
-        ZAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xu7oTP0nGGCz7rGfR1PGW1eLK1/ds
-        Fv8fvWa1mDup1qJz4hJ2iwWzuS0u75rDZvHg5X5Gi0N90RZ3751gsVjfou/A7fH+Riu7x7w1
-        1R6X+3qZPGZ3zGT1uN99nMlj85J6j/6/Bh5/Z+1n8dh+bR6zx+dNcgFcUXo2RfmlJakKGfnF
-        JbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZC15fYis4plbxZst9pgbG
-        V/JdjJwcEgImEpdf/WTtYuTiEBJYyiix4fhSZoiEuMTu+W+hbGGJP9e62CCKXjNKzG5tAksI
-        CyRLHN23G8wWEWhhknj53BqkiFmgl1Gi/cwzRoiOw4wSTydfYwepYhPQlPi7+SYbiM0rYCfx
-        9OAzJhCbRUBV4sa+FWBxUYEIibMv1zFC1AhKnJz5hAXE5hSwlXj8bB9YDbOAusSfeZeYIWx5
-        ie1v50DZ4hK3nsxnmsAoNAtJ+ywkLbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+
-        7iZGYBRvO/Zz8w7GSxuDDzEKcDAq8fA+UJKMEWJNLCuuzD3EKMHBrCTCeykaKMSbklhZlVqU
-        H19UmpNafIjRFOi5icxSosn5wASTVxJvaGpobmFpaG5sbmxmoSTOe96gMkpIID2xJDU7NbUg
-        tQimj4mDU6qBsefsp+9HNvvNkllk6XUxsfXpqdYftVdOqeXv4VO0md75a+3LrfOSok/K1drb
-        P3648czF3wJv+VvayznzFIUPxajM/LV1/Qfz4j4Pi7Bdtqf/LHrzLfrw9EXTp1xfpPTf+Ngv
-        9b8fLWou3PqWt/nikR2ypze1eXI4FKvuerVCvJn7c6RLOruVy0wlluKMREMt5qLiRABZZveE
-        +AIAAA==
-X-CMS-MailID: 20181219072610eucas1p27da804d4d3c86dd60a6aeee9e75bc90d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181130134411epcas3p2dc841f297a16ae25f17323c766a386d6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181130134411epcas3p2dc841f297a16ae25f17323c766a386d6
-References: <20181130134301.17963-1-narmstrong@baylibre.com>
-        <CGME20181130134411epcas3p2dc841f297a16ae25f17323c766a386d6@epcas3p2.samsung.com>
-        <20181130134301.17963-6-narmstrong@baylibre.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-GPG-Key: 0x864C9B9E
+X-GPG-Fingerprint: 0A76 074A 02CD E989 CE7F  AC3F DA47 578E 864C 9B9E
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-Originating-IP: [10.191.8.145]
+X-ClientProxiedBy: helex01.FI.F-Secure.com (10.190.48.70) To
+ helex01.FI.F-Secure.com (10.190.48.70)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.11.2018 14:42, Neil Armstrong wrote:
-> From: Zheng Yang <zhengyang@rock-chips.com>
->
-> To get input/output bus_format/enc_format dynamically, this patch
-> introduce following funstion in plat_data:
-> 	- get_input_bus_format
-> 	- get_output_bus_format
-> 	- get_enc_in_encoding
-> 	- get_enc_out_encoding
 
+The nvmem-imx-ocotp driver does not currently handle addressing gaps between
+OTP banks which can be present in i.MX System-on-Chip part numbers.
 
-It seems fishy. On one side description says about dynamic resolution of
-formats and encodings.
+This leads to inconsistencies between the interpretation of the offset
+argument in read and write operations, not only requiring specific
+workarounds but also resulting in the impossibility of reading the entire OTP
+bank.
 
-On the other side these functions as only argument takes platform_data
-which should be rather static.
+Additionally this inconsistency violates the NVMEM subsystem principle of
+exposing a userspace binary interface for read/write operations against a
+pseudo-file.
 
-Where is this "dynamic" thing? The only usage of these callbacks I have
-found in next patches is also not dynamic, the functions just return
-some static value.
+This patch accounts for addressing gaps, depending on the specific i.MX model
+being addressed.
 
-Moreover function takes void* argument, which is again something
-suspicious, why cannot you pass know structure?
+Signed-off-by: Andrea Barisani <andrea@inversepath.com>
 
-And finally encoding usually should depend on display mode, it should
-not depend only static data.
+---
+ drivers/nvmem/imx-ocotp.c |   49 ++++++++++++++++++++++++++++++------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
 
+--- linux-4.14.89/drivers/nvmem/imx-ocotp.c.orig	2018-12-18 10:30:49.363322853 +0100
++++ linux-4.14.89/drivers/nvmem/imx-ocotp.c	2018-12-18 10:31:18.143778980 +0100
+@@ -114,6 +114,8 @@ static int imx_ocotp_read(void *context,
+ {
+ 	struct ocotp_priv *priv = context;
+ 	unsigned int count;
++	unsigned int base_offset;
++	const char *compat;
+ 	u32 *buf = val;
+ 	int i, ret;
+ 	u32 index;
+@@ -139,11 +141,42 @@ static int imx_ocotp_read(void *context,
+ 		goto read_end;
+ 	}
+ 
++	compat = of_get_property(priv->dev->of_node, "compatible", NULL);
++
+ 	for (i = index; i < (index + count); i++) {
+-		*buf++ = readl(priv->base + IMX_OCOTP_OFFSET_B0W0 +
+-			       i * IMX_OCOTP_OFFSET_PER_WORD);
++		/*
++		 * On specific i.MX P/Ns there are addressing gaps between
++		 * contiguous OTP banks which must be accounted for when
++		 * reading OTP banks from mapped memory.
++		 *
++		 * This is necessary to make the imx_ocotp_read() offset
++		 * interpretation consistent with imx_ocotp_write(), which
++		 * does not require to account for gaps as it uses the offset
++		 * value to derive the bank index and pass it directly to the
++		 * OCOTP controller (rather than being used for mapped memory
++		 * addressing).
++		 */
++		base_offset = IMX_OCOTP_OFFSET_B0W0 + i * IMX_OCOTP_OFFSET_PER_WORD;
++
++		if (strcmp(compat, "fsl,imx6sx-ocotp")) {
++			/* 44.5.43 [IMX6SXRM]
++			 * 256 bytes gap between Bank5 Word7 (21B_C6F0h, offset 0x6f0) and
++			 * Bank10 Word1 (21B_CA10h, offset 0xa10)
++			 */
++			if (base_offset > 0x6f0)
++				base_offset += 0x100;
++		} else if (strcmp(compat, "fsl,imx6ul-ocotp")) {
++			/* 35.5.59 [IMX6ULRM]
++			 * 256 bytes gap between Bank5 Word7 (21B_C6F0h, offset 0x6f0) and
++			 * Bank6 Word0 (21B_C800h, offset 0x800)
++			 */
++			if (base_offset > 0x6f0)
++				base_offset += 0x100;
++		}
++
++		*buf++ = readl(priv->base + base_offset);
+ 
+-		/* 47.3.1.2
++		/* 47.3.1.2 [IMX6SDLRM]
+ 		 * For "read locked" registers 0xBADABADA will be returned and
+ 		 * HW_OCOTP_CTRL[ERROR] will be set. It must be cleared by
+ 		 * software before any new write, read or reload access can be
+@@ -205,7 +238,7 @@ static int imx_ocotp_write(void *context
+ 
+ 	writel(timing, priv->base + IMX_OCOTP_ADDR_TIMING);
+ 
+-	/* 47.3.1.3.2
++	/* 47.3.1.3.2 [IMX6SDLRM]
+ 	 * Check that HW_OCOTP_CTRL[BUSY] and HW_OCOTP_CTRL[ERROR] are clear.
+ 	 * Overlapped accesses are not supported by the controller. Any pending
+ 	 * write or reload must be completed before a write access can be
+@@ -217,7 +250,7 @@ static int imx_ocotp_write(void *context
+ 		goto write_end;
+ 	}
+ 
+-	/* 47.3.1.3.3
++	/* 47.3.1.3.3 [IMX6SDLRM]
+ 	 * Write the requested address to HW_OCOTP_CTRL[ADDR] and program the
+ 	 * unlock code into HW_OCOTP_CTRL[WR_UNLOCK]. This must be programmed
+ 	 * for each write access. The lock code is documented in the register
+@@ -234,7 +267,7 @@ static int imx_ocotp_write(void *context
+ 
+ 	writel(ctrl, priv->base + IMX_OCOTP_ADDR_CTRL);
+ 
+-	/* 47.3.1.3.4
++	/* 47.3.1.3.4 [IMX6SDLRM]
+ 	 * Write the data to the HW_OCOTP_DATA register. This will automatically
+ 	 * set HW_OCOTP_CTRL[BUSY] and clear HW_OCOTP_CTRL[WR_UNLOCK]. To
+ 	 * protect programming same OTP bit twice, before program OCOTP will
+@@ -254,7 +287,7 @@ static int imx_ocotp_write(void *context
+ 	 */
+ 	writel(*buf, priv->base + IMX_OCOTP_ADDR_DATA);
+ 
+-	/* 47.4.1.4.5
++	/* 47.4.1.4.5 [IMX6SDLRM]
+ 	 * Once complete, the controller will clear BUSY. A write request to a
+ 	 * protected or locked region will result in no OTP access and no
+ 	 * setting of HW_OCOTP_CTRL[BUSY]. In addition HW_OCOTP_CTRL[ERROR] will
+@@ -272,7 +305,7 @@ static int imx_ocotp_write(void *context
+ 		goto write_end;
+ 	}
+ 
+-	/* 47.3.1.4
++	/* 47.3.1.4 [IMX6SDLRM]
+ 	 * Write Postamble: Due to internal electrical characteristics of the
+ 	 * OTP during writes, all OTP operations following a write must be
+ 	 * separated by 2 us after the clearing of HW_OCOTP_CTRL_BUSY following
 
-What kind of problems do you want to solve here?
+-- 
+Andrea Barisani     Head of Hardware Security |     F-Secure
+                                      Founder | Inverse Path
 
-
-Regards
-
-Andrzej
-
-
-
->
-> Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 28 +++++++++++++++++------
->  include/drm/bridge/dw_hdmi.h              |  5 ++++
->  2 files changed, 26 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 4a9a24e854db..bd564ffdf18b 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -1810,6 +1810,7 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
->  static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
->  {
->  	int ret;
-> +	void *data = hdmi->plat_data->phy_data;
->  
->  	hdmi_disable_overflow_interrupts(hdmi);
->  
-> @@ -1821,10 +1822,13 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
->  		dev_dbg(hdmi->dev, "CEA mode used vic=%d\n", hdmi->vic);
->  	}
->  
-> -	if ((hdmi->vic == 6) || (hdmi->vic == 7) ||
-> -	    (hdmi->vic == 21) || (hdmi->vic == 22) ||
-> -	    (hdmi->vic == 2) || (hdmi->vic == 3) ||
-> -	    (hdmi->vic == 17) || (hdmi->vic == 18))
-> +	if (hdmi->plat_data->get_enc_out_encoding)
-> +		hdmi->hdmi_data.enc_out_encoding =
-> +			hdmi->plat_data->get_enc_out_encoding(data);
-> +	else if ((hdmi->vic == 6) || (hdmi->vic == 7) ||
-> +		 (hdmi->vic == 21) || (hdmi->vic == 22) ||
-> +		 (hdmi->vic == 2) || (hdmi->vic == 3) ||
-> +		 (hdmi->vic == 17) || (hdmi->vic == 18))
->  		hdmi->hdmi_data.enc_out_encoding = V4L2_YCBCR_ENC_601;
->  	else
->  		hdmi->hdmi_data.enc_out_encoding = V4L2_YCBCR_ENC_709;
-> @@ -1833,21 +1837,31 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
->  	hdmi->hdmi_data.video_mode.mpixelrepetitioninput = 0;
->  
->  	/* TOFIX: Get input format from plat data or fallback to RGB888 */
-> -	if (hdmi->plat_data->input_bus_format)
-> +	if (hdmi->plat_data->get_input_bus_format)
-> +		hdmi->hdmi_data.enc_in_bus_format =
-> +			hdmi->plat_data->get_input_bus_format(data);
-> +	else if (hdmi->plat_data->input_bus_format)
->  		hdmi->hdmi_data.enc_in_bus_format =
->  			hdmi->plat_data->input_bus_format;
->  	else
->  		hdmi->hdmi_data.enc_in_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
->  
->  	/* TOFIX: Get input encoding from plat data or fallback to none */
-> -	if (hdmi->plat_data->input_bus_encoding)
-> +	if (hdmi->plat_data->get_enc_in_encoding)
-> +		hdmi->hdmi_data.enc_in_encoding =
-> +			hdmi->plat_data->get_enc_in_encoding(data);
-> +	else if (hdmi->plat_data->input_bus_encoding)
->  		hdmi->hdmi_data.enc_in_encoding =
->  			hdmi->plat_data->input_bus_encoding;
->  	else
->  		hdmi->hdmi_data.enc_in_encoding = V4L2_YCBCR_ENC_DEFAULT;
->  
->  	/* TOFIX: Default to RGB888 output format */
-> -	hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
-> +	if (hdmi->plat_data->get_output_bus_format)
-> +		hdmi->hdmi_data.enc_out_bus_format =
-> +			hdmi->plat_data->get_output_bus_format(data);
-> +	else
-> +		hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
->  
->  	hdmi->hdmi_data.pix_repet_factor = 0;
->  	hdmi->hdmi_data.hdcp_enable = 0;
-> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-> index 7a02744ce0bc..2e797f782c51 100644
-> --- a/include/drm/bridge/dw_hdmi.h
-> +++ b/include/drm/bridge/dw_hdmi.h
-> @@ -142,6 +142,11 @@ struct dw_hdmi_plat_data {
->  	int (*configure_phy)(struct dw_hdmi *hdmi,
->  			     const struct dw_hdmi_plat_data *pdata,
->  			     unsigned long mpixelclock);
-> +
-> +	unsigned long (*get_input_bus_format)(void *data);
-> +	unsigned long (*get_output_bus_format)(void *data);
-> +	unsigned long (*get_enc_in_encoding)(void *data);
-> +	unsigned long (*get_enc_out_encoding)(void *data);
->  };
->  
->  struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
-
-
+https://www.f-secure.com             https://inversepath.com
+0x864C9B9E 0A76 074A 02CD E989 CE7F AC3F DA47 578E 864C 9B9E
+       "Pluralitas non est ponenda sine necessitate"
