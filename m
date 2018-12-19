@@ -2,88 +2,79 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81967C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9F9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D66E21873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545212766;
-	bh=h0f14PZ4LwED5eW8kr4Nt+kke98V2FiplZHB432/Q2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=d7+fndrw4Ee5ZlYRbxrZ/+jhzwCOojhucA1ToNkyRHG1riMnJAjKxrvbYmLuu0hTI
-	 UDqBHxrrenYdEOUE7BXRX+5HAzz3LjNUP8ouxSFmwUpHWzCZsrrZNw6gZyZoILsHoQ
-	 sPhVUd6zl2+CwatDrS9lgxtJ5jRWAHfT3rp83h7g=
+	by mail.kernel.org (Postfix) with ESMTP id 02887218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728710AbeLSJqF (ORCPT
+        id S1728742AbeLSJqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:46:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727792AbeLSJqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:46:04 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4AFC20873;
-        Wed, 19 Dec 2018 09:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545212764;
-        bh=h0f14PZ4LwED5eW8kr4Nt+kke98V2FiplZHB432/Q2o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fddfKjuMrkH7Fm0i6ycuXZl1WTsijMVi2E7Xd+VxSYKk/zUb8jIEvk4hIY6RprEvC
-         xWGOsudsLc3IohVvb3Kr96hY4jh3Ihwo7S3/ni5LGIN+nKhtByk+usZS8XLxN2O2W6
-         g5ptzJNSY+6TPfsnaEY2EKysvEZJdRGPs3QKuXQw=
-Date:   Wed, 19 Dec 2018 10:46:01 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     peng.hao2@zte.com.cn
-Cc:     arnd@arndb.de, andy.shevchenko@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 1/3]  misc/pvpanic: return 0 for empty body
- registerfunction
-Message-ID: <20181219094601.GB11441@kroah.com>
-References: <20181219082806.GA31421@kroah.com>
- <201812191703216682499@zte.com.cn>
+        Wed, 19 Dec 2018 04:46:13 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:58153 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeLSJqN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 04:46:13 -0500
+Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gZYQH-0000SR-D0; Wed, 19 Dec 2018 10:45:49 +0100
+Date:   Wed, 19 Dec 2018 10:45:48 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Li, Aubrey" <aubrey.li@linux.intel.com>
+cc:     Andi Kleen <ak@linux.intel.com>, Aubrey Li <aubrey.li@intel.com>,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
+        tim.c.chen@linux.intel.com, dave.hansen@intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] x86/fpu: track AVX-512 usage of tasks
+In-Reply-To: <6695cf98-17e8-df5f-4dac-264435e2aea5@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1812190951190.1651@nanos.tec.linutronix.de>
+References: <20181218042218.8653-1-aubrey.li@intel.com> <alpine.DEB.2.21.1812181448170.12686@nanos.tec.linutronix.de> <62997df2-0817-b54d-b11e-00a567f1d67c@linux.intel.com> <alpine.DEB.2.21.1812181630530.14031@nanos.tec.linutronix.de>
+ <b14a9c82-3336-0f13-1a27-fba929e6b4fb@linux.intel.com> <20181218213826.GI25620@tassilo.jf.intel.com> <6695cf98-17e8-df5f-4dac-264435e2aea5@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201812191703216682499@zte.com.cn>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 05:03:21PM +0800, peng.hao2@zte.com.cn wrote:
-> >> Return 0 for empty body register function normally.
+On Wed, 19 Dec 2018, Li, Aubrey wrote:
+> On 2018/12/19 5:38, Andi Kleen wrote:
+> >> I misunderstood, you mean 32bit kernel, not 32bit machine. Theoretically 32bit
+> >> kernel can use AVX512, but not sure if anyone use it like this. get_jiffies_64()
+> >> includes jiffies_lock ops so not good in context switch. So I want to use raw
+> >> jiffies_64 here. jiffies is a good candidate but it has wraparound overflow issue.
+> >> Other time source are expensive here.
 > >>
-> >> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> >> ---
-> >> v4 --> v5 : handle all typo "drvier/driver" in funtion name.
-> >>
-> >> v3 --> v4 : use pcim* function instead of pci* function.
-> >>             handle typo "drvier/driver" in funtion name.
-> >>
-> >> v2 --> v3 : handle a uninitialized variable in some path.
-> >>
-> >> v2 --> v1 : arch=sh don't support pci, adjust  CONFIG_PCI macro.
-> >>
-> >> v1 : QEMU community requires additional PCI devices to simulate PVPANIC devices
-> >> so that some architectures can not occupy precious less than 4G of memory
-> >> space.
-> >
-> >Have you also fixed the kbuild issues that keep getting reported?
-> >
-> 
-> yes.  v2--> v1 fixed the first kbuild issue.
->          v2--> v3 fixed the second kbuild issue.
->          v4 -->v5 fixed the last two kbuild issues.
+> >> Should I limit the code only running on 64bit kernel? 
+> > 
+> > Yes making it 64bit only should be fine.
+> > 
+> > Other alternative would be to use 32bit jiffies on 32bit. I assume
+> > wrapping is not that big a problem here.
+> > 
+> Thomas, is this acceptable?
 
-And why did you not list all of this?  Am I supposed to just guess it?
-:(
+Just do the math. jiffies on 32bit wrap around depending on HZ:
+
+ HZ=100	    248 days
+ HZ=1000     24 days
+
+So, yes it takes quite some time, but from then on the information is
+bogus. Whether that matters or not is a different question. At least it
+needs proper documentation.
+
+Thanks,
+
+	tglx
+
 
