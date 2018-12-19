@@ -2,127 +2,172 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391A6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98CFC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 059222084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:10:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpFFzkaN"
+	by mail.kernel.org (Postfix) with ESMTP id 98159218AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545228765;
+	bh=mYSv6C/anEPEOntT611vVWNftpPDSMGVwZM4K2vIyl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FAcw4cOZbeoKK0faEBi5aignZKI037sY1QaHn1UKhZXmkjULR0TucN0suUM6ZXIBc
+	 PV2oHFdYXTbdKRbHKFrMw47QJZMpVBRxhza1fabY6OWD7Bg1WlKcSAQ8GXxJkd0u16
+	 Mhrm7qiYKS0sA66VfFES3twDIDgQSShI7j0KD57M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbeLSOKU (ORCPT
+        id S1728458AbeLSOMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:10:20 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35146 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727982AbeLSOKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:10:20 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so15151334lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:10:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=VA98hHAI2VVKlf91qrIg1B+oW4hafFZKadnv26WyUig=;
-        b=cpFFzkaNt05F3OWVwa0Ic4yYXDbeuu8/IKLP2L8yj6SjFVf+8p6ATBln8O0ElynhD3
-         0I/Q1FyMqtj0RH+70v9RIAZ7F52KsaRfWPD/kAvTBFhrQCJBlbp4MCsSitV62A4dHJgt
-         ItHdEr/2dMXrGQ1IgHA53TteQl4au2pdgf1p2b0FyjVrIK1ulAadlw6AdD0QiqrCOhR+
-         WrhC2rKsTspxw69MRxFA4F2Nmn26azbrqM+QYnV6Ic/+p8mtnLxaHCLUSE3jdyOFf5Q/
-         q5u9YJnChz+n0gQXv2gE+XU9KTk1Fiy8858W7+Qv6NPs5Ubj42KA+vsIhtJ6blxmYWup
-         YECg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=VA98hHAI2VVKlf91qrIg1B+oW4hafFZKadnv26WyUig=;
-        b=GaBEfm+O5yMCDKyfa4HvBSPSqeR2EW1eNS8rnk8Yel1nRWRqWQVnqQorh0Smiln1EX
-         g+7uT+UdNL0RGpiUZrIPQbfDy720sPNLy84tqQQjjwEBl2fT5nZ4/4dY40JeL5xf99Ok
-         lcBMSJKFqs2owPNXaHPCE+rYAgBOaSJsAqGGZ0KBxNPKAmZ7qm+ymdD8+C4t6cSjGKb/
-         g4skrP7uMDAilUBINQrdcB9NQqjJl1pndPFa1dHfIaGH6PHYAStdNl9LON2gm6aXTGuI
-         trDOmD2+iYPk70M/8TOEBniMTXgdpvnUmq1Qh+RHcC58ihqtRO13bOnD3xNeQ6dALRIo
-         +GPQ==
-X-Gm-Message-State: AA+aEWZDBN/e+VNmaJMiao5SowSTbnbxrh1oKI3zRdKjnqzF8vi+4aWT
-        XFg9Wb2M8C4vFjOQTT8cSVQ=
-X-Google-Smtp-Source: AFSGD/WqKU4vextfBOrNF57mZ8EcCPypDuPvuS0VBBRjtk0fwJfm5NAFj7wRYa086FuNxQpbs5Zt5A==
-X-Received: by 2002:a19:5349:: with SMTP id h70mr12313225lfb.50.1545228617954;
-        Wed, 19 Dec 2018 06:10:17 -0800 (PST)
-Received: from [10.17.182.20] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id b69sm3909428lfl.28.2018.12.19.06.10.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 06:10:17 -0800 (PST)
-Subject: Re: [PATCH] drm/bochs: add edid present check
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>
-References: <20181218073339.12160-1-kraxel@redhat.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <93d72578-9567-9694-dbc7-62618b217f8f@gmail.com>
-Date:   Wed, 19 Dec 2018 16:10:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Dec 2018 09:12:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727635AbeLSOMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:12:44 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 669512084A;
+        Wed, 19 Dec 2018 14:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545228763;
+        bh=mYSv6C/anEPEOntT611vVWNftpPDSMGVwZM4K2vIyl8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ByvLzt4YfomMJA54EMmSb1yQTm5xnxXrsuygozJeZ5oY5zmyIugwowSxbSaIjs0k7
+         WEWq/5bv8YbYMp8rBhUNcvtBtvW0kRl/4hzorhM+j6FYGYvR25WM0MqOZa6cAwOiuD
+         LibnrvKayjkp4raXjyz97OA3rX0H3qoqwfRNMFJo=
+Date:   Wed, 19 Dec 2018 08:12:41 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Andrew Smirnov <andrew.smirnov@gmail.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Trent Piepho <tpiepho@impinj.com>
+Subject: Re: [v4] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
+Message-ID: <20181219141241.GB12763@google.com>
+References: <1544768762-18124-1-git-send-email-hongxing.zhu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20181218073339.12160-1-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544768762-18124-1-git-send-email-hongxing.zhu@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Gerd!
+[+cc Sven, Trent, et al from related report:
+https://lore.kernel.org/linux-pci/20181218210444.5950-1-TheSven73@googlemail.com]
 
-On 12/18/18 9:33 AM, Gerd Hoffmann wrote:
-> Check first two header bytes before trying to read the edid blob,
-> to avoid the log being spammed in case qemu has no edid support (old
-> qemu or edid turned off).
->
-> Fixes: 01f23459cf drm/bochs: add edid support.
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+On Fri, Dec 14, 2018 at 06:44:15AM +0000, Richard Zhu wrote:
+> Assertion of the MSI Enable bit of RC's MSI CAP is mandatory required to
+> trigger MSI on i.MX6 PCIe.
+> This bit would be asserted when CONFIG_PCIEPORTBUS=y.
+> Thus, the MSI works fine on i.MX6 PCIe before the commit "f3fdfc4".
+> 
+> Assert it unconditionally when MSI is enabled.
+> Otherwise, the MSI wouldn't be triggered although the EP is present and
+> the MSIs are assigned.
+
+OK, I think I finally understand most of what's going on.  Please
+check the following possible changelog text:
+
+  The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2)
+  controls whether a Function can request service using MSI.
+
+  i.MX6 Root Ports implement the MSI Capability and may use MSI to
+  request service for events like PME, hotplug, AER, etc.  In
+  addition, on i.MX6, the MSI Enable bit controls delivery of MSI
+  interrupts from components below the Root Port.
+
+  Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
+  CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also
+  enabled CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports,
+  it set the MSI Enable bit so it could use PME, hotplug, AER, etc.
+  As a side effect, that also enabled delivery of MSI interrupts from
+  downstream components.
+
+  After f3fdfc4ac3a2, the imx6q-pcie driver can operate without
+  portdrv, but that means imx6q-pcie must set the MSI Enable bit
+  itself if downstream components use MSI.
+
+  Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+
+I still don't understand exactly *how* MSI Enable affects MSI from
+downstream components, since the downstream component just does a DMA
+write, and the Root Port can't tell whether the write is to memory or
+interrupt controller unless the Root Port knows where the MSI targets
+are, e.g., if the interrupt controller is actually part of the RC.
+
+Bjorn
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 > ---
->   drivers/gpu/drm/bochs/bochs_hw.c | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-> index c90a0d492f..f91e049625 100644
-> --- a/drivers/gpu/drm/bochs/bochs_hw.c
-> +++ b/drivers/gpu/drm/bochs/bochs_hw.c
-> @@ -89,6 +89,10 @@ int bochs_hw_load_edid(struct bochs_device *bochs)
->   	if (!bochs->mmio)
->   		return -1;
->   
-
-You could probably have a comment here explaining the magic below
-
-(just like in the commit message to ease the task of understanding
-
-while reading the code why 2 of 8 bytes of the EDID header is checked
-
-and why it is all needed). Of course one can use git blame... Up to you
-
-> +	if (readb(bochs->mmio + 0) != 0x00 ||
-> +	    readb(bochs->mmio + 1) != 0xff)
-
-bochs->mmio is defined as "void __iomem   *mmio;". Can we please avoid
-
-void pointer arithmetic here?
-
-> +		return -1;
+> Changes v1 -> v2:
+> * Assert the MSI_EN unconditionally when MSI is supported.
+> Changes v2 -> v3:
+> * Remove the IS_ENABLED(CONFIG_PCI_MSI) since the driver depends on
+> PCI_MSI_IRQ_DOMAIN
+> * Extended with a check for pci_msi_enabled() to see if the user
+> explicitly want legacy IRQs
+> Changes v3 -> v4:
+> * Refer to Bjorn's comments, refine the subject and commit log and change
+> the PCI_MSI_CAP to PCIE_RC_IMX6_MSI_CAP.
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 26087b3..639bb27 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -74,6 +74,7 @@ struct imx6_pcie {
+>  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+>  
+>  /* PCIe Root Complex registers (memory-mapped) */
+> +#define PCIE_RC_IMX6_MSI_CAP			0x50
+>  #define PCIE_RC_LCR				0x7c
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+> @@ -926,6 +927,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+>  	int ret;
+> +	u16 val;
+>  
+>  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+>  	if (!imx6_pcie)
+> @@ -1071,6 +1073,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (pci_msi_enabled()) {
+> +		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
+> +				PCI_MSI_FLAGS);
+> +		val |= PCI_MSI_FLAGS_ENABLE;
+> +		dw_pcie_writew_dbi(pci, PCIE_RC_MSI_IMX6_CAP +
+> +				PCI_MSI_FLAGS, val);
+> +	}
 > +
->   	kfree(bochs->edid);
->   	bochs->edid = drm_do_get_edid(&bochs->connector,
->   				      bochs_get_edid_block, bochs);
-
-With the above fixed:
-
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
