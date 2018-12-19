@@ -2,157 +2,153 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA2DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFBCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F542184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7F472184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:22:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tszlL8CN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbeLSLUu (ORCPT
+        id S1729303AbeLSLWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:20:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34908 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726652AbeLSLUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:20:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BC424B0A5;
-        Wed, 19 Dec 2018 11:20:43 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     afaerber@suse.de, agraf@suse.de,
-        linux-rpi-kernel@lists.infradead.org, stefan.wahren@i2se.com,
-        eric@anholt.net, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/panel: rpi-touchscreen: Add backlight support
-Date:   Wed, 19 Dec 2018 12:20:32 +0100
-Message-Id: <20181219112033.31064-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.19.2
+        Wed, 19 Dec 2018 06:22:39 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37238 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbeLSLWi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:22:38 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t18-v6so5051821ljd.4;
+        Wed, 19 Dec 2018 03:22:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wvv+6h2xtQTAcq6rLgBPG7RS7nGtHtlwnBYaaXULXbE=;
+        b=tszlL8CNHq0+X/RzT8xpY3BDKwCx7nsuPmL3gBIwM0FaWQ7G4AN2GeADPO3u5M10WM
+         i6LMfhoglti5gGuksAZHifcSOYN+w1MCIb+XxdemFunJLxWkvI5r/upujazENE53xcX8
+         9/YBIWMddHLOIXNH0dnO9TFoVt5xMEjHXSltV1n4gyPudG/e/0+sAuW7RYUEfoIMGH7y
+         UCgGMERlS5ozpmNIOLIyU+Jsj7PdN+NlBtP2qzGAn75S2jedrYIINdrJyx2NwAS27pV0
+         3Ftv+xDBRr3/QmkgWzxV0ddTwcLHsEYjTQ9lUp79tV65VOMsHH9aN4Gyu9oQWx2oJ5d1
+         ZPww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wvv+6h2xtQTAcq6rLgBPG7RS7nGtHtlwnBYaaXULXbE=;
+        b=aonNWr1XOxMKieq1f/niBe9wl5E055WRDYBTMJHOqXm2MsDLpOlVo6gbtdUpiuD5LI
+         Ze/ZUqwizzgZHukaNt6SDUfG5HrElQqANA2fpWoGMRlQgVfzny4Bdh4QjB3mDR8pePM4
+         KEgwvgpm48P66YLJVHqvX8ZVXUtSLakis8u936YAPurJ4HsRIgERxYBVOLXHtu81dZNH
+         h1fHr4TMkq+skEbUyH3OmEkkel4WLZAizw/Qvk1WQX/ZWpJGfVNGtvZ7Fw09UXW8mM48
+         2kdQ50P989MD5F2BIFKbb8s5uwsdIXdTJidD6PwPLnnuUbYb7d0+Q5oIu2Z4TMVsy4ZU
+         ZPaQ==
+X-Gm-Message-State: AA+aEWbe4cJV5bStNBVXdbL+FwBdAPjK/ZSLc5RSNdzu9vwE9D5Iuxk+
+        4/N9DTa9JwzA+lCMzXxsgPM=
+X-Google-Smtp-Source: AFSGD/UHQGFkMW8f6kiY++/Hd17vxhcJVetVe7aAvf5UoHWI0/+sn6LtJZwvyfq+wvj4NIRGPdJcaQ==
+X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr11991322ljg.164.1545218556376;
+        Wed, 19 Dec 2018 03:22:36 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:e05f:a77f:eff8:4ba])
+        by smtp.googlemail.com with ESMTPSA id y11-v6sm3522548ljc.85.2018.12.19.03.22.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 03:22:35 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonathan Bakker <xc-racer2@live.ca>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3] Bluetooth: hci_bcm: Handle specific unknown packets after firmware loading
+Date:   Wed, 19 Dec 2018 12:22:28 +0100
+Message-Id: <20181219112228.9735-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exposes backlight control into userspace by creating a
-backlight device instead of directly accessing the PWM registers.
+From: Jonathan Bakker <xc-racer2@live.ca>
 
-The backlight driver can't go on a separate file as it shares the I2C
-bus & address with the panel.
+The Broadcom controller on aries S5PV210 boards sends out a couple of
+unknown packets after the firmware is loaded.  This will cause
+logging of errors such as:
+	Bluetooth: hci0: Frame reassembly failed (-84)
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+This is probably also the case with other boards, as there are related
+Android userspace patches for custom ROMs such as
+https://review.lineageos.org/#/c/LineageOS/android_system_bt/+/142721/
+Since this appears to be intended behaviour, treated them as diagnostic
+packets.
+
+Note that this is another variant of commit 01d5e44ace8a
+("Bluetooth: hci_bcm: Handle empty packet after firmware loading")
+
+Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+
 ---
-v1 -> v2:
-  - Add Kconfig dependency with BACKLIGHT_CLASS_DEVICE
+Changes from v2:
+   - Rebased against latest bluetooth-next tree
 
- drivers/gpu/drm/panel/Kconfig                 |  1 +
- .../drm/panel/panel-raspberrypi-touchscreen.c | 33 +++++++++++++++++--
- 2 files changed, 32 insertions(+), 2 deletions(-)
+Changes from v1:
+   - Rename UNKNOWN to TYPE49
+   - Rename UNKNOWN2 to TYPE52
+---
+ drivers/bluetooth/hci_bcm.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 6020c30a33b3..1ce35483f342 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -112,6 +112,7 @@ config DRM_PANEL_PANASONIC_VVX10F034N00
- config DRM_PANEL_RASPBERRYPI_TOUCHSCREEN
- 	tristate "Raspberry Pi 7-inch touchscreen panel"
- 	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
- 	help
- 	  Say Y here if you want to enable support for the Raspberry
- 	  Pi 7" Touchscreen.  To compile this driver as a module,
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 2c9c9722734f..838b5c8767bc 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -52,6 +52,7 @@
- #include <linux/of_device.h>
- #include <linux/of_graph.h>
- #include <linux/pm.h>
-+#include <linux/backlight.h>
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index a5cb580a07de..ddbe518c3e5b 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -52,6 +52,12 @@
+ #define BCM_LM_DIAG_PKT 0x07
+ #define BCM_LM_DIAG_SIZE 63
  
- #include <drm/drm_panel.h>
- #include <drm/drmP.h>
-@@ -196,6 +197,7 @@ struct rpi_touchscreen {
- 	struct drm_panel base;
- 	struct mipi_dsi_device *dsi;
- 	struct i2c_client *i2c;
-+	struct backlight_device *backlight;
++#define BCM_TYPE49_PKT 0x31
++#define BCM_TYPE49_SIZE 0
++
++#define BCM_TYPE52_PKT 0x34
++#define BCM_TYPE52_SIZE 0
++
+ #define BCM_AUTOSUSPEND_DELAY	5000 /* default autosleep delay */
+ 
+ #define BCM_NUM_SUPPLIES 2
+@@ -595,12 +601,28 @@ static int bcm_setup(struct hci_uart *hu)
+ 	.lsize = 0, \
+ 	.maxlen = BCM_NULL_SIZE
+ 
++#define BCM_RECV_TYPE49 \
++	.type = BCM_TYPE49_PKT, \
++	.hlen = BCM_TYPE49_SIZE, \
++	.loff = 0, \
++	.lsize = 0, \
++	.maxlen = BCM_TYPE49_SIZE
++
++#define BCM_RECV_TYPE52 \
++	.type = BCM_TYPE52_PKT, \
++	.hlen = BCM_TYPE52_SIZE, \
++	.loff = 0, \
++	.lsize = 0, \
++	.maxlen = BCM_TYPE52_SIZE
++
+ static const struct h4_recv_pkt bcm_recv_pkts[] = {
+ 	{ H4_RECV_ACL,      .recv = hci_recv_frame },
+ 	{ H4_RECV_SCO,      .recv = hci_recv_frame },
+ 	{ H4_RECV_EVENT,    .recv = hci_recv_frame },
+ 	{ BCM_RECV_LM_DIAG, .recv = hci_recv_diag  },
+ 	{ BCM_RECV_NULL,    .recv = hci_recv_diag  },
++	{ BCM_RECV_TYPE49,  .recv = hci_recv_diag  },
++	{ BCM_RECV_TYPE52,  .recv = hci_recv_diag  },
  };
  
- static const struct drm_display_mode rpi_touchscreen_modes[] = {
-@@ -256,7 +258,8 @@ static int rpi_touchscreen_disable(struct drm_panel *panel)
- {
- 	struct rpi_touchscreen *ts = panel_to_ts(panel);
- 
--	rpi_touchscreen_i2c_write(ts, REG_PWM, 0);
-+	ts->backlight->props.brightness = 0;
-+	backlight_update_status(ts->backlight);
- 
- 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
- 	udelay(1);
-@@ -300,7 +303,8 @@ static int rpi_touchscreen_enable(struct drm_panel *panel)
- 	msleep(100);
- 
- 	/* Turn on the backlight. */
--	rpi_touchscreen_i2c_write(ts, REG_PWM, 255);
-+	ts->backlight->props.brightness = 255;
-+	backlight_update_status(ts->backlight);
- 
- 	/* Default to the same orientation as the closed source
- 	 * firmware used for the panel.  Runtime rotation
-@@ -358,12 +362,26 @@ static const struct drm_panel_funcs rpi_touchscreen_funcs = {
- 	.get_modes = rpi_touchscreen_get_modes,
- };
- 
-+static int raspberrypi_bl_update_status(struct backlight_device *bl)
-+{
-+	struct rpi_touchscreen *ts = bl_get_data(bl);
-+
-+	rpi_touchscreen_i2c_write(ts, REG_PWM, bl->props.brightness);
-+
-+	return 0;
-+}
-+
-+static const struct backlight_ops raspberrypi_bl_ops = {
-+	.update_status = raspberrypi_bl_update_status,
-+};
-+
- static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 				 const struct i2c_device_id *id)
- {
- 	struct device *dev = &i2c->dev;
- 	struct rpi_touchscreen *ts;
- 	struct device_node *endpoint, *dsi_host_node;
-+	struct backlight_properties props;
- 	struct mipi_dsi_host *host;
- 	int ret, ver;
- 	struct mipi_dsi_device_info info = {
-@@ -398,6 +416,17 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 	/* Turn off at boot, so we can cleanly sequence powering on. */
- 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
- 
-+	memset(&props, 0, sizeof(props));
-+	props.type = BACKLIGHT_RAW;
-+	props.max_brightness = 255;
-+	ts->backlight = devm_backlight_device_register(dev, dev_name(dev), dev,
-+						       ts, &raspberrypi_bl_ops,
-+						       &props);
-+	if (IS_ERR(ts->backlight)) {
-+		dev_err(dev, "Failed to create backlight device\n");
-+		return PTR_ERR(ts->backlight);
-+	}
-+
- 	/* Look up the DSI host.  It needs to probe before we do. */
- 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
- 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
+ static int bcm_recv(struct hci_uart *hu, const void *data, int count)
 -- 
-2.19.2
+2.17.1
 
