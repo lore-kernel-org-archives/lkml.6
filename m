@@ -6,28 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37776C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3111DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE402133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2222133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbeLSNLp (ORCPT
+        id S1728969AbeLSNLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:11:45 -0500
-Received: from mail.lysator.liu.se ([130.236.254.3]:60435 "EHLO
+        Wed, 19 Dec 2018 08:11:53 -0500
+Received: from mail.lysator.liu.se ([130.236.254.3]:54235 "EHLO
         mail.lysator.liu.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728809AbeLSNLh (ORCPT
+        with ESMTP id S1726833AbeLSNLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:11:37 -0500
+        Wed, 19 Dec 2018 08:11:36 -0500
+X-Greylist: delayed 396 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 08:11:35 EST
 Received: from mail.lysator.liu.se (localhost [127.0.0.1])
-        by mail.lysator.liu.se (Postfix) with ESMTP id 693FA4002E;
-        Wed, 19 Dec 2018 14:05:01 +0100 (CET)
+        by mail.lysator.liu.se (Postfix) with ESMTP id 1D03540037;
+        Wed, 19 Dec 2018 14:05:12 +0100 (CET)
 Received: from orc.pedanet (c-17f4e255.26241707-0-68616c6d7374616473746164736e6174.bbcust.telenor.se [85.226.244.23])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.lysator.liu.se (Postfix) with ESMTPSA id 17ADE40005;
-        Wed, 19 Dec 2018 14:05:01 +0100 (CET)
+        by mail.lysator.liu.se (Postfix) with ESMTPSA id C493840005;
+        Wed, 19 Dec 2018 14:05:11 +0100 (CET)
 From:   Peter Rosin <peda@lysator.liu.se>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
@@ -37,9 +38,9 @@ Cc:     Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
         Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: display: bridge: fork out ti,ds90c185 from lvds-transmitter
-Date:   Wed, 19 Dec 2018 14:04:47 +0100
-Message-Id: <20181219130449.31641-2-peda@lysator.liu.se>
+Subject: [PATCH v2 3/3] drm/bridge: add pwdn-gpios support to the lvds-encoder
+Date:   Wed, 19 Dec 2018 14:04:49 +0100
+Message-Id: <20181219130449.31641-4-peda@lysator.liu.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181219130449.31641-1-peda@lysator.liu.se>
 References: <20181219130449.31641-1-peda@lysator.liu.se>
@@ -51,98 +52,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Rosin <peda@axentia.se>
 
-DS90C185 has a shutdown pin which does not fit in the lvds-transmitter
-binding, which is meant to be generic.
-
-The sister chip DS90C187 is similar to DS90C185, describe it here as well.
+Optionally power down the LVDS-encoder when it is not in use.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- .../bindings/display/bridge/lvds-transmitter.txt   |  8 +---
- .../bindings/display/bridge/ti,ds90c185.txt        | 55 ++++++++++++++++++++++
- 2 files changed, 56 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
+ drivers/gpu/drm/bridge/lvds-encoder.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-index 50220190c203..fd39ad34c383 100644
---- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-@@ -22,13 +22,7 @@ among others.
+diff --git a/drivers/gpu/drm/bridge/lvds-encoder.c b/drivers/gpu/drm/bridge/lvds-encoder.c
+index 75b0d3f6e4de..43d584a6a6b9 100644
+--- a/drivers/gpu/drm/bridge/lvds-encoder.c
++++ b/drivers/gpu/drm/bridge/lvds-encoder.c
+@@ -11,11 +11,13 @@
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_panel.h>
  
- Required properties:
++#include <linux/gpio/consumer.h>
+ #include <linux/of_graph.h>
  
--- compatible: Must be one or more of the following
--  - "ti,ds90c185" for the TI DS90C185 FPD-Link Serializer
--  - "lvds-encoder" for a generic LVDS encoder device
--
--  When compatible with the generic version, nodes must list the
--  device-specific version corresponding to the device first
--  followed by the generic version.
-+- compatible: Must be "lvds-encoder"
+ struct lvds_encoder {
+ 	struct drm_bridge bridge;
+ 	struct drm_bridge *panel_bridge;
++	struct gpio_desc *pwdn_gpio;
+ };
  
- Required nodes:
+ static int lvds_encoder_attach(struct drm_bridge *bridge)
+@@ -28,8 +30,30 @@ static int lvds_encoder_attach(struct drm_bridge *bridge)
+ 				 bridge);
+ }
  
-diff --git a/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt b/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
-new file mode 100644
-index 000000000000..a13e778503e6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
-@@ -0,0 +1,55 @@
-+Texas Instruments FPD-Link (LVDS) Serializer
-+--------------------------------------------
++static void lvds_encoder_enable(struct drm_bridge *bridge)
++{
++	struct lvds_encoder *lvds_encoder = container_of(bridge,
++							 struct lvds_encoder,
++							 bridge);
 +
-+The DS90C185 and DS90C187 are low-power serializers for portable
-+battery-powered applications that reduces the size of the RGB
-+interface between the host GPU and the display.
++	if (lvds_encoder->pwdn_gpio)
++		gpiod_set_value_cansleep(lvds_encoder->pwdn_gpio, 0);
++}
 +
-+Required properties:
++static void lvds_encoder_disable(struct drm_bridge *bridge)
++{
++	struct lvds_encoder *lvds_encoder = container_of(bridge,
++							 struct lvds_encoder,
++							 bridge);
 +
-+- compatible: Should be
-+  "ti,ds90c185", "lvds-encoder"  for the TI DS90C185 FPD-Link Serializer
-+  "ti,ds90c187", "lvds-encoder"  for the TI DS90C187 FPD-Link Serializer
++	if (lvds_encoder->pwdn_gpio)
++		gpiod_set_value_cansleep(lvds_encoder->pwdn_gpio, 1);
++}
 +
-+Optional properties:
+ static struct drm_bridge_funcs funcs = {
+ 	.attach = lvds_encoder_attach,
++	.enable = lvds_encoder_enable,
++	.disable = lvds_encoder_disable,
+ };
+ 
+ static int lvds_encoder_probe(struct platform_device *pdev)
+@@ -45,6 +69,16 @@ static int lvds_encoder_probe(struct platform_device *pdev)
+ 	if (!lvds_encoder)
+ 		return -ENOMEM;
+ 
++	lvds_encoder->pwdn_gpio = devm_gpiod_get_optional(&pdev->dev, "pwdn",
++							  GPIOD_OUT_HIGH);
++	if (IS_ERR(lvds_encoder->pwdn_gpio)) {
++		int err = PTR_ERR(lvds_encoder->pwdn_gpio);
 +
-+- pwdn-gpios: Power down control GPIO (the PDB pin, active-low)
++		if (err != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "pwdn GPIO failure: %d\n", err);
++		return err;
++	}
 +
-+Required nodes:
-+
-+The devices have two video ports. Their connections are modeled using the OF
-+graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-+
-+- Video port 0 for parallel input
-+- Video port 1 for LVDS output
-+
-+
-+Example
-+-------
-+
-+lvds-encoder {
-+	compatible = "ti,ds90c185", "lvds-encoder";
-+
-+	pwdn-gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			lvds_enc_in: endpoint {
-+				remote-endpoint = <&lcdc_out_rgb>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds_enc_out: endpoint {
-+				remote-endpoint = <&lvds_panel_in>;
-+			};
-+		};
-+	};
-+};
+ 	/* Locate the panel DT node. */
+ 	port = of_graph_get_port_by_id(pdev->dev.of_node, 1);
+ 	if (!port) {
 -- 
 2.11.0
 
