@@ -2,79 +2,200 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66736C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEE8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 213FB20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D9920874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:25:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UJVmfxAW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWHX114T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbeLSOYW (ORCPT
+        id S1729422AbeLSOZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:24:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54442 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbeLSOYV (ORCPT
+        Wed, 19 Dec 2018 09:25:32 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35692 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbeLSOZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:24:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=coGmbTLk422neUd7eMcjNwbLbdlqqt6qKLsKfsfuGCg=; b=UJVmfxAWPEoaG9ojeIx96bJaGA
-        mFf9KTktohJWDkwOVl65SfWI+IXJaBCHilcWEyxxP/bcmXEQtKk8FbIBBZmtcCseMsp3ZDDsBVuvh
-        Rj0100VvZRmvs2e5q1EF+WgMCb2n5Qef/GhZ85mUv0f8DSAn3Ts+M0Rk6ios5iikqoq/3nb43bRNk
-        +B42yuulvCDEfZ2Uuqx7JCOjRhXIUdRA5l+yNw7i8ytxnE2YpFwDTTPP32iXOKZpabu/aj/zHCzsk
-        LORjDP8xn4lsxZGaonHAF6/+V85Mq5uNkTw2UjpKD2DPbqFQZxpjMYsms4RqSR3Q1vEIr009Aix+m
-        vyG1QDsQ==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZclo-0006jd-Rl; Wed, 19 Dec 2018 14:24:21 +0000
-Date:   Wed, 19 Dec 2018 15:24:19 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [GIT PULL] dma-mapping fix for 4.20
-Message-ID: <20181219142419.GA1112@infradead.org>
+        Wed, 19 Dec 2018 09:25:32 -0500
+Received: by mail-ed1-f68.google.com with SMTP id x30so17131303edx.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:25:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OtCtqnQFcaJcuPDm4e+SywOcjI8goP1g5k5lke8q0/8=;
+        b=mWHX114TMQ1HpDRuOZTW7SQg+v4An4jvyAkxDZWoxyKSnWDjX++pU1P72CGOe+IF2Q
+         QGbMjBWlfPwd1yy/ES/mf8mQlxY7EnpPfxqmvAR3Mxamdw9KzAyKzWk01N85GxMlrLpR
+         JjJZm9sfOeucRph45ASFPnT+hGCzTcqwHCzeb/fEyhpmhWYVqUCBHDlIXKSonY4m1uEP
+         wR3k4TmQnUAxxBhxv8+WuX7tkHgDikLsh45+esnMYCXMqfEGmR2lQIHqLRc73go5Bbp4
+         GiCj6P8ECs0u6lru/jcxk/XGzuciap4Pu/XrE6TmGGAQjmDQ2eorHEmA9bLjWRb6n+SZ
+         012w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OtCtqnQFcaJcuPDm4e+SywOcjI8goP1g5k5lke8q0/8=;
+        b=J3w8ONv8OxLK5775gzme7ucuHpbRG1+eyrhisG0Z7LDVlJls/AVsrUs9D04gXYNLxV
+         sCjRuLZrPpfg0ceoZfpUYF29qPakUSKkvEEq8Je5TZ6S3YRZ42a7NY2nrgxte2M3Ib1B
+         o1Rye7YOz6IVimgX7d0WrkFv/sqoSKhT/3FMq4TA7vBM+O3thLK68JDMHjMhB4Q7esj+
+         L7UIf9gwycxLcV9EV+AQgYqddFGMtPsOLtcC8F1EsJi//9tC/6+gah4ks3/GO4Ett1R6
+         jAsB4lcKKL5T4fmFOTBRDgX+yFWaiDvExGEHXvLhcGUwfaDtJ9QH3XadiCCc04S0mHSB
+         6W/g==
+X-Gm-Message-State: AA+aEWYv8hc6Tin/6cCrV2iocdTc9cJ606/ny+65hV2VG0ScmkZUHof3
+        XaFogq8J8Nn+8Y8h/zDbVGg=
+X-Google-Smtp-Source: AFSGD/WHP7PM5NDP4xoDbY2KwIBjg9vJei3RdWV7WKkvFjqBbPndWNt3nFf2/Gn2pG+Gf5BR8LCMhA==
+X-Received: by 2002:a50:b5a5:: with SMTP id a34mr19915229ede.52.1545229529579;
+        Wed, 19 Dec 2018 06:25:29 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id o6-v6sm1529236ejs.32.2018.12.19.06.25.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 06:25:28 -0800 (PST)
+Date:   Wed, 19 Dec 2018 14:25:28 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        pavel.tatashin@microsoft.com, rppt@linux.vnet.ibm.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm, page_alloc: Fix has_unmovable_pages for HugePages
+Message-ID: <20181219142528.yx6ravdyzcqp5wtd@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181217225113.17864-1-osalvador@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181217225113.17864-1-osalvador@suse.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 6531e115b7ab84f563fcd7f0d2d05ccf971aaaf9:
+On Mon, Dec 17, 2018 at 11:51:13PM +0100, Oscar Salvador wrote:
+>v1 -> v2:
+>	- Fix the logic for skipping pages by Michal
+>
+>---
+>>From e346b151037d3c37feb10a981a4d2a25018acf81 Mon Sep 17 00:00:00 2001
+>From: Oscar Salvador <osalvador@suse.de>
+>Date: Mon, 17 Dec 2018 14:53:35 +0100
+>Subject: [PATCH] mm, page_alloc: Fix has_unmovable_pages for HugePages
+>
+>While playing with gigantic hugepages and memory_hotplug, I triggered
+>the following #PF when "cat memoryX/removable":
+>
+><---
+>kernel: BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+>kernel: #PF error: [normal kernel read fault]
+>kernel: PGD 0 P4D 0
+>kernel: Oops: 0000 [#1] SMP PTI
+>kernel: CPU: 1 PID: 1481 Comm: cat Tainted: G            E     4.20.0-rc6-mm1-1-default+ #18
+>kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+>kernel: RIP: 0010:has_unmovable_pages+0x154/0x210
+>kernel: Code: 1b ff ff ff eb 32 48 8b 45 00 bf 00 10 00 00 a9 00 00 01 00 74 07 0f b6 4d 51 48 d3 e7 e8 c4 81 05 00 48 85 c0 49 89 c1 75 7e <41> 8b 41 08 83 f8 09 74 41 83 f8 1b 74 3c 4d 2b 64 24 58 49 81 ec
+>kernel: RSP: 0018:ffffc90000a1fd30 EFLAGS: 00010246
+>kernel: RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000009
+>kernel: RDX: ffffffff82aed4f0 RSI: 0000000000001000 RDI: 0000000000001000
+>kernel: RBP: ffffea0001800000 R08: 0000000000200000 R09: 0000000000000000
+>kernel: R10: 0000000000001000 R11: 0000000000000003 R12: ffff88813ffd45c0
+>kernel: R13: 0000000000060000 R14: 0000000000000001 R15: ffffea0000000000
+>kernel: FS:  00007fd71d9b3500(0000) GS:ffff88813bb00000(0000) knlGS:0000000000000000
+>kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>kernel: CR2: 0000000000000008 CR3: 00000001371c2002 CR4: 00000000003606e0
+>kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>kernel: Call Trace:
+>kernel:  is_mem_section_removable+0x7d/0x100
+>kernel:  removable_show+0x90/0xb0
+>kernel:  dev_attr_show+0x1c/0x50
+>kernel:  sysfs_kf_seq_show+0xca/0x1b0
+>kernel:  seq_read+0x133/0x380
+>kernel:  __vfs_read+0x26/0x180
+>kernel:  vfs_read+0x89/0x140
+>kernel:  ksys_read+0x42/0x90
+>kernel:  do_syscall_64+0x5b/0x180
+>kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>kernel: RIP: 0033:0x7fd71d4c8b41
+>kernel: Code: fe ff ff 48 8d 3d 27 9e 09 00 48 83 ec 08 e8 96 02 02 00 66 0f 1f 44 00 00 8b 05 ea fc 2c 00 48 63 ff 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 f3 c3 0f 1f 44 00 00 55 53 48 89 d5 48 89
+>kernel: RSP: 002b:00007ffeab5f6448 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+>kernel: RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fd71d4c8b41
+>kernel: RDX: 0000000000020000 RSI: 00007fd71d809000 RDI: 0000000000000003
+>kernel: RBP: 0000000000020000 R08: ffffffffffffffff R09: 0000000000000000
+>kernel: R10: 000000000000038b R11: 0000000000000246 R12: 00007fd71d809000
+>kernel: R13: 0000000000000003 R14: 00007fd71d80900f R15: 0000000000020000
+>kernel: Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) drm_kms_helper(E) drm(E) aesni_intel(E) virtio_net(E) syscopyarea(E) net_failover(E) sysfillrect(E) failover(E) aes_x86_64(E) crypto_simd(E) sysimgblt(E) cryptd(E) pcspkr(E) glue_helper(E) parport_pc(E) fb_sys_fops(E) i2c_piix4(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) serio_raw(E) crc32c_intel(E) virtio_pci(E) virtio_ring(E) virtio(E) libata(E) sg(E) scsi_mod(E) autofs4(E)
+>kernel: CR2: 0000000000000008
+>kernel: ---[ end trace 49cade81474e40e7 ]---
+>kernel: RIP: 0010:has_unmovable_pages+0x154/0x210
+>kernel: Code: 1b ff ff ff eb 32 48 8b 45 00 bf 00 10 00 00 a9 00 00 01 00 74 07 0f b6 4d 51 48 d3 e7 e8 c4 81 05 00 48 85 c0 49 89 c1 75 7e <41> 8b 41 08 83 f8 09 74 41 83 f8 1b 74 3c 4d 2b 64 24 58 49 81 ec
+>kernel: RSP: 0018:ffffc90000a1fd30 EFLAGS: 00010246
+>kernel: RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000009
+>kernel: RDX: ffffffff82aed4f0 RSI: 0000000000001000 RDI: 0000000000001000
+>kernel: RBP: ffffea0001800000 R08: 0000000000200000 R09: 0000000000000000
+>kernel: R10: 0000000000001000 R11: 0000000000000003 R12: ffff88813ffd45c0
+>kernel: R13: 0000000000060000 R14: 0000000000000001 R15: ffffea0000000000
+>kernel: FS:  00007fd71d9b3500(0000) GS:ffff88813bb00000(0000) knlGS:0000000000000000
+>kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>kernel: CR2: 0000000000000008 CR3: 00000001371c2002 CR4: 00000000003606e0
+>kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>--->
+>
+>The reason is we do not pass the Head to page_hstate(), and so,
+>the call to compound_order() in page_hstate() returns 0, so
+>we end up checking all hstates's size to match PAGE_SIZE.
+>
+>Obviously, we do not find any hstate matching that size, and we
+>return NULL.
+>Then, we dereference that NULL pointer in hugepage_migration_supported()
+>and we got the #PF from above.
+>
+>Fix that by getting the head page before calling page_hstate().
+>
+>Also, since gigantic pages span several pageblocks, re-adjust the logic
+>for skipping pages.
+>
+>Signed-off-by: Oscar Salvador <osalvador@suse.de>
+>---
+> mm/page_alloc.c | 7 +++++--
+> 1 file changed, 5 insertions(+), 2 deletions(-)
+>
+>diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>index a6e7bfd18cde..90ad281f750c 100644
+>--- a/mm/page_alloc.c
+>+++ b/mm/page_alloc.c
+>@@ -8038,11 +8038,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+> 		 * handle each tail page individually in migration.
+> 		 */
+> 		if (PageHuge(page)) {
+>+			struct page *head = compound_head(page);
+>+			unsigned int skip_pages;
+> 
+>-			if (!hugepage_migration_supported(page_hstate(page)))
+>+			if (!hugepage_migration_supported(page_hstate(head)))
+> 				goto unmovable;
+> 
+>-			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
+>+			skip_pages = (1 << compound_order(head)) - (page - head);
+>+			iter = round_up(iter + 1, skip_pages) - 1;
 
-  Merge branch 'akpm' (patches from Andrew) (2018-12-14 15:35:30 -0800)
+The comment of round_up says round up to next specified power of 2.  And
+second parameter must be a power of 2.
 
-are available in the Git repository at:
+Look skip_pages not satisfy this.
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.20-4
+> 			continue;
+> 		}
+> 
+>-- 
+>2.13.7
 
-for you to fetch changes up to c92a54cfa0257e8ffd66b2a17d49e9c0bd4b769f:
-
-  dma-direct: do not include SME mask in the DMA supported check (2018-12-17 18:02:11 +0100)
-
-----------------------------------------------------------------
-dma-mapping fix for 4.21
-
-Fix a regression in dma-direct that didn't take account the magic AMD
-memory encryption mask in the DMA address.
-
-----------------------------------------------------------------
-Lendacky, Thomas (1):
-      dma-direct: do not include SME mask in the DMA supported check
-
- kernel/dma/direct.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+-- 
+Wei Yang
+Help you, Help me
