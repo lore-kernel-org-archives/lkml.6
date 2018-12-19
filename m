@@ -6,81 +6,98 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52281C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A785EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9342184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E4022184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:52:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbeLSLw0 (ORCPT
+        id S1729567AbeLSLwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:52:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47830 "EHLO mx1.redhat.com"
+        Wed, 19 Dec 2018 06:52:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47816 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbeLSLvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728470AbeLSLvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Dec 2018 06:51:32 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A4DB19B324;
+        by mx1.redhat.com (Postfix) with ESMTPS id 2DA74792BA;
         Wed, 19 Dec 2018 11:51:32 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 357A418236;
-        Wed, 19 Dec 2018 11:51:29 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C6535D70A;
+        Wed, 19 Dec 2018 11:51:28 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 791867708; Wed, 19 Dec 2018 12:51:28 +0100 (CET)
+        id 1848CB16; Wed, 19 Dec 2018 12:51:28 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
         BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 04/14] drm/bochs: atomic: add mode_set_nofb callback.
-Date:   Wed, 19 Dec 2018 12:51:17 +0100
-Message-Id: <20181219115127.31359-5-kraxel@redhat.com>
+Subject: [PATCH 01/14] drm/bochs: encoder cleanup
+Date:   Wed, 19 Dec 2018 12:51:14 +0100
+Message-Id: <20181219115127.31359-2-kraxel@redhat.com>
 In-Reply-To: <20181219115127.31359-1-kraxel@redhat.com>
 References: <20181219115127.31359-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 19 Dec 2018 11:51:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Conversion to atomic modesetting, step two.
-Add mode_set_nofb crtc helper callback.
+Most unused callbacks can be NULL pointers these days.
+Drop a bunch of empty encoder callbacks.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/bochs/bochs_kms.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/bochs/bochs_kms.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
 
 diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index 59d469f343..18b705fb0b 100644
+index f87c284dd9..c8ce54498d 100644
 --- a/drivers/gpu/drm/bochs/bochs_kms.c
 +++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -86,6 +86,14 @@ static int bochs_crtc_mode_set(struct drm_crtc *crtc,
- 	return 0;
+@@ -170,31 +170,6 @@ static void bochs_crtc_init(struct drm_device *dev)
+ 	drm_crtc_helper_add(crtc, &bochs_helper_funcs);
  }
  
-+static void bochs_crtc_mode_set_nofb(struct drm_crtc *crtc)
-+{
-+	struct bochs_device *bochs =
-+		container_of(crtc, struct bochs_device, crtc);
-+
-+	bochs_hw_setmode(bochs, &crtc->mode);
-+}
-+
- static void bochs_crtc_prepare(struct drm_crtc *crtc)
- {
+-static void bochs_encoder_mode_set(struct drm_encoder *encoder,
+-				   struct drm_display_mode *mode,
+-				   struct drm_display_mode *adjusted_mode)
+-{
+-}
+-
+-static void bochs_encoder_dpms(struct drm_encoder *encoder, int state)
+-{
+-}
+-
+-static void bochs_encoder_prepare(struct drm_encoder *encoder)
+-{
+-}
+-
+-static void bochs_encoder_commit(struct drm_encoder *encoder)
+-{
+-}
+-
+-static const struct drm_encoder_helper_funcs bochs_encoder_helper_funcs = {
+-	.dpms = bochs_encoder_dpms,
+-	.mode_set = bochs_encoder_mode_set,
+-	.prepare = bochs_encoder_prepare,
+-	.commit = bochs_encoder_commit,
+-};
+-
+ static const struct drm_encoder_funcs bochs_encoder_encoder_funcs = {
+ 	.destroy = drm_encoder_cleanup,
+ };
+@@ -207,7 +182,6 @@ static void bochs_encoder_init(struct drm_device *dev)
+ 	encoder->possible_crtcs = 0x1;
+ 	drm_encoder_init(dev, encoder, &bochs_encoder_encoder_funcs,
+ 			 DRM_MODE_ENCODER_DAC, NULL);
+-	drm_encoder_helper_add(encoder, &bochs_encoder_helper_funcs);
  }
-@@ -149,6 +157,7 @@ static const struct drm_crtc_helper_funcs bochs_helper_funcs = {
- 	.dpms = bochs_crtc_dpms,
- 	.mode_set = bochs_crtc_mode_set,
- 	.mode_set_base = bochs_crtc_mode_set_base,
-+	.mode_set_nofb = bochs_crtc_mode_set_nofb,
- 	.prepare = bochs_crtc_prepare,
- 	.commit = bochs_crtc_commit,
- 	.atomic_enable = bochs_crtc_atomic_enable,
+ 
+ 
 -- 
 2.9.3
 
