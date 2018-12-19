@@ -2,116 +2,125 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521C3C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5610BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC5121841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2620421841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:47:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwiwxgOb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbeLSOqr (ORCPT
+        id S1729713AbeLSOrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:46:47 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:57640 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727943AbeLSOqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:46:47 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wBJEhj5k031580;
-        Wed, 19 Dec 2018 08:43:45 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wBJEhhv3031579;
-        Wed, 19 Dec 2018 08:43:43 -0600
-Date:   Wed, 19 Dec 2018 08:43:43 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181219144343.GA31189@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com> <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com> <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
-Mime-Version: 1.0
+        Wed, 19 Dec 2018 09:47:22 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36340 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727943AbeLSOrV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:47:21 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so9546811pgm.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:47:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+RrlYuy13DpQ9eKQWWaHQi673orAx1g3SXGxVm8vSXc=;
+        b=KwiwxgObJsSX+GRhaX3BWLdI63GdGCWUt53BMcfadfeHu8+34wt0Syo9eGzfIZusRi
+         rssTj5kF/qUbF54xLziYD7WvI+0InhaNnEwivoqVenbTsX2SLx7KWt01NOmJPUSmuCJ9
+         ZCa5WV6OoQ1gqIpGM8hqC6ga//Q2Zj8OkddIfOv3ZbuysGBo6yFM0TnftUvAkM3ieGPM
+         S7NDJXqEhvfYPDX+nhk7wOHp7K5dzgESAYyTSBOk2srcX/4K28Fzyx/R1efMA5NGUxe0
+         7soPtY9qGpdI1OxXfNcQicMZyGMvH+p78jZ8ZoJV0nFbuXD8smVoeltQsr0rfUSBkbsX
+         lbVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+RrlYuy13DpQ9eKQWWaHQi673orAx1g3SXGxVm8vSXc=;
+        b=KUoYeqZDoK2K7bzYtuNZ7VYgpm22/EhQUB7rhk8YL2QXjvCI2uQ8dN1WdlxVL7G75+
+         Hc1kgtCappI1K9VjDmR0I0sWizZVhpPRYiq+D7Y41+h+46OJISHLQztmza/udOwm4gpF
+         e32k7UZk5J0ulKx7zXLZ4A08VNJLma3Xq0rNL0236/XaDDxYGwiIdvIx/JcGjvAWljj3
+         Qx0WxlnOTNlv/X8IJw2TUtTuaOnoQE58FPHjWehmCIuPAjMshNPBGNXuXqWCJgSBALF0
+         ABXu2Kzo5zL1xeIXgVKDZ4RzFPOZrIQGLj27B7kNrSRizoRKlBmt6ckAXQnAMEbxuU7h
+         PmZg==
+X-Gm-Message-State: AA+aEWZiF3mVaIlycXYzLaZmCW/19mWpBh0zyuDXQKyOTUd6Ch8wtGkr
+        9hA5QsgzL4CDncZ3PEt+P6I=
+X-Google-Smtp-Source: AFSGD/UUyn9Mtne+TcVYzd4Wv1QI6lZzrnnnuI28JjPanQeqcbSRSztEdI/T9myAwCzpadOkQVRpZA==
+X-Received: by 2002:a65:500c:: with SMTP id f12mr18922924pgo.226.1545230840349;
+        Wed, 19 Dec 2018 06:47:20 -0800 (PST)
+Received: from localhost (g206.124-44-15.ppp.wakwak.ne.jp. [124.44.15.206])
+        by smtp.gmail.com with ESMTPSA id a90sm31000083pfj.109.2018.12.19.06.47.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 06:47:19 -0800 (PST)
+Date:   Wed, 19 Dec 2018 23:47:18 +0900
+From:   Stafford Horne <shorne@gmail.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] openrisc: Fix broken paths to arch/or32
+Message-ID: <20181219144718.GK3235@lianli.shorne-pla.net>
+References: <20181203122047.12225-1-geert@linux-m68k.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 19 Dec 2018 08:43:45 -0600 (CST)
+In-Reply-To: <20181203122047.12225-1-geert@linux-m68k.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 08:41:12AM +0000, Jethro Beekman wrote:
+On Mon, Dec 03, 2018 at 01:20:47PM +0100, Geert Uytterhoeven wrote:
+> OpenRISC was mainlined as "openrisc", not "or32".
+> vmlinux.lds is generated from vmlinux.lds.S.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Good morning, I everyone is weathering the pre-holiday season well.
+Thanks,
 
-> On 2018-12-19 13:28, Jarkko Sakkinen wrote:
-> > * @eclave_fd:		file handle to the enclave address space
-> > * @attribute_fd:	file handle of the attribute file in the securityfs
-> > */
-> >struct sgx_enclave_set_attribute {
-> >	__u64	enclave_fd;
-> >	__u64	attribute_fd;
-> >};
+Sorry for the delay.
 
-> What is this for?
+I will queue this up.
 
-I believe it is a silent response to the issues we were prosecuting
-4-5 weeks ago, regarding the requirement for an SGX driver on an FLC
-hardware platform to have some semblance of policy management to be
-relevant from a security/privacy perspective.  It would have certainly
-been collegial to include a reference to our discussions and concerns
-in the changelog.
+-Stafford
 
-See 364f68f5a3c in Jarkko's next/master.
-
-The changeset addresses enclave access to the PROVISION key but is
-still insufficient to deliver guarantees that are consistent with the
-SGX security model.  In order to achieve that, policy management needs
-to embrace the use of MRSIGNER values, which is what our SFLC patchset
-uses.
-
-The noted changeset actually implements most of the 'kernel bloat'
-that our SFLC patchset needs to bolt onto.
-
-As of yesterday afternoon next/master still won't initialize a
-non-trivial enclave.  Since there now appears to be a wholesale change
-in the driver architecture and UAPI we are sitting on the sidelines
-waiting for an indication all of that has some hope of working before
-we introduce our approach.
-
-Part of SFLC won't be popular but it is driven by clients who are
-actually paying for SGX security engineering and architectures.
-
-> Jethro Beekman | Fortanix
-
-Best wishes for a pleasant holiday season to everyone.
-
-Dr. Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"Politics is the business of getting power and privilege without possessing
- merit."
-                                -- P.J. O'Rourke
+> ---
+>  arch/openrisc/kernel/entry.S | 2 +-
+>  arch/openrisc/kernel/head.S  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/openrisc/kernel/entry.S b/arch/openrisc/kernel/entry.S
+> index 0c826ad6e994cce3..ee6159d2ed22ec49 100644
+> --- a/arch/openrisc/kernel/entry.S
+> +++ b/arch/openrisc/kernel/entry.S
+> @@ -240,7 +240,7 @@ handler:							;\
+>   *	 occured. in fact they never do. if you need them use
+>   *	 values saved on stack (for SPR_EPC, SPR_ESR) or content
+>   *       of r4 (for SPR_EEAR). for details look at EXCEPTION_HANDLE()
+> - *       in 'arch/or32/kernel/head.S'
+> + *       in 'arch/openrisc/kernel/head.S'
+>   */
+>  
+>  /* =====================================================[ exceptions] === */
+> diff --git a/arch/openrisc/kernel/head.S b/arch/openrisc/kernel/head.S
+> index 9fc6b60140f007be..31ed257ff06188ee 100644
+> --- a/arch/openrisc/kernel/head.S
+> +++ b/arch/openrisc/kernel/head.S
+> @@ -1728,7 +1728,7 @@ _string_nl:
+>  
+>  /*
+>   * .data section should be page aligned
+> - *	(look into arch/or32/kernel/vmlinux.lds)
+> + *	(look into arch/openrisc/kernel/vmlinux.lds.S)
+>   */
+>  	.section .data,"aw"
+>  	.align	8192
+> -- 
+> 2.17.1
+> 
