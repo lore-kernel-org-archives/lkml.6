@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662F4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6159AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCD72133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137782133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:34:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="GJjqF25i"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="pru0tpHq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbeLSMdv (ORCPT
+        id S1729600AbeLSMeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:33:51 -0500
-Received: from mail-eopbgr140079.outbound.protection.outlook.com ([40.107.14.79]:63643
+        Wed, 19 Dec 2018 07:34:08 -0500
+Received: from mail-eopbgr140082.outbound.protection.outlook.com ([40.107.14.82]:12039
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729530AbeLSMdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:33:50 -0500
+        id S1729530AbeLSMeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:34:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Im7sJ8ngHGkldSNCp7raJ2jeRbEu+0PBBxyp+azpZo=;
- b=GJjqF25i4B9jN/qrpODbGPEap6zMrPaV3fKRDRrG9VcFEOUCsKoKHzDBdjLbx4b58UzaNs9caO1+GsUsZdtnfGxsAvPLVTVhIQPDtwCEJT79jwA45ieOqnPAzv+mMFA2wIsn1pXhOBSoYN6A3/VW+lLTyYKLEa2M85lmbelPvCQ=
+ bh=QgTnsx5wNy7x/lg0C4+3t07mFKRvzbuZGOAdbQdFojQ=;
+ b=pru0tpHqYhmWpaZjufNpoqQJvp/1ZjI+Kpey+avdmBqQ1OS1+TGHbf2AVrUWPkmoGFu2Qv6VO+lsaExYEbd6sMd2qgXMo118j+Jxfep1g1xEKJW2baTEj38a9pkkb9QULy6DzJMmgCtusujdUyGhtp2qvJkIH77qyBcaGnFEbXo=
 Received: from AM0PR08MB4483.eurprd08.prod.outlook.com (20.179.35.149) by
  AM0PR08MB3924.eurprd08.prod.outlook.com (20.178.118.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Wed, 19 Dec 2018 12:33:43 +0000
+ 15.20.1425.19; Wed, 19 Dec 2018 12:34:00 +0000
 Received: from AM0PR08MB4483.eurprd08.prod.outlook.com
  ([fe80::1dff:434f:5905:45db]) by AM0PR08MB4483.eurprd08.prod.outlook.com
  ([fe80::1dff:434f:5905:45db%5]) with mapi id 15.20.1446.018; Wed, 19 Dec 2018
- 12:33:43 +0000
+ 12:34:00 +0000
 From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 To:     Liviu Dudau <Liviu.Dudau@arm.com>
 CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
@@ -70,11 +70,12 @@ CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
         "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
         "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v2 4/9] drm/komeda: Add DT parsing
-Thread-Topic: [PATCH v2 4/9] drm/komeda: Add DT parsing
-Thread-Index: AQHUl5cUt9ULts/t3UaAJkdKdzOFrQ==
-Date:   Wed, 19 Dec 2018 12:33:43 +0000
-Message-ID: <20181219123147.16090-5-james.qian.wang@arm.com>
+Subject: [PATCH v2 5/9] drm/komeda: Add komeda_format_caps for format handling
+Thread-Topic: [PATCH v2 5/9] drm/komeda: Add komeda_format_caps for format
+ handling
+Thread-Index: AQHUl5cd0lvRAn06vk2dc4z9aMFStA==
+Date:   Wed, 19 Dec 2018 12:33:59 +0000
+Message-ID: <20181219123147.16090-6-james.qian.wang@arm.com>
 References: <20181219123147.16090-1-james.qian.wang@arm.com>
 In-Reply-To: <20181219123147.16090-1-james.qian.wang@arm.com>
 Accept-Language: en-US
@@ -89,28 +90,28 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=james.qian.wang@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3924;6:+8fIjqU9TaqfpHt8JDh4l8BfjY9pN1vKC3hBmfSw92mCq926J9UKCTrYgEljHtseiGKE17mqCvhfYa5Vbq2dW1fG4nw7SJ8I6OZFf8UH7iAcEVV6EhpuDV6kjp/slvMbT66AgjG9+CvhRU4MwLcZDChVxh2WbEXCgsi9gXiCIFKyshcwd9/2Hs4DehWCDsGVPPqiBsyxuykYzbVp2XvpiBOI6lPF0s0ate+hQCClj/hgbYgd7qly4eu2Zj91CsU9oRisCjsmRxwH/ZvqWehn7Nqc3YYOk3Iy78fu1Nm5rDIKvMf8j63gkd2IsrzSjnADr/Os8gxDJNScCkpULMm5DUllcglVFfIqNj0tnDf24YI+UXdXsSwpRE7hkHRilfQRiNu9qy1uC6kccxqfjnL3dxo7O3jVTgIVgegahAYYX5+vjZY3/cFr/C2ESMncNoyKM4w9AS863HzRuXUBmmY8hg==;5:v2nDbtW9hQAuJ3KJaYyh0D+EoIgocf3R5EmXRyEceudxGpoL6yo+mskpfd1ABFzfvu/yoXIhb8dqt2OM1cHKJU9ZbBpDyzFKZF0pqd+tXCbEfc1kyUtAw4MDUXwUe3dCpacLMIqrlja9ihjbM2IiD0JS+pdt1kxEtxQ0ZHm7vk4=;7:OEfnRJHhRQBufY+tRunVKVUeigzhpnx/ZurwheRgl2xwc0zo7OaBToOQFIqYARo0VYvFPgzLSfAGS6y9PYQ/EDcrRsQv4a2GeF+9ODfBxrKOaT9/FOKBFIUicV2xJfTaaedMzU7VMSciEZqYVtncIQ==
-x-ms-office365-filtering-correlation-id: 701a94d2-96d8-40a3-5514-08d665ae367f
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3924;6:y8Bik0S1VdCRmUT6YpcMNlT8VuBsGyesicKFxpXC9jjmrRWdwTCuwdu82id5fQMaMCgEwOgymbRIRbTJRJJzTy/t27zTPXKoOl7ZhNR2W/EfThe2/TMljipuf4R2uMGRjwxtGxGk9F5EwNMSuxexIieiTVfL/SQOco4Y9p7Kolfer4gbGnjsKdT7+kqF8rXnIDC+v848Bcm5/+n4WfEIyV0JD0dtRfkIE1j/69mxqs/O67TO25s6BLQuG/qKTUruUXO0Iz8fRqf3YdtVYEsIl8c9BeLVdJ4dRxS/o8vnn8rgZDEbIoUnQiQp4mmsnJiB8EVY1J4wsWPOQzD8jEYFKGbcAXyq5xvI68diyxsVuKomANfJcZzahn4FrXQpom9GilB6HfOUXD50iK48H8brRaAvvPmG828l6N7lNBBA6i7kZgFGscen07lnfSupPjwO/q1tTOxeHhOGD3fIzI3Irg==;5:y9I1bRFUXW+avhV9AYUUeZoD+7qXbualxNUQRqOi0c3TJio5Mc9Mh8GzO8wNPDw1RayyBFUx3T0z4db65D0E9O0hUOhI5BAvSv3SjD5FutzfOsl3HZpoR4uIDxGA3/3cBKIp29ZKKBUAGACzQfiDq1WKxkVzwx7I9L5r8VBenc4=;7:EaxPgT1aNZkZem08ytHCg5zP68cBB5Df5UCFIYLoVPMABvnTj8QAoFGgGYoN+0U7GJsvtUMQPMTyycMjCNTFMcdJs2rW8CCwdx6Fot2agISw4rAEcLQ9nG8GYhmKtzKUvZ9bicOEhYtheO2Q03fZIw==
+x-ms-office365-filtering-correlation-id: 6d7c391b-b3ee-4d9e-136c-08d665ae4041
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3924;
 x-ms-traffictypediagnostic: AM0PR08MB3924:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB39243F6418188C3CDE819407B3BE0@AM0PR08MB3924.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR08MB3924E140D281508F5A83975FB3BE0@AM0PR08MB3924.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3924;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3924;
 x-forefront-prvs: 0891BC3F3D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(366004)(376002)(199004)(189003)(316002)(8936002)(103116003)(37006003)(1076003)(71190400001)(81166006)(81156014)(11346002)(446003)(97736004)(36756003)(54906003)(256004)(2616005)(486006)(6636002)(99286004)(71200400001)(476003)(575784001)(86362001)(8676002)(106356001)(105586002)(5660300001)(3846002)(7416002)(6116002)(14454004)(68736007)(6512007)(2906002)(4326008)(25786009)(6486002)(76176011)(52116002)(53936002)(186003)(55236004)(102836004)(26005)(6862004)(6436002)(305945005)(478600001)(6506007)(66066001)(386003)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3924;H:AM0PR08MB4483.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(366004)(376002)(199004)(189003)(316002)(8936002)(103116003)(37006003)(1076003)(71190400001)(81166006)(81156014)(11346002)(446003)(97736004)(36756003)(54906003)(4744004)(256004)(2616005)(486006)(6636002)(99286004)(71200400001)(476003)(575784001)(86362001)(14444005)(8676002)(106356001)(105586002)(5660300001)(3846002)(7416002)(6116002)(14454004)(68736007)(6512007)(2906002)(4326008)(25786009)(6486002)(76176011)(52116002)(53936002)(186003)(55236004)(102836004)(26005)(6862004)(6436002)(305945005)(478600001)(6506007)(66066001)(386003)(7736002)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3924;H:AM0PR08MB4483.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: l89mpEenLD+s/Tp08B2a1ZcyGzBBnAeQt86+uyIYu/E5021jZ+s5i/x/nRwubpmNHIxt5ozTV262j/ySFPrqnCffKsJuO/UphFcSgdojH/sFiZtcgMFd7O4IH1GzmkQoRBQpaMZSS226LIEV2iGUHYvLLGoJcGPY6DY+wG7tC3YKstBmJXrohwPAAttItMLFJQD5eOvjUtVPi25FrnSlUOqwgnj051pCkbiCSIeD3EYmBzH3nyzfBSUhFuHfBMID0L0ZrSDrgZ85d+dCRyVWN+C7tRlbSngS69ZqqfviC4uPXqw3JkZqAekYsZzdPBAe
+x-microsoft-antispam-message-info: LpbATgaMZjqhVaEQmXjbOlRq4MhK7B4b7ETZ/5U/A2XUB6BioZsslB2NO6scGIIkUPTtO0pmxyhVcHOPCCNkQNdzWg3COzQmazCExUTidomuhQTNdNVTGl1JMwrcdH6za3V/xRDdIV6+0qlcByXKZSSpa7G3vrFAA8WKpHvJFo3UqtY3reIpuzUvO3Xr/XPkE6to93PCyqbe/uxgTlNEwcefXaR/DKa4EBKnGPod0OSi9/SEEwCN8iiIZmjh8voVDt9Az9W1MSqSViMnSCFnqJmzZKUOAht60eDRMZcqnmCqkJnBvChSv9z8zFJkaRKb
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 701a94d2-96d8-40a3-5514-08d665ae367f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 12:33:43.6155
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d7c391b-b3ee-4d9e-136c-08d665ae4041
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 12:33:59.9777
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
@@ -120,163 +121,390 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse DT and initialize corresponding dev/pipeline attributes.
+komeda_format_caps is for describing ARM display specific features and
+limitations of a specific format, and format_caps will be linked into
+&komeda_framebuffer like a extension of &drm_format_info.
+And komed_format_caps_table will be initialized before the enum_resources,
+since the layer features description depend on this format_caps table, so
+we'd better initialize the table first.
 
 Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
 ---
- .../gpu/drm/arm/display/komeda/komeda_dev.c   | 74 +++++++++++++++++++
- .../gpu/drm/arm/display/komeda/komeda_dev.h   |  3 +
- .../drm/arm/display/komeda/komeda_pipeline.c  |  4 +
- .../drm/arm/display/komeda/komeda_pipeline.h  |  7 ++
- 4 files changed, 88 insertions(+)
+ drivers/gpu/drm/arm/display/komeda/Makefile   |  1 +
+ .../gpu/drm/arm/display/komeda/d71/d71_dev.c  | 78 ++++++++++++++++
+ .../gpu/drm/arm/display/komeda/komeda_dev.c   |  2 +
+ .../gpu/drm/arm/display/komeda/komeda_dev.h   | 11 ++-
+ .../arm/display/komeda/komeda_format_caps.c   | 75 ++++++++++++++++
+ .../arm/display/komeda/komeda_format_caps.h   | 89 +++++++++++++++++++
+ .../drm/arm/display/komeda/komeda_pipeline.h  |  1 +
+ 7 files changed, 256 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/=
-drm/arm/display/komeda/komeda_dev.c
-index 887a17005367..214ef75e0e24 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
-@@ -12,6 +12,74 @@
- #include <linux/version.h>
- #include "komeda_dev.h"
+diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/=
+arm/display/komeda/Makefile
+index 4efcce0cdce8..c86602131dbc 100644
+--- a/drivers/gpu/drm/arm/display/komeda/Makefile
++++ b/drivers/gpu/drm/arm/display/komeda/Makefile
+@@ -7,6 +7,7 @@ ccflags-y :=3D \
+ komeda-y :=3D \
+ 	komeda_drv.o \
+ 	komeda_dev.o \
++	komeda_format_caps.o \
+ 	komeda_pipeline.o
 =20
-+static int komeda_parse_pipe_dt(struct komeda_dev *mdev, struct device_nod=
-e *np)
-+{
-+	struct komeda_pipeline *pipe;
-+	struct clk *clk;
-+	u32 pipe_id;
-+	int ret =3D 0;
-+
-+	ret =3D of_property_read_u32(np, "reg", &pipe_id);
-+	if (ret !=3D 0 || pipe_id >=3D mdev->n_pipelines)
-+		return -EINVAL;
-+
-+	pipe =3D mdev->pipelines[pipe_id];
-+
-+	clk =3D of_clk_get_by_name(np, "aclk");
-+	if (IS_ERR(clk)) {
-+		DRM_ERROR("get aclk for pipeline %d failed!\n", pipe_id);
-+		return PTR_ERR(clk);
-+	}
-+	pipe->aclk =3D clk;
-+
-+	clk =3D of_clk_get_by_name(np, "pxclk");
-+	if (IS_ERR(clk)) {
-+		DRM_ERROR("get pxclk for pipeline %d failed!\n", pipe_id);
-+		return PTR_ERR(clk);
-+	}
-+	pipe->pxlclk =3D clk;
-+
-+	/* enum ports */
-+	pipe->of_output_dev  =3D of_graph_get_remote_node(np, KOMEDA_OF_PORT_OUTP=
-UT, 0);
-+	pipe->of_output_port =3D of_graph_get_port_by_id(np, KOMEDA_OF_PORT_OUTPU=
-T);
-+
-+	pipe->of_node =3D np;
-+
-+	return 0;
-+}
-+
-+static int komeda_parse_dt(struct device *dev, struct komeda_dev *mdev)
-+{
-+	struct platform_device *pdev =3D to_platform_device(dev);
-+	struct device_node *child, *np =3D dev->of_node;
-+	struct clk *clk;
-+	int ret;
-+
-+	clk =3D devm_clk_get(dev, "mclk");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	mdev->mclk =3D clk;
-+	mdev->irq  =3D platform_get_irq_byname(pdev, "DPU");
-+	if (mdev->irq < 0) {
-+		DRM_ERROR("could not get IRQ number.\n");
-+		return mdev->irq;
-+	}
-+
-+	for_each_available_child_of_node(np, child) {
-+		if (of_node_cmp(child->name, "pipeline") =3D=3D 0) {
-+			ret =3D komeda_parse_pipe_dt(mdev, child);
-+			if (ret) {
-+				DRM_ERROR("parse pipeline dt error!\n");
-+				of_node_put(child);
-+				break;
-+			}
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- struct komeda_dev *komeda_dev_create(struct device *dev)
- {
- 	struct platform_device *pdev =3D to_platform_device(dev);
-@@ -74,6 +142,12 @@ struct komeda_dev *komeda_dev_create(struct device *dev=
-)
- 		goto err_cleanup;
- 	}
-=20
-+	err =3D komeda_parse_dt(dev, mdev);
-+	if (err) {
-+		DRM_ERROR("parse device tree failed.\n");
-+		goto err_cleanup;
-+	}
-+
- 	return mdev;
-=20
- err_cleanup:
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/=
-drm/arm/display/komeda/komeda_dev.h
-index 680e3e2cf100..4a27a44e2ec6 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
-@@ -72,6 +72,9 @@ struct komeda_dev {
- 	/** @mck: HW main engine clk */
- 	struct clk *mclk;
-=20
-+	/** @irq: irq number */
-+	u32 irq;
-+
- 	int n_pipelines;
- 	struct komeda_pipeline *pipelines[KOMEDA_MAX_PIPELINES];
-=20
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.c b/drivers=
-/gpu/drm/arm/display/komeda/komeda_pipeline.c
-index 10378df8e5a8..2f36b6bd8282 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.c
-@@ -55,6 +55,10 @@ void komeda_pipeline_destroy(struct komeda_dev *mdev,
- 	clk_put(pipe->pxlclk);
- 	clk_put(pipe->aclk);
-=20
-+	of_node_put(pipe->of_output_dev);
-+	of_node_put(pipe->of_output_port);
-+	of_node_put(pipe->of_node);
-+
- 	devm_kfree(mdev->dev, pipe);
+ komeda-y +=3D \
+diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c b/drivers/gpu=
+/drm/arm/display/komeda/d71/d71_dev.c
+index af3dabb499cd..2d22be54ef48 100644
+--- a/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
++++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c
+@@ -13,7 +13,85 @@ static int d71_enum_resources(struct komeda_dev *mdev)
+ 	return -1;
  }
 =20
++#define __HW_ID(__group, __format) \
++	(((__group & 0x7) << 3) | (__format & 0x7))
++
++#define RICH		KOMEDA_FMT_RICH_LAYER
++#define SIMPLE		KOMEDA_FMT_SIMPLE_LAYER
++#define RICH_SIMPLE	KOMEDA_FMT_RICH_LAYER | KOMEDA_FMT_SIMPLE_LAYER
++#define RICH_WB		KOMEDA_FMT_RICH_LAYER | KOMEDA_FMT_WB_LAYER
++#define RICH_SIMPLE_WB	RICH_SIMPLE | KOMEDA_FMT_WB_LAYER
++
++#define Rot_0		DRM_MODE_ROTATE_0
++#define Flip_H_V	DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y | Rot_0
++#define Rot_ALL_H_V	DRM_MODE_ROTATE_MASK | Flip_H_V
++
++#define LYT_NM		BIT(AFBC_FORMAT_MOD_BLOCK_SIZE_16x16)
++#define LYT_WB		BIT(AFBC_FORMAT_MOD_BLOCK_SIZE_32x8)
++#define LYT_NM_WB	LYT_NM | LYT_WB
++
++#define AFB_TH		AFBC(_TILED | _SPARSE)
++#define AFB_TH_SC_YTR	AFBC(_TILED | _SC | _SPARSE | _YTR)
++#define AFB_TH_SC_YTR_BS AFBC(_TILED | _SC | _SPARSE | _YTR | _SPLIT)
++
++static struct komeda_format_caps d71_format_caps_table[] =3D {
++	/*   HW_ID    |        fourcc        | tile_sz |   layer_types |   rots  =
+  | afbc_layouts | afbc_features */
++	/* ABGR_2101010*/
++	{__HW_ID(0, 0),	DRM_FORMAT_ARGB2101010,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, =
+0},
++	{__HW_ID(0, 1),	DRM_FORMAT_ABGR2101010,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, =
+0},
++	{__HW_ID(0, 1),	DRM_FORMAT_ABGR2101010,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_=
+NM_WB, AFB_TH_SC_YTR_BS}, /* afbc */
++	{__HW_ID(0, 2),	DRM_FORMAT_RGBA1010102,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, =
+0},
++	{__HW_ID(0, 3),	DRM_FORMAT_BGRA1010102,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, =
+0},
++	/* ABGR_8888*/
++	{__HW_ID(1, 0),	DRM_FORMAT_ARGB8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	{__HW_ID(1, 1),	DRM_FORMAT_ABGR8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	{__HW_ID(1, 1),	DRM_FORMAT_ABGR8888,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_=
+WB, AFB_TH_SC_YTR_BS}, /* afbc */
++	{__HW_ID(1, 2),	DRM_FORMAT_RGBA8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	{__HW_ID(1, 3),	DRM_FORMAT_BGRA8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	/* XBGB_8888 */
++	{__HW_ID(2, 0),	DRM_FORMAT_XRGB8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	{__HW_ID(2, 1),	DRM_FORMAT_XBGR8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	{__HW_ID(2, 2),	DRM_FORMAT_RGBX8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	{__HW_ID(2, 3),	DRM_FORMAT_BGRX8888,	1,	RICH_SIMPLE_WB,	Flip_H_V,		0, 0},
++	/* BGR_888 */ /* none-afbc RGB888 doesn't support rotation and flip */
++	{__HW_ID(3, 0),	DRM_FORMAT_RGB888,	1,	RICH_SIMPLE_WB,	Rot_0,			0, 0},
++	{__HW_ID(3, 1),	DRM_FORMAT_BGR888,	1,	RICH_SIMPLE_WB,	Rot_0,			0, 0},
++	{__HW_ID(3, 1),	DRM_FORMAT_BGR888,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB=
+, AFB_TH_SC_YTR_BS}, /* afbc */
++	/* BGR 16bpp */
++	{__HW_ID(4, 0),	DRM_FORMAT_RGBA5551,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
++	{__HW_ID(4, 1),	DRM_FORMAT_ABGR1555,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
++	{__HW_ID(4, 1),	DRM_FORMAT_ABGR1555,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_=
+WB, AFB_TH_SC_YTR}, /* afbc */
++	{__HW_ID(4, 2),	DRM_FORMAT_RGB565,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
++	{__HW_ID(4, 3),	DRM_FORMAT_BGR565,	1,	RICH_SIMPLE,	Flip_H_V,		0, 0},
++	{__HW_ID(4, 3),	DRM_FORMAT_BGR565,	1,	RICH_SIMPLE,	Rot_ALL_H_V,	LYT_NM_WB=
+, AFB_TH_SC_YTR}, /* afbc */
++	{__HW_ID(4, 4), DRM_FORMAT_R8,		1,	SIMPLE,		Rot_0,			0, 0},
++	/* YUV 444/422/420 8bit  */
++	{__HW_ID(5, 0),	0 /*XYUV8888*/,		1,	0,		0,			0, 0},
++	/* XYUV unsupported*/
++	{__HW_ID(5, 1),	DRM_FORMAT_YUYV,	1,	RICH,		Rot_ALL_H_V,	LYT_NM, AFB_TH}, =
+/* afbc */
++	{__HW_ID(5, 2),	DRM_FORMAT_YUYV,	1,	RICH,		Flip_H_V,		0, 0},
++	{__HW_ID(5, 3),	DRM_FORMAT_UYVY,	1,	RICH,		Flip_H_V,		0, 0},
++	{__HW_ID(5, 4),	0, /*X0L0 */		2,		0,			0, 0}, /* Y0L0 unsupported */
++	{__HW_ID(5, 6),	DRM_FORMAT_NV12,	1,	RICH,		Flip_H_V,		0, 0},
++	{__HW_ID(5, 6),	0/*DRM_FORMAT_YUV420_8BIT*/,	1,	RICH,	Rot_ALL_H_V,	LYT_NM=
+, AFB_TH}, /* afbc */
++	{__HW_ID(5, 7),	DRM_FORMAT_YUV420,	1,	RICH,		Flip_H_V,		0, 0},
++	/* YUV 10bit*/
++	{__HW_ID(6, 0),	0,/*XVYU2101010*/	1,	0,		0,			0, 0},/* VYV30 unsupported =
+*/
++	{__HW_ID(6, 6),	0/*DRM_FORMAT_X0L2*/,	2,	RICH,		Flip_H_V,		0, 0},
++	{__HW_ID(6, 7),	0/*DRM_FORMAT_P010*/,	1,	RICH,		Flip_H_V,		0, 0},
++	{__HW_ID(6, 7),	0/*DRM_FORMAT_YUV420_10BIT*/,1,	RICH,	Rot_ALL_H_V,	LYT_NM=
+, AFB_TH},
++};
++
++static void d71_init_fmt_tbl(struct komeda_dev *mdev)
++{
++	struct komeda_format_caps_table *table =3D &mdev->fmt_tbl;
++
++	table->format_caps =3D d71_format_caps_table;
++	table->n_formats =3D ARRAY_SIZE(d71_format_caps_table);
++}
++
+ static struct komeda_dev_funcs d71_chip_funcs =3D {
++	.init_format_table =3D d71_init_fmt_tbl,
+ 	.enum_resources	=3D d71_enum_resources,
+ 	.cleanup	=3D NULL,
+ };
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu/=
+drm/arm/display/komeda/komeda_dev.c
+index 214ef75e0e24..fd52d85b0d12 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+@@ -136,6 +136,8 @@ struct komeda_dev *komeda_dev_create(struct device *dev=
+)
+ 		 MALIDP_CORE_ID_MAJOR(mdev->chip.core_id),
+ 		 MALIDP_CORE_ID_MINOR(mdev->chip.core_id));
+=20
++	mdev->funcs->init_format_table(mdev);
++
+ 	err =3D mdev->funcs->enum_resources(mdev);
+ 	if (err) {
+ 		DRM_ERROR("enumerate display resource failed.\n");
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h b/drivers/gpu/=
+drm/arm/display/komeda/komeda_dev.h
+index 4a27a44e2ec6..555510be66f1 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.h
+@@ -11,6 +11,7 @@
+ #include <linux/interrupt.h>
+ #include "komeda_pipeline.h"
+ #include "malidp_product.h"
++#include "komeda_format_caps.h"
+=20
+ /* malidp device id */
+ enum {
+@@ -44,6 +45,13 @@ struct komeda_dev;
+  * Supplied by chip level and returned by the chip entry function xxx_iden=
+tify,
+  */
+ struct komeda_dev_funcs {
++	/**
++	 * @init_format_table:
++	 *
++	 * initialize &komeda_dev->format_table, this function should be called
++	 * before the &enum_resource
++	 */
++	void (*init_format_table)(struct komeda_dev *mdev);
+ 	/**
+ 	 * @enum_resources:
+ 	 *
+@@ -66,7 +74,8 @@ struct komeda_dev {
+ 	u32 __iomem   *reg_base;
+=20
+ 	struct komeda_chip_info chip;
+-
++	/** @fmt_tbl: initialized by &komeda_dev_funcs->init_format_table */
++	struct komeda_format_caps_table fmt_tbl;
+ 	/** @pclk: APB clock for register access */
+ 	struct clk *pclk;
+ 	/** @mck: HW main engine clk */
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c b/driv=
+ers/gpu/drm/arm/display/komeda/komeda_format_caps.c
+new file mode 100644
+index 000000000000..38aeb7d30048
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.c
+@@ -0,0 +1,75 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++
++#include <linux/slab.h>
++#include "komeda_format_caps.h"
++#include "malidp_utils.h"
++
++const struct komeda_format_caps *
++komeda_get_format_caps(struct komeda_format_caps_table *table,
++		       u32 fourcc, u64 modifier)
++{
++	const struct komeda_format_caps *caps;
++	u64 afbc_features =3D modifier & ~(AFBC_FORMAT_MOD_BLOCK_SIZE_MASK);
++	u32 afbc_layout =3D modifier & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK;
++	int id;
++
++	for(id =3D 0; id < table->n_formats; id++) {
++		caps =3D &table->format_caps[id];
++
++		if(fourcc !=3D caps->fourcc)
++			continue;
++
++		if ((modifier =3D=3D 0ULL) && (caps->supported_afbc_layouts =3D=3D 0))
++			return caps;
++
++		if ((has_bits(afbc_features, caps->supported_afbc_features)) &&
++		    (has_bit(afbc_layout, caps->supported_afbc_layouts)))
++			return caps;
++	}
++
++	return NULL;
++}
++
++u32 *komeda_get_layer_fourcc_list(struct komeda_format_caps_table *table,
++				  u32 layer_type, u32 *n_fmts)
++{
++	const struct komeda_format_caps *cap;
++	u32 *fmts;
++	int i, j, n =3D 0;
++
++	fmts =3D kzalloc(sizeof(u32) * table->n_formats, GFP_KERNEL);
++	if (fmts =3D=3D NULL)
++		return NULL;
++
++	for (i =3D 0; i < table->n_formats; i++) {
++		cap =3D &table->format_caps[i];
++		if (!(layer_type & cap->supported_layer_types) ||
++		     (cap->fourcc =3D=3D 0))
++			continue;
++
++		/* one fourcc may has two caps items in table (afbc/none-afbc),
++		 * so check the existing list to avoid adding a duplicated one.
++		 */
++		for (j =3D n - 1; j >=3D 0; j--)
++			if (fmts[j] =3D=3D cap->fourcc)
++				break;
++
++		if (j < 0)
++			fmts[n++] =3D cap->fourcc;
++	}
++
++	if (n_fmts !=3D NULL)
++		*n_fmts =3D n;
++
++	return fmts;
++}
++
++void komeda_put_fourcc_list(u32 *fourcc_list)
++{
++	kfree(fourcc_list);
++}
+\ No newline at end of file
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h b/driv=
+ers/gpu/drm/arm/display/komeda/komeda_format_caps.h
+new file mode 100644
+index 000000000000..fe7ebaf60687
+--- /dev/null
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_format_caps.h
+@@ -0,0 +1,89 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
++ * Author: James.Qian.Wang <james.qian.wang@arm.com>
++ *
++ */
++
++#ifndef _KOMEDA_FORMAT_CAPS_H_
++#define _KOMEDA_FORMAT_CAPS_H_
++
++#include <linux/types.h>
++#include <uapi/drm/drm_fourcc.h>
++#include <drm/drm_fourcc.h>
++
++#define AFBC(x)		DRM_FORMAT_MOD_ARM_AFBC(x)
++
++/* afbc layerout */
++#define AFBC_16x16(x)	AFBC(AFBC_FORMAT_MOD_BLOCK_SIZE_16x16 | (x))
++#define AFBC_32x8(x)	AFBC(AFBC_FORMAT_MOD_BLOCK_SIZE_32x8 | (x))
++
++/* afbc features */
++#define _YTR		AFBC_FORMAT_MOD_YTR
++#define _SPLIT		AFBC_FORMAT_MOD_SPLIT
++#define _SPARSE		AFBC_FORMAT_MOD_SPARSE
++#define _CBR		AFBC_FORMAT_MOD_CBR
++#define _TILED		AFBC_FORMAT_MOD_TILED
++#define _SC		AFBC_FORMAT_MOD_SC
++
++/* layer_type */
++#define KOMEDA_FMT_RICH_LAYER		BIT(0)
++#define KOMEDA_FMT_SIMPLE_LAYER		BIT(1)
++#define KOMEDA_FMT_WB_LAYER		BIT(2)
++
++#define AFBC_TH_LAYOUT_ALIGNMENT	8
++#define AFBC_HEADER_SIZE 		16
++#define AFBC_SUPERBLK_ALIGNMENT		128
++#define AFBC_SUPERBLK_PIXELS		256
++#define AFBC_BODY_START_ALIGNMENT	1024
++#define AFBC_TH_BODY_START_ALIGNMENT	4096
++
++/**
++ * struct komeda_format_caps
++ *
++ * komeda_format_caps is for describing ARM display specific features and
++ * limitations for a specific format, and format_caps will be linked into
++ * &komeda_framebuffer like a extension of &drm_format_info.
++ *
++ * NOTE: one fourcc may has two different format_caps items for fourcc and
++ * fourcc+modifier
++ *
++ * @hw_id: hw format id, hw specific value.
++ * @fourcc: drm fourcc format.
++ * @tile_size: format tiled size, used by ARM format X0L0/X0L2
++ * @supported_layer_types: indicate which layer supports this format
++ * @supported_rots: allowed rotations for this format
++ * @supported_afbc_layouts: supported afbc layerout
++ * @supported_afbc_features: supported afbc features
++ */
++struct komeda_format_caps {
++	u32 hw_id;
++	u32 fourcc;
++	u32 tile_size;
++	u32 supported_layer_types;
++	u32 supported_rots;
++	u32 supported_afbc_layouts;
++	u64 supported_afbc_features;
++};
++
++/**
++ * struct komeda_format_caps_table - format_caps mananger
++ *
++ * @n_formats: the size of format_caps list.
++ * @format_caps: format_caps list.
++ */
++struct komeda_format_caps_table {
++	u32 n_formats;
++	const struct komeda_format_caps *format_caps;
++};
++
++const struct komeda_format_caps *
++komeda_get_format_caps(struct komeda_format_caps_table *table,
++		       u32 fourcc, u64 modifier);
++
++u32 *komeda_get_layer_fourcc_list(struct komeda_format_caps_table *table,
++				  u32 layer_type, u32 *n_fmts);
++
++void komeda_put_fourcc_list(u32 *fourcc_list);
++
++#endif
 diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers=
 /gpu/drm/arm/display/komeda/komeda_pipeline.h
-index eea1e64c4624..e097d4fcb2c5 100644
+index e097d4fcb2c5..ead897720e1a 100644
 --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
 +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-@@ -286,6 +286,13 @@ struct komeda_pipeline {
- 	struct komeda_improc *improc;
- 	struct komeda_timing_ctrlr *ctrlr;
- 	struct komeda_pipeline_funcs *funcs; /* private pipeline functions */
-+
-+	/** @of_node: pipeline dt node */
-+	struct device_node *of_node;
-+	/** @of_output_port: pipeline output port */
-+	struct device_node *of_output_port;
-+	/** @of_output_dev: output connector device node */
-+	struct device_node *of_output_dev;
+@@ -210,6 +210,7 @@ static inline u16 component_changed_inputs(struct komed=
+a_component_state *st)
+ struct komeda_layer {
+ 	struct komeda_component base;
+ 	/* layer specific features and caps */
++	int layer_type; /* RICH, SIMPLE or WB */
  };
 =20
- /**
+ struct komeda_layer_state {
 --=20
 2.17.1
 
