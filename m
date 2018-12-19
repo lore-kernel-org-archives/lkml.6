@@ -2,152 +2,149 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BBCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0358CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2293A21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAB7721479
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4zdV+V7"
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="pP54ihDQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbeLSMyC (ORCPT
+        id S1728527AbeLSMyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:54:02 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42601 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbeLSMyB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:54:01 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so12152702vsd.9
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 04:53:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jcFIssZ5uCnxarSbhhjy8lOdqNazHu2rLSIxhH6ZZ94=;
-        b=P4zdV+V7D+kJ2OqmDWA+6CaNThu6p87cXk7tzR7cPP1nzGV/PgkkxXFWRpE22BGrCz
-         kKUh7dMorNC16o3ZrXj/gLY//viyUdiS6zJlPQDjByvZz1QdSiJ5ctp2sTaCVNRZwAov
-         +wejvtkYQLzZ9l27zP0bRucJFRuPmU3Fh08s0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jcFIssZ5uCnxarSbhhjy8lOdqNazHu2rLSIxhH6ZZ94=;
-        b=seJ/P0/NSFxInYZUKQWlyD/Cw5FYr/Btv3sEAZ149f4brHHB7oxBgZ3Y+XZWU5EUjW
-         XFnZ/O7fOPsGS5DGj3ZrLfWO40GzyzpGngX+ks7rRYZnfCR1B7apknSXLCYkuPHBb7iW
-         +aAuRLlO8BTQDIXC878hypU2XfPh2ZCCE01Nj/lQdD8xlZ7XxGpd954becLpVgRpPpEW
-         H81ifRHCIoP6vO5Io46g3syc1MOPpPD5l2SR7RqVIaf9qwwTCA0ytmvwdJ5O+Ll1HGgj
-         OdJzQKabD1KK69Of4/EDjvjtY2pdlekkSPIdke54IJnIoWx3nbOj7uxiSl8XT4+r3nPX
-         MlGQ==
-X-Gm-Message-State: AA+aEWYx8urfXarw3+6cSCvAzWcTcKWDgA/f1LmxDbgmjpnoQjvIvWQZ
-        bdvaubc3+P24kQiwzzKQ+Rmfby9SBp6h2hL6+Wh2qg==
-X-Google-Smtp-Source: AFSGD/Wh86tdW772GFuHMHhvw2DdDNpd3ZVUMAJgAka8VlI8rOlkT+Iwc3ty+6s4rvkmgNu0DKQFlrF5x8NX5sJKoZo=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr10207107vsh.200.1545224039014;
- Wed, 19 Dec 2018 04:53:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-14-ulf.hansson@linaro.org> <a5c19c01-31d5-f703-663c-3d5bd2ea8201@linaro.org>
-In-Reply-To: <a5c19c01-31d5-f703-663c-3d5bd2ea8201@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 19 Dec 2018 13:53:23 +0100
-Message-ID: <CAPDyKFpa6cCfQtfNo=CN0=BpY6bARfnVWRH0N=apQgVr1m24Og@mail.gmail.com>
-Subject: Re: [PATCH v10 13/27] drivers: firmware: psci: Support hierarchical
- CPU idle states
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Wed, 19 Dec 2018 07:54:17 -0500
+Received: from mail-eopbgr140131.outbound.protection.outlook.com ([40.107.14.131]:30210
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726833AbeLSMyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:54:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UwfUrECpYC9WdCT/l8pQhiQNzIeJfD8P4+CnuBFuLzA=;
+ b=pP54ihDQlLqTcvdscOqkMsQDYRqYzCm9FU4LQJeHReTiN6eHt0mfIhFhVb67sX+muqv5EWrvxRd00r0DdGnbX8B8AUSf80UjlKYL0cT37haMYL9qn8cdMIFHsIsRKwhe7Z87Z5rKKO3UHK7BDlMb6RB9OB0LAnzFUPGo8WX1EMw=
+Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
+ VI1PR02MB4784.eurprd02.prod.outlook.com (20.177.200.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Wed, 19 Dec 2018 12:54:13 +0000
+Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
+ ([fe80::11d9:9fe:f412:46a8]) by VI1PR02MB5119.eurprd02.prod.outlook.com
+ ([fe80::11d9:9fe:f412:46a8%5]) with mapi id 15.20.1446.018; Wed, 19 Dec 2018
+ 12:54:13 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     Andrzej Hajda <a.hajda@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lina Iyer <lina.iyer@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Archit Taneja <architt@codeaurora.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: display: bridge: lvds-transmitter: add
+ pwdn-gpios
+Thread-Topic: [PATCH 2/3] dt-bindings: display: bridge: lvds-transmitter: add
+ pwdn-gpios
+Thread-Index: AQHUlygfLqQfa5yGMUGP6qbZiqP5EqWFx74AgAAdNoCAAAuWgIAAFQOA
+Date:   Wed, 19 Dec 2018 12:54:12 +0000
+Message-ID: <4d5ca987-fdf4-6ebb-281f-29a8f3277329@axentia.se>
+References: <20181218231850.3572-1-peda@axentia.se>
+ <f0686eeb-14af-6525-6c55-9cc8bdc5730e@samsung.com>
+ <7c2f1268-43a3-1dc2-bb2d-6da9d74a5a43@axentia.se> <2541072.bfOLpEHFeN@avalon>
+In-Reply-To: <2541072.bfOLpEHFeN@avalon>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR0402CA0059.eurprd04.prod.outlook.com
+ (2603:10a6:7:7c::48) To VI1PR02MB5119.eurprd02.prod.outlook.com
+ (2603:10a6:803:b7::12)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR02MB4784;6:kNXCAKlsEYJ2oFVz6g03YJRgvqDrJm0fjDgrBX+AQBQZyOhnKPkHOidp3pSVp5DJG8b1eySm+lDtJkhmQUgBOXYPwQi4lT/da/RL7omAgdwWahtpkAnPTn3gyWmej+rhISP4Bs4IadrU7LAL174zUqywb9Idaz4sw3iVx1ZuTORLKcQL3oJsAdokM8/30rfkSg7n9kewup+/oymvilAcmI9hO7JGE206cyynRug0zVacsdW2supCYtXum+gj2MS+KyKjXJ1yaAayzNg1VcFlU8jI5wZnWgMkTLDQuCoq59LZLE8N1AgLyA+khwXuAWXxc94X8nPqtroDOvtmMaP9IxQUOSiDuyqrROAX496IhUQTqtjz2qdNBHr3J5tzgVbp2HsFlYxFxmNvvAxXZ0yntJLcQNJUFKqCwNM9YnNZgn5QeHl0XX64s96lyzV1rXIeCGbX9hn5hBdWY/lYTQp94g==;5:N9oDlXnbmN4YOx4H6UBR40MXbl2QAhCtzR8zTLDTqJ+QP+6fsRDXn/4dBUjZl7Wcfys8iP2pwkhO1UHeoB4IUQEdK2vzaA1b2GTtaQCvD48edsbm/kvcibBEeLs6SRLrjmXGSZojYZC7LKAxAeHY4kIPoTC1ijvSQEShb/q2UmQ=;7:+XqJDDMW/RTP/+Lcq/5kY6xFdBk8OcqNHWIm2lrJqHOTdB9quRJxuSyyjgAyiA4uDkOs0I86uKRAXSq/bLCiUuQZ7C4rXgJEKzPEfVfDrF7o8H/k6TmEt8pG1bw66jpauXTkjb7nSRZLdbM4Gcl+AA==
+x-ms-office365-filtering-correlation-id: 51f74f4a-0ef8-4bd2-01f1-08d665b11329
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB4784;
+x-ms-traffictypediagnostic: VI1PR02MB4784:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-microsoft-antispam-prvs: <VI1PR02MB4784CB8CE833C4B07F735B07BCBE0@VI1PR02MB4784.eurprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB4784;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB4784;
+x-forefront-prvs: 0891BC3F3D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(136003)(39830400003)(396003)(189003)(199004)(4001150100001)(64126003)(86362001)(68736007)(93886005)(476003)(65806001)(65956001)(6916009)(36756003)(97736004)(446003)(99286004)(66066001)(11346002)(65826007)(31696002)(305945005)(7736002)(4326008)(2616005)(316002)(58126008)(54906003)(25786009)(5660300001)(2906002)(52116002)(3846002)(508600001)(186003)(8936002)(53936002)(6436002)(6506007)(386003)(53546011)(6512007)(105586002)(102836004)(6486002)(71190400001)(71200400001)(6116002)(76176011)(26005)(6246003)(8676002)(81166006)(74482002)(81156014)(31686004)(229853002)(106356001)(14454004)(256004)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB4784;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: SwKThszFZjDmta0yTHetFQKkJ/ARzL2r+kScxAvySro2CoO57EkTlUAbdqi+gdh8VwBuCI/9IvFyksJmBXHNAILxPWCzmucov5lltGCLjkWfRgkmPTfqbgmTkI7kylFiUIC/OfypZh7yl884fp+3U1est9U52sxGSLmjr4pZEA0cyX1HMKSSHogA7uLCTNHjx0S7y9Ql82becrnCX0xQuSxG3dLpfVlqHjOvDw72wB9+SxVDicYe09I+m7xGsxcFNnEmYgcX5Xd/FuM5N/LRZ0LvXlnu8L6cJbDiGHwPtjcGBLZ3I74UuohAtCj2/oXj
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A32DE31E6DE542498F0068ED39894A15@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51f74f4a-0ef8-4bd2-01f1-08d665b11329
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 12:54:12.8768
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB4784
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Dec 2018 at 13:11, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
-ote:
->
-> On 29/11/2018 18:46, Ulf Hansson wrote:
-> > From: Lina Iyer <lina.iyer@linaro.org>
-> >
-> > Currently CPU's idle states are represented in a flattened model, via t=
-he
-> > "cpu-idle-states" binding from within the CPU's device nodes.
-> >
-> > Support the hierarchical layout, simply by converting to calling the ne=
-w OF
-> > helper, of_get_cpu_state_node().
-> >
-> > Cc: Lina Iyer <ilina@codeaurora.org>
-> > Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-> > Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
->
-> Fold it with 07/27 ?
-
-I can do that. However, normally we try to keep changes that touches
-different subsystems, separate from each other. Of course sometimes
-it's not possible and sometimes it just doesn't make sense to separate
-changes.
-
-Perhaps the PSCI maintainers and Rafael can give their opinion.
-
-Kind regards
-Uffe
-
->
-> >
-> > Changes in v10:
-> >       - None.
-> >
-> > ---
-> >  drivers/firmware/psci/psci.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.=
-c
-> > index cbfc936d251c..631e20720a22 100644
-> > --- a/drivers/firmware/psci/psci.c
-> > +++ b/drivers/firmware/psci/psci.c
-> > @@ -300,7 +300,7 @@ static int psci_dt_cpu_init_idle(struct cpuidle_dri=
-ver *drv,
-> >               return -ENOMEM;
-> >
-> >       for (i =3D 0; i < num_state_nodes; i++) {
-> > -             state_node =3D of_parse_phandle(cpu_node, "cpu-idle-state=
-s", i);
-> > +             state_node =3D of_get_cpu_state_node(cpu_node, i);
-> >               if (!state_node)
-> >                       break;
-> >
-> >
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+T24gMjAxOC0xMi0xOSAxMjozOCwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToNCj4gSGVsbG8sDQo+
+IA0KPiBPbiBXZWRuZXNkYXksIDE5IERlY2VtYmVyIDIwMTggMTE6NTc6MzIgRUVUIFBldGVyIFJv
+c2luIHdyb3RlOg0KPj4gT24gMjAxOC0xMi0xOSAxMDoxMiwgQW5kcnplaiBIYWpkYSB3cm90ZToN
+Cj4+PiBPbiAxOS4xMi4yMDE4IDAwOjE5LCBQZXRlciBSb3NpbiB3cm90ZToNCj4+Pj4gQWRkIG9w
+dGlvbmFsIHByb3BlcnR5IHRvIHNwZWNpZnkgYSBwb3dlci1kb3duIEdQSU8uDQo+Pj4+IFRoZSBw
+d2RuLWdwaW9zIG5hbWUgaXMgYWxyZWFkeSBpbiB1c2UgYnkgdGhlIHRoaW5lLHRoYzYzbHZkbTgz
+ZA0KPj4+PiBiaW5kaW5nLCBzbyBnbyB3aXRoIHRoYXQuDQo+Pj4+DQo+Pj4+IFNpZ25lZC1vZmYt
+Ynk6IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+DQo+Pj4+IC0tLQ0KPj4+Pg0KPj4+PiAg
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2ZHMtdHJh
+bnNtaXR0ZXIudHh0IHwNCj4+Pj4gIDMgKysrIA0KPj4+PiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5z
+ZXJ0aW9ucygrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0DQo+Pj4+IGEvRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2ZHMtdHJhbnNtaXR0ZXIudHh0DQo+
+Pj4+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2
+ZHMtdHJhbnNtaXR0ZXIudHh0DQo+Pj4+IGluZGV4IGY5ZTdkZDY2NmY1OC4uNDc5NDFkMzlmOTJm
+IDEwMDY0NA0KPj4+PiAtLS0NCj4+Pj4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvZGlzcGxheS9icmlkZ2UvbHZkcy10cmFuc21pdHRlci50eHQNCj4+Pj4gKysrDQo+Pj4+IGIv
+RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2ZHMtdHJh
+bnNtaXR0ZXIudHh0DQo+Pj4+IEBAIC0zMSw2ICszMSw5IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6
+DQo+Pj4+ICAgIGRldmljZS1zcGVjaWZpYyB2ZXJzaW9uIGNvcnJlc3BvbmRpbmcgdG8gdGhlIGRl
+dmljZSBmaXJzdA0KPj4+PiAgICBmb2xsb3dlZCBieSB0aGUgZ2VuZXJpYyB2ZXJzaW9uLg0KPj4+
+Pg0KPj4+PiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4+Pj4gKy0gcHdkbi1ncGlvczogUG93ZXIt
+ZG93biBjb250cm9sIEdQSU8NCj4+Pj4gKw0KPj4+DQo+Pj4gU2luY2UgbmFtaW5nIGlzIG5vdCBl
+bmZvcmNlZCBieSBhbnkgZGF0YXNoZWV0IEkgd291bGQgcHJvcG9zZSBzb21ldGhpbmcNCj4+PiBt
+b3JlIHBvcHVsYXIgd2l0aCBsZXNzIHR3aXN0ZWQgbG9naWMuIE1heWJlOg0KPj4+DQo+Pj4gLSBl
+bmFibGUtZ3Bpb3M6IC4uLiAoYWN0aXZlIGhpZ2gpLg0KPj4NCj4+IFRoYXQgd2FzIG15IG9yaWdp
+bmFsIHRob3VnaHQgdG9vLCBidXQgdGhlIGRyaXZlciBpbXBsZW1lbnRpbmcgdGhlDQo+PiBsdmRz
+LWVuY29kZXIgYmluZGluZ3MgYWxzbyBoYW5kbGVzIHRoZSBtZW50aW9uZWQgdGhpbmUsdGhjNjNs
+dmRtODNkDQo+PiBsdmRzIGVuY29kZXIsIGFuZCB0aGF0IGJpbmRpbmcgaGFzIHRoZSAicHdkbiIg
+bmFtaW5nLiBTbywgZm9yIGRyaXZlcg0KPj4gaW1wbGVtZW50YXRpb24gc2ltcGxpY2l0eSBJIHdl
+bnQgd2l0aCB3aGF0IHdhcyBhbHJlYWR5IHRoZXJlLCB0aHVzDQo+PiBhbGxvd2luZyBhZGRpbmcg
+c3VwcG9ydCBmb3IgYm90aCBiaW5kaW5ncyB3aXRoIG9uZSBpbXBsZW1lbnRhdGlvbg0KPj4gKGlu
+IHBhdGNoIDMvMykuDQo+Pg0KPj4gQWRkaW5nIGNvZGUganVzdCB0byBoYW5kbGUgbXVsdGlwbGUg
+bmFtZXMgZm9yIHRoZSBzYW1lIHRoaW5nIGRvZXMNCj4+IG5vdCBzb3VuZHMgdG9vIGFwcGVhbGlu
+Zy4NCj4gDQo+IEknbSBhZnJhaWQgSSB0aGluayB3ZSBzaG91bGRuJ3QgYWRkIHB3ZG4tZ3Bpb3Mg
+c3VwcG9ydCB0byB0aGUgbHZkcyBlbmNvZGVyIERUIA0KPiBiaW5kaW5ncy4gVGhlIHJlYXNvbiBp
+cyB0aGF0IGNvbnRyb2wgR1BJT3MgKGFuZCByZWd1bGF0b3JzKSBjb21lIHdpdGggZGV2aWNlLQ0K
+PiBzcGVjaWZpYyBzZW1hbnRpY3MuIElmIHdlIGFkZCBwd2RuLWdwaW9zIG5vdywgd2UnbGwgdGhl
+biBhZGQgcmVzZXQtZ3Bpb3MsIGFuZCANCj4gcG93ZXIgc3VwcGxpZXMsIGFuZCBhbGwgb2YgYSBz
+dWRkZW4gd2UnbGwgZW5kIHVwIGhhdmluZyB0byBlbmNvZGUgc2VxdWVuY2luZyANCj4gb2YgR1BJ
+T3MgYW5kIHBvd2VyIHN1cHBsaWVzIGluIERULiBUaGF0IHBhdGggaGFzIGJlZW4gdHJpZWQgaW4g
+dGhlIHBhc3QsIHdpdGggDQo+IG5vIGdvb2QgcmVzdWx0cy4NCj4gDQo+IEkgd291bGQgaW5zdGVh
+ZCBjcmVhdGUgZGV2aWNlLXNwZWNpZmljIGJpbmRpbmdzLCBsaWtlIGRvbmUgZm9yIA0KPiB0aGlu
+ZSx0aGM2M2x2ZG04M2QuIEl0J3MgZmluZSB0byB0aGVuIGFkZCBzdXBwb3J0IGZvciB0aGUgcHdk
+bi1ncGlvcyBwcm9wZXJ0eSANCj4gaW4gdGhlIGx2ZHMtZW5jb2RlciBkcml2ZXIsIGFzIGxvbmcg
+YXMgdGhlIG1lYW5pbmcgb2YgdGhlIHByb3BlcnR5IGNvbWVzIGZyb20gDQo+IHNwZWNpZmljIERU
+IGJpbmRpbmdzLCBub3QgZnJvbSB0aGUgZ2VuZXJpYyBvbmVzLg0KDQpSaWdodCwgSSdsbCBmb3Jr
+IG91dCB0aGUgYmluZGluZ3MgZm9yIHRoZSB0ZXhhcyBjaGlwcy4gdjIgY29taW5nIHVwLg0KDQpD
+aGVlcnMsDQpQZXRlcg0K
