@@ -2,56 +2,95 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235FEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F9EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91DBE204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:55:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cock.li header.i=@cock.li header.b="J7TGJdRy"
+	by mail.kernel.org (Postfix) with ESMTP id E198A204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeLSHzF (ORCPT
+        id S1727952AbeLSHzK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:55:05 -0500
-Received: from cock.li ([185.100.85.212]:40742 "EHLO cock.li"
+        Wed, 19 Dec 2018 02:55:10 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:34606 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbeLSHzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:55:05 -0500
-Date:   Wed, 19 Dec 2018 10:55:01 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cock.li; s=mail;
-        t=1545206102; bh=g7AsA7yE6zZqdUOAMFj7aACbVqwIf68pRQFvqpNLvDM=;
-        h=Date:From:To:Subject:From;
-        b=J7TGJdRyWfADO9ROcz2GR2G5gQ4qwq8KbziJr5Vj2OGExmzEfo3f3C54j3K0i/0FB
-         hxQU8kSTWTTC7okHOtZDhUC5Mn8UPh2sYDa+Sfe67xR6glllym4kPvzPJu1jonVBBX
-         lJGZ4irA8SWGxTca1s7n60A/XoKPKYx58vHqd5m3jf66yc1HkkgSmYlQr5vuNICDVr
-         jEmF0HPBxJUDknk0znRgtAYvAELNpodZsxE/Jt5DjISAHEF2olYc8+vjcwMbKz6IEo
-         YZo/VvUZflsU0KXRG5/Le7+ox5tVUUT7VweE5EUS8K/9UEAQj5D8IHTYgsMbZHTMk4
-         vbXNBLPDuJaMw==
-From:   L29Ah <l29ah@cock.li>
-To:     linux-kernel@vger.kernel.org
-Subject: Mysterious delays on power-related events in userspace
-Message-ID: <20181219075500.mhdx2j5dy75kwgk7@l29ah-x201>
+        id S1726631AbeLSHzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 02:55:10 -0500
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wBJ7rG0j019467
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 18 Dec 2018 23:53:37 -0800
+Received: from pek-lpggp4.wrs.com (128.224.153.77) by ALA-HCB.corp.ad.wrs.com
+ (147.11.189.41) with Microsoft SMTP Server id 14.3.408.0; Tue, 18 Dec 2018
+ 23:53:14 -0800
+From:   Zumeng Chen <zumeng.chen@gmail.com>
+To:     <linux-wireless@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <kvalo@codeaurora.org>, <tony@atomide.com>,
+        Zumeng Chen <zumeng.chen@gmail.com>
+Subject: [PATCH 1/1] wlcore: Fix memory leak in case wl12xx_fetch_firmware failure
+Date:   Wed, 19 Dec 2018 15:50:29 +0800
+Message-ID: <1545205829-31979-1-git-send-email-zumeng.chen@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716-999-57adec
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Release fw_status, raw_fw_status, and tx_res_if when wl12xx_fetch_firmware
+failed instead of meaningless goto out to avoid the following memory leak
+reports(Only the last one listed):
 
-When i connect various USB devices or get different ACPI(?) events like opening/closing the lid (as seen by acpid) on my Thinkpad X230 with Linux-4.19.5, i get random delays (usually ~10s, but may also be ~20s and ~30s). USB-related messages show up in dmesg instantly as they should tho. This was occuring to me for a few years already. What can be wrong with my system?
-eudev bug report: https://github.com/gentoo/eudev/issues/153
+unreferenced object 0xc28a9a00 (size 512):
+  comm "kworker/0:4", pid 31298, jiffies 2783204 (age 203.290s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+  backtrace:
+    [<6624adab>] kmemleak_alloc+0x40/0x74
+    [<500ddb31>] kmem_cache_alloc_trace+0x1ac/0x270
+    [<db4d731d>] wl12xx_chip_wakeup+0xc4/0x1fc [wlcore]
+    [<76c5db53>] wl1271_op_add_interface+0x4a4/0x8f4 [wlcore]
+    [<cbf30777>] drv_add_interface+0xa4/0x1a0 [mac80211]
+    [<65bac325>] ieee80211_reconfig+0x9c0/0x1644 [mac80211]
+    [<2817c80e>] ieee80211_restart_work+0x90/0xc8 [mac80211]
+    [<7e1d425a>] process_one_work+0x284/0x42c
+    [<55f9432e>] worker_thread+0x2fc/0x48c
+    [<abb582c6>] kthread+0x148/0x160
+    [<63144b13>] ret_from_fork+0x14/0x2c
+    [< (null)>] (null)
+    [<1f6e7715>] 0xffffffff
 
-CC me please.
+Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
+---
+ drivers/net/wireless/ti/wlcore/main.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/wireless/ti/wlcore/main.c b/drivers/net/wireless/ti/wlcore/main.c
+index 26b1873..2e12de8 100644
+--- a/drivers/net/wireless/ti/wlcore/main.c
++++ b/drivers/net/wireless/ti/wlcore/main.c
+@@ -1085,8 +1085,11 @@ static int wl12xx_chip_wakeup(struct wl1271 *wl, bool plt)
+ 		goto out;
+ 
+ 	ret = wl12xx_fetch_firmware(wl, plt);
+-	if (ret < 0)
+-		goto out;
++	if (ret < 0) {
++		kfree(wl->fw_status);
++		kfree(wl->raw_fw_status);
++		kfree(wl->tx_res_if);
++	}
+ 
+ out:
+ 	return ret;
 -- 
-()  ascii ribbon campaign - against html mail
-/\  http://arc.pasp.de/   - against proprietary attachments
+2.7.5
+
