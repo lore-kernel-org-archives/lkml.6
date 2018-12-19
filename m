@@ -2,162 +2,204 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14FBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B15C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA7BA218A6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZR0DifR3"
+	by mail.kernel.org (Postfix) with ESMTP id 1074721873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbeLSJyY (ORCPT
+        id S1728706AbeLSJyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:54:24 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47422 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728532AbeLSJyY (ORCPT
+        Wed, 19 Dec 2018 04:54:32 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35608 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728532AbeLSJya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:54:24 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181219095421euoutp0100238ca97b2042e6d3c340eb1948374c~xs0ZcodOb2830828308euoutp01c
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:54:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181219095421euoutp0100238ca97b2042e6d3c340eb1948374c~xs0ZcodOb2830828308euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545213261;
-        bh=KUy7ni1XgxOt4znMhWvVZ+IZsCl+aL9yNW0Vn+JNawE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ZR0DifR3nwiQdAhL/GccxsWgDa6dRzO8uJ5a7fxghOIQi2jYV5v19FLqTg2e25Xxh
-         +lUCgsVQBhU2Bf3+nEP2fe7k4IES/4YCWAvfsg0fSi/YmOCR2M2plAGtjoPRq+xhfP
-         s4qsG2L6hQa4exGgq+2uF6Z3EV/6Z1Qf12REbODc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181219095421eucas1p2b5a62961eed60f46c4f780bc335609f3~xs0Yr98Ul0171301713eucas1p2p;
-        Wed, 19 Dec 2018 09:54:21 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 82.B4.04806.C451A1C5; Wed, 19
-        Dec 2018 09:54:20 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181219095420eucas1p17dcf5ec60601a335dbdfd48c7132038c~xs0XtY3vR1721517215eucas1p1n;
-        Wed, 19 Dec 2018 09:54:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181219095419eusmtrp2dc4ef983ecbf7fbfccc8c840e4235eae~xs0Xe2guz1185511855eusmtrp2Z;
-        Wed, 19 Dec 2018 09:54:19 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-af-5c1a154ceefb
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C4.F0.04128.B451A1C5; Wed, 19
-        Dec 2018 09:54:19 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181219095419eusmtip2ebf6a57b20d08641a13b0311bb6dc57f~xs0XKfOB41296712967eusmtip2i;
-        Wed, 19 Dec 2018 09:54:19 +0000 (GMT)
-Subject: Re: [PATCH 3/4] iommu/of: Don't call iommu_ops->add_device directly
-To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, jroedel@suse.de,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <30d86186-e0a2-2be1-2295-20510fbd74ba@samsung.com>
-Date:   Wed, 19 Dec 2018 10:54:18 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.3.3
+        Wed, 19 Dec 2018 04:54:30 -0500
+Received: by mail-ed1-f66.google.com with SMTP id x30so16427523edx.2;
+        Wed, 19 Dec 2018 01:54:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zvkrGh8FmjuQsFl1/lfQSnJLqSABQFL8mxLLYAsA+rc=;
+        b=FeburRhichJ5UQu3l8A8p+0S2CEysXr+uJxNFQrTLc4EGOPJhkn7ZRA0pT/AyfWPL0
+         ZuLwmo6aaRGreRyE7kibqWdwJ6WoRrwEbrv1zQQFwyjyV5d9hg+yMxYvmmhrwhrg8bo2
+         omQ2z6gu3+ViSca2cJDMdwFtPXDxI2baIR2hPr2PkDgvVQmtNooxDJp1IobonHVM7+FS
+         RO+0jSJnTYLFMaP0wK6Aa2bTnhbK727BbsPWVao0ZWIjfGyXxTupAn29C0wa9XMQPppF
+         5bIFt5UnE4yLHYpXKZ014xPRshHwRASmElj0xlplcyVuFvTwsrW26a4j8GL6SRIUzrO+
+         daXQ==
+X-Gm-Message-State: AA+aEWbEOxi2kvr8EaVbyANR98XJi1pn5e2Ohb1TNsuOkwc+Xte5BGWM
+        W9pRNVIwXv9TD+UPDeWOdKz0RXYVMa0=
+X-Google-Smtp-Source: AFSGD/UpaLQeR44vFr7dTi+xZQGjwQR9Gt7UsXYKqbg0d3rCpOfaLseoEeihKEe9qtfiXfcFeYzEHw==
+X-Received: by 2002:aa7:c906:: with SMTP id b6mr19613115edt.17.1545213266811;
+        Wed, 19 Dec 2018 01:54:26 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id d7-v6sm2587329ejx.68.2018.12.19.01.54.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 01:54:26 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id p4so18807482wrt.7;
+        Wed, 19 Dec 2018 01:54:25 -0800 (PST)
+X-Received: by 2002:adf:b608:: with SMTP id f8mr17166237wre.120.1545213265539;
+ Wed, 19 Dec 2018 01:54:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181211150513.15161-4-joro@8bytes.org>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7djPc7o+olIxBoevmFgs2G9t0Tl7A7vF
-        5FNzmSzOnweyLu+aw2Zx8MMTVovlp3awOLB7PDk4j8ljzbw1jB6bVnWyeUy+sZzRY/Ppao/P
-        m+QC2KK4bFJSczLLUov07RK4MloP+hfM5Km4/GQVYwPjI84uRk4OCQETifOTz7J1MXJxCAms
-        YJT4sOQFO4TzhVHi1IduVgjnM6NEQ9sPZpiWjS0noRLLGSVO77nOCOG8Z5TYuruRFaRKWMBH
-        4kJPA1iHiICLxPUfl8HmMgssY5Q4vmcNC0iCTcBQouttFxuIzStgJ7H6zWGwOIuAqsSDmT/A
-        BokKxEg8bdjHAlEjKHFy5hMgm4ODU8BUYupsGZAws4C8xPa3c5ghbHGJW0/mM0FcuoldYl5H
-        NITtIjFl+X6oD4QlXh3fwg5hy0j83wlSzwVkNzNKtM+YxQ7h9AB9M2cHG0SVtcTh4xdZQRYz
-        C2hKrN+lDxF2lDh6sIcNJCwhwCdx460gxA18EpO2TWeGCPNKdLQJQVSrScw6vg5u7cELl5gn
-        MCrNQvLYLCTfzELyzSyEvQsYWVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEJqLT/45/
-        3cG470/SIUYBDkYlHt4HSpIxQqyJZcWVuYcYJTiYlUR4L0UDhXhTEiurUovy44tKc1KLDzFK
-        c7AoifNWMzyIFhJITyxJzU5NLUgtgskycXBKNTAWPz1ZHSbyXuJloouuwjPe6HVty33PdD9j
-        3S1Ytn7RShm1ba/7EljFZPVELQ7+kds532RX+bMlqY2yk47Ff+rlOr3MY8+P8jUH/nOHWvqc
-        Ysxa8HVO+PImvtW+3vW6/hm2dz/P9ddwmiedpC/QdMjgYKNn8vGHCkvF3l4rNcgW+HOawel7
-        9SUlluKMREMt5qLiRACIdRlVQAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xe7reolIxBs1XDC0W7Le26Jy9gd1i
-        8qm5TBbnzwNZl3fNYbM4+OEJq8XyUztYHNg9nhycx+SxZt4aRo9NqzrZPCbfWM7osfl0tcfn
-        TXIBbFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6
-        Ga0H/Qtm8lRcfrKKsYHxEWcXIyeHhICJxMaWk6wgtpDAUkaJvxclIOIyEienNbBC2MISf651
-        sXUxcgHVvGWUWPOziQUkISzgI3Ghp4EZxBYRcJG4/uMyO0gRs8AyRon2/9OYIDo2M0osbPrA
-        BlLFJmAo0fW2C8zmFbCTWP3mMNgkFgFViQczfwCt4+AQFYiReLagGqJEUOLkzCcsIGFOAVOJ
-        qbNlQMLMAuoSf+ZdYoaw5SW2v50DZYtL3Hoyn2kCo9AsJN2zkLTMQtIyC0nLAkaWVYwiqaXF
-        uem5xUZ6xYm5xaV56XrJ+bmbGIFxt+3Yzy07GLveBR9iFOBgVOLh7VKQjBFiTSwrrsw9xCjB
-        wawkwnspGijEm5JYWZValB9fVJqTWnyI0RTotYnMUqLJ+cCUkFcSb2hqaG5haWhubG5sZqEk
-        znveoDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgZH1t+X7B95vZzDE2s51qnkrbrXobbXYpPO7xNXV
-        d4u9j6qb8yHFlq0t7YWf5v0KA7VN6VJC+Xpbpn2Ov9qxxSefgfln1Ls+rZMvbMrnf2iPUr9W
-        PHG/3L2uUPsZ7G8eqJ18Os/3Pw+viVBitGHxf68lW7/KKIjtttjM3bDUsOdKrrN8VIz+ESWW
-        4oxEQy3mouJEADhMl5zRAgAA
-X-CMS-MailID: 20181219095420eucas1p17dcf5ec60601a335dbdfd48c7132038c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181211150640epcas5p4ffdd63a1900ebfe4a04eea24d2c86de6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181211150640epcas5p4ffdd63a1900ebfe4a04eea24d2c86de6
-References: <20181211150513.15161-1-joro@8bytes.org>
-        <CGME20181211150640epcas5p4ffdd63a1900ebfe4a04eea24d2c86de6@epcas5p4.samsung.com>
-        <20181211150513.15161-4-joro@8bytes.org>
+References: <20181217040449.31437-1-wens@csie.org> <ADDC30F6-9C86-4D59-A28E-A3007C9D478D@holtmann.org>
+In-Reply-To: <ADDC30F6-9C86-4D59-A28E-A3007C9D478D@holtmann.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 19 Dec 2018 17:54:12 +0800
+X-Gmail-Original-Message-ID: <CAGb2v643Wyt5NSygxf0aQzrAhOjYS+M_OC5L7RSCnk+aw_p9LA@mail.gmail.com>
+Message-ID: <CAGb2v643Wyt5NSygxf0aQzrAhOjYS+M_OC5L7RSCnk+aw_p9LA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/15] ARM: sunxi: Enable Broadcom-based Bluetooth controllers
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Loic Poulain <loic.poulain@gmail.com>,
+        linux-bluetooth@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
-
-This patch landed in today's linux-next and causes a regression.
-
-On 2018-12-11 16:05, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
+On Wed, Dec 19, 2018 at 7:50 AM Marcel Holtmann <marcel@holtmann.org> wrote:
 >
-> Make sure to invoke this call-back through the proper
-> function of the IOMMU-API.
+> Hi Chen-Yu,
 >
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  drivers/iommu/of_iommu.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> > This is v3 of my Broadcom-based Bluetooth controllers on Allwinner SoC-
+> > based SBCs series. v2 was sent on 11/15, with a follow up ping on 11/28.
+> > No response from either Bluetooth maintainer. Would the maintainers
+> > acknowledge or provide feedback so we can move forward? WiFi for the
+> > Broadcom chips has been supported and enabled for many years. Bluetooth
+> > on the other hand has required userspace trickery to get it working.
+> > With serdev support, this now requires minimal interaction from
+> > users to get working.
+> >
+> >
+> > Changes since v2:
+> >
+> >  - Collected tags from Ondrej for applicable patches
+> >
+> > Changes since v1:
+> >
+> >  - Collected tags
+> >  - Re-organize dt binding clocks and clock-names properties
+> >  - Simplify check for deferred probe when getting clocks
+> >  - Add explanation of Cubietruck's clk_out_a pinmux setting placement
+> >    to commit message.
+> >  - Add missing "uart-has-rtscts" property to Cubietruck device tree
+> >
+> > Original cover letter follows.
+> >
+> >
+> > On many Allwinner SBCs / developer boards, there is a WiFi+BT combo
+> > module from AMPAK. Inside is either one or two Broadcom chips, depending
+> > on the model. This series enables the Bluetooth controllers for AMPAK
+> > AP6210, AP6212, and AP6330 found on several boards. More will come later
+> > as other SoCs require changes to some other parts. I did not cover the
+> > SCO PCM connections from the controller to the SoC's I2S interface. It
+> > seems no one is actually doing this, so I was not sure how to proceed.
+> > Any suggestions?
+> >
+> > I deliberately left out the netdev mailing list and Dave Miller, as the
+> > only thing that is under net is the binding document. Maybe we should
+> > move that out of Documentation/devicetree/bindings/net/ ?
+> >
+> > Also, I'm not subscribed to the linux-bluetooth ML, so please CC me for
+> > any discussions.
+> >
+> > Patches 1 through 4 are device tree binding changes:
+> >
+> > 1 - Make the external clock name unambiguous, and add a second entry for
+> >    the LPO clock.
+> >
+> > 2 - Add regulator supply properties for the VBAT and VDDIO power pins.
+> >
+> > 3 - Add a compatible string for BCM20702A1.
+> >
+> > 4 - Add a compatible string for BCM4330.
+> >
+> > Patches 5 through 13 are changes to the driver, either improvements,
+> > or updates to handle the updated device tree binding.
+> >
+> > 5 - Make the driver handle deferred probing for the external clock.
+> >
+> > 6 - Simplify clock error checking for subsequent clk API calls.
+> >
+> > 7 - Handle clock-names for the main external clock.
+> >
+> > 8 - Support a new external clock, the LPO.
+> >
+> > 9 - Support regulator supplies.
+> >
+> > 10 - Wait a small amount of time after toggling the GPIO for the device
+> >     to settle.
+> >
+> > 11 - Add support for BCM20702A1, including its default address.
+> >
+> > 12 - Add BCM4330 compatible string to the driver.
+> >
+> > 13 - Handle default address for BCM43430A0.
+> >
+> > 14 - Enable Broadcom-based serdev Bluetooth for multiple Allwinner ARMv7
+> >     boards.
+> >
+> > 15 - Enable Broadcom-based serdev Bluetooth for the Bananapi M64.
+> >
+> > checkpatch reports an error for both patch 11 and patch 13:
+> >
+> >    ERROR: space required after that close brace '}'
+> >
+> > I followed the existing code's style. If this is undesirable, I can send
+> > a follow-up patch fixing the entire code block.
+> >
+> > The first 13 patches should go through the Bluetooth tree, while we, the
+> > sunxi maintainers, will take the last 2.
+> >
+> >
+> > Thanks
+> > ChenYu
+> >
+> > Chen-Yu Tsai (14):
+> >  dt-bindings: net: broadcom-bluetooth: Fix external clock names
+> >  dt-bindings: net: broadcom-bluetooth: Add VBAT and VDDIO supplies
+> >  dt-bindings: net: broadcom-bluetooth: Add BCM20702A1 compatible string
+> >  dt-bindings: net: broadcom-bluetooth: Add BCM4330 compatible string
+> >  Bluetooth: hci_bcm: Handle deferred probing for the clock supply
+> >  Bluetooth: hci_bcm: Simplify clk_get error handling
+> >  Bluetooth: hci_bcm: Use "txco" and "extclk" to get clock reference
+> >  Bluetooth: hci_bcm: Add support for LPO clock
+> >  Bluetooth: hci_bcm: Add support for regulator supplies
+> >  Bluetooth: hci_bcm: Wait for device to come out of reset after power
+> >    on
+> >  Bluetooth: hci_bcm: Add compatible string for BCM4330
+> >  Bluetooth: btbcm: Add default address for BCM43430A0
+> >  ARM: dts: sunxi: Enable Broadcom-based Bluetooth for multiple boards
+> >  arm64: dts: allwinner: a64: bananapi-m64: Add Bluetooth device node
+> >
+> > Maxime Ripard (1):
+> >  Bluetooth: hci_bcm: Add BCM20702A1 variant
+> >
+> > .../bindings/net/broadcom-bluetooth.txt       |  11 +-
+> > arch/arm/boot/dts/sun7i-a20-cubietruck.dts    |  25 ++++
+> > arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts  |  18 +++
+> > .../boot/dts/sun8i-a83t-cubietruck-plus.dts   |  18 +++
+> > arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  14 +++
+> > .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  14 +++
+> > drivers/bluetooth/btbcm.c                     |  13 +-
+> > drivers/bluetooth/hci_bcm.c                   | 112 +++++++++++++++---
+> > 8 files changed, 208 insertions(+), 17 deletions(-)
 >
-> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> index c5dd63072529..4d4847de727e 100644
-> --- a/drivers/iommu/of_iommu.c
-> +++ b/drivers/iommu/of_iommu.c
-> @@ -218,10 +218,10 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
->  		ops = dev->iommu_fwspec->ops;
->  	/*
->  	 * If we have reason to believe the IOMMU driver missed the initial
-> -	 * add_device callback for dev, replay it to get things in order.
-> +	 * probe for dev, replay it to get things in order.
->  	 */
-> -	if (ops && ops->add_device && dev->bus && !dev->iommu_group)
-> -		err = ops->add_device(dev);
-> +	if (dev->bus && !dev->iommu_group)
-> +		err = iommu_probe_device(dev);
+> patches 1-13 have been applied to bluetooth-next tree.
 
-This change removes a check for NULL ops, what causes NULL pointer
-exception on first device without IOMMU.
+Thanks. Queued up the last two for a late pull request round.
 
-I'm also not sure if this is a good idea to call iommu_probe_device(),
-which comes from dev->bus->iommu_ops, which might be different from ops
-from local variable.
-
->  
->  	/* Ignore all other errors apart from EPROBE_DEFER */
->  	if (err == -EPROBE_DEFER) {
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+ChenYu
