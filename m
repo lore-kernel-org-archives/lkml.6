@@ -2,66 +2,76 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9ABC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF24C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97716218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4F012184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:48:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbeLSGmK (ORCPT
+        id S1727967AbeLSGse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 01:42:10 -0500
-Received: from verein.lst.de ([213.95.11.211]:45213 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbeLSGmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 01:42:09 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 9559C67358; Wed, 19 Dec 2018 07:42:06 +0100 (CET)
-Date:   Wed, 19 Dec 2018 07:42:06 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
-        Christoph Hellwig <hch@lst.de>,
-        iommu@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        ezequiel Garcia <ezequiel@collabora.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [15/15] dma-mapping: bypass indirect calls for dma-direct
-Message-ID: <20181219064206.GA27018@lst.de>
-References: <20181207190720.18517-16-hch@lst.de> <2e779fa7-dc9f-7ed8-252a-5d20c5deca9c@collabora.com> <92096de9-7183-dbe8-2169-0143190591fa@arm.com>
+        Wed, 19 Dec 2018 01:48:34 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34291 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727345AbeLSGse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 01:48:34 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6756EC1422DD8;
+        Wed, 19 Dec 2018 14:48:31 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 19 Dec 2018
+ 14:48:22 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <steffen.klassert@secunet.com>,
+        <herbert@gondor.apana.org.au>, <kuznet@ms2.inr.ac.ru>,
+        <yoshfuji@linux-ipv6.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Wed, 19 Dec 2018 14:45:09 +0800
+Message-ID: <20181219064509.9804-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92096de9-7183-dbe8-2169-0143190591fa@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 08:42:46PM +0000, Robin Murphy wrote:
->> [   16.046084] rk_iommu ff8f3f00.iommu: DMA map error for DT
->
-> Yup, with this patch as-is, anything which isn't behind an IOMMU will be 
-> erroneously banned from DMA entirely - see here:
->
-> https://lore.kernel.org/lkml/20181214142435.GA18448@lst.de/
+gcc warn this:
 
-FYI, I'm still waiting for a review on that..
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
+
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/ipv6/xfrm6_tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index 4a46df8..f5b4feb 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
++
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+-- 
+2.7.0
+
+
