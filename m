@@ -2,160 +2,105 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55866C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4F1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E00A218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAD6A218C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:37:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHl4Wl5E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbeLSPhM (ORCPT
+        id S1730255AbeLSPhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:37:12 -0500
-Received: from gateway30.websitewelcome.com ([192.185.179.30]:31924 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728301AbeLSPhL (ORCPT
+        Wed, 19 Dec 2018 10:37:16 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33996 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728301AbeLSPhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:37:11 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 24C5214E87
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:37:10 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZduIgGBrI4FKpZduIglbQi; Wed, 19 Dec 2018 09:37:10 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=35298 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZduH-000fXP-Od; Wed, 19 Dec 2018 09:37:09 -0600
-Subject: Re: [PATCH 06/41] scsi: aic7xxx: mark expected switch fall-throughs
-To:     Hannes Reinecke <hare@suse.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <b55c3f902d88871053983314cfa837e641db5db6.1543374820.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <76760259-100e-f149-bbbf-4c1044152ff7@embeddedor.com>
-Date:   Wed, 19 Dec 2018 09:37:08 -0600
+        Wed, 19 Dec 2018 10:37:14 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u89-v6so7098854lje.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:37:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=38X3SiYJ7IeHkQ0u5m6xFXUttDO+deoOHzUxpbe/MI0=;
+        b=GHl4Wl5EO6SQMDkKwkXOETCrtSwTsICyCfcsU43naJYEq9Mh1xEUqNuadDNMhADWa4
+         R1/XX2SYBoBCUeb2N9rgc8npxI/iRBr86YSWZulp+Y1wNyZyp0GysVLhIJd4q/8wkTx9
+         0hy+8rhUAedkh+R00ZutlxojtcyooUXksXVVlUzcb7pACItbyvZ8Caz/LnH0zkxRtkw0
+         7t6D3tRfrCfGWNrIuw9BKOiNYvztp7Wb3w4ZWdRgAqg41sNuYEa3MR/tkI8BLj+Kcgw2
+         Ycjls+EvYXmssUxOP+PxB3EEDwcFBA3tmArNXJgti0VsgC18T4XhRjrW4c7LIQZHoru6
+         UiBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=38X3SiYJ7IeHkQ0u5m6xFXUttDO+deoOHzUxpbe/MI0=;
+        b=tCfBH1qMrHr7V+64iEvJnnPL1KeHvFr8jS+d0mRQyuaAxdW+Bw7h68izJi3mFvBj1y
+         Dr+JrP7JqgF693rLfOOLWEZ2Oi6zrlXUmNJuyqaau+sse0KagNB5BHx9+68i1+hECOKY
+         TDB6qcc092rgjWCGehRgl6shNw1BNB6M8fHuNR7gUanYTySRRvX69m2qB81pf/LMvpaC
+         b1FutwdnetlncyI45FZ7e0ScOaZXUSHQxOmoem900cbhO2eG91E7X15iU0hY1UILLrCy
+         59TCFA5y0gFsKcdPTyp2Natbbhc8s0GdOtZoQItIOmP7VLqnLzeoOYRQTXFG8TmcN/Yl
+         5Vjg==
+X-Gm-Message-State: AA+aEWaTQNLbV+TsqMkOTxxNK18n0DBRHwb6+zMsjJiUiRYPgJ3U7AmM
+        EfXDnCzjTijoXW6YLElnPyE=
+X-Google-Smtp-Source: AFSGD/XS1o+S/lxZKETyOicOT+QIcfmlGq0RvjSQ482rlMN39fM7aWDQOSD5jRtlWDOsWf8++31XHQ==
+X-Received: by 2002:a2e:93d7:: with SMTP id p23-v6mr12474787ljh.22.1545233831692;
+        Wed, 19 Dec 2018 07:37:11 -0800 (PST)
+Received: from [10.17.182.20] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id b21sm3884083lfi.7.2018.12.19.07.37.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 07:37:10 -0800 (PST)
+Subject: Re: [PATCH] drm/bochs: add edid present check
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+References: <20181218073339.12160-1-kraxel@redhat.com>
+ <93d72578-9567-9694-dbc7-62618b217f8f@gmail.com>
+ <20181219152129.k7v4ttpsazguswke@sirius.home.kraxel.org>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <4a1897bf-2b48-fdd7-25e3-d7d25b9885c3@gmail.com>
+Date:   Wed, 19 Dec 2018 17:37:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <b55c3f902d88871053983314cfa837e641db5db6.1543374820.git.gustavo@embeddedor.com>
+In-Reply-To: <20181219152129.k7v4ttpsazguswke@sirius.home.kraxel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZduH-000fXP-Od
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35298
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 12/19/18 5:21 PM, Gerd Hoffmann wrote:
+>    Hi,
+>
+>> You could probably have a comment here explaining the magic below
+>> (just like in the commit message to ease the task of understanding
+>> while reading the code why 2 of 8 bytes of the EDID header is checked
+>> and why it is all needed). Of course one can use git blame... Up to you
+> Makes sense.
+>
+>>> +	if (readb(bochs->mmio + 0) != 0x00 ||
+>>> +	    readb(bochs->mmio + 1) != 0xff)
+>> bochs->mmio is defined as "void __iomem   *mmio;". Can we please avoid
+>> void pointer arithmetic here?
+> Why is that a problem?  gcc uses bytes when doing pointer arithmetic
+> with void pointers (even though it is undefined in the C standard),
+> and as far I know the linux kernel depends on that behavior anyway.
+>
+> Also the driver already does it everywhere.
+Ok then, just to be consistent with the rest of the driver.
+> cheers,
+>    Gerd
+>
 
-Friendly ping:
-
-Who can ack or review this patch, please?
-
-Thanks
---
-Gustavo
-
-On 11/27/18 10:26 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Notice that, in some cases, I replaced "FALLTHROUGH" with a "fall through"
-> annotation and then placed it at the bottom of the corresponding switch
-> case, which is what GCC is expecting to find.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/scsi/aic7xxx/aic7xxx_core.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/aic7xxx/aic7xxx_core.c b/drivers/scsi/aic7xxx/aic7xxx_core.c
-> index f3362f4ab16e..d4a7263e4b8f 100644
-> --- a/drivers/scsi/aic7xxx/aic7xxx_core.c
-> +++ b/drivers/scsi/aic7xxx/aic7xxx_core.c
-> @@ -4920,24 +4920,30 @@ ahc_fini_scbdata(struct ahc_softc *ahc)
->   		}
->   		ahc_dma_tag_destroy(ahc, scb_data->sg_dmat);
->   	}
-> +		/* fall through */
->   	case 6:
->   		ahc_dmamap_unload(ahc, scb_data->sense_dmat,
->   				  scb_data->sense_dmamap);
-> +		/* fall through */
->   	case 5:
->   		ahc_dmamem_free(ahc, scb_data->sense_dmat, scb_data->sense,
->   				scb_data->sense_dmamap);
->   		ahc_dmamap_destroy(ahc, scb_data->sense_dmat,
->   				   scb_data->sense_dmamap);
-> +		/* fall through */
->   	case 4:
->   		ahc_dma_tag_destroy(ahc, scb_data->sense_dmat);
-> +		/* fall through */
->   	case 3:
->   		ahc_dmamap_unload(ahc, scb_data->hscb_dmat,
->   				  scb_data->hscb_dmamap);
-> +		/* fall through */
->   	case 2:
->   		ahc_dmamem_free(ahc, scb_data->hscb_dmat, scb_data->hscbs,
->   				scb_data->hscb_dmamap);
->   		ahc_dmamap_destroy(ahc, scb_data->hscb_dmat,
->   				   scb_data->hscb_dmamap);
-> +		/* fall through */
->   	case 1:
->   		ahc_dma_tag_destroy(ahc, scb_data->hscb_dmat);
->   		break;
-> @@ -6002,8 +6008,8 @@ ahc_search_qinfifo(struct ahc_softc *ahc, int target, char channel,
->   				if ((scb->flags & SCB_ACTIVE) == 0)
->   					printk("Inactive SCB in Waiting List\n");
->   				ahc_done(ahc, scb);
-> -				/* FALLTHROUGH */
->   			}
-> +				/* fall through */
->   			case SEARCH_REMOVE:
->   				next = ahc_rem_wscb(ahc, next, prev);
->   				break;
-> @@ -7008,8 +7014,8 @@ ahc_download_instr(struct ahc_softc *ahc, u_int instrptr, uint8_t *dconsts)
->   		}
->   		address -= address_offset;
->   		fmt3_ins->address = address;
-> -		/* FALLTHROUGH */
->   	}
-> +		/* fall through */
->   	case AIC_OP_OR:
->   	case AIC_OP_AND:
->   	case AIC_OP_XOR:
-> @@ -7035,7 +7041,7 @@ ahc_download_instr(struct ahc_softc *ahc, u_int instrptr, uint8_t *dconsts)
->   			fmt1_ins->opcode = AIC_OP_AND;
->   			fmt1_ins->immediate = 0xff;
->   		}
-> -		/* FALLTHROUGH */
-> +		/* fall through */
->   	case AIC_OP_ROL:
->   		if ((ahc->features & AHC_ULTRA2) != 0) {
->   			int i, count;
-> 
