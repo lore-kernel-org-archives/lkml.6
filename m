@@ -2,169 +2,104 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B97DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8239FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB1072054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AE20217D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeLSJQE (ORCPT
+        id S1727844AbeLSJRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:16:04 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41071 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727159AbeLSJQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:16:04 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A55518862400A;
-        Wed, 19 Dec 2018 17:16:00 +0800 (CST)
-Received: from dessert.huawei.com (10.69.192.158) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 19 Dec 2018 17:15:53 +0800
-From:   Zeng Tao <prime.zeng@hisilicon.com>
-To:     <labbott@redhat.com>, <sumit.semwal@linaro.org>
-CC:     Zeng Tao <prime.zeng@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] staging: android: ion: add buffer flag update ioctl
-Date:   Thu, 20 Dec 2018 01:19:03 +0800
-Message-ID: <1545239943-15414-1-git-send-email-prime.zeng@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 19 Dec 2018 04:17:46 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:38040 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726774AbeLSJRp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 04:17:45 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJ9ANXI026208;
+        Wed, 19 Dec 2018 03:17:44 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2pcyw5qje2-1;
+        Wed, 19 Dec 2018 03:17:44 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id A5916611C8AC;
+        Wed, 19 Dec 2018 03:20:40 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 19 Dec 2018
+ 09:17:42 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBJ9HgAS012169; Wed,
+ 19 Dec 2018 09:17:42 GMT
+Date:   Wed, 19 Dec 2018 09:17:42 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH 18/18] mfd: wm8400-core: Make it explicitly non-modular
+Message-ID: <20181219091742.GA16508@imbe.wolfsonmicro.main>
+References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
+ <1545078688-21217-19-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.158]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1545078688-21217-19-git-send-email-paul.gortmaker@windriver.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1812190080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some usecases, the buffer cached attribute is not determined at
-allocation time, it's determined just before the real cpu mapping.
-And from the memory view of point, a buffer should not have the cached
-attribute util is really mapped by the cpu. So in this patch, we
-introduced the new ioctl command to target the requirement.
+On Mon, Dec 17, 2018 at 03:31:28PM -0500, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> drivers/mfd/Kconfig:config MFD_WM8400
+> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8400"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_init was not in use by this code, the init ordering
+> remains unchanged with this commit.
+> 
+> A trivial function rename from wm8400_module_init to the name
+> wm8400_driver_init is also done to reduce possible confusion.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Cc: patches@opensource.cirrus.com
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> -MODULE_DEVICE_TABLE(i2c, wm8400_i2c_id);
+>  
+>  static struct i2c_driver wm8400_i2c_driver = {
+>  	.driver = {
+> @@ -161,7 +160,7 @@ static struct i2c_driver wm8400_i2c_driver = {
+>  };
+>  #endif
 
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
----
- drivers/staging/android/ion/ion-ioctl.c |  4 ++++
- drivers/staging/android/ion/ion.c       | 17 +++++++++++++++++
- drivers/staging/android/ion/ion.h       |  1 +
- drivers/staging/android/uapi/ion.h      | 22 ++++++++++++++++++++++
- 4 files changed, 44 insertions(+)
+Do we not want to add suppress_bind_attrs into the i2c_driver
+struct here?
 
-diff --git a/drivers/staging/android/ion/ion-ioctl.c b/drivers/staging/android/ion/ion-ioctl.c
-index a8d3cc4..60bb702 100644
---- a/drivers/staging/android/ion/ion-ioctl.c
-+++ b/drivers/staging/android/ion/ion-ioctl.c
-@@ -12,6 +12,7 @@
- 
- union ion_ioctl_arg {
- 	struct ion_allocation_data allocation;
-+	struct ion_buffer_flag_data update;
- 	struct ion_heap_query query;
- };
- 
-@@ -83,6 +84,9 @@ long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 
- 		break;
- 	}
-+	case ION_IOC_BUFFER_UPDATE:
-+		ret = ion_buffer_update(data.update.fd, data.update.flags);
-+		break;
- 	case ION_IOC_HEAP_QUERY:
- 		ret = ion_query_heaps(&data.query);
- 		break;
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 9907332..f1404dc 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -436,6 +436,23 @@ int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
- 	return fd;
- }
- 
-+int ion_buffer_update(unsigned int fd, unsigned int flags)
-+{
-+	struct dma_buf *dmabuf;
-+	struct ion_buffer *buffer;
-+
-+	dmabuf = dma_buf_get(fd);
-+
-+	if (!dmabuf)
-+		return -EINVAL;
-+
-+	buffer = dmabuf->priv;
-+	buffer->flags = flags;
-+	dma_buf_put(dmabuf);
-+
-+	return 0;
-+}
-+
- int ion_query_heaps(struct ion_heap_query *query)
- {
- 	struct ion_device *dev = internal_dev;
-diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
-index c006fc1..99bf9ab 100644
---- a/drivers/staging/android/ion/ion.h
-+++ b/drivers/staging/android/ion/ion.h
-@@ -199,6 +199,7 @@ int ion_heap_pages_zero(struct page *page, size_t size, pgprot_t pgprot);
- int ion_alloc(size_t len,
- 	      unsigned int heap_id_mask,
- 	      unsigned int flags);
-+int ion_buffer_update(unsigned int fd, unsigned int flags);
- 
- /**
-  * ion_heap_init_shrinker
-diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
-index 5d70098..99753fc 100644
---- a/drivers/staging/android/uapi/ion.h
-+++ b/drivers/staging/android/uapi/ion.h
-@@ -74,6 +74,20 @@ struct ion_allocation_data {
- 	__u32 unused;
- };
- 
-+/**
-+ * struct ion_buffer_flag_data - metadata passed from userspace for update
-+ * buffer flags
-+ * @fd:			file descriptor of the buffer
-+ * @flags:		flags passed to the buffer
-+ *
-+ * Provided by userspace as an argument to the ioctl
-+ */
-+
-+struct ion_buffer_flag_data {
-+	__u32 fd;
-+	__u32 flags;
-+}
-+
- #define MAX_HEAP_NAME			32
- 
- /**
-@@ -116,6 +130,14 @@ struct ion_heap_query {
- 				      struct ion_allocation_data)
- 
- /**
-+ * DOC: ION_IOC_BUFFER_UPDATE - update the specified ion buffer flags
-+ *
-+ * Takes an ion_buffer_flag_data structure and returns the result of the
-+ * buffer flag update operation.
-+ */
-+#define ION_IOC_BUFFER_UPDATE	_IOWR(ION_IOC_MAGIC, 1, \
-+				      struct ion_buffer_flag_data)
-+/**
-  * DOC: ION_IOC_HEAP_QUERY - information about available heaps
-  *
-  * Takes an ion_heap_query structure and populates information about
--- 
-2.7.4
-
+Thanks,
+Charles
