@@ -2,106 +2,104 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308C4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BFFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB39218AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:00:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=prjkt-io.20150623.gappssmtp.com header.i=@prjkt-io.20150623.gappssmtp.com header.b="rlq/JXb6"
+	by mail.kernel.org (Postfix) with ESMTP id 6EBB420874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:01:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729873AbeLSPA3 (ORCPT
+        id S1729563AbeLSPBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:00:29 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39344 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729523AbeLSPA3 (ORCPT
+        Wed, 19 Dec 2018 10:01:05 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38808 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727502AbeLSPBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:00:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w6so9556052pgl.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=prjkt-io.20150623.gappssmtp.com; s=20150623;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=O2B8OT2BFlOTc1bYch3EgRc0i3NIlNRUFHbRXlooPok=;
-        b=rlq/JXb6YaHmJjIsf1Z7UwCmfngppHySQDmke/wACbVm6e9g1bmAGytTFSplJwQf0E
-         R0XkrrjeVCqLrGg1oGlpdB9Y8lNOcn7ECUbIlqg3LeWBtfwOQzulu0g9HzeGn8Fb8LCX
-         ny/iwXX1AqW7j9+UT0LKGoUQIWRhe424GAvAKEuaD6MDO+kgENt+jeCjfzmb3dTZ6gIE
-         Be1tbZdolkSMxyu9Zxu3/UheaDxJ3ieKNWs5BYY0muSPXj013ULpHZC8ZurBZt46k7wr
-         qOuRNAZr1pGpcsN9X+8waoq4+7ZYwl3+dOqMpW8vK+55pHVM555NFd3zRP7vWG6Lbtyb
-         Tj4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=O2B8OT2BFlOTc1bYch3EgRc0i3NIlNRUFHbRXlooPok=;
-        b=SRTUOTK8qoCK/i2Z6h6zAeMb63xuXon+zWCnQLvLgN5olafGpmODpOyjXjQx5WBhuj
-         Rtx8esT0AYwgz1mLfJxEzttqeyWhzNeHIyrOlgVQ/khgnoNt4VpoJkjt3ENbzmdjI8/O
-         /Wa9KrX1E6mN6Vuw/U/xUv37OZztZARjBQsPFuCTh62Or5jxlr3ZJrD7BsmV/PK9Iv+U
-         UvPwp/LUZswUT+vGXxNULzLPdb4pT9P9NNJZ/suJCzNWgqIHX7nycCD/3xk+PrIoLmqc
-         i7aPBW6qFccS9Vm9LfWsrTHSX+LqOzgC5tcIkmfNVONvzulH+GR/qqtXYYEqxV9lET2K
-         eRwg==
-X-Gm-Message-State: AA+aEWZvRFDpc5ng5AuwuSnmstk1ybQvZcLW9D8gI1R/BxCOTQxcQlVc
-        yLr4a/Ok/FmmeBj0iK6s8eJ37w==
-X-Google-Smtp-Source: AFSGD/V2EBdBOIZTLFmj0KJLmGC39cbcHSA8PfRAlSlMcD3xB3ykTjt5IvSHj3Gj30MHJxBIelhhTA==
-X-Received: by 2002:a63:2a4a:: with SMTP id q71mr19561466pgq.374.1545231628231;
-        Wed, 19 Dec 2018 07:00:28 -0800 (PST)
-Received: from [192.168.0.102] ([160.202.37.112])
-        by smtp.gmail.com with ESMTPSA id k14sm26714652pgs.52.2018.12.19.07.00.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 07:00:27 -0800 (PST)
-Date:   Wed, 19 Dec 2018 20:31:25 +0530
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181218163927.119623235@linuxfoundation.org>
-References: <20181218163927.119623235@linuxfoundation.org>
+        Wed, 19 Dec 2018 10:01:05 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJEuFhq026070;
+        Wed, 19 Dec 2018 16:00:26 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2pcr8xxg5n-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 19 Dec 2018 16:00:26 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EFF0D3A;
+        Wed, 19 Dec 2018 15:00:24 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BA4552A59;
+        Wed, 19 Dec 2018 15:00:24 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.50) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 19 Dec
+ 2018 16:00:23 +0100
+Subject: Re: [PATCH v3 0/3] Make STM32 interrupt controller use hwspinlock
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20181217142215.17493-1-benjamin.gaignard@st.com>
+ <297d3207-7302-674e-5acd-30dc7b2df408@arm.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <fc6eb663-8694-662d-c4c2-705c7bc57700@st.com>
+Date:   Wed, 19 Dec 2018 16:00:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4.19 00/44] 4.19.11-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-CC:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-From:   Harsh Shandilya <harsh@prjkt.io>
-Message-ID: <D3BC02ED-AFA9-4390-83A7-148406821637@prjkt.io>
+In-Reply-To: <297d3207-7302-674e-5acd-30dc7b2df408@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 December 2018 10:09:12 PM IST, Greg Kroah-Hartman <gregkh@linuxfounda=
-tion=2Eorg> wrote:
->This is the start of the stable review cycle for the 4=2E19=2E11 release=
-=2E
->There are 44 patches in this series, all will be posted as a response
->to this one=2E  If anyone has any issues with these being applied, please
->let me know=2E
->
->Responses should be made by Thu Dec 20 16:39:02 UTC 2018=2E
->Anything received after that time might be too late=2E
->
->The whole patch series can be found in one patch at:
->	https://www=2Ekernel=2Eorg/pub/linux/kernel/v4=2Ex/stable-review/patch-4=
-=2E19=2E11-rc1=2Egz
->or in the git tree and branch at:
->	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable-rc=
-=2Egit
->linux-4=2E19=2Ey
->and the diffstat can be found below=2E
->
->thanks,
->
->greg k-h
-Built and booted on the Lenovo IdeaPad 330-15ARR, no dmesg regressions=2E
---=20
-Harsh Shandilya
-PRJKT Development LLC
+Hi Marc,
+
+On 12/18/18 4:39 PM, Marc Zyngier wrote:
+> On 17/12/2018 14:22, Benjamin Gaignard wrote:
+>> This series allow to protect STM32 interrupt controller configuration registers
+>> with a hwspinlock to avoid conflicting accesses between processors.
+>>
+>> version 3:
+>> - with bindings patch
+>>
+>> version 2:
+>> - rework hwspinlock locking sequence in stm32 irqchip to take care of the
+>>    cases where hwspinlock node is disabled or not yet probed
+>>
+>> Benjamin Gaignard (3):
+>>    dt-bindings: interrupt-controller: stm32: Document hwlock properties
+>>    irqchip: stm32: protect configuration registers with hwspinlock
+>>    ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
+>>
+>>   .../interrupt-controller/st,stm32-exti.txt         |   4 +
+>>   arch/arm/boot/dts/stm32mp157c.dtsi                 |   1 +
+>>   drivers/irqchip/irq-stm32-exti.c                   | 116 ++++++++++++++++++---
+>>   3 files changed, 105 insertions(+), 16 deletions(-)
+>>
+> 
+> I've taken the first two patches. Please route the DTS patch to the
+> appropriate tree.
+> 
+
+I'll take DTS patch in stm32-next branch.
+
+Regards
+Alex
+
+> Thanks,
+> 
+> 	M.
+> 
