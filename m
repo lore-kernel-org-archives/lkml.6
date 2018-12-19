@@ -2,121 +2,113 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7BBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDA2C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF3220449
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:44:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ONwGzWfH"
+	by mail.kernel.org (Postfix) with ESMTP id 8601420449
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:48:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbeLSPoI (ORCPT
+        id S1730379AbeLSPsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:44:08 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41706 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728901AbeLSPoI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:44:08 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBJFhFKI051101;
-        Wed, 19 Dec 2018 09:43:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545234195;
-        bh=Zw/0n+fUcbC7Z0GjFbsk5XY79G/el4H8B/5jktqCFcY=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=ONwGzWfH2dX7RR60w7qlUP0JSR/aqA2H0GitWYB8FfKvj3Y22ZQznTAu6igTPlloY
-         pPhxTACPUWR69QBna+lfWWNdq2+N0NnVOV7lsFeGEiiEckOgoSDU87avaBANhS2AnJ
-         v2Yb2E3ARr8kWgaZ8o9ihmfxRkV0mSmL+hfmw74E=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBJFhFPY097815
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Dec 2018 09:43:15 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 19
- Dec 2018 09:43:15 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 19 Dec 2018 09:43:15 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBJFhAGY028924;
-        Wed, 19 Dec 2018 09:43:11 -0600
-Subject: Re: [PATCH 05/16] remoteproc/pru: Add pru-specific debugfs support
-To:     Mark Brown <broonie@kernel.org>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-6-git-send-email-rogerq@ti.com>
- <d0e227e3-39dc-dfc8-b94c-3d9d072f6562@lechnology.com>
- <5BFFBCAC.9000004@ti.com> <5C191770.9090804@ti.com>
- <20181219123812.GC8130@sirena.org.uk>
-CC:     David Lechner <david@lechnology.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>, <tony@atomide.com>,
-        <robh+dt@kernel.org>, <bcousson@baylibre.com>,
-        <ssantosh@kernel.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
-        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
-        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C1A670E.9020904@ti.com>
-Date:   Wed, 19 Dec 2018 17:43:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Wed, 19 Dec 2018 10:48:55 -0500
+Received: from foss.arm.com ([217.140.101.70]:37788 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728344AbeLSPsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:48:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68F0580D;
+        Wed, 19 Dec 2018 07:48:54 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51CAC3F675;
+        Wed, 19 Dec 2018 07:48:52 -0800 (PST)
+Date:   Wed, 19 Dec 2018 15:48:49 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: Re: [PATCH v5 0/2] Add new UniPhier PCIe host driver
+Message-ID: <20181219154849.GB25410@e107981-ln.cambridge.arm.com>
+References: <1544143992-16385-1-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20181219123812.GC8130@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544143992-16385-1-git-send-email-hayashi.kunihiko@socionext.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/18 14:38, Mark Brown wrote:
-> On Tue, Dec 18, 2018 at 05:51:12PM +0200, Roger Quadros wrote:
+On Fri, Dec 07, 2018 at 09:53:10AM +0900, Kunihiko Hayashi wrote:
+> This series adds PCIe host controller driver for Socionext UniPhier SoCs.
+> This controller is based on the DesignWare PCIe core. This driver
+> supports LD20 and PXs3 SoCs.
 > 
->> We could combine control and debug into one iomap and use
->> 2 regmap ranges. But this is really working around the
->> regmap_mmio limitation of not being able to use more than one ioremaps.
+> v4: https://www.spinics.net/lists/linux-pci/msg78278.html
 > 
->> Mark, any suggestions?
+> About legacy IRQ, it might be necessary to share common view from
+> keystone driver that have been cleaned up[1].
 > 
-> If they're separate regions why not create separate regmaps for them?
+> [1] https://lore.kernel.org/patchwork/patch/989541/
 > 
+> Changes since v4:
+> - fix an issue of using the wrong value to mask IRQ mask register
+> 
+> Changes since v3:
+> - dt-bindings: fix INTX numbering of legacy interrupt map
+> - change interrupts to level ones
+> - remove .xlate function
+> - merge uniphier_pcie_ltssm_disable() into uniphier_pcie_ltssm_enable()
+> - remove an error message on uniphier_pcie_establish_link()
+> - change the order between irq_domain_add_liniear() and
+>   irq_set_chained_handler_and_data()
+> - replace dummy_irq_chip with uniphier_pcie_irq_chip and its functions
+> - add dependency on CONFIG_HAS_IOMEM
+> - MAINTAINERS: add pcie-uniphier entry
+> 
+> Changes since v2:
+> - dt-bindings: remove a comment that the node name isn't important
+> - dt-bindings: remove "intx" interrupt
+> - dt-bindings: define 'legacy-interrupt-controller' node and its properties
+> - return an error value when link up fails
+> - remove devm_request_irq() and a handler for MSI IRQ
+> - use chained interrupt instead of devm_request_irq() for legacy IRQ
+> - add unipher_pcie_config_legacy_irq() to get legacy IRQ from
+>   'legacy-interrupt controller' node
+> - replace 4 statments to handle INTX with for_each_set_bit()
+> - remove initialization of pp->root_bus_nr
+> - remove indivisual interrupt enable bit definitions
+> - rename 'irq_domain' member to 'legacy_irq_domain' in private structure
+> - use pci_irqd_intx_xlate() for irq_domain_ops.xlate function
+> 
+> Changes since v1:
+> - follow capitalization conventions in the descriptions
+> - use C style comments except for the SPDX line
+> 
+> Kunihiko Hayashi (2):
+>   dt-bindings: PCI: Add UniPhier PCIe host controller description
+>   PCI: uniphier: Add UniPhier PCIe host controller support
+> 
+>  .../devicetree/bindings/pci/uniphier-pcie.txt      |  81 ++++
+>  MAINTAINERS                                        |   7 +
+>  drivers/pci/controller/dwc/Kconfig                 |  10 +
+>  drivers/pci/controller/dwc/Makefile                |   1 +
+>  drivers/pci/controller/dwc/pcie-uniphier.c         | 471 +++++++++++++++++++++
+>  5 files changed, 570 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie.txt
+>  create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
 
-I tried that but only the first regmap shows up in debugfs.
+Applied to pci/uniphier, aiming for v4.21, thanks.
 
-e.g.
-
-+
-+       pru->ctrl_regmap = devm_regmap_init_mmio(dev, pru->iomem_regions[PRU_IOMEM_CTRL].va,
-+                                                &pru_regmap_config);
-+       if (IS_ERR(pru->ctrl_regmap)) {
-+               ret = PTR_ERR(pru->ctrl_regmap);
-+               dev_err(dev, "CTRL regmap init failed: %d\n", ret);
-+               goto free_rproc;
-+       }
-+
-+
-+       pru->debug_regmap = devm_regmap_init_mmio(dev, pru->iomem_regions[PRU_IOMEM_DEBUG].va,
-+                                                 &pru_debug_regmap_config);
-+       if (IS_ERR(pru->debug_regmap)) {
-+               ret = PTR_ERR(pru->debug_regmap);
-+               dev_err(dev, "DEBUG regmap init failed: %d\n", ret);
-+               goto free_rproc;
-        }
-
-
-Did I do something wrong or we just need to enhance regmap_debugfs.c?
-
-cheers,
--roger
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Lorenzo
