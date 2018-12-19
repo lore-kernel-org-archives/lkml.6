@@ -2,100 +2,84 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531DAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DFEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 127222086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E0ED20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545251923;
-	bh=RdYtcIxgR5cVtKimc93Liz4bgZFOm7q8AYNlF1L3FPw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=CJDoK2+kazrkL5L2p0vqsEKbJ0J+kva2KoqA62aEQTNpSmOn9rXOtW6bYSimciC8E
-	 /7wJu788A222Hmq/G+iNdqj5icLTMvje2pOZoXo1wd0MnQgbkBQmVjUiQUfvDvNeVl
-	 WpJtFeNnK3eWB9e6HRdIpts+rfbk1HrKkH49EYJk=
+	s=default; t=1545251934;
+	bh=WrewN3pP+xXagxVdkwsPCFljB9lgVCIfSx3Z2tMQQbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=I4UtjVRmsQUAsh2yySIITOY+ATXw+lkd3ehkJ0iqpsSaQkizrbeCjyWdSgN6foey9
+	 c3GViOgKqNbIV6qO8FqczDxOFJWsik4KNqPrVeCMVWnKaSUE5NewwnmI2nhalWGQGt
+	 eYa5IaAy6E2My3YWjoRTeZ6D6SZbSI0WEvG0oFMo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730262AbeLSUim (ORCPT
+        id S1730311AbeLSUix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 15:38:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725294AbeLSUim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 15:38:42 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D34920815;
-        Wed, 19 Dec 2018 20:38:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545251921;
-        bh=RdYtcIxgR5cVtKimc93Liz4bgZFOm7q8AYNlF1L3FPw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lpb3QdM1G+SVnwQp/KqhILUmH0zthJTtBRGFxXK/wLzmjc/NsHP+KYExaRTXCLUh/
-         8+hRc+uLIboVC8ShcvUWAkWxRuA9YOJa+yhhPDnQhSSgi9yNNJttB9qysikKpYUOzN
-         Wl/ygNmChdRxfmmoTXWU7VuYP908K23YLcvhLgMA=
-Message-ID: <1545251919.4161.4.camel@kernel.org>
-Subject: Re: [PATCH 2/7] tracing: Change strlen to sizeof for hist trigger
- static strings
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>, Joe Perches <joe@perches.com>
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date:   Wed, 19 Dec 2018 14:38:39 -0600
-In-Reply-To: <20181219153002.62ede7e9@gandalf.local.home>
-References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
-         <e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com>
-         <20181219144047.49fabfa6@gandalf.local.home>
-         <1545248809.2396.2.camel@kernel.org>
-         <baf7e7af61873fc8bb3833d6bb0501d684a92bf2.camel@perches.com>
-         <20181219153002.62ede7e9@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 15:38:53 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41728 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725294AbeLSUix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 15:38:53 -0500
+Received: by mail-oi1-f193.google.com with SMTP id j21so2712548oii.8;
+        Wed, 19 Dec 2018 12:38:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X9EDmUb25eCGRB3VLJKp5doexQ0zWLS4cH4s5eq7g5c=;
+        b=HevrCZi/9dEk7TI4LgGYRI2eLbb2G8ZV24C8xVCbqHdVgyIIywado0YJxUEa9JkVrD
+         M5wV5/Nc0rTZXJZZUiKWyBwLxAwWwM5jZDjqEOYnS1VOFBaBEHWwKY8Ehf4nPv6gtJAm
+         uB+5Dg6MxOwgm253K97B5wCXnalZ0cPWjmqTy0aU9uQ/971/6N2BpL026Sx+852+VnR1
+         4DI7qROWYFLNNgxzLS5hrWb4YjXmw+kDt9rx0KIqc/BFHpGr42EXKFzSdfnTfyZAv7+7
+         r43oiLFVh/nJKNWXqd6ABQo51W59sGfiqqP2xj3YMOzn+PcrUh03pSPAuJPUJk1lgtrY
+         z/Jg==
+X-Gm-Message-State: AA+aEWa8l8/LO+2VLy4C/H5c+WkYHFOkqoHIOV5lQ6dpGiprs0qv0fSw
+        M7gxSPnL+Ek7KUHUQ3dutA==
+X-Google-Smtp-Source: AFSGD/XvKotdNnZpmSD7TKdK4qZuEYF5GqjjNE66L1B4YLvKB4dvjRIVz19SZ5LxL8yHjtyc2M+2jQ==
+X-Received: by 2002:aca:49cb:: with SMTP id w194mr240905oia.114.1545251932056;
+        Wed, 19 Dec 2018 12:38:52 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v20sm10399529otp.10.2018.12.19.12.38.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 12:38:51 -0800 (PST)
+Date:   Wed, 19 Dec 2018 14:38:50 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jianjun Wang <jianjun.wang@mediatek.com>
+Cc:     ryder.lee@mediatek.com, bhelgaas@google.com, robh+dt@kernel.org,
+        lorenzo.pieralisi@arm.com, matthias.bgg@gmail.com,
+        linux-pci@vger.kernel.org, mark.rutland@arm.com,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        honghui.zhang@mediatek.com, youlin.pei@mediatek.com,
+        Jianjun Wang <jianjun.wang@mediatek.com>
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: Add support for MT7629
+Message-ID: <20181219203850.GA31173@bogus>
+References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
+ <1544058553-10936-2-git-send-email-jianjun.wang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544058553-10936-2-git-send-email-jianjun.wang@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-19 at 15:30 -0500, Steven Rostedt wrote:
-> On Wed, 19 Dec 2018 12:20:19 -0800
-> Joe Perches <joe@perches.com> wrote:
+On Thu, 6 Dec 2018 09:09:12 +0800, Jianjun Wang wrote:
+> MT7629 is an arm platform Soc which has the same PCIe IP with MT7622.
 > 
-> > > Yeah, I had considered it but wasn't sure it was worth it.  Since
-> > > you're suggesting it is, I can send another patch on top of
-> > > these, or
-> > > feel free if you want to too.  ;-)  
-> > 
-> > I believe the 'strlen("foo") -> sizeof("foo") - 1'
-> > conversions do not change objects at all.
-> > 
-> > strlen("constant") is already optimized by gcc to a
-> > constant value when fed a constant string.
-> 
-> If that's the case (and it probably is), then yeah, strlen is
-> probably
-> better. As it can handle the "not a constant" that you stated in
-> another email.
+> Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/pci/mediatek-pcie.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-OK, so I guess that means we should just drop this patch ('[PATCH 2/7]
-tracing: Change strlen to sizeof for hist trigger static strings').
-
-Tom
-
-> -- Steve
-> 
-> 
-> > 
-> > the strcmp_const macro does seem to make sense as
-> > the copy/paste/typo possibility is real.
-> 
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
