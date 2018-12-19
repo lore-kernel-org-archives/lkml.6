@@ -7,158 +7,154 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2FFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8DCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C7D21871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82EC721871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:02:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G9HsCnGd"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ESTlneAd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbeLSJ6z (ORCPT
+        id S1728708AbeLSKCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:58:55 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45813 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbeLSJ6z (ORCPT
+        Wed, 19 Dec 2018 05:02:43 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:33504 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeLSKCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:58:55 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x28so4239826vsh.12
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:58:54 -0800 (PST)
+        Wed, 19 Dec 2018 05:02:42 -0500
+Received: by mail-ua1-f66.google.com with SMTP id t8so6786833uap.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 02:02:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sOLDET7sNb5TDwXKMFWdwpc1eihjuQRzqbJa4kFarrQ=;
-        b=G9HsCnGdJiNv6cLv8ZXL7ROVhqOw3JeXgKS41NwEHIK8V5HGTAqkNNVywyaXiN7elO
-         xN+4s9svqPKx9z9+XDDO6RBDWMvTkunmE/QC4WZIN6PQH5WH4J4tHWfTUD50pOfK7Ot8
-         YD1Z00aMSQ521KCxGtBBN+M5mc7RnmyqZjaac=
+        bh=NQx7dLUJGiSAdVx/e9rnK06sQwchI0BSenA1bBEwXWM=;
+        b=ESTlneAdRAvwkG+zZ26ezJt7iDxfFGWlUc3J7WkSnuGT/Si2x2H3LHwRoD5AupI9xI
+         r2RVktvCRDT9LEsXK7hSdzePAY9E7Q0cQSJknQDSmE/2FcIIUxWJQ6vZMXWqCrlM6+QY
+         JvdtcM36xJtSnNKcalSFnzRJR6qo4xstBZQ5M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sOLDET7sNb5TDwXKMFWdwpc1eihjuQRzqbJa4kFarrQ=;
-        b=HC4uQUw9vq0DWP5a9eWWS6vo2RGPwbXSgzztEUx7GFLGHbQWAuz/Si/mXYJzkq5d8Y
-         IfIaIc0blulXCr0Fp2zmfhK5YFThwwvi6a0oEBNUZoJf1foiHBvQutPjd0pvBd1KHySL
-         g9EAZZRtBHhFYv7c4OIglj3h2gKCXIRs81u6okRqf1LOeoqiFHH0fjzWzk1sGAK6JxJ5
-         aocDoXV5XX/owmgIxWPNRb0yFC/xGElwGvx2h4EwanJCoC+xE+LRgGLJcwqo7EmweAkS
-         d4P2qRArsmHOJkImvHRevBOSJIuOhpnyzjLrcDrWdvZ+2duMr4zN5YsOSEafKRBxtyCr
-         RHJQ==
-X-Gm-Message-State: AA+aEWZsSphufnPhrRUcF2dFW8w9V4qKmOBRDnekkLI4UPyH3G93FQ3k
-        rfHIYO10idvE43vcj2ZoqxPn8FNOXekzfSYL1Fh/cA==
-X-Google-Smtp-Source: AFSGD/UB03s+I9XQjrxyRchcDiD9wrppKSzA9ok4MzOymNMVeGaIzJ7SdwEygVn0RybORcn6ul2cXv+ynT+kk2uQ/2E=
-X-Received: by 2002:a67:e002:: with SMTP id c2mr10043409vsl.34.1545213533720;
- Wed, 19 Dec 2018 01:58:53 -0800 (PST)
+        bh=NQx7dLUJGiSAdVx/e9rnK06sQwchI0BSenA1bBEwXWM=;
+        b=UBXmYdPp07lhJk1/UtAAXCoN3OjDti88TnxFuc3xNIXP8gwQ1iBFLkF2Ve+7ydviix
+         spPSxYPkaqFZyu/GA0pGPlk0lQHwSbh2Y438Wbj0audKugLT8AXW4I68pL0YpMtxA9sv
+         oR4QbtdQ3dw+Zd8Rwc5rTF1J9uWFJdQW4gYqU/+SCyPfU4kq10rOzQWSr3lQg2OyvXDB
+         WhWGVgaVyyf5RAqDMvacppyWICt7cH77hcSYgc4t+XKkuvWVPMFyJt6W9+8Rehz+/t76
+         ghLb/wVg5aB79FTTaKk2Ng4GSFUmC6p0+fiA3jp7ROqyWbvNIABTY+l/RYGb5qpoiU/m
+         Vjcg==
+X-Gm-Message-State: AA+aEWaVMY1uiskfvphBLywDmogvozWPgJIlo8mazFFRgTMkCgjHMbLQ
+        ywwUMIP+pioz4JMPohuGY/P0wPPY99OwFyiNILmL3A==
+X-Google-Smtp-Source: AFSGD/VwoVhy63mcAPAyB7tvXdB338299OtPsVMetYCfWdZ7miCMyRZSMVVAxuuDM4tC725I/ZurmECoM7YO5mF3Gt0=
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr10084799uan.107.1545213761724;
+ Wed, 19 Dec 2018 02:02:41 -0800 (PST)
 MIME-Version: 1.0
-References: <1545144923-31546-1-git-send-email-vincent.guittot@linaro.org> <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org>
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-3-ulf.hansson@linaro.org> <45ff9a4b-6130-7800-28cc-a2f5f736f44b@linaro.org>
+In-Reply-To: <45ff9a4b-6130-7800-28cc-a2f5f736f44b@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 19 Dec 2018 10:58:17 +0100
-Message-ID: <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
-Subject: Re: [RFC v3 1/3] PM/runtime: Add a new interface to get accounted time
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        jani.nikula@linux.intel.com,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
-        "Intel graphics driver community testing & development" 
-        <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
+Date:   Wed, 19 Dec 2018 11:02:05 +0100
+Message-ID: <CAPDyKFpPa1u1ouoa2zFzMe2McqEpxu7Vex2zd1nYoQUQtY2s-A@mail.gmail.com>
+Subject: Re: [PATCH v10 02/27] PM / Domains: Add support for CPU devices to genpd
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 at 15:55, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
+On Wed, 19 Dec 2018 at 10:53, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
 >
-> Some drivers (like i915/drm) need to get the accounted suspended time.
-> pm_runtime_accounted_time_get() will return the suspended or active
-> accounted time until now.
-
-I suggest to leave the active accounted time out for now. At least
-until we have some users.
-
-That said, perhaps rename the function to something along the lines
-of, pm_runtime_last_suspended_time(), to make it more clear.
-
+> On 29/11/2018 18:46, Ulf Hansson wrote:
+> > To enable a device belonging to a CPU to be attached to a PM domain managed
+> > by genpd, let's do a few changes to it, as to make it convenient to manage
+> > the specifics around CPUs.
+> >
+> > To be able to quickly find out what CPUs that are attached to a genpd,
+> > which typically becomes useful from a genpd governor as following changes
+> > is about to show, let's add a cpumask to the struct generic_pm_domain. At
+> > the point when a CPU device gets attached to a genpd, let's update its
+> > cpumask. Moreover, let's also propagate changes to the cpumask upwards in
+> > the topology to the master PM domains. In this way, the cpumask for a genpd
+> > hierarchically reflects all CPUs attached to the topology below it.
+> >
+> > Finally, let's make this an opt-in feature, to avoid having to manage CPUs
+> > and the cpumask for a genpd that doesn't need it. For that reason, let's
+> > add a new genpd configuration bit, GENPD_FLAG_CPU_DOMAIN.
+> >
+> > Cc: Lina Iyer <ilina@codeaurora.org>
+> > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >
+> > Changes in v10:
+> >       - Don't allocate the cpumask when not used.
+> >       - Simplify the code that updates the cpumask.
+> >       - Document the GENPD_FLAG_CPU_DOMAIN.
+> >
+> > ---
+> >  drivers/base/power/domain.c | 66 ++++++++++++++++++++++++++++++++++++-
+> >  include/linux/pm_domain.h   | 13 ++++++++
+> >  2 files changed, 78 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index e27b91d36a2a..c3ff8e395308 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/sched.h>
+> >  #include <linux/suspend.h>
+> >  #include <linux/export.h>
+> > +#include <linux/cpu.h>
+> >
+> >  #include "power.h"
+> >
+> > @@ -126,6 +127,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
+> >  #define genpd_is_irq_safe(genpd)     (genpd->flags & GENPD_FLAG_IRQ_SAFE)
+> >  #define genpd_is_always_on(genpd)    (genpd->flags & GENPD_FLAG_ALWAYS_ON)
+> >  #define genpd_is_active_wakeup(genpd)        (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
+> > +#define genpd_is_cpu_domain(genpd)   (genpd->flags & GENPD_FLAG_CPU_DOMAIN)
+> >
+> >  static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
+> >               const struct generic_pm_domain *genpd)
+> > @@ -1377,6 +1379,56 @@ static void genpd_free_dev_data(struct device *dev,
+> >       dev_pm_put_subsys_data(dev);
+> >  }
+> >
+> > +static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
+> > +                                int cpu, bool set, unsigned int depth)
+> > +{
+> > +     struct gpd_link *link;
+> > +
+> > +     if (!genpd_is_cpu_domain(genpd))
+> > +             return;
 >
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  drivers/base/power/runtime.c | 26 ++++++++++++++++++++++++++
->  include/linux/pm_runtime.h   |  2 ++
->  2 files changed, 28 insertions(+)
->
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 7062469..6461469 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -88,6 +88,32 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
->         dev->power.runtime_status = status;
->  }
->
-> +u64 pm_runtime_accounted_time_get(struct device *dev, enum rpm_status status, bool update)
-> +{
-> +       u64 now = ktime_to_ns(ktime_get());
+> With this test, we won't continue updating the cpumask for the other
+> masters. Is it done on purpose ?
 
-I think you should stay on jiffies here - and then switch to ktime in patch 3.
+Correct, and yes it's on purpose.
 
-> +       u64 delta = 0, time = 0;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&dev->power.lock, flags);
-> +
-> +       if (dev->power.disable_depth > 0)
-> +               goto unlock;
-> +
-> +       /* Add ongoing state  if requested */
-> +       if (update && dev->power.runtime_status == status)
-> +               delta = now - dev->power.accounting_timestamp;
-> +
+We are not even allocating the cpumask for the genpd in question,
+unless it has the GENPD_FLAG_CPU_DOMAIN set.
 
-Hmm. Do we really need to update the accounting timestamp? I would
-rather avoid it if possible.
-
-It seems like it should be sufficient to return the delta between
-"now" and the "dev->power.accounting_timestamp", when
-"dev->power.runtime_status == RPM_SUSPENDED".
-
-In other case, just return 0, because we are not in RPM_SUSPENDED state.
-
-> +       if (status == RPM_SUSPENDED)
-> +               time = dev->power.suspended_time + delta;
-> +       else
-> +               time = dev->power.active_time + delta;
-> +
-> +unlock:
-> +       spin_unlock_irqrestore(&dev->power.lock, flags);
-> +
-> +       return time;
-> +}
-> +
->  /**
->   * pm_runtime_deactivate_timer - Deactivate given device's suspend timer.
->   * @dev: Device to handle.
-> diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-> index 54af4ee..86f21f9 100644
-> --- a/include/linux/pm_runtime.h
-> +++ b/include/linux/pm_runtime.h
-> @@ -113,6 +113,8 @@ static inline bool pm_runtime_is_irq_safe(struct device *dev)
->         return dev->power.irq_safe;
->  }
->
-> +extern u64 pm_runtime_accounted_time_get(struct device *dev, enum rpm_status status, bool update);
-> +
->  #else /* !CONFIG_PM */
->
->  static inline bool queue_pm_work(struct work_struct *work) { return false; }
-> --
-> 2.7.4
->
+[...]
 
 Kind regards
 Uffe
