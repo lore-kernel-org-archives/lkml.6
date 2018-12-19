@@ -2,132 +2,158 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A89C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8378C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94AEE2080D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A46C320879
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:41:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbeLSVkX (ORCPT
+        id S1729098AbeLSVlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:40:23 -0500
-Received: from cdptpa-outbound-snat.email.rr.com ([107.14.166.228]:31608 "EHLO
-        cdptpa-cmomta01.email.rr.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727079AbeLSVkW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:40:22 -0500
-X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 16:40:20 EST
-Received: from gandalf.local.home ([66.24.56.78])
-        by cmsmtp with SMTP
-        id ZjRogOsxLHYTyZjRqg2D5Z; Wed, 19 Dec 2018 21:32:11 +0000
-Date:   Wed, 19 Dec 2018 16:32:07 -0500
-From:   Bryana Rostedt <bryana@home.goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [RFC][PATCH] string.h: Add strncmp_prefix() helper macro
-Message-ID: <20181219163207.792e0f97@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 19 Dec 2018 16:41:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727079AbeLSVlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 16:41:08 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AE7688E55;
+        Wed, 19 Dec 2018 21:41:07 +0000 (UTC)
+Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 21E34165FC;
+        Wed, 19 Dec 2018 21:41:02 +0000 (UTC)
+Subject: Re: "x86: Remove Intel MPX" is wrong (Re: linux-next: manual merge of
+ the kvm tree with the tip tree)
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Orr <marcorr@google.com>
+References: <20181219151252.3e27a7f8@canb.auug.org.au>
+ <33146e35-3127-3ded-eb51-24a2a72f10fa@redhat.com>
+ <e88ea968-f593-ce3a-b152-93f9248446d8@intel.com>
+ <b492238c-6916-1d9b-f9b1-12a43b9f3ffc@redhat.com>
+ <c1c1d927-9e7c-3937-4ea9-a6d6dd94a4ee@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <e4ee46ee-001c-a22b-173e-551684fa79b5@redhat.com>
+Date:   Wed, 19 Dec 2018 22:40:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEoqkHlt4uDKjLU087jz1UFocYU9fXjXGsuGnZKrBlF1xaUpXFU80PbcLWul6DVrPZP4yZivESCm/mk7gY6+PxosD6S7lusLuMXJxKTNW4R6V5kFKW9b
- rSTUDH0TApIFCb2Qb6j/PgINBvOXO1ApJ3a/IU11cRUUiyJ6/ON1oqZZ3IVm4H0HcNfKU9O7UqlBJ6WzlVBppGwWA8LW+wDaW3zCIay94vGTT4QwFUsTT3Vz
- X1tSed46SmmzgoWPuN6khbiDeW3/ABZj0+QQEOArFO0zhDsrgdpeXxhrbJDjDy4mZBKmASlrm35+bZKF0oh3ghoc/llzdxDP73Ao/vnMF7FeLiCHQygxg25S
- tTNK5jM3XJDHTxr6XxuQIZ1J8TtOsAUvNTxrD4t/rUBy27y0dCW6GHM7Mjp30yjryM3Q+V7mJ5Y+naEgr+2EBieMCuxqthJyPuYn0scYKXVdbOd1drsCETrH
- ibc7uDTajGsNbic/j35rCEI1ZY28jSXmcvT/MWGB1A6+t/YSrIGwk3d6g1zkx25JMAedvsMfTJEIbISz
+In-Reply-To: <c1c1d927-9e7c-3937-4ea9-a6d6dd94a4ee@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 19 Dec 2018 21:41:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A discussion came up in the trace triggers thread about converting a
-bunch of:
+On 19/12/18 22:28, Dave Hansen wrote:
+> 
+> On 12/19/18 1:00 PM, Paolo Bonzini wrote:
+>> On 19/12/18 21:54, Dave Hansen wrote:
+>>> I should have called this out in the changelog, but I removed *all* the
+>>> support because I assumed that guests don't need MPX because no other OS
+>>> supported it that I know of.
+>>
+>> Well, as long as you could have code that sets the MPX bits in XCR0, KVM
+>> will have to support it.  My employer happens to sell one such kernel
+>> and will probably do so a little less than ten years from now. :)
+> 
+> Does your employer sell a system that supports live migration across
+> major releases?  Or, is it always that you support migration to _newer_
+> releases but not older?
 
- strncmp(str, "const", sizeof("const") - 1)
+Only to the immediately following major release, but a major release has
+a looooong lifetime.  So guests running on RHEL6 will have to reboot
+when moving to RHEL8, and will drop MPX support.  But RHEL8 is stuck
+supporting MPX even if it's off by default because guests can be
+migrated from RHEL7 hosts to RHEL8.
 
-use cases into a helper macro. It started with:
+>> In fact I'm not sure we want to ever remove XSAVE support for MPX in KVM
+>> as long as the processor supports it.  That is, when KVM does
+>> xsave/xrstor of the guest_fpu, we probably want to include MPX in there.
+>> That can be contained within KVM, Linux need not enable it in XCR0, 
+> 
+> I believe you need the feature bit set in XCR0 for XSAVE* to be able to
+> operate on it.  So, you could do this, but you would need to save XCR0,
+> set the XCR0 MPX bits, do XSAVE or XRSTOR, and restore XCR0 all with
+> preemption (and interrupts?) off.
 
-#define strncmp_const(str, const) \
-	strncmp(str, const, sizeof(const) - 1)
+Yes, and on context switch KVM does rely on the kernel saving/restoring
+MPX state to userspace (QEMU)'s FPU struct though.  However, I can move
+that to the preempt notifier, either open coded or wrapped with XSETBVs.
+ One more reason to do our own xsave/xrstor in non-compacted format when
+loading/storing guest_fpu.
 
-But then Joe Perches mentioned that if a const is not used, the
-sizeof() will be the size of a pointer, which can be bad. And that
-gcc will optimize strlen("const") into "sizeof("const") - 1".
+Paolo
 
-Thinking about this more, a quick grep in the kernel tree found several
-(thousands!) of cases that use this construct. A quick grep also
-revealed that there's probably several bugs in that use case. Some are
-that people forgot the "- 1" (which I found) and others could be that
-the constant for the sizeof is different than the constant (although, I
-haven't found any of those, but I also didn't look hard).
-
-I figured the best thing to do is to create a helper macro and place it
-into include/linux/string.h. And go around and fix all the open coded
-versions of it later.
-
-I plan on only applying this patch and updating the tracing hooks for
-this merge window. And perhaps use it to fix some of the bugs that were
-found.
-
-I was going to just use:
-
-#define strncmp_prefix(str, prefix) \
-	strncmp(str, prefix, strlen(prefix))
-
-but then realized that "prefix" is used twice, and will break if
-someone does something like:
-
-	strncmp_prefix(str, ptr++);
-
-So instead I check with __builtin_constant_p() to see if the second
-parameter is truly a constant, which I use sizeof() anyway (why bother
-gcc to optimize it, if we already know it's a constant), and copy the
-parameter into a local variable and use that local variable for the non
-constant part (with strlen).
-
-Link: http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 27d0482e5e05..3dc743e3a0ba 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -14,6 +14,27 @@ extern void *memdup_user(const void __user *, size_t);
- extern void *vmemdup_user(const void __user *, size_t);
- extern void *memdup_user_nul(const void __user *, size_t);
- 
-+/*
-+ * A common way to test a prefix of a string is to do:
-+ *  strncmp(str, prefix, sizeof(prefix) - 1)
-+ *
-+ * But this can lead to bugs due to typos, or if prefix is a pointer
-+ * and not a constant. Instead use strncmp_prefix().
-+ */
-+#define strncmp_prefix(str, prefix)					\
-+	({								\
-+		int ____strcmp_prefix_ret____;				\
-+		char *____strcmp_prefix____ = prefix;			\
-+		if (__builtin_constant_p(&prefix))			\
-+			____strcmp_prefix_ret____ =			\
-+				strncmp(str, prefix, sizeof(prefix) - 1); \
-+		else							\
-+			____strcmp_prefix_ret____ =			\
-+				strncmp(str, ____strcmp_prefix____,	\
-+					strlen(____strcmp_prefix____));	\
-+		____strcmp_prefix_ret____;				\
-+	})
-+
- /*
-  * Include machine specific inline routines
-  */
+> You could just open-code the MPX save/restore, though.  MPX is
+> XSAVE-managed, but not XSAVE-enabled like some other features, IIRC.
