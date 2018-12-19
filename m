@@ -2,308 +2,133 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E58C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771DEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7ED82086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:13:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ik0HNHBd"
+	by mail.kernel.org (Postfix) with ESMTP id 3C72D20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbeLSVNJ (ORCPT
+        id S1730246AbeLSVUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:13:09 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37066 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbeLSVNI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:13:08 -0500
-Received: by mail-pg1-f196.google.com with SMTP id c25so8493039pgb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 13:13:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Gxe5tDmAX5HbXU5DbKPWLD6YT+6MIthlRyYzvWy4fNM=;
-        b=Ik0HNHBdiU2cc7061JU6CZnT6oNNvNKBT0WfycjwrIkoCzISPrKY+VQg5lfBU0pSCz
-         L+cBuBSEtJ2ERQ0gS2+zEFy3RTyvEo727l44YHj98Z5Ii2DZxvqPh6tH/3slqQrt4vGJ
-         HNsFBCJ5FlP5A0HCvzLqQrUImJWc87OmTEuHE6TohqEWpXrW5Ca29f21bfGt8CWE3pgz
-         i6CVMXT0O0ZfaJeI94KdTgXdVDCQjmkUQyV7KH3F8mDx3hjRYsnaVejHXup4Bgy/BFKT
-         9YdmMEcdPWDRAHRpe3GYdBk3VH1odNSsReq+JffUr7hFQcPAjhlJMiyR8ZjKIZVrl9fP
-         I3Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Gxe5tDmAX5HbXU5DbKPWLD6YT+6MIthlRyYzvWy4fNM=;
-        b=BbnxvE4wli0vparHcG1KLCSkhBXe+0BKnXpOL50Hg5DB3tOtxvhzMv/VosLZD/guMO
-         oeExGdvjwnMT9qCEqCMJzzhcgOapkBVvUXCJwGWBT5OYMJnbJN2/kxRP0vklX2jjTQUH
-         d604UKykOvtnyqF+NFd6c9DZfPp6cN22rEfRSOmzDKJk63mVrtKiioRHFT4EyjcTV0fT
-         0ReBG3i6H16v8U0RBnUgbx2EMUZNfWt4K+H5Lw+2zyBHT2VuntyjBqh7cIrleO2ORqg6
-         ZFjjJftuTgubVY585NdWegpr+pY/ZgyuhK/tY/75ObBlSLYVvWS0CkPxghe5Y+DRugjG
-         Nfcw==
-X-Gm-Message-State: AA+aEWaVNZlA1O7XgMVhPd59xtDCzVu5SafBcnkeBWNT2wyo42XFAcpp
-        OLrouVOBjUhKmdJCVnRr11jZcw==
-X-Google-Smtp-Source: AFSGD/Wbe7fZxlDXVHW+ypzr4AQF7n5oUke4S9y1JkwPfk1/lQbYZdJ/DSTGlUnWdDyAfi58rsmHAw==
-X-Received: by 2002:a63:61c8:: with SMTP id v191mr20983812pgb.242.1545253986316;
-        Wed, 19 Dec 2018 13:13:06 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id l70sm21142905pgd.20.2018.12.19.13.13.05
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Dec 2018 13:13:05 -0800 (PST)
-Date:   Wed, 19 Dec 2018 13:12:58 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Paul Burton <paul.burton@mips.com>
-cc:     Andy Lutomirski <luto@kernel.org>, Hugh Dickins <hughd@google.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Daney <david.daney@cavium.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Rich Felker <dalias@libc.org>
-Subject: Re: Fixing MIPS delay slot emulation weakness?
-In-Reply-To: <20181219043155.nkaofln64lbp2gfz@pburton-laptop>
-Message-ID: <alpine.LSU.2.11.1812191249560.24428@eggly.anvils>
-References: <CALCETrWaWTupSp6V=XXhvExtFdS6ewx_0A7hiGfStqpeuqZn8g@mail.gmail.com> <20181219043155.nkaofln64lbp2gfz@pburton-laptop>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Wed, 19 Dec 2018 16:20:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59204 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729283AbeLSVUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 16:20:55 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 73BE4C07F999;
+        Wed, 19 Dec 2018 21:20:54 +0000 (UTC)
+Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DEB8060181;
+        Wed, 19 Dec 2018 21:20:51 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: nSVM: fix switch to guest mmu
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <20181219162514.30453-1-vkuznets@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <b9a36adb-7754-ebd4-0db0-f2219215a976@redhat.com>
+Date:   Wed, 19 Dec 2018 22:20:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20181219162514.30453-1-vkuznets@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 19 Dec 2018 21:20:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Dec 2018, Paul Burton wrote:
-> On Sat, Dec 15, 2018 at 11:19:37AM -0800, Andy Lutomirski wrote:
-> > The really simple but possibly suboptimal fix is to get rid of
-> > VM_WRITE and to use get_user_pages(..., FOLL_FORCE) to write to it.
+On 19/12/18 17:25, Vitaly Kuznetsov wrote:
+> Recent optimizations in MMU code broke nested SVM with NPT in L1
+> completely: when we do nested_svm_{,un}init_mmu_context() we want
+> to switch from TDP MMU to shadow MMU, both init_kvm_tdp_mmu() and
+> kvm_init_shadow_mmu() check if re-configuration is needed by looking
+> at cache source data. The data, however, doesn't change - it's only
+> the type of the MMU which changes. We end up not re-initializing
+> guest MMU as shadow and everything goes off the rails.
 > 
-> I actually wound up trying this route because it seemed like it would
-> produce a nice small patch that would be simple to backport, and we
-> could clean up mainline afterwards.
+> The issue could have been fixed by putting MMU type into extended MMU
+> role but this is not really needed. We can just split root and guest MMUs
+> the exact same way we did for nVMX, their types never change in the
+> lifetime of a vCPU.
 > 
-> Unfortunately though things fail because get_user_pages() returns
-> -EFAULT for the delay slot emulation page, due to the !is_cow_mapping()
-> check in check_vma_flags(). This was introduced by commit cda540ace6a1
-> ("mm: get_user_pages(write,force) refuse to COW in shared areas"). I'm a
-> little confused as to its behaviour...
+> There is still room for improvement: currently, we reset all MMU roots
+> when switching from L1 to L2 and back and this is not needed.
 > 
-> is_cow_mapping() returns true if the VM_MAYWRITE flag is set and
-> VM_SHARED is not set - this suggests a private & potentially-writable
-> area, right? That fits in nicely with an area we'd want to COW. Why then
-> does check_vma_flags() use the inverse of this to indicate a shared
-> area? This fails if we have a private mapping where VM_MAYWRITE is not
-> set, but where FOLL_FORCE would otherwise provide a means of writing to
-> the memory.
-> 
-> If I remove this check in check_vma_flags() then I have a nice simple
-> patch which seems to work well, leaving the user mapping of the delay
-> slot emulation page non-writeable. I'm not sure I'm following the mm
-> innards here though - is there something I should change about the delay
-> slot page instead? Should I be marking it shared, even though it isn't
-> really? Or perhaps I'm misunderstanding what VM_MAYWRITE does & I should
-> set that - would that allow a user to use mprotect() to make the region
-> writeable..?
+> Fixes: 7dcd57552008 ("x86/kvm/mmu: check if tdp/shadow MMU reconfiguration is needed")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Exactly, in that last sentence above you come to the right understanding
-of VM_MAYWRITE: it allows mprotect to add VM_WRITE whenever.  So I think
-your issue in setting up the mmap, is that you're (rightly) doing it with
-VM_flags to mmap_region(), but giving it a combination of flags that an
-mmap() syscall from userspace would never arrive at, so does not match
-expectations in is_cow_mapping().  Look for VM_MAYWRITE in mm/mmap.c:
-you'll find do_mmap() first adding VM_MAYWRITE unconditionally, then
-removing it just from the case of a MAP_SHARED without FMODE_WRITE.
+I'm queueing this to kvm-master.  Radim, please pick the other patches
+from him to kvm/next and let me know when you're done---the tree is
+yours; I'll handle the merge window pull request.
 
-> 
-> The work-in-progress patch can be seen below if it's helpful (and yes, I
-> realise that the modified condition in check_vma_flags() became
-> impossible & that removing it would be equivalent).
-> 
-> Or perhaps this is only confusing because it's 4:25am & I'm massively
-> jetlagged... :)
-> 
-> > A possibly nicer way to accomplish more or less the same thing would
-> > be to allocate the area with _install_special_mapping() and arrange to
-> > keep a reference to the struct page around.
-> 
-> I looked at this, but it ends up being a much bigger patch. Perhaps it
-> could be something to look into as a follow-on cleanup, though it
-> complicates things a little because we need to actually allocate the
-> page, preferrably only on demand, which is handled for us with the
-> current mmap_region() code.
-> 
-> Thanks,
->     Paul
-> 
-> ---
-> diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
-> index 48a9c6b90e07..9476efb54d18 100644
-> --- a/arch/mips/kernel/vdso.c
-> +++ b/arch/mips/kernel/vdso.c
-> @@ -126,8 +126,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
->  
->  	/* Map delay slot emulation page */
->  	base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
-> -			   VM_READ|VM_WRITE|VM_EXEC|
-> -			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-> +			   VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYEXEC,
-
-So, remove the VM_WRITE by all means, but leave in the VM_MAYWRITE.
-
->  			   0, NULL);
->  	if (IS_ERR_VALUE(base)) {
->  		ret = base;
-> diff --git a/arch/mips/math-emu/dsemul.c b/arch/mips/math-emu/dsemul.c
-> index 5450f4d1c920..3aa8e3b90efb 100644
-> --- a/arch/mips/math-emu/dsemul.c
-> +++ b/arch/mips/math-emu/dsemul.c
-> @@ -67,11 +67,6 @@ struct emuframe {
->  
->  static const int emupage_frame_count = PAGE_SIZE / sizeof(struct emuframe);
->  
-> -static inline __user struct emuframe *dsemul_page(void)
-> -{
-> -	return (__user struct emuframe *)STACK_TOP;
-> -}
-> -
->  static int alloc_emuframe(void)
->  {
->  	mm_context_t *mm_ctx = &current->mm->context;
-> @@ -139,7 +134,7 @@ static void free_emuframe(int idx, struct mm_struct *mm)
->  
->  static bool within_emuframe(struct pt_regs *regs)
->  {
-> -	unsigned long base = (unsigned long)dsemul_page();
-> +	unsigned long base = STACK_TOP;
->  
->  	if (regs->cp0_epc < base)
->  		return false;
-> @@ -172,8 +167,8 @@ bool dsemul_thread_cleanup(struct task_struct *tsk)
->  
->  bool dsemul_thread_rollback(struct pt_regs *regs)
->  {
-> -	struct emuframe __user *fr;
-> -	int fr_idx;
-> +	struct emuframe fr;
-> +	int fr_idx, ret;
->  
->  	/* Do nothing if we're not executing from a frame */
->  	if (!within_emuframe(regs))
-> @@ -183,7 +178,12 @@ bool dsemul_thread_rollback(struct pt_regs *regs)
->  	fr_idx = atomic_read(&current->thread.bd_emu_frame);
->  	if (fr_idx == BD_EMUFRAME_NONE)
->  		return false;
-> -	fr = &dsemul_page()[fr_idx];
-> +
-> +	ret = access_process_vm(current,
-> +				STACK_TOP + (fr_idx * sizeof(fr)),
-> +				&fr, sizeof(fr), FOLL_FORCE);
-> +	if (WARN_ON(ret != sizeof(fr)))
-> +		return false;
->  
->  	/*
->  	 * If the PC is at the emul instruction, roll back to the branch. If
-> @@ -192,9 +192,9 @@ bool dsemul_thread_rollback(struct pt_regs *regs)
->  	 * then something is amiss & the user has branched into some other area
->  	 * of the emupage - we'll free the allocated frame anyway.
->  	 */
-> -	if (msk_isa16_mode(regs->cp0_epc) == (unsigned long)&fr->emul)
-> +	if (msk_isa16_mode(regs->cp0_epc) == (unsigned long)&fr.emul)
->  		regs->cp0_epc = current->thread.bd_emu_branch_pc;
-> -	else if (msk_isa16_mode(regs->cp0_epc) == (unsigned long)&fr->badinst)
-> +	else if (msk_isa16_mode(regs->cp0_epc) == (unsigned long)&fr.badinst)
->  		regs->cp0_epc = current->thread.bd_emu_cont_pc;
->  
->  	atomic_set(&current->thread.bd_emu_frame, BD_EMUFRAME_NONE);
-> @@ -214,8 +214,8 @@ int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
->  {
->  	int isa16 = get_isa16_mode(regs->cp0_epc);
->  	mips_instruction break_math;
-> -	struct emuframe __user *fr;
-> -	int err, fr_idx;
-> +	struct emuframe fr;
-> +	int fr_idx, ret;
->  
->  	/* NOP is easy */
->  	if (ir == 0)
-> @@ -250,27 +250,31 @@ int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
->  		fr_idx = alloc_emuframe();
->  	if (fr_idx == BD_EMUFRAME_NONE)
->  		return SIGBUS;
-> -	fr = &dsemul_page()[fr_idx];
->  
->  	/* Retrieve the appropriately encoded break instruction */
->  	break_math = BREAK_MATH(isa16);
->  
->  	/* Write the instructions to the frame */
->  	if (isa16) {
-> -		err = __put_user(ir >> 16,
-> -				 (u16 __user *)(&fr->emul));
-> -		err |= __put_user(ir & 0xffff,
-> -				  (u16 __user *)((long)(&fr->emul) + 2));
-> -		err |= __put_user(break_math >> 16,
-> -				  (u16 __user *)(&fr->badinst));
-> -		err |= __put_user(break_math & 0xffff,
-> -				  (u16 __user *)((long)(&fr->badinst) + 2));
-> +		union mips_instruction _emul = {
-> +			.halfword = { ir >> 16, ir }
-> +		};
-> +		union mips_instruction _badinst = {
-> +			.halfword = { break_math >> 16, break_math }
-> +		};
-> +
-> +		fr.emul = _emul.word;
-> +		fr.badinst = _badinst.word;
->  	} else {
-> -		err = __put_user(ir, &fr->emul);
-> -		err |= __put_user(break_math, &fr->badinst);
-> +		fr.emul = ir;
-> +		fr.badinst = break_math;
->  	}
->  
-> -	if (unlikely(err)) {
-> +	/* Write the frame to user memory */
-> +	ret = access_process_vm(current,
-> +				STACK_TOP + (fr_idx * sizeof(fr)),
-> +				&fr, sizeof(fr), FOLL_FORCE | FOLL_WRITE);
-> +	if (WARN_ON(ret != sizeof(fr))) {
->  		MIPS_FPU_EMU_INC_STATS(errors);
->  		free_emuframe(fr_idx, current->mm);
->  		return SIGBUS;
-> @@ -282,10 +286,7 @@ int mips_dsemul(struct pt_regs *regs, mips_instruction ir,
->  	atomic_set(&current->thread.bd_emu_frame, fr_idx);
->  
->  	/* Change user register context to execute the frame */
-> -	regs->cp0_epc = (unsigned long)&fr->emul | isa16;
-> -
-> -	/* Ensure the icache observes our newly written frame */
-> -	flush_cache_sigtramp((unsigned long)&fr->emul);
-> +	regs->cp0_epc = (unsigned long)&fr.emul | isa16;
->  
->  	return 0;
->  }
-> diff --git a/mm/gup.c b/mm/gup.c
-> index f76e77a2d34b..9a1bc941dcb9 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -587,7 +587,7 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
->  			 * Anon pages in shared mappings are surprising: now
->  			 * just reject it.
->  			 */
-> -			if (!is_cow_mapping(vm_flags))
-> +			if ((vm_flags & VM_SHARED) && !is_cow_mapping(vm_flags))
-
-Then please drop this patch to mm/gup.c: does the result then work
-for you?  (I won't pretend to have reviewed the rest of the patch.)
-
-Hugh
-
->  				return -EFAULT;
->  		}
->  	} else if (!(vm_flags & VM_READ)) {
+Paolo
