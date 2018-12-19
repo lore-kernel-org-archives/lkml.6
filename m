@@ -2,125 +2,142 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5610BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04413C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2620421841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:47:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwiwxgOb"
+	by mail.kernel.org (Postfix) with ESMTP id CE8CD21841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbeLSOrW (ORCPT
+        id S1729733AbeLSOsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:47:22 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36340 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727943AbeLSOrV (ORCPT
+        Wed, 19 Dec 2018 09:48:07 -0500
+Received: from zimbra.alphalink.fr ([217.15.80.77]:60184 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728454AbeLSOsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:47:21 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so9546811pgm.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:47:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+RrlYuy13DpQ9eKQWWaHQi673orAx1g3SXGxVm8vSXc=;
-        b=KwiwxgObJsSX+GRhaX3BWLdI63GdGCWUt53BMcfadfeHu8+34wt0Syo9eGzfIZusRi
-         rssTj5kF/qUbF54xLziYD7WvI+0InhaNnEwivoqVenbTsX2SLx7KWt01NOmJPUSmuCJ9
-         ZCa5WV6OoQ1gqIpGM8hqC6ga//Q2Zj8OkddIfOv3ZbuysGBo6yFM0TnftUvAkM3ieGPM
-         S7NDJXqEhvfYPDX+nhk7wOHp7K5dzgESAYyTSBOk2srcX/4K28Fzyx/R1efMA5NGUxe0
-         7soPtY9qGpdI1OxXfNcQicMZyGMvH+p78jZ8ZoJV0nFbuXD8smVoeltQsr0rfUSBkbsX
-         lbVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+RrlYuy13DpQ9eKQWWaHQi673orAx1g3SXGxVm8vSXc=;
-        b=KUoYeqZDoK2K7bzYtuNZ7VYgpm22/EhQUB7rhk8YL2QXjvCI2uQ8dN1WdlxVL7G75+
-         Hc1kgtCappI1K9VjDmR0I0sWizZVhpPRYiq+D7Y41+h+46OJISHLQztmza/udOwm4gpF
-         e32k7UZk5J0ulKx7zXLZ4A08VNJLma3Xq0rNL0236/XaDDxYGwiIdvIx/JcGjvAWljj3
-         Qx0WxlnOTNlv/X8IJw2TUtTuaOnoQE58FPHjWehmCIuPAjMshNPBGNXuXqWCJgSBALF0
-         ABXu2Kzo5zL1xeIXgVKDZ4RzFPOZrIQGLj27B7kNrSRizoRKlBmt6ckAXQnAMEbxuU7h
-         PmZg==
-X-Gm-Message-State: AA+aEWZiF3mVaIlycXYzLaZmCW/19mWpBh0zyuDXQKyOTUd6Ch8wtGkr
-        9hA5QsgzL4CDncZ3PEt+P6I=
-X-Google-Smtp-Source: AFSGD/UUyn9Mtne+TcVYzd4Wv1QI6lZzrnnnuI28JjPanQeqcbSRSztEdI/T9myAwCzpadOkQVRpZA==
-X-Received: by 2002:a65:500c:: with SMTP id f12mr18922924pgo.226.1545230840349;
-        Wed, 19 Dec 2018 06:47:20 -0800 (PST)
-Received: from localhost (g206.124-44-15.ppp.wakwak.ne.jp. [124.44.15.206])
-        by smtp.gmail.com with ESMTPSA id a90sm31000083pfj.109.2018.12.19.06.47.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 06:47:19 -0800 (PST)
-Date:   Wed, 19 Dec 2018 23:47:18 +0900
-From:   Stafford Horne <shorne@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        openrisc@lists.librecores.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH resend] openrisc: Fix broken paths to arch/or32
-Message-ID: <20181219144718.GK3235@lianli.shorne-pla.net>
-References: <20181203122047.12225-1-geert@linux-m68k.org>
+        Wed, 19 Dec 2018 09:48:07 -0500
+X-Greylist: delayed 560 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 09:48:04 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 8F1D82B52034;
+        Wed, 19 Dec 2018 15:38:43 +0100 (CET)
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 6Y9L8_hzgLte; Wed, 19 Dec 2018 15:38:42 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id EF5B22B52058;
+        Wed, 19 Dec 2018 15:38:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id N8aZb0rzZc92; Wed, 19 Dec 2018 15:38:41 +0100 (CET)
+Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id AFF732B52034;
+        Wed, 19 Dec 2018 15:38:41 +0100 (CET)
+Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
+        id 7EB636017C; Wed, 19 Dec 2018 15:38:41 +0100 (CET)
+Date:   Wed, 19 Dec 2018 15:38:41 +0100
+From:   Guillaume Nault <g.nault@alphalink.fr>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ppp: Move PFC decompression to PPP generic layer
+Message-ID: <20181219143841.GC1338@alphalink.fr>
+References: <20181219000808.28382-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181203122047.12225-1-geert@linux-m68k.org>
+In-Reply-To: <20181219000808.28382-1-semen.protsenko@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 01:20:47PM +0100, Geert Uytterhoeven wrote:
-> OpenRISC was mainlined as "openrisc", not "or32".
-> vmlinux.lds is generated from vmlinux.lds.S.
+On Wed, Dec 19, 2018 at 02:08:08AM +0200, Sam Protsenko wrote:
+> Extract "Protocol" field decompression code from transport protocols to
+> PPP generic layer, where it actually belongs. As a consequence, this
+> patch fixes incorrect place of PFC decompression in L2TP driver (when
+> it's not PPPOX_BOUND) and also enables this decompression for other
+> protocols, like PPPoE.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Thanks,
-
-Sorry for the delay.
-
-I will queue this up.
-
--Stafford
-
-> ---
->  arch/openrisc/kernel/entry.S | 2 +-
->  arch/openrisc/kernel/head.S  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Protocol field decompression also happens in PPP Multilink Protocol
+> code and in PPP compression protocols implementations (bsd, deflate,
+> mppe). It looks like there is no easy way to get rid of that, so it was
+> decided to leave it as is, but provide those cases with appropriate
+> comments instead.
 > 
-> diff --git a/arch/openrisc/kernel/entry.S b/arch/openrisc/kernel/entry.S
-> index 0c826ad6e994cce3..ee6159d2ed22ec49 100644
-> --- a/arch/openrisc/kernel/entry.S
-> +++ b/arch/openrisc/kernel/entry.S
-> @@ -240,7 +240,7 @@ handler:							;\
->   *	 occured. in fact they never do. if you need them use
->   *	 values saved on stack (for SPR_EPC, SPR_ESR) or content
->   *       of r4 (for SPR_EEAR). for details look at EXCEPTION_HANDLE()
-> - *       in 'arch/or32/kernel/head.S'
-> + *       in 'arch/openrisc/kernel/head.S'
->   */
+Yes, ideally we'd make PPP_PROTO() handle compressed protocol so that
+we wouldn't need to decompress protocol field in place. But other parts
+of the ppp code assume uncompressed protocol field in skb->data, so
+let's stick with the current behaviour for now.
+
+> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
+> index 500bc0027c1b..10c4c8eec995 100644
+> --- a/drivers/net/ppp/ppp_generic.c
+> +++ b/drivers/net/ppp/ppp_generic.c
+> @@ -1965,6 +1965,14 @@ ppp_do_recv(struct ppp *ppp, struct sk_buff *skb, struct channel *pch)
+>  	ppp_recv_unlock(ppp);
+>  }
 >  
->  /* =====================================================[ exceptions] === */
-> diff --git a/arch/openrisc/kernel/head.S b/arch/openrisc/kernel/head.S
-> index 9fc6b60140f007be..31ed257ff06188ee 100644
-> --- a/arch/openrisc/kernel/head.S
-> +++ b/arch/openrisc/kernel/head.S
-> @@ -1728,7 +1728,7 @@ _string_nl:
->  
->  /*
->   * .data section should be page aligned
-> - *	(look into arch/or32/kernel/vmlinux.lds)
-> + *	(look into arch/openrisc/kernel/vmlinux.lds.S)
->   */
->  	.section .data,"aw"
->  	.align	8192
-> -- 
-> 2.17.1
+> +/* Decompress protocol field in PPP header if it's compressed */
+> +static inline void
+> +ppp_decompress_proto(struct sk_buff *skb)
 > 
+No need for inline keyword in .c files. Also, no need to split line
+before function name. I know older function declarations of
+ppp_generic.c do this, but let's stick to the general networking stack
+style instead.
+
+> +{
+> +	if (skb->data[0] & 0x01)
+> +		*(u8 *)skb_push(skb, 1) = 0x00;
+> +}
+> +
+This assumes that we have at least 1 byte of head room and 1 byte of
+linear data. Although that's what the original code did, I find that's
+a bit dangerous. Maybe prefix the function name with '__' and add a
+comment in the function description to warn the reader.
+
+>  void
+>  ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
+>  {
+> @@ -1986,6 +1994,7 @@ ppp_input(struct ppp_channel *chan, struct sk_buff *skb)
+>  		goto done;
+>  	}
+>  
+> +	ppp_decompress_proto(skb);
+> 
+The pskb_may_pull(skb, 2) at the beginning of the functions is there
+because we're going to read the protocol field. It doesn't make sense to
+decompress it after this test (although technically that mostly works).
+
+However, if we move ppp_decompress_proto() before pskb_may_pull(), then
+callers must respect the requirements of ppp_decompress_proto().
+
+>  	proto = PPP_PROTO(skb);
+>  	if (!pch->ppp || proto >= 0xc000 || proto == PPP_CCPFRAG) {
+>  		/* put it on the channel queue */
+> @@ -2074,6 +2083,9 @@ ppp_receive_nonmp_frame(struct ppp *ppp, struct sk_buff *skb)
+>  	if (ppp->flags & SC_MUST_COMP && ppp->rstate & SC_DC_FERROR)
+>  		goto err;
+>  
+> +	/* At this point the "Protocol" field MUST be decompressed, either in
+> +	 * ppp_decompress_frame() or in ppp_receive_mp_frame().
+> +	 */
+> 
+Or ppp_input(). In the general case (no multilink header and no compression)
+it's ppp_input() that'd decompress the protocol field.
+
+> @@ -2290,9 +2305,11 @@ ppp_receive_mp_frame(struct ppp *ppp, struct sk_buff *skb, struct channel *pch)
+>  
+>  	/*
+>  	 * Do protocol ID decompression on the first fragment of each packet.
+> +	 * We can't wait for this to happen in ppp_input(), because
+> +	 * ppp_receive_nonmp_frame() expects decompressed protocol field.
+>  	 */
+ppp_input() is not going to be called anyway. I think you can omit the
+middle line entirely.
