@@ -2,106 +2,103 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1082C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1A1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A729120869
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D75D2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:58:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="T2gvHZCB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbeLSWui (ORCPT
+        id S1728706AbeLSW6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:50:38 -0500
-Received: from gateway20.websitewelcome.com ([192.185.48.38]:40582 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728307AbeLSWuK (ORCPT
+        Wed, 19 Dec 2018 17:58:16 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14263 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbeLSW6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:50:10 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 2A140400CE17F
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 16:27:57 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZkJpgcW2JYTGMZkJpgRnx8; Wed, 19 Dec 2018 16:27:57 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=47224 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZkJo-000Dtz-IF; Wed, 19 Dec 2018 16:27:56 -0600
-Subject: Re: [PATCH 26/41] scsi: lpfc: lpfc_nvme: Mark expected switch
- fall-through
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <79e1e3ed62a02dc3caf264f6960e7be68bbbc70c.1543374820.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <3f572992-e75e-ed35-c36a-e3ae11e6a76a@embeddedor.com>
-Date:   Wed, 19 Dec 2018 16:27:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Dec 2018 17:58:16 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1accfc0008>; Wed, 19 Dec 2018 14:58:04 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 19 Dec 2018 14:58:14 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 19 Dec 2018 14:58:14 -0800
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 19 Dec
+ 2018 22:58:13 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 19 Dec 2018 22:58:13 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c1acc7c0000>; Wed, 19 Dec 2018 14:55:58 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
+        <ulf.hansson@linaro.org>, <pchandru@nvidia.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V2 1/3] dt-bindings: mmc: tegra: Add pinctrl for pad drive strength config
+Date:   Wed, 19 Dec 2018 14:55:51 -0800
+Message-ID: <1545260153-11338-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <79e1e3ed62a02dc3caf264f6960e7be68bbbc70c.1543374820.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZkJo-000Dtz-IF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:47224
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 58
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545260285; bh=aeW5srTuVMljeFxTYLeI1rl+Rzz9wq/UVcb0OHGTpeg=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=T2gvHZCBcLQzJV32jpHfhFz/AZ2Vku/MjlBQ+XsdAx6QvPb/DKuuSSzw82DoNGxMK
+         3yYYE5QTNzuccaas2lI2cQ5sgu5HaXrAwffsXAWg+YsrKPLuBusqTjkLjsxwwRTxpb
+         DcWwRrcqdaT0THmm2fOGT53zDq6qQcgw9UB7dv17znBaKYW/rxV8BDNId0cJcJBjMu
+         gAInb1qmL81mGPhbCovAYFq4LGEwxag4xpC4f+K4CZYygHDzYSPchLLLBRfrQ6IBdP
+         09olVGFQtIc27IUHxhFxxsCzYliAh92JKp02A0anGuH8qLDXCwvvPgdbVMyRadY/li
+         e0exxLF1NpRTQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add pinctrl for 3V3 and 1V8 pad drive strength configuration for
+Tegra210 sdmmc which has pad configuration registers in the pinmux
+reigster domain.
 
-Friendly ping:
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Who can ack or review this patch, please?
-
-Thanks
+diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+index 32b4b4e41923..2cecdc71d94c 100644
+--- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
++++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+@@ -39,12 +39,16 @@ sdhci@c8000200 {
+ 	bus-width = <8>;
+ };
+ 
+-Optional properties for Tegra210 and Tegra186:
++Optional properties for Tegra210, Tegra186 and Tegra194:
+ - pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
+   configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
+   for controllers supporting multiple voltage levels. The order of names
+   should correspond to the pin configuration states in pinctrl-0 and
+   pinctrl-1.
++- pinctrl-names : "sdmmc-3v3-drv" and "sdmmc-1v8-drv" are applicable for
++  Tegra210 where pad config registers are in the pinmux register domain
++  for pull-up-strength and pull-down-strength values configuration when
++  using pads at 3V3 and 1V8 levels.
+ - nvidia,only-1-8-v : The presence of this property indicates that the
+   controller operates at a 1.8 V fixed I/O voltage.
+ - nvidia,pad-autocal-pull-up-offset-3v3,
 -- 
-Gustavo
+2.7.4
 
-On 11/27/18 10:31 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/scsi/lpfc/lpfc_nvme.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
-> index ba831def9301..942fe58c433d 100644
-> --- a/drivers/scsi/lpfc/lpfc_nvme.c
-> +++ b/drivers/scsi/lpfc/lpfc_nvme.c
-> @@ -1115,6 +1115,7 @@ lpfc_nvme_io_cmd_wqe_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pwqeIn,
->   					 lpfc_ncmd, nCmd,
->   					 lpfc_ncmd->cur_iocbq.sli4_xritag,
->   					 bf_get(lpfc_wcqe_c_xb, wcqe));
-> +			/* fall through */
->   		default:
->   out_err:
->   			lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME_IOERR,
-> 
