@@ -2,180 +2,88 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77ADC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED37FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9CA2184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC9A02184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:14:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7Zf2Bpn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729194AbeLSLNU (ORCPT
+        id S1729202AbeLSLOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:13:20 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:29505 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbeLSLNU (ORCPT
+        Wed, 19 Dec 2018 06:14:04 -0500
+Received: from mail-vs1-f53.google.com ([209.85.217.53]:45355 "EHLO
+        mail-vs1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeLSLOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:13:20 -0500
-Received: from [10.18.29.147] (10.18.29.147) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 19 Dec
- 2018 19:13:47 +0800
-Subject: Re: [PATCH v8 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
- controller driver
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>
-References: <1545120286-129258-1-git-send-email-hanjie.lin@amlogic.com>
- <1545120286-129258-3-git-send-email-hanjie.lin@amlogic.com>
- <20181218224708.GB22610@google.com>
-From:   Hanjie Lin <hanjie.lin@amlogic.com>
-Message-ID: <df9e974d-cac8-3522-fdbe-1811160bb4fc@amlogic.com>
-Date:   Wed, 19 Dec 2018 19:13:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 19 Dec 2018 06:14:04 -0500
+Received: by mail-vs1-f53.google.com with SMTP id x28so4359960vsh.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 03:14:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TZzmP5CXZYgnMuq7Hi7O92EA22A99yCWsjub4AkC6BY=;
+        b=i7Zf2BpnyVkLxnHGfSpMpNYMFdCPusvGdP67GCj5iVU3LFzbK0WF3XM3A1XG6N27W+
+         V6+r1Wf0UNdzIyEZODaH+/9aaMUDbArUPkSFLmTKOwifV2D1MU8LhryTP59rGWYjDazo
+         OxZ4teVzvciJ2g6lqdxc6Nayaeap5Xd7fE/aw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TZzmP5CXZYgnMuq7Hi7O92EA22A99yCWsjub4AkC6BY=;
+        b=Ft+4aVNI0IgWPobAHzkmCGOk+BBbIUUQNETxxqG4dTWceVRlZxlTkZJih8yebz+6xW
+         Kr9QdR88xjiSkpGhemy11BVP3V4TMBJemmFtv4iN4rBm6HcU9HoM5TIEC3C7M5fvJTPc
+         51ptWhXTVhRPIBtk1A4OdokzPeQQzxj/ttMn0cJ4Vrj4nER7jzlnzG4teOTwT5JY/US3
+         52xnnNTgapZDkR2NfJPKf+bcSvSMMXb3fqLzt6VuaFhS+BwJS+tjLZiQM9QWazPm2pyw
+         6C+PHeEYnee1cB1IVHbZV9FGv/as5TXm1K8XcrwCGHxPmrV+vyuGd1AfrheGP8zgUrvw
+         n0Lw==
+X-Gm-Message-State: AA+aEWanlW8/6hdPqlRuK5GIuN2ZDzhTkFbsSgx5oU1tl3Y1Mj1PvvwC
+        LEb+KS8RXJ42FV5KK+rcshVVcSv64d049W3KnJCFfg==
+X-Google-Smtp-Source: AFSGD/Wtbxtk9sbneu7mAQ6Vr26JSfpvronwcjXFh+w4aE0G8uUj2LOyyM3UxcDWHi/k7MxsbUIo1wLnaYaWsJEPwkU=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr10073771vsh.200.1545218042256;
+ Wed, 19 Dec 2018 03:14:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181218224708.GB22610@google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.147]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+References: <1545144923-31546-1-git-send-email-vincent.guittot@linaro.org>
+ <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org>
+ <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
+ <CAKfTPtCpv0MqF64JGTyR63bqKdAhXzL1fEsNbS6DHsD-jXYpKw@mail.gmail.com>
+ <CAPDyKFrSxX-eBsTiEvbrbjVpqkSuBnhxruCgtihH6hSvWSFD1g@mail.gmail.com>
+ <CAKfTPtB=TUAz=KpZzJsRUvK8ymiXnTgQ3BxcY0yu9YbJ1BW7QA@mail.gmail.com>
+ <CAPDyKFoR7t=K65n0_+4yRqdpRMZ0BbA16cDhmxEvNhm0qEOXNQ@mail.gmail.com> <CAPDyKFpfDF_7ZyhRY-jfapjuQQ=5KpQt7QV2-d_a-qki=omAYA@mail.gmail.com>
+In-Reply-To: <CAPDyKFpfDF_7ZyhRY-jfapjuQQ=5KpQt7QV2-d_a-qki=omAYA@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 19 Dec 2018 12:13:26 +0100
+Message-ID: <CAPDyKFpQ3yVe5_opAEs1SprSD-VhqZREEunpw8HMD+1F=r2C+g@mail.gmail.com>
+Subject: Re: [RFC v3 1/3] PM/runtime: Add a new interface to get accounted time
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        jani.nikula@linux.intel.com,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        "Intel graphics driver community testing & development" 
+        <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[...]
 
+> Hold on. I am wondering if the drm driver could use the existing
+> pm_runtime_autosuspend_expiration() function instead. Isn't that
+> really that what is needed?
 
-On 2018/12/19 6:47, Bjorn Helgaas wrote:
-> On Tue, Dec 18, 2018 at 04:04:46PM +0800, Hanjie Lin wrote:
->> From: Yue Wang <yue.wang@amlogic.com>
->>
->> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
->> PCI core. This patch adds the driver support for Meson PCIe controller.
-> 
-> I don't have any comments on the code itself; just the trivial things
-> below.  No need to repost for these unless you're changing something
-> else.
-> 
-> I thought it looked very pretty overall, thanks for paying attention
-> to that!
-> 
->> +static int meson_size_to_payload(struct meson_pcie *mp, int size)
->> +{
->> +	struct device *dev = mp->pci.dev;
->> +
->> +	/*
->> +	 * dwc supports 2^(val+7) payload size, which val is 0~5 default to 1.
->> +	 * So if input size is not 2^order alignment or less than 2^7 or bigger
->> +	 * than 2^12, just set to default size 2^(1+7).
->> +	 */
->> +	if (!is_power_of_2(size) || size < 128 || size > 4096) {
->> +		dev_warn(dev, "playload size %d, set to default 256\n", size);
-> 
-> s/playload/payload/
-> 
->> +static void meson_set_max_payload(struct meson_pcie *mp, int size)
->> +{
->> +	u32 val = 0;
-> 
-> Unnecessary initialization.
-> 
->> +	int max_payload_size = meson_size_to_payload(mp, size);
->> +
->> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
-> 
->> +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
->> +				  u32 *val)
->> +{
->> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->> +	int ret;
->> +
->> +	ret = dw_pcie_read(pci->dbi_base + where, size, val);
->> +	if (ret != PCIBIOS_SUCCESSFUL)
->> +		return ret;
->> +
->> +	/*
->> +	 * There is a bug in the MESON AXG pcie controller whereby software
->> +	 * cannot programme the PCI_CLASS_DEVICE register, so we must fabricate
->> +	 * the return value in the config accessors.
-> 
-> s/pcie/PCIe/
-> s/programme/program/ (IIUC, "programme" is British and only used as a
-> noun, where here you need a verb)
-> 
->> +static int meson_pcie_link_up(struct dw_pcie *pci)
->> +{
->> +	struct meson_pcie *mp = to_meson_pcie(pci);
->> +	struct device *dev = pci->dev;
->> +	u32 smlh_up = 0;
->> +	u32 ltssm_up = 0;
->> +	u32 rdlh_up = 0;
-> 
-> Unnecessary initialization of smlh_up, ltssm_up, and rdlh_up.
-> 
->> +	u32 speed_okay = 0;
->> +	u32 cnt = 0;
->> +	u32 state12, state17;
->> +
->> +	do {
->> +		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
->> +		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
->> +		smlh_up = IS_SMLH_LINK_UP(state12);
->> +		rdlh_up = IS_RDLH_LINK_UP(state12);
->> +		ltssm_up = IS_LTSSM_UP(state12);
-> 
->> +	dev_err(dev, "Error: Wait linkup timeout.\n");
-> 
-> Message doesn't match others from driver (capitalization and trailing
-> period).
-> 
->> +			dev_err(dev, "failed to get msi irq\n");
-> 
-> s/msi irq/MSI IRQ/
-> 
->> +	ret = meson_add_pcie_port(mp, pdev);
->> +	if (ret < 0) {
->> +		dev_err(dev, "Add PCIE port failed, %d\n", ret);
-> 
-> s/PCIE/PCIe/
-> 
-> All the messages in this function are capitalized differently than
-> other messages in the driver.
-> 
-> Bjorn
-> 
-> .
-> 
+No, it can't. I don't know why I thought that, sorry for the noise.
 
-hi Bjorn:
-
-Thanks for the all suggestions and corrections.
-
-There were too many code details unnecessary initialization, typing errors
-and coding style etc. I will pay more attention to these rules and code-details
-in the future patches also my daily work.
-
-thanks again
-
-hanjie.
+U
