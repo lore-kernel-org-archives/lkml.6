@@ -2,133 +2,114 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585AFC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D983DC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DEA20449
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0F8D2133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:52:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730401AbeLSPuj (ORCPT
+        id S1729034AbeLSPwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:50:39 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37676 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbeLSPui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:50:38 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1B82020A82; Wed, 19 Dec 2018 16:50:36 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CD38F2037D;
-        Wed, 19 Dec 2018 16:50:25 +0100 (CET)
-Date:   Wed, 19 Dec 2018 16:50:26 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-Message-ID: <20181219155026.2mpnmdibs3i6ianh@flea>
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com>
- <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZBzOyAGwgOZwArbvnqtcvwMkJrqwGQ-q7+XFX-BVs34RQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pabpp542fin7m244"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBzOyAGwgOZwArbvnqtcvwMkJrqwGQ-q7+XFX-BVs34RQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Wed, 19 Dec 2018 10:52:17 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45439 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbeLSPwR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:52:17 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gZe8q-0006dU-M4; Wed, 19 Dec 2018 16:52:12 +0100
+Message-ID: <1545234725.5874.38.camel@pengutronix.de>
+Subject: Re: [v4] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Smirnov <andrew.smirnov@gmail.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sven Van Asbroeck <thesven73@gmail.com>,
+        Niklas Cassel <niklas.cassel@axis.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Trent Piepho <tpiepho@impinj.com>
+Date:   Wed, 19 Dec 2018 16:52:05 +0100
+In-Reply-To: <20181219141241.GB12763@google.com>
+References: <1544768762-18124-1-git-send-email-hongxing.zhu@nxp.com>
+         <20181219141241.GB12763@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Mittwoch, den 19.12.2018, 08:12 -0600 schrieb Bjorn Helgaas:
+> [+cc Sven, Trent, et al from related report:
+> https://lore.kernel.org/linux-pci/20181218210444.5950-1-TheSven73@googlemail.com]
+> 
+> On Fri, Dec 14, 2018 at 06:44:15AM +0000, Richard Zhu wrote:
+> > Assertion of the MSI Enable bit of RC's MSI CAP is mandatory required to
+> > trigger MSI on i.MX6 PCIe.
+> > This bit would be asserted when CONFIG_PCIEPORTBUS=y.
+> > Thus, the MSI works fine on i.MX6 PCIe before the commit "f3fdfc4".
+> > 
+> > Assert it unconditionally when MSI is enabled.
+> > Otherwise, the MSI wouldn't be triggered although the EP is present and
+> > the MSIs are assigned.
+> 
+> OK, I think I finally understand most of what's going on.  Please
+> check the following possible changelog text:
+> 
+>   The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2)
+>   controls whether a Function can request service using MSI.
+> 
+>   i.MX6 Root Ports implement the MSI Capability and may use MSI to
+>   request service for events like PME, hotplug, AER, etc.  In
+>   addition, on i.MX6, the MSI Enable bit controls delivery of MSI
+>   interrupts from components below the Root Port.
+> 
+>   Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
+>   CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also
+>   enabled CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports,
+>   it set the MSI Enable bit so it could use PME, hotplug, AER, etc.
+>   As a side effect, that also enabled delivery of MSI interrupts from
+>   downstream components.
+> 
+>   After f3fdfc4ac3a2, the imx6q-pcie driver can operate without
+>   portdrv, but that means imx6q-pcie must set the MSI Enable bit
+>   itself if downstream components use MSI.
+> 
+>   Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+> 
+> I still don't understand exactly *how* MSI Enable affects MSI from
+> downstream components, since the downstream component just does a DMA
+> write, and the Root Port can't tell whether the write is to memory or
+> interrupt controller unless the Root Port knows where the MSI targets
+> are, e.g., if the interrupt controller is actually part of the RC.
 
---pabpp542fin7m244
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The controller terminating the MSI write is part of the DWC PCIe host
+controller on i.MX6, which is questionable at least when you think
+about how a MSI should be self-synchronizing to memory writes, but
+that's reality...
 
-On Tue, Dec 11, 2018 at 10:30:08PM +0530, Jagan Teki wrote:
-> On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
-> > > Video start delay can be computed by subtracting total vertical
-> > > timing with front porch timing and with adding 1 delay line for TCON.
-> > >
-> > > BSP code form BPI-M64-bsp is computing video start delay as
-> > > (from linux-sunxi/
-> > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > >
-> > > u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > > =3D> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-> > > =3D> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-> > >    - panel->lcd_y - (panel->lcd_vbp)
-> > > =3D> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-> > >                            - panel->lcd_y - panel->lcd_vbp
-> > > =3D> timmings->ver_front_porch
-> > >
-> > > So, update the start delay computation accordingly.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >
-> > Even though it's a bit better now on my A33 board and I don't have the
-> > white stripes on the bottom of the display, there's still some
-> > flickering with your patches applied.
-> >
-> > Bisecting it seems to point at that patch, but reverting it doesn't
-> > make the issue go away, so it's not really clear which one exactly is
-> > at fault.
-> >
-> > So, just like I asked in your v4, twice,
-> >
-> > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/615=
-339.html
->=20
-> I don't know how can I comment here. Not quite clearly understand your
-> setup, because I have verified 3 different panels from different
-> vendors one with 2-lane, another with 4-lane and one with video format
-> and another one is burstmode format. I even verified with the clock
-> rate and register details.
->
-> Please suggest me, what can look further on this.
+As to why the controller needs the MSI Enable bit set, I have no idea.
+But then the DWC controller is known to have some funky design
+limitations regarding MSI, like not forwarding legacy PCI interrupts
+anymore when MSI is enabled, so it's not totally surprising that we
+need some quirky setup here.
 
-You had a reason to do these patches in the first place, yet you never
-mention it anywhere in your commit logs. it would address the first
-part of my comment.
-
-And I can help you nail down whatever is going on here, but I would
-need the panel datasheet for that. It is my second point.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---pabpp542fin7m244
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXBpowgAKCRDj7w1vZxhR
-xS5mAPkBvCnKEMqNBzx1jl/H57Y26OfbClwFS5eU5c1rFTUIIwEA6cxvVrxQQtiz
-TkacBASu5Zw9+olpuqa2tKq8tAcJdw4=
-=GMM5
------END PGP SIGNATURE-----
-
---pabpp542fin7m244--
+Regards,
+Lucas
