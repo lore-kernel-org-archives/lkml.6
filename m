@@ -2,162 +2,158 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B756C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73FEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003022086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90F4A2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:36:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gcpk2gaF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbeLSVgA (ORCPT
+        id S1729832AbeLSVgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:36:00 -0500
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:58806 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727387AbeLSVf7 (ORCPT
+        Wed, 19 Dec 2018 16:36:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38951 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeLSVgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:35:59 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 20 Dec 2018 08:05:55 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gZjVQ-0002EB-WF; Thu, 20 Dec 2018 08:35:53 +1100
-Date:   Thu, 20 Dec 2018 08:35:52 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181219213552.GO6311@dastard>
-References: <20181219071420.GC2628@infradead.org>
- <20181219021953.GD31274@dastard>
- <20181219193005.GB6889@mit.edu>
+        Wed, 19 Dec 2018 16:36:15 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t27so21012152wra.6;
+        Wed, 19 Dec 2018 13:36:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UoJ3P8b83vU11FI+fVrZE63Gj+nIQDJHUS0bV4hCUnA=;
+        b=Gcpk2gaF7WZjiCV62Oe6vuMTjFj4pzFBlTjZNrcIC5F5gJ6xPVj9/zrce7cBlkkK4Y
+         PwMn4Y3KTImUhe54PlTSACeAJf35amYf36vI9cqEF/y+8mcy1IvO/glC0Mmp9E4KBHHs
+         /m8yqGPCfUATl1fwiU/IO0mx+sE0GEVXPG/aQ5dvLj/o7sMu8wUPTMAaHAJsjBn7tdrq
+         TjrPXvin3Xhmd5j7Tb3RlhVaRHtpNlipudaFq279d1CN28rQ3X/+YGKt2i4zfbk7Q94/
+         Dd8bmaRwlHZKDthyZ565PALX0Uwd705zVb6lJgOlrIL8zc1jgEW3GhQAJjlHqJtvkpzN
+         6jRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UoJ3P8b83vU11FI+fVrZE63Gj+nIQDJHUS0bV4hCUnA=;
+        b=dc87//Kelj3VuRY1QEUKSmmz3QmVR8LM5S1XgoxBpAaB5Yj1j0kpFsIartPRQssy5R
+         lHJXpfZWjd4G0srN+yeEXZm/AGU7/jV2yohirA5Ur5l3kIccMFLvUXgz+VWLOvVW4A3s
+         qF1BCO1dHplJr+nKkmm0nwt5RMuWUYMWoNgjlm29vqfUmuF2abkYaW5dOsWq5nayxu+r
+         lEN1wN5qSKPbzDbE6jG45nBLaNHx8Det5pR+0GrW0PWLfwnBlrT8Ok/i1pJUWHd5BImL
+         xJlmJHfKgPaR8YBjQ6u/wQYO9zTbhuB8uX8v5tolLsTx6E4tcRH5e94cFmBh23xEna6H
+         aggw==
+X-Gm-Message-State: AA+aEWY69vOsNLZAeJFGeT4STpSRUNhnAbzjG/w95OZ3g/RHhysvVk22
+        5wU8OOz4LnRacQlgi4LafdlJscim
+X-Google-Smtp-Source: AFSGD/XFi+5XGCD9lb071jk9/rPUKPB/b7qkD79gOBHb5V/foKI4XB2FlVLwakUR4QMwxl/Nib5Xrw==
+X-Received: by 2002:a5d:40c1:: with SMTP id b1mr21252413wrq.133.1545255372320;
+        Wed, 19 Dec 2018 13:36:12 -0800 (PST)
+Received: from [192.168.1.18] (chj170.neoplus.adsl.tpnet.pl. [83.31.7.170])
+        by smtp.gmail.com with ESMTPSA id c65sm7042088wma.24.2018.12.19.13.36.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 13:36:11 -0800 (PST)
+Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+To:     Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
+ <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
+ <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
+Date:   Wed, 19 Dec 2018 22:36:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181219193005.GB6889@mit.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 02:30:05PM -0500, Theodore Y. Ts'o wrote:
-> On Wed, Dec 19, 2018 at 01:19:53PM +1100, Dave Chinner wrote:
-> > Putting metadata in user files beyond EOF doesn't work with XFS's
-> > post-EOF speculative allocation algorithms.
-> > 
-> > i.e. Filesystem design/algorithms often assume that the region
-> > beyond EOF in user files is a write-only region.  e.g. We can allow
-> > extents beyond EOF to be uninitialised because they are in a write
-> > only region of the file and so there's no possibility of stale data
-> > exposure. Unfortunately, putting filesystem/security metadata beyond
-> > EOF breaks these assumptions - it's no longer a write-only region.
+Hi Dan and Pavel,
+
+On 12/19/18 9:41 PM, Dan Murphy wrote:
+> Pavel
 > 
-> On Tue, Dec 18, 2018 at 11:14:20PM -0800, Christoph Hellwig wrote:
-> > Filesystems already use blocks beyond EOF for preallocation, either
-> > speculative by the file system itself, or explicitly by the user with
-> > fallocate.  I bet you will run into bugs with your creative abuse
-> > sooner or later.  Indepnd of that the interface simply is gross, which
-> > is enough of a reason not to merge it.
+> On 12/19/2018 02:10 PM, Pavel Machek wrote:
+>> On Wed 2018-12-19 13:41:18, Dan Murphy wrote:
+>>> Pavel
+>>>
+>>> Thanks for the review.
+>>>
+>>> On 12/19/2018 01:34 PM, Pavel Machek wrote:
+>>>> Hi!
+>>>>
+>>>>> +static DEVICE_ATTR_WO(ctrl_bank_a_mix);
+>>>>> +static DEVICE_ATTR_WO(ctrl_bank_b_mix);
+>>>>> +static DEVICE_ATTR_WO(ctrl_bank_c_mix);
+>>>>> +
+>>>>> +static struct attribute *lp5024_ctrl_bank_attrs[] = {
+>>>>> +	&dev_attr_ctrl_bank_a_mix.attr,
+>>>>> +	&dev_attr_ctrl_bank_b_mix.attr,
+>>>>> +	&dev_attr_ctrl_bank_c_mix.attr,
+>>>>> +	NULL
+>>>>> +};
+>>>>> +ATTRIBUTE_GROUPS(lp5024_ctrl_bank);
+>>>>
+>>>> ...
+>>>>> +
+>>>>> +static DEVICE_ATTR_WO(led1_mix);
+>>>>> +static DEVICE_ATTR_WO(led2_mix);
+>>>>> +static DEVICE_ATTR_WO(led3_mix);
+>>>>> +
+>>>>> +static struct attribute *lp5024_led_independent_attrs[] = {
+>>>>> +	&dev_attr_led1_mix.attr,
+>>>>> +	&dev_attr_led2_mix.attr,
+>>>>> +	&dev_attr_led3_mix.attr,
+>>>>> +	NULL
+>>>>> +};
+>>>>> +ATTRIBUTE_GROUPS(lp5024_led_independent);
+>>>>
+>>>> Ok, so you are adding new sysfs files. Are they _really_ neccessary?
+>>>> We'd like to have uniform interfaces for the leds.
+>>>
+>>> Yes I am adding these for this driver.
+>>> They adjust the individual brightness of each LED connected (what the HW guys called mixing).
+>>>
+>>> The standard brightness sysfs adjusts all 3 LEDs simultaneously so that all 3 LEDs brightness are
+>>> uniform.
+>>
+>> 1 LED, 1 brightness file... that's what we do. Why should this one be different?
+>>
 > 
-> Both of these concerns aren't applicable for fs-verity because the
-> entire file will be read-only.  So there will be no preallocation or
-> fallocation going on --- or allowed --- for a file which is protected
-> by fs-verity.  Since no writes are allowed at all, it won't break any
-> file systems' assumptions about "write-only regions".
+> Yes I understand this and 1 DT child node per LED out but...
+> 
+> This device has a single register to control 3 LEDs brightness as a group and individual brightness
+> registers to control the LEDs independently to mix the LEDs to a specific color.
+> 
+> There needs to be a way to control both so that developers can mix and adjust the individual RGB and
+> then control the brightness of the group during run time without touching the "mixing" value.
+> 
+> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
+> Or with the LP5036 that would have 36 LED nodes.
+> 
+> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
 
-The file has to be written before it has been protected, which means
-it may very well have user space allocated beyond EOF before the
-merkle tree needs to be written. And, well, the fact that it is all
-read only after creation is a feature implementation detail that
-allows fsverity to "get away with" storing it's metadata in file
-data space.
+Some time ago we had discussion with Vesa Jääskeläinen about possible
+approaches to RGB LEDs [0]. What seemed to be the most suitable
+variation of the discussed out-of-tree approach was the "color" property
+and array of color triplets defined in Device Tree per each color.
 
-But whether or not fsverity is enabled on the filesystem, the fact
-is that the kernel code now has to support storing and reading data
-from beyond EOF. Every user, whether they are using fsverity or not,
-is now exposed to that code and a filesystem that no longer
-considers the user data region beyond EOF as write only. i.e. it
-doesn't matter if fsverity is in use, then ext4/f2fs code now
-allows reading of information beyond EOF from user data files
+Please refer to [0] for the details.
 
-i.e. you've completely changed the way files appear to /everyone/,
-not just the users of fsverity. Not only that, you now have file
-data that has a specific metadata on-disk format encoded into file
-data space. That greatly complicates filesystem checking and
-scrubbing which typically /doesn't even look at the contents of
-user data/. So yeah, this hack might make the merkle tree
-verification "simple" but it greatly complicates everything else the
-filesystem has to do.
+[0] https://lkml.org/lkml/2018/11/9/938
 
-That's the problem here - fsverity completely redefines the layout
-of user data files for everyone, not just fsverity, and not just the
-filesystems that implement fsverity. You've taken an ext4 fsverity
-implementation feature and promoted it to being a linux-wide 
-file data layout standard that is encoded into the kernel/user
-ABI/API forever more.
-
-And you're trying to force this into the tree on everyone without
-adequate review because "a product is already shipping with this
-code in it". Didn't we learn the lessons of failing to "upstream
-first" new features more than 15 years ago?
-
-> As far as whether it's "gross" --- that's a taste question, and I
-> happen to think it's more "clever" than "gross". 
-
-You think it's clever because it's a neat hack that makes what you
-need simple to implement, and so you can ship it in phones quickly
-and without needing to involve upstream in more complex design
-discussions.
-
-I think it's gross because it bleeds implementation details all over
-the API and globally redefines the user data file layout for
-everyone, kernel wide in a manner that is incompatible with existing
-filesystem implementations.
-
-> It allows for a very
-> simple implementation, *leveraging* the fact that the file will never
-> change --- and especially, grow in length.  So why not use the space
-> after EOF?
-
-There have been many technical reasons given for why it's a bad interfaces,
-yet you only address entirely subjective arguments and claim that
-you have "good taste" in APIs because it is "clever".
-
-> The alternative requires adding Solaris-style alternate data streams
-> support.
-
-No, it does not. It simply requires a different userspace API to
-move the merkle tree data into the kernel, and a different
-implemetnation abstraction that allows filesystems to provide the
-merkle tree data pages on request. Darrick and Christoph have
-already suggested alternative user APIs that would work just fine,
-and they don't ahve a requirement that the merkle tree is held in
-the user data space beyond EOF.
-
-How filesystems store and retrieve merkle tree data should be a
-filesystem internal detail. If how metadata is stored in th e
-filesystem is defined by the userspace API or the kernel library
-code that implements the verification feature, then it lacks the
-necessary abstraction to be a generic Linux filesystem feature.
-IOWs, it needs to be redesigned and reworked before we should
-consider it for merging.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Best regards,
+Jacek Anaszewski
