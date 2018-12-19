@@ -2,270 +2,188 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABE1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56847C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED6D620811
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:52:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eWh93uPB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eWh93uPB"
+	by mail.kernel.org (Postfix) with ESMTP id 279C42080D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729453AbeLSTwu (ORCPT
+        id S1729486AbeLSTzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 14:52:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33806 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbeLSTwt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 14:52:49 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C42EB6058E; Wed, 19 Dec 2018 19:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545249168;
-        bh=KcvvPK1QoefApDWLIZYgOhr2Z4ApmfzGh91E9lf8gcE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eWh93uPBGSXRJyO+nuwGnKoDqxt8aSMQ4Yf4fyqi3+aWqA31jX4eBdJevgEIwj+/2
-         yXqEiNd/FOQTljqqwMOqb9ZqGziExu5RlKUNKjS/a6floBGL6XmkM+wmNtW5/25Ysz
-         FA25yhV1xis5R10S/a7b7D1wBX9V9X87W79XoSDM=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7DC546028D;
-        Wed, 19 Dec 2018 19:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545249168;
-        bh=KcvvPK1QoefApDWLIZYgOhr2Z4ApmfzGh91E9lf8gcE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eWh93uPBGSXRJyO+nuwGnKoDqxt8aSMQ4Yf4fyqi3+aWqA31jX4eBdJevgEIwj+/2
-         yXqEiNd/FOQTljqqwMOqb9ZqGziExu5RlKUNKjS/a6floBGL6XmkM+wmNtW5/25Ysz
-         FA25yhV1xis5R10S/a7b7D1wBX9V9X87W79XoSDM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7DC546028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] arm64: dts: qcom: msm8998: Enumerate i2c controllers
-Date:   Wed, 19 Dec 2018 12:52:39 -0700
-Message-Id: <1545249159-18628-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 19 Dec 2018 14:55:05 -0500
+Received: from mga05.intel.com ([192.55.52.43]:23615 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729137AbeLSTzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 14:55:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2018 11:55:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,373,1539673200"; 
+   d="scan'208";a="111904064"
+Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
+  by orsmga003.jf.intel.com with ESMTP; 19 Dec 2018 11:55:03 -0800
+Subject: [PATCH] x86/cpu: sort cpuinfo flags
+To:     linux-kernel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Wed, 19 Dec 2018 11:50:14 -0800
+Message-Id: <20181219195014.A0962820@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-msm8998 has a dozen i2c controllers which can be used to connect to board
-specific peripherals.  Enumerate the controllers so that boards can wire
-up as needed.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+I frequently find myself contemplating my life choices as I try to
+find 3-character entries in the 1,000-character, unsorted "flags:"
+field of /proc/cpuinfo.
+
+Sort that field, giving me hours back in my day.
+
+This eats up ~1200 bytes (NCAPINTS*2*32) of space for the sorted
+array.  I used an 'unsigned short' to use 1/4 of the space on 64-bit
+that would have been needed had pointers been used in the array.
+
+An alternatve, requiring no array, would be to do the sort at runtime,
+but it seems ridiculous for a 500-cpu system to do 500 sorts for each
+'cat /proc/cpuinfo'.
+
+Another would be to just cache the *string* that results from this,
+which would be even faster at runtime because it could do a single
+seq_printf() and would consume less space.  But, that would
+require a bit more infrastructure to make sure that the produced
+string never changed and was consistent across all CPUs, unless
+we want to store a string per 'struct cpuinfo_x86'.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 180 ++++++++++++++++++++++++++++++++++
- 1 file changed, 180 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 8d41b69..720bce6 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -624,6 +624,186 @@
- 			status = "disabled";
- 		};
+ b/arch/x86/kernel/cpu/proc.c |   80 +++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 74 insertions(+), 6 deletions(-)
+
+diff -puN arch/x86/kernel/cpu/proc.c~x86-sorted-flags arch/x86/kernel/cpu/proc.c
+--- a/arch/x86/kernel/cpu/proc.c~x86-sorted-flags	2018-12-19 11:48:46.562987402 -0800
++++ b/arch/x86/kernel/cpu/proc.c	2018-12-19 11:48:46.567987402 -0800
+@@ -1,8 +1,10 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/smp.h>
++#include <linux/sort.h>
+ #include <linux/timex.h>
+ #include <linux/string.h>
+ #include <linux/seq_file.h>
++#include <linux/spinlock.h>
+ #include <linux/cpufreq.h>
  
-+		i2c1: i2c@c175000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc175000 0x600>;
-+			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+ #include "cpu.h"
+@@ -54,6 +56,76 @@ static void show_cpuinfo_misc(struct seq
+ }
+ #endif
+ 
++#define X86_NR_CAPS	(32*NCAPINTS)
++/*
++ * x86_cap_flags[] is an array of string pointers.  This
++ * (x86_sorted_cap_flags[]) is an array of array indexes
++ * *referring* to x86_cap_flags[] entries.  It is sorted
++ * to make it quick to print a sorted list of cpu flags in
++ * /proc/cpuinfo.
++ */
++static unsigned short x86_sorted_cap_flags[X86_NR_CAPS] = { -1, };
++static int x86_cmp_cap(const void *a_ptr, const void *b_ptr)
++{
++	unsigned short a = *(unsigned short *)a_ptr;
++	unsigned short b = *(unsigned short *)b_ptr;
 +
-+			clocks = <&gcc GCC_BLSP1_QUP1_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
++	/* Don't need to swap equal entries (presumably NULLs) */
++	if (x86_cap_flags[a] == x86_cap_flags[b])
++		return 0;
++	/* Put NULL elements at the end: */
++	if (x86_cap_flags[a] == NULL)
++		return -1;
++	if (x86_cap_flags[b] == NULL)
++		return 1;
 +
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++	return strcmp(x86_cap_flags[a], x86_cap_flags[b]);
++}
 +
-+		i2c2: i2c@c176000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc176000 0x600>;
-+			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++static void x86_sort_cap_flags(void)
++{
++	static DEFINE_SPINLOCK(lock);
++	int i;
 +
-+			clocks = <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
++	/*
++	 * It's possible that multiple threads could race
++	 * to here and both sort the list.  The lock keeps
++	 * them from trying to sort concurrently.
++	 */
++	spin_lock(&lock);
 +
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++	/* Initialize the list with 0->i, removing the -1's: */
++	for (i = 0; i < X86_NR_CAPS; i++)
++		x86_sorted_cap_flags[i] = i;
 +
-+		i2c3: i2c@c177000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc177000 0x600>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++	sort(x86_sorted_cap_flags, X86_NR_CAPS,
++	     sizeof(x86_sorted_cap_flags[0]),
++	     x86_cmp_cap, NULL);
 +
-+			clocks = <&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
++	spin_unlock(&lock);
++}
 +
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++static void show_cpuinfo_flags(struct seq_file *m, struct cpuinfo_x86 *c)
++{
++	int i;
 +
-+		i2c4: i2c@c178000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc178000 0x600>;
-+			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++	if (x86_sorted_cap_flags[0] == (unsigned short)-1)
++		x86_sort_cap_flags();
 +
-+			clocks = <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
++	seq_puts(m, "flags\t\t:");
 +
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++	for (i = 0; i < X86_NR_CAPS; i++) {
++		/*
++		 * Go through the flag list in alphabetical
++		 * order to make reading this field easier.
++		 */
++		int cap = x86_sorted_cap_flags[i];
 +
-+		i2c5: i2c@c179000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc179000 0x600>;
-+			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
++		if (cpu_has(c, cap) && x86_cap_flags[cap] != NULL)
++			seq_printf(m, " %s", x86_cap_flags[cap]);
++	}
++}
 +
-+			clocks = <&gcc GCC_BLSP1_QUP5_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c6: i2c@c17a000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc17a000 0x600>;
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP1_QUP6_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c7: i2c@c1b5000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc1b5000 0x600>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c8: i2c@c1b6000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc1b6000 0x600>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP2_QUP2_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c9: i2c@c1b7000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc1b7000 0x600>;
-+			interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP2_QUP3_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c10: i2c@c1b8000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc1b8000 0x600>;
-+			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP2_QUP4_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c11: i2c@c1b9000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc1b9000 0x600>;
-+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP2_QUP5_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
-+		i2c12: i2c@c1ba000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0xc175000 0x600>;
-+			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gcc GCC_BLSP2_QUP6_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		blsp2_uart1: serial@c1b0000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0xc1b0000 0x1000>;
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+ static int show_cpuinfo(struct seq_file *m, void *v)
+ {
+ 	struct cpuinfo_x86 *c = v;
+@@ -96,15 +168,11 @@ static int show_cpuinfo(struct seq_file
+ 
+ 	show_cpuinfo_core(m, c, cpu);
+ 	show_cpuinfo_misc(m, c);
+-
+-	seq_puts(m, "flags\t\t:");
+-	for (i = 0; i < 32*NCAPINTS; i++)
+-		if (cpu_has(c, i) && x86_cap_flags[i] != NULL)
+-			seq_printf(m, " %s", x86_cap_flags[i]);
++	show_cpuinfo_flags(m, c);
+ 
+ 	seq_puts(m, "\nbugs\t\t:");
+ 	for (i = 0; i < 32*NBUGINTS; i++) {
+-		unsigned int bug_bit = 32*NCAPINTS + i;
++		unsigned int bug_bit = x86_NR_CAPS + i;
+ 
+ 		if (cpu_has_bug(c, bug_bit) && x86_bug_flags[i])
+ 			seq_printf(m, " %s", x86_bug_flags[i]);
+_
