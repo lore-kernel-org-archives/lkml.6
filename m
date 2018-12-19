@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22493C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84326C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE30D2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFD52086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730289AbeLSPjL (ORCPT
+        id S1730302AbeLSPjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:39:11 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.102]:47073 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728040AbeLSPjK (ORCPT
+        Wed, 19 Dec 2018 10:39:23 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.51]:43080 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728249AbeLSPjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:39:10 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id DFECE18C3C3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:39:09 -0600 (CST)
+        Wed, 19 Dec 2018 10:39:22 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id C4BBCD5140
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:39:20 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id ZdwDgZhws2qH7ZdwDgIWea; Wed, 19 Dec 2018 09:39:09 -0600
+        id ZdwOgtjvz2PzOZdwOgdzOA; Wed, 19 Dec 2018 09:39:20 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=35318 helo=[192.168.1.76])
+Received: from [189.250.106.44] (port=35322 helo=[192.168.1.76])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gZdwD-000h8S-Gh; Wed, 19 Dec 2018 09:39:09 -0600
-Subject: Re: [PATCH 10/41] scsi: bfa: bfa_fcs_lport: Mark expected switch
+        id 1gZdwO-000hGa-6j; Wed, 19 Dec 2018 09:39:20 -0600
+Subject: Re: [PATCH 11/41] scsi: bfa: bfa_fcs_rport: Mark expected switch
  fall-throughs
 To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
         Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
@@ -40,14 +40,14 @@ Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <cover.1543374820.git.gustavo@embeddedor.com>
- <5cc329185c0b92f3aad001fc1afa54996a2c1112.1543374820.git.gustavo@embeddedor.com>
+ <c2a6667094f80fd7f72c887b2e7844b6341ce961.1543374820.git.gustavo@embeddedor.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <a2a4fd41-d231-4d72-a95e-e1109c209f94@embeddedor.com>
-Date:   Wed, 19 Dec 2018 09:39:08 -0600
+Message-ID: <d81468df-1de5-8aaf-9c7b-ce490a358bea@embeddedor.com>
+Date:   Wed, 19 Dec 2018 09:39:19 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <5cc329185c0b92f3aad001fc1afa54996a2c1112.1543374820.git.gustavo@embeddedor.com>
+In-Reply-To: <c2a6667094f80fd7f72c887b2e7844b6341ce961.1543374820.git.gustavo@embeddedor.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -59,13 +59,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.106.44
 X-Source-L: No
-X-Exim-ID: 1gZdwD-000h8S-Gh
+X-Exim-ID: 1gZdwO-000hGa-6j
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35318
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35322
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 43
+X-Email-Count: 49
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -87,39 +87,86 @@ On 11/27/18 10:27 PM, Gustavo A. R. Silva wrote:
 > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 > where we are expecting to fall through.
 > 
-> Notice that, in this particular case, I replaced "!!! fall through !!!"
-> with a "fall through" annotation, which is what GCC is expecting to
-> find.
+> Notice that I replaced "!! fall through !!" and "!!! fall through !!!"
+> comments with "fall through" annotations, which is what GCC is
+> expecting to find.
 > 
+> Addresses-Coverity-ID: 744899 ("Missing break in switch")
+> Addresses-Coverity-ID: 744900 ("Missing break in switch")
+> Addresses-Coverity-ID: 744901 ("Missing break in switch")
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->   drivers/scsi/bfa/bfa_fcs_lport.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
+>   drivers/scsi/bfa/bfa_fcs_rport.c | 19 +++++++------------
+>   1 file changed, 7 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/scsi/bfa/bfa_fcs_lport.c b/drivers/scsi/bfa/bfa_fcs_lport.c
-> index b4f2c1d8742e..646f09f66443 100644
-> --- a/drivers/scsi/bfa/bfa_fcs_lport.c
-> +++ b/drivers/scsi/bfa/bfa_fcs_lport.c
-> @@ -6430,9 +6430,7 @@ bfa_fcs_vport_sm_logo_for_stop(struct bfa_fcs_vport_s *vport,
->   	switch (event) {
->   	case BFA_FCS_VPORT_SM_OFFLINE:
->   		bfa_sm_send_event(vport->lps, BFA_LPS_SM_OFFLINE);
+> diff --git a/drivers/scsi/bfa/bfa_fcs_rport.c b/drivers/scsi/bfa/bfa_fcs_rport.c
+> index de50349a39ce..1e400f2aaece 100644
+> --- a/drivers/scsi/bfa/bfa_fcs_rport.c
+> +++ b/drivers/scsi/bfa/bfa_fcs_rport.c
+> @@ -427,17 +427,13 @@ bfa_fcs_rport_sm_plogi(struct bfa_fcs_rport_s *rport, enum rport_event event)
+>   
+>   	case RPSM_EVENT_LOGO_RCVD:
+>   		bfa_fcs_rport_send_logo_acc(rport);
+> -		/*
+> -		 * !! fall through !!
+> -		 */
+> +		/* fall through */
+>   	case RPSM_EVENT_PRLO_RCVD:
+>   		if (rport->prlo == BFA_TRUE)
+>   			bfa_fcs_rport_send_prlo_acc(rport);
+>   
+>   		bfa_fcxp_discard(rport->fcxp);
+> -		/*
+> -		 * !! fall through !!
+> -		 */
+> +		/* fall through */
+>   	case RPSM_EVENT_FAILED:
+>   		if (rport->plogi_retries < BFA_FCS_RPORT_MAX_RETRIES) {
+>   			rport->plogi_retries++;
+> @@ -868,9 +864,7 @@ bfa_fcs_rport_sm_adisc_online(struct bfa_fcs_rport_s *rport,
+>   		 * At least go offline when a PLOGI is received.
+>   		 */
+>   		bfa_fcxp_discard(rport->fcxp);
 > -		/*
 > -		 * !!! fall through !!!
 > -		 */
 > +		/* fall through */
 >   
->   	case BFA_FCS_VPORT_SM_RSP_OK:
->   	case BFA_FCS_VPORT_SM_RSP_ERROR:
-> @@ -6458,9 +6456,7 @@ bfa_fcs_vport_sm_logo(struct bfa_fcs_vport_s *vport,
->   	switch (event) {
->   	case BFA_FCS_VPORT_SM_OFFLINE:
->   		bfa_sm_send_event(vport->lps, BFA_LPS_SM_OFFLINE);
+>   	case RPSM_EVENT_FAILED:
+>   	case RPSM_EVENT_ADDRESS_CHANGE:
+> @@ -1056,6 +1050,7 @@ bfa_fcs_rport_sm_fc4_logosend(struct bfa_fcs_rport_s *rport,
+>   
+>   	case RPSM_EVENT_LOGO_RCVD:
+>   		bfa_fcs_rport_send_logo_acc(rport);
+> +		/* fall through */
+>   	case RPSM_EVENT_PRLO_RCVD:
+>   		if (rport->prlo == BFA_TRUE)
+>   			bfa_fcs_rport_send_prlo_acc(rport);
+> @@ -1144,9 +1139,7 @@ bfa_fcs_rport_sm_hcb_offline(struct bfa_fcs_rport_s *rport,
+>   			bfa_fcs_rport_send_plogiacc(rport, NULL);
+>   			break;
+>   		}
 > -		/*
-> -		 * !!! fall through !!!
+> -		 * !! fall through !!
 > -		 */
 > +		/* fall through */
 >   
->   	case BFA_FCS_VPORT_SM_RSP_OK:
->   	case BFA_FCS_VPORT_SM_RSP_ERROR:
+>   	case RPSM_EVENT_ADDRESS_CHANGE:
+>   		if (!bfa_fcs_lport_is_online(rport->port)) {
+> @@ -1303,6 +1296,7 @@ bfa_fcs_rport_sm_hcb_logosend(struct bfa_fcs_rport_s *rport,
+>   
+>   	case RPSM_EVENT_LOGO_RCVD:
+>   		bfa_fcs_rport_send_logo_acc(rport);
+> +		/* fall through */
+>   	case RPSM_EVENT_PRLO_RCVD:
+>   		if (rport->prlo == BFA_TRUE)
+>   			bfa_fcs_rport_send_prlo_acc(rport);
+> @@ -1346,6 +1340,7 @@ bfa_fcs_rport_sm_logo_sending(struct bfa_fcs_rport_s *rport,
+>   
+>   	case RPSM_EVENT_LOGO_RCVD:
+>   		bfa_fcs_rport_send_logo_acc(rport);
+> +		/* fall through */
+>   	case RPSM_EVENT_PRLO_RCVD:
+>   		if (rport->prlo == BFA_TRUE)
+>   			bfa_fcs_rport_send_prlo_acc(rport);
 > 
