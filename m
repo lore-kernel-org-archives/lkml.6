@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C481C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 068FBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E8421479
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C68F92080D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Xt0aO/qC"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cN0HBEVN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbeLSMmu (ORCPT
+        id S1729818AbeLSMnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:42:50 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:54700 "EHLO
+        Wed, 19 Dec 2018 07:43:11 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54848 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729726AbeLSMms (ORCPT
+        with ESMTP id S1729795AbeLSMnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:42:48 -0500
+        Wed, 19 Dec 2018 07:43:08 -0500
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBJCgafD098484;
-        Wed, 19 Dec 2018 06:42:36 -0600
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBJCgmIb098512;
+        Wed, 19 Dec 2018 06:42:48 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545223356;
-        bh=/mryJEnDKpkn8c9z8vkT/gef1dG7mXbfXz/QOxGPW7c=;
+        s=ti-com-17Q1; t=1545223369;
+        bh=2Znl2d3jLCrX2Ss1Y7tIZm8c5dh8/ypWE14F2Dg39vw=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Xt0aO/qCvm1jPcl/uy0Dw1olZC3RzKQaWI0I1dE50ZjJeAun+tzmrUSNI5WuNEhxR
-         /PfqQTLIqUFTe+Wmz0pzgH+VDCuZKc7YKv1v+V9cWPsJAYCTbfxtZMlOlpKgprl01+
-         cOOjet7DzDeP5n/WuA0fTJ+LDu8ccN9xgp+bVhHg=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBJCga72034588
+        b=cN0HBEVN3hmW5fAJ4//i8TIpO2Uq1VPFjduNZEFAw4DShguZl/Ma0+ybS518Kn9KI
+         3sW9mLXBKH1Jf+dEPs7LFIc1YVnKouteFJdURXnCFDxNfdw/WHqe8X8Thys2ugbFSd
+         9FblDf/u0bscEcpZ1VtkrrXrl+Q2eTqGTn2RGtLA=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBJCgmI6034691
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Dec 2018 06:42:36 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 19 Dec 2018 06:42:48 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 19
- Dec 2018 06:42:36 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ Dec 2018 06:42:48 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 19 Dec 2018 06:42:36 -0600
+ Wed, 19 Dec 2018 06:42:48 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBJCgNZm003940;
-        Wed, 19 Dec 2018 06:42:33 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBJCgNZq003940;
+        Wed, 19 Dec 2018 06:42:45 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Murali Karicheri <m-karicheri2@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -57,9 +57,9 @@ CC:     Bjorn Helgaas <bhelgaas@google.com>,
         Jingoo Han <jingoohan1@gmail.com>, <linux-pci@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <kishon@ti.com>
-Subject: [PATCH 03/10] PCI: keystone: Modify legacy_irq_handler to check the IRQ_STATUS of INTA/B/C/D
-Date:   Wed, 19 Dec 2018 18:12:00 +0530
-Message-ID: <20181219124207.13479-4-kishon@ti.com>
+Subject: [PATCH 07/10] PCI: dwc: Add support to use non default msi_irq_chip
+Date:   Wed, 19 Dec 2018 18:12:04 +0530
+Message-ID: <20181219124207.13479-8-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181219124207.13479-1-kishon@ti.com>
 References: <20181219124207.13479-1-kishon@ti.com>
@@ -71,80 +71,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The legacy interrupt handler directly checks the IRQ_STATUS register
-corresponding to a interrupt line inorder to invoke generic_handle_irq.
+Platforms using Designware IP uses dw_pci_msi_bottom_irq_chip for
+configuring the MSI controller logic within the Designware IP. However
+certain platforms like Keystone (K2G) which uses Desingware IP has
+it's own MSI controller logic. For handling such platforms,
+the irqchip ops uses msi_irq_ack, msi_set_irq, msi_clear_irq callback
+functions.
 
-While this is okay for K2G platform which has separate interrupt line for
-each of the 4 legacy interrupts, AM654 which uses the same PCIe wrapper
-has a single interrupt line for all the legacy interrupts. So for AM654
-the interrupt handler won't be able to directly check the IRQ_STATUS
-register corresponding to the interrupt line.
+Add support to use different msi_irq_chip with default as
+dw_pci_msi_bottom_irq_chip. This is in preparation to get rid off
+msi_irq_ack, msi_set_irq, msi_clear_irq and other Keystone specific
+dw_pcie_host_ops.
 
-Also the legacy interrupt handler uses 'virq' obtained from
-irq_of_parse_and_map to find the correct interrupt line which raised the
-interrupt. There is no guarantee that virq assigned for contiguous hardware
-irq will be contiguous and the interrupt handler might end up checking
-the wrong IRQ_STATUS register.
-
-In order to overcome the above issues, read the IRQ_STATUS register of
-all the 4 legacy interrupts to determine which interrupt was raised.
-
-Link: https://lkml.kernel.org/r/bb081d21-7c03-0357-4294-7e92d95d838c@arm.com
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c | 5 ++++-
+ drivers/pci/controller/dwc/pcie-designware.h      | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 1ef443009da5..e9f5387136f0 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -214,16 +214,11 @@ static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
- {
- 	struct dw_pcie *pci = ks_pcie->pci;
- 	struct device *dev = pci->dev;
--	u32 pending;
- 	int virq;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 0fa9e8fdce66..db21bd11f153 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -245,7 +245,7 @@ static int dw_pcie_irq_domain_alloc(struct irq_domain *domain,
  
--	pending = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(offset));
--
--	if (BIT(0) & pending) {
--		virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
--		dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
--		generic_handle_irq(virq);
--	}
-+	virq = irq_linear_revmap(ks_pcie->legacy_irq_domain, offset);
-+	dev_dbg(dev, ": irq: irq_offset %d, virq %d\n", offset, virq);
-+	generic_handle_irq(virq);
+ 	for (i = 0; i < nr_irqs; i++)
+ 		irq_domain_set_info(domain, virq + i, bit + i,
+-				    &dw_pci_msi_bottom_irq_chip,
++				    pp->msi_irq_chip,
+ 				    pp, handle_edge_irq,
+ 				    NULL, NULL);
  
- 	/* EOI the INTx interrupt */
- 	ks_pcie_app_writel(ks_pcie, IRQ_EOI, offset);
-@@ -587,8 +582,9 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
- 	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
- 	struct dw_pcie *pci = ks_pcie->pci;
- 	struct device *dev = pci->dev;
--	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned int irq_no;
-+	u32 reg;
+@@ -277,6 +277,9 @@ int dw_pcie_allocate_domains(struct pcie_port *pp)
+ 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+ 	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
  
- 	dev_dbg(dev, ": Handling legacy irq %d\n", irq);
- 
-@@ -598,7 +594,13 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
- 	 * ack operation.
- 	 */
- 	chained_irq_enter(chip, desc);
--	ks_pcie_handle_legacy_irq(ks_pcie, irq_offset);
-+	for (irq_no = 0; irq_no < PCI_NUM_INTX; irq_no++) {
-+		reg = ks_pcie_app_readl(ks_pcie, IRQ_STATUS(irq_no));
-+		if (!(reg & INTx_EN))
-+			continue;
-+		ks_pcie_handle_legacy_irq(ks_pcie, irq_no);
-+	}
++	if (!pp->msi_irq_chip)
++		pp->msi_irq_chip = &dw_pci_msi_bottom_irq_chip;
 +
- 	chained_irq_exit(chip, desc);
- }
- 
+ 	pp->irq_domain = irq_domain_create_linear(fwnode, pp->num_vectors,
+ 					       &dw_pcie_msi_domain_ops, pp);
+ 	if (!pp->irq_domain) {
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 0989d880ac46..0873ee4084aa 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -168,6 +168,7 @@ struct pcie_port {
+ 	struct irq_domain	*irq_domain;
+ 	struct irq_domain	*msi_domain;
+ 	dma_addr_t		msi_data;
++	struct irq_chip		*msi_irq_chip;
+ 	u32			num_vectors;
+ 	u32			irq_status[MAX_MSI_CTRLS];
+ 	raw_spinlock_t		lock;
 -- 
 2.17.1
 
