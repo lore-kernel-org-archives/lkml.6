@@ -2,101 +2,239 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E04AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD1EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C678218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545212383;
-	bh=n1xjUUJ5dkXv3Mw5i6d+2py9yKHPP0ob6PH1FAVKnsI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WwsMHe+1jnLdVo0QGYFj8lfehp4l4GXsmtoXyccgjbaCtoUoGSVoZiw7L0GVrfhHC
-	 CPttTbL9j0kdRlWM8QGZITLwTTCjTVpP3LML3vc5wqFMv4lgvvw0N6xvaRb1Iumw62
-	 mLDfxXkbc4KyoneOa5F4KNN+euZ8G18lEv2bntS8=
+	by mail.kernel.org (Postfix) with ESMTP id 786E121850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbeLSJjm (ORCPT
+        id S1728680AbeLSJkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:39:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59550 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726537AbeLSJjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:39:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DE963ACEA;
-        Wed, 19 Dec 2018 09:39:39 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 10:39:38 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>,
-        akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v15 2/2] Add oom victim's memcg to the oom context
- information
-Message-ID: <20181219093938.GA5758@dhcp22.suse.cz>
-References: <20181122133954.GI18011@dhcp22.suse.cz>
- <CAHCio2gdCX3p-7=N0cA22cWTaUmUXRq8WbiMAA2sM2wLVX4GjQ@mail.gmail.com>
- <201812190723.wBJ7NdkN032628@www262.sakura.ne.jp>
+        Wed, 19 Dec 2018 04:40:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:59668 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728649AbeLSJks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 04:40:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53048A78;
+        Wed, 19 Dec 2018 01:40:48 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35E793F575;
+        Wed, 19 Dec 2018 01:40:45 -0800 (PST)
+Subject: Re: [RESEND PATCH v5 4/6] coresight: Use PMU driver configuration for
+ sink selection
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, suzuki.poulosi@arm.com,
+        linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1545067306-31687-1-git-send-email-mathieu.poirier@linaro.org>
+ <1545067306-31687-5-git-send-email-mathieu.poirier@linaro.org>
+ <48afc315-d4ed-8779-a808-757fa4203bb7@arm.com>
+ <CANLsYkyvq-K1M7jZ=rOEcGBySTktV_c7D4S2jBV_nS3cj8a8wg@mail.gmail.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <bb313a2d-b5fc-9329-5db6-4bf661d278bb@arm.com>
+Date:   Wed, 19 Dec 2018 09:40:43 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201812190723.wBJ7NdkN032628@www262.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANLsYkyvq-K1M7jZ=rOEcGBySTktV_c7D4S2jBV_nS3cj8a8wg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 19-12-18 16:23:39, Tetsuo Handa wrote:
-> Andrew, will you fold below diff into "mm, oom: add oom victim's memcg to the oom context information" ?
-> 
-> >From add1e8daddbfc5186417dbc58e9e11e7614868f8 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 19 Dec 2018 16:09:31 +0900
-> Subject: [PATCH] mm, oom: Use pr_cont() in mem_cgroup_print_oom_context().
-> 
-> One line summary of the OOM killer context is not one line due to
-> not using KERN_CONT.
-> 
-> [   23.346650] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0
-> [   23.346691] ,global_oom,task_memcg=/,task=firewalld,pid=5096,uid=0
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-Sorry, I have missed that during review. Thanks for catching this up!
 
-> ---
->  mm/memcontrol.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 18/12/2018 17:34, Mathieu Poirier wrote:
+> Good day Suzuki,
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index b860dd4f7..4afd597 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1306,10 +1306,10 @@ void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *
->  	rcu_read_lock();
->  
->  	if (memcg) {
-> -		pr_info(",oom_memcg=");
-> +		pr_cont(",oom_memcg=");
->  		pr_cont_cgroup_path(memcg->css.cgroup);
->  	} else
-> -		pr_info(",global_oom");
-> +		pr_cont(",global_oom");
->  	if (p) {
->  		pr_cont(",task_memcg=");
->  		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
-> -- 
-> 1.8.3.1
+> On Tue, 18 Dec 2018 at 07:14, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>
+>> Hi Mathieu,
+>>
+>> On 17/12/2018 17:21, Mathieu Poirier wrote:
+>>> This patch uses the PMU driver configuration held in event::hw::drv_config
+>>> to select a sink for each event that is created (the old sysFS way of
+>>> working is kept around for backward compatibility).
+>>>
+>>> By proceeding in this way a sink can be used by multiple sessions
+>>> without having to play games with entries in sysFS.
+>>>
+>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>>    drivers/hwtracing/coresight/coresight-etm-perf.c | 74 ++++++++++++++++++++----
+>>>    1 file changed, 62 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>>> index f21eb28b6782..a7e1fdef07f2 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>>> @@ -4,6 +4,7 @@
+>>>     * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>     */
+>>>
+>>> +#include <linux/amba/bus.h>
+>>>    #include <linux/coresight.h>
+>>>    #include <linux/coresight-pmu.h>
+>>>    #include <linux/cpumask.h>
+>>> @@ -11,6 +12,7 @@
+>>>    #include <linux/list.h>
+>>>    #include <linux/mm.h>
+>>>    #include <linux/init.h>
+>>> +#include <linux/ioport.h>
+>>>    #include <linux/perf_event.h>
+>>>    #include <linux/percpu-defs.h>
+>>>    #include <linux/slab.h>
+>>> @@ -177,6 +179,26 @@ static void etm_free_aux(void *data)
+>>>        schedule_work(&event_data->work);
+>>>    }
+>>>
+>>> +static struct coresight_device *etm_drv_config_sync(struct perf_event *event)
+>>
+>> minor nit: The name doesn't quite imply what we do here. Did you mean
+>> s/sync/sink ?
+>>
+> 
+> I chose "sync" with "synchronisation" in mind.  I tried to keep things
+> generic since we could potentially use the same interface to convey
+> complex PMU configuration.  Arguably we could go with "sink" for now
+> and change it to "sync" in the future - I'm not strongly opinionated
+> on that part.
 
--- 
-Michal Hocko
-SUSE Labs
+Ok. I thought we were trying to grab the sink information from the event
+drv_config, hence something that implies that would be slightly more
+reader friendly. Again, I am not too keen on it.
+
+> 
+>>> +{
+>>> +     struct coresight_device *sink = NULL;
+>>> +     struct pmu_drv_config *drv_config = perf_event_get_drv_config(event);
+>>> +
+>>> +     /*
+>>> +      * Make sure we don't race with perf_drv_config_replace() in
+>>> +      * kernel/events/core.c.
+>>> +      */
+>>> +     raw_spin_lock(&drv_config->lock);
+>>> +
+>>> +     /* Copy what we got from user space if applicable. */
+>>> +     if (drv_config->config)
+>>> +             sink = drv_config->config;
+>>> +
+>>> +     raw_spin_unlock(&drv_config->lock);
+>>> +
+>>> +     return sink;
+>>> +}
+>>> +
+>>>    static void *etm_setup_aux(struct perf_event *event, void **pages,
+>>>                           int nr_pages, bool overwrite)
+>>>    {
+>>> @@ -190,18 +212,11 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>>>                return NULL;
+>>>        INIT_WORK(&event_data->work, free_event_data);
+>>>
+>>> -     /*
+>>> -      * In theory nothing prevent tracers in a trace session from being
+>>> -      * associated with different sinks, nor having a sink per tracer.  But
+>>> -      * until we have HW with this kind of topology we need to assume tracers
+>>> -      * in a trace session are using the same sink.  Therefore go through
+>>> -      * the coresight bus and pick the first enabled sink.
+>>> -      *
+>>> -      * When operated from sysFS users are responsible to enable the sink
+>>> -      * while from perf, the perf tools will do it based on the choice made
+>>> -      * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
+>>> -      */
+>>> -     sink = coresight_get_enabled_sink(true);
+>>> +     /* First get the sink config from user space. */
+>>> +     sink = etm_drv_config_sync(event);
+>>> +     if (!sink)
+>>> +             sink = coresight_get_enabled_sink(true);
+>>> +
+>>>        if (!sink || !sink_ops(sink)->alloc_buffer)
+>>>                goto err;
+>>>
+>>> @@ -454,6 +469,40 @@ static void etm_addr_filters_sync(struct perf_event *event)
+>>>        filters->nr_filters = i;
+>>>    }
+>>>
+>>> +static int etm_drv_config_find_sink(struct device *dev, void *data)
+>>> +{
+>>> +     struct amba_device *adev = to_amba_device(dev->parent);
+>>> +     struct resource *res = &adev->res;
+>>> +     u64 value = *((u64 *)data);
+>>> +
+>>> +     /*
+>>> +      * The HW mapping of a component is unique.  If the value we've been
+>>> +      * given matches the component's start address, then we must have found
+>>> +      * the device we are looking for.
+>>> +      */
+>>
+>> To be frank, I don't quite like the idea of passing the base address of the
+>> component as the key to locate a device, (even though that is unique and readily
+>> available). I would rather prefer a programmable way to map the keys to the
+>> "sink" devices, which works platform agnostic (e.g, ACPI support, where the base
+>> address is not obvious from the name). Also if we decide to use a platform
+>> agnostic naming scheme, it becomes even more complex.
+> 
+> This mechanism doesn't rely on the naming scheme - it exploits the
+> "resource" interface exported for each amba device [1].  As such
+> whether the component is discovered using ACPI or DT, we end up on the
+> same amba bus and using the same interface.
+> 
+> [1]. https://elixir.bootlin.com/linux/latest/source/drivers/amba/bus.c#L128
+
+Ok. The only problem with this approach would be if the devices doesn't appear
+on the AMBA bus (btw, which is not true for the existing IPs).
+
+> 
+>>
+>> We could assign a static "id/key" exported either via the device sysfs dir or
+>> the "pmu" dir. I prefer the latter.
+> 
+> Not sure what you mean by "pmu" directory - would you mind expanding
+> on that?  Using sysfs would be quite easy but I am reluctant to create
+> a new id/key mechanism and introduce another entry when we have the
+> component address that is unique and already available in the amba
+> directory structure.
+
+We could add another directory under :
+
+/sys/bus/event_source/devices/<PMU>/
+				\_ events/
+				\_ format/
+say :
+		\_ drv_config/
+		Or
+		\_ sinks/
+
+and list the sinks, eg:
+# cd $sysfs_pmu_dir/sinks
+# cat <name_of_the_sink>
+ID_of_the_sink
+
+Btw, I am always inclined to using some bits off one of the "config" fields
+("config1" or "config2") for the sink configuration. But I understand that
+you have explored that avenue and chose this approach as we have further
+configurations required for complex ETM settings.
+
+Cheers
+Suzuki
