@@ -7,72 +7,72 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D428DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47337C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F176217D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:12:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 090612133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:13:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MCh7hFK3"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="AWTWSQJy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbeLSNMC (ORCPT
+        id S1728801AbeLSNM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:12:02 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43878 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbeLSNMC (ORCPT
+        Wed, 19 Dec 2018 08:12:58 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40236 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbeLSNM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:12:02 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f9so16885088eds.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:12:00 -0800 (PST)
+        Wed, 19 Dec 2018 08:12:58 -0500
+Received: by mail-ed1-f68.google.com with SMTP id g22so10870927edr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:12:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=sender:date:from:to:cc:subject:message-id:mail-followup-to
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=edUgZzd8BLfo6Hu38x+e5OW6IeTonKqX3TQ9mg8Dy6A=;
-        b=MCh7hFK3cjjVAmnSYIz0vdkhL60E/M0qh0WxBLN/VWnEMo/uNjMMBsWz5x3FqIjAF4
-         /PM4oYEPpiMDfY33lzXkwHlRmxwDYlo+al5CgmFW+maJNH5gv425s0p2TJv4Dw79hZWe
-         OZ/pqdgFA2+IJgTgNYIdkdrL682ndgOw6KRlw=
+        bh=d3beWpGlXWIqv3Q1J0W7TmoMyGgmDR+Q4OramTWjqhc=;
+        b=AWTWSQJyFtJd3XPQsQAvvtxz79mWmc4gDdfn7p9gQhrnlIB3fnBjtQoj4acdpmOpCM
+         gelmUQpY5GFTIZ1aMWqB3ljm8ym3TIGaSH7UDMUTqDSvGkjvrcYVblixh8itJKotYXe+
+         9bc0U5ig+v3zsSdw26x8O7Bc5PyNlXtvniskk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to:user-agent;
-        bh=edUgZzd8BLfo6Hu38x+e5OW6IeTonKqX3TQ9mg8Dy6A=;
-        b=VYHZvhEAc1s4J/xwnrqnb9HKINDhxwONEZKy2USj4UsS3Uhmi0fvm/BuOgaeBZTlLJ
-         pk1vmD3QDoyMI+ekWtAhlZvSbqEXXtsJPpbEadrEp8a/vCHKXk/Ui5GzXFr4FThdqqWA
-         ISrtawyQhNXI0ek/V7/QGDlWwTH3ceWn2LplHThQatuOembqXoMT/0mWYtewZL+2EaDL
-         jtOQ8BCLdeW9ILzHFYUJ5w+CbL0OUcHy3X2SSBajmhYvbSGokE6aogViZyqCwoyVMWhi
-         ickw3K6sGajFyA2e55FYVXaEkz3700T2FI50tKXZfYoyPlajNp4/sg3JFQG1rIFsbv0j
-         xS9w==
-X-Gm-Message-State: AA+aEWZY8ns6Uj+m9gH0zs/AT2xNBaDw4MwPJzSS0jNigA0UrYFIh9C4
-        7lQ6qQSKEraFAclt73b42wPFEw==
-X-Google-Smtp-Source: AFSGD/VgK9Vb5/vJmty/w5fbJTVc1XgoElGasCES4JuC75vXYT1AWcf4tfATVTcC7/JPI7mK5TXSYw==
-X-Received: by 2002:a17:906:6b99:: with SMTP id l25-v6mr15913524ejr.154.1545225120016;
-        Wed, 19 Dec 2018 05:12:00 -0800 (PST)
+        bh=d3beWpGlXWIqv3Q1J0W7TmoMyGgmDR+Q4OramTWjqhc=;
+        b=ZZ9VCMf3RCpdyS50lnjZOkG0U0o/jWGahtpg+xK0ikoA0HEcwiqWWTiM5Tw3TlqKBW
+         c5fV1+buYhF9f2gkw/pfr9FwRVDoVAueFuJ5Ep4zK1x57aM+SaAo7bq8eOcoEPGuZiYE
+         bQKC96+ztVDO+ifDFxGN19q/n/pXSDDH6zw9poC/ky5j5HMX1fk0aqUuFjrCwJDrx3q5
+         qrqBQJRhgwSAK56gAoGAOl4rWgODV29UMsOhIpptA+LufelPcdhjPTrWoNlRc7W1w3K8
+         9JpEFPUQaCTiDPa9xyUQvqCz0LCAHvwheAmXdR6HPXNVznSS/LzeXjpDAAB7TA2FhoCM
+         ahVQ==
+X-Gm-Message-State: AA+aEWYoOkG9Z9Z+okh0bw4nB4a9kyAH83hez4XvGQfzmgjYDTQlOk86
+        +H4/s+uf+2wBmKUdwMCG552sQQ==
+X-Google-Smtp-Source: AFSGD/WLG2h/7j0huSU+ApuFAHPMCOMibxgD0NIJ08TFAWYHVa47wEelObU6rOfQJNLbZ6LHwsEw5g==
+X-Received: by 2002:a17:906:60b:: with SMTP id s11-v6mr16621088ejb.25.1545225176714;
+        Wed, 19 Dec 2018 05:12:56 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id b11-v6sm2725298ejd.16.2018.12.19.05.11.58
+        by smtp.gmail.com with ESMTPSA id a15-v6sm2668920ejj.5.2018.12.19.05.12.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 05:11:59 -0800 (PST)
-Date:   Wed, 19 Dec 2018 14:11:57 +0100
+        Wed, 19 Dec 2018 05:12:56 -0800 (PST)
+Date:   Wed, 19 Dec 2018 14:12:54 +0100
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Shayenne Moura <shayenneluzmoura@gmail.com>
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/7] drm: omapdrm: Delete base.id prints
-Message-ID: <20181219131157.GQ21184@phenom.ffwll.local>
+Subject: Re: [PATCH 4/7] drm: i915: Delete base.id prints
+Message-ID: <20181219131254.GR21184@phenom.ffwll.local>
 Mail-Followup-To: Shayenne Moura <shayenneluzmoura@gmail.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20181218133815.vr3hi5dpq6g7kgh4@smtp.gmail.com>
+References: <20181218133821.sykwt6wdeo7uf6o7@smtp.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218133815.vr3hi5dpq6g7kgh4@smtp.gmail.com>
+In-Reply-To: <20181218133821.sykwt6wdeo7uf6o7@smtp.gmail.com>
 X-Operating-System: Linux phenom 4.18.0-2-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,51 +80,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:38:15AM -0200, Shayenne Moura wrote:
+On Tue, Dec 18, 2018 at 11:38:21AM -0200, Shayenne Moura wrote:
 > This patch removes base.id prints from drm_display_mode                         
-> objects in omapdrm files. It removes dependency from drm_mode_object.
+> objects in i915 files. It removes dependency from drm_mode_object.
 > 
 > Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
 
-Same comment as for msm, I think better to use this opportunity to switch
-over to DRM_MODE_FMT/ARG.
+Again I think better to switch to DRM_MODE_FMT/ARG.
 -Daniel
+
 > ---
->  drivers/gpu/drm/omapdrm/omap_connector.c | 4 ++--
->  drivers/gpu/drm/omapdrm/omap_crtc.c      | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/i915/i915_debugfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
-> index b81302c4bf9e..e02986e0b2c6 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_connector.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-> @@ -306,9 +306,9 @@ static int omap_connector_mode_valid(struct drm_connector *connector,
+> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+> index 7f455bca528e..61dd7bb3fa85 100644
+> --- a/drivers/gpu/drm/i915/i915_debugfs.c
+> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
+> @@ -2948,8 +2948,8 @@ static void intel_seq_print_mode(struct seq_file *m, int tabs,
+>  	for (i = 0; i < tabs; i++)
+>  		seq_putc(m, '\t');
 >  
->  done:
->  	DBG("connector: mode %s: "
-> -			"%d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
-> +			"\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
->  			(ret == MODE_OK) ? "valid" : "invalid",
-> -			mode->base.id, mode->name, mode->vrefresh, mode->clock,
-> +			mode->name, mode->vrefresh, mode->clock,
->  			mode->hdisplay, mode->hsync_start,
->  			mode->hsync_end, mode->htotal,
->  			mode->vdisplay, mode->vsync_start,
-> diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> index caffc547ef97..3d6febb2e9c4 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> @@ -427,8 +427,8 @@ static void omap_crtc_mode_set_nofb(struct drm_crtc *crtc)
->  	struct omap_crtc *omap_crtc = to_omap_crtc(crtc);
->  	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
->  
-> -	DBG("%s: set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
-> -	    omap_crtc->name, mode->base.id, mode->name,
-> +	DBG("%s: set mode: \"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
-> +	    omap_crtc->name, mode->name,
->  	    mode->vrefresh, mode->clock,
->  	    mode->hdisplay, mode->hsync_start, mode->hsync_end, mode->htotal,
->  	    mode->vdisplay, mode->vsync_start, mode->vsync_end, mode->vtotal,
+> -	seq_printf(m, "id %d:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
+> -		   mode->base.id, mode->name,
+> +	seq_printf(m, "name:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
+> +		   mode->name,
+>  		   mode->vrefresh, mode->clock,
+>  		   mode->hdisplay, mode->hsync_start,
+>  		   mode->hsync_end, mode->htotal,
 > -- 
 > 2.17.1
 > 
