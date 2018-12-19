@@ -2,263 +2,135 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2147EC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EEEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C08E421850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545211862;
-	bh=43RgjK+bimjRZebyCRaB+JDYm/WRObPDexhEklyetMw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mgEKiBAOsFepvMvoxTTXbBY/kf897+2T+mn2FHJoe5gkxt4CjrdPe6LhnRk9yCXyK
-	 chuZU/FoFusiWm2TwiHFF5BBHesE3fjipr/bJzPk3cSd7Nipj00JfgZg8njw3SbLJS
-	 /uonn93kywxJIPvErDXwEi+YqenQjwlHrm0OflWQ=
+	by mail.kernel.org (Postfix) with ESMTP id 4093321873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbeLSJbA (ORCPT
+        id S1728529AbeLSJcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:31:00 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38304 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbeLSJbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:31:00 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so1082831oii.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:30:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zaV1S3jRnupj8z/aJXgXQ2SsK5por60pzK+MJa4INVE=;
-        b=sr88fyJmXRRF6hrJxvjiszeMJ2sloqeJV4RT1aSwGWbnN2Z0bXI7csME7o5mgxy/lK
-         2weNhUW3MWKYC8Wrl+cG0DBo2jZPyxqujjDAQd+L3R5Yo9X6SGFbAQuJk2TfrAQ00zZi
-         I3w6YrPc0T0Bfv0g7tmhusqEwaFIgB1e5TzliRajnGck3FRq+8zmubEfYubYr6ZuMAYY
-         qFK68qumub+KZ8UhRDacQWO2Fr092Ae6MOJUX0PUFj5s++eYeQaplcfNVcLiAT7/SzM8
-         /gDhp9Dr4SSEy1jBnYu+GNPcB3if7MkxjUQd2qmj2G9Zd0tmxs8UZZjRS/WCtwxAHlM+
-         4KCw==
-X-Gm-Message-State: AA+aEWbkD+yhX/lD3MksG5CTA5190seWWrcZ5hVmWrMmp8OQdPCNDU/n
-        bsiGwfxYyoaWYC9f18rPlYzbUT8lJxOxhcUwM3c=
-X-Google-Smtp-Source: AFSGD/UVVcWnKEIG+Zp0Se8cWI6q92wk7H40AEIyccmxTJCu8gkGKHHTBL5+Vo8O0YtenAy3diBdem0Pd9quFsFxCtg=
-X-Received: by 2002:aca:6c8b:: with SMTP id h133mr683308oic.33.1545211859050;
- Wed, 19 Dec 2018 01:30:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20181218201443.4950-1-daniel.vetter@ffwll.ch> <20181219070110.GB21256@kroah.com>
- <CAKMK7uF0dDeomEyDkeZGSqCE66f76ME2EkuExVPJv6Bu=tKQSg@mail.gmail.com>
-In-Reply-To: <CAKMK7uF0dDeomEyDkeZGSqCE66f76ME2EkuExVPJv6Bu=tKQSg@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 19 Dec 2018 10:30:47 +0100
-Message-ID: <CAJZ5v0g6Nmmjp3a7vkS-C+caq1niq3Usa8NAm+gJ6R1O005TSw@mail.gmail.com>
-Subject: Re: [PATCH] sysfs: Disable lockdep for driver bind/unbind files
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        Wed, 19 Dec 2018 04:32:12 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59492 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727522AbeLSJcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 04:32:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CAF9A78;
+        Wed, 19 Dec 2018 01:32:11 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D44123F575;
+        Wed, 19 Dec 2018 01:32:08 -0800 (PST)
+Date:   Wed, 19 Dec 2018 09:32:03 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, ramalingam.c@intel.com,
-        aspriel@gmail.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>, brgl@bgdev.pl,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, hu1.chen@intel.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] cpuidle: New timer events oriented governor for tickless
+ systems
+Message-ID: <20181219093200.3e5zr7ixxowboanv@queper01-lin>
+References: <128769314.7imKxugEn6@aspire.rjw.lan>
+ <20181218114949.c6npu357fj65l5iv@queper01-ThinkPad-T460s>
+ <CAJZ5v0grJJi7572vdT7eudMTSW6h+9KT8WSNXa-z8rWqp-Fikw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0grJJi7572vdT7eudMTSW6h+9KT8WSNXa-z8rWqp-Fikw@mail.gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 10:24 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> On Wed, Dec 19, 2018 at 8:01 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Dec 18, 2018 at 09:14:43PM +0100, Daniel Vetter wrote:
-> > > This is the much more correct fix for my earlier attempt at:
-> > >
-> > > https://lkml.org/lkml/2018/12/10/118
-> > >
-> > > Short recap:
-> > >
-> > > - There's not actually a locking issue, it's just lockdep being a bit
-> > >   too eager to complain about a possible deadlock.
-> > >
-> > > - Contrary to what I claimed the real problem is recursion on
-> > >   kn->count. Greg pointed me at sysfs_break_active_protection(), used
-> > >   by the scsi subsystem to allow a sysfs file to unbind itself. That
-> > >   would be a real deadlock, which isn't what's happening here. Also,
-> > >   breaking the active protection means we'd need to manually handle
-> > >   all the lifetime fun.
-> > >
-> > > - With Rafael we discussed the task_work approach, which kinda works,
-> > >   but has two downsides: It's a functional change for a lockdep
-> > >   annotation issue, and it won't work for the bind file (which needs
-> > >   to get the errno from the driver load function back to userspace).
-> > >
-> > > - Greg also asked why this never showed up: To hit this you need to
-> > >   unregister a 2nd driver from the unload code of your first driver. I
-> > >   guess only gpus do that. The bug has always been there, but only
-> > >   with a recent patch series did we add more locks so that lockdep
-> > >   built a chain from unbinding the snd-hda driver to the
-> > >   acpi_video_unregister call.
-> > >
-> > > Full lockdep splat:
-> > >
-> > > [12301.898799] ============================================
-> > > [12301.898805] WARNING: possible recursive locking detected
-> > > [12301.898811] 4.20.0-rc7+ #84 Not tainted
-> > > [12301.898815] --------------------------------------------
-> > > [12301.898821] bash/5297 is trying to acquire lock:
-> > > [12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-> > > [12301.898841] but task is already holding lock:
-> > > [12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> > > [12301.898856] other info that might help us debug this:
-> > > [12301.898862]  Possible unsafe locking scenario:
-> > > [12301.898867]        CPU0
-> > > [12301.898870]        ----
-> > > [12301.898874]   lock(kn->count#39);
-> > > [12301.898879]   lock(kn->count#39);
-> > > [12301.898883] *** DEADLOCK ***
-> > > [12301.898891]  May be due to missing lock nesting notation
-> > > [12301.898899] 5 locks held by bash/5297:
-> > > [12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-> > > [12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-> > > [12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> > > [12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-> > > [12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-> > > [12301.898960] stack backtrace:
-> > > [12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-> > > [12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-> > > [12301.898982] Call Trace:
-> > > [12301.898989]  dump_stack+0x67/0x9b
-> > > [12301.898997]  __lock_acquire+0x6ad/0x1410
-> > > [12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> > > [12301.899010]  ? find_held_lock+0x2d/0x90
-> > > [12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-> > > [12301.899023]  ? find_held_lock+0x2d/0x90
-> > > [12301.899030]  ? lock_acquire+0x90/0x180
-> > > [12301.899036]  lock_acquire+0x90/0x180
-> > > [12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> > > [12301.899049]  __kernfs_remove+0x296/0x310
-> > > [12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> > > [12301.899060]  ? kernfs_name_hash+0xd/0x80
-> > > [12301.899066]  ? kernfs_find_ns+0x6c/0x100
-> > > [12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-> > > [12301.899080]  bus_remove_driver+0x92/0xa0
-> > > [12301.899085]  acpi_video_unregister+0x24/0x40
-> > > [12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-> > > [12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-> > > [12301.899169]  pci_device_remove+0x36/0xb0
-> > > [12301.899176]  device_release_driver_internal+0x185/0x240
-> > > [12301.899183]  unbind_store+0xaf/0x180
-> > > [12301.899189]  kernfs_fop_write+0x104/0x190
-> > > [12301.899195]  __vfs_write+0x31/0x180
-> > > [12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-> > > [12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-> > > [12301.899216]  ? __sb_start_write+0x13c/0x1a0
-> > > [12301.899221]  ? vfs_write+0x17f/0x1b0
-> > > [12301.899227]  vfs_write+0xb9/0x1b0
-> > > [12301.899233]  ksys_write+0x50/0xc0
-> > > [12301.899239]  do_syscall_64+0x4b/0x180
-> > > [12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > > [12301.899253] RIP: 0033:0x7f452ac7f7a4
-> > > [12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-> > > [12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> > > [12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-> > > [12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-> > > [12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-> > > [12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-> > > [12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
-> > >
-> > > Locking around I've noticed that usb and i2c already handle similar
-> > > recursion problems, where a sysfs file can unbind the same type of
-> > > sysfs somewhere else in the hierarchy. Relevant commits are:
-> > >
-> > > commit 356c05d58af05d582e634b54b40050c73609617b
-> > > Author: Alan Stern <stern@rowland.harvard.edu>
-> > > Date:   Mon May 14 13:30:03 2012 -0400
-> > >
-> > >     sysfs: get rid of some lockdep false positives
-> > >
-> > > commit e9b526fe704812364bca07edd15eadeba163ebfb
-> > > Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-> > > Date:   Fri May 17 14:56:35 2013 +0200
-> > >
-> > >     i2c: suppress lockdep warning on delete_device
-> > >
-> > > Implement the same trick for driver bind/unbind.
-> > >
-> > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: Ramalingam C <ramalingam.c@intel.com>
-> > > Cc: Arend van Spriel <aspriel@gmail.com>
-> > > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> > > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > > Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > > Cc: Joe Perches <joe@perches.com>
-> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > > ---
-> > >  drivers/base/bus.c     | 4 ++--
-> > >  include/linux/device.h | 4 ++++
-> > >  2 files changed, 6 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> > > index 8bfd27ec73d6..5d2411b848cd 100644
-> > > --- a/drivers/base/bus.c
-> > > +++ b/drivers/base/bus.c
-> > > @@ -195,7 +195,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
-> > >       bus_put(bus);
-> > >       return err;
-> > >  }
-> > > -static DRIVER_ATTR_WO(unbind);
-> > > +static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
-> > >
-> > >  /*
-> > >   * Manually attach a device to a driver.
-> > > @@ -231,7 +231,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
-> > >       bus_put(bus);
-> > >       return err;
-> > >  }
-> > > -static DRIVER_ATTR_WO(bind);
-> > > +static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
-> > >
-> > >  static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
-> > >  {
-> > > diff --git a/include/linux/device.h b/include/linux/device.h
-> > > index 1b25c7a43f4c..d2cb1a6c5d95 100644
-> > > --- a/include/linux/device.h
-> > > +++ b/include/linux/device.h
-> > > @@ -326,6 +326,10 @@ struct driver_attribute {
-> > >       struct driver_attribute driver_attr_##_name = __ATTR_RO(_name)
-> > >  #define DRIVER_ATTR_WO(_name) \
-> > >       struct driver_attribute driver_attr_##_name = __ATTR_WO(_name)
-> > > +#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-> > > +     struct driver_attribute driver_attr_##_name =           \
-> > > +             __ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
+On Tuesday 18 Dec 2018 at 16:31:13 (+0100), Rafael J. Wysocki wrote:
+> > > +             /*
+> > > +              * Count and sum the most recent idle duration values less than
+> > > +              * the target residency of the state selected so far, find the
+> > > +              * max.
+> > > +              */
+> > > +             for (i = 0; i < INTERVALS; i++) {
+> > > +                     unsigned int val = cpu_data->intervals[i];
 > > > +
+> > > +                     if (val >= drv->states[idx].target_residency)
+> > > +                             continue;
+> > > +
+> > > +                     count++;
+> > > +                     sum += val;
+> > > +             }
+> > > +
+> > > +             /*
+> > > +              * Give up unless the majority of the most recent idle duration
+> > > +              * values are in the interesting range.
+> > > +              */
+> > > +             if (count > INTERVALS / 2) {
 > >
-> > I don't want to give driver writers the ability to shoot themselves in
-> > the foot, can you just put this in the bus.c file itself so that no one
-> > else will abuse this and "open code" the unbind/bind attributes instead
-> > of using a #define for it?
->
-> So part of the reasons I've put these here is that I think we can do a
-> lot better. Instead of ignoring lockdep I think we can implement
-> nested lockdep annotations. It's going to be a bit a pain to wire that
-> through from sysfs->kernfs, but for all the (now 3) uses of
-> _IGNORE_LOCKDEP it should work if the add/remove_files functions use
-> mutex_lock_nested.
+> > I understand this probably works well enough in practice, but how 'robust'
+> > is supposed to be this filtering here ? If you have, say, 2 tasks with
+> > prime periods, then the hyper-period (which is when the pattern repeats)
+> > can get high really quickly, and you'll never see the full extent of
+> > that pattern with this mechanism.
+> 
+> That's correct, but this is just about whether or not there is a
+> reason to select an idle state shallower than the one selected
+> already.  How the pattern looks like exactly doesn't matter too much
+> here AFAICS.
 
-Agreed.
+Right, I think what I was trying to say is that if you could actually
+capture at least one full hyper-period, then the avg_us you're computing
+here would be 'stable' as long as you're not changing workloads. So the
+prediction should be accurate overall, in average.
 
->I think then there's not really a problem with
-> exposing this. Aside from it's already exposed, but only for devices,
-> as DEVICE_ATTR_IGNORE_LOCKDEP.
+But maybe we don't want that. At least it's not obvious we always want
+that. Maybe the hyper-period is so large that you'd be better off
+looking only at portion of it and locally optimize things ...
 
-Right.
+So yes, this is very much a theoretical question. And the results will,
+as always, largely depend on the workload you're running, so nevermind.
+
+> > Yes, it's hard to do much better without introducing tons of complexity
+> > in here, but how did you define INTERVALS=8 and so ?
+> 
+> I blatantly stole this number from the menu governor. :-)
+
+Fair enough ;-)
+
+> > > +                     unsigned int avg_us = div64_u64(sum, count);
+> > > +
+> > > +                     /*
+> > > +                      * Avoid spending too much time in an idle state that
+> > > +                      * would be too shallow.
+> > > +                      */
+> > > +                     if (!(tick_nohz_tick_stopped() && avg_us < TICK_USEC)) {
+> >
+> > IIUC, this is saying we shouldn't trust the predicted sleep time if it
+> > is shorter than the tick and the tick is stopped. What is the use case
+> > you have in mind for this ?
+> >
+> > In other words, in which scenario do you expect to see a lot of high
+> > frequency non-timer-related wake-ups and have the tick disabled ?
+> 
+> It is mostly theoretical, but the rationale here is that the cost of
+> using a shallow idle state with the tick stopped is potentially very
+> high (the CPU may stay in that idle state for a very long time then),
+> so it is better to assume misprediction in that case to avoid that
+> cost.
+
+I see, and since we should in fact have the tick enabled when loads of
+tasks are running, then this check should usually be harmless in
+practice. Makes sense.
+
+Thanks,
+Quentin
