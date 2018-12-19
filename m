@@ -2,221 +2,152 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097A8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BBCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB89721479
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:53:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2293A21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4zdV+V7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbeLSMxA (ORCPT
+        id S1728475AbeLSMyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:53:00 -0500
-Received: from foss.arm.com ([217.140.101.70]:34772 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbeLSMxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:53:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D18F7A78;
-        Wed, 19 Dec 2018 04:52:59 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47CD73F5C0;
-        Wed, 19 Dec 2018 04:52:55 -0800 (PST)
-Date:   Wed, 19 Dec 2018 12:52:52 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-Message-ID: <20181219125249.GB22067@e103592.cambridge.arm.com>
-References: <cover.1544445454.git.andreyknvl@google.com>
- <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
- <20181212150230.GH65138@arrakis.emea.arm.com>
- <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
- <20181218175938.GD20197@arrakis.emea.arm.com>
+        Wed, 19 Dec 2018 07:54:02 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42601 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbeLSMyB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:54:01 -0500
+Received: by mail-vs1-f66.google.com with SMTP id b74so12152702vsd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 04:53:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jcFIssZ5uCnxarSbhhjy8lOdqNazHu2rLSIxhH6ZZ94=;
+        b=P4zdV+V7D+kJ2OqmDWA+6CaNThu6p87cXk7tzR7cPP1nzGV/PgkkxXFWRpE22BGrCz
+         kKUh7dMorNC16o3ZrXj/gLY//viyUdiS6zJlPQDjByvZz1QdSiJ5ctp2sTaCVNRZwAov
+         +wejvtkYQLzZ9l27zP0bRucJFRuPmU3Fh08s0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jcFIssZ5uCnxarSbhhjy8lOdqNazHu2rLSIxhH6ZZ94=;
+        b=seJ/P0/NSFxInYZUKQWlyD/Cw5FYr/Btv3sEAZ149f4brHHB7oxBgZ3Y+XZWU5EUjW
+         XFnZ/O7fOPsGS5DGj3ZrLfWO40GzyzpGngX+ks7rRYZnfCR1B7apknSXLCYkuPHBb7iW
+         +aAuRLlO8BTQDIXC878hypU2XfPh2ZCCE01Nj/lQdD8xlZ7XxGpd954becLpVgRpPpEW
+         H81ifRHCIoP6vO5Io46g3syc1MOPpPD5l2SR7RqVIaf9qwwTCA0ytmvwdJ5O+Ll1HGgj
+         OdJzQKabD1KK69Of4/EDjvjtY2pdlekkSPIdke54IJnIoWx3nbOj7uxiSl8XT4+r3nPX
+         MlGQ==
+X-Gm-Message-State: AA+aEWYx8urfXarw3+6cSCvAzWcTcKWDgA/f1LmxDbgmjpnoQjvIvWQZ
+        bdvaubc3+P24kQiwzzKQ+Rmfby9SBp6h2hL6+Wh2qg==
+X-Google-Smtp-Source: AFSGD/Wh86tdW772GFuHMHhvw2DdDNpd3ZVUMAJgAka8VlI8rOlkT+Iwc3ty+6s4rvkmgNu0DKQFlrF5x8NX5sJKoZo=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr10207107vsh.200.1545224039014;
+ Wed, 19 Dec 2018 04:53:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218175938.GD20197@arrakis.emea.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-14-ulf.hansson@linaro.org> <a5c19c01-31d5-f703-663c-3d5bd2ea8201@linaro.org>
+In-Reply-To: <a5c19c01-31d5-f703-663c-3d5bd2ea8201@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 19 Dec 2018 13:53:23 +0100
+Message-ID: <CAPDyKFpa6cCfQtfNo=CN0=BpY6bARfnVWRH0N=apQgVr1m24Og@mail.gmail.com>
+Subject: Re: [PATCH v10 13/27] drivers: firmware: psci: Support hierarchical
+ CPU idle states
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lina Iyer <lina.iyer@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 05:59:38PM +0000, Catalin Marinas wrote:
-> On Tue, Dec 18, 2018 at 04:03:38PM +0100, Andrey Konovalov wrote:
-> > On Wed, Dec 12, 2018 at 4:02 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > The summary of our internal discussions (mostly between kernel
-> > > developers) is that we can't properly describe a user ABI that covers
-> > > future syscalls or syscall extensions while not all syscalls accept
-> > > tagged pointers. So we tweaked the requirements slightly to only allow
-> > > tagged pointers back into the kernel *if* the originating address is
-> > > from an anonymous mmap() or below sbrk(0). This should cover some of the
-> > > ioctls or getsockopt(TCP_ZEROCOPY_RECEIVE) where the user passes a
-> > > pointer to a buffer obtained via mmap() on the device operations.
-> > >
-> > > (sorry for not being clear on what Vincenzo's proposal implies)
-> > 
-> > OK, I see. So I need to make the following changes to my patchset AFAIU.
-> > 
-> > 1. Make sure that we only allow tagged user addresses that originate
-> > from an anonymous mmap() or below sbrk(0). How exactly should this
-> > check be performed?
-> 
-> I don't think we should perform such checks. That's rather stating that
-> the kernel only guarantees that the tagged pointers work if they
-> originated from these memory ranges.
+On Wed, 19 Dec 2018 at 13:11, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On 29/11/2018 18:46, Ulf Hansson wrote:
+> > From: Lina Iyer <lina.iyer@linaro.org>
+> >
+> > Currently CPU's idle states are represented in a flattened model, via t=
+he
+> > "cpu-idle-states" binding from within the CPU's device nodes.
+> >
+> > Support the hierarchical layout, simply by converting to calling the ne=
+w OF
+> > helper, of_get_cpu_state_node().
+> >
+> > Cc: Lina Iyer <ilina@codeaurora.org>
+> > Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+> > Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+>
+> Fold it with 07/27 ?
 
-I concur.
+I can do that. However, normally we try to keep changes that touches
+different subsystems, separate from each other. Of course sometimes
+it's not possible and sometimes it just doesn't make sense to separate
+changes.
 
-Really, the kernel should do the expected thing with all "non-weird"
-memory.
+Perhaps the PSCI maintainers and Rafael can give their opinion.
 
-In lieu of a proper definition of "non-weird", I think we should have
-some lists of things that are explicitly included, and also excluded:
+Kind regards
+Uffe
 
-OK:
-	kernel-allocated process stack
-	brk area
-	MAP_ANONYMOUS | MAP_PRIVATE
-	MAP_PRIVATE mappings of /dev/zero
-
-Not OK:
-	MAP_SHARED
-	mmaps of non-memory-like devices
-	mmaps of anything that is not a regular file
-	the VDSO
-	...
-
-In general, userspace can tag memory that it "owns", and we do not assume
-a transfer of ownership except in the "OK" list above.  Otherwise, it's
-the kernel's memory, or the owner is simply not well defined.
-
-
-I would also like to see advice for userspace developers, particularly
-things like (strawman, please challenge!):
-
- * Userspace should set tags at the point of allocation only.
-
- * If you don't know how an object was allocated, you cannot modify the
-   tag, period.
-
- * A single C object should be accessed using a single, fixed pointer tag
-   throughout its entire lifetime.
-
- * Tags can be changed only when there are no outstanding pointers to
-   the affected object or region that may be used to access the object
-   or region (i.e., if the object were allocated from the C heap and
-   is it safe to realloc() it, then it is safe to change the tag; for
-   other types of allocation, analogous arguments can be applied).
-
- * When the kernel dereferences a pointer on userspace's behalf, it
-   shall behave equivalently to userspace dereferencing the same pointer,
-   including use of the same tag (where passed by userspace).
-
- * Where the pointer tag affects pointer dereference behaviour (i.e.,
-   with hardware memory colouring) the kernel makes no guarantee to
-   honour pointer tags correctly for every location a buffer based on a
-   pointer passed by userspace to the kernel.
-
-   (This means for example that for a read(fd, buf, size), we can check
-   the tag for a single arbitrary location in *(char (*)[size])buf
-   before passing the buffer to get_user_pages().  Hopefully this could
-   be done in get_user_pages() itself rather than hunting call sites.
-   For userspace, it means that you're on your own if you ask the
-   kernel to operate on a buffer than spans multiple, independently-
-   allocated objects, or a deliberately striped single object.)
-
- * The kernel shall not extend the lifetime of user pointers in ways
-   that are not clear from the specification of the syscall or
-   interface to which the pointer is passed (and in any case shall not
-   extend pointer lifetimes without good reason).
-
-   So no clever transparent caching between syscalls, unless it _really_
-   is transparent in the presence of tags.
-
- * For purposes other than dereference, the kernel shall accept any
-   legitimately tagged pointer (according to the above rules) as
-   identifying the associated memory location.
-
-   So, mprotect(some_page_aligned_object, ...); is valid irrespective
-   of where page_aligned_object() came from.  There is no implicit
-   derefence by the kernel here, hence no tag check.
-
-   The kernel does not guarantee to work correctly if the wrong tag
-   is used, but there is not always a well-defined "right" tag, so
-   we can't really guarantee to check it.  So a pointer derived by
-   any reasonable means by userspace has to be treated as equally
-   valid.
-  
-
-We would need to get some cross-arch buy-in for this, otherwise core
-maintainers might just refuse to maintain the necessary guarantees.
-
-
-> > 2. Allow tagged addressed passed to memory syscalls (as long as (1) is
-> > satisfied). Do I understand correctly that this means that I need to
-> > locate all find_vma() callers outside of mm/ and fix them up as well?
-> 
-> Yes (unless anyone as a better idea or objections to this approach).
-
-Also, watch out for code that pokes about inside struct vma directly.
-
-I'm wondering, could we define an explicit type, say,
-
-	struct user_vaddr {
-		unsigned long addr;
-	};
-
-to replace the unsigned longs in struct vma the mm API?  This would
-turn ad-hoc (unsigned long) casts into build breaks.  We could have
-an explicit conversion functions, say,
-
-	struct user_vaddr __user_vaddr_unsafe(void __user *);
-	void __user *__user_ptr_unsafe(struct user_vaddr);
-
-that we robotically insert in all the relevant places to mark
-unaudited code.
-
-This allows us to keep the kernel buildable, while flagging things
-that will need review.  We would also need to warn the mm folks to
-reject any new code using these unsafe conversions.
-
-Of course, it would be a non-trivial effort...
-
-> 
-> BTW, I'll be off until the new year, so won't be able to follow up.
-
-Cheers
----Dave
+>
+> >
+> > Changes in v10:
+> >       - None.
+> >
+> > ---
+> >  drivers/firmware/psci/psci.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.=
+c
+> > index cbfc936d251c..631e20720a22 100644
+> > --- a/drivers/firmware/psci/psci.c
+> > +++ b/drivers/firmware/psci/psci.c
+> > @@ -300,7 +300,7 @@ static int psci_dt_cpu_init_idle(struct cpuidle_dri=
+ver *drv,
+> >               return -ENOMEM;
+> >
+> >       for (i =3D 0; i < num_state_nodes; i++) {
+> > -             state_node =3D of_parse_phandle(cpu_node, "cpu-idle-state=
+s", i);
+> > +             state_node =3D of_get_cpu_state_node(cpu_node, i);
+> >               if (!state_node)
+> >                       break;
+> >
+> >
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
