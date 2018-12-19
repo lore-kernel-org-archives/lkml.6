@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C03F0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 623F5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D6FD21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C23221841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbeLSNh0 (ORCPT
+        id S1729197AbeLSNhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:37:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56726 "EHLO mx1.suse.de"
+        Wed, 19 Dec 2018 08:37:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56750 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726833AbeLSNh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:37:26 -0500
+        id S1729031AbeLSNhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 08:37:36 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6052CACC6;
-        Wed, 19 Dec 2018 13:37:24 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 14:37:23 +0100
-Message-ID: <s5hlg4lbpt8.wl-tiwai@suse.de>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B02B3ACD9;
+        Wed, 19 Dec 2018 13:37:34 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 14:37:34 +0100
+Message-ID: <s5hk1k5bpsx.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     " Gustavo A. R. Silva " <gustavo@embeddedor.com>
 Cc:     "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: rme9652: Fix potential Spectre v1 vulnerability
-In-Reply-To: <20181218171834.GA14211@embeddedor>
-References: <20181218171834.GA14211@embeddedor>
+Subject: Re: [PATCH] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
+In-Reply-To: <20181218175216.GA16070@embeddedor>
+References: <20181218175216.GA16070@embeddedor>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -42,29 +42,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 18:18:34 +0100,
+On Tue, 18 Dec 2018 18:52:16 +0100,
  Gustavo A. R. Silva  wrote:
 > 
-> info->channel is indirectly controlled by user-space, hence leading to
+> ipcm->substream is indirectly controlled by user-space, hence leading to
 > a potential exploitation of the Spectre variant 1 vulnerability.
 > 
 > This issue was detected with the help of Smatch:
 > 
-> sound/pci/rme9652/hdsp.c:4100 snd_hdsp_channel_info() warn: potential spectre issue 'hdsp->channel_map' [r] (local cap)
+> sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+> sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
 > 
-> Fix this by sanitizing info->channel before using it to index hdsp->channel_map
+> Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
 > 
 > Notice that given that speculation windows are large, the policy is
 > to kill the speculation on the first load and not worry if it can be
 > completed with a dependent load/store [1].
-> 
-> Also, notice that I refactored the code a bit in order to get rid of the
-> following checkpatch warning:
-> 
-> ERROR: do not use assignment in if condition
-> FILE: sound/pci/rme9652/hdsp.c:4103:
-> 	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-> 
 > 
 > [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 > 
