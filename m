@@ -2,129 +2,124 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 632C8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AF1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF0C20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53BFF20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:11:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s4toArgF"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jVtsQTWp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bb97B/uS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbeLSWJE (ORCPT
+        id S1729664AbeLSWLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:09:04 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47992 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbeLSWJE (ORCPT
+        Wed, 19 Dec 2018 17:11:31 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44420 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729462AbeLSWLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:09:04 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBJM8wWg054279;
-        Wed, 19 Dec 2018 16:08:58 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545257338;
-        bh=W3EEFYV+J3vUW/Ks/s4mmOj3yL7xFlZ5v9QVFnBbeis=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=s4toArgFJE54MwkvaNIxn8HmSM9Pqg+hOx1kEd9MttMiI3GEamWBud8C6iX/UPZCx
-         LbZxfUJfML/q/nl81K7EgPgXOpjl3SUwmlx6KNhdZe6a3NP2a1u/EZjNV17FlYHOWa
-         jrU7vqHG4neFGkRD21e00kRJpO/76UfkD5Jxz3t8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBJM8wH6117899
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Dec 2018 16:08:58 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 19
- Dec 2018 16:08:58 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 19 Dec 2018 16:08:58 -0600
-Received: from [172.22.106.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBJM8wLZ026476;
-        Wed, 19 Dec 2018 16:08:58 -0600
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-To:     Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-CC:     <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-3-dmurphy@ti.com> <20181219193455.GA21159@amd>
- <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com> <20181219201047.GA23448@amd>
- <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com> <20181219220326.GA28244@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com>
-Date:   Wed, 19 Dec 2018 16:08:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 19 Dec 2018 17:11:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 768A760851; Wed, 19 Dec 2018 22:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545257489;
+        bh=2HsORYIzhRzBiA8U7lu4n6cxvzSqDNW0O7eObXYubCE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jVtsQTWpKXUt0RNyf4lFInwX8v2N10nrkW3TH7h/MzJrdJ67+vXg3R/+ZUEt/3B2h
+         V1ZNq6oBwom6DF6I1Lf1OfCbuKLYvy6UEcMQY0NG9N2uUWK+XYE50b1ALE1zXVFgwa
+         k9Xk5wYQoiOpftEnyGgzNPZPM4UBhYSmgA6lHdP4=
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D941660208;
+        Wed, 19 Dec 2018 22:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545257488;
+        bh=2HsORYIzhRzBiA8U7lu4n6cxvzSqDNW0O7eObXYubCE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bb97B/uSh62DnWIJyQjxQYrxOTKbmpeBsERBTfXnugEOC98+x8wRlV5PWyZkAOsSL
+         uaF31MWcAwMN0MjtdVqm3KZb4h3eJYDpn/XyhsrDdmga94TJtJlO8o+VPyatRJUjQf
+         m6IUdGaycewU9j+mdoiKrgh+0ZnBrUY6T4wMWXBI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D941660208
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     sboyd@kernel.org, evgreen@chromium.org, marc.zyngier@arm.com
+Cc:     linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
+        bjorn.andersson@linaro.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH 0/7] qcom: support wakeup capable GPIOs
+Date:   Wed, 19 Dec 2018 15:10:58 -0700
+Message-Id: <20181219221105.3004-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20181219220326.GA28244@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/2018 04:03 PM, Pavel Machek wrote:
-> Hi!
-> 
->>> I don't think a user needs nor would want to have 24 different LED nodes with 24 different brightness files.
->>> Or with the LP5036 that would have 36 LED nodes.
->>>
->>> Table 1 in the data sheet shows how the outputs map to the control banks to the LED registers.
->>
->> Some time ago we had discussion with Vesa Jääskeläinen about possible
->> approaches to RGB LEDs [0]. What seemed to be the most suitable
->> variation of the discussed out-of-tree approach was the "color" property
->> and array of color triplets defined in Device Tree per each color.
->>
->> Please refer to [0] for the details.
->>
->> [0] https://lkml.org/lkml/2018/11/9/938
-> 
-> Yes, plus I also have the set of HSV patches somewhere... and they
-> work, but I found out that HSV->RGB conversion results in loss of precision.
-> 
-> We may want to do something like that.
-> 
-> But we need to do it once, in a driver core. We obviously don't want
-> each driver having different version of RGB support.
+Hi all,
 
-True.  But the RGB driver really should not be defining the color palette.
+This set of patches adds support for wakeup capable GPIOs. After discussions in
+[1], this patches implement the recommendations suggested by Stephen.
 
-Maybe a "color capability" reported to user space so that the user space can make the decision.
+The gist of the approach is that GPIO is setup in hierarchy with a
+wakeup-parent irqchip. The key difference to [1] is that the TLMM GPIO driver
+could mask the TLMM GPIO if requested by the wakeup-parent irqchip, thereby
+supporing both MPM and PDC based architectures for QCOM SoCs. The work uses
+Stephen's code pretty much as-is from [1].
 
-It can report
+Stephen,
+I moved the GPIO-PDC pin map to a separate file to allow the follow-on chips to
+add their SoC specific maps in the data file and avoid clobbering the PDC
+driver.
 
-For GPIO or constant current situations
-static red
-static blue
-static green 
+Thanks to Thierry's patches to add support for hierarchy in GPIO framework. It
+has been included here for completeness.
 
-For adjustable configurations it can report:
-variable red
-variable blue
-variable green
+Kindly review these patches and let me know your commennts.
 
-or even simpler "static" or "dynamic" as a return to report the RGB configuration.
-The LED driver would just need to set the variable.
+Thanks,
+Lina
 
-Dan
+[1]. https://lkml.org/lkml/2018/11/21/168
 
-> 
-> Best regards,
-> 									Pavel
-> 
+Lina Iyer (5):
+  irqdomain: add bus token DOMAIN_BUS_WAKEUP
+  dt-bindings: sdm845-pinctrl: add wakeup interrupt parent for GPIO
+  drivers: pinctrl: msm: setup GPIO irqchip hierarchy
+  arm64: dts: msm: add PDC device bindings for sdm845
+  arm64: dts: msm: setup PDC as wakeup parent for GPIOs for SDM845
 
+Stephen Boyd (1):
+  drivers: irqchip: add PDC irqdomain for wakeup capable GPIOs
+
+Thierry Reding (1):
+  gpio: Add support for hierarchical IRQ domains
+
+ .../bindings/pinctrl/qcom,sdm845-pinctrl.txt  |   7 +-
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  10 ++
+ drivers/gpio/gpiolib.c                        |  15 +-
+ drivers/irqchip/Makefile                      |   2 +-
+ drivers/irqchip/qcom-pdc-data.c               |  94 ++++++++++++
+ drivers/irqchip/qcom-pdc.c                    | 111 ++++++++++++--
+ drivers/irqchip/qcom-pdc.h                    |  24 ++++
+ drivers/pinctrl/qcom/pinctrl-msm.c            | 136 ++++++++++++++++--
+ include/linux/gpio/driver.h                   |   6 +
+ include/linux/irqdomain.h                     |   1 +
+ include/linux/soc/qcom/irq.h                  |  23 +++
+ 11 files changed, 401 insertions(+), 28 deletions(-)
+ create mode 100644 drivers/irqchip/qcom-pdc-data.c
+ create mode 100644 drivers/irqchip/qcom-pdc.h
+ create mode 100644 include/linux/soc/qcom/irq.h
 
 -- 
-------------------
-Dan Murphy
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
