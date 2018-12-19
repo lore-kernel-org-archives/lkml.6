@@ -2,116 +2,198 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A76C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 195A9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA0F7217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4642217D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545244709;
+	bh=A9nmwXb6J2JsmoViaCuYfnpVRai0WHxFQ4t6bOXefVo=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=gAHczAKc1EeO5eOBsDjkf41HHsDAtn8bBIQif1HSe45OV6wqRTJ3IUMvMKV/bD//6
+	 nyLkzQP2Ni4a8meQjt1liHJieIYZ7YVNuy/3hWJ+L+K7yzL35b2hZn1FdIW9Lhi0/2
+	 eI6jzqau/klOEppttsTqos8LJ3aSEmHx1zmD6ubo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbeLSSiB (ORCPT
+        id S1729922AbeLSSi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:38:01 -0500
-Received: from shell.v3.sk ([90.176.6.54]:51268 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727694AbeLSSiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:38:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 98DAB68BAD;
-        Wed, 19 Dec 2018 19:37:58 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id mNC7j0Wbdafd; Wed, 19 Dec 2018 19:37:55 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 549F768BD7;
-        Wed, 19 Dec 2018 19:37:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Sj_mKgAFoNGx; Wed, 19 Dec 2018 19:37:54 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 940A868BAD;
-        Wed, 19 Dec 2018 19:37:54 +0100 (CET)
-Message-ID: <10639e018803dd2b7efa0a99ca78df1a533fdb4c.camel@v3.sk>
-Subject: Re: [PATCH v3] irqchip/mmp: only touch the PJ4 & FIQ bits on
- enable/disable
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org
-Date:   Wed, 19 Dec 2018 19:37:53 +0100
-In-Reply-To: <fc85f7e6-fc78-9e7c-258e-a0a60d195686@arm.com>
-References: <20181219172822.18349-1-lkundrak@v3.sk>
-         <fc85f7e6-fc78-9e7c-258e-a0a60d195686@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 13:38:29 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40548 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727694AbeLSSi2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:38:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=Asq4JRnjBzoR/uQaJAoLpElZ3E8aQDpbVFgVhWfS4Qc=; b=T164bibY7wEz
+        MpmRC4CswYaq9Wa/2YuO747QPqAonrKbqRTwK/+L9RNDvM8vr5KOSbrMUQIgJkoS4JVXC4CK9+ELu
+        2JXnHdsQCccxEDNvcrO29F6kT8Bt5IMTghWufpUqUVfsTdLHEFf4d1Ka3z0VqPuERDFD5NAvEmovz
+        6Na5E=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gZgjh-0005Li-Nw; Wed, 19 Dec 2018 18:38:25 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 4304111259E9; Wed, 19 Dec 2018 18:38:25 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap: irq: add an option to clear status registers on unmask" to the regmap tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20181219183825.4304111259E9@debutante.sirena.org.uk>
+Date:   Wed, 19 Dec 2018 18:38:25 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-19 at 18:29 +0000, Marc Zyngier wrote:
-> On 19/12/2018 17:28, Lubomir Rintel wrote:
-> > On an OLPC XO 1.75 machine, the "security processor" handles the GPIO 71
-> > and 72 interrupts. Don't reset the "route to SP" bit (4).
-> > 
-> > I'm just assuming the bit 4 is the "route to SP" bit -- it fixes the
-> > SP-based keyboard for me and <mach-mmp/regs-icu.h> defines
-> > ICU_INT_ROUTE_SP_IRQ to be 1 << 4. When asked for a data sheet, Marvell
-> > was not helpful.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > 
-> > ---
-> > Changes since v2:
-> > - Correct subsystem maintainers on Cc (irqchip)
-> > 
-> > Changes since v1:
-> > - Adjusted wording & ack from Pavel
-> > 
-> >  drivers/irqchip/irq-mmp.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> > index 25f32e1d7764..1ed38f9f1d0a 100644
-> > --- a/drivers/irqchip/irq-mmp.c
-> > +++ b/drivers/irqchip/irq-mmp.c
-> > @@ -190,7 +190,7 @@ static const struct mmp_intc_conf mmp_conf = {
-> >  static const struct mmp_intc_conf mmp2_conf = {
-> >  	.conf_enable	= 0x20,
-> >  	.conf_disable	= 0x0,
-> > -	.conf_mask	= 0x7f,
-> > +	.conf_mask	= 0x60,
-> 
-> You seem to have identified that ICU_INT_ROUTE_PJ4_IRQ and
-> ICU_INT_ROUTE_PJ4_FIQ bits are the only ones to be touched. So why don't
-> you use these constants? This number soup is quite unhealthy.
+The patch
 
-Yeah, but those #defines live in mach-mmp, so some moving would be
-necessary. If you indeed prefer that then I can follow up with a patch
-that does that.
+   regmap: irq: add an option to clear status registers on unmask
 
-> It'd be good to Cc some of the folks who initially wrote this code
-> (Haojian Zhuang, Eric Miao -- assuming they are still around) and get
-> some testing on a non OLPC platform, just to make sure there is no
-> regression due to this. I have the nagging feeling that this could be a
-> platform specific thing rather than a universal setting.
+has been applied to the regmap tree at
 
-They've been Cc'd on previous spins of the patch (and tens of other
-mmp-related patches that were in circulation lately), but they never
-returned a response. It is safe to assume they're AWOL.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
 
-> 
-> Thanks,
-> 
-> 	M.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Thanks
-Lubo
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From c82ea33ead18801605b236523f21e5c893c7c253 Mon Sep 17 00:00:00 2001
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Wed, 19 Dec 2018 12:18:05 +0100
+Subject: [PATCH] regmap: irq: add an option to clear status registers on
+ unmask
+
+Some interrupt controllers whose interrupts are acked on read will set
+the status bits for masked interrupts without changing the state of
+the IRQ line.
+
+Some chips have an additional "feature" where if those set bits are
+not cleared before unmasking their respective interrupts, the IRQ
+line will change the state and we'll interpret this as an interrupt
+although it actually fired when it was masked.
+
+Add a new field to the irq chip struct that tells the regmap irq chip
+code to always clear the status registers before actually changing the
+irq mask values.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/base/regmap/regmap-irq.c | 23 +++++++++++++++++++++++
+ include/linux/regmap.h           |  4 ++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 31d23c9a5ae7..1bd1145ad8b5 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -44,6 +44,8 @@ struct regmap_irq_chip_data {
+ 
+ 	unsigned int irq_reg_stride;
+ 	unsigned int type_reg_stride;
++
++	bool clear_status:1;
+ };
+ 
+ static inline const
+@@ -77,6 +79,7 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 	int i, ret;
+ 	u32 reg;
+ 	u32 unmask_offset;
++	u32 val;
+ 
+ 	if (d->chip->runtime_pm) {
+ 		ret = pm_runtime_get_sync(map->dev);
+@@ -85,6 +88,20 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 				ret);
+ 	}
+ 
++	if (d->clear_status) {
++		for (i = 0; i < d->chip->num_regs; i++) {
++			reg = d->chip->status_base +
++				(i * map->reg_stride * d->irq_reg_stride);
++
++			ret = regmap_read(map, reg, &val);
++			if (ret)
++				dev_err(d->map->dev,
++					"Failed to clear the interrupt status bits\n");
++		}
++
++		d->clear_status = false;
++	}
++
+ 	/*
+ 	 * If there's been a change in the mask write it back to the
+ 	 * hardware.  We rely on the use of the regmap core cache to
+@@ -217,6 +234,9 @@ static void regmap_irq_enable(struct irq_data *data)
+ 	else
+ 		mask = irq_data->mask;
+ 
++	if (d->chip->clear_on_unmask)
++		d->clear_status = true;
++
+ 	d->mask_buf[irq_data->reg_offset / map->reg_stride] &= ~mask;
+ }
+ 
+@@ -474,6 +494,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 	if (chip->num_regs <= 0)
+ 		return -EINVAL;
+ 
++	if (chip->clear_on_unmask && (chip->ack_base || chip->use_ack))
++		return -EINVAL;
++
+ 	for (i = 0; i < chip->num_irqs; i++) {
+ 		if (chip->irqs[i].reg_offset % map->reg_stride)
+ 			return -EINVAL;
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 0f1832e4c2c8..1781b6cb793c 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1155,6 +1155,9 @@ struct regmap_irq {
+  * @type_in_mask: Use the mask registers for controlling irq type. For
+  *                interrupts defining type_rising/falling_mask use mask_base
+  *                for edge configuration and never update bits in type_base.
++ * @clear_on_unmask: For chips with interrupts cleared on read: read the status
++ *                   registers before unmasking interrupts to clear any bits
++ *                   set when they were masked.
+  * @runtime_pm:  Hold a runtime PM lock on the device when accessing it.
+  *
+  * @num_regs:    Number of registers in each control bank.
+@@ -1194,6 +1197,7 @@ struct regmap_irq_chip {
+ 	bool runtime_pm:1;
+ 	bool type_invert:1;
+ 	bool type_in_mask:1;
++	bool clear_on_unmask:1;
+ 
+ 	int num_regs;
+ 
+-- 
+2.19.0.rc2
 
