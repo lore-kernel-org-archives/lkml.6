@@ -2,96 +2,70 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E97C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADDFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D5E21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:16:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23B94218CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:17:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n/4NymAj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbeLSPQ6 (ORCPT
+        id S1730044AbeLSPRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:16:58 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36816 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729995AbeLSPQ5 (ORCPT
+        Wed, 19 Dec 2018 10:17:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51004 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729903AbeLSPRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:16:57 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p6so6550839wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:16:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jQEgjSv0p+0t9lP58YylQUqO3+AtSiTF9GKFD/e/dj4=;
-        b=oNmwEl+4KO8MjUpcynfLTOFPWqL9gJSnHjysASHfVq+ll62rTeu8falm0xrNIsI0Mo
-         XjnjafqazHk6ffsxtux4/WHSUBv90d+0YqgmgocZf1OnA1G+4qxvnQoZBsmq7cNMMIvE
-         N4AI75hZsMbOJytCBRWdY2zmQZbR+pWFrCXwCFetWDxXavd+3mO9vNS65471U34YC5N1
-         9C6af9X4PgapoWYXWsePsV44Ju9G0wrSpz0XXcvI+2PcxWz0aOJAoT1EyGjAjcaZOhYJ
-         ASAOoUAZTku+4s+5bO4dzfMX10q9sGA8oMFKhDpUbrcw8wtWrE0ztdtNOiagF+oYCCDU
-         JlxA==
-X-Gm-Message-State: AA+aEWYMHZVNWTEBBCZLgnIrdSzHlO4InPwTEYy6gkBXkL6Li964YxiH
-        upOlZhEKDvfgdLcrKvxJvYPUPA==
-X-Google-Smtp-Source: AFSGD/W+1FnnhrhbmSMCDhKSNF5vgr3dlRdMVBEABlD4aThzpcLlqDDzCPiUXN2OJLty4/1nvZ/Qyw==
-X-Received: by 2002:a1c:f207:: with SMTP id s7mr7425336wmc.87.1545232615958;
-        Wed, 19 Dec 2018 07:16:55 -0800 (PST)
-Received: from localhost.localdomain.home ([151.15.249.65])
-        by smtp.gmail.com with ESMTPSA id f187sm5004081wma.4.2018.12.19.07.16.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 07:16:55 -0800 (PST)
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
-Cc:     fenghua.yu@intel.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH] arch/x86/kernel/topology: Make DEBUG_HOTPLUG_CPU0 pr_info more descriptive
-Date:   Wed, 19 Dec 2018 16:16:47 +0100
-Message-Id: <20181219151647.15073-1-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.17.2
+        Wed, 19 Dec 2018 10:17:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PAClkGWQY+TyBVW4crUR175JeC7/HxJ/DfM4/M9tw+s=; b=n/4NymAjtnpmKJ/q3vr56j53F
+        ZVPRKZrVF+/Cvf4w1f9h+X/ocQdI4jx1dKcvGpsmCDyxDmTCodxkyZqeB2m+bnn6Qnc9mNY35w6fc
+        LCS842qh2u3hcSimQfykbvRuVmvbLQvl9MLlqNSNsHnKRel5mb8WGlcdUndW3+srLW8iomCxoIRWn
+        azY6mu0VYCsT+1XK6bG/+8jAfS30l+f+7vl9TTpz6LdGxhqR+A6XE6OmbXCrHxwT2GyimXGrCz5lu
+        D+3dJIf/iCa+lzECo1i8tFOq4nWp/WtmUER0Gc20JctMlx2x3AqNLB+EIAt2Yj2ItEgGucHqtMRh3
+        f6ZVy972A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gZdar-0003DQ-4K; Wed, 19 Dec 2018 15:17:05 +0000
+Date:   Wed, 19 Dec 2018 07:17:04 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Maruthi Srinivas Bayyavarapu 
+        <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vishal Sagar <vsagar@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ASoC: xlnx: change license header format style
+Message-ID: <20181219151704.GA5040@infradead.org>
+References: <1545212440-109949-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545212440-109949-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DEBUG_HOTPLUG_CPU0 debug feature offlines a CPU as early as possible
-allowing userspace to boot up without that CPU (so that it is possible
-to check for unwanted dependencies towards the offlined CPU). After
-doing so it emits a "CPU %u is now offline" pr_info, which is not enough
-descriptive of why the CPU was offlined (e.g., one might be running with
-a config that triggered some problem, not being aware that CONFIG_DEBUG_
-HOTPLUG_CPU0 is set).
+On Wed, Dec 19, 2018 at 03:10:40PM +0530, Maruthi Srinivas Bayyavarapu wrote:
+> Changed License header from C to C++ style comment block.
 
-Add a bit more of informative text to the pr_info, so that it is
-immediately obvious why a CPU has been offlined in early boot stages.
-
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-
----
-
-Got to scratch my head a bit while debugging a WARNING splat related to
-the offlining of CPU0. Without being aware yet of this debug option it
-wasn't immediately obvious why CPU0 was being offlined by the kernel.
-
-Hope this makes sense and is acceptable. :-)
----
- arch/x86/kernel/topology.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/topology.c b/arch/x86/kernel/topology.c
-index 738bf42b0218..c3c2400e30b1 100644
---- a/arch/x86/kernel/topology.c
-+++ b/arch/x86/kernel/topology.c
-@@ -71,7 +71,8 @@ int _debug_hotplug_cpu(int cpu, int action)
- 	case 0:
- 		ret = cpu_down(cpu);
- 		if (!ret) {
--			pr_info("CPU %u is now offline\n", cpu);
-+			pr_info("DEBUG_HOTPLUG_CPU0: CPU %u is now offline\n",
-+				cpu);
- 			dev->offline = true;
- 			kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
- 		} else
--- 
-2.17.2
-
+Why this completely pointless uglification that goes counter to
+the common style all over the kernel?
