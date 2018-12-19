@@ -2,193 +2,111 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C652C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159E4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8B221871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:18:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gOiZbwZe"
+	by mail.kernel.org (Postfix) with ESMTP id E0C0E218A6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeLSLSL (ORCPT
+        id S1729256AbeLSLTZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:18:11 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52900 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727155AbeLSLSK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:18:10 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so5686644wml.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 03:18:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TqKqWnuzhLbrzsGGpVafyPrzq3m458cHAEUpEwoTcTg=;
-        b=gOiZbwZeCICmVnsjTiZw3HgUFYqa/UwXZtbnVgHtwo58IKdyJAtXj46tres2v+TfHk
-         ub0G0IFTLJdjkSwoy55falOWEw9vSxD/0s1FiVf2f8SysFi32CyQNosLrc+EIdhNy0O1
-         WTgNe+7MtqtYrUCdh46PCaST2yytWDmuiH9Q6Vxd+5TCU738yMEvM6edNRkzzvxDvuMV
-         T6QzzPZbCN8LmWI2PvVdb6aqhTkJFA7tABbch0N7lbuZodtHfWIMmgKl/qXgGj3d+VsG
-         JlGQ6TcFPnxfLn8UjeMmiXqbIeApOio7P3XwL1igOvxtpkzT3eOOif2/ZNZoOnDBB7eK
-         abRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TqKqWnuzhLbrzsGGpVafyPrzq3m458cHAEUpEwoTcTg=;
-        b=sZJpvBGUfAAhkdtckk66F9SuMDqmqzKiXjRGd16OOziTDQtXHfYfL2a6Ej/TZqanm8
-         ytZ9vQafrS0AeWl0Su+cZMOqApKDESuMkwaKtmbyMoqLvjNGu7Hmt81iOZDa/qvAfJs3
-         iGmZFQPcJbovYLASTDfiMRLPWb84PWY1zqzhgPNqyyUt4+NNM6Ds/vu4gGaBPszbFAft
-         uI9dopMd+X/lxzYUiD9dOgdci1BhO1FCFS2BrxRtA8sWLdVMZLpI/YwxIb2zLDTZFWdn
-         VVFEMj2exwo1aEZ8ChTXeU6rca/K4Ee414RVoa0W78hNh4I8viLitA4WQA2iFJlEurfG
-         zdWw==
-X-Gm-Message-State: AA+aEWYYSyW5Qd/qiioSsZux9/Gf6+cJTjTlMIWML+WSPU08G3PRUHyu
-        y6mmBuWiTNNHcqi9HT90jMgGnw==
-X-Google-Smtp-Source: AFSGD/U5VoB2R2oRuSPIp7wjKsMNJiPVEDg/suucku1MGOhIk7L2qMcYL8P/6ys8qZQS9cc6wpwOgw==
-X-Received: by 2002:a1c:ae88:: with SMTP id x130mr6459235wme.91.1545218288225;
-        Wed, 19 Dec 2018 03:18:08 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id z7sm4320111wrw.22.2018.12.19.03.18.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 03:18:07 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH] regmap: irq: add an option to clear status registers on unmask
-Date:   Wed, 19 Dec 2018 12:18:05 +0100
-Message-Id: <20181219111805.18048-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
+        Wed, 19 Dec 2018 06:19:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34608 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726652AbeLSLTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:19:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F1FC3B0A5;
+        Wed, 19 Dec 2018 11:19:22 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 049DB1E1463; Wed, 19 Dec 2018 12:19:22 +0100 (CET)
+Date:   Wed, 19 Dec 2018 12:19:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Dave Chinner <david@fromorbit.com>,
+        Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181219111921.GB18345@quack2.suse.cz>
+References: <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181218103306.GC18032@quack2.suse.cz>
+ <20181218234254.GC31274@dastard>
+ <20181219030329.GI21992@ziepe.ca>
+ <CAPcyv4h=j=Kc=uOzdbfoYvmJ54aqSq6tHra2QZQwtpE+80WkVw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4h=j=Kc=uOzdbfoYvmJ54aqSq6tHra2QZQwtpE+80WkVw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue 18-12-18 21:26:28, Dan Williams wrote:
+> On Tue, Dec 18, 2018 at 7:03 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Wed, Dec 19, 2018 at 10:42:54AM +1100, Dave Chinner wrote:
+> >
+> > > Essentially, what we are talking about is how to handle broken
+> > > hardware. I say we should just brun it with napalm and thermite
+> > > (i.e. taint the kernel with "unsupportable hardware") and force
+> > > wait_for_stable_page() to trigger when there are GUP mappings if
+> > > the underlying storage doesn't already require it.
+> >
+> > If you want to ban O_DIRECT/etc from writing to file backed pages,
+> > then just do it.
+> >
+> > Otherwise I'm not sure demanding some unrealistic HW design is
+> > reasonable. ie nvme drives are not likely to add page faulting to
+> > their IO path any time soon.
+> >
+> > A SW architecture that relies on page faulting is just not going to
+> > support real world block IO devices.
+> >
+> > GPUs and one RDMA are about the only things that can do this today,
+> > and they are basically irrelevant to O_DIRECT.
+> 
+> Yes.
+> 
+> I'm missing why a bounce buffer is needed. If writeback hits a
+> DMA-writable page why can't that path just turn around and trigger
+> another mkwrite notifcation on behalf of hardware that will never send
+> it? "Nice try writeback, this page is dirty again".
 
-Some interrupt controllers whose interrupts are acked on read will set
-the status bits for masked interrupts without changing the state of
-the IRQ line.
+You are conflating two things here. Bounce buffer (or a way to stop DMA
+from happening) is needed because think what happens when RAID5 computes
+its stripe checksum while someone modifies the data through DMA. Checksum
+mismatch and all fun arising from that.
 
-Some chips have an additional "feature" where if those set bits are
-not cleared before unmasking their respective interrupts, the IRQ
-line will change the state and we'll interpret this as an interrupt
-although it actually fired when it was masked.
+Notifying filesystem about the fact that the page didn't get cleaned by the
+writeback and still can be modified by the DMA is a different thing.
 
-Add a new field to the irq chip struct that tells the regmap irq chip
-code to always clear the status registers before actually changing the
-irq mask values.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
-Hi Mark,
-
-there's one more problem I noticed with max77650. When a condition for
-a masked interrupt is met - its status bit is set but the irq line
-doesn't go low. Now if we don't clear that bit and unmask its
-respective interrupt, the line will go low and we'll interpret it as
-if an interrupt fired right after we enabled it.
-
-This patch tries to address it in a generic way.
-
- drivers/base/regmap/regmap-irq.c | 23 +++++++++++++++++++++++
- include/linux/regmap.h           |  4 ++++
- 2 files changed, 27 insertions(+)
-
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 8b216b2e2c19..5a454fcd10db 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -44,6 +44,8 @@ struct regmap_irq_chip_data {
- 
- 	unsigned int irq_reg_stride;
- 	unsigned int type_reg_stride;
-+
-+	bool clear_status:1;
- };
- 
- static inline const
-@@ -77,6 +79,7 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
- 	int i, ret;
- 	u32 reg;
- 	u32 unmask_offset;
-+	u32 val;
- 
- 	if (d->chip->runtime_pm) {
- 		ret = pm_runtime_get_sync(map->dev);
-@@ -85,6 +88,20 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
- 				ret);
- 	}
- 
-+	if (d->clear_status) {
-+		for (i = 0; i < d->chip->num_regs; i++) {
-+			reg = d->chip->status_base +
-+				(i * map->reg_stride * d->irq_reg_stride);
-+
-+			ret = regmap_read(map, reg, &val);
-+			if (ret)
-+				dev_err(d->map->dev,
-+					"Failed to clear the interrupt status bits\n");
-+		}
-+
-+		d->clear_status = false;
-+	}
-+
- 	/*
- 	 * If there's been a change in the mask write it back to the
- 	 * hardware.  We rely on the use of the regmap core cache to
-@@ -217,6 +234,9 @@ static void regmap_irq_enable(struct irq_data *data)
- 	else
- 		mask = irq_data->mask;
- 
-+	if (d->chip->clear_on_unmask)
-+		d->clear_status = true;
-+
- 	d->mask_buf[irq_data->reg_offset / map->reg_stride] &= ~mask;
- }
- 
-@@ -459,6 +479,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	if (chip->num_regs <= 0)
- 		return -EINVAL;
- 
-+	if (chip->clear_on_unmask && (chip->ack_base || chip->use_ack))
-+		return -EINVAL;
-+
- 	for (i = 0; i < chip->num_irqs; i++) {
- 		if (chip->irqs[i].reg_offset % map->reg_stride)
- 			return -EINVAL;
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index b7aa50cfb306..23dfacf281f8 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1134,6 +1134,9 @@ struct regmap_irq {
-  * @type_in_mask: Use the mask registers for controlling irq type. For
-  *                interrupts defining type_rising/falling_mask use mask_base
-  *                for edge configuration and never update bits in type_base.
-+ * @clear_on_unmask: For chips with interrupts cleared on read: read the status
-+ *                   registers before unmasking interrupts to clear any bits
-+ *                   set when they were masked.
-  * @runtime_pm:  Hold a runtime PM lock on the device when accessing it.
-  *
-  * @num_regs:    Number of registers in each control bank.
-@@ -1173,6 +1176,7 @@ struct regmap_irq_chip {
- 	bool runtime_pm:1;
- 	bool type_invert:1;
- 	bool type_in_mask:1;
-+	bool clear_on_unmask:1;
- 
- 	int num_regs;
- 
+								Honza
 -- 
-2.19.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
