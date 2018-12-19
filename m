@@ -2,84 +2,96 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025ACC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF90EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDAC521850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8798821850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeLSHXQ (ORCPT
+        id S1728305AbeLSHXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:23:16 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56986 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725298AbeLSHW7 (ORCPT
+        Wed, 19 Dec 2018 02:23:42 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:24051 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbeLSHXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:22:59 -0500
-X-UUID: 0fb3a570a99641718333fc68b8a2d477-20181219
-X-UUID: 0fb3a570a99641718333fc68b8a2d477-20181219
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 64279765; Wed, 19 Dec 2018 15:22:53 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 19 Dec 2018 15:22:51 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 19 Dec 2018 15:22:44 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     <davem@davemloft.net>, <robh+dt@kernel.org>
-CC:     <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
-        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
-        <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
-        <andrew@lunn.ch>
-Subject: [v3, PATCH 0/2] add ethernet binding and modify ethernet driver for mt2712
-Date:   Wed, 19 Dec 2018 15:22:39 +0800
-Message-ID: <1545204161-15742-1-git-send-email-biao.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Wed, 19 Dec 2018 02:23:41 -0500
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBJ7Nd5x032633;
+        Wed, 19 Dec 2018 16:23:39 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Wed, 19 Dec 2018 16:23:39 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBJ7NdQE032629;
+        Wed, 19 Dec 2018 16:23:39 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id wBJ7NdkN032628;
+        Wed, 19 Dec 2018 16:23:39 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201812190723.wBJ7NdkN032628@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH v15 2/2] Add oom victim's memcg to the oom context information
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>,
+        akpm@linux-foundation.org
+Cc:     mhocko@kernel.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Date:   Wed, 19 Dec 2018 16:23:39 +0900
+References: <20181122133954.GI18011@dhcp22.suse.cz> <CAHCio2gdCX3p-7=N0cA22cWTaUmUXRq8WbiMAA2sM2wLVX4GjQ@mail.gmail.com>
+In-Reply-To: <CAHCio2gdCX3p-7=N0cA22cWTaUmUXRq8WbiMAA2sM2wLVX4GjQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-changes in v3:
-resend this series base on the latest net-next tree.
+Andrew, will you fold below diff into "mm, oom: add oom victim's memcg to the oom context information" ?
 
-changes in v2 as comments from Sean:
-1. fix typo.
-2. use capital letters for RMII/MII/RGMII in driver and bindings.
+From add1e8daddbfc5186417dbc58e9e11e7614868f8 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 19 Dec 2018 16:09:31 +0900
+Subject: [PATCH] mm, oom: Use pr_cont() in mem_cgroup_print_oom_context().
 
-v1:
-This new series is the result of discussion in:
-http://lkml.org/lkml/2018/12/13/1007
-http://lkml.org/lkml/2018/12/14/53
+One line summary of the OOM killer context is not one line due to
+not using KERN_CONT.
 
-1. ethernet binding file move to this series.
-2. remove fine tune property in device tree
-3. remove fine tune flow in ethernet driver
-4. set rgmii timing according to the value in device tree,
-and don't care whether phy insert internal delay  or not.
+[   23.346650] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0
+[   23.346691] ,global_oom,task_memcg=/,task=firewalld,pid=5096,uid=0
 
-Biao Huang (2):
-  net-next: dt-binding: dwmac-mediatek: remove fine-tune property
-  net-next: stmmac: dwmac-mediatek: remove fine-tune property
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ mm/memcontrol.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- .../devicetree/bindings/net/mediatek-dwmac.txt     |   31 +++------
- .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |   71 +++++++-------------
- 2 files changed, 35 insertions(+), 67 deletions(-)
-
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index b860dd4f7..4afd597 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1306,10 +1306,10 @@ void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *
+ 	rcu_read_lock();
+ 
+ 	if (memcg) {
+-		pr_info(",oom_memcg=");
++		pr_cont(",oom_memcg=");
+ 		pr_cont_cgroup_path(memcg->css.cgroup);
+ 	} else
+-		pr_info(",global_oom");
++		pr_cont(",global_oom");
+ 	if (p) {
+ 		pr_cont(",task_memcg=");
+ 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
 -- 
-1.7.9.5
+1.8.3.1
 
