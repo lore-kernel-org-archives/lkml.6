@@ -2,204 +2,271 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B15C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9372C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1074721873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6721D218A6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:54:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6fdH8md"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbeLSJyc (ORCPT
+        id S1728758AbeLSJyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:54:32 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35608 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728532AbeLSJya (ORCPT
+        Wed, 19 Dec 2018 04:54:35 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50767 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728660AbeLSJyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:54:30 -0500
-Received: by mail-ed1-f66.google.com with SMTP id x30so16427523edx.2;
-        Wed, 19 Dec 2018 01:54:27 -0800 (PST)
+        Wed, 19 Dec 2018 04:54:32 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n190so5427420wmd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:54:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O0vouEdLzSS4mYarCHOwZC3GUarLRhIXtaaYdhIDtVM=;
+        b=X6fdH8mdSlxrkG1pj85BRjgGnSoKRwoO9XBbPTOuC6nazNYpoiDhHS17AL6qGvNa52
+         6IHanetEy+71QtnUahHrQO8YgCkoJpRlndEe5mY5ldKcdEdEKxvCnas54zu7HCE3m/A+
+         DwPZP9GlVL0+s2a9GJDReI7yVSXYIbV++SCeQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zvkrGh8FmjuQsFl1/lfQSnJLqSABQFL8mxLLYAsA+rc=;
-        b=FeburRhichJ5UQu3l8A8p+0S2CEysXr+uJxNFQrTLc4EGOPJhkn7ZRA0pT/AyfWPL0
-         ZuLwmo6aaRGreRyE7kibqWdwJ6WoRrwEbrv1zQQFwyjyV5d9hg+yMxYvmmhrwhrg8bo2
-         omQ2z6gu3+ViSca2cJDMdwFtPXDxI2baIR2hPr2PkDgvVQmtNooxDJp1IobonHVM7+FS
-         RO+0jSJnTYLFMaP0wK6Aa2bTnhbK727BbsPWVao0ZWIjfGyXxTupAn29C0wa9XMQPppF
-         5bIFt5UnE4yLHYpXKZ014xPRshHwRASmElj0xlplcyVuFvTwsrW26a4j8GL6SRIUzrO+
-         daXQ==
-X-Gm-Message-State: AA+aEWbEOxi2kvr8EaVbyANR98XJi1pn5e2Ohb1TNsuOkwc+Xte5BGWM
-        W9pRNVIwXv9TD+UPDeWOdKz0RXYVMa0=
-X-Google-Smtp-Source: AFSGD/UpaLQeR44vFr7dTi+xZQGjwQR9Gt7UsXYKqbg0d3rCpOfaLseoEeihKEe9qtfiXfcFeYzEHw==
-X-Received: by 2002:aa7:c906:: with SMTP id b6mr19613115edt.17.1545213266811;
-        Wed, 19 Dec 2018 01:54:26 -0800 (PST)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm2587329ejx.68.2018.12.19.01.54.25
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O0vouEdLzSS4mYarCHOwZC3GUarLRhIXtaaYdhIDtVM=;
+        b=ppif9CjnAezDaUA47Ls4fHjOOo0sLumnggGFJkK7aZEAG2ypob7/x860gLP73HfoP7
+         YI+7cTsPUo919wHFyCN11H49UAHA2VlF4zWYW1q9Lbg7XLU1DwwTrPTPRdgFS5BqUEfT
+         F5r4c2WQsvGCJqydjC3orOq2KKCY+r2be1NLA4jxF2bKsTq50t4JHu+G/kg+0M0VNy5J
+         114ITYEgITho4deKKdkCbwY5MmzM6mZ+Hd+r9deqyj+EFHloWjhbgB52LR3arbjWv5lT
+         FuUCe1zJYF2SsS9/BuWnlKV/jr7rbj28uaXekCNluV5b4VomO//lGApNyIvLMEZcviso
+         bosg==
+X-Gm-Message-State: AA+aEWasufecmwbA41C3MPDLm07EH93lzFQGhdlSdKs+Zcym+2K9bWZw
+        k9TbWs9ZbweobWJ58d49C+4mWQ==
+X-Google-Smtp-Source: AFSGD/WLxTeqA7jVvlZfXQp0dhI5SFUOy5bKe87vkm+cF8XOUdyPjIr7KR8PVlkbo5qRjn8B/K9UxA==
+X-Received: by 2002:a1c:e1d5:: with SMTP id y204mr6419457wmg.65.1545213268868;
+        Wed, 19 Dec 2018 01:54:28 -0800 (PST)
+Received: from [192.168.0.40] (105.50.92.92.rev.sfr.net. [92.92.50.105])
+        by smtp.googlemail.com with ESMTPSA id q3sm8599214wrn.84.2018.12.19.01.54.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 01:54:26 -0800 (PST)
-Received: by mail-wr1-f54.google.com with SMTP id p4so18807482wrt.7;
-        Wed, 19 Dec 2018 01:54:25 -0800 (PST)
-X-Received: by 2002:adf:b608:: with SMTP id f8mr17166237wre.120.1545213265539;
- Wed, 19 Dec 2018 01:54:25 -0800 (PST)
+        Wed, 19 Dec 2018 01:54:28 -0800 (PST)
+Subject: Re: [PATCH v10 04/27] PM / Domains: Add genpd governor for CPUs
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org
+Cc:     "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-5-ulf.hansson@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <5529fc0a-af96-b10a-ca4a-f1417598f4ee@linaro.org>
+Date:   Wed, 19 Dec 2018 10:54:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181217040449.31437-1-wens@csie.org> <ADDC30F6-9C86-4D59-A28E-A3007C9D478D@holtmann.org>
-In-Reply-To: <ADDC30F6-9C86-4D59-A28E-A3007C9D478D@holtmann.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 19 Dec 2018 17:54:12 +0800
-X-Gmail-Original-Message-ID: <CAGb2v643Wyt5NSygxf0aQzrAhOjYS+M_OC5L7RSCnk+aw_p9LA@mail.gmail.com>
-Message-ID: <CAGb2v643Wyt5NSygxf0aQzrAhOjYS+M_OC5L7RSCnk+aw_p9LA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/15] ARM: sunxi: Enable Broadcom-based Bluetooth controllers
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Loic Poulain <loic.poulain@gmail.com>,
-        linux-bluetooth@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181129174700.16585-5-ulf.hansson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 7:50 AM Marcel Holtmann <marcel@holtmann.org> wrote:
->
-> Hi Chen-Yu,
->
-> > This is v3 of my Broadcom-based Bluetooth controllers on Allwinner SoC-
-> > based SBCs series. v2 was sent on 11/15, with a follow up ping on 11/28.
-> > No response from either Bluetooth maintainer. Would the maintainers
-> > acknowledge or provide feedback so we can move forward? WiFi for the
-> > Broadcom chips has been supported and enabled for many years. Bluetooth
-> > on the other hand has required userspace trickery to get it working.
-> > With serdev support, this now requires minimal interaction from
-> > users to get working.
-> >
-> >
-> > Changes since v2:
-> >
-> >  - Collected tags from Ondrej for applicable patches
-> >
-> > Changes since v1:
-> >
-> >  - Collected tags
-> >  - Re-organize dt binding clocks and clock-names properties
-> >  - Simplify check for deferred probe when getting clocks
-> >  - Add explanation of Cubietruck's clk_out_a pinmux setting placement
-> >    to commit message.
-> >  - Add missing "uart-has-rtscts" property to Cubietruck device tree
-> >
-> > Original cover letter follows.
-> >
-> >
-> > On many Allwinner SBCs / developer boards, there is a WiFi+BT combo
-> > module from AMPAK. Inside is either one or two Broadcom chips, depending
-> > on the model. This series enables the Bluetooth controllers for AMPAK
-> > AP6210, AP6212, and AP6330 found on several boards. More will come later
-> > as other SoCs require changes to some other parts. I did not cover the
-> > SCO PCM connections from the controller to the SoC's I2S interface. It
-> > seems no one is actually doing this, so I was not sure how to proceed.
-> > Any suggestions?
-> >
-> > I deliberately left out the netdev mailing list and Dave Miller, as the
-> > only thing that is under net is the binding document. Maybe we should
-> > move that out of Documentation/devicetree/bindings/net/ ?
-> >
-> > Also, I'm not subscribed to the linux-bluetooth ML, so please CC me for
-> > any discussions.
-> >
-> > Patches 1 through 4 are device tree binding changes:
-> >
-> > 1 - Make the external clock name unambiguous, and add a second entry for
-> >    the LPO clock.
-> >
-> > 2 - Add regulator supply properties for the VBAT and VDDIO power pins.
-> >
-> > 3 - Add a compatible string for BCM20702A1.
-> >
-> > 4 - Add a compatible string for BCM4330.
-> >
-> > Patches 5 through 13 are changes to the driver, either improvements,
-> > or updates to handle the updated device tree binding.
-> >
-> > 5 - Make the driver handle deferred probing for the external clock.
-> >
-> > 6 - Simplify clock error checking for subsequent clk API calls.
-> >
-> > 7 - Handle clock-names for the main external clock.
-> >
-> > 8 - Support a new external clock, the LPO.
-> >
-> > 9 - Support regulator supplies.
-> >
-> > 10 - Wait a small amount of time after toggling the GPIO for the device
-> >     to settle.
-> >
-> > 11 - Add support for BCM20702A1, including its default address.
-> >
-> > 12 - Add BCM4330 compatible string to the driver.
-> >
-> > 13 - Handle default address for BCM43430A0.
-> >
-> > 14 - Enable Broadcom-based serdev Bluetooth for multiple Allwinner ARMv7
-> >     boards.
-> >
-> > 15 - Enable Broadcom-based serdev Bluetooth for the Bananapi M64.
-> >
-> > checkpatch reports an error for both patch 11 and patch 13:
-> >
-> >    ERROR: space required after that close brace '}'
-> >
-> > I followed the existing code's style. If this is undesirable, I can send
-> > a follow-up patch fixing the entire code block.
-> >
-> > The first 13 patches should go through the Bluetooth tree, while we, the
-> > sunxi maintainers, will take the last 2.
-> >
-> >
-> > Thanks
-> > ChenYu
-> >
-> > Chen-Yu Tsai (14):
-> >  dt-bindings: net: broadcom-bluetooth: Fix external clock names
-> >  dt-bindings: net: broadcom-bluetooth: Add VBAT and VDDIO supplies
-> >  dt-bindings: net: broadcom-bluetooth: Add BCM20702A1 compatible string
-> >  dt-bindings: net: broadcom-bluetooth: Add BCM4330 compatible string
-> >  Bluetooth: hci_bcm: Handle deferred probing for the clock supply
-> >  Bluetooth: hci_bcm: Simplify clk_get error handling
-> >  Bluetooth: hci_bcm: Use "txco" and "extclk" to get clock reference
-> >  Bluetooth: hci_bcm: Add support for LPO clock
-> >  Bluetooth: hci_bcm: Add support for regulator supplies
-> >  Bluetooth: hci_bcm: Wait for device to come out of reset after power
-> >    on
-> >  Bluetooth: hci_bcm: Add compatible string for BCM4330
-> >  Bluetooth: btbcm: Add default address for BCM43430A0
-> >  ARM: dts: sunxi: Enable Broadcom-based Bluetooth for multiple boards
-> >  arm64: dts: allwinner: a64: bananapi-m64: Add Bluetooth device node
-> >
-> > Maxime Ripard (1):
-> >  Bluetooth: hci_bcm: Add BCM20702A1 variant
-> >
-> > .../bindings/net/broadcom-bluetooth.txt       |  11 +-
-> > arch/arm/boot/dts/sun7i-a20-cubietruck.dts    |  25 ++++
-> > arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts  |  18 +++
-> > .../boot/dts/sun8i-a83t-cubietruck-plus.dts   |  18 +++
-> > arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  14 +++
-> > .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  14 +++
-> > drivers/bluetooth/btbcm.c                     |  13 +-
-> > drivers/bluetooth/hci_bcm.c                   | 112 +++++++++++++++---
-> > 8 files changed, 208 insertions(+), 17 deletions(-)
->
-> patches 1-13 have been applied to bluetooth-next tree.
+On 29/11/2018 18:46, Ulf Hansson wrote:
+> As it's now perfectly possible that a PM domain managed by genpd contains
+> devices belonging to CPUs, we should start to take into account the
+> residency values for the idle states during the state selection process.
+> The residency value specifies the minimum duration of time, the CPU or a
+> group of CPUs, needs to spend in an idle state to not waste energy entering
+> it.
+> 
+> To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
+> may be used for a PM domain that have CPU devices attached or if the CPUs
+> are attached through subdomains.
+> 
+> The new governor computes the minimum expected idle duration time for the
+> online CPUs being attached to the PM domain and its subdomains. Then in the
+> state selection process, trying the deepest state first, it verifies that
+> the idle duration time satisfies the state's residency value.
+> 
+> It should be noted that, when computing the minimum expected idle duration
+> time, we use the information from tick_nohz_get_next_wakeup(), to find the
+> next wakeup for the related CPUs. Future wise, this may deserve to be
+> improved, as there are more reasons to why a CPU may be woken up from idle.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+> 
+> Changes in v10:
+> 	- Fold in patch that extended the new genpd CPU governor to cope with
+> 	  QoS constraints, as to avoid confusion.
+> 	- Simplified the code according to suggestions from Rafael.
+> 
+> ---
+>  drivers/base/power/domain_governor.c | 61 +++++++++++++++++++++++++++-
+>  include/linux/pm_domain.h            |  3 ++
+>  2 files changed, 63 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
+> index 99896fbf18e4..61a7c3c03c98 100644
+> --- a/drivers/base/power/domain_governor.c
+> +++ b/drivers/base/power/domain_governor.c
+> @@ -10,6 +10,9 @@
+>  #include <linux/pm_domain.h>
+>  #include <linux/pm_qos.h>
+>  #include <linux/hrtimer.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/ktime.h>
+> +#include <linux/tick.h>
+>  
+>  static int dev_update_qos_constraint(struct device *dev, void *data)
+>  {
+> @@ -211,8 +214,10 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
+>  	struct generic_pm_domain *genpd = pd_to_genpd(pd);
+>  	struct gpd_link *link;
+>  
+> -	if (!genpd->max_off_time_changed)
+> +	if (!genpd->max_off_time_changed) {
+> +		genpd->state_idx = genpd->cached_power_down_state_idx;
+>  		return genpd->cached_power_down_ok;
+> +	}
+>  
+>  	/*
+>  	 * We have to invalidate the cached results for the masters, so
+> @@ -237,6 +242,7 @@ static bool default_power_down_ok(struct dev_pm_domain *pd)
+>  		genpd->state_idx--;
+>  	}
+>  
+> +	genpd->cached_power_down_state_idx = genpd->state_idx;
+>  	return genpd->cached_power_down_ok;
+>  }
+>  
+> @@ -245,6 +251,54 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
+>  	return false;
+>  }
+>  
+> +static bool cpu_power_down_ok(struct dev_pm_domain *pd)
+> +{
+> +	struct generic_pm_domain *genpd = pd_to_genpd(pd);
+> +	ktime_t domain_wakeup, cpu_wakeup;
+> +	s64 idle_duration_ns;
+> +	int cpu, i;
+> +
+> +	/* Validate dev PM QoS constraints. */
+> +	if (!default_power_down_ok(pd))
+> +		return false;
+> +
+> +	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
+> +		return true;
 
-Thanks. Queued up the last two for a late pull request round.
+Is it possible to have this function called without the
+GENPD_FLAG_CPU_DOMAIN flag set in the genpd?
 
-ChenYu
+> +	/*
+> +	 * Find the next wakeup for any of the online CPUs within the PM domain
+> +	 * and its subdomains. Note, we only need the genpd->cpus, as it already
+> +	 * contains a mask of all CPUs from subdomains.
+> +	 */
+> +	domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
+> +	for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
+> +		cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
+> +		if (ktime_before(cpu_wakeup, domain_wakeup))
+> +			domain_wakeup = cpu_wakeup;
+> +	}
+> +
+> +	/* The minimum idle duration is from now - until the next wakeup. */
+> +	idle_duration_ns = ktime_to_ns(ktime_sub(domain_wakeup, ktime_get()));
+> +	if (idle_duration_ns <= 0)
+> +		return false;
+> +
+> +	/*
+> +	 * Find the deepest idle state that has its residency value satisfied
+> +	 * and by also taking into account the power off latency for the state.
+> +	 * Start at the state picked by the dev PM QoS constraint validation.
+> +	 */
+> +	i = genpd->state_idx;
+> +	do {
+> +		if (idle_duration_ns >= (genpd->states[i].residency_ns +
+> +		    genpd->states[i].power_off_latency_ns)) {
+> +			genpd->state_idx = i;
+> +			return true;
+> +		}
+> +	} while (--i >= 0);
+> +
+> +	return false;
+> +}
+> +
+>  struct dev_power_governor simple_qos_governor = {
+>  	.suspend_ok = default_suspend_ok,
+>  	.power_down_ok = default_power_down_ok,
+> @@ -257,3 +311,8 @@ struct dev_power_governor pm_domain_always_on_gov = {
+>  	.power_down_ok = always_on_power_down_ok,
+>  	.suspend_ok = default_suspend_ok,
+>  };
+> +
+> +struct dev_power_governor pm_domain_cpu_gov = {
+> +	.suspend_ok = default_suspend_ok,
+> +	.power_down_ok = cpu_power_down_ok,
+> +};
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 5a4673605d22..969a9b36c0db 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -116,6 +116,7 @@ struct generic_pm_domain {
+>  	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
+>  	bool max_off_time_changed;
+>  	bool cached_power_down_ok;
+> +	bool cached_power_down_state_idx;
+>  	int (*attach_dev)(struct generic_pm_domain *domain,
+>  			  struct device *dev);
+>  	void (*detach_dev)(struct generic_pm_domain *domain,
+> @@ -195,6 +196,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state);
+>  
+>  extern struct dev_power_governor simple_qos_governor;
+>  extern struct dev_power_governor pm_domain_always_on_gov;
+> +extern struct dev_power_governor pm_domain_cpu_gov;
+>  #else
+>  
+>  static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+> @@ -238,6 +240,7 @@ static inline int dev_pm_genpd_set_performance_state(struct device *dev,
+>  
+>  #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
+>  #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
+> +#define pm_domain_cpu_gov		(*(struct dev_power_governor *)(NULL))
+>  #endif
+>  
+>  #ifdef CONFIG_PM_GENERIC_DOMAINS_SLEEP
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
