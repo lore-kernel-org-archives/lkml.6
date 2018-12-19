@@ -2,128 +2,104 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36C4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EDDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59BA8217D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED6FE217D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:50:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VpLOK74s";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X9B92esc"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iQVmLVfe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbeLSSto (ORCPT
+        id S1730040AbeLSSuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:49:44 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58044 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729637AbeLSSto (ORCPT
+        Wed, 19 Dec 2018 13:50:08 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40066 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729478AbeLSSuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:49:44 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A2B5161B52; Wed, 19 Dec 2018 18:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545245383;
-        bh=dNp2eZV4j9GiMr4qaE11NrLvy7q85BsWWNJ9YdmSx0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VpLOK74sfBrRrS11ylgyt3d5xL+//QN0BPXi6v/7jZHZfw5NmXLfkEtDRzomkWwRa
-         5hpRxeRat44i0q7EjWlODC98KS3rkjnKa/1Y4ol12qwWWfQXaItdZdxeiHMjjg8fJM
-         npHzCGsQ8RsJVfLWrHKB0XZ9UJprBsykPocnShy8=
-Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jackp@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EAB2661188;
-        Wed, 19 Dec 2018 18:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545245380;
-        bh=dNp2eZV4j9GiMr4qaE11NrLvy7q85BsWWNJ9YdmSx0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X9B92esc/9ky8sHkj6+aEgsORwI5b8Dc9/O1tTuSllqyprFWBkVV5NnxirZShwzjq
-         1w+GsjKdhrBI+OqlKRdI1AxPJrQdfha6H13xjY0Y4TTsuzNACsfJHlnb3a3JEvcSNE
-         2PC5ObGJa/ZZOp0m9P0zkuByMon1zlPekkXrElH8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAB2661188
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
-Date:   Wed, 19 Dec 2018 10:49:38 -0800
-From:   Jack Pham <jackp@codeaurora.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sriharsha Allenki <sallenki@codeaurora.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY
- driver
-Message-ID: <20181219184938.GC1997@jackp-linux.qualcomm.com>
-References: <20181127100722.9993-1-shawn.guo@linaro.org>
- <20181127100722.9993-3-shawn.guo@linaro.org>
- <b0d02b1c-cc44-69fe-0765-84caf76eaea1@ti.com>
- <20181204060104.GA11391@dragon>
- <20181217003434.GA7208@dragon>
- <c5ccf173-d0f3-70f4-f8e3-777fd3339b68@ti.com>
- <20181219010733.GA13489@dragon>
+        Wed, 19 Dec 2018 13:50:07 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so15842846lfe.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 10:50:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PO0k9/o7FTI1jmrZxBjOjNf74wJ/GL8BCXp4XKglEmI=;
+        b=iQVmLVfePQuBwksRtmeoKDlom41PV7298F02ulRzbo0gry7p9hGyVy/sy67yu5mNFM
+         f+VUWogabWm2Up1+oC9aVduDK4g9c5+yluSQ4H5NFaEhKPES5ByPKdjmngWmOo77Fqdi
+         I3BbczXpU7mrqD4x92RGu9CMx3PxRvhKGQYcs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PO0k9/o7FTI1jmrZxBjOjNf74wJ/GL8BCXp4XKglEmI=;
+        b=lYj4QEPU8qvZyzXoPm/Bcg5n16zQQpvp2FvSplFp/M0AqN9gT6vtk5+BcQZtriUiGS
+         iwvAJx9X14LlIcj3XwdGEWZFJdrsmkBDw1m19oraYFoxj4miXjsj6N7mmmhSu7vKxftM
+         iu30w/U7gM57fBOwml/d/efRFCvJA+Tlq6afTOyqTj5+KmRUTL4iVUfpzEF84TJVsRy5
+         ftS9gAwnLIZdsMOTY0Ks9blyetLe3148cvBjOJS4Z0Cic9XVXnIsNM4H6icL4Moy/2Xr
+         GeLkmhhXtvStynql6F4HUOgA7bvGpxQqOjNpXoK0e69KiUSQzS2luI/yhZHtXBwiAMNY
+         1A/Q==
+X-Gm-Message-State: AA+aEWahV6oVwlXFQyQyk3fpBPJtpbdmOn6PnsIZC4/g90iujaBAr4pA
+        rtwCMsnWV6iRm29+9Vy7KyTnC6/YIG8=
+X-Google-Smtp-Source: AFSGD/WDtQ0FXj7iBVoAtWGcFAbfP6wZQQhpNf/upUrKPxQ1Ots9y93KriCIrFKwB0ue/wdBd+aedg==
+X-Received: by 2002:ac2:50c4:: with SMTP id h4mr11597859lfm.81.1545245404728;
+        Wed, 19 Dec 2018 10:50:04 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id a62sm3978968lfa.37.2018.12.19.10.50.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 10:50:04 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id v1-v6so18358497ljd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 10:50:04 -0800 (PST)
+X-Received: by 2002:a2e:45d:: with SMTP id 90-v6mr13628864lje.110.1545245402786;
+ Wed, 19 Dec 2018 10:50:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181219010733.GA13489@dragon>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181219181747.118278-1-mka@chromium.org>
+In-Reply-To: <20181219181747.118278-1-mka@chromium.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 19 Dec 2018 10:49:26 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7BV=M4wpk304yhDV11ddNJSFGDYu8TRW3WOtDPLrRmnQ@mail.gmail.com>
+Message-ID: <CAE=gft7BV=M4wpk304yhDV11ddNJSFGDYu8TRW3WOtDPLrRmnQ@mail.gmail.com>
+Subject: Re: [PATCH] tty: serial: qcom_geni_serial: Fix wrap around of TX buffer
+To:     mka@chromium.org
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        msavaliy@codeaurora.org, ryandcase@chromium.org,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shawn, Kishon,
+On Wed, Dec 19, 2018 at 10:17 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> Before commit a1fee899e5bed ("tty: serial: qcom_geni_serial: Fix
+> softlock") the size of TX transfers was limited to the TX FIFO size,
+> and wrap arounds of the UART circular buffer were split into two
+> transfers. With the commit wrap around are allowed within a transfer.
+> The TX FIFO of the geni serial port uses a word size of 4 bytes. In
+> case of a circular buffer wrap within a transfer the driver currently
+> may write an incomplete word to the FIFO, with some bytes containing
+> data from the circular buffer and others being zero. Since the
+> transfer isn't completed yet the zero bytes are sent as if they were
+> actual data.
+>
+> Handle wrap arounds of the TX buffer properly and ensure that words
+> written to the TX FIFO always contain valid data (unless the transfer
+> is completed).
+>
+> Fixes: a1fee899e5bed ("tty: serial: qcom_geni_serial: Fix softlock")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-On Wed, Dec 19, 2018 at 09:07:36AM +0800, Shawn Guo wrote:
-> On Tue, Dec 18, 2018 at 07:46:13PM +0530, Kishon Vijay Abraham I wrote:
-> > 
-> > 
-> > On 17/12/18 6:04 AM, Shawn Guo wrote:
-> > > On Tue, Dec 04, 2018 at 02:01:07PM +0800, Shawn Guo wrote:
-> > >> Hi Kishon,
-> > >>
-> > >> On Tue, Dec 04, 2018 at 10:38:19AM +0530, Kishon Vijay Abraham I wrote:
-> > >>> Hi,
-> > >>>
-> > >>> On 27/11/18 3:37 PM, Shawn Guo wrote:
-> > >>>> It adds Synopsys 28nm Femto High-Speed USB PHY driver support, which
-> > >>>> is usually paired with Synopsys DWC3 USB controllers on Qualcomm SoCs.
-> > >>>
-> > >>> Is this Synopsys PHY specific to Qualcomm or could it be used by other vendors
-> > >>> (with just changing tuning parameters)? If it could be used by other vendors
-> > >>> then it would make sense to add this PHY driver in synopsys directory.
-> > >>
-> > >> My knowledge is that this Synopsys PHY is specific to Qualcomm SoCs.
-> > >> @Sriharsha, correct me if I'm wrong.
-> > > 
-> > > Kishon,
-> > > 
-> > > Do you have any further comments on the patches?  We are close the 4.21
-> > > merge window, and I really hope they can hit mainline with 4.21 release.
-> > > Thanks.
-> > 
-> > Aren't we waiting for feedback from Sriharsha?
-> 
-> I think no correction means that I'm right :)
+Oh nice, so this did end up being your problem with corrupt
+characters? Strange though, I still would have expected this bug to
+result in inserted serial characters, rather than edited ones.
+Either way, this looks good to me.
 
-I'm sorry Sriharsha has not yet responded but I can confirm that this
-PHY driver would only be specific to Qualcomm SoCs simply because of our
-custom register mapping used to control and initialize it. These are
-only defined as as HW signals by the Synopsys IP, which have been
-synthesized to map to our own IO register space. So really it can be
-treated as just a "Qualcomm USB PHY" with acknowledgement that the core
-design is licensed from SNPS.
-
-Thanks,
-Jack
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Evan Green <evgreen@chromium.org>
