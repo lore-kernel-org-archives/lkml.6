@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02ED2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8712C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBC9F214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78456214C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:04:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JSiskSSC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Je+P+wTi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729549AbeLSQEb (ORCPT
+        id S1729618AbeLSQEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:04:31 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46988 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728691AbeLSQE3 (ORCPT
+        Wed, 19 Dec 2018 11:04:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41646 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeLSQEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:04:29 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f23so15393160lfc.13;
-        Wed, 19 Dec 2018 08:04:27 -0800 (PST)
+        Wed, 19 Dec 2018 11:04:31 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15-v6so17859140ljc.8;
+        Wed, 19 Dec 2018 08:04:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZZI8ioWXkc4sq7/+UaHZVn4uYxbM0VQloyZQGuqbwgg=;
-        b=JSiskSSCKMdW6SROQWsAN+3PI4AOXKr9SmcP/NJCUlOUJ13ZuYHnccEJQa16U3eRHf
-         rN6UIPgmOA+vfs26YoTNj+eLoZCY55M4BVMsot0glgvtKdj2i/b7+qi2oqNZOwEoggkY
-         DqbkNX90bI1Q2vHeSUZGhbVSTgcAY7D+VMmjHcKT6ntRlPIGF+T/HlNC8rn32JhK/jls
-         dwU7je2wrUvAMXbcIVdhxYMntfFEj2LGn0or0Z8fSSe5H2yiqkszrmvlbq4XelS1f0/g
-         grLB7vCyiFAewfzu3/1Fcaau+HD4yd4W7FpihnrBwhrZEnrHoN264E6Wz9AoydQ6xB/C
-         SJoA==
+        bh=ngVQAKuo8iZ2AhPYUfFDSDo8oErenzKZAMdi0+QR+xU=;
+        b=Je+P+wTiSS132/OYNBJGWFuMnRcNMqVyFWYK6HkGA/dcKfF0tcaVSq+Ppt+Yyn8XMp
+         sFLDoz+Ml1N9X/4/3qBnyGsF7uQmNYYqpJClJ1LO6luPJhV6TlMHlbyunVyvJfmQAkNm
+         /Q3oFP6xQzsN73uAPPGe0TY3vByM2sUKE2uC+p8oVHjv9GDXJmLCY3Mqt8w6oXYmmBTo
+         tgqvus6CGNGTYG6bPrxRO1UqHbh14e8SchEnY197n7b0+XQpJU499Yyoa9fTKpNOWHak
+         rY+tEPSWPXfYjGYmriOY3WbK4udIuIt9o6+WpRlmEwjKu3OIPpxBgHJsnem0LEJ1YRcM
+         5gkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZZI8ioWXkc4sq7/+UaHZVn4uYxbM0VQloyZQGuqbwgg=;
-        b=tlJU7sT807DGtZrtjzrBZ1y38uxJ9dyoJZwNusCaiREGCrAesWddFqcxnfTnDfVXAO
-         JL5O/4/UhjYQa/jmmIjDNJO/FZ89SdXCC0X0lCzziy3JJz/baDkPMtGFaZidg4laElRw
-         KGF9lNjO71H+KIK9Hf1NhLqBBqNocr3sxmJacH0ooQeDg6bYwBCXlxFEArZzIZQY1bEh
-         b8uOF879YRfXUtUB3/fvIJaxuabGlN0ILDsaSLZ2j7mN/Zlolw+iU6A/O8P1otF3XrQR
-         CIyMDb7UOqOar5YQB6JEq5mFFL5QKz87O+WSGY3ZQkyz4VE86iioI0z10rRq/hulFdjp
-         E31Q==
-X-Gm-Message-State: AA+aEWatKReZfxiFu2mTABZVyaUkAFhg5DDmLd5lnq1TYC3aLpat36WN
-        2nG/JZMOR+FhkOntjUQxqI0=
-X-Google-Smtp-Source: AFSGD/XvQ2nuSqE4wy/SbLlLNPEkqpARqK5tWnC9Ud8eRUmdV0WeVTBjc0PXOds7iOWSNVOByjIIkw==
-X-Received: by 2002:a19:c18d:: with SMTP id r135mr1884611lff.59.1545235466806;
-        Wed, 19 Dec 2018 08:04:26 -0800 (PST)
+        bh=ngVQAKuo8iZ2AhPYUfFDSDo8oErenzKZAMdi0+QR+xU=;
+        b=tPDYoiFgThqkF2PFl6zjZE0tqZhuKHEBXS0sK8kJDdRBNJEIZ8X2HpiS4JeJxZFuQq
+         7W+ZqNVJaOqUOVnC5gs5AoSqwzGy4fLJKd9P1aFb+4X+R7kI8JZ04JISiYqoAvbgCYfO
+         3IVgiMhSNy/S+tFLD+n92AdFPdBRKki0veE3Jx8kZi/3qnlK/7U7DpDDxCtiiE1yLcp4
+         1VODDRaMMJ4qsazPPwiwhudGb/MTVg0TrVttqvpprvsynbUGFtww0fFVHeQ8c2Wwv0uR
+         wqNLL9GhBf4promiEIiHaHAw7OXqNSRNl6HcTYOwEg/ThNIxT06xFAQCnu2ZtCCGnAkf
+         5JvQ==
+X-Gm-Message-State: AA+aEWYhbcfvRUojumO73zAKU5kpl/TQkw4+VhtVgnGnGYI0A7aMdLBc
+        Pm8AReuyFbovCK0XPRRg5E0=
+X-Google-Smtp-Source: AFSGD/UiKeMYiz1n1P+y93y49ttH2Vl+kPk/qIKf8YwCLriepYxMihJFvJpC/nHEu4WzLQnGn8WSSQ==
+X-Received: by 2002:a2e:2a46:: with SMTP id q67-v6mr11164912ljq.38.1545235468587;
+        Wed, 19 Dec 2018 08:04:28 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:253f:4197:555d:bfba])
-        by smtp.googlemail.com with ESMTPSA id i75sm3943979lfb.58.2018.12.19.08.04.25
+        by smtp.googlemail.com with ESMTPSA id i75sm3943979lfb.58.2018.12.19.08.04.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 08:04:26 -0800 (PST)
+        Wed, 19 Dec 2018 08:04:27 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     inki.dae@samsung.com, krzk@kernel.org, airlied@linux.ie
 Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
@@ -66,9 +66,9 @@ Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
         robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org,
         =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 1/3] drm/exynos: rotator: Add support for s5pv210
-Date:   Wed, 19 Dec 2018 16:57:02 +0100
-Message-Id: <20181219155704.15264-2-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 2/3] dt-bindings: gpu: samsung-rotator: Document s5pv210 support
+Date:   Wed, 19 Dec 2018 16:57:03 +0100
+Message-Id: <20181219155704.15264-3-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181219155704.15264-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20181219155704.15264-1-pawel.mikolaj.chmiel@gmail.com>
@@ -80,78 +80,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds support for s5pv210.
-Currently only NV12 and XRGB8888 formats are supported.
-It was tested by using tool from
-https://www.spinics.net/lists/linux-samsung-soc/msg60498.html
+This commit documents new compatible for s5pv210 soc,
+which will be also supported by this driver.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_rotator.c | 23 +++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ Documentation/devicetree/bindings/gpu/samsung-rotator.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-index a820a68429b9..a822d340ccf6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-@@ -357,6 +357,11 @@ static int rotator_runtime_resume(struct device *dev)
- }
- #endif
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt b/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+index 82cd1ed0be93..78658dec6941 100644
+--- a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
++++ b/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+@@ -5,6 +5,7 @@ Required properties:
+ 	(a) "samsung,exynos4210-rotator" for Rotator IP in Exynos4210
+ 	(b) "samsung,exynos4212-rotator" for Rotator IP in Exynos4212/4412
+ 	(c) "samsung,exynos5250-rotator" for Rotator IP in Exynos5250
++	(d) "samsung,s5pv210-rotator" for Rotator IP in S5PV210
  
-+static const struct drm_exynos_ipp_limit rotator_s5pv210_rbg888_limits[] = {
-+	{ IPP_SIZE_LIMIT(BUFFER, .h = { 8, SZ_16K }, .v = { 8, SZ_16K }) },
-+	{ IPP_SIZE_LIMIT(AREA, .h.align = 2, .v.align = 2) },
-+};
-+
- static const struct drm_exynos_ipp_limit rotator_4210_rbg888_limits[] = {
- 	{ IPP_SIZE_LIMIT(BUFFER, .h = { 8, SZ_16K }, .v = { 8, SZ_16K }) },
- 	{ IPP_SIZE_LIMIT(AREA, .h.align = 4, .v.align = 4) },
-@@ -372,6 +377,11 @@ static const struct drm_exynos_ipp_limit rotator_5250_rbg888_limits[] = {
- 	{ IPP_SIZE_LIMIT(AREA, .h.align = 2, .v.align = 2) },
- };
- 
-+static const struct drm_exynos_ipp_limit rotator_s5pv210_yuv_limits[] = {
-+	{ IPP_SIZE_LIMIT(BUFFER, .h = { 32, SZ_64K }, .v = { 32, SZ_64K }) },
-+	{ IPP_SIZE_LIMIT(AREA, .h.align = 8, .v.align = 8) },
-+};
-+
- static const struct drm_exynos_ipp_limit rotator_4210_yuv_limits[] = {
- 	{ IPP_SIZE_LIMIT(BUFFER, .h = { 32, SZ_64K }, .v = { 32, SZ_64K }) },
- 	{ IPP_SIZE_LIMIT(AREA, .h.align = 8, .v.align = 8) },
-@@ -382,6 +392,11 @@ static const struct drm_exynos_ipp_limit rotator_4412_yuv_limits[] = {
- 	{ IPP_SIZE_LIMIT(AREA, .h.align = 8, .v.align = 8) },
- };
- 
-+static const struct exynos_drm_ipp_formats rotator_s5pv210_formats[] = {
-+	{ IPP_SRCDST_FORMAT(XRGB8888, rotator_s5pv210_rbg888_limits) },
-+	{ IPP_SRCDST_FORMAT(NV12, rotator_s5pv210_yuv_limits) },
-+};
-+
- static const struct exynos_drm_ipp_formats rotator_4210_formats[] = {
- 	{ IPP_SRCDST_FORMAT(XRGB8888, rotator_4210_rbg888_limits) },
- 	{ IPP_SRCDST_FORMAT(NV12, rotator_4210_yuv_limits) },
-@@ -397,6 +412,11 @@ static const struct exynos_drm_ipp_formats rotator_5250_formats[] = {
- 	{ IPP_SRCDST_FORMAT(NV12, rotator_4412_yuv_limits) },
- };
- 
-+static const struct rot_variant rotator_s5pv210_data = {
-+	.formats = rotator_s5pv210_formats,
-+	.num_formats = ARRAY_SIZE(rotator_s5pv210_formats),
-+};
-+
- static const struct rot_variant rotator_4210_data = {
- 	.formats = rotator_4210_formats,
- 	.num_formats = ARRAY_SIZE(rotator_4210_formats),
-@@ -414,6 +434,9 @@ static const struct rot_variant rotator_5250_data = {
- 
- static const struct of_device_id exynos_rotator_match[] = {
- 	{
-+		.compatible = "samsung,s5pv210-rotator",
-+		.data = &rotator_s5pv210_data,
-+	}, {
- 		.compatible = "samsung,exynos4210-rotator",
- 		.data = &rotator_4210_data,
- 	}, {
+   - reg : Physical base address of the IP registers and length of memory
+ 	  mapped region.
 -- 
 2.17.1
 
