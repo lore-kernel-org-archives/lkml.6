@@ -2,196 +2,345 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71D6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DA5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9150F218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F10D218A6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:41:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5cPmmd7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729088AbeLSTkw (ORCPT
+        id S1729178AbeLSTlO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 14:40:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbeLSTkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 14:40:51 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 331A620874;
-        Wed, 19 Dec 2018 19:40:49 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 14:40:47 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH 2/7] tracing: Change strlen to sizeof for hist trigger
- static strings
-Message-ID: <20181219144047.49fabfa6@gandalf.local.home>
-In-Reply-To: <e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com>
-References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
-        <e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 19 Dec 2018 14:41:14 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34806 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728789AbeLSTlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 14:41:13 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so20760280wrw.1;
+        Wed, 19 Dec 2018 11:41:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lcvwrP4kha8Mwz9COYLOBTMIGNTJLWaSpu2j6A+2+Wg=;
+        b=d5cPmmd7wWCpbH/METfzlVzeCd1FzB9kkj1gqhTasCDbf8mfJWRx/xEPJQ5J0Wk3oL
+         eQD13UkS2fZ2SDxCAsGwNV0laGG3h87L/K6yLF0SWIGTA633lPVONygbDGD/bHKSn/DX
+         lFAGTReZd6+GSA4Dzoambdtk/qTjp0I81UOdATlHHCGjIo5EJ9Na+AukCMU6WnreQgWx
+         qDoCkQ8VRy/y7xjCvgimQGf9/pk6F7qc8lPXMd6iI22N4egWILb5DdRvGHq463FDJXnW
+         jzI8BgJsjub1amAgkZQUAwKUn7w2of1Y5SpXOZdGIg6pgo7fHgU+wnzMBS4Uecemb2O5
+         kyBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lcvwrP4kha8Mwz9COYLOBTMIGNTJLWaSpu2j6A+2+Wg=;
+        b=Tfe89gvM2j9bM8lzMIt7nJT67Zbzcvlz/7+2MkdclSiSWBJCgcLT85B+BHM4VNuhty
+         mOgAf9iC4ZvriBh6bWgsCOonoGt+Ivfg14UY2XcOgR4dX6Q7pZwZ5479czZsLqOlsBNY
+         +pRLaMs3zomTTUk399s1X5P6Pqrj+gbmxTeIdU+M+gPa9MAPIZRrFlvnKWzUln/pcDtm
+         qcR0EErfWrO53rqkfVzdBTiwk3bOM8FqLLibVbFpXheWejzdYUrgDrik8/wbvZ0qYtuU
+         wr+rNeLmJEe5FPq3KW0qWw7TO+4ivd4oeyNfHugp3PGMhcLq8g1bHb+HbPChe6En6RHa
+         yHjg==
+X-Gm-Message-State: AA+aEWbMZgyIG+rU9g6uwLCdgr4l1BMwm2/M59xZdb4uOb+akNW5SIpV
+        odv2Yp0t4Pme1iHmsMEdJY4=
+X-Google-Smtp-Source: AFSGD/XhHwPEZY8/Zo2DU6Fk+FTJ+rPSDxTRDNMQ7Y1RnIbZHTA8aACsVEwq/wF+iF7P97GnEuW1RQ==
+X-Received: by 2002:adf:ed46:: with SMTP id u6mr20619292wro.262.1545248469075;
+        Wed, 19 Dec 2018 11:41:09 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:c8fd:529:3f95:d427? (p200300EA8BCFE300C8FD05293F95D427.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:c8fd:529:3f95:d427])
+        by smtp.googlemail.com with ESMTPSA id j202sm15925042wmf.15.2018.12.19.11.41.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 11:41:08 -0800 (PST)
+Subject: Re: A weird problem of Realtek r8168 after resume from S3
+To:     Chris Chiu <chiu@endlessm.com>
+Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
+        netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
+ <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
+ <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com>
+ <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
+ <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
+ <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
+ <7c245fa2-75bb-8ff9-5ffa-83262e3470fe@gmail.com>
+ <CAB4CAwepsfaDm6rdxy=RZGuTxjtfsK7yoD5Jkker1AfS7vrZxg@mail.gmail.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <38e4563f-99ae-d5ee-782d-1c309599cfbf@gmail.com>
+Date:   Wed, 19 Dec 2018 20:41:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAB4CAwepsfaDm6rdxy=RZGuTxjtfsK7yoD5Jkker1AfS7vrZxg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Dec 2018 14:33:21 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On 19.12.2018 16:32, Chris Chiu wrote:
+> On Wed, Dec 19, 2018 at 4:28 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>
+>> On 18.12.2018 14:25, Chris Chiu wrote:
+>>> On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>
+>>>> On 17.12.2018 14:25, Chris Chiu wrote:
+>>>>> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>>>
+>>>>>> On 14.12.2018 04:33, Chris Chiu wrote:
+>>>>>>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
+>>>>>>>>
+>>>>>>>> Hi,
+>>>>>>>>     We got an acer laptop which has a problem with ethernet networking after
+>>>>>>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
+>>>>>>>> follows.
+>>>>>>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+>>>>>>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
+>>>>>>>>
+>>>>>> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
+>>>>>>
+>>>>> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
+>>>>> (uninitialized): mac_version = 0x2b
+>>>>> [   22.365580] libphy: r8169: probed
+>>>>> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
+>>>>> XID 5c800800, IRQ 38
+>>>>> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
+>>>>> bytes, tx checksumming: ko]
+>>>>>
+>>>> Thanks for the info.
+>>>>
+>>>>>>>>     The problem is the ethernet is not accessible after resume. Pinging via
+>>>>>>>> ethernet always shows the response `Destination Host Unreachable`. However,
+>>>>>>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
+>>>>>>>> interface, the networking is back to alive. But it's dead again after
+>>>>>>>> I stop tcpdump.
+>>>>>>>> One more thing, if I ping the problematic machine from others, it achieves the
+>>>>>>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
+>>>>>>>>
+>>>>>> You could compare the register dumps (ethtool -d) before and after S3 sleep
+>>>>>> to find out whether there's a difference.
+>>>>>>
+>>>>>
+>>>>> Actually, I just found I lead the wrong direction. The S3 suspend does
+>>>>> help to reproduce,
+>>>>> but it's not necessary. All I need to do is ping around 5 mins and the
+>>>>> network connection
+>>>>> fails.  And I also find one thing interesting, disabling the  MSI-X
+>>>>> interrupt like commit
+>>>>> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
+>>>>> Although I don't
+>>>>> understand the root cause. Anything I can do to help?
+>>>>>
+>>>> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
+>>>> the issue, but also pinging the machine from outside brings back the network.
+>>>> Both actions affect totally different corners.
+>>>>
+>>>> The commit and related issue you mention was a workaround in the driver,
+>>>> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
+>>>> in the PCI core. After this was fixed we removed the workaround again.
+>>>> This shouldn't be related to your issue.
+>>>>
+>>>> Hard to say for now is whether the issue is:
+>>>> - a driver issue
+>>>> - a hardware issue in the RTL8411
+>>>> - an issue with the chipset on your mainboard
+>>>>
+>>>> According to your description it doesn't take a special scenario to trigger
+>>>> the issue, so most likely also other users of Acer notebooks with RTL8411
+>>>> should be affected (after briefly checking this should be at least Aspire
+>>>> F15, V15, V7). Therefore I wonder why there aren't more reports.
+>>>>
+>>>> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
+>>>> So you could test this revision and the one before.
+>>>>
+>>>> Eventually, if the issue really should be caused by a side effect of using
+>>>> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
+>>>> in general or just for RTL8411 and a certain subsystem id.
+>>>>
+>>>
+>>> I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
+>>> interrupt handling"),
+>>> the problem still there. Then I revert to the previous revision, the
+>>> problem goes away.
+>>> So I think it's pretty much the side effect of MSI-X. However, as you
+>>> mentioned that
+>>> you didn't hit this problem, I'll ask the vendor to verify if this
+>>> problem also happens on
+>>> other machines with the same chip. Then we can determine to disable for specific
+>>> mac version or just a certain subsystem id.
+>>>
+>>>>>>>>     I tried the latest 4.20 rc version but the problem still there. I
+>>>>>>>> also tried some
+>>>>>>>> hw_reset or init thing in the resume path but no effect. Any
+>>>>>>>> suggestion for this?
+>>>>>>>> Thanks
+>>>>>>>>
+>>>>>> Did previous kernel versions work? If it's a regression, a bisect would be
+>>>>>> appreciated, because with the chip versions I've got I can't reproduce the issue.
+>>>>>>
+>>>>>>>> Chris
+>>>>>>>
+>>>>>>> Gentle ping. Any additional information required?
+>>>>>>>
+>>>>>>> Chris
+>>>>>>>
+>>>>>> Heiner
+>>>>>
+>>>>
+>>>
+>>
+>> As an additional note:
+>> I found that the rtsx_pci driver doesn't support MSI-X currently.
+>> The following patch adds MSI-X support (it's compile-tested only
+>> because I don't have a system with RTL8411).
+>> Would be interesting to see whether it makes a difference if both
+>> components on this combo chip use MSI-X.
+>>
+>> ---
+>>  drivers/misc/cardreader/rtsx_pcr.c | 51 ++++++++++--------------------
+>>  include/linux/rtsx_pci.h           |  1 -
+>>  2 files changed, 16 insertions(+), 36 deletions(-)
+>>
+>> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+>> index da445223f..d1349c248 100644
+>> --- a/drivers/misc/cardreader/rtsx_pcr.c
+>> +++ b/drivers/misc/cardreader/rtsx_pcr.c
+>> @@ -35,10 +35,6 @@
+>>
+>>  #include "rtsx_pcr.h"
+>>
+>> -static bool msi_en = true;
+>> -module_param(msi_en, bool, S_IRUGO | S_IWUSR);
+>> -MODULE_PARM_DESC(msi_en, "Enable MSI");
+>> -
+>>  static DEFINE_IDR(rtsx_pci_idr);
+>>  static DEFINE_SPINLOCK(rtsx_pci_lock);
+>>
+>> @@ -1049,22 +1045,21 @@ static irqreturn_t rtsx_pci_isr(int irq, void *dev_id)
+>>
+>>  static int rtsx_pci_acquire_irq(struct rtsx_pcr *pcr)
+>>  {
+>> -       pcr_dbg(pcr, "%s: pcr->msi_en = %d, pci->irq = %d\n",
+>> -                       __func__, pcr->msi_en, pcr->pci->irq);
+>> +       int ret;
+>>
+>> -       if (request_irq(pcr->pci->irq, rtsx_pci_isr,
+>> -                       pcr->msi_en ? 0 : IRQF_SHARED,
+>> -                       DRV_NAME_RTSX_PCI, pcr)) {
+>> -               dev_err(&(pcr->pci->dev),
+>> -                       "rtsx_sdmmc: unable to grab IRQ %d, disabling device\n",
+>> -                       pcr->pci->irq);
+>> -               return -1;
+>> -       }
+>> +       ret = pci_alloc_irq_vectors(pcr->pci, 1, 1, PCI_IRQ_ALL_TYPES);
+>> +       if (ret < 0)
+>> +               goto err;
+>>
+>> -       pcr->irq = pcr->pci->irq;
+>> -       pci_intx(pcr->pci, !pcr->msi_en);
+>> +       ret = pci_request_irq(pcr->pci, 0, rtsx_pci_isr, NULL, pcr,
+>> +                             DRV_NAME_RTSX_PCI);
+>> +       if (ret)
+>> +               goto err;
+>>
+>>         return 0;
+>> +err:
+>> +       pci_err(pcr->pci, "rtsx_sdmmc: unable to grab interrupt\n");
+>> +       return ret;
+>>  }
+>>
+>>  static void rtsx_enable_aspm(struct rtsx_pcr *pcr)
+>> @@ -1496,19 +1491,11 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+>>         INIT_DELAYED_WORK(&pcr->carddet_work, rtsx_pci_card_detect);
+>>         INIT_DELAYED_WORK(&pcr->idle_work, rtsx_pci_idle_work);
+>>
+>> -       pcr->msi_en = msi_en;
+>> -       if (pcr->msi_en) {
+>> -               ret = pci_enable_msi(pcidev);
+>> -               if (ret)
+>> -                       pcr->msi_en = false;
+>> -       }
+>> -
+>>         ret = rtsx_pci_acquire_irq(pcr);
+>>         if (ret < 0)
+>> -               goto disable_msi;
+>> +               goto free_dma;
+>>
+>>         pci_set_master(pcidev);
+>> -       synchronize_irq(pcr->irq);
+>>
+>>         ret = rtsx_pci_init_chip(pcr);
+>>         if (ret < 0)
+>> @@ -1528,10 +1515,8 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+>>         return 0;
+>>
+>>  disable_irq:
+>> -       free_irq(pcr->irq, (void *)pcr);
+>> -disable_msi:
+>> -       if (pcr->msi_en)
+>> -               pci_disable_msi(pcr->pci);
+>> +       pci_free_irq(pcr->pci, 0, pcr);
+>> +free_dma:
+>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+>>  unmap:
+>> @@ -1568,9 +1553,7 @@ static void rtsx_pci_remove(struct pci_dev *pcidev)
+>>
+>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+>> -       free_irq(pcr->irq, (void *)pcr);
+>> -       if (pcr->msi_en)
+>> -               pci_disable_msi(pcr->pci);
+>> +       pci_free_irq(pcr->pci, 0, pcr);
+>>         iounmap(pcr->remap_addr);
+>>
+>>         pci_release_regions(pcidev);
+>> @@ -1664,9 +1647,7 @@ static void rtsx_pci_shutdown(struct pci_dev *pcidev)
+>>         rtsx_pci_power_off(pcr, HOST_ENTER_S1);
+>>
+>>         pci_disable_device(pcidev);
+>> -       free_irq(pcr->irq, (void *)pcr);
+>> -       if (pcr->msi_en)
+>> -               pci_disable_msi(pcr->pci);
+>> +       pci_free_irq(pcr->pci, 0, pcr);
+>>  }
+>>
+>>  #else /* CONFIG_PM */
+>> diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
+>> index e964bbd03..10abfe7f2 100644
+>> --- a/include/linux/rtsx_pci.h
+>> +++ b/include/linux/rtsx_pci.h
+>> @@ -1190,7 +1190,6 @@ struct rtsx_pcr {
+>>         /* pci resources */
+>>         unsigned long                   addr;
+>>         void __iomem                    *remap_addr;
+>> -       int                             irq;
+>>
+>>         /* host reserved buffer */
+>>         void                            *rtsx_resv_buf;
+>> --
+>> 2.20.0
+>>
 > 
-> There's no need to use strlen() for static strings when the length is
-> already known, so update trace_events_hist.c with sizeof() for those
-> cases.
+> As mentioned in the last email, the rtsx_pci seems to make no
+> difference. I still tried the kernel with this patch applied, the
+> problem still persists. I also tried the vendor driver and it works
+> without any problem. I'd rather like to find out the root cause
+> instead of a workaround. Any better idea?
 > 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
->  kernel/trace/trace_events_hist.c | 38 +++++++++++++++++++-------------------
->  1 file changed, 19 insertions(+), 19 deletions(-)
+Thanks for your efforts! The vendor driver doesn't support MSI-X,
+therefore the issue doesn't occur. I'm running out of ideas, so
+I will write to a contact in Realtek who few times provided helpful
+information already.
+
+> Chris
 > 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index d29bf8a8e1dd..25d06b3ae1f6 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -507,7 +507,7 @@ static int synth_field_string_size(char *type)
->  	start = strstr(type, "char[");
->  	if (start == NULL)
->  		return -EINVAL;
-> -	start += strlen("char[");
-> +	start += sizeof("char[") - 1;
->  
->  	end = strchr(type, ']');
->  	if (!end || end < start)
-> @@ -1843,8 +1843,8 @@ static int parse_action(char *str, struct hist_trigger_attrs *attrs)
->  	if (attrs->n_actions >= HIST_ACTIONS_MAX)
->  		return ret;
->  
-> -	if ((strncmp(str, "onmatch(", strlen("onmatch(")) == 0) ||
-> -	    (strncmp(str, "onmax(", strlen("onmax(")) == 0)) {
-> +	if ((strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) ||
-> +	    (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0)) {
->  		attrs->action_str[attrs->n_actions] = kstrdup(str, GFP_KERNEL);
->  		if (!attrs->action_str[attrs->n_actions]) {
->  			ret = -ENOMEM;
-> @@ -1861,34 +1861,34 @@ static int parse_assignment(char *str, struct hist_trigger_attrs *attrs)
->  {
->  	int ret = 0;
->  
-> -	if ((strncmp(str, "key=", strlen("key=")) == 0) ||
-> -	    (strncmp(str, "keys=", strlen("keys=")) == 0)) {
-> +	if ((strncmp(str, "key=", sizeof("key=") - 1) == 0) ||
-> +	    (strncmp(str, "keys=", sizeof("keys=") - 1) == 0)) {
->  		attrs->keys_str = kstrdup(str, GFP_KERNEL);
-
-I'll apply this as is, but since there's a lot of these, I wonder if we
-should make a marcro for this:
-
-#define strcmp_const(str, str_const) strncmp(str, str_const, sizeof(str_const) - 1)
-
-?
-
-This would help prevent bugs due to typos and bad cut and paste.
-
--- Steve
-
-
-
->  		if (!attrs->keys_str) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if ((strncmp(str, "val=", strlen("val=")) == 0) ||
-> -		 (strncmp(str, "vals=", strlen("vals=")) == 0) ||
-> -		 (strncmp(str, "values=", strlen("values=")) == 0)) {
-> +	} else if ((strncmp(str, "val=", sizeof("val=") - 1) == 0) ||
-> +		 (strncmp(str, "vals=", sizeof("vals=") - 1) == 0) ||
-> +		 (strncmp(str, "values=", sizeof("values=") - 1) == 0)) {
->  		attrs->vals_str = kstrdup(str, GFP_KERNEL);
->  		if (!attrs->vals_str) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (strncmp(str, "sort=", strlen("sort=")) == 0) {
-> +	} else if (strncmp(str, "sort=", sizeof("sort=") - 1) == 0) {
->  		attrs->sort_key_str = kstrdup(str, GFP_KERNEL);
->  		if (!attrs->sort_key_str) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (strncmp(str, "name=", strlen("name=")) == 0) {
-> +	} else if (strncmp(str, "name=", sizeof("name=") - 1) == 0) {
->  		attrs->name = kstrdup(str, GFP_KERNEL);
->  		if (!attrs->name) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (strncmp(str, "clock=", strlen("clock=")) == 0) {
-> +	} else if (strncmp(str, "clock=", sizeof("clock=") - 1) == 0) {
->  		strsep(&str, "=");
->  		if (!str) {
->  			ret = -EINVAL;
-> @@ -1901,7 +1901,7 @@ static int parse_assignment(char *str, struct hist_trigger_attrs *attrs)
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -	} else if (strncmp(str, "size=", strlen("size=")) == 0) {
-> +	} else if (strncmp(str, "size=", sizeof("size=") - 1) == 0) {
->  		int map_bits = parse_map_size(str);
->  
->  		if (map_bits < 0) {
-> @@ -3497,7 +3497,7 @@ static struct action_data *onmax_parse(char *str)
->  	if (!onmax_fn_name || !str)
->  		goto free;
->  
-> -	if (strncmp(onmax_fn_name, "save", strlen("save")) == 0) {
-> +	if (strncmp(onmax_fn_name, "save", sizeof("save") - 1) == 0) {
->  		char *params = strsep(&str, ")");
->  
->  		if (!params) {
-> @@ -4302,8 +4302,8 @@ static int parse_actions(struct hist_trigger_data *hist_data)
->  	for (i = 0; i < hist_data->attrs->n_actions; i++) {
->  		str = hist_data->attrs->action_str[i];
->  
-> -		if (strncmp(str, "onmatch(", strlen("onmatch(")) == 0) {
-> -			char *action_str = str + strlen("onmatch(");
-> +		if (strncmp(str, "onmatch(", sizeof("onmatch(") - 1) == 0) {
-> +			char *action_str = str + sizeof("onmatch(") - 1;
->  
->  			data = onmatch_parse(tr, action_str);
->  			if (IS_ERR(data)) {
-> @@ -4311,8 +4311,8 @@ static int parse_actions(struct hist_trigger_data *hist_data)
->  				break;
->  			}
->  			data->fn = action_trace;
-> -		} else if (strncmp(str, "onmax(", strlen("onmax(")) == 0) {
-> -			char *action_str = str + strlen("onmax(");
-> +		} else if (strncmp(str, "onmax(", sizeof("onmax(") - 1) == 0) {
-> +			char *action_str = str + sizeof("onmax(") - 1;
->  
->  			data = onmax_parse(action_str);
->  			if (IS_ERR(data)) {
-> @@ -5548,9 +5548,9 @@ static int event_hist_trigger_func(struct event_command *cmd_ops,
->  			p++;
->  			continue;
->  		}
-> -		if (p >= param + strlen(param) - strlen("if") - 1)
-> +		if (p >= param + strlen(param) - (sizeof("if") - 1) - 1)
->  			return -EINVAL;
-> -		if (*(p + strlen("if")) != ' ' && *(p + strlen("if")) != '\t') {
-> +		if (*(p + sizeof("if") - 1) != ' ' && *(p + sizeof("if") - 1) != '\t') {
->  			p++;
->  			continue;
->  		}
-
+Heiner
