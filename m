@@ -2,187 +2,110 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CB1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70210C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEBD2080D
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:09:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYLRvYXd"
+	by mail.kernel.org (Postfix) with ESMTP id 494EF2080D
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 19:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbeLSTJU (ORCPT
+        id S1730342AbeLSTKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 14:09:20 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35454 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729303AbeLSTJU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 14:09:20 -0500
-Received: by mail-it1-f193.google.com with SMTP id p197so10912035itp.0;
-        Wed, 19 Dec 2018 11:09:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pcGFm+WWDHMbNkU16anFiaUGHrZn3yGJ3Q07OiBG13g=;
-        b=HYLRvYXdkfKHcAblKIBrGZVgbt4hEPc3QJM9MLgCXh8kKV8TP+RjeTiHZaf6nTWMpr
-         rjTZbdqVfewSAkNQVJqPxdwb60qEXBRwk3BkMNguhDCUT5uoFhUJtER3pramCJMllIio
-         ZxH2X0IEg1YuujLEyeW36ch8gTYon/CS1ns23/meqxHYYDxiS/1APcqi7YFQUWtIjBfU
-         LDhHmaaxNxrbPuNu3IBI+9JPrwUKdi1pUSx6ZYJO0TL6en5Bn0GQJdwblfsH5WHbt/iJ
-         ZvN6/mjkcu8q8lVQJYR5A7Vsqt/+3FvkV1r2uvBhz4FARLAgclRrh5VIVdWik1ApTpvS
-         91Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pcGFm+WWDHMbNkU16anFiaUGHrZn3yGJ3Q07OiBG13g=;
-        b=AtviUOMC+Id/VlwF+mvmLoZf+T0iebxPFc82pt3da2Ex0pxZfV3O/bLQDDY+kVr3qi
-         573migdq1JGxT5AEjg5h9zDW8IrcjFI5Nk4nX3lWm70HG4BH27DSgysFROdkAodF6/vO
-         aOMsZZqXQOARRnXfih/lhL453LWb4bkGPc91bCIaD8BbupGn/fZbsab4FN9JWRjK6+yC
-         3kv+Lf4Jbfz5n1KO6GPxT3e27zUl9RRRAHZbbU1nA/kDVjVQLHrKOLs1DlAGLPlthxll
-         g2/ThnSRN+nAjsdVaMcJENaZWqL92icvlpCEkxFbJ+Rb2Agn7OwinsgnsogibPD8SKs6
-         Syag==
-X-Gm-Message-State: AA+aEWa7W7cqmSUKIM4yu93CsyubuOIKQOs2b903SZ+vND7Kk4XO62X6
-        zL1eL/xuPEe4k7Ee/WEG0+I=
-X-Google-Smtp-Source: AFSGD/URCyFjb9IQQJKrZCpe9Re/8eFHLdfGsK1lwzTny8sDIuYHe/uLT3Etoso72w9L6XMS6qlAdQ==
-X-Received: by 2002:a02:9b26:: with SMTP id o35mr20904426jak.23.1545246559092;
-        Wed, 19 Dec 2018 11:09:19 -0800 (PST)
-Received: from tzanussi-mobl ([2601:246:0:7004:2550:47d9:db89:e6e1])
-        by smtp.googlemail.com with ESMTPSA id 196sm4367385itu.37.2018.12.19.11.09.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 11:09:18 -0800 (PST)
-Message-ID: <1545246556.4239.7.camel@gmail.com>
-Subject: [PATCH v2 3/7] tracing: Use var_refs[] for hist trigger reference
- checking
-From:   Tom Zanussi <tzanussi@gmail.com>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date:   Wed, 19 Dec 2018 13:09:16 -0600
-In-Reply-To: <becb9627fb09681960f26809961b832be9591048.1545161087.git.tom.zanussi@linux.intel.com>
-References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
-         <becb9627fb09681960f26809961b832be9591048.1545161087.git.tom.zanussi@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 14:10:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727847AbeLSTKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 14:10:25 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 99D2F653C8;
+        Wed, 19 Dec 2018 19:10:24 +0000 (UTC)
+Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 687979F77;
+        Wed, 19 Dec 2018 19:10:18 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [RFC PATCH] x86/speculation: Don't inherit TIF_SSBD on execve()
+Date:   Wed, 19 Dec 2018 14:09:50 -0500
+Message-Id: <1545246590-12704-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 19 Dec 2018 19:10:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since all the variable reference hist_fields are collected into
-hist_data->var_refs[] array, there's no need to go through all the
-fields looking for them, or in separate arrays like synth_var_refs[],
-which will be going away soon anyway.
+With the default SPEC_STORE_BYPASS_SECCOMP/SPEC_STORE_BYPASS_PRCTL mode,
+the TIF_SSBD bit will be inherited when a new task is fork'ed or cloned.
 
-This also allows us to get rid of some unnecessary code and functions
-currently used for the same purpose.
+As only certain class of applications (like Java) requires disabling
+speculative store bypass for security purpose, it may not make sense to
+allow the TIF_SSBD bit to be inherited across execve() boundary where the
+new application may not need SSBD at all and is probably not aware that
+SSBD may have been turned on. This may cause an unnecessary performance
+loss of up to 20% in some cases.
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+The arch_setup_new_exec() function is updated to clear the TIF_SSBD
+bit unless it has been force-disabled.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/trace/trace_events_hist.c | 68 +++++++---------------------------------
- 1 file changed, 11 insertions(+), 57 deletions(-)
+ Documentation/userspace-api/spec_ctrl.rst |  3 +++
+ arch/x86/kernel/process.c                 | 10 ++++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 25d06b3ae1f6..f3caf6e484f4 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1297,75 +1297,29 @@ check_field_for_var_ref(struct hist_field *hist_field,
- 			struct hist_trigger_data *var_data,
- 			unsigned int var_idx)
- {
--	struct hist_field *found = NULL;
--
--	if (hist_field && hist_field->flags & HIST_FIELD_FL_VAR_REF) {
--		if (hist_field->var.idx == var_idx &&
--		    hist_field->var.hist_data == var_data) {
--			found = hist_field;
--		}
--	}
--
--	return found;
--}
--
--static struct hist_field *
--check_field_for_var_refs(struct hist_trigger_data *hist_data,
--			 struct hist_field *hist_field,
--			 struct hist_trigger_data *var_data,
--			 unsigned int var_idx,
--			 unsigned int level)
--{
--	struct hist_field *found = NULL;
--	unsigned int i;
--
--	if (level > 3)
--		return found;
--
--	if (!hist_field)
--		return found;
--
--	found = check_field_for_var_ref(hist_field, var_data, var_idx);
--	if (found)
--		return found;
--
--	for (i = 0; i < HIST_FIELD_OPERANDS_MAX; i++) {
--		struct hist_field *operand;
-+	WARN_ON(!(hist_field && hist_field->flags & HIST_FIELD_FL_VAR_REF));
+diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
+index c4dbe6f..226aed5 100644
+--- a/Documentation/userspace-api/spec_ctrl.rst
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -55,6 +55,9 @@ is selected by arg2 of :manpage:`prctl(2)` per task. arg3 is used to hand
+ in the control value, i.e. either PR_SPEC_ENABLE or PR_SPEC_DISABLE or
+ PR_SPEC_FORCE_DISABLE.
  
--		operand = hist_field->operands[i];
--		found = check_field_for_var_refs(hist_data, operand, var_data,
--						 var_idx, level + 1);
--		if (found)
--			return found;
--	}
-+	if (hist_field && hist_field->var.idx == var_idx &&
-+	    hist_field->var.hist_data == var_data)
-+		return hist_field;
- 
--	return found;
-+	return NULL;
++When mitigation is enabled, its state will not be inherited on
++:manpage:`execve(2)` unless it is force-disabled.
++
+ Common error codes
+ ------------------
+ ======= =================================================================
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 7d31192..f207f4d 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -252,6 +252,16 @@ void arch_setup_new_exec(void)
+ 	/* If cpuid was previously disabled for this task, re-enable it. */
+ 	if (test_thread_flag(TIF_NOCPUID))
+ 		enable_cpuid();
++
++	/*
++	 * Don't inherit TIF_SSBD across exec boundary unless speculative
++	 * store bypass is force-disabled (e.g. seccomp on).
++	 */
++	if (test_thread_flag(TIF_SSBD) &&
++	   !task_spec_ssb_force_disable(current)) {
++		clear_thread_flag(TIF_SSBD);
++		task_clear_spec_ssb_disable(current);
++	}
  }
  
- static struct hist_field *find_var_ref(struct hist_trigger_data *hist_data,
- 				       struct hist_trigger_data *var_data,
- 				       unsigned int var_idx)
- {
--	struct hist_field *hist_field, *found = NULL;
-+	struct hist_field *hist_field;
- 	unsigned int i;
- 
--	for_each_hist_field(i, hist_data) {
--		hist_field = hist_data->fields[i];
--		found = check_field_for_var_refs(hist_data, hist_field,
--						 var_data, var_idx, 0);
--		if (found)
--			return found;
--	}
--
--	for (i = 0; i < hist_data->n_synth_var_refs; i++) {
--		hist_field = hist_data->synth_var_refs[i];
--		found = check_field_for_var_refs(hist_data, hist_field,
--						 var_data, var_idx, 0);
--		if (found)
--			return found;
-+	for (i = 0; i < hist_data->n_var_refs; i++) {
-+		hist_field = hist_data->var_refs[i];
-+		if (check_field_for_var_ref(hist_field, var_data, var_idx))
-+			return hist_field;
- 	}
- 
--	return found;
-+	return NULL;
- }
- 
- static struct hist_field *find_any_var_ref(struct hist_trigger_data *hist_data,
+ static inline void switch_to_bitmap(struct thread_struct *prev,
 -- 
-2.14.1
+1.8.3.1
 
