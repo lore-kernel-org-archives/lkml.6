@@ -2,61 +2,61 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21842C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68D9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE38A21871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:42:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1CDD21871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:42:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="H790KpFA"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="rGN0HFR6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbeLSKmD (ORCPT
+        id S1729084AbeLSKmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 05:42:03 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43564 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbeLSKmD (ORCPT
+        Wed, 19 Dec 2018 05:42:52 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:37045 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeLSKmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 05:42:03 -0500
-Received: by mail-io1-f68.google.com with SMTP id g17so3417306ioc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 02:42:02 -0800 (PST)
+        Wed, 19 Dec 2018 05:42:50 -0500
+Received: by mail-it1-f193.google.com with SMTP id b5so8746873iti.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 02:42:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=I6I5jg1KYTO2ZnWGYRIpKrCIH1+bHKYeEMYRuF+H5c0=;
-        b=H790KpFAEYAQoQeZjDOttAcOsXVLrqqdPiNnYIFV2Nxb//W/fM+mUYSPhrgN6U/ZPk
-         UTXj9hYY6l9NaR+NukYoXtbdq1wIxSt0rMcn46lyx/hbRMtFaMIavl+5CuTh7iQ2Wiij
-         B/9ycdQVLsO6qAUn1piM3+8j5ScHSorl5SSqc=
+        bh=TIsaOUia+4f6xiB5ne3A07PpfINF67awrDp0lnaaVwA=;
+        b=rGN0HFR6UM/at1z8mRFLiTvtXFt9ibuZMTACZ0XLLWxdXt+SSALX9eFLLwY000QGsc
+         ycPc87ljD/pXurAOY/Y06Y7BmGpyrZLBbKUauTcfNpPc5tIbnsiGpaV9MJpifMBM7xNw
+         CEVxLmE35zYtXeoNa66ZRqE3D1xSISGZ/RZOI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=I6I5jg1KYTO2ZnWGYRIpKrCIH1+bHKYeEMYRuF+H5c0=;
-        b=k/GjU72hz/CuCvfDyHVChxXo2LS3PYQ+JS2b/yGCU8csWkylAdVybKApekpKq3CgFF
-         XaKiNYewRoJu1QmqUOaaOm4ZQS8UUqE0xhWmqfZhhu7oVAFZKpngbgUUlGrw8nDAVNhN
-         95uAHrV5ZxB4Thp8UDjXw6cVmB7YacZYHmGTNRsD7nUHkQs/8x6kymlBb+IUPznFpvOE
-         kM6WS7wAFW6e86X3ItikdlUwhdpn75fZEd1fsjjHJB6ZoYjCAwY5sgoG0C3kD8hkK/sN
-         6suJ037NOcP8kGVuVkOODGIUqhaMz2jOhVa6vSYdT9bIBK1W6DZdkIorylzksmifzWDd
-         vL6A==
-X-Gm-Message-State: AA+aEWbyJI7SJGCab5IkCa8/s5siZ7GqGn3y2PjhdTpdx+Bicyfe1TtM
-        CgB1w95Y5bNy671LFnuax+tuocDytgfK1nM86RsLZg==
-X-Google-Smtp-Source: AFSGD/XFykBB1VcG+DE/qkaJQ4oV6LcEpMKEafQRWp3DLXpeT3ex0t3KF8X7HeeM7eW3Hwc/7nJeX113DgQ1sUVq0MU=
-X-Received: by 2002:a6b:1411:: with SMTP id 17mr17725808iou.252.1545216122223;
- Wed, 19 Dec 2018 02:42:02 -0800 (PST)
+        bh=TIsaOUia+4f6xiB5ne3A07PpfINF67awrDp0lnaaVwA=;
+        b=MJQlLrAXxBpSGoVx8dNXw+Ws742nYGyfWMjJ7G29ymA3kllN9chcxnV9qVRyxCPQyq
+         UHZg3Hq8gmBj9pS+fm0lh9lZPHCAo9WO/phqsW1onrGHmOgy9C/XqggfiIAzujmIzacp
+         o7EonIBBHaq9FLU6f+7qTnnV8QBpOuv1/A6E+Ap7/FJoGGENpZ3giEKZAnDLsMlUGJkd
+         Ay9zKg47C+rDNIAG2bUIMiV551YxQZqNmSiwUO/T8K8Z5jW6aG0pnFcWL8ng6O7TXu6Q
+         8732QR54wb1v7St8OAvKyFMwedZFBfbD0icTmdNpWAysxIVGFFBD/n6U+x3Tv01VVDaF
+         iQPg==
+X-Gm-Message-State: AA+aEWawIxM1aalZXDLplqNMcEGmzjSZwKPu5d/c/iPSu48KV91r0/5g
+        ERZaX0zAHkPAUSfI50AKpbJWj2QTV1HKHkfNx1N3Xg==
+X-Google-Smtp-Source: AFSGD/UNfYBBYtAG2Nw1A2p+D0ueJnUI8wDsbqBGB52Ihg6vJfQgO94aSPji9meSv+0PKGZCvC5lGisycx2aqaSlTIQ=
+X-Received: by 2002:a02:104a:: with SMTP id 71mr7451064jay.103.1545216169586;
+ Wed, 19 Dec 2018 02:42:49 -0800 (PST)
 MIME-Version: 1.0
 References: <20181218113320.4856-1-jagan@amarulasolutions.com>
- <20181218152122.4zj6wgbukhrl6ly6@flea> <CAMty3ZA4xXVLKx-yj+2_iJ700+yTLesjEAgS8Wu2i8otPScpaw@mail.gmail.com>
- <20181219102450.picswsg3yevba23j@flea>
-In-Reply-To: <20181219102450.picswsg3yevba23j@flea>
+ <20181218113320.4856-4-jagan@amarulasolutions.com> <20181218152318.duynff7f5m2gxtv4@flea>
+ <CAMty3ZCS+QT_YqbJueR-qeityaDxNbQ7p_d3D6bNATSJLQpRnQ@mail.gmail.com> <20181219100738.iakvqigi7z3k2coa@flea>
+In-Reply-To: <20181219100738.iakvqigi7z3k2coa@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 19 Dec 2018 16:11:50 +0530
-Message-ID: <CAMty3ZB04E46kMKVvo-QxpVQBus74at3uKJC_QzS788UiCAeeg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] media/sun6i: Allwinner A64 CSI support
+Date:   Wed, 19 Dec 2018 16:12:38 +0530
+Message-ID: <CAMty3ZDm0jPTigzX_jnNcOKRp6MbTFuwHpaTUmxnnkW8AQZRng@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] media: sun6i: Update default CSI_SCLK for A64
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -76,54 +76,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Wed, Dec 19, 2018 at 3:37 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> On Tue, Dec 18, 2018 at 08:58:22PM +0530, Jagan Teki wrote:
-> > On Tue, Dec 18, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Tue, Dec 18, 2018 at 09:08:17PM +0530, Jagan Teki wrote:
+> > On Tue, Dec 18, 2018 at 8:53 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > >
-> > > On Tue, Dec 18, 2018 at 05:03:14PM +0530, Jagan Teki wrote:
-> > > > This series support CSI on Allwinner A64.
+> > > On Tue, Dec 18, 2018 at 05:03:17PM +0530, Jagan Teki wrote:
+> > > > Unfortunately A64 CSI cannot work with default CSI_SCLK rate.
 > > > >
-> > > > Tested 640x480, 320x240, 720p, 1080p resolutions UYVY8_2X8 format.
+> > > > A64 BSP is using 300MHz clock rate as default csi clock,
+> > > > so sun6i_csi require explicit change to update CSI_SCLK
+> > > > rate to 300MHZ for A64 SoC's.
 > > > >
-> > > > Changes for v4:
-> > > > - update the compatible string order
-> > > > - add proper commit message
-> > > > - included BPI-M64 patch
-> > > > - skipped amarula-a64 patch
-> > > > Changes for v3:
-> > > > - update dt-bindings for A64
-> > > > - set mod clock via csi driver
-> > > > - remove assign clocks from dtsi
-> > > > - remove i2c-gpio opendrian
-> > > > - fix avdd and dovdd supplies
-> > > > - remove vcc-csi pin group supply
+> > > > So, set the clk_mod to 300MHz only for A64.
 > > > >
-> > > > Note: This series created on top of H3 changes [1]
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > ---
+> > > >  drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 5 +++++
+> > > >  1 file changed, 5 insertions(+)
 > > > >
-> > > > [1] https://patchwork.kernel.org/cover/10705905/
+> > > > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > > > index 9ff61896e4bb..91470edf7581 100644
+> > > > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > > > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > > > @@ -822,6 +822,11 @@ static int sun6i_csi_resource_request(struct sun6i_csi_dev *sdev,
+> > > >               return PTR_ERR(sdev->clk_mod);
+> > > >       }
+> > > >
+> > > > +     /* A64 require 300MHz mod clock to operate properly */
+> > > > +     if (of_device_is_compatible(pdev->dev.of_node,
+> > > > +                                 "allwinner,sun50i-a64-csi"))
+> > > > +             clk_set_rate_exclusive(sdev->clk_mod, 300000000);
+> > > > +
 > > >
-> > > You had memory corruption before, how was this fixed?
+> > > If you're using clk_set_rate_exclusive, you need to put back the
+> > > "exclusive" reference once you're not using the clock.
+> > >
+> > > Doing it here is not really optimal either, since you'll put a
+> > > constraint on the system (maintaining that clock at 300MHz), while
+> > > it's not in use.
 > >
-> > Memory corruption observed with default 600MHz on 1080p. It worked
-> > fine on BPI-M64 (with 300MHz)
+> > I think we can handle via clk_rate_exclusive_put for those errors
+> > cases? If I'm not wrong
 >
-> I don't get it. In the previous version of those patches, you were
-> mentionning you were still having this issue, even though you had the
-> clock running at 300MHz, and then you tried to convince us to merge
-> the patches nonetheless.
->
-> Why would you say that then if that issue was fixed?
+> Yes, but it's not only for the error case, it's also for the inactive
+> case.
 
-Previous version has A64-Relic board, which has some xclk issue on
-sensor side wrt 1080p. I have tried 300MHz on the same hardware, it's
-failing to capture on 30fps and so I tried 600MHz(which is default) on
-the same configuration but it encounter memory corruption.
-
-So, for checking whether there is an issue with hardware on A64-Relic
-I moved with BPI-M64 dev board. which is working 1080p with 300MHz, ie
-reason I have not included A64-Relic on this version and included
-BPI-M64. We processed A64-Relic to hardware team to figure out the
-clock and once ie fixed I'm planning to send DTS patch for that.
-
-This is overall summary, hope you understand.
+Yes, I will try to add this next version.
