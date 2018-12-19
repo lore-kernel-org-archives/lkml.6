@@ -2,149 +2,86 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF91C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB201C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:05:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADAF218D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:04:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="MhPacUZ2"
+	by mail.kernel.org (Postfix) with ESMTP id C2035214C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbeLSREM (ORCPT
+        id S1729197AbeLSRFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 12:04:12 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:41122 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728533AbeLSREL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 12:04:11 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 7037024E2835;
-        Wed, 19 Dec 2018 09:04:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1545239051; bh=2Yjoq58YvYYxsq+TIvIsOJnI49gZPUarf6y1zMUqsBM=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=MhPacUZ2lXMuuTMDbJ6fb16DUye+xtl0MFx24aHrv5euUXaHp7ervMqtndX4R4ck3
-         T4uORmzAnXidn3r6FTnIQfve1u+hm/F7dKUa49OV6R4jUzEKKDQCwXzEWxB81cEFn5
-         RzcrAXEBwN2Kl0cLMbwz4rjVyAVpiPftMtUsqoJi6oIXjSs2sAYDolLkK0ViESTuaE
-         kVmLN+2TO9Ki5fuT6BVJFMZw1JfdobGrmvAfFX1yfkEnQtq/JxXCIDAAr3NyqPIRSl
-         hMOIQxyj8ct/xbHZ1HhbjoxohS1qx5plJxRkLL7FYj2KvKbKpoCSdvE3434GI8NjEy
-         FMSUXAfuxVN9w==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 3D54736CB;
-        Wed, 19 Dec 2018 09:04:11 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 19 Dec 2018 09:04:11 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 19 Dec 2018 18:04:09 +0100
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] ARC: show_regs: avoid page allocator
-Thread-Topic: [PATCH 1/2] ARC: show_regs: avoid page allocator
-Thread-Index: AQHUlwMiqe8HBnb5hEKyJd5LRn2p4qWGOuqA
-Date:   Wed, 19 Dec 2018 17:04:09 +0000
-Message-ID: <1545239047.14089.13.camel@synopsys.com>
-References: <1545159239-30628-1-git-send-email-vgupta@synopsys.com>
-         <1545159239-30628-2-git-send-email-vgupta@synopsys.com>
-In-Reply-To: <1545159239-30628-2-git-send-email-vgupta@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.66]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <33B02DA585641B4EB2CBE3B47E62EC35@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Wed, 19 Dec 2018 12:05:13 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:41081 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbeLSRFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 12:05:13 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C27D320775; Wed, 19 Dec 2018 18:05:10 +0100 (CET)
+Received: from localhost (lfbn-1-2078-236.w90-76.abo.wanadoo.fr [90.76.143.236])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8F9952039F;
+        Wed, 19 Dec 2018 18:05:00 +0100 (CET)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net, linux@armlinux.org.uk
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: [PATCH net v4] net: mvpp2: fix the phylink mode validation
+Date:   Wed, 19 Dec 2018 18:00:12 +0100
+Message-Id: <20181219170012.23889-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluZWV0LA0KDQpKdXN0IGN1cmlvdXM6IGlzbid0IHRoYXQgZW5vdWdoIHRvIHVzZSBHRlBf
-Tk9XQUlUIGluc3RlYWQNCm9mIEdGUF9LRVJORUwgd2hlbiB3ZSBhbGxvY2F0ZSBwYWdlIGluIHNo
-b3dfcmVncygpPw0KDQpBcyBJIGNhbiBzZWUgeDg2IHVzZSBwcmludF92bWFfYWRkcigpIGluIHRo
-ZWlyIHNob3dfc2lnbmFsX21zZygpDQpmdW5jdGlvbiB3aGljaCBhbGxvY2F0ZSBwYWdlIHdpdGgg
-X19nZXRfZnJlZV9wYWdlKEdGUF9OT1dBSVQpOw0KDQpPbiBUdWUsIDIwMTgtMTItMTggYXQgMTA6
-NTMgLTA4MDAsIFZpbmVldCBHdXB0YSB3cm90ZToNCj4gVXNlIG9uLXN0YWNrIHNtYWxsZXIgYnVm
-ZmVycyBpbnN0ZWFkIG9mIGR5bmFtaWMgcGFnZXMuDQo+IA0KPiBUaGUgbW90aXZhdGlvbiBmb3Ig
-dGhpcyBjaGFuZ2Ugd2FzIHRvIGFkZHJlc3MgbG9ja2RlcCBzcGxhdCB3aGVuDQo+IHNpZ25hbCBo
-YW5kbGluZyBjb2RlIGNhbGxzIHNob3dfcmVncyAod2l0aCBwcmVlbXB0aW9uIGRpc2FibGVkKSBh
-bmQNCj4gQVJDIHNob3dfcmVncyBjYWxscyBpbnRvIHNsZWVwYWJsZSBwYWdlIGFsbG9jYXRvci4N
-Cj4gDQo+ID4gcG90ZW50aWFsbHkgdW5leHBlY3RlZCBmYXRhbCBzaWduYWwgMTEuDQo+ID4gQlVH
-OiBzbGVlcGluZyBmdW5jdGlvbiBjYWxsZWQgZnJvbSBpbnZhbGlkIGNvbnRleHQgYXQgLi4vbW0v
-cGFnZV9hbGxvYy5jOjQzMTcNCj4gPiBpbl9hdG9taWMoKTogMSwgaXJxc19kaXNhYmxlZCgpOiAw
-LCBwaWQ6IDU3LCBuYW1lOiBzZWd2DQo+ID4gbm8gbG9ja3MgaGVsZCBieSBzZWd2LzU3Lg0KPiA+
-IFByZWVtcHRpb24gZGlzYWJsZWQgYXQ6DQo+ID4gWzw4MTgyZjE3ZT5dIGdldF9zaWduYWwrMHg0
-YTYvMHg3YzQNCj4gPiBDUFU6IDAgUElEOiA1NyBDb21tOiBzZWd2IE5vdCB0YWludGVkIDQuMTcu
-MCsgIzIzDQo+ID4gDQo+ID4gU3RhY2sgVHJhY2U6DQo+ID4gIGFyY191bndpbmRfY29yZS5jb25z
-dHByb3AuMSsweGQwLzB4ZjQNCj4gPiAgX19taWdodF9zbGVlcCsweDFmNi8weDIzNA0KPiA+ICBf
-X2dldF9mcmVlX3BhZ2VzKzB4MTc0LzB4Y2EwDQo+ID4gIHNob3dfcmVncysweDIyLzB4MzMwDQo+
-ID4gIGdldF9zaWduYWwrMHg0YWMvMHg3YzQgICAgICMgcHJpbnRfZmF0YWxfc2lnbmFscygpIC0+
-IHByZWVtcHRfZGlzYWJsZSgpDQo+ID4gIGRvX3NpZ25hbCsweDMwLzB4MjI0DQo+ID4gIHJlc3Vt
-ZV91c2VyX21vZGVfYmVnaW4rMHg5MC8weGQ4DQo+IA0KPiBEZXNwaXRlIHRoaXMsIGxvY2tkZXAg
-c3RpbGwgYmFyZnMgKHNlZSBuZXh0IGNoYW5nZSksIGJ1dCB0aGlzIHBhdGNoDQo+IHN0aWxsIGhh
-cyBtZXJpdCBhcyBpbiB3ZSB1c2Ugc21hbGxlci9sb2NhbGl6ZWQgYnVmZmVycyBub3cgYW5kIHRo
-ZXJlJ3MNCj4gbGVzcyBpbnN0cnVjdG9oIHRyYWNlIHRvIHNpZnQgdGhydSB3aGVuIGRlYnVnZ2lu
-ZyBwZXNreSBpc3N1ZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBWaW5lZXQgR3VwdGEgPHZndXB0
-YUBzeW5vcHN5cy5jb20+DQo+IC0tLQ0KPiAgYXJjaC9hcmMva2VybmVsL3Ryb3VibGVzaG9vdC5j
-IHwgMjIgKysrKysrKysrLS0tLS0tLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0
-aW9ucygrKSwgMTMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcmMva2Vy
-bmVsL3Ryb3VibGVzaG9vdC5jIGIvYXJjaC9hcmMva2VybmVsL3Ryb3VibGVzaG9vdC5jDQo+IGlu
-ZGV4IGU4ZDlmYjQ1MjM0Ni4uMjg4NWJlYzcxZmI4IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FyYy9r
-ZXJuZWwvdHJvdWJsZXNob290LmMNCj4gKysrIGIvYXJjaC9hcmMva2VybmVsL3Ryb3VibGVzaG9v
-dC5jDQo+IEBAIC01OCwxMSArNTgsMTIgQEAgc3RhdGljIHZvaWQgc2hvd19jYWxsZWVfcmVncyhz
-dHJ1Y3QgY2FsbGVlX3JlZ3MgKmNyZWdzKQ0KPiAgCXByaW50X3JlZ19maWxlKCYoY3JlZ3MtPnIx
-MyksIDEzKTsNCj4gIH0NCj4gIA0KPiAtc3RhdGljIHZvaWQgcHJpbnRfdGFza19wYXRoX25fbm0o
-c3RydWN0IHRhc2tfc3RydWN0ICp0c2ssIGNoYXIgKmJ1ZikNCj4gK3N0YXRpYyB2b2lkIHByaW50
-X3Rhc2tfcGF0aF9uX25tKHN0cnVjdCB0YXNrX3N0cnVjdCAqdHNrKQ0KPiAgew0KPiAgCWNoYXIg
-KnBhdGhfbm0gPSBOVUxMOw0KPiAgCXN0cnVjdCBtbV9zdHJ1Y3QgKm1tOw0KPiAgCXN0cnVjdCBm
-aWxlICpleGVfZmlsZTsNCj4gKwljaGFyIGJ1ZlsyNTZdOw0KPiAgDQo+ICAJbW0gPSBnZXRfdGFz
-a19tbSh0c2spOw0KPiAgCWlmICghbW0pDQo+IEBAIC04MCwxMCArODEsOSBAQCBzdGF0aWMgdm9p
-ZCBwcmludF90YXNrX3BhdGhfbl9ubShzdHJ1Y3QgdGFza19zdHJ1Y3QgKnRzaywgY2hhciAqYnVm
-KQ0KPiAgCXByX2luZm8oIlBhdGg6ICVzXG4iLCAhSVNfRVJSKHBhdGhfbm0pID8gcGF0aF9ubSA6
-ICI/Iik7DQo+ICB9DQo+ICANCj4gLXN0YXRpYyB2b2lkIHNob3dfZmF1bHRpbmdfdm1hKHVuc2ln
-bmVkIGxvbmcgYWRkcmVzcywgY2hhciAqYnVmKQ0KPiArc3RhdGljIHZvaWQgc2hvd19mYXVsdGlu
-Z192bWEodW5zaWduZWQgbG9uZyBhZGRyZXNzKQ0KPiAgew0KPiAgCXN0cnVjdCB2bV9hcmVhX3N0
-cnVjdCAqdm1hOw0KPiAtCWNoYXIgKm5tID0gYnVmOw0KPiAgCXN0cnVjdCBtbV9zdHJ1Y3QgKmFj
-dGl2ZV9tbSA9IGN1cnJlbnQtPmFjdGl2ZV9tbTsNCj4gIA0KPiAgCS8qIGNhbid0IHVzZSBwcmlu
-dF92bWFfYWRkcigpIHlldCBhcyBpdCBkb2Vzbid0IGNoZWNrIGZvcg0KPiBAQCAtOTYsOCArOTYs
-MTEgQEAgc3RhdGljIHZvaWQgc2hvd19mYXVsdGluZ192bWEodW5zaWduZWQgbG9uZyBhZGRyZXNz
-LCBjaGFyICpidWYpDQo+ICAJICogaWYgdGhlIGNvbnRhaW5lciBWTUEgaXMgbm90IGZvdW5kDQo+
-ICAJICovDQo+ICAJaWYgKHZtYSAmJiAodm1hLT52bV9zdGFydCA8PSBhZGRyZXNzKSkgew0KPiAr
-CQljaGFyIGJ1ZlsyNTZdOw0KPiArCQljaGFyICpubSA9ICI/IjsNCj4gKw0KPiAgCQlpZiAodm1h
-LT52bV9maWxlKSB7DQo+IC0JCQlubSA9IGZpbGVfcGF0aCh2bWEtPnZtX2ZpbGUsIGJ1ZiwgUEFH
-RV9TSVpFIC0gMSk7DQo+ICsJCQlubSA9IGZpbGVfcGF0aCh2bWEtPnZtX2ZpbGUsIGJ1ZiwgMjU2
-LTEpOw0KPiAgCQkJaWYgKElTX0VSUihubSkpDQo+ICAJCQkJbm0gPSAiPyI7DQo+ICAJCX0NCj4g
-QEAgLTE3MywxMyArMTc2LDggQEAgdm9pZCBzaG93X3JlZ3Moc3RydWN0IHB0X3JlZ3MgKnJlZ3Mp
-DQo+ICB7DQo+ICAJc3RydWN0IHRhc2tfc3RydWN0ICp0c2sgPSBjdXJyZW50Ow0KPiAgCXN0cnVj
-dCBjYWxsZWVfcmVncyAqY3JlZ3M7DQo+IC0JY2hhciAqYnVmOw0KPiAtDQo+IC0JYnVmID0gKGNo
-YXIgKilfX2dldF9mcmVlX3BhZ2UoR0ZQX0tFUk5FTCk7DQo+IC0JaWYgKCFidWYpDQo+IC0JCXJl
-dHVybjsNCj4gIA0KPiAtCXByaW50X3Rhc2tfcGF0aF9uX25tKHRzaywgYnVmKTsNCj4gKwlwcmlu
-dF90YXNrX3BhdGhfbl9ubSh0c2spOw0KPiAgCXNob3dfcmVnc19wcmludF9pbmZvKEtFUk5fSU5G
-Tyk7DQo+ICANCj4gIAlzaG93X2Vjcl92ZXJib3NlKHJlZ3MpOw0KPiBAQCAtMTg5LDcgKzE4Nyw3
-IEBAIHZvaWQgc2hvd19yZWdzKHN0cnVjdCBwdF9yZWdzICpyZWdzKQ0KPiAgCQkodm9pZCAqKXJl
-Z3MtPmJsaW5rLCAodm9pZCAqKXJlZ3MtPnJldCk7DQo+ICANCj4gIAlpZiAodXNlcl9tb2RlKHJl
-Z3MpKQ0KPiAtCQlzaG93X2ZhdWx0aW5nX3ZtYShyZWdzLT5yZXQsIGJ1Zik7IC8qIGZhdWx0aW5n
-IGNvZGUsIG5vdCBkYXRhICovDQo+ICsJCXNob3dfZmF1bHRpbmdfdm1hKHJlZ3MtPnJldCk7IC8q
-IGZhdWx0aW5nIGNvZGUsIG5vdCBkYXRhICovDQo+ICANCj4gIAlwcl9pbmZvKCJbU1RBVDMyXTog
-MHglMDhseCIsIHJlZ3MtPnN0YXR1czMyKTsNCj4gIA0KPiBAQCAtMjIxLDggKzIxOSw2IEBAIHZv
-aWQgc2hvd19yZWdzKHN0cnVjdCBwdF9yZWdzICpyZWdzKQ0KPiAgCWNyZWdzID0gKHN0cnVjdCBj
-YWxsZWVfcmVncyAqKWN1cnJlbnQtPnRocmVhZC5jYWxsZWVfcmVnOw0KPiAgCWlmIChjcmVncykN
-Cj4gIAkJc2hvd19jYWxsZWVfcmVncyhjcmVncyk7DQo+IC0NCj4gLQlmcmVlX3BhZ2UoKHVuc2ln
-bmVkIGxvbmcpYnVmKTsNCj4gIH0NCj4gIA0KPiAgdm9pZCBzaG93X2tlcm5lbF9mYXVsdF9kaWFn
-KGNvbnN0IGNoYXIgKnN0ciwgc3RydWN0IHB0X3JlZ3MgKnJlZ3MsDQotLSANCiBFdWdlbml5IFBh
-bHRzZXY=
+The mvpp2_phylink_validate() sets all modes that are supported by a
+given PPv2 port. An mistake made the 10000baseT_Full mode being
+advertised in some cases when a port wasn't configured to perform at
+10G. This patch fixes this.
+
+Fixes: d97c9f4ab000 ("net: mvpp2: 1000baseX support")
+Reported-by: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+
+Since v3:
+  - Rebase on top of net/master.
+
+Since v2, v1:
+  - N/A.
+
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 88aa488054a8..f1dab0b55769 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -4406,6 +4406,7 @@ static void mvpp2_phylink_validate(struct net_device *dev,
+ 	case PHY_INTERFACE_MODE_XAUI:
+ 	case PHY_INTERFACE_MODE_NA:
+ 		if (port->gop_id == 0) {
++			phylink_set(mask, 10000baseT_Full);
+ 			phylink_set(mask, 10000baseCR_Full);
+ 			phylink_set(mask, 10000baseSR_Full);
+ 			phylink_set(mask, 10000baseLR_Full);
+@@ -4423,7 +4424,6 @@ static void mvpp2_phylink_validate(struct net_device *dev,
+ 		phylink_set(mask, 10baseT_Full);
+ 		phylink_set(mask, 100baseT_Half);
+ 		phylink_set(mask, 100baseT_Full);
+-		phylink_set(mask, 10000baseT_Full);
+ 		/* Fall-through */
+ 	case PHY_INTERFACE_MODE_1000BASEX:
+ 	case PHY_INTERFACE_MODE_2500BASEX:
+-- 
+2.19.2
+
