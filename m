@@ -2,151 +2,193 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B21C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C652C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B9B921871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A8B221871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:18:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gOiZbwZe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbeLSLRx (ORCPT
+        id S1728067AbeLSLSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:17:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:33126 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727155AbeLSLRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:17:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D5F8EBD;
-        Wed, 19 Dec 2018 03:17:52 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAC293F5C0;
-        Wed, 19 Dec 2018 03:17:49 -0800 (PST)
-Date:   Wed, 19 Dec 2018 11:17:44 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 24/27] drivers: firmware: psci: Support CPU hotplug
- for the hierarchical model
-Message-ID: <20181219111744.GA23393@e107981-ln.cambridge.arm.com>
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-25-ulf.hansson@linaro.org>
+        Wed, 19 Dec 2018 06:18:11 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52900 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727155AbeLSLSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:18:10 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so5686644wml.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 03:18:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TqKqWnuzhLbrzsGGpVafyPrzq3m458cHAEUpEwoTcTg=;
+        b=gOiZbwZeCICmVnsjTiZw3HgUFYqa/UwXZtbnVgHtwo58IKdyJAtXj46tres2v+TfHk
+         ub0G0IFTLJdjkSwoy55falOWEw9vSxD/0s1FiVf2f8SysFi32CyQNosLrc+EIdhNy0O1
+         WTgNe+7MtqtYrUCdh46PCaST2yytWDmuiH9Q6Vxd+5TCU738yMEvM6edNRkzzvxDvuMV
+         T6QzzPZbCN8LmWI2PvVdb6aqhTkJFA7tABbch0N7lbuZodtHfWIMmgKl/qXgGj3d+VsG
+         JlGQ6TcFPnxfLn8UjeMmiXqbIeApOio7P3XwL1igOvxtpkzT3eOOif2/ZNZoOnDBB7eK
+         abRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TqKqWnuzhLbrzsGGpVafyPrzq3m458cHAEUpEwoTcTg=;
+        b=sZJpvBGUfAAhkdtckk66F9SuMDqmqzKiXjRGd16OOziTDQtXHfYfL2a6Ej/TZqanm8
+         ytZ9vQafrS0AeWl0Su+cZMOqApKDESuMkwaKtmbyMoqLvjNGu7Hmt81iOZDa/qvAfJs3
+         iGmZFQPcJbovYLASTDfiMRLPWb84PWY1zqzhgPNqyyUt4+NNM6Ds/vu4gGaBPszbFAft
+         uI9dopMd+X/lxzYUiD9dOgdci1BhO1FCFS2BrxRtA8sWLdVMZLpI/YwxIb2zLDTZFWdn
+         VVFEMj2exwo1aEZ8ChTXeU6rca/K4Ee414RVoa0W78hNh4I8viLitA4WQA2iFJlEurfG
+         zdWw==
+X-Gm-Message-State: AA+aEWYYSyW5Qd/qiioSsZux9/Gf6+cJTjTlMIWML+WSPU08G3PRUHyu
+        y6mmBuWiTNNHcqi9HT90jMgGnw==
+X-Google-Smtp-Source: AFSGD/U5VoB2R2oRuSPIp7wjKsMNJiPVEDg/suucku1MGOhIk7L2qMcYL8P/6ys8qZQS9cc6wpwOgw==
+X-Received: by 2002:a1c:ae88:: with SMTP id x130mr6459235wme.91.1545218288225;
+        Wed, 19 Dec 2018 03:18:08 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id z7sm4320111wrw.22.2018.12.19.03.18.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 03:18:07 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] regmap: irq: add an option to clear status registers on unmask
+Date:   Wed, 19 Dec 2018 12:18:05 +0100
+Message-Id: <20181219111805.18048-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129174700.16585-25-ulf.hansson@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 06:46:57PM +0100, Ulf Hansson wrote:
-> When the hierarchical CPU topology is used and when a CPU has been put
-> offline (hotplug), that same CPU prevents its PM domain and thus also
-> potential master PM domains, from being powered off. This is because genpd
-> observes the CPU's struct device to remain being active from a runtime PM
-> point of view.
-> 
-> To deal with this, let's decrease the runtime PM usage count by calling
-> pm_runtime_put_sync_suspend() of the CPU's struct device when putting it
-> offline. Consequentially, we must then increase the runtime PM usage for
-> the CPU, while putting it online again.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in v10:
-> 	- Make it work when the hierarchical CPU topology is used, which may be
-> 	  used both for OSI and PC mode.
-> 	- Rework the code to prevent "BUG: sleeping function called from
-> 	  invalid context".
-> ---
->  drivers/firmware/psci/psci.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index b03bccce0a5d..f62c4963eb62 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -15,6 +15,7 @@
->  
->  #include <linux/acpi.h>
->  #include <linux/arm-smccc.h>
-> +#include <linux/cpu.h>
->  #include <linux/cpuidle.h>
->  #include <linux/errno.h>
->  #include <linux/linkage.h>
-> @@ -199,9 +200,20 @@ static int psci_cpu_suspend(u32 state, unsigned long entry_point)
->  
->  static int psci_cpu_off(u32 state)
->  {
-> +	struct device *dev;
->  	int err;
->  	u32 fn;
->  
-> +	/*
-> +	 * When the hierarchical CPU topology is used, decrease the runtime PM
-> +	 * usage count for the current CPU, as to allow other parts in the
-> +	 * topology to enter low power states.
-> +	 */
-> +	if (psci_dt_topology) {
-> +		dev = get_cpu_device(smp_processor_id());
-> +		pm_runtime_put_sync_suspend(dev);
-> +	}
-> +
->  	fn = psci_function_id[PSCI_FN_CPU_OFF];
->  	err = invoke_psci_fn(fn, state, 0, 0);
->  	return psci_to_linux_errno(err);
-> @@ -209,6 +221,7 @@ static int psci_cpu_off(u32 state)
->  
->  static int psci_cpu_on(unsigned long cpuid, unsigned long entry_point)
->  {
-> +	struct device *dev;
->  	int err;
->  	u32 fn;
->  
-> @@ -216,6 +229,13 @@ static int psci_cpu_on(unsigned long cpuid, unsigned long entry_point)
->  	err = invoke_psci_fn(fn, cpuid, entry_point, 0);
->  	/* Clear the domain state to start fresh. */
->  	psci_set_domain_state(0);
-> +
-> +	/* Increase runtime PM usage count if the hierarchical CPU toplogy. */
-> +	if (!err && psci_dt_topology) {
-> +		dev = get_cpu_device(cpuid);
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-I do not like adding this code in the cpu_{on/off} method themselves, I will
-have a look at the patchset as whole to see how we can restructure it.
+Some interrupt controllers whose interrupts are acked on read will set
+the status bits for masked interrupts without changing the state of
+the IRQ line.
 
-More to the point, using cpuid as a logical cpu id is wrong, it is a
-physical id that you should convert to a logical id through
-get_logical_index().
+Some chips have an additional "feature" where if those set bits are
+not cleared before unmasking their respective interrupts, the IRQ
+line will change the state and we'll interpret this as an interrupt
+although it actually fired when it was masked.
 
-Lorenzo
+Add a new field to the irq chip struct that tells the regmap irq chip
+code to always clear the status registers before actually changing the
+irq mask values.
 
-> +		pm_runtime_get_sync(dev);
-> +	}
-> +
->  	return psci_to_linux_errno(err);
->  }
->  
-> -- 
-> 2.17.1
-> 
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+Hi Mark,
+
+there's one more problem I noticed with max77650. When a condition for
+a masked interrupt is met - its status bit is set but the irq line
+doesn't go low. Now if we don't clear that bit and unmask its
+respective interrupt, the line will go low and we'll interpret it as
+if an interrupt fired right after we enabled it.
+
+This patch tries to address it in a generic way.
+
+ drivers/base/regmap/regmap-irq.c | 23 +++++++++++++++++++++++
+ include/linux/regmap.h           |  4 ++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 8b216b2e2c19..5a454fcd10db 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -44,6 +44,8 @@ struct regmap_irq_chip_data {
+ 
+ 	unsigned int irq_reg_stride;
+ 	unsigned int type_reg_stride;
++
++	bool clear_status:1;
+ };
+ 
+ static inline const
+@@ -77,6 +79,7 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 	int i, ret;
+ 	u32 reg;
+ 	u32 unmask_offset;
++	u32 val;
+ 
+ 	if (d->chip->runtime_pm) {
+ 		ret = pm_runtime_get_sync(map->dev);
+@@ -85,6 +88,20 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 				ret);
+ 	}
+ 
++	if (d->clear_status) {
++		for (i = 0; i < d->chip->num_regs; i++) {
++			reg = d->chip->status_base +
++				(i * map->reg_stride * d->irq_reg_stride);
++
++			ret = regmap_read(map, reg, &val);
++			if (ret)
++				dev_err(d->map->dev,
++					"Failed to clear the interrupt status bits\n");
++		}
++
++		d->clear_status = false;
++	}
++
+ 	/*
+ 	 * If there's been a change in the mask write it back to the
+ 	 * hardware.  We rely on the use of the regmap core cache to
+@@ -217,6 +234,9 @@ static void regmap_irq_enable(struct irq_data *data)
+ 	else
+ 		mask = irq_data->mask;
+ 
++	if (d->chip->clear_on_unmask)
++		d->clear_status = true;
++
+ 	d->mask_buf[irq_data->reg_offset / map->reg_stride] &= ~mask;
+ }
+ 
+@@ -459,6 +479,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 	if (chip->num_regs <= 0)
+ 		return -EINVAL;
+ 
++	if (chip->clear_on_unmask && (chip->ack_base || chip->use_ack))
++		return -EINVAL;
++
+ 	for (i = 0; i < chip->num_irqs; i++) {
+ 		if (chip->irqs[i].reg_offset % map->reg_stride)
+ 			return -EINVAL;
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index b7aa50cfb306..23dfacf281f8 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -1134,6 +1134,9 @@ struct regmap_irq {
+  * @type_in_mask: Use the mask registers for controlling irq type. For
+  *                interrupts defining type_rising/falling_mask use mask_base
+  *                for edge configuration and never update bits in type_base.
++ * @clear_on_unmask: For chips with interrupts cleared on read: read the status
++ *                   registers before unmasking interrupts to clear any bits
++ *                   set when they were masked.
+  * @runtime_pm:  Hold a runtime PM lock on the device when accessing it.
+  *
+  * @num_regs:    Number of registers in each control bank.
+@@ -1173,6 +1176,7 @@ struct regmap_irq_chip {
+ 	bool runtime_pm:1;
+ 	bool type_invert:1;
+ 	bool type_in_mask:1;
++	bool clear_on_unmask:1;
+ 
+ 	int num_regs;
+ 
+-- 
+2.19.1
+
