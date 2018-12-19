@@ -2,85 +2,100 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFC6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531DAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FA620869
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 127222086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545251880;
-	bh=eWvyJBBYN0fAuhpjwov9ACCGeqUpOUGGtHgzWICM4DM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ileSKalivJ6I4fZZ1LRo0rQqdDUarbm2pfyd4jZlSyK0cvuWGC/zFP0AVGXWI9zOl
-	 iJXuTlWE2zv/sWZatUA3VWOpHM2aoSGH3uwQDiD+esaSwmorKKUeVVk1Ma0uDoipta
-	 VSqUR+M+9fBxuUYJpZaR8RFaFyRQr6jOPSrNq0WQ=
+	s=default; t=1545251923;
+	bh=RdYtcIxgR5cVtKimc93Liz4bgZFOm7q8AYNlF1L3FPw=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=CJDoK2+kazrkL5L2p0vqsEKbJ0J+kva2KoqA62aEQTNpSmOn9rXOtW6bYSimciC8E
+	 /7wJu788A222Hmq/G+iNdqj5icLTMvje2pOZoXo1wd0MnQgbkBQmVjUiQUfvDvNeVl
+	 WpJtFeNnK3eWB9e6HRdIpts+rfbk1HrKkH49EYJk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbeLSUh7 (ORCPT
+        id S1730262AbeLSUim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 15:37:59 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45810 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729090AbeLSUh7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 15:37:59 -0500
-Received: by mail-oi1-f195.google.com with SMTP id y1so2696506oie.12;
-        Wed, 19 Dec 2018 12:37:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=viso4VjcJ6vxD3i5+8KcRCIdWRW6qJD4fiP3njk0uL8=;
-        b=jQgaScH1m5CQ8xxHa8sVogtAk1CK6TExsZkVgrxInZ8mxYxG3cpduEUlENvWZ4oq/b
-         fi9WGjME1QPD889PGFSv5cWSjNPbe3PXJ+kf0/266WwtGcKprTJr6ui/jHdf0JKA+sCl
-         LBpn5ncflxiYQ0Tnlc1F5HEkO6dl+J441SRLXtrwDy6U6jgxzDxi4jizkYhsOAS/p0DR
-         Sok0cPMm4N5tW8pQa9FHw7cfZW5LUnoW0byLMvO/7NRsCKWALjXTKilq6Lqs/V40EZlX
-         koa9g/exOhkNYx5VqTsL9Ou8+oVK45E3I40GTY/YQRnXS3Uny8VS6gyPmoe8alPLTggn
-         pLPA==
-X-Gm-Message-State: AA+aEWYiknEdfd6V3MvPB/DCgzZeTy5PRm+I2B8y4HcFsWLKwamg5356
-        E75GaPX8NT1xc79LzRvJNw==
-X-Google-Smtp-Source: AFSGD/XzeduizDAKcuK6/RPPnWQ8Y5Agx+B8lydJAQPyEmc4a59rnke5Rb2BFRm3qKmnABkg6jic3w==
-X-Received: by 2002:aca:d4c9:: with SMTP id l192mr226436oig.307.1545251877637;
-        Wed, 19 Dec 2018 12:37:57 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d10sm8594386otl.62.2018.12.19.12.37.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 12:37:57 -0800 (PST)
-Date:   Wed, 19 Dec 2018 14:37:56 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        hverkuil@xs4all.nl, fischerdouglasc@gmail.com,
-        keescook@chromium.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Subject: Re: [PATCH 5/5] media: dt-bindings: si470x: Document new reset-gpios
- property
-Message-ID: <20181219203756.GA29877@bogus>
-References: <20181205154750.17996-1-pawel.mikolaj.chmiel@gmail.com>
- <20181205154750.17996-6-pawel.mikolaj.chmiel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181205154750.17996-6-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 19 Dec 2018 15:38:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725294AbeLSUim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 15:38:42 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D34920815;
+        Wed, 19 Dec 2018 20:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545251921;
+        bh=RdYtcIxgR5cVtKimc93Liz4bgZFOm7q8AYNlF1L3FPw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lpb3QdM1G+SVnwQp/KqhILUmH0zthJTtBRGFxXK/wLzmjc/NsHP+KYExaRTXCLUh/
+         8+hRc+uLIboVC8ShcvUWAkWxRuA9YOJa+yhhPDnQhSSgi9yNNJttB9qysikKpYUOzN
+         Wl/ygNmChdRxfmmoTXWU7VuYP908K23YLcvhLgMA=
+Message-ID: <1545251919.4161.4.camel@kernel.org>
+Subject: Re: [PATCH 2/7] tracing: Change strlen to sizeof for hist trigger
+ static strings
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>, Joe Perches <joe@perches.com>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Date:   Wed, 19 Dec 2018 14:38:39 -0600
+In-Reply-To: <20181219153002.62ede7e9@gandalf.local.home>
+References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
+         <e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com>
+         <20181219144047.49fabfa6@gandalf.local.home>
+         <1545248809.2396.2.camel@kernel.org>
+         <baf7e7af61873fc8bb3833d6bb0501d684a92bf2.camel@perches.com>
+         <20181219153002.62ede7e9@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  5 Dec 2018 16:47:50 +0100, =?UTF-8?q?Pawe=C5=82=20Chmiel?= wrote:
-> Add information about new reset-gpios property to driver documentation
+On Wed, 2018-12-19 at 15:30 -0500, Steven Rostedt wrote:
+> On Wed, 19 Dec 2018 12:20:19 -0800
+> Joe Perches <joe@perches.com> wrote:
 > 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  Documentation/devicetree/bindings/media/si470x.txt | 2 ++
->  1 file changed, 2 insertions(+)
+> > > Yeah, I had considered it but wasn't sure it was worth it.  Since
+> > > you're suggesting it is, I can send another patch on top of
+> > > these, or
+> > > feel free if you want to too.  ;-)  
+> > 
+> > I believe the 'strlen("foo") -> sizeof("foo") - 1'
+> > conversions do not change objects at all.
+> > 
+> > strlen("constant") is already optimized by gcc to a
+> > constant value when fed a constant string.
+> 
+> If that's the case (and it probably is), then yeah, strlen is
+> probably
+> better. As it can handle the "not a constant" that you stated in
+> another email.
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+OK, so I guess that means we should just drop this patch ('[PATCH 2/7]
+tracing: Change strlen to sizeof for hist trigger static strings').
+
+Tom
+
+> -- Steve
+> 
+> 
+> > 
+> > the strcmp_const macro does seem to make sense as
+> > the copy/paste/typo possibility is real.
+> 
+> 
