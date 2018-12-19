@@ -2,101 +2,189 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC11DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7B0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888AD217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545235284;
-	bh=KjVtgsaDR3fItCOlduFomsRDNTRefk72OVT5ycanHVk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=glexHOS+LVX6kBHVIDpcmDhVsTzuAlbmPBVW6QZ+fkUgKg1q1qRGwfki6G66GgpMz
-	 HnGfL/Q+80AwRr4at4+UYddMMEEUO8ZcVKfF7QzOUQJAwFUCWWBsnnY0fLDn61RqXe
-	 cciVutSain4h3qLbeNTYrBfvAPojpCrIEkLY3RE8=
+	by mail.kernel.org (Postfix) with ESMTP id 679F0218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbeLSQBX (ORCPT
+        id S1729348AbeLSQBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:01:23 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42464 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbeLSQBX (ORCPT
+        Wed, 19 Dec 2018 11:01:54 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:58214 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727317AbeLSQBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:01:23 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v23so19537359otk.9;
-        Wed, 19 Dec 2018 08:01:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IPlkvNM9GsyzZD67er9Zgb7zoKIvhVOUgUKubFfAp0k=;
-        b=T0XNbv3wG8rxqaX5c/yiuHD7N5+D7kDiiJ448IEpKp4qQDwFZ/bBlbwmd0XZUQLKBT
-         ZcWUd/7EaotkGxEBRT/oU+j0ViQTQVYKv4cczBKi48tOurN1j+Yf2I2I7xgcOSW6kvv8
-         ui1s98I3YupS6Np+IzPE8r0pUNbouKrt2e7nzs62iaFy5dd7rlDbAbvAhfl78Yern9Yd
-         /tnzk28Y2lhbzfNJjyqiZPi030X346wTsJUI2M3tQzR5762YbAZR3uo46TaXwLcgQPxC
-         UC3lLVL8gGo9pZeuUmYnpu61E4Ma462hVmjpd+VqARVFM9IsLqIhTW6VJPOv4io2QhnA
-         478w==
-X-Gm-Message-State: AA+aEWZ7luDvlrXXV2LJceQgCXIauARQnETJ60ElydyIe7yXiQMJJ5zq
-        gxlGgrfSRGLdlZ9zjTQzAQ==
-X-Google-Smtp-Source: AFSGD/WIO+D0wloRt8yliL36bwmAdCFAVBOfDeBY2iMpsNzbqObhjTxN6MgXkgLnR7hAxhfD/J/6hA==
-X-Received: by 2002:a9d:c6a:: with SMTP id 97mr14856681otr.163.1545235282296;
-        Wed, 19 Dec 2018 08:01:22 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e81sm8769551oig.8.2018.12.19.08.01.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 08:01:21 -0800 (PST)
-Date:   Wed, 19 Dec 2018 10:01:20 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: media: sun6i: Add vcc-csi supply
- property
-Message-ID: <20181219160120.GB22708@bogus>
-References: <20181203100747.16442-1-jagan@amarulasolutions.com>
- <20181203100747.16442-3-jagan@amarulasolutions.com>
- <CAGb2v66pG0kes1_xBNUj4z85fjunjP_Fe5_pPiRja=nDSOS01A@mail.gmail.com>
+        Wed, 19 Dec 2018 11:01:54 -0500
+Received: (qmail 1943 invoked by uid 2102); 19 Dec 2018 11:01:52 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 19 Dec 2018 11:01:52 -0500
+Date:   Wed, 19 Dec 2018 11:01:52 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Paul Elder <paul.elder@ideasonboard.com>
+cc:     laurent.pinchart@ideasonboard.com,
+        <kieran.bingham@ideasonboard.com>, <b-liu@ti.com>, <rogerq@ti.com>,
+        <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/6] usb: gadget: add mechanism to specify an explicit
+ status stage
+In-Reply-To: <20181219092647.12397-5-paul.elder@ideasonboard.com>
+Message-ID: <Pine.LNX.4.44L0.1812191048580.1260-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGb2v66pG0kes1_xBNUj4z85fjunjP_Fe5_pPiRja=nDSOS01A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 06:11:35PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > Most of the Allwinner A64 CSI controllers are supply with
-> > VCC-PE pin. which need to supply for some of the boards to
-> > trigger the power.
-> >
-> > So, document the supply property as vcc-csi so-that the required
-> > board can eable it via device tree.
-> >
-> > Used vcc-csi instead of vcc-pe to have better naming convention
-> > wrt other controller pin supplies.
+On Wed, 19 Dec 2018, Paul Elder wrote:
+
+> A usb gadget function driver may or may not want to delay the status
+> stage of a control OUT request. An instance it might want to is to
+---------------------------------------------^
+Typo: missing "where"
+
+> asynchronously validate the data of a class-specific request.
 > 
-> This is not related to the CSI controller. It belongs in the pin
-> controller, but that has its own set of problems like possible
-> circular dependencies.
+> A function driver that wants an explicit status stage should set the
+> newly added explicit_status flag of the usb_request corresponding to the
+> data stage. Later on the function driver can explicitly complete the
+> status stage by enqueueing a usb_request for ACK, or calling
+> usb_ep_set_halt() for STALL.
+> 
+> To support both explicit and implicit status stages, a UDC driver must
+> call the newly added usb_gadget_control_complete function right after
+> calling usb_gadget_giveback_request. The status of the request that was
+> just given back must be fed into usb_gadget_control_complete. To support
+> the explicit status stage, it might then check what stage the
+> usb_request was queued in, and send an ACK.
 
-That might be a better choice, but I think most platforms put the supply 
-in the module node. But that wouldn't work well if the module is not 
-used and you want to use the pins for GPIO or some other function. Maybe 
-we don't hit that property because most I/O supplies are always on.
+I don't really understand that last sentence.  Perhaps what you mean is
+that depending on the direction of the control transfer, the driver
+should either ACK the host's 0-length data packet (control-IN) or send
+a 0-length DATA1 packet (control-OUT)?
 
-Rob
+> Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> Changes from v2:
+> 
+> Add status parameter to usb_gadget_control_complete, so that a
+> usb_request is not queued if the status of the just given back request
+> is nonzero.
+> 
+> Changes from v1:
+> 
+> Complete change of API. Now we use a flag that should be set in the
+> usb_request that is queued for the data stage to signal to the UDC that
+> we want to delay the status stage (as opposed to setting a flag in the
+> UDC itself, that persists across all requests). We now also provide a
+> function for UDC drivers to very easily allow implicit status stages, to
+> mitigate the need to convert all function drivers to this new API at
+> once, and to make it easier for UDC drivers to convert.
+> 
+>  drivers/usb/gadget/udc/core.c | 34 ++++++++++++++++++++++++++++++++++
+>  include/linux/usb/gadget.h    | 10 ++++++++++
+>  2 files changed, 44 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> index af88b48c1cea..0a0ccd2b7639 100644
+> --- a/drivers/usb/gadget/udc/core.c
+> +++ b/drivers/usb/gadget/udc/core.c
+> @@ -894,6 +894,40 @@ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
+>  
+>  /* ------------------------------------------------------------------------- */
+>  
+> +/**
+> + * usb_gadget_control_complete - complete the status stage of a control
+> + *	request, or delay it
+> + * Context: in_interrupt()
+> + *
+> + * @gadget: gadget whose control request's status stage should be completed
+> + * @explicit_status: true to delay status stage, false to complete here
+> + * @status: completion code of previously completed request
+> + *
+> + * This is called by device controller drivers after returning the completed
+> + * request back to the gadget layer, to either complete or delay the status
+> + * stage.
+> + */
+> +void usb_gadget_control_complete(struct usb_gadget *gadget,
+> +		unsigned int explicit_status, int status)
+> +{
+> +	struct usb_request *req;
+> +
+> +	if (explicit_status || status)
+> +		return;
+> +
+> +	/* Send an implicit status-stage request for ep0 */
+> +	req = usb_ep_alloc_request(gadget->ep0, GFP_ATOMIC);
+> +	if (req) {
+> +		req->length = 0;
+> +		req->explicit_status = 0;
+
+Oops!  I should have spotted this in the previous version, sorry. The
+implicit status-stage request should have its ->explicit_status set, so
+that we don't try to submit another status request when this one
+completes.
+
+Also, would it look better if the type of explicit_status was bool 
+instead of unsigned int (both here and in the structure)?
+
+Either way, once this change is made:
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+
+> +		req->complete = usb_ep_free_request;
+> +		usb_ep_queue(gadget->ep0, req, GFP_ATOMIC);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(usb_gadget_control_complete);
+> +
+> +/* ------------------------------------------------------------------------- */
+> +
+>  /**
+>   * gadget_find_ep_by_name - returns ep whose name is the same as sting passed
+>   *	in second parameter or NULL if searched endpoint not found
+> diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+> index e5cd84a0f84a..1e3a23637468 100644
+> --- a/include/linux/usb/gadget.h
+> +++ b/include/linux/usb/gadget.h
+> @@ -73,6 +73,7 @@ struct usb_ep;
+>   *	Note that for writes (IN transfers) some data bytes may still
+>   *	reside in a device-side FIFO when the request is reported as
+>   *	complete.
+> + * @explicit_status: If true, delays the status stage
+>   *
+>   * These are allocated/freed through the endpoint they're used with.  The
+>   * hardware's driver can add extra per-request data to the memory it returns,
+> @@ -114,6 +115,8 @@ struct usb_request {
+>  
+>  	int			status;
+>  	unsigned		actual;
+> +
+> +	unsigned		explicit_status:1;
+>  };
+>  
+>  /*-------------------------------------------------------------------------*/
+> @@ -850,6 +853,13 @@ extern void usb_gadget_giveback_request(struct usb_ep *ep,
+>  
+>  /*-------------------------------------------------------------------------*/
+>  
+> +/* utility to complete or delay status stage */
+> +
+> +void usb_gadget_control_complete(struct usb_gadget *gadget,
+> +		unsigned int explicit_status, int status);
+> +
+> +/*-------------------------------------------------------------------------*/
+> +
+>  /* utility to find endpoint by name */
+>  
+>  extern struct usb_ep *gadget_find_ep_by_name(struct usb_gadget *g,
+> 
+
