@@ -2,126 +2,105 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FC6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F35C5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D36B21850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF68121873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:12:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sqpQLKJ2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeLSDLV (ORCPT
+        id S1727585AbeLSDMu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 22:11:21 -0500
-Received: from mail-eopbgr680045.outbound.protection.outlook.com ([40.107.68.45]:61072
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727494AbeLSDLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 22:11:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8QainyYeoOSScs9c80aPYp1OGwfjwBqG6Aito5PSHlw=;
- b=eQJntHdqboWPqXWxJB7JCp7TiQMWyaBua6IcCZgRvytXTviqwr2G/DYDyxT5ARHDceR1yOWLxAKlD1BaiHP5oKuWJfHqe0B+BAUat+7wJ6HnPJvWdL7TDCJy1AROKW7Nek2pj+mrnW7RG1xhAAx4LzTQXofrjlp6HIayqRPv7Ck=
-Received: from SN6PR03MB4398.namprd03.prod.outlook.com (20.177.255.219) by
- SN6PR03MB3518.namprd03.prod.outlook.com (52.135.80.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Wed, 19 Dec 2018 03:11:16 +0000
-Received: from SN6PR03MB4398.namprd03.prod.outlook.com
- ([fe80::7c2a:de77:a4ce:5ccc]) by SN6PR03MB4398.namprd03.prod.outlook.com
- ([fe80::7c2a:de77:a4ce:5ccc%3]) with mapi id 15.20.1425.024; Wed, 19 Dec 2018
- 03:11:16 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-CC:     Marcin Wojtas <mw@semihalf.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev <netdev@vger.kernel.org>,
-        =?iso-8859-1?Q?Gr=E9gory_Clement?= <gregory.clement@bootlin.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        "nadavh@marvell.com" <nadavh@marvell.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        David Miller <davem@davemloft.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
-Thread-Topic: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
-Thread-Index: AQHUkVET6MmkkP0I6kWJw6RDslXtBqWB3MQAgAAt/wCAAIlbgIAC2LgA
-Date:   Wed, 19 Dec 2018 03:11:16 +0000
-Message-ID: <20181219110546.63f68f4b@xhacker.debian>
-References: <1544533009-12425-1-git-send-email-mw@semihalf.com>
-        <20181216.124120.731491122771817496.davem@davemloft.net>
-        <CAPv3WKfz4AkODzJ+gsV=u6ve5YnZEdUhZF5+VmFPQa4mp9okUw@mail.gmail.com>
-        <20181217083735.4c6599b3@windsurf>
-In-Reply-To: <20181217083735.4c6599b3@windsurf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TYAPR04CA0020.apcprd04.prod.outlook.com
- (2603:1096:404:15::32) To SN6PR03MB4398.namprd03.prod.outlook.com
- (2603:10b6:805:fd::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR03MB3518;6:fNgS0p6XGSwVjwRU0hAvcOUVUKjdLsA5wHnc0PUI4kckMxcYDy/p027FSXoyOzhjJ5/3EPn/Xq/8kYmSDHF8nl50J0d2ywHM8FClorsJ832ZJqqWVBJstjJiK591M3RV79Cx0F2Gox6GXYGsxfebtWfHvXd16MYjIyw39k8CvjyOlF61LjjBedQWu2ESiqSIL571mNBBJYcu9uU2hQkMRctC/WE3x/vJ0RXME7weZ3Bk8P3G9lOxvusYoTA9ALRnKHKAyoZaTRlrei+sWd0HX+yux6bprksDq1F26DYbjXGGAr1rZjqbxeFsCje9ctUtr8Rkd8gzNt2fxcRFj+KfUv9IlQVM3OssP3ksnhUBkcpvN8xx8IWkACzo3jgWpsT1eMOyURBAEPhqPbcwbqXCzVb5BwDM0VdKgUzIjNNWqAKetMCyBeDmbM0dBy8rGGMyzaYd7ecpY2vLt95EDGQdUA==;5:x5Z9x8lH7RZJedickzEUagojlUcjGqIfZwN5lGbaEgHxDAS9AqqXYSv3FqOtgOmHxumYWwptWRD3Koa7MO19kNXVAYXiqWsjaBbOG7Y9WiKjK6oHlLyjQAheKMY609uQM8IG3r0MQL9VdTQ0GnhqLtOnwmX3hmBYfC+//u2atDA=;7:PraXAqgdGAJdQoulEMVFAD8SsMHCaDv62kwDA5EOJQYZU54WqZWDdUE5ow7GRE1cqFZZ+R4NsGm5+mwkoLWu6fzSHqXIuYHgdF+DGY92XZF3WV+li9MCwlIIoXc9Q1nR2F47Pn95ciCN5Garq3VRDw==
-x-ms-office365-filtering-correlation-id: 905303be-2706-488b-03d4-08d6655fa378
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR03MB3518;
-x-ms-traffictypediagnostic: SN6PR03MB3518:
-x-microsoft-antispam-prvs: <SN6PR03MB35180A50CE6C11134C84C635EDBE0@SN6PR03MB3518.namprd03.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN6PR03MB3518;BCL:0;PCL:0;RULEID:;SRVR:SN6PR03MB3518;
-x-forefront-prvs: 0891BC3F3D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(39860400002)(396003)(346002)(199004)(189003)(6246003)(81166006)(14444005)(9686003)(386003)(256004)(11346002)(53936002)(6512007)(6506007)(71200400001)(76176011)(3846002)(52116002)(33896004)(26005)(6916009)(71190400001)(6116002)(6436002)(6486002)(229853002)(186003)(7416002)(316002)(305945005)(102836004)(2906002)(5660300001)(54906003)(8936002)(105586002)(93886005)(99286004)(86362001)(7736002)(476003)(66066001)(478600001)(25786009)(4326008)(68736007)(97736004)(486006)(14454004)(8676002)(72206003)(446003)(81156014)(1076003)(106356001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3518;H:SN6PR03MB4398.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ka+IsRnlFRU/WwdlR8ioIeY4Rl//kIhzywgi2PtINlEDooQKZuwDrJ5KToRHHDoanmt7cPaAeiDIPfvGq8U2/xsbem8rlQg8fhQ6w4Xw3u/ywtxSU6FznEVhq+UyOB2+vnigFABXX1AhgodczdbRdL9uTdk8sW1h/yxPspICmiIRTBUFpFAe8dugq+C2KDk5BhLNHqy+G8u2v6aXzhBfp6Ae/CvfG8AGHTR9iRSSRWe8s4V9v0E8tE8i5C56RlM1dMkFnihbFTN+KgDj+33SiB/GDl1glkZVvLDXPh2SqHtZJ63kRDgbpmRsH0lU7yB0
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <085743CFB054304999D36D3A0EABF3B2@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 18 Dec 2018 22:12:50 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45484 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLSDMu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 22:12:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5peKips6igA2cfm29XGmOjqLZ3etZ1w6zwOuOvsb2NU=; b=sqpQLKJ2SfYIAdeKqTlaxGhmC1
+        KT8NP27uIudDC1Ffb2WdjJcfDsqkkoo/2CDdy19k4tAIADG36fRGfdfrtjU2BXO8nXqbtn1KJDuqZ
+        BFLgQcqSOUpaN6QEYeyQgk3pSxEDkhCfQ/4jlmhlpbmWOSjld6QcBP7yqOz3Nki5twe5S4ihqH7PG
+        quwFScF1YzjPwje4XBnESf33nquSgQxqX3V/57KqXaAq0dM7nUuMdfrgDv9OENTnvg+lkh5pzdh7o
+        MkI4ZSbo/B6VvEpXtvfG9F2SKqXyaw1W4KLG6DsslepiFpoO3VSJR9k2K31GSgEGMSG68N+nZShK5
+        N4glaxQQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gZSHo-0004s5-LB; Wed, 19 Dec 2018 03:12:40 +0000
+Subject: Re: [PATCH v6 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
+ support
+To:     Long Cheng <long.cheng@mediatek.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, srv_heupstream@mediatek.com,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>
+References: <1545186022-3712-1-git-send-email-long.cheng@mediatek.com>
+ <1545186022-3712-2-git-send-email-long.cheng@mediatek.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <46c746fc-b400-ec6e-d6b1-899c3d594b19@infradead.org>
+Date:   Tue, 18 Dec 2018 19:12:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 905303be-2706-488b-03d4-08d6655fa378
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 03:11:16.1826
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3518
+In-Reply-To: <1545186022-3712-2-git-send-email-long.cheng@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+A few small corrections...
 
-On Mon, 17 Dec 2018 08:37:35 +0100 Thomas Petazzoni wrote:
+On 12/18/18 6:20 PM, Long Cheng wrote:
+> diff --git a/drivers/dma/mediatek/Kconfig b/drivers/dma/mediatek/Kconfig
+> index 27bac0b..2c082c9 100644
+> --- a/drivers/dma/mediatek/Kconfig
+> +++ b/drivers/dma/mediatek/Kconfig
+> @@ -1,4 +1,15 @@
+>  
+> +config DMA_MTK_UART
+> +	tristate "MediaTek SoCs APDMA support for UART"
+> +	depends on OF && SERIAL_8250_MT6577
+> +	select DMA_ENGINE
+> +	select DMA_VIRTUAL_CHANNELS
+> +	help
+> +	  Support for the UART DMA engine found on MediaTek MTK SoCs.
+> +	  when SERIAL_8250_MT6577 is enabled, and if you want to using DMA,
 
-> Hello Marcin,
->=20
-> On Mon, 17 Dec 2018 00:25:58 +0100, Marcin Wojtas wrote:
->=20
-> > Thanks. Indeed, the patch is valid as a fix for current version of SW
-> > BM. However, because this concept is broken, I will rework it and
-> > submit patch/patches some time early 2019. =20
->=20
-> I know some people are working on XDP support in mvneta, and this work
-> also needs to change parts of the memory allocation strategy in this
-> driver. I'd suggest to get in touch with those folks. Antoine can give
-> you the contact details, I don't have them off-hand. Or perhaps they
-> will see this e-mail :-)
+	  When                                                to use DMA,
 
-Great. So the problem of current memory allocation is seen, glad to
-know reworking is going on.
+> +	  you can enable the config. the DMA engine just only be used
 
-Besides the memory waste, there's another issue with commit 7e47fd84b56b
-it always allocates page, so the rx is mapped with dmap_map_page(), but
-the unmap routine isn't updated, there's mismatch here.
+	                             The DMA engine can only be used
 
-thanks
+> +	  with MediaTek SoCs.
+> +
+
+
+cheers,
+-- 
+~Randy
