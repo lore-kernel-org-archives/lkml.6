@@ -2,203 +2,202 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3DEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4E2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1353320989
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:23:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="pk5rHhaO"
+	by mail.kernel.org (Postfix) with ESMTP id 0A15020989
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:24:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbeLSNXh (ORCPT
+        id S1729268AbeLSNYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:23:37 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40782 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728652AbeLSNXg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:23:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so9465865plq.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:23:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b2DFbvOdv2MJAs05SZzPfotgdcRg6VQ81iHyNmB6fq4=;
-        b=pk5rHhaO98Ky2Mgblzh6OHTWBUeZFtPnMgwOtsqb/KM3TfIoXPbYbSyQSdMyPvjqtO
-         8sgfOMdaS5XFKlhh9UoeqdpwVP38Qy4CzoJEWssR2lrtJnHM49HqEo2sodC3EBBBOqUn
-         j2EvKBLEmYYjuPy/0w/swHeatbxjElfQ4UIe65YDJNSoyfpnzAn4S8XlAivjTTFNYT9l
-         mNcNTlzmuX9ch28FzBg+mK8F85HHLR5sT/1yLWqCyvTMd4RDKswVoztbWlS/mEQr4IP1
-         P/GqJUqrSCjpBiwaAc/xSNsITfImyuWd6gzFAul6Ps5HIeUE6z2b2UW/b2mqt7+U0ZCh
-         J46Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b2DFbvOdv2MJAs05SZzPfotgdcRg6VQ81iHyNmB6fq4=;
-        b=ZoqhYIdnBAfSLmjFQtMw8IY4C+f31zIuE+iwkKIbq7xzYbEeMOtRH5rcs2X6FjGgAp
-         foLDt7n0CC0qyAcc6l5Y4ccRHIxVdIWgXb+IwFAq6cdiLGRmR8N6MYiChtenM79w3b/z
-         gh2H6TiQVDasxo8DoVJFUlEs/tRhaxSSDsnYauxe3Yktbe3Om3HA5taaetCWMyJheWKm
-         b+TmgQ6/qVAcz/dlnYKaerMoMCKgU+Alo9Jr4jn0rbBPKmq+7X3PmTlVh2E8ZiTNdPZ5
-         UzjQZg7d7l9kbR6dob7qf0b1Lf7Y/tNFQonO+tE37rk6gLco/OReTTNSIi4oXr0SxLcB
-         iEMQ==
-X-Gm-Message-State: AA+aEWaNWnWBEH48C+a31+uJrSsjCjaBpvkz7wn+ANkDnIiK9op0RfIv
-        UBgR7j64o0/gdKzNcMlqzoM0/w==
-X-Google-Smtp-Source: AFSGD/XUHo3xPiEokDnbsbvCqlYPfhJ11u87SE0qei9dS/yw+7p1Gg763OA0b+Se5c72vdH0PMx7wQ==
-X-Received: by 2002:a17:902:8bc6:: with SMTP id r6mr20133835plo.67.1545225815695;
-        Wed, 19 Dec 2018 05:23:35 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id h8sm19185066pgv.27.2018.12.19.05.23.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 05:23:34 -0800 (PST)
-Subject: Re: KMSAN: kernel-infoleak in copy_page_to_iter (2)
-To:     Alexander Potapenko <glider@google.com>,
+        Wed, 19 Dec 2018 08:24:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54670 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728231AbeLSNYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 08:24:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ED291AEEE;
+        Wed, 19 Dec 2018 13:24:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id DCF0D1E1463; Wed, 19 Dec 2018 14:24:49 +0100 (CET)
+Date:   Wed, 19 Dec 2018 14:24:49 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        bart.vanassche@wdc.com, matias.bjorling@wdc.com
-Cc:     Andi Kleen <ak@linux.intel.com>, jack@suse.cz, jlayton@redhat.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com
-References: <00000000000016eb330575bd2fab@google.com>
- <CAG_fn=WwdgnCQ2fOw_LEXwv7Fdbmshxo57XJXNbfbawDndJZ_Q@mail.gmail.com>
- <CAG_fn=UjeL9BmAq+FDK01n4mH7ieQXpxkRRxAbDPd5UcC7eZPw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <06a3b403-7fe3-24fd-0ce2-9a604f3bbe62@kernel.dk>
-Date:   Wed, 19 Dec 2018 06:23:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181219132449.GD18345@quack2.suse.cz>
+References: <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181218103306.GC18032@quack2.suse.cz>
+ <20181218234254.GC31274@dastard>
 MIME-Version: 1.0
-In-Reply-To: <CAG_fn=UjeL9BmAq+FDK01n4mH7ieQXpxkRRxAbDPd5UcC7eZPw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218234254.GC31274@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/18 3:23 AM, Alexander Potapenko wrote:
-> On Thu, Sep 13, 2018 at 11:23 AM Alexander Potapenko <glider@google.com> wrote:
->>
->> On Thu, Sep 13, 2018 at 11:18 AM syzbot
->> <syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com> wrote:
->>>
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    123906095e30 kmsan: introduce kmsan_interrupt_enter()/kmsa..
->>> git tree:       https://github.com/google/kmsan.git/master
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=1249fcb8400000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=2dcfeaf8cb49b05e8f1a
->>> compiler:       clang version 7.0.0 (trunk 334104)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116ef050400000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=122870ff800000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+2dcfeaf8cb49b05e8f1a@syzkaller.appspotmail.com
->>>
->>> random: sshd: uninitialized urandom read (32 bytes read)
->>> ==================================================================
->>> BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:140 [inline]
->>> BUG: KMSAN: kernel-infoleak in copy_page_to_iter_iovec lib/iov_iter.c:212
->>> [inline]
->>> BUG: KMSAN: kernel-infoleak in copy_page_to_iter+0x754/0x1b70
->>> lib/iov_iter.c:716
->>> CPU: 0 PID: 4516 Comm: blkid Not tainted 4.17.0+ #9
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> Google 01/01/2011
->>> Call Trace:
->>>   __dump_stack lib/dump_stack.c:77 [inline]
->>>   dump_stack+0x185/0x1d0 lib/dump_stack.c:113
->>>   kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
->>>   kmsan_internal_check_memory+0x17e/0x1f0 mm/kmsan/kmsan.c:1238
->>>   kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
->>>   copyout lib/iov_iter.c:140 [inline]
->>>   copy_page_to_iter_iovec lib/iov_iter.c:212 [inline]
->>>   copy_page_to_iter+0x754/0x1b70 lib/iov_iter.c:716
->>>   generic_file_buffered_read mm/filemap.c:2185 [inline]
->>>   generic_file_read_iter+0x2ef8/0x44d0 mm/filemap.c:2362
->>>   blkdev_read_iter+0x20d/0x280 fs/block_dev.c:1930
->>>   call_read_iter include/linux/fs.h:1778 [inline]
->>>   new_sync_read fs/read_write.c:406 [inline]
->>>   __vfs_read+0x775/0x9d0 fs/read_write.c:418
->>>   vfs_read+0x36c/0x6b0 fs/read_write.c:452
->>>   ksys_read fs/read_write.c:578 [inline]
->>>   __do_sys_read fs/read_write.c:588 [inline]
->>>   __se_sys_read fs/read_write.c:586 [inline]
->>>   __x64_sys_read+0x1bf/0x3e0 fs/read_write.c:586
->>>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
->>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>> RIP: 0033:0x7fdeff68f310
->>> RSP: 002b:00007ffe999660b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->>> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdeff68f310
->>> RDX: 0000000000000100 RSI: 0000000001e78df8 RDI: 0000000000000003
->>> RBP: 0000000001e78dd0 R08: 0000000000000028 R09: 0000000001680000
->>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000001e78030
->>> R13: 0000000000000100 R14: 0000000001e78080 R15: 0000000001e78de8
->>>
->>> Uninit was created at:
->>>   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:282 [inline]
->>>   kmsan_alloc_meta_for_pages+0x161/0x3a0 mm/kmsan/kmsan.c:819
->>>   kmsan_alloc_page+0x82/0xe0 mm/kmsan/kmsan.c:889
->>>   __alloc_pages_nodemask+0xf7b/0x5cc0 mm/page_alloc.c:4402
->>>   alloc_pages_current+0x6b1/0x970 mm/mempolicy.c:2093
->>>   alloc_pages include/linux/gfp.h:494 [inline]
->>>   __page_cache_alloc+0x95/0x320 mm/filemap.c:946
->>>   pagecache_get_page+0x52b/0x1450 mm/filemap.c:1577
->>>   grab_cache_page_write_begin+0x10d/0x190 mm/filemap.c:3089
->>>   block_write_begin+0xf9/0x3a0 fs/buffer.c:2068
->>>   blkdev_write_begin+0xf5/0x110 fs/block_dev.c:584
->>>   generic_perform_write+0x438/0x9d0 mm/filemap.c:3139
->>>   __generic_file_write_iter+0x43b/0xa10 mm/filemap.c:3264
->>>   blkdev_write_iter+0x3a8/0x5f0 fs/block_dev.c:1910
->>>   do_iter_readv_writev+0x81c/0xa20 include/linux/fs.h:1778
->>>   do_iter_write+0x30d/0xd50 fs/read_write.c:959
->>>   vfs_writev fs/read_write.c:1004 [inline]
->>>   do_writev+0x3be/0x820 fs/read_write.c:1039
->>>   __do_sys_writev fs/read_write.c:1112 [inline]
->>>   __se_sys_writev fs/read_write.c:1109 [inline]
->>>   __x64_sys_writev+0xe1/0x120 fs/read_write.c:1109
->>>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
->>>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>
->>> Bytes 4-255 of 256 are uninitialized
->>> Memory access starts at ffff8801b9903000
->>> ==================================================================
->> This particular report was caused by the repro program writing a byte
->> to /dev/nullb0 and /sbin/blkid reading from that device in the
->> background.
->> But it turns out that simply running `cat /dev/nullb0` already prints
->> uninitialized kernel memory.
->> Is this the intended behavior of the null block driver?
-> A friendly ping, this bug is still reproducible on syzbot.
+On Wed 19-12-18 10:42:54, Dave Chinner wrote:
+> On Tue, Dec 18, 2018 at 11:33:06AM +0100, Jan Kara wrote:
+> > On Mon 17-12-18 08:58:19, Dave Chinner wrote:
+> > > On Fri, Dec 14, 2018 at 04:43:21PM +0100, Jan Kara wrote:
+> > > > Yes, for filesystem it is too late. But the plan we figured back in October
+> > > > was to do the bouncing in the block layer. I.e., mark the bio (or just the
+> > > > particular page) as needing bouncing and then use the existing page
+> > > > bouncing mechanism in the block layer to do the bouncing for us. Ext3 (when
+> > > > it was still a separate fs driver) has been using a mechanism like this to
+> > > > make DIF/DIX work with its metadata.
+> > > 
+> > > Sure, that's a possibility, but that doesn't close off any race
+> > > conditions because there can be DMA into the page in progress while
+> > > the page is being bounced, right? AFAICT this ext3+DIF/DIX case is
+> > > different in that there is no 3rd-party access to the page while it
+> > > is under IO (ext3 arbitrates all access to it's metadata), and so
+> > > nothing can actually race for modification of the page between
+> > > submission and bouncing at the block layer.
+> > >
+> > > In this case, the moment the page is unlocked, anyone else can map
+> > > it and start (R)DMA on it, and that can happen before the bio is
+> > > bounced by the block layer. So AFAICT, block layer bouncing doesn't
+> > > solve the problem of racing writeback and DMA direct to the page we
+> > > are doing IO on. Yes, it reduces the race window substantially, but
+> > > it doesn't get rid of it.
+> > 
+> > The scenario you describe here cannot happen exactly because of the
+> > wait_for_stable_page() in ->page_mkwrite() you mention below.
+> 
+> In general, no, because stable pages are controlled by block
+> devices.
+> 
+> void wait_for_stable_page(struct page *page)
+> {
+>         if (bdi_cap_stable_pages_required(inode_to_bdi(page->mapping->host)))
+>                 wait_on_page_writeback(page);
+> }
+> 
+> 
+> I have previously advocated for the filesystem to be in control of
+> stable pages but, well, too many people shouted "but performance!"
+> and so we still have all these holes I wanted to close in our
+> code...
+> 
+> > If someone
+> > will try to GUP a page that is under writeback (has already PageWriteback
+> > set), GUP will have to do a write fault because the page is writeprotected
+> > in page tables and go into ->page_mkwrite() which will wait.
+> 
+> Correct, but that doesn't close the problem down because stable
+> pages are something we cannot rely on right now. We need to fix
+> wait_for_stable_page() to always block on page writeback before
+> this specific race condition goes away.
 
-Does this fix it?
+Right, all I said was assuming that someone actually cares about stable
+pages so bdi_cap_stable_pages_required() is set. I agree with filesystem
+having ability to control whether stable pages are required or not. But
+when stable pages get enforced seems like a separate problem to me.
 
+> > The problem rather is with someone mapping the page *before* writeback
+> > starts, giving the page to HW. Then clear_page_dirty_for_io() writeprotects
+> > the page in PTEs but the HW gives a damn about that. Then, after we add the
+> > page to the bio but before the page gets bounced by the block layer, the HW
+> > can still modify it.
+> 
+> Sure, that's yet another aspect of the same problem - not getting a
+> write fault when the page is being written to. If we got a write
+> fault, then the wait_for_stable_page() call in ->page_mkwrite would
+> then solve the problem.
+> 
+> Essentially, what we are talking about is how to handle broken
+> hardware. I say we should just brun it with napalm and thermite
+> (i.e. taint the kernel with "unsupportable hardware") and force
+> wait_for_stable_page() to trigger when there are GUP mappings if
+> the underlying storage doesn't already require it.
 
-diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.c
-index 62c9654b9ce8..08808c572692 100644
---- a/drivers/block/null_blk_main.c
-+++ b/drivers/block/null_blk_main.c
-@@ -655,7 +655,7 @@ static struct nullb_page *null_alloc_page(gfp_t gfp_flags)
- 	if (!t_page)
- 		goto out;
- 
--	t_page->page = alloc_pages(gfp_flags, 0);
-+	t_page->page = alloc_pages(gfp_flags | __GFP_ZERO, 0);
- 	if (!t_page->page)
- 		goto out_freepage;
- 
+As I wrote in other email, this is also about direct IO using file mapping
+as a data buffer. So burn with napalm can hardly be a complete solution...
+I agree that for the hardware that cannot support revoking of access /
+fault on access and uses long-term page pins, we may just have to put up
+with weird behavior in some corner cases.
 
+> > > If it's permanently dirty, how do we trigger new COW operations
+> > > after writeback has "cleaned" the page? i.e. we still need a
+> > > ->page_mkwrite call to run before we allow the next write to the
+> > > page to be done, regardless of whether the page is "permanently
+> > > dirty" or not....
+> > 
+> > Interaction with COW is certainly an interesting problem. When the page
+> > gets pinned, GUP will make sure the page is writeably mapped and trigger a
+> > write fault if not. So at the moment the page is pinned, we are sure the
+> > page is COWed. Now the question is what should happen when the file A
+> > containing this pinned page gets reflinked to file B while the page is still
+> > pinned.
+> > 
+> > Options I can see are:
+> > 
+> > 1) Fail the reflink.
+> >   - difficult for sysadmin to discover the source of failure
+> >
+> > 2) Block reflink until the pin of the page is released.
+> >   - can last for a long time, again difficult to discover
+> > 
+> > 3) Don't do anything special.
+> >   - can corrupt data as read accesses through file B won't see
+> >     modifications done to the page (and thus eventually the corresponding disk
+> >     block) by the HW.
+> > 
+> > 4) Immediately COW the block during reflink when the corresponding page
+> >    cache page is pinned.
+> >   - seems as the best solution at this point, although sadly also requires
+> >     the most per-filesystem work
+> 
+> None of the above are acceptable solutions - they all have nasty
+> corner cases which are going to be difficult to get right, test,
+> etc. IMO, the robust, reliable, testable solution is this:
+> 
+> 5) The reflink breaks the file lease, the userspace app releases the
+> pinned pages on the file and drops the lease. The reflink proceeds,
+> does it's work, and then the app gets a new lease on the file. When
+> the app pins the pages again, it triggers new ->page_mkwrite calls
+> to break any sharing that the reflink created. And if the app fails
+> to drop the lease, then we can either fail with a lease related
+> error or kill it....
+
+This is certainly fine for the GUP users that are going to support leases.
+But do you want GUP in direct IO to create a lease if the pages are from a
+file mapping? I belive we need another option at least for GUP references
+that are short-term in nature and sometimes also performance critical.
+
+								Honza
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
