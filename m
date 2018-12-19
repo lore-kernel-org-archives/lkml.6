@@ -2,125 +2,324 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1C3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C19A4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2953A20643
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77A31218CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:32:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnqJnXef"
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="tI2EreBD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbeLSPbn (ORCPT
+        id S1728307AbeLSPcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:31:43 -0500
-Received: from mail-io1-f47.google.com ([209.85.166.47]:35335 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727494AbeLSPbm (ORCPT
+        Wed, 19 Dec 2018 10:32:46 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40313 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbeLSPcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:31:42 -0500
-Received: by mail-io1-f47.google.com with SMTP id o13so200720ioh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:31:42 -0800 (PST)
+        Wed, 19 Dec 2018 10:32:45 -0500
+Received: by mail-ed1-f67.google.com with SMTP id g22so11287355edr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:32:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:sender:from:date:message-id
-         :subject:to:cc;
-        bh=Eddjy1yIu1eEGnkwlfQj42NuIjTYKtmeSXVcn3/nUZQ=;
-        b=nnqJnXefzaPmvQRuHa/IcjOJ6CdRR5GP+dz9+6ZGPpEAjVKqF0a9HmvSXVhdlIqTn0
-         /1ZjMHEC4+YP+ZO8fT6oONj+ZWUvzSYfl5hi4ny4456plYejr/26Vy5oh3JqjlZZ05Lo
-         JwpHA2N52Y8mWvo+uklz83kH+m4fSpiXktO+iduRc9Q7P1P1Y0gICeHntzMcLq7ITakB
-         5bdslW3nf1+C8/QzK9M/yPL4C2xwKnidVBupJ9RNqtjBG3hv+bgcwM0XKjFJezNSdyqC
-         ND8YCpBx+Z8olgjsKWE97lzVKPAkoe0vKKNPs6gI8OpjnRTcVMMysojhSis/00jfu2p4
-         bmqA==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bun7DFEukLpwUO+DzsQXa8eh7dfwqp9mDpXtpGfb/rc=;
+        b=tI2EreBDxTtG8OlHV8S1tsLoH7o1aR/a4qPqE6MMRreX2VfXe+Yj+mau1j4l5HxpUn
+         IlHFl9/EVqdjibrVkfrAHQLupPi7uyzvM7nkHtWzS1W2dfftaellqccc7hoBSmsS1Fth
+         sHWwnWIDY0HueYRDHY26IVrBmEoLE0SsfMLfzUBinzkZrii3Q7AoRYdAD3FyB2NFXquo
+         qp3DCv6H/l3ISbA2vHuCPVeaMF9gTqRcJSZ3Q5g7arzbuJnZQsCG8yLFPHr3j0+JRv8C
+         b4hwD6D/ar/WK9QhbrWN3FEQba95vdXYnt5OZv/0s1ajFGYOkNBAqSNBvnWgvVK2C5wh
+         PSyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:sender:from
-         :date:message-id:subject:to:cc;
-        bh=Eddjy1yIu1eEGnkwlfQj42NuIjTYKtmeSXVcn3/nUZQ=;
-        b=JEdAe7v2UQwv/q0d1pi5lDVOMmbfktNHVmBRqVAttIrOKUhjLH6iOCpNBm09peSB2f
-         Ztawu+N59lwCPU6fypeY/ktXqbUBl2uuOj25+0xM/8d370qx/fuKPp6MpVJmSFLiMNl/
-         qN6+QRx52/5d0OkVSLuHEAXo4UHilS65uU7nM6kXd0pAg7CYPzYcXUON2STRiDCCAl86
-         yVQg/VkPwHEOOBUw+40Fyku3e9GlcCrDHY8E9qkaqoZekSVBJhnTx8yuE4ErBx73MMwR
-         P0r1Gy/cbCrTVQ/lBri2ymCOekf5UwV4hLQAEAZEy9ZTHULAGOFDOcayVGH8IF5iEhhh
-         n8UA==
-X-Gm-Message-State: AA+aEWYf81CunPBEU0jscB+8L7/OVE5C7EGJGqKLnm5UqaTaAbbAxtKh
-        BC9QvntER6Pizdy07mO6rS8FRcZmeSLGqpuegpg=
-X-Google-Smtp-Source: AFSGD/Xd9Et4pONQEumJ5agaoFVPl7i0fF6cpSo5axb/73WN3vb1e+oqBLRxeZqT319R7+WkLScWbyFRYSVRfFaApSI=
-X-Received: by 2002:a6b:1583:: with SMTP id 125mr18203422iov.102.1545233501593;
- Wed, 19 Dec 2018 07:31:41 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bun7DFEukLpwUO+DzsQXa8eh7dfwqp9mDpXtpGfb/rc=;
+        b=lwgMF5DjiNJAxB6RuTESMdqVMinxmFlehjKhpKHUILMR1GUJanHh36kcWYqUq5/LvU
+         eBS7T81VLP2los1UpBfVIoUjHKM8jrtF+o/Q2L9rHoWA4XOnkXlZ7rcDWmbbDOlGVU0K
+         JI02ibLgql182jQC21tdhUO45I5y8nnBfJ5CyV5oVWrCCHUSs1OzFkK2XsomuKbEYOp6
+         Fb2+dbBCK4vqtpeMBmIgYcRT1fwPFBkFVcIFT14xHlpZp9aBpH8a/X7Jkht7LcIxTgQA
+         XG3hKcqqNecwV0gx74qs7PyGcvFAl8XbNyOBUCim1QtzkgjowjFuYABwtZqMrxAPfMJJ
+         8G8g==
+X-Gm-Message-State: AA+aEWaUx9BDCzd3XNYDZZyrcXjbV8n/EQR27DLOumhHgrf5l3pj8a/6
+        vMPXOzwN99tmFvPKg/jABGVAFyzNmThEQwxrUxFCSw==
+X-Google-Smtp-Source: AFSGD/V1XkwdyfQV0oEgeXd0nwKJASaHwz20PSFfhY44tew5fTm5ZKRojKzryKlYuSOQ0HFkHJFp7aBuRbFJw+kjOaw=
+X-Received: by 2002:a17:906:7c52:: with SMTP id g18-v6mr16483621ejp.77.1545233563178;
+ Wed, 19 Dec 2018 07:32:43 -0800 (PST)
 MIME-Version: 1.0
-References: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
- <20181219150604.GB25653@kroah.com>
-In-Reply-To: <20181219150604.GB25653@kroah.com>
-X-Google-Sender-Delegation: praveenkumar1511@gmail.com
-From:   Praveen Kumar <kpraveen.lkml@gmail.com>
-Date:   Wed, 19 Dec 2018 21:01:11 +0530
-X-Google-Sender-Auth: oHu8Mu3nP5kIyriqG_uhocKxtGE
-Message-ID: <CABcWhv4794moz7PZxmzJMySpJnjZR4ikGwHVcicp0-4PWOHmig@mail.gmail.com>
-Subject: Re: /proc/modules not showing any output
-To:     Greg KH <greg@kroah.com>
-Cc:     kernelnewbies@kernelnewbies.org, linux-kernel@vger.kernel.org
+References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
+ <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
+ <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com> <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
+ <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com> <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
+ <7c245fa2-75bb-8ff9-5ffa-83262e3470fe@gmail.com>
+In-Reply-To: <7c245fa2-75bb-8ff9-5ffa-83262e3470fe@gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Wed, 19 Dec 2018 23:32:31 +0800
+Message-ID: <CAB4CAwepsfaDm6rdxy=RZGuTxjtfsK7yoD5Jkker1AfS7vrZxg@mail.gmail.com>
+Subject: Re: A weird problem of Realtek r8168 after resume from S3
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
+        netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 8:36 PM Greg KH <greg@kroah.com> wrote:
+On Wed, Dec 19, 2018 at 4:28 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
 >
-> On Wed, Dec 19, 2018 at 06:52:39PM +0530, Praveen Kumar wrote:
-> > Hi All,
+> On 18.12.2018 14:25, Chris Chiu wrote:
+> > On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>
+> >> On 17.12.2018 14:25, Chris Chiu wrote:
+> >>> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> >>>>
+> >>>> On 14.12.2018 04:33, Chris Chiu wrote:
+> >>>>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
+> >>>>>>
+> >>>>>> Hi,
+> >>>>>>     We got an acer laptop which has a problem with ethernet networking after
+> >>>>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
+> >>>>>> follows.
+> >>>>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+> >>>>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
+> >>>>>>
+> >>>> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
+> >>>>
+> >>> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
+> >>> (uninitialized): mac_version = 0x2b
+> >>> [   22.365580] libphy: r8169: probed
+> >>> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
+> >>> XID 5c800800, IRQ 38
+> >>> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
+> >>> bytes, tx checksumming: ko]
+> >>>
+> >> Thanks for the info.
+> >>
+> >>>>>>     The problem is the ethernet is not accessible after resume. Pinging via
+> >>>>>> ethernet always shows the response `Destination Host Unreachable`. However,
+> >>>>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
+> >>>>>> interface, the networking is back to alive. But it's dead again after
+> >>>>>> I stop tcpdump.
+> >>>>>> One more thing, if I ping the problematic machine from others, it achieves the
+> >>>>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
+> >>>>>>
+> >>>> You could compare the register dumps (ethtool -d) before and after S3 sleep
+> >>>> to find out whether there's a difference.
+> >>>>
+> >>>
+> >>> Actually, I just found I lead the wrong direction. The S3 suspend does
+> >>> help to reproduce,
+> >>> but it's not necessary. All I need to do is ping around 5 mins and the
+> >>> network connection
+> >>> fails.  And I also find one thing interesting, disabling the  MSI-X
+> >>> interrupt like commit
+> >>> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
+> >>> Although I don't
+> >>> understand the root cause. Anything I can do to help?
+> >>>
+> >> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
+> >> the issue, but also pinging the machine from outside brings back the network.
+> >> Both actions affect totally different corners.
+> >>
+> >> The commit and related issue you mention was a workaround in the driver,
+> >> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
+> >> in the PCI core. After this was fixed we removed the workaround again.
+> >> This shouldn't be related to your issue.
+> >>
+> >> Hard to say for now is whether the issue is:
+> >> - a driver issue
+> >> - a hardware issue in the RTL8411
+> >> - an issue with the chipset on your mainboard
+> >>
+> >> According to your description it doesn't take a special scenario to trigger
+> >> the issue, so most likely also other users of Acer notebooks with RTL8411
+> >> should be affected (after briefly checking this should be at least Aspire
+> >> F15, V15, V7). Therefore I wonder why there aren't more reports.
+> >>
+> >> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
+> >> So you could test this revision and the one before.
+> >>
+> >> Eventually, if the issue really should be caused by a side effect of using
+> >> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
+> >> in general or just for RTL8411 and a certain subsystem id.
+> >>
 > >
-> > Compiled the vanila kernel 4.20.0-rc6 build, and was trying to get
-> > module information, but /proc/modules is not showing any output ( both
-> > on arm64 and x86_64 )
+> > I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
+> > interrupt handling"),
+> > the problem still there. Then I revert to the previous revision, the
+> > problem goes away.
+> > So I think it's pretty much the side effect of MSI-X. However, as you
+> > mentioned that
+> > you didn't hit this problem, I'll ask the vendor to verify if this
+> > problem also happens on
+> > other machines with the same chip. Then we can determine to disable for specific
+> > mac version or just a certain subsystem id.
 > >
-> > root@ubuntu:~# uname -a
-> > Linux ubuntu 4.20.0-rc6-00082-g65e08c5e8631 #7 SMP PREEMPT Fri Dec 14
-> > 15:54:30 IST 2018 aarch64 aarch64 aarch64 GNU/Linux
+> >>>>>>     I tried the latest 4.20 rc version but the problem still there. I
+> >>>>>> also tried some
+> >>>>>> hw_reset or init thing in the resume path but no effect. Any
+> >>>>>> suggestion for this?
+> >>>>>> Thanks
+> >>>>>>
+> >>>> Did previous kernel versions work? If it's a regression, a bisect would be
+> >>>> appreciated, because with the chip versions I've got I can't reproduce the issue.
+> >>>>
+> >>>>>> Chris
+> >>>>>
+> >>>>> Gentle ping. Any additional information required?
+> >>>>>
+> >>>>> Chris
+> >>>>>
+> >>>> Heiner
+> >>>
+> >>
 > >
-> > root@ubuntu:~# cat /proc/modules
-> > root@ubuntu:~#
-> >
-> > Tried with older version 4.4.162-78-default modules were properly shown.
-> >
-> > Can you please help if there is something which I am missing during
-> > compilation or is there any potential bug here ? Thanks in advance.
 >
-> Are you sure your .config file has enabled modules?  Have you actually
-> loaded any?  If you do not load any, nothing will show up in that proc
-> file :)
+> As an additional note:
+> I found that the rtsx_pci driver doesn't support MSI-X currently.
+> The following patch adds MSI-X support (it's compile-tested only
+> because I don't have a system with RTL8411).
+> Would be interesting to see whether it makes a difference if both
+> components on this combo chip use MSI-X.
+>
+> ---
+>  drivers/misc/cardreader/rtsx_pcr.c | 51 ++++++++++--------------------
+>  include/linux/rtsx_pci.h           |  1 -
+>  2 files changed, 16 insertions(+), 36 deletions(-)
+>
+> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+> index da445223f..d1349c248 100644
+> --- a/drivers/misc/cardreader/rtsx_pcr.c
+> +++ b/drivers/misc/cardreader/rtsx_pcr.c
+> @@ -35,10 +35,6 @@
+>
+>  #include "rtsx_pcr.h"
+>
+> -static bool msi_en = true;
+> -module_param(msi_en, bool, S_IRUGO | S_IWUSR);
+> -MODULE_PARM_DESC(msi_en, "Enable MSI");
+> -
+>  static DEFINE_IDR(rtsx_pci_idr);
+>  static DEFINE_SPINLOCK(rtsx_pci_lock);
+>
+> @@ -1049,22 +1045,21 @@ static irqreturn_t rtsx_pci_isr(int irq, void *dev_id)
+>
+>  static int rtsx_pci_acquire_irq(struct rtsx_pcr *pcr)
+>  {
+> -       pcr_dbg(pcr, "%s: pcr->msi_en = %d, pci->irq = %d\n",
+> -                       __func__, pcr->msi_en, pcr->pci->irq);
+> +       int ret;
+>
+> -       if (request_irq(pcr->pci->irq, rtsx_pci_isr,
+> -                       pcr->msi_en ? 0 : IRQF_SHARED,
+> -                       DRV_NAME_RTSX_PCI, pcr)) {
+> -               dev_err(&(pcr->pci->dev),
+> -                       "rtsx_sdmmc: unable to grab IRQ %d, disabling device\n",
+> -                       pcr->pci->irq);
+> -               return -1;
+> -       }
+> +       ret = pci_alloc_irq_vectors(pcr->pci, 1, 1, PCI_IRQ_ALL_TYPES);
+> +       if (ret < 0)
+> +               goto err;
+>
+> -       pcr->irq = pcr->pci->irq;
+> -       pci_intx(pcr->pci, !pcr->msi_en);
+> +       ret = pci_request_irq(pcr->pci, 0, rtsx_pci_isr, NULL, pcr,
+> +                             DRV_NAME_RTSX_PCI);
+> +       if (ret)
+> +               goto err;
+>
+>         return 0;
+> +err:
+> +       pci_err(pcr->pci, "rtsx_sdmmc: unable to grab interrupt\n");
+> +       return ret;
+>  }
+>
+>  static void rtsx_enable_aspm(struct rtsx_pcr *pcr)
+> @@ -1496,19 +1491,11 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+>         INIT_DELAYED_WORK(&pcr->carddet_work, rtsx_pci_card_detect);
+>         INIT_DELAYED_WORK(&pcr->idle_work, rtsx_pci_idle_work);
+>
+> -       pcr->msi_en = msi_en;
+> -       if (pcr->msi_en) {
+> -               ret = pci_enable_msi(pcidev);
+> -               if (ret)
+> -                       pcr->msi_en = false;
+> -       }
+> -
+>         ret = rtsx_pci_acquire_irq(pcr);
+>         if (ret < 0)
+> -               goto disable_msi;
+> +               goto free_dma;
+>
+>         pci_set_master(pcidev);
+> -       synchronize_irq(pcr->irq);
+>
+>         ret = rtsx_pci_init_chip(pcr);
+>         if (ret < 0)
+> @@ -1528,10 +1515,8 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+>         return 0;
+>
+>  disable_irq:
+> -       free_irq(pcr->irq, (void *)pcr);
+> -disable_msi:
+> -       if (pcr->msi_en)
+> -               pci_disable_msi(pcr->pci);
+> +       pci_free_irq(pcr->pci, 0, pcr);
+> +free_dma:
+>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+>  unmap:
+> @@ -1568,9 +1553,7 @@ static void rtsx_pci_remove(struct pci_dev *pcidev)
+>
+>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+> -       free_irq(pcr->irq, (void *)pcr);
+> -       if (pcr->msi_en)
+> -               pci_disable_msi(pcr->pci);
+> +       pci_free_irq(pcr->pci, 0, pcr);
+>         iounmap(pcr->remap_addr);
+>
+>         pci_release_regions(pcidev);
+> @@ -1664,9 +1647,7 @@ static void rtsx_pci_shutdown(struct pci_dev *pcidev)
+>         rtsx_pci_power_off(pcr, HOST_ENTER_S1);
+>
+>         pci_disable_device(pcidev);
+> -       free_irq(pcr->irq, (void *)pcr);
+> -       if (pcr->msi_en)
+> -               pci_disable_msi(pcr->pci);
+> +       pci_free_irq(pcr->pci, 0, pcr);
+>  }
+>
+>  #else /* CONFIG_PM */
+> diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
+> index e964bbd03..10abfe7f2 100644
+> --- a/include/linux/rtsx_pci.h
+> +++ b/include/linux/rtsx_pci.h
+> @@ -1190,7 +1190,6 @@ struct rtsx_pcr {
+>         /* pci resources */
+>         unsigned long                   addr;
+>         void __iomem                    *remap_addr;
+> -       int                             irq;
+>
+>         /* host reserved buffer */
+>         void                            *rtsx_resv_buf;
+> --
+> 2.20.0
 >
 
-Thanks Greg for the reply.
-I think I did compile with enabled modules.
-kern-xen-dev:/mnt/kernel/linux # cat .config | grep MODULE
-CONFIG_MODULES_USE_ELF_RELA=y
-CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
-CONFIG_STRICT_MODULE_RWX=y
-CONFIG_MODULES=y                              <<<<<<<<
-# CONFIG_MODULE_FORCE_LOAD is not set
-CONFIG_MODULE_UNLOAD=y
-CONFIG_MODULE_FORCE_UNLOAD=y
-# CONFIG_MODULE_SRCVERSION_ALL is not set
-# CONFIG_MODULE_SIG is not set
-# CONFIG_MODULE_COMPRESS is not set
-CONFIG_MODULES_TREE_LOOKUP=y
+As mentioned in the last email, the rtsx_pci seems to make no
+difference. I still tried the kernel with this patch applied, the
+problem still persists. I also tried the vendor driver and it works
+without any problem. I'd rather like to find out the root cause
+instead of a workaround. Any better idea?
 
-I added a new kernel module and was able to see the module added.
-
-kern-xen-dev:/mnt/kernel/linuxfs # insmod linuxfs.ko
-kern-xen-dev:/mnt/kernel/linuxfs # cat /proc/modules
-linuxfs 16384 0 - Live 0xffffffffc01c1000 (O)
-
-I think, on my test machine, by default, there are many modules which
-get added during boot up, which with vanilla kernel is not happening.
-Thanks for your input.
-
-Regards,
-
-~Praveen.
+Chris
