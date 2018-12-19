@@ -2,126 +2,116 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7758C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521C3C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C90218D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:45:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UZtj27ZV"
+	by mail.kernel.org (Postfix) with ESMTP id 2BC5121841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbeLSOpt (ORCPT
+        id S1729703AbeLSOqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:45:49 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:40671 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729665AbeLSOps (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:45:48 -0500
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wBJEjg99001953;
-        Wed, 19 Dec 2018 23:45:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBJEjg99001953
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545230743;
-        bh=vmrhOZSbXQRZKTgtfY4HSigGcDt4V1IH8thrZfvjEgc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UZtj27ZVmH3tjnKxJ1bq/gLq+blKT7hAVGFDKKVk0goBMd4I085nGLMXtK6AwcNBz
-         6amWMzDnBzhdxylFKWvHAfAj2pSfidtweuGJOkh8DwYpTo8FV2XLehvaPjwdWYQYI/
-         AD0YBD8WGoVF1xi4Kfr5yMI29YqXHNQcCT/nwY9dQiy+aNz6uO2azXoLn1oPck28ek
-         kRuk8RtLpnLM2b7qiRV4xr4W+PU+lcgi/0LGayVclncoqyPKVyWcHCQUjZg/A6wwhy
-         hUArAkd6PF2KtTOpcd1Hjb0pHrTjL8euvQcPoVNzfhZbOm9N4OVjyFJcTGMo7/ymEp
-         gLmqXPryQIPBA==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id x1so12357660vsc.10;
-        Wed, 19 Dec 2018 06:45:43 -0800 (PST)
-X-Gm-Message-State: AA+aEWY4MV/y50WQ9QgowZNdhJ9c5L8j0udxSXkkKqO0+icvPql8hPtx
-        OAl6jTgsn13taTdDzpl3z/5Cm/7H91ffU4UdpEc=
-X-Google-Smtp-Source: AFSGD/Wxgw7uJ9H8HnunVaYr+7ZFLJvyzAistOZPRZqi8ehPiRKuFLWEfOfyirvlHVjh80v22kjbztZxtPXVv5nEyO8=
-X-Received: by 2002:a67:f1c2:: with SMTP id v2mr3539333vsm.181.1545230741896;
- Wed, 19 Dec 2018 06:45:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20181218224907.1274-1-tmroeder@google.com>
-In-Reply-To: <20181218224907.1274-1-tmroeder@google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 19 Dec 2018 23:45:06 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR3iZ0P_ttL4CTwZX7dhzeGB4oJ6wyXVwMtaaMovi2_XQ@mail.gmail.com>
-Message-ID: <CAK7LNAR3iZ0P_ttL4CTwZX7dhzeGB4oJ6wyXVwMtaaMovi2_XQ@mail.gmail.com>
-Subject: Re: [PATCH v2] scripts: add a tool to produce a compile_commands.json file
-To:     Tom Roeder <tmroeder@google.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 19 Dec 2018 09:46:47 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:57640 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbeLSOqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:46:47 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wBJEhj5k031580;
+        Wed, 19 Dec 2018 08:43:45 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wBJEhhv3031579;
+        Wed, 19 Dec 2018 08:43:43 -0600
+Date:   Wed, 19 Dec 2018 08:43:43 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20181219144343.GA31189@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com> <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com> <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 19 Dec 2018 08:43:45 -0600 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 8:40 AM Tom Roeder <tmroeder@google.com> wrote:
->
-> The LLVM/Clang project provides many tools for analyzing C source code.
-> Many of these tools are based on LibTooling
-> (https://clang.llvm.org/docs/LibTooling.html), which depends on a
-> database of compiler flags. The standard container for this database is
-> compile_commands.json, which consists of a list of JSON objects, each
-> with "directory", "file", and "command" fields.
->
-> Some build systems, like cmake or bazel, produce this compilation
-> information directly. Naturally, Makefiles don't. However, the kernel
-> makefiles already create .<target>.o.cmd files that contain all the
-> information needed to build a compile_commands.json file.
->
-> So, this commit adds scripts/gen_compile_commands.py, which recursively
-> searches through a directory for .<target>.o.cmd files and extracts
-> appropriate compile commands from them. It writes a
-> compile_commands.json file that LibTooling-based tools can use.
->
-> By default, gen_compile_commands.py starts its search in its working
-> directory and (over)writes compile_commands.json in the working
-> directory. However, it also supports --output and --directory flags for
-> out-of-tree use.
->
-> Note that while gen_compile_commands.py enables the use of clang-based
-> tools, it does not require the kernel to be compiled with clang. E.g.,
-> the following sequence of commands produces a compile_commands.json file
-> that works correctly with LibTooling.
->
-> make defconfig
-> make
-> scripts/gen_compile_commands.py
->
-> Also note that this script is written to work correctly in both Python 2
-> and Python 3, so it does not specify the Python version in its first
-> line.
->
-> For an example of the utility of this script: after running
-> gen_compile_commands.json on the latest kernel version, I was able to
-> use Vim + the YouCompleteMe pluging + clangd to automatically jump to
-> definitions and declarations. Obviously, cscope and ctags provide some
-> of this functionality; the advantage of supporting LibTooling is that it
-> opens the door to many other clang-based tools that understand the code
-> directly and do not rely on regular expressions and heuristics.
->
-> Tested: Built several recent kernel versions and ran the script against
-> them, testing tools like clangd (for editor/LSP support) and clang-check
-> (for static analysis). Also extracted some test .cmd files from a kernel
-> build and wrote a test script to check that the script behaved correctly
-> with all permutations of the --output and --directory flags.
->
-> Signed-off-by: Tom Roeder <tmroeder@google.com>
-> ---
-> Changelog since v1:
-> - Add simple string replacement to unescape the pound sign.
+On Wed, Dec 19, 2018 at 08:41:12AM +0000, Jethro Beekman wrote:
 
+Good morning, I everyone is weathering the pre-holiday season well.
 
-Applied to linux-kbuild. Thanks!
+> On 2018-12-19 13:28, Jarkko Sakkinen wrote:
+> > * @eclave_fd:		file handle to the enclave address space
+> > * @attribute_fd:	file handle of the attribute file in the securityfs
+> > */
+> >struct sgx_enclave_set_attribute {
+> >	__u64	enclave_fd;
+> >	__u64	attribute_fd;
+> >};
 
+> What is this for?
 
--- 
-Best Regards
-Masahiro Yamada
+I believe it is a silent response to the issues we were prosecuting
+4-5 weeks ago, regarding the requirement for an SGX driver on an FLC
+hardware platform to have some semblance of policy management to be
+relevant from a security/privacy perspective.  It would have certainly
+been collegial to include a reference to our discussions and concerns
+in the changelog.
+
+See 364f68f5a3c in Jarkko's next/master.
+
+The changeset addresses enclave access to the PROVISION key but is
+still insufficient to deliver guarantees that are consistent with the
+SGX security model.  In order to achieve that, policy management needs
+to embrace the use of MRSIGNER values, which is what our SFLC patchset
+uses.
+
+The noted changeset actually implements most of the 'kernel bloat'
+that our SFLC patchset needs to bolt onto.
+
+As of yesterday afternoon next/master still won't initialize a
+non-trivial enclave.  Since there now appears to be a wholesale change
+in the driver architecture and UAPI we are sitting on the sidelines
+waiting for an indication all of that has some hope of working before
+we introduce our approach.
+
+Part of SFLC won't be popular but it is driven by clients who are
+actually paying for SGX security engineering and architectures.
+
+> Jethro Beekman | Fortanix
+
+Best wishes for a pleasant holiday season to everyone.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Politics is the business of getting power and privilege without possessing
+ merit."
+                                -- P.J. O'Rourke
