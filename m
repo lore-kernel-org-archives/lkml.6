@@ -2,97 +2,104 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E49DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB52C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBC8021873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545192577;
-	bh=9z1vdxsKHK1NMWKam1ZY98y9lqdHp7yfFFZgwu4/YfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=COaS6NTumsp51Y0iMfBVcJ9KsMHVxdysHhs2hN3AkMCAQ7rDKULZ+t5mruCDFlS3f
-	 DON9flYn4Kcuc7L7MwjKD/sTAJKwV5itKI6Nk3JNW+f6Y+H9DoyIB/krPVYjEJ5b+g
-	 lmnVcJ2gfU1caVUFSHOH1fSlXbeVprdzPVOMXGs8=
+	by mail.kernel.org (Postfix) with ESMTP id CC08721871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:12:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbhID/fv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbeLSEJe (ORCPT
+        id S1727639AbeLSEMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 23:09:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726917AbeLSEJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 23:09:34 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90721217D6;
-        Wed, 19 Dec 2018 04:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545192573;
-        bh=9z1vdxsKHK1NMWKam1ZY98y9lqdHp7yfFFZgwu4/YfU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T+HpzBzIZD7dUtvJxdIFUC9B8zCGWlMasPebNqFun5kPEF1N9u6Pw8Tpz/M0opzJb
-         g8+w6QpT9oRmM1O4J9xwd6KipPj3QqV5uMz2rLXF3UgvXRbfo2Ofs6l/GPjdcaiHAi
-         6XfFpBWlEjVvxLIlPbIiaR7hK1pAb+sD4ngnzyFk=
-Date:   Wed, 19 Dec 2018 12:08:22 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Andy Tang <andy.tang@nxp.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: dts: nxp: ls208xa: add more thermal zone support
-Message-ID: <20181219040820.GA13728@dragon>
-References: <20181031044742.26327-1-andy.tang@nxp.com>
- <VI1PR04MB433351E63826CC2128153943F3BD0@VI1PR04MB4333.eurprd04.prod.outlook.com>
+        Tue, 18 Dec 2018 23:12:17 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36197 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeLSEMR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 23:12:17 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so9197029pfc.3;
+        Tue, 18 Dec 2018 20:12:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=99ol7qbLCgkmttbxGy8bJMeKzGX8ofEsvRhXZ26stH8=;
+        b=TbhID/fv2AjiLgcCxrnVAJ6XUQWH7mP1752zzD6yYjgm0mhlD5xWJ0s36T9ahjYvAl
+         TyirBr/wFYuVNosCKZll+qd7dtrYKn6jxYZ14ws9BajP4J7VDQ+Er07UL3icToD1yfbP
+         FjIsfIgkurdqEuEL2T+MPbXIKjAOWW4rdQqC89IzOP0tlIj+bEqvkOPv3kuplXqsejd2
+         cfqVLjjaVK3fEsYJwSHA5jm+bJjEAOMSzOJoBpahJXINcsF9fezRcdzT4L9mB499OB43
+         qtwmMY993aeAZjY0+vVDZR9pC0s6LfZPF8HC17ZkNREx3SueoBU1l8LKYtjPtIJiZ7mO
+         AEkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=99ol7qbLCgkmttbxGy8bJMeKzGX8ofEsvRhXZ26stH8=;
+        b=E/rTkNtLDQimY6+O46ttu04Pozlw2HkDoH9bP1A1agf6RRGkWUS71IAPHS8Zj0uy6X
+         6pAlRXWgrPdflbgvXkuF8O3C7ohhgAsD99p6xdaLILDPm3qcw0WEn3TcuCVaa3abNrht
+         sHboMIQdNVIONc6HIk76iYJkthoiN+tCzu+URvCUHWZZy6CEqZzUVRN+7yXo91mxz0i4
+         y9l0bGeHYGb2GKOvmuo/eHjp8bvJlgc4SaKB8GcWCYHOCjcyefkIhbLdQxT9DUlGUHLT
+         kGcZ14kR4xRAtWW7op5+Xf5NPrNTsZOn8YvYODMX9SM+Yo5nw0s1ZGL98fqtYjmPhqE1
+         iv2g==
+X-Gm-Message-State: AA+aEWaJxEdAJReSHb74PxJ7m80D2bmB7y4Mr9/HWfeQ7gNiUUQdc1v+
+        ajzmX1nFK7yvKZ8q6UIljNUDfj1VeOwoLRQIOqk=
+X-Google-Smtp-Source: AFSGD/UyHuK9cw3f2JzLnTb9wNkvWQBGXbupwvgo4NwYpaK9lVwNEcTMMJkzGf8I57LTAGbaHpQ7G+Bsg6d89hbD3O8=
+X-Received: by 2002:a63:2586:: with SMTP id l128mr18503023pgl.104.1545192736238;
+ Tue, 18 Dec 2018 20:12:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR04MB433351E63826CC2128153943F3BD0@VI1PR04MB4333.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <0000000000005e47a2057d0edc49@google.com> <20181216190412.GE4170@linux.ibm.com>
+ <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
+ <20181217112916.GG4170@linux.ibm.com> <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
+ <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
+ <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com> <20181217162421.6d636ee5@redhat.com>
+ <CACT4Y+YXFrnQh9h1KQf8=NcHugmxTj+d7AQdGCvRX_xsHwr1qA@mail.gmail.com>
+ <20181218001828.49cea463@redhat.com> <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
+ <20181218134024.45d2d5e3@redhat.com>
+In-Reply-To: <20181218134024.45d2d5e3@redhat.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Tue, 18 Dec 2018 20:12:04 -0800
+Message-ID: <CAM_iQpUYeF1vLRX=TryfH6ruPi2qL-j8Y2shbs7s9cKiy4xvmA@mail.gmail.com>
+Subject: Re: WARNING in __rcu_read_unlock
+To:     Stefano Brivio <sbrivio@redhat.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        netdev <netdev@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 07:01:32AM +0000, Andy Tang wrote:
-> Hi,
-> 
-> PING.
-> 
-> BR,
-> Andy
-> 
-> > -----Original Message-----
-> > From: Yuantian Tang <andy.tang@nxp.com>
-> > Sent: 2018年10月31日 12:48
-> > To: shawnguo@kernel.org
-> > Cc: Leo Li <leoyang.li@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
-> > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; rui.zhang@intel.com; daniel.lezcano@linaro.org;
-> > Andy Tang <andy.tang@nxp.com>
-> > Subject: [PATCH] arm64: dts: nxp: ls208xa: add more thermal zone support
-> > 
-> > Ls208xa has several thermal sensors. Add all the sensor id to dts to enable
-> > them.
-> > 
-> > To make the dts cleaner, re-organize the nodes to split out the common part so
-> > that it can be shared with other SoCs.
-> > 
-> > Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+On Tue, Dec 18, 2018 at 4:40 AM Stefano Brivio <sbrivio@redhat.com> wrote:
+> Not as far as I know. The selftests checking this path, by design, only
+> use supported configurations, they don't forge packets.
+>
+> Maybe it would be nice to have a semi-automated way to isolate and
+> describe/name specific conditions found by syzbot via fuzzing and turn
+> those into tests that are then repeated periodically. I'm not sure how
+> that would look like, but I think it's still more maintainable than a
+> pile of C reproducers with forged packets in selftests/net.
+>
+> Eric, Cong, Xin, as you also recently fixed a nice deal of similar cases
+> reported by syzbot, what do you think? Did you ever feel the need to
+> turn a syzbot reproducer into a regression test case?
 
-Please take a look at patch below.
+I think it is a very good idea to archive these C reproducers in
+tools/testing/selftests/. After this is done, kbuild bot could do these
+regression tests, no longer need to bother syzbot to run them again. :)
 
-https://patchwork.kernel.org/patch/10685815/
-
-Shawn
+Thanks.
