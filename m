@@ -2,219 +2,153 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A362C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFBFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47C99218A6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545227759;
-	bh=FM+hsBx9/RBvpYL8sdkk2SO2cjqnMa9L4ZTTEJHHrXE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=UbSoGkI71MHt+GmhaPMtMc9YwZ7aVEJzjFPwVe1gMh9wkD8MJ1P600Wr77NMpBWhb
-	 KdHpPVl5mJu3vXh2bSb05w0Ub/isxRsZ8kD4NBgjajiocslE2CzNuwBksj/jmv9nFl
-	 BTqwQH/1ap1o7udf1m1XqD5syNOYb2RFuYTVAZ3Q=
+	by mail.kernel.org (Postfix) with ESMTP id 80E5A218A6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:00:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ToEybDjl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeLSNz6 (ORCPT
+        id S1729221AbeLSOAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:55:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbeLSNz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:55:58 -0500
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADF06218A6;
-        Wed, 19 Dec 2018 13:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545227756;
-        bh=FM+hsBx9/RBvpYL8sdkk2SO2cjqnMa9L4ZTTEJHHrXE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NN7ExXfe9m3AN1QAD409R99D5hkT263tmcT7QMtQNYRXjaFmJs64FHlamMPP7WEB9
-         XIh/xFI0rS1YvZt6E3V5PBuCPwM5Zz89IMHdQM4bGSgzT/SHHm6NJ7TQju4xBrfU6e
-         PzQQzOcwmB9uA123x23++xlEo1RixkChVsxaLyrI=
-Received: by mail-qt1-f173.google.com with SMTP id r14so22318438qtp.1;
-        Wed, 19 Dec 2018 05:55:56 -0800 (PST)
-X-Gm-Message-State: AA+aEWa7QcwKl4A0S5QelNTGl9NTWY1ZL/TFLNg6ie8aqIkKm76Jh9UN
-        DUOegzWTjmklt/Vejx2Ti0VV8Os5tkh00N2UCA==
-X-Google-Smtp-Source: AFSGD/U7MMddC0x398KdCFTj5CQ7/aHVczQLCSfUV1R98gGC1p/jxF4mJvD6vB5+15NByhakKiMMJunMABmOHn+XaDg=
-X-Received: by 2002:aed:3ecf:: with SMTP id o15mr22163473qtf.26.1545227755896;
- Wed, 19 Dec 2018 05:55:55 -0800 (PST)
+        Wed, 19 Dec 2018 09:00:48 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42135 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728967AbeLSOAs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:00:48 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l15-v6so17468684lja.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:00:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VkwhrtHK+/Xs38/nSuArtykjmfNSxZJzJE7YwYf1RrI=;
+        b=ToEybDjl/6/bBB/EqKzkhQYAN1sOmFdiGH2+2CJQwaLxw4pBrgR+P2nyg5Jrr9hyN+
+         sdxbqf7ZYyihec/UPQ78SStVQ4bYKV1hiGqX8WnqjDfjtiKDXmqa4zsJ53QF27Xj3IFv
+         7Qc/8+iejQ60QRP32EK8UqxvrwQYYPnQrGkIo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VkwhrtHK+/Xs38/nSuArtykjmfNSxZJzJE7YwYf1RrI=;
+        b=iREKf4C2Yl6lA2zPgIOd/uLvCHvdoOwhQfxhTigv56J946OPiYzu5zdLVmFYoy2iK3
+         9IGUio+r0ktJgr0q6VvVbrTL/jUT17iwRsfhD/Hhfka1I6wzHMuJhIWRoIdw2fU7Uo8G
+         nmyicnhT2Sf0aUodJVIsYrECkxo90Bz7mz4crakZjlQxuO3shvcccqQRKMH5HwnFmd4k
+         MSBGo+Yp9hay4V92dthSoYVP/6CjEbxB1wyypzbq95T6pWTxXqAa8WixC/dePvluNYsD
+         xn7kuSk08sUN5+NIHQWcJIcqV1Cg7VpYtb88TA4uesjr7CmA+jTA9JMBTbJMGzJSrk5h
+         Ryjg==
+X-Gm-Message-State: AA+aEWaZDOmz6hN06m9x/tQSdgt6/mALQNW1RpDAntzr0LYhfFOaugai
+        FRx3lb6Kes1xf4JaxhfVxG3yHw==
+X-Google-Smtp-Source: AFSGD/XBY7o/8NTmTNqwHepi7caKf+MlEZUmbBjr8oHvWq3S4g84bKDDBPJiYBjbWKBsA/HD5tiHvQ==
+X-Received: by 2002:a2e:c41:: with SMTP id o1-v6mr12830581ljd.152.1545228045755;
+        Wed, 19 Dec 2018 06:00:45 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm3573224ljj.87.2018.12.19.06.00.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 06:00:44 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     dhowells@redhat.com, viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] samples: Kconfig: readd BROKEN to SAMPLE_STATX
+Date:   Wed, 19 Dec 2018 15:00:40 +0100
+Message-Id: <20181219140040.8637-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181219123147.16090-1-james.qian.wang@arm.com> <20181219123147.16090-3-james.qian.wang@arm.com>
-In-Reply-To: <20181219123147.16090-3-james.qian.wang@arm.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 19 Dec 2018 07:55:44 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLsQ__dpu0Xh5zmLbOx_B8t0t0kJzoh-nOf=nuZSppAYg@mail.gmail.com>
-Message-ID: <CAL_JsqLsQ__dpu0Xh5zmLbOx_B8t0t0kJzoh-nOf=nuZSppAYg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] dt/bindings: drm/komeda: Add DT bindings for ARM
- display processor D71
-To:     james.qian.wang@arm.com
-Cc:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jonathan.Chai@arm.com,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Yiqi.Kang@arm.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Tiannan.Zhu@arm.com, Jonathan Corbet <corbet@lwn.net>,
-        David Airlie <airlied@linux.ie>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        thomas.Sun@arm.com, Ayan.Halder@arm.com,
-        devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jin.Gao@arm.com, nd@arm.com, Sean Paul <sean@poorly.run>,
-        Lowry.Li@arm.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Julien.Yin@arm.com, Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 6:33 AM james qian wang (Arm Technology China)
-<james.qian.wang@arm.com> wrote:
->
-> Add DT bindings documentation for the ARM display processor D71 and later
-> IPs.
->
-> Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
-> ---
->  .../bindings/display/arm/arm,komeda.txt       | 87 +++++++++++++++++++
->  1 file changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/arm/arm,komeda.txt
->
-> diff --git a/Documentation/devicetree/bindings/display/arm/arm,komeda.txt b/Documentation/devicetree/bindings/display/arm/arm,komeda.txt
-> new file mode 100644
-> index 000000000000..d4b53c11b2a2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/arm/arm,komeda.txt
-> @@ -0,0 +1,87 @@
-> +Device Tree bindings for ARM Komeda display driver
-> +
-> +Required properties:
-> +- compatible: Should be "arm,mali-d71"
-> +- reg: Physical base address and length of the registers in the system
-> +- interrupts: the interrupt line numbers of the device in the system
+Commit c1cae12e6b4a ("vfs: Add a sample program for the new mount API")
+introduced a build error (regression) when building an allmodconfig
+kernel. Before that SAMPLE_STATX had a "depends on BROKEN", and it got
+removed in the patch.
 
-How many?
+When building an allmodconfig kernel, option SAMPLE_VFS gets enabled
+and produce the following build error:
 
-> +- interrupt-names: contains the names of the IRQs in the order they were
-> +    provided in the "interrupts" property. Must contain: "DPU".
+In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
+                 from ../samples/vfs/test-statx.c:28:
+/usr/include/x86_64-linux-gnu/bits/statx.h:25:8: error: redefinition of ‘struct statx_timestamp’
+ struct statx_timestamp
+        ^~~~~~~~~~~~~~~
+In file included from ../samples/vfs/test-statx.c:26:
+./usr/include/linux/stat.h:56:8: note: originally defined here
+ struct statx_timestamp {
+        ^~~~~~~~~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
+                 from ../samples/vfs/test-statx.c:28:
+/usr/include/x86_64-linux-gnu/bits/statx.h:36:8: error: redefinition of ‘struct statx’
+ struct statx
+        ^~~~~
+In file included from ../samples/vfs/test-statx.c:26:
+./usr/include/linux/stat.h:99:8: note: originally defined here
+ struct statx {
+        ^~~~~
+../samples/vfs/test-statx.c:40:9: error: conflicting types for ‘statx’
+ ssize_t statx(int dfd, const char *filename, unsigned flags,
+         ^~~~~
+In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
+                 from ../samples/vfs/test-statx.c:28:
+/usr/include/x86_64-linux-gnu/bits/statx.h:87:5: note: previous declaration of ‘statx’ was here
+ int statx (int __dirfd, const char *__restrict __path, int __flags,
+     ^~~~~
+make[3]: *** [scripts/Makefile.host:90: samples/vfs/test-statx] Error 1
+make[3]: Target '__build' not remade because of errors.
+make[2]: *** [../scripts/Makefile.build:492: samples/vfs] Error 2
+make[2]: Target '__build' not remade because of errors.
+make[1]: *** [/srv/src/kernel/testing/Makefile:1065: samples] Error 2
 
-There's no point in *-names when there is only one entry.
+Rework so that SAMPLE_STATX depends on BROKEN, and SAMPLE_VFS enables
+the newly added test.
 
-> +- clocks: A list of phandle + clock-specifier pairs, one for each entry
-> +    in 'clock-names'
-> +- clock-names: A list of clock names. It should contain:
-> +      - "pclk": for the APB interface clock
-> +      - "mclk": for the main processor clock
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ samples/Kconfig      | 7 +++++++
+ samples/vfs/Makefile | 3 ++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-The order here doesn't match the example.
+diff --git a/samples/Kconfig b/samples/Kconfig
+index dc4eb5355fad..8253c8ce7632 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -147,6 +147,13 @@ config SAMPLE_VFIO_MDEV_MBOCHS
+ 	  Specifically it does *not* include any legacy vga stuff.
+ 	  Device looks a lot like "qemu -device secondary-vga".
+ 
++config SAMPLE_STATX
++	bool "Build example extended-stat using code"
++	depends on BROKEN
++	depends on SAMPLE_VFS
++	help
++	  Build example userspace program to use the new extended-stat syscall.
++
+ config SAMPLE_VFS
+ 	bool "Build example programs that use new VFS system calls"
+ 	help
+diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
+index 4ac9690fb3c4..fe510c6d5e52 100644
+--- a/samples/vfs/Makefile
++++ b/samples/vfs/Makefile
+@@ -1,6 +1,7 @@
+ # List of programs to build
+ hostprogs-$(CONFIG_SAMPLE_VFS) := \
+-	test-fsmount \
++	test-fsmount
++hostprogs-$(CONFIG_SAMPLE_STATX) := \
+ 	test-statx
+ 
+ # Tell kbuild to always build the programs
+-- 
+2.19.2
 
-> +- #address-cells: Must be 1
-> +- #size-cells: Must be 0
-> +
-> +Required properties for sub-node: pipeline@nq
-> +Each device contains one or two pipeline sub-nodes (at least one), each
-> +pipeline node should provide properties:
-> +- reg: Zero-indexed identifier for the pipeline
-> +- clocks: A list of phandle + clock-specifier pairs, one for each entry
-> +    in 'clock-names'
-> +- clock-names: should contain:
-> +      - "aclk": AXI interface clock
-> +      - "pxclk": pixel clock
-
-The order here doesn't match the example.
-
-> +
-> +- port: each pipeline connect to an encoder input port. The connection is
-> +    modelled using the OF graph bindings specified in
-
-modeled
-
-> +    Documentation/devicetree/bindings/graph.txt
-> +
-> +Optional properties:
-> +  - memory-region: phandle to a node describing memory (see
-> +    Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt)
-> +    to be used for the framebuffer; if not present, the framebuffer may
-> +    be located anywhere in memory.
-> +
-> +Example:
-> +/ {
-> +       ...
-> +
-> +       dp0: display@c00000 {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               compatible = "arm,mali-d71";
-> +               reg = <0xc00000 0x20000>;
-> +               interrupts = <0 168 4>;
-> +               interrupt-names = "DPU";
-> +               clocks = <&dpu_mclk>, <&dpu_aclk>;
-> +               clock-names = "mclk", "pclk";
-> +
-> +               pl0: pipeline@0 {
-> +                       clocks = <&fpgaosc2>, <&dpu_aclk>;
-> +                       clock-names = "pxclk", "aclk";
-> +                       reg = <0>;
-
-Is there a register range for each pipeline? If so, using that here
-would be better than index.
-
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               port@0 {
-> +                                       reg = <0>;
-
-You can drop 'ports' moving port up a level. And for a single port,
-you don't need reg.
-
-> +                                       dp0_pl0_out: endpoint {
-> +                                               remote-endpoint = <&db_dvi0_in>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +               pl1: pipeline@1 {
-> +                       clocks = <&fpgaosc2>, <&dpu_aclk>;
-> +                       clock-names = "pxclk", "aclk";
-> +                       reg = <1>;
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               port@0 {
-> +                                       reg = <0>;
-> +                                       dp0_pl1_out: endpoint {
-> +                                               remote-endpoint = <&db_dvi1_in>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +       ...
-> +};
-> --
-> 2.17.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
