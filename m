@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3670C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6420EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 636FD218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7A32086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:38:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbeLSPiE (ORCPT
+        id S1730262AbeLSPia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:38:04 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.104]:48862 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728290AbeLSPiC (ORCPT
+        Wed, 19 Dec 2018 10:38:30 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.204]:32197 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728285AbeLSPi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:38:02 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 1EE8719544
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:38:01 -0600 (CST)
+        Wed, 19 Dec 2018 10:38:29 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id ABE2219846F
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:38:28 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id Zdv7gthWh2PzOZdv7gdwzp; Wed, 19 Dec 2018 09:38:01 -0600
+        id ZdvYgZgl32qH7ZdvYgIVTB; Wed, 19 Dec 2018 09:38:28 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=35302 helo=[192.168.1.76])
+Received: from [189.250.106.44] (port=35308 helo=[192.168.1.76])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gZdv6-000gA5-Mw; Wed, 19 Dec 2018 09:38:00 -0600
-Subject: Re: [PATCH 07/41] scsi: be2iscsi: be_iscsi: Mark expected switch
+        id 1gZdvY-000gWG-9J; Wed, 19 Dec 2018 09:38:28 -0600
+Subject: Re: [PATCH 08/41] scsi: be2iscsi: be_main: Mark expected switch
  fall-through
 To:     Subbu Seetharaman <subbu.seetharaman@broadcom.com>,
         Ketan Mukadam <ketan.mukadam@broadcom.com>,
@@ -41,14 +41,14 @@ Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <cover.1543374820.git.gustavo@embeddedor.com>
- <4da131a74bf4d88c49307ade507b48aee86b4714.1543374820.git.gustavo@embeddedor.com>
+ <ca994231ba2101ba489ee7b18862a10a8c9dad7e.1543374820.git.gustavo@embeddedor.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <bc99a534-bc6c-d093-eca2-a085bd1dfd82@embeddedor.com>
-Date:   Wed, 19 Dec 2018 09:37:59 -0600
+Message-ID: <8cecc2e7-5008-678f-e2de-7d8ab3b95195@embeddedor.com>
+Date:   Wed, 19 Dec 2018 09:38:27 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <4da131a74bf4d88c49307ade507b48aee86b4714.1543374820.git.gustavo@embeddedor.com>
+In-Reply-To: <ca994231ba2101ba489ee7b18862a10a8c9dad7e.1543374820.git.gustavo@embeddedor.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,13 +60,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.106.44
 X-Source-L: No
-X-Exim-ID: 1gZdv6-000gA5-Mw
+X-Exim-ID: 1gZdvY-000gWG-9J
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35302
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35308
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
+X-Email-Count: 31
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,25 +84,26 @@ Thanks
 --
 Gustavo
 
-On 11/27/18 10:26 PM, Gustavo A. R. Silva wrote:
+On 11/27/18 10:27 PM, Gustavo A. R. Silva wrote:
 > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 > where we are expecting to fall through.
 > 
+> Addresses-Coverity-ID: 1357387 ("Missing break in switch")
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->   drivers/scsi/be2iscsi/be_iscsi.c | 1 +
+>   drivers/scsi/be2iscsi/be_main.c | 1 +
 >   1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/scsi/be2iscsi/be_iscsi.c b/drivers/scsi/be2iscsi/be_iscsi.c
-> index 96b96e2ab91a..ed1bd369baa0 100644
-> --- a/drivers/scsi/be2iscsi/be_iscsi.c
-> +++ b/drivers/scsi/be2iscsi/be_iscsi.c
-> @@ -679,6 +679,7 @@ int beiscsi_set_param(struct iscsi_cls_conn *cls_conn,
->   	case ISCSI_PARAM_MAX_XMIT_DLENGTH:
->   		if (conn->max_xmit_dlength > 65536)
->   			conn->max_xmit_dlength = 65536;
+> diff --git a/drivers/scsi/be2iscsi/be_main.c b/drivers/scsi/be2iscsi/be_main.c
+> index effb6fc95af4..b6449da1320c 100644
+> --- a/drivers/scsi/be2iscsi/be_main.c
+> +++ b/drivers/scsi/be2iscsi/be_main.c
+> @@ -1539,6 +1539,7 @@ beiscsi_hdl_get_handle(struct beiscsi_conn *beiscsi_conn,
+>   		break;
+>   	case UNSOL_DATA_DIGEST_ERROR_NOTIFY:
+>   		error = 1;
 > +		/* fall through */
->   	default:
->   		return 0;
->   	}
+>   	case UNSOL_DATA_NOTIFY:
+>   		pasync_handle = pasync_ctx->async_entry[ci].data;
+>   		break;
 > 
