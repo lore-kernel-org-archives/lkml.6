@@ -2,99 +2,108 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D3BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC67AC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C5FD205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:53:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="zBny0wqg"
+	by mail.kernel.org (Postfix) with ESMTP id C6AB72184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbeLSIxs (ORCPT
+        id S1728536AbeLSIym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 03:53:48 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43438 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbeLSIxs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 03:53:48 -0500
-Received: by mail-io1-f67.google.com with SMTP id g17so3185164ioc.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 00:53:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WgdFPlLFkxQ/SMzDT9mj9aSUL5NFG4zY5RYSkN5hQ6g=;
-        b=zBny0wqgIMvX+4jx0R61m3BbKSNWuWtyyP3M9qRtRwG2A8L8rNfy7twXruFZaF4guC
-         W7DMaXRinMlM/bVGCxZsPr17xgSUppYOEbdheiMYA2WWbzfoznWCZMHc8SEWwOmUF0aH
-         g97Q5BFFw3fKFeNGUMOLcIfnJssUAFz/8aF4I2U3RZ0avit7rHZ7zSWOOln+kcV09Qdz
-         96fVxukApFZX0NraRRyvycsX6dkGMdz8lv0B6Qw68u+MShIhk2y7lo7kQJuZe1iTClac
-         nmgm63Ch1ivTjt9JBfhSufuRGuZ20RFx0zN02TItUl5Th71RQV0l+ZCMEDLffHgmgYjh
-         mT9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WgdFPlLFkxQ/SMzDT9mj9aSUL5NFG4zY5RYSkN5hQ6g=;
-        b=qtmFPpZje2ATXMb63pjt6QRkljjEmwExBRIzzLYs/xxmwBn80YdAENhe1E7x5QXi20
-         F5SuT4C5OW0NUk58sU3XzqEt35h/W2w2XXV2EinXeXIbusD0wD/Qv3kusD8tX1uECAp9
-         QZxpqoOryXgZoLSj1iUqUHZbhwl/dxDHup80sXmS0jmQgjg8q7a/JxuBnGREeOu9XkS9
-         xuJcXK30EBAfDS/8O1BWY7kJtwJd79kxS150U8DUb2eaRn9DipiHqIddRQ2kCJ6jwilW
-         MPNDtU/6zHMpGqPgq4+xSOvUZ7bkJn2FnvYmYwZTy9zeJHr2haxlTwMTrncCklbksprH
-         eXdA==
-X-Gm-Message-State: AA+aEWbzNfNemqtwhsHaK7pIJXiayQDxxJwh+yM+89AVAYL8s40c/REi
-        bJJALcrmeqLDdOs/MltolgNLkg==
-X-Google-Smtp-Source: AFSGD/X5f4Abkn6+amqimBhCexsWKKnCxBrsL/EDSHHgH6KiQfmZjDbOzqPDxWGVFL2UsyEQjTaJoA==
-X-Received: by 2002:a5e:8611:: with SMTP id z17mr17438309ioj.35.1545209627879;
-        Wed, 19 Dec 2018 00:53:47 -0800 (PST)
-Received: from [192.168.0.130] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
-        by smtp.gmail.com with ESMTPSA id o21sm8354301ioa.71.2018.12.19.00.53.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 00:53:47 -0800 (PST)
-Subject: [PATCH 9/12] scsi: arcmsr: Add an option of set dma_mask_64 for
- ACB_ADAPTER_TYPE_A
-From:   Ching Huang <ching2048@areca.com.tw>
-To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     dan.carpenter@oracle.com, hch@infradead.org,
-        colin.king@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 19 Dec 2018 16:53:44 +0800
-Message-ID: <1545209624.4457.41.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 03:54:42 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53732 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727868AbeLSIyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 03:54:41 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3B4EA207D9; Wed, 19 Dec 2018 09:54:39 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 054FA207B2;
+        Wed, 19 Dec 2018 09:54:29 +0100 (CET)
+Date:   Wed, 19 Dec 2018 09:54:29 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "LW@KARO-electronics.de" <LW@KARO-electronics.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V4 2/4] rtc: add i.MX system controller RTC support
+Message-ID: <20181219085429.GJ19816@piout.net>
+References: <1543455856-18021-1-git-send-email-Anson.Huang@nxp.com>
+ <1543455856-18021-3-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543455856-18021-3-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Ching Huang <ching2048@areca.com.tw>
+Hello,
 
-Add an option of set dma_mask_64 for ACB_ADAPTER_TYPE_A
+On 29/11/2018 01:50:11+0000, Anson Huang wrote:
+> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
+> inside, the system controller is in charge of controlling power,
+> clock and secure rtc etc..
+> 
+> This patch adds i.MX system controller RTC driver support,
+> Linux kernel has to communicate with system controller via MU
+> (message unit) IPC to set/get RTC time and other alarm functions,
+> since the RTC set time needs to be done in secure EL3 mode (required
+> by system controller firmware) and alarm functions needs to be done
+> with general MU IRQ handle, these depend on other components which
+> are NOT ready, so this patch ONLY enables the RTC time read.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> ChangeLog:
+> V3->V4:
+>   *remove unnecessary headfile included;
+>   *fix potential memory currpution for the message responce;
+>   *update the compatible string name to start with "fsl" instead of "nxp".
+>  drivers/rtc/Kconfig      |  6 +++
+>  drivers/rtc/Makefile     |  1 +
+>  drivers/rtc/rtc-imx-sc.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 105 insertions(+)
+>  create mode 100644 drivers/rtc/rtc-imx-sc.c
+> 
 
-Signed-off-by: Ching Huang <ching2048@areca.com.tw>
----
+I applied it on my test branch and this makes sparc64-allyesconfig fail
+with:
 
-diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-index 8cc2134..45f1374 100755
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@ -91,6 +91,10 @@ static int cmd_per_lun = ARCMSR_DEFAULT_CMD_PERLUN;
- module_param(cmd_per_lun, int, S_IRUGO);
- MODULE_PARM_DESC(cmd_per_lun, " device queue depth(1 ~ 128), default is 32");
- 
-+static int dma_mask_64 = 0;
-+module_param(dma_mask_64, int, S_IRUGO);
-+MODULE_PARM_DESC(dma_mask_64, " set DMA mask to 64 bits(0 ~ 1), dma_mask_64=1(64 bits), =0(32 bits)");
-+
- static int set_date_time = 0;
- module_param(set_date_time, int, S_IRUGO);
- MODULE_PARM_DESC(set_date_time, " send date, time to iop(0 ~ 1), set_date_time=1(enable), default(=0) is disable");
+   drivers/rtc/rtc-imx-sc.o: In function `imx_sc_rtc_read_time':
+   rtc-imx-sc.c:(.text+0x34): undefined reference to `imx_scu_call_rpc'
+   drivers/rtc/rtc-imx-sc.o: In function `imx_sc_rtc_probe':
+   rtc-imx-sc.c:(.text+0x90): undefined reference to `imx_scu_get_handle'
 
 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
