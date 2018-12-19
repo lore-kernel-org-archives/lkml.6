@@ -3,44 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 546D3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91213C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBDE321871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50C1721871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:17:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="hEe84kb5"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="AhP/FkOa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeLSBM6 (ORCPT
+        id S1727768AbeLSBRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 20:12:58 -0500
-Received: from cock.li ([185.100.85.212]:38606 "EHLO cock.li"
+        Tue, 18 Dec 2018 20:17:41 -0500
+Received: from cock.li ([185.100.85.212]:43326 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbeLSBM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 20:12:58 -0500
+        id S1727160AbeLSBRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 20:17:40 -0500
 MIME-Version: 1.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1545181974; bh=4uDgpQQ2uxXSLXOi13rOHS3pzUHB+z04QxlsIj1jYxU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hEe84kb5tnpPSDKsjr/OPA+RjP+CeiGhZZq8r+57uhz1Eoapp5ZaYviVwowwKb/mE
-         1exHVDFOT+58zP5Beycj9fEtggK7njGSU7DI3snckO/T6coVnmu2Y5Qltv9ecgLRkC
-         3UicHe/78OA0FUn2sTdc7s3DfSytQH66OA0Z5qz9ks9eLpPum8eYC0ODGPeaCZIORl
-         Y28FE5VY51b8KOpqL6OWgnxD+oD3QoWMct1QnEuZa7KM6PXHU+KkKukL3umsNETqpk
-         vV2Z8Y/mk65x3mtEnb5DI6ANH4jsKmO6cKuQiruySFWwrmmp99Cl5ioXHYtt5UH8vO
-         CN34emRNQlFQQ==
+        t=1545182257; bh=1SO8YGgFRAj9AnsA5beJpBbTdGKQClzR0ePA7TqYNCQ=;
+        h=Date:From:To:Subject:In-Reply-To:References:From;
+        b=AhP/FkOaLz2Fk9ywtNw6yVp7YqWKACz2smFdzvtC+MqXiYJnDwOzQ1Oc2pHS2lMeX
+         EBuFsG79qHOT+Uyd1gzRinmXjFPnoT3ZghRoesLq5hOSgB1oyH15UVG0qoL8G+BPuj
+         bxIJnYwoZMynuzmulBzXKE9kGM1I3iZgf7noqJlG4mxUmvu3XIgGfEmMX91dva16Fc
+         Rn8qil2SP863x8Wjad7RWieB/9IYn1MW5MW3tUyUdEX5Acx9m8aoAIyIVc2kIfr3du
+         1KVg3O+beembHjzabXQQsjOXuvS9a6ps6Wzgd/axa0rm4j2GPCmMkC6c3W8zlNLkjR
+         1n+FimAV31tbA==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 19 Dec 2018 01:12:53 +0000
+Date:   Wed, 19 Dec 2018 01:17:37 +0000
 From:   visionsofalice@redchan.it
-To:     rohit@thelawfirm.io, contact@grsecurity.net
-Cc:     linux-kernel@vger.kernel.org
-Subject: Bruce Perens, inconsistent statements regarding Copyright, GPL, Open
- Source Security.
-Message-ID: <2de4e6e285f929b969ee8c113547c1c9@redchan.it>
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Subject: The CoC regime is a License violation - Additional restrictive terms
+In-Reply-To: <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
+References: <20181020134908.GA32218@kroah.com>
+ <87y3ar80ac.fsf@notabene.neil.brown.name>
+ <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
+ <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
+Message-ID: <3cac42b7170bef0d6e47f0ceb37d7c4d@redchan.it>
 X-Sender: visionsofalice@redchan.it
 User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,106 +51,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a prior public statement, Bruce Perens put forth a legal theory where 
-users of a certain piece of Software would be liable for contributory 
-copyright infringement*[1]. This statement, specifically the 
-pronouncement of such damages reachable, is predicated on a pure 
-copyright License theory regarding the grant under-which the Linux 
-Kernel is distributed and modified.
+Version 2 of the GPL forbids the incorporation of additional
+restrictive terms, relating to the distribution, modification, etc of
+the article licensed under the terms.
 
-* 
-(https://perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/ 
-)
+Those that violate this section are declared, by operation of the
+terms, to have their grant automatically revoked.
 
-As we all know, under a contract theory, damages are quite limited 
-regarding opensource licenses** (See the initial district court 
-determination of Jacobsen v. Katzer) and the legal theory published by 
-Bruce Perens, if analyzed under a contract theory regarding the GPL 
-would become a less-than-likely scenario.
+An additional term need-not be present in the same writing. Such terms
+simply need to be present to or made known to the taker(sub-licensee) by
+the distributor. They may be proffered in writing, orally, or
+implied in the course of doing business dealings. They simply must
+relate back or involve the article in question (the licensed code or
+product.)
 
-** (For this very reason, the FSF specifically drafted version 2 of the 
-GPL to avoid language that would tend to induce a contract reading 
-rather than a bare license construction. The FSF has maintained for 
-decades that the GPL is a bare license and is not a contract)
+The proffering of additional restrictive terms is a violation of the
+text of the license grant in and of itself.
 
-It is just that utterance, added by Bruce Perens, regarding contributory 
-copyright infringement damages reachable vis a vis the GPL version 2, 
-that induced upwards of 70 of Open Source Security's clients to cease 
-their business dealings with Open Source Security.
+Here we have a situation where an additional writing has been
+proffered. The additional writing promises both in it's own text and
+by implication consequences against those who violate the terms of
+this additional writing.
 
-Bruce Perens has recently made known, publicly, that he currently 
-believes in a Contract theory regarding the GPL version 2, specifically 
-regarding the Linux Kernel. He has stated that he, infact, in the past 
-has supplied expert testimony praying to the court for it to find that 
-the GPL is, in fact, a contract (and not a bare (copyright) license). He 
-has stated that the court has indeed relied on his testimony in various 
-pleadings. ***[3]
+The additional writing restricts those subject to it from expressing
+certain views publicly - promising retribution against those who do.
 
-Here, ( 
-https://developers.slashdot.org/comments.pl?sid=12767438&cid=57489528 ) 
-Bruce Perens argues that case law has overridden the esteemed Raymond 
-Nimmer's opinion that the GPL is not a contract and is, at best, a 
-failed contract, and likely a bare license akin to a property license. 
-Bruce Perens further clarifies that it was his very own testimony that 
-has convinced the court that the GPL is in-fact not a bare license and 
-is instead a contract.
+No consideration is paid to those subject to the additional writing
+for their assent; it is simply imposed unilaterally against the
+subjects.
 
-If these pleadings were to have occurred prior to the theory published 
-regarding Open Source Security and its Contributor Access Agreement, 
-that would put the lie to any suggestion that Bruce Perens in fact 
-believed in the theory that he published at the time of publication and 
-would instead suggest that rather than proffering his opinion regarding 
-a matter - he was instead intentionally publishing a theory he believed 
-to be a lie in-order to harm Open Source Security - A goal that has 
-indeed been effected (specifically by the "Contributory Copyright 
-Infringement" addendum).
+The violators of the additional writing are promised:
+Additional, unwanted, public scrutiny (to which they were not subject
+to prior)
+Public ridicule.
+Loss of public standing.
+as-well as an implied loss of future income.
 
+These are the enforcement mechanisms of the additional writing to
+enforce its restrictions against those who publish derivative works of
+the kernel.
 
+The additional writing is activated when (with the prerequisite of
+being a derivative work of the linux kernel) the work of a rights-holder
+is incorporated into the kernel, when such a work is made known to the
+kernel-team to exist where any one person on this earth has seen fit
+to present it for inclusion, or by simple prior-inclusion into the
+kernel.
 
+Thus all current and past rights-holders who have code in, or have
+published for distribution, derivative works of the kernel are subject
+to the retributive promises made to them in the additional writing,
+drafted to restrict their actions and utterances.
 
-*[1]
--------
-https://perens.com/2017/06/28/warning-grsecurity-potential-contributory-infringement-risk-for-customers/
-Posted on June 28, 2017 by Bruce
-Warning: Grsecurity: Potential contributory infringement and breach of 
-contract risk for customers
+This is tantamount to an additional restrictive term regarding the
+modification and distribution of works under the linux kernel license
+grant.
 
+It is a violation of the license terms of the rights-holders past
+incorporated works in much the same way that GRSecurity's
+Contributor Access Agreement was and is.
 
-
-
-***[3]
--------
-https://developers.slashdot.org/comments.pl?sid=12767438&cid=57489528
--------
-
-Re:Who gives a FUCK about Nimmer? (Score:2)
-by Bruce Perens ( 3872 ) <bruce@perens.com> on Tuesday October 16, 2018 
-@09:10PM (#57489528) Homepage Journal
-
-If lawyers were never wrong, we'd have no need for courts. Which means 
-they're wrong half the time, or at least the adopt unsupportable 
-arguments half of the time.
-
-Case law has overridden him on the GPL question, thanks in part to my 
-pro-bono testimony. But courts and lawyers still take him seriously. And 
-me, sometimes.
-
-----------
-
-In response to:
-
-> Who gives a FUCK about Nimmer? (Score:0)
-> by Anonymous Coward on Tuesday October 16, 2018 @08:30PM (#57489396)
-> 
-> Who gives a FUCK about Nimmer?
-> 
-> He said the GPLv2 was "not a contract" - was "at best" "a failed 
-> contract" - "has no consideration" - and thus it is a bare license 
-> revocable by >the grantor.
-> 
-> Free Software has REJECTED this CLOWN Nimmer.
-> Thus he is wrong.
-> 
-> http://illinoisjltp.com/journal/wp-content/uploads/2013/10/kumar.pdf
-> http://oxwugzccvk3dk6tj.onion/tech/res/987076.html
-> ...
