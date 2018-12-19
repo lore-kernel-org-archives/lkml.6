@@ -2,105 +2,140 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35C5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD165C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF68121873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:12:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9961D218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:14:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sqpQLKJ2"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jw3Z9rOk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeLSDMu (ORCPT
+        id S1727613AbeLSDO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 22:12:50 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:45484 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbeLSDMu (ORCPT
+        Tue, 18 Dec 2018 22:14:28 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9524 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeLSDO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 22:12:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5peKips6igA2cfm29XGmOjqLZ3etZ1w6zwOuOvsb2NU=; b=sqpQLKJ2SfYIAdeKqTlaxGhmC1
-        KT8NP27uIudDC1Ffb2WdjJcfDsqkkoo/2CDdy19k4tAIADG36fRGfdfrtjU2BXO8nXqbtn1KJDuqZ
-        BFLgQcqSOUpaN6QEYeyQgk3pSxEDkhCfQ/4jlmhlpbmWOSjld6QcBP7yqOz3Nki5twe5S4ihqH7PG
-        quwFScF1YzjPwje4XBnESf33nquSgQxqX3V/57KqXaAq0dM7nUuMdfrgDv9OENTnvg+lkh5pzdh7o
-        MkI4ZSbo/B6VvEpXtvfG9F2SKqXyaw1W4KLG6DsslepiFpoO3VSJR9k2K31GSgEGMSG68N+nZShK5
-        N4glaxQQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZSHo-0004s5-LB; Wed, 19 Dec 2018 03:12:40 +0000
-Subject: Re: [PATCH v6 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
- support
-To:     Long Cheng <long.cheng@mediatek.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, srv_heupstream@mediatek.com,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>
-References: <1545186022-3712-1-git-send-email-long.cheng@mediatek.com>
- <1545186022-3712-2-git-send-email-long.cheng@mediatek.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <46c746fc-b400-ec6e-d6b1-899c3d594b19@infradead.org>
-Date:   Tue, 18 Dec 2018 19:12:33 -0800
+        Tue, 18 Dec 2018 22:14:27 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c19b7890000>; Tue, 18 Dec 2018 19:14:17 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Dec 2018 19:14:26 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 19:14:26 -0800
+Received: from [10.19.225.182] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 19 Dec
+ 2018 03:14:24 +0000
+Subject: Re: [PATCH v6 0/4] Fixes for Tegra soctherm
+To:     Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>
+CC:     <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
+        <linux-tegra@vger.kernel.org>, <srikars@nvidia.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
+ <74e77548-d10c-fd00-48c5-2b611529eaf5@nvidia.com>
+ <1545104154.2052.2.camel@intel.com>
+ <20181218213126.GA8850@localhost.localdomain>
+From:   Wei Ni <wni@nvidia.com>
+Message-ID: <18672c34-86f3-082e-ad2d-278819e0b075@nvidia.com>
+Date:   Wed, 19 Dec 2018 11:14:22 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1545186022-3712-2-git-send-email-long.cheng@mediatek.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181218213126.GA8850@localhost.localdomain>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1545189258; bh=VqLDfhBe6Zp813kO9hDppR3YQCp0H0lUbMuXj1cuCDg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=jw3Z9rOk/6+eC0shI5MO6IfVLMn44O2zncbyb53n0KNtpq3yGyFBz3Jva1DspP3dp
+         jFaMyxzGn/WY8hCK8fDtIp2zkTvIOhzDJamiM9OfY97EE2/LURpOBXZyBUgaraOHPD
+         83znlpYJDW9Wfg8Ct+pfj7FfILHiyDvA5dFm7fRoGQmUMILAlRj9RCL/TE3G3xYkcd
+         Rrc0u++xUVNJluZk7YQJ44B1V66lLYile3oGyCdNs+gd52Tp7sMQTp3e50dDC4hFJ9
+         XGIINudXvG5DXv3VPQ/EsQhjqKKaWa7TpEEx+VnjblElmJleamyYzVZy56Ifd/8XGk
+         S2PTwG9M84jAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-A few small corrections...
-
-On 12/18/18 6:20 PM, Long Cheng wrote:
-> diff --git a/drivers/dma/mediatek/Kconfig b/drivers/dma/mediatek/Kconfig
-> index 27bac0b..2c082c9 100644
-> --- a/drivers/dma/mediatek/Kconfig
-> +++ b/drivers/dma/mediatek/Kconfig
-> @@ -1,4 +1,15 @@
->  
-> +config DMA_MTK_UART
-> +	tristate "MediaTek SoCs APDMA support for UART"
-> +	depends on OF && SERIAL_8250_MT6577
-> +	select DMA_ENGINE
-> +	select DMA_VIRTUAL_CHANNELS
-> +	help
-> +	  Support for the UART DMA engine found on MediaTek MTK SoCs.
-> +	  when SERIAL_8250_MT6577 is enabled, and if you want to using DMA,
-
-	  When                                                to use DMA,
-
-> +	  you can enable the config. the DMA engine just only be used
-
-	                             The DMA engine can only be used
-
-> +	  with MediaTek SoCs.
-> +
 
 
-cheers,
--- 
-~Randy
+On 19/12/2018 5:31 AM, Eduardo Valentin wrote:
+> On Tue, Dec 18, 2018 at 11:35:54AM +0800, Zhang Rui wrote:
+>> On =E4=BA=94, 2018-12-14 at 17:54 +0800, Wei Ni wrote:
+>>> Hi Rui,
+>>> I moved get_trend() patch https://lkml.org/lkml/2018/11/20/643 in
+>>> this
+>>> serial.
+>>> Since no more comments on these patches, will you take them?
+>>>
+>> I think Eduardo will take care of this patch series.
+>=20
+> Yes, I will take a look on this series.
+>=20
+> But, please, next time you send a series of patches on thermal, copy the
+> linux-pm@vger.kernel.org mailing list. This way we can track your
+> patches on patchwork.
+
+Sure, will do it.
+
+Thanks.
+Wei.
+
+>=20
+>>
+>> thanks,
+>> rui
+>>> Thanks.
+>>> Wei.
+>>>
+>>> On 14/12/2018 5:49 PM, Wei Ni wrote:
+>>>>
+>>>> This series fixed some issues for Tegra soctherm,
+>>>> and add get_trend().
+>>>>
+>>>> Main changes from v5:
+>>>> 1. Move the get_trend() patch https://lkml.org/lkml/2018/11/20/643
+>>>> into this serial.
+>>>>
+>>>> Main changes from v4:
+>>>> 1. fixed for the parsing sensor id.
+>>>> 2. keep warning for missing critical trips.
+>>>>
+>>>> Main changes from v3:
+>>>> 1. updated codes for parsing sensor id, per Thierry's comments
+>>>>
+>>>> Main changes from v2:
+>>>> 1. add codes to parse sensor id to avoid registration
+>>>> failure.
+>>>>
+>>>> Main changes from v1:
+>>>> 1. Acked by Thierry Reding <treding@nvidia.com> for the patch
+>>>> "thermal: tegra: fix memory allocation".
+>>>> 2. Print out the sensor name when register failed.
+>>>> 2. Remove patch "thermal: tegra: fix coverity defect"
+>>>>
+>>>> Wei Ni (4):
+>>>> =C2=A0 thermal: tegra: remove unnecessary warnings
+>>>> =C2=A0 thermal: tegra: fix memory allocation
+>>>> =C2=A0 thermal: tegra: parse sensor id before sensor register
+>>>> =C2=A0 thermal: tegra: add get_trend ops
+>>>>
+>>>> =C2=A0drivers/thermal/tegra/soctherm.c | 85
+>>>> +++++++++++++++++++++++++++++++++++++---
+>>>> =C2=A01 file changed, 80 insertions(+), 5 deletions(-)
+>>>>
