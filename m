@@ -2,483 +2,155 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4F1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 05:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A38C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 05:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8536217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 05:58:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B09B217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 05:59:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lw6y9aRw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeLSF6x (ORCPT
+        id S1727724AbeLSF76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 00:58:53 -0500
-Received: from mga09.intel.com ([134.134.136.24]:43039 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbeLSF6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 00:58:53 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 21:58:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,371,1539673200"; 
-   d="gz'50?scan'50,208,50";a="99834643"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 18 Dec 2018 21:58:18 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gZUs5-000IeX-W2; Wed, 19 Dec 2018 13:58:17 +0800
-Date:   Wed, 19 Dec 2018 13:58:10 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     kbuild-all@01.org, Max Filippov <jcmvbkbc@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>, linux-xtensa@linux-xtensa.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 19/25] xtensa: define syscall_get_* functions
-Message-ID: <201812191351.xpYwnrqp%fengguang.wu@intel.com>
-References: <20181210043041.GS6131@altlinux.org>
+        Wed, 19 Dec 2018 00:59:58 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36484 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbeLSF75 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 00:59:57 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n2so8967884pgm.3;
+        Tue, 18 Dec 2018 21:59:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZBdxhU3bmO+dc8jT9cagGtozla6BnpIu8lRuspjGDLo=;
+        b=lw6y9aRwNHeVyVhBtPl4Q/ZvcFzayuZ+SPf1G0rcQbqTjiDUbGrdwkKBTIam8o4nIx
+         bv0xEV6UJIWCO9+1+pwkvA5OOfreQ6BPRua4uTYhrI6tfGxZYt9pBnfAPtBEG8jeMzDc
+         KCnZ9wyOKgFZS8XfCWiu2P+sqoFCZSU9c0hoqFET+vsMDCE7OzErFEImBQBkMIq699Bn
+         D6/zq9Lfz+IIFbOaxOI2DkKy84NyFmszGrJ6qWuWoRhHeVRMwBfkhqlo81kMNdMGNCpF
+         pXzhRw5TSZ3FtTJqVawWj9ug8VFi+mDFrbwC4bcLhzlhXrJTKTfnN74NOx9Ln2WOh/Fc
+         hcrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZBdxhU3bmO+dc8jT9cagGtozla6BnpIu8lRuspjGDLo=;
+        b=ghpg86tAzoEoN34sd0Wl8wXkcjke+p4Boq5+jnkVasvXp2CyT4b/N1D63db6KpSVDS
+         LvRfE4JRH2RTLrlNkCgN2Y7sE/QTAkwBG4hDQdNTduo3QPPKRWnOIgMLrLjEjM7WEejE
+         313rr95u8NAA+qoE80+eA3GdaGLgSQbw4budvEy6qOCa3tdwsMO5SdgMogI9RsjMVDiC
+         Xmf5p5eP39BJgWF3BOI9/HA2ZDtyOn3bSibRnnPGJed6CUrDarFFZRpcZQE9rEK2Yxvl
+         EWQ6EfYHrivI1aRQslAqd+VGqo0yRC3+HWdsQu5rvauvJVjGveXsG6BsDnLgfOgFnf0A
+         zHGA==
+X-Gm-Message-State: AA+aEWYZ2+JM1QzH7hSz5tpEvqErcD/bi+pjd5sSM/TJnWV403z+XlSL
+        wnNioovJJVVAI13AOQ0bERE=
+X-Google-Smtp-Source: AFSGD/VdBcBqXbYwGhOGHSRooGOxFMQkPQoeDuZd4L2iKXxIIr0L+d6ekO5GVqMoEMAkBcRDAICUhQ==
+X-Received: by 2002:a62:5301:: with SMTP id h1mr5081423pfb.17.1545199196666;
+        Tue, 18 Dec 2018 21:59:56 -0800 (PST)
+Received: from localhost.localdomain ([2001:268:c0a2:eb51:6018:45d4:55a2:e94b])
+        by smtp.gmail.com with ESMTPSA id t67sm29538835pfd.90.2018.12.18.21.59.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 21:59:56 -0800 (PST)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v6 0/8] Introduce the for_each_set_clump8 macro
+Date:   Wed, 19 Dec 2018 14:59:58 +0900
+Message-Id: <cover.1545198260.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="xHFwDpU9dbj6ez1V"
-Content-Disposition: inline
-In-Reply-To: <20181210043041.GS6131@altlinux.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes in v6:
+  - Fix typo in for_each_set_clump8 macro definition ('offset' should be
+    'start')
+  - Fix data type mismatch for format specifier of warning print
+    statements in __check_eq_clump8
+  - Fix typo in symbol suffix for definition of __check_eq_clump8
+  - Fix typo in parameter passed to expect_eq_clump8 (missing '&' for
+    clump argument)
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-Hi Dmitry,
+This patchset introduces the for_each_set_clump8 macro and utilizes it
+in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+for-loop syntax that iterates over a memory region entire groups of set
+bits at a time.
 
-Thank you for the patch! Yet something to improve:
+For example, suppose you would like to iterate over a 32-bit integer 8
+bits at a time, skipping over 8-bit groups with no set bit, where
+XXXXXXXX represents the current 8-bit group:
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v4.20-rc7]
-[cannot apply to next-20181218]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+    Example:        10111110 00000000 11111111 00110011
+    First loop:     10111110 00000000 11111111 XXXXXXXX
+    Second loop:    10111110 00000000 XXXXXXXX 00110011
+    Third loop:     XXXXXXXX 00000000 11111111 00110011
 
-url:    https://github.com/0day-ci/linux/commits/Dmitry-V-Levin/ptrace-add-PTRACE_GET_SYSCALL_INFO-request/20181210-174745
-config: xtensa-iss_defconfig (attached as .config)
-compiler: xtensa-linux-gcc (GCC) 8.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        GCC_VERSION=8.1.0 make.cross ARCH=xtensa 
+Each iteration of the loop returns the next 8-bit group that has at
+least one set bit.
 
-All errors (new ones prefixed by >>):
+The for_each_set_clump8 macro has four parameters:
 
-                   ^~~~~~~~~~
-   include/linux/signal.h:122:20: note: in definition of macro '_SIG_SET_BINOP'
-    static inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) \
-                       ^~~~
-   include/linux/signal.h:153:16: error: invalid storage class for function 'sigandnsets'
-    _SIG_SET_BINOP(sigandnsets, _sig_andn)
-                   ^~~~~~~~~~~
-   include/linux/signal.h:122:20: note: in definition of macro '_SIG_SET_BINOP'
-    static inline void name(sigset_t *r, const sigset_t *a, const sigset_t *b) \
-                       ^~~~
-   include/linux/signal.h:177:13: error: invalid storage class for function 'signotset'
-    _SIG_SET_OP(signotset, _sig_not)
-                ^~~~~~~~~
-   include/linux/signal.h:161:20: note: in definition of macro '_SIG_SET_OP'
-    static inline void name(sigset_t *set)     \
-                       ^~~~
-   include/linux/signal.h:182:20: error: invalid storage class for function 'sigemptyset'
-    static inline void sigemptyset(sigset_t *set)
-                       ^~~~~~~~~~~
-   include/linux/signal.h:195:20: error: invalid storage class for function 'sigfillset'
-    static inline void sigfillset(sigset_t *set)
-                       ^~~~~~~~~~
-   include/linux/signal.h:210:20: error: invalid storage class for function 'sigaddsetmask'
-    static inline void sigaddsetmask(sigset_t *set, unsigned long mask)
-                       ^~~~~~~~~~~~~
-   include/linux/signal.h:215:20: error: invalid storage class for function 'sigdelsetmask'
-    static inline void sigdelsetmask(sigset_t *set, unsigned long mask)
-                       ^~~~~~~~~~~~~
-   include/linux/signal.h:220:19: error: invalid storage class for function 'sigtestsetmask'
-    static inline int sigtestsetmask(sigset_t *set, unsigned long mask)
-                      ^~~~~~~~~~~~~~
-   include/linux/signal.h:225:20: error: invalid storage class for function 'siginitset'
-    static inline void siginitset(sigset_t *set, unsigned long mask)
-                       ^~~~~~~~~~
-   include/linux/signal.h:237:20: error: invalid storage class for function 'siginitsetinv'
-    static inline void siginitsetinv(sigset_t *set, unsigned long mask)
-                       ^~~~~~~~~~~~~
-   include/linux/signal.h:251:20: error: invalid storage class for function 'init_sigpending'
-    static inline void init_sigpending(struct sigpending *sig)
-                       ^~~~~~~~~~~~~~~
-   include/linux/signal.h:260:19: error: invalid storage class for function 'valid_signal'
-    static inline int valid_signal(unsigned long sig)
-                      ^~~~~~~~~~~~
-   include/linux/signal.h:285:20: error: invalid storage class for function 'allow_signal'
-    static inline void allow_signal(int sig)
-                       ^~~~~~~~~~~~
-   include/linux/signal.h:295:20: error: invalid storage class for function 'disallow_signal'
-    static inline void disallow_signal(int sig)
-                       ^~~~~~~~~~~~~~~
-   In file included from include/linux/key.h:22,
-                    from include/linux/syscalls.h:83,
-                    from arch/xtensa/kernel/syscall.c:24:
-   include/linux/sysctl.h:100:21: error: invalid storage class for function 'proc_sys_poll_event'
-    static inline void *proc_sys_poll_event(struct ctl_table_poll *poll)
-                        ^~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/static_key.h:1,
-                    from include/linux/tracepoint-defs.h:12,
-                    from include/linux/tracepoint.h:23,
-                    from include/trace/syscall.h:5,
-                    from include/linux/syscalls.h:85,
-                    from arch/xtensa/kernel/syscall.c:24:
-   include/linux/jump_label.h:253:19: error: invalid storage class for function 'static_key_count'
-    static inline int static_key_count(struct static_key *key)
-                      ^~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:258:29: error: invalid storage class for function 'jump_label_init'
-    static __always_inline void jump_label_init(void)
-                                ^~~~~~~~~~~~~~~
-   include/linux/jump_label.h:263:29: error: invalid storage class for function 'static_key_false'
-    static __always_inline bool static_key_false(struct static_key *key)
-                                ^~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:270:29: error: invalid storage class for function 'static_key_true'
-    static __always_inline bool static_key_true(struct static_key *key)
-                                ^~~~~~~~~~~~~~~
-   include/linux/jump_label.h:277:20: error: invalid storage class for function 'static_key_slow_inc'
-    static inline void static_key_slow_inc(struct static_key *key)
-                       ^~~~~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:283:20: error: invalid storage class for function 'static_key_slow_dec'
-    static inline void static_key_slow_dec(struct static_key *key)
-                       ^~~~~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:292:19: error: invalid storage class for function 'jump_label_text_reserved'
-    static inline int jump_label_text_reserved(void *start, void *end)
-                      ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:297:20: error: invalid storage class for function 'jump_label_lock'
-    static inline void jump_label_lock(void) {}
-                       ^~~~~~~~~~~~~~~
-   include/linux/jump_label.h:298:20: error: invalid storage class for function 'jump_label_unlock'
-    static inline void jump_label_unlock(void) {}
-                       ^~~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:300:19: error: invalid storage class for function 'jump_label_apply_nops'
-    static inline int jump_label_apply_nops(struct module *mod)
-                      ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:305:20: error: invalid storage class for function 'static_key_enable'
-    static inline void static_key_enable(struct static_key *key)
-                       ^~~~~~~~~~~~~~~~~
-   include/linux/jump_label.h:316:20: error: invalid storage class for function 'static_key_disable'
-    static inline void static_key_disable(struct static_key *key)
-                       ^~~~~~~~~~~~~~~~~~
-   In file included from include/trace/syscall.h:5,
-                    from include/linux/syscalls.h:85,
-                    from arch/xtensa/kernel/syscall.c:24:
->> include/linux/tracepoint.h:60:20: error: invalid storage class for function 'trace_module_has_bad_taint'
-    static inline bool trace_module_has_bad_taint(struct module *mod)
-                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
->> include/linux/tracepoint.h:65:5: error: invalid storage class for function 'register_tracepoint_module_notifier'
-    int register_tracepoint_module_notifier(struct notifier_block *nb)
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> include/linux/tracepoint.h:70:5: error: invalid storage class for function 'unregister_tracepoint_module_notifier'
-    int unregister_tracepoint_module_notifier(struct notifier_block *nb)
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/tracepoint.h:88:20: error: invalid storage class for function 'tracepoint_synchronize_unregister'
-    static inline void tracepoint_synchronize_unregister(void)
-                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/tracepoint.h:114:34: error: invalid storage class for function 'tracepoint_ptr_deref'
-    static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
-                                     ^~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/mm.h:18,
-                    from include/linux/ring_buffer.h:5,
-                    from include/linux/trace_events.h:6,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:85,
-                    from arch/xtensa/kernel/syscall.c:24:
-   include/linux/range.h:24:31: error: invalid storage class for function 'cap_resource'
-    static inline resource_size_t cap_resource(u64 val)
-                                  ^~~~~~~~~~~~
-   In file included from include/linux/mm.h:20,
-                    from include/linux/ring_buffer.h:5,
-                    from include/linux/trace_events.h:6,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:85,
-                    from arch/xtensa/kernel/syscall.c:24:
-   include/linux/percpu-refcount.h:126:20: error: invalid storage class for function 'percpu_ref_kill'
-    static inline void percpu_ref_kill(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:137:20: error: invalid storage class for function '__ref_is_percpu'
-    static inline bool __ref_is_percpu(struct percpu_ref *ref,
-                       ^~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:177:20: error: invalid storage class for function 'percpu_ref_get_many'
-    static inline void percpu_ref_get_many(struct percpu_ref *ref, unsigned long nr)
-                       ^~~~~~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:199:20: error: invalid storage class for function 'percpu_ref_get'
-    static inline void percpu_ref_get(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:213:20: error: invalid storage class for function 'percpu_ref_tryget'
-    static inline bool percpu_ref_tryget(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:247:20: error: invalid storage class for function 'percpu_ref_tryget_live'
-    static inline bool percpu_ref_tryget_live(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:276:20: error: invalid storage class for function 'percpu_ref_put_many'
-    static inline void percpu_ref_put_many(struct percpu_ref *ref, unsigned long nr)
-                       ^~~~~~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:299:20: error: invalid storage class for function 'percpu_ref_put'
-    static inline void percpu_ref_put(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:313:20: error: invalid storage class for function 'percpu_ref_is_dying'
-    static inline bool percpu_ref_is_dying(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~~~~~~
-   include/linux/percpu-refcount.h:326:20: error: invalid storage class for function 'percpu_ref_is_zero'
-    static inline bool percpu_ref_is_zero(struct percpu_ref *ref)
-                       ^~~~~~~~~~~~~~~~~~
-   In file included from include/linux/mm.h:24,
-                    from include/linux/ring_buffer.h:5,
-                    from include/linux/trace_events.h:6,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:85,
-                    from arch/xtensa/kernel/syscall.c:24:
-   include/linux/page_ext.h:58:20: error: invalid storage class for function 'pgdat_page_ext_init'
-    static inline void pgdat_page_ext_init(struct pglist_data *pgdat)
-                       ^~~~~~~~~~~~~~~~~~~
-   include/linux/page_ext.h:62:32: error: invalid storage class for function 'lookup_page_ext'
-    static inline struct page_ext *lookup_page_ext(const struct page *page)
-                                   ^~~~~~~~~~~~~~~
-   include/linux/page_ext.h:67:20: error: invalid storage class for function 'page_ext_init'
-    static inline void page_ext_init(void)
-                       ^~~~~~~~~~~~~
-   include/linux/page_ext.h:71:20: error: invalid storage class for function 'page_ext_init_flatmem'
-    static inline void page_ext_init_flatmem(void)
-                       ^~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/page_ref.h:7,
-                    from include/linux/mm.h:26,
-                    from include/linux/ring_buffer.h:5,
-                    from include/linux/trace_events.h:6,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:85,
-                    from arch/xtensa/kernel/syscall.c:24:
-   include/linux/page-flags.h:141:28: error: invalid storage class for function 'compound_head'
-    static inline struct page *compound_head(struct page *page)
-                               ^~~~~~~~~~~~~
-   include/linux/page-flags.h:150:28: error: invalid storage class for function 'PageTail'
-    static __always_inline int PageTail(struct page *page)
-                               ^~~~~~~~
-   include/linux/page-flags.h:155:28: error: invalid storage class for function 'PageCompound'
-    static __always_inline int PageCompound(struct page *page)
-                               ^~~~~~~~~~~~
-   include/linux/page-flags.h:161:19: error: invalid storage class for function 'PagePoisoned'
-    static inline int PagePoisoned(const struct page *page)
-                      ^~~~~~~~~~~~
-   include/linux/page-flags.h:169:20: error: invalid storage class for function 'page_init_poison'
-    static inline void page_init_poison(struct page *page, size_t size)
-                       ^~~~~~~~~~~~~~~~
-   include/linux/page-flags.h:216:28: error: invalid storage class for function 'PageLocked'
-    static __always_inline int Page##uname(struct page *page)  \
-                               ^~~~
-   include/linux/page-flags.h:249:2: note: in expansion of macro 'TESTPAGEFLAG'
-     TESTPAGEFLAG(uname, lname, policy)    \
-     ^~~~~~~~~~~~
-   include/linux/page-flags.h:281:1: note: in expansion of macro '__PAGEFLAG'
+    * start: set to the bit offset of the current clump
+    * clump: set to the current clump value
+    * bits: bitmap to search within
+    * size: bitmap size in number of bits
 
-vim +/trace_module_has_bad_taint +60 include/linux/tracepoint.h
+In this version of the patchset, the for_each_set_clump macro has been
+reimplemented and simplified based on the suggestions provided by Rasmus
+Villemoes and Andy Shevchenko in the version 4 submission.
 
-de7b29739 Mathieu Desnoyers        2014-04-08  55  
-45ab2813d Steven Rostedt (Red Hat  2014-02-26  56) bool trace_module_has_bad_taint(struct module *mod);
-de7b29739 Mathieu Desnoyers        2014-04-08  57  extern int register_tracepoint_module_notifier(struct notifier_block *nb);
-de7b29739 Mathieu Desnoyers        2014-04-08  58  extern int unregister_tracepoint_module_notifier(struct notifier_block *nb);
-45ab2813d Steven Rostedt (Red Hat  2014-02-26  59) #else
-45ab2813d Steven Rostedt (Red Hat  2014-02-26 @60) static inline bool trace_module_has_bad_taint(struct module *mod)
-45ab2813d Steven Rostedt (Red Hat  2014-02-26  61) {
-45ab2813d Steven Rostedt (Red Hat  2014-02-26  62) 	return false;
-45ab2813d Steven Rostedt (Red Hat  2014-02-26  63) }
-de7b29739 Mathieu Desnoyers        2014-04-08  64  static inline
-de7b29739 Mathieu Desnoyers        2014-04-08 @65  int register_tracepoint_module_notifier(struct notifier_block *nb)
-de7b29739 Mathieu Desnoyers        2014-04-08  66  {
-de7b29739 Mathieu Desnoyers        2014-04-08  67  	return 0;
-de7b29739 Mathieu Desnoyers        2014-04-08  68  }
-de7b29739 Mathieu Desnoyers        2014-04-08  69  static inline
-de7b29739 Mathieu Desnoyers        2014-04-08 @70  int unregister_tracepoint_module_notifier(struct notifier_block *nb)
-de7b29739 Mathieu Desnoyers        2014-04-08  71  {
-de7b29739 Mathieu Desnoyers        2014-04-08  72  	return 0;
-de7b29739 Mathieu Desnoyers        2014-04-08  73  }
-b75ef8b44 Mathieu Desnoyers        2011-08-10  74  #endif /* CONFIG_MODULES */
-b75ef8b44 Mathieu Desnoyers        2011-08-10  75  
+In particular, the function of the for_each_set_clump macro has been
+restricted to handle only 8-bit clumps; the drivers that use the
+for_each_set_clump macro only handle 8-bit ports so a generic
+for_each_set_clump implementation is not necessary. Thus, a solution for
+odd-sized clumps (e.g. 3-bit, 7-bit, etc.) mismatching word boundaries
+can be postponed until a driver appears that actually requires a generic
+for_each_set_clump implementation.
 
-:::::: The code at line 60 was first introduced by commit
-:::::: 45ab2813d40d88fc575e753c38478de242d03f88 tracing: Do not add event files for modules that fail tracepoints
+In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+introduced to get and set 8-bit values respectively. Their use is based
+on the behavior suggested in the patchset version 4 review. Similarly,
+the implementation of the find_next_clump function has been simplified
+in order for the function to match the syntax and use of the
+find_next_bit function.
 
-:::::: TO: Steven Rostedt (Red Hat) <rostedt@goodmis.org>
-:::::: CC: Steven Rostedt <rostedt@goodmis.org>
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump8 macro
+  lib/test_bitmap.c: Add for_each_set_clump8 test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+  gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+  gpio: gpio-mm: Utilize for_each_set_clump8 macro
+  gpio: ws16c48: Utilize for_each_set_clump8 macro
+  gpio: pci-idio-16: Utilize for_each_set_clump8 macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/gpio/gpio-104-dio-48e.c   |  71 ++++++-------------
+ drivers/gpio/gpio-104-idi-48.c    |  36 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  71 ++++++-------------
+ drivers/gpio/gpio-pci-idio-16.c   |  73 +++++++-------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 109 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  71 ++++++-------------
+ include/asm-generic/bitops/find.h |  14 ++++
+ include/linux/bitops.h            |   5 ++
+ lib/find_bit.c                    |  63 +++++++++++++++++
+ lib/test_bitmap.c                 |  65 ++++++++++++++++++
+ 10 files changed, 279 insertions(+), 299 deletions(-)
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+-- 
+2.20.1
 
-H4sICGXbGVwAAy5jb25maWcAjFxZj9u4sn6fXyFkgIsEmCTuNZ25aODSFCVxLImKSHnJi+DY
-6sQYt9XHS2b6398iJdmSVXTOwZmkm1XcirV8VaTy+2+/O+SwL5/n+9Vivl6/Ot+LTbGd74ul
-87RaF//ruMKJhXKYy9UHYA5Xm8O/H//dF5vd3Ln9cD34MHi/Xdw7o2K7KdYOLTdPq+8HGGBV
-bn77/Tf4/+/Q+PwCY23/dKp+79d6kPffFwvnrU/pO+fhw9WHAbBSEXvczynNucyB8vjaNMEv
-+Zilkov48WFwNRgceUMS+0fSsZmnX/KJSEenEYYZD13FI5azqSLDkOVSpAroZom+2fXa2RX7
-w8tpJcNUjFiciziXUXIai8dc5Swe5yT185BHXD3eXOuN1msSUcJhAsWkclY7Z1Pu9cBN71BQ
-EjYrfvMGa85JpsTZ2nNJQtXid5lHslDlgZAqJhF7fPN2U26Kd0cGOSGtNcuZHPOE9hr031SF
-0H5cfyIkn+bRl4xlDFk/TYWUecQikc5yohShQbt3JlnIh+1+RxLJQIvaFCN7OCtnd/i2e93t
-i+eT7H0Ws5RTc5QyEJOW+KHFFRHhcUtBam4KYhyxMYuVbM5WrZ6L7Q6bIviaJ9BLuJy2dxAL
-TeFuyNBdGDJKCbgf5CmTudazVCKyS1LGokTBGDHriLxuH4swixVJZ+j4NVdPgjTJPqr57m9n
-D1t15puls9vP9ztnvliUh81+tfl+2rPidJRDh5xQKmAuHvvthWjZGis5kdGlDKULyxGUgSoA
-q0KZFJEjqYiS+G4k7+0kpZkj+wcFy5jlQGuvFH4FU4bzw2xMVszt7vKsPx9VP6AWqm3OA7Xj
-nnq8uj2dHo/VCAzRY+c8N+eKKGnA3Eod27NSPxVZggtEW7FMCMgUJcOAdJQIWILWMSVSXD2r
-ibUDMVPhPDPpSfAgoFCUKOaiTCkLCa6Hw3AEncfGD6Yu5iJoLhJQI/6V5Z5ItZXBXxGJaUfr
-z9kk/IAdZuOhGjcC1gNzC5fJlo9MvNMvlV6cfo/AUXJwTGl7dukzFYGGmvFJGOIzg5xqesd1
-woL67V5AYvAap4bKk1beoNVq1Kjt3v3W0kMPAkjaGmRIJIgn60yUKTY9+zVPeGuURHQWzP2Y
-hJ7bNglYU7vB+Mx2gwzAxbeEzlsBibhjDouqBdDaGnQZkjTlRtJ120izzCLZln3TluNyP5LN
-3rUiKj7uqA4cN3Zu7SiUmvjo4coN62SuyzDlDciYGY3Nj3GkOTjdCCPn4wjmFZ2gkdCrwW3P
-n9WwKCm2T+X2eb5ZFA77WWzANxPw0lR7Z4hNlRNvzVFNjKxtHFW03DjnjlbJMBuCVXaUSSMR
-ogDGdHyQDMkQU3YYoMsmcDYyhHNOfdZAkPOxcw/iVMgl+CmwBxHhLqjDGJDUBceJnxXEGY+H
-Z5Gopk0ViyU57TidSBblUxr4xAUvGPoi5Spo6XHjn4MJg2jd8hHB18cWrtR+G/xjLrMkEW1X
-AvGMjlQKXrpPq5ohhHoh8WWfHkVZ2ywkAVwZEFdMcuF5kqnHwb/3xe1A/69Sn2RbLordrtw6
-+9eXKrI/FfP9YVvsTsGxEkE+JiknoBme9NoHckZ16fXNNY7OEM4b+t9w0gyiUWQ9nCNfhVKf
-dk9vekNl4J7AR0Hg0oaLeQSWxiyEYyFwqq4LAVCCtJYgqZvB6dTGjEJclCdxDs4Y6ulGkpnT
-yMfXbVlp/AYeDN2zR0BNa49TD/NrPgl5QAj+ywcdxwFhvSDg5sMUQnFewa6WvoG2khAsOZbC
-hBajGMPDzilfdJLVdR60D6l0G9ssX8rVZn/GCzmMawBFv9N6vtceqzVJd8EJuGQd0iFTk4i6
-HclTdQ3iv6RFLVYv8QkioyNHnGrjgoM/DXLE/UcBuuewpfGFkQs+hOVDIVqRsW59fLOAXZbr
-4nG/f5WDP24ewAydYv9j8LgHHz1/+eMP+AP28fJ49fn6w9X9g/nv7s/2b1fOtiz3j5snmPtp
-Z37ukP/8CNL8+FzCeD9XgNA/vmzLj8vi59+rfZ1RfzSZcf6t+Lifb78Xe+e5eH6ew5zXD9H/
-Dd50whsoOSYrkkqzRwU/kagTMmvUJnnkcjlCOoOQwX9FZJp/hfxEgEtOH6+u2ipDCYr3mlwU
-jEc7yLQxvZYnK/8ptg5EwPn34hkCIKq9UU8Pm7x8vl38WO2LhXZ975fFS7FZdgc55qZEBmf4
-ycRzUQWR82Y3Itq0FPczkckzIg1bII2kNMgn2o3ppLkSc5PEd7uZCAHTKeOMWqoGQYfIM3KT
-CbajC9L3rJNUqYj9s3mR1K0VeoSbhZCZasXREFNjqhaw8auSSAjgAuDcdWdcNuUqV0HKSAsd
-QmKjbQlWNQGV6LiAlHlmfoNZ+ydKxfj9t/muWDp/V+AIrOBpte4kqUmY+Tw2pQ1KWzWPFFRM
-Y90O8NcQUWpA1vYL9X4RXR3WKVkT6IcuaWUO2kgklRx28SWDLKtL0eYzlD5mVdBsK3uc0iXF
-fIAjl5MqbXo4DtIcjRczCpha2SZDPCM324MoKxLSP5pkvt2vtEE5CtBG1zTBprkylSl3rNM4
-zAtE0hXyxNrKLTzeaa7KPsKRix/F8rCuEHDNy0WVwMZCJJ10vW53QQ21BNDtNUzU+3LBS9VD
-n7XWfR/fbMry5ahx0ZfezC2jOhFHs2E3u2wIQ3QpPDanCPggBuyjNVKbb7vCaOja5mr6JRra
-dwKaxmyd28S6tzkU9m+xOOzn39aFKf86JmvZt45nyGMvUtqFdFLW2uO2SqApONcsSo7i1U4n
-gCXjMKgeVtKUJ518oiZEXFIspsM0epZm+VHxXG5fnQgLM02MAzDRSWx1Q66LCSZ6RZ2aaRKC
-60uUkRJNIEDcnmaGzIp21TziPiCQTtOYg8tSAlL8bvorMbh8jKKwCBgsNkD38Xbw+b7hiBlo
-FGSIpoA36kR3GjKwSwI6h8NSCBhKV4Tx0lKEg9mvCYAlnDLMcCf1VVa5MW6fbqhdF6SOOlUa
-2YqLsEO9QXvp0M+SfMhiGkQkxYBMzI6V/bjY/1Nu/4bw0tcFOMER66hb1ZK7nGDJZhbzaafU
-Db/3eE/VzxAF/F7aOTf9ey/p6VIlJPaJCDnFA4fhqXQPP/tqEBAmZCGcWmqPsOsRw3Azj7si
-4klVTqNE4jEGGJogkacCwjWWzwFTErevVMzvuRvQfqNBs73WlKSdAKF3wBOOK3hF9LVTYlE2
-tRRFYzBrMeKW+ms1xlhxK9UTGS4RTSSBncYkvmxezamdjeVk6tPX7gtMKpbdgsM5RxZDEm0l
-Dxk776uV+6xJ0aRp7q4zcxO7MRiOlEx+waGpcEQa3+LKrmeHH/1LOOTIQ7Mhp/1I39Ah6Tt8
-Wy3edEeP3DvJLUtMxve2w9e3jQCt6LlH6vEkwczAdDDIKLF5QGCGbEXZEF5ygQjm4VJq0acE
-QqzCaYDicYmD/uG3eQqvlITXlhmGKXd93EWNQxLnD4Prqy8o2WUUJILPFtJry/JIiJ/E9PoO
-H4okOIBPAmGbnjPG9Lrvbq1eweBAfFvUkjCAaImB2ihZJCweywlXFHcpY6nvQC2hE1YECHBk
-t8MoCe3+L5b4lIHEldHs36wUUhsrR3gDuEtXyPJLXDHtXhi2SOlUI6xZ3r31GH4Jz1CAsy92
-9XVoZ+hkpHwW4zsjUUpcSFZQ3ETwTpbsi0DePU1t5uTlI4rBwgmHZJ11y2zU87XWXfWvghvC
-piiWO2dfOt8Kp9hoRL/UaN6JCDUMJxTUtGiIoCsUgakA6bu4dkI94dCKOw5vxC23MFq2ny2Q
-k3APJ7AkyG2pdOzhwkskOFPbfb2OoR5OCydVTETE7qcC1lLdbnXGAh3VFoQlwGRmCiw1R7uj
-R3goxl2XbQ7MLX6uFoXjblc/qzz4VPdaLepmR5wj16y6BQpYmLSv2jrNAGZVoIsnLTc6VlHi
-4eYNpx+7RJd1sLJiWo3s8TSaEIBR5klKY13eavv8z3xbOOtyviy2rWRrYir27SWyKeCU4zid
-5R25DR6ud4EsRucXE1MraeV/rU0OM/gz5WNLgKwZ2Di1AL2KQb/eqYeBXDuCw+udna7CL835
-dYol8Fds6nR47hJLfNpI4VFC4HaSAP4V6OOHupKEVaniLAz1LxcrUKEQlgBeM7jp0F6hMtP8
-gp4SHDpQNxWR9sbUHeMjQFTPtR3lTOGR6DhFdwlVFBhHzJGHl5dy27kK0e1517NU5YTVboEd
-MKhcNNNlE3QFkJeGQmZgJKDFY257ziGtQrg+P9eqNMMSEI6z6y+/ouSfb+j0vtdNFf/Odw7f
-7Pbbw7O5ed79AFNdOvvtfLPTQznr1aZwlrDX1Yv+sfFBZL0vtnPHXMo8NRa+LP/ZaCt3nktd
-uXPebov/HFbbAqa4pu+arnyzL9ZOxKnzP862WJvnhKeFn7FoK6r8XEOTFGJDv3kMatlvPQ0U
-lLu9lUjn2yU2jZW/fDlevso97KBdVXpLhYzenTttvb7jcKfToYHonYouMdea1RJMoxm6/gwZ
-WaeoTrirH9ulFmU6w0Zte8GdDW5eiqQ+U8av2mIpGJdVp8GQelvlm5fD3rpXHidZt7ygG3LP
-09U4jXosuaJm0mjPBhgrDmnK5KPIUvaqmCKiUj49ZzJrz3bFdq1v3Vf6ncbT/MwP1P0FhKvL
-6/hLzC4zsPGv6BCSLKLtIYizviM2G4qzeztsC5fXr0tHeNioWMwFkiVHqhhERgNJU2YB2vVK
-zgq9JwOI+G1PL81mA7Bs45v4R+Fo7erIQN+f4+DdJxFDPS0FBzlfwIG3fH9jH2rWKu62qiW0
-up+vijChqQLLNmfrAr9JLCattlPuploEXf128XcvuvT4+SFP1Kw1Tch8QmfWxurR0OP13X1X
-PCTUt5AV/rOoSZz7Eo9W9VMYHBCDUle19jYEHZ09sagcIsDd+dpZ9pW4XuHD9d2g1ysuN+8N
-YVd1N+EMiZD1GBlJIfm1VElrHklpPLW8mqw4iC69kPwvRXw94H/B+ku2FNf5muzJMA+TXw1i
-LiEzSw0HDr96dWgpC0U8r94uYngbFLJ6yNV5K9M0Vk8JubA9nElvPt/jxRFTDrTjdEXhP+RN
-AAAN7Ix1MyqeBI+MEjZtqWXg7Un32W51ZaoSZ7EuF39jKwJifnX38FC9Au4DOpOVO0kw09mu
-jjLWEiGk8buicPY/Cme+XJo7WtB2M/HuQ2dKHlOV4sm4n3Bhy6snV/iWxQSgNhlbHnAbKmRR
-Fr9f0fUruBC7WAgmkbkqa6kUNNTZFw14PxzH8z24B9xJgMNMZU5kwizFtobF+3T1MLjDc6o2
-z8O1hxfIGiauHj5dZIjI9OrzZZaEPny6ucffR7V5bq8vjxMrmquAQZCUtrzzyErV/f3DzS95
-Pn3Cq6RHnoRGn6aWq5SaR0aS3n6KcOXqMg1vfiEqSYO7+1+IwfDc4DX6hmesrs4KZz2WycMN
-zBRc1pGKiVm4zGEQrK40IboaKlrXKk3L2bulY3MsJmQmMoWQKqdtbsgg79QQrJM1HPnMQ/ae
-PU3m+8WPZfm9DyGbvQpPtRd8HHiq3+NOjyRLhc+FVJhdZnInl+lgQ/c3U3ym7h6SbaE/fykB
-EfslbGNTdl3EURZJyrRzBYHmvhgjJySlvm+Vkg+72AzasWoLjQjKPjy7Va9KCof1fvV02CzM
-O5s6K0IcWuTpdO/zVZ5JW9zXLJEul+EZXqD0MzXJKW7quveIRUmIe0szuLq3GaUmy+hugNsR
-GU7vBgN7Fml6zyT8ZiUrnpPo5uZumisJimTJCZifAda2OLyUXlgBczlpHmj3Dsnfzl9+rBY7
-LKi7KQ5zoD13k5yyfhmJ0MR5Sw7LVenQ8vik+x3+sSSBzDxcfdvOt6/OFpR5tSmOBQZvO38u
-nG+HpyfITdx+XcqzXSfRUagfu+chda2bptUDWF0IelnPX2ulxEQw9kmToWCY3xTHeulOpxn+
-DrMIMqSHAU5PxURCotKyPUhd+gW9gLv9kgI0dh91u/pCDYD4TL+bZLFvqRwCIyBSlJTpiRAE
-A0PXD5CbUrh8KRY6E9EdELPWPcitYpabO0OmqeWBgqEmtmsOQ81SRnD0Z8TAwhG3XHMBmULM
-snx5WJE5/HaBLjKf4KZoyMbm7ORZktrKPZoOZ+OLOOWWOoVmYREgNzwcG3LIqOVjFEP+evb+
-pUP1WTTkluTY0D2LX9BEGNhUP+wMM/uuJpBEWurxZuJZ9ebMysB1HLZTLdmwpv1FhrbYAlQ1
-4XFguf+sNh1LyF3UhaWF1KQIdjqLxRgv3hiy8PlFU4qIz6m9tlWxzLyQ2G61gSFllebZR+D6
-g2gASnYOoT/VuqBc5j3VZQ2JLc+ONA28OcMTe01NSKzBaCguaG/CFAlnsd3tJGD6EDzs9BBm
-SUVse15meFLrFbImS8IvbUOSSGaW1zKGrhO/83vZLodilhuXmspCXUqxlLYNTxYnoaXEYnTF
-VlHQdqoLnwDH7AYlI0B6f4nZxSkUv2AQ4CekLf019CDNpKqeWliZMh0F80TisFFzTHkc2Rfx
-laXi4ha+zlyIcRcsqsqw8iDD4YwJdGGCPa7MALmLgPI85EoBjGAxhJzWc1xN732VpxvN1x36
-64yAdsBD1oX81aUAtJlC47J7/aPbkx+vO/0PaTjh/FXXj/sIIBaJmXFKGccr/prqE9e3VFXU
-LGE4HNYdszDh1jJgNsElGkX4gBFEVGvZP2YTcNCWR2OE6n8ZgA8hTbR87sDhz5gPSWz5+Fzp
-f8uBWACBq/Oe8fk1VPWeIiLDzMM+L5KzmOb6GyB8xdnU5TKxffKeWS4RzAPvqoiJfq8LZC5A
-kHHn3x5omiPevxqMVottuSuf9k7w+lJs34+d74dit0fL2goCHHo9QMNRfZM/ylpPZ5vPmnQO
-nJB2sQGQkS6+VZ881fnA8zOkqNRUN03moV9QdcDsRH+/gNY2q16yPGzx9Jakdd0Y/PbDAC8P
-R4SHQzFFdseF/nbzZMidJzOG6CTz70X1HYPs3junxXO5L/TdLrYu/dBD6ev0fhaXvjzvvqN9
-kkg2R4pXjHTuol9x9caUMM9baf6xC0eArH+sXt45O51CPB0f/xz9C3lel9+hWZb03PUMt+V8
-uSifMVo8TT5626LYgVsqnC/lln/B2FYfoinW/uUwX8PI50O3Nkdz1f/qdKq/6Pr/xq6luXEc
-B/8VH3erdrpjJ5PtOfSBpiSLHb1MSbGdiyrjuJJUbx4VOzUz/34JUG8BdJ+cEBBFUiAAksDH
-v7mH6u2jW0nHS2cxnGYE2mcCLLYFu3WAqDS0wmG+TrYhjhj0erY3H2O6uATBNU4lhsgl+nsv
-OVJB7gCrenGXHFMNdRpFjPkN4qnYZeFugIjSMjeZr8BArvplXN2kiQCzsGC54Kgh24pq8S2J
-4eSDCa/rc0F9NBc485I5a4+ZWFctpjpcvD58vD0/DBRG4ulUMWG0jFcJYT3TbxtuIPRlDwkh
-pEqlXUTI3YsqZudgnLfc1aZSZoM8UvFIVOpIOjNH7bceTBgj8ouKCdwztEsH7YqjaV8BSEbO
-0X/wpC1PWgU529Jl4XhdoiLHo8GCfxKgbARlJ/wtGIhgEMHZlNk80Col/UjwEhACYphDCwfk
-BaBejej9lviJ1LtsvCJv6UlaqGA3OBG3RZSZs5RqDFwTiOkjLXFdpkzID0ACBTkrDpbMjjHE
-tTI0iMczflNFnDDI+/3TaI8ynySpWbL3m07jrxD3B5OAmAMqT/+4vr7gWlF6AdUCL82/BqL4
-mhRcvTZtlan11jzLSmwxGS+rso+Hz4c3TKDsXtfoSONaVMEADMgU3AxPfrBsjHqEhZg7Zxw1
-ZbPDO9ULRBmqyNM+JXgAn9F/K54H9YBLICq4Xx8W1PBFQtI7ipZnC0FpxBuN6g28SmpfFKPM
-UPiZDFzzlMqtj24aWPhDzKBUi2Tl8yIqPAct4GmhkwRLWVafOVqz5EmOp8qlQiLMxtBPIMuO
-3dyTWsRcLPe6FHnIibRDe8cKUhq5eR47Rirjaetke+WkXvNU7Xpp5kBB2+W37CBz0tfEXzAC
-mDiMV5DTvglmMzAPScURUk/wksw3Iprqovyw//x4Pv1DLYhv/B0jPr4sAafArLP9HH3Xwnia
-XPSR5XUSydHGxWgD/IRGTqbZDqP7pRjptwkb/TrIcZXIAwmNbAJBkwjY9VMQaYINtYc/gaY9
-bVfIH/+8n95m+7ePw+ztY/Z0+N97P/nBMgMGlehDsw2KF9PyIcxGVzhlXUY3UmWhr6ckSOMh
-C6esuu/idGUkYw/xa9RAtiU3WUZ0EjJaB9BLzTsYVKWa7NH+d0315ZA+pBrvzRhPPWlLXU61
-hsGiGj5YeSpH8BRIGMmJWlYBwPeUVCxIzZEMwP16hdORA/2EwKzEi/CHUUP1uKNVIU6oP09P
-h1eAAIZIff91D5INAQp/PZ+eZuJ4fNs/I8m7P90PUl3qN0smlaEeATdZhsYjFIuLLI1288sL
-OuyonQkrlZvx/BUe2m3pMy1+p2OFmi+c6jK/vqLDs/o85mVOptxfKyrSpBXcUBjDe9soliXu
-nr28PYzyiurhWtKL9IbMRAE05ILee2jJjElqWuqsPNL0+XlNTt1Ny870bOtumzFnG00E8Yf3
-xyd+MGNBAovUGjMWkpho2zMNvR1Vahciz4+H44lqgpaXTOxqn+MMQzG/8LiMynoWhtw5ZzP+
-vzD/Yo/erG3J7qeVkXQ/gl8Xm469M1McOJiwyY7jzOw2HJcL97QNxZwXDkM1byDEwxB+nzu/
-l+Ggj9caeuwkFys9/8P5gk02aoGVu+f3p0F8X6sLKbslEMjaqUMTs15xzkmhpVNellG6CZRb
-LKWI/ShiDk5bnrxwSh4wOKXB41CXLTnAX6f6CcWdcFrfXES5cEtcYwrdxoQ54m3pOjNLR7d8
-Ob9K4TsH2yySxt+sOTF6/zgcjzaabTrAgLREr9Ya83HHpNlb8rcrp8xHd85OGXLo1Dp3eTGN
-MNP3rw9vL7Pk8+XPw0cNR1iH643nQq4qmVHetKeXq+YIkKAwRsbSRip7yjKp84eCWDcfDhqy
-HePUVmbpMambZcxr5/6XmDUTozHmgyWNw/Bu2kXW4eMEp2HG/TwigMHx+fEVIXBn+6fD/qdF
-c0BWImyyrnWpCkhg13lvk82GTYme492cqCCYTaH6uNbtYYtUcPoosuHASuMBm2FnOi7nnOaR
-ldNsy0oVZUWleKNHMGrD5cJM/Shgbp2oGSIl/eXuG/GopXBTCFmE3vAzGDiWih0DJgdI8gZC
-0qHHkVo6PSZJOw42WYkZo5ZrewdYM+RmRV5hjlP/MB2K4DRhiBoH5V7cQ9dE1DZAGgVcN9ij
-6ElhG3iC0QnABED4NrjhHJfMehoFCj2lfVnAmUZvp3cVVQ1YecO67gl9EsEG7lTSRZEaL+36
-aoTq5zGem+cxaER6jXm6xJB2nVpVuADqNdoI0miSwRZUsiK/Hk7+Gmn96X6gEt4/nl9PPzG5
-6uHlcHwkYWftrQ4QjkDNmzoiOUpXiI7aboH8l+VYl8ovOqjA2M9z2Laf1HA1uB7nN7y8A3Xa
-ERu8r6/Nodpsk6RUEqREk20iSBWXeWEvjeiBHWrjTFUboZPv84vF1XB4s0rkcQW4+/QMMhob
-KxZMKmiZQCI0VLBMGQwhPL9IN4kTmoPeLbTYkW2HRs/kPoIxwgFCLEbASE0XRyw4DFWaRLvR
-REOUXztSiI5tYfbbFw4orm4gmvLGFzcNZCO95Q5BqrBfrWnMUqjKop9/H6Jceoc/Px8fR2hG
-OMA+Qmtz5wa2SmDkgRqxGtPFPE04iDJbTbr84XN7Bt2NBBXTFOSYwDy2ehQAmm3/EQxAEN+9
-oTiaiNjJkEfDYI9ZrlsmrQOJ9WVHcN8J11CUHMT07zcSCyitUmNBi0Smt3UOdSYJsQ5HKCN2
-KwG+/Cx62//8fLe6Irx/fRyF5QQIW1oCAmsxQaNpXwKkKiwTe1nPdBO8JVV1ztT3+aKHCtUC
-jfcYM5EoyoSyvNWtiMoh2NTanRVmHzNzOaXP7wf0tvoBselOW9yA/NoLNLqBhGIeidQ+ZUXM
-TzyrnhySBK+98f0x8J/1X2HXr53Vs38d359fMcX3P7OXz9Ph74P543Daf/ny5d+da4tRDFj3
-Cu1jGxTXs2/pbRutQLtUUAf00dHwDnrbNdWIeMDxVDpbyWZjmeACkg1gWDl4seW8GrNM1pUx
-1ZlxP1MXDCEueWo3g24nvtXMqAJAflhfsuuHy+Ps7hOhKwEbBVdJlAms+wFSlb9TpVaJVie7
-eqqYxtSmQZ3jyF0mAYNTlM8g1dTp3dr0JSmUII4s4Q4w0rbBjV94PQ47mMBx9rsgEzvgeK3Y
-OrftdEnpujbwmjftltMGGhmbjPhrJGMzZJWvtXHsVfLD+iokcw1X7uSBnZZE7kaJQ317FZSJ
-dYdwKHoLAPh/qEma9yLnwBMa1kGrantnHawDprca9ZcJxmIFroqspnUwhBtA8nYw1H5xCwOL
-nAxgBtKqPBFZHqYkyJqZh8bi19dKEBf62XKRmG8LV6zVDzCar2UHeDYXo7U0jk62lw2kDiFH
-ir1KjoTR7iTYrCpBH05mQzNb4J6J2E42EJpxoDuC6OENT3nKpDEjC0tddrctAYI8P6mXhRE0
-no7OunEEKjdbs+p162xscuhvAXrQ0Se7YrVRCIyYAd+NYSyYOFFkwAUqAzMAdLtYdtKNcmES
-vZGjLJnQWqRuhdZMWgTSIf4vMLaa59Cw14gIUY7x5LYjkao85rolZZwu08Ezcox1NKCTjk+G
-MXeOcZpcLjSkm3WCNDqIiYD2Y1ai7Bqp8gDeUKZal5MI0k4DINIpFz6WMxmZtfcZLWHNMQrX
-aWwGXLqBF8P0rhbMLxdy3vlDhvB/ZXDgizN4AAA=
-
---xHFwDpU9dbj6ez1V--
