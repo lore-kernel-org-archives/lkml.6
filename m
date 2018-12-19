@@ -2,136 +2,106 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5488C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D10C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1A420873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DC4320873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbeLSW1l (ORCPT
+        id S1730001AbeLSW1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:27:41 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56247 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbeLSW1k (ORCPT
+        Wed, 19 Dec 2018 17:27:50 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.185]:21579 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727502AbeLSW1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:27:40 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 79EF180A9F; Wed, 19 Dec 2018 23:27:33 +0100 (CET)
-Date:   Wed, 19 Dec 2018 23:27:37 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-Message-ID: <20181219222737.GB30496@amd>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-3-dmurphy@ti.com>
- <20181219193455.GA21159@amd>
- <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
- <20181219201047.GA23448@amd>
- <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <20181219220326.GA28244@amd>
- <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com>
+        Wed, 19 Dec 2018 17:27:49 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id A493B12903
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 16:27:48 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZkJgg0NYPdnCeZkJggACIP; Wed, 19 Dec 2018 16:27:48 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=47220 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gZkJg-000Dot-8r; Wed, 19 Dec 2018 16:27:48 -0600
+Subject: Re: [PATCH 25/41] scsi: lpfc: lpfc_nportdisc: Mark expected switch
+ fall-through
+To:     James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+ <8d1c41fb93d54415cfd0a8c1fa6d31a6a76db461.1543374820.git.gustavo@embeddedor.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <7e647723-0fdf-97c0-4e54-3d663db91392@embeddedor.com>
+Date:   Wed, 19 Dec 2018 16:27:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
-Content-Disposition: inline
-In-Reply-To: <a3214ab3-9281-19d6-7fcc-5abae9a60ebd@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <8d1c41fb93d54415cfd0a8c1fa6d31a6a76db461.1543374820.git.gustavo@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gZkJg-000Dot-8r
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:47220
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 52
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---i0/AhcQY5QxfSsSZ
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Friendly ping:
 
-Hi!
+Who can ack or review this patch, please?
 
-[cc list trimmed]
+Thanks
+-- 
+Gustavo
 
-> >>> I don't think a user needs nor would want to have 24 different LED no=
-des with 24 different brightness files.
-> >>> Or with the LP5036 that would have 36 LED nodes.
-> >>>
-> >>> Table 1 in the data sheet shows how the outputs map to the control ba=
-nks to the LED registers.
-> >>
-> >> Some time ago we had discussion with Vesa J=E4=E4skel=E4inen about pos=
-sible
-> >> approaches to RGB LEDs [0]. What seemed to be the most suitable
-> >> variation of the discussed out-of-tree approach was the "color" proper=
-ty
-> >> and array of color triplets defined in Device Tree per each color.
-> >>
-> >> Please refer to [0] for the details.
-> >>
-> >> [0] https://lkml.org/lkml/2018/11/9/938
-> >=20
-> > Yes, plus I also have the set of HSV patches somewhere... and they
-> > work, but I found out that HSV->RGB conversion results in loss of preci=
-sion.
-> >=20
-> > We may want to do something like that.
-> >=20
-> > But we need to do it once, in a driver core. We obviously don't want
-> > each driver having different version of RGB support.
->=20
-> True.  But the RGB driver really should not be defining the color palette.
->=20
-> Maybe a "color capability" reported to user space so that the user space =
-can make the decision.
->=20
-> It can report
->=20
-> For GPIO or constant current situations
-> static red
-> static blue
-> static green=20
->=20
-> For adjustable configurations it can report:
-> variable red
-> variable blue
-> variable green
->=20
-> or even simpler "static" or "dynamic" as a return to report the RGB confi=
-guration.
-> The LED driver would just need to set the variable.
-
-I'm not sure what static/variable is.
-
-I have RGB leds here that can set any channel to 0-255, at
-runtime. They seem to be quite common at phones.
-
-Anyway, if your 36 channels can be set independently, I believe you
-just want them to export as 36 LEDs.
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---i0/AhcQY5QxfSsSZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwaxdkACgkQMOfwapXb+vIV3QCfcYJM8VPdCZQxaX0y9mrvxKRl
-FQ0AnRIzgL0rg5Yy6TRRBbLLSJSSKWrp
-=gkmt
------END PGP SIGNATURE-----
-
---i0/AhcQY5QxfSsSZ--
+On 11/27/18 10:31 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_nportdisc.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
+> index 7d5693cfaa87..e8583496feaf 100644
+> --- a/drivers/scsi/lpfc/lpfc_nportdisc.c
+> +++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
+> @@ -360,6 +360,7 @@ lpfc_rcv_plogi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+>   	case  NLP_STE_NPR_NODE:
+>   		if (!(ndlp->nlp_flag & NLP_NPR_ADISC))
+>   			break;
+> +		/* fall through */
+>   	case  NLP_STE_REG_LOGIN_ISSUE:
+>   	case  NLP_STE_PRLI_ISSUE:
+>   	case  NLP_STE_UNMAPPED_NODE:
+> 
