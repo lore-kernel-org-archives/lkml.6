@@ -2,80 +2,213 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07512C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA1CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF9CE21850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 847D4218AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbeLSLGR (ORCPT
+        id S1729196AbeLSLJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:06:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34554 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728471AbeLSLGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:06:17 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C4F56C050069;
-        Wed, 19 Dec 2018 11:06:16 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AC4B60159;
-        Wed, 19 Dec 2018 11:06:14 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Joerg Roedel <joro@8bytes.org>, x86@kernel.org
-Subject: [PATCH] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
-Date:   Wed, 19 Dec 2018 12:06:13 +0100
-Message-Id: <20181219110613.24459-1-vkuznets@redhat.com>
+        Wed, 19 Dec 2018 06:09:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60456 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727991AbeLSLJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:09:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E1401B07F;
+        Wed, 19 Dec 2018 11:09:00 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A0A381E1463; Wed, 19 Dec 2018 12:08:56 +0100 (CET)
+Date:   Wed, 19 Dec 2018 12:08:56 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181219110856.GA18345@quack2.suse.cz>
+References: <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181217181148.GA3341@redhat.com>
+ <20181217183443.GO10600@bombadil.infradead.org>
+ <20181218093017.GB18032@quack2.suse.cz>
+ <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
+ <20181219020723.GD4347@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 19 Dec 2018 11:06:16 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181219020723.GD4347@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AMD doesn't seem to implement MSR_IA32_MCG_EXT_CTL and svm code in kvm
-knows nothing about it, however, this MSR is among emulated_msrs and
-thus returned with KVM_GET_MSR_INDEX_LIST. The consequent KVM_GET_MSRS,
-of course, fails.
+On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
+> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
+> > OK, so let's take another look at Jerome's _mapcount idea all by itself (using
+> > *only* the tracking pinned pages aspect), given that it is the lightest weight
+> > solution for that.  
+> > 
+> > So as I understand it, this would use page->_mapcount to store both the real
+> > mapcount, and the dma pinned count (simply added together), but only do so for
+> > file-backed (non-anonymous) pages:
+> > 
+> > 
+> > __get_user_pages()
+> > {
+> > 	...
+> > 	get_page(page);
+> > 
+> > 	if (!PageAnon)
+> > 		atomic_inc(page->_mapcount);
+> > 	...
+> > }
+> > 
+> > put_user_page(struct page *page)
+> > {
+> > 	...
+> > 	if (!PageAnon)
+> > 		atomic_dec(&page->_mapcount);
+> > 
+> > 	put_page(page);
+> > 	...
+> > }
+> > 
+> > ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
+> > to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
+> > had in mind?
+> 
+> Mostly, with the extra two observations:
+>     [1] We only need to know the pin count when a write back kicks in
+>     [2] We need to protect GUP code with wait_for_write_back() in case
+>         GUP is racing with a write back that might not the see the
+>         elevated mapcount in time.
+> 
+> So for [2]
+> 
+> __get_user_pages()
+> {
+>     get_page(page);
+> 
+>     if (!PageAnon) {
+>         atomic_inc(page->_mapcount);
+> +       if (PageWriteback(page)) {
+> +           // Assume we are racing and curent write back will not see
+> +           // the elevated mapcount so wait for current write back and
+> +           // force page fault
+> +           wait_on_page_writeback(page);
+> +           // force slow path that will fault again
+> +       }
+>     }
+> }
 
-Report the MSR as unsupported to not confuse userspace.
+This is not needed AFAICT. __get_user_pages() gets page reference (and it
+should also increment page->_mapcount) under PTE lock. So at that point we
+are sure we have writeable PTE nobody can change. So page_mkclean() has to
+block on PTE lock to make PTE read-only and only after going through all
+PTEs like this, it can check page->_mapcount. So the PTE lock provides
+enough synchronization.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/svm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> For [1] only needing pin count during write back turns page_mkclean into
+> the perfect spot to check for that so:
+> 
+> int page_mkclean(struct page *page)
+> {
+>     int cleaned = 0;
+> +   int real_mapcount = 0;
+>     struct address_space *mapping;
+>     struct rmap_walk_control rwc = {
+>         .arg = (void *)&cleaned,
+>         .rmap_one = page_mkclean_one,
+>         .invalid_vma = invalid_mkclean_vma,
+> +       .mapcount = &real_mapcount,
+>     };
+> 
+>     BUG_ON(!PageLocked(page));
+> 
+>     if (!page_mapped(page))
+>         return 0;
+> 
+>     mapping = page_mapping(page);
+>     if (!mapping)
+>         return 0;
+> 
+>     // rmap_walk need to change to count mapping and return value
+>     // in .mapcount easy one
+>     rmap_walk(page, &rwc);
+> 
+>     // Big fat comment to explain what is going on
+> +   if ((page_mapcount(page) - real_mapcount) > 0) {
+> +       SetPageDMAPined(page);
+> +   } else {
+> +       ClearPageDMAPined(page);
+> +   }
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 2acb42b74a51..dfdf7d0b7f88 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5845,6 +5845,13 @@ static bool svm_cpu_has_accelerated_tpr(void)
- 
- static bool svm_has_emulated_msr(int index)
- {
-+	switch (index) {
-+	case MSR_IA32_MCG_EXT_CTL:
-+		return false;
-+	default:
-+		break;
-+	}
-+
- 	return true;
- }
- 
+This is the detail I'm not sure about: Why cannot rmap_walk_file() race
+with e.g. zap_pte_range() which decrements page->_mapcount and thus the
+check we do in page_mkclean() is wrong?
+
+> 
+>     // Maybe we want to leverage the int nature of return value so that
+>     // we can express more than cleaned/truncated and express cleaned/
+>     // truncated/pinned for benefit of caller and that way we do not
+>     // even need one bit as page flags above.
+> 
+>     return cleaned;
+> }
+> 
+> You do not want to change page_mapped() i do not see a need for that.
+> 
+> Then the whole discussion between Jan and Dave seems to indicate that
+> the bounce mechanism will need to be in the fs layer and that we can
+> not reuse the bio bounce mechanism. This means that more work is needed
+> at the fs level for that (so that fs do not freak on bounce page).
+> 
+> Note that they are few gotcha where we need to preserve the pin count
+> ie mostly in truncate code path that can remove page from page cache
+> and overwrite the mapcount in the process, this would need to be fixed
+> to not overwrite mapcount so that put_user_page does not set the map
+> count to an invalid value turning the page into a bad state that will
+> at one point trigger kernel BUG_ON();
+>
+> I am not saying block truncate, i am saying make sure it does not
+> erase pin count and keep truncating happily. The how to handle truncate
+> is a per existing GUP user discussion to see what they want to do for
+> that.
+> 
+> Obviously a bit deeper analysis of all spot that use mapcount is needed
+> to check that we are not breaking anything but from the top of my head
+> i can not think of anything bad (migrate will abort and other things will
+> assume the page is mapped even it is only in hardware page table, ...).
+
+Hum, grepping for page_mapped() and page_mapcount(), this is actually going
+to be non-trivial to get right AFAICT.
+
+								Honza
 -- 
-2.19.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
