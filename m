@@ -2,136 +2,139 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B843BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 638DDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70384218AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:27:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kwE2jYEn"
+	by mail.kernel.org (Postfix) with ESMTP id 4099820672
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbeLSS1N (ORCPT
+        id S1728741AbeLSS3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:27:13 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55356 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727841AbeLSS1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:27:12 -0500
-Received: by mail-it1-f195.google.com with SMTP id m62so11116791ith.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 10:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bfqcCqx8fHu6FED3rlKQxbGhEQNL5yPTNPFB4gRD2zA=;
-        b=kwE2jYEnCpXqDtnzOPsJOHgDRciOa5Sb19XjiuJ9ky/KPueKFfpVM/R2NL4FCTty9Q
-         jL9w3glWYKtHMQKLs+ZMqNooWmCZ+YQTgBQccKw/9IQae34jH/F4ax0E7D4AtOvaO9jE
-         McGP8GaSEM2VvR8/u4zt+rcvfSLmW8G8NoNuU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bfqcCqx8fHu6FED3rlKQxbGhEQNL5yPTNPFB4gRD2zA=;
-        b=ZlKZYS0QQHHm4Ivw2GmYPDE/O+odY+y8PRVZx7gIvi+OuuRGsc6gtqgIqSyl2+KqMQ
-         5QDxzjJqSd58d3dLquElizHAV4E7TdRvWQ46w/1KQePeBfuHkl1DEnKbqbjvkLYaCkzg
-         TO2BFQruLy+3jSi7CctlimxCJxIWfgOklt+qZbKdlhnflISGR2p4Xjw1lmn05TDy9kiB
-         4dLejRVWywHaaAVrD+oCGLAj4uvWLzCj8hozJxm1X9cVMEhG1J/ZoeZYeUF3KQIfmQ45
-         NSPwhD0uj4XsVkk504R9LXcfKKe45E3gO+h+Xdd2oPjaocpQqAVd5PfQPxGEw/L4aDaA
-         lemw==
-X-Gm-Message-State: AA+aEWYf9PWY10mMTk98sX910V7xd6S/1egWBaT1jAIOvz2fykjXt91z
-        DUj0cge8osNuK67TIqLxXjZNIcpKdMHLuCc/dxp5smTa
-X-Google-Smtp-Source: AFSGD/UNmhIW0kn/rOMg+WXnO4qELDNAqtXt671G91uheYTbQzT7YlAEcAv1blIe3oNyMOKoh2xcUkRG/PLNdgR8umI=
-X-Received: by 2002:a02:781e:: with SMTP id p30mr21177260jac.85.1545244031631;
- Wed, 19 Dec 2018 10:27:11 -0800 (PST)
+        Wed, 19 Dec 2018 13:29:10 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41406 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727841AbeLSS3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:29:09 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41D3EA78;
+        Wed, 19 Dec 2018 10:29:09 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61D5F3F59C;
+        Wed, 19 Dec 2018 10:29:08 -0800 (PST)
+Subject: Re: [PATCH v3] irqchip/mmp: only touch the PJ4 & FIQ bits on
+ enable/disable
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org
+References: <20181219172822.18349-1-lkundrak@v3.sk>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <fc85f7e6-fc78-9e7c-258e-a0a60d195686@arm.com>
+Date:   Wed, 19 Dec 2018 18:29:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181218133821.sykwt6wdeo7uf6o7@smtp.gmail.com>
- <20181219131254.GR21184@phenom.ffwll.local> <20181219172943.yvccbanfeod3hcoj@smtp.gmail.com>
-In-Reply-To: <20181219172943.yvccbanfeod3hcoj@smtp.gmail.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 19 Dec 2018 19:27:00 +0100
-Message-ID: <CAKMK7uHFH1cYWoQfwOOU5arzfgQ+T2BEQXHkp3ghcdZOWQkX5Q@mail.gmail.com>
-Subject: Re: [PATCH 4/7] drm: i915: Delete base.id prints
-To:     Shayenne Moura <shayenneluzmoura@gmail.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181219172822.18349-1-lkundrak@v3.sk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 6:29 PM Shayenne Moura
-<shayenneluzmoura@gmail.com> wrote:
->
-> On 12/19, Daniel Vetter wrote:
-> > On Tue, Dec 18, 2018 at 11:38:21AM -0200, Shayenne Moura wrote:
-> > > This patch removes base.id prints from drm_display_mode
-> > > objects in i915 files. It removes dependency from drm_mode_object.
-> > >
-> > > Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-> >
-> > Again I think better to switch to DRM_MODE_FMT/ARG.
-> > -Daniel
-> >
->
-> This one has a different print style. Is it okay to change to DRM_MODE_FMT?
+On 19/12/2018 17:28, Lubomir Rintel wrote:
+> On an OLPC XO 1.75 machine, the "security processor" handles the GPIO 71
+> and 72 interrupts. Don't reset the "route to SP" bit (4).
+> 
+> I'm just assuming the bit 4 is the "route to SP" bit -- it fixes the
+> SP-based keyboard for me and <mach-mmp/regs-icu.h> defines
+> ICU_INT_ROUTE_SP_IRQ to be 1 << 4. When asked for a data sheet, Marvell
+> was not helpful.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> 
+> ---
+> Changes since v2:
+> - Correct subsystem maintainers on Cc (irqchip)
+> 
+> Changes since v1:
+> - Adjusted wording & ack from Pavel
+> 
+>  drivers/irqchip/irq-mmp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+> index 25f32e1d7764..1ed38f9f1d0a 100644
+> --- a/drivers/irqchip/irq-mmp.c
+> +++ b/drivers/irqchip/irq-mmp.c
+> @@ -190,7 +190,7 @@ static const struct mmp_intc_conf mmp_conf = {
+>  static const struct mmp_intc_conf mmp2_conf = {
+>  	.conf_enable	= 0x20,
+>  	.conf_disable	= 0x0,
+> -	.conf_mask	= 0x7f,
+> +	.conf_mask	= 0x60,
 
-Yeah, standardizing sounds good, just mention in the commit message if
-something has changed. This is all debug information, so no issue if
-we change the output format slightly.
--Daniel
+You seem to have identified that ICU_INT_ROUTE_PJ4_IRQ and
+ICU_INT_ROUTE_PJ4_FIQ bits are the only ones to be touched. So why don't
+you use these constants? This number soup is quite unhealthy.
 
->
-> Best,
-> Shayenne
-> > > ---
-> > >  drivers/gpu/drm/i915/i915_debugfs.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-> > > index 7f455bca528e..61dd7bb3fa85 100644
-> > > --- a/drivers/gpu/drm/i915/i915_debugfs.c
-> > > +++ b/drivers/gpu/drm/i915/i915_debugfs.c
-> > > @@ -2948,8 +2948,8 @@ static void intel_seq_print_mode(struct seq_file *m, int tabs,
-> > >     for (i = 0; i < tabs; i++)
-> > >             seq_putc(m, '\t');
-> > >
-> > > -   seq_printf(m, "id %d:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
-> > > -              mode->base.id, mode->name,
-> > > +   seq_printf(m, "name:\"%s\" freq %d clock %d hdisp %d hss %d hse %d htot %d vdisp %d vss %d vse %d vtot %d type 0x%x flags 0x%x\n",
-> > > +              mode->name,
-> > >                mode->vrefresh, mode->clock,
-> > >                mode->hdisplay, mode->hsync_start,
-> > >                mode->hsync_end, mode->htotal,
-> > > --
-> > > 2.17.1
-> > >
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+It'd be good to Cc some of the folks who initially wrote this code
+(Haojian Zhuang, Eric Miao -- assuming they are still around) and get
+some testing on a non OLPC platform, just to make sure there is no
+regression due to this. I have the nagging feeling that this could be a
+platform specific thing rather than a universal setting.
 
+Thanks,
 
-
+	M.
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Jazz is not dead. It just smells funny...
