@@ -2,109 +2,88 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 956FAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E919C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67394217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC635217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:59:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbeLSL6h (ORCPT
+        id S1728576AbeLSL7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:58:37 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33848 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbeLSL6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:58:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFB25EBD;
-        Wed, 19 Dec 2018 03:58:35 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B72C3F5C0;
-        Wed, 19 Dec 2018 03:58:34 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] sched/fair: fix rounding issue for asym packing
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
-References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
- <1544803317-7610-2-git-send-email-vincent.guittot@linaro.org>
- <f2619d92-7367-abd4-97e8-e0f4e7cc96eb@arm.com>
- <CAKfTPtAEi=EBmSUEcYmkfSZVkBviQaJaqZXvt-=XbsgZs5t_OA@mail.gmail.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <4de22c37-fe65-4f5f-929b-320c663ee8b6@arm.com>
-Date:   Wed, 19 Dec 2018 11:58:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Dec 2018 06:59:20 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55197 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbeLSL7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:59:20 -0500
+Received: from 1.general.apw.uk.vpn ([10.172.192.78] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <apw@canonical.com>)
+        id 1gZaVO-0006fe-JI; Wed, 19 Dec 2018 11:59:15 +0000
+Date:   Wed, 19 Dec 2018 11:59:14 +0000
+From:   Andy Whitcroft <apw@canonical.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>, igor.stoppa@huawei.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] checkpatch.pl: Improve WARNING on Kconfig help
+Message-ID: <20181219115914.GA24359@brain>
+References: <20181219083559.30985-1-igor.stoppa@huawei.com>
+ <af04860002d4b0f4607bd4ce6d767f5705430ace.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtAEi=EBmSUEcYmkfSZVkBviQaJaqZXvt-=XbsgZs5t_OA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af04860002d4b0f4607bd4ce6d767f5705430ace.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2018 08:32, Vincent Guittot wrote:
-[...]
-> This is another UC, asym packing is used at SMT level for now and we
-> don't face this kind of problem, it has been also tested and DynamiQ
-> configuration which is similar to SMT : 1 CPU per sched_group
-> The legacy b.L one was not the main target although it can be
+On Wed, Dec 19, 2018 at 02:44:36AM -0800, Joe Perches wrote:
+> On Wed, 2018-12-19 at 10:35 +0200, Igor Stoppa wrote:
+> > The checkpatch.pl script complains when the help section of a Kconfig
+> > entry is too short, but it doesn't really explain what it is looking
+> > for. Instead, it gives a generic warning that one should consider writing
+> > a paragraph.
+> > 
+> > But what it *really* checks is that the help section is at least
+> > .$min_conf_desc_length lines long.
+> > 
+> > Since the definition of what is a paragraph is not really carved in
+> > stone (and actually the primary descriptions is "5 sentences"), make the
+> > warning less ambiguous by expliciting the actual test condition, so that
+> > one doesn't have to read checkpatch.pl sources, to figure out the actual
+> > test.
+> []
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+> > @@ -2931,7 +2931,8 @@ sub process {
+> >  			}
+> >  			if ($is_start && $is_end && $length < $min_conf_desc_length) {
+> >  				WARN("CONFIG_DESCRIPTION",
+> > -				     "please write a paragraph that describes the config symbol fully\n" . $herecurr);
+> > +				     "please write a paragraph (" .$min_conf_desc_length . " lines)" .
 > 
-> The rounding error is there and should be fixed and your UC is another
-> case for legacy b.L that can be treated in another patch
-> 
+> could say "(at least $min_conf_desc_length lines)"
 
-I used that setup out of convenience for myself, but AFAICT that use-case
-just stresses that issue.
+The original is better description in the semantic sense.  We want them
+to describe it well.  We assume they haven't because it is short.  We
+don't want them to make it long, we want them to confirm it is fully
+described.
 
-In the end we still have an imbalance value that can vary with only
-slight group_capacity changes. And that's true even if that group
-contains a single CPU, as the imbalance value computed by
-check_asym_packing() can vary by +/-1 with very tiny capacity changes 
-(rt/IRQ pressure). That means that sometimes you're off by one and don't
-do the packing because some CPU was pressured, but some other time you
-might do it because that CPU was *more* pressured. It's doesn't make sense. 
+You arn't trying to make people make these warnings away, they should
+just be checking they have met the criteria in the warning.  If they
+have they can ignore the warning and be happy, they don't have to add
+two more lines.
 
+To cover both cases perhaps:
 
-In the end problem is that in update_sg_lb_stats() we do:
+	"please ensure that this config symbols is described fully (less than
+	 $min_conf_desc_length lines is quite brief)"
 
-	sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
-
-and in check_asym_packing() we do:
-
-	env->imbalance = DIV_ROUND_CLOSEST(
-		sds->busiest_stat.avg_load * sds->busiest_stat.group_capacity,
-		SCHED_CAPACITY_SCALE)
-
-So we end up with something like:
-
-		    group_load * SCHED_CAPACITY_SCALE * group_capacity
-	imbalance = --------------------------------------------------
-			    group_capacity * SCHED_CAPACITY_SCALE
-
-Which you'd hope to reduce down to:
-
-	imbalance = group_load
-
-but you get division errors all over the place. So actually, the fix we'd
-want would be:
-
------8<-----
-@@ -8463,9 +8463,7 @@ static int check_asym_packing(struct lb_env *env, struct sd_lb_stats *sds)
-        if (sched_asym_prefer(busiest_cpu, env->dst_cpu))
-                return 0;
- 
--       env->imbalance = DIV_ROUND_CLOSEST(
--               sds->busiest_stat.avg_load * sds->busiest_stat.group_capacity,
--               SCHED_CAPACITY_SCALE);
-+       env->imbalance = sds->busiest_stat.group_load;
- 
-        return 1;
- }
------>8-----
+-apw
