@@ -2,247 +2,211 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FA8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB2FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB48621852
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545202876;
-	bh=BV8vPJnnRA4qIS1gvvV4CT6LICCL/H5gA1DH1zCd5uk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UQqZZGXv3Txpo7v7ZIx9LLYtp2+Rvr7r0JCroSbxGJKLJ3v0Pmz/f8ayYiJRcDSYf
-	 HcI2DtVv6ESEbXKqJRlEz073nMsylhCP83OrSmnS8OX1bJPizrcPizpjaME19YIk+a
-	 qTgHXwb71192Pghj1WcW18wHjqrx/twkQ5QDp07E=
+	by mail.kernel.org (Postfix) with ESMTP id 47DA221841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:03:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeLSHBP (ORCPT
+        id S1728104AbeLSHDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:01:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50406 "EHLO mail.kernel.org"
+        Wed, 19 Dec 2018 02:03:36 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:3629 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726898AbeLSHBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:01:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76FD221841;
-        Wed, 19 Dec 2018 07:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545202872;
-        bh=BV8vPJnnRA4qIS1gvvV4CT6LICCL/H5gA1DH1zCd5uk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NYWWgCp7QE1uZD2zB0U5GVC41jQah38nxZO9Ubdd+H8H0XcLTQadSXUCmJrB+Herx
-         2SjEPG7j9vYccw+e9bqswE2Cb/xZxkG2zdoDKyJJGpZRP0rUos0EDSBfkg1sp0fOvi
-         PUuiALU+ed2twpCd/a3E5xVkcDxPSKjK5+5+aCsw=
-Date:   Wed, 19 Dec 2018 08:01:10 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] sysfs: Disable lockdep for driver bind/unbind files
-Message-ID: <20181219070110.GB21256@kroah.com>
-References: <20181218201443.4950-1-daniel.vetter@ffwll.ch>
+        id S1725294AbeLSHDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 02:03:35 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43KQpX6x2nz9v2Rx;
+        Wed, 19 Dec 2018 08:03:32 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ZLGtgowk6JAG; Wed, 19 Dec 2018 08:03:32 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43KQpX6M43z9v2Rw;
+        Wed, 19 Dec 2018 08:03:32 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BF4F88B85D;
+        Wed, 19 Dec 2018 08:03:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id gxj39CXns4St; Wed, 19 Dec 2018 08:03:33 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8B2D78B754;
+        Wed, 19 Dec 2018 08:03:33 +0100 (CET)
+Subject: Re: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
+ <87y38nrkto.fsf@concordia.ellerman.id.au>
+ <87a7l2s6p3.fsf@concordia.ellerman.id.au>
+ <f725ff38-4dd8-0657-6023-4b0b5b0d5f4e@c-s.fr>
+Message-ID: <5e18c60e-9572-5844-b17d-aa55e7ff4709@c-s.fr>
+Date:   Wed, 19 Dec 2018 07:03:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218201443.4950-1-daniel.vetter@ffwll.ch>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <f725ff38-4dd8-0657-6023-4b0b5b0d5f4e@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 09:14:43PM +0100, Daniel Vetter wrote:
-> This is the much more correct fix for my earlier attempt at:
-> 
-> https://lkml.org/lkml/2018/12/10/118
-> 
-> Short recap:
-> 
-> - There's not actually a locking issue, it's just lockdep being a bit
->   too eager to complain about a possible deadlock.
-> 
-> - Contrary to what I claimed the real problem is recursion on
->   kn->count. Greg pointed me at sysfs_break_active_protection(), used
->   by the scsi subsystem to allow a sysfs file to unbind itself. That
->   would be a real deadlock, which isn't what's happening here. Also,
->   breaking the active protection means we'd need to manually handle
->   all the lifetime fun.
-> 
-> - With Rafael we discussed the task_work approach, which kinda works,
->   but has two downsides: It's a functional change for a lockdep
->   annotation issue, and it won't work for the bind file (which needs
->   to get the errno from the driver load function back to userspace).
-> 
-> - Greg also asked why this never showed up: To hit this you need to
->   unregister a 2nd driver from the unload code of your first driver. I
->   guess only gpus do that. The bug has always been there, but only
->   with a recent patch series did we add more locks so that lockdep
->   built a chain from unbinding the snd-hda driver to the
->   acpi_video_unregister call.
-> 
-> Full lockdep splat:
-> 
-> [12301.898799] ============================================
-> [12301.898805] WARNING: possible recursive locking detected
-> [12301.898811] 4.20.0-rc7+ #84 Not tainted
-> [12301.898815] --------------------------------------------
-> [12301.898821] bash/5297 is trying to acquire lock:
-> [12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.898841] but task is already holding lock:
-> [12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> [12301.898856] other info that might help us debug this:
-> [12301.898862]  Possible unsafe locking scenario:
-> [12301.898867]        CPU0
-> [12301.898870]        ----
-> [12301.898874]   lock(kn->count#39);
-> [12301.898879]   lock(kn->count#39);
-> [12301.898883] *** DEADLOCK ***
-> [12301.898891]  May be due to missing lock nesting notation
-> [12301.898899] 5 locks held by bash/5297:
-> [12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-> [12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-> [12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> [12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-> [12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-> [12301.898960] stack backtrace:
-> [12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-> [12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-> [12301.898982] Call Trace:
-> [12301.898989]  dump_stack+0x67/0x9b
-> [12301.898997]  __lock_acquire+0x6ad/0x1410
-> [12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899010]  ? find_held_lock+0x2d/0x90
-> [12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-> [12301.899023]  ? find_held_lock+0x2d/0x90
-> [12301.899030]  ? lock_acquire+0x90/0x180
-> [12301.899036]  lock_acquire+0x90/0x180
-> [12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899049]  __kernfs_remove+0x296/0x310
-> [12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899060]  ? kernfs_name_hash+0xd/0x80
-> [12301.899066]  ? kernfs_find_ns+0x6c/0x100
-> [12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-> [12301.899080]  bus_remove_driver+0x92/0xa0
-> [12301.899085]  acpi_video_unregister+0x24/0x40
-> [12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-> [12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-> [12301.899169]  pci_device_remove+0x36/0xb0
-> [12301.899176]  device_release_driver_internal+0x185/0x240
-> [12301.899183]  unbind_store+0xaf/0x180
-> [12301.899189]  kernfs_fop_write+0x104/0x190
-> [12301.899195]  __vfs_write+0x31/0x180
-> [12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-> [12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-> [12301.899216]  ? __sb_start_write+0x13c/0x1a0
-> [12301.899221]  ? vfs_write+0x17f/0x1b0
-> [12301.899227]  vfs_write+0xb9/0x1b0
-> [12301.899233]  ksys_write+0x50/0xc0
-> [12301.899239]  do_syscall_64+0x4b/0x180
-> [12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [12301.899253] RIP: 0033:0x7f452ac7f7a4
-> [12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-> [12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> [12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-> [12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-> [12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-> [12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-> [12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
-> 
-> Locking around I've noticed that usb and i2c already handle similar
-> recursion problems, where a sysfs file can unbind the same type of
-> sysfs somewhere else in the hierarchy. Relevant commits are:
-> 
-> commit 356c05d58af05d582e634b54b40050c73609617b
-> Author: Alan Stern <stern@rowland.harvard.edu>
-> Date:   Mon May 14 13:30:03 2012 -0400
-> 
->     sysfs: get rid of some lockdep false positives
-> 
-> commit e9b526fe704812364bca07edd15eadeba163ebfb
-> Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-> Date:   Fri May 17 14:56:35 2013 +0200
-> 
->     i2c: suppress lockdep warning on delete_device
-> 
-> Implement the same trick for driver bind/unbind.
-> 
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Ramalingam C <ramalingam.c@intel.com>
-> Cc: Arend van Spriel <aspriel@gmail.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Joe Perches <joe@perches.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> ---
->  drivers/base/bus.c     | 4 ++--
->  include/linux/device.h | 4 ++++
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index 8bfd27ec73d6..5d2411b848cd 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -195,7 +195,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
->  	bus_put(bus);
->  	return err;
->  }
-> -static DRIVER_ATTR_WO(unbind);
-> +static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
->  
->  /*
->   * Manually attach a device to a driver.
-> @@ -231,7 +231,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
->  	bus_put(bus);
->  	return err;
->  }
-> -static DRIVER_ATTR_WO(bind);
-> +static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
->  
->  static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
->  {
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 1b25c7a43f4c..d2cb1a6c5d95 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -326,6 +326,10 @@ struct driver_attribute {
->  	struct driver_attribute driver_attr_##_name = __ATTR_RO(_name)
->  #define DRIVER_ATTR_WO(_name) \
->  	struct driver_attribute driver_attr_##_name = __ATTR_WO(_name)
-> +#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-> +	struct driver_attribute driver_attr_##_name =		\
-> +		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
-> +
 
-I don't want to give driver writers the ability to shoot themselves in
-the foot, can you just put this in the bus.c file itself so that no one
-else will abuse this and "open code" the unbind/bind attributes instead
-of using a #define for it?
 
-Also I've been trying to get rid of the "specify the mode" macros, so
-that everyone uses the RO, WO, and RW versions, so adding a generic one
-here is not going to help with that effort :)
+On 12/19/2018 06:57 AM, Christophe Leroy wrote:
+> 
+> 
+> Le 19/12/2018 à 01:26, Michael Ellerman a écrit :
+>> Michael Ellerman <mpe@ellerman.id.au> writes:
+>>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>>
+>>>> This patch implements CONFIG_DEBUG_VIRTUAL to warn about
+>>>> incorrect use of virt_to_phys() and page_to_phys()
+>>>
+>>> This commit is breaking my p5020ds booting a 32-bit kernel with:
+>>>
+>>>    smp: Bringing up secondary CPUs ...
+>>>    __ioremap(): phys addr 0x7fef5000 is RAM lr ioremap_coherent
+>>>    Unable to handle kernel paging request for data at address 0x00000000
+>>>    Faulting instruction address: 0xc002e950
+>>>    Oops: Kernel access of bad area, sig: 11 [#1]
+>>>    BE SMP NR_CPUS=24 CoreNet Generic
+>>>    Modules linked in:
+>>>    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 
+>>> 4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9 #148
+>>>    NIP:  c002e950 LR: c002eb20 CTR: 00000001
+>>>    REGS: e804bd20 TRAP: 0300   Not tainted  
+>>> (4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9)
+>>>    MSR:  00021002 <CE,ME>  CR: 28004222  XER: 00000000
+>>>    DEAR: 00000000 ESR: 00000000
+>>>    GPR00: c002eb20 e804bdd0 e8050000 00000000 00021002 00000000 
+>>> 00000050 00021002
+>>>    GPR08: 2d3f0000 00000001 00000000 00000004 24000842 00000000 
+>>> c00026d0 00000000
+>>>    GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 
+>>> 00000000 00000001
+>>>    GPR24: 00029002 7fef5140 30000000 00000000 00000000 00000040 
+>>> 00000001 00000000
+>>>    NIP [c002e950] smp_85xx_kick_cpu+0x120/0x410
+>>>    LR [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410
+>>>    Call Trace:
+>>>    [e804bdd0] [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410 (unreliable)
+>>>    [e804be20] [c0012e38] __cpu_up+0xc8/0x230
+>>>    [e804be50] [c0040b34] bringup_cpu+0x34/0x110
+>>>    [e804be70] [c00418a8] cpu_up+0x128/0x250
+>>>    [e804beb0] [c0b84b14] smp_init+0xc4/0x10c
+>>>    [e804bee0] [c0b75c1c] kernel_init_freeable+0xc8/0x250
+>>>    [e804bf20] [c00026e8] kernel_init+0x18/0x120
+>>>    [e804bf40] [c0011298] ret_from_kernel_thread+0x14/0x1c
+>>>    Instruction dump:
+>>>    7fb3e850 57bdd1be 2e1d0000 41d20250 57bd3032 393dffc0 7e6a9b78 
+>>> 5529d1be
+>>>    39290001 7d2903a6 60000000 60000000 <7c0050ac> 394a0040 4200fff8 
+>>> 7c0004ac
+>>>    ---[ end trace edcab2a1dfd5b38c ]---
+>>>
+>>>
+>>> Which is obviously this hunk:
+>>>
+>>>> diff --git a/arch/powerpc/mm/pgtable_32.c 
+>>>> b/arch/powerpc/mm/pgtable_32.c
+>>>> index 4fc77a99c9bf..68d204a45cd0 100644
+>>>> --- a/arch/powerpc/mm/pgtable_32.c
+>>>> +++ b/arch/powerpc/mm/pgtable_32.c
+>>>> @@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long 
+>>>> size, pgprot_t prot, void *call
+>>>>        * Don't allow anybody to remap normal RAM that we're using.
+>>>>        * mem_init() sets high_memory so only do the check after that.
+>>>>        */
+>>>> -    if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+>>>> +    if (slab_is_available() && virt_addr_valid(p) &&
+>>>>           page_is_ram(__phys_to_pfn(p))) {
+>>>>           printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+>>>>                  (unsigned long long)p, __builtin_return_address(0));
+>>>
+>>>
+>>> I'll try and come up with a fix tomorrow.
+>>
+>> Actually I think that change is just wrong. virt_addr_valid() takes a
+>> virtual address, but p is a physical address.
+>>
+>> So I'll drop this hunk for now, which makes the patch a no-op when
+>> DEBUG_VIRTUAL is n which is probably the way it should be.
+> 
+> The hunk is obviously wrong for sure. Anyway there's a problem, most 
+> likely high_memory is not a valid virtual address, so without this hunk 
+> I get the following warning at every ioremap():
+> 
+> [    0.000000] WARNING: CPU: 0 PID: 0 at 
+> ./arch/powerpc/include/asm/io.h:809 __ioremap_caller+0x9c/0x180
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 
+> 4.20.0-rc6-s3k-dev-00677-g9c98dcab6203-dirty #615
+> [    0.000000] NIP:  c000fcd0 LR: c000fc64 CTR: 00000000
+> [    0.000000] REGS: c073de50 TRAP: 0700   Not tainted 
+> (4.20.0-rc6-s3k-dev-00677-g9c98dcab6203-dirty)
+> [    0.000000] MSR:  00021032 <ME,IR,DR,RI>  CR: 28944422  XER: 0000f940
+> [    0.000000]
+> [    0.000000] GPR00: c000fe04 c073df00 c06e1450 00000001 00004023 
+> c073df38 c0018f50 00000001
+> [    0.000000] GPR08: 00002000 08000000 00002000 00000000 88944224 
+> 00600000 00000000 07ff9580
+> [    0.000000] GPR16: 00000000 07ffb94c 00000000 00000000 00000000 
+> 00000000 00000000 00000000
+> [    0.000000] GPR24: 00000000 c0760000 0000019f ff000000 ff000000 
+> c000fe04 00004000 c0018f50
+> [    0.000000] NIP [c000fcd0] __ioremap_caller+0x9c/0x180
+> [    0.000000] LR [c000fc64] __ioremap_caller+0x30/0x180
+> [    0.000000] Call Trace:
+> [    0.000000] [c073df00] [c02fc23c] of_address_to_resource+0x114/0x154 
+> (unreliable)
+> [    0.000000] [c073df30] [c000fe04] ioremap_wt+0x20/0x30
+> [    0.000000] [c073df40] [c0018f50] mpc8xx_pic_init+0x70/0xf8
+> [    0.000000] [c073df80] [c0655b84] mpc8xx_pics_init+0x10/0x6c
+> [    0.000000] [c073df90] [c0675080] cmpc885_pics_init+0x14/0x118
+> [    0.000000] [c073dfa0] [c0652eb0] init_IRQ+0x24/0x38
+> [    0.000000] [c073dfb0] [c0650b10] start_kernel+0x2a8/0x3d4
+> [    0.000000] [c073dff0] [c0002258] start_here+0x44/0x98
+> [    0.000000] Instruction dump:
+> [    0.000000] 419e00b8 7f83e378 480013fd 7c7d1b79 41820030 576304be 
+> 7c63ea14 80010034
+> [    0.000000] bb410018 7c0803a6 38210030 4e800020 <0fe00000> 7f9c4840 
+> 409cffc4 480000a8
+> [    0.000000] random: get_random_bytes called from 
+> print_oops_end_marker+0x60/0x84 with crng_init=0
+> [    0.000000] ---[ end trace 25d7f28ce013ad37 ]---
+> 
+> I'll try and come with solution during the day.
 
-thanks,
+In fact the solution is the following:
 
-greg k-h
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index 4fc77a99c9bf..60401af2bc8f 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long 
+size, pgprot_t prot, void *call
+  	 * Don't allow anybody to remap normal RAM that we're using.
+  	 * mem_init() sets high_memory so only do the check after that.
+  	 */
+-	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
++	if (slab_is_available() && (p <= virt_to_phys(high_memory - 1)) &&
+  	    page_is_ram(__phys_to_pfn(p))) {
+  		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+  		       (unsigned long long)p, __builtin_return_address(0));
+
+
+I'll send an updated patch in a few minutes.
+
+Christophe
