@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9805C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FE2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7421E20811
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A622620811
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:42:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ixy2UxbN"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="OPcNfBrb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729987AbeLSXm2 (ORCPT
+        id S1730039AbeLSXmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 18:42:28 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19000 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729876AbeLSXmY (ORCPT
+        Wed, 19 Dec 2018 18:42:32 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16961 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729903AbeLSXm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 18:42:24 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1ad7550000>; Wed, 19 Dec 2018 15:42:13 -0800
+        Wed, 19 Dec 2018 18:42:26 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1ad75a0001>; Wed, 19 Dec 2018 15:42:18 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 19 Dec 2018 15:42:23 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 19 Dec 2018 15:42:24 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 19 Dec 2018 15:42:23 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 19 Dec
- 2018 23:42:23 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 19 Dec 2018 23:42:22 +0000
+        by hqpgpgate102.nvidia.com on Wed, 19 Dec 2018 15:42:24 -0800
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 19 Dec
+ 2018 23:42:24 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 19 Dec 2018 23:42:24 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c1ad75e0000>; Wed, 19 Dec 2018 15:42:22 -0800
+        id <B5c1ad75f0001>; Wed, 19 Dec 2018 15:42:23 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
@@ -46,9 +46,9 @@ To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
 CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
         Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 3/4] arm64: dtsi: Fix SDMMC address range
-Date:   Wed, 19 Dec 2018 15:42:17 -0800
-Message-ID: <1545262938-20636-4-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V4 4/4] mmc: tegra: HW Command Queue Support for Tegra SDMMC
+Date:   Wed, 19 Dec 2018 15:42:18 -0800
+Message-ID: <1545262938-20636-5-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545262938-20636-1-git-send-email-skomatineni@nvidia.com>
 References: <1545262938-20636-1-git-send-email-skomatineni@nvidia.com>
@@ -56,89 +56,222 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545262934; bh=CFBtF6ZaKNyqKgjWa+hPoclDVuRehYmyqcZmFtTTkGs=;
+        t=1545262938; bh=rdzKwP0znz9QhYZJ4Qfm84qBauXZfx6F85gB1ZA90aU=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=Ixy2UxbNdZXRhr1k0H9dvUimx8QjMfNRkERGA9c56fK7bP1rKzb0KVhlUCHv2eZs4
-         1nSzMcldLKVqxIloyuGVLRlB0vA3oULObicrVmYVmDKfxDoZ8P8KxIXprxLgOeJri1
-         jGTb1xCefnyYY3kilF6qOzJdwlSqXZOTr+sG0pFIM0pMi4dwx/YkXSN+AAyx0J9goI
-         576TsH/s94gp+yQt9yWJSGDbyxM9yQSFT+uWNuQ5AjwojjTRXcIeWjX5FVCOiLcwDu
-         F9Nw7FJjSJWv3AfLLDcU6034cucUEQCwVmX3h9yWhrX13dBANSKZk3YmYK38Jf8he4
-         3VFtJgiqjRhkA==
+        b=OPcNfBrbqj+REO9vgP5SSZaKo4CAuGcN4pgiA7M3PBXgRjXBONVCaHl9lu6qqlmXS
+         6FavV/aUp0F0JQnXgF6aSHUM+8tlBAHg64j5YOtGNCqRGIepYzhoZteC6jUBpVwDaO
+         YnpaLPsQ3dfbudZQEsJDD62tFL8XV66MOj1FIgjkjs3lSy3v79A4Z+f6h3zpfQbpWb
+         NjggglMMxq9TY3en/Isomg80yL3sLrmNqcpSnOfcabZ3ekXpCbmr+mYcYfFCVrmF8L
+         lbEJ65+FYU/xP1bxTicSl79WvNVK7ZVIXEIqJ8FunbP4cS9vhhysnpFq4bk5kpeLux
+         C42+vYW+h3emQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the SDMMC Controllers address space to be exact
-defined register address range as per the design.
+This patch adds HW Command Queue for supported Tegra SDMMC
+controllers.
 
-SDMMC Controller supporting Command Queue has CQHCI registers at
-offset 0xF000.
+Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
+use of 64_BIT DMA to disable 64-bit addressing mode access to the
+system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
+for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
 
-This fix helps to identify the Tegra SDMMC Controllers supporting
-Command Queue based on the size of address space.
+CQE need to use ADMA3 as it need to fetch task descriptor along
+with transfer descriptor, so this patch forces DMA Select to be
+ADMA3 for CQE.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 6 +++---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/mmc/host/Kconfig       |  1 +
+ drivers/mmc/host/sdhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/sdhci.c       |  3 +-
+ 3 files changed, 91 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-index 2f3c8e29520d..6fda3d6a7f3d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -231,7 +231,7 @@
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 1b58739d9744..5aa2de2c7609 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
+ 	depends on ARCH_TEGRA
+ 	depends on MMC_SDHCI_PLTFM
+ 	select MMC_SDHCI_IO_ACCESSORS
++	select MMC_CQHCI
+ 	help
+ 	  This selects the Tegra SD/MMC controller. If you have a Tegra
+ 	  platform with SD or MMC devices, say Y or M here.
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 7b95d088fdef..ba8bd72ec59a 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -33,6 +33,7 @@
+ #include <linux/ktime.h>
  
- 	sdmmc1: sdhci@3400000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03400000 0x0 0x10000>;
-+		reg = <0x0 0x03400000 0x0 0x220>;
- 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
- 		clock-names = "sdhci";
-@@ -256,7 +256,7 @@
+ #include "sdhci-pltfm.h"
++#include "cqhci.h"
  
- 	sdmmc2: sdhci@3420000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03420000 0x0 0x10000>;
-+		reg = <0x0 0x03420000 0x0 0x220>;
- 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
- 		clock-names = "sdhci";
-@@ -276,7 +276,7 @@
+ /* Tegra SDHOST controller vendor register definitions */
+ #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
+@@ -89,6 +90,10 @@
+ #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
+ #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
  
- 	sdmmc3: sdhci@3440000 {
- 		compatible = "nvidia,tegra186-sdhci";
--		reg = <0x0 0x03440000 0x0 0x10000>;
-+		reg = <0x0 0x03440000 0x0 0x220>;
- 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
- 		clock-names = "sdhci";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..6510ef6492b1 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -295,7 +295,7 @@
++/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
++#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
++
++
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
+ 	u32 nvquirks;
+@@ -128,6 +133,7 @@ struct sdhci_tegra {
+ 	u32 default_tap;
+ 	u32 default_trim;
+ 	u32 dqs_trim;
++	bool enable_hwcq;
+ };
  
- 		sdmmc1: sdhci@3400000 {
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
--			reg = <0x03400000 0x10000>;
-+			reg = <0x03400000 0x220>;
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
- 			clock-names = "sdhci";
-@@ -306,7 +306,7 @@
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+@@ -836,6 +842,30 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+ 		tegra_host->pad_calib_required = true;
+ }
  
- 		sdmmc3: sdhci@3440000 {
- 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
--			reg = <0x03440000 0x10000>;
-+			reg = <0x03440000 0x220>;
- 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
- 			clock-names = "sdhci";
++static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
++{
++	sdhci_dumpregs(mmc_priv(mmc));
++}
++
++static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
++{
++	int cmd_error = 0;
++	int data_error = 0;
++
++	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
++		return intmask;
++
++	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
++
++	return 0;
++}
++
++static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
++	.enable	= sdhci_cqe_enable,
++	.disable = sdhci_cqe_disable,
++	.dumpregs = sdhci_tegra_dumpregs,
++};
++
+ static const struct sdhci_ops tegra_sdhci_ops = {
+ 	.get_ro     = tegra_sdhci_get_ro,
+ 	.read_w     = tegra_sdhci_readw,
+@@ -989,6 +1019,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+ 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+ 	.voltage_switch = tegra_sdhci_voltage_switch,
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
++	.irq = sdhci_tegra_cqhci_irq,
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+@@ -1030,6 +1061,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
+ 
++static int sdhci_tegra_add_host(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
++	struct cqhci_host *cq_host;
++	bool dma64;
++	int ret;
++
++	if (!tegra_host->enable_hwcq)
++		return sdhci_add_host(host);
++
++	host->v4_mode = true;
++
++	ret = sdhci_setup_host(host);
++	if (ret)
++		return ret;
++
++	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
++
++	cq_host = devm_kzalloc(host->mmc->parent,
++				sizeof(*cq_host), GFP_KERNEL);
++	if (!cq_host) {
++		ret = -ENOMEM;
++		goto cleanup;
++	}
++
++	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
++	cq_host->ops = &sdhci_tegra_cqhci_ops;
++
++	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
++	if (dma64)
++		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
++
++	ret = cqhci_init(cq_host, host->mmc, dma64);
++	if (ret)
++		goto cleanup;
++
++	ret = __sdhci_add_host(host);
++	if (ret)
++		goto cleanup;
++
++	return 0;
++
++cleanup:
++	sdhci_cleanup_host(host);
++	return ret;
++
++}
++
+ static int sdhci_tegra_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
+@@ -1039,6 +1119,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	struct sdhci_tegra *tegra_host;
+ 	struct clk *clk;
+ 	int rc;
++	struct resource *iomem;
+ 
+ 	match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
+ 	if (!match)
+@@ -1056,6 +1137,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	tegra_host->pad_control_available = false;
+ 	tegra_host->soc_data = soc_data;
+ 
++	iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
++		tegra_host->enable_hwcq = true;
++	else
++		tegra_host->enable_hwcq = false;
++
+ 	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+ 		rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+ 		if (rc == 0)
+@@ -1117,7 +1204,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 
+ 	usleep_range(2000, 4000);
+ 
+-	rc = sdhci_add_host(host);
++	rc = sdhci_tegra_add_host(host);
+ 	if (rc)
+ 		goto err_add_host;
+ 
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index fde984d10619..ce3acbd35639 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3308,7 +3308,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+ 
+ 	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+ 	ctrl &= ~SDHCI_CTRL_DMA_MASK;
+-	if (host->flags & SDHCI_USE_64_BIT_DMA)
++	if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
++			(host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
+ 		ctrl |= SDHCI_CTRL_ADMA64;
+ 	else
+ 		ctrl |= SDHCI_CTRL_ADMA32;
 -- 
 2.7.4
 
