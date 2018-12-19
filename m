@@ -2,54 +2,59 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC1DC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D96C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14EC2218D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:16:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545243417;
-	bh=72fdjbNpxrOgaid6/wodsdGUd2NO2XEPMocUEpv/mR8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=bW6TkKbTMpHJ00DTnD8CHq85Qvhkyy7dTMQotLGkTryGEdozERUCQRogRxtRXOe31
-	 s207xNP1wxwsdSj/3AAaYyOwKZNQVHXc9Nz7SXGXeu7Re4tfZyEqH/9adWK5QWxXbW
-	 BPkMiR6UYvw9TFl8u7BhMPX/zTY69W3MJG2pQR1U=
+	by mail.kernel.org (Postfix) with ESMTP id C302B217D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:17:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbeLSSQ4 (ORCPT
+        id S1728992AbeLSSR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:16:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbeLSSQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:16:56 -0500
-Received: from ziggy.de (unknown [37.223.145.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0345217D9;
-        Wed, 19 Dec 2018 18:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545243415;
-        bh=72fdjbNpxrOgaid6/wodsdGUd2NO2XEPMocUEpv/mR8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sGWRAJ2SndK7M/Ziwv0aivWhCtYKU3w3GNUo2Y2tJDkwbknoc0GVfB1MTLl8wB1Ev
-         Y2u6zmf7AfzPJuuk+LYiiKnsmYE/52YASLeeVZX6xLnNeiMAbRu2F+1o0Bo7rNSrJA
-         zYrr2wBnAqN0591OM6b9aB9IMwSdCIGotA3+C0/4=
-From:   matthias.bgg@kernel.org
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
-Cc:     matthias.bgg@gmail.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: Mark bus and DRAM related clocks as critical
-Date:   Wed, 19 Dec 2018 19:16:50 +0100
-Message-Id: <20181219181650.27105-1-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.19.2
+        Wed, 19 Dec 2018 13:17:57 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37898 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbeLSSR4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:17:56 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g189so9792943pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 10:17:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gFiQ6Cd6LqoiqWhSF4c+voiZBdlsxof1yD663f/ytmQ=;
+        b=cRjrrE7By9hS19P8lvRgJHI2Liw4jUrcxpwS7Gqz10GarPz/MIkznVbTlzcnB6gd/S
+         KurKvamYluTv2iXv/rkoK8O5+P2rPPbeRTpnOqNMIoO5tklKYb13/RHvTIJsM6LSu6Qu
+         ojmDzGB5bauq49OusxwkbfBT3vEIXqU6lPYrRj6XDhDQj2aZdNkqdhRdBJyxVlp50B7j
+         7uhcijl4Mw/VEgwSOM5O+qIU7Pkt1VmbGogmgJB6hjk2wA0pu1uU7J99cy6EaijRgzFp
+         hGu+JeOaFv9XhVgwPzclI9DC3vY3wvm+YesrDlhYBRC92u6w/ju0+3oE8Y23Vs+hLGnc
+         wFyw==
+X-Gm-Message-State: AA+aEWZk5SkEKpTnZ4MySj2J/ouWizE6zylsu3Pjad4BDy2OpWcCkKjS
+        Mt49O8N4ZAvwopIl09UhWKkv6g==
+X-Google-Smtp-Source: AFSGD/WXpgZbCVYFedKXsxFmZo/RXOyurWa4gErZwMludblmlHdc0MUy8yTkvCKZkyOZ7TsQokFjUw==
+X-Received: by 2002:a62:130c:: with SMTP id b12mr21543798pfj.247.1545243474412;
+        Wed, 19 Dec 2018 10:17:54 -0800 (PST)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id x186sm28487121pfb.59.2018.12.19.10.17.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 10:17:53 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mukesh Kumar Savaliya <msavaliy@codeaurora.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] tty: serial: qcom_geni_serial: Fix wrap around of TX buffer
+Date:   Wed, 19 Dec 2018 10:17:47 -0800
+Message-Id: <20181219181747.118278-1-mka@chromium.org>
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,123 +62,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jasper Mattsson <jasu@njomotys.info>
+Before commit a1fee899e5bed ("tty: serial: qcom_geni_serial: Fix
+softlock") the size of TX transfers was limited to the TX FIFO size,
+and wrap arounds of the UART circular buffer were split into two
+transfers. With the commit wrap around are allowed within a transfer.
+The TX FIFO of the geni serial port uses a word size of 4 bytes. In
+case of a circular buffer wrap within a transfer the driver currently
+may write an incomplete word to the FIFO, with some bytes containing
+data from the circular buffer and others being zero. Since the
+transfer isn't completed yet the zero bytes are sent as if they were
+actual data.
 
-Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
-for MT6797. This causes memory corruption when the system is
-booted without clk_ignore_unused.
-This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
-and infra_dramc_b_f26m as CLK_IS_CRITICAL.
+Handle wrap arounds of the TX buffer properly and ensure that words
+written to the TX FIFO always contain valid data (unless the transfer
+is completed).
 
-Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+Fixes: a1fee899e5bed ("tty: serial: qcom_geni_serial: Fix softlock")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
-changes since v2 [1]:
-- first two patches of series are in clk-next, drop them
-- axi_sel is not needed, drop CLK_IS_CRITICAL for it.
-- update commit message
+ drivers/tty/serial/qcom_geni_serial.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-[1] https://patchwork.kernel.org/patch/10686759/ 
-
- drivers/clk/mediatek/clk-mt6797.c | 60 ++++++++++++++++++-------------
- 1 file changed, 35 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
-index 5702bc974ed9..a6e5408e0388 100644
---- a/drivers/clk/mediatek/clk-mt6797.c
-+++ b/drivers/clk/mediatek/clk-mt6797.c
-@@ -331,8 +331,8 @@ static const struct mtk_composite top_muxes[] = {
- 	    ulposc_axi_ck_mux_parents, 0x0040, 2, 1),
- 	MUX(CLK_TOP_MUX_AXI, "axi_sel", axi_parents,
- 	    0x0040, 0, 2),
--	MUX(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
--	    0x0040, 16, 2),
-+	MUX_FLAGS(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
-+		  0x0040, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
- 	MUX(CLK_TOP_MUX_MM, "mm_sel", mm_parents,
- 	    0x0040, 24, 2),
- 	MUX_GATE(CLK_TOP_MUX_PWM, "pwm_sel", pwm_parents, 0x0050, 0, 3, 7),
-@@ -424,31 +424,39 @@ static const struct mtk_gate_regs infra2_cg_regs = {
- 	.sta_ofs = 0x00b0,
- };
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index cf7a95e339ad9..2ee2d3286a6b4 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -744,7 +744,7 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	avail *= port->tx_bytes_pw;
  
--#define GATE_ICG0(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra0_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG0(_id, _name, _parent, _shift) {		\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra0_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
- }
+ 	tail = xmit->tail;
+-	chunk = min3(avail, pending, (size_t)(UART_XMIT_SIZE - tail));
++	chunk = min(avail, pending);
+ 	if (!chunk)
+ 		goto out_write_wakeup;
  
--#define GATE_ICG1(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra1_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG1(_id, _name, _parent, _shift)			\
-+	GATE_ICG1_FLAGS(_id, _name, _parent, _shift, 0)
+@@ -766,19 +766,21 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 
+ 		memset(buf, 0, ARRAY_SIZE(buf));
+ 		tx_bytes = min_t(size_t, remaining, port->tx_bytes_pw);
+-		for (c = 0; c < tx_bytes ; c++)
+-			buf[c] = xmit->buf[tail + c];
 +
-+#define GATE_ICG1_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra1_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
-+	.flags = _flags,					\
- }
++		for (c = 0; c < tx_bytes ; c++) {
++			buf[c] = xmit->buf[tail++];
++			tail &= UART_XMIT_SIZE - 1;
++		}
  
--#define GATE_ICG2(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra2_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG2(_id, _name, _parent, _shift)			\
-+	GATE_ICG2_FLAGS(_id, _name, _parent, _shift, 0)
-+
-+#define GATE_ICG2_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra2_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
-+	.flags = _flags,					\
- }
+ 		iowrite32_rep(uport->membase + SE_GENI_TX_FIFOn, buf, 1);
  
- static const struct mtk_gate infra_clks[] = {
-@@ -505,7 +513,8 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG1(CLK_INFRA_CCIF_AP, "infra_ccif_ap", "axi_sel", 23),
- 	GATE_ICG1(CLK_INFRA_AUDIO, "infra_audio", "axi_sel", 25),
- 	GATE_ICG1(CLK_INFRA_CCIF_MD, "infra_ccif_md", "axi_sel", 26),
--	GATE_ICG1(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m", "clk26m", 31),
-+	GATE_ICG1_FLAGS(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m",
-+			"clk26m", 31, CLK_IS_CRITICAL),
- 	GATE_ICG2(CLK_INFRA_I2C4, "infra_i2c4", "axi_sel", 0),
- 	GATE_ICG2(CLK_INFRA_I2C_APPM, "infra_i2c_appm", "axi_sel", 1),
- 	GATE_ICG2(CLK_INFRA_I2C_GPUPM, "infra_i2c_gpupm", "axi_sel", 2),
-@@ -516,7 +525,8 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG2(CLK_INFRA_I2C5, "infra_i2c5", "axi_sel", 7),
- 	GATE_ICG2(CLK_INFRA_SYS_CIRQ, "infra_sys_cirq", "axi_sel", 8),
- 	GATE_ICG2(CLK_INFRA_SPI1, "infra_spi1", "spi_sel", 10),
--	GATE_ICG2(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m", "clk26m", 11),
-+	GATE_ICG2_FLAGS(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m",
-+			"clk26m", 11, CLK_IS_CRITICAL),
- 	GATE_ICG2(CLK_INFRA_ANC_MD32, "infra_anc_md32", "anc_md32_sel", 12),
- 	GATE_ICG2(CLK_INFRA_ANC_MD32_32K, "infra_anc_md32_32k", "clk26m", 13),
- 	GATE_ICG2(CLK_INFRA_DVFS_SPM1, "infra_dvfs_spm1", "axi_sel", 15),
+ 		i += tx_bytes;
+-		tail += tx_bytes;
+ 		uport->icount.tx += tx_bytes;
+ 		remaining -= tx_bytes;
+ 		port->tx_remaining -= tx_bytes;
+ 	}
+ 
+-	xmit->tail = tail & (UART_XMIT_SIZE - 1);
++	xmit->tail = tail;
+ 
+ 	/*
+ 	 * The tx fifo watermark is level triggered and latched. Though we had
 -- 
-2.19.2
+2.20.0.405.gbc1bbc6f85-goog
 
