@@ -2,110 +2,126 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC941C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DB5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A79D72086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BDE62086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:41:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O1s/sSwY";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oM2HA0dI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbeLSPlE (ORCPT
+        id S1730363AbeLSPl2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:41:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37265 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728135AbeLSPlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:41:04 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4BE3920AB9; Wed, 19 Dec 2018 16:41:01 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 975F4206A7;
-        Wed, 19 Dec 2018 16:40:39 +0100 (CET)
-Date:   Wed, 19 Dec 2018 16:40:40 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     sakari.ailus@iki.fi
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v3 03/10] phy: Add MIPI D-PHY configuration options
-Message-ID: <20181219154040.k424xkzz3xap6462@flea>
-References: <cover.ad7c4feb3905658f10b022df4756a5ade280011f.1544190837.git-series.maxime.ripard@bootlin.com>
- <96a74b72be8db491dea720fdd7394bcd09880c84.1544190837.git-series.maxime.ripard@bootlin.com>
- <20181213204928.34hwq63nj5ircvkf@valkosipuli.retiisi.org.uk>
- <20181217154921.c4ttksa6bg2yxxjp@flea>
- <20181217202039.zhsxozdw7dlc3xdj@valkosipuli.retiisi.org.uk>
+        Wed, 19 Dec 2018 10:41:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60496 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728135AbeLSPl1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:41:27 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8E2A861CB7; Wed, 19 Dec 2018 15:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545234086;
+        bh=34JLDKlwAfL9TmveL8qHUUFHdqwJMXCqWotrQNTQi30=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=O1s/sSwYpvGvszZGyPPPWCpbXOg/wC/hpqsljfcAopHbVVWEL6nMZpY8JdFFUoFpt
+         0pB/m5cn4IJ4cT+wHlA8ARnoAMe7Wy9t4pko67ljazB21wdQi4VoNO7l+0gGlXJWN5
+         xbs7MNkCKwHPe8udI4I2t9ceWAju3MSHlZIoIcUQ=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id A1AC861B87;
+        Wed, 19 Dec 2018 15:41:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545234085;
+        bh=34JLDKlwAfL9TmveL8qHUUFHdqwJMXCqWotrQNTQi30=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oM2HA0dIBL46C3Ry+E5hVcPR0S2LOphpYymaIGZ5w/fzeyco+Jhsh8K7a8CPWRSpq
+         C81c50aFO/Uy7zcavQXfXmgfcaCbRcxq1OFBOtCuyIY8mcGjhrUn7VDjJHwpu5hfVz
+         NlzN5+MBaDAExNh8Afo6bigSO0L2JH1wmBnWtHi4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5iqyg7jbpm2uyidw"
-Content-Disposition: inline
-In-Reply-To: <20181217202039.zhsxozdw7dlc3xdj@valkosipuli.retiisi.org.uk>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 19 Dec 2018 21:11:25 +0530
+From:   Govind Singh <govinds@codeaurora.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     briannorris@chromium.org, andy.gross@linaro.org,
+        ath10k@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-wireless@vger.kernel.org, robh+dt@kernel.org,
+        sboyd@kernel.org, dianders@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] Enable ath10k wcn3990 wifi driver support on
+ sdm845
+In-Reply-To: <874lcg55at.fsf@codeaurora.org>
+References: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
+ <87d0r55ews.fsf@codeaurora.org>
+ <6e831363962be4e28d7551e360ed4d46@codeaurora.org>
+ <874lcg55at.fsf@codeaurora.org>
+Message-ID: <9f8bbfaa232c02bb33594207fa1f8821@codeaurora.org>
+X-Sender: govinds@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Kalle,
 
---5iqyg7jbpm2uyidw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018-11-17 16:39, Kalle Valo wrote:
+> Govind Singh <govinds@codeaurora.org> writes:
+> 
+>> On 2018-11-16 18:59, Kalle Valo wrote:
+>>> Govind Singh <govinds@codeaurora.org> writes:
+>>> 
+>>>> This series enables ath10k wifi driver support for WCN3990 target
+>>>> on sdm845 SOC. This series also updates the missing dt binding
+>>>> documentation
+>>>> and adds optional iommu property.
+>>>> 
+>>>> Changes since v3:
+>>>>     Moved interrupt/reg/reg-name to required property.
+>>>>     Removed unused clocks.
+>>>>     Corrected interrupt no's.
+>>>> 
+>>>> Changes since v2:
+>>>>     dropped [v2,4/4] dts: arm64/sdm845: Enable iommu for WCN3990
+>>>> wifi module
+>>>>     device node patch from the series as dependent patch is not yet
+>>>> merged.
+>>>>     Enabled status flag from sdm845-mtp.dts.
+>>>> 
+>>>> Changes since v1:
+>>>>     Listed no of interrupts/clocks for each set of compatible.
+>>>>     Added missing 'wifi' label to sdm845.dtsi.
+>>>> 
+>>>> Govind Singh (3):
+>>>>   dt: bindings: add missing dt properties for WCN3990 wifi node
+>>>>   dts: arm64/sdm845: Add WCN3990 WLAN module device node
+>>>>   dt: bindings: add bindings for wifi iommu node
+>>>> 
+>>>>  .../bindings/net/wireless/qcom,ath10k.txt          | 62
+>>>> ++++++++++++++--------
+>>>>  arch/arm64/boot/dts/qcom/sdm845-mtp.dts            |  8 +++
+>>>>  arch/arm64/boot/dts/qcom/sdm845.dtsi               | 26 +++++++++
+>>>>  3 files changed, 74 insertions(+), 22 deletions(-)
+>>> 
+>>> Via which tree are these patches going? That's not clear for me.
+>> 
+>> I guess sdm845 dtsi change should be going to
+>> git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git.
+>> I need to send v5 to address one comment from Brian.
+> 
+> Ok, I'll then drop these from my queue.
 
-On Mon, Dec 17, 2018 at 10:20:39PM +0200, sakari.ailus@iki.fi wrote:
-> Hi Maxime,
->=20
-> On Mon, Dec 17, 2018 at 04:49:21PM +0100, Maxime Ripard wrote:
-> > Hi Sakari,
-> >=20
-> > Thanks for your feedback.
-> >=20
-> > On Thu, Dec 13, 2018 at 10:49:28PM +0200, sakari.ailus@iki.fi wrote:
-> > > > +	/**
-> > > > +	 * @lanes:
-> > > > +	 *
-> > > > +	 * Number of active data lanes used for the transmissions.
-> > >=20
-> > > Could you add that these are the first "lanes" number of lanes from w=
-hat
-> > > are available?
-> >=20
-> > I'm not quite sure I understood this part though, what did you mean?
->=20
-> A number of lanes are routed between the two devices on hardware, and this
-> field is specifying how many of them are in use. In order for the bus to
-> function, both ends need to be in agreement on which of these lanes are
-> actually being used. The current practice I've seen without exceptions is
-> that these are the first n lanes.
+Can you pls apply below changes to ath10k tree, i will send sdm845 dtsi 
+change as separate patch after rebase.
+>>>>   dt: bindings: add missing dt properties for WCN3990 wifi node
+>>>>   dt: bindings: add bindings for wifi iommu node
 
-Ah, right, I get it now, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---5iqyg7jbpm2uyidw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXBpmeAAKCRDj7w1vZxhR
-xTnFAQCP+5QVwIA2UFCKHNRgxL3GIau3a9c+AWOb3EwOgHtSKQEA9BNznxa/TFI6
-EtTZ9A7KaebGQBSMkfkKIaBrEGGaqQQ=
-=PQh1
------END PGP SIGNATURE-----
-
---5iqyg7jbpm2uyidw--
+BR,
+Govind
