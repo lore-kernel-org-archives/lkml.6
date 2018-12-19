@@ -2,91 +2,161 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41977C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B33C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E7A218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36F6021850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9kesu9f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbeLSJjS (ORCPT
+        id S1728615AbeLSJjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:39:18 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45838 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeLSJjR (ORCPT
+        Wed, 19 Dec 2018 04:39:37 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36802 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728581AbeLSJjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:39:17 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x28so4210632vsh.12;
-        Wed, 19 Dec 2018 01:39:17 -0800 (PST)
+        Wed, 19 Dec 2018 04:39:36 -0500
+Received: by mail-qk1-f195.google.com with SMTP id o125so11269318qkf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:39:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=alqENIH4zrVWxQU5khICTpLHqUBK3x9KlcUHJQs2nLA=;
+        b=L9kesu9fyShDoukHXOZd5lkFVjVrI33/14q05zlrZybDCq1FD3HIjJqoMZuIyGUFxK
+         /k7zPuBgEH1CYUjCuRU9Aqe1TU1oW2uULIC8w0hII/lRyx4dNTllo67914Lx9JGaCVEH
+         Ebu5rDnANaxcipdsY8y5x1fKTpzXsuyyemNFI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TuCpSMpWIEaYjQlh0UJtISg8gGP4dUwfsuw6wy6uFmw=;
-        b=JvypdjZQAfQRU/xxr15TP2QQRuk7Oh5dnGonuaK38P3h+XmCuywzqW2pn8UCduS05t
-         IGtP6ojoh0K2WeLA6HqfizoRiAXhAchjpw1FSgTp2+FysatO+ZA7obwz+q6CLR3ELmuN
-         HUp+65wFgVuGATauLjhuAP7TPRJh24piGbn1vxNJX93KDabo/bGtjjd8/xQPVP/kI1JL
-         l0RVENOh/EfdlezGcco0Lbtm9M+WE64Bf1lxYqUSF+MHstol5LgIGHX5g3eHIi2oknSl
-         rcflm0jgQkvgZnx7+c7sOvkvFgGb71pSdAJrdUOpn/dJIeBM7JyY17i7gNdHOexvdw9J
-         GLBA==
-X-Gm-Message-State: AA+aEWbl3c18DTJDxShvfc8Sh6KhVFF/cd7FDl8juJ5hM+zhWepHk2p9
-        CAlcsPVu/O0IaC3GPbR6yCKS3RkT97EyebElgnM=
-X-Google-Smtp-Source: AFSGD/XijFguxsVpS8nAuQ/qBpS26KM2u/bsI7OaRhAOaAO3LpAu/iQ3iPUGkeFRZ8K+nBru+5U/MrJaNIDf8FE7tOs=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr9058755vsj.11.1545212356638;
- Wed, 19 Dec 2018 01:39:16 -0800 (PST)
+        bh=alqENIH4zrVWxQU5khICTpLHqUBK3x9KlcUHJQs2nLA=;
+        b=o96jlozIg1ppgh04gNwalcIlew/9Y+siLKd03nN7haZ5qqirYiI+yahqxG0JiQftxA
+         VHaX3WXIZM/KNRfwxTwEE4mtJ2x2leIpKkKOgUoxCaPNDG+wIJj/YVyefQvy+YxIbMnh
+         lruZz/e77IzL3i2n4WG7Lxcm3vWre0CUBVsrqx5uk8/AiZGy9nqokVoCDDwo+qf60ojt
+         S7G7FwQ7VM0nhu2fZcnbrSrK86LwU4KEjiqPXybHbCK5CFJGQvSsKdccauS7+IOGrGpH
+         Ye6DxB5Y24Rjft6p+pDw/o8/89X5i/nao9Apy6rYzJf9CjobTRFh1dLXy0aDsaiwjuxI
+         o/aA==
+X-Gm-Message-State: AA+aEWa8fAT0/BXpFB58T0lQ6i4CbY3eAJGnVPVXAKvi9C9dxPdv8CnG
+        UVRjeicRh2GUSoH44G/Xr5s9ZtW9Oaj4NBQAYefmRw==
+X-Google-Smtp-Source: AFSGD/UE7lyw07Y2CgiT8R+PaWW1eSHvcVdEBFQe/UDaXYLnPssnAoV1MMzYf90yEhoLyLqp5ZnhHn4AVwmBwGfrsXg=
+X-Received: by 2002:a37:d947:: with SMTP id u68mr19260287qki.296.1545212374169;
+ Wed, 19 Dec 2018 01:39:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
- <20181210210310.12677-2-wsa+renesas@sang-engineering.com> <a4fdd7f1-be79-48fd-0d13-410276962384@axentia.se>
- <20181218233354.pie5i3lvrrhq5q2c@ninjato>
-In-Reply-To: <20181218233354.pie5i3lvrrhq5q2c@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 19 Dec 2018 10:39:05 +0100
-Message-ID: <CAMuHMdWH-bh=cfZhxrD6MYfqFUYroai5WbyYZ6+H4MQeubN=PA@mail.gmail.com>
-Subject: Re: [RFC/RFT 01/10] i2c: add 'is_suspended' flag for i2c adapters
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Peter Rosin <peda@axentia.se>, Hans de Goede <hdegoede@redhat.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
+References: <cover.1545126964.git.amit.kucheria@linaro.org>
+ <d153a86748f99526e7790bfc4ef8781a2016fd51.1545126964.git.amit.kucheria@linaro.org>
+ <8f03c13235ff5ad6f0ad6af59d4d7db501fb8c96.camel@perches.com>
+In-Reply-To: <8f03c13235ff5ad6f0ad6af59d4d7db501fb8c96.camel@perches.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Wed, 19 Dec 2018 15:09:22 +0530
+Message-ID: <CAP245DX_NX-78OvGft2NJnmhhzfN_3jSjCi2vMeo0t6MMcS4vA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] MAINTAINERS: update list of qcom drivers
+To:     joe@perches.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>, marc.w.gonzalez@free.fr,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kalle Valo <kvalo@adurom.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
-
-On Wed, Dec 19, 2018 at 12:34 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > > +   unsigned int is_suspended:1;    /* owned by the I2C core */
-> >
-> > When more stuff is added to this bit field (which always happens at
-> > some point) updates to all members of the bit field will have to use
-> > the same root-adapter-locking, or we will suffer from RMW-races. So
-> > this feels like an invitation for future disaster. Maybe a comment
-> > about that to remind our future selves? Or perhaps the bit field
-> > should be avoided altogether?
+On Tue, Dec 18, 2018 at 6:02 PM Joe Perches <joe@perches.com> wrote:
 >
-> Changed to bool. Thanks!
+> On Tue, 2018-12-18 at 15:29 +0530, Amit Kucheria wrote:
+> > Several drivers didn't have a specific maintainer (other than the
+> > subsystem maintainer). Add all drivers referring to qcom or msm to the
+> > list of supported drivers.
+> []
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> []
+> > @@ -1929,20 +1929,61 @@ M:    Andy Gross <andy.gross@linaro.org>
+> >  M:   David Brown <david.brown@linaro.org>
+> >  L:   linux-arm-msm@vger.kernel.org
+> >  S:   Maintained
+> > +F:   include/dt-bindings/*/qcom*
+> > +F:   include/linux/*/qcom*
+> >  F:   Documentation/devicetree/bindings/soc/qcom/
+> > +F:   Documentation/devicetree/bindings/*/qcom*
+> >  F:   arch/arm/boot/dts/qcom-*.dts
+> >  F:   arch/arm/boot/dts/qcom-*.dtsi
+> >  F:   arch/arm/mach-qcom/
+> > -F:   arch/arm64/boot/dts/qcom/*
+> > -F:   drivers/i2c/busses/i2c-qup.c
+> > +F:   arch/arm64/boot/dts/qcom/
+> > +F:   drivers/bluetooth/btqcomsmd.c
+> > +F:   drivers/bus/qcom*
+> > +F:   drivers/cpufreq/qcom*
+> >  F:   drivers/clk/qcom/
+> > +F:   drivers/clocksource/timer-qcom.c
+> > +F:   drivers/crypto/qcom-*
+> >  F:   drivers/dma/qcom/
+> > +F:   drivers/edac/qcom*
+> > +F:   drivers/extcon/extcon-qcom*
+> > +F:   drivers/firmware/qcom*
+> > +F:   drivers/hwspinlock/qcom_*
+> > +F:   drivers/iio/adc/qcom*
+> > +F:   drivers/iommu/qcom*
+> > +F:   drivers/iommu/msm*
+> > +F:   drivers/i2c/busses/i2c-qup.c
+> > +F:   drivers/i2c/busses/i2c-qcom-geni.c
+> > +F:   drivers/irqchip/qcom*
+> > +F:   drivers/mailbox/qcom-*
+> > +F:   drivers/media/platform/qcom/
+> > +F:   drivers/mfd/qcom*
+> > +F:   drivers/mfd/ssbi.c
+> > +F:   drivers/misc/qcom-*
+> > +F:   drivers/mmc/host/mmci_qcom*
+> > +F:   drivers/mmc/host/sdhci_msm.c
+> > +F:   drivers/mtd/*/qcom*
+> > +F:   drivers/pci/controller/dwc/pcie-qcom.c
+> > +F:   drivers/perf/qcom*
+> > +F:   drivers/pinctrl/qcom/
+> > +F:   drivers/phy/qualcomm/
+> > +F:   drivers/power/*/qcom*
+> > +F:   drivers/power/*/msm*
+> > +F:   drivers/regulator/qcom*
+> > +F:   drivers/reset/reset-qcom-*
+> > +F:   drivers/remoteproc/qcom*
+> > +F:   drivers/rpmsg/qcom*
+> > +F:   drivers/scsi/ufs/ufs-qcom.*
+> > +F:   drivers/slimbus/qcom*
+> >  F:   drivers/soc/qcom/
+> >  F:   drivers/spi/spi-qup.c
+> > +F:   drivers/spi/spi-geni-qcom.c
+> > +F:   drivers/spi/spi-qcom-qspi.c
+> > +F:   drivers/thermal/qcom/
+> >  F:   drivers/tty/serial/msm_serial.c
+> > +F:   drivers/tty/serial/qcom*
+> > +F:   drivers/usb/dwc3/dwc3-qcom.c
+> > +F:   drivers/watchdog/qcom*
+> >  F:   drivers/*/pm8???-*
+> > -F:   drivers/mfd/ssbi.c
+> > -F:   drivers/firmware/qcom_scm*
+> >  T:   git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+>
+> Perhaps many of these could be consolidated like
+>
+> F:      drivers/*/qcom/
+> F:      drivers/*/qcom*
+> F:      drivers/*/*/qcom/
+> F:      drivers/*/*/qcom*
 
-Does that help, given bool is smaller than the CPUs word size?
-Is it Alpha that cannot do atomic operations on bytes?
+Good suggestion! I might be able to get rid of a few more lines with
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+F:      drivers/*/*qcom*
