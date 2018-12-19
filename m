@@ -2,172 +2,121 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3D3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A391C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F9A20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:28:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F27F120811
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:32:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QvMS/y8q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730111AbeLSW21 convert rfc822-to-8bit (ORCPT
+        id S1728613AbeLSWcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:28:27 -0500
-Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:36904 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728740AbeLSW21 (ORCPT
+        Wed, 19 Dec 2018 17:32:22 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42899 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbeLSWcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:28:27 -0500
-X-Greylist: delayed 417 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 17:28:26 EST
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 1470418033CFA
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 22:21:30 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 3B455181D341D;
-        Wed, 19 Dec 2018 22:21:29 +0000 (UTC)
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-HE-Tag: part32_cdec7f437637
-X-Filterd-Recvd-Size: 5156
-Received: from ip-30-183-4-93.pools.spcsdns.net (ip-66-87-124-93.spfdma.spcsdns.net [66.87.124.93])
-        (Authenticated sender: rostedt@goodmis.org)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 19 Dec 2018 22:21:28 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 17:21:26 -0500
-User-Agent: K-9 Mail for Android
-In-Reply-To: <b6cc5327509148fb26bfba2ca34f9c2927437707.camel@perches.com>
-References: <20181219163207.792e0f97@gandalf.local.home> <b6cc5327509148fb26bfba2ca34f9c2927437707.camel@perches.com>
+        Wed, 19 Dec 2018 17:32:21 -0500
+Received: by mail-pf1-f195.google.com with SMTP id 64so10485325pfr.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 14:32:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:user-agent:to:references:cc
+         :from:in-reply-to:message-id:subject:date;
+        bh=zEFywTJZsRkcxT1AcNZEO8Usk7ex33GyxYyswIy1kL8=;
+        b=QvMS/y8q5krt9BA/rjhFN7/GZm3yQGwg2ED/WOAGxkh8MDLQso8AV9Tw7ZgvW+NpBa
+         WDEMKf8gSNmpfTmz+Mwy9WRnuhZyGpH5uQq4vFLlDwL+2idyfE+MNnRTm0x3KpzOSkyG
+         RCLo7Jj0xAmxiBBBcr36rcmrznK3PqrgqWE20=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :user-agent:to:references:cc:from:in-reply-to:message-id:subject
+         :date;
+        bh=zEFywTJZsRkcxT1AcNZEO8Usk7ex33GyxYyswIy1kL8=;
+        b=QGvYGJn4g1XgA7wAae0T/54MlLIBtvMlo5425tnE5FuQLYI0W7NktEZftDH2iqLXYy
+         yc2ULv7nxi5EpdA53CuBZet+Z4xtgM+0UjFQv5qM8GvhNfj1l/TyrBevckfMfSr41Ofu
+         NFxnmwtkAy18rLiikEpl4HlHEdUMfnTRSsbDhwkh6kJcSJg1lT0OkPy6shmGgSMZiRm6
+         UuJiSPAgawtt6OqCCN0579ancUJnf02x3QVn/DM5qCPQsN7+e23Yg+xvY0OnNt9DR716
+         506ZYOLXy8KMubhi4Uohmh15cS6Unlqd0WYc3/+VZV+roXEn48L70ts+omq2rBKb26d6
+         vWZw==
+X-Gm-Message-State: AA+aEWZGiSoQXn63PTvD75v/uHBNWFujGELg8UQ6USfvRuffMzR5Eo9n
+        KGQX9qY6glUhPlJk2CfgzK5JRQ==
+X-Google-Smtp-Source: AFSGD/WsagMM1GAbSGyx+PWOi+/NeTyWWapQIJp/PxTdIxtKD8afK9xUbzY7bcuV/V1tr39uYn3Xsw==
+X-Received: by 2002:a63:1157:: with SMTP id 23mr21155226pgr.245.1545258740641;
+        Wed, 19 Dec 2018 14:32:20 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id l19sm43063809pfi.71.2018.12.19.14.32.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 14:32:20 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [RFC][PATCH] string.h: Add strncmp_prefix() helper macro
-To:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-From:   Steven Rostedt <rostedt@goodmis.org>
-Message-ID: <0A30C9FF-1E99-454A-B935-AD14819DBF1C@goodmis.org>
+Content-Transfer-Encoding: quoted-printable
+User-Agent: alot/0.8
+To:     Matthias Kaehlcke <mka@chromium.org>
+References: <20181204224234.62619-1-mka@chromium.org> <20181204224234.62619-5-mka@chromium.org> <154445707953.17204.10100324387384439759@swboyd.mtv.corp.google.com> <20181219222222.GA261387@google.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Airlie <airlied@linux.ie>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20181219222222.GA261387@google.com>
+Message-ID: <154525873917.79149.9742850766307036349@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 4/8] drm/msm/dsi: 14nm PHY: Get ref clock from the DT
+Date:   Wed, 19 Dec 2018 14:32:19 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seems that I sent this as my daughter.
+Quoting Matthias Kaehlcke (2018-12-19 14:22:22)
+> On Mon, Dec 10, 2018 at 07:51:19AM -0800, Stephen Boyd wrote:
+> > Quoting Matthias Kaehlcke (2018-12-04 14:42:30)
+> > > diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c b/drivers/gpu=
+/drm/msm/dsi/pll/dsi_pll_14nm.c
+> > > index 71fe60e5f01f1..032bf3e8614bd 100644
+> > > --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+> > > +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c
+> > > @@ -40,7 +40,6 @@
+> > > =20
+> > >  #define NUM_PROVIDED_CLKS              2
+> > > =20
+> > > -#define VCO_REF_CLK_RATE               19200000
+> > >  #define VCO_MIN_RATE                   1300000000UL
+> > >  #define VCO_MAX_RATE                   2600000000UL
+> > > =20
+> > > @@ -139,6 +138,7 @@ struct dsi_pll_14nm {
+> > >         /* protects REG_DSI_14nm_PHY_CMN_CLK_CFG0 register */
+> > >         spinlock_t postdiv_lock;
+> > > =20
+> > > +       struct clk *vco_ref_clk;
+> >=20
+> > Is there any need to keep it in the struct? Or just get the clk, find
+> > the rate, and then put the clk and call pll_14nm_postdiv_register()?
+>=20
+> I suppose you mean passing the clock name to pll_14nm_register()?
 
-I'm not home now but will resend again as myself when I am.
+Yes, whatever makes it possible to avoid storing the pointer in the
+struct.
 
--- Steve
+>=20
+> Is putting the clock really needed or preferable, or is it just fine
+> to auto-put it when the device is deleted?
 
-On December 19, 2018 4:54:57 PM EST, Joe Perches <joe@perches.com> wrote:
->On Wed, 2018-12-19 at 16:32 -0500, Bryana Rostedt wrote:
->> A discussion came up in the trace triggers thread about converting a
->> bunch of:
->> 
->>  strncmp(str, "const", sizeof("const") - 1)
->> 
->> use cases into a helper macro. It started with:
->> 
->> #define strncmp_const(str, const) \
->> 	strncmp(str, const, sizeof(const) - 1)
->> 
->> But then Joe Perches mentioned that if a const is not used, the
->> sizeof() will be the size of a pointer, which can be bad. And that
->> gcc will optimize strlen("const") into "sizeof("const") - 1".
->> 
->> Thinking about this more, a quick grep in the kernel tree found
->several
->> (thousands!) of cases that use this construct. A quick grep also
->> revealed that there's probably several bugs in that use case. Some
->are
->> that people forgot the "- 1" (which I found) and others could be that
->> the constant for the sizeof is different than the constant (although,
->I
->> haven't found any of those, but I also didn't look hard).
->> 
->> I figured the best thing to do is to create a helper macro and place
->it
->> into include/linux/string.h. And go around and fix all the open coded
->> versions of it later.
->> 
->> I plan on only applying this patch and updating the tracing hooks for
->> this merge window. And perhaps use it to fix some of the bugs that
->were
->> found.
->> 
->> I was going to just use:
->> 
->> #define strncmp_prefix(str, prefix) \
->> 	strncmp(str, prefix, strlen(prefix))
->> 
->> but then realized that "prefix" is used twice, and will break if
->> someone does something like:
->> 
->> 	strncmp_prefix(str, ptr++);
->> 
->> So instead I check with __builtin_constant_p() to see if the second
->> parameter is truly a constant, which I use sizeof() anyway (why
->bother
->> gcc to optimize it, if we already know it's a constant), and copy the
->> parameter into a local variable and use that local variable for the
->non
->> constant part (with strlen).
->> 
->> Link:
->http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
->> 
->> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> ---
->> diff --git a/include/linux/string.h b/include/linux/string.h
->> index 27d0482e5e05..3dc743e3a0ba 100644
->> --- a/include/linux/string.h
->> +++ b/include/linux/string.h
->> @@ -14,6 +14,27 @@ extern void *memdup_user(const void __user *,
->size_t);
->>  extern void *vmemdup_user(const void __user *, size_t);
->>  extern void *memdup_user_nul(const void __user *, size_t);
->>  
->> +/*
->> + * A common way to test a prefix of a string is to do:
->> + *  strncmp(str, prefix, sizeof(prefix) - 1)
->> + *
->> + * But this can lead to bugs due to typos, or if prefix is a pointer
->> + * and not a constant. Instead use strncmp_prefix().
->> + */
->> +#define strncmp_prefix(str, prefix)					\e
->> +	({								\
->> +		int ____strcmp_prefix_ret____;				\
->> +		char *____strcmp_prefix____ = prefix;			\
->
->This creates a warning and discards any const from prefix when used
->like
->
->	static const char foo[] = "bar";
->
->	strncmp_prefix(str, foo);
->
->> +		if (__builtin_constant_p(&prefix))			\
->> +			____strcmp_prefix_ret____ =			\
->> +				strncmp(str, prefix, sizeof(prefix) - 1); \
->> +		else							\
->> +			____strcmp_prefix_ret____ =			\
->> +				strncmp(str, ____strcmp_prefix____,	\
->> +					strlen(____strcmp_prefix____));	\
->> +		____strcmp_prefix_ret____;				\
->> +	})
->> +
->
->Perhaps
->
->#define strncmp_prefix(str, prefix)					\
->({									\
->	typeof(prefix) p = (prefix);					\
->	strncmp(str, p, strlen(p));					\
->})
+Up to you. If you don't have a need for the clk anymore it seems fine to
+just put the clk and be done.=20
 
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity and top posting.
