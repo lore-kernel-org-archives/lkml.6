@@ -2,131 +2,176 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6F6C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF3EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D37F21871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4CC721873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:24:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH1iIc20"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMw4ZGYT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeLSBTO (ORCPT
+        id S1727835AbeLSBY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 20:19:14 -0500
-Received: from mail-qk1-f175.google.com ([209.85.222.175]:36647 "EHLO
-        mail-qk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbeLSBTN (ORCPT
+        Tue, 18 Dec 2018 20:24:58 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33552 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeLSBY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 20:19:13 -0500
-Received: by mail-qk1-f175.google.com with SMTP id o125so10739957qkf.3;
-        Tue, 18 Dec 2018 17:19:12 -0800 (PST)
+        Tue, 18 Dec 2018 20:24:57 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so9008647pfb.0;
+        Tue, 18 Dec 2018 17:24:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TPk7kEYwxNHb0G5HMeWlTF02OIgIabeRAUKDFm1wpC4=;
-        b=mH1iIc20v/l3yTadzZDB+6KpG2q+m9FKO1SlUGpWv52l+HfddItQNi2jKcHxBO5M03
-         5ou7TaAW9COud+m+2npq4x99gy/BLg/As2QQPAi5wXIoGGM+fG9z5d+x5IXNUzEvEALV
-         c/krv4o45ApfWYCzRNY+USVV7Mxucx2hSspK7MTnsNdgeNUU4LIJ7yfPT5suNYy68n1N
-         vJiai44AKUs1WhL1oPyTAIPKstFX0uYXJgB5ti7dGhAnM1/Aeg+p9pZ5xTJf4araXLzG
-         XqT7Z1MpQkqtRJ1FqJWMbIZ4Wq0oVvNvQvsCDQq0O8SUJ8lUJ44xAkBfchB5YvzO6kmC
-         logA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Voj//nhWAMx/8ObwLtNNf6FYWhzZMRgyBUH3bthFofw=;
+        b=NMw4ZGYT6Y5bDRKlqIIcXQ4J4CKHpKKvI5cGfBJVuv91Ig494qGU8j8RluuVwO2pjH
+         sjV/HmtsJtfiLZx0xuhHoayMl9XA63fi3Tl4lNX9SKIk/1FUWY7kOJTKuGqjI4Nt5jP+
+         HPxEFhqOk8q5lWVNtSLMn0tuRUN/mzSJYPpIGD5w88nHRI5HY/6nMt5+JECkd86LnYWD
+         5n/014OkkuuSyOeP7WulFcfX822YLBurHmRIK5WKIdHJT5wCx9yGeF8pTjZsNlfPUY/n
+         wwblZytOKJS60rSi0uiJ2xltYyUJ7vMZCBL7pp6KuqAKgiN4kQtOKGqanl0PZJvCP17Y
+         QRUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TPk7kEYwxNHb0G5HMeWlTF02OIgIabeRAUKDFm1wpC4=;
-        b=Q6bCAJ2ycrQuySQAHgAwg0pmK/aQFHJCvUyN2IqAy3TGZBYTBADDL6VsprrlZ5ExS4
-         r+5Dwy70tdt1pm6UhdAtesMHaGuQo+HqZfbOjtOJiAaEgRaR/B38KBdFtpxf3zQnjwhL
-         QWk87/B/ApnXBNbQdPA946QErdJXzmiETvpKqorzLSz4JB5gfV5Kby/QlGsNIWsIRR0R
-         iZms8zUuzaGFdToUzRs9t28sNfwbDKzr58rHjDYpB9qiru3nwXsiABRWzGxRlMkSgEPz
-         ZMc7pfKr7RpGPEQjojA8/TsVX57jU9dj9s8mChW7TceSdNKLTQalfyWRMvTD28fkB4br
-         B8Iw==
-X-Gm-Message-State: AA+aEWaW0F95YzIE0SbKw9ybQ1szRXc/RIWtRQTA1wFrf0LbeyO+hME+
-        3z8dl0ElbrqLRDVRje3gltC7WtgGPd2iG5s4yi3QcW45
-X-Google-Smtp-Source: AFSGD/X4EGMWb5ZgaoXgtpMjcAC1finTQIvw/DArOKzO1IzUUHXDiBrFfOcKbVLiCv5CC4hAXrUG3WeG1E64S80g++Y=
-X-Received: by 2002:a37:498a:: with SMTP id w132mr18962358qka.92.1545182351789;
- Tue, 18 Dec 2018 17:19:11 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Voj//nhWAMx/8ObwLtNNf6FYWhzZMRgyBUH3bthFofw=;
+        b=WbAIHCGwrk7hsaaFBWnVjnce18E68Dn7YAK/pYOFONmd4ZxNUjJtSbFhUlVmbz9d4v
+         +6MlUV+CLXbgicaOCeFjUcVF3dZY/zobWRw4YYNj/zi9HYWluIxai7Z5+oqyE9/J0C4u
+         844C7IHvl4N91JED2kgqllbjOHXPeslDOcurkl+DwONeevBSVGfbZom5Arrkohk3diJw
+         +xslbNVEkM+gHudFzYBG4MswUXm4MTg6uDIxxP/TIIrRvtzCchy4fjHTCPKJ4oVyRRPe
+         1hgSaabkj+V7vHqZ9OeA8Wz1SbUFXTq5n7gIBoSbwJ76E8eVUTqdwdv1V2T6llDQvqyZ
+         pbWg==
+X-Gm-Message-State: AA+aEWaC8q6LaHun0N+eFJogvx41lWNcHl8d834D/qZG97AQwNDMhOXk
+        67dJ4SFHrrl+nqtF6940cfC7MfsQ
+X-Google-Smtp-Source: AFSGD/Up7J95paqgemJKyWeIX7ZukSMeAuCpXUZrcWpvQISoVYHY6qJe/Ae91o3t9RWdGtiBEp2I1Q==
+X-Received: by 2002:a63:de04:: with SMTP id f4mr1224960pgg.292.1545182696365;
+        Tue, 18 Dec 2018 17:24:56 -0800 (PST)
+Received: from localhost.localdomain ([172.58.92.156])
+        by smtp.gmail.com with ESMTPSA id d6sm23778175pgc.89.2018.12.18.17.24.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 17:24:55 -0800 (PST)
+Date:   Tue, 18 Dec 2018 17:24:52 -0800
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Wei Ni <wni@nvidia.com>
+Cc:     rui.zhang@intel.com, thierry.reding@gmail.com,
+        daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org,
+        srikars@nvidia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/4] thermal: tegra: parse sensor id before sensor
+ register
+Message-ID: <20181219012450.GA2842@localhost.localdomain>
+References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
+ <1544780993-20744-4-git-send-email-wni@nvidia.com>
 MIME-Version: 1.0
-References: <20181218045138.4282-1-yupeng0921@gmail.com> <20181218045138.4282-2-yupeng0921@gmail.com>
- <20181218172645.GB13768@localhost.localdomain> <20181218174750.GA14416@lst.de>
-In-Reply-To: <20181218174750.GA14416@lst.de>
-From:   peng yu <yupeng0921@gmail.com>
-Date:   Tue, 18 Dec 2018 17:19:00 -0800
-Message-ID: <CAG3TDc3QarHcz_ez=GYYzqDp8VwMHL=nUTvur+5XN+m5-T57sA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] trace nvme submit queue status
-To:     "hch@lst.de" <hch@lst.de>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "axboe@fb.com" <axboe@fb.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "jthumshirn@suse.de" <jthumshirn@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544780993-20744-4-git-send-email-wni@nvidia.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 9:47 AM hch@lst.de <hch@lst.de> wrote:
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 2477bd906904..5a0bf6a24d50 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -1004,8 +1004,7 @@ static inline void nvme_handle_cqe(struct nvme_queue *nvmeq, u16 idx)
->         }
->
->         req = blk_mq_tag_to_rq(*nvmeq->tags, cqe->command_id);
-> -       trace_nvme_sq(req->rq_disk, nvmeq->qid, le16_to_cpu(cqe->sq_head),
-> -                       nvmeq->sq_tail);
-> +       trace_nvme_sq(req, cqe->sq_head, nvmeq->sq_tail);
->         nvme_end_request(req, cqe->status, cqe->result);
+On Fri, Dec 14, 2018 at 05:49:52PM +0800, Wei Ni wrote:
+> Since different platforms may not support all 4
+> sensors, so the sensor registration may be failed.
+> Add codes to parse dt to find sensor id which
+> need to be registered. So that the registration
+> can be successful on all platform.
+> 
+> Signed-off-by: Wei Ni <wni@nvidia.com>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 45 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 43 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+> index fd2703c0cfc5..6bee31cd4621 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -1224,6 +1224,41 @@ static void soctherm_init(struct platform_device *pdev)
+>  	tegra_soctherm_throttle(&pdev->dev);
 >  }
->
-> diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace.h
-> index cf666709bc50..3564120aa7b3 100644
-> --- a/drivers/nvme/host/trace.h
-> +++ b/drivers/nvme/host/trace.h
-> @@ -185,22 +185,24 @@ TRACE_EVENT(nvme_async_event,
->  #undef aer_name
->
->  TRACE_EVENT(nvme_sq,
-> -       TP_PROTO(void *rq_disk, int qid, int sq_head, int sq_tail),
-> -       TP_ARGS(rq_disk, qid, sq_head, sq_tail),
-> +       TP_PROTO(struct request *req, __le16 sq_head, int sq_tail),
-> +       TP_ARGS(req, sq_head, sq_tail),
->         TP_STRUCT__entry(
-> +               __field(int, ctrl_id)
->                 __array(char, disk, DISK_NAME_LEN)
->                 __field(int, qid)
-> -               __field(int, sq_head)
-> -               __field(int, sq_tail)
-> +               __field(u16, sq_head)
-> +               __field(u16, sq_tail)
->         ),
->         TP_fast_assign(
-> -               __assign_disk_name(__entry->disk, rq_disk);
-> -               __entry->qid = qid;
-> -               __entry->sq_head = sq_head;
-> +               __entry->ctrl_id = nvme_req(req)->ctrl->instance;
-> +               __assign_disk_name(__entry->disk, req->rq_disk);
-> +               __entry->qid = nvme_req_qid(req);
-> +               __entry->sq_head = le16_to_cpu(sq_head);
->                 __entry->sq_tail = sq_tail;
->         ),
-> -       TP_printk("nvme: %s qid=%d head=%d tail=%d",
-> -               __print_disk_name(__entry->disk),
-> +       TP_printk("nvme%d: %sqid=%d, head=%u, tail=%u",
-> +               __entry->ctrl_id, __print_disk_name(__entry->disk),
->                 __entry->qid, __entry->sq_head, __entry->sq_tail
->         )
->  );
+>  
+> +static bool tegra_soctherm_find_sensor_id(unsigned int sensor_id)
+> +{
+> +	bool ret = false;
+> +	struct of_phandle_args sensor_specs;
+> +	struct device_node *np, *sensor_np;
+> +
+> +	np = of_find_node_by_name(NULL, "thermal-zones");
+> +	if (!np)
+> +		return ret;
+> +
+> +	for_each_available_child_of_node(np, sensor_np) {
+> +		if (of_parse_phandle_with_args(sensor_np, "thermal-sensors",
+> +						 "#thermal-sensor-cells",
+> +						 0, &sensor_specs))
+> +			continue;
+> +
+> +		if (sensor_specs.args_count != 1) {
+> +			WARN(sensor_specs.args_count != 1,
+> +			     "%s: wrong cells in sensor specifier %d\n",
+> +			     sensor_specs.np->name, sensor_specs.args_count);
+> +			continue;
+> +		}
+> +
+> +		if (sensor_specs.args[0] == sensor_id) {
+> +			of_node_put(sensor_np);
+> +			ret = true;
+> +			break;
+> +		}
+> +	}
+> +
+> +	of_node_put(np);
+> +
+> +	return ret;
+> +}
 
-I think this change is nice. Will you submit this change or are you
-suggesting me to do it?
+So, I am still failing to see why this is really needed. 
+
+Why can't you simply resolve this with different compatibles?
+If the sensor is not present or disabled, the compatible is not, well,
+compatible anymore.
+
+> +
+>  static const struct of_device_id tegra_soctherm_of_match[] = {
+>  #ifdef CONFIG_ARCH_TEGRA_124_SOC
+>  	{
+> @@ -1365,13 +1400,16 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+>  		zone->sg = soc->ttgs[i];
+>  		zone->ts = tegra;
+>  
+> +		if (!tegra_soctherm_find_sensor_id(soc->ttgs[i]->id))
+> +			continue;
+> +
+>  		z = devm_thermal_zone_of_sensor_register(&pdev->dev,
+>  							 soc->ttgs[i]->id, zone,
+>  							 &tegra_of_thermal_ops);
+>  		if (IS_ERR(z)) {
+>  			err = PTR_ERR(z);
+> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+> -				err);
+> +			dev_err(&pdev->dev, "failed to register sensor %s: %d\n",
+> +				soc->ttgs[i]->name, err);
+>  			goto disable_clocks;
+>  		}
+>  
+> @@ -1434,6 +1472,9 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+>  		struct thermal_zone_device *tz;
+>  
+>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
+> +		if (!tz)
+> +			continue;
+> +
+>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+>  		if (err) {
+>  			dev_err(&pdev->dev,
+> -- 
+> 2.7.4
+> 
