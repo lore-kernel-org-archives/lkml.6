@@ -2,84 +2,89 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55704C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9327EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2667A2184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C8C82184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:29:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="A5l1I0Nt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbeLSJ2v (ORCPT
+        id S1728279AbeLSJ31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:28:51 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:52153 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbeLSJ2v (ORCPT
+        Wed, 19 Dec 2018 04:29:27 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38368 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbeLSJ30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:28:51 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gZY9p-00045s-Lf; Wed, 19 Dec 2018 02:28:49 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gZY9n-0003vW-0c; Wed, 19 Dec 2018 02:28:49 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Gargi Sharma <gs051095@gmail.com>, Rik van Riel <riel@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org
-References: <20181218215321.GW10600@bombadil.infradead.org>
-Date:   Wed, 19 Dec 2018 03:28:41 -0600
-In-Reply-To: <20181218215321.GW10600@bombadil.infradead.org> (Matthew Wilcox's
-        message of "Tue, 18 Dec 2018 13:53:21 -0800")
-Message-ID: <87woo5c1bq.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 19 Dec 2018 04:29:26 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h50so16362706ede.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:29:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ao1ZlpnCcQuCiz3PvkV/rVl6U2b00EtLd/YWNHLp0hQ=;
+        b=A5l1I0Nt9jWVWMcK7Kiy/J50aSbSfcDRRsUReomsnnTBp50D2jjG7daLK5xe085+m6
+         JoqGB9oiv+6ge6/hxDzTIrSWtVcQq7iZA5pidryCdeL7bo4ZgfW0VL6uZfJw2nOlw0Rg
+         8Bc/8jO8ZzjU8LfDrlC17hvgfULC3W0/mZtZGxC/ooNH9sXQwBKqjsYlLq0kEcQaimFI
+         tRQVtF82IQMmc6RKWmyJ7nuEg1PXZSFw5npVtUZFE8FWb2cSG4OzX4+JbRxFlkQBuzqp
+         KoCL+ggiaUB1CrAsGS7acB1GkmUQ6JL5Vj12AooUXuEw2tG3Urev9p8h2FX7WEvkGqm/
+         hUtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ao1ZlpnCcQuCiz3PvkV/rVl6U2b00EtLd/YWNHLp0hQ=;
+        b=kKm0Sm59Tkg0vZEhpf8iFIVqw1BFCFTx+iii+KwPvxmH+XIsqyFV78hkKcpF/QUouA
+         5RLzveFTfp38GNk21On2kI7YcIyj19wPnEno8TneKsm/0cIOGuLz93lXtDw4d42CvXlT
+         3gnOxVFq0Smh4KR7O/J7NYXYAFC7Pw4T0kDgRMcIQ7CgcGD8xMf8XyI7+tZ0AJYBqDM3
+         KoblMtBmPVbW/q3fVR4z1MV4byX5T10ZzKVkE0BO/GHS9u2ArZY3Xg5QAVZorcCrGt8P
+         n4HH4dnwRKAHty/ZG0AhJRFdnbSnSOsg4Gg9t6yJtbSCCu81unMFq54qCsZkMJTiBolY
+         D3wQ==
+X-Gm-Message-State: AA+aEWauMFDesS0KDekCbAvlSsFR4nDvjczN1mDznRENFPQRxwrZOnd6
+        1QBSy6J+dmmJoAucSG6KGvXhvQ==
+X-Google-Smtp-Source: AFSGD/X0Rk6rNCkZ4+56IUV/oUcT1AVOqh0DoHTcnWNuddzypyONdKZ9/4ElYJiVka25kcjIz/Eg9w==
+X-Received: by 2002:a50:a55c:: with SMTP id z28mr19392887edb.124.1545211764027;
+        Wed, 19 Dec 2018 01:29:24 -0800 (PST)
+Received: from brauner.io ([2a02:8109:b6c0:6c14:58a0:c7b2:d756:db85])
+        by smtp.gmail.com with ESMTPSA id v11sm5200082edy.49.2018.12.19.01.29.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 01:29:23 -0800 (PST)
+Date:   Wed, 19 Dec 2018 10:29:21 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kilobyte@angband.pl, darrick.wong@oracle.com,
+        chouryzhou@tencent.com, david@fromorbit.com, arve@android.com,
+        joel@joelfernandes.org, Martijn Coenen <maco@android.com>,
+        dan.carpenter@oracle.com, tkjos@google.com
+Subject: Re: [PATCH v3] binder: implement binderfs
+Message-ID: <20181219092920.6mhd5i63cm2pyi4n@brauner.io>
+References: <20181214121114.8785-1-christian@brauner.io>
+ <20181219084756.GA26777@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gZY9n-0003vW-0c;;;mid=<87woo5c1bq.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/m8OjRhX6IA0X3pmhttj8qfcBPmRGz8HQ=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC] Fix failure path in alloc_pid()
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181219084756.GA26777@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> writes:
+On Wed, Dec 19, 2018 at 09:47:56AM +0100, Greg KH wrote:
+> On Fri, Dec 14, 2018 at 01:11:14PM +0100, Christian Brauner wrote:
+> > As discussed at Linux Plumbers Conference 2018 in Vancouver [1] this is the
+> > implementation of binderfs.
+> 
+> <snip>
+> 
+> Looks good to me, thanks so much for doing this, now queued up!
 
-> The failure path removes the allocated PIDs from the wrong namespace.
-> I believe this is correct, but have not tested it.  Spotted by inspection,
-> do we have a test suite for PID namespaces?  Some error injection,
-> perhaps?
->
-> Fixes: 95846ecf9dac ("pid: replace pid bitmap implementation with IDR API")
->
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index b2f6c506035da..75264e0d1e71d 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -233,8 +233,11 @@ struct pid *alloc_pid(struct pid_namespace *ns)
->  
->  out_free:
->  	spin_lock_irq(&pidmap_lock);
-> -	while (++i <= ns->level)
-> -		idr_remove(&ns->idr, (pid->numbers + i)->nr);
-> +	upid = pid->numbers + i;
-> +	while (++i <= ns->level) {
-> +		upid++;
-> +		idr_remove(&upid->ns->idr, upid->nr);
-> +	}
->  
->  	/* On failure to allocate the first pid, reset the state */
->  	if (ns->pid_allocated == PIDNS_ADDING)
+Thanks for trusting me with this idea and work!
+Christian
