@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 528DAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67187C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 206C520869
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3628820869
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbeLSWtP (ORCPT
+        id S1729184AbeLSWuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:49:15 -0500
-Received: from gateway36.websitewelcome.com ([192.185.187.5]:35504 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727151AbeLSWtO (ORCPT
+        Wed, 19 Dec 2018 17:50:10 -0500
+Received: from gateway20.websitewelcome.com ([192.185.48.38]:23468 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728249AbeLSWuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:49:14 -0500
-X-Greylist: delayed 1336 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 17:49:14 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 370B0400C8F70
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 15:37:49 -0600 (CST)
+        Wed, 19 Dec 2018 17:50:09 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id F0D74400CE506
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 16:27:20 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id ZkIsghfCf90onZkIsgFiRg; Wed, 19 Dec 2018 16:26:58 -0600
+        id ZkJEg0N73dnCeZkJEgABrH; Wed, 19 Dec 2018 16:27:20 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=47198 helo=[192.168.1.76])
+Received: from [189.250.106.44] (port=47208 helo=[192.168.1.76])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gZkIr-000DJt-OW; Wed, 19 Dec 2018 16:26:57 -0600
-Subject: Re: [PATCH 19/41] scsi: isci: remote_node_context: mark expected
- switch fall-throughs
-To:     Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+        id 1gZkJE-000DYr-Jy; Wed, 19 Dec 2018 16:27:20 -0600
+Subject: Re: [PATCH 22/41] scsi: lpfc: lpfc_ct: Mark expected switch
+ fall-throughs
+To:     James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>
 Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <cover.1543374820.git.gustavo@embeddedor.com>
- <b54e3cf608d656ce6d8445becd105d1613325198.1543374820.git.gustavo@embeddedor.com>
+ <4e80e3ae7cd0f0c54b45530a3772af4f606b0c8e.1543374820.git.gustavo@embeddedor.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <d9022b4f-35c9-4a7d-68e6-c942a538da02@embeddedor.com>
-Date:   Wed, 19 Dec 2018 16:26:56 -0600
+Message-ID: <ff237a7e-0e0c-94e4-c977-134d071c9061@embeddedor.com>
+Date:   Wed, 19 Dec 2018 16:27:19 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <b54e3cf608d656ce6d8445becd105d1613325198.1543374820.git.gustavo@embeddedor.com>
+In-Reply-To: <4e80e3ae7cd0f0c54b45530a3772af4f606b0c8e.1543374820.git.gustavo@embeddedor.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,13 +59,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.106.44
 X-Source-L: No
-X-Exim-ID: 1gZkIr-000DJt-OW
+X-Exim-ID: 1gZkJE-000DYr-Jy
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:47198
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:47208
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 22
+X-Email-Count: 34
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,33 +83,33 @@ Thanks
 -- 
 Gustavo
 
-On 11/27/18 10:30 PM, Gustavo A. R. Silva wrote:
+On 11/27/18 10:31 PM, Gustavo A. R. Silva wrote:
 > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
 > where we are expecting to fall through.
 > 
-> Notice that, in this particular case, a dash is added as a token in
-> order to separate the "Fall through" annotations from the rest of
-> the comment on the same line, which is what GCC is expecting to find.
-> 
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->   drivers/scsi/isci/remote_node_context.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/scsi/lpfc/lpfc_ct.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/scsi/isci/remote_node_context.c b/drivers/scsi/isci/remote_node_context.c
-> index e3f2a5359d71..474a43460963 100644
-> --- a/drivers/scsi/isci/remote_node_context.c
-> +++ b/drivers/scsi/isci/remote_node_context.c
-> @@ -601,9 +601,9 @@ enum sci_status sci_remote_node_context_suspend(
->   				 __func__, sci_rnc);
->   			return SCI_FAILURE_INVALID_STATE;
->   		}
-> -		/* Fall through and handle like SCI_RNC_POSTING */
-> +		/* Fall through - and handle like SCI_RNC_POSTING */
->   	case SCI_RNC_RESUMING:
-> -		/* Fall through and handle like SCI_RNC_POSTING */
-> +		/* Fall through - and handle like SCI_RNC_POSTING */
->   	case SCI_RNC_POSTING:
->   		/* Set the destination state to AWAIT - this signals the
->   		 * entry into the SCI_RNC_READY state that a suspension
+> diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
+> index 6305ffeba7ea..b2b7fcc23654 100644
+> --- a/drivers/scsi/lpfc/lpfc_ct.c
+> +++ b/drivers/scsi/lpfc/lpfc_ct.c
+> @@ -3050,6 +3050,7 @@ lpfc_fdmi_cmd(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+>   	case SLI_MGMT_GHAT:
+>   	case SLI_MGMT_GRPL:
+>   		rsp_size = FC_MAX_NS_RSP;
+> +		/* fall through */
+>   	case SLI_MGMT_DHBA:
+>   	case SLI_MGMT_DHAT:
+>   		pe = (struct lpfc_fdmi_port_entry *)&CtReq->un.PortID;
+> @@ -3062,6 +3063,7 @@ lpfc_fdmi_cmd(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+>   	case SLI_MGMT_GPAT:
+>   	case SLI_MGMT_GPAS:
+>   		rsp_size = FC_MAX_NS_RSP;
+> +		/* fall through */
+>   	case SLI_MGMT_DPRT:
+>   	case SLI_MGMT_DPA:
+>   		pe = (struct lpfc_fdmi_port_entry *)&CtReq->un.PortID;
 > 
