@@ -2,240 +2,191 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38257C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00623C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07993218A6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:53:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAD5020866
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:53:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pzz3nFKG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729105AbeLSKxK (ORCPT
+        id S1729126AbeLSKxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 05:53:10 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:58323 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728714AbeLSKxK (ORCPT
+        Wed, 19 Dec 2018 05:53:17 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39452 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728714AbeLSKxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 05:53:10 -0500
-Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gZZTM-0001og-HS; Wed, 19 Dec 2018 11:53:04 +0100
-Date:   Wed, 19 Dec 2018 11:53:04 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dou Liyang <douliyangs@gmail.com>
-cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        kashyap.desai@broadcom.com,
-        shivasharan.srikanteshwara@broadcom.com, sumit.saxena@broadcom.com,
-        ming.lei@redhat.com, hch@lst.de, bhelgaas@google.com,
-        douliyang1@huawei.com
-Subject: Re: [PATCH 0/3] irq/core: Fix and expand the irq affinity
- descriptor
-In-Reply-To: <20181204155122.6327-1-douliyangs@gmail.com>
-Message-ID: <alpine.DEB.2.21.1812191136550.1651@nanos.tec.linutronix.de>
-References: <20181204155122.6327-1-douliyangs@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 19 Dec 2018 05:53:17 -0500
+Received: by mail-vs1-f67.google.com with SMTP id h78so11959765vsi.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 02:53:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pLK40EgKIKp3NB5AeBPyNZyo1IwhNKosbRaznCx78iw=;
+        b=Pzz3nFKG5BvU9Df11j5njkFoEPOnsCXigkHUolPAzxHTCaEOFHxUko4m5O90F9GDcF
+         uBeNJK77xp63iUn6MlSxeZHNmflSFj06ZdyhyinDlnowRWxuhqBnWAd62ieIthZK3KDj
+         ytCEJ/bNNmIu8jd5BpyPYpKRhrFMcz6KKi8F8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pLK40EgKIKp3NB5AeBPyNZyo1IwhNKosbRaznCx78iw=;
+        b=buOaUBK39JDAscyCOERdGR66mForp5mFyweJqryfhnJsoDn7+yRxnbFDxKI2Aukrbm
+         zv1FSvBZHhJfiVPkSRUCt9QpLGs5q5ocuduV6EC7lrP1c33sx6vD7W7g8pcSfdWKrC6+
+         obLBKBwARdmcIhYRgv6DLbx/vTslyAgXyBv5/ThA3VUN8ACxYSW+CVzdxRqKO450SZ+A
+         BLbiT1QWUkZJ8Ym3R77ZvyWhqnb6QdkD0261xP70RlWEzLnFG0fjr78rNt16Dj7Ch2XV
+         tq0IzE3EUfn2lei1xeATrAoOlZikM7p2A7v5qyr2tlFn1qEOoYg4b46PCQVuNjfEmxH6
+         QlGA==
+X-Gm-Message-State: AA+aEWY8dq5fr9MLsjgIugvGMwurzP42QWhJBPPjkbQMMLky6RJ/PTJN
+        opaCzkEqhDlfiNaeCDVyrOanm6/jomG1BdlBcIIm+Q==
+X-Google-Smtp-Source: AFSGD/WBlMU97G0W0ScT/9BhAkyd7RB5sswk+1zyF9iLL6dPlqyMzhF7qDz8bytabbbs+JtX+CDml0X8oFvYyTMXj7w=
+X-Received: by 2002:a67:d00f:: with SMTP id r15mr9821114vsi.191.1545216795647;
+ Wed, 19 Dec 2018 02:53:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <1545144923-31546-1-git-send-email-vincent.guittot@linaro.org>
+ <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org>
+ <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
+ <CAKfTPtCpv0MqF64JGTyR63bqKdAhXzL1fEsNbS6DHsD-jXYpKw@mail.gmail.com>
+ <CAPDyKFrSxX-eBsTiEvbrbjVpqkSuBnhxruCgtihH6hSvWSFD1g@mail.gmail.com>
+ <CAKfTPtB=TUAz=KpZzJsRUvK8ymiXnTgQ3BxcY0yu9YbJ1BW7QA@mail.gmail.com> <CAPDyKFoR7t=K65n0_+4yRqdpRMZ0BbA16cDhmxEvNhm0qEOXNQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFoR7t=K65n0_+4yRqdpRMZ0BbA16cDhmxEvNhm0qEOXNQ@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 19 Dec 2018 11:52:39 +0100
+Message-ID: <CAPDyKFpfDF_7ZyhRY-jfapjuQQ=5KpQt7QV2-d_a-qki=omAYA@mail.gmail.com>
+Subject: Re: [RFC v3 1/3] PM/runtime: Add a new interface to get accounted time
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        jani.nikula@linux.intel.com,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        "Intel graphics driver community testing & development" 
+        <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Dec 2018, Dou Liyang wrote:
+On Wed, 19 Dec 2018 at 11:43, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Wed, 19 Dec 2018 at 11:34, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > On Wed, 19 Dec 2018 at 11:21, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > On Wed, 19 Dec 2018 at 11:11, Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > >
+> > > > On Wed, 19 Dec 2018 at 10:58, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > >
+> > > > > On Tue, 18 Dec 2018 at 15:55, Vincent Guittot
+> > > > > <vincent.guittot@linaro.org> wrote:
+> > > > > >
+> > > > > > Some drivers (like i915/drm) need to get the accounted suspended time.
+> > > > > > pm_runtime_accounted_time_get() will return the suspended or active
+> > > > > > accounted time until now.
+> > > > >
+> > > > > I suggest to leave the active accounted time out for now. At least
+> > > > > until we have some users.
+> > > >
+> > > > This is needed to keep same feature level for i915/drm
+> > >
+> > > I don't follow. According to the changes in the drm driver in patch2,
+> > > we are only calling the new pm_runtime interface with RPM_SUSPENDED?
+> >
+> > sorry I mix your question above and the one about  accounting_timestamp.
+> >
+> > So I agree that only RPM_SUSPENDED is used for now
+> >
+> > >
+> > > >
+> > > > >
+> > > > > That said, perhaps rename the function to something along the lines
+> > > > > of, pm_runtime_last_suspended_time(), to make it more clear.
+> > > > >
+> > > > > >
+> > > > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > > > > ---
+> > > > > >  drivers/base/power/runtime.c | 26 ++++++++++++++++++++++++++
+> > > > > >  include/linux/pm_runtime.h   |  2 ++
+> > > > > >  2 files changed, 28 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > > > > > index 7062469..6461469 100644
+> > > > > > --- a/drivers/base/power/runtime.c
+> > > > > > +++ b/drivers/base/power/runtime.c
+> > > > > > @@ -88,6 +88,32 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
+> > > > > >         dev->power.runtime_status = status;
+> > > > > >  }
+> > > > > >
+> > > > > > +u64 pm_runtime_accounted_time_get(struct device *dev, enum rpm_status status, bool update)
+> > > > > > +{
+> > > > > > +       u64 now = ktime_to_ns(ktime_get());
+> > > > >
+> > > > > I think you should stay on jiffies here - and then switch to ktime in patch 3.
+> > > > >
+> > > > > > +       u64 delta = 0, time = 0;
+> > > > > > +       unsigned long flags;
+> > > > > > +
+> > > > > > +       spin_lock_irqsave(&dev->power.lock, flags);
+> > > > > > +
+> > > > > > +       if (dev->power.disable_depth > 0)
+> > > > > > +               goto unlock;
+> > > > > > +
+> > > > > > +       /* Add ongoing state  if requested */
+> > > > > > +       if (update && dev->power.runtime_status == status)
+> > > > > > +               delta = now - dev->power.accounting_timestamp;
+> > > > > > +
+> > > > >
+> > > > > Hmm. Do we really need to update the accounting timestamp? I would
+> > > > > rather avoid it if possible.
+> > > >
+> > > > i915/drm uses this to track ongoing suspended state. In fact they are
+> > > > mainly interested by this part
+> > >
+> > > Again, sorry I don't follow.
+> >
+> > In fact we don't update dev->power.accounting_timestamp but only use
+> > it to get how much time has elapsed in the current state.
+> >
+> > >
+> > > My suggested changes below, would do exactly that; track the ongoing
+> > > suspended state.
+> > >
+> > > The user can call the function several times while the device remains
+> > > RPM_SUSPENDED, and if needed the user could then compute the delta
+> > > in-between the calls, for whatever reason that may be needed.
+> >
+> > So I'm not sure to catch your question:
+> > Is your problem linked to status != RPM_SUSPENDED or the update
+> > parameter that compute delta ?
+>
+> My intent was to keep things simple.
+>
+> 1. Only expose last suspended time, which means tracking the ongoing
+> suspended state. In other words, you can also remove "enum rpm_status
+> status" as the in-parameter to pm_runtime_accounted_time_get().
+> 2. Don't allow the user of pm_runtime_accounted_time_get() to update
+> the current timestamp, in "dev->power.accounting_timestamp".
+>
+> Is that okay for the drm driver, to do what it does today?
 
-> Now,  Spreading the interrupt affinity info by a cpumask pointer is not
-> enough, meets a problem[1] and hard to expand in the future.
-> 
-> Fix it by:
-> 
->      +-----------------------------------+
->      |                                   |
->      |     struct cpumask *affinity      |
->      |                                   |
->      +-----------------------------------+
->                        |
->     +------------------v-------------------+
->     |                                      |
->     | struct irq_affinity_desc {           |
->     |     struct cpumask   mask;           |
->     |     unsigned int     is_managed : 1; |
->     | };                                   |
->     |                                      |
->     +--------------------------------------+
-> 
+Hold on. I am wondering if the drm driver could use the existing
+pm_runtime_autosuspend_expiration() function instead. Isn't that
+really that what is needed?
 
-So, I've applied that lot for 4.21 (or whatever number it will be). That's
-only the first step for solving Kashyap's problem.
+[...]
 
-IIRC, then Kashap wanted to get initial interrupt spreading for these extra
-magic interrupts as well, but not have them marked managed.
-
-That's trivial to do now with the two queued changes in that area:
-
-  - The rework above
-  
-  - The support for interrupt sets from Jens
-
-Just adding a small bitfield to struct irq_affinity which allows to tell
-the core that a particular interrupt set is not managed does the trick.
-
-Untested patch below.
-
-Kashyap, is that what you were looking for and if so, does it work?
-
-Thanks,
-
-	tglx
-
-8<-----------------
-
-Subject: genirq/affinity: Add support for non-managed affinity sets
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Tue, 18 Dec 2018 16:46:47 +0100
-
-Some drivers need an extra set of interrupts which are not marked managed,
-but should get initial interrupt spreading.
-
-Add a bitmap to struct irq_affinity which allows the driver to mark a
-particular set of interrupts as non managed. Check the bitmap during
-spreading and use the result to mark the interrupts in the sets
-accordingly.
-
-The unmanaged interrupts get initial spreading, but user space can change
-their affinity later on.
-
-Usage example:
-
-      struct irq_affinity affd = { .pre_vectors	= 2 };
-      int sets[2];
-
-      /* Fill in sets[] */
-
-      affd.nr_sets = 2;
-      affd.sets = &sets;
-      affd.unmanaged_sets = 0x02;
-
-      ......
-
-So both sets are properly spread out, but the second set is not marked
-managed.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/interrupt.h |   10 ++++++----
- kernel/irq/affinity.c     |   24 ++++++++++++++----------
- 2 files changed, 20 insertions(+), 14 deletions(-)
-
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -99,7 +99,8 @@ static int __irq_build_affinity_masks(co
- 				      cpumask_var_t *node_to_cpumask,
- 				      const struct cpumask *cpu_mask,
- 				      struct cpumask *nmsk,
--				      struct irq_affinity_desc *masks)
-+				      struct irq_affinity_desc *masks,
-+				      bool managed)
- {
- 	int n, nodes, cpus_per_vec, extra_vecs, done = 0;
- 	int last_affv = firstvec + numvecs;
-@@ -154,6 +155,7 @@ static int __irq_build_affinity_masks(co
- 			}
- 			irq_spread_init_one(&masks[curvec].mask, nmsk,
- 						cpus_per_vec);
-+			masks[curvec].is_managed = managed;
- 		}
- 
- 		done += v;
-@@ -176,7 +178,8 @@ static int __irq_build_affinity_masks(co
- static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 				    int startvec, int numvecs, int firstvec,
- 				    cpumask_var_t *node_to_cpumask,
--				    struct irq_affinity_desc *masks)
-+				    struct irq_affinity_desc *masks,
-+				    bool managed)
- {
- 	int curvec = startvec, nr_present, nr_others;
- 	int ret = -ENOMEM;
-@@ -196,7 +199,8 @@ static int irq_build_affinity_masks(cons
- 	/* Spread on present CPUs starting from affd->pre_vectors */
- 	nr_present = __irq_build_affinity_masks(affd, curvec, numvecs,
- 						firstvec, node_to_cpumask,
--						cpu_present_mask, nmsk, masks);
-+						cpu_present_mask, nmsk, masks,
-+						managed);
- 
- 	/*
- 	 * Spread on non present CPUs starting from the next vector to be
-@@ -211,7 +215,7 @@ static int irq_build_affinity_masks(cons
- 	cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
- 	nr_others = __irq_build_affinity_masks(affd, curvec, numvecs,
- 					       firstvec, node_to_cpumask,
--					       npresmsk, nmsk, masks);
-+					       npresmsk, nmsk, masks, managed);
- 	put_online_cpus();
- 
- 	if (nr_present < numvecs)
-@@ -268,10 +272,11 @@ irq_create_affinity_masks(int nvecs, con
- 
- 	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
- 		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
-+		bool managed = !test_bit(i, &affd->unmanaged_sets);
- 		int ret;
- 
--		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
--						curvec, node_to_cpumask, masks);
-+		ret = irq_build_affinity_masks(affd, curvec, this_vecs, curvec,
-+					       node_to_cpumask, masks, managed);
- 		if (ret) {
- 			kfree(masks);
- 			masks = NULL;
-@@ -289,10 +294,6 @@ irq_create_affinity_masks(int nvecs, con
- 	for (; curvec < nvecs; curvec++)
- 		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
- 
--	/* Mark the managed interrupts */
--	for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
--		masks[i].is_managed = 1;
--
- outnodemsk:
- 	free_node_to_cpumask(node_to_cpumask);
- 	return masks;
-@@ -316,6 +317,9 @@ int irq_calc_affinity_vectors(int minvec
- 	if (affd->nr_sets) {
- 		int i;
- 
-+		if (WARN_ON_ONCE(affd->nr_sets > BITS_PER_LONG))
-+			return 0;
-+
- 		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
- 			set_vecs += affd->sets[i];
- 	} else {
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -249,12 +249,14 @@ struct irq_affinity_notify {
-  *			the MSI(-X) vector space
-  * @nr_sets:		Length of passed in *sets array
-  * @sets:		Number of affinitized sets
-+ * @unmanaged_sets:	Bitmap to mark members of @sets as unmanaged
-  */
- struct irq_affinity {
--	int	pre_vectors;
--	int	post_vectors;
--	int	nr_sets;
--	int	*sets;
-+	int		pre_vectors;
-+	int		post_vectors;
-+	int		nr_sets;
-+	int		*sets;
-+	unsigned long	unmanaged_sets;
- };
- 
- /**
+Kind regards
+Uffe
