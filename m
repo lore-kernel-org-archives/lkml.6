@@ -2,160 +2,191 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3E3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67970C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE9921841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FDB321841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbeLSHW6 (ORCPT
+        id S1728239AbeLSHW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:22:58 -0500
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:56945 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725294AbeLSHW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:22:58 -0500
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id 7B8655C2288; Wed, 19 Dec 2018 08:22:50 +0100 (CET)
-Date:   Wed, 19 Dec 2018 08:22:50 +0100
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Joe Perches <joe@perches.com>
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: check kzalloc return
-Message-ID: <20181219072250.GA18501@osadl.at>
-References: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
- <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
+        Wed, 19 Dec 2018 02:22:59 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:41189 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726898AbeLSHW7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 02:22:59 -0500
+X-UUID: d42140e3420a438e91fd4889fb77d09b-20181219
+X-UUID: d42140e3420a438e91fd4889fb77d09b-20181219
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 721553360; Wed, 19 Dec 2018 15:22:55 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 19 Dec 2018 15:22:53 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 19 Dec 2018 15:22:53 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     <davem@davemloft.net>, <robh+dt@kernel.org>
+CC:     <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
+        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
+        <andrew@lunn.ch>
+Subject: [v3, PATCH 2/2] net-next: stmmac: dwmac-mediatek: remove fine-tune property
+Date:   Wed, 19 Dec 2018 15:22:41 +0800
+Message-ID: <1545204161-15742-3-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1545204161-15742-1-git-send-email-biao.huang@mediatek.com>
+References: <1545204161-15742-1-git-send-email-biao.huang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: B4648EA4B5EB803547499D3B3324E1FC534517B38244ABE2025337E9328BD3752000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 09:33:58AM -0800, Joe Perches wrote:
-> On Tue, 2018-12-18 at 17:27 +0100, Nicholas Mc Guire wrote:
-> > kzalloc can return NULL so a check is needed. While there is a
-> > check for ret_buf there is no check for the allocation of
-> > ret_buf->crfid.fid - this check is thus added. Both call-sites
-> > of tconInfoAlloc() check for NULL return of tconInfoAlloc()
-> > so returning NULL on failure of kzalloc() here seems appropriate.
-> > As the kzalloc() is the only thing here that can fail it is
-> > moved to the beginning so as not to initialize other resources
-> > on failure of kzalloc.
-> > 
-> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > Fixes: 3d4ef9a15343 ("smb3: fix redundant opens on root")
-> > ---
-> > 
-> > Problem located with an experimental coccinelle script
-> > 
-> > While at it make checkpatch happy by using *ret_buf->crfid.fid
-> > rather than struct cifs_fid.
-> > 
-> > Patch was compile tested with: x86_64_defconfig + CIFS=m
-> > (with some unrelated smatch warnings and some pending cocci fixes)
-> > 
-> > Patch is against v4.20-rc7 (localversion-next is next-20181218)
-> []
-> > diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
-> []
-> > @@ -113,6 +113,13 @@ tconInfoAlloc(void)
-> >  	struct cifs_tcon *ret_buf;
-> >  	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
-> >  	if (ret_buf) {
-> > +		ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid),
-> > +					     GFP_KERNEL);
-> > +		if (!ret_buf->crfid.fid) {
-> > +			kfree(ret_buf);
-> > +			return NULL;
-> > +		}
-> > +
-> >  		atomic_inc(&tconInfoAllocCount);
-> >  		ret_buf->tidStatus = CifsNew;
-> >  		++ret_buf->tc_count;
-> > @@ -120,8 +127,6 @@ tconInfoAlloc(void)
-> >  		INIT_LIST_HEAD(&ret_buf->tcon_list);
-> >  		spin_lock_init(&ret_buf->open_file_lock);
-> >  		mutex_init(&ret_buf->crfid.fid_mutex);
-> > -		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
-> > -					     GFP_KERNEL);
-> >  		spin_lock_init(&ret_buf->stat_lock);
-> >  		atomic_set(&ret_buf->num_local_opens, 0);
-> >  		atomic_set(&ret_buf->num_remote_opens, 0);
-> 
-> Perhaps use a more common style by returning early on the
-> first possible failure too so the block can be unindented.
->
+1. remove fine-tune property and related setting to simplify
+the timing adjustment flow.
+2. set timing value according to the value from device tree,
+and will not care whether PHY insert internal delay.
 
-yup the restructured cleanup would be the better way to go
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+---
+ .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |   71 +++++++-------------
+ 1 file changed, 24 insertions(+), 47 deletions(-)
 
-rather than making this two patches I guess it would be the
-best to just skip the intermediate kzalloc only cleanup -
-atleast I see little value in that intermediat step - so
-could you take care of the kzalloc() in your refactoring 
-please ?
-
-thx!
-hofrat
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+index e400cbd..bf25629 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+@@ -44,7 +44,6 @@ struct mac_delay_struct {
+ 	u32 rx_delay;
+ 	bool tx_inv;
+ 	bool rx_inv;
+-	bool fine_tune;
+ };
  
-> Maybe as a separate cleanup patch.
-> ---
->  fs/cifs/misc.c | 34 ++++++++++++++++++++--------------
->  1 file changed, 20 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
-> index 113980dba4d8..bee203055b30 100644
-> --- a/fs/cifs/misc.c
-> +++ b/fs/cifs/misc.c
-> @@ -111,21 +111,27 @@ struct cifs_tcon *
->  tconInfoAlloc(void)
->  {
->  	struct cifs_tcon *ret_buf;
-> -	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
-> -	if (ret_buf) {
-> -		atomic_inc(&tconInfoAllocCount);
-> -		ret_buf->tidStatus = CifsNew;
-> -		++ret_buf->tc_count;
-> -		INIT_LIST_HEAD(&ret_buf->openFileList);
-> -		INIT_LIST_HEAD(&ret_buf->tcon_list);
-> -		spin_lock_init(&ret_buf->open_file_lock);
-> -		mutex_init(&ret_buf->crfid.fid_mutex);
-> -		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
-> -					     GFP_KERNEL);
-> -		spin_lock_init(&ret_buf->stat_lock);
-> -		atomic_set(&ret_buf->num_local_opens, 0);
-> -		atomic_set(&ret_buf->num_remote_opens, 0);
-> +
-> +	ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
-> +	if (!ret_buf)
-> +		return NULL;
-> +	ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
-> +	if (!ret_buf->crfid.fid) {
-> +		kfree(ret_buf);
-> +		return NULL;
->  	}
-> +
-> +	atomic_inc(&tconInfoAllocCount);
-> +	ret_buf->tidStatus = CifsNew;
-> +	++ret_buf->tc_count;
-> +	INIT_LIST_HEAD(&ret_buf->openFileList);
-> +	INIT_LIST_HEAD(&ret_buf->tcon_list);
-> +	spin_lock_init(&ret_buf->open_file_lock);
-> +	mutex_init(&ret_buf->crfid.fid_mutex);
-> +	spin_lock_init(&ret_buf->stat_lock);
-> +	atomic_set(&ret_buf->num_local_opens, 0);
-> +	atomic_set(&ret_buf->num_remote_opens, 0);
-> +
->  	return ret_buf;
->  }
->  
-> 
+ struct mediatek_dwmac_plat_data {
+@@ -105,16 +104,28 @@ static int mt2712_set_interface(struct mediatek_dwmac_plat_data *plat)
+ 	return 0;
+ }
+ 
+-static void mt2712_delay_ps2stage(struct mac_delay_struct *mac_delay)
++static void mt2712_delay_ps2stage(struct mediatek_dwmac_plat_data *plat)
+ {
+-	if (mac_delay->fine_tune) {
+-		/* 170ps per stage for fine tune delay macro circuit*/
+-		mac_delay->tx_delay /= 170;
+-		mac_delay->rx_delay /= 170;
+-	} else {
+-		/* 550ps per stage for coarse tune delay macro circuit*/
++	struct mac_delay_struct *mac_delay = &plat->mac_delay;
++
++	switch (plat->phy_mode) {
++	case PHY_INTERFACE_MODE_MII:
++	case PHY_INTERFACE_MODE_RMII:
++		/* 550ps per stage for MII/RMII */
+ 		mac_delay->tx_delay /= 550;
+ 		mac_delay->rx_delay /= 550;
++		break;
++	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++		/* 170ps per stage for RGMII */
++		mac_delay->tx_delay /= 170;
++		mac_delay->rx_delay /= 170;
++		break;
++	default:
++		dev_err(plat->dev, "phy interface not supported\n");
++		break;
+ 	}
+ }
+ 
+@@ -123,7 +134,7 @@ static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
+ 	struct mac_delay_struct *mac_delay = &plat->mac_delay;
+ 	u32 delay_val = 0, fine_val = 0;
+ 
+-	mt2712_delay_ps2stage(mac_delay);
++	mt2712_delay_ps2stage(plat);
+ 
+ 	switch (plat->phy_mode) {
+ 	case PHY_INTERFACE_MODE_MII:
+@@ -167,13 +178,10 @@ static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
+ 			fine_val = ETH_RMII_DLY_TX_INV;
+ 		break;
+ 	case PHY_INTERFACE_MODE_RGMII:
+-		/* the PHY is not responsible for inserting any internal
+-		 * delay by itself in PHY_INTERFACE_MODE_RGMII case,
+-		 * so Ethernet MAC will insert delays for both transmit
+-		 * and receive path here.
+-		 */
+-		if (mac_delay->fine_tune)
+-			fine_val = ETH_FINE_DLY_GTXC | ETH_FINE_DLY_RXC;
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++		fine_val = ETH_FINE_DLY_GTXC | ETH_FINE_DLY_RXC;
+ 
+ 		delay_val |= FIELD_PREP(ETH_DLY_GTXC_ENABLE, !!mac_delay->tx_delay);
+ 		delay_val |= FIELD_PREP(ETH_DLY_GTXC_STAGES, mac_delay->tx_delay);
+@@ -183,36 +191,6 @@ static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
+ 		delay_val |= FIELD_PREP(ETH_DLY_RXC_STAGES, mac_delay->rx_delay);
+ 		delay_val |= FIELD_PREP(ETH_DLY_RXC_INV, mac_delay->rx_inv);
+ 		break;
+-	case PHY_INTERFACE_MODE_RGMII_TXID:
+-		/* the PHY should insert an internal delay for the transmit
+-		 * path in PHY_INTERFACE_MODE_RGMII_TXID case,
+-		 * so Ethernet MAC will insert the delay for receive path here.
+-		 */
+-		if (mac_delay->fine_tune)
+-			fine_val = ETH_FINE_DLY_RXC;
+-
+-		delay_val |= FIELD_PREP(ETH_DLY_RXC_ENABLE, !!mac_delay->rx_delay);
+-		delay_val |= FIELD_PREP(ETH_DLY_RXC_STAGES, mac_delay->rx_delay);
+-		delay_val |= FIELD_PREP(ETH_DLY_RXC_INV, mac_delay->rx_inv);
+-		break;
+-	case PHY_INTERFACE_MODE_RGMII_RXID:
+-		/* the PHY should insert an internal delay for the receive
+-		 * path in PHY_INTERFACE_MODE_RGMII_RXID case,
+-		 * so Ethernet MAC will insert the delay for transmit path here.
+-		 */
+-		if (mac_delay->fine_tune)
+-			fine_val = ETH_FINE_DLY_GTXC;
+-
+-		delay_val |= FIELD_PREP(ETH_DLY_GTXC_ENABLE, !!mac_delay->tx_delay);
+-		delay_val |= FIELD_PREP(ETH_DLY_GTXC_STAGES, mac_delay->tx_delay);
+-		delay_val |= FIELD_PREP(ETH_DLY_GTXC_INV, mac_delay->tx_inv);
+-		break;
+-	case PHY_INTERFACE_MODE_RGMII_ID:
+-		/* the PHY should insert internal delays for both transmit
+-		 * and receive path in PHY_INTERFACE_MODE_RGMII_RXID case,
+-		 * so Ethernet MAC will NOT insert any delay here.
+-		 */
+-		break;
+ 	default:
+ 		dev_err(plat->dev, "phy interface not supported\n");
+ 		return -EINVAL;
+@@ -270,7 +248,6 @@ static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
+ 
+ 	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
+ 	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
+-	mac_delay->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
+ 	plat->rmii_rxc = of_property_read_bool(plat->np, "mediatek,rmii-rxc");
+ 
+ 	return 0;
+-- 
+1.7.9.5
+
