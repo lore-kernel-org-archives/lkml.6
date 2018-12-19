@@ -2,131 +2,111 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CFCC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0798C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92554217D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:32:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9289521852
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 01:50:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ccW+soL9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jrxo5pCo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeLSBcv (ORCPT
+        id S1727884AbeLSBrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 20:32:51 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:55918 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbeLSBcv (ORCPT
+        Tue, 18 Dec 2018 20:47:04 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42473 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727766AbeLSBrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 20:32:51 -0500
-Received: by mail-pf1-f201.google.com with SMTP id s71so16824391pfi.22
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 17:32:50 -0800 (PST)
+        Tue, 18 Dec 2018 20:47:03 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so8670591pga.9
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 17:47:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=yj76ol9i47/AU4bCLurPYgGV6L9o3/EOqtXfA4wPq+A=;
-        b=ccW+soL99zIuLrbpZQ5MZTZvTWDXGRbiAp1zmUnSXMXefFXAxeb0rIeIuXwuvzG5+I
-         ssDfIski0BrVXYFuzgR1x0RsdA2g32Q1j94U1OAfwge2YnUrVqrDHD2mwj5ytCuLbkWC
-         DikTHv6PuVi6nTE2KS7vMHA7PBIt4++slRMiW+NRRJjs7WuO3qlfapkXvEx3AOymJb3U
-         obFhtU98aFv4gYGQv8/mVU1fxyGA9DdLEsyVAEjHudWuRynhJOrzKu8HFX526hBSpoLw
-         7g1p/HSM0tBDCrhPAY3IaksThf8hq0X2SZwoU1K1E3XMSjW4gg0ZbGDm6GvJpqBf2Eyt
-         VpsQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8kD6cyP/Yz34GPRRH9k/hxKKfUdquCjTD7Rsnl/hgoI=;
+        b=Jrxo5pCoIxYnnIhXMkapTJyEYhdcKSeTbnC2CWAwtJKfPlnxjsb8PIUX5FQEFglMZt
+         9ShNwEpdsGG7CtUTYTiCDyyfTn6E/iQmZMi43+xtOe3JaPOrRR7BitT7A9cToJQ0lWfF
+         yJUa5YbbA37jqB3aDCLztRutIh/OIbsiKiflDkune7qQLHDpqe4eLjy2qqqf6VOOPXs2
+         rZvwsKnnRACd+pesLHfg46FQtPyfK4t68aBd8vTPShAMGmC7AaY412ObQEVXhK7/wsN9
+         7JnJAJfiF+7cR3iUFoMBzx82Ns1k3VyC3Myp+WbVOnQbe+6UfhV06h0H0rK9pYwrbXtR
+         7Qqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=yj76ol9i47/AU4bCLurPYgGV6L9o3/EOqtXfA4wPq+A=;
-        b=rmZmaMXXWlIH1+4vLdxa9d/pDwrQm7J6FPfdaptQ1t9Y6BYoeArPecHa50IqF/dXC1
-         MNimCV4GQn0NBCOfCfSwxRXJdbSX2GKjjPXVxmf5GN2IVztkCpWo5RloXPnZmLNkJCz0
-         n5EkC/5U58PC4AEKnwrfCHwVU5p2UxJlzILWgErHiAZNb6Jm3jnA4iY03Ttlm1SQj1Vt
-         LiU0SI6V4ElXtXTR1D9+vVq/dkfaVEFHzGfYQ7NfROw3aMrd70dTrOXuiC3lw//3aYUU
-         mk/wtL4ZKFvIFSV4SM96NwpEjiOYohLzsic+7N7PJ6z89kUMj83z3/X5HVCybmEn01Ea
-         UlWg==
-X-Gm-Message-State: AA+aEWaXX2ydMvmGYWucWOSNqc48d1AT8OJBJoAIX2gHik8pfAhq/uaX
-        VuZFRuwg7ehe01qQ6Kn6adnrmIhLQ/Znvd2swvwHYo/yjHzflcqJxo7TvZkHKnRxemdauVSFGJ9
-        1tXyyf2H/Q840sEZzU8ABdXZz+9HKsSVLbmZqg3LrF5KCxIX+EMYEicYSTxLpHUtN2rW6hFVzlU
-        QvSg==
-X-Google-Smtp-Source: AFSGD/VuWaPE/rHfoHG1J9J3ZkhIAZghcuoKB/66C2831LzzUMz7NbEC8RGNwQVOV2d8TkL55W178LPSExnUvns=
-X-Received: by 2002:a63:480a:: with SMTP id v10mr10661000pga.105.1545183170432;
- Tue, 18 Dec 2018 17:32:50 -0800 (PST)
-Date:   Tue, 18 Dec 2018 17:32:48 -0800
-Message-Id: <20181219013248.94850-1-astrachan@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
-Subject: [PATCH v2] media: uvcvideo: Fix 'type' check leading to overflow
-From:   Alistair Strachan <astrachan@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     syzbot <syzkaller@googlegroups.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8kD6cyP/Yz34GPRRH9k/hxKKfUdquCjTD7Rsnl/hgoI=;
+        b=eIF7nsaGrzTZhk4NlugYodLhClGqf3CredpmXxbyq43qouHgkX1HUadfY1KXWzk2jh
+         S+L0MdkjqiTLSATxaI+WrR336N2WUru2Qt3of6a2Mc3T1l/9U7SXuLFcW0JmrJRudGpJ
+         nK86m1iXNsb3YK/d46N7y/iuVjmRhznX345KvG2bZ+dz1AMzfw+q3Cr+DFG/+CdRcYi3
+         8Qxtg1vJwXpZgGDSr8WIrf5nCjcXEoQT6jx1UlO8mJIaP2wbifhnZGSi2HKG1Sertj7c
+         FrYcoMIsoX2/Nx65PJXvn1UZGdmt1uQOTqYDMjYnHRc4e4iAEeiJ7wa935KiV0gyPLua
+         vMvg==
+X-Gm-Message-State: AA+aEWZNpyqp1ArK8TLKkJJVtl7HA9ejsiZJ3YzFYHJoCNgop1Hn1BuR
+        9hOMkEZd66cpYE/1FcWZJak=
+X-Google-Smtp-Source: AFSGD/WzVIO49eenKbZCKABTe36huh+9kZhWamzDGHpp3n0B7Kgyz63D0geYPUJ2yo9imXRbS2AxMw==
+X-Received: by 2002:a63:ae01:: with SMTP id q1mr17318544pgf.402.1545184022203;
+        Tue, 18 Dec 2018 17:47:02 -0800 (PST)
+Received: from localhost ([175.223.26.207])
+        by smtp.gmail.com with ESMTPSA id t13sm24257014pgr.42.2018.12.18.17.47.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 17:47:00 -0800 (PST)
+Date:   Wed, 19 Dec 2018 10:46:57 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
+Message-ID: <20181219014657.GA3720@jagdpanzerIV>
+References: <20181218111701.GA32522@jagdpanzerIV>
+ <20181218114709.GF7485@zn.tnic>
+ <20181218130750.GA665@tigerII.localdomain>
+ <20181218142623.GH7485@zn.tnic>
+ <20181218145558.GD665@tigerII.localdomain>
+ <20181218150313.GI7485@zn.tnic>
+ <20181218151455.GE665@tigerII.localdomain>
+ <20181218152413.GJ7485@zn.tnic>
+ <20181218165217.GA534@tigerII.localdomain>
+ <20181218174723.GK7485@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218174723.GK7485@zn.tnic>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On (12/18/18 18:47), Borislav Petkov wrote:
+> So how much is not strict?
+>
+> And what happens if you raise that ratelimiting level and the *one* line
+> which is most important for debugging an issue
 
-When initially testing the Camera Terminal Descriptor wTerminalType
-field (buffer[4]), no mask is used. Later in the function, the MSB is
-overloaded to store the descriptor subtype, and so a mask of 0x7fff
-is used to check the type.
+Like you said, for debugging devkmsg=off works just fine. I don't mind
+the ratelimiting and want to keep it; I just don't want errors to be
+ratelimited.
 
-If a descriptor is specially crafted to set this overloaded bit in the
-original wTerminalType field, the initial type check will fail (falling
-through, without adjusting the buffer size), but the later type checks
-will pass, assuming the buffer has been made suitably large, causing an
-overflow.
+> All I'm saying is, gradually raising the limit is the wrong approach
+> - there will always be a case where something important doesn't get
+> logged.
 
-Avoid this problem by checking for the MSB in the wTerminalType field.
-If the bit is set, assume the descriptor is bad, and abort parsing it.
+Well, OK.
 
-Originally reported here:
-https://groups.google.com/forum/#!topic/syzkaller/Ot1fOE6v1d8
-A similar (non-compiling) patch was provided at that time.
+> What we need is a different solution, maybe what Rostedt proposes or
+> so...
 
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Alistair Strachan <astrachan@google.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org
-Cc: kernel-team@android.com
----
-v2: Use an alternative fix suggested by Laurent
- drivers/media/usb/uvc/uvc_driver.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Sure, a different approach and idea are welcome. This is RFC thread.
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index bc369a0934a3..7fde3ce642c4 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1065,11 +1065,19 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
- 			return -EINVAL;
- 		}
- 
--		/* Make sure the terminal type MSB is not null, otherwise it
--		 * could be confused with a unit.
-+		/*
-+		 * Reject invalid terminal types that would cause issues:
-+		 *
-+		 * - The high byte must be non-zero, otherwise it would be
-+		 *   confused with a unit.
-+		 *
-+		 * - Bit 15 must be 0, as we use it internally as a terminal
-+		 *   direction flag.
-+		 *
-+		 * Other unknown types are accepted.
- 		 */
- 		type = get_unaligned_le16(&buffer[4]);
--		if ((type & 0xff00) == 0) {
-+		if ((type & 0x7f00) == 0 || (type & 0x8000) != 0) {
- 			uvc_trace(UVC_TRACE_DESCR, "device %d videocontrol "
- 				"interface %d INPUT_TERMINAL %d has invalid "
- 				"type 0x%04x, skipping\n", udev->devnum,
--- 
-2.20.1.415.g653613c723-goog
-
+	-ss
