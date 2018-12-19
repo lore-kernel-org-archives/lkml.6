@@ -2,112 +2,128 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4B0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5561AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D8320866
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2347021871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbeLSKyr (ORCPT
+        id S1729149AbeLSK5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 05:54:47 -0500
-Received: from paleale.coelho.fi ([176.9.41.70]:42970 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727640AbeLSKyr (ORCPT
+        Wed, 19 Dec 2018 05:57:08 -0500
+Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:58465 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726725AbeLSK5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 05:54:47 -0500
-X-Greylist: delayed 1625 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 05:54:46 EST
-Received: from 201-0-74-183.dsl.telesp.net.br ([201.0.74.183] helo=dubbel)
-        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <luca@coelho.fi>)
-        id 1gZZ4c-00057o-2P; Wed, 19 Dec 2018 12:27:31 +0200
-Message-ID: <1ce59aaf30aaa9f59fc84c68a9e83299df0d4af8.camel@coelho.fi>
-From:   Luca Coelho <luca@coelho.fi>
-To:     "Grumbach, Emmanuel" <emmanuel.grumbach@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Wireless <linux-wireless@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Sharon, Sara" <sara.sharon@intel.com>,
-        Kees Cook <keescook@google.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Date:   Wed, 19 Dec 2018 08:27:22 -0200
-In-Reply-To: <0BA3FCBA62E2DC44AF3030971E174FB3013375F96C@HASMSX112.ger.corp.intel.com>
-References: <20181130120555.1d35eb6b@canb.auug.org.au>
-         <20181219134738.4efed34f@canb.auug.org.au>
-         <871s6evtra.fsf@kamboji.qca.qualcomm.com>
-         <0BA3FCBA62E2DC44AF3030971E174FB3013375F96C@HASMSX112.ger.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2-1 
+        Wed, 19 Dec 2018 05:57:08 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id B6432180A8850;
+        Wed, 19 Dec 2018 10:57:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: women89_3b8f63be8e5b
+X-Filterd-Recvd-Size: 3844
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 19 Dec 2018 10:57:05 +0000 (UTC)
+Message-ID: <6ef8274c8fc7adb7903cf3874fbab1098881ed4c.camel@perches.com>
+Subject: Re: [PATCH] cifs: check kzalloc return
+From:   Joe Perches <joe@perches.com>
+To:     Nicholas Mc Guire <der.herr@hofr.at>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Date:   Wed, 19 Dec 2018 02:57:04 -0800
+In-Reply-To: <20181219072250.GA18501@osadl.at>
+References: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
+         <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
+         <20181219072250.GA18501@osadl.at>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: linux-next: build warnings after merge of the
- wireless-drivers-next tree
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-19 at 08:31 +0000, Grumbach, Emmanuel wrote:
-> > Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> > 
-> > > On Fri, 30 Nov 2018 12:05:55 +1100 Stephen Rothwell
-> > <sfr@canb.auug.org.au> wrote:
-> > > > After merging the wireless-drivers-next tree, today's linux-next
-> > > > build
-> > > > (x86_64 allmodconfig) produced these warnings:
-> > > > 
-> > > > drivers/net/wireless/intel/iwlwifi/iwl-drv.c: In function
-> > 'iwl_parse_tlv_firmware':
-> > > > drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1098:7: warning: this
-> > statement may fall through [-Wimplicit-fallthrough=]
-> > > >     if (iwlwifi_mod_params.enable_ini)
-> > > >        ^
-> > > > drivers/net/wireless/intel/iwlwifi/iwl-drv.c:1100:3: note: here
-> > > >    default:
-> > > >    ^~~~~~~
-> > > > drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c: In function
-> > 'iwl_parse_fw_dbg_tlv':
-> > > > drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:203:4: warning: this
-> > statement may fall through [-Wimplicit-fallthrough=]
-> > > >     iwl_fw_dbg_copy_tlv(trans, tlv, true);
-> > > >     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:204:3: note: here
-> > > >    default:
-> > > >    ^~~~~~~
-> > > > 
-> > > > Introduced by commit
-> > > > 
-> > > >   f14cda6f3b31 ("iwlwifi: trans: parse and store debug ini TLVs")
-> > > > 
-> > > > These are noted because I use -Wimplict-fallthrough
-> > > > 
-> > > > The warnings can be suppressed by adding a comment like
-> > > > 	/* fall through */
-> > > > at the appropriate place to indicate that the fallthough is intended.
+On Wed, 2018-12-19 at 08:22 +0100, Nicholas Mc Guire wrote:
+> On Tue, Dec 18, 2018 at 09:33:58AM -0800, Joe Perches wrote:
+> > On Tue, 2018-12-18 at 17:27 +0100, Nicholas Mc Guire wrote:
+> > > kzalloc can return NULL so a check is needed. While there is a
+> > > check for ret_buf there is no check for the allocation of
+> > > ret_buf->crfid.fid - this check is thus added. Both call-sites
+> > > of tconInfoAlloc() check for NULL return of tconInfoAlloc()
+> > > so returning NULL on failure of kzalloc() here seems appropriate.
+> > > As the kzalloc() is the only thing here that can fail it is
+> > > moved to the beginning so as not to initialize other resources
+> > > on failure of kzalloc.
 > > > 
-> > > I am still seeing these warnings (but in the net-next tree now) and I
-> > > do not see a fix patch in the wireless-drivers-next tree.
-> > 
-> > Luca did submit a patch[1] for cfg80211 to fix those but I don't see any
-> > patches for iwlwifi (even in the one pending pull request he sent), not sure
-> > what happened. I know that Luca is already on holidays but adding
-> > Emmanuel, maybe he can help here?
-> > 
+> > Perhaps use a more common style by returning early on the
+> > first possible failure too so the block can be unindented.
+[]
+> > yup the restructured cleanup would be the better way to go
 > 
-> Just sent a patch.
+> rather than making this two patches I guess it would be the
+> best to just skip the intermediate kzalloc only cleanup -
+> atleast I see little value in that intermediat step - so
+> could you take care of the kzalloc() in your refactoring 
+> please ?
 
-Those patches were still queued for upstreaming and I didn't think they
-were that urgent, so I didn't pick them.
+I did that in the patch I proposed, which is trivial.
+If you want to take it, please do.
 
---
-Luca.
+If you want a sign-off:
+
+Signed-off-by: Joe Perches <joe@perches.com>
+
+> > diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+[]
+> > @@ -111,21 +111,27 @@ struct cifs_tcon *
+> >  tconInfoAlloc(void)
+> >  {
+> >  	struct cifs_tcon *ret_buf;
+> > -	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+> > -	if (ret_buf) {
+> > -		atomic_inc(&tconInfoAllocCount);
+> > -		ret_buf->tidStatus = CifsNew;
+> > -		++ret_buf->tc_count;
+> > -		INIT_LIST_HEAD(&ret_buf->openFileList);
+> > -		INIT_LIST_HEAD(&ret_buf->tcon_list);
+> > -		spin_lock_init(&ret_buf->open_file_lock);
+> > -		mutex_init(&ret_buf->crfid.fid_mutex);
+> > -		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+> > -					     GFP_KERNEL);
+> > -		spin_lock_init(&ret_buf->stat_lock);
+> > -		atomic_set(&ret_buf->num_local_opens, 0);
+> > -		atomic_set(&ret_buf->num_remote_opens, 0);
+> > +
+> > +	ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
+> > +	if (!ret_buf)
+> > +		return NULL;
+> > +	ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
+> > +	if (!ret_buf->crfid.fid) {
+> > +		kfree(ret_buf);
+> > +		return NULL;
+> >  	}
+> > +
+> > +	atomic_inc(&tconInfoAllocCount);
+> > +	ret_buf->tidStatus = CifsNew;
+> > +	++ret_buf->tc_count;
+> > +	INIT_LIST_HEAD(&ret_buf->openFileList);
+> > +	INIT_LIST_HEAD(&ret_buf->tcon_list);
+> > +	spin_lock_init(&ret_buf->open_file_lock);
+> > +	mutex_init(&ret_buf->crfid.fid_mutex);
+> > +	spin_lock_init(&ret_buf->stat_lock);
+> > +	atomic_set(&ret_buf->num_local_opens, 0);
+> > +	atomic_set(&ret_buf->num_remote_opens, 0);
+> > +
+> >  	return ret_buf;
+> >  }
+> >  
+
 
