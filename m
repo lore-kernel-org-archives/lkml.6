@@ -2,117 +2,180 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087CCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF81C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8FD3217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:15:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D340D21873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545222151;
+	bh=oK4WyuOXJgpyGzP1UK5yZ9WfcAbnMNWI5+yjGQxwvo4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=gx3QHLss/y+0ZqwQ++liE6ldyfbzY/FVrQIs4fN6+HXBSIBKoUUJcB8P4YiNLWcYT
+	 uxUCthO0aTH7cfziNfbl6X37lwPPwZ7GRAQ5yzoHjw8PULde1J+VzgRpcYumUOCbbK
+	 5R52uQwgLQguRyLHqrWynLM6yof59QHweAXXD53E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbeLSMPL (ORCPT
+        id S1728843AbeLSMWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:15:11 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:9074 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728771AbeLSMPK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:15:10 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJBtbn6025321;
-        Wed, 19 Dec 2018 13:14:39 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2pegxj2n88-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 19 Dec 2018 13:14:39 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 805D631;
-        Wed, 19 Dec 2018 12:14:38 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6727525FB;
-        Wed, 19 Dec 2018 12:14:38 +0000 (GMT)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 19 Dec
- 2018 13:14:38 +0100
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1347.000; Wed, 19 Dec 2018 13:14:38 +0100
-From:   Patrice CHOTARD <patrice.chotard@st.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] ARM: STi: Restore secondary CPU's bringup
-Thread-Topic: [PATCH 1/1] ARM: STi: Restore secondary CPU's bringup
-Thread-Index: AQHUluC8wzYjRbliykengwL93mfzKqWElOMAgAAUSoCAAAZLAIABHgkAgAAP6wCAAAzggA==
-Date:   Wed, 19 Dec 2018 12:14:38 +0000
-Message-ID: <becad78d-2f00-46a7-a42f-5558d173d23b@st.com>
-References: <1545144493-11600-1-git-send-email-patrice.chotard@st.com>
- <20181218155239.GP26090@n2100.armlinux.org.uk>
- <b26902d8-79d6-2b09-6e35-9e8823f9181e@st.com>
- <20181218172748.GQ26090@n2100.armlinux.org.uk>
- <913263b2-7421-5174-2e7d-5a15df40e51e@st.com>
- <20181219112832.GT26090@n2100.armlinux.org.uk>
-In-Reply-To: <20181219112832.GT26090@n2100.armlinux.org.uk>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <460BAC9213CA594991D264FFBEF4CEEB@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_06:,,
- signatures=0
+        Wed, 19 Dec 2018 07:22:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727993AbeLSMWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:22:30 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25FDA217D9;
+        Wed, 19 Dec 2018 12:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545222148;
+        bh=oK4WyuOXJgpyGzP1UK5yZ9WfcAbnMNWI5+yjGQxwvo4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=eFLkOiwTKd0PGD7x2ktTs8CdDSwvzTO6Iet86nkEB/DpEnbJVcBqKciU0savVgLDO
+         I+sEXtAtmzxpCzF/WU2GUQNldqddf/JhMESh0bLWzNTAfYh6qsERYc0rGNc33Bm/6K
+         /YecaGBSUfyZ7LnH8WGdBVK6bKHQZSMsEQq/Kzb0=
+Date:   Wed, 19 Dec 2018 21:22:24 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 3/7] tracing: Use var_refs[] for hist trigger reference
+ checking
+Message-Id: <20181219212224.968ee0ad61aada5a8a3f634f@kernel.org>
+In-Reply-To: <becb9627fb09681960f26809961b832be9591048.1545161087.git.tom.zanussi@linux.intel.com>
+References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
+        <becb9627fb09681960f26809961b832be9591048.1545161087.git.tom.zanussi@linux.intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTIvMTkvMTggMTI6MjggUE0sIFJ1c3NlbGwgS2luZyAtIEFSTSBMaW51eCB3cm90ZToNCj4g
-T24gV2VkLCBEZWMgMTksIDIwMTggYXQgMTA6MzE6MzVBTSArMDAwMCwgUGF0cmljZSBDSE9UQVJE
-IHdyb3RlOg0KPj4gSGkgUnVzc2VsbA0KPj4NCj4+IE9uIDEyLzE4LzE4IDY6MjcgUE0sIFJ1c3Nl
-bGwgS2luZyAtIEFSTSBMaW51eCB3cm90ZToNCj4+PiBPbiBUdWUsIERlYyAxOCwgMjAxOCBhdCAw
-NTowNToxOFBNICswMDAwLCBQYXRyaWNlIENIT1RBUkQgd3JvdGU6DQo+Pj4+IEhpIFJ1c3NlbGwN
-Cj4+Pj4NCj4+Pj4gT24gMTIvMTgvMTggNDo1MiBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4
-IHdyb3RlOg0KPj4+Pj4gT24gVHVlLCBEZWMgMTgsIDIwMTggYXQgMDM6NDg6MTNQTSArMDEwMCwg
-cGF0cmljZS5jaG90YXJkQHN0LmNvbSB3cm90ZToNCj4+Pj4+PiBGcm9tOiBQYXRyaWNlIENob3Rh
-cmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQo+Pj4+Pj4NCj4+Pj4+PiBEdWUgdG8gcGVuX3Jl
-bGVhc2UgYW5kIGJvb3RfbG9jayByZW1vdmFsLCBzZWNvbmRhcnkgQ1BVJ3MgYnJpbmd1cA0KPj4+
-Pj4+IHdhcyBicm9rZW4uIFJlc3RvcmUgQ1BVJ3MgYnJpbmd1cCBieSByZXdvcmtpbmcgcHJvcGVy
-bHkNCj4+Pj4+PiAuc21wX3ByZXBhcmVfY3B1cyBhbmQgLnNtcF9ib290X3NlY29uZGFyeSBTVGkg
-Y2FsbGJhY2tzLg0KPj4+Pj4NCj4+Pj4+IFNvcnJ5LCBtYXliZSBJIGRvbid0IHVuZGVyc3RhbmQg
-eW91ciBjb21taXQgbWVzc2FnZSwgYnV0IHlvdSBzZWVtIHRvIGJlDQo+Pj4+PiBzYXlpbmcgdGhh
-dCByZW1vdmFsIG9mIHRoZSBwZW5fcmVsZWFzZSBhbmQgYm9vdF9sb2NrIGJyb2tlIFNUaSdzIHNl
-Y29uZGFyeQ0KPj4+Pj4gQ1BVIGJyaW5nIHVwPyAgUGxlYXNlIGNsYXJpZnksIGFuZCBleHBsYWlu
-IGhvdyB0aGF0IGhhcHBlbmVkLg0KPj4+Pg0KPj4+PiBDb3JyZWN0LCBDUFUxIGZhaWxlZCB0byBj
-b21lIG9ubGluZS4NCj4+Pj4NCj4+Pj4gSXQgc2VlbXMgdGhhdCB3cml0aW5nIHNlY29uZGFyeV9z
-dGFydHVwIGFkZHJlc3MgYXQgY3B1LXJlbGVhc2UtYWRkciBpbg0KPj4+PiAuc21wX3ByZXBhcmVf
-Y3B1cyBjYWxsYmFjayB3YXMgdG9vIGVhcmx5Lg0KPj4+Pg0KPj4+PiBEb2luZyBpdCBpbiAuc21w
-X2Jvb3Rfc2Vjb25kYXJ5IGNhbGxiYWNrLCBpbnN1cmVzIHRoYXQgc2Vjb25kYXJ5X2RhdGENCj4+
-Pj4gc3RydWN0IGlzIHBvcHVsYXRlZCBpbiBfX2NwdV91cCgpIChzdGFjaywgcGdkaXIgYW5kIHN3
-YXBwZXJfcGdfZGlyIGZpZWxkcykuDQo+Pj4NCj4+PiBBaCwgeW91J3JlIHNheWluZyB0aGF0IGl0
-IGNhdXNlcyB0aGUgQ1BVIHRvIGp1bXAgdG8gc2Vjb25kYXJ5X3N0YXJ0dXANCj4+PiB3aGlsZSB0
-aGUgYm9vdCBDUFUgaXMgaW4gc21wX3ByZXBhcmVfY3B1cygpPyAgV2hhdCB0cmlnZ2VycyB0aGUg
-Q1BVDQo+Pg0KPj4gWWVzDQo+Pg0KPj4+IHRvIGp1bXAgdG8gdGhlIGFkZHJlc3Mgd3JpdHRlbiB0
-byBjcHVfc3RydF9wdHI/ICBXaGF0IHlvdSdyZSBzYXlpbmcNCj4+PiBzZWVtcyB0byBzdWdnZXN0
-IHRoYXQgaXQncyB0aGUgd3JpdGUgdG8gdGhhdCBhZGRyZXNzLCByYXRoZXIgdGhhbiB0aGUNCj4+
-PiBJUEkgdGhhdCdzIHNlbnQgaW4gc3RpX2Jvb3Rfc2Vjb25kYXJ5KCkuDQo+Pg0KPj4gQXQgcGxh
-dGZvcm0gc3RhcnR1cCwgYW4gVS1Cb290cm9tIGZpcm13YXJlIGluaXRpYWxpemUgc2Vjb25kYXJ5
-IENQVSBhbmQNCj4+IG1ha2UgaXQgc3Bpbm5pbmcgd2FpdGluZyBmb3IgYSBqdW1wIGFkZHJlc3Mg
-dG8gYmUgd3JpdHRlbiBhdCBjcHVfc3RydF9wdHIuDQo+Pg0KPj4gSSBkaWRuJ3QgcGF5IGF0dGVu
-dGlvbiB0byB0aGUgSVBJLCB5b3UgYXJlIHJpZ2h0IElQSSBpcyB1c2VsZXNzLCBpIHdpbGwNCj4+
-IHJlbW92ZSBpdC4NCj4gDQo+IE9rYXksIGluIHRoYXQgY2FzZSBtYXkgSSBzdWdnZXN0IGFuIGFs
-dGVybmF0aXZlIHRvIHRha2luZyBteSBwYXRjaA0KPiB3aGljaCB3aWxsIGJyZWFrIHRoaXMsIGFu
-ZCB0aGVuIGZpeGluZyBpdCBpbiBhIHN1YnNlcXVlbnQgcGF0Y2ggLQ0KPiBwbGVhc2UgbWVyZ2Ug
-dGhlIHR3byBwYXRjaGVzIHRvZ2V0aGVyIHNvIGl0IGJlY29tZXMgb25lICJjbGVhbiB1cCINCj4g
-cGF0Y2ggd2hpY2ggZG9lc24ndCBjYXVzZSBhbnkgYnJlYWthZ2UuDQo+IA0KPiBUaGFua3MuDQo+
-IA0KDQpPaywgYWdyZWUgd2l0aCB5b3VyIHByb3Bvc2FsLiBJIHdpbGwgc3F1YXNoIG91ciAyIHBh
-dGNoZXMuDQoNClRoYW5rcw0KDQpQYXRyaWNl
+Hi Tom,
+
+On Tue, 18 Dec 2018 14:33:22 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
+
+> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> 
+> Since all the variable reference hist_fields are collected into
+> hist_data->var_refs[] array, there's no need to go through all the
+> fields looking for them, or in separate arrays like synth_var_refs[],
+> which will be going away soon anyway.
+> 
+> This also allows us to get rid of some unnecessary code and functions
+> currently used for the same purpose.
+
+I just have a nitpick. 
+
+> 
+> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> ---
+>  kernel/trace/trace_events_hist.c | 57 +++++-----------------------------------
+>  1 file changed, 7 insertions(+), 50 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+> index 25d06b3ae1f6..ee839c52bd3f 100644
+> --- a/kernel/trace/trace_events_hist.c
+> +++ b/kernel/trace/trace_events_hist.c
+> @@ -1299,45 +1299,11 @@ check_field_for_var_ref(struct hist_field *hist_field,
+>  {
+>  	struct hist_field *found = NULL;
+>  
+> -	if (hist_field && hist_field->flags & HIST_FIELD_FL_VAR_REF) {
+> -		if (hist_field->var.idx == var_idx &&
+> -		    hist_field->var.hist_data == var_data) {
+> -			found = hist_field;
+> -		}
+> -	}
+> -
+> -	return found;
+> -}
+> -
+> -static struct hist_field *
+> -check_field_for_var_refs(struct hist_trigger_data *hist_data,
+> -			 struct hist_field *hist_field,
+> -			 struct hist_trigger_data *var_data,
+> -			 unsigned int var_idx,
+> -			 unsigned int level)
+> -{
+> -	struct hist_field *found = NULL;
+> -	unsigned int i;
+> -
+> -	if (level > 3)
+> -		return found;
+> -
+> -	if (!hist_field)
+> -		return found;
+> +	WARN_ON(!(hist_field && hist_field->flags & HIST_FIELD_FL_VAR_REF));
+>  
+> -	found = check_field_for_var_ref(hist_field, var_data, var_idx);
+> -	if (found)
+> -		return found;
+> -
+> -	for (i = 0; i < HIST_FIELD_OPERANDS_MAX; i++) {
+> -		struct hist_field *operand;
+> -
+> -		operand = hist_field->operands[i];
+> -		found = check_field_for_var_refs(hist_data, operand, var_data,
+> -						 var_idx, level + 1);
+> -		if (found)
+> -			return found;
+> -	}
+> +	if (hist_field && hist_field->var.idx == var_idx &&
+> +	    hist_field->var.hist_data == var_data)
+> +		found = hist_field;
+>  
+>  	return found;
+
+It seems we don't need "found" var here. Just return hist_field or NULL.
+
+>  }
+> @@ -1349,18 +1315,9 @@ static struct hist_field *find_var_ref(struct hist_trigger_data *hist_data,
+>  	struct hist_field *hist_field, *found = NULL;
+>  	unsigned int i;
+>  
+> -	for_each_hist_field(i, hist_data) {
+> -		hist_field = hist_data->fields[i];
+> -		found = check_field_for_var_refs(hist_data, hist_field,
+> -						 var_data, var_idx, 0);
+> -		if (found)
+> -			return found;
+> -	}
+> -
+> -	for (i = 0; i < hist_data->n_synth_var_refs; i++) {
+> -		hist_field = hist_data->synth_var_refs[i];
+> -		found = check_field_for_var_refs(hist_data, hist_field,
+> -						 var_data, var_idx, 0);
+> +	for (i = 0; i < hist_data->n_var_refs; i++) {
+> +		hist_field = hist_data->var_refs[i];
+> +		found = check_field_for_var_ref(hist_field, var_data, var_idx);
+>  		if (found)
+>  			return found;
+>  	}
+
+Here too. If you return soon after found it, you don't need to assign it.
+
+Except for that, it looks good to me.
+
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you,
+
+> -- 
+> 2.14.1
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
