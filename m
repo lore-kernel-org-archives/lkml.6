@@ -2,107 +2,67 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EC3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4261AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:36:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22DBA20815
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18BD720866
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbeLSLfp (ORCPT
+        id S1729144AbeLSLgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:35:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727111AbeLSLfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:35:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 59555ACB5;
-        Wed, 19 Dec 2018 11:35:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DF6251E1463; Wed, 19 Dec 2018 12:35:40 +0100 (CET)
-Date:   Wed, 19 Dec 2018 12:35:40 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181219113540.GC18345@quack2.suse.cz>
-References: <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181218103306.GC18032@quack2.suse.cz>
- <20181218234254.GC31274@dastard>
- <20181219030329.GI21992@ziepe.ca>
- <20181219102825.GN6311@dastard>
+        Wed, 19 Dec 2018 06:36:53 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:58447 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbeLSLgx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:36:53 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gZa9j-0002bK-5r; Wed, 19 Dec 2018 12:36:51 +0100
+Date:   Wed, 19 Dec 2018 12:36:51 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+Subject: Re: RT-Kernel boot stalls because of change in fs/dcache.c
+Message-ID: <20181219113650.ak3wj3h3oapfy3tj@linutronix.de>
+References: <cfff1645-aab1-7b39-5f75-31b94f3365d1@kontron.de>
+ <4aa4a0f1-373f-4978-42b1-6b676d6f1950@kontron.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181219102825.GN6311@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4aa4a0f1-373f-4978-42b1-6b676d6f1950@kontron.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 19-12-18 21:28:25, Dave Chinner wrote:
-> On Tue, Dec 18, 2018 at 08:03:29PM -0700, Jason Gunthorpe wrote:
-> > On Wed, Dec 19, 2018 at 10:42:54AM +1100, Dave Chinner wrote:
-> > 
-> > > Essentially, what we are talking about is how to handle broken
-> > > hardware. I say we should just brun it with napalm and thermite
-> > > (i.e. taint the kernel with "unsupportable hardware") and force
-> > > wait_for_stable_page() to trigger when there are GUP mappings if
-> > > the underlying storage doesn't already require it.
-> > 
-> > If you want to ban O_DIRECT/etc from writing to file backed pages,
-> > then just do it.
+On 2018-12-19 07:50:17 [+0000], Schrempf Frieder wrote:
+> + linux-rt-users
 > 
-> O_DIRECT IO *isn't the problem*.
+> On 17.12.18 11:42, Frieder Schrempf wrote:
+> > Hi,
+> > 
+> > I have tried to boot a 4.14-Kernel with the RT-patches and 
+> > PREEMPT_RT_FULL on an i.MX6UL board. Unfortunately the boot stalls at 
+> > some point and never finishes.
+> > 
+> > I did some bisecting and found out, that reverting this change: [1], 
+> > makes the board boot correctly.
+> > 
+> > Can anyone help to come up with a proper fix for this?
 
-That is not true. O_DIRECT IO is a problem. In some aspects it is easier
-than the problem with RDMA but currently O_DIRECT IO can crash your machine
-or corrupt data the same way RDMA can. Just the race window is much
-smaller. So we have to fix the generic GUP infrastructure to make O_DIRECT
-IO work. I agree that fixing RDMA will likely require even more work like
-revokable leases or what not.
+can you check if the hashtable is initialized twice?
 
-> iO_DIRECT IO uses a short term pin that the existing prefaulting
-> during GUP works just fine for. The problem we have is the long term
-> pins where pages can be cleaned while the pages are pinned. i.e. the
-> use case we current have to disable for DAX because *we can't make
-> it work sanely* without either revokable file leases and/or hardware
-> that is able to trigger page faults when they need write access to a
-> clean page.
+> > Thanks,
+> > Frieder
+> > 
+> > [1]: 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git/commit/?h=v4.14-rt&id=56684d21f7f8341f7a5ed1433714112f49294590 
 
-I would like to find a solution to the O_DIRECT IO problem while making the
-infractructure reusable also for solving the problems with RDMA... Because
-nobody wants to go through those couple hundred get_user_pages() users in
-the kernel twice...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Sebastian
