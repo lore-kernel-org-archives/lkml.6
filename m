@@ -2,84 +2,160 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D03C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3E3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC12921850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:19:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aH+dHuuC"
+	by mail.kernel.org (Postfix) with ESMTP id EEE9921841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:22:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbeLSHTR (ORCPT
+        id S1728063AbeLSHW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:19:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37090 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeLSHTQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:19:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=evqe5dPHDIt+SHYPo3T6MulYSyrCpjE82y/Hm+ivgNI=; b=aH+dHuuCtnfTgHx5FCXFTmdoc
-        ZsoHqEK1stmdr1SvDj+HeA6rvliXeUp1qkSbM2vjXUv7IcItpOTNY66/VayMovSOznP7KiTHt+AKY
-        EW1hEmKH0+oVoMuAjQV3q81zVW1ShFrPenvg6/lpXMclEwKacW/xClpgLrezRvN46PJw4s0arrjrM
-        HCZVnho39z5ONFgZpagvPR0hoj8gp/aVi+Ng078gT3nmfjiSFKmI0oe0xXrLo5bh+cGpOH052AoEz
-        mHPaPmnFuVB3WUIyE30D3/rRQr0ET6+ve4Oks3rKB7rc4061ONG9cfyupcWfoWlfq3HKuSe2Qkegy
-        vj4VLiyuQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZW8Q-0004v9-7e; Wed, 19 Dec 2018 07:19:14 +0000
-Date:   Tue, 18 Dec 2018 23:19:14 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>, ebiggers@kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181219071914.GA18852@infradead.org>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
- <20181212091406.GA31723@infradead.org>
- <20181212202609.GA193967@gmail.com>
- <20181213202249.GA3797@infradead.org>
- <20181214044802.GA681@sol.localdomain>
- <20181217200039.GD8111@magnolia>
- <20181219071149.GB2628@infradead.org>
- <CAHk-=wiB8vGbje+NgNkMZupHsZ_cqg6YEBV+ZXSF4wnywFLRHQ@mail.gmail.com>
+        Wed, 19 Dec 2018 02:22:58 -0500
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:56945 "EHLO
+        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725294AbeLSHW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 02:22:58 -0500
+Received: by mail.osadl.at (Postfix, from userid 1001)
+        id 7B8655C2288; Wed, 19 Dec 2018 08:22:50 +0100 (CET)
+Date:   Wed, 19 Dec 2018 08:22:50 +0100
+From:   Nicholas Mc Guire <der.herr@hofr.at>
+To:     Joe Perches <joe@perches.com>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: check kzalloc return
+Message-ID: <20181219072250.GA18501@osadl.at>
+References: <1545150439-26055-1-git-send-email-hofrat@osadl.org>
+ <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiB8vGbje+NgNkMZupHsZ_cqg6YEBV+ZXSF4wnywFLRHQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <4db484684a6e9b096c7fdf57673fd208d1c4005a.camel@perches.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:16:08PM -0800, Linus Torvalds wrote:
-> On Tue, Dec 18, 2018, 23:11 Christoph Hellwig <hch@infradead.org wrote:
+On Tue, Dec 18, 2018 at 09:33:58AM -0800, Joe Perches wrote:
+> On Tue, 2018-12-18 at 17:27 +0100, Nicholas Mc Guire wrote:
+> > kzalloc can return NULL so a check is needed. While there is a
+> > check for ret_buf there is no check for the allocation of
+> > ret_buf->crfid.fid - this check is thus added. Both call-sites
+> > of tconInfoAlloc() check for NULL return of tconInfoAlloc()
+> > so returning NULL on failure of kzalloc() here seems appropriate.
+> > As the kzalloc() is the only thing here that can fail it is
+> > moved to the beginning so as not to initialize other resources
+> > on failure of kzalloc.
+> > 
+> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> > Fixes: 3d4ef9a15343 ("smb3: fix redundant opens on root")
+> > ---
+> > 
+> > Problem located with an experimental coccinelle script
+> > 
+> > While at it make checkpatch happy by using *ret_buf->crfid.fid
+> > rather than struct cifs_fid.
+> > 
+> > Patch was compile tested with: x86_64_defconfig + CIFS=m
+> > (with some unrelated smatch warnings and some pending cocci fixes)
+> > 
+> > Patch is against v4.20-rc7 (localversion-next is next-20181218)
+> []
+> > diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+> []
+> > @@ -113,6 +113,13 @@ tconInfoAlloc(void)
+> >  	struct cifs_tcon *ret_buf;
+> >  	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+> >  	if (ret_buf) {
+> > +		ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid),
+> > +					     GFP_KERNEL);
+> > +		if (!ret_buf->crfid.fid) {
+> > +			kfree(ret_buf);
+> > +			return NULL;
+> > +		}
+> > +
+> >  		atomic_inc(&tconInfoAllocCount);
+> >  		ret_buf->tidStatus = CifsNew;
+> >  		++ret_buf->tc_count;
+> > @@ -120,8 +127,6 @@ tconInfoAlloc(void)
+> >  		INIT_LIST_HEAD(&ret_buf->tcon_list);
+> >  		spin_lock_init(&ret_buf->open_file_lock);
+> >  		mutex_init(&ret_buf->crfid.fid_mutex);
+> > -		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+> > -					     GFP_KERNEL);
+> >  		spin_lock_init(&ret_buf->stat_lock);
+> >  		atomic_set(&ret_buf->num_local_opens, 0);
+> >  		atomic_set(&ret_buf->num_remote_opens, 0);
 > 
-> >
-> > I think the fd would have to be on the same fs for this interface to
-> > make sense. But it could be an O_TMPFILE one.  And given that ext4
-> > already supports a variant of swapext this interface should also work
-> > with the existing ext4 on disk format.
-> >
-> 
-> Why is the merkle tree not just an xattr of the file?
+> Perhaps use a more common style by returning early on the
+> first possible failure too so the block can be unindented.
+>
 
-Because it is too large for our awkward xattrs interface..
+yup the restructured cleanup would be the better way to go
+
+rather than making this two patches I guess it would be the
+best to just skip the intermediate kzalloc only cleanup -
+atleast I see little value in that intermediat step - so
+could you take care of the kzalloc() in your refactoring 
+please ?
+
+thx!
+hofrat
+ 
+> Maybe as a separate cleanup patch.
+> ---
+>  fs/cifs/misc.c | 34 ++++++++++++++++++++--------------
+>  1 file changed, 20 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+> index 113980dba4d8..bee203055b30 100644
+> --- a/fs/cifs/misc.c
+> +++ b/fs/cifs/misc.c
+> @@ -111,21 +111,27 @@ struct cifs_tcon *
+>  tconInfoAlloc(void)
+>  {
+>  	struct cifs_tcon *ret_buf;
+> -	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+> -	if (ret_buf) {
+> -		atomic_inc(&tconInfoAllocCount);
+> -		ret_buf->tidStatus = CifsNew;
+> -		++ret_buf->tc_count;
+> -		INIT_LIST_HEAD(&ret_buf->openFileList);
+> -		INIT_LIST_HEAD(&ret_buf->tcon_list);
+> -		spin_lock_init(&ret_buf->open_file_lock);
+> -		mutex_init(&ret_buf->crfid.fid_mutex);
+> -		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+> -					     GFP_KERNEL);
+> -		spin_lock_init(&ret_buf->stat_lock);
+> -		atomic_set(&ret_buf->num_local_opens, 0);
+> -		atomic_set(&ret_buf->num_remote_opens, 0);
+> +
+> +	ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
+> +	if (!ret_buf)
+> +		return NULL;
+> +	ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
+> +	if (!ret_buf->crfid.fid) {
+> +		kfree(ret_buf);
+> +		return NULL;
+>  	}
+> +
+> +	atomic_inc(&tconInfoAllocCount);
+> +	ret_buf->tidStatus = CifsNew;
+> +	++ret_buf->tc_count;
+> +	INIT_LIST_HEAD(&ret_buf->openFileList);
+> +	INIT_LIST_HEAD(&ret_buf->tcon_list);
+> +	spin_lock_init(&ret_buf->open_file_lock);
+> +	mutex_init(&ret_buf->crfid.fid_mutex);
+> +	spin_lock_init(&ret_buf->stat_lock);
+> +	atomic_set(&ret_buf->num_local_opens, 0);
+> +	atomic_set(&ret_buf->num_remote_opens, 0);
+> +
+>  	return ret_buf;
+>  }
+>  
+> 
