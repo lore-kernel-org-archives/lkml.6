@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E75C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0CAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CACCE2070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA1620672
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545244351;
-	bh=L5cjE+XNxksjMP5swZAL8ykToRs9nLaclmofQFAI2hk=;
+	s=default; t=1545244359;
+	bh=c5CD4r95hIigRDKySWKlleuWASZOrmOBYV+Bsu5SRek=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=sW65VnSOhJcORmqdvy3IMAGUW+/sGekDE3IJ5GIJ1u6W8SvWh0z3xCLj3C3BeavoA
-	 kggOiYuMHCyVM/XuLZRzaXCHaSKLliTrziOPNjlxE77MV8AX5P2FhVM9YvqOlGOJ4N
-	 kK9UAjqYzMXgnk0XBJWT3GbiFf4yyldMOUVzuD4s=
+	b=gzP1xpy3C8zZ0EMhGEylV5czrH49/iXrkb2ItRzwip9xqRgTNYhMMIuY+uOYMXS1o
+	 FjzKDNr4nqBCcdGNNtYI56fwiy5nQlxM10UE8RXbd11a+C9HHUwlDoORu2+pUmPTj+
+	 HiZmSnkeT31uSMyxwU5YTZmGM87Wzpud9mzHiyRo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbeLSSca (ORCPT
+        id S1729848AbeLSSci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:32:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58794 "EHLO
+        Wed, 19 Dec 2018 13:32:38 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59024 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728580AbeLSSca (ORCPT
+        with ESMTP id S1728580AbeLSSci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:32:30 -0500
+        Wed, 19 Dec 2018 13:32:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=k2W452HgvFYGsnhcfgTrHdG+RzDVjkRUUqF23YlVWbI=; b=oU6TpWvrayMy
-        BJAUj+6o8c7UA9eyJD0mdG5WWCfqGbAjTTkuwkNtihzdLGMoAUmQCjUaIOiD9Pa6u2sEXMp2Ye69/
-        uy30zFJjrYvh4+Xy3cnnk5b1oXkRXVjSa5G0oHEDZdG9KkiIJy1MxmNcO6Rjo7592xvgytxGW66Mi
-        40M1I=;
+        List-Archive; bh=5pA5ywXZkUwqkx8d9HW9r1a8f9AutmcPcP/RSkB50cw=; b=Vv026LeM7DCN
+        U1ur2P1M68Ksi0Tia8eUDc53xg4Q4c+cNsWW37Tn/wkdC0PbI2EwI/7rghbipg4/TdC7T6QHx7yj6
+        M1Dka/C+cVSCPmIvGJ1wKGpO+nMyrK6NE8q08+h9D/AyVmh1Ump560r2F9/h0LwAmQQLz6GDDVE5q
+        2XbYs=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gZgdv-0005Ku-5O; Wed, 19 Dec 2018 18:32:27 +0000
+        id 1gZge1-0005L1-9H; Wed, 19 Dec 2018 18:32:33 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6433211259E9; Wed, 19 Dec 2018 18:32:26 +0000 (GMT)
+        id E9E1511259E9; Wed, 19 Dec 2018 18:32:32 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regmap: regmap-irq: Remove default irq type setting from core" to the regmap tree
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: act8945a-regulator: make symbol act8945a_pm static" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181219183226.6433211259E9@debutante.sirena.org.uk>
-Date:   Wed, 19 Dec 2018 18:32:26 +0000 (GMT)
+Message-Id: <20181219183232.E9E1511259E9@debutante.sirena.org.uk>
+Date:   Wed, 19 Dec 2018 18:32:32 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,11 +59,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regmap: regmap-irq: Remove default irq type setting from core
+   regulator: act8945a-regulator: make symbol act8945a_pm static
 
-has been applied to the regmap tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,64 +84,36 @@ to this mail.
 Thanks,
 Mark
 
-From 84267d1b18abee0c141553396f52a23db71660d3 Mon Sep 17 00:00:00 2001
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Date: Tue, 18 Dec 2018 12:58:13 +0200
-Subject: [PATCH] regmap: regmap-irq: Remove default irq type setting from core
+From 78e6fbf321a9b4cb46b17d83f25abcd318859c70 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Tue, 18 Dec 2018 07:10:21 +0000
+Subject: [PATCH] regulator: act8945a-regulator: make symbol act8945a_pm static
 
-The common code should not set IRQ type. Read HW defaults to the
-cache at startup instead of forcing type to EDGE_BOTH. If
-default setting is needed this should be done via normal
-mechanisms or by chip specific code if normal mechanisms are not
-suitable for some reason. Common regmap-irq code should not have
-defaults hard-coded but keep the HW/boot defaults untouched.
+Fixes the following sparse warning:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+drivers/regulator/act8945a-regulator.c:340:1: warning:
+ symbol 'act8945a_pm' was not declared. Should it be static?
+
+Fixes: 7482d6ecc68e ("regulator: act8945a-regulator: Implement PM functionalities")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/base/regmap/regmap-irq.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/regulator/act8945a-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 603b1554f81c..8b216b2e2c19 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -625,26 +625,20 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	}
+diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+index 157272536122..603db77723b6 100644
+--- a/drivers/regulator/act8945a-regulator.c
++++ b/drivers/regulator/act8945a-regulator.c
+@@ -337,7 +337,7 @@ static int __maybe_unused act8945a_suspend(struct device *pdev)
+ 	return regmap_write(act8945a->regmap, ACT8945A_SYS_CTRL, 0x42);
+ }
  
- 	if (chip->num_type_reg && !chip->type_in_mask) {
--		for (i = 0; i < chip->num_irqs; i++) {
--			reg = chip->irqs[i].type_reg_offset / map->reg_stride;
--			d->type_buf_def[reg] |= chip->irqs[i].type_rising_mask |
--					chip->irqs[i].type_falling_mask;
--		}
- 		for (i = 0; i < chip->num_type_reg; ++i) {
- 			if (!d->type_buf_def[i])
- 				continue;
+-SIMPLE_DEV_PM_OPS(act8945a_pm, act8945a_suspend, NULL);
++static SIMPLE_DEV_PM_OPS(act8945a_pm, act8945a_suspend, NULL);
  
- 			reg = chip->type_base +
- 				(i * map->reg_stride * d->type_reg_stride);
--			if (chip->type_invert)
--				ret = regmap_irq_update_bits(d, reg,
--					d->type_buf_def[i], 0xFF);
--			else
--				ret = regmap_irq_update_bits(d, reg,
--					d->type_buf_def[i], 0x0);
--			if (ret != 0) {
--				dev_err(map->dev,
--					"Failed to set type in 0x%x: %x\n",
-+
-+			ret = regmap_read(map, reg, &d->type_buf_def[i]);
-+
-+			if (d->chip->type_invert)
-+				d->type_buf_def[i] = ~d->type_buf_def[i];
-+
-+			if (ret) {
-+				dev_err(map->dev, "Failed to get type defaults at 0x%x: %d\n",
- 					reg, ret);
- 				goto err_alloc;
- 			}
+ static void act8945a_pmic_shutdown(struct platform_device *pdev)
+ {
 -- 
 2.19.0.rc2
 
