@@ -2,99 +2,108 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC192C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B55BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4E5217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 111012184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeLSMEj (ORCPT
+        id S1728627AbeLSMFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:04:39 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40057 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbeLSMEi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:04:38 -0500
-Received: by mail-io1-f67.google.com with SMTP id a11so802086ioq.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 04:04:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Xk3LTK0rZU9iPsSUpdLXv+5SfsDQuy6u0SOzzxtG1jI=;
-        b=cukspQ5OkCUL4vmFZGNcu4KeiixdrpP+Mm23tFR9z4sSqiRZwuh1279dyGbFJansy/
-         YdohvjKRz7b5GHAmrV76l5wtXPkiqZQysXoRnWLHaYijgxeEomgmuWqUx4U7x69tmeTB
-         hlxcLQ1b0OW2NEG5SOGsGQ6bFcej6u7nOCr2NZ31WFAoJHaG/KArzfu/7fEWvqNCs8Cz
-         T37SyMqydS/6e7hyZ589Xzi96tZyDaz1Av41der1bdhH7DhJHHgQFkbX5iVJnAwfoCFe
-         u5nehrqav5owFibhwcElx77vH5x4d8T1+dRJCFQVBn5qjPnrmnvVYhBDPLaag5X/mNI2
-         Kj6A==
-X-Gm-Message-State: AA+aEWbrmjOH2rvyZ030vglU/uBwOBCISIas/VTfgAWx7zgA/fg89XSm
-        bWIyS4s23s0r9Oog+yAP6nBJgA==
-X-Google-Smtp-Source: AFSGD/Xe6uBgJPyhjtiW8C/yHzDXJqHegrIC0FbW6IjCmSiUA09cndTGdk7/zDQqJ+P0kSX+mSXUuw==
-X-Received: by 2002:a6b:4a09:: with SMTP id w9mr18510023iob.260.1545221078106;
-        Wed, 19 Dec 2018 04:04:38 -0800 (PST)
-Received: from bsingh.kernel.org ([125.16.97.116])
-        by smtp.gmail.com with ESMTPSA id b91sm3393673itd.26.2018.12.19.04.04.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 04:04:37 -0800 (PST)
-Subject: Re: [PATCH] hpet: Fix missing '=' character in the __setup() code of
- hpet_mmap_enable.
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     clemens@ladisch.de, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        trivial@kernel.org, prarit@redhat.com
-References: <20181219092502.3079-1-bsingh@redhat.com>
- <20181219094627.GC11441@kroah.com>
-From:   Buland Singh <bsingh@redhat.com>
-Message-ID: <2c7a66e5-9488-b1a3-d08d-e4f508d3ee53@redhat.com>
-Date:   Wed, 19 Dec 2018 17:34:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181219094627.GC11441@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 07:05:07 -0500
+Received: from www.osadl.org ([62.245.132.105]:37965 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727962AbeLSMFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:05:07 -0500
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id wBJC1gHi020816;
+        Wed, 19 Dec 2018 13:01:42 +0100
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Steve French <sfrench@samba.org>
+Cc:     Joe Perches <joe@perches.com>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] cifs: handle allocation failures early
+Date:   Wed, 19 Dec 2018 12:58:17 +0100
+Message-Id: <1545220697-29183-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/18 3:16 PM, Greg KH wrote:
-> On Wed, Dec 19, 2018 at 02:55:02PM +0530, Buland Singh wrote:
->> The kernel command parameter 'hpet_mmap' never takes effect due to missing
->> '=' character in the __setup() code of hpet_mmap_enable and the memory map
->> of the HPET registers never get expose to userspace.
->>
->> Signed-off-by: Buland Singh <bsingh@redhat.com>
->> ---
->>   drivers/char/hpet.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
->> index 4a22b4b41aef..9bffcd37cc7b 100644
->> --- a/drivers/char/hpet.c
->> +++ b/drivers/char/hpet.c
->> @@ -377,7 +377,7 @@ static __init int hpet_mmap_enable(char *str)
->>   	pr_info("HPET mmap %s\n", hpet_mmap_enabled ? "enabled" : "disabled");
->>   	return 1;
->>   }
->> -__setup("hpet_mmap", hpet_mmap_enable);
->> +__setup("hpet_mmap=", hpet_mmap_enable);
-> 
-> What commit caused this bug?  Should this go to the stable kernel trees?
+kzalloc can return NULL so a check is needed. Further move the
+allocation checks before the remaining initialization and bail
+out without initialization if allocation failed returning NULL.
 
-Hello Greg,
+Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 3d4ef9a15343 ("smb3: fix redundant opens on root")
+---
 
-The commit id is 3d035f58. The bug is there since the initial patch which
-introduced the kernel parameter 'hpet_mmap'. The fix should go to the
-stable kernel trees.
+Missing kzalloc check located with an experimental coccinelle script
 
-Regards,
-Buland Singh
+While at it make checkpatch happy by using *ret_buf->crfid.fid
+rather than struct cifs_fid and use a more common style by returning
+early on the first possible failure too so the block can be unindented.
+
+Patch was compile tested with: x86_64_defconfig + CIFS=m
+(with an unrelated smatch warnings and some pending cocci fixes)
+
+Patch is against v4.20-rc7 (localversion-next is next-20181219)
+
+ fs/cifs/misc.c | 33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
+
+diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+index 113980d..2d4b5fb 100644
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -111,21 +111,26 @@ struct cifs_tcon *
+ tconInfoAlloc(void)
+ {
+ 	struct cifs_tcon *ret_buf;
+-	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
+-	if (ret_buf) {
+-		atomic_inc(&tconInfoAllocCount);
+-		ret_buf->tidStatus = CifsNew;
+-		++ret_buf->tc_count;
+-		INIT_LIST_HEAD(&ret_buf->openFileList);
+-		INIT_LIST_HEAD(&ret_buf->tcon_list);
+-		spin_lock_init(&ret_buf->open_file_lock);
+-		mutex_init(&ret_buf->crfid.fid_mutex);
+-		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
+-					     GFP_KERNEL);
+-		spin_lock_init(&ret_buf->stat_lock);
+-		atomic_set(&ret_buf->num_local_opens, 0);
+-		atomic_set(&ret_buf->num_remote_opens, 0);
++	ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
++	if (!ret_buf)
++		return NULL;
++	ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
++	if (!ret_buf->crfid.fid) {
++		kfree(ret_buf);
++		return NULL;
+ 	}
++
++	atomic_inc(&tconInfoAllocCount);
++	ret_buf->tidStatus = CifsNew;
++	++ret_buf->tc_count;
++	INIT_LIST_HEAD(&ret_buf->openFileList);
++	INIT_LIST_HEAD(&ret_buf->tcon_list);
++	spin_lock_init(&ret_buf->open_file_lock);
++	mutex_init(&ret_buf->crfid.fid_mutex);
++	spin_lock_init(&ret_buf->stat_lock);
++	atomic_set(&ret_buf->num_local_opens, 0);
++	atomic_set(&ret_buf->num_remote_opens, 0);
++
+ 	return ret_buf;
+ }
+ 
+-- 
+2.1.4
 
