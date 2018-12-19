@@ -2,98 +2,148 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB6FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6C5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251CF21850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D953C2054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545210910;
+	bh=cLhbY7dBkzlVk9Y9KKA90Cj8vYejMn1pKRfxHVlQWg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oHxwE4pT/mqWedJx3iSkPVtld8Vzl9ftHYgS24yvXpOr0jgoXBHVuOk2OZt5auIhJ
+	 oLUCmkdJsoWaR6ul44wkYqjUkV0C+XxpG8ZNPNpwQuvbnG9hdGM5NHAkqXkuUseDmd
+	 Cj1jRuQBLxu/Uf9PzT18yDf2OgzZKf329L9l2eM0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeLSJOx (ORCPT
+        id S1728676AbeLSJPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:14:53 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37852 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726818AbeLSJOw (ORCPT
+        Wed, 19 Dec 2018 04:15:09 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34972 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeLSJPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:14:52 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJ9ANX7026208;
-        Wed, 19 Dec 2018 03:14:51 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2pcyw5qj6h-1;
-        Wed, 19 Dec 2018 03:14:51 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 7DBF2611B6D0;
-        Wed, 19 Dec 2018 03:18:40 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 19 Dec 2018
- 09:14:50 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBJ9Eo1u011997; Wed,
- 19 Dec 2018 09:14:50 GMT
-Date:   Wed, 19 Dec 2018 09:14:50 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 16/18] mfd: wm8350-i2c: Make it explicitly non-modular
-Message-ID: <20181219091450.GY16508@imbe.wolfsonmicro.main>
-References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
- <1545078688-21217-17-git-send-email-paul.gortmaker@windriver.com>
+        Wed, 19 Dec 2018 04:15:09 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s198so9182532pgs.2;
+        Wed, 19 Dec 2018 01:15:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=9lbCxpplthykvomAmhnVmBNdcm6t59QNi2ehRvzQnW0=;
+        b=ZKCZhqv8Nr6ZSHAcysuFwqDhWFlEwgHxFYEk65JE+61u4a9rTtyMQM8vO6ftRCIvdQ
+         Ud4RQh/PHddky8q6OGypU/+Y9bmVUEcYsQjF9CKxnU1ac+ElrO0/Sap6p7wZysJFY0qB
+         Q+D3ud41RtV+z7c153oYJO+sOrlmsHw9HkAP3k1GdZkE/HtneVbilAehlO7PwKTnHdhs
+         VmFzHHVCKk3HaEXiWqd5N6sHODr26xvATJ8whJqy8dBSmVKIP4b2T/QuuP31/DXGnTSN
+         jgkNwoBNxDfDvs+w6ctfkg4ai69ely8jjigOwxDCWwHPEfmk+2NQFl+KwAPrz2ZehXIs
+         udrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=9lbCxpplthykvomAmhnVmBNdcm6t59QNi2ehRvzQnW0=;
+        b=AEVkl7sK2ASCtZVnR9+rmrEWk0okI+0KUrHAxB4sHBh9lnPxZElMLa6E6GaBb/goWR
+         cFhAGXqkc9shdv8YxNWsdUY+sGDegkYnoPfNiPD38U2JO+wLy4tChV+c60xJ+y0YeuMB
+         BuZ/VaqTnaUAa/FIjY1ooyWmy7/N1x7gMHzHgh7YhCHeAiipVf3F6EMgD5JiAFODDnuh
+         NL9fefMPUtQXV4BcsrH2KCLG/XRrrpFswvV84lg1ru3L+3/c5LluaLZUKGaIN5Txdyc1
+         CNm2Z/4DluYcZBVmxdbRCoyv4EkKMlHphcZb8epUZK1zEXOrsoHayNS9vM0Jij+BiAFg
+         MsYw==
+X-Gm-Message-State: AA+aEWbUyqMjiYOQrs65cf0H8Gqlu9A4eCdGqFHqyQq4l5kdXfk+Bp9b
+        fi6zsVyWR7krx3Y0ulN9D8Z6hIvd
+X-Google-Smtp-Source: AFSGD/XIZ12qh1D6G0PRt/+d73+ShP3gmoYyC4Mq4Eb6yS2Lt0HA9XsDF+EUK6/RYLwC7iA2WCifnA==
+X-Received: by 2002:a63:d949:: with SMTP id e9mr18835228pgj.24.1545210908227;
+        Wed, 19 Dec 2018 01:15:08 -0800 (PST)
+Received: from danjae.aot.lge.com ([182.210.106.196])
+        by smtp.gmail.com with ESMTPSA id 125sm27183490pfx.159.2018.12.19.01.15.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 01:15:06 -0800 (PST)
+Date:   Wed, 19 Dec 2018 18:15:00 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Luis =?utf-8?Q?Cl=C3=A1udio_Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>, Wang Nan <wangnan0@huawei.com>,
+        kernel-team@lge.com
+Subject: Re: [PATCH 57/63] perf beauty mmap: Print PROT_READ before PROT_EXEC
+ to match strace output
+Message-ID: <20181219091500.GB18068@danjae.aot.lge.com>
+References: <20181218220733.15839-1-acme@kernel.org>
+ <20181218220733.15839-58-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1545078688-21217-17-git-send-email-paul.gortmaker@windriver.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=931 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812190080
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181218220733.15839-58-acme@kernel.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:31:26PM -0500, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
+On Tue, Dec 18, 2018 at 07:07:27PM -0300, Arnaldo Carvalho de Melo wrote:
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
 > 
-> drivers/mfd/Kconfig:config MFD_WM8350_I2C
-> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8350 with I2C"
+> Helps with comparing 'strace' and 'perf trace' output, for mutual
+> regression testing.
 > 
-> ...meaning that it currently is not being built as a module by anyone.
-> 
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
-> 
-> We explicitly disallow a driver unbind, since that doesn't have a
-> sensible use case anyway, and it allows us to drop the ".remove"
-> code for non-modular drivers.
-> 
-> Since module_init was not in use by this code, the init ordering
-> remains unchanged with this commit.
-> 
-> We don't replace module.h with init.h since the file already has that.
-> But we do delete an unused moduleparam.h
-> 
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: patches@opensource.cirrus.com
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Wang Nan <wangnan0@huawei.com>
+> Link: https://lkml.kernel.org/n/tip-va0qe95xbhep5hy52aq5qe0v@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 > ---
+>  tools/perf/trace/beauty/mmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/trace/beauty/mmap.c b/tools/perf/trace/beauty/mmap.c
+> index 138f36a47fb1..eb31089790e3 100644
+> --- a/tools/perf/trace/beauty/mmap.c
+> +++ b/tools/perf/trace/beauty/mmap.c
+> @@ -17,8 +17,8 @@ static size_t syscall_arg__scnprintf_mmap_prot(char *bf, size_t size,
+>  		prot &= ~PROT_##n; \
+>  	}
+>  
+> -	P_MMAP_PROT(EXEC);
+>  	P_MMAP_PROT(READ);
+> +	P_MMAP_PROT(EXEC);
+>  	P_MMAP_PROT(WRITE);
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+EXEC should be printed after WRITE..
+
+  $ cat mmap.c
+  #include <sys/mman.h>
+  
+  int main(void)
+  {
+    mmap(0, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+    return 0;
+  }
+  
+  $ strace -e mmap ./a.out
+  ...
+  mmap(NULL, 4096, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f4c643ec000
+  +++ exited with 0 +++
 
 Thanks,
-Charles
+Namhyung
+
+
+
+>  	P_MMAP_PROT(SEM);
+>  	P_MMAP_PROT(GROWSDOWN);
+> -- 
+> 2.19.2
+> 
