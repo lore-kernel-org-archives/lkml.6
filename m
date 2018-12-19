@@ -2,141 +2,150 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4FBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C586C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C69DF20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:51:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d0UhBioK"
+	by mail.kernel.org (Postfix) with ESMTP id 1C82D20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbeLSVve (ORCPT
+        id S1729339AbeLSVzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:51:34 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:45667 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729183AbeLSVve (ORCPT
+        Wed, 19 Dec 2018 16:55:02 -0500
+Received: from smtprelay0015.hostedemail.com ([216.40.44.15]:60440 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728285AbeLSVzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:51:34 -0500
-Received: by mail-yw1-f67.google.com with SMTP id d190so8752966ywd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 13:51:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GM5hGu4M0G7cLJiG/Agci333y79vb/B6Mg/bPozxqbQ=;
-        b=d0UhBioKbOj3lUW4AGfleaR68HWYnVZ51nyMcG4O+WkRY3xIcpbjHL3t8lSkZPAkRg
-         cWh00QeeQeSnJZQ5dJk30aggq6GezcAXHtyUyz6B0UFLiG/a1VChq4/l+jcxjcnvOrzk
-         dj4vJSRiE4slCuvIBEKYqRGIZdIkmkPwvRxqg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GM5hGu4M0G7cLJiG/Agci333y79vb/B6Mg/bPozxqbQ=;
-        b=joJ0hRTt5iCIYibMee0yD+S8gKVqaOFgm7YL8lsJGYCVJN4MnXFwrvjNHOmoObAiGh
-         VRSTZJGpHLJbUR8yq+Yreq2ZgKVoQWbEmYagI59Ck8UOaC69Jhw1LeNo48qsVvjzb30y
-         JB1PDoWlXbpHmPUjxQzXTtSxl432UXMHpjGqOGS/n05ZrxNhwyO/m+Yhk/TdCXRhvZ3F
-         +mIr1gvRaY+R2aDrxnoyTKdrv0ct5w2HzR6phbCdubzYN47246G0y132YGWPqijf2Jf2
-         4yhKXiCUAZGQkHZBNNTwdvMcA+rbNfYpPQuecQ+Y9z+aE3/5VS2Zcd72p4JjuH8PSeUM
-         ObDg==
-X-Gm-Message-State: AA+aEWaIMJHoLbZG4Wv0rZuij++FhXcbczOClmCRGp+3jgTc9JD14jDl
-        02qXB3XcIFfk/wO+a2hWEE7zqJpqYmw=
-X-Google-Smtp-Source: AFSGD/Wee28JALnKkXwP6BaiFV/ZtghqVXHv5rnzC87l0NO6yckkqxYXDFHEfSG+By2zyNbpwD+3iw==
-X-Received: by 2002:a81:7342:: with SMTP id o63mr22825597ywc.131.1545256291971;
-        Wed, 19 Dec 2018 13:51:31 -0800 (PST)
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
-        by smtp.gmail.com with ESMTPSA id i21sm11616082ywg.5.2018.12.19.13.51.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 13:51:29 -0800 (PST)
-Received: by mail-yb1-f172.google.com with SMTP id 64so8502271ybe.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 13:51:29 -0800 (PST)
-X-Received: by 2002:a25:a445:: with SMTP id f63-v6mr21956262ybi.171.1545256289326;
- Wed, 19 Dec 2018 13:51:29 -0800 (PST)
-MIME-Version: 1.0
-References: <ecb306ea6f4a83302e78884713ad7823@codeaurora.org>
-In-Reply-To: <ecb306ea6f4a83302e78884713ad7823@codeaurora.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 19 Dec 2018 13:51:18 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jK68J6xHMva1p6aM0ZoQDyY0QiEV3qW3K8UDoK-OeP5Ng@mail.gmail.com>
-Message-ID: <CAGXu5jK68J6xHMva1p6aM0ZoQDyY0QiEV3qW3K8UDoK-OeP5Ng@mail.gmail.com>
-Subject: Re: usercopy_warn in __copy_to_user
-To:     rishabhb@codeaurora.org
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        Linux-arm Kernel <linux-arm-kernel@lists.infradead.org>,
-        tsoni@codeaurora.org, ckadabi@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 19 Dec 2018 16:55:01 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id B25DF18223269;
+        Wed, 19 Dec 2018 21:55:00 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: beds66_48a583d208a38
+X-Filterd-Recvd-Size: 4543
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 19 Dec 2018 21:54:59 +0000 (UTC)
+Message-ID: <b6cc5327509148fb26bfba2ca34f9c2927437707.camel@perches.com>
+Subject: Re: [RFC][PATCH] string.h: Add strncmp_prefix() helper macro
+From:   Joe Perches <joe@perches.com>
+To:     Bryana Rostedt <bryana@home.goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Date:   Wed, 19 Dec 2018 13:54:57 -0800
+In-Reply-To: <20181219163207.792e0f97@gandalf.local.home>
+References: <20181219163207.792e0f97@gandalf.local.home>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 11:51 AM <rishabhb@codeaurora.org> wrote:
->
->
-> In the 4.19 kernel, we are seeing a USERCOPY_WARN in __copy_to_user
-> during bootup.
-> The code-flow is something like this:
->
-> (arch/arm64/kernel/signal.c)
-> struct sigset_t *set;
-> __copy_to_user(&sf->uc.uc_sigmask, set, sizeof(*set))
->
-> (include/linux/uaccess.h)
-> __copy_to_user(void __user *to, const void *from, unsigned long n)
-> {
->                  might_fault();
->                  kasan_check_read(from, n);
->                  check_object_size(from, n, true);
->                  return raw_copy_to_user(to, from, n);
-> }
->
-> (include/linux/thread_info.h)
-> static __always_inline void check_object_size(const void *ptr,
->                                   unsigned long n, bool to_user)
-> {
->                  if (!__builtin_constant_p(n))
->                                  __check_object_size(ptr, n, to_user);
-> }
->
-> Since sizeof(*set) is constant, __builtin_constant_p(n) should return
-> true.
-> But we are seeing that its returning the value as false. Because of
-> which
-> the code goes on to __check_object_size and generates a USERCOPY_WARN
-> ("usercopy: WARN() on slab cache usercopy
-> region violations").
->
-> We are using LLVM clang version 6.0 to compile the kernel and not gcc.
+On Wed, 2018-12-19 at 16:32 -0500, Bryana Rostedt wrote:
+> A discussion came up in the trace triggers thread about converting a
+> bunch of:
+> 
+>  strncmp(str, "const", sizeof("const") - 1)
+> 
+> use cases into a helper macro. It started with:
+> 
+> #define strncmp_const(str, const) \
+> 	strncmp(str, const, sizeof(const) - 1)
+> 
+> But then Joe Perches mentioned that if a const is not used, the
+> sizeof() will be the size of a pointer, which can be bad. And that
+> gcc will optimize strlen("const") into "sizeof("const") - 1".
+> 
+> Thinking about this more, a quick grep in the kernel tree found several
+> (thousands!) of cases that use this construct. A quick grep also
+> revealed that there's probably several bugs in that use case. Some are
+> that people forgot the "- 1" (which I found) and others could be that
+> the constant for the sizeof is different than the constant (although, I
+> haven't found any of those, but I also didn't look hard).
+> 
+> I figured the best thing to do is to create a helper macro and place it
+> into include/linux/string.h. And go around and fix all the open coded
+> versions of it later.
+> 
+> I plan on only applying this patch and updating the tracing hooks for
+> this merge window. And perhaps use it to fix some of the bugs that were
+> found.
+> 
+> I was going to just use:
+> 
+> #define strncmp_prefix(str, prefix) \
+> 	strncmp(str, prefix, strlen(prefix))
+> 
+> but then realized that "prefix" is used twice, and will break if
+> someone does something like:
+> 
+> 	strncmp_prefix(str, ptr++);
+> 
+> So instead I check with __builtin_constant_p() to see if the second
+> parameter is truly a constant, which I use sizeof() anyway (why bother
+> gcc to optimize it, if we already know it's a constant), and copy the
+> parameter into a local variable and use that local variable for the non
+> constant part (with strlen).
+> 
+> Link: http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 27d0482e5e05..3dc743e3a0ba 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -14,6 +14,27 @@ extern void *memdup_user(const void __user *, size_t);
+>  extern void *vmemdup_user(const void __user *, size_t);
+>  extern void *memdup_user_nul(const void __user *, size_t);
+>  
+> +/*
+> + * A common way to test a prefix of a string is to do:
+> + *  strncmp(str, prefix, sizeof(prefix) - 1)
+> + *
+> + * But this can lead to bugs due to typos, or if prefix is a pointer
+> + * and not a constant. Instead use strncmp_prefix().
+> + */
+> +#define strncmp_prefix(str, prefix)					\e
+> +	({								\
+> +		int ____strcmp_prefix_ret____;				\
+> +		char *____strcmp_prefix____ = prefix;			\
 
-This is fixed in the latest LLVM and Clang:
+This creates a warning and discards any const from prefix when used like
 
-https://github.com/ClangBuiltLinux/linux/issues/7
+	static const char foo[] = "bar";
 
--Kees
+	strncmp_prefix(str, foo);
 
-> In clang, __builtin_constant_p is evaluated immediately, before inlining
-> or other optimizations run, gcc evaluates it later.
-> We believe that maybe causing __builtin_constant_p(n) to return false.
-> There=E2=80=99s upstream work to change LLVM, so __builtin_constant_p wor=
-ks more
-> like gcc when optimization is enabled, but its still in progress.
->
->
-> For this scenario is there a way to avoid the warning? Should the code
-> be
-> written in a different to avoid dependency on compiler?
->
-> Thanks,
-> Rishabh
+> +		if (__builtin_constant_p(&prefix))			\
+> +			____strcmp_prefix_ret____ =			\
+> +				strncmp(str, prefix, sizeof(prefix) - 1); \
+> +		else							\
+> +			____strcmp_prefix_ret____ =			\
+> +				strncmp(str, ____strcmp_prefix____,	\
+> +					strlen(____strcmp_prefix____));	\
+> +		____strcmp_prefix_ret____;				\
+> +	})
+> +
+
+Perhaps
+
+#define strncmp_prefix(str, prefix)					\
+({									\
+	typeof(prefix) p = (prefix);					\
+	strncmp(str, p, strlen(p));					\
+})
 
 
-
---=20
-Kees Cook
