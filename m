@@ -2,117 +2,297 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4439CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DACC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0482A21871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7B1C2184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:27:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wblp9OAs"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P0E9BFnj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbeLSL0W (ORCPT
+        id S1728406AbeLSL07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:26:22 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41928 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729255AbeLSL0V (ORCPT
+        Wed, 19 Dec 2018 06:26:59 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42721 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728126AbeLSL07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:26:21 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15-v6so17065325ljc.8;
-        Wed, 19 Dec 2018 03:26:19 -0800 (PST)
+        Wed, 19 Dec 2018 06:26:59 -0500
+Received: by mail-ua1-f68.google.com with SMTP id d21so6840193uap.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 03:26:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Zl/FQ02zDCdhGeqMe1/aqQs0xDd6N3gVw4SozzG/IFs=;
-        b=Wblp9OAsPB428Ei3oNM3U70drzimJh80eJGllL0d9pg4zOQ+u+9SABWOroMTpgwmVZ
-         1KJtxR9QUqAr4UXED0Oiuzy6SnMhIUI5AdpMH/ZqnnkdIP4CxK54Ckg87O4pzduOfV+m
-         gbZXXw0GkYEFwLZv3/TIC3L0qWdDayUu27iXqVs20QKa3mAvGMWf+oDHK1y/X7U3sjOR
-         KvxbzEXn91Xb6sbsG1ai7y10QwA5Qswg9Q2ImYygFOEBuepLof4Z+vkUIOKJRK7gEsIQ
-         skYThRYWWt9SWuKLwh1jsz/BLDabzpv8N3w+b/qElntX04KIkvKXV2TStrdGcMGxE+9W
-         DmWw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BAqx4cIuPGFDgJovDd64eRHIRgWgvrYKRebacENufRQ=;
+        b=P0E9BFnjFXJ2XmgHcnedzXCyOHZYmnEE9H9Dl6PS7gh73TYCtn/Inzm4xRTimEIMWF
+         P9emhK+zGpmMrRiqKwMOzvywBSurBcihdkTTwnEE1XfG96rDuEbU8BArSM6Dflijjyrh
+         hJHa0JT5S5rh3ebv5+XuNLqy0Z/1KWhZTra7c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Zl/FQ02zDCdhGeqMe1/aqQs0xDd6N3gVw4SozzG/IFs=;
-        b=bOIx5qjICvXyAJJhvIdimdsSAbOaavdyzibhQYxpaDfIY2lstxgDbmxTPxx5X80Fi7
-         oeLxpsGwtGzMPCr3IF60FHZa3OT0f5rg2PgY/wLSjqMkqaSYmKyvUemZDMTKdPlsfNZ8
-         ake5r0ldEAaucrRD5rOJHmgR2r3MmovhddqRyOX6hyxWQbL0axyBw61KxgzTIsx7CFim
-         mCpgPJt19kA1kEIjMHeIny10fzQE4NqjTHdHs22r0VmA3ETlLyMfbFVGR+H0dhfpPwG1
-         riam3Y9BmHh4209opkSdx3QSpNlLMcevDQWcXyxxgqdP3T77OqI+DCU2fS2ZEU/I6lIb
-         1hxw==
-X-Gm-Message-State: AA+aEWa4vxxxNLKu8nIe7M9mQCUh+HmpMGldz7gnYccnk72/DIZ+N5/O
-        MDyA8TMJIyD/JukMFmBD2Es=
-X-Google-Smtp-Source: AFSGD/WHjdcTKs0PGTwKxJzJza5cxp5BjEJZqo0cNLcFGY/bvkBWRkigITlyVTUPK0yboR8bQjh+ug==
-X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr13671715ljk.80.1545218778727;
-        Wed, 19 Dec 2018 03:26:18 -0800 (PST)
-Received: from acerlaptop.localnet ([2a02:a315:5445:5300:e05f:a77f:eff8:4ba])
-        by smtp.gmail.com with ESMTPSA id p186sm3761811lfd.83.2018.12.19.03.26.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 03:26:18 -0800 (PST)
-From:   =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Bakker <xc-racer2@live.ca>
-Subject: Re: [PATCH v2] Bluetooth: hci_bcm: Handle specific unknown packets after firmware loading
-Date:   Wed, 19 Dec 2018 12:26:16 +0100
-Message-ID: <1616107.XVYD9PJAcy@acerlaptop>
-In-Reply-To: <6E62E2F9-5754-40AA-BA19-CDDABF338A1B@holtmann.org>
-References: <20181205212232.3947-1-pawel.mikolaj.chmiel@gmail.com> <6E62E2F9-5754-40AA-BA19-CDDABF338A1B@holtmann.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BAqx4cIuPGFDgJovDd64eRHIRgWgvrYKRebacENufRQ=;
+        b=jbf990NqeBr0cbVQ6ZTDdll4cavzcAHPneKBo/HtGbwPw/3GGiAnDOfzAU2rqgRpil
+         ajHHO1q642GveE55VQ7vAeLts/6evY0xPDG5QCDWZzC41dgpmqxH3w2punXUg38nOKbn
+         V9AY/rGYl7piLF6RykJwB8flQvt+/BsFFIKvjj2Uh4cb1T/N4fftz/KgpodymZSeY+76
+         g+3avMcVHSPSecwJedkuU/yB/ybQkI0DOcQpOVRuV27ac8AvpK23bBdOmMTML8fNlkCk
+         8ojv8G4Th/bYpHvQKzrUnsyZBt+9rWw23Hnyw/1DZMqUAMnXjE7a4lHPDDBhzLS+WNlN
+         L8kQ==
+X-Gm-Message-State: AA+aEWboRQ4dWeZ6TLMiB9Ie9bPInRU385qHaVywfHxztqYJaFrBF+HN
+        omFy95auagddKV1/eTT7ftKdCzS5FnUUDpIf6ZL4NQ==
+X-Google-Smtp-Source: AFSGD/UIaxpmYmO0qGaOG/OQTG8jyGvZBLjjs8rPObenn0NEO1eZg6q/DtSYVb302RpyThWrZTJwQrdztVzwn9re4BQ=
+X-Received: by 2002:a9f:2244:: with SMTP id 62mr9196516uad.119.1545218816500;
+ Wed, 19 Dec 2018 03:26:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <1545072373-6562-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1545072373-6562-1-git-send-email-skomatineni@nvidia.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 19 Dec 2018 12:26:20 +0100
+Message-ID: <CAPDyKFpkFy+8E8PnzQ+SXg=hGfDrfbiYw4ETe1qd=BYJ+eFbzA@mail.gmail.com>
+Subject: Re: [PATCH V3] mmc: tegra: HW Command Queue Support for Tegra SDMMC
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dnia =C5=9Broda, 19 grudnia 2018 00:49:49 CET Marcel Holtmann pisze:
-> Hi Pawel,
->=20
-> > The Broadcom controller on aries S5PV210 boards sends out a couple of
-> > unknown packets after the firmware is loaded.  This will cause
-> > logging of errors such as:
-> > 	Bluetooth: hci0: Frame reassembly failed (-84)
-> >=20
-> > This is probably also the case with other boards, as there are related
-> > Android userspace patches for custom ROMs such as
-> > https://review.lineageos.org/#/c/LineageOS/android_system_bt/+/142721/
-> > Since this appears to be intended behaviour, treated them as diagnostic
-> > packets.
-> >=20
-> > Note that this is another variant of commit 01d5e44ace8a
-> > ("Bluetooth: hci_bcm: Handle empty packet after firmware loading")
-> >=20
-> > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> >=20
-> > ---
-> > Changes from v1:
-> > 	- Rename UNKNOWN to TYPE49
-> > 	- Rename UNKNOWN2 to TYPE52
-> > ---
-> > drivers/bluetooth/hci_bcm.c | 22 ++++++++++++++++++++++
-> > 1 file changed, 22 insertions(+)
->=20
-> can you update this patch against latest bluetooth-next tree since it no =
-longer applies cleanly.
-I've send new version of both patches (this and Bluetooth: hci_bcm: Handle =
-specific unknown packets after firmware loading), rebased against latest bl=
-uetooth-next.
->=20
-> Regards
->=20
-> Marcel
->=20
+On Mon, 17 Dec 2018 at 19:46, Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+>
+> This patch adds HW Command Queue for supported Tegra SDMMC
+> controllers.
+>
+> Tegra SDHCI with Quirk SDHCI_QUIRK2_BROKEN_64_BIT_DMA disables the
+> use of 64_BIT DMA to disable 64-bit addressing mode access to the
+> system memory and sdhci_cqe_enable using flag SDHCI_USE_64_BIT_DMA
+> for ADMA32/ADMA2 Vs ADMA64/ADMA3 DMA selection.
+>
+> CQE need to use ADMA3 as it need to fetch task descriptor along
+> with transfer descriptor, so this patch forces DMA Select to be
+> ADMA3 for CQE.
+>
+> Note that this patch depends on below patches
+> [0] DMA Config prior to CQE
+>     https://lkml.org/lkml/2018/12/14/1062
+> [1] SDMMC address range
+>     https://lkml.org/lkml/2018/12/14/1323
+> [2] Fix sdhci_do_enable_v4_mode
+>     https://lkml.org/lkml/2018/12/14/72
 
+Okay, let me state this again.
 
+Please remove the listed dependencies from the changelog. If you have
+dependencies, please post a series instead, then the dependencies
+becomes obvious. While posting a series, I also recommend you to post
+a cover-letter, where you can give the overall story of what the
+series changes and why. For example:
 
+git format-patch -3 (the number of patches you have) --cover-letter
 
+Kind regards
+Uffe
+
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/Kconfig       |  1 +
+>  drivers/mmc/host/sdhci-tegra.c | 89 +++++++++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci.c       |  3 +-
+>  3 files changed, 91 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739d9744..5aa2de2c7609 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
+>         depends on ARCH_TEGRA
+>         depends on MMC_SDHCI_PLTFM
+>         select MMC_SDHCI_IO_ACCESSORS
+> +       select MMC_CQHCI
+>         help
+>           This selects the Tegra SD/MMC controller. If you have a Tegra
+>           platform with SD or MMC devices, say Y or M here.
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 7b95d088fdef..ba8bd72ec59a 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/ktime.h>
+>
+>  #include "sdhci-pltfm.h"
+> +#include "cqhci.h"
+>
+>  /* Tegra SDHOST controller vendor register definitions */
+>  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL                  0x100
+> @@ -89,6 +90,10 @@
+>  #define NVQUIRK_NEEDS_PAD_CONTROL                      BIT(7)
+>  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP                        BIT(8)
+>
+> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> +#define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+> +
+> +
+>  struct sdhci_tegra_soc_data {
+>         const struct sdhci_pltfm_data *pdata;
+>         u32 nvquirks;
+> @@ -128,6 +133,7 @@ struct sdhci_tegra {
+>         u32 default_tap;
+>         u32 default_trim;
+>         u32 dqs_trim;
+> +       bool enable_hwcq;
+>  };
+>
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -836,6 +842,30 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+>                 tegra_host->pad_calib_required = true;
+>  }
+>
+> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
+> +{
+> +       sdhci_dumpregs(mmc_priv(mmc));
+> +}
+> +
+> +static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+> +{
+> +       int cmd_error = 0;
+> +       int data_error = 0;
+> +
+> +       if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+> +               return intmask;
+> +
+> +       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+> +       .enable = sdhci_cqe_enable,
+> +       .disable = sdhci_cqe_disable,
+> +       .dumpregs = sdhci_tegra_dumpregs,
+> +};
+> +
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+>         .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+> @@ -989,6 +1019,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+> +       .irq = sdhci_tegra_cqhci_irq,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+> @@ -1030,6 +1061,55 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
+>
+> +static int sdhci_tegra_add_host(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +       struct cqhci_host *cq_host;
+> +       bool dma64;
+> +       int ret;
+> +
+> +       if (!tegra_host->enable_hwcq)
+> +               return sdhci_add_host(host);
+> +
+> +       host->v4_mode = true;
+> +
+> +       ret = sdhci_setup_host(host);
+> +       if (ret)
+> +               return ret;
+> +
+> +       host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+> +
+> +       cq_host = devm_kzalloc(host->mmc->parent,
+> +                               sizeof(*cq_host), GFP_KERNEL);
+> +       if (!cq_host) {
+> +               ret = -ENOMEM;
+> +               goto cleanup;
+> +       }
+> +
+> +       cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
+> +       cq_host->ops = &sdhci_tegra_cqhci_ops;
+> +
+> +       dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+> +       if (dma64)
+> +               cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
+> +
+> +       ret = cqhci_init(cq_host, host->mmc, dma64);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       ret = __sdhci_add_host(host);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       return 0;
+> +
+> +cleanup:
+> +       sdhci_cleanup_host(host);
+> +       return ret;
+> +
+> +}
+> +
+>  static int sdhci_tegra_probe(struct platform_device *pdev)
+>  {
+>         const struct of_device_id *match;
+> @@ -1039,6 +1119,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         struct sdhci_tegra *tegra_host;
+>         struct clk *clk;
+>         int rc;
+> +       struct resource *iomem;
+>
+>         match = of_match_device(sdhci_tegra_dt_match, &pdev->dev);
+>         if (!match)
+> @@ -1056,6 +1137,12 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         tegra_host->pad_control_available = false;
+>         tegra_host->soc_data = soc_data;
+>
+> +       iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
+> +               tegra_host->enable_hwcq = true;
+> +       else
+> +               tegra_host->enable_hwcq = false;
+> +
+>         if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+>                 rc = tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+>                 if (rc == 0)
+> @@ -1117,7 +1204,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>
+>         usleep_range(2000, 4000);
+>
+> -       rc = sdhci_add_host(host);
+> +       rc = sdhci_tegra_add_host(host);
+>         if (rc)
+>                 goto err_add_host;
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae53fa2e..87375fbfca30 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3308,7 +3308,8 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+>
+>         ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+>         ctrl &= ~SDHCI_CTRL_DMA_MASK;
+> -       if (host->flags & SDHCI_USE_64_BIT_DMA)
+> +       if ((host->flags & SDHCI_USE_64_BIT_DMA) ||
+> +                       (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA))
+>                 ctrl |= SDHCI_CTRL_ADMA64;
+>         else
+>                 ctrl |= SDHCI_CTRL_ADMA32;
+> --
+> 2.7.4
+>
