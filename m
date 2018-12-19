@@ -2,80 +2,176 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12AFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F017C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E0420866
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C592075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:26:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="fLnXZBbN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729892AbeLSUWo (ORCPT
+        id S1729897AbeLSU0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 15:22:44 -0500
-Received: from smtprelay0016.hostedemail.com ([216.40.44.16]:37724 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728613AbeLSUWo (ORCPT
+        Wed, 19 Dec 2018 15:26:09 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35630 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727821AbeLSU0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 15:22:44 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B86FF45B4;
-        Wed, 19 Dec 2018 20:22:42 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: metal68_8ba5d785e4e44
-X-Filterd-Recvd-Size: 1938
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 19 Dec 2018 20:22:39 +0000 (UTC)
-Message-ID: <af216c227fa3ec310d8c4271485dd6c7f829174f.camel@perches.com>
-Subject: Re: [PATCH 2/7] tracing: Change strlen to sizeof for hist trigger
- static strings
-From:   Joe Perches <joe@perches.com>
-To:     Tom Zanussi <zanussi@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date:   Wed, 19 Dec 2018 12:22:38 -0800
-In-Reply-To: <1545250591.4161.2.camel@kernel.org>
-References: <cover.1545161087.git.tom.zanussi@linux.intel.com>
-         <e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com>
-         <20181219144047.49fabfa6@gandalf.local.home>
-         <1545248809.2396.2.camel@kernel.org> <1545250591.4161.2.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 15:26:09 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 81so20327128otj.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 12:26:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jp7TEKQl/y1BlvMWaG5N4+osLTzroWCaav7pVI1NgYA=;
+        b=fLnXZBbNybXxcHm8k9lSrr2WcgwHM11F3rEKIgk7dzSHdyRbSXNefVM/zqGzHxCrgp
+         /KzZm+qgaCSMnSAAxgCEUSJdQ5rh0pGJrnXojFwIPamb3eTDg17Vfmr+hTgO8fomVHrk
+         Hu4GiN5pIohY6O5BVEJ+VUs2ExIyc7gRmfJjoN5VaNWSDZ97zTbhiXUrWbIu/JXXDMZg
+         MPAV4knMXT2VtVlRjfQAwEt2Jaeg6VNLISe9+vkhj4/YxsekbJPC0E0aKMhq7Gk8aQlA
+         JBJHe9Ui1/pnUjjieJBOlHxZ+uQaXpJ5H0M5mFS25vp66GQ3kKCi+FUPkKebp99oNcof
+         MBLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jp7TEKQl/y1BlvMWaG5N4+osLTzroWCaav7pVI1NgYA=;
+        b=H1Xq3ncDD8mQa44zovr7VcPvbGTpa9wLktx2zWZDCkzhvgsu3U6IxOdfHijevqz3iZ
+         af/wU1iB8BoZBHNDiQfy8WuTklPkSJlaziXlkdG6+NGdsHq3uJu/Azc19GqBtlKjwghl
+         pTz6iA3IVntFZHrqwdJOUR8vUyS/v2h0TUZAcTU949r7zPeYDlo94An3WHpUI5oOxxrf
+         xXqOkz922jFNc4XSFSTEL53JTynDRnr3bgblC2Ee3RPfQIrLFpPZR7KTzzOzE8Ltz4OX
+         55J5f6LqR3WngFnEWJrN/tgFxkPNMui0pDHX00o1zDoqMHhyueGg7PDyqBz5DbzgJ2zY
+         MU4A==
+X-Gm-Message-State: AA+aEWZwVeEFoO38aD7NswphPzLWwj2TsgHROSgYbC7iJpD2reJD7keL
+        KTE/xoPwZTj3P8Y/0KSxaEszrP0y2YQeWDKyKbku8w==
+X-Google-Smtp-Source: AFSGD/XhgOf286RgaHFLaa/98Duhzs/et6l0MpJlKyAu4DDki23nR9ZLEcFkpwktehJyZjjXQzFa0sZRnCE4lE/Mx5Y=
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr16157427oti.367.1545251168196;
+ Wed, 19 Dec 2018 12:26:08 -0800 (PST)
+MIME-Version: 1.0
+References: <154483851047.1672629.15001135860756738866.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <2153922.MoOcIFpNeT@aspire.rjw.lan> <CAPcyv4iW1812gtiuKz8UTPJPhT0_fg+jgo6Z_6Kt9CR2N0Z4Jg@mail.gmail.com>
+ <11122411.AfX3tQF1aD@aspire.rjw.lan>
+In-Reply-To: <11122411.AfX3tQF1aD@aspire.rjw.lan>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 19 Dec 2018 12:25:57 -0800
+Message-ID: <CAPcyv4i0xD+1DQGQrERPkPNjVo9xSf7xd_E-T50ZEoy5TM0+CQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] mm: Randomize free memory
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>, X86 ML <x86@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-19 at 14:16 -0600, Tom Zanussi wrote:
-> 
-> How's this?
-> 
-> [PATCH] tracing: Introduce and use strcmp_const() for hist triggers
-> 
-> Provide a new strcmp_const() macro and make use of it instead of the
-> longer and more error-prone strncmp(str, "str", sizeof("str") - 1).
-[]
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-[]
-> @@ -22,6 +22,9 @@
->  
->  #define STR_VAR_LEN_MAX		32 /* must be multiple of sizeof(u64) */
->  
-> +#define strcmp_const(str, str_const) \
-> +	strncmp(str, str_const, sizeof(str_const) - 1)
+On Tue, Dec 18, 2018 at 2:46 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Monday, December 17, 2018 5:32:10 PM CET Dan Williams wrote:
+> > On Mon, Dec 17, 2018 at 2:12 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >
+> > > On Saturday, December 15, 2018 2:48:30 AM CET Dan Williams wrote:
+> > > > Changes since v4: [1]
+> > > > * Default the randomization to off and enable it dynamically based on
+> > > >   the detection of a memory side cache advertised by platform firmware.
+> > > >   In the case of x86 this enumeration comes from the ACPI HMAT. (Michal
+> > > >   and Mel)
+> > > > * Improve the changelog of the patch that introduces the shuffling to
+> > > >   clarify the motivation and better explain the tradeoffs. (Michal and
+> > > >   Mel)
+> > > > * Include the required HMAT enabling in the series.
+> > > >
+> > > > [1]: https://lkml.kernel.org/r/153922180166.838512.8260339805733812034.stgit@dwillia2-desk3.amr.corp.intel.com
+> > > >
+> > > > ---
+> > > >
+> > > > Quote patch 3:
+> > > >
+> > > > Randomization of the page allocator improves the average utilization of
+> > > > a direct-mapped memory-side-cache. Memory side caching is a platform
+> > > > capability that Linux has been previously exposed to in HPC
+> > > > (high-performance computing) environments on specialty platforms. In
+> > > > that instance it was a smaller pool of high-bandwidth-memory relative to
+> > > > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+> > > > be found on general purpose server platforms where DRAM is a cache in
+> > > > front of higher latency persistent memory [2].
+> > > >
+> > > > Robert offered an explanation of the state of the art of Linux
+> > > > interactions with memory-side-caches [3], and I copy it here:
+> > > >
+> > > >     It's been a problem in the HPC space:
+> > > >     http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
+> > > >
+> > > >     A kernel module called zonesort is available to try to help:
+> > > >     https://software.intel.com/en-us/articles/xeon-phi-software
+> > > >
+> > > >     and this abandoned patch series proposed that for the kernel:
+> > > >     https://lkml.org/lkml/2017/8/23/195
+> > > >
+> > > >     Dan's patch series doesn't attempt to ensure buffers won't conflict, but
+> > > >     also reduces the chance that the buffers will. This will make performance
+> > > >     more consistent, albeit slower than "optimal" (which is near impossible
+> > > >     to attain in a general-purpose kernel).  That's better than forcing
+> > > >     users to deploy remedies like:
+> > > >         "To eliminate this gradual degradation, we have added a Stream
+> > > >          measurement to the Node Health Check that follows each job;
+> > > >          nodes are rebooted whenever their measured memory bandwidth
+> > > >          falls below 300 GB/s."
+> > > >
+> > > > A replacement for zonesort was merged upstream in commit cc9aec03e58f
+> > > > "x86/numa_emulation: Introduce uniform split capability". With this
+> > > > numa_emulation capability, memory can be split into cache sized
+> > > > ("near-memory" sized) numa nodes. A bind operation to such a node, and
+> > > > disabling workloads on other nodes, enables full cache performance.
+> > > > However, once the workload exceeds the cache size then cache conflicts
+> > > > are unavoidable. While HPC environments might be able to tolerate
+> > > > time-scheduling of cache sized workloads, for general purpose server
+> > > > platforms, the oversubscribed cache case will be the common case.
+> > > >
+> > > > The worst case scenario is that a server system owner benchmarks a
+> > > > workload at boot with an un-contended cache only to see that performance
+> > > > degrade over time, even below the average cache performance due to
+> > > > excessive conflicts. Randomization clips the peaks and fills in the
+> > > > valleys of cache utilization to yield steady average performance.
+> > > >
+> > > > See patch 3 for more details.
+> > > >
+> > > > [2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+> > > > [3]: https://lkml.org/lkml/2018/9/22/54
+> > >
+> > > Has this hibernation been tested with this series applied?
+> >
+> > It has not. Is QEMU sufficient? What's your concern?
+>
+> Well, hibernation does quite a bit of memory management and that involves
+> free memory too.  I'm not expecting any particular issues, but I may be
+> overlooking something and I would like to know that it doesn't break before
+> the changes go in.
+>
+> QEMU should be sufficient, but let me talk to the power lab folks if they can
+> test that for you.
 
-Not good as it's too easy to pass a pointer as str_const
-and sizeof(pointer) - 1 isn't likely the string length.
+Yeah, the quick QEMU test did not immediately fall over, but a
+checkout by power lab folks would be much appreciated.
 
+> Is there a git branch with these changes available somewhere?
 
+I have posted the upcoming v7 version of the patches here:
 
+    https://git.kernel.org/pub/scm/linux/kernel/git/djbw/nvdimm.git/log/?h=libnvdimm-pending
+
+Note, that branch constantly rebases like tip/master.
