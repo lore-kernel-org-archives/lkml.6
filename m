@@ -2,133 +2,104 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3330CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3408C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0497A214C6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81E69214C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:54:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOgALlCK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729542AbeLSQyU (ORCPT
+        id S1729603AbeLSQyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:54:20 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:59335 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728543AbeLSQyU (ORCPT
+        Wed, 19 Dec 2018 11:54:25 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34886 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728543AbeLSQyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:54:20 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gZf6V-0008K6-5g; Wed, 19 Dec 2018 17:53:51 +0100
-Date:   Wed, 19 Dec 2018 17:53:50 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     zhe.he@windriver.com, acme@kernel.org, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, bp@alien8.de, hpa@zytor.com,
-        jolsa@kernel.org, jolsa@redhat.com, kan.liang@linux.intel.com,
-        mingo@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH] perf/x86/intel: Delay memory deallocation until
- x86_pmu_dead_cpu()
-Message-ID: <20181219165350.6s3jvyxbibpvlhtq@linutronix.de>
-References: <1545129033-21757-1-git-send-email-zhe.he@windriver.com>
- <20181218110209.GD15430@hirez.programming.kicks-ass.net>
- <20181218111637.b53u5pi3nxnyldaq@linutronix.de>
- <20181218113119.GG15430@hirez.programming.kicks-ass.net>
- <20181218113700.GC16284@hirez.programming.kicks-ass.net>
+        Wed, 19 Dec 2018 11:54:21 -0500
+Received: by mail-io1-f67.google.com with SMTP id o13so69445ioh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 08:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p7LGwrmK0luiJrlGQV7YS0Iqs5flwfQSvDyxasNQ+wU=;
+        b=cOgALlCKBap4r8ae62S1E9H1fXa8Qrslsy+GmZxmVIJdNNAuPxAyqC29kxdfHkF4Kx
+         hK6B02gRL++OriP5HBItUO3vcSCqYI7BAdgyfH8xDsZr0wquSBxPP6to3LLwf8MSaJg4
+         rg90Ro8ctoKzb1dRl1u7ia9HGsPm6/xwucIkY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p7LGwrmK0luiJrlGQV7YS0Iqs5flwfQSvDyxasNQ+wU=;
+        b=U/JOMWTqF9t/bqFrXGWAdgFIJe2wu0k/unp5LgP/U+HssfyDK/w8cS+cuCKpQc2eND
+         2CfhgGJKmjDajCEOcIFf4KivhhjHoDHtTor+jT493tGiWN/EMVvN1O6hYUeJErBJEreX
+         0N8oBGhgUDxPhLsjOUn3bJvPphc8CiJxQvQT6xzM/VLTxQTPR88eU7KfQdtGCrPkJNBk
+         uMehpsb++TyenJW2xhnLyhA660oSEVVNJvmHVt0F3p3FJU9+rjM/hmTQsN5bDZpRnlqk
+         pnWBXEPaw0FQPdnbFpB8zZ02uBHj1MUauN2Et7KAkOZt+hi7hpiiqw7hVmCHH8Jj+9pF
+         rlyg==
+X-Gm-Message-State: AJcUukcxeRWNCk400yaXidW/jEASBiOLjkylb8ZILe163S4MfhI2SxLJ
+        qHF754D/zMVJAeO//bQU9sMJUkl9PDPjM6QWymMEWg==
+X-Google-Smtp-Source: ALg8bN6KhcimKjhPL7b71bROEYVaZfiv6dzVaenUWzBUgpUR9R2W+ghoCg/m+b8JXTleFJUd8g8sKifd7UcL9BteqVg=
+X-Received: by 2002:a6b:6b01:: with SMTP id g1mr338614ioc.18.1545238460297;
+ Wed, 19 Dec 2018 08:54:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181218113700.GC16284@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
+ <1544803317-7610-4-git-send-email-vincent.guittot@linaro.org>
+ <f6443ca2-3e82-d4eb-deb8-2aff44c618e2@arm.com> <CAKfTPtCJBGtmx7pQJCwhcMaxyXWoh04o_C+pR6z+YVykXwvv5Q@mail.gmail.com>
+ <07400c1b-d9d7-7619-57fb-b09276d7da92@arm.com> <CAKfTPtA0HQL9xsMbAH-2u63XaEJ-4mwzdBzNzvVSA8_3XyQ89g@mail.gmail.com>
+ <9b008c93-c78c-0761-5ac9-cc1c3806f24b@arm.com> <CAKfTPtDqtoUOnYMPhiAoG1Utc4YY+4Xm0=NgfzC7STWJDxiuYg@mail.gmail.com>
+ <7a1aaf61-c352-69fc-b990-861bc2aef85b@arm.com> <CAKfTPtDk8z_aBapA3FM5Af1benOyqYYcTpMVWZ9KsjDP7wSJ4Q@mail.gmail.com>
+ <6afedeb0-62bc-27ec-56f0-107be22d2494@arm.com>
+In-Reply-To: <6afedeb0-62bc-27ec-56f0-107be22d2494@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 19 Dec 2018 17:54:09 +0100
+Message-ID: <CAKfTPtAtf4WMu-eLALfqn3-sKru58=uH-yo2SFygaDfmVoP0Hg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] sched/fair: fix unnecessary increase of balance interval
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+On Wed, 19 Dec 2018 at 16:54, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> On 19/12/2018 13:29, Vincent Guittot wrote:
+> [...]
+> >> My point is that AFAICT the LBF_ALL_PINNED flag would cover all the cases
+> >> we care about, although the one you're mentioning is the only one I can
+> >> think of. In that case LBF_ALL_PINNED would never be cleared, so when we do
+> >> the active balance we'd know it's because all other tasks were pinned so
+> >> we should probably increase the interval (see last snippet I sent).
+> >
+> > There are probably several other UC than the one mentioned below as
+> > tasks can be discarded for several reasons.
+> > So instead of changing for all UC by default, i would prefer only
+> > change for those for which we know it's safe
+>
+> I get your point. Thing is, I've stared at the code for a while and
+> couldn't find any other usecase where checking LBF_ALL_PINNED wouldn't
+> suffice.
 
-intel_pmu_cpu_prepare() allocated memory for ->shared_regs among other
-members of struct cpu_hw_events. This memory is released in
-intel_pmu_cpu_dying() which is wrong. The counterpart of the
-intel_pmu_cpu_prepare() callback is x86_pmu_dead_cpu().
+The point is that LBF_ALL_PINNED flag is not set otherwise we would
+have jump to out_*_pinned
+But conditions are similar
 
-Otherwise if the CPU fails on the UP path between CPUHP_PERF_X86_PREPARE
-and CPUHP_AP_PERF_X86_STARTING then it won't release the memory but
-allocate new memory on the next attempt to online the CPU (leaking the
-old memory).
-Also, if the CPU down path fails between CPUHP_AP_PERF_X86_STARTING and
-CPUHP_PERF_X86_PREPARE then the CPU will go back online but never
-allocate the memory that was released in x86_pmu_dying_cpu().
+>
+> It would be nice convince ourselves it is indeed enough (or not, but then
+> we should be sure of it rather than base ourselves on assumptions), because
+> then we can have just a simple condition rather than something that
+> introduces active balance categories.
 
-Make the memory allocation/free symmetrical in regard to the CPU hotplug
-notifier by moving the deallocation to intel_pmu_cpu_dead().
-
-This started in commit
-   a7e3ed1e47011 ("perf: Add support for supplementary event registers").
-
-Cc: stable@vger.kernel.org
-Reported-by: He Zhe <zhe.he@windriver.com>
-Fixes: a7e3ed1e47011 ("perf: Add support for supplementary event registers").
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-[bigeasy: patch description]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/events/intel/core.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index ecc3e34ca955f..90b6718ff861d 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3558,6 +3558,14 @@ static void free_excl_cntrs(int cpu)
- }
- 
- static void intel_pmu_cpu_dying(int cpu)
-+{
-+	fini_debug_store_on_cpu(cpu);
-+
-+	if (x86_pmu.counter_freezing)
-+		disable_counter_freeze();
-+}
-+
-+static void intel_pmu_cpu_dead(int cpu)
- {
- 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
- 	struct intel_shared_regs *pc;
-@@ -3570,11 +3578,6 @@ static void intel_pmu_cpu_dying(int cpu)
- 	}
- 
- 	free_excl_cntrs(cpu);
--
--	fini_debug_store_on_cpu(cpu);
--
--	if (x86_pmu.counter_freezing)
--		disable_counter_freeze();
- }
- 
- static void intel_pmu_sched_task(struct perf_event_context *ctx,
-@@ -3663,6 +3666,7 @@ static __initconst const struct x86_pmu core_pmu = {
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
- };
- 
- static struct attribute *intel_pmu_attrs[];
-@@ -3703,6 +3707,8 @@ static __initconst const struct x86_pmu intel_pmu = {
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-+	.cpu_dead		= intel_pmu_cpu_dead,
-+
- 	.guest_get_msrs		= intel_guest_get_msrs,
- 	.sched_task		= intel_pmu_sched_task,
- };
--- 
-2.20.1
-
+this can be part of the larger rework that Peter asked few days ago
