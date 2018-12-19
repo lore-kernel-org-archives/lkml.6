@@ -2,102 +2,109 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A785EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956FAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4022184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67394217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:58:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbeLSLwi (ORCPT
+        id S1728330AbeLSL6h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:52:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47816 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbeLSLvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:51:32 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DA74792BA;
-        Wed, 19 Dec 2018 11:51:32 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C6535D70A;
-        Wed, 19 Dec 2018 11:51:28 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 1848CB16; Wed, 19 Dec 2018 12:51:28 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 01/14] drm/bochs: encoder cleanup
-Date:   Wed, 19 Dec 2018 12:51:14 +0100
-Message-Id: <20181219115127.31359-2-kraxel@redhat.com>
-In-Reply-To: <20181219115127.31359-1-kraxel@redhat.com>
-References: <20181219115127.31359-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 19 Dec 2018 11:51:32 +0000 (UTC)
+        Wed, 19 Dec 2018 06:58:37 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33848 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbeLSL6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:58:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFB25EBD;
+        Wed, 19 Dec 2018 03:58:35 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B72C3F5C0;
+        Wed, 19 Dec 2018 03:58:34 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] sched/fair: fix rounding issue for asym packing
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
+ <1544803317-7610-2-git-send-email-vincent.guittot@linaro.org>
+ <f2619d92-7367-abd4-97e8-e0f4e7cc96eb@arm.com>
+ <CAKfTPtAEi=EBmSUEcYmkfSZVkBviQaJaqZXvt-=XbsgZs5t_OA@mail.gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <4de22c37-fe65-4f5f-929b-320c663ee8b6@arm.com>
+Date:   Wed, 19 Dec 2018 11:58:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAKfTPtAEi=EBmSUEcYmkfSZVkBviQaJaqZXvt-=XbsgZs5t_OA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most unused callbacks can be NULL pointers these days.
-Drop a bunch of empty encoder callbacks.
+On 19/12/2018 08:32, Vincent Guittot wrote:
+[...]
+> This is another UC, asym packing is used at SMT level for now and we
+> don't face this kind of problem, it has been also tested and DynamiQ
+> configuration which is similar to SMT : 1 CPU per sched_group
+> The legacy b.L one was not the main target although it can be
+> 
+> The rounding error is there and should be fixed and your UC is another
+> case for legacy b.L that can be treated in another patch
+> 
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/bochs/bochs_kms.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
+I used that setup out of convenience for myself, but AFAICT that use-case
+just stresses that issue.
 
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index f87c284dd9..c8ce54498d 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -170,31 +170,6 @@ static void bochs_crtc_init(struct drm_device *dev)
- 	drm_crtc_helper_add(crtc, &bochs_helper_funcs);
+In the end we still have an imbalance value that can vary with only
+slight group_capacity changes. And that's true even if that group
+contains a single CPU, as the imbalance value computed by
+check_asym_packing() can vary by +/-1 with very tiny capacity changes 
+(rt/IRQ pressure). That means that sometimes you're off by one and don't
+do the packing because some CPU was pressured, but some other time you
+might do it because that CPU was *more* pressured. It's doesn't make sense. 
+
+
+In the end problem is that in update_sg_lb_stats() we do:
+
+	sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
+
+and in check_asym_packing() we do:
+
+	env->imbalance = DIV_ROUND_CLOSEST(
+		sds->busiest_stat.avg_load * sds->busiest_stat.group_capacity,
+		SCHED_CAPACITY_SCALE)
+
+So we end up with something like:
+
+		    group_load * SCHED_CAPACITY_SCALE * group_capacity
+	imbalance = --------------------------------------------------
+			    group_capacity * SCHED_CAPACITY_SCALE
+
+Which you'd hope to reduce down to:
+
+	imbalance = group_load
+
+but you get division errors all over the place. So actually, the fix we'd
+want would be:
+
+-----8<-----
+@@ -8463,9 +8463,7 @@ static int check_asym_packing(struct lb_env *env, struct sd_lb_stats *sds)
+        if (sched_asym_prefer(busiest_cpu, env->dst_cpu))
+                return 0;
+ 
+-       env->imbalance = DIV_ROUND_CLOSEST(
+-               sds->busiest_stat.avg_load * sds->busiest_stat.group_capacity,
+-               SCHED_CAPACITY_SCALE);
++       env->imbalance = sds->busiest_stat.group_load;
+ 
+        return 1;
  }
- 
--static void bochs_encoder_mode_set(struct drm_encoder *encoder,
--				   struct drm_display_mode *mode,
--				   struct drm_display_mode *adjusted_mode)
--{
--}
--
--static void bochs_encoder_dpms(struct drm_encoder *encoder, int state)
--{
--}
--
--static void bochs_encoder_prepare(struct drm_encoder *encoder)
--{
--}
--
--static void bochs_encoder_commit(struct drm_encoder *encoder)
--{
--}
--
--static const struct drm_encoder_helper_funcs bochs_encoder_helper_funcs = {
--	.dpms = bochs_encoder_dpms,
--	.mode_set = bochs_encoder_mode_set,
--	.prepare = bochs_encoder_prepare,
--	.commit = bochs_encoder_commit,
--};
--
- static const struct drm_encoder_funcs bochs_encoder_encoder_funcs = {
- 	.destroy = drm_encoder_cleanup,
- };
-@@ -207,7 +182,6 @@ static void bochs_encoder_init(struct drm_device *dev)
- 	encoder->possible_crtcs = 0x1;
- 	drm_encoder_init(dev, encoder, &bochs_encoder_encoder_funcs,
- 			 DRM_MODE_ENCODER_DAC, NULL);
--	drm_encoder_helper_add(encoder, &bochs_encoder_helper_funcs);
- }
- 
- 
--- 
-2.9.3
-
+----->8-----
