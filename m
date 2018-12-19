@@ -2,127 +2,153 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C1AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF29C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAAB3217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545235105;
-	bh=WFjmUESCuYzgG5fu+T0BncSymYl5O7PV1e0RRELZmgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mYQqtKO1XKoiGIC1O2aWpHjDe0z9uMsVk+PtFC6FHhjdVqT0fSQbDHW0TzD1dBiSU
-	 I7Myaey7jEZE8hJmSi0Jse4cctMJltUXUMbARdm4ta6sevvTCl227AlWPeSSzsu8wt
-	 vJUQmAfkTlMvcllYIXEoDM2R5GJ94jzoQtJIRgyE=
+	by mail.kernel.org (Postfix) with ESMTP id 2F46F217D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:59:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="foyG8pJ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbeLSP6Y (ORCPT
+        id S1729501AbeLSP7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:58:24 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33667 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbeLSP6V (ORCPT
+        Wed, 19 Dec 2018 10:59:24 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54693 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbeLSP7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:58:21 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c206so2004259oib.0;
-        Wed, 19 Dec 2018 07:58:21 -0800 (PST)
+        Wed, 19 Dec 2018 10:59:23 -0500
+Received: by mail-it1-f193.google.com with SMTP id i145so10383130ita.4;
+        Wed, 19 Dec 2018 07:59:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L9Oe0ayTRjWuO0bO25VljJGJZxyDQt7qiLMrAfR62L4=;
+        b=foyG8pJ6eYATlT3t/v3/QqPCjazxd7lRYM7EST/C+ScjOFHPmDTcrKjfJP34XdxJ6I
+         E5WVVAH/uQkJfb2Ep7MPoNiacIeEP3M+H4vUTuJ0TO/sYAbl4sYHcHQbgJER6MeIGe0B
+         GEqpaGIgebbIuVTHxWf0nBfhJcjyZcbnk4yAYyEeW9XGZ6Yyb+1SQgvU2gY22rSCBsq2
+         EuntTFjDJdpmjoZFx0twq8pIlmTN//Y/oaiFotdrESQbZCC5Xl+td7/DPBCpu2+07lZs
+         wRcRLoQyeJMF448/PZuMFaAaJWy7Xd40SnU5rhhtneTGfwojfMKbfKrVwUhaKxzal5r4
+         +M0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CZ6helZFIbNZWd2xpX2RWEIGe/GgpkbWYhxxRVvlPGY=;
-        b=ds3aEwrJvLvJSQwAviAWVEMJ+EL8DpRWFRjkJmypflAyMB05Hf5r/Il7804f7uK4QW
-         USHQqSfMCZFhF1fMsZNzGAkU16kco+7PMpJ3sGmZwiJIqXXE9qQ/vSvLuU9IelSzJE32
-         KPIFfokkCPFneX/4m7zSviNEiCVNbn//Pj5d/yb8+ocEmejLXBCLu2L9i6ssYESLWW6F
-         oH6MMtv1uRGBg9A95SLnP4slo7j85A/l9VTv42awQ+svp8H+D0HhIeEcI8SHvKYo2BNL
-         P3jnTpEK9ACy+7HsMD3JMqbzUcG79liEDuZ4prhvrZEbgi+O408KlBk5wYZJIhIQLlKC
-         00jg==
-X-Gm-Message-State: AA+aEWZHFR8lUbIh2C7lqDXrxMOFg/bqcEeDEJHlDcLEmgF3vVcevA7u
-        judrG/76aqhwD5uYT2T4bdlb2yc=
-X-Google-Smtp-Source: AFSGD/W9GXq5kAsnWs/Xnz7z663VsKaUGUVw1RXyP8zm6/ltLOF3fLAu87v6trOzW/o02sT4ob4rFQ==
-X-Received: by 2002:aca:f244:: with SMTP id q65mr1333524oih.50.1545235100970;
-        Wed, 19 Dec 2018 07:58:20 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 75sm8770634otc.67.2018.12.19.07.58.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 07:58:20 -0800 (PST)
-Date:   Wed, 19 Dec 2018 09:58:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH 5/5] arm64: dts: allwinner: a64-amarula-relic: Add OV5640
- camera node
-Message-ID: <20181219155819.GA22708@bogus>
-References: <20181203100747.16442-1-jagan@amarulasolutions.com>
- <20181203100747.16442-6-jagan@amarulasolutions.com>
- <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
- <CAMty3ZBBcum5CF1xQ_ePNUkcMoBPXngbiwf2V7hWHrH7-k3xuQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L9Oe0ayTRjWuO0bO25VljJGJZxyDQt7qiLMrAfR62L4=;
+        b=ImrkS5kPDVUJpzczdDtdCbUv+Jy+WiBcAxfpC/QOtOEzbTOB9ixV+cKFG1DEeRN+R1
+         8xTuFI7Y3qIQF7PEurk/3661Mxakm0f6Jtx2ptCDJO62XD4qyTl1F6jvit3i+FdA2CDr
+         5mt9TpXi1p3X83DGngqBgMqM57xcn/spg8ekgVGQf4buyYl0u+tPU6wZ9ds+aztCCjYK
+         0vX3Hfq3it2BOL/G++1VAiudQVJOoV0hwG1v0Bn+XBEwCVHQL3VsKPtMC736Km/46BQF
+         ZbsKv4BTITQeY8O1rBQU5d8k5z4arETbO06tJV1GviADV06v4BdiSrHFUcv+NUbR5IOR
+         xvnQ==
+X-Gm-Message-State: AA+aEWavp/wG7+U6dIkNqvFQfwFKf+94Ueb0Qq8gjomSQS0p/AJNT/a1
+        ERcfvhkIgZYobi0CTOxKwp09l/MrwNwDrXVBOyfMoA==
+X-Google-Smtp-Source: AFSGD/Wh0Jx88BKBUeeQ3uKUrVxecIc1ivCAky97eA3neZYFKgoHgdRvR4QDLmu6jZ52Wd9YF+WHP9taanbyQdX0pvw=
+X-Received: by 2002:a24:2d0b:: with SMTP id x11mr7439167itx.85.1545235162579;
+ Wed, 19 Dec 2018 07:59:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBBcum5CF1xQ_ePNUkcMoBPXngbiwf2V7hWHrH7-k3xuQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org> <CALxhOngxbsYFSbK1Y0okuiTmjWEQ8Zcd4vQ0OezhXBgXH82DtA@mail.gmail.com>
+In-Reply-To: <CALxhOngxbsYFSbK1Y0okuiTmjWEQ8Zcd4vQ0OezhXBgXH82DtA@mail.gmail.com>
+From:   Matt Turner <mattst88@gmail.com>
+Date:   Wed, 19 Dec 2018 10:59:10 -0500
+Message-ID: <CAEdQ38FQNC0mnf6UWOeandwR2guLRGmbYaJAo8MrEKFn2U61Gw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] alpha: system call table generation support
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     linux-alpha <linux-alpha@vger.kernel.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 04:43:33PM +0530, Jagan Teki wrote:
-> On Mon, Dec 3, 2018 at 3:55 PM Chen-Yu Tsai <wens@csie.org> wrote:
+On Fri, Dec 14, 2018 at 10:18 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> Hi Folks,
+>
+> On Tue, 13 Nov 2018 at 15:02, Firoz Khan <firoz.khan@linaro.org> wrote:
 > >
-> > On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > Amarula A64-Relic board by default bound with OV5640 camera,
-> > > so add support for it with below pin information.
-> > >
-> > > - PE13, PE12 via i2c-gpio bitbanging
-> > > - CLK_CSI_MCLK as external clock
-> > > - PE1 as external clock pin muxing
-> > > - DLDO3 as vcc-csi supply
-> > > - DLDO3 as AVDD supply
-> > > - ALDO1 as DOVDD supply
-> > > - ELDO3 as DVDD supply
-> > > - PE14 gpio for reset pin
-> > > - PE15 gpio for powerdown pin
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
-> > >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  5 ++
-> > >  2 files changed, 59 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > > index 6cb2b7f0c817..9ac6d773188b 100644
-> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > > @@ -22,6 +22,41 @@
-> > >                 stdout-path = "serial0:115200n8";
-> > >         };
-> > >
-> > > +       i2c-csi {
-> > > +               compatible = "i2c-gpio";
-> > > +               sda-gpios = <&pio 4 13 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
-> > > +               scl-gpios = <&pio 4 12 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+> > The purpose of this patch series is, we can easily
+> > add/modify/delete system call table support by cha-
+> > nging entry in syscall.tbl file instead of manually
+> > changing many files. The other goal is to unify the
+> > system call table generation support implementation
+> > across all the architectures.
 > >
-> > FYI our hardware doesn't do open drain.
-> 
-> True, but the kernel is enforcing it seems, from the change from [1].
-> does that mean Linux use open drain even though hardware doens't have?
-> or did I miss anything?
+> > The system call tables are in different format in
+> > all architecture. It will be difficult to manually
+> > add, modify or delete the system calls in the resp-
+> > ective files manually. To make it easy by keeping a
+> > script and which'll generate uapi header file and
+> > syscall table file.
+> >
+> > syscall.tbl contains the list of available system
+> > calls along with system call number and correspond-
+> > ing entry point. Add a new system call in this arch-
+> > itecture will be possible by adding new entry in the
+> > syscall.tbl file.
+> >
+> > Adding a new table entry consisting of:
+> >         - System call number.
+> >         - ABI.
+> >         - System call name.
+> >         - Entry point name.
+> >
+> > ARM, s390 and x86 architecuture does exist the sim-
+> > ilar support. I leverage their implementation to
+> > come up with a generic solution.
+> >
+> > I have done the same support for work for ia64, m68k,
+> > microblaze, mips, parisc, powerpc, sh, sparc and xtensa.
+> > Below mentioned git repository contains more details
+> > about the workflow.
+> >
+> > https://github.com/frzkhn/system_call_table_generator/
+> >
+> > Finally, this is the ground work to solve the Y2038
+> > issue. We need to add two dozen of system calls to
+> > solve Y2038 issue. So this patch series will help to
+> > add new system calls easily by adding new entry in
+> > the syscall.tbl.
+> >
+> > changes since v2:
+> >  - changed from generic-y to generated-y in Kbuild.
+> >  - made changes in syscall.tbl for removing entry -
+> >    alpha_ni_syscall.
+> >
+> > changes since v1:
+> >  - optimized/updated the syscall table generation
+> >    scripts.
+> >  - fixed all mixed indentation issues in syscall.tbl.
+> >  - added "comments" in syscall.tbl.
+> >  - enclosed __NR_sycalls macro with __KERNEL__.
+> >  - added missing new line.
+> >
+> > Firoz Khan (5):
+> >   alpha: move __IGNORE* entries to non uapi header
+> >   alpha: remove CONFIG_OSF4_COMPAT flag from syscall table
+> >   alpha: add __NR_syscalls along with NR_SYSCALLS
+> >   alpha: add system call table generation support
+> >   alpha: generate uapi header and syscall table header files
+>
+> Could someone review this patch series and queue it for 4.21
+> through alpha tree would be great.
 
-It's forced because you can't do I2C without open drain. Things like the 
-slave doing clock stretching won't work.
-
-Rob
+Thank you! I'll take a look.
