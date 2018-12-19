@@ -2,128 +2,153 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D3BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8005BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1EE520874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46B1920874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:34:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RZMkN4rH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RZMkN4rH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbeLSObi (ORCPT
+        id S1729452AbeLSOeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:31:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46068 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728471AbeLSObi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:31:38 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 19 Dec 2018 09:34:07 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53590 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728017AbeLSOeH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:34:07 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7DF9E612C6; Wed, 19 Dec 2018 14:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545230046;
+        bh=Mx2i/3QKpE/nqsbfETRwwoRpfWE2yxvb7yFW7igSFdg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RZMkN4rHfh4udO9JTfpaoaJoZ7UHitqVFw5hlafYvRWE8N9rC9zM/XsRFP9HoeSm7
+         6cYqdEB63NJ3GnwsdcClYNIm6R0R3Hp06Bo9HPI5dkc+gsH+AgXrlRiDgzp4bXSQ2/
+         wX7kcpC6OElOUy7nkWCCRUgoq0yXWi2VBvRrMcds=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 888E1A0490;
-        Wed, 19 Dec 2018 14:31:37 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7B3BD17DF9;
-        Wed, 19 Dec 2018 14:31:37 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 7058A3F7CB;
-        Wed, 19 Dec 2018 14:31:37 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 09:31:37 -0500 (EST)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     cluster-devel <cluster-devel@redhat.com>,
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E476D6179D;
+        Wed, 19 Dec 2018 14:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545230046;
+        bh=Mx2i/3QKpE/nqsbfETRwwoRpfWE2yxvb7yFW7igSFdg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RZMkN4rHfh4udO9JTfpaoaJoZ7UHitqVFw5hlafYvRWE8N9rC9zM/XsRFP9HoeSm7
+         6cYqdEB63NJ3GnwsdcClYNIm6R0R3Hp06Bo9HPI5dkc+gsH+AgXrlRiDgzp4bXSQ2/
+         wX7kcpC6OElOUy7nkWCCRUgoq0yXWi2VBvRrMcds=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E476D6179D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-ID: <1374307029.56890917.1545229897334.JavaMail.zimbra@redhat.com>
-In-Reply-To: <180051537.56890898.1545229879645.JavaMail.zimbra@redhat.com>
-Subject: GFS2: Pull request (merge window)
+Subject: pull-request: wireless-drivers 2018-12-19
+Date:   Wed, 19 Dec 2018 16:34:02 +0200
+Message-ID: <87bm5hvb51.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.116.15, 10.4.195.14]
-Thread-Topic: GFS2: Pull request (merge window)
-Thread-Index: t5BYcXqjBmqI2h0GP0qGfQV5MQBNgQ==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 19 Dec 2018 14:31:37 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Dave,
 
-Please consider pulling the following changes for the GFS2 file system.
+this a pull request to net tree for 4.20, more info below.
 
-Regards,
+Really sorry for sending a late request like this but I have been busy
+with other stuff and this just got delayed. These are pretty
+important fixes so I hope there's still time to get them to 4.20. But if
+there's not time, please let me know and I'll pull these to
+wireless-drivers-next.
 
-Bob Peterson
-----------------------------------------------------------------
-The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
+All of these, expect the ath10k fix, have been in linux-next, and even
+the ath10k fix was in the pending branch so it has been tested by the
+kbuild bot.
 
-  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
+I'll send the -next pull request tomorrow. Please let me know if there
+are any problems.
 
-are available in the Git repository at:
+Kalle
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-4.21.fixes
+The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
 
-for you to fetch changes up to bc0205612bbd4dd4026d4ba6287f5643c37366ec:
+  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
 
-  gfs2: take jdata unstuff into account in do_grow (2018-12-18 10:49:02 -0600)
+are available in the git repository at:
 
-----------------------------------------------------------------
-We've got 11 patches for this merge window:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-12-19
 
- - Enhancements and performance improvements to journal replay (Abhi Das)
+for you to fetch changes up to 53884577fbcef33a7d15ad664e664a3dabe35171:
 
- - Cleanup of gfs2_is_ordered and gfs2_is_writeback (Andreas Gruenbacher)
-
- - Fix a potential double-free in inode creation (Andreas Gruenbacher)
-
- - Fix the bitmap search loop that was searching too far (Andreas Gruenbacher)
-
- - Various cleanups (Andreas Gruenbacher, Bob Peterson)
-
- - Implement Steve Whitehouse's patch to dump nrpages for inodes (Bob Peterson)
-
- - Fix a withdraw bug where stuffed journaled data files didn't allocate
-   enough journal space to be grown (Bob Peterson)
+  ath10k: skip sending quiet mode cmd for WCN3990 (2018-12-19 15:37:01 +0200)
 
 ----------------------------------------------------------------
-Abhi Das (4):
-      gfs2: add more timing info to journal recovery process
-      gfs2: changes to gfs2_log_XXX_bio
-      gfs2: add a helper function to get_log_header that can be used elsewhere
-      gfs2: read journal in large chunks to locate the head
+wireless-drivers fixes for 4.20
 
-Andreas Gruenbacher (4):
-      gfs2: Clean up gfs2_is_{ordered,writeback}
-      gfs2: Fix the gfs2_invalidatepage description
-      gfs2: Get rid of potential double-freeing in gfs2_create_inode
-      gfs2: Fix loop in gfs2_rbm_find
+Last set of fixes for 4.20. All (except the mt76 fix) of these are
+important fixes to user reported problems and pretty small in size.
 
-Bob Peterson (3):
-      gfs2: Remove vestigial bd_ops
-      gfs2: Dump nrpages for inodes and their glocks
-      gfs2: take jdata unstuff into account in do_grow
+rtlwifi
 
- fs/gfs2/aops.c       |  16 ++--
- fs/gfs2/bmap.c       |  10 +-
- fs/gfs2/glock.c      |   2 +-
- fs/gfs2/glock.h      |   2 +-
- fs/gfs2/glops.c      |  17 +++-
- fs/gfs2/incore.h     |   3 +-
- fs/gfs2/inode.c      |  18 ++--
- fs/gfs2/inode.h      |  10 +-
- fs/gfs2/log.c        |   5 +-
- fs/gfs2/log.h        |   5 +-
- fs/gfs2/lops.c       | 257 +++++++++++++++++++++++++++++++++++++++++++--------
- fs/gfs2/lops.h       |   4 +-
- fs/gfs2/ops_fstype.c |   1 +
- fs/gfs2/recovery.c   | 178 +++++++----------------------------
- fs/gfs2/recovery.h   |   5 +-
- fs/gfs2/rgrp.c       |   4 +-
- fs/gfs2/rgrp.h       |   2 +-
- fs/gfs2/super.c      |   1 +
- fs/gfs2/trans.c      |   8 +-
- 19 files changed, 317 insertions(+), 231 deletions(-)
+* fix skb leak
+
+mwifiex
+
+* revert a commit from v4.19 due to problems with locking
+
+mt76
+
+* fix a potential NULL derenfence
+
+* add entry to MAINTAINERS
+
+iwlwifi
+
+* fix a firmware crash which was a regression introduced in v4.20-rc4
+
+ath10k
+
+* fix a firmware crash with wcn3990 firmware
+
+----------------------------------------------------------------
+Brian Norris (1):
+      Revert "mwifiex: restructure rx_reorder_tbl_lock usage"
+
+Emmanuel Grumbach (1):
+      iwlwifi: mvm: don't send GEO_TX_POWER_LIMIT to old firmwares
+
+Larry Finger (1):
+      rtlwifi: Fix leak of skb when processing C2H_BT_INFO
+
+Lorenzo Bianconi (2):
+      mt76: fix potential NULL pointer dereference in mt76_stop_tx_queues
+      mt76: add entry in MAINTAINERS file
+
+Rakesh Pillai (1):
+      ath10k: skip sending quiet mode cmd for WCN3990
+
+ MAINTAINERS                                        |  7 ++
+ drivers/net/wireless/ath/ath10k/core.c             | 28 +++++++
+ drivers/net/wireless/ath/ath10k/debug.c            |  5 +-
+ drivers/net/wireless/ath/ath10k/thermal.c          |  9 ++
+ drivers/net/wireless/ath/ath10k/wmi-tlv.h          |  3 +
+ drivers/net/wireless/ath/ath10k/wmi.h              |  1 +
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  9 ++
+ drivers/net/wireless/marvell/mwifiex/11n.c         |  5 +-
+ .../net/wireless/marvell/mwifiex/11n_rxreorder.c   | 96 +++++++++++-----------
+ drivers/net/wireless/marvell/mwifiex/uap_txrx.c    |  3 -
+ drivers/net/wireless/mediatek/mt76/tx.c            |  7 +-
+ drivers/net/wireless/realtek/rtlwifi/base.c        |  1 +
+ 12 files changed, 118 insertions(+), 56 deletions(-)
