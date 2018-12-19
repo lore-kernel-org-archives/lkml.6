@@ -2,156 +2,515 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB23C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66432C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4844218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:53:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hx3VYrFz"
+	by mail.kernel.org (Postfix) with ESMTP id 2DD65218AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:07:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbeLSRx4 (ORCPT
+        id S1728670AbeLSSH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 12:53:56 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41560 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbeLSRx4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 12:53:56 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so9783973plm.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:53:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4Z/v67/vlB54ndWsugDUscflQWUKBr9V+KlB0WvHYZw=;
-        b=Hx3VYrFziGa2DVTMXCDNlosgpUJ/zRB8k78pTwd4bmKEscjZDe4+D6hHGO4CJxnbT3
-         uGPGvF62Cdf7ScAJ6PrlTCgUE3QVtiQ049UY88QfSyszj0VWYpf6PdK0vsm+N9NZbtJK
-         6He+N+c/0xnOQRysHmCSIRols/kX2cIdQd9Xf92oU16twSo640yff09fAkdlt7bTMTcR
-         ZFRzCNFDYaeG9lZ7Mr6XDLp0IzEK06ypVJV8e1MKRw5dkcZVC3CKatgEUh1gQYJnGm1q
-         xOF24TZo5m3H2zbbASfDcq0kkXjNWtpzTYOEh1AwAerSb/og8YalaEUlvzN0UIVnOR2e
-         bwsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4Z/v67/vlB54ndWsugDUscflQWUKBr9V+KlB0WvHYZw=;
-        b=qXQGXSjwjN0LoigwcEW5UzVq8H0oReK4P9ASAIdBJU+lxh569xcRMhtcJFy5CIKgiT
-         4J/AejRwIgYuDYXfNcYIHELH8huzdVs3gBOpRZjS5xsgxNy2q6lFoeWwdAyXyLTBf/Vm
-         bc/IvID186klw+HpWKov+wtwUkcXyiWyeYDJpQDv04AfY91PEKth1wueF+tK+e80YCs7
-         XJ86rnZzsB0QdcI6HNY5CuR9AHg+eTWeYiWuJVv0HPzktIcUKxQWM+qZThxDe/sk5abK
-         kEmyNEY3VT0Y2Vheyj+OqQs2uGjCxlKb66vUEs6lqF571ZQkeA/ceI+O0sD5rCGQUMl0
-         lTEQ==
-X-Gm-Message-State: AA+aEWYjeX5TJswHXYpjWRVJax+N5uAZZ+YRLSOa6KPFrUWc90NveQxD
-        T3wbGBk+OLXz+cWHyXKmryg=
-X-Google-Smtp-Source: AFSGD/UbNhHOefpDnzzqCzysbDNbBrPvgMVJvQmUEFkQYENsOYIHCel63FcjdtvQy9B53O/vKV3PfQ==
-X-Received: by 2002:a17:902:2969:: with SMTP id g96mr21059005plb.295.1545242035230;
-        Wed, 19 Dec 2018 09:53:55 -0800 (PST)
-Received: from [192.168.2.145] ([94.29.36.169])
-        by smtp.googlemail.com with ESMTPSA id c7sm31069782pfa.24.2018.12.19.09.53.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 09:53:54 -0800 (PST)
-Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
-To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, Chunming Zhou <david1.zhou@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Ekstrand <jason@jlekstrand.net>
-References: <20181108160422.17743-1-eric@anholt.net>
- <20181108160422.17743-3-eric@anholt.net>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <faf15d58-a076-49fb-c903-15acdf6f8ffe@gmail.com>
-Date:   Wed, 19 Dec 2018 20:53:45 +0300
+        Wed, 19 Dec 2018 13:07:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:40820 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbeLSSH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:07:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52237A78;
+        Wed, 19 Dec 2018 10:07:25 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57CDA3F675;
+        Wed, 19 Dec 2018 10:07:22 -0800 (PST)
+Subject: Re: [PATCH v3 2/6] iommu/arm-smmu: Add support to program multiple
+ ARM SMMU's identically
+To:     Krishna Reddy <vdumpa@nvidia.com>, will.deacon@arm.com,
+        joro@8bytes.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, treding@nvidia.com, yhsu@nvidia.com,
+        snikam@nvidia.com, praithatha@nvidia.com, talho@nvidia.com,
+        avanbrunt@nvidia.com, thomasz@nvidia.com, olof@lixom.net,
+        jtukkinen@nvidia.com, mperttunen@nvidia.com, jon.he@arm.com
+References: <1543887414-18209-1-git-send-email-vdumpa@nvidia.com>
+ <1543887414-18209-3-git-send-email-vdumpa@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5e1b242c-d2d5-9478-6726-2921bea9f3dc@arm.com>
+Date:   Wed, 19 Dec 2018 18:07:20 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181108160422.17743-3-eric@anholt.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1543887414-18209-3-git-send-email-vdumpa@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.11.2018 19:04, Eric Anholt wrote:
-> Daniel suggested I submit this, since we're still seeing regressions
-> from it.  This is a revert to before 48197bc564c7 ("drm: add syncobj
-> timeline support v9") and its followon fixes.
-> 
-> Fixes this on first V3D testcase execution:
-> 
-> [   48.767088] ============================================
-> [   48.772410] WARNING: possible recursive locking detected
-> [   48.777739] 4.19.0-rc6+ #489 Not tainted
-> [   48.781668] --------------------------------------------
-> [   48.786993] shader_runner/3284 is trying to acquire lock:
-> [   48.792408] ce309d7f (&(&array->lock)->rlock){....}, at: dma_fence_add_callback+0x30/0x23c
-> [   48.800714]
-> [   48.800714] but task is already holding lock:
-> [   48.806559] c5952bd3 (&(&array->lock)->rlock){....}, at: dma_fence_add_callback+0x30/0x23c
-> [   48.814862]
-> [   48.814862] other info that might help us debug this:
-> [   48.821410]  Possible unsafe locking scenario:
-> [   48.821410]
-> [   48.827338]        CPU0
-> [   48.829788]        ----
-> [   48.832239]   lock(&(&array->lock)->rlock);
-> [   48.836434]   lock(&(&array->lock)->rlock);
-> [   48.840640]
-> [   48.840640]  *** DEADLOCK ***
-> [   48.840640]
-> [   48.846582]  May be due to missing lock nesting notation
-> [  130.763560] 1 lock held by cts-runner/3270:
-> [  130.767745]  #0: 7834b793 (&(&array->lock)->rlock){-...}, at: dma_fence_add_callback+0x30/0x23c
-> [  130.776461]
->                stack backtrace:
-> [  130.780825] CPU: 1 PID: 3270 Comm: cts-runner Not tainted 4.19.0-rc6+ #486
-> [  130.787706] Hardware name: Broadcom STB (Flattened Device Tree)
-> [  130.793645] [<c021269c>] (unwind_backtrace) from [<c020db1c>] (show_stack+0x10/0x14)
-> [  130.801404] [<c020db1c>] (show_stack) from [<c0c2c4b0>] (dump_stack+0xa8/0xd4)
-> [  130.808642] [<c0c2c4b0>] (dump_stack) from [<c0281a84>] (__lock_acquire+0x848/0x1a68)
-> [  130.816483] [<c0281a84>] (__lock_acquire) from [<c02835d8>] (lock_acquire+0xd8/0x22c)
-> [  130.824326] [<c02835d8>] (lock_acquire) from [<c0c49948>] (_raw_spin_lock_irqsave+0x54/0x68)
-> [  130.832777] [<c0c49948>] (_raw_spin_lock_irqsave) from [<c086bf54>] (dma_fence_add_callback+0x30/0x23c)
-> [  130.842183] [<c086bf54>] (dma_fence_add_callback) from [<c086d4c8>] (dma_fence_array_enable_signaling+0x58/0xec)
-> [  130.852371] [<c086d4c8>] (dma_fence_array_enable_signaling) from [<c086c00c>] (dma_fence_add_callback+0xe8/0x23c)
-> [  130.862647] [<c086c00c>] (dma_fence_add_callback) from [<c06d8774>] (drm_syncobj_wait_ioctl+0x518/0x614)
-> [  130.872143] [<c06d8774>] (drm_syncobj_wait_ioctl) from [<c06b8458>] (drm_ioctl_kernel+0xb0/0xf0)
-> [  130.880940] [<c06b8458>] (drm_ioctl_kernel) from [<c06b8818>] (drm_ioctl+0x1d8/0x390)
-> [  130.888782] [<c06b8818>] (drm_ioctl) from [<c03a4510>] (do_vfs_ioctl+0xb0/0x8ac)
-> [  130.896187] [<c03a4510>] (do_vfs_ioctl) from [<c03a4d40>] (ksys_ioctl+0x34/0x60)
-> [  130.903593] [<c03a4d40>] (ksys_ioctl) from [<c0201000>] (ret_fast_syscall+0x0/0x28)
-> 
-> Cc: Chunming Zhou <david1.zhou@amd.com>
-> Cc: Christian König <christian.koenig@amd.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+Hi Krishna,
+
+On 04/12/2018 01:36, Krishna Reddy wrote:
+> Add support to program multiple ARM SMMU's identically as one SMMU device.
+> Tegra194 uses Two ARM SMMU's as one SMMU device and both ARM SMMU's need
+> to be programmed identically.
+
+The whole point of the library idea was to factor out the code in such a 
+way that all the details specific to a particular implementation can be 
+kept together. But what this patch does is insert Tegra194-specific 
+handling all through the 'common' code, which is the exact opposite of 
+that concept and just makes more hard-to-maintain mess.
+
+The amount of copy-paste duplication in patch #4 has the opposite 
+problem - about 95% of that isn't Tegra194-specific at all (I mean, how 
+many fsl_mc instances does it have?), and having multiple copies of 
+generic code with the potential to diverge is also not what anyone 
+wants. Plus I don't think ending up building multiple separate drivers 
+will even work in general - thanks to the current state of 
+bus_set_iommu() etc., you can't use the regular driver for your third 
+SMMU at the same time.
+
+I think what really needs to be done is to conceptually split the driver 
+into "architecture" and "implementation" layers - at some point after 
+the holidays we're probably going to sit down and go through all the 
+various quirks and specifics we know about to try and figure out what 
+that should actually look like.
+
+Robin.
+
+> Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
 > ---
-
-
-[snip]
-
-> @@ -931,9 +718,6 @@ static signed long drm_syncobj_array_wait_timeout(struct drm_syncobj **syncobjs,
->  
->  	if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
->  		for (i = 0; i < count; ++i) {
-> -			if (entries[i].fence)
-> -				continue;
-> -
->  			drm_syncobj_fence_get_or_add_callback(syncobjs[i],
->  							      &entries[i].fence,
->  							      &entries[i].syncobj_cb,
-
-Hello,
-
-The above three removed lines we added in commit 337fe9f5c1e7de ("drm/syncobj: Don't leak fences when WAIT_FOR_SUBMIT is set") that fixed a memleak. Removal of the lines returns the memleak because of disbalanced fence refcounting and it looks like they were removed unintentionally in this patch.
-
--- 
-Dmitry
+>   drivers/iommu/lib-arm-smmu.c | 191 ++++++++++++++++++++++++++++++++-----------
+>   1 file changed, 144 insertions(+), 47 deletions(-)
+> 
+> diff --git a/drivers/iommu/lib-arm-smmu.c b/drivers/iommu/lib-arm-smmu.c
+> index 6aba5db..7036763 100644
+> --- a/drivers/iommu/lib-arm-smmu.c
+> +++ b/drivers/iommu/lib-arm-smmu.c
+> @@ -69,9 +69,9 @@
+>    * therefore this actually makes more sense than it might first appear.
+>    */
+>   #ifdef CONFIG_64BIT
+> -#define smmu_write_atomic_lq		writeq_relaxed
+> +#define smmu_write_atomic_lq		writeq_all_relaxed
+>   #else
+> -#define smmu_write_atomic_lq		writel_relaxed
+> +#define smmu_write_atomic_lq		writel_all_relaxed
+>   #endif
+>   
+>   /* Translation context bank */
+> @@ -135,6 +135,48 @@ struct arm_smmu_domain {
+>   	struct iommu_domain		domain;
+>   };
+>   
+> +#define to_smmu_intance(smmu, inst, addr) \
+> +	(addr - smmu->bases[0] + smmu->bases[inst])
+> +
+> +static void writel_all(struct arm_smmu_device *smmu,
+> +		       u32 value, void __iomem *addr)
+> +{
+> +	int i;
+> +
+> +	writel(value, addr);
+> +	for (i = 1; i < smmu->num_smmus; i++) {
+> +		void __iomem *reg_addr = to_smmu_intance(smmu, i, addr);
+> +
+> +		writel(value, reg_addr);
+> +	}
+> +}
+> +
+> +static void writel_all_relaxed(struct arm_smmu_device *smmu,
+> +			       u32 value, void __iomem *addr)
+> +{
+> +	int i;
+> +
+> +	writel_relaxed(value, addr);
+> +	for (i = 1; i < smmu->num_smmus; i++) {
+> +		void __iomem *reg_addr = to_smmu_intance(smmu, i, addr);
+> +
+> +		writel_relaxed(value, reg_addr);
+> +	}
+> +}
+> +
+> +static void writeq_all_relaxed(struct arm_smmu_device *smmu,
+> +			       u64 value, void __iomem *addr)
+> +{
+> +	int i;
+> +
+> +	writeq_relaxed(value, addr);
+> +	for (i = 1; i < smmu->num_smmus; i++) {
+> +		void __iomem *reg_addr = to_smmu_intance(smmu, i, addr);
+> +
+> +		writeq_relaxed(value, reg_addr);
+> +	}
+> +}
+> +
+>   static struct arm_smmu_domain *to_smmu_domain(struct iommu_domain *dom)
+>   {
+>   	return container_of(dom, struct arm_smmu_domain, domain);
+> @@ -179,25 +221,37 @@ static void __arm_smmu_tlb_sync(struct arm_smmu_device *smmu,
+>   
+>   static void arm_smmu_tlb_sync_global(struct arm_smmu_device *smmu)
+>   {
+> -	void __iomem *base = ARM_SMMU_GR0(smmu);
+> +	int i;
+>   	unsigned long flags;
+>   
+>   	spin_lock_irqsave(&smmu->global_sync_lock, flags);
+> -	__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_GR0_sTLBGSYNC,
+> -			    base + ARM_SMMU_GR0_sTLBGSTATUS);
+> +	for (i = 0; i < smmu->num_smmus; i++) {
+> +		void __iomem *base = ARM_SMMU_GR0(smmu);
+> +
+> +		if (i > 0)
+> +			base = to_smmu_intance(smmu, i, base);
+> +		__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_GR0_sTLBGSYNC,
+> +				    base + ARM_SMMU_GR0_sTLBGSTATUS);
+> +	}
+>   	spin_unlock_irqrestore(&smmu->global_sync_lock, flags);
+>   }
+>   
+>   static void arm_smmu_tlb_sync_context(void *cookie)
+>   {
+> +	int i;
+>   	struct arm_smmu_domain *smmu_domain = cookie;
+>   	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> -	void __iomem *base = ARM_SMMU_CB(smmu, smmu_domain->cfg.cbndx);
+>   	unsigned long flags;
+>   
+>   	spin_lock_irqsave(&smmu_domain->cb_lock, flags);
+> -	__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_CB_TLBSYNC,
+> -			    base + ARM_SMMU_CB_TLBSTATUS);
+> +	for (i = 0; i < smmu->num_smmus; i++) {
+> +		void __iomem *base = ARM_SMMU_CB(smmu, smmu_domain->cfg.cbndx);
+> +
+> +		if (i > 0)
+> +			base = to_smmu_intance(smmu, i, base);
+> +		__arm_smmu_tlb_sync(smmu, base + ARM_SMMU_CB_TLBSYNC,
+> +				    base + ARM_SMMU_CB_TLBSTATUS);
+> +	}
+>   	spin_unlock_irqrestore(&smmu_domain->cb_lock, flags);
+>   }
+>   
+> @@ -212,13 +266,14 @@ static void arm_smmu_tlb_inv_context_s1(void *cookie)
+>   {
+>   	struct arm_smmu_domain *smmu_domain = cookie;
+>   	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+> -	void __iomem *base = ARM_SMMU_CB(smmu_domain->smmu, cfg->cbndx);
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> +	void __iomem *base = ARM_SMMU_CB(smmu, cfg->cbndx);
+>   
+>   	/*
+>   	 * NOTE: this is not a relaxed write; it needs to guarantee that PTEs
+>   	 * cleared by the current CPU are visible to the SMMU before the TLBI.
+>   	 */
+> -	writel(cfg->asid, base + ARM_SMMU_CB_S1_TLBIASID);
+> +	writel_all(smmu, cfg->asid, base + ARM_SMMU_CB_S1_TLBIASID);
+>   	arm_smmu_tlb_sync_context(cookie);
+>   }
+>   
+> @@ -229,7 +284,7 @@ static void arm_smmu_tlb_inv_context_s2(void *cookie)
+>   	void __iomem *base = ARM_SMMU_GR0(smmu);
+>   
+>   	/* NOTE: see above */
+> -	writel(smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
+> +	writel_all(smmu, smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
+>   	arm_smmu_tlb_sync_global(smmu);
+>   }
+>   
+> @@ -237,11 +292,12 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+>   				size_t granule, bool leaf, void *cookie)
+>   {
+>   	struct arm_smmu_domain *smmu_domain = cookie;
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
+>   	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>   	bool stage1 = cfg->cbar != CBAR_TYPE_S2_TRANS;
+> -	void __iomem *reg = ARM_SMMU_CB(smmu_domain->smmu, cfg->cbndx);
+> +	void __iomem *reg = ARM_SMMU_CB(smmu, cfg->cbndx);
+>   
+> -	if (smmu_domain->smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+> +	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>   		wmb();
+>   
+>   	if (stage1) {
+> @@ -251,7 +307,7 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+>   			iova &= ~12UL;
+>   			iova |= cfg->asid;
+>   			do {
+> -				writel_relaxed(iova, reg);
+> +				writel_all_relaxed(smmu, iova, reg);
+>   				iova += granule;
+>   			} while (size -= granule);
+>   		} else {
+> @@ -267,7 +323,7 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+>   			      ARM_SMMU_CB_S2_TLBIIPAS2;
+>   		iova >>= 12;
+>   		do {
+> -			smmu_write_atomic_lq(iova, reg);
+> +			smmu_write_atomic_lq(smmu, iova, reg);
+>   			iova += granule >> 12;
+>   		} while (size -= granule);
+>   	}
+> @@ -283,12 +339,13 @@ static void arm_smmu_tlb_inv_vmid_nosync(unsigned long iova, size_t size,
+>   				size_t granule, bool leaf, void *cookie)
+>   {
+>   	struct arm_smmu_domain *smmu_domain = cookie;
+> -	void __iomem *base = ARM_SMMU_GR0(smmu_domain->smmu);
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> +	void __iomem *base = ARM_SMMU_GR0(smmu);
+>   
+> -	if (smmu_domain->smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+> +	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>   		wmb();
+>   
+> -	writel_relaxed(smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
+> +	writel_all_relaxed(smmu, smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
+>   }
+>   
+>   static const struct iommu_gather_ops arm_smmu_s1_tlb_ops = {
+> @@ -309,7 +366,8 @@ static const struct iommu_gather_ops arm_smmu_s2_tlb_ops_v1 = {
+>   	.tlb_sync	= arm_smmu_tlb_sync_vmid,
+>   };
+>   
+> -irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+> +static irqreturn_t __arm_smmu_context_fault(int irq, void *dev,
+> +					    void __iomem *cb_base)
+>   {
+>   	u32 fsr, fsynr;
+>   	unsigned long iova;
+> @@ -317,9 +375,7 @@ irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+>   	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>   	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>   	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> -	void __iomem *cb_base;
+>   
+> -	cb_base = ARM_SMMU_CB(smmu, cfg->cbndx);
+>   	fsr = readl_relaxed(cb_base + ARM_SMMU_CB_FSR);
+>   
+>   	if (!(fsr & FSR_FAULT))
+> @@ -336,11 +392,33 @@ irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> -irqreturn_t arm_smmu_global_fault(int irq, void *dev)
+> +static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+> +{
+> +	int i;
+> +	irqreturn_t irq_ret = IRQ_NONE;
+> +	struct iommu_domain *domain = dev;
+> +	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> +	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> +
+> +	for (i = 0; i < smmu->num_smmus; i++) {
+> +		void __iomem *cb_base = ARM_SMMU_CB(smmu, cfg->cbndx);
+> +
+> +		if (i > 0)
+> +			cb_base = to_smmu_intance(smmu, i, cb_base);
+> +		irq_ret = __arm_smmu_context_fault(irq, dev, cb_base);
+> +		if (irq_ret == IRQ_HANDLED)
+> +			break;
+> +	}
+> +
+> +	return irq_ret;
+> +}
+> +
+> +static irqreturn_t __arm_smmu_global_fault(int irq, void *dev,
+> +					   void __iomem *gr0_base)
+>   {
+> -	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
+>   	struct arm_smmu_device *smmu = dev;
+> -	void __iomem *gr0_base = ARM_SMMU_GR0_NS(smmu);
+> +	u32 gfsr, gfsynr0, gfsynr1, gfsynr2;
+>   
+>   	gfsr = readl_relaxed(gr0_base + ARM_SMMU_GR0_sGFSR);
+>   	gfsynr0 = readl_relaxed(gr0_base + ARM_SMMU_GR0_sGFSYNR0);
+> @@ -360,6 +438,25 @@ irqreturn_t arm_smmu_global_fault(int irq, void *dev)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> +irqreturn_t arm_smmu_global_fault(int irq, void *dev)
+> +{
+> +	int i;
+> +	irqreturn_t irq_ret = IRQ_NONE;
+> +	struct arm_smmu_device *smmu = dev;
+> +
+> +	for (i = 0; i < smmu->num_smmus; i++) {
+> +		void __iomem *gr0_base = ARM_SMMU_GR0_NS(smmu);
+> +
+> +		if (i > 0)
+> +			gr0_base = to_smmu_intance(smmu, i, gr0_base);
+> +		irq_ret = __arm_smmu_global_fault(irq, dev, gr0_base);
+> +		if (irq_ret == IRQ_HANDLED)
+> +			break;
+> +	}
+> +
+> +	return irq_ret;
+> +}
+> +
+>   static void arm_smmu_init_context_bank(struct arm_smmu_domain *smmu_domain,
+>   				       struct io_pgtable_cfg *pgtbl_cfg)
+>   {
+> @@ -423,7 +520,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+>   
+>   	/* Unassigned context banks only need disabling */
+>   	if (!cfg) {
+> -		writel_relaxed(0, cb_base + ARM_SMMU_CB_SCTLR);
+> +		writel_all_relaxed(smmu, 0, cb_base + ARM_SMMU_CB_SCTLR);
+>   		return;
+>   	}
+>   
+> @@ -440,7 +537,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+>   		if (smmu->features & ARM_SMMU_FEAT_VMID16)
+>   			reg |= cfg->vmid << CBA2R_VMID_SHIFT;
+>   
+> -		writel_relaxed(reg, gr1_base + ARM_SMMU_GR1_CBA2R(idx));
+> +		writel_all_relaxed(smmu, reg, gr1_base + ARM_SMMU_GR1_CBA2R(idx));
+>   	}
+>   
+>   	/* CBAR */
+> @@ -459,7 +556,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+>   		/* 8-bit VMIDs live in CBAR */
+>   		reg |= cfg->vmid << CBAR_VMID_SHIFT;
+>   	}
+> -	writel_relaxed(reg, gr1_base + ARM_SMMU_GR1_CBAR(idx));
+> +	writel_all_relaxed(smmu, reg, gr1_base + ARM_SMMU_GR1_CBAR(idx));
+>   
+>   	/*
+>   	 * TTBCR
+> @@ -467,14 +564,14 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+>   	 * access behaviour of some fields (in particular, ASID[15:8]).
+>   	 */
+>   	if (stage1 && smmu->version > ARM_SMMU_V1)
+> -		writel_relaxed(cb->tcr[1], cb_base + ARM_SMMU_CB_TTBCR2);
+> -	writel_relaxed(cb->tcr[0], cb_base + ARM_SMMU_CB_TTBCR);
+> +		writel_all_relaxed(smmu, cb->tcr[1], cb_base + ARM_SMMU_CB_TTBCR2);
+> +	writel_all_relaxed(smmu, cb->tcr[0], cb_base + ARM_SMMU_CB_TTBCR);
+>   
+>   	/* TTBRs */
+>   	if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_S) {
+> -		writel_relaxed(cfg->asid, cb_base + ARM_SMMU_CB_CONTEXTIDR);
+> -		writel_relaxed(cb->ttbr[0], cb_base + ARM_SMMU_CB_TTBR0);
+> -		writel_relaxed(cb->ttbr[1], cb_base + ARM_SMMU_CB_TTBR1);
+> +		writel_all_relaxed(smmu, cfg->asid, cb_base + ARM_SMMU_CB_CONTEXTIDR);
+> +		writel_all_relaxed(smmu, cb->ttbr[0], cb_base + ARM_SMMU_CB_TTBR0);
+> +		writel_all_relaxed(smmu, cb->ttbr[1], cb_base + ARM_SMMU_CB_TTBR1);
+>   	} else {
+>   		writeq_relaxed(cb->ttbr[0], cb_base + ARM_SMMU_CB_TTBR0);
+>   		if (stage1)
+> @@ -484,8 +581,8 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+>   
+>   	/* MAIRs (stage-1 only) */
+>   	if (stage1) {
+> -		writel_relaxed(cb->mair[0], cb_base + ARM_SMMU_CB_S1_MAIR0);
+> -		writel_relaxed(cb->mair[1], cb_base + ARM_SMMU_CB_S1_MAIR1);
+> +		writel_all_relaxed(smmu, cb->mair[0], cb_base + ARM_SMMU_CB_S1_MAIR0);
+> +		writel_all_relaxed(smmu, cb->mair[1], cb_base + ARM_SMMU_CB_S1_MAIR1);
+>   	}
+>   
+>   	/* SCTLR */
+> @@ -495,7 +592,7 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+>   	if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+>   		reg |= SCTLR_E;
+>   
+> -	writel_relaxed(reg, cb_base + ARM_SMMU_CB_SCTLR);
+> +	writel_all_relaxed(smmu, reg, cb_base + ARM_SMMU_CB_SCTLR);
+>   }
+>   
+>   static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+> @@ -763,7 +860,7 @@ static void arm_smmu_write_smr(struct arm_smmu_device *smmu, int idx)
+>   
+>   	if (!(smmu->features & ARM_SMMU_FEAT_EXIDS) && smr->valid)
+>   		reg |= SMR_VALID;
+> -	writel_relaxed(reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_SMR(idx));
+> +	writel_all_relaxed(smmu, reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_SMR(idx));
+>   }
+>   
+>   static void arm_smmu_write_s2cr(struct arm_smmu_device *smmu, int idx)
+> @@ -776,7 +873,7 @@ static void arm_smmu_write_s2cr(struct arm_smmu_device *smmu, int idx)
+>   	if (smmu->features & ARM_SMMU_FEAT_EXIDS && smmu->smrs &&
+>   	    smmu->smrs[idx].valid)
+>   		reg |= S2CR_EXIDVALID;
+> -	writel_relaxed(reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_S2CR(idx));
+> +	writel_all_relaxed(smmu, reg, ARM_SMMU_GR0(smmu) + ARM_SMMU_GR0_S2CR(idx));
+>   }
+>   
+>   static void arm_smmu_write_sme(struct arm_smmu_device *smmu, int idx)
+> @@ -1071,9 +1168,9 @@ static phys_addr_t arm_smmu_iova_to_phys_hard(struct iommu_domain *domain,
+>   	/* ATS1 registers can only be written atomically */
+>   	va = iova & ~0xfffUL;
+>   	if (smmu->version == ARM_SMMU_V2)
+> -		smmu_write_atomic_lq(va, cb_base + ARM_SMMU_CB_ATS1PR);
+> +		smmu_write_atomic_lq(smmu, va, cb_base + ARM_SMMU_CB_ATS1PR);
+>   	else /* Register is only 32-bit in v1 */
+> -		writel_relaxed(va, cb_base + ARM_SMMU_CB_ATS1PR);
+> +		writel_all_relaxed(smmu, va, cb_base + ARM_SMMU_CB_ATS1PR);
+>   
+>   	if (readl_poll_timeout_atomic(cb_base + ARM_SMMU_CB_ATSR, tmp,
+>   				      !(tmp & ATSR_ACTIVE), 5, 50)) {
+> @@ -1346,7 +1443,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
+>   
+>   	/* clear global FSR */
+>   	reg = readl_relaxed(ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sGFSR);
+> -	writel(reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sGFSR);
+> +	writel_all(smmu, reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sGFSR);
+>   
+>   	/*
+>   	 * Reset stream mapping groups: Initial values mark all SMRn as
+> @@ -1371,7 +1468,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
+>   		 * TLB entries for reduced latency.
+>   		 */
+>   		reg |= ARM_MMU500_ACR_SMTNMB_TLBEN | ARM_MMU500_ACR_S2CRB_TLBEN;
+> -		writel_relaxed(reg, gr0_base + ARM_SMMU_GR0_sACR);
+> +		writel_all_relaxed(smmu, reg, gr0_base + ARM_SMMU_GR0_sACR);
+>   	}
+>   
+>   	/* Make sure all context banks are disabled and clear CB_FSR  */
+> @@ -1379,7 +1476,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
+>   		void __iomem *cb_base = ARM_SMMU_CB(smmu, i);
+>   
+>   		arm_smmu_write_context_bank(smmu, i);
+> -		writel_relaxed(FSR_FAULT, cb_base + ARM_SMMU_CB_FSR);
+> +		writel_all_relaxed(smmu, FSR_FAULT, cb_base + ARM_SMMU_CB_FSR);
+>   		/*
+>   		 * Disable MMU-500's not-particularly-beneficial next-page
+>   		 * prefetcher for the sake of errata #841119 and #826419.
+> @@ -1387,13 +1484,13 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
+>   		if (smmu->model == ARM_MMU500) {
+>   			reg = readl_relaxed(cb_base + ARM_SMMU_CB_ACTLR);
+>   			reg &= ~ARM_MMU500_ACTLR_CPRE;
+> -			writel_relaxed(reg, cb_base + ARM_SMMU_CB_ACTLR);
+> +			writel_all_relaxed(smmu, reg, cb_base + ARM_SMMU_CB_ACTLR);
+>   		}
+>   	}
+>   
+>   	/* Invalidate the TLB, just in case */
+> -	writel_relaxed(0, gr0_base + ARM_SMMU_GR0_TLBIALLH);
+> -	writel_relaxed(0, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
+> +	writel_all_relaxed(smmu, 0, gr0_base + ARM_SMMU_GR0_TLBIALLH);
+> +	writel_all_relaxed(smmu, 0, gr0_base + ARM_SMMU_GR0_TLBIALLNSNH);
+>   
+>   	reg = readl_relaxed(ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+>   
+> @@ -1424,7 +1521,7 @@ void arm_smmu_device_reset(struct arm_smmu_device *smmu)
+>   
+>   	/* Push the button */
+>   	arm_smmu_tlb_sync_global(smmu);
+> -	writel(reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+> +	writel_all(smmu, reg, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+>   }
+>   
+>   static int arm_smmu_id_size_to_bits(int size)
+> @@ -1666,6 +1763,6 @@ int arm_smmu_device_remove(struct platform_device *pdev)
+>   		dev_err(&pdev->dev, "removing device with active domains!\n");
+>   
+>   	/* Turn the thing off */
+> -	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+> +	writel_all(smmu, sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
+>   	return 0;
+>   }
+> 
