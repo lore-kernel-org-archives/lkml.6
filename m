@@ -2,121 +2,61 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B4FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF3DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1B7E20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66AB2218AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:24:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeLSSXt (ORCPT
+        id S1729494AbeLSSYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:23:49 -0500
-Received: from mga04.intel.com ([192.55.52.120]:20237 "EHLO mga04.intel.com"
+        Wed, 19 Dec 2018 13:24:07 -0500
+Received: from foss.arm.com ([217.140.101.70]:41272 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727232AbeLSSXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:23:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2018 10:23:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,373,1539673200"; 
-   d="scan'208";a="131341630"
-Received: from fmerten-mobl.ger.corp.intel.com (HELO localhost) ([10.252.54.164])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Dec 2018 10:23:46 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Shayenne Moura <shayenneluzmoura@gmail.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 0/7] drm: KMS cleanup remove drm_mode_object dependency
-In-Reply-To: <20181219164013.dr7vgfbs2w3jtix7@smtp.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20181218133749.h4bnf5n5ljsmr2kz@smtp.gmail.com> <87woo5vf4r.fsf@intel.com> <20181219164013.dr7vgfbs2w3jtix7@smtp.gmail.com>
-Date:   Wed, 19 Dec 2018 20:23:50 +0200
-Message-ID: <874lb9pe89.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1727232AbeLSSYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:24:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55F1CA78;
+        Wed, 19 Dec 2018 10:24:06 -0800 (PST)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 36AFC3F59C;
+        Wed, 19 Dec 2018 10:24:04 -0800 (PST)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     cai@gmx.us, daniel.lezcano@linaro.org,
+        linux-arm-kernel@lists.infradead.org, longman@redhat.com,
+        marc.zyngier@arm.com, mark.rutland@arm.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, dietmar.eggemann@arm.com
+Subject: [PATCH 0/2] System-wide mute of hotplug lockdep during init
+Date:   Wed, 19 Dec 2018 18:23:14 +0000
+Message-Id: <1545243796-23224-1-git-send-email-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Dec 2018, Shayenne Moura <shayenneluzmoura@gmail.com> wrote:
-> On 12/19, Jani Nikula wrote:
->> On Tue, 18 Dec 2018, Shayenne Moura <shayenneluzmoura@gmail.com> wrote:
->> > This patch serie removes drm_mode_object dependency from 
->> > drm_display_mode struct. This is part of KMS cleanup.  
->> 
->> For future reference:
->> 
->> Please use git-send-email or fix the mail threading otherwise. Patches
->> 1-7 should be in reply to the cover letter.
->> 
-> Sorry about that, 
->> Please justify the changes in the commit messages. Your current commit
->> messages focus on *what* is being done, which is fairly obvious from the
->> changes themselves. Please try to describe *why* this is being
->> done. That's more important for posterity. (In this case, it's basically
->> explained in the FIXME comment being removed in patch 7, as well as
->> Documentation/gpu/todo.rst.)
->> 
->> BR,
->> Jani.
->> 
-> Okay, thank you! But I should write on every patch why I am doing or
-> just on the cover letter?
+In [1] Peter had a suggestion to broadly mute hotplug lockdep warnings during
+init instead of going after every single warning and wrapping them with
+cpus_read_{lock, unlock}(). This is implemented in [PATCH 1/2].
 
-So this series is trivial enough that I can look the other way... ;)
+[PATCH 2/2] is a logical follow-up as [PATCH 1/2] is the generalized version
+of the reverted patch.
 
-But in general each patch should have a justification, even if just one
-sentence in the commit message. The why. The commit messages get
-recorded in git history, but the cover letter gets lost.
+[1]: https://lore.kernel.org/lkml/1543877121-4098-1-git-send-email-cai@gmx.us/#t
 
-BR,
-Jani.
+Valentin Schneider (2):
+  cpu/hotplug: Mute hotplug lockdep during init
+  Revert "sched/core: Take the hotplug lock in sched_init_smp()"
 
+ kernel/cpu.c        | 9 +++++++++
+ kernel/sched/core.c | 5 +----
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
->
-> Bests,
-> Shayenne
->> 
->> >
->> > Shayenne Moura (7):
->> >   drm: msm: Delete base.id prints
->> >   drm: Remove use of drm_mode_object
->> >   drm: omapdrm: Delete base.id prints
->> >   drm: i915: Delete base.id prints 
->> >   drm: sti: Delete base.id prints
->> >   drm: meson: Delete base.id prints
->> >   drm: Complete remove drm_mode_object dependency
->> >
->> >  drivers/gpu/drm/drm_crtc_helper.c                 |  5 ++---
->> >  drivers/gpu/drm/drm_modes.c                       |  9 ---------
->> >  drivers/gpu/drm/i915/i915_debugfs.c               |  4 ++--
->> >  drivers/gpu/drm/meson/meson_dw_hdmi.c             |  9 ++++-----
->> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c         |  4 ++--
->> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c  |  4 ++--
->> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c  |  4 ++--
->> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c |  4 ++--
->> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c  |  4 ++--
->> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c         |  4 ++--
->> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c      |  4 ++--
->> >  drivers/gpu/drm/msm/dsi/dsi_manager.c             |  4 ++--
->> >  drivers/gpu/drm/msm/edp/edp_bridge.c              |  4 ++--
->> >  drivers/gpu/drm/omapdrm/omap_connector.c          |  4 ++--
->> >  drivers/gpu/drm/omapdrm/omap_crtc.c               |  4 ++--
->> >  drivers/gpu/drm/sti/sti_crtc.c                    |  4 ++--
->> >  include/drm/drm_modes.h                           | 10 ++++------
->> >  17 files changed, 36 insertions(+), 49 deletions(-)
->> 
->> -- 
->> Jani Nikula, Intel Open Source Graphics Center
+--
+2.7.4
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
