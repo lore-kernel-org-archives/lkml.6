@@ -2,90 +2,181 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6CDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B619C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D93B21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545202585;
-	bh=tlu7Xwb1hzDYyqD2tgUdoFaFpTrj9P7NqlkTHs3BliA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kLtjOR7Hw21nVXYDbWcKd5ysolt0C6PjjTF0/u8Nnl2J4Pd82NzRzJRQCsTyfVQOL
-	 /c6gKD3jfhb8CARwezI5zLKpZBhylR6b8n5OvVMr+E4wZOt3e8FFhYF4iX8y1dxngU
-	 PtiiKa85oPtjQQg8ExlsOiGA2Km/2+qzjZ7MD4+c=
+	by mail.kernel.org (Postfix) with ESMTP id 1854E21841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:57:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeLSG4Y (ORCPT
+        id S1728085AbeLSG5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 01:56:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44738 "EHLO mail.kernel.org"
+        Wed, 19 Dec 2018 01:57:49 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:44939 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727232AbeLSG4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 01:56:24 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F01672184A;
-        Wed, 19 Dec 2018 06:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545202583;
-        bh=tlu7Xwb1hzDYyqD2tgUdoFaFpTrj9P7NqlkTHs3BliA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yweGbTB434wTwDDxSQqW17dZZjhJ7ed1T5paBnmOGs3JhUQtLVvG3Ast0EuM4JCMP
-         LmFSVdzwglDMIz5jMJw0pwvhmTCDGVnzU6ob9Wgnml9vlu++LnhPZ5N0atjjIvG7NS
-         bLwXzSwoK3w65eZMZ/xXpqEQN2AR5z25bL17xaxA=
-Date:   Wed, 19 Dec 2018 07:56:21 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     peng.hao2@zte.com.cn
-Cc:     arnd@arndb.de, andy.shevchenko@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 1/3]  misc/pvpanic: return 0 for empty body
- registerfunction
-Message-ID: <20181219065621.GA21256@kroah.com>
-References: <20181218102817.GA29083@kroah.com>
- <201812190811376451432@zte.com.cn>
+        id S1726898AbeLSG5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 01:57:48 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43KQgr3jmdz9v0bM;
+        Wed, 19 Dec 2018 07:57:44 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id yZAvX9HLZ8KX; Wed, 19 Dec 2018 07:57:44 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43KQgr2y48z9v0bL;
+        Wed, 19 Dec 2018 07:57:44 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 406BC8B85D;
+        Wed, 19 Dec 2018 07:57:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id BkxrEO5HQSXt; Wed, 19 Dec 2018 07:57:45 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0FAC78B754;
+        Wed, 19 Dec 2018 07:57:45 +0100 (CET)
+Subject: Re: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
+ <87y38nrkto.fsf@concordia.ellerman.id.au>
+ <87a7l2s6p3.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <f725ff38-4dd8-0657-6023-4b0b5b0d5f4e@c-s.fr>
+Date:   Wed, 19 Dec 2018 07:57:44 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201812190811376451432@zte.com.cn>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <87a7l2s6p3.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 08:11:37AM +0800, peng.hao2@zte.com.cn wrote:
-> >On Tue, Dec 18, 2018 at 05:46:41PM +0800, Peng Hao wrote:
-> >> Return 0 for empty body register function normally.
-> >>
-> >> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> >> ---
-> >> QEMU community requires additional PCI devices to simulate PVPANIC devices
-> >> so that some architectures can not occupy precious less than 4G of memory
-> >> space.
-> >
-> >What is this for below the --- line?
-> >
-> >And again, you did not specify what changed from the previous versions.
-> >I can not take these unless you provide it.
+
+
+Le 19/12/2018 à 01:26, Michael Ellerman a écrit :
+> Michael Ellerman <mpe@ellerman.id.au> writes:
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>
+>>> This patch implements CONFIG_DEBUG_VIRTUAL to warn about
+>>> incorrect use of virt_to_phys() and page_to_phys()
+>>
+>> This commit is breaking my p5020ds booting a 32-bit kernel with:
+>>
+>>    smp: Bringing up secondary CPUs ...
+>>    __ioremap(): phys addr 0x7fef5000 is RAM lr ioremap_coherent
+>>    Unable to handle kernel paging request for data at address 0x00000000
+>>    Faulting instruction address: 0xc002e950
+>>    Oops: Kernel access of bad area, sig: 11 [#1]
+>>    BE SMP NR_CPUS=24 CoreNet Generic
+>>    Modules linked in:
+>>    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9 #148
+>>    NIP:  c002e950 LR: c002eb20 CTR: 00000001
+>>    REGS: e804bd20 TRAP: 0300   Not tainted  (4.20.0-rc2-gcc-7.0.1-00138-g9a0380d299e9)
+>>    MSR:  00021002 <CE,ME>  CR: 28004222  XER: 00000000
+>>    DEAR: 00000000 ESR: 00000000
+>>    GPR00: c002eb20 e804bdd0 e8050000 00000000 00021002 00000000 00000050 00021002
+>>    GPR08: 2d3f0000 00000001 00000000 00000004 24000842 00000000 c00026d0 00000000
+>>    GPR16: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001
+>>    GPR24: 00029002 7fef5140 30000000 00000000 00000000 00000040 00000001 00000000
+>>    NIP [c002e950] smp_85xx_kick_cpu+0x120/0x410
+>>    LR [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410
+>>    Call Trace:
+>>    [e804bdd0] [c002eb20] smp_85xx_kick_cpu+0x2f0/0x410 (unreliable)
+>>    [e804be20] [c0012e38] __cpu_up+0xc8/0x230
+>>    [e804be50] [c0040b34] bringup_cpu+0x34/0x110
+>>    [e804be70] [c00418a8] cpu_up+0x128/0x250
+>>    [e804beb0] [c0b84b14] smp_init+0xc4/0x10c
+>>    [e804bee0] [c0b75c1c] kernel_init_freeable+0xc8/0x250
+>>    [e804bf20] [c00026e8] kernel_init+0x18/0x120
+>>    [e804bf40] [c0011298] ret_from_kernel_thread+0x14/0x1c
+>>    Instruction dump:
+>>    7fb3e850 57bdd1be 2e1d0000 41d20250 57bd3032 393dffc0 7e6a9b78 5529d1be
+>>    39290001 7d2903a6 60000000 60000000 <7c0050ac> 394a0040 4200fff8 7c0004ac
+>>    ---[ end trace edcab2a1dfd5b38c ]---
+>>
+>>
+>> Which is obviously this hunk:
+>>
+>>> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+>>> index 4fc77a99c9bf..68d204a45cd0 100644
+>>> --- a/arch/powerpc/mm/pgtable_32.c
+>>> +++ b/arch/powerpc/mm/pgtable_32.c
+>>> @@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
+>>>   	 * Don't allow anybody to remap normal RAM that we're using.
+>>>   	 * mem_init() sets high_memory so only do the check after that.
+>>>   	 */
+>>> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+>>> +	if (slab_is_available() && virt_addr_valid(p) &&
+>>>   	    page_is_ram(__phys_to_pfn(p))) {
+>>>   		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+>>>   		       (unsigned long long)p, __builtin_return_address(0));
+>>
+>>
+>> I'll try and come up with a fix tomorrow.
 > 
-> The previous version of the code is basically unchanged, and the new patches just 
-> adds a PCI interface. Previous versions only support ACPI and FDT interfaces.
-> The QEMU community requires a PCI interface so that some architectures do not occupy
->  precious low 4G memory address.
+> Actually I think that change is just wrong. virt_addr_valid() takes a
+> virtual address, but p is a physical address.
+> 
+> So I'll drop this hunk for now, which makes the patch a no-op when
+> DEBUG_VIRTUAL is n which is probably the way it should be.
 
-No, you are changing things between each version, hopefully based on the
-review comments.  And the testing that is being provided for you showing
-you where your code breaks the build.
+The hunk is obviously wrong for sure. Anyway there's a problem, most 
+likely high_memory is not a valid virtual address, so without this hunk 
+I get the following warning at every ioremap():
 
-That goes in the "what changed" lines, as is documented in the kernel
-documentation.  Please follow that when resubmitting if you wish for
-your changes to be able to be accepted.
+[    0.000000] WARNING: CPU: 0 PID: 0 at 
+./arch/powerpc/include/asm/io.h:809 __ioremap_caller+0x9c/0x180
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 
+4.20.0-rc6-s3k-dev-00677-g9c98dcab6203-dirty #615
+[    0.000000] NIP:  c000fcd0 LR: c000fc64 CTR: 00000000
+[    0.000000] REGS: c073de50 TRAP: 0700   Not tainted 
+(4.20.0-rc6-s3k-dev-00677-g9c98dcab6203-dirty)
+[    0.000000] MSR:  00021032 <ME,IR,DR,RI>  CR: 28944422  XER: 0000f940
+[    0.000000]
+[    0.000000] GPR00: c000fe04 c073df00 c06e1450 00000001 00004023 
+c073df38 c0018f50 00000001
+[    0.000000] GPR08: 00002000 08000000 00002000 00000000 88944224 
+00600000 00000000 07ff9580
+[    0.000000] GPR16: 00000000 07ffb94c 00000000 00000000 00000000 
+00000000 00000000 00000000
+[    0.000000] GPR24: 00000000 c0760000 0000019f ff000000 ff000000 
+c000fe04 00004000 c0018f50
+[    0.000000] NIP [c000fcd0] __ioremap_caller+0x9c/0x180
+[    0.000000] LR [c000fc64] __ioremap_caller+0x30/0x180
+[    0.000000] Call Trace:
+[    0.000000] [c073df00] [c02fc23c] of_address_to_resource+0x114/0x154 
+(unreliable)
+[    0.000000] [c073df30] [c000fe04] ioremap_wt+0x20/0x30
+[    0.000000] [c073df40] [c0018f50] mpc8xx_pic_init+0x70/0xf8
+[    0.000000] [c073df80] [c0655b84] mpc8xx_pics_init+0x10/0x6c
+[    0.000000] [c073df90] [c0675080] cmpc885_pics_init+0x14/0x118
+[    0.000000] [c073dfa0] [c0652eb0] init_IRQ+0x24/0x38
+[    0.000000] [c073dfb0] [c0650b10] start_kernel+0x2a8/0x3d4
+[    0.000000] [c073dff0] [c0002258] start_here+0x44/0x98
+[    0.000000] Instruction dump:
+[    0.000000] 419e00b8 7f83e378 480013fd 7c7d1b79 41820030 576304be 
+7c63ea14 80010034
+[    0.000000] bb410018 7c0803a6 38210030 4e800020 <0fe00000> 7f9c4840 
+409cffc4 480000a8
+[    0.000000] random: get_random_bytes called from 
+print_oops_end_marker+0x60/0x84 with crng_init=0
+[    0.000000] ---[ end trace 25d7f28ce013ad37 ]---
 
-thanks,
+I'll try and come with solution during the day.
 
-greg k-h
+Christophe
+
+> 
+> cheers
+> 
