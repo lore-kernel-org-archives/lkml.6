@@ -2,95 +2,96 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36DFC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E97C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7659C21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:16:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CNqS45Fz"
+	by mail.kernel.org (Postfix) with ESMTP id 32D5E21841
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:16:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729985AbeLSPQF (ORCPT
+        id S1730008AbeLSPQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:16:05 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:33935 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728613AbeLSPQE (ORCPT
+        Wed, 19 Dec 2018 10:16:58 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36816 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729995AbeLSPQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:16:04 -0500
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id wBJFFxsE025961
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 00:15:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wBJFFxsE025961
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1545232559;
-        bh=n+uNOKQMP1VfT3ymS5EYhCd8LfPtnRlWof0IYC/zJIo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CNqS45FztnPnzSfsSB9u8hzQ7dijS1KZC781j53H+UIwU/v+i9w1jw1Wjq4rEn3T7
-         CZlCP+r5y3TY3eUQn7H5490G9xH0J3WKT0uSw2Hzqsk36qLOO+Rnnwcx+qG3op06NP
-         XcYlGVAVOiVa12fucVCcV3oiIkTasBg8rzuaUOXfpKwF4Cmg/m8v5q9/fLfr/oda2l
-         NzvBFGESFbHlwzB8PZzCtSQOZsbs4dDl0fUbkd1u/JKgKNF8cBAoROIsejrKggUofK
-         DQUXG67m2WL4ynnJdT2RyIJ4ZbI30Z0uUiNGqkTxwpdODBp7PfEt4v2Hb5AkVXHnIX
-         Ry2cjhpvG8JEA==
-X-Nifty-SrcIP: [209.85.222.54]
-Received: by mail-ua1-f54.google.com with SMTP id z11so7075921uaa.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:15:59 -0800 (PST)
-X-Gm-Message-State: AA+aEWbeVWtaPH6RuM9hNUuEuS6tJDhd48DxZxhSeuL7Lq5mRYt4MnqH
-        qHoSHZt31Sen8YLMTzORVIX2jn3YxjtQgg/V3Wg=
-X-Google-Smtp-Source: AFSGD/U0VSpn0AqykwILjU30wSR2Ir/6Z6QA740HKvMWPxBtjM9lBUfpdJLqBR19ztgYN69mbOWygoCdAAVT7cLxhkg=
-X-Received: by 2002:a9f:3193:: with SMTP id v19mr10256498uad.55.1545232558294;
- Wed, 19 Dec 2018 07:15:58 -0800 (PST)
-MIME-Version: 1.0
-References: <1544969781-14506-1-git-send-email-yamada.masahiro@socionext.com> <C2D7FE5348E1B147BCA15975FBA23075014641FC6F@US01WEMBX2.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014641FC6F@US01WEMBX2.internal.synopsys.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 20 Dec 2018 00:15:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATJVGVJi_S99zfEpKe+HYWpk+TkfT4gCFZVVTibyP=ThA@mail.gmail.com>
-Message-ID: <CAK7LNATJVGVJi_S99zfEpKe+HYWpk+TkfT4gCFZVVTibyP=ThA@mail.gmail.com>
-Subject: Re: [PATCH] arc: remove redundant kernel-space generic-y
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 19 Dec 2018 10:16:57 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p6so6550839wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:16:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jQEgjSv0p+0t9lP58YylQUqO3+AtSiTF9GKFD/e/dj4=;
+        b=oNmwEl+4KO8MjUpcynfLTOFPWqL9gJSnHjysASHfVq+ll62rTeu8falm0xrNIsI0Mo
+         XjnjafqazHk6ffsxtux4/WHSUBv90d+0YqgmgocZf1OnA1G+4qxvnQoZBsmq7cNMMIvE
+         N4AI75hZsMbOJytCBRWdY2zmQZbR+pWFrCXwCFetWDxXavd+3mO9vNS65471U34YC5N1
+         9C6af9X4PgapoWYXWsePsV44Ju9G0wrSpz0XXcvI+2PcxWz0aOJAoT1EyGjAjcaZOhYJ
+         ASAOoUAZTku+4s+5bO4dzfMX10q9sGA8oMFKhDpUbrcw8wtWrE0ztdtNOiagF+oYCCDU
+         JlxA==
+X-Gm-Message-State: AA+aEWYMHZVNWTEBBCZLgnIrdSzHlO4InPwTEYy6gkBXkL6Li964YxiH
+        upOlZhEKDvfgdLcrKvxJvYPUPA==
+X-Google-Smtp-Source: AFSGD/W+1FnnhrhbmSMCDhKSNF5vgr3dlRdMVBEABlD4aThzpcLlqDDzCPiUXN2OJLty4/1nvZ/Qyw==
+X-Received: by 2002:a1c:f207:: with SMTP id s7mr7425336wmc.87.1545232615958;
+        Wed, 19 Dec 2018 07:16:55 -0800 (PST)
+Received: from localhost.localdomain.home ([151.15.249.65])
+        by smtp.gmail.com with ESMTPSA id f187sm5004081wma.4.2018.12.19.07.16.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 07:16:55 -0800 (PST)
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Cc:     fenghua.yu@intel.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: [PATCH] arch/x86/kernel/topology: Make DEBUG_HOTPLUG_CPU0 pr_info more descriptive
+Date:   Wed, 19 Dec 2018 16:16:47 +0100
+Message-Id: <20181219151647.15073-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vineet,
+DEBUG_HOTPLUG_CPU0 debug feature offlines a CPU as early as possible
+allowing userspace to boot up without that CPU (so that it is possible
+to check for unwanted dependencies towards the offlined CPU). After
+doing so it emits a "CPU %u is now offline" pr_info, which is not enough
+descriptive of why the CPU was offlined (e.g., one might be running with
+a config that triggered some problem, not being aware that CONFIG_DEBUG_
+HOTPLUG_CPU0 is set).
 
-On Mon, Dec 17, 2018 at 2:07 PM Vineet Gupta <vineet.gupta1@synopsys.com> wrote:
->
-> On 12/16/18 6:17 AM, Masahiro Yamada wrote:
-> > This commit removes redundant generic-y defines in
-> > arch/arc/include/asm/Kbuild.
-> >
-> > It is redundant to define generic-y when arch-specific implementation
-> > exists in arch/$(ARCH)/include/asm/*.h
-> >
-> > Remove the following generic-y:
-> >
-> >     dma-mapping.h
-> >     fb.h
-> >     kmap_types.h
-> >     pci.h
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> Acked-by: Vineet Gupta <vgupta@synopsys.com>
+Add a bit more of informative text to the pr_info, so that it is
+immediately obvious why a CPU has been offlined in early boot stages.
 
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 
-Could you pick this up to your arc tree?
+---
 
+Got to scratch my head a bit while debugging a WARNING splat related to
+the offlining of CPU0. Without being aware yet of this debug option it
+wasn't immediately obvious why CPU0 was being offlined by the kernel.
 
+Hope this makes sense and is acceptable. :-)
+---
+ arch/x86/kernel/topology.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/topology.c b/arch/x86/kernel/topology.c
+index 738bf42b0218..c3c2400e30b1 100644
+--- a/arch/x86/kernel/topology.c
++++ b/arch/x86/kernel/topology.c
+@@ -71,7 +71,8 @@ int _debug_hotplug_cpu(int cpu, int action)
+ 	case 0:
+ 		ret = cpu_down(cpu);
+ 		if (!ret) {
+-			pr_info("CPU %u is now offline\n", cpu);
++			pr_info("DEBUG_HOTPLUG_CPU0: CPU %u is now offline\n",
++				cpu);
+ 			dev->offline = true;
+ 			kobject_uevent(&dev->kobj, KOBJ_OFFLINE);
+ 		} else
 -- 
-Best Regards
-Masahiro Yamada
+2.17.2
+
