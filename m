@@ -2,121 +2,121 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B60C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C540C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87AF9218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:44:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sfqe3t8t"
+	by mail.kernel.org (Postfix) with ESMTP id 4722521850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbeLSDo1 (ORCPT
+        id S1727542AbeLSDxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 22:44:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:60063 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726600AbeLSDo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 22:44:27 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43KLNm2ZkLz9sCr;
-        Wed, 19 Dec 2018 14:44:24 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545191064;
-        bh=jhBBzKEqOzwz+UXsWq4GXOHsPgtq4Qc1pOgxM0a8wMQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Sfqe3t8tQAwWBW/V4lYkoNBWO+Dd4fUkr5p1G11mocX5STf2KeGOZuqBsbPsd9bZW
-         K9wSg7+0ou9jyqtJfRH17VJeMAZAFooKgJSrxT1LczGaOpBQBnuPxlyXNWEZbXiyHs
-         NndT3DzDDmIAly2CglmukZ3x8SUlGzPq0t4XpRZEoYqGnb8AmBK8UIZ+UkscgODMUC
-         eSlaKZwNQMCORNoGi9niEL0mRPmitluAV9tNmM2peeNP7clfbZ8S4dzEY59ImKlqeN
-         yJFPmtIr/yJUyDf6xPy1My4QczI7ZB/lyGr4TwMYwjYnCjAB7hL9lBEnt0OdxbBsSh
-         P0j2KVxsnHLzQ==
-Date:   Wed, 19 Dec 2018 14:44:23 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: linux-next: Tree for Dec 11
-Message-ID: <20181219144423.089e46b9@canb.auug.org.au>
-In-Reply-To: <20181212093632.774c0603@canb.auug.org.au>
-References: <20181211182627.42b79e40@canb.auug.org.au>
-        <20181211173851.GA29028@roeck-us.net>
-        <20181211180437.GA28010@flashbox>
-        <20181212093632.774c0603@canb.auug.org.au>
+        Tue, 18 Dec 2018 22:53:48 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.35]:23925 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726600AbeLSDxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 22:53:48 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 8EE3F44A94
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 21:53:47 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZSvbgTmTwiQerZSvbgZOIl; Tue, 18 Dec 2018 21:53:47 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=37510 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gZSva-001bn0-01; Tue, 18 Dec 2018 21:53:46 -0600
+Subject: Re: [PATCH 00/41] scsi: Mark expected switch fall-throughs
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Khalid Aziz <khalid@gonehiking.org>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Subbu Seetharaman <subbu.seetharaman@broadcom.com>,
+        Ketan Mukadam <ketan.mukadam@broadcom.com>,
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        Don Brace <don.brace@microsemi.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Willem Riede <osst@riede.org>,
+        QLogic-Storage-Upstream@qlogic.com,
+        =?UTF-8?Q?Kai_M=c3=a4kisara?= <Kai.Makisara@kolumbus.fi>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        esc.storagedev@microsemi.com, megaraidlinux.pdl@broadcom.com,
+        MPT-FusionLinux.pdl@broadcom.com, osst-users@lists.sourceforge.net,
+        xen-devel@lists.xenproject.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+ <304623b0-e0ad-ec9c-7097-c6f00ba43948@embeddedor.com>
+ <yq1mup2i3h1.fsf@oracle.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <ab57e784-9471-a707-0fe6-b12b0cb027f3@embeddedor.com>
+Date:   Tue, 18 Dec 2018 21:53:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/O2rkDmhjeE=BWL8=zuE09Qt"; protocol="application/pgp-signature"
+In-Reply-To: <yq1mup2i3h1.fsf@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gZSva-001bn0-01
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.106.44]:37510
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 48
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/O2rkDmhjeE=BWL8=zuE09Qt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Wed, 12 Dec 2018 09:36:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 11 Dec 2018 11:04:37 -0700 Nathan Chancellor <natechancellor@gmai=
-l.com> wrote:
-> >
-> > On Tue, Dec 11, 2018 at 09:38:51AM -0800, Guenter Roeck wrote: =20
-> > > Build results:
-> > > 	total: 152 pass: 150 fail: 2
-> > > Failed builds:=20
-> > > 	arm:allmodconfig=20
-> > > 	arm64:allmodconfig=20
-> > > Qemu test results:
-> > > 	total: 337 pass: 137 fail: 200
-> > >=20
-> > > Build failures:
-> > >=20
-> > > arm:
-> > >=20
-> > > In file included from drivers/media/pci/ddbridge/ddbridge.h:22:0,
-> > >                  from drivers/media/pci/ddbridge/ddbridge-ci.c:19:
-> > > arch/arm/include/asm/irq.h:35:50: error: unknown type name 'cpumask_t'
-> > >    =20
-> >=20
-> > Just FYI, I noticed this one yesterday on next-20181210 and sent a patc=
-h:
-> > https://lore.kernel.org/linux-media/20181210233514.3069-1-natechancello=
-r@gmail.com/ =20
->=20
-> I have added that patch after the v4l-dvb tree for today.
+On 12/18/18 9:45 PM, Martin K. Petersen wrote:
+> 
+> If you haven't received feedback on a patch you should poke the relevant
+> driver maintainer.
+> 
 
-I am still applying that patch ...
+Got it. Will do so.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/O2rkDmhjeE=BWL8=zuE09Qt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZvpcACgkQAVBC80lX
-0Gw0Tgf/VjsVzhkRc3iFtCzf51Ei59QGW7MzBU7OLXZe5jSRDc4iF47ShDOQEPk4
-8q1RXR9kl74z34yp+8uFKtO9sP1wkVfT+qXPxKLNtcEgKa+K8cQe5zUNLjZllACj
-mw0TzVSS2y43LkqTbefCYiH2a5DFxrcsCmEXwWfatKAFZW5yapSxSpBI9PE/pB62
-o/Bmn+dG1JxraSEyO2pvodut/oSg3u1d8vjfpLP1N6uBHbSTUlUmPOPiTuBqTQzn
-Rep07w8gHPrDvWwTNLTHnDbvJexAWQCxBcRC+oJTokI6wfqZKdgtZhfoH1rtvTHj
-274ocTfDOLz75lOQWNLZMru/BMEv0Q==
-=wEjz
------END PGP SIGNATURE-----
-
---Sig_/O2rkDmhjeE=BWL8=zuE09Qt--
+Thanks
+--
+Gustavo
