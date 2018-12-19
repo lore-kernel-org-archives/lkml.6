@@ -2,139 +2,108 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55402C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FCDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FFFC21841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A796F218AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:45:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7ykM7In"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbeLSOpR (ORCPT
+        id S1729663AbeLSOpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:45:17 -0500
-Received: from mga05.intel.com ([192.55.52.43]:55084 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727473AbeLSOpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:45:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2018 06:45:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,373,1539673200"; 
-   d="scan'208";a="102875924"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga008.jf.intel.com with ESMTP; 19 Dec 2018 06:45:15 -0800
-Date:   Wed, 19 Dec 2018 06:45:15 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181219144515.GA30909@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 19 Dec 2018 09:45:20 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38141 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbeLSOpT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:45:19 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so6749076wml.3;
+        Wed, 19 Dec 2018 06:45:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=UghBl7YXTr7VFBWhfJSESwbMq/0Bc5LmBOUAuq5VGbM=;
+        b=e7ykM7InBpFHOD8dUoYJtTNgC3HYKvrHoKWGdk9Gdb8fkRK837WNgwtszENsRHYeg2
+         yq8H7Nl5UYiTDxlva+7A1NR91d3PCP+HzcziUB9LxWqNpr8ovuWt1SEJyuuFgPU72yf/
+         EPhgWsZ+mTMZiFWQsLGBCPiZb/bPS/xsoG5Qd3DalfYUdO+nmMy3eyPFlwCMLK+sE/KP
+         Zdh4KYx+o9Gpc2vPK+mdsY1U2eQogIPJJQGdlIjLwzitQvukIzjlKcXiT2SRba7EUCGW
+         gY6JuKg0xwmOj+520tCg8vph8tTg7uSkqgbOL1YyGR3SrkOMLCeRUtZmcTLSin52FZT7
+         cp+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=UghBl7YXTr7VFBWhfJSESwbMq/0Bc5LmBOUAuq5VGbM=;
+        b=RS9A7PuZkEI1azmhIOjPJcvR12shcB9zqRDB3OWJXX3tHAWmF6/4KHuXacDx1D9Coh
+         QLT66o4cTrcowITNys4cWQWLnGggzUIHJzayfHnaX47iKbILwEbT2r1Cd4HMTMStg1im
+         Ut5ALx2rlNJ6fhSDDW0WZR79Dz10tSH4PsqDSRsAS9oOMrj7oJbsj1uAlnUQHpCStH/K
+         LpuncSeDQYwR8Zf8WpWsLR9pEIWUtgCJWZoSmb7Kgp95kqlka7DZ1WH4s5xSOD6Mey0r
+         F8RSlqaWZwOWkXBz9GKE4TZ1OXk12lRgQnaAD70u0LlvXFfYGod2PGyiV23fT6Bb07aY
+         Wplw==
+X-Gm-Message-State: AA+aEWbUGj1vSff6NW9kAiTwWsFxCI3zsgvQAx6wh7xyIFv62G2xQqUK
+        DC7O0GnsuJ14j9dhVfBumGti/dvz
+X-Google-Smtp-Source: AFSGD/XVSJHu2sE2mltWGjITTq4uOiikb2gyu+5AzDUVKhVkMyTvdOU60euIG4Yt0TQEWpPdfdLSjw==
+X-Received: by 2002:a7b:c4cb:: with SMTP id g11mr7529470wmk.149.1545230717252;
+        Wed, 19 Dec 2018 06:45:17 -0800 (PST)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id o17sm8654031wmg.35.2018.12.19.06.45.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 06:45:16 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for 4.20-rc8 (or final)
+Date:   Wed, 19 Dec 2018 15:45:13 +0100
+Message-Id: <1545230713-12173-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 09:36:16AM +0000, Jethro Beekman wrote:
-> On 2018-12-19 14:41, Jarkko Sakkinen wrote:
-> >On Wed, Dec 19, 2018 at 08:41:12AM +0000, Jethro Beekman wrote:
-> >>One weird thing is the departure from the normal mmap behavior that the
-> >>memory mapping persists even if the original fd is closed. (See man mmap:
-> >>"closing the file descriptor does not unmap the region.")
+Linus,
 
-It won't (be a departure).  mmap() on a file grabs a reference to the
-file, i.e. each VMA keeps a reference to the file.  Closing the original
-enclave fd will only put its reference to the file/enclave, not destroy
-it outright.
+The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
 
-> >
-> >The mmapped region and enclave would be completely disjoint to start
-> >with. The enclave driver code would assume that an enclave VMA exists
-> >when it maps enclave address space to a process.
-> >
-> >I.e. VMA would no longer reference to the enclave or vice versa but
-> >you would still create an enclave VMA with mmap().
-> >
-> >This is IMHO very clear and well-defined semantics.
-> >
-> >>>struct sgx_enclave_add_page {
-> >>>	__u64	enclave_fd;
-> >>>	__u64	src;
-> >>>	__u64	secinfo;
-> >>>	__u16	mrmask;
-> >>>} __attribute__((__packed__));
-> >>
-> >>Wouldn't you just pass enclave_fd as the ioctl fd parameter?
-> >
-> >I'm still planning to keep the API in the device fd and use enclave_fd
-> >as handle to the enclave address space. I don't see any obvious reason
-> >to change that behavior.
-> >
-> >And if we ever add any "global" ioctls, then we would have to define
-> >APIs to both fd's, which would become a mess.
-> >
-> >>How to specify the address of the page that is being added?
-> >
-> >Yes, that is correct and my bad to remove it (just quickly drafted what
-> >I had in mind).
-> 
-> So your plan is that to call EADD, userspace has to pass the device fd AND
-> the enclave fd AND the enclave address? That seems a little superfluous.
+  Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
 
-I agree with Jethro, passing the enclave_fd as a param is obnoxious.
-And it means the user needs to open /dev/sgx to do anything with an
-enclave fd, e.g. the enclave fd might be passed to a builder thread,
-it shouldn't also need the device fd.
+are available in the git repository at:
 
-E.g.:
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
-	sgx_fd = open("/dev/sgx", O_RDWR);
-	BUG_ON(sgx_fd < 0);
+for you to fetch changes up to 0e1b869fff60c81b510c2d00602d778f8f59dd9a:
 
-	enclave_fd = ioctl(sgx_fd, SGX_ENCLAVE_CREATE, &ecreate);
-	BUG_ON(enclave_fd < 0);
+  kvm: x86: Add AMD's EX_CFG to the list of ignored MSRs (2018-12-18 22:15:44 +0100)
 
-	ret = ioctl(enclave_fd, SGX_ENCLAVE_ADD_PAGE, &eadd);
-	BUG_ON(ret);
+----------------------------------------------------------------
+* One nasty use-after-free bugfix, from this merge window however
+* A less nasty use-after-free that can only zero some words at
+the beginning of the page, and hence is not really exploitable
+* A NULL pointer dereference
+* A dummy implementation of an AMD chicken bit MSR that Windows uses
+for some unknown reason
 
-	...
+----------------------------------------------------------------
+Cfir Cohen (1):
+      KVM: Fix UAF in nested posted interrupt processing
 
-	ret = ioctl(enclave_fd, SGX_ENCLAVE_INIT, &einit);
-	BUG_ON(ret);
+Eduardo Habkost (1):
+      kvm: x86: Add AMD's EX_CFG to the list of ignored MSRs
 
-	...
+Eric Biggers (1):
+      KVM: fix unregistering coalesced mmio zone from wrong bus
 
-	close(enclave_fd);
-	close(sgx_fd);
+Wanpeng Li (1):
+      KVM: X86: Fix NULL deref in vcpu_scan_ioapic
 
-
-Take a look at virt/kvm/kvm_main.c to see how KVM manages anon inodes
-and ioctls for VMs and vCPUs.
+ arch/x86/include/asm/msr-index.h | 1 +
+ arch/x86/kvm/vmx.c               | 2 ++
+ arch/x86/kvm/x86.c               | 4 +++-
+ virt/kvm/coalesced_mmio.c        | 6 +++++-
+ 4 files changed, 11 insertions(+), 2 deletions(-)
