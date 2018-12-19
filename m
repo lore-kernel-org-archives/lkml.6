@@ -2,176 +2,93 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF9FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AEAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFD821841
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A6A21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:11:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545203469;
+	bh=LIlrEOL2fiXT3Hyb1BuH3YNBtVjNvYNHAcx9tvvzyec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Zs6sl3lAu2Q9lqysAqucwuHMkV0jE/aOr4jjavyelqKUGXaQpTdZI0rb6qykARYdR
+	 KqUYoh6yykUGUUbDT9WNSEpk/G9CnNwMBLxR0Wt8QYmcJKt6VVGwVK9qNGZffURLDM
+	 M7dZBU1s51KlRi2bnGB5/F2ZhIQk9y9Cpb75eFac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbeLSHJl (ORCPT
+        id S1728239AbeLSHLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:09:41 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:24139 "EHLO pegase1.c-s.fr"
+        Wed, 19 Dec 2018 02:11:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbeLSHJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:09:40 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43KQxZ6ClRz9v2Rx;
-        Wed, 19 Dec 2018 08:09:38 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8bqWcGPS2kNy; Wed, 19 Dec 2018 08:09:38 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43KQxZ5VzXz9v2Rw;
-        Wed, 19 Dec 2018 08:09:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A5E8D8B85D;
-        Wed, 19 Dec 2018 08:09:39 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id D_utCnL0TIJx; Wed, 19 Dec 2018 08:09:39 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7D9248B754;
-        Wed, 19 Dec 2018 08:09:39 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 5673671729; Wed, 19 Dec 2018 07:09:39 +0000 (UTC)
-Message-Id: <2769431386b8b54a052b442ed3d629153d24e7a4.1545203319.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4] powerpc: implement CONFIG_DEBUG_VIRTUAL
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 19 Dec 2018 07:09:39 +0000 (UTC)
+        id S1727717AbeLSHLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 02:11:08 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D32C721841;
+        Wed, 19 Dec 2018 07:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545203467;
+        bh=LIlrEOL2fiXT3Hyb1BuH3YNBtVjNvYNHAcx9tvvzyec=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UWrsF6gSuXKcAIf9wBGbm1o3zcqPhP5PvCexDT9TCV6QLfU6q6z2RJhiVlPS2WQcC
+         RTWGHtMlmgCDm1XgOukpJleglDwFyOEDor0Holu1vC77FjZj3Xswm2SGMvgRXANP/l
+         0n3gQ9goy07K471KHKB819kYJNEJxJngo06LPH9U=
+Date:   Wed, 19 Dec 2018 08:11:04 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Omer Tripp <trippo@google.com>
+Cc:     ghackmann@android.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Hackmann <ghackmann@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] fs: fix possible Spectre V1 indexing in __close_fd()
+Message-ID: <20181219071104.GA25037@kroah.com>
+References: <20180924181500.125257-1-ghackmann@google.com>
+ <20180924183911.GB9122@kroah.com>
+ <20181015133708.GB10221@kroah.com>
+ <CALTzUognuG-N4M5w9xugxF7KZjUxF_9O32fKoUt2v7st70ppmw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALTzUognuG-N4M5w9xugxF7KZjUxF_9O32fKoUt2v7st70ppmw@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements CONFIG_DEBUG_VIRTUAL to warn about
-incorrect use of virt_to_phys() and page_to_phys()
+On Mon, Oct 15, 2018 at 06:54:31AM -0700, Omer Tripp wrote:
+> Hi Greg and all,
+> 
+> Here is my analysis of the complete gadget, and looking forward to your
+> corrections/feedback if there are any inaccuracies:
+> 
+> 
+>    1.
+> 
+>    __close_fd() is reachable via the close() syscall with a user-controlled
+>    fd.
+>    2.
+> 
+>    If said bounds check is mispredicted, then a user-controlled address
+>    fdt->fd[fd] is obtained then dereferenced, and the value of a
+>    user-controlled address is loaded into the local variable file.
+>    3.
+> 
+>    file is then passed as an argument to filp_close, where the cache
+> lines secret
+>    + offsetof(f_op) and secret + offsetof(f_mode) are hot and vulnerable to
+>    a timing channel attack.
+> 
+> 
+> The mitigation proposed by Greg Hackmann blocks this gadget.
 
-Below is the result of test_debug_virtual:
+What ever happened to this patch?  Did it get reposted?  If not, can
+someone please do so with this text in the changelog?
 
-[    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
-[    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
-[    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
-[    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-[    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
-[    1.477811]
-[    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
-[    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
-[    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
-[    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
-[    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
-[    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
-[    1.523163] Call Trace:
-[    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
-[    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
-[    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
-[    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
-[    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-[    1.553971] Instruction dump:
-[    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
-[    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
-[    1.572425] ---[ end trace 6f6984225b280ad6 ]---
-[    1.577467] PA: 0x09000000 for VA: 0xc9000000
-[    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
+thanks,
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v4: revised verification in __ioremap_caller(): we keep the verification
-     based on virt_to_phys() but do it on (highmem - 1) instead of highmem
-     because highmem is not a valid virtual address.
-
- v3: Added missing linux/mm.h
-     I realised that a driver may use DMA on stack after checking with virt_addr_valid(), so the new
-     verification might induce false positives. I remove it for now, will add it again later in a more
-     controled way.
-
- v2: Using asm/pgtable.h to avoid build failure on ppc64e.
-     Added a verification that the object is not in stack to catch problems before activing VMAP_STACK.
-
- arch/powerpc/Kconfig          |  1 +
- arch/powerpc/include/asm/io.h | 13 ++++++++++++-
- arch/powerpc/mm/pgtable_32.c  |  2 +-
- 3 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index e312e92e3381..94b46624068d 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -128,6 +128,7 @@ config PPC
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-+	select ARCH_HAS_DEBUG_VIRTUAL
- 	select ARCH_HAS_DEVMEM_IS_ALLOWED
- 	select ARCH_HAS_DMA_SET_COHERENT_MASK
- 	select ARCH_HAS_ELF_RANDOMIZE
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index e746becd9d6f..7f19fbd3ba55 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -29,12 +29,14 @@ extern struct pci_dev *isa_bridge_pcidev;
- 
- #include <linux/device.h>
- #include <linux/compiler.h>
-+#include <linux/mm.h>
- #include <asm/page.h>
- #include <asm/byteorder.h>
- #include <asm/synch.h>
- #include <asm/delay.h>
- #include <asm/mmu.h>
- #include <asm/ppc_asm.h>
-+#include <asm/pgtable.h>
- 
- #ifdef CONFIG_PPC64
- #include <asm/paca.h>
-@@ -804,6 +806,8 @@ extern void __iounmap_at(void *ea, unsigned long size);
-  */
- static inline unsigned long virt_to_phys(volatile void * address)
- {
-+	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !virt_addr_valid(address));
-+
- 	return __pa((unsigned long)address);
- }
- 
-@@ -827,7 +831,14 @@ static inline void * phys_to_virt(unsigned long address)
- /*
-  * Change "struct page" to physical address.
-  */
--#define page_to_phys(page)	((phys_addr_t)page_to_pfn(page) << PAGE_SHIFT)
-+static inline phys_addr_t page_to_phys(struct page *page)
-+{
-+	unsigned long pfn = page_to_pfn(page);
-+
-+	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !pfn_valid(pfn));
-+
-+	return PFN_PHYS(pfn);
-+}
- 
- /*
-  * 32 bits still uses virt_to_bus() for it's implementation of DMA
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 4fc77a99c9bf..d67215248d82 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -143,7 +143,7 @@ __ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *call
- 	 * Don't allow anybody to remap normal RAM that we're using.
- 	 * mem_init() sets high_memory so only do the check after that.
- 	 */
--	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
-+	if (slab_is_available() && p <= virt_to_phys(high_memory - 1) &&
- 	    page_is_ram(__phys_to_pfn(p))) {
- 		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
- 		       (unsigned long long)p, __builtin_return_address(0));
--- 
-2.13.3
-
+greg k-h
