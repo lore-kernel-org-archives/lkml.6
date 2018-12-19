@@ -2,100 +2,100 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2C6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D61DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30341218E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:18:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dh8HduUI"
+	by mail.kernel.org (Postfix) with ESMTP id 25C1A218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545236587;
+	bh=QSkckDURgj+9WLccl7aLFxkVXmwA0nrKp4CtTj2gmo4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=wzHEPkP8Zh1gvnzDJ0Mp3Jzbgi80qFSa35AJFr+ss9/ZV/8y4EDlRQtUEQZEvOUCS
+	 bbO3b3RyNtXGLJlOXkBRKUXgwRw8C+FHGRnJKpsBcnk7plMEKq26MT/LDDLg9MhI+u
+	 ZGVA2Yw1QM0pMc1sLHCJ/TJpUMGG4h7W9hm6ftfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbeLSQSS (ORCPT
+        id S1729529AbeLSQXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:18:18 -0500
-Received: from mail-io1-f42.google.com ([209.85.166.42]:41607 "EHLO
-        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeLSQSR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:18:17 -0500
-Received: by mail-io1-f42.google.com with SMTP id s22so16022414ioc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 08:18:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:sender:from:date:message-id
-         :subject:to:cc;
-        bh=KZYe3uP9znFA7r/rUMKbrGoNP0sDWMgxjKOs9jMUxKI=;
-        b=dh8HduUIeEjx4+NL0x8vJfInto0JXJ68YnnE1p5Dq/csouv6G2wF6sKVFO4z3XJUND
-         WM1Ok1COknx5hGc3ZvhaxqFBUN1MwhcN2Oq5uMs7mn3pq3UzLaPeaMQkIqkht8YB1OI1
-         ZHFOezQbTFzncknHwHIGI1SBfkr8dTajry4pro/2AZmJCfJ/81ZrqLL2vsFf1TdRa+IG
-         hcxDEJnCsjS1BM/f+j1VQToN8siGPPcfCbGnuyRmlwZsu0k32EvSWueyX1CWERlbvmSo
-         wZ2GqFCn71nmY/w/IVijLPkN/GSiTgR0wyXPkkYMWfRTZdntzEelVYbFYfu6X87s+6az
-         hM0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:sender:from
-         :date:message-id:subject:to:cc;
-        bh=KZYe3uP9znFA7r/rUMKbrGoNP0sDWMgxjKOs9jMUxKI=;
-        b=q3Mw9D/cYU9Rsgk9Lw8+Zl93wLiNIPEtlgGjP4PC8XiuAk44IL+xF6zgApWWwkGn7F
-         2C3jmhwnVj9l4LArKigRxXI8r9gX2aEcKZJIm7fEzYgZevXT/qLoNVakRskf9x+pUVZI
-         ecoiHJVSxXEOklxc5z52xwXuMObOIwLBPfyHzP5eTE/5EE5PcR4u9Ge8S0i3qfV7C8PC
-         QRvtbiFl1wh3JhtPPSSBiz9O5HGBv5aIWhsfg3lLza43LJ0W3d78CEXNw6g5t9c+dCTA
-         PUMNjw9WUb16Ux1C8/Jh8a78yG2EbrHOBxOhCyheDGaYRWKat/9ZBZuMeBsAycXIKAkJ
-         +m2A==
-X-Gm-Message-State: AA+aEWYz8tEDeGiONHxdTfhJw2HPpdsE2/F6Oypm4EsReqkXJpaKgdpz
-        ySDtSIwNjH6ktlBER3I/ptIEP7xZ3PLn51Ixv1WyOAMA
-X-Google-Smtp-Source: AFSGD/UwZ5TxnFmWlPrP0s77MHcV8+xJzz90twKFVBZGoVFJN6aqNpeKj5QUtyQA4/SFSMT+/44x9xz6WGTqzegezRQ=
-X-Received: by 2002:a6b:1d8:: with SMTP id 207mr18920798iob.62.1545236295787;
- Wed, 19 Dec 2018 08:18:15 -0800 (PST)
+        Wed, 19 Dec 2018 11:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727844AbeLSQXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 11:23:05 -0500
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F60B218D3;
+        Wed, 19 Dec 2018 16:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545236585;
+        bh=QSkckDURgj+9WLccl7aLFxkVXmwA0nrKp4CtTj2gmo4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nI2cMWd0QX4dAHKNVNISHLNv49/oWnuroLg7eNNixiNtZihlNJVM2TZ18w2PADQS7
+         rQLrQdP4X7AGBQxa6P6KyiB2tYoxLz+x1ZmS/DgBlby/jhYccuNqkr5rN9XRfqH7kA
+         t78sVpJmCA7Jx0u7m1bnV14nsXkxOxZ80NnRqvyI=
+Received: by mail-lf1-f47.google.com with SMTP id e26so15500547lfc.2;
+        Wed, 19 Dec 2018 08:23:04 -0800 (PST)
+X-Gm-Message-State: AA+aEWYxG4ehTwpRG8WUzObFh9fUZsYfJ3Tgjsr/t47MUSI99NxzVY0r
+        fVifM2cHh3XfIhwoBlwTUk7SCZwGyptGu0NCtUc=
+X-Google-Smtp-Source: AFSGD/VO2kVSDgr7J8iQDZ0WsAGHEdvNG6Nk8qU4kQVGNZk3zhBgl1ex+2zT9Eb9YWL4arFoXrAPXSVSHpTYjYsQn6A=
+X-Received: by 2002:a19:d8d8:: with SMTP id r85mr12753915lfi.92.1545236582750;
+ Wed, 19 Dec 2018 08:23:02 -0800 (PST)
 MIME-Version: 1.0
-References: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
- <20181219150604.GB25653@kroah.com> <CABcWhv4794moz7PZxmzJMySpJnjZR4ikGwHVcicp0-4PWOHmig@mail.gmail.com>
- <CAFSeFg9dyKEry_pbnn7395nFtOYixbgYuAunvoNa5roe9dVUTQ@mail.gmail.com>
-In-Reply-To: <CAFSeFg9dyKEry_pbnn7395nFtOYixbgYuAunvoNa5roe9dVUTQ@mail.gmail.com>
-X-Google-Sender-Delegation: praveenkumar1511@gmail.com
-From:   Praveen Kumar <kpraveen.lkml@gmail.com>
-Date:   Wed, 19 Dec 2018 21:47:46 +0530
-X-Google-Sender-Auth: 8FKPN98DpVw1_rSyjeL3Mp67INg
-Message-ID: <CABcWhv7og6-MqXgo9X=huachKo5gHV+S-GBLW6mhHUXmwkdW+A@mail.gmail.com>
-Subject: Re: /proc/modules not showing any output
-To:     Aruna Hewapathirane <aruna.hewapathirane@gmail.com>
-Cc:     Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org,
-        kernelnewbies <kernelnewbies@kernelnewbies.org>
+References: <20181219155704.15264-1-pawel.mikolaj.chmiel@gmail.com> <20181219155704.15264-3-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20181219155704.15264-3-pawel.mikolaj.chmiel@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 19 Dec 2018 17:22:51 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPfHHNUzQZu62btspC+6SwgoGPdAzusfSixXM7U9u3QP7A@mail.gmail.com>
+Message-ID: <CAJKOXPfHHNUzQZu62btspC+6SwgoGPdAzusfSixXM7U9u3QP7A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: gpu: samsung-rotator: Document s5pv210 support
+To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc:     Inki Dae <inki.dae@samsung.com>, airlied@linux.ie,
+        jy0922.shim@samsung.com, Seung Woo Kim <sw0312.kim@samsung.com>,
+        kyungmin.park@samsung.com, kgene@kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 9:28 PM Aruna Hewapathirane
-<aruna.hewapathirane@gmail.com> wrote:
+On Wed, 19 Dec 2018 at 17:04, Pawe=C5=82 Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
 >
-> <snip>
->>
->> I think, on my test machine, by default, there are many modules which
->> get added during boot up, which with vanilla kernel is not happening.
->> Thanks for your input.
->>
->> Regards,
->>
->> ~Praveen.
->>
+> This commit documents new compatible for s5pv210 soc,
+> which will be also supported by this driver.
 >
-> What does lsmod show you in the vanilla kernel ? If you want the same modules to load in the vanilla
-> kernel folow steps given below:
+> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/gpu/samsung-rotator.txt | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> 1 -boot into the older 4.4.162-78-defaultkernel
-> 2 - change into the vanilla kernel source 4.20.0-rc6 builddirectory
-> 3 - $ lsmod > lsmod.txt
-> 4 - $ make LSMOD="lsmod.txt" localmodconfig
->
-> Boot into your newly compiled vanilla kernel and run lsmod and smile :-)
->
-> Hope this helps - Aruna
->
-Thanks Aruna. This helps.
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt b/=
+Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> index 82cd1ed0be93..78658dec6941 100644
+> --- a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> +++ b/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> @@ -5,6 +5,7 @@ Required properties:
+>         (a) "samsung,exynos4210-rotator" for Rotator IP in Exynos4210
+>         (b) "samsung,exynos4212-rotator" for Rotator IP in Exynos4212/441=
+2
+>         (c) "samsung,exynos5250-rotator" for Rotator IP in Exynos5250
+> +       (d) "samsung,s5pv210-rotator" for Rotator IP in S5PV210
+
+How about putting it at beginning as the oldest chipset? This would
+require reordering the list so maybe let's remove the a/b/c list
+enumerations? They are kind of useless.
+
+Best regards,
+Krzysztof
