@@ -2,140 +2,114 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6434FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB28C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3ED2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99DA82086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730342AbeLSPjt (ORCPT
+        id S1730350AbeLSPjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:39:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37160 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728249AbeLSPjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:39:48 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DD8C1206FF; Wed, 19 Dec 2018 16:39:45 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B12E72037D;
-        Wed, 19 Dec 2018 16:39:35 +0100 (CET)
-Date:   Wed, 19 Dec 2018 16:39:36 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH v4 0/6] media/sun6i: Allwinner A64 CSI support
-Message-ID: <20181219153936.pxu6nwf2conp4b3m@flea>
-References: <20181218113320.4856-1-jagan@amarulasolutions.com>
- <20181218152122.4zj6wgbukhrl6ly6@flea>
- <CAMty3ZA4xXVLKx-yj+2_iJ700+yTLesjEAgS8Wu2i8otPScpaw@mail.gmail.com>
- <20181219102450.picswsg3yevba23j@flea>
- <CAMty3ZB04E46kMKVvo-QxpVQBus74at3uKJC_QzS788UiCAeeg@mail.gmail.com>
+        Wed, 19 Dec 2018 10:39:54 -0500
+Received: from gateway24.websitewelcome.com ([192.185.50.252]:14599 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728249AbeLSPjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:39:53 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 4DE3A59B62
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:39:53 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ZdwvgqwEgdnCeZdwvg0oBt; Wed, 19 Dec 2018 09:39:53 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=35334 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gZdwu-000hjo-RF; Wed, 19 Dec 2018 09:39:52 -0600
+Subject: Re: [PATCH 14/41] scsi: esas2r: esas2r_init: mark expected switch
+ fall-throughs
+To:     Bradley Grove <linuxdrivers@attotech.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+ <eb98d6f510cd93e45d7832837acd4e5811f3d20e.1543374820.git.gustavo@embeddedor.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <b7f0fbf6-a793-c22c-cc3e-e35706d722f9@embeddedor.com>
+Date:   Wed, 19 Dec 2018 09:39:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="42s4xmtnspqvogyw"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZB04E46kMKVvo-QxpVQBus74at3uKJC_QzS788UiCAeeg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <eb98d6f510cd93e45d7832837acd4e5811f3d20e.1543374820.git.gustavo@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gZdwu-000hjo-RF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:35334
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 64
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---42s4xmtnspqvogyw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Friendly ping:
 
-65;5402;1c
-On Wed, Dec 19, 2018 at 04:11:50PM +0530, Jagan Teki wrote:
-> On Wed, Dec 19, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> >
-> > On Tue, Dec 18, 2018 at 08:58:22PM +0530, Jagan Teki wrote:
-> > > On Tue, Dec 18, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >
-> > > > On Tue, Dec 18, 2018 at 05:03:14PM +0530, Jagan Teki wrote:
-> > > > > This series support CSI on Allwinner A64.
-> > > > >
-> > > > > Tested 640x480, 320x240, 720p, 1080p resolutions UYVY8_2X8 format.
-> > > > >
-> > > > > Changes for v4:
-> > > > > - update the compatible string order
-> > > > > - add proper commit message
-> > > > > - included BPI-M64 patch
-> > > > > - skipped amarula-a64 patch
-> > > > > Changes for v3:
-> > > > > - update dt-bindings for A64
-> > > > > - set mod clock via csi driver
-> > > > > - remove assign clocks from dtsi
-> > > > > - remove i2c-gpio opendrian
-> > > > > - fix avdd and dovdd supplies
-> > > > > - remove vcc-csi pin group supply
-> > > > >
-> > > > > Note: This series created on top of H3 changes [1]
-> > > > >
-> > > > > [1] https://patchwork.kernel.org/cover/10705905/
-> > > >
-> > > > You had memory corruption before, how was this fixed?
-> > >
-> > > Memory corruption observed with default 600MHz on 1080p. It worked
-> > > fine on BPI-M64 (with 300MHz)
-> >
-> > I don't get it. In the previous version of those patches, you were
-> > mentionning you were still having this issue, even though you had the
-> > clock running at 300MHz, and then you tried to convince us to merge
-> > the patches nonetheless.
-> >
-> > Why would you say that then if that issue was fixed?
->=20
-> Previous version has A64-Relic board, which has some xclk issue on
-> sensor side wrt 1080p. I have tried 300MHz on the same hardware, it's
-> failing to capture on 30fps and so I tried 600MHz(which is default) on
-> the same configuration but it encounter memory corruption.
->=20
-> So, for checking whether there is an issue with hardware on A64-Relic
-> I moved with BPI-M64 dev board. which is working 1080p with 300MHz, ie
-> reason I have not included A64-Relic on this version and included
-> BPI-M64. We processed A64-Relic to hardware team to figure out the
-> clock and once ie fixed I'm planning to send DTS patch for that.
->=20
-> This is overall summary, hope you understand.
+Who can ack or review this patch, please?
 
-Ok, great, thanks!
-Maxime
+Thanks
+--
+Gustavo
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---42s4xmtnspqvogyw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXBpmOAAKCRDj7w1vZxhR
-xS6UAQDZ0gzJ6Cpqb1L748mR/KCe7R4lzSPjadp+Ltn60pN+WgEAwiW65t5DGkTU
-TkBvF6d0ycQwn2u7f7jwIzCs/pG+XgM=
-=7Fyr
------END PGP SIGNATURE-----
-
---42s4xmtnspqvogyw--
+On 11/27/18 10:28 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>   drivers/scsi/esas2r/esas2r_init.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/esas2r/esas2r_init.c b/drivers/scsi/esas2r/esas2r_init.c
+> index 46b2c83ba21f..950cd92df2ff 100644
+> --- a/drivers/scsi/esas2r/esas2r_init.c
+> +++ b/drivers/scsi/esas2r/esas2r_init.c
+> @@ -1241,6 +1241,7 @@ static bool esas2r_format_init_msg(struct esas2r_adapter *a,
+>   			a->init_msg = ESAS2R_INIT_MSG_GET_INIT;
+>   			break;
+>   		}
+> +		/* fall through */
+>   
+>   	case ESAS2R_INIT_MSG_GET_INIT:
+>   		if (msg == ESAS2R_INIT_MSG_GET_INIT) {
+> @@ -1254,7 +1255,7 @@ static bool esas2r_format_init_msg(struct esas2r_adapter *a,
+>   				esas2r_hdebug("FAILED");
+>   			}
+>   		}
+> -	/* fall through */
+> +		/* fall through */
+>   
+>   	default:
+>   		rq->req_stat = RS_SUCCESS;
+> 
