@@ -2,122 +2,105 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA60C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F5EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51019218F0
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545231904;
-	bh=ZRQ0eu16f5oAPxPyA5eKjBCN2sadEwOj0SLRuZ9s1Yg=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=GYwfPS4Lzx4EAsWnJL7LiJ5gfBvuspDe8x9ovsHrb+T+r4qr4g0Bcm2pl3RWaxdcM
-	 eUzgaTej8Y1ra1Tlb8HYnwCPloqe450SKjRIlIW8rcjUpCI1YQJtlj0Y4nCVYtmSHY
-	 s7Tod/o/c23y266MA5PonMuH7YBoIwHDha9Clwr0=
+	by mail.kernel.org (Postfix) with ESMTP id 5932F218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:06:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="rW/9IbiE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yEmFog/W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbeLSPFD (ORCPT
+        id S1728994AbeLSPGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:05:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbeLSPFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:05:02 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FD4D20874;
-        Wed, 19 Dec 2018 15:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545231902;
-        bh=ZRQ0eu16f5oAPxPyA5eKjBCN2sadEwOj0SLRuZ9s1Yg=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=GY46YC+EqnLETSXH1afaUzvkxZfL3QPUL1WrUP6w7Qm+7JxLnW5dn/Y+dUi+4t+Pd
-         SiKp7DBQQpkb0Q8cfygO9ZU+u9vudsbCSYsyVZ0moRiX7QHr7FSZy7OvfhstV860Ss
-         mWC93Pxltj6zOTLr2fxAM1ohB4tYp2rWOY840HHs=
-Date:   Wed, 19 Dec 2018 16:04:59 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ramalingam C <ramalingam.c@intel.com>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        seanpaul@chromium.org, tomas.winkler@intel.com,
-        uma.shankar@intel.com, ville.syrjala@linux.intel.com,
-        chris@chris-wilson.co.uk,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 04/39] component: alloc component_match without any
- comp to match
-Message-ID: <20181219150459.GA25653@kroah.com>
-References: <1544673701-6353-1-git-send-email-ramalingam.c@intel.com>
- <1544673701-6353-5-git-send-email-ramalingam.c@intel.com>
- <20181219134245.GB21184@phenom.ffwll.local>
+        Wed, 19 Dec 2018 10:06:09 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35015 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727071AbeLSPGI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:06:08 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 19DAE21BC4;
+        Wed, 19 Dec 2018 10:06:07 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 19 Dec 2018 10:06:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=wMqe4oHeF7qvj89izhHwd37gQVY
+        wsCmKRVlt429pDPI=; b=rW/9IbiEeTKL10Z6iCguGrB4vsfzEM6Dl3/GudRqbJO
+        ILcngeqA3bdYwY1FpAzApWO1lGVsiSjN6lMKUoCaA187270YRwJ1P8KCqjFOW+mm
+        V9CWm2gmXd2lWbN5G61oJtpAoYyL4PhB/06hWZ5MRTh6+Jw6YQSpUMch2axt+FVC
+        yv489rfe/xpZA4FTXPOmiT/chpMY/pfmEpQFzIRQc0iywuA0h3/7NnyxtdYIiqY4
+        WZwAHKgRNr54iNAlNAaI/uq6ICvA8TAM4LSpOSVrCGi5Q4jYpPTJQgaCSl/LqcTz
+        AULHdUY7dVCXzTlGG0p1tQiY9oX5ooRPl6jebFlYxKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=wMqe4o
+        HeF7qvj89izhHwd37gQVYwsCmKRVlt429pDPI=; b=yEmFog/WoAdnc7xT2kcDmi
+        +H7XW6JivVAj/7/rgnIzCJ+ABPOQTxpK40I6SoZKbTL0ltHkIRRV1EFMU3zeC0cX
+        2yVaxHoYqEb8UWy6OfKiEW7w7CfobK5iF5WTfHr/0QfjAAWhkjAMty9CaCzgp54E
+        M5dVFBGLeDQvwf4pHc7joyF5blAJBK0luH8NbcNVF7R2lVFw1pqEegi3aecpcapn
+        W9nZw8CNXEXk7kQBNtVdoEH+AMq0HuQsEP+CsvDAt0Au71gr1zN9joKY/XwiYY7E
+        0o6Rrc9pUwiR+TFfUxjTkCIs0hckneWDXC0fJi0iIp/3CuuaPX3Ll8jrYmyhYmFA
+        ==
+X-ME-Sender: <xms:Xl4aXLqCZNtCrlB65Yo5FJO6ev9QE8rzVMSA2eJP3MtqwrNoLz6HCQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudejtddgjeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecunecujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomh
+    epifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeei
+    rdekledruddtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
+    gtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:Xl4aXMHmgJC45mzVbsCb1j8oAVxmTx9WI78ku8P9fXed_5u-wq6VDg>
+    <xmx:Xl4aXFtaLjiiMhd7hqqOoCD0XWBctiwArmh71YRJYeIO-b0ubrGNfw>
+    <xmx:Xl4aXHRIiEV2J5Fj8CZM-M0KRXZ37ygeDOmIFPkLjui7QtNVFZF8aA>
+    <xmx:X14aXF8c2-Yk3SlI37-5Bbh_PX_--5WSsDC6XfPPxNHBeGD5tjCMvA>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D70BB102A0;
+        Wed, 19 Dec 2018 10:06:05 -0500 (EST)
+Date:   Wed, 19 Dec 2018 16:06:04 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Praveen Kumar <kpraveen.lkml@gmail.com>
+Cc:     kernelnewbies@kernelnewbies.org, linux-kernel@vger.kernel.org
+Subject: Re: /proc/modules not showing any output
+Message-ID: <20181219150604.GB25653@kroah.com>
+References: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181219134245.GB21184@phenom.ffwll.local>
+In-Reply-To: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 02:42:45PM +0100, Daniel Vetter wrote:
-> On Thu, Dec 13, 2018 at 09:31:06AM +0530, Ramalingam C wrote:
-> > If all the components associated to a component master is not added
-> > to the component framework due to the HW capability or Kconfig
-> > selection, component_match will be NULL at
-> > component_master_add_with_match().
-> > 
-> > To avoid this, component_match_alloc() is added to the framework,
-> > to allcoate the struct component_match with zero associated components.
-> > Hence component master can be added with a component_match with zero
-> > associated components.
-> > 
-> > This helps the component master bind call to get triggered,
-> > even if no component is registered for that particular master.
-> > 
-> > This is meant for big PCI device drivers where small/optional
-> > features are external components, and based on usecases different
-> > combination of components are build as entire driver.
-> > 
-> > In such PCI device driver Load, if we use the component master for
-> > waiting for few  components(features) availability, only if they are
-> > supported by the underlying HW, then we need to allocate memory for
-> > component_match using the API introduced in this change before
-> > the call to component_master_add_with_match.
-> > 
-> > v2:
-> >   No Change.
-> > 
-> > Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-> > Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> > Cc: linux-kernel@vger.kernel.org
+On Wed, Dec 19, 2018 at 06:52:39PM +0530, Praveen Kumar wrote:
+> Hi All,
 > 
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Compiled the vanila kernel 4.20.0-rc6 build, and was trying to get
+> module information, but /proc/modules is not showing any output ( both
+> on arm64 and x86_64 )
 > 
-> Greg, I expect the i915 feature that needs this will only land in 4.22.
-> I'm also not aware of anyone else using this (all the other component
-> users always use components). How do you want to get this landed?
+> root@ubuntu:~# uname -a
+> Linux ubuntu 4.20.0-rc6-00082-g65e08c5e8631 #7 SMP PREEMPT Fri Dec 14
+> 15:54:30 IST 2018 aarch64 aarch64 aarch64 GNU/Linux
 > 
-> I think either getting this into 4.21, or an ack for merging through drm
-> trees would work well for us.
+> root@ubuntu:~# cat /proc/modules
+> root@ubuntu:~#
+> 
+> Tried with older version 4.4.162-78-default modules were properly shown.
+> 
+> Can you please help if there is something which I am missing during
+> compilation or is there any potential bug here ? Thanks in advance.
 
-I have no objection to you taking this through the drm tree.  As I
-really do not know the component code at all (that would be Russell
-King), feel free to add my:
-
-	Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-as it looks sane to me.
+Are you sure your .config file has enabled modules?  Have you actually
+loaded any?  If you do not load any, nothing will show up in that proc
+file :)
 
 thanks,
 
