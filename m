@@ -2,149 +2,2144 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAB7C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01719C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46AD2070B
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8990820672
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729789AbeLSShG (ORCPT
+        id S1729678AbeLSShE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:37:06 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:55397 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729569AbeLSShE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Dec 2018 13:37:04 -0500
-Received: by mail-it1-f198.google.com with SMTP id j3so7463512itf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 10:37:03 -0800 (PST)
+Received: from mail-qt1-f179.google.com ([209.85.160.179]:39939 "EHLO
+        mail-qt1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729161AbeLSShD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:37:03 -0500
+Received: by mail-qt1-f179.google.com with SMTP id k12so23336655qtf.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 10:37:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=1IbbA9fH2zZ8HgrPn/ZNdu+pDYuYGcB9YkBNoaRGtpo=;
-        b=VwQvAgWm2Ex4II2ZOnryPbpp/8aTCkKdPn3xDnMlqKNiB5PdJmBtNRr8FvCb3TPF8u
-         M842FysWUAdcbaiaO8VDLAYbI0mrgH9HBLk6ftNjOy32vEZJl6vT4rMLJMjZO0XLTEmH
-         Qbzw2dZ/gX0zM/N7gjL2astrD+9Bc378g8Sw3EjIzllX8qyjHO0r+Lb81Lw7njgACL3t
-         J5yIHpmOXvV+lehU8CyWbCwGjdbFUTipXbq/ijwaVSihkj5q3mbrEAUvnr4t/Q93Ffv1
-         n/khu/GHmY/tLih2gYswK76MzgNHPRXTPuSmLOJfrcpDIpc5toI4as6dt9Q+hJwv3YF3
-         X54g==
-X-Gm-Message-State: AA+aEWbeYEdtt99c34nB6HCZqCuhjmrMVKc8IhEF2Vt7qO9xcYbOHUnx
-        WI5gtHJoDpRrJP/DCqnnliWRXexaB9sIod7fattkabJ4FhxQ
-X-Google-Smtp-Source: AFSGD/XI6H+uGY9fV9zgdJsO0nzNsvoir52RaqyzEb3/GUjci3RgUV+mITvIiOiO3kp0CTqWYxVQnbno35EaMD5xfozqL0XAuFv9
-MIME-Version: 1.0
-X-Received: by 2002:a02:b5e5:: with SMTP id y34mr18171218jaj.21.1545244623196;
- Wed, 19 Dec 2018 10:37:03 -0800 (PST)
-Date:   Wed, 19 Dec 2018 10:37:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000db57ce057d644c81@google.com>
-Subject: INFO: rcu detected stall in pfkey_sendmsg
-From:   syzbot <syzbot+e1d3a7522b4d05aeede4@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=oqBjp0hFzals5sUld9f/pZf/m1v0JJhtsHYtU/v9wro=;
+        b=AS+FXsZHDAMkYn6qR3nzZ3ntTGtRFtHfW9amb9R7ja/P80tJK349K3w9adz9272RTj
+         dOk5TovnrNpX+S3JfmtKp6L8Jtz78SVqnLZrwV4a1GGhP/bNLO2BSeHCf4vLYRQEi3lc
+         mGmQu0VyKMybzfPGMlzNkuYzloDy7HBSyA2dptgZbmkEPVYLKPK/MCjohalTPlTLkcdI
+         SJaBOg68tBW23Hdv+8p5ZFCdAJ3lg46AIZJmGDyJhqNQAWbBxU0o76Nn55BrIkgKyy0t
+         D8BQWOUQgYQYl1nNa3TT4sXnEZu69DOc2Dnzs5b5EVYzAuWpa9PMGq6QaZtU/OJW8qrL
+         esFQ==
+X-Gm-Message-State: AA+aEWaKC0quWx7TX1dUI5HMZl+9FSCbOo0WemaHpr2//0gdxSEOLw/O
+        7/u42ierYitU2HbQqBOIo4LBGg==
+X-Google-Smtp-Source: AFSGD/U6U68f8a3FyCrCWK2948qWSBkZg/xepr4pVMlHR10yVrDepxv6uIHNYoK+xZSFKbPlxjDogg==
+X-Received: by 2002:a0c:b3c2:: with SMTP id b2mr22812497qvf.138.1545244619828;
+        Wed, 19 Dec 2018 10:36:59 -0800 (PST)
+Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id z8sm2743686qth.34.2018.12.19.10.36.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 10:36:57 -0800 (PST)
+Message-ID: <8f8128327a657d43771a678eed8f3436546fc62c.camel@redhat.com>
+Subject: Re: [WIP PATCH 03/15] drm/dp_mst: Introduce new refcounting scheme
+ for mstbs and ports
+From:   Lyude Paul <lyude@redhat.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Dave Airlie <airlied@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>,
+        David Airlie <airlied@redhat.com>,
+        Juston Li <juston.li@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 19 Dec 2018 13:36:53 -0500
+In-Reply-To: <20181219124811.GN21184@phenom.ffwll.local>
+References: <20181214012604.13746-1-lyude@redhat.com>
+         <20181214012604.13746-4-lyude@redhat.com>
+         <20181214092900.GN21184@phenom.ffwll.local>
+         <483ba47f152486005318ca2e1a2d8d2a65d29927.camel@redhat.com>
+         <20181219124811.GN21184@phenom.ffwll.local>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 2018-12-19 at 13:48 +0100, Daniel Vetter wrote:
+> On Tue, Dec 18, 2018 at 04:27:58PM -0500, Lyude Paul wrote:
+> > On Fri, 2018-12-14 at 10:29 +0100, Daniel Vetter wrote:
+> > > On Thu, Dec 13, 2018 at 08:25:32PM -0500, Lyude Paul wrote:
+> > > > The current way of handling refcounting in the DP MST helpers is
+> > > > really
+> > > > confusing and probably just plain wrong because it's been hacked up
+> > > > many
+> > > > times over the years without anyone actually going over the code and
+> > > > seeing if things could be simplified.
+> > > > 
+> > > > To the best of my understanding, the current scheme works like this:
+> > > > drm_dp_mst_port and drm_dp_mst_branch both have a single refcount.
+> > > > When
+> > > > this refcount hits 0 for either of the two, they're removed from the
+> > > > topology state, but not immediately freed. Both ports and branch
+> > > > devices
+> > > > will reinitialize their kref once it's hit 0 before actually
+> > > > destroying
+> > > > themselves. The intended purpose behind this is so that we can avoid
+> > > > problems like not being able to free a remote payload that might still
+> > > > be active, due to us having removed all of the port/branch device
+> > > > structures in memory, as per:
+> > > > 
+> > > > 91a25e463130 ("drm/dp/mst: deallocate payload on port destruction")
+> > > > 
+> > > > Which may have worked, but then it caused use-after-free errors. Being
+> > > > new to MST at the time, I tried fixing it;
+> > > > 
+> > > > 263efde31f97 ("drm/dp/mst: Get validated port ref in
+> > > > drm_dp_update_payload_part1()")
+> > > > 
+> > > > But, that was broken: both drm_dp_mst_port and drm_dp_mst_branch
+> > > > structs
+> > > > are validated in almost every DP MST helper function. Simply put, this
+> > > > means we go through the topology and try to see if the given
+> > > > drm_dp_mst_branch or drm_dp_mst_port is still attached to something
+> > > > before trying to use it in order to avoid dereferencing freed memory
+> > > > (something that has happened a LOT in the past with this library).
+> > > > Because of this it doesn't actually matter whether or not we keep keep
+> > > > the ports and branches around in memory as that's not enough, because
+> > > > any function that validates the branches and ports passed to it will
+> > > > still reject them anyway since they're no longer in the topology
+> > > > structure. So, use-after-free errors were fixed but payload
+> > > > deallocation
+> > > > was completely broken.
+> > > > 
+> > > > Two years later, AMD informed me about this issue and I attempted to
+> > > > come up with a temporary fix, pending a long-overdue cleanup of this
+> > > > library:
+> > > > 
+> > > > c54c7374ff44 ("drm/dp_mst: Skip validating ports during destruction,
+> > > > just
+> > > > ref")
+> > > > 
+> > > > But then that introduced use-after-free errors, so I quickly reverted
+> > > > it:
+> > > > 
+> > > > 9765635b3075 ("Revert "drm/dp_mst: Skip validating ports during
+> > > > destruction, just ref"")
+> > > > 
+> > > > And in the process, learned that there is just no simple fix for this:
+> > > > the design is just broken. Unfortuntely, the usage of these helpers
+> > > > are
+> > > > quite broken as well. Some drivers like i915 have been smart enough to
+> > > > avoid accessing any kind of information from MST port structures, but
+> > > > others like nouveau have assumed, understandably so, that
+> > > > drm_dp_mst_port structures are normal and can just be accessed at any
+> > > > time without worrying about use-after-free errors.
+> > > > 
+> > > > After a lot of discussion, me and Daniel Vetter came up with a better
+> > > > idea to replace all of this.
+> > > > 
+> > > > To summarize, since this is documented far more indepth in the
+> > > > documentation this patch introduces, we make it so that
+> > > > drm_dp_mst_port
+> > > > and drm_dp_mst_branch structures have two different classes of
+> > > > refcounts: topology_kref, and malloc_kref. topology_kref corresponds
+> > > > to
+> > > > the lifetime of the given drm_dp_mst_port or drm_dp_mst_branch in it's
+> > > > given topology. Once it hits zero, any associated connectors are
+> > > > removed
+> > > > and the branch or port can no longer be validated. malloc_kref
+> > > > corresponds to the lifetime of the memory allocation for the actual
+> > > > structure, and will always be non-zero so long as the topology_kref is
+> > > > non-zero. This gives us a way to allow callers to hold onto port and
+> > > > branch device structures past their topology lifetime, and
+> > > > dramatically
+> > > > simplifies the lifetimes of both structures. This also finally fixes
+> > > > the
+> > > > port deallocation problem, properly.
+> > > > 
+> > > > Additionally: since this now means that we can keep ports and branch
+> > > > devices allocated in memory for however long we need, we no longer
+> > > > need
+> > > > a significant amount of the port validation that we currently do.
+> > > > 
+> > > > Additionally, there is one last scenario that this fixes, which
+> > > > couldn't
+> > > > have been fixed properly beforehand:
+> > > > 
+> > > > - CPU1 unrefs port from topology (refcount 1->0)
+> > > > - CPU2 refs port in topology(refcount 0->1)
+> > > > 
+> > > > Since we now can guarantee memory safety for ports and branches
+> > > > as-needed, we also can make our main reference counting functions fix
+> > > > this problem by using kref_get_unless_zero() internally so that
+> > > > topology
+> > > > refcounts can only ever reach 0 once.
+> > > > 
+> > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > > > Cc: Daniel Vetter <daniel@ffwll.ch>
+> > > > Cc: David Airlie <airlied@redhat.com>
+> > > > Cc: Jerry Zuo <Jerry.Zuo@amd.com>
+> > > > Cc: Harry Wentland <harry.wentland@amd.com>
+> > > > Cc: Juston Li <juston.li@intel.com>
+> > > > ---
+> > > >  .../gpu/dp-mst/topology-figure-1.dot          |  31 ++
+> > > >  .../gpu/dp-mst/topology-figure-2.dot          |  37 ++
+> > > >  .../gpu/dp-mst/topology-figure-3.dot          |  40 ++
+> > > >  Documentation/gpu/drm-kms-helpers.rst         | 125 ++++-
+> > > >  drivers/gpu/drm/drm_dp_mst_topology.c         | 512 +++++++++++++--
+> > > > ---
+> > > >  include/drm/drm_dp_mst_helper.h               |  19 +-
+> > > >  6 files changed, 637 insertions(+), 127 deletions(-)
+> > > >  create mode 100644 Documentation/gpu/dp-mst/topology-figure-1.dot
+> > > >  create mode 100644 Documentation/gpu/dp-mst/topology-figure-2.dot
+> > > >  create mode 100644 Documentation/gpu/dp-mst/topology-figure-3.dot
+> > > 
+> > > Yay, docs, and pretty ones at that! Awesome stuff :-)
+> > > 
+> > > > diff --git a/Documentation/gpu/dp-mst/topology-figure-1.dot
+> > > > b/Documentation/gpu/dp-mst/topology-figure-1.dot
+> > > > new file mode 100644
+> > > > index 000000000000..fb83789e0a3e
+> > > > --- /dev/null
+> > > > +++ b/Documentation/gpu/dp-mst/topology-figure-1.dot
+> > > > @@ -0,0 +1,31 @@
+> > > > +digraph T {
+> > > > +    /* Topology references */
+> > > > +    node [shape=oval];
+> > > > +    mstb1 -> {port1, port2};
+> > > > +    port1 -> mstb2;
+> > > > +    port2 -> mstb3 -> {port3, port4};
+> > > > +    port3 -> mstb4;
+> > > > +
+> > > > +    /* Malloc references */
+> > > > +    edge [style=dashed];
+> > > > +    mstb4 -> port3;
+> > > > +    {port4, port3} -> mstb3;
+> > > > +    mstb3 -> port2;
+> > > > +    mstb2 -> port1;
+> > > > +    {port1, port2} -> mstb1;
+> > > > +
+> > > > +    edge [dir=back];
+> > > > +    node [style=filled;shape=box;fillcolor=lightblue];
+> > > > +    port1 -> "Payload #1";
+> > > > +    port3 -> "Payload #2";
+> > > > +
+> > > > +    mstb1 [label="MSTB #1";style=filled;fillcolor=palegreen];
+> > > > +    mstb2 [label="MSTB #2";style=filled;fillcolor=palegreen];
+> > > > +    mstb3 [label="MSTB #3";style=filled;fillcolor=palegreen];
+> > > > +    mstb4 [label="MSTB #4";style=filled;fillcolor=palegreen];
+> > > > +
+> > > > +    port1 [label="Port #1"];
+> > > > +    port2 [label="Port #2"];
+> > > > +    port3 [label="Port #3"];
+> > > > +    port4 [label="Port #4"];
+> > > > +}
+> > > > diff --git a/Documentation/gpu/dp-mst/topology-figure-2.dot
+> > > > b/Documentation/gpu/dp-mst/topology-figure-2.dot
+> > > > new file mode 100644
+> > > > index 000000000000..eebce560be40
+> > > > --- /dev/null
+> > > > +++ b/Documentation/gpu/dp-mst/topology-figure-2.dot
+> > > > @@ -0,0 +1,37 @@
+> > > > +digraph T {
+> > > > +    /* Topology references */
+> > > > +    node [shape=oval];
+> > > > +
+> > > > +    mstb1 -> {port1, port2};
+> > > > +    port1 -> mstb2;
+> > > > +    edge [color=red];
+> > > > +    port2 -> mstb3 -> {port3, port4};
+> > > > +    port3 -> mstb4;
+> > > > +    edge [color=""];
+> > > > +
+> > > > +    /* Malloc references */
+> > > > +    edge [style=dashed];
+> > > > +    port3 -> mstb3;
+> > > > +    mstb3 -> port2;
+> > > > +    mstb2 -> port1;
+> > > > +    {port1, port2} -> mstb1;
+> > > > +    edge [color=red];
+> > > > +    mstb4 -> port3;
+> > > > +    port4 -> mstb3;
+> > > > +    edge [color=""];
+> > > > +
+> > > > +    edge [dir=back];
+> > > > +    node [style=filled;shape=box;fillcolor=lightblue];
+> > > > +    port1 -> "Payload #1";
+> > > > +    port3 -> "Payload #2";
+> > > > +
+> > > > +    mstb1 [label="MSTB #1";style=filled;fillcolor=palegreen];
+> > > > +    mstb2 [label="MSTB #2";style=filled;fillcolor=palegreen];
+> > > > +    mstb3 [label="MSTB #3";style=filled;fillcolor=palegreen];
+> > > > +    mstb4 [label="MSTB #4";style=filled;fillcolor=grey];
+> > > > +
+> > > > +    port1 [label="Port #1"];
+> > > > +    port2 [label="Port #2"];
+> > > > +    port3 [label="Port #3"];
+> > > > +    port4 [label="Port #4";style=filled;fillcolor=grey];
+> > > > +}
+> > > > diff --git a/Documentation/gpu/dp-mst/topology-figure-3.dot
+> > > > b/Documentation/gpu/dp-mst/topology-figure-3.dot
+> > > > new file mode 100644
+> > > > index 000000000000..9bf28d87144c
+> > > > --- /dev/null
+> > > > +++ b/Documentation/gpu/dp-mst/topology-figure-3.dot
+> > > > @@ -0,0 +1,40 @@
+> > > > +digraph T {
+> > > > +    /* Topology references */
+> > > > +    node [shape=oval];
+> > > > +
+> > > > +    mstb1 -> {port1, port2};
+> > > > +    port1 -> mstb2;
+> > > > +    edge [color=grey];
+> > > > +    port2 -> mstb3 -> {port3, port4};
+> > > > +    port3 -> mstb4;
+> > > > +    edge [color=""];
+> > > > +
+> > > > +    /* Malloc references */
+> > > > +    edge [style=dashed];
+> > > > +    port3 -> mstb3 [penwidth=3];
+> > > > +    mstb3 -> port2 [penwidth=3];
+> > > > +    mstb2 -> port1;
+> > > > +    {port1, port2} -> mstb1;
+> > > > +    edge [color=grey];
+> > > > +    mstb4 -> port3;
+> > > > +    port4 -> mstb3;
+> > > > +    edge [color=""];
+> > > > +
+> > > > +    edge [dir=back];
+> > > > +    node [style=filled;shape=box;fillcolor=lightblue];
+> > > > +    port1 -> payload1;
+> > > > +    port3 -> payload2 [penwidth=3];
+> > > > +
+> > > > +    mstb1 [label="MSTB #1";style=filled;fillcolor=palegreen];
+> > > > +    mstb2 [label="MSTB #2";style=filled;fillcolor=palegreen];
+> > > > +    mstb3 [label="MSTB
+> > > > #3";penwidth=3;style=filled;fillcolor=palegreen];
+> > > > +    mstb4 [label="MSTB #4";style=filled;fillcolor=grey];
+> > > > +
+> > > > +    port1 [label="Port #1"];
+> > > > +    port2 [label="Port #2";penwidth=3];
+> > > > +    port3 [label="Port #3";penwidth=3];
+> > > > +    port4 [label="Port #4";style=filled;fillcolor=grey];
+> > > > +
+> > > > +    payload1 [label="Payload #1"];
+> > > > +    payload2 [label="Payload #2";penwidth=3];
+> > > > +}
+> > > > diff --git a/Documentation/gpu/drm-kms-helpers.rst
+> > > > b/Documentation/gpu/drm-kms-helpers.rst
+> > > > index b422eb8edf16..c0f994c2c72f 100644
+> > > > --- a/Documentation/gpu/drm-kms-helpers.rst
+> > > > +++ b/Documentation/gpu/drm-kms-helpers.rst
+> > > > @@ -208,8 +208,11 @@ Display Port Dual Mode Adaptor Helper Functions
+> > > > Reference
+> > > >  .. kernel-doc:: drivers/gpu/drm/drm_dp_dual_mode_helper.c
+> > > >     :export:
+> > > >  
+> > > > -Display Port MST Helper Functions Reference
+> > > > -===========================================
+> > > > +Display Port MST Helpers
+> > > > +========================
+> > > > +
+> > > > +Functions Reference
+> > > > +-------------------
+> > > >  
+> > > >  .. kernel-doc:: drivers/gpu/drm/drm_dp_mst_topology.c
+> > > >     :doc: dp mst helper
+> > > > @@ -220,6 +223,124 @@ Display Port MST Helper Functions Reference
+> > > >  .. kernel-doc:: drivers/gpu/drm/drm_dp_mst_topology.c
+> > > >     :export:
+> > > >  
+> > > > +Branch device and port refcounting
+> > > > +----------------------------------
+> > > 
+> > > I generally try to put the long-form explanations before the function
+> > > references. Since usually the references completely drown out everything
+> > > else and make it harder to spot the important overview stuff.
+> > > 
+> > > 
+> > > > +
+> > > > +Overview
+> > > > +~~~~~~~~
+> > > > +
+> > > > +The refcounting schemes for :c:type:`struct drm_dp_mst_branch` and
+> > > > +:c:type:`struct drm_dp_mst_port` are somewhat unusual. Both ports and
+> > > > branch
+> > > > +devices have two different kinds of refcounts: topology refcounts,
+> > > > and
+> > > > malloc
+> > > > +refcounts.
+> > > > +
+> > > > +Topology refcount overview
+> > > > +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > +
+> > > > +Topology refcounts are not exposed to drivers, and are handled
+> > > > internally
+> > > > by the
+> > > > +DP MST helpers. The helpers use them in order to prevent the in-
+> > > > memory
+> > > > topology
+> > > > +state from being changed in the middle of critical operations like
+> > > > changing the
+> > > > +internal state of payload allocations. This means each branch and
+> > > > port
+> > > > will be
+> > > > +considered to be connected to the rest of the topology until it's
+> > > > topology
+> > > > +refcount reaches zero. Additionally, for ports this means that their
+> > > > associated
+> > > > +:c:type:`struct drm_connector` will stay registered with userspace
+> > > > until
+> > > > the
+> > > > +port's refcount reaches 0.
+> > > > +
+> > > > +
+> > > > +Topology refcount functions
+> > > > +~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > +
+> > > > +The DP MST helpers use the following functions to manage topology
+> > > > refcounts:
+> > > > +
+> > > > +.. kernel-doc:: drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > +   :functions: drm_dp_mst_topology_get_port
+> > > > drm_dp_mst_topology_put_port
+> > > > +               drm_dp_mst_topology_ref_port
+> > > > drm_dp_mst_topology_get_mstb
+> > > > +               drm_dp_mst_topology_put_mstb
+> > > > drm_dp_mst_topology_ref_mstb
+> > > > +
+> > > > +Malloc refcount overview
+> > > > +~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > +
+> > > > +Malloc references are used to keep a :c:type:`struct drm_dp_mst_port`
+> > > > or
+> > > > +:c:type:`struct drm_dp_mst_branch` allocated even after all of its
+> > > > topology
+> > > > +references have been dropped, so that the driver or MST helpers can
+> > > > safely
+> > > > +access each branch's last known state before it was disconnected from
+> > > > the
+> > > > +topology. When the malloc refcount of a port or branch reaches 0, the
+> > > > memory
+> > > > +allocation containing the :c:type:`struct drm_dp_mst_branch` or
+> > > > :c:type:`struct
+> > > > +drm_dp_mst_port` respectively will be freed.
+> > > > +
+> > > > +Malloc refcounts for ports
+> > > > +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > +
+> > > > +For :c:type:`struct drm_dp_mst_port`, malloc refcounts are exposed to
+> > > > drivers
+> > > > +through the following functions:
+> > > > +
+> > > > +.. kernel-doc:: drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > +   :functions: drm_dp_mst_get_port_malloc drm_dp_mst_put_port_malloc
+> > > > +
+> > > > +Malloc refcounts for branch devices
+> > > > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > +
+> > > > +For :c:type:`struct drm_dp_mst_branch`, malloc refcounts are not
+> > > > currently
+> > > > +exposed to drivers. As of writing this documentation, there are no
+> > > > drivers that
+> > > > +have a usecase for accessing :c:type:`struct drm_dp_mst_branch`
+> > > > outside
+> > > > of the
+> > > > +MST helpers. Exposing this API to drivers in a race-free manner would
+> > > > take more
+> > > > +tweaking of the refcounting scheme, however patches are welcome
+> > > > provided
+> > > > there
+> > > > +is a legitimate driver usecase for this.
+> > > > +
+> > > > +Internally, malloc refcounts for :c:type:`struct drm_dp_mst_branch`
+> > > > are
+> > > > managed
+> > > > +by the DP MST core through the following functions:
+> > > > +
+> > > > +.. kernel-doc:: drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > +   :functions: drm_dp_mst_get_mstb_malloc drm_dp_mst_put_mstb_malloc
+> > > > +
+> > > > +Refcount relationships in a topology
+> > > > +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > +
+> > > > +Let's take a look at why the relationship between topology and malloc
+> > > > refcounts
+> > > > +is designed the way it is.
+> > > > +
+> > > > +.. kernel-figure:: dp-mst/topology-figure-1.dot
+> > > > +
+> > > > +   An example of topology and malloc refs in a DP MST topology with
+> > > > two
+> > > > active
+> > > > +   payloads. Topology refcount increments are indicated by solid
+> > > > lines,
+> > > > and
+> > > > +   malloc refcount increments are indicated by dashed lines. Each
+> > > > starts
+> > > > from
+> > > > +   the branch which incremented the refcount, and ends at the branch
+> > > > to
+> > > > which
+> > > > +   the refcount belongs to.
+> > > > +
+> > > > +As you can see in figure 1, every branch increments the topology
+> > > > +refcount of it's children, and increments the malloc refcount of it's
+> > > > parent.
+> > > > +Additionally, every payload increments the malloc refcount of it's
+> > > > assigned port
+> > > > +by 1.
+> > > > +
+> > > > +So, what would happen if MSTB #3 from the above figure was unplugged
+> > > > from
+> > > > the
+> > > > +system, but the driver hadn't yet removed payload #2 from port #3?
+> > > > The
+> > > > topology
+> > > > +would start to look like figure 2.
+> > > > +
+> > > > +.. kernel-figure:: dp-mst/topology-figure-2.dot
+> > > > +
+> > > > +   Ports and branch devices which have been released from memory are
+> > > > colored
+> > > > +   grey, and references which have been removed are colored red.
+> > > > +
+> > > > +Whenever a port or branch device's topology refcount reaches zero, it
+> > > > will
+> > > > +decrement the topology refcounts of all its children, the malloc
+> > > > refcount
+> > > > of its
+> > > > +parent, and finally its own malloc refcount. For MSTB #4 and port #4,
+> > > > this means
+> > > > +they both have been disconnected from the topology and freed from
+> > > > memory.
+> > > > But,
+> > > > +because payload #2 is still holding a reference to port #3, port #3
+> > > > is
+> > > > removed
+> > > > +from the topology but it's :c:type:`struct drm_dp_mst_port` is still
+> > > > accessible
+> > > > +from memory. This also means port #3 has not yet decremented the
+> > > > malloc
+> > > > refcount
+> > > > +of MSTB #3, so it's :c:type:`struct drm_dp_mst_branch` will also stay
+> > > > allocated
+> > > > +in memory until port #3's malloc refcount reaches 0.
+> > > > +
+> > > > +This relationship is necessary because in order to release payload
+> > > > #2, we
+> > > > +need to be able to figure out the last relative of port #3 that's
+> > > > still
+> > > > +connected to the topology. In this case, we would travel up the
+> > > > topology
+> > > > as
+> > > > +shown in figure 3.
+> > > > +
+> > > > +.. kernel-figure:: dp-mst/topology-figure-3.dot
+> > > > +
+> > > > +And finally, remove payload #2 by communicating with port #2 through
+> > > > sideband
+> > > > +transactions.
+> > > 
+> > > (Blind guess, I haven't looked ahead in the series yet)
+> > > 
+> > > I assume that drivers also want to hold a malloc reference from their
+> > > connector, until that connector is destroyed completed (and we hence
+> > > know
+> > > it released all its vcpi and other stuff and really doesn't need the
+> > > port
+> > > anymore). Could we integrated that into these neat graphs too? Answering
+> > > the "so how does this integrate into my driver?" question is imo the
+> > > most
+> > > important part for core api docs.
+> > > 
+> > > Another one: Any reason for not putting this right into the code as a
+> > > DOC:
+> > > section? Ime moving docs as close as possible to the code improves the
+> > > odds it's kept up-to-date. The only overview texts I've left in the .rst
+> > > is the stuff that describes overall concepts (e.g. how all the kms
+> > > objects
+> > > fit together).
+> > > 
+> > > All the sphinx/rst syntax should carry over 1:1, except in kerneldoc you
+> > > also can benefit from the abbreviated reference syntax from kerneldoc.
+> > > 
+> > > Anyway, really great stuff.
+> > > 
+> > > > +
+> > > >  MIPI DSI Helper Functions Reference
+> > > >  ===================================
+> > > >  
+> > > > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > index 2ab16c9e6243..c196fb580beb 100644
+> > > > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> > > > @@ -46,7 +46,7 @@ static bool dump_dp_payload_table(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  				  char *buf);
+> > > >  static int test_calc_pbn_mode(void);
+> > > >  
+> > > > -static void drm_dp_put_port(struct drm_dp_mst_port *port);
+> > > > +static void drm_dp_mst_topology_put_port(struct drm_dp_mst_port
+> > > > *port);
+> > > >  
+> > > >  static int drm_dp_dpcd_write_payload(struct drm_dp_mst_topology_mgr
+> > > > *mgr,
+> > > >  				     int id,
+> > > > @@ -850,46 +850,120 @@ static struct drm_dp_mst_branch
+> > > > *drm_dp_add_mst_branch_device(u8 lct, u8 *rad)
+> > > >  	if (lct > 1)
+> > > >  		memcpy(mstb->rad, rad, lct / 2);
+> > > >  	INIT_LIST_HEAD(&mstb->ports);
+> > > > -	kref_init(&mstb->kref);
+> > > > +	kref_init(&mstb->topology_kref);
+> > > > +	kref_init(&mstb->malloc_kref);
+> > > >  	return mstb;
+> > > >  }
+> > > >  
+> > > >  static void drm_dp_free_mst_port(struct kref *kref);
+> > > > +static void drm_dp_free_mst_branch_device(struct kref *kref);
+> > > 
+> > > I'd move the functions around, forward declarations for static functions
+> > > is a bit silly
+> > > 
+> > > > +
+> > > > +/**
+> > > > + * drm_dp_mst_get_mstb_malloc() - Increment the malloc refcount of a
+> > > > branch
+> > > > + * device
+> > > > + * @mstb: The &struct drm_dp_mst_branch to increment the malloc
+> > > > refcount
+> > > > of
+> > > > + *
+> > > > + * Increments @mstb.malloc_kref. When @mstb.malloc_kref reaches 0,
+> > > > the
+> > > > memory
+> > > 
+> > > s/@/&/ for structure member references. @ references to
+> > > parameters/members
+> > > in the same kerneldoc type only. With & you'll get a nice link, @ is
+> > > just
+> > > markup (and yes & with a member unfortunately doesn't link to the
+> > > member,
+> > > only the overall structure).
+> > > 
+> > > Similarly below.
+> > > 
+> > > > + * allocation for @mstb will be released and @mstb may no longer be
+> > > > used.
+> > > > + *
+> > > > + * Any malloc references acquired with this function must be released
+> > > > when
+> > > > + * they are no longer being used by calling
+> > > > drm_dp_mst_put_mstb_malloc().
+> > > 
+> > > I'd dropped "when they are no longer being used", and the line below
+> > > too.
+> > > Short docs are better generally because attention span of readers.
+> > > 
+> > > > + *
+> > > > + * See also: drm_dp_mst_put_mstb_malloc()
+> > > > + */
+> > > > +static void
+> > > > +drm_dp_mst_get_mstb_malloc(struct drm_dp_mst_branch *mstb)
+> > > > +{
+> > > > +	kref_get(&mstb->malloc_kref);
+> > > > +	DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb-
+> > > > >malloc_kref));
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * drm_dp_mst_put_mstb_malloc() - Decrement the malloc refcount of a
+> > > > branch
+> > > > + * device
+> > > > + * @mstb: The &struct drm_dp_mst_branch to decrement the malloc
+> > > > refcount
+> > > > of
+> > > > + *
+> > > > + * Decrements @mstb.malloc_kref. When @mstb.malloc_kref reaches 0,
+> > > > the
+> > > > memory
+> > > > + * allocation for @mstb will be released and @mstb may no longer be
+> > > > used.
+> > > > + *
+> > > > + * See also: drm_dp_mst_get_mstb_malloc()
+> > > > + */
+> > > > +static void
+> > > > +drm_dp_mst_put_mstb_malloc(struct drm_dp_mst_branch *mstb)
+> > > > +{
+> > > > +	DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb-
+> > > > >malloc_kref)-1);
+> > > > +	kref_put(&mstb->malloc_kref, drm_dp_free_mst_branch_device);
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * drm_dp_mst_get_port_malloc() - Increment the malloc refcount of an
+> > > > MST
+> > > > port
+> > > > + * @port: The &struct drm_dp_mst_port to increment the malloc
+> > > > refcount of
+> > > > + *
+> > > > + * Increments @port.malloc_kref. When @port.malloc_kref reaches 0,
+> > > > the
+> > > > memory
+> > > > + * allocation for @port will be released and @port may no longer be
+> > > > used.
+> > > > + *
+> > > > + * Because @port could potentially be freed at any time by the DP MST
+> > > > helpers
+> > > > + * if @port.malloc_kref reaches 0, including during a call to this
+> > > > function,
+> > > > + * drivers that which to make use of &struct drm_dp_mst_port should
+> > > > ensure
+> > > > + * that they grab at least one main malloc reference to their MST
+> > > > ports
+> > > > in
+> > > > + * &drm_dp_mst_topology_cbs.add_connector. This callback is called
+> > > > before
+> > > > + * there is any chance for @port.malloc_kref to reach 0.
+> > > > + *
+> > > > + * Any malloc references acquired with this function must be released
+> > > > when
+> > > > + * they are no longer being used by calling
+> > > > drm_dp_mst_put_port_malloc().
+> > > > + *
+> > > > + * See also: drm_dp_mst_put_port_malloc()
+> > > 
+> > > Same reduction as with mstb_malloc version.
+> > > 
+> > > > + */
+> > > > +void
+> > > > +drm_dp_mst_get_port_malloc(struct drm_dp_mst_port *port)
+> > > > +{
+> > > > +	kref_get(&port->malloc_kref);
+> > > > +	DRM_DEBUG("port %p (%d)\n", port, kref_read(&port-
+> > > > >malloc_kref));
+> > > > +}
+> > > > +EXPORT_SYMBOL(drm_dp_mst_get_port_malloc);
+> > > > +
+> > > > +/**
+> > > > + * drm_dp_mst_put_port_malloc() - Decrement the malloc refcount of an
+> > > > MST
+> > > > port
+> > > > + * @port: The &struct drm_dp_mst_port to decrement the malloc
+> > > > refcount of
+> > > > + *
+> > > > + * Decrements @port.malloc_kref. When @port.malloc_kref reaches 0,
+> > > > the
+> > > > memory
+> > > > + * allocation for @port will be released and @port may no longer be
+> > > > used.
+> > > > + *
+> > > > + * See also: drm_dp_mst_get_port_malloc()
+> > > > + */
+> > > > +void
+> > > > +drm_dp_mst_put_port_malloc(struct drm_dp_mst_port *port)
+> > > > +{
+> > > > +	DRM_DEBUG("port %p (%d)\n", port, kref_read(&port-
+> > > > >malloc_kref)-1);
+> > > > +	kref_put(&port->malloc_kref, drm_dp_free_mst_port);
+> > > > +}
+> > > > +EXPORT_SYMBOL(drm_dp_mst_put_port_malloc);
+> > > >  
+> > > >  static void drm_dp_free_mst_branch_device(struct kref *kref)
+> > > >  {
+> > > > -	struct drm_dp_mst_branch *mstb = container_of(kref, struct
+> > > > drm_dp_mst_branch, kref);
+> > > > -	if (mstb->port_parent) {
+> > > > -		if (list_empty(&mstb->port_parent->next))
+> > > > -			kref_put(&mstb->port_parent->kref,
+> > > > drm_dp_free_mst_port);
+> > > > -	}
+> > > > +	struct drm_dp_mst_branch *mstb =
+> > > > +		container_of(kref, struct drm_dp_mst_branch,
+> > > > malloc_kref);
+> > > > +
+> > > > +	if (mstb->port_parent)
+> > > > +		drm_dp_mst_put_port_malloc(mstb->port_parent);
+> > > > +
+> > > >  	kfree(mstb);
+> > > >  }
+> > > >  
+> > > >  static void drm_dp_destroy_mst_branch_device(struct kref *kref)
+> > > >  {
+> > > > -	struct drm_dp_mst_branch *mstb = container_of(kref, struct
+> > > > drm_dp_mst_branch, kref);
+> > > > +	struct drm_dp_mst_branch *mstb =
+> > > > +		container_of(kref, struct drm_dp_mst_branch,
+> > > > topology_kref);
+> > > > +	struct drm_dp_mst_topology_mgr *mgr = mstb->mgr;
+> > > >  	struct drm_dp_mst_port *port, *tmp;
+> > > >  	bool wake_tx = false;
+> > > >  
+> > > > -	/*
+> > > > -	 * init kref again to be used by ports to remove mst branch
+> > > > when it is
+> > > > -	 * not needed anymore
+> > > > -	 */
+> > > > -	kref_init(kref);
+> > > > -
+> > > > -	if (mstb->port_parent && list_empty(&mstb->port_parent->next))
+> > > > -		kref_get(&mstb->port_parent->kref);
+> > > > -
+> > > > -	/*
+> > > > -	 * destroy all ports - don't need lock
+> > > > -	 * as there are no more references to the mst branch
+> > > > -	 * device at this point.
+> > > > -	 */
+> > > > +	mutex_lock(&mgr->lock);
+> > > >  	list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
+> > > >  		list_del(&port->next);
+> > > > -		drm_dp_put_port(port);
+> > > > +		drm_dp_mst_topology_put_port(port);
+> > > >  	}
+> > > > +	mutex_unlock(&mgr->lock);
+> > > 
+> > > Would be nice to split this out (to highlight the bugfix more), but
+> > > because of the kref_init() hack not really feasible I think :-/
+> > > >  
+> > > >  	/* drop any tx slots msg */
+> > > >  	mutex_lock(&mstb->mgr->qlock);
+> > > > @@ -908,14 +982,82 @@ static void
+> > > > drm_dp_destroy_mst_branch_device(struct
+> > > > kref *kref)
+> > > >  	if (wake_tx)
+> > > >  		wake_up_all(&mstb->mgr->tx_waitq);
+> > > >  
+> > > > -	kref_put(kref, drm_dp_free_mst_branch_device);
+> > > > +	drm_dp_mst_put_mstb_malloc(mstb);
+> > > >  }
+> > > >  
+> > > > -static void drm_dp_put_mst_branch_device(struct drm_dp_mst_branch
+> > > > *mstb)
+> > > > +/**
+> > > > + * drm_dp_mst_topology_get_mstb() - Increment the topology refcount
+> > > > of a
+> > > > + * branch device unless its zero
+> > > > + * @mstb: &struct drm_dp_mst_branch to increment the topology
+> > > > refcount of
+> > > > + *
+> > > > + * Attempts to grab a topology reference to @mstb, if it hasn't yet
+> > > > been
+> > > > + * removed from the topology (e.g. @mstb.topology_kref has reached
+> > > > 0).
+> > > > + *
+> > > > + * Any topology references acquired with this function must be
+> > > > released
+> > > > when
+> > > > + * they are no longer being used by calling
+> > > > drm_dp_mst_topology_put_mstb().
+> > > 
+> > > I'd explain the relationship with malloc_kref a bit here:
+> > > 
+> > > - topology ref implies a malloc ref, hence you can call get_mstb_malloc
+> > >   with only holding a topology ref (might be better to explain this in
+> > > the
+> > >   get_mstb_malloc kerneldoc, since it also applies to the unconditional
+> > >   kref_get below)
+> > > - malloc_ref is enough to call this function, but then it can fail
+> > > 
+> > > > + *
+> > > > + * See also:
+> > > > + * drm_dp_mst_topology_ref_mstb()
+> > > 
+> > > I'd write out when you should use this one instead:
+> > > 
+> > > "If you already have a topology reference you should use
+> > > other_function()
+> > > instead."
+> > > 
+> > > > + * drm_dp_mst_topology_get_mstb()
+> > > 
+> > > This is this function itself :-)
+> > > 
+> > > > + *
+> > > > + * Returns:
+> > > > + * * 1: A topology reference was grabbed successfully
+> > > > + * * 0: @port is no longer in the topology, no reference was grabbed
+> > > > + */
+> > > > +static int __must_check
+> > > > +drm_dp_mst_topology_get_mstb(struct drm_dp_mst_branch *mstb)
+> > > 
+> > > Hm if you both want a kref_get and a kref_get_unless_zero then we need
+> > > better naming. topology_get_mstb should be the unconditional kref_get,
+> > > the
+> > > conditional kref_get_unless_zero needs some indication that it could
+> > > fail.
+> > > We need some verb that indicates that instead of "get":
+> > > - "validate" since we've used that one already
+> > > - "lookup" that's used by all the drm_mode_object lookup functions,
+> > > feels
+> > >   a bit misleading
+> > > - "try_get"
+> > > 
+> > > >  {
+> > > > -	kref_put(&mstb->kref, drm_dp_destroy_mst_branch_device);
+> > > > +	int ret = kref_get_unless_zero(&mstb->topology_kref);
+> > > > +
+> > > > +	if (ret)
+> > > > +		DRM_DEBUG("mstb %p (%d)\n", mstb,
+> > > > +			  kref_read(&mstb->topology_kref));
+> > > > +
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * drm_dp_mst_topology_ref_mstb() - Increment the topology refcount
+> > > > of a
+> > > > + * branch device
+> > > > + * @mstb: The &struct drm_dp_mst_branch to increment the topology
+> > > > refcount of
+> > > > + *
+> > > > + * Increments @mstb.topology_refcount without checking whether or not
+> > > > it's
+> > > > + * already reached 0. This is only valid to use in scenarios where
+> > > > you
+> > > > are
+> > > > + * already guaranteed to have at least one active topology reference
+> > > > to
+> > > > @mstb.
+> > > > + * Otherwise, drm_dp_mst_topology_get_mstb() should be used.
+> > > 
+> > > s/should/must/  (or my English understanding is off, afaiui "should"
+> > > isn't
+> > > a strict requirement per rfc2119)
+> > > 
+> > > > + *
+> > > > + * Any topology references acquired with this function must be
+> > > > released
+> > > > when
+> > > > + * they are no longer being used by calling
+> > > > drm_dp_mst_topology_put_mstb().
+> > > > + *
+> > > > + * See also:
+> > > > + * drm_dp_mst_topology_get_mstb()
+> > > > + * drm_dp_mst_topology_put_mstb()
+> > > > + */
+> > > > +static void
+> > > > +drm_dp_mst_topology_ref_mstb(struct drm_dp_mst_branch *mstb)
+> > > > +{
+> > > 
+> > > Should we have a WARN_ON(refcount == 0) here?
+> > > 
+> > > > +	kref_get(&mstb->topology_kref);
+> > > > +	DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb-
+> > > > >topology_kref));
+> > > >  }
+> > > >  
+> > > > +/**
+> > > > + * drm_dp_mst_topology_put_mstb() - release a topology reference to a
+> > > > branch
+> > > > + * device
+> > > > + * @mstb: The &struct drm_dp_mst_branch to release the topology
+> > > > reference
+> > > > from
+> > > > + *
+> > > > + * Releases a topology reference from @mstb by decrementing
+> > > > + * @mstb.topology_kref.
+> > > > + *
+> > > > + * See also:
+> > > > + * drm_dp_mst_topology_get_mstb()
+> > > > + * drm_dp_mst_topology_ref_mstb()
+> > > > + */
+> > > > +static void
+> > > > +drm_dp_mst_topology_put_mstb(struct drm_dp_mst_branch *mstb)
+> > > > +{
+> > > > +	DRM_DEBUG("mstb %p (%d)\n", mstb, kref_read(&mstb-
+> > > > >topology_kref)-1);
+> > > > +	kref_put(&mstb->topology_kref,
+> > > > drm_dp_destroy_mst_branch_device);
+> > > > +}
+> > > >  
+> > > >  static void drm_dp_port_teardown_pdt(struct drm_dp_mst_port *port,
+> > > > int
+> > > > old_pdt)
+> > > >  {
+> > > > @@ -930,14 +1072,15 @@ static void drm_dp_port_teardown_pdt(struct
+> > > > drm_dp_mst_port *port, int old_pdt)
+> > > >  	case DP_PEER_DEVICE_MST_BRANCHING:
+> > > >  		mstb = port->mstb;
+> > > >  		port->mstb = NULL;
+> > > > -		drm_dp_put_mst_branch_device(mstb);
+> > > > +		drm_dp_mst_topology_put_mstb(mstb);
+> > > >  		break;
+> > > >  	}
+> > > >  }
+> > > >  
+> > > >  static void drm_dp_destroy_port(struct kref *kref)
+> > > >  {
+> > > > -	struct drm_dp_mst_port *port = container_of(kref, struct
+> > > > drm_dp_mst_port, kref);
+> > > > +	struct drm_dp_mst_port *port =
+> > > > +		container_of(kref, struct drm_dp_mst_port,
+> > > > topology_kref);
+> > > >  	struct drm_dp_mst_topology_mgr *mgr = port->mgr;
+> > > >  
+> > > >  	if (!port->input) {
+> > > > @@ -956,7 +1099,6 @@ static void drm_dp_destroy_port(struct kref
+> > > > *kref)
+> > > >  			 * from an EDID retrieval */
+> > > >  
+> > > >  			mutex_lock(&mgr->destroy_connector_lock);
+> > > > -			kref_get(&port->parent->kref);
+> > > >  			list_add(&port->next, &mgr-
+> > > > >destroy_connector_list);
+> > > >  			mutex_unlock(&mgr->destroy_connector_lock);
+> > > >  			schedule_work(&mgr->destroy_connector_work);
+> > > > @@ -967,25 +1109,93 @@ static void drm_dp_destroy_port(struct kref
+> > > > *kref)
+> > > >  		drm_dp_port_teardown_pdt(port, port->pdt);
+> > > >  		port->pdt = DP_PEER_DEVICE_NONE;
+> > > >  	}
+> > > > -	kfree(port);
+> > > > +	drm_dp_mst_put_port_malloc(port);
+> > > >  }
+> > > >  
+> > > > -static void drm_dp_put_port(struct drm_dp_mst_port *port)
+> > > > +/**
+> > > > + * drm_dp_mst_topology_get_port() - Increment the topology refcount
+> > > > of a
+> > > > + * port unless its zero
+> > > > + * @port: &struct drm_dp_mst_port to increment the topology refcount
+> > > > of
+> > > > + *
+> > > > + * Attempts to grab a topology reference to @port, if it hasn't yet
+> > > > been
+> > > > + * removed from the topology (e.g. @port.topology_kref has reached
+> > > > 0).
+> > > > + *
+> > > > + * Any topology references acquired with this function must be
+> > > > released
+> > > > when
+> > > > + * they are no longer being used by calling
+> > > > drm_dp_mst_topology_put_port().
+> > > > + *
+> > > > + * See also:
+> > > > + * drm_dp_mst_topology_ref_port()
+> > > > + * drm_dp_mst_topology_put_port()
+> > > > + *
+> > > > + * Returns:
+> > > > + * * 1: A topology reference was grabbed successfully
+> > > > + * * 0: @port is no longer in the topology, no reference was grabbed
+> > > > + */
+> > > > +static int __must_check
+> > > > +drm_dp_mst_topology_get_port(struct drm_dp_mst_port *port)
+> > > >  {
+> > > > -	kref_put(&port->kref, drm_dp_destroy_port);
+> > > > +	int ret = kref_get_unless_zero(&port->topology_kref);
+> > > > +
+> > > > +	if (ret)
+> > > > +		DRM_DEBUG("port %p (%d)\n", port,
+> > > > +			  kref_read(&port->topology_kref));
+> > > > +
+> > > > +	return ret;
+> > > >  }
+> > > >  
+> > > > -static struct drm_dp_mst_branch
+> > > > *drm_dp_mst_get_validated_mstb_ref_locked(struct drm_dp_mst_branch
+> > > > *mstb,
+> > > > struct drm_dp_mst_branch *to_find)
+> > > > +/**
+> > > > + * drm_dp_mst_topology_ref_port() - Increment the topology refcount
+> > > > of a
+> > > > port
+> > > > + * @port: The &struct drm_dp_mst_port to increment the topology
+> > > > refcount
+> > > > of
+> > > > + *
+> > > > + * Increments @port.topology_refcount without checking whether or not
+> > > > it's
+> > > > + * already reached 0. This is only valid to use in scenarios where
+> > > > you
+> > > > are
+> > > > + * already guaranteed to have at least one active topology reference
+> > > > to
+> > > > @port.
+> > > > + * Otherwise, drm_dp_mst_topology_get_port() should be used.
+> > > > + *
+> > > > + * Any topology references acquired with this function must be
+> > > > released
+> > > > when
+> > > > + * they are no longer being used by calling
+> > > > drm_dp_mst_topology_put_port().
+> > > > + *
+> > > > + * See also:
+> > > > + * drm_dp_mst_topology_get_port()
+> > > > + * drm_dp_mst_topology_put_port()
+> > > > + */
+> > > > +static void drm_dp_mst_topology_ref_port(struct drm_dp_mst_port
+> > > > *port)
+> > > > +{
+> > > > +	kref_get(&port->topology_kref);
+> > > > +	DRM_DEBUG("port %p (%d)\n", port, kref_read(&port-
+> > > > >topology_kref));
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * drm_dp_mst_topology_put_port() - release a topology reference to a
+> > > > port
+> > > > + * @port: The &struct drm_dp_mst_port to release the topology
+> > > > reference
+> > > > from
+> > > > + *
+> > > > + * Releases a topology reference from @port by decrementing
+> > > > + * @port.topology_kref.
+> > > > + *
+> > > > + * See also:
+> > > > + * drm_dp_mst_topology_get_port()
+> > > > + * drm_dp_mst_topology_ref_port()
+> > > > + */
+> > > > +static void drm_dp_mst_topology_put_port(struct drm_dp_mst_port
+> > > > *port)
+> > > > +{
+> > > > +	DRM_DEBUG("port %p (%d)\n", port, kref_read(&port-
+> > > > >topology_kref)-1);
+> > > > +	kref_put(&port->topology_kref, drm_dp_destroy_port);
+> > > > +}
+> > > > +
+> > > > +static struct drm_dp_mst_branch *
+> > > > +drm_dp_mst_topology_get_mstb_validated_locked(struct
+> > > > drm_dp_mst_branch
+> > > > *mstb,
+> > > > +					      struct drm_dp_mst_branch
+> > > > *to_find)
+> > > >  {
+> > > >  	struct drm_dp_mst_port *port;
+> > > >  	struct drm_dp_mst_branch *rmstb;
+> > > > -	if (to_find == mstb) {
+> > > > -		kref_get(&mstb->kref);
+> > > > +
+> > > > +	if (to_find == mstb)
+> > > >  		return mstb;
+> > > > -	}
+> > > > +
+> > > >  	list_for_each_entry(port, &mstb->ports, next) {
+> > > >  		if (port->mstb) {
+> > > > -			rmstb =
+> > > > drm_dp_mst_get_validated_mstb_ref_locked(port-
+> > > > > mstb, to_find);
+> > > > +			rmstb =
+> > > > drm_dp_mst_topology_get_mstb_validated_locked(
+> > > 
+> > > I think a prep patch which just renames the current get_validated/put
+> > > functions to the new names would be really good. Then this patch here
+> > > with
+> > > the new stuff.
+> > > 
+> > > 
+> > > > +			    port->mstb, to_find);
+> > > >  			if (rmstb)
+> > > >  				return rmstb;
+> > > >  		}
+> > > > @@ -993,27 +1203,37 @@ static struct drm_dp_mst_branch
+> > > > *drm_dp_mst_get_validated_mstb_ref_locked(struct
+> > > >  	return NULL;
+> > > >  }
+> > > >  
+> > > > -static struct drm_dp_mst_branch *drm_dp_get_validated_mstb_ref(struct
+> > > > drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_branch *mstb)
+> > > > +static struct drm_dp_mst_branch *
+> > > > +drm_dp_mst_topology_get_mstb_validated(struct drm_dp_mst_topology_mgr
+> > > > *mgr,
+> > > > +				       struct drm_dp_mst_branch *mstb)
+> > > >  {
+> > > >  	struct drm_dp_mst_branch *rmstb = NULL;
+> > > > +
+> > > >  	mutex_lock(&mgr->lock);
+> > > > -	if (mgr->mst_primary)
+> > > > -		rmstb = drm_dp_mst_get_validated_mstb_ref_locked(mgr-
+> > > > > mst_primary, mstb);
+> > > > +	if (mgr->mst_primary) {
+> > > > +		rmstb = drm_dp_mst_topology_get_mstb_validated_locked(
+> > > > +		    mgr->mst_primary, mstb);
+> > > > +
+> > > > +		if (rmstb && !drm_dp_mst_topology_get_mstb(rmstb))
+> > > > +			rmstb = NULL;
+> > > > +	}
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	return rmstb;
+> > > >  }
+> > > >  
+> > > > -static struct drm_dp_mst_port *drm_dp_mst_get_port_ref_locked(struct
+> > > > drm_dp_mst_branch *mstb, struct drm_dp_mst_port *to_find)
+> > > > +static struct drm_dp_mst_port *
+> > > > +drm_dp_mst_topology_get_port_validated_locked(struct
+> > > > drm_dp_mst_branch
+> > > > *mstb,
+> > > > +					      struct drm_dp_mst_port
+> > > > *to_find)
+> > > >  {
+> > > >  	struct drm_dp_mst_port *port, *mport;
+> > > >  
+> > > >  	list_for_each_entry(port, &mstb->ports, next) {
+> > > > -		if (port == to_find) {
+> > > > -			kref_get(&port->kref);
+> > > > +		if (port == to_find)
+> > > >  			return port;
+> > > > -		}
+> > > > +
+> > > >  		if (port->mstb) {
+> > > > -			mport = drm_dp_mst_get_port_ref_locked(port-
+> > > > >mstb,
+> > > > to_find);
+> > > > +			mport =
+> > > > drm_dp_mst_topology_get_port_validated_locked(
+> > > > +			    port->mstb, to_find);
+> > > >  			if (mport)
+> > > >  				return mport;
+> > > >  		}
+> > > > @@ -1021,12 +1241,20 @@ static struct drm_dp_mst_port
+> > > > *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
+> > > >  	return NULL;
+> > > >  }
+> > > >  
+> > > > -static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct
+> > > > drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
+> > > > +static struct drm_dp_mst_port *
+> > > > +drm_dp_mst_topology_get_port_validated(struct drm_dp_mst_topology_mgr
+> > > > *mgr,
+> > > > +				       struct drm_dp_mst_port *port)
+> > > >  {
+> > > >  	struct drm_dp_mst_port *rport = NULL;
+> > > > +
+> > > >  	mutex_lock(&mgr->lock);
+> > > > -	if (mgr->mst_primary)
+> > > > -		rport = drm_dp_mst_get_port_ref_locked(mgr-
+> > > > >mst_primary,
+> > > > port);
+> > > > +	if (mgr->mst_primary) {
+> > > > +		rport = drm_dp_mst_topology_get_port_validated_locked(
+> > > > +		    mgr->mst_primary, port);
+> > > > +
+> > > > +		if (rport && !drm_dp_mst_topology_get_port(rport))
+> > > > +			rport = NULL;
+> > > > +	}
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	return rport;
+> > > >  }
+> > > > @@ -1034,11 +1262,12 @@ static struct drm_dp_mst_port
+> > > > *drm_dp_get_validated_port_ref(struct drm_dp_mst_t
+> > > >  static struct drm_dp_mst_port *drm_dp_get_port(struct
+> > > > drm_dp_mst_branch
+> > > > *mstb, u8 port_num)
+> > > >  {
+> > > >  	struct drm_dp_mst_port *port;
+> > > > +	int ret;
+> > > >  
+> > > >  	list_for_each_entry(port, &mstb->ports, next) {
+> > > >  		if (port->port_num == port_num) {
+> > > > -			kref_get(&port->kref);
+> > > > -			return port;
+> > > > +			ret = drm_dp_mst_topology_get_port(port);
+> > > > +			return ret ? port : NULL;
+> > > >  		}
+> > > >  	}
+> > > >  
+> > > > @@ -1087,6 +1316,11 @@ static bool drm_dp_port_setup_pdt(struct
+> > > > drm_dp_mst_port *port)
+> > > >  		if (port->mstb) {
+> > > >  			port->mstb->mgr = port->mgr;
+> > > >  			port->mstb->port_parent = port;
+> > > > +			/*
+> > > > +			 * Make sure this port's memory allocation
+> > > > stays
+> > > > +			 * around until it's child MSTB releases it
+> > > > +			 */
+> > > > +			drm_dp_mst_get_port_malloc(port);
+> > > >  
+> > > >  			send_link = true;
+> > > >  		}
+> > > > @@ -1147,17 +1381,26 @@ static void drm_dp_add_port(struct
+> > > > drm_dp_mst_branch *mstb,
+> > > >  	bool created = false;
+> > > >  	int old_pdt = 0;
+> > > >  	int old_ddps = 0;
+> > > > +
+> > > >  	port = drm_dp_get_port(mstb, port_msg->port_number);
+> > > >  	if (!port) {
+> > > >  		port = kzalloc(sizeof(*port), GFP_KERNEL);
+> > > >  		if (!port)
+> > > >  			return;
+> > > > -		kref_init(&port->kref);
+> > > > +		kref_init(&port->topology_kref);
+> > > > +		kref_init(&port->malloc_kref);
+> > > >  		port->parent = mstb;
+> > > >  		port->port_num = port_msg->port_number;
+> > > >  		port->mgr = mstb->mgr;
+> > > >  		port->aux.name = "DPMST";
+> > > >  		port->aux.dev = dev->dev;
+> > > > +
+> > > > +		/*
+> > > > +		 * Make sure the memory allocation for our parent
+> > > > branch stays
+> > > > +		 * around until our own memory allocation is released
+> > > > +		 */
+> > > > +		drm_dp_mst_get_mstb_malloc(mstb);
+> > > > +
+> > > >  		created = true;
+> > > >  	} else {
+> > > >  		old_pdt = port->pdt;
+> > > > @@ -1177,7 +1420,7 @@ static void drm_dp_add_port(struct
+> > > > drm_dp_mst_branch
+> > > > *mstb,
+> > > >  	   for this list */
+> > > >  	if (created) {
+> > > >  		mutex_lock(&mstb->mgr->lock);
+> > > > -		kref_get(&port->kref);
+> > > > +		drm_dp_mst_topology_ref_port(port);
+> > > >  		list_add(&port->next, &mstb->ports);
+> > > >  		mutex_unlock(&mstb->mgr->lock);
+> > > >  	}
+> > > > @@ -1202,17 +1445,21 @@ static void drm_dp_add_port(struct
+> > > > drm_dp_mst_branch *mstb,
+> > > >  	if (created && !port->input) {
+> > > >  		char proppath[255];
+> > > >  
+> > > > -		build_mst_prop_path(mstb, port->port_num, proppath,
+> > > > sizeof(proppath));
+> > > > -		port->connector = (*mstb->mgr->cbs-
+> > > > >add_connector)(mstb->mgr,
+> > > > port, proppath);
+> > > > +		build_mst_prop_path(mstb, port->port_num, proppath,
+> > > > +				    sizeof(proppath));
+> > > > +		port->connector = (*mstb->mgr->cbs-
+> > > > >add_connector)(mstb->mgr,
+> > > > +								   por
+> > > > t,
+> > > > +								   pro
+> > > > ppath);
+> > > >  		if (!port->connector) {
+> > > >  			/* remove it from the port list */
+> > > >  			mutex_lock(&mstb->mgr->lock);
+> > > >  			list_del(&port->next);
+> > > >  			mutex_unlock(&mstb->mgr->lock);
+> > > >  			/* drop port list reference */
+> > > > -			drm_dp_put_port(port);
+> > > > +			drm_dp_mst_topology_put_port(port);
+> > > >  			goto out;
+> > > >  		}
+> > > > +
+> > > >  		if ((port->pdt == DP_PEER_DEVICE_DP_LEGACY_CONV ||
+> > > >  		     port->pdt == DP_PEER_DEVICE_SST_SINK) &&
+> > > >  		    port->port_num >= DP_MST_LOGICAL_PORT_0) {
+> > > > @@ -1224,7 +1471,7 @@ static void drm_dp_add_port(struct
+> > > > drm_dp_mst_branch
+> > > > *mstb,
+> > > >  
+> > > >  out:
+> > > >  	/* put reference to this port */
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  }
+> > > >  
+> > > >  static void drm_dp_update_port(struct drm_dp_mst_branch *mstb,
+> > > > @@ -1259,7 +1506,7 @@ static void drm_dp_update_port(struct
+> > > > drm_dp_mst_branch *mstb,
+> > > >  			dowork = true;
+> > > >  	}
+> > > >  
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	if (dowork)
+> > > >  		queue_work(system_long_wq, &mstb->mgr->work);
+> > > >  
+> > > > @@ -1270,7 +1517,7 @@ static struct drm_dp_mst_branch
+> > > > *drm_dp_get_mst_branch_device(struct drm_dp_mst_
+> > > >  {
+> > > >  	struct drm_dp_mst_branch *mstb;
+> > > >  	struct drm_dp_mst_port *port;
+> > > > -	int i;
+> > > > +	int i, ret;
+> > > >  	/* find the port by iterating down */
+> > > >  
+> > > >  	mutex_lock(&mgr->lock);
+> > > > @@ -1295,7 +1542,9 @@ static struct drm_dp_mst_branch
+> > > > *drm_dp_get_mst_branch_device(struct drm_dp_mst_
+> > > >  			}
+> > > >  		}
+> > > >  	}
+> > > > -	kref_get(&mstb->kref);
+> > > > +	ret = drm_dp_mst_topology_get_mstb(mstb);
+> > > > +	if (!ret)
+> > > > +		mstb = NULL;
+> > > >  out:
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	return mstb;
+> > > > @@ -1325,19 +1574,22 @@ static struct drm_dp_mst_branch
+> > > > *get_mst_branch_device_by_guid_helper(
+> > > >  	return NULL;
+> > > >  }
+> > > >  
+> > > > -static struct drm_dp_mst_branch
+> > > > *drm_dp_get_mst_branch_device_by_guid(
+> > > > -	struct drm_dp_mst_topology_mgr *mgr,
+> > > > -	uint8_t *guid)
+> > > > +static struct drm_dp_mst_branch *
+> > > > +drm_dp_get_mst_branch_device_by_guid(struct drm_dp_mst_topology_mgr
+> > > > *mgr,
+> > > > +				     uint8_t *guid)
+> > > >  {
+> > > >  	struct drm_dp_mst_branch *mstb;
+> > > > +	int ret;
+> > > >  
+> > > >  	/* find the port by iterating down */
+> > > >  	mutex_lock(&mgr->lock);
+> > > >  
+> > > >  	mstb = get_mst_branch_device_by_guid_helper(mgr->mst_primary,
+> > > > guid);
+> > > > -
+> > > > -	if (mstb)
+> > > > -		kref_get(&mstb->kref);
+> > > > +	if (mstb) {
+> > > > +		ret = drm_dp_mst_topology_get_mstb(mstb);
+> > > > +		if (!ret)
+> > > > +			mstb = NULL;
+> > > > +	}
+> > > >  
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	return mstb;
+> > > > @@ -1362,10 +1614,10 @@ static void
+> > > > drm_dp_check_and_send_link_address(struct drm_dp_mst_topology_mgr *m
+> > > >  			drm_dp_send_enum_path_resources(mgr, mstb,
+> > > > port);
+> > > >  
+> > > >  		if (port->mstb) {
+> > > > -			mstb_child =
+> > > > drm_dp_get_validated_mstb_ref(mgr, port-
+> > > > > mstb);
+> > > > +			mstb_child =
+> > > > drm_dp_mst_topology_get_mstb_validated(mgr, port->mstb);
+> > > >  			if (mstb_child) {
+> > > >  				drm_dp_check_and_send_link_address(mgr
+> > > > ,
+> > > > mstb_child);
+> > > > -				drm_dp_put_mst_branch_device(mstb_chil
+> > > > d);
+> > > > +				drm_dp_mst_topology_put_mstb(mstb_chil
+> > > > d);
+> > > >  			}
+> > > >  		}
+> > > >  	}
+> > > > @@ -1375,16 +1627,19 @@ static void drm_dp_mst_link_probe_work(struct
+> > > > work_struct *work)
+> > > >  {
+> > > >  	struct drm_dp_mst_topology_mgr *mgr = container_of(work,
+> > > > struct
+> > > > drm_dp_mst_topology_mgr, work);
+> > > >  	struct drm_dp_mst_branch *mstb;
+> > > > +	int ret;
+> > > >  
+> > > >  	mutex_lock(&mgr->lock);
+> > > >  	mstb = mgr->mst_primary;
+> > > >  	if (mstb) {
+> > > > -		kref_get(&mstb->kref);
+> > > > +		ret = drm_dp_mst_topology_get_mstb(mstb);
+> > > > +		if (!ret)
+> > > > +			mstb = NULL;
+> > > >  	}
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	if (mstb) {
+> > > >  		drm_dp_check_and_send_link_address(mgr, mstb);
+> > > > -		drm_dp_put_mst_branch_device(mstb);
+> > > > +		drm_dp_mst_topology_put_mstb(mstb);
+> > > >  	}
+> > > >  }
+> > > >  
+> > > > @@ -1695,22 +1950,32 @@ static struct drm_dp_mst_port
+> > > > *drm_dp_get_last_connected_port_to_mstb(struct drm
+> > > >  	return drm_dp_get_last_connected_port_to_mstb(mstb-
+> > > > >port_parent-
+> > > > > parent);
+> > > >  }
+> > > >  
+> > > > -static struct drm_dp_mst_branch
+> > > > *drm_dp_get_last_connected_port_and_mstb(struct
+> > > > drm_dp_mst_topology_mgr
+> > > > *mgr,
+> > > > -									
+> > > >  struc
+> > > > t drm_dp_mst_branch *mstb,
+> > > > -									
+> > > >  int
+> > > > *port_num)
+> > > > +static struct drm_dp_mst_branch *
+> > > > +drm_dp_get_last_connected_port_and_mstb(struct
+> > > > drm_dp_mst_topology_mgr
+> > > > *mgr,
+> > > > +					struct drm_dp_mst_branch
+> > > > *mstb,
+> > > > +					int *port_num)
+> > > >  {
+> > > >  	struct drm_dp_mst_branch *rmstb = NULL;
+> > > >  	struct drm_dp_mst_port *found_port;
+> > > > +
+> > > >  	mutex_lock(&mgr->lock);
+> > > > -	if (mgr->mst_primary) {
+> > > > +	if (!mgr->mst_primary)
+> > > > +		goto out;
+> > > > +
+> > > > +	do {
+> > > >  		found_port =
+> > > > drm_dp_get_last_connected_port_to_mstb(mstb);
+> > > > +		if (!found_port)
+> > > > +			break;
+> > > >  
+> > > > -		if (found_port) {
+> > > > +		if (drm_dp_mst_topology_get_mstb(found_port->parent))
+> > > > {
+> > > >  			rmstb = found_port->parent;
+> > > > -			kref_get(&rmstb->kref);
+> > > >  			*port_num = found_port->port_num;
+> > > > +		} else {
+> > > > +			/* Search again, starting from this parent */
+> > > > +			mstb = found_port->parent;
+> > > >  		}
+> > > > -	}
+> > > > +	} while (!rmstb);
+> > > 
+> > > Hm, is this a bugfix of validating the entire chain? Afaiui the new
+> > > topology_get still validates the entire chain, so I'm a bit confused
+> > > what
+> > > this does here.
+> > 
+> > JFYI: I'm assuming you meant the old get_validated() functions. I
+> > mentioned in
+> > the cover letter for this series that I wasn't sure if we still needed
+> > them,
+> > but on closer inspection I think we still do since they perform the actual
+> > validation of the whole topology chain.
+> > drm_dp_mst_topology_get_(port|mstb)()
+> > just increments the topology refcount safely.
+> 
+> Yeah I mixed this up with the old get_validated, but this is only used in
+> payload_send_mgs.
+> 
+> > The change you're seeing here is because since we didn't use
+> > kref_get_unless_zero() before, we'd just go up the topology path above
+> > mstb(),
+> > then kref the first thing we find that we think is still connected to the
+> > topology (I honestly don't know how/if this ever worked), then give it a
+> > kref
+> > and return it. Now that we use kref_get_unless_zero(), we have to deal
+> > with
+> > the fact that the kref could fail, which would happen if we just retrieved
+> > a
+> > parent mstb or port that is also disconnected from the topology. So, the
+> > only
+> > way to do that is to find what we think is the last connected mstb, check
+> > if
+> > it actually is, then restart the search from that mstb if the kref failed
+> > and
+> > it's not connected to the topology.
+> > 
+> > That being said, I've been wondering about figuring out spots like this
+> > where
+> > we probably also need to follow that up with "also make sure all of the
+> > parents of this 'connected' topology device are also valid", since it's
+> > quite
+> > possible we could run into a scenario like this:
+> > 
+> > Step 1:
+> > MSTB 1
+> >   |- Port 1
+> >   |- Port 2
+> >   |- Port 3
+> >      |- MSTB 2 ← (just unplugged, top refcount == 0)
+> >         |- Port 4 ← (also unplugged, but top refcount not updated yet)
+> >         |- Port 5 ← (same thing ^)
+> >         |- Port 6 ← (same thing ^)
+> >            |- MSTB 3
+> >               |- Port 7
+> >               |- Port 8
+> >               |- Port 9
+> >                  ^
+> >       drm_dp_get_last_connected_port_to_mstb()
+> >       travels up to Port 6, assumes Port 6 is valid because it's top
+> > refcount
+> >       != 0
+> > 
+> > Now that I type all of that out though, I think we could also fix that
+> > fairly
+> > easily by instead just adding a topology_state mutex, and adding a
+> > variable to
+> > denote whether or not a port is actually still part of a topology.
+> > 
+> > Maybe that also means we should come up with a different name for
+> > topology_refcount, resource_refcount maybe?
+> 
+> Hm. Fixing refcounting/lifetime issues with locking is ime a bad idea.
+> I'm also not sure we fundamentally need to fix this, since even if we make
+> the internal representation race-free, the real world can still get
+> unplugged whenever it feels like. So fundamentally the payload_send_msg
+> function needs to be able to deal with races.
+> 
+> So not sure whether (or why) we need your change here.
+> 
+> Can we instead just fail if we've raced and give up? Not sure why we need
+> to send out the message still if the recipient is gone ...
+I think you are right actually, I thought a lot more about this and I
+think there is always going to be some inevitable racing.
 
-syzbot found the following crash on:
+As for whether or not we can just fail if we've raced: we do need to
+send a message out if the recepient isn't there so long as there's still
+a part of the topology active, because payload allocations actually go
+down the whole tree. For example, this is what a payload allocation on a
+deeply nested MSTB actually should look like in the real world
 
-HEAD commit:    a26d94bff4d5 net: bridge: remove unneeded variable 'err'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c7a4cd400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9655b05acfc97ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=e1d3a7522b4d05aeede4
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+  MSTB #1
+  |- Port #1 (payload allocation forwards payload #1 down to MSTB #2)
+     |- MSTB #2 (payload allocation forwards payload #1 down to Port #4)
+        |- Port #3
+        |- Port #4 (payload allocation forwards payload #1 down to MSTB #3)
+           |- MSTB #3 (Payload allocation for payload #1 goes to sink)
+  |- Port #2
 
-Unfortunately, I don't have any reproducer for this crash yet.
+When we setup virtual channels, MSTB #1 actually does the job of
+allocating a payload on MSTB #2, which does the job of allocating a
+payload on MSTB #3. If MSTB #3 is removed, MSTB #1 won't actually
+change any payload allocations down the topology until we tell it to.
+Hence why we need to be able to actually figure out what the last
+connected port was. I've confirmed this as well: AMD has pointed some
+bugs out to me that I've been able to reproduce where the problems with
+payload deallocation start causing downstream sinks to flicker randomly
+due to leaking payloads.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e1d3a7522b4d05aeede4@syzkaller.appspotmail.com
+So long story short: we do actually need payload messages to be as
+accurate as possible with this. I think we could theoretically get
+around the inherent raciness I described above by just doing something
+like this:
 
-ip6_tunnel: ip6tnl1 xmit: Local address not yet configured!
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	1-....: (1 GPs behind) idle=9e6/1/0x4000000000000002  
-softirq=418161/418162 fqs=5249
-rcu: 	 (t=10502 jiffies g=488537 q=1706)
-NMI backtrace for cpu 1
-CPU: 1 PID: 18240 Comm: syz-executor3 Not tainted 4.20.0-rc6+ #352
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
-  rcu_dump_cpu_stacks+0x16f/0x1bc kernel/rcu/tree.c:1195
-  print_cpu_stall.cold.67+0x1f3/0x3c7 kernel/rcu/tree.c:1334
-  check_cpu_stall kernel/rcu/tree.c:1408 [inline]
-  rcu_pending kernel/rcu/tree.c:2961 [inline]
-  rcu_check_callbacks+0xf3b/0x13f0 kernel/rcu/tree.c:2506
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:__read_once_size include/linux/compiler.h:182 [inline]
-RIP: 0010:check_kcov_mode kernel/kcov.c:69 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x20/0x50 kernel/kcov.c:101
-Code: 4c d8 20 4c 89 08 5d c3 66 90 55 48 89 e5 48 8b 75 08 65 48 8b 04 25  
-40 ee 01 00 65 8b 15 28 69 82 7e 81 e2 00 01 1f 00 75 2b <8b> 90 d8 12 00  
-00 83 fa 02 75 20 48 8b 88 e0 12 00 00 8b 80 dc 12
-RSP: 0018:ffff888197daf338 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff8881d207c040 RBX: ffff8881c39fd688 RCX: ffffc9000be34000
-RDX: 0000000000000000 RSI: ffffffff86cdda27 RDI: ffff8881c39fd688
-RBP: ffff888197daf338 R08: ffff8881d207c040 R09: 0000000000000008
-R10: 0000000000000003 R11: ffff8881d207c040 R12: dffffc0000000000
-R13: 0000000000000000 R14: 000000000000227d R15: 0000000000000000
-  xfrm_policy_insert_list+0x257/0x1020 net/xfrm/xfrm_policy.c:1531
-  xfrm_policy_inexact_insert+0x166/0xee0 net/xfrm/xfrm_policy.c:1195
-  xfrm_policy_insert+0x639/0x850 net/xfrm/xfrm_policy.c:1570
-  pfkey_spdadd+0x10f8/0x19d0 net/key/af_key.c:2339
-  pfkey_process+0x857/0x9a0 net/key/af_key.c:2844
-  pfkey_sendmsg+0x5e5/0xfb0 net/key/af_key.c:3683
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457669
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007efc20b07c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007efc20b086d4
-R13: 00000000004c443a R14: 00000000004d7410 R15: 00000000ffffffff
+* Find the last living relative of MSTB #3 (let's pretend it's port #4)
+* Try sending a payload message to port #4, while at the same time port
+  #4 is removed from the topology in the real world
+* When the payload message times out, check if the root of the topology
+  (MSTB #1) is still connected and if so, redo the search starting from
+  port #4
+* Rinse and repeat, until either the topology itself is removed, we
+  reach the root of the topology and get no response, or we manage to
+  get a response.
 
+We could probably use similar approaches for most of the cases where
+being accurate to the real world state of the topology ends up being
+important, and possibly even supplement it by querying the actual state
+of the hub on failure to ensure we stay in sync.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+All of that being said: I think the approach I described above can
+probably be saved for another patch series. For now though, we will need
+the changes in drm_dp_get_last_connected_port_to_mstb() to at least make
+payload deallocation work outside of some very edge cases. I'm fine with
+splitting it into another patch though if you think that'd be better
+> -Daniel
+> 
+> > > > +out:
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	return rmstb;
+> > > >  }
+> > > > @@ -1726,17 +1991,19 @@ static int drm_dp_payload_send_msg(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	u8 sinks[DRM_DP_MAX_SDP_STREAMS];
+> > > >  	int i;
+> > > >  
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return -EINVAL;
+> > > >  
+> > > >  	port_num = port->port_num;
+> > > > -	mstb = drm_dp_get_validated_mstb_ref(mgr, port->parent);
+> > > > +	mstb = drm_dp_mst_topology_get_mstb_validated(mgr, port-
+> > > > >parent);
+> > > >  	if (!mstb) {
+> > > > -		mstb = drm_dp_get_last_connected_port_and_mstb(mgr,
+> > > > port-
+> > > > > parent, &port_num);
+> > > > +		mstb = drm_dp_get_last_connected_port_and_mstb(mgr,
+> > > > +							       port-
+> > > > >parent,
+> > > > +							       &port_n
+> > > > um);
+> > > >  
+> > > >  		if (!mstb) {
+> > > > -			drm_dp_put_port(port);
+> > > > +			drm_dp_mst_topology_put_port(port);
+> > > >  			return -EINVAL;
+> > > >  		}
+> > > >  	}
+> > > > @@ -1766,8 +2033,8 @@ static int drm_dp_payload_send_msg(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	}
+> > > >  	kfree(txmsg);
+> > > >  fail_put:
+> > > > -	drm_dp_put_mst_branch_device(mstb);
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_mstb(mstb);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return ret;
+> > > >  }
+> > > >  
+> > > > @@ -1777,13 +2044,13 @@ int drm_dp_send_power_updown_phy(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	struct drm_dp_sideband_msg_tx *txmsg;
+> > > >  	int len, ret;
+> > > >  
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return -EINVAL;
+> > > >  
+> > > >  	txmsg = kzalloc(sizeof(*txmsg), GFP_KERNEL);
+> > > >  	if (!txmsg) {
+> > > > -		drm_dp_put_port(port);
+> > > > +		drm_dp_mst_topology_put_port(port);
+> > > >  		return -ENOMEM;
+> > > >  	}
+> > > >  
+> > > > @@ -1799,7 +2066,7 @@ int drm_dp_send_power_updown_phy(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  			ret = 0;
+> > > >  	}
+> > > >  	kfree(txmsg);
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  
+> > > >  	return ret;
+> > > >  }
+> > > > @@ -1888,7 +2155,8 @@ int drm_dp_update_payload_part1(struct
+> > > > drm_dp_mst_topology_mgr *mgr)
+> > > >  		if (vcpi) {
+> > > >  			port = container_of(vcpi, struct
+> > > > drm_dp_mst_port,
+> > > >  					    vcpi);
+> > > > -			port = drm_dp_get_validated_port_ref(mgr,
+> > > > port);
+> > > > +			port =
+> > > > drm_dp_mst_topology_get_port_validated(mgr,
+> > > > +								      
+> > > > port);
+> > > >  			if (!port) {
+> > > >  				mutex_unlock(&mgr->payload_lock);
+> > > >  				return -EINVAL;
+> > > > @@ -1925,7 +2193,7 @@ int drm_dp_update_payload_part1(struct
+> > > > drm_dp_mst_topology_mgr *mgr)
+> > > >  		cur_slots += req_payload.num_slots;
+> > > >  
+> > > >  		if (port)
+> > > > -			drm_dp_put_port(port);
+> > > > +			drm_dp_mst_topology_put_port(port);
+> > > >  	}
+> > > >  
+> > > >  	for (i = 0; i < mgr->max_payloads; i++) {
+> > > > @@ -2024,7 +2292,7 @@ static int drm_dp_send_dpcd_write(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	struct drm_dp_sideband_msg_tx *txmsg;
+> > > >  	struct drm_dp_mst_branch *mstb;
+> > > >  
+> > > > -	mstb = drm_dp_get_validated_mstb_ref(mgr, port->parent);
+> > > > +	mstb = drm_dp_mst_topology_get_mstb_validated(mgr, port-
+> > > > >parent);
+> > > >  	if (!mstb)
+> > > >  		return -EINVAL;
+> > > >  
+> > > > @@ -2048,7 +2316,7 @@ static int drm_dp_send_dpcd_write(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	}
+> > > >  	kfree(txmsg);
+> > > >  fail_put:
+> > > > -	drm_dp_put_mst_branch_device(mstb);
+> > > > +	drm_dp_mst_topology_put_mstb(mstb);
+> > > >  	return ret;
+> > > >  }
+> > > >  
+> > > > @@ -2158,7 +2426,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct
+> > > > drm_dp_mst_topology_mgr *mgr, bool ms
+> > > >  
+> > > >  		/* give this the main reference */
+> > > >  		mgr->mst_primary = mstb;
+> > > > -		kref_get(&mgr->mst_primary->kref);
+> > > > +		drm_dp_mst_topology_ref_mstb(mgr->mst_primary);
+> > > >  
+> > > >  		ret = drm_dp_dpcd_writeb(mgr->aux, DP_MSTM_CTRL,
+> > > >  							 DP_MST_EN |
+> > > > DP_UP_REQ_EN | DP_UPSTREAM_IS_SRC);
+> > > > @@ -2192,7 +2460,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct
+> > > > drm_dp_mst_topology_mgr *mgr, bool ms
+> > > >  out_unlock:
+> > > >  	mutex_unlock(&mgr->lock);
+> > > >  	if (mstb)
+> > > > -		drm_dp_put_mst_branch_device(mstb);
+> > > > +		drm_dp_mst_topology_put_mstb(mstb);
+> > > >  	return ret;
+> > > >  
+> > > >  }
+> > > > @@ -2357,7 +2625,7 @@ static int drm_dp_mst_handle_down_rep(struct
+> > > > drm_dp_mst_topology_mgr *mgr)
+> > > >  			       mgr->down_rep_recv.initial_hdr.lct,
+> > > >  				      mgr-
+> > > > >down_rep_recv.initial_hdr.rad[0],
+> > > >  				      mgr->down_rep_recv.msg[0]);
+> > > > -			drm_dp_put_mst_branch_device(mstb);
+> > > > +			drm_dp_mst_topology_put_mstb(mstb);
+> > > >  			memset(&mgr->down_rep_recv, 0, sizeof(struct
+> > > > drm_dp_sideband_msg_rx));
+> > > >  			return 0;
+> > > >  		}
+> > > > @@ -2368,7 +2636,7 @@ static int drm_dp_mst_handle_down_rep(struct
+> > > > drm_dp_mst_topology_mgr *mgr)
+> > > >  		}
+> > > >  
+> > > >  		memset(&mgr->down_rep_recv, 0, sizeof(struct
+> > > > drm_dp_sideband_msg_rx));
+> > > > -		drm_dp_put_mst_branch_device(mstb);
+> > > > +		drm_dp_mst_topology_put_mstb(mstb);
+> > > >  
+> > > >  		mutex_lock(&mgr->qlock);
+> > > >  		txmsg->state = DRM_DP_SIDEBAND_TX_RX;
+> > > > @@ -2441,7 +2709,7 @@ static int drm_dp_mst_handle_up_req(struct
+> > > > drm_dp_mst_topology_mgr *mgr)
+> > > >  		}
+> > > >  
+> > > >  		if (mstb)
+> > > > -			drm_dp_put_mst_branch_device(mstb);
+> > > > +			drm_dp_mst_topology_put_mstb(mstb);
+> > > >  
+> > > >  		memset(&mgr->up_req_recv, 0, sizeof(struct
+> > > > drm_dp_sideband_msg_rx));
+> > > >  	}
+> > > > @@ -2501,7 +2769,7 @@ enum drm_connector_status
+> > > > drm_dp_mst_detect_port(struct drm_connector *connector
+> > > >  	enum drm_connector_status status =
+> > > > connector_status_disconnected;
+> > > >  
+> > > >  	/* we need to search for the port in the mgr in case its gone
+> > > > */
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return connector_status_disconnected;
+> > > >  
+> > > > @@ -2526,7 +2794,7 @@ enum drm_connector_status
+> > > > drm_dp_mst_detect_port(struct drm_connector *connector
+> > > >  		break;
+> > > >  	}
+> > > >  out:
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return status;
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_mst_detect_port);
+> > > > @@ -2543,11 +2811,11 @@ bool drm_dp_mst_port_has_audio(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  {
+> > > >  	bool ret = false;
+> > > >  
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return ret;
+> > > >  	ret = port->has_audio;
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return ret;
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_mst_port_has_audio);
+> > > > @@ -2567,7 +2835,7 @@ struct edid *drm_dp_mst_get_edid(struct
+> > > > drm_connector *connector, struct drm_dp_
+> > > >  	struct edid *edid = NULL;
+> > > >  
+> > > >  	/* we need to search for the port in the mgr in case its gone
+> > > > */
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return NULL;
+> > > >  
+> > > > @@ -2578,7 +2846,7 @@ struct edid *drm_dp_mst_get_edid(struct
+> > > > drm_connector *connector, struct drm_dp_
+> > > >  		drm_connector_set_tile_property(connector);
+> > > >  	}
+> > > >  	port->has_audio = drm_detect_monitor_audio(edid);
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return edid;
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_mst_get_edid);
+> > > > @@ -2649,7 +2917,7 @@ int drm_dp_atomic_find_vcpi_slots(struct
+> > > > drm_atomic_state *state,
+> > > >  	if (IS_ERR(topology_state))
+> > > >  		return PTR_ERR(topology_state);
+> > > >  
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (port == NULL)
+> > > >  		return -EINVAL;
+> > > >  	req_slots = DIV_ROUND_UP(pbn, mgr->pbn_div);
+> > > > @@ -2657,14 +2925,14 @@ int drm_dp_atomic_find_vcpi_slots(struct
+> > > > drm_atomic_state *state,
+> > > >  			req_slots, topology_state->avail_slots);
+> > > >  
+> > > >  	if (req_slots > topology_state->avail_slots) {
+> > > > -		drm_dp_put_port(port);
+> > > > +		drm_dp_mst_topology_put_port(port);
+> > > >  		return -ENOSPC;
+> > > >  	}
+> > > >  
+> > > >  	topology_state->avail_slots -= req_slots;
+> > > >  	DRM_DEBUG_KMS("vcpi slots avail=%d", topology_state-
+> > > > >avail_slots);
+> > > >  
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return req_slots;
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_atomic_find_vcpi_slots);
+> > > > @@ -2715,7 +2983,7 @@ bool drm_dp_mst_allocate_vcpi(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  {
+> > > >  	int ret;
+> > > >  
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return false;
+> > > >  
+> > > > @@ -2725,7 +2993,7 @@ bool drm_dp_mst_allocate_vcpi(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	if (port->vcpi.vcpi > 0) {
+> > > >  		DRM_DEBUG_KMS("payload: vcpi %d already allocated for
+> > > > pbn %d -
+> > > > requested pbn %d\n", port->vcpi.vcpi, port->vcpi.pbn, pbn);
+> > > >  		if (pbn == port->vcpi.pbn) {
+> > > > -			drm_dp_put_port(port);
+> > > > +			drm_dp_mst_topology_put_port(port);
+> > > >  			return true;
+> > > >  		}
+> > > >  	}
+> > > > @@ -2733,13 +3001,13 @@ bool drm_dp_mst_allocate_vcpi(struct
+> > > > drm_dp_mst_topology_mgr *mgr,
+> > > >  	ret = drm_dp_init_vcpi(mgr, &port->vcpi, pbn, slots);
+> > > >  	if (ret) {
+> > > >  		DRM_DEBUG_KMS("failed to init vcpi slots=%d max=63
+> > > > ret=%d\n",
+> > > > -				DIV_ROUND_UP(pbn, mgr->pbn_div), ret);
+> > > > +			      DIV_ROUND_UP(pbn, mgr->pbn_div), ret);
+> > > >  		goto out;
+> > > >  	}
+> > > >  	DRM_DEBUG_KMS("initing vcpi for pbn=%d slots=%d\n",
+> > > > -			pbn, port->vcpi.num_slots);
+> > > > +		      pbn, port->vcpi.num_slots);
+> > > >  
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return true;
+> > > >  out:
+> > > >  	return false;
+> > > > @@ -2749,12 +3017,12 @@ EXPORT_SYMBOL(drm_dp_mst_allocate_vcpi);
+> > > >  int drm_dp_mst_get_vcpi_slots(struct drm_dp_mst_topology_mgr *mgr,
+> > > > struct
+> > > > drm_dp_mst_port *port)
+> > > >  {
+> > > >  	int slots = 0;
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return slots;
+> > > >  
+> > > >  	slots = port->vcpi.num_slots;
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  	return slots;
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_mst_get_vcpi_slots);
+> > > > @@ -2768,11 +3036,11 @@ EXPORT_SYMBOL(drm_dp_mst_get_vcpi_slots);
+> > > >   */
+> > > >  void drm_dp_mst_reset_vcpi_slots(struct drm_dp_mst_topology_mgr *mgr,
+> > > > struct drm_dp_mst_port *port)
+> > > >  {
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return;
+> > > >  	port->vcpi.num_slots = 0;
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_mst_reset_vcpi_slots);
+> > > >  
+> > > > @@ -2781,9 +3049,10 @@ EXPORT_SYMBOL(drm_dp_mst_reset_vcpi_slots);
+> > > >   * @mgr: manager for this port
+> > > >   * @port: unverified port to deallocate vcpi for
+> > > >   */
+> > > > -void drm_dp_mst_deallocate_vcpi(struct drm_dp_mst_topology_mgr *mgr,
+> > > > struct drm_dp_mst_port *port)
+> > > > +void drm_dp_mst_deallocate_vcpi(struct drm_dp_mst_topology_mgr *mgr,
+> > > > +				struct drm_dp_mst_port *port)
+> > > >  {
+> > > > -	port = drm_dp_get_validated_port_ref(mgr, port);
+> > > > +	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+> > > >  	if (!port)
+> > > >  		return;
+> > > >  
+> > > > @@ -2792,7 +3061,7 @@ void drm_dp_mst_deallocate_vcpi(struct
+> > > > drm_dp_mst_topology_mgr *mgr, struct drm_
+> > > >  	port->vcpi.pbn = 0;
+> > > >  	port->vcpi.aligned_pbn = 0;
+> > > >  	port->vcpi.vcpi = 0;
+> > > > -	drm_dp_put_port(port);
+> > > > +	drm_dp_mst_topology_put_port(port);
+> > > >  }
+> > > >  EXPORT_SYMBOL(drm_dp_mst_deallocate_vcpi);
+> > > >  
+> > > > @@ -3078,8 +3347,10 @@ static void drm_dp_tx_work(struct work_struct
+> > > > *work)
+> > > >  
+> > > >  static void drm_dp_free_mst_port(struct kref *kref)
+> > > >  {
+> > > > -	struct drm_dp_mst_port *port = container_of(kref, struct
+> > > > drm_dp_mst_port, kref);
+> > > > -	kref_put(&port->parent->kref, drm_dp_free_mst_branch_device);
+> > > > +	struct drm_dp_mst_port *port =
+> > > > +		container_of(kref, struct drm_dp_mst_port,
+> > > > malloc_kref);
+> > > > +
+> > > > +	drm_dp_mst_put_mstb_malloc(port->parent);
+> > > >  	kfree(port);
+> > > >  }
+> > > >  
+> > > > @@ -3103,7 +3374,6 @@ static void drm_dp_destroy_connector_work(struct
+> > > > work_struct *work)
+> > > >  		list_del(&port->next);
+> > > >  		mutex_unlock(&mgr->destroy_connector_lock);
+> > > >  
+> > > > -		kref_init(&port->kref);
+> > > >  		INIT_LIST_HEAD(&port->next);
+> > > >  
+> > > >  		mgr->cbs->destroy_connector(mgr, port->connector);
+> > > > @@ -3117,7 +3387,7 @@ static void drm_dp_destroy_connector_work(struct
+> > > > work_struct *work)
+> > > >  			drm_dp_mst_put_payload_id(mgr, port-
+> > > > >vcpi.vcpi);
+> > > >  		}
+> > > >  
+> > > > -		kref_put(&port->kref, drm_dp_free_mst_port);
+> > > > +		drm_dp_mst_put_port_malloc(port);
+> > > >  		send_hotplug = true;
+> > > >  	}
+> > > >  	if (send_hotplug)
+> > > > @@ -3292,7 +3562,7 @@ static int drm_dp_mst_i2c_xfer(struct
+> > > > i2c_adapter
+> > > > *adapter, struct i2c_msg *msgs
+> > > >  	struct drm_dp_sideband_msg_tx *txmsg = NULL;
+> > > >  	int ret;
+> > > >  
+> > > > -	mstb = drm_dp_get_validated_mstb_ref(mgr, port->parent);
+> > > > +	mstb = drm_dp_mst_topology_get_mstb_validated(mgr, port-
+> > > > >parent);
+> > > >  	if (!mstb)
+> > > >  		return -EREMOTEIO;
+> > > >  
+> > > > @@ -3342,7 +3612,7 @@ static int drm_dp_mst_i2c_xfer(struct
+> > > > i2c_adapter
+> > > > *adapter, struct i2c_msg *msgs
+> > > >  	}
+> > > >  out:
+> > > >  	kfree(txmsg);
+> > > > -	drm_dp_put_mst_branch_device(mstb);
+> > > > +	drm_dp_mst_topology_put_mstb(mstb);
+> > > >  	return ret;
+> > > >  }
+> > > >  
+> > > > diff --git a/include/drm/drm_dp_mst_helper.h
+> > > > b/include/drm/drm_dp_mst_helper.h
+> > > > index 371cc2816477..50643a39765d 100644
+> > > > --- a/include/drm/drm_dp_mst_helper.h
+> > > > +++ b/include/drm/drm_dp_mst_helper.h
+> > > > @@ -44,7 +44,10 @@ struct drm_dp_vcpi {
+> > > >  
+> > > >  /**
+> > > >   * struct drm_dp_mst_port - MST port
+> > > > - * @kref: reference count for this port.
+> > > > + * @topology_kref: refcount for this port's lifetime in the topology,
+> > > > only the
+> > > > + * DP MST helpers should need to touch this
+> > > > + * @malloc_kref: refcount for the memory allocation containing this
+> > > > structure.
+> > > > + * See drm_dp_mst_get_port_malloc() and drm_dp_mst_put_port_malloc().
+> > > >   * @port_num: port number
+> > > >   * @input: if this port is an input port.
+> > > >   * @mcs: message capability status - DP 1.2 spec.
+> > > > @@ -67,7 +70,8 @@ struct drm_dp_vcpi {
+> > > >   * in the MST topology.
+> > > >   */
+> > > >  struct drm_dp_mst_port {
+> > > > -	struct kref kref;
+> > > > +	struct kref topology_kref;
+> > > > +	struct kref malloc_kref;
+> > > 
+> > > I'd to inline member kerneldoc here (you can mix&match, so no need to
+> > > rewrite them all) and spend a few words reference the family of get/put
+> > > functions. Same for mstb below.
+> > > 
+> > > >  
+> > > >  	u8 port_num;
+> > > >  	bool input;
+> > > > @@ -102,7 +106,10 @@ struct drm_dp_mst_port {
+> > > >  
+> > > >  /**
+> > > >   * struct drm_dp_mst_branch - MST branch device.
+> > > > - * @kref: reference count for this port.
+> > > > + * @topology_kref: refcount for this branch device's lifetime in the
+> > > > topology,
+> > > > + * only the DP MST helpers should need to touch this
+> > > > + * @malloc_kref: refcount for the memory allocation containing this
+> > > > structure.
+> > > > + * See drm_dp_mst_get_mstb_malloc() and drm_dp_mst_put_mstb_malloc().
+> > > >   * @rad: Relative Address to talk to this branch device.
+> > > >   * @lct: Link count total to talk to this branch device.
+> > > >   * @num_ports: number of ports on the branch.
+> > > > @@ -121,7 +128,8 @@ struct drm_dp_mst_port {
+> > > >   * to downstream port of parent branches.
+> > > >   */
+> > > >  struct drm_dp_mst_branch {
+> > > > -	struct kref kref;
+> > > > +	struct kref topology_kref;
+> > > > +	struct kref malloc_kref;
+> > > >  	u8 rad[8];
+> > > >  	u8 lct;
+> > > >  	int num_ports;
+> > > > @@ -626,4 +634,7 @@ int drm_dp_atomic_release_vcpi_slots(struct
+> > > > drm_atomic_state *state,
+> > > >  int drm_dp_send_power_updown_phy(struct drm_dp_mst_topology_mgr *mgr,
+> > > >  				 struct drm_dp_mst_port *port, bool
+> > > > power_up);
+> > > >  
+> > > > +void drm_dp_mst_get_port_malloc(struct drm_dp_mst_port *port);
+> > > > +void drm_dp_mst_put_port_malloc(struct drm_dp_mst_port *port);
+> > > > +
+> > > >  #endif
+> > > > -- 
+> > > > 2.19.2
+> > > 
+> > > I really like. Mostly concentrated on looking at the docs. Also still
+> > > need to apply it and build the docs, so I can appreciate the DOT graphs.
+> > > -Daniel
+> > -- 
+> > Cheers,
+> > 	Lyude Paul
+> > 
+-- 
+Cheers,
+	Lyude Paul
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
