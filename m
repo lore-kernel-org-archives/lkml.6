@@ -2,124 +2,90 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F4AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6CDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52D0C2184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D93B21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545202585;
+	bh=tlu7Xwb1hzDYyqD2tgUdoFaFpTrj9P7NqlkTHs3BliA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kLtjOR7Hw21nVXYDbWcKd5ysolt0C6PjjTF0/u8Nnl2J4Pd82NzRzJRQCsTyfVQOL
+	 /c6gKD3jfhb8CARwezI5zLKpZBhylR6b8n5OvVMr+E4wZOt3e8FFhYF4iX8y1dxngU
+	 PtiiKa85oPtjQQg8ExlsOiGA2Km/2+qzjZ7MD4+c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbeLSGst (ORCPT
+        id S1728069AbeLSG4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 01:48:49 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34631 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbeLSGss (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 01:48:48 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so14192277lfc.1;
-        Tue, 18 Dec 2018 22:48:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e/CPB4gnLhuGEr+6GLr/ob0SBZJAndsZXG7pGBjhfRk=;
-        b=WMS8G9Vi9Vl3JWPKQyb36BZNV+MTYU8VGLtnQekHx9pVLSg3gD+/grNisb7w9nui7w
-         R8VoTJLE18h101ercxE7XSwZWgcLPI3D8/I4duJD5fBGli2jhM34pb0j7HmdftafKsWr
-         46F9SWScaEVG7MS77XzddMNHSMGgOIO6AAN1RogxHcw4BV9YhbGZZebqd7dyQrUMMhT0
-         cgBLUqK5pJp4xqQ8+M3/X54Kv/IHklhglT2vRY8D/bp2vdREjvnZzlaI3iJS+6YgMjUI
-         m8FImfrJAe3TwYgoOh+etrRF9NHVmn8CKlXgrZ2wG/r2NfYEGj97KQKPbHH/xD/8bj/N
-         uzTQ==
-X-Gm-Message-State: AA+aEWaJj2p4V3jpqlGH0gfZRReT2S1dhlCapEKLAm0LbxTgaQ/m4du2
-        R+25NRfCYJ6Dt/+iLh7jqEg=
-X-Google-Smtp-Source: AFSGD/VpCeHnNQ2fUIOi1uM5d/Z6ytDEUMryDXlRxELP2MAacvlxVPRbjFp4mrPxEJ0eCpyZmMSmRQ==
-X-Received: by 2002:a19:641d:: with SMTP id y29mr11487735lfb.14.1545202126374;
-        Tue, 18 Dec 2018 22:48:46 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id q6sm3546848lfh.52.2018.12.18.22.48.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 22:48:45 -0800 (PST)
-Date:   Wed, 19 Dec 2018 08:48:42 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, vladimir_zapolskiy@mentor.com
-Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
- support
-Message-ID: <20181219064842.GG2477@localhost.localdomain>
-References: <20181218115931.GA21253@localhost.localdomain>
- <201812182306.X3vcHVlL%fengguang.wu@intel.com>
+        Wed, 19 Dec 2018 01:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727232AbeLSG4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 01:56:24 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F01672184A;
+        Wed, 19 Dec 2018 06:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545202583;
+        bh=tlu7Xwb1hzDYyqD2tgUdoFaFpTrj9P7NqlkTHs3BliA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yweGbTB434wTwDDxSQqW17dZZjhJ7ed1T5paBnmOGs3JhUQtLVvG3Ast0EuM4JCMP
+         LmFSVdzwglDMIz5jMJw0pwvhmTCDGVnzU6ob9Wgnml9vlu++LnhPZ5N0atjjIvG7NS
+         bLwXzSwoK3w65eZMZ/xXpqEQN2AR5z25bL17xaxA=
+Date:   Wed, 19 Dec 2018 07:56:21 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     peng.hao2@zte.com.cn
+Cc:     arnd@arndb.de, andy.shevchenko@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/3]  misc/pvpanic: return 0 for empty body
+ registerfunction
+Message-ID: <20181219065621.GA21256@kroah.com>
+References: <20181218102817.GA29083@kroah.com>
+ <201812190811376451432@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201812182306.X3vcHVlL%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <201812190811376451432@zte.com.cn>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 11:36:22PM +0800, kbuild test robot wrote:
-> Hi Matti,
+On Wed, Dec 19, 2018 at 08:11:37AM +0800, peng.hao2@zte.com.cn wrote:
+> >On Tue, Dec 18, 2018 at 05:46:41PM +0800, Peng Hao wrote:
+> >> Return 0 for empty body register function normally.
+> >>
+> >> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> >> ---
+> >> QEMU community requires additional PCI devices to simulate PVPANIC devices
+> >> so that some architectures can not occupy precious less than 4G of memory
+> >> space.
+> >
+> >What is this for below the --- line?
+> >
+> >And again, you did not specify what changed from the previous versions.
+> >I can not take these unless you provide it.
 > 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on regmap/for-next]
-> [also build test ERROR on next-20181218]
-> [cannot apply to v4.20-rc7]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/regmap-regmap-irq-gpio-max77620-add-level-irq-support/20181218-225844
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
-> config: x86_64-randconfig-x006-201850 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/base/regmap/regmap-irq.c: In function 'regmap_add_irq_chip':
-> >> drivers/base/regmap/regmap-irq.c:644:24: error: 'const struct regmap_irq' has no member named 'type_reg_offset'; did you mean 'reg_offset'?
->        reg = chip->irqs[i].type_reg_offset / map->reg_stride;
->                            ^~~~~~~~~~~~~~~
->                            reg_offset
-> >> drivers/base/regmap/regmap-irq.c:645:41: error: 'const struct regmap_irq' has no member named 'type_rising_mask'
->        d->type_buf_def[reg] |= chip->irqs[i].type_rising_mask |
->                                             ^
-> >> drivers/base/regmap/regmap-irq.c:646:19: error: 'const struct regmap_irq' has no member named 'type_falling_mask'
->          chip->irqs[i].type_falling_mask;
----
+> The previous version of the code is basically unchanged, and the new patches just 
+> adds a PCI interface. Previous versions only support ACPI and FDT interfaces.
+> The QEMU community requires a PCI interface so that some architectures do not occupy
+>  precious low 4G memory address.
 
-> > Version 3 of this patch is intended to be functionally identical to v2.
-> > This patch is rebased on top of a tree which contains changes:
-> > "regmap: irq: handle HW using separate rising/falling edge interrupts"
-> > from Bartosz Golaszewski and the change
-> > "regmap: regmap-irq: Remove default irq type setting from core"
-> > (proposed here):
-> > https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
-> > 
-> > There should not be direct dependency to "regmap: regmap-irq: Remove
-> > default irq type setting from core" though. Patch was also tested to
-> > apply cleany on regmap-tree.
+No, you are changing things between each version, hopefully based on the
+review comments.  And the testing that is being provided for you showing
+you where your code breaks the build.
 
-I forgot that the block of code the commit "regmap: regmap-irq: Remove
-default irq type setting from core" removes do use the old type specifiers
-whcih this patch changes. So even though this patch applies cleanly on tree
-which does not include "regmap: regmap-irq: Remove default irq type setting
-from core" - it does not mean there is no dependency. This was my brain fart.
-There is dependency. "regmap: regmap-irq: Remove default irq type setting
-from core" should be applied prior this patch.
+That goes in the "what changed" lines, as is documented in the kernel
+documentation.  Please follow that when resubmitting if you wish for
+your changes to be able to be accepted.
 
-Should I combine these two patches as a series (and resend them) or what is
-the correct way to note the dependency?
+thanks,
 
-Br,
-	Matti Vaittinen
-
+greg k-h
