@@ -2,104 +2,103 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8239FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 764C8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE20217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4663B2184C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545211071;
+	bh=9aSN3aAgtnDH6zxyKtnM/vV6qgBeVNf23Ec6rLd0W8c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=DsXzpZnFcw6RJyvikCz89ooilEpKMq2y6JsXY7neuNVoKjusRNfeofrYIMqPuruNj
+	 y8Oye7/JsmCq1tnEe8djYPM0g63D0RdfoK4vOBAdJbdVJxl5gV+NatY+TdS9wtE7um
+	 xWrG+HhW+4H3IwXOVattVLc2LME2uesnmDb0adb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbeLSJRq (ORCPT
+        id S1728025AbeLSJRu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:17:46 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:38040 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726774AbeLSJRp (ORCPT
+        Wed, 19 Dec 2018 04:17:50 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43058 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbeLSJRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:17:45 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJ9ANXI026208;
-        Wed, 19 Dec 2018 03:17:44 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2pcyw5qje2-1;
-        Wed, 19 Dec 2018 03:17:44 -0600
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id A5916611C8AC;
-        Wed, 19 Dec 2018 03:20:40 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 19 Dec 2018
- 09:17:42 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBJ9HgAS012169; Wed,
- 19 Dec 2018 09:17:42 GMT
-Date:   Wed, 19 Dec 2018 09:17:42 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 18/18] mfd: wm8400-core: Make it explicitly non-modular
-Message-ID: <20181219091742.GA16508@imbe.wolfsonmicro.main>
-References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
- <1545078688-21217-19-git-send-email-paul.gortmaker@windriver.com>
+        Wed, 19 Dec 2018 04:17:50 -0500
+Received: by mail-oi1-f193.google.com with SMTP id u18so1042017oie.10;
+        Wed, 19 Dec 2018 01:17:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qsUkNlUIMMNRxs4Qf1zwhD5XASIKnmUZSMG6XvCAZ/o=;
+        b=m9zplyMzA3Swu+h4tnUmppPP3TJ2JYuGQ3uyk6NFRoqhyif6w62tqQPG6mhZML8kTH
+         8MvI04S+azzPdOQLs+lijOsr1V13k5qLEThH+CqAJv3pa/F6l92uwcM79pEgqn6BICWt
+         PX3Y8FFe5gtim8wGyYUXsmjgW1asLYttwMZANbqs01SRfxs7wdvip+tp/9h6Ymbo9B/g
+         cVFVM0zekdREzZC1MXRChNR5P3JLon8TzU7YoyIahdbM1LUJZpuR9+kBhKMstGkLBmni
+         AHNsr+3BANK9jI2Vw7huT6hFq9iph/XY/IXq2rA63NUk1Tvd7rZQWKyPS+9akkZwaDjL
+         faSA==
+X-Gm-Message-State: AA+aEWZhQ50JNdNTPrc/2dkt6vRgbJ9yasYSAzgdESOTACpiMgSMrxv5
+        ws63HHesTMGdzjbWTa0wDQp6MZrQIdoTxe0nLvE=
+X-Google-Smtp-Source: AFSGD/VjB8et0XszcDX6QipeVeEZNsoQle9axGs41MOmxZ96fF6gUqVwpTeEf8Tqv4nyoppvSF7Spvd0newi1Dpe1jo=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr623680oix.246.1545211069124;
+ Wed, 19 Dec 2018 01:17:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1545078688-21217-19-git-send-email-paul.gortmaker@windriver.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812190080
+References: <20181215084526.27210-1-tiny.windzz@gmail.com> <CAPDyKFq5oxDc1drn-0Tj-aBJCPCXcd_AO0q=56s9sumgiY4Dpg@mail.gmail.com>
+ <20181219083223.GC31670@kroah.com>
+In-Reply-To: <20181219083223.GC31670@kroah.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 19 Dec 2018 10:17:38 +0100
+Message-ID: <CAJZ5v0hW_SFsQ-oGaHUtxTEXTdNRkDjp4ZpS_MxEp9-jTYvoew@mail.gmail.com>
+Subject: Re: [RESEND] PM / Domains: remove define_genpd_open_function() and define_genpd_debugfs_fops()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     tiny.windzz@gmail.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 03:31:28PM -0500, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
-> 
-> drivers/mfd/Kconfig:config MFD_WM8400
-> drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM8400"
-> 
-> ...meaning that it currently is not being built as a module by anyone.
-> 
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
-> 
-> Since module_init was not in use by this code, the init ordering
-> remains unchanged with this commit.
-> 
-> A trivial function rename from wm8400_module_init to the name
-> wm8400_driver_init is also done to reduce possible confusion.
-> 
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> is already contained at the top of the file in the comments.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> Cc: patches@opensource.cirrus.com
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> -MODULE_DEVICE_TABLE(i2c, wm8400_i2c_id);
->  
->  static struct i2c_driver wm8400_i2c_driver = {
->  	.driver = {
-> @@ -161,7 +160,7 @@ static struct i2c_driver wm8400_i2c_driver = {
->  };
->  #endif
+On Wed, Dec 19, 2018 at 9:32 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Dec 17, 2018 at 09:19:07AM +0100, Ulf Hansson wrote:
+> > On Sat, 15 Dec 2018 at 09:45, Yangtao Li <tiny.windzz@gmail.com> wrote:
+> > >
+> > > We already have the DEFINE_SHOW_ATTRIBUTE, There is no need to define
+> > > such a macro, so remove define_genpd_open_function and
+> > > define_genpd_debugfs_fops.
+> > >
+> > > Convert them to DEFINE_SHOW_ATTRIBUTE.
+> > >
+> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > > ---
+> > >  drivers/base/power/domain.c | 71 +++++++++++++------------------------
+> > >  1 file changed, 24 insertions(+), 47 deletions(-)
+> > >
+> > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > > index 7f38a92b444a..10a61d6147d0 100644
+> > > --- a/drivers/base/power/domain.c
+> > > +++ b/drivers/base/power/domain.c
+> > > @@ -2671,7 +2671,7 @@ static int genpd_summary_one(struct seq_file *s,
+> > >         return 0;
+> > >  }
+> > >
+> > > -static int genpd_summary_show(struct seq_file *s, void *data)
+> > > +static int summary_show(struct seq_file *s, void *data)
+> >
+> > Why rename the function(s)?
+>
+> Because the macro requires it?
 
-Do we not want to add suppress_bind_attrs into the i2c_driver
-struct here?
+Yeah.
 
-Thanks,
-Charles
+Ulf, this looks like a good cleanup to me, any objections to this one
+given the explanation above?
