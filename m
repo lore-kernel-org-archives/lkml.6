@@ -2,67 +2,70 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42ECC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08103C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C002184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545209358;
-	bh=4v3yZcTbxAfsLKNaVX8Fl46kBWtBT40YysRZtAfiIG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UF4Hn8JgE+0x4WAbbWg1judyM4jCe+BNptF9kaRodh1PPSjWlrhdlgvge+AlOP7AP
-	 2Bkf6dJhn4CgTnmTXbotrjMnnXsvgvBDqcPK42naRSUCnUCxm1TUiLWnC7Gf56z1Om
-	 W0XFT6Y2Oi/3c1zKu9HMyVYzadfWczZfrsSQIYPw=
+	by mail.kernel.org (Postfix) with ESMTP id C10932133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbeLSItR (ORCPT
+        id S1728377AbeLSIuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 03:49:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725294AbeLSItR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 03:49:17 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10A002133F;
-        Wed, 19 Dec 2018 08:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545209356;
-        bh=4v3yZcTbxAfsLKNaVX8Fl46kBWtBT40YysRZtAfiIG8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y0mIyJNq4AbfmnZUNwDbZFmnVJanZlFQGt+LRu6lv3x0czU0Zk+duWONDMcjeoAB9
-         rSBcolQNJN4pP27gl5IqKt79C11LndLKk9uzaNdEi3hdvXSfGa+uakjH59EuaHmoCu
-         +DQaUyKwrbDPdiBFq2Z+lh0i96NNU8I6X4koqz+8=
-Date:   Wed, 19 Dec 2018 09:49:14 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 1/3] stm class: Fix a module refcount leak in policy
- creation error path
-Message-ID: <20181219084914.GA28855@kroah.com>
-References: <20181214155347.75722-1-alexander.shishkin@linux.intel.com>
- <20181214155347.75722-2-alexander.shishkin@linux.intel.com>
+        Wed, 19 Dec 2018 03:50:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:57862 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725294AbeLSIuH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 03:50:07 -0500
+Received: from p4fea4820.dip0.t-ipconnect.de ([79.234.72.32] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gZXYE-0007ms-FE; Wed, 19 Dec 2018 09:49:58 +0100
+Date:   Wed, 19 Dec 2018 09:49:57 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jiri Kosina <jikos@kernel.org>
+cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Zhou Chengming <zhouchengming1@huawei.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V2 3/9] x86/jump_label: Move checking code away from
+ __jump_label_transform()
+In-Reply-To: <nycvar.YFH.7.76.1812190942360.17216@cbobk.fhfr.pm>
+Message-ID: <alpine.DEB.2.21.1812190949250.1651@nanos.tec.linutronix.de>
+References: <cover.1545149539.git.bristot@redhat.com> <1d1a40fec7285eaf47b8055a26684508109eefb7.1545149539.git.bristot@redhat.com> <nycvar.YFH.7.76.1812190942360.17216@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214155347.75722-2-alexander.shishkin@linux.intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 05:53:45PM +0200, Alexander Shishkin wrote:
-> Commit ccddbbf4ef27 ("stm class: Introduce framing protocol drivers")
+On Wed, 19 Dec 2018, Jiri Kosina wrote:
 
-I don't see that commit id in Linus's tree, are you sure it is correct?
+> On Tue, 18 Dec 2018, Daniel Bristot de Oliveira wrote:
+> 
+> > This patch creates a new functions 
+> 
+> I am not a native speaker, but this doesn't sound like proper english to 
+> me.
 
-thanks,
+Aside of that 'This patch' is wrong to begin with. See Documentation/process/
 
-greg k-h
