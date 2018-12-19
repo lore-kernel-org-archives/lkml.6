@@ -2,95 +2,99 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEAFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C4DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A070B20866
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:01:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QSi2SIEp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fdjkykz7"
+	by mail.kernel.org (Postfix) with ESMTP id D15482084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729569AbeLSUBL (ORCPT
+        id S1729659AbeLSUKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 15:01:11 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39638 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeLSUBK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 15:01:10 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4EAEF60593; Wed, 19 Dec 2018 20:01:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545249670;
-        bh=NF0J2Meb9DZFop87EKE2wT3NpmrRZC00dVdCW1igt10=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QSi2SIEpTRflv9QFRxAoxUzu6NoCsra325LbiJQH186Nw0OdsDRxBCJPz4WtAscIJ
-         x75v+Ey38Rxlij6R9NFFst0C3sXXYmlIcOTeJodQ9EMxo67Y+DTnhLo34b1Xx84tJt
-         79TvqhUKAD2VGA23jZqXAiD1zIBI+g8mo5Ij6iXM=
-Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        Wed, 19 Dec 2018 15:10:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42608 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728479AbeLSUKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 15:10:11 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jackp@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4C4BD60132;
-        Wed, 19 Dec 2018 20:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545249669;
-        bh=NF0J2Meb9DZFop87EKE2wT3NpmrRZC00dVdCW1igt10=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fdjkykz7+8YMbnfyOMcXub2BpYzA6yf4jOb/7CIcuoZ2Mnk1FmGue4AMTovHdi/g0
-         BjMQ0LONp1FbWpvjpm6mFNVv2yUWgn/rvCZnBeiBXYUugIAfNj2otMulnt7G2/vpPN
-         CAW9qI5iBS5+zzHpHChPpUJJIAldRj8sjeTPuUxk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C4BD60132
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
-Date:   Wed, 19 Dec 2018 12:01:07 -0800
-From:   Jack Pham <jackp@codeaurora.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sriharsha Allenki <sallenki@codeaurora.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY
- driver
-Message-ID: <20181219200107.GD1997@jackp-linux.qualcomm.com>
-References: <20181127100722.9993-1-shawn.guo@linaro.org>
- <20181127100722.9993-3-shawn.guo@linaro.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id B6F8B3DBD2;
+        Wed, 19 Dec 2018 20:10:10 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BD99210018F8;
+        Wed, 19 Dec 2018 20:10:05 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 21:10:03 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v5 01/15] KVM: s390: unregister debug feature on failing
+ arch init
+Message-ID: <20181219210934.2f370eb7.cohuck@redhat.com>
+In-Reply-To: <20181219191756.57973-2-mimu@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+        <20181219191756.57973-2-mimu@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181127100722.9993-3-shawn.guo@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 19 Dec 2018 20:10:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shawn,
+On Wed, 19 Dec 2018 20:17:42 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
 
-On Tue, Nov 27, 2018 at 06:07:22PM +0800, Shawn Guo wrote:
-> It adds Synopsys 28nm Femto High-Speed USB PHY driver support, which
-> is usually paired with Synopsys DWC3 USB controllers on Qualcomm SoCs.
+> Make sure the debug feature and its allocated resources get
+> released upon unsuccessful architecture initialization.
 > 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> A related indication of the issue will be reported as kernel
+> message.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+> Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 > ---
->  drivers/phy/qualcomm/Kconfig                  |  10 +
->  drivers/phy/qualcomm/Makefile                 |   1 +
->  .../phy/qualcomm/phy-qcom-usb-hs-snsp-28nm.c  | 529 ++++++++++++++++++
+>  Documentation/kmsg/s390/kvm | 12 ++++++++++++
+>  arch/s390/kvm/kvm-s390.c    | 17 ++++++++++++++---
+>  2 files changed, 26 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/kmsg/s390/kvm
+> 
+> diff --git a/Documentation/kmsg/s390/kvm b/Documentation/kmsg/s390/kvm
+> new file mode 100644
+> index 000000000000..76ffe2012254
+> --- /dev/null
+> +++ b/Documentation/kmsg/s390/kvm
+> @@ -0,0 +1,12 @@
+> +/*?
+> + * Text: "Failed to register FLIC rc=%d\n"
+> + * Severity: Error
+> + * Parameter:
+> + *   @1: return code of the FLIC registration call
+> + * Description:
+> + * The registration of the FLIC (Floating Interrupt Controller Interface)
+> + * was not successful.
+> + * User action:
+> + * If this problem persists after a reload of the kvm kernel module, gather
+> + * Linux debug data and contact your support organization.
+> + */
 
-Just caught this...
-s/snsp/snps/ in the file name? The bindings doc in Patch 1 is named
-correctly.
-
-Thanks,
-Jack
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Hm, it seems that the kmsg stuff crept in there again...
