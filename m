@@ -2,213 +2,180 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA1CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77ADC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847D4218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F9CA2184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 11:13:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbeLSLJE (ORCPT
+        id S1729194AbeLSLNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:09:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60456 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727991AbeLSLJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 06:09:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E1401B07F;
-        Wed, 19 Dec 2018 11:09:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A0A381E1463; Wed, 19 Dec 2018 12:08:56 +0100 (CET)
-Date:   Wed, 19 Dec 2018 12:08:56 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181219110856.GA18345@quack2.suse.cz>
-References: <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
- <20181217183443.GO10600@bombadil.infradead.org>
- <20181218093017.GB18032@quack2.suse.cz>
- <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
- <20181219020723.GD4347@redhat.com>
+        Wed, 19 Dec 2018 06:13:20 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:29505 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeLSLNU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 06:13:20 -0500
+Received: from [10.18.29.147] (10.18.29.147) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 19 Dec
+ 2018 19:13:47 +0800
+Subject: Re: [PATCH v8 2/2] PCI: amlogic: Add the Amlogic Meson PCIe
+ controller driver
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>
+References: <1545120286-129258-1-git-send-email-hanjie.lin@amlogic.com>
+ <1545120286-129258-3-git-send-email-hanjie.lin@amlogic.com>
+ <20181218224708.GB22610@google.com>
+From:   Hanjie Lin <hanjie.lin@amlogic.com>
+Message-ID: <df9e974d-cac8-3522-fdbe-1811160bb4fc@amlogic.com>
+Date:   Wed, 19 Dec 2018 19:13:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181219020723.GD4347@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181218224708.GB22610@google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.147]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
-> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
-> > OK, so let's take another look at Jerome's _mapcount idea all by itself (using
-> > *only* the tracking pinned pages aspect), given that it is the lightest weight
-> > solution for that.  
-> > 
-> > So as I understand it, this would use page->_mapcount to store both the real
-> > mapcount, and the dma pinned count (simply added together), but only do so for
-> > file-backed (non-anonymous) pages:
-> > 
-> > 
-> > __get_user_pages()
-> > {
-> > 	...
-> > 	get_page(page);
-> > 
-> > 	if (!PageAnon)
-> > 		atomic_inc(page->_mapcount);
-> > 	...
-> > }
-> > 
-> > put_user_page(struct page *page)
-> > {
-> > 	...
-> > 	if (!PageAnon)
-> > 		atomic_dec(&page->_mapcount);
-> > 
-> > 	put_page(page);
-> > 	...
-> > }
-> > 
-> > ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
-> > to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
-> > had in mind?
-> 
-> Mostly, with the extra two observations:
->     [1] We only need to know the pin count when a write back kicks in
->     [2] We need to protect GUP code with wait_for_write_back() in case
->         GUP is racing with a write back that might not the see the
->         elevated mapcount in time.
-> 
-> So for [2]
-> 
-> __get_user_pages()
-> {
->     get_page(page);
-> 
->     if (!PageAnon) {
->         atomic_inc(page->_mapcount);
-> +       if (PageWriteback(page)) {
-> +           // Assume we are racing and curent write back will not see
-> +           // the elevated mapcount so wait for current write back and
-> +           // force page fault
-> +           wait_on_page_writeback(page);
-> +           // force slow path that will fault again
-> +       }
->     }
-> }
 
-This is not needed AFAICT. __get_user_pages() gets page reference (and it
-should also increment page->_mapcount) under PTE lock. So at that point we
-are sure we have writeable PTE nobody can change. So page_mkclean() has to
-block on PTE lock to make PTE read-only and only after going through all
-PTEs like this, it can check page->_mapcount. So the PTE lock provides
-enough synchronization.
 
-> For [1] only needing pin count during write back turns page_mkclean into
-> the perfect spot to check for that so:
+On 2018/12/19 6:47, Bjorn Helgaas wrote:
+> On Tue, Dec 18, 2018 at 04:04:46PM +0800, Hanjie Lin wrote:
+>> From: Yue Wang <yue.wang@amlogic.com>
+>>
+>> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+>> PCI core. This patch adds the driver support for Meson PCIe controller.
 > 
-> int page_mkclean(struct page *page)
-> {
->     int cleaned = 0;
-> +   int real_mapcount = 0;
->     struct address_space *mapping;
->     struct rmap_walk_control rwc = {
->         .arg = (void *)&cleaned,
->         .rmap_one = page_mkclean_one,
->         .invalid_vma = invalid_mkclean_vma,
-> +       .mapcount = &real_mapcount,
->     };
+> I don't have any comments on the code itself; just the trivial things
+> below.  No need to repost for these unless you're changing something
+> else.
 > 
->     BUG_ON(!PageLocked(page));
+> I thought it looked very pretty overall, thanks for paying attention
+> to that!
 > 
->     if (!page_mapped(page))
->         return 0;
+>> +static int meson_size_to_payload(struct meson_pcie *mp, int size)
+>> +{
+>> +	struct device *dev = mp->pci.dev;
+>> +
+>> +	/*
+>> +	 * dwc supports 2^(val+7) payload size, which val is 0~5 default to 1.
+>> +	 * So if input size is not 2^order alignment or less than 2^7 or bigger
+>> +	 * than 2^12, just set to default size 2^(1+7).
+>> +	 */
+>> +	if (!is_power_of_2(size) || size < 128 || size > 4096) {
+>> +		dev_warn(dev, "playload size %d, set to default 256\n", size);
 > 
->     mapping = page_mapping(page);
->     if (!mapping)
->         return 0;
+> s/playload/payload/
 > 
->     // rmap_walk need to change to count mapping and return value
->     // in .mapcount easy one
->     rmap_walk(page, &rwc);
+>> +static void meson_set_max_payload(struct meson_pcie *mp, int size)
+>> +{
+>> +	u32 val = 0;
 > 
->     // Big fat comment to explain what is going on
-> +   if ((page_mapcount(page) - real_mapcount) > 0) {
-> +       SetPageDMAPined(page);
-> +   } else {
-> +       ClearPageDMAPined(page);
-> +   }
+> Unnecessary initialization.
+> 
+>> +	int max_payload_size = meson_size_to_payload(mp, size);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+> 
+>> +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
+>> +				  u32 *val)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	int ret;
+>> +
+>> +	ret = dw_pcie_read(pci->dbi_base + where, size, val);
+>> +	if (ret != PCIBIOS_SUCCESSFUL)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * There is a bug in the MESON AXG pcie controller whereby software
+>> +	 * cannot programme the PCI_CLASS_DEVICE register, so we must fabricate
+>> +	 * the return value in the config accessors.
+> 
+> s/pcie/PCIe/
+> s/programme/program/ (IIUC, "programme" is British and only used as a
+> noun, where here you need a verb)
+> 
+>> +static int meson_pcie_link_up(struct dw_pcie *pci)
+>> +{
+>> +	struct meson_pcie *mp = to_meson_pcie(pci);
+>> +	struct device *dev = pci->dev;
+>> +	u32 smlh_up = 0;
+>> +	u32 ltssm_up = 0;
+>> +	u32 rdlh_up = 0;
+> 
+> Unnecessary initialization of smlh_up, ltssm_up, and rdlh_up.
+> 
+>> +	u32 speed_okay = 0;
+>> +	u32 cnt = 0;
+>> +	u32 state12, state17;
+>> +
+>> +	do {
+>> +		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
+>> +		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
+>> +		smlh_up = IS_SMLH_LINK_UP(state12);
+>> +		rdlh_up = IS_RDLH_LINK_UP(state12);
+>> +		ltssm_up = IS_LTSSM_UP(state12);
+> 
+>> +	dev_err(dev, "Error: Wait linkup timeout.\n");
+> 
+> Message doesn't match others from driver (capitalization and trailing
+> period).
+> 
+>> +			dev_err(dev, "failed to get msi irq\n");
+> 
+> s/msi irq/MSI IRQ/
+> 
+>> +	ret = meson_add_pcie_port(mp, pdev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "Add PCIE port failed, %d\n", ret);
+> 
+> s/PCIE/PCIe/
+> 
+> All the messages in this function are capitalized differently than
+> other messages in the driver.
+> 
+> Bjorn
+> 
+> .
+> 
 
-This is the detail I'm not sure about: Why cannot rmap_walk_file() race
-with e.g. zap_pte_range() which decrements page->_mapcount and thus the
-check we do in page_mkclean() is wrong?
+hi Bjorn:
 
-> 
->     // Maybe we want to leverage the int nature of return value so that
->     // we can express more than cleaned/truncated and express cleaned/
->     // truncated/pinned for benefit of caller and that way we do not
->     // even need one bit as page flags above.
-> 
->     return cleaned;
-> }
-> 
-> You do not want to change page_mapped() i do not see a need for that.
-> 
-> Then the whole discussion between Jan and Dave seems to indicate that
-> the bounce mechanism will need to be in the fs layer and that we can
-> not reuse the bio bounce mechanism. This means that more work is needed
-> at the fs level for that (so that fs do not freak on bounce page).
-> 
-> Note that they are few gotcha where we need to preserve the pin count
-> ie mostly in truncate code path that can remove page from page cache
-> and overwrite the mapcount in the process, this would need to be fixed
-> to not overwrite mapcount so that put_user_page does not set the map
-> count to an invalid value turning the page into a bad state that will
-> at one point trigger kernel BUG_ON();
->
-> I am not saying block truncate, i am saying make sure it does not
-> erase pin count and keep truncating happily. The how to handle truncate
-> is a per existing GUP user discussion to see what they want to do for
-> that.
-> 
-> Obviously a bit deeper analysis of all spot that use mapcount is needed
-> to check that we are not breaking anything but from the top of my head
-> i can not think of anything bad (migrate will abort and other things will
-> assume the page is mapped even it is only in hardware page table, ...).
+Thanks for the all suggestions and corrections.
 
-Hum, grepping for page_mapped() and page_mapcount(), this is actually going
-to be non-trivial to get right AFAICT.
+There were too many code details unnecessary initialization, typing errors
+and coding style etc. I will pay more attention to these rules and code-details
+in the future patches also my daily work.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+thanks again
+
+hanjie.
