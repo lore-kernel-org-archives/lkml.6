@@ -2,136 +2,243 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CBCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76201C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA5A217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC40217D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:43:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u6prnzZ6"
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="XJhFC8LO";
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="mwEHkid2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeLSQkV (ORCPT
+        id S1729300AbeLSQnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:40:21 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46621 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbeLSQkV (ORCPT
+        Wed, 19 Dec 2018 11:43:18 -0500
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:50967 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727383AbeLSQnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:40:21 -0500
-Received: by mail-qt1-f195.google.com with SMTP id y20so22879272qtm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 08:40:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UyIA08uJq0wQTVUlVEcTAiGL0N9tihTC7NfxPiMfc00=;
-        b=u6prnzZ61LDpL6vu59A/6Gjbs30by/ELLGRfUT7yccoa8TmZJhqckMzgsuJNd0FArQ
-         9k9YX5iUI0RovSuaIbazJFKWMMM6JROZyDoKkleAg00LTCiRMHiP+gpSVxKiidygHRvX
-         WOO3aJKp+LL3UMl0VryVhs4KD3LlVA6AxeZVLj1q6XVtKyrs6vbk1DyRcb9/xNJIKtfW
-         fQD0Se4RYoCQXYzdQBLUcl2vQ0Ln25hO7G0TRvZCexfMW1xgbW1n+syq8RbjRBeEQheq
-         N6XOnpmyU0wE/ELbaeqzVm8byJKAlGSqA3NEAu4V2O1R2T7NoOIl7MxZdrBfkWFuuiKE
-         kXlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UyIA08uJq0wQTVUlVEcTAiGL0N9tihTC7NfxPiMfc00=;
-        b=CpY+BPKs/a2aG9Opbyw10CiBbaN/W+dWucGp07ayirS+mEU+8+K+v5ckpQl327QE9R
-         g/sXs4lgL1Z/6SH0lNtz12lOg2csL+SlDKV0nGMb5ayh8jJnz1ZJd2uEAnIdgWDldLnZ
-         P4b1JQzFVayOlOQEyH4ttvWTbtG6U9xxfHN/neQ/UaZKC/BKOXQb976OZHR6HqSBxKT/
-         N/gLNWgJVgjVsVvOw/ZtmXoIl/yf4XrcAzFATIBMwBnwiIdIP4XHxCS1efYaFfI8m3JT
-         36Ztz/6XthLfPI+X7N8ewHPxmEIBhcIm58ISCSBTUgnUsaSObz4SeFDFlX0MpOC7UmES
-         lsAA==
-X-Gm-Message-State: AA+aEWayRJ6sD5jZvNehhwrZzbkAIAHCbkfC3Q2jWE9KPey1vubIuM+C
-        8sGkZeB34E+Xvc7R86O4JVgAu6Py2yg=
-X-Google-Smtp-Source: AFSGD/XOYgyrFx/WSvzfNp7P6X53bj6XkUVuMDmk8ad0BLYWmQxtLOe3zz2JPklioYk3GA8ktZmFWg==
-X-Received: by 2002:ad4:41d0:: with SMTP id a16mr22223998qvq.55.1545237619560;
-        Wed, 19 Dec 2018 08:40:19 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id p31sm2689341qkh.86.2018.12.19.08.40.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 08:40:18 -0800 (PST)
-Date:   Wed, 19 Dec 2018 14:40:13 -0200
-From:   Shayenne Moura <shayenneluzmoura@gmail.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 0/7] drm: KMS cleanup remove drm_mode_object dependency
-Message-ID: <20181219164013.dr7vgfbs2w3jtix7@smtp.gmail.com>
-References: <20181218133749.h4bnf5n5ljsmr2kz@smtp.gmail.com>
- <87woo5vf4r.fsf@intel.com>
+        Wed, 19 Dec 2018 11:43:17 -0500
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1j.cmail.yandex.net (Yandex) with ESMTP id 3B44821321;
+        Wed, 19 Dec 2018 19:43:13 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [2a02:6b8:0:1a2d::30])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 51ZqkxIrED-hCOqeP3m;
+        Wed, 19 Dec 2018 19:43:13 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1545237793; bh=MSv7B/d4wVDMLojnIBPVkba5gMXIMkpMLjVLzInF2u8=;
+        h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References;
+        b=XJhFC8LOuQo3BeMET6Af2mruRy+UmSfySLt5nTbQsmKYbNJ+zGeCf/AkJApeuQWBZ
+         yefT11BwBU2M5o1IE+gzq30taFeEyDTbCUkMfCMjP7T1Wh33k9nLpg8h6Be/arjDts
+         rrb0JQcGL5U8Z+WzLekG5JV5WWq30HDnRjNo4IHs=
+Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:0:3711::1:3e])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id qozLndJxTz-hC5CMBKm;
+        Wed, 19 Dec 2018 19:43:12 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1545237792; bh=MSv7B/d4wVDMLojnIBPVkba5gMXIMkpMLjVLzInF2u8=;
+        h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References;
+        b=mwEHkid29XC6QnMBpuiVe3TIZrduKKoTAj7bQypItmWvo36GNypEA0cONJPcsCWLz
+         6psAcWrx5UCXuxdKE0nXBAe3L3Yclns1COGaKUFoFBoZjFC6CezaIJ9jwxc2yA8zwO
+         kz46oSxV00iEKlaf73jEYB+8WBT2r6TfW8i/0n+M=
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: [PATCH v2] macvlan: use per-cpu queues for broadcast and multicast
+ packets
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc:     Vadim Fedorenko <junk@yandex-team.ru>,
+        Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+Date:   Wed, 19 Dec 2018 19:43:10 +0300
+Message-ID: <154523779011.671635.11120127931100080368.stgit@buzz>
+In-Reply-To: <154116580015.953950.9450253307804393677.stgit@buzz>
+References: <154116580015.953950.9450253307804393677.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87woo5vf4r.fsf@intel.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19, Jani Nikula wrote:
-> On Tue, 18 Dec 2018, Shayenne Moura <shayenneluzmoura@gmail.com> wrote:
-> > This patch serie removes drm_mode_object dependency from 
-> > drm_display_mode struct. This is part of KMS cleanup.  
-> 
-> For future reference:
-> 
-> Please use git-send-email or fix the mail threading otherwise. Patches
-> 1-7 should be in reply to the cover letter.
-> 
-Sorry about that, 
-> Please justify the changes in the commit messages. Your current commit
-> messages focus on *what* is being done, which is fairly obvious from the
-> changes themselves. Please try to describe *why* this is being
-> done. That's more important for posterity. (In this case, it's basically
-> explained in the FIXME comment being removed in patch 7, as well as
-> Documentation/gpu/todo.rst.)
-> 
-> BR,
-> Jani.
-> 
-Okay, thank you! But I should write on every patch why I am doing or
-just on the cover letter?
+Currently macvlan has single per-port queue for broadcast and multicast.
+This disrupts order of packets when flows from different cpus are mixed.
 
-Bests,
-Shayenne
-> 
-> >
-> > Shayenne Moura (7):
-> >   drm: msm: Delete base.id prints
-> >   drm: Remove use of drm_mode_object
-> >   drm: omapdrm: Delete base.id prints
-> >   drm: i915: Delete base.id prints 
-> >   drm: sti: Delete base.id prints
-> >   drm: meson: Delete base.id prints
-> >   drm: Complete remove drm_mode_object dependency
-> >
-> >  drivers/gpu/drm/drm_crtc_helper.c                 |  5 ++---
-> >  drivers/gpu/drm/drm_modes.c                       |  9 ---------
-> >  drivers/gpu/drm/i915/i915_debugfs.c               |  4 ++--
-> >  drivers/gpu/drm/meson/meson_dw_hdmi.c             |  9 ++++-----
-> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c         |  4 ++--
-> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c  |  4 ++--
-> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c  |  4 ++--
-> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c |  4 ++--
-> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c  |  4 ++--
-> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c         |  4 ++--
-> >  drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c      |  4 ++--
-> >  drivers/gpu/drm/msm/dsi/dsi_manager.c             |  4 ++--
-> >  drivers/gpu/drm/msm/edp/edp_bridge.c              |  4 ++--
-> >  drivers/gpu/drm/omapdrm/omap_connector.c          |  4 ++--
-> >  drivers/gpu/drm/omapdrm/omap_crtc.c               |  4 ++--
-> >  drivers/gpu/drm/sti/sti_crtc.c                    |  4 ++--
-> >  include/drm/drm_modes.h                           | 10 ++++------
-> >  17 files changed, 36 insertions(+), 49 deletions(-)
-> 
-> -- 
-> Jani Nikula, Intel Open Source Graphics Center
+This patch replaces this queue with single set of per-cpu queues.
+Pointer to macvlan port is passed in skb control block.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reported-by: Vadim Fedorenko <vfedorenko@yandex-team.ru>
+Tested-by: Vadim Fedorenko <vfedorenko@yandex-team.ru>
+---
+ drivers/net/macvlan.c |   65 +++++++++++++++++++++++++++++--------------------
+ 1 file changed, 38 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
+index 0da3d36b283b..d6e74bd01571 100644
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -46,8 +46,6 @@ struct macvlan_port {
+ 	struct net_device	*dev;
+ 	struct hlist_head	vlan_hash[MACVLAN_HASH_SIZE];
+ 	struct list_head	vlans;
+-	struct sk_buff_head	bc_queue;
+-	struct work_struct	bc_work;
+ 	u32			flags;
+ 	int			count;
+ 	struct hlist_head	vlan_source_hash[MACVLAN_HASH_SIZE];
+@@ -55,6 +53,11 @@ struct macvlan_port {
+ 	unsigned char           perm_addr[ETH_ALEN];
+ };
+ 
++struct macvlan_bc_work {
++	struct sk_buff_head	bc_queue;
++	struct work_struct	bc_work;
++};
++
+ struct macvlan_source_entry {
+ 	struct hlist_node	hlist;
+ 	struct macvlan_dev	*vlan;
+@@ -63,6 +66,7 @@ struct macvlan_source_entry {
+ };
+ 
+ struct macvlan_skb_cb {
++	const struct macvlan_port *port;
+ 	const struct macvlan_dev *src;
+ };
+ 
+@@ -295,20 +299,23 @@ static void macvlan_broadcast(struct sk_buff *skb,
+ 	}
+ }
+ 
++static DEFINE_PER_CPU(struct macvlan_bc_work, macvlan_bc_work);
++
+ static void macvlan_process_broadcast(struct work_struct *w)
+ {
+-	struct macvlan_port *port = container_of(w, struct macvlan_port,
++	struct macvlan_bc_work *work = container_of(w, struct macvlan_bc_work,
+ 						 bc_work);
+ 	struct sk_buff *skb;
+ 	struct sk_buff_head list;
+ 
+ 	__skb_queue_head_init(&list);
+ 
+-	spin_lock_bh(&port->bc_queue.lock);
+-	skb_queue_splice_tail_init(&port->bc_queue, &list);
+-	spin_unlock_bh(&port->bc_queue.lock);
++	spin_lock_bh(&work->bc_queue.lock);
++	skb_queue_splice_tail_init(&work->bc_queue, &list);
++	spin_unlock_bh(&work->bc_queue.lock);
+ 
+ 	while ((skb = __skb_dequeue(&list))) {
++		const struct macvlan_port *port = MACVLAN_SKB_CB(skb)->port;
+ 		const struct macvlan_dev *src = MACVLAN_SKB_CB(skb)->src;
+ 
+ 		rcu_read_lock();
+@@ -345,6 +352,7 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
+ 				      const struct macvlan_dev *src,
+ 				      struct sk_buff *skb)
+ {
++	struct macvlan_bc_work *work;
+ 	struct sk_buff *nskb;
+ 	int err = -ENOMEM;
+ 
+@@ -352,24 +360,30 @@ static void macvlan_broadcast_enqueue(struct macvlan_port *port,
+ 	if (!nskb)
+ 		goto err;
+ 
++	MACVLAN_SKB_CB(nskb)->port = port;
+ 	MACVLAN_SKB_CB(nskb)->src = src;
+ 
+-	spin_lock(&port->bc_queue.lock);
+-	if (skb_queue_len(&port->bc_queue) < MACVLAN_BC_QUEUE_LEN) {
++	work = get_cpu_ptr(&macvlan_bc_work);
++
++	spin_lock(&work->bc_queue.lock);
++	if (skb_queue_len(&work->bc_queue) < MACVLAN_BC_QUEUE_LEN) {
+ 		if (src)
+ 			dev_hold(src->dev);
+-		__skb_queue_tail(&port->bc_queue, nskb);
++		__skb_queue_tail(&work->bc_queue, nskb);
+ 		err = 0;
+ 	}
+-	spin_unlock(&port->bc_queue.lock);
++	spin_unlock(&work->bc_queue.lock);
+ 
+ 	if (err)
+ 		goto free_nskb;
+ 
+-	schedule_work(&port->bc_work);
++	schedule_work_on(smp_processor_id(), &work->bc_work);
++	put_cpu_ptr(work);
++
+ 	return;
+ 
+ free_nskb:
++	put_cpu_ptr(work);
+ 	kfree_skb(nskb);
+ err:
+ 	atomic_long_inc(&skb->dev->rx_dropped);
+@@ -1171,9 +1185,6 @@ static int macvlan_port_create(struct net_device *dev)
+ 	for (i = 0; i < MACVLAN_HASH_SIZE; i++)
+ 		INIT_HLIST_HEAD(&port->vlan_source_hash[i]);
+ 
+-	skb_queue_head_init(&port->bc_queue);
+-	INIT_WORK(&port->bc_work, macvlan_process_broadcast);
+-
+ 	err = netdev_rx_handler_register(dev, macvlan_handle_frame, port);
+ 	if (err)
+ 		kfree(port);
+@@ -1185,24 +1196,16 @@ static int macvlan_port_create(struct net_device *dev)
+ static void macvlan_port_destroy(struct net_device *dev)
+ {
+ 	struct macvlan_port *port = macvlan_port_get_rtnl(dev);
+-	struct sk_buff *skb;
++	int cpu;
+ 
+ 	dev->priv_flags &= ~IFF_MACVLAN_PORT;
+ 	netdev_rx_handler_unregister(dev);
+ 
+ 	/* After this point, no packet can schedule bc_work anymore,
+-	 * but we need to cancel it and purge left skbs if any.
++	 * but we need to flush work.
+ 	 */
+-	cancel_work_sync(&port->bc_work);
+-
+-	while ((skb = __skb_dequeue(&port->bc_queue))) {
+-		const struct macvlan_dev *src = MACVLAN_SKB_CB(skb)->src;
+-
+-		if (src)
+-			dev_put(src->dev);
+-
+-		kfree_skb(skb);
+-	}
++	for_each_possible_cpu(cpu)
++		flush_work(per_cpu_ptr(&macvlan_bc_work.bc_work, cpu));
+ 
+ 	/* If the lower device address has been changed by passthru
+ 	 * macvlan, put it back.
+@@ -1705,7 +1708,15 @@ static struct notifier_block macvlan_notifier_block __read_mostly = {
+ 
+ static int __init macvlan_init_module(void)
+ {
+-	int err;
++	int err, cpu;
++
++	for_each_possible_cpu(cpu) {
++		struct macvlan_bc_work *work;
++
++		work = per_cpu_ptr(&macvlan_bc_work, cpu);
++		skb_queue_head_init(&work->bc_queue);
++		INIT_WORK(&work->bc_work, macvlan_process_broadcast);
++	}
+ 
+ 	register_netdevice_notifier(&macvlan_notifier_block);
+ 
+
