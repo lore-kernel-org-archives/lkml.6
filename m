@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286FEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65DAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD8C420879
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74C6E2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWCHozxt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECXYO49y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730527AbeLSVeL (ORCPT
+        id S1730711AbeLSVeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:34:11 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39594 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeLSVeI (ORCPT
+        Wed, 19 Dec 2018 16:34:14 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44904 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730425AbeLSVeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:34:08 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n18so16144069lfh.6;
-        Wed, 19 Dec 2018 13:34:07 -0800 (PST)
+        Wed, 19 Dec 2018 16:34:10 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so16126729lfe.11;
+        Wed, 19 Dec 2018 13:34:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=zzEjOKOluUUWksw+oXnin6HXgBufUkueAJaYjC1prj4=;
-        b=CWCHozxtXPaF/R34zIBV9kgAuN1gg0PddkrPC5aWleCfLISFSDUnCKYlt1SLfa1Qdf
-         AbBcVlgs7IbX/SocNOSs7TJQFHB47Mb19vHQatLapdRgx2CO4a1kc145mUHuA0wziXHH
-         QzZ8yM8QB4lZEUShcVat6wzXvLInx64kvRel1qGAK2FWOTDIZ18UCt14KqSiQ4ShML9x
-         rAO14BDpxcuPoIQYRNZAzrNtOpMAw7VGp3iOilzQ4tI6o+kS0TZkiyLu0KCkKArZ5UO2
-         dPjUBiO0nyOIiEfyvkENuq9RLsdpeA4AjYW6bWLilccCTnnGGCpqqA/Quth/AjuruGh3
-         tVQg==
+        bh=scWZE0nWnwTd+0FVwhDij4gwRZDyVIgA4bUgU9jm4Qw=;
+        b=ECXYO49yQdsxme7Jgttlgkk1OXF/pQaB16kIMgz5hObs81P2rf53rdtsbq9vuqLTnT
+         jX7gpNLiv7n2ncpWcBw+TV1SPHoghJKVMmyBOzVunlBAW61kLMpZr1w3iqUXJQoeIKEd
+         brnyV5ix2RB7j3HEu34jkYRtexvm/NhrNxTfEAvkekM6qgJOc/YlTSrGbQY/Vl1JRFjx
+         vUOH/DytpLM810A0HmxqVAf2g4zZX/YJL1WbFzWl0Mg2GTodhUeSoi+UJUiQ/AAA4RPC
+         Jbrz4ug0xFFizcuiOeNzDKdpaBPg6nJAXr8izbvHwNWU2BmKHoXdLtFkNMw7Vc0D9izd
+         VsJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=zzEjOKOluUUWksw+oXnin6HXgBufUkueAJaYjC1prj4=;
-        b=VWFcHf4RsMUVltkbNBhNHcW9MnkRscPYXj6bUXP/ExmFzmA98FKiKxb90z4AxWRWGf
-         FjxcFKUd7EV5RVkJaTal0VPQSvz+O5qwaOd71NrlzPSrKn700K7gXqXx0F/+tCAueuMY
-         92B0tClBZ3+yZLtEGbkoOSIZezajWND/9HpTSPm1zzVmdUKa+dlAnsorEzvc9yebuYw4
-         VA7R6Gssn9OhP89TqArC+PT6i6ajJVlB/zFfi4llB3nPhJ6BHRCjSaI+6th8CnIVVQqi
-         45HngDizBY5UehcrSiTeSDHspGGldsn+lnZEjKxvd6X1Cg0shpF9CzIyyJVUdMIYmrqa
-         AyiQ==
-X-Gm-Message-State: AA+aEWaFqcJj2DNVDGRSqPxekW9ZIpmBnpL97kHg3Knns/I28h7FdKRm
-        ObbXfdAZKqDh0/1fKDQrU/dLje6pQ1A=
-X-Google-Smtp-Source: AFSGD/WxAkE6ImfOjvKiqC6CvFghm5iWxm8HjnpQw4GJB94Y1GY0BzHPXMXipEe8534UoMRhUUvpBw==
-X-Received: by 2002:a19:6514:: with SMTP id z20mr6123044lfb.31.1545255246483;
-        Wed, 19 Dec 2018 13:34:06 -0800 (PST)
+        bh=scWZE0nWnwTd+0FVwhDij4gwRZDyVIgA4bUgU9jm4Qw=;
+        b=dq6Fd/u/VGTRLsrw4pbeUsqaEMY2gsbj80DP8HOEwUfUq3fNI5yZbGJS/pQl8oOBQ9
+         CeY0/AQ+k7vTV4rLMgfPQPXvEU7FtN+1Yb44U5wVkMIU/xN1g8QjtoL3QzK6lToHk4MI
+         V43H0SkAiXtax1Il0CNR6+UB2/ZDoLitmxXxtGSKbGzpUlXGJvHpTmo5DwKuGN6USHPZ
+         ZecU2d88eyQ3dIFHfFzMOVLAh7Dqak1wt2/+86TQ3wj5oXXAy+4j6W+o0yNI7nCFXpC5
+         8/hv7He5KyDpqDt1Kt4ZO6MQx8PFLQjoqmmzlbGTaPZFt0Zwl4ANeExYrUt/VIvhkJga
+         2+Mg==
+X-Gm-Message-State: AA+aEWYYhjN/VsZpsQbis81wb5oHY/QxAO8+DAHm9lxOeLdZQY6/SaXC
+        GS9gC7lbeIrlbEid5kUmA2g=
+X-Google-Smtp-Source: AFSGD/UUnkuvBJtrj64z76vEVRzpp/gNTMhY363jcuYcBn4wBrr23AJH+tdTR+9OboCCOslwcSXVpw==
+X-Received: by 2002:a19:2906:: with SMTP id p6mr5307891lfp.17.1545255248175;
+        Wed, 19 Dec 2018 13:34:08 -0800 (PST)
 Received: from localhost.localdomain (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.04
+        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 13:34:05 -0800 (PST)
+        Wed, 19 Dec 2018 13:34:07 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -69,9 +69,9 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/12] x86_64: memset_user()
-Date:   Wed, 19 Dec 2018 23:33:27 +0200
-Message-Id: <20181219213338.26619-2-igor.stoppa@huawei.com>
+Subject: [PATCH 02/12] __wr_after_init: linker section and label
+Date:   Wed, 19 Dec 2018 23:33:28 +0200
+Message-Id: <20181219213338.26619-3-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181219213338.26619-1-igor.stoppa@huawei.com>
 References: <20181219213338.26619-1-igor.stoppa@huawei.com>
@@ -83,11 +83,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create x86_64 specific version of memset for user space, based on
-clear_user().
-This will be used for implementing wr_memset() in the __wr_after_init
-scenario, where write-rare variables have an alternate mapping for
-writing.
+Introduce a section and a label for statically allocated write rare
+data. The label is named "__wr_after_init".
+As the name implies, after the init phase is completed, this section
+will be modifiable only by invoking write rare functions.
+The section must take up a set of full pages.
+
+To activate both section and label, the arch must set CONFIG_ARCH_HAS_PRMEM
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -103,90 +105,133 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/include/asm/uaccess_64.h |  6 ++++
- arch/x86/lib/usercopy_64.c        | 54 +++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ arch/Kconfig                      | 15 +++++++++++++++
+ include/asm-generic/vmlinux.lds.h | 25 +++++++++++++++++++++++++
+ include/linux/cache.h             | 21 +++++++++++++++++++++
+ init/main.c                       |  2 ++
+ 4 files changed, 63 insertions(+)
 
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index a9d637bc301d..f194bfce4866 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -213,4 +213,10 @@ copy_user_handle_tail(char *to, char *from, unsigned len);
- unsigned long
- mcsafe_handle_tail(char *to, char *from, unsigned len);
+diff --git a/arch/Kconfig b/arch/Kconfig
+index e1e540ffa979..8668ffec8098 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -802,6 +802,21 @@ config VMAP_STACK
+ 	  the stack to map directly to the KASAN shadow map using a formula
+ 	  that is incorrect if the stack is in vmalloc space.
  
-+unsigned long __must_check
-+memset_user(void __user *mem, int c, unsigned long len);
++config ARCH_HAS_PRMEM
++	def_bool n
++	help
++	  architecture specific symbol stating that the architecture provides
++	  a back-end function for the write rare operation.
 +
-+unsigned long __must_check
-+__memset_user(void __user *mem, int c, unsigned long len);
++config PRMEM
++	bool "Write protect critical data that doesn't need high write speed."
++	depends on ARCH_HAS_PRMEM
++	default y
++	help
++	  If the architecture supports it, statically allocated data which
++	  has been selected for hardening becomes (mostly) read-only.
++	  The selection happens by labelling the data "__wr_after_init".
 +
- #endif /* _ASM_X86_UACCESS_64_H */
-diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
-index 1bd837cdc4b1..84f8f8a20b30 100644
---- a/arch/x86/lib/usercopy_64.c
-+++ b/arch/x86/lib/usercopy_64.c
-@@ -9,6 +9,60 @@
- #include <linux/uaccess.h>
- #include <linux/highmem.h>
+ config ARCH_OPTIONAL_KERNEL_RWX
+ 	def_bool n
+ 
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 3d7a6a9c2370..ddb1fd608490 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -311,6 +311,30 @@
+ 	KEEP(*(__jump_table))						\
+ 	__stop___jump_table = .;
  
 +/*
-+ * Memset Userspace
++ * Allow architectures to handle wr_after_init data on their
++ * own by defining an empty WR_AFTER_INIT_DATA.
++ * However, it's important that pages containing WR_RARE data do not
++ * hold anything else, to avoid both accidentally unprotecting something
++ * that is supposed to stay read-only all the time and also to protect
++ * something else that is supposed to be writeable all the time.
 + */
-+
-+unsigned long __memset_user(void __user *addr, int c, unsigned long size)
-+{
-+	long __d0;
-+	unsigned long  pattern = 0;
-+	int i;
-+
-+	for (i = 0; i < 8; i++)
-+		pattern = (pattern << 8) | (0xFF & c);
-+	might_fault();
-+	/* no memory constraint: gcc doesn't know about this memory */
-+	stac();
-+	asm volatile(
-+		"       movq %[val], %%rdx\n"
-+		"	testq  %[size8],%[size8]\n"
-+		"	jz     4f\n"
-+		"0:	mov %%rdx,(%[dst])\n"
-+		"	addq   $8,%[dst]\n"
-+		"	decl %%ecx ; jnz   0b\n"
-+		"4:	movq  %[size1],%%rcx\n"
-+		"	testl %%ecx,%%ecx\n"
-+		"	jz     2f\n"
-+		"1:	movb   %%dl,(%[dst])\n"
-+		"	incq   %[dst]\n"
-+		"	decl %%ecx ; jnz  1b\n"
-+		"2:\n"
-+		".section .fixup,\"ax\"\n"
-+		"3:	lea 0(%[size1],%[size8],8),%[size8]\n"
-+		"	jmp 2b\n"
-+		".previous\n"
-+		_ASM_EXTABLE_UA(0b, 3b)
-+		_ASM_EXTABLE_UA(1b, 2b)
-+		: [size8] "=&c"(size), [dst] "=&D" (__d0)
-+		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr),
-+		  [val] "ri"(pattern)
-+		: "rdx");
-+
-+	clac();
-+	return size;
-+}
-+EXPORT_SYMBOL(__memset_user);
-+
-+unsigned long memset_user(void __user *to, int c, unsigned long n)
-+{
-+	if (access_ok(VERIFY_WRITE, to, n))
-+		return __memset_user(to, c, n);
-+	return n;
-+}
-+EXPORT_SYMBOL(memset_user);
-+
++#ifndef WR_AFTER_INIT_DATA
++#ifdef CONFIG_PRMEM
++#define WR_AFTER_INIT_DATA(align)					\
++	. = ALIGN(PAGE_SIZE);						\
++	__start_wr_after_init = .;					\
++	. = ALIGN(align);						\
++	*(.data..wr_after_init)						\
++	. = ALIGN(PAGE_SIZE);						\
++	__end_wr_after_init = .;					\
++	. = ALIGN(align);
++#else
++#define WR_AFTER_INIT_DATA(align)					\
++	. = ALIGN(align);
++#endif
++#endif
 +
  /*
-  * Zero Userspace
-  */
+  * Allow architectures to handle ro_after_init data on their
+  * own by defining an empty RO_AFTER_INIT_DATA.
+@@ -332,6 +356,7 @@
+ 		__start_rodata = .;					\
+ 		*(.rodata) *(.rodata.*)					\
+ 		RO_AFTER_INIT_DATA	/* Read only after init */	\
++		WR_AFTER_INIT_DATA(align) /* wr after init */	\
+ 		KEEP(*(__vermagic))	/* Kernel version magic */	\
+ 		. = ALIGN(8);						\
+ 		__start___tracepoints_ptrs = .;				\
+diff --git a/include/linux/cache.h b/include/linux/cache.h
+index 750621e41d1c..09bd0b9284b6 100644
+--- a/include/linux/cache.h
++++ b/include/linux/cache.h
+@@ -31,6 +31,27 @@
+ #define __ro_after_init __attribute__((__section__(".data..ro_after_init")))
+ #endif
+ 
++/*
++ * __wr_after_init is used to mark objects that cannot be modified
++ * directly after init (i.e. after mark_rodata_ro() has been called).
++ * These objects become effectively read-only, from the perspective of
++ * performing a direct write, like a variable assignment.
++ * However, they can be altered through a dedicated function.
++ * It is intended for those objects which are occasionally modified after
++ * init, however they are modified so seldomly, that the extra cost from
++ * the indirect modification is either negligible or worth paying, for the
++ * sake of the protection gained.
++ */
++#ifndef __wr_after_init
++#ifdef CONFIG_PRMEM
++#define __wr_after_init \
++		__attribute__((__section__(".data..wr_after_init")))
++#else
++#define __wr_after_init
++#endif
++#endif
++
++
+ #ifndef ____cacheline_aligned
+ #define ____cacheline_aligned __attribute__((__aligned__(SMP_CACHE_BYTES)))
+ #endif
+diff --git a/init/main.c b/init/main.c
+index a461150adfb1..a36f2e54f937 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -498,6 +498,7 @@ void __init __weak thread_stack_cache_init(void)
+ void __init __weak mem_encrypt_init(void) { }
+ 
+ void __init __weak poking_init(void) { }
++void __init __weak wr_poking_init(void) { }
+ 
+ bool initcall_debug;
+ core_param(initcall_debug, initcall_debug, bool, 0644);
+@@ -734,6 +735,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	delayacct_init();
+ 
+ 	poking_init();
++	wr_poking_init();
+ 	check_bugs();
+ 
+ 	acpi_subsystem_init();
 -- 
 2.19.1
 
