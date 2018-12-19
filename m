@@ -2,213 +2,158 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A2DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7826C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8922084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 20:57:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HJs4IbLL"
+	by mail.kernel.org (Postfix) with ESMTP id 573E820672
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbeLSU5H (ORCPT
+        id S1728748AbeLSVBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 15:57:07 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:47011 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbeLSU5G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 15:57:06 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so9986323ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 12:57:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DzTS9QYO2r69hs/bAQE3QHKmKsyi7lPyBvuylOVKON4=;
-        b=HJs4IbLLaGIjkZZvJQ/v5+00Y4B3sY2be8h1/ymYiGHJCDaqBOM4r3xMRDfZBLEjL+
-         f1CcWbkMAFSx88pdENVMIXG+rOjMbFpQcNDbtLOFIXmUENTmykauLPzARduAxzopHQJk
-         kta8zwcMCn2DO5K6lkoI3YDnJsbMpuMGdZU8o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DzTS9QYO2r69hs/bAQE3QHKmKsyi7lPyBvuylOVKON4=;
-        b=IEfvpFplYVFXBy5LGpuf7zT6rESZ7Tfu0/n8lMmmbwqxspqGBfCULeo3GZmq7JvMT2
-         5c6lRg3t3luJDWDBTn6VYN/qEE4EEs3q/sSb6ZoYIGnceTFJR8fKqC2sZBJEqL6cHqB4
-         6+zK7MLdidDpkC/MmOemNNrVWy/oGfwDE/D5zm/peei4+dYvNCyIV/BYZ3H4+kqTw5jS
-         zq90A87cgpHFM35fiVWnLua/JSj/wDfcAiKxDV2NUt3H4g2LKlyqD861OL8tEAby1vDl
-         0DqUka5bI8xPEjLdQ+NWashFRYs1imBgYz/DKc3ng+Cj6iPMokWaHEhRMamw2LNpX6hS
-         rHXw==
-X-Gm-Message-State: AA+aEWawnpHG3P6XXC3Y0G81Nlu3mriRUu6rSQBb2CnIXX6hfTLFi+zT
-        INdq14h5qjHFSyyJYOUdQQgx6r7lDqM=
-X-Google-Smtp-Source: AFSGD/XRLmvMlQFZE6ZhBi0SUiuQp79qC668S2wqoQm+hPefEfqeiwnkz6UlSd8gfc4Wqd65idfKgw==
-X-Received: by 2002:a17:902:720c:: with SMTP id ba12mr21735371plb.79.1545253025525;
-        Wed, 19 Dec 2018 12:57:05 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id s9sm26864111pgl.88.2018.12.19.12.57.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 12:57:04 -0800 (PST)
-Date:   Wed, 19 Dec 2018 12:57:04 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/8] drm/msm/dsi: 28nm PHY: Get ref clock from the DT
-Message-ID: <20181219205704.GE109358@google.com>
-References: <20181204224234.62619-1-mka@chromium.org>
- <20181204224234.62619-4-mka@chromium.org>
- <20181212220717.GA16710@centauri.lan>
+        Wed, 19 Dec 2018 16:01:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43296 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725267AbeLSVBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 16:01:09 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 688FFC059B9E;
+        Wed, 19 Dec 2018 21:01:08 +0000 (UTC)
+Received: from [10.36.112.16] (ovpn-112-16.ams2.redhat.com [10.36.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A26DB6B465;
+        Wed, 19 Dec 2018 21:01:01 +0000 (UTC)
+Subject: Re: "x86: Remove Intel MPX" is wrong (Re: linux-next: manual merge of
+ the kvm tree with the tip tree)
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Orr <marcorr@google.com>
+References: <20181219151252.3e27a7f8@canb.auug.org.au>
+ <33146e35-3127-3ded-eb51-24a2a72f10fa@redhat.com>
+ <e88ea968-f593-ce3a-b152-93f9248446d8@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ mQHhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAbQj
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT6JAg0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSS5AQ0EVEJxcwEIAK+nUrsUz3aP2aBjIrX3a1+C+39R
+ nctpNIPcJjFJ/8WafRiwcEuLjbvJ/4kyM6K7pWUIQftl1P8Woxwb5nqL7zEFHh5I+hKS3haO
+ 5pgco//V0tWBGMKinjqntpd4U4Dl299dMBZ4rRbPvmI8rr63sCENxTnHhTECyHdGFpqSzWzy
+ 97rH68uqMpxbUeggVwYkYihZNd8xt1+lf7GWYNEO/QV8ar/qbRPG6PEfiPPHQd/sldGYavmd
+ //o6TQLSJsvJyJDt7KxulnNT8Q2X/OdEuVQsRT5glLaSAeVAABcLAEnNgmCIGkX7TnQF8a6w
+ gHGrZIR9ZCoKvDxAr7RP6mPeS9sAEQEAAYkDEgQYAQIACQUCVEJxcwIbAgEpCRB+FRAMzTZp
+ scBdIAQZAQIABgUCVEJxcwAKCRC/+9JfeMeug/SlCACl7QjRnwHo/VzENWD9G2VpUOd9eRnS
+ DZGQmPo6Mp3Wy8vL7snGFBfRseT9BevXBSkxvtOnUUV2YbyLmolAODqUGzUI8ViF339poOYN
+ i6Ffek0E19IMQ5+CilqJJ2d5ZvRfaq70LA/Ly9jmIwwX4auvXrWl99/2wCkqnWZI+PAepkcX
+ JRD4KY2fsvRi64/aoQmcxTiyyR7q3/52Sqd4EdMfj0niYJV0Xb9nt8G57Dp9v3Ox5JeWZKXS
+ krFqy1qyEIypIrqcMbtXM7LSmiQ8aJRM4ZHYbvgjChJKR4PsKNQZQlMWGUJO4nVFSkrixc9R
+ Z49uIqQK3b3ENB1QkcdMg9cxsB0Onih8zR+Wp1uDZXnz1ekto+EivLQLqvTjCCwLxxJafwKI
+ bqhQ+hGR9jF34EFur5eWt9jJGloEPVv0GgQflQaE+rRGe+3f5ZDgRe5Y/EJVNhBhKcafcbP8
+ MzmLRh3UDnYDwaeguYmxuSlMdjFL96YfhRBXs8tUw6SO9jtCgBvoOIBDCxxAJjShY4KIvEpK
+ b2hSNr8KxzelKKlSXMtB1bbHbQxiQcerAipYiChUHq1raFc3V0eOyCXK205rLtknJHhM5pfG
+ 6taABGAMvJgm/MrVILIxvBuERj1FRgcgoXtiBmLEJSb7akcrRlqe3MoPTntSTNvNzAJmfWhd
+ SvP0G1WDLolqvX0OtKMppI91AWVu72f1kolJg43wbaKpRJg1GMkKEI3H+jrrlTBrNl/8e20m
+ TElPRDKzPiowmXeZqFSS1A6Azv0TJoo9as+lWF+P4zCXt40+Zhh5hdHO38EV7vFAVG3iuay6
+ 7ToF8Uy7tgc3mdH98WQSmHcn/H5PFYk3xTP3KHB7b0FZPdFPQXBZb9+tJeZBi9gMqcjMch+Y
+ R8dmTcQRQX14bm5nXlBF7VpSOPZMR392LY7wzAvRdhz7aeIUkdO7VelaspFk2nT7wOj1Y6uL
+ nRxQlLkBDQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAemVv9Yfn2PbDIbxXqLff7o
+ yVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CRwkMHtOmzQiQ2tSLjKh/c
+ HeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuffAb589AJW50kkQK9VD/9
+ QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v028TVAaYbIhxvDY0hUQE4r
+ 8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQzCYHXAzwnGi8WU9iuE1P
+ 0wARAQABiQHzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EOoJy0uZggJm7gZKeJ7iUp
+ eX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBTuiJ0bfo55SWsUNN+c9hh
+ IX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHnplOzCXHvmdlW0i6SrMsB
+ Dl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4HYv/7ZnASVkR5EERFF3+
+ 6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz876SvcOb5SL5SKg9/rCB
+ ufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvriy9enJ8kxJwhC0ECbSKF
+ Y+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y1lJAPPSIqZKvHzGShdh8
+ DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
+ S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <b492238c-6916-1d9b-f9b1-12a43b9f3ffc@redhat.com>
+Date:   Wed, 19 Dec 2018 22:00:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181212220717.GA16710@centauri.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e88ea968-f593-ce3a-b152-93f9248446d8@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 19 Dec 2018 21:01:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
+On 19/12/18 21:54, Dave Hansen wrote:
+> I should have called this out in the changelog, but I removed *all* the
+> support because I assumed that guests don't need MPX because no other OS
+> supported it that I know of.
 
-On Wed, Dec 12, 2018 at 11:07:17PM +0100, Niklas Cassel wrote:
-> On Tue, Dec 04, 2018 at 02:42:29PM -0800, Matthias Kaehlcke wrote:
-> > Get the ref clock of the PHY from the device tree instead of
-> > hardcoding its name and rate.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > Changes in v4:
-> > - always use parent rate in dsi_pll_28nm_clk_set_rate() and
-> >    dsi_pll_28nm_clk_recalc_rate()
-> > - pass name of VCO ref clock to pll_28nm_register() instead of
-> >   storing it in a struct field
-> > - updated commit message
-> > 
-> > Changes in v3:
-> > - use default name and rate if the ref clock is not specified
-> >   in the DT
-> > - store vco_ref_clk_name instead of vco_ref_clk
-> > - dsi_pll_28nm_clk_set_rate: changed data type of ref_clk_rate to
-> >   unsigned long
-> > - fixed check for EPROBE_DEFER
-> > - renamed VCO_REF_CLK_RATE to VCO_REF_CLK_DEFAULT_RATE
-> > 
-> > Changes in v2:
-> > - patch added to the series
-> > ---
-> >  drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c | 36 +++++++++++++++-------
-> >  1 file changed, 25 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-> > index 26e3a01a99c2b..7777340b03e8d 100644
-> > --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-> > +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c
-> > @@ -40,7 +40,6 @@
-> >  
-> >  #define NUM_PROVIDED_CLKS		2
-> >  
-> > -#define VCO_REF_CLK_RATE		19200000
-> >  #define VCO_MIN_RATE			350000000
-> >  #define VCO_MAX_RATE			750000000
-> >  
-> > @@ -166,17 +165,17 @@ static int dsi_pll_28nm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  	pll_write(base + REG_DSI_28nm_PHY_PLL_LPFC1_CFG, 0x70);
-> >  	pll_write(base + REG_DSI_28nm_PHY_PLL_LPFC2_CFG, 0x15);
-> >  
-> > -	rem = rate % VCO_REF_CLK_RATE;
-> > +	rem = rate % parent_rate;
-> >  	if (rem) {
-> >  		refclk_cfg = DSI_28nm_PHY_PLL_REFCLK_CFG_DBLR;
-> >  		frac_n_mode = 1;
-> > -		div_fbx1000 = rate / (VCO_REF_CLK_RATE / 500);
-> > -		gen_vco_clk = div_fbx1000 * (VCO_REF_CLK_RATE / 500);
-> > +		div_fbx1000 = rate / (parent_rate / 500);
-> > +		gen_vco_clk = div_fbx1000 * (parent_rate / 500);
-> >  	} else {
-> >  		refclk_cfg = 0x0;
-> >  		frac_n_mode = 0;
-> > -		div_fbx1000 = rate / (VCO_REF_CLK_RATE / 1000);
-> > -		gen_vco_clk = div_fbx1000 * (VCO_REF_CLK_RATE / 1000);
-> > +		div_fbx1000 = rate / (parent_rate / 1000);
-> > +		gen_vco_clk = div_fbx1000 * (parent_rate / 1000);
-> >  	}
-> >  
-> >  	DBG("refclk_cfg = %d", refclk_cfg);
-> > @@ -265,7 +264,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
-> >  	void __iomem *base = pll_28nm->mmio;
-> >  	u32 sdm0, doubler, sdm_byp_div;
-> >  	u32 sdm_dc_off, sdm_freq_seed, sdm2, sdm3;
-> > -	u32 ref_clk = VCO_REF_CLK_RATE;
-> > +	u32 ref_clk = parent_rate;
-> >  	unsigned long vco_rate;
-> >  
-> >  	VERB("parent_rate=%lu", parent_rate);
-> > @@ -273,7 +272,7 @@ static unsigned long dsi_pll_28nm_clk_recalc_rate(struct clk_hw *hw,
-> >  	/* Check to see if the ref clk doubler is enabled */
-> >  	doubler = pll_read(base + REG_DSI_28nm_PHY_PLL_REFCLK_CFG) &
-> >  			DSI_28nm_PHY_PLL_REFCLK_CFG_DBLR;
-> > -	ref_clk += (doubler * VCO_REF_CLK_RATE);
-> > +	ref_clk += (doubler * ref_clk);
-> >  
-> >  	/* see if it is integer mode or sdm mode */
-> >  	sdm0 = pll_read(base + REG_DSI_28nm_PHY_PLL_SDM_CFG0);
-> > @@ -514,11 +513,12 @@ static void dsi_pll_28nm_destroy(struct msm_dsi_pll *pll)
-> >  	pll_28nm->clk_data.clk_num = 0;
-> >  }
-> >  
-> > -static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm)
-> > +static int pll_28nm_register(struct dsi_pll_28nm *pll_28nm,
-> > +			     const char *ref_clk_name)
-> >  {
-> >  	char clk_name[32], parent1[32], parent2[32], vco_name[32];
-> >  	struct clk_init_data vco_init = {
-> > -		.parent_names = (const char *[]){ "xo" },
-> > +		.parent_names = &ref_clk_name,
-> >  		.num_parents = 1,
-> >  		.name = vco_name,
-> >  		.flags = CLK_IGNORE_UNUSED,
-> > @@ -593,6 +593,8 @@ struct msm_dsi_pll *msm_dsi_pll_28nm_init(struct platform_device *pdev,
-> >  {
-> >  	struct dsi_pll_28nm *pll_28nm;
-> >  	struct msm_dsi_pll *pll;
-> > +	struct clk *vco_ref_clk;
-> > +	const char *vco_ref_clk_name;
-> >  	int ret;
-> >  
-> >  	if (!pdev)
-> > @@ -605,6 +607,18 @@ struct msm_dsi_pll *msm_dsi_pll_28nm_init(struct platform_device *pdev,
-> >  	pll_28nm->pdev = pdev;
-> >  	pll_28nm->id = id;
-> >  
-> > +	vco_ref_clk = devm_clk_get(&pdev->dev, "ref");
-> > +	if (!IS_ERR(vco_ref_clk)) {
-> > +		vco_ref_clk_name = __clk_get_name(vco_ref_clk);
-> > +	} else {
-> > +		ret = PTR_ERR(vco_ref_clk);
-> > +		if (ret == -EPROBE_DEFER)
-> > +			ERR_PTR(ret);
+Well, as long as you could have code that sets the MPX bits in XCR0, KVM
+will have to support it.  My employer happens to sell one such kernel
+and will probably do so a little less than ten years from now. :)
+
+>> A simple fix would be to leave the XSAVE state enabled in the kernel
+>> unconditionally even if all the other gunk is removed; alternatively
+>> I can also try to save/restore it only for the guest FPU.
 > 
-> It looks like you are missing the return keyword here.
+> We could do this in two phases: remove the APIs now, and then remove the
+> XSAVE enabling later (4.22 or whenever).
+> 
+> But, on the other hand, if we want to remove XSAVE support for MPX,
+> we'll have to break live migration at _some_ point, so why not just do
+> it now?
 
-Indeed, thanks for pointing that out!
+In fact I'm not sure we want to ever remove XSAVE support for MPX in KVM
+as long as the processor supports it.  That is, when KVM does
+xsave/xrstor of the guest_fpu, we probably want to include MPX in there.
+ That can be contained within KVM, Linux need not enable it in XCR0, but
+there is one ugly thing: the xsavec offsets would be different between
+guest_fpu and other FPUs.  Since KVM is not using supervisor states,
+perhaps it's better if that part of the KVM code is completely detached
+from the kernel FPU code and uses xsaveopt/xrstoropt instead.
 
-Cheers
+So perhaps the plan should be:
 
-Matthias
+1) remove MPX APIs now
+
+2) then stop using kernel xsave code for KVM's guest_fpu
+
+3) then stop enabling MPX XSAVE in core kernel.
+
+Paolo
+
+>> If this patch can be bumped to 4.22, I would prefer that because it
+>> would save me and Linus some merge window headaches.  Considering that
+>> the patch lacked my Cc or Ack, perhaps it's the right thing to do.
+> 
+> That's fine with me as well.
