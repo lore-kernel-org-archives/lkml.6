@@ -2,217 +2,303 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9711EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C45F5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D4E0217D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79612217D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:37:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="QCKkVONZ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7nUbK72"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbeLSOhR (ORCPT
+        id S1729614AbeLSOhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:37:17 -0500
-Received: from mail-ed1-f41.google.com ([209.85.208.41]:38025 "EHLO
-        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728013AbeLSOhR (ORCPT
+        Wed, 19 Dec 2018 09:37:34 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42151 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729459AbeLSOhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:37:17 -0500
-Received: by mail-ed1-f41.google.com with SMTP id h50so17160527ede.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:37:15 -0800 (PST)
+        Wed, 19 Dec 2018 09:37:34 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q18so19753494wrx.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 06:37:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+HGyy7sEqCk0Uj5XLEfvCRuMzG/iGo4xggsAVeFTwGg=;
-        b=QCKkVONZI63RezzrkRAPJ9QZUSJGc6oUwg41vGaU8OGNW8YeQrgF8FdD5s+7a+ajRs
-         TEj80eFXVkL+9UnNo+Py/741kmCJkupuXlFVvunOWrPt5LiWZko+pdNhnpo5o5To0vtb
-         7mAcrU3VQaajslxBdqBd8V9/VjzcY6Or/7Ro+fzwk+M3VYsrFsVQgHNENf/jyWgih46Y
-         +3/BOh69cO08dayYD1VIX2MuAAfLnoPuODsqtndIb1dC0np93v+HsXKnAlM2mmDzznqB
-         W1oQAt5gVvcx+aAj683Ac4yt3udsAyyT1jtD9ed3yNNnpivJoXuaXtse7y7M7SHOSZhi
-         e0JQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xGa2ICyEKMipdlDD0WrN11F2swN1FjgUP7+OQw6214E=;
+        b=F7nUbK72pxExytCs9g8c4/3cd0hk4vuYfwUK5sCSZwfP/XjiMktS5fVjVadv9aJA2t
+         qNk8SVYNG1m0VuAZ8tnepXOVaVLzWY54A9+3IQHOcO1zxWLkJUp03a2zx5ZcRYjB6Ypq
+         keBo5swZBl7znMLOeyiQXFxMAdbuTP3WN6hyU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+HGyy7sEqCk0Uj5XLEfvCRuMzG/iGo4xggsAVeFTwGg=;
-        b=TP7U79g0QnrY8+uEOUdAyyqhXyHGMi9YXkcObsKrW1npGGuvqlYQ6fDK6XCOzmU3Z1
-         l+fiwG2HEwC5oZB0adftWkUAUXrNY++8iam3/0w2w1Do3dxJlAjmge/Lo3WlQ8y9PY3s
-         6TRGSX9DZvelpEf+1cMVjYr2444qFjM6Ma6u3PcLqoDVDMPMmOadMjjAIoTuKNZjvGwU
-         6Te8Gdw0eVUnGgkhhphsnDc72JFES7ssJybDpDSbpn8Nd4+1ZaMb3rG07QFJ32rMUHVs
-         nLqmoY1rEqNPADOKytiSUr4he6FkfX1Ppzl2LZz7xWvh8INhDNN3b9Fv1vZPvxxWM90X
-         28dA==
-X-Gm-Message-State: AA+aEWYCyKsx9Skiaj79YntnRjiWm4nHQiOgHFzfLsHtan3qJPEXAxzb
-        npsq6ytc6JsIdidwGCf2Is1MrQBrR2h38AXpbKNRcQ==
-X-Google-Smtp-Source: AFSGD/XFi/1TDORrbTuyvpwzJQyneIn2h2+kjXAJOXxbFCDaoxiRuTgIc/NlO05r9NLSP7WOJP8ZJMjIo0yG4mcChSA=
-X-Received: by 2002:aa7:d597:: with SMTP id r23mr20471532edq.51.1545230234378;
- Wed, 19 Dec 2018 06:37:14 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xGa2ICyEKMipdlDD0WrN11F2swN1FjgUP7+OQw6214E=;
+        b=mILNWu7ddARnz5aHzfhh9jGGYlgIeipFBZZYN3p3meqangx3H1x4UWfge0IhZ3MpgA
+         N084APiT8987W+jdnAZdCQeXZxoAl2Sr9waF0MphvaaFnfGvuKrkc9hRFsrnLwq2uTGA
+         7TLnnQKkvmXRZnmUAjfcbEPK4hLTmdPOUc6p7SDZrFajjJxbh7kzHk3x3/ZVzfLRoxSg
+         C3TC9wGR6wcYvNG56T11qiaUtiRzM3XfJ1CV4hCKFsYaddPXUdjB68KtkwwWgzZj3m+O
+         xBvPo2crdBZvnF6cy6bNrtH0csJkNfYMBqJFhL6mmJAUWdHhTPjDLVsPJWI+lXqUUYWb
+         bVzQ==
+X-Gm-Message-State: AA+aEWa6lbtH6upDQhPIN5DBHzulQnXhKgrwj8vTPzi3QBCI/zWdn72k
+        1RTawUgZFunInG8Lw8LrBdAL7w==
+X-Google-Smtp-Source: AFSGD/WfdUsK/gKVRPdbxpQhh2R49SedFf3/xaPjTgdwfyup2gFl+WirZYOrpNjbxPXzsSOr+sq+zg==
+X-Received: by 2002:adf:dcd0:: with SMTP id x16mr18453899wrm.143.1545230251406;
+        Wed, 19 Dec 2018 06:37:31 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id h16sm12351949wrb.62.2018.12.19.06.37.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 06:37:30 -0800 (PST)
+Subject: Re: [PATCH v3 2/3] drm/msm/dpu: Integrate interconnect API in MDSS
+To:     Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        seanpaul@chromium.org, sean@poorly.run
+References: <20181122090653.3523-1-skolluku@codeaurora.org>
+ <20181122090653.3523-3-skolluku@codeaurora.org>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <bbe80ea8-52ef-3942-9691-eaad19eb996a@linaro.org>
+Date:   Wed, 19 Dec 2018 16:37:27 +0200
 MIME-Version: 1.0
-References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
- <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
- <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com> <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
- <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com> <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
- <4d2084e5-abec-b046-a304-8ca7db4c269f@gmail.com>
-In-Reply-To: <4d2084e5-abec-b046-a304-8ca7db4c269f@gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Wed, 19 Dec 2018 22:37:00 +0800
-Message-ID: <CAB4CAwfD2iFN4j8-r_kEgShPxQ98U9gdntWk+3Y3aRCOJhj5mw@mail.gmail.com>
-Subject: Re: A weird problem of Realtek r8168 after resume from S3
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
-        netdev@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181122090653.3523-3-skolluku@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 2:22 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->
-> On 18.12.2018 14:25, Chris Chiu wrote:
-> > On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> >>
-> >> On 17.12.2018 14:25, Chris Chiu wrote:
-> >>> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> >>>>
-> >>>> On 14.12.2018 04:33, Chris Chiu wrote:
-> >>>>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
-> >>>>>>
-> >>>>>> Hi,
-> >>>>>>     We got an acer laptop which has a problem with ethernet networking after
-> >>>>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
-> >>>>>> follows.
-> >>>>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
-> >>>>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
-> >>>>>>
-> >>>> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
-> >>>>
-> >>> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
-> >>> (uninitialized): mac_version = 0x2b
-> >>> [   22.365580] libphy: r8169: probed
-> >>> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
-> >>> XID 5c800800, IRQ 38
-> >>> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
-> >>> bytes, tx checksumming: ko]
-> >>>
-> >> Thanks for the info.
-> >>
-> >>>>>>     The problem is the ethernet is not accessible after resume. Pinging via
-> >>>>>> ethernet always shows the response `Destination Host Unreachable`. However,
-> >>>>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
-> >>>>>> interface, the networking is back to alive. But it's dead again after
-> >>>>>> I stop tcpdump.
-> >>>>>> One more thing, if I ping the problematic machine from others, it achieves the
-> >>>>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
-> >>>>>>
-> >>>> You could compare the register dumps (ethtool -d) before and after S3 sleep
-> >>>> to find out whether there's a difference.
-> >>>>
-> >>>
-> >>> Actually, I just found I lead the wrong direction. The S3 suspend does
-> >>> help to reproduce,
-> >>> but it's not necessary. All I need to do is ping around 5 mins and the
-> >>> network connection
-> >>> fails.  And I also find one thing interesting, disabling the  MSI-X
-> >>> interrupt like commit
-> >>> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
-> >>> Although I don't
-> >>> understand the root cause. Anything I can do to help?
-> >>>
-> >> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
-> >> the issue, but also pinging the machine from outside brings back the network.
-> >> Both actions affect totally different corners.
-> >>
-> >> The commit and related issue you mention was a workaround in the driver,
-> >> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
-> >> in the PCI core. After this was fixed we removed the workaround again.
-> >> This shouldn't be related to your issue.
-> >>
-> >> Hard to say for now is whether the issue is:
-> >> - a driver issue
-> >> - a hardware issue in the RTL8411
-> >> - an issue with the chipset on your mainboard
-> >>
-> >> According to your description it doesn't take a special scenario to trigger
-> >> the issue, so most likely also other users of Acer notebooks with RTL8411
-> >> should be affected (after briefly checking this should be at least Aspire
-> >> F15, V15, V7). Therefore I wonder why there aren't more reports.
-> >>
-> >> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
-> >> So you could test this revision and the one before.
-> >>
-> >> Eventually, if the issue really should be caused by a side effect of using
-> >> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
-> >> in general or just for RTL8411 and a certain subsystem id.
-> >>
-> >
-> > I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
-> > interrupt handling"),
-> > the problem still there. Then I revert to the previous revision, the
-> > problem goes away.
-> > So I think it's pretty much the side effect of MSI-X. However, as you
-> > mentioned that
-> > you didn't hit this problem, I'll ask the vendor to verify if this
-> > problem also happens on
-> > other machines with the same chip. Then we can determine to disable for specific
-> > mac version or just a certain subsystem id.
-> >
-> Thanks a lot for testing. OK, I have one more idea.
-> AFAICS RTL8411 also has an integrated card reader controller which is driven
-> by module rtsx_pci. Maybe if both components (card reader controller + ethernet)
-> use different interrupt types, RTL8411 can't properly handle this.
-> In case module rtsx_pci is loaded on your system, can you check whether not
-> loading it (e.g. by blacklisting) or removing it makes a difference?
->
+Hi Sravanthi,
 
-I boot my kernel with rtsx_pci_ms/rtsx_pci on blacklist, but it
-doesn't change anything.
+Thanks for the patch!
 
-> Can you provide the "lspci -v" output for the card reader part of RTL8411?
+On 11/22/18 11:06, Sravanthi Kollukuduru wrote:
+> The interconnect framework is designed to provide a
+> standard kernel interface to control the settings of
+> the interconnects on a SoC.
+> 
+> The interconnect API uses a consumer/provider-based model,
+> where the providers are the interconnect buses and the
+> consumers could be various drivers.
+> 
+> MDSS is one of the interconnect consumers which uses the
+> interconnect APIs to get the path between endpoints and
+> set its bandwidth/latency/QoS requirements for the given
+> interconnected path.
+> 
+> Changes in v2:
+> 	- Remove error log and unnecessary check (Jordan Crouse)
+> 
+> Changes in v3:
+> 	- Code clean involving variable name change, removal
+> 	  of extra paranthesis and variables (Matthias Kaehlcke)
+> 
+> Signed-off-by: Sravanthi Kollukuduru <skolluku@codeaurora.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 49 ++++++++++++++++++++++++++++----
+>  1 file changed, 44 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> index 38576f8b90b6..1387a6b1b39e 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
+> @@ -4,10 +4,12 @@
+>   */
+>  
+>  #include "dpu_kms.h"
+> +#include <linux/interconnect.h>
+>  
+>  #define to_dpu_mdss(x) container_of(x, struct dpu_mdss, base)
+>  
+> -#define HW_INTR_STATUS			0x0010
+> +#define HW_INTR_STATUS	0x0010
 
-02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd.
-RTL8411B PCI Express Card Reader (rev 01)
-        Subsystem: Acer Incorporated [ALI] RTL8411B PCI Express Card Reader
-        Flags: bus master, fast devsel, latency 0, IRQ 34
-        Memory at f0b05000 (32-bit, non-prefetchable) [size=4K]
-        Expansion ROM at f0b10000 [disabled] [size=64K]
-        Capabilities: [40] Power Management version 3
-        Capabilities: [50] MSI: Enable+ Count=1/1 Maskable- 64bit+
-        Capabilities: [70] Express Endpoint, MSI 00
-        Capabilities: [b0] MSI-X: Enable- Count=1 Masked-
-        Capabilities: [d0] Vital Product Data
-        Capabilities: [100] Advanced Error Reporting
-        Capabilities: [140] Virtual Channel
-        Capabilities: [160] Device Serial Number 00-00-00-00-00-00-00-00
-        Capabilities: [170] Latency Tolerance Reporting
-        Capabilities: [178] L1 PM Substates
-        Kernel driver in use: rtsx_pci
-        Kernel modules: rtsx_pci
+Unrelated change?
 
->
-> >>>>>>     I tried the latest 4.20 rc version but the problem still there. I
-> >>>>>> also tried some
-> >>>>>> hw_reset or init thing in the resume path but no effect. Any
-> >>>>>> suggestion for this?
-> >>>>>> Thanks
-> >>>>>>
-> >>>> Did previous kernel versions work? If it's a regression, a bisect would be
-> >>>> appreciated, because with the chip versions I've got I can't reproduce the issue.
-> >>>>
-> >>>>>> Chris
-> >>>>>
-> >>>>> Gentle ping. Any additional information required?
-> >>>>>
-> >>>>> Chris
-> >>>>>
-> >>>> Heiner
-> >>>
-> >>
-> >
->
+> +#define MAX_BW		6800000
+
+In what units? Maybe add a comment.
+
+>  
+>  struct dpu_mdss {
+>  	struct msm_mdss base;
+> @@ -16,8 +18,30 @@ struct dpu_mdss {
+>  	u32 hwversion;
+>  	struct dss_module_power mp;
+>  	struct dpu_irq_controller irq_controller;
+> +	struct icc_path *path[2];
+> +	u32 num_paths;
+>  };
+>  
+> +static int dpu_mdss_parse_data_bus_icc_path(
+> +		struct drm_device *dev, struct dpu_mdss *dpu_mdss)
+
+Nit: Lines should not end with a '('. Please move the first argument up:
+
+static int dpu_mdss_parse_data_bus_icc_path(struct drm_device *dev,
+					    struct dpu_mdss *dpu_mdss)
+
+> +{
+> +	struct icc_path *path0 = of_icc_get(dev->dev, "port0");
+> +	struct icc_path *path1 = of_icc_get(dev->dev, "port1");
+
+In DT it's preferred that the name contains both the source and
+destination, so maybe of_icc_get(dev->dev, "mdp0-mem") etc.
+
+> +
+> +	if (IS_ERR(path0))
+> +		return PTR_ERR(path0);
+> +
+> +	dpu_mdss->path[0] = path0;
+> +	dpu_mdss->num_paths = 1;
+> +
+> +	if (!IS_ERR(path1)) {
+> +		dpu_mdss->path[1] = path1;
+> +		dpu_mdss->num_paths++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static irqreturn_t dpu_mdss_irq(int irq, void *arg)
+>  {
+>  	struct dpu_mdss *dpu_mdss = arg;
+> @@ -127,7 +151,11 @@ static int dpu_mdss_enable(struct msm_mdss *mdss)
+>  {
+>  	struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
+>  	struct dss_module_power *mp = &dpu_mdss->mp;
+> -	int ret;
+> +	int ret, i;
+> +	u64 avg_bw = dpu_mdss->num_paths ? MAX_BW/dpu_mdss->num_paths : 0;
+
+Nit: Please add spaces around "/"
+
+> +
+> +	for (i = 0; i < dpu_mdss->num_paths; i++)
+> +		icc_set(dpu_mdss->path[i], avg_bw, MAX_BW);
+
+Now we have macros in the header, that can be used to specify the
+bandwidth units. So please use kBps_to_icc or MBps_to_icc etc. If we
+decide in the future to change the internal units, we will be able to do
+it without touching the users.
+
+Thanks,
+Georgi
+
+>  
+>  	ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, true);
+>  	if (ret)
+> @@ -140,12 +168,15 @@ static int dpu_mdss_disable(struct msm_mdss *mdss)
+>  {
+>  	struct dpu_mdss *dpu_mdss = to_dpu_mdss(mdss);
+>  	struct dss_module_power *mp = &dpu_mdss->mp;
+> -	int ret;
+> +	int ret, i;
+>  
+>  	ret = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
+>  	if (ret)
+>  		DPU_ERROR("clock disable failed, ret:%d\n", ret);
+>  
+> +	for (i = 0; i < dpu_mdss->num_paths; i++)
+> +		icc_set(dpu_mdss->path[i], 0, 0);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -155,6 +186,7 @@ static void dpu_mdss_destroy(struct drm_device *dev)
+>  	struct msm_drm_private *priv = dev->dev_private;
+>  	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
+>  	struct dss_module_power *mp = &dpu_mdss->mp;
+> +	int i;
+>  
+>  	pm_runtime_disable(dev->dev);
+>  	_dpu_mdss_irq_domain_fini(dpu_mdss);
+> @@ -162,6 +194,9 @@ static void dpu_mdss_destroy(struct drm_device *dev)
+>  	msm_dss_put_clk(mp->clk_config, mp->num_clk);
+>  	devm_kfree(&pdev->dev, mp->clk_config);
+>  
+> +	for (i = 0; i < dpu_mdss->num_paths; i++)
+> +		icc_put(dpu_mdss->path[i]);
+> +
+>  	if (dpu_mdss->mmio)
+>  		devm_iounmap(&pdev->dev, dpu_mdss->mmio);
+>  	dpu_mdss->mmio = NULL;
+> @@ -200,6 +235,10 @@ int dpu_mdss_init(struct drm_device *dev)
+>  	}
+>  	dpu_mdss->mmio_len = resource_size(res);
+>  
+> +	ret = dpu_mdss_parse_data_bus_icc_path(dev, dpu_mdss);
+> +	if (ret)
+> +		return ret;
+> +
+>  	mp = &dpu_mdss->mp;
+>  	ret = msm_dss_parse_clock(pdev, mp);
+>  	if (ret) {
+> @@ -221,14 +260,14 @@ int dpu_mdss_init(struct drm_device *dev)
+>  		goto irq_error;
+>  	}
+>  
+> +	priv->mdss = &dpu_mdss->base;
+> +
+>  	pm_runtime_enable(dev->dev);
+>  
+>  	pm_runtime_get_sync(dev->dev);
+>  	dpu_mdss->hwversion = readl_relaxed(dpu_mdss->mmio);
+>  	pm_runtime_put_sync(dev->dev);
+>  
+> -	priv->mdss = &dpu_mdss->base;
+> -
+>  	return ret;
+>  
+>  irq_error:
+> 
