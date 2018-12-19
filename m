@@ -2,205 +2,127 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B5EC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C1AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AC4217D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAAB3217D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545235105;
+	bh=WFjmUESCuYzgG5fu+T0BncSymYl5O7PV1e0RRELZmgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mYQqtKO1XKoiGIC1O2aWpHjDe0z9uMsVk+PtFC6FHhjdVqT0fSQbDHW0TzD1dBiSU
+	 I7Myaey7jEZE8hJmSi0Jse4cctMJltUXUMbARdm4ta6sevvTCl227AlWPeSSzsu8wt
+	 vJUQmAfkTlMvcllYIXEoDM2R5GJ94jzoQtJIRgyE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbeLSPz5 (ORCPT
+        id S1729184AbeLSP6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:55:57 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16158 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727799AbeLSPz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:55:56 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1BDAA1F0FA7C9;
-        Wed, 19 Dec 2018 23:55:51 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 19 Dec 2018 23:55:45 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, Luo Jiaxing <luojiaxing@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 5/8] scsi: hisi_sas: Add debugfs for port registers
-Date:   Wed, 19 Dec 2018 23:56:43 +0800
-Message-ID: <1545235006-151716-6-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1545235006-151716-1-git-send-email-john.garry@huawei.com>
-References: <1545235006-151716-1-git-send-email-john.garry@huawei.com>
+        Wed, 19 Dec 2018 10:58:24 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33667 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbeLSP6V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:58:21 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so2004259oib.0;
+        Wed, 19 Dec 2018 07:58:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CZ6helZFIbNZWd2xpX2RWEIGe/GgpkbWYhxxRVvlPGY=;
+        b=ds3aEwrJvLvJSQwAviAWVEMJ+EL8DpRWFRjkJmypflAyMB05Hf5r/Il7804f7uK4QW
+         USHQqSfMCZFhF1fMsZNzGAkU16kco+7PMpJ3sGmZwiJIqXXE9qQ/vSvLuU9IelSzJE32
+         KPIFfokkCPFneX/4m7zSviNEiCVNbn//Pj5d/yb8+ocEmejLXBCLu2L9i6ssYESLWW6F
+         oH6MMtv1uRGBg9A95SLnP4slo7j85A/l9VTv42awQ+svp8H+D0HhIeEcI8SHvKYo2BNL
+         P3jnTpEK9ACy+7HsMD3JMqbzUcG79liEDuZ4prhvrZEbgi+O408KlBk5wYZJIhIQLlKC
+         00jg==
+X-Gm-Message-State: AA+aEWZHFR8lUbIh2C7lqDXrxMOFg/bqcEeDEJHlDcLEmgF3vVcevA7u
+        judrG/76aqhwD5uYT2T4bdlb2yc=
+X-Google-Smtp-Source: AFSGD/W9GXq5kAsnWs/Xnz7z663VsKaUGUVw1RXyP8zm6/ltLOF3fLAu87v6trOzW/o02sT4ob4rFQ==
+X-Received: by 2002:aca:f244:: with SMTP id q65mr1333524oih.50.1545235100970;
+        Wed, 19 Dec 2018 07:58:20 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 75sm8770634otc.67.2018.12.19.07.58.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 07:58:20 -0800 (PST)
+Date:   Wed, 19 Dec 2018 09:58:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Subject: Re: [PATCH 5/5] arm64: dts: allwinner: a64-amarula-relic: Add OV5640
+ camera node
+Message-ID: <20181219155819.GA22708@bogus>
+References: <20181203100747.16442-1-jagan@amarulasolutions.com>
+ <20181203100747.16442-6-jagan@amarulasolutions.com>
+ <CAGb2v6441wV7PM6q=vF2cpJtP9BGdYjQQqNU54rqELNJ5YcmdQ@mail.gmail.com>
+ <CAMty3ZBBcum5CF1xQ_ePNUkcMoBPXngbiwf2V7hWHrH7-k3xuQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBBcum5CF1xQ_ePNUkcMoBPXngbiwf2V7hWHrH7-k3xuQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luo Jiaxing <luojiaxing@huawei.com>
+On Thu, Dec 06, 2018 at 04:43:33PM +0530, Jagan Teki wrote:
+> On Mon, Dec 3, 2018 at 3:55 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> >
+> > On Mon, Dec 3, 2018 at 6:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > Amarula A64-Relic board by default bound with OV5640 camera,
+> > > so add support for it with below pin information.
+> > >
+> > > - PE13, PE12 via i2c-gpio bitbanging
+> > > - CLK_CSI_MCLK as external clock
+> > > - PE1 as external clock pin muxing
+> > > - DLDO3 as vcc-csi supply
+> > > - DLDO3 as AVDD supply
+> > > - ALDO1 as DOVDD supply
+> > > - ELDO3 as DVDD supply
+> > > - PE14 gpio for reset pin
+> > > - PE15 gpio for powerdown pin
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  .../allwinner/sun50i-a64-amarula-relic.dts    | 54 +++++++++++++++++++
+> > >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  5 ++
+> > >  2 files changed, 59 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > > index 6cb2b7f0c817..9ac6d773188b 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > > @@ -22,6 +22,41 @@
+> > >                 stdout-path = "serial0:115200n8";
+> > >         };
+> > >
+> > > +       i2c-csi {
+> > > +               compatible = "i2c-gpio";
+> > > +               sda-gpios = <&pio 4 13 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+> > > +               scl-gpios = <&pio 4 12 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>;
+> >
+> > FYI our hardware doesn't do open drain.
+> 
+> True, but the kernel is enforcing it seems, from the change from [1].
+> does that mean Linux use open drain even though hardware doens't have?
+> or did I miss anything?
 
-This patch create debugfs file for port register and add file operations.
+It's forced because you can't do I2C without open drain. Things like the 
+slave doing clock stretching won't work.
 
-Signed-off-by: Luo Jiaxing <luojiaxing@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 43 ++++++++++++++++++++++++++
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 55 ++++++++++++++++++++++++++++++++++
- 2 files changed, 98 insertions(+)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index fd85934..fbd9b4a 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -2604,9 +2604,38 @@ static int hisi_sas_debugfs_global_open(struct inode *inode, struct file *filp)
- 	.owner = THIS_MODULE,
- };
- 
-+static int hisi_sas_debugfs_port_show(struct seq_file *s, void *p)
-+{
-+	struct hisi_sas_phy *phy = s->private;
-+	struct hisi_hba *hisi_hba = phy->hisi_hba;
-+	const struct hisi_sas_hw *hw = hisi_hba->hw;
-+	const struct hisi_sas_debugfs_reg *reg_port = hw->debugfs_reg_port;
-+	u32 *databuf = hisi_hba->debugfs_port_reg[phy->sas_phy.id];
-+
-+	hisi_sas_debugfs_print_reg(databuf, reg_port, s);
-+
-+	return 0;
-+}
-+
-+static int hisi_sas_debugfs_port_open(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, hisi_sas_debugfs_port_show, inode->i_private);
-+}
-+
-+static const struct file_operations hisi_sas_debugfs_port_fops = {
-+	.open = hisi_sas_debugfs_port_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+	.owner = THIS_MODULE,
-+};
-+
- static void hisi_sas_debugfs_create_files(struct hisi_hba *hisi_hba)
- {
- 	struct dentry *dump_dentry;
-+	struct dentry *dentry;
-+	char name[256];
-+	int p;
- 
- 	/* Create dump dir inside device dir */
- 	dump_dentry = debugfs_create_dir("dump", hisi_hba->debugfs_dir);
-@@ -2618,6 +2647,20 @@ static void hisi_sas_debugfs_create_files(struct hisi_hba *hisi_hba)
- 	if (!debugfs_create_file("global", 0400, dump_dentry, hisi_hba,
- 				 &hisi_sas_debugfs_global_fops))
- 		goto fail;
-+
-+	/* Create port dir and files */
-+	dentry = debugfs_create_dir("port", dump_dentry);
-+	if (!dentry)
-+		goto fail;
-+
-+	for (p = 0; p < hisi_hba->n_phy; p++) {
-+		snprintf(name, 256, "%d", p);
-+		if (!debugfs_create_file(name, 0400, dentry,
-+					 &hisi_hba->phy[p],
-+					 &hisi_sas_debugfs_port_fops))
-+			goto fail;
-+	}
-+
- 	return;
- fail:
- 	debugfs_remove_recursive(hisi_hba->debugfs_dir);
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index ca3d13b..cda1e40 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -186,6 +186,7 @@
- #define CHL_INT0_MSK			(PORT_BASE + 0x1c0)
- #define CHL_INT1_MSK			(PORT_BASE + 0x1c4)
- #define CHL_INT2_MSK			(PORT_BASE + 0x1c8)
-+#define SAS_EC_INT_COAL_TIME		(PORT_BASE + 0x1cc)
- #define CHL_INT_COAL_EN			(PORT_BASE + 0x1d0)
- #define SAS_RX_TRAIN_TIMER		(PORT_BASE + 0x2a4)
- #define PHY_CTRL_RDY_MSK		(PORT_BASE + 0x2b0)
-@@ -205,6 +206,7 @@
- #define ERR_CNT_DWS_LOST		(PORT_BASE + 0x380)
- #define ERR_CNT_RESET_PROB		(PORT_BASE + 0x384)
- #define ERR_CNT_INVLD_DW		(PORT_BASE + 0x390)
-+#define ERR_CNT_CODE_ERR		(PORT_BASE + 0x394)
- #define ERR_CNT_DISP_ERR		(PORT_BASE + 0x398)
- 
- #define DEFAULT_ITCT_HW		2048 /* reset value, not reprogrammed */
-@@ -2339,7 +2341,60 @@ static ssize_t intr_coal_count_v3_hw_store(struct device *dev,
- 	NULL
- };
- 
-+static const struct hisi_sas_debugfs_reg_lu debugfs_port_reg_lu[] = {
-+	HISI_SAS_DEBUGFS_REG(PHY_CFG),
-+	HISI_SAS_DEBUGFS_REG(HARD_PHY_LINKRATE),
-+	HISI_SAS_DEBUGFS_REG(PROG_PHY_LINK_RATE),
-+	HISI_SAS_DEBUGFS_REG(PHY_CTRL),
-+	HISI_SAS_DEBUGFS_REG(SL_CFG),
-+	HISI_SAS_DEBUGFS_REG(AIP_LIMIT),
-+	HISI_SAS_DEBUGFS_REG(SL_CONTROL),
-+	HISI_SAS_DEBUGFS_REG(RX_PRIMS_STATUS),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD0),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD1),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD2),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD3),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD4),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD5),
-+	HISI_SAS_DEBUGFS_REG(TX_ID_DWORD6),
-+	HISI_SAS_DEBUGFS_REG(TXID_AUTO),
-+	HISI_SAS_DEBUGFS_REG(RX_IDAF_DWORD0),
-+	HISI_SAS_DEBUGFS_REG(RXOP_CHECK_CFG_H),
-+	HISI_SAS_DEBUGFS_REG(STP_LINK_TIMER),
-+	HISI_SAS_DEBUGFS_REG(STP_LINK_TIMEOUT_STATE),
-+	HISI_SAS_DEBUGFS_REG(CON_CFG_DRIVER),
-+	HISI_SAS_DEBUGFS_REG(SAS_SSP_CON_TIMER_CFG),
-+	HISI_SAS_DEBUGFS_REG(SAS_SMP_CON_TIMER_CFG),
-+	HISI_SAS_DEBUGFS_REG(SAS_STP_CON_TIMER_CFG),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT0),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT1),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT2),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT0_MSK),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT1_MSK),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT2_MSK),
-+	HISI_SAS_DEBUGFS_REG(SAS_EC_INT_COAL_TIME),
-+	HISI_SAS_DEBUGFS_REG(CHL_INT_COAL_EN),
-+	HISI_SAS_DEBUGFS_REG(SAS_RX_TRAIN_TIMER),
-+	HISI_SAS_DEBUGFS_REG(PHY_CTRL_RDY_MSK),
-+	HISI_SAS_DEBUGFS_REG(PHYCTRL_NOT_RDY_MSK),
-+	HISI_SAS_DEBUGFS_REG(PHYCTRL_DWS_RESET_MSK),
-+	HISI_SAS_DEBUGFS_REG(PHYCTRL_PHY_ENA_MSK),
-+	HISI_SAS_DEBUGFS_REG(SL_RX_BCAST_CHK_MSK),
-+	HISI_SAS_DEBUGFS_REG(PHYCTRL_OOB_RESTART_MSK),
-+	HISI_SAS_DEBUGFS_REG(DMA_TX_STATUS),
-+	HISI_SAS_DEBUGFS_REG(DMA_RX_STATUS),
-+	HISI_SAS_DEBUGFS_REG(COARSETUNE_TIME),
-+	HISI_SAS_DEBUGFS_REG(ERR_CNT_DWS_LOST),
-+	HISI_SAS_DEBUGFS_REG(ERR_CNT_RESET_PROB),
-+	HISI_SAS_DEBUGFS_REG(ERR_CNT_INVLD_DW),
-+	HISI_SAS_DEBUGFS_REG(ERR_CNT_CODE_ERR),
-+	HISI_SAS_DEBUGFS_REG(ERR_CNT_DISP_ERR),
-+	{}
-+};
-+
- static const struct hisi_sas_debugfs_reg debugfs_port_reg = {
-+	.lu = debugfs_port_reg_lu,
-+	.count = 0x100,
- 	.base_off = PORT_BASE,
- 	.read_port_reg = hisi_sas_phy_read32,
- };
--- 
-1.9.1
-
+Rob
