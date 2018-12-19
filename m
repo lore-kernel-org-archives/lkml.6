@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B48C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28296C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8555121873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C34212184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="gQSvzYVU"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="nM2eKj2q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbeLSMe6 (ORCPT
+        id S1729665AbeLSMfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:34:58 -0500
+        Wed, 19 Dec 2018 07:35:03 -0500
 Received: from mail-eopbgr10049.outbound.protection.outlook.com ([40.107.1.49]:51629
         "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729530AbeLSMez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:34:55 -0500
+        id S1729635AbeLSMfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:35:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hywrdd2eluQrgl6ypuJG2HxPyNpiyV+k4CzMUxbVqyk=;
- b=gQSvzYVUaneyPJUmy53+fy91ZCdEQxkDbEo6EzAzz4ia+KSXfq9inNoicJXrqNzYkb458UDhCaRrWqb2Bnio5fe4xQPer7h6lJ8cUZ8L5cu8votVFsvC7YNlk+HcrqyY7DUpuCuNqWn8jn5Aa1+W42HGVmw8t9fKkcGLiQ9EmgQ=
+ bh=/W1fZOPdbXBqWkGpnxtP4ogz2aFicG12dKlr7us3W5U=;
+ b=nM2eKj2qjZLcZQXRGLgJ7piZonPNbOqLBLzHlwCc9+2bdQ14NW+2cQEQKME1kWRjIR3d3pogiWx5c8coPSx0+gDrTLAcmBEQfHPmeEPxps8aMvy8UV9oiZH+CQLry7rLWNoUPBr9eymWroqCQ9fn1Nhernmy+v8zDll2KrsnSRE=
 Received: from AM0PR08MB4483.eurprd08.prod.outlook.com (20.179.35.149) by
  AM0PR08MB3924.eurprd08.prod.outlook.com (20.178.118.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Wed, 19 Dec 2018 12:34:33 +0000
+ 15.20.1425.19; Wed, 19 Dec 2018 12:34:50 +0000
 Received: from AM0PR08MB4483.eurprd08.prod.outlook.com
  ([fe80::1dff:434f:5905:45db]) by AM0PR08MB4483.eurprd08.prod.outlook.com
  ([fe80::1dff:434f:5905:45db%5]) with mapi id 15.20.1446.018; Wed, 19 Dec 2018
- 12:34:33 +0000
+ 12:34:50 +0000
 From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
 To:     Liviu Dudau <Liviu.Dudau@arm.com>
 CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
@@ -70,11 +70,11 @@ CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
         "airlied@linux.ie" <airlied@linux.ie>,
         "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
         "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: [PATCH v2 7/9] drm/komeda: Attach komeda_dev to DRM-KMS
-Thread-Topic: [PATCH v2 7/9] drm/komeda: Attach komeda_dev to DRM-KMS
-Thread-Index: AQHUl5cxWOblOH4LREO0WtwAQQpdOw==
-Date:   Wed, 19 Dec 2018 12:34:33 +0000
-Message-ID: <20181219123147.16090-8-james.qian.wang@arm.com>
+Subject: [PATCH v2 8/9] drm/doc: Add initial komeda driver documentation
+Thread-Topic: [PATCH v2 8/9] drm/doc: Add initial komeda driver documentation
+Thread-Index: AQHUl5c7HbzfmxaT302f2Ua1RlRtHw==
+Date:   Wed, 19 Dec 2018 12:34:50 +0000
+Message-ID: <20181219123147.16090-9-james.qian.wang@arm.com>
 References: <20181219123147.16090-1-james.qian.wang@arm.com>
 In-Reply-To: <20181219123147.16090-1-james.qian.wang@arm.com>
 Accept-Language: en-US
@@ -89,28 +89,29 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=james.qian.wang@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3924;6:EF5yOQId6jNtbWrE/FgD/yVcZKZZJUKrC5BdERWRdvPZ0GZvK9fB4tluEpMsMrMBV990zN8eh+dRN7AA6VYIX4ge6dXjiTBT7VWn8Cc14nDeg5ekBXA2xnyKzGkr2xXzENTcnNEInOwvohcG4qPx8i8d+7CkZmZvVImWq8sYcxUxRzAV7asNc/zhq7geesgd6iRYv1RrkwQg8J4EitXrpsK160DiAyyFxtT31TtUv57Nm+hLWZA22uWm3R4ogxLJEE891BtnjybCehQDmx5CHIiq8rFk7MtDlxNVALwfnBlY2OsNd8FDF95aUQGY2bMPUIrBIMV1sG++11Asw/d3zRJuJkmUGpY9RMX0LN+BC4btUxakFMfct9O8UUTV1EXNywkym57B+ac1d4l60f139lMFpqV+c18pPl65RsH3WobjuRYZJHlp+aTtc9I2WXJq6KQZSYx7c334cFBPna95KA==;5:kaTGazVZty62MAhTn7TkgpjsnJNuPFBcodQSD/g5pHm+MIqWkJ+dKJad6vSrQ5ggm/quUZk/WHUi5+OYgia7OtCXbTGvYN7M6/mSmqYBjOm+t/WFPDJu8LbyAJxU1NUgt0g+eVSOeNR6YhNqw4JB5sWhxFMoezy/eXZdAPUO47Y=;7:IxrOqSUxwKP9lP3rrBbG1dngtFwAKJsG0nImE13AUV15wq8nei8IkfrJui7W7e/QzskWpWx5y6kIKwpVrLk5UUuqyuoTu1KLpDGUmnQ4+ll4KXiKDgTZPzNdg1fGt1XIbvwLLi4vE5XYesw/EZhKbQ==
-x-ms-office365-filtering-correlation-id: aedb0ed9-db00-4566-83bd-08d665ae53e9
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3924;6:xpUcaIKaAfv05FS1irxWPLe/OuzcAhCXySZvZUkmbqAQAreFlHsgwgRY+KbCkkV/NPYwD87AAdjpQblIQqa0nif74p2amwimUBjA0Wn62hZXfCFQV6WuRaHRfyBQKWYNuzvR8NJ5VuapradpTdjwUWTylAAZEo9pD1320ECY6XaAmurfcRXmy3JaoEyHavmwkpISvmF35NKHQwnxg356MBEg1sKmc7RhfEsuizy6LKOYcFIQPN/kwq3upo8PhdGUlgsTLkyMZ+8M4jTBVObyfpN9RdMVGeer3I+q2jjuDeB8yIgnlss33J459b5NxT+cOTFVw5J7XH0h9XjK8AnCkwaKg7cUMfE0Jn1ti33xTIJWiqzqvVFRUv/5s5KEmRJNDkLTlSdfh5P+YWej/Szi02iBDsha9q5NvjXex9HRrdhFcvhxlTIbg7eDVLqAkCp//pgUM5yBFc7HApO0hlhBig==;5:QubR59qeT5XOHOpY7fRWQFvDSxIoYqJv3+Eemg52D3wexLFVu4+q+JBs3oSVdgMkCheyN9poWEShxSkWNM9tGyvpxa5YiA9CgA3UkRyIGIg1ci4s31WzwyO11iYS/yKHgznXJlJwAuSxxLrwZM4B6bpNUJ7/UWmHaaibLhfMJEo=;7:wslns7ew8lEWbxIhuJn4DWdYYqDOCkbnnkDd1EjPWkaluIjgnZMw4svxFYMDyMFRu+28fYUyOC436Vk+9eT33u/LVkS7tqd1+g/KV4VQNwfZQSoUVM1NU12fUb0Xu5MB5BCblqzL4Ihk2hQ2LyCLMQ==
+x-ms-office365-filtering-correlation-id: 3c95fcf0-8c04-4243-5867-08d665ae5e1b
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3924;
 x-ms-traffictypediagnostic: AM0PR08MB3924:
 nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB392491150B699B78D96460A0B3BE0@AM0PR08MB3924.eurprd08.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR08MB3924DAD2565F04F269CA516BB3BE0@AM0PR08MB3924.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3924;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3924;
 x-forefront-prvs: 0891BC3F3D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(366004)(376002)(199004)(189003)(316002)(8936002)(103116003)(37006003)(1076003)(71190400001)(81166006)(81156014)(11346002)(446003)(97736004)(36756003)(54906003)(4744004)(256004)(2616005)(486006)(6636002)(99286004)(71200400001)(476003)(575784001)(86362001)(5024004)(14444005)(8676002)(106356001)(105586002)(5660300001)(3846002)(7416002)(6116002)(14454004)(68736007)(6512007)(2906002)(4326008)(25786009)(6486002)(76176011)(52116002)(53936002)(186003)(55236004)(102836004)(26005)(6862004)(6436002)(53946003)(305945005)(478600001)(6506007)(66066001)(386003)(7736002)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3924;H:AM0PR08MB4483.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(366004)(376002)(199004)(189003)(316002)(8936002)(103116003)(37006003)(1076003)(71190400001)(81166006)(81156014)(11346002)(446003)(97736004)(36756003)(54906003)(4744004)(256004)(2616005)(486006)(6636002)(99286004)(71200400001)(476003)(86362001)(5024004)(14444005)(8676002)(106356001)(105586002)(5660300001)(3846002)(7416002)(6116002)(14454004)(68736007)(6512007)(2906002)(4326008)(25786009)(6486002)(76176011)(52116002)(53936002)(54075001)(186003)(55236004)(102836004)(26005)(6862004)(6436002)(53946003)(305945005)(478600001)(6506007)(66066001)(386003)(7736002)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3924;H:AM0PR08MB4483.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: Rp1KCg6qpDD9SYKbgTXfKfg5ceRwgM6fCdwpPWZkcMeiWXXQ3D1fsKCc6mxP7h8kUP0yNttS8QDw71s50i06qlHDameVgryx5xinM9RK1B3L3X5+vxcQq9Lxh80xAYCvI26jB3qEDXM7gLcfrT9sEY11T2bSfLkDXis81dTAGsmpccIBzO7GHPGQVaO6R+yGRlNORbwqm5qgeVXLcg9V+4U4yMZRJ4uv5BGLS0lphGW+X+yAL2sPSv6S5cIFZL6GN9NCgDZykkd1BQuriWjkKcfwoV3QlY7MTxEuQ+yvQv8MVEJIGl8/xrwf3Tp5Ph/X
+x-microsoft-antispam-message-info: E3U7xfLXAdDO665sbDTeRFFOYmpSrym2BFAxQkJ+Fdsslhuba03ZX3y1xHvc9mZeq7HMQBEdfcAJK/UUo1sy5tGl97mwjhGvUcarPL0HpgSHqf/d9wSzduHCo1RgWyHVeKJlmYi2G/BPs4cCeKbTQ6RvoMHeq6cu2SfzTTzRvBzBf67ZC0Nlb3EJWTYGGNV0vZM67IQeNbQUlNcvmsH3wFcP0h1tTQvS3Iom4SgUElpcrlHt5W5zHKfa+xAd6qdNKuXkkjdQ+ApmGY7P1LrEmmqkgdueHhExbCxnvlBJQGdnpvwmf8caN5c3Sm5nefLY
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <763720CA94DDD04286245D10FB37E197@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aedb0ed9-db00-4566-83bd-08d665ae53e9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 12:34:33.1545
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c95fcf0-8c04-4243-5867-08d665ae5e1b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 12:34:50.0841
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
@@ -120,759 +121,309 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add komeda_kms abstracton to attach komeda_dev to DRM-KMS
-  CRTC: according to the komeda_pipeline
-  PLANE: according to komeda_layer (layer input pipeline)
-  PRIVATE_OBJS: komeda_pipeline/component all will be treat as private_objs
-
-komeda_kms is for connecting DRM-KMS and komeda_dev, like reporting the
-kms object properties according to the komeda_dev, and pass/convert KMS's
-requirement to komeda_dev.
-
-Signed-off-by: James (Qian) Wang <james.qian.wang@arm.com>
----
- drivers/gpu/drm/arm/display/komeda/Makefile   |   6 +-
- .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 106 +++++++++++
- .../gpu/drm/arm/display/komeda/komeda_drv.c   |  22 ++-
- .../gpu/drm/arm/display/komeda/komeda_kms.c   | 168 ++++++++++++++++++
- .../gpu/drm/arm/display/komeda/komeda_kms.h   | 113 ++++++++++++
- .../drm/arm/display/komeda/komeda_pipeline.h  |   3 +
- .../gpu/drm/arm/display/komeda/komeda_plane.c | 109 ++++++++++++
- .../arm/display/komeda/komeda_private_obj.c   |  87 +++++++++
- 8 files changed, 608 insertions(+), 6 deletions(-)
- create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
- create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_kms.c
- create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_kms.h
- create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_plane.c
- create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-
-diff --git a/drivers/gpu/drm/arm/display/komeda/Makefile b/drivers/gpu/drm/=
-arm/display/komeda/Makefile
-index d369317f72ab..1374c01d179e 100644
---- a/drivers/gpu/drm/arm/display/komeda/Makefile
-+++ b/drivers/gpu/drm/arm/display/komeda/Makefile
-@@ -9,7 +9,11 @@ komeda-y :=3D \
- 	komeda_dev.o \
- 	komeda_format_caps.o \
- 	komeda_pipeline.o \
--	komeda_framebuffer.o
-+	komeda_framebuffer.o \
-+	komeda_kms.o \
-+	komeda_crtc.o \
-+	komeda_plane.o \
-+	komeda_private_obj.o
-=20
- komeda-y +=3D \
- 	d71/d71_dev.o
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
-/drm/arm/display/komeda/komeda_crtc.c
-new file mode 100644
-index 000000000000..5bb5a55f6b31
---- /dev/null
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -0,0 +1,106 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-+ * Author: James.Qian.Wang <james.qian.wang@arm.com>
-+ *
-+ */
-+#include <linux/clk.h>
-+#include <linux/spinlock.h>
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_plane_helper.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <linux/pm_runtime.h>
-+#include "komeda_dev.h"
-+#include "komeda_kms.h"
-+
-+struct drm_crtc_helper_funcs komeda_crtc_helper_funcs =3D {
-+};
-+
-+static const struct drm_crtc_funcs komeda_crtc_funcs =3D {
-+};
-+
-+int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
-+			   struct komeda_dev *mdev)
-+{
-+	struct komeda_crtc *crtc;
-+	struct komeda_pipeline *master;
-+	char str[16];
-+	int i;
-+
-+	kms->n_crtcs =3D 0;
-+
-+	for (i =3D 0; i < mdev->n_pipelines; i++) {
-+		crtc =3D &kms->crtcs[kms->n_crtcs];
-+		master =3D mdev->pipelines[i];
-+
-+		crtc->master =3D master;
-+		crtc->slave  =3D NULL;
-+
-+		if (crtc->slave)
-+			sprintf(str, "pipe-%d", crtc->slave->id);
-+		else
-+			sprintf(str, "None");
-+
-+		DRM_INFO("crtc%d: master(pipe-%d) slave(%s) output: %s.\n",
-+			 kms->n_crtcs, master->id, str,
-+			 master->of_output_dev ?
-+			 master->of_output_dev->full_name : "None");
-+
-+		kms->n_crtcs++;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct drm_plane *
-+get_crtc_primary(struct komeda_kms_dev *kms, struct komeda_crtc *crtc)
-+{
-+	struct komeda_plane *kplane;
-+	struct drm_plane *plane;
-+
-+	drm_for_each_plane(plane, &kms->base) {
-+		if (plane->type !=3D DRM_PLANE_TYPE_PRIMARY)
-+			continue;
-+
-+		kplane =3D to_kplane(plane);
-+		/* only master can be primary */
-+		if (kplane->layer->base.pipeline =3D=3D crtc->master)
-+			return plane;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int komeda_crtc_add(struct komeda_kms_dev *kms,
-+			   struct komeda_crtc *kcrtc)
-+{
-+	struct drm_crtc *crtc =3D &kcrtc->base;
-+	int err;
-+
-+	err =3D drm_crtc_init_with_planes(&kms->base, crtc,
-+					get_crtc_primary(kms, kcrtc), NULL,
-+					&komeda_crtc_funcs, NULL);
-+	if (err)
-+		return err;
-+
-+	drm_crtc_helper_add(crtc, &komeda_crtc_helper_funcs);
-+	drm_crtc_vblank_reset(crtc);
-+
-+	crtc->port =3D kcrtc->master->of_output_port;
-+
-+	return 0;
-+}
-+
-+int komeda_kms_add_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *md=
-ev)
-+{
-+	int i, err;
-+
-+	for (i =3D 0; i < kms->n_crtcs; i++) {
-+		err =3D komeda_crtc_add(kms, &kms->crtcs[i]);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c b/drivers/gpu/=
-drm/arm/display/komeda/komeda_drv.c
-index bf32d334d20d..11ec0d275917 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_drv.c
-@@ -10,22 +10,26 @@
- #include <linux/component.h>
- #include <drm/drm_of.h>
- #include "komeda_dev.h"
-+#include "komeda_kms.h"
-=20
- struct komeda_drv {
- 	struct komeda_dev *mdev;
-+	struct komeda_kms_dev *kms;
- };
-=20
- static void komeda_unbind(struct device *dev)
- {
- 	struct komeda_drv *mdrv =3D dev_get_drvdata(dev);
-=20
--	dev_set_drvdata(dev, NULL);
--
- 	if (mdrv =3D=3D NULL)
- 		return;
-=20
-+	komeda_kms_detach(mdrv->kms);
-+
- 	komeda_dev_destroy(mdrv->mdev);
--	kfree(mdrv);
-+
-+	dev_set_drvdata(dev, NULL);
-+	devm_kfree(dev, mdrv);
- }
-=20
- static int komeda_bind(struct device *dev)
-@@ -33,7 +37,7 @@ static int komeda_bind(struct device *dev)
- 	struct komeda_drv *mdrv;
- 	int err;
-=20
--	mdrv =3D kzalloc(sizeof(*mdrv), GFP_KERNEL);
-+	mdrv =3D devm_kzalloc(dev, sizeof(*mdrv), GFP_KERNEL);
- 	if (mdrv =3D=3D NULL)
- 		return -ENOMEM;
-=20
-@@ -45,10 +49,18 @@ static int komeda_bind(struct device *dev)
-=20
- 	dev_set_drvdata(dev, mdrv);
-=20
-+	mdrv->kms =3D komeda_kms_attach(mdrv->mdev);
-+	if (IS_ERR(mdrv->kms)) {
-+		err =3D PTR_ERR(mdrv->kms);
-+		goto destroy_mdev;
-+	}
-+
- 	return 0;
-=20
-+destroy_mdev:
-+	komeda_dev_destroy(mdrv->mdev);
- free_mdrv:
--	kfree(mdrv);
-+	devm_kfree(dev, mdrv);
- 	return err;
- }
-=20
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gpu/=
-drm/arm/display/komeda/komeda_kms.c
-new file mode 100644
-index 000000000000..841ee8402812
---- /dev/null
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-+ * Author: James.Qian.Wang <james.qian.wang@arm.com>
-+ *
-+ */
-+#include <linux/component.h>
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_cma_helper.h>
-+#include <drm/drm_fb_helper.h>
-+#include <linux/interrupt.h>
-+#include "komeda_dev.h"
-+#include "komeda_kms.h"
-+#include "komeda_framebuffer.h"
-+
-+DEFINE_DRM_GEM_CMA_FOPS(komeda_cma_fops);
-+
-+static int komeda_gem_cma_dumb_create(struct drm_file *file,
-+				      struct drm_device *dev,
-+				      struct drm_mode_create_dumb *args)
-+{
-+	u32 alignment =3D 16; /* TODO get alignment from dev */
-+
-+	args->pitch =3D ALIGN(DIV_ROUND_UP(args->width * args->bpp, 8), alignment=
-);
-+
-+	return drm_gem_cma_dumb_create_internal(file, dev, args);
-+}
-+
-+static struct drm_driver komeda_kms_driver =3D {
-+	.driver_features =3D DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
-+			   DRIVER_PRIME,
-+	.lastclose			=3D drm_fb_helper_lastclose,
-+	.gem_free_object_unlocked	=3D drm_gem_cma_free_object,
-+	.gem_vm_ops			=3D &drm_gem_cma_vm_ops,
-+	.dumb_create			=3D komeda_gem_cma_dumb_create,
-+	.prime_handle_to_fd		=3D drm_gem_prime_handle_to_fd,
-+	.prime_fd_to_handle		=3D drm_gem_prime_fd_to_handle,
-+	.gem_prime_export		=3D drm_gem_prime_export,
-+	.gem_prime_import		=3D drm_gem_prime_import,
-+	.gem_prime_get_sg_table		=3D drm_gem_cma_prime_get_sg_table,
-+	.gem_prime_import_sg_table	=3D drm_gem_cma_prime_import_sg_table,
-+	.gem_prime_vmap			=3D drm_gem_cma_prime_vmap,
-+	.gem_prime_vunmap		=3D drm_gem_cma_prime_vunmap,
-+	.gem_prime_mmap			=3D drm_gem_cma_prime_mmap,
-+	.fops =3D &komeda_cma_fops,
-+	.name =3D "komeda",
-+	.desc =3D "ARM Mali Komeda Display Processor driver",
-+	.date =3D "20181101",
-+	.major =3D 1,
-+	.minor =3D 0,
-+};
-+
-+static void komeda_kms_commit_tail(struct drm_atomic_state *old_state)
-+{
-+	struct drm_device *dev =3D old_state->dev;
-+
-+	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-+
-+	drm_atomic_helper_commit_planes(dev, old_state, 0);
-+
-+	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-+
-+	drm_atomic_helper_wait_for_flip_done(dev, old_state);
-+
-+	drm_atomic_helper_commit_hw_done(old_state);
-+
-+	drm_atomic_helper_cleanup_planes(dev, old_state);
-+}
-+
-+static const struct drm_mode_config_helper_funcs komeda_mode_config_helper=
-s =3D {
-+	.atomic_commit_tail =3D komeda_kms_commit_tail,
-+};
-+
-+static const struct drm_mode_config_funcs komeda_mode_config_funcs =3D {
-+	.fb_create		=3D komeda_fb_create,
-+	.atomic_check		=3D NULL,/*komeda_kms_check*/
-+	.atomic_commit		=3D drm_atomic_helper_commit,
-+};
-+
-+static void komeda_kms_mode_config_init(struct komeda_kms_dev *kms,
-+					struct komeda_dev *mdev)
-+{
-+	struct drm_mode_config *config =3D &kms->base.mode_config;
-+
-+	drm_mode_config_init(&kms->base);
-+
-+	komeda_kms_setup_crtcs(kms, mdev);
-+
-+	/* Get value from dev */
-+	config->min_width	=3D 0;
-+	config->min_height	=3D 0;
-+	config->max_width	=3D 4096;
-+	config->max_height	=3D 4096;
-+	config->allow_fb_modifiers =3D true;
-+
-+	config->funcs =3D &komeda_mode_config_funcs;
-+	config->helper_private =3D &komeda_mode_config_helpers;
-+}
-+
-+struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev)
-+{
-+	struct komeda_kms_dev *kms =3D kzalloc(sizeof(*kms), GFP_KERNEL);
-+	struct drm_device *drm;
-+	int err;
-+
-+	if (kms =3D=3D NULL)
-+		return ERR_PTR(-ENOMEM);
-+
-+	drm =3D &kms->base;
-+	err =3D drm_dev_init(drm, &komeda_kms_driver, mdev->dev);
-+	if (err)
-+		goto free_kms;
-+
-+	drm->dev_private =3D mdev;
-+
-+	komeda_kms_mode_config_init(kms, mdev);
-+
-+	err =3D komeda_kms_add_private_objs(kms, mdev);
-+	if (err)
-+		goto cleanup_mode_config;
-+
-+	err =3D komeda_kms_add_planes(kms, mdev);
-+	if (err)
-+		goto cleanup_mode_config;
-+
-+	err =3D drm_vblank_init(drm, kms->n_crtcs);
-+	if (err)
-+		goto cleanup_mode_config;
-+
-+	err =3D komeda_kms_add_crtcs(kms, mdev);
-+	if (err)
-+		goto cleanup_mode_config;
-+
-+	err =3D component_bind_all(mdev->dev, kms);
-+	if (err)
-+		goto cleanup_mode_config;
-+
-+	drm_mode_config_reset(drm);
-+
-+	err =3D drm_dev_register(drm, 0);
-+	if (err)
-+		goto uninstall_irq;
-+
-+	return kms;
-+
-+uninstall_irq:
-+	drm_irq_uninstall(drm);
-+cleanup_mode_config:
-+	drm_mode_config_cleanup(drm);
-+free_kms:
-+	kfree(kms);
-+	return ERR_PTR(err);
-+}
-+
-+void komeda_kms_detach(struct komeda_kms_dev *kms)
-+{
-+	struct drm_device *drm =3D &kms->base;
-+	struct komeda_dev *mdev =3D drm->dev_private;
-+
-+	drm_dev_unregister(drm);
-+	component_unbind_all(mdev->dev, drm);
-+	komeda_kms_cleanup_private_objs(mdev);
-+	drm_mode_config_cleanup(drm);
-+	drm->dev_private =3D NULL;
-+	drm_dev_put(drm);
-+}
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.h b/drivers/gpu/=
-drm/arm/display/komeda/komeda_kms.h
-new file mode 100644
-index 000000000000..8810e986bcbc
---- /dev/null
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.h
-@@ -0,0 +1,113 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-+ * Author: James.Qian.Wang <james.qian.wang@arm.com>
-+ *
-+ */
-+#ifndef _KOMEDA_KMS_H_
-+#define _KOMEDA_KMS_H_
-+
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_crtc_helper.h>
-+#include <drm/drm_writeback.h>
-+
-+/** struct komeda_plane - komeda instance of drm_plane */
-+struct komeda_plane {
-+	/** @base: &drm_plane */
-+	struct drm_plane base;
-+	/**
-+	 * @layer:
-+	 *
-+	 * represents available layer input pipelines for this plane.
-+	 *
-+	 * NOTE:
-+	 * the layer is not for a specific Layer, but indicate a group of
-+	 * Layers with same capabilities.
-+	 */
-+	struct komeda_layer *layer;
-+};
-+
-+/**
-+ * struct komeda_plane_state
-+ *
-+ * The plane_state can be splitted into two data flow (left/right) and han=
-dled
-+ * by two layers &komeda_plane.layer and &komeda_plane.layer.right
-+ */
-+struct komeda_plane_state {
-+	/** @base: &drm_plane_state */
-+	struct drm_plane_state base;
-+
-+	/* private properties */
-+};
-+
-+/**
-+ * struct komeda_wb_connector
-+ */
-+struct komeda_wb_connector {
-+	/** @base: &drm_writeback_connector */
-+	struct drm_writeback_connector base;
-+
-+	/** @wb_layer: represents associated writeback pipeline of komeda */
-+	struct komeda_layer *wb_layer;
-+};
-+
-+/**
-+ * struct komeda_crtc
-+ */
-+struct komeda_crtc {
-+	/** @base: &drm_crtc */
-+	struct drm_crtc base;
-+	/** @master: only master has display output */
-+	struct komeda_pipeline *master;
-+	/**
-+	 * @slave: optional
-+	 *
-+	 * Doesn't have its own display output, the handled data flow will
-+	 * merge into the master.
-+	 */
-+	struct komeda_pipeline *slave;
-+};
-+
-+/** struct komeda_crtc_state */
-+struct komeda_crtc_state {
-+	/** @base: &drm_crtc_state */
-+	struct drm_crtc_state base;
-+
-+	/* private properties */
-+
-+	/* computed state which are used by validate/check */
-+	u32 affected_pipes;
-+	u32 active_pipes;
-+};
-+
-+/** struct komeda_kms_dev - for gather KMS related things */
-+struct komeda_kms_dev {
-+	/** @base: &drm_device */
-+	struct drm_device base;
-+
-+	/** @n_crtcs: valid numbers of crtcs in &komeda_kms_dev.crtcs */
-+	int n_crtcs;
-+	/** @crtcs: crtcs list */
-+	struct komeda_crtc crtcs[KOMEDA_MAX_PIPELINES];
-+};
-+
-+#define to_kplane(p)	container_of(p, struct komeda_plane, base)
-+#define to_kplane_st(p)	container_of(p, struct komeda_plane_state, base)
-+#define to_kconn(p)	container_of(p, struct komeda_wb_connector, base)
-+#define to_kcrtc(p)	container_of(p, struct komeda_crtc, base)
-+#define to_kcrtc_st(p)	container_of(p, struct komeda_crtc_state, base)
-+#define to_kdev(p)	container_of(p, struct komeda_kms_dev, base)
-+
-+int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *=
-mdev);
-+
-+int komeda_kms_add_crtcs(struct komeda_kms_dev *kms, struct komeda_dev *md=
-ev);
-+int komeda_kms_add_planes(struct komeda_kms_dev *kms, struct komeda_dev *m=
-dev);
-+int komeda_kms_add_private_objs(struct komeda_kms_dev *kms,
-+				struct komeda_dev *mdev);
-+void komeda_kms_cleanup_private_objs(struct komeda_dev *mdev);
-+
-+struct komeda_kms_dev *komeda_kms_attach(struct komeda_dev *mdev);
-+void komeda_kms_detach(struct komeda_kms_dev *kms);
-+
-+#endif /*_KOMEDA_KMS_H_*/
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers=
-/gpu/drm/arm/display/komeda/komeda_pipeline.h
-index ead897720e1a..49dd869cb462 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
-@@ -328,6 +328,9 @@ struct komeda_pipeline_state {
- #define to_improc_st(c)	container_of(c, struct komeda_improc_state, base)
- #define to_ctrlr_st(c)	container_of(c, struct komeda_timing_ctrlr_state, b=
-ase)
-=20
-+#define priv_to_comp_st(o) container_of(o, struct komeda_component_state, =
-obj)
-+#define priv_to_pipe_st(o)  container_of(o, struct komeda_pipeline_state, =
-obj)
-+
- /* pipeline APIs */
- struct komeda_pipeline *
- komeda_pipeline_add(struct komeda_dev *mdev, size_t size,
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_plane.c b/drivers/gp=
-u/drm/arm/display/komeda/komeda_plane.c
-new file mode 100644
-index 000000000000..937bc800c81e
---- /dev/null
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_plane.c
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-+ * Author: James.Qian.Wang <james.qian.wang@arm.com>
-+ *
-+ */
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_plane_helper.h>
-+#include "komeda_dev.h"
-+#include "komeda_kms.h"
-+
-+static const struct drm_plane_helper_funcs komeda_plane_helper_funcs =3D {
-+};
-+
-+static void komeda_plane_destroy(struct drm_plane *plane)
-+{
-+	drm_plane_cleanup(plane);
-+
-+	kfree(to_kplane(plane));
-+}
-+
-+static const struct drm_plane_funcs komeda_plane_funcs =3D {
-+};
-+
-+/* for komeda, which is pipeline can be share between crtcs */
-+static u32 get_possible_crtcs(struct komeda_kms_dev *kms,
-+			      struct komeda_pipeline *pipe)
-+{
-+	struct komeda_crtc *crtc;
-+	u32 possible_crtcs =3D 0;
-+	int i;
-+
-+	for (i =3D 0; i < kms->n_crtcs; i++) {
-+		crtc =3D &kms->crtcs[i];
-+
-+		if ((pipe =3D=3D crtc->master) || (pipe =3D=3D crtc->slave))
-+			possible_crtcs |=3D BIT(i);
-+	}
-+
-+	return possible_crtcs;
-+}
-+
-+/* use Layer0 as primary */
-+static u32 get_plane_type(struct komeda_kms_dev *kms,
-+			  struct komeda_component *c)
-+{
-+	bool is_primary =3D (c->id =3D=3D KOMEDA_COMPONENT_LAYER0);
-+
-+	return is_primary ? DRM_PLANE_TYPE_PRIMARY : DRM_PLANE_TYPE_OVERLAY;
-+}
-+
-+static int komeda_plane_add(struct komeda_kms_dev *kms,
-+			    struct komeda_layer *layer)
-+{
-+	struct komeda_dev *mdev =3D kms->base.dev_private;
-+	struct komeda_component *c =3D &layer->base;
-+	struct komeda_plane *kplane;
-+	struct drm_plane *plane;
-+	u32 *formats, n_formats =3D 0;
-+	int err;
-+
-+	kplane =3D kzalloc(sizeof(*kplane), GFP_KERNEL);
-+	if (kplane =3D=3D NULL)
-+		return -ENOMEM;
-+
-+	plane =3D &kplane->base;
-+	kplane->layer =3D layer;
-+
-+	formats =3D komeda_get_layer_fourcc_list(&mdev->fmt_tbl,
-+					       layer->layer_type, &n_formats);
-+
-+	err =3D drm_universal_plane_init(&kms->base, plane,
-+			get_possible_crtcs(kms, c->pipeline),
-+			&komeda_plane_funcs,
-+			formats, n_formats, NULL,
-+			get_plane_type(kms, c),
-+			"%s", c->name);
-+
-+	komeda_put_fourcc_list(formats);
-+
-+	if (err)
-+		goto cleanup;
-+
-+	drm_plane_helper_add(plane, &komeda_plane_helper_funcs);
-+
-+	return 0;
-+cleanup:
-+	komeda_plane_destroy(plane);
-+	return err;
-+}
-+
-+int komeda_kms_add_planes(struct komeda_kms_dev *kms, struct komeda_dev *m=
-dev)
-+{
-+	struct komeda_pipeline *pipe;
-+	int i, j, err;
-+
-+	for (i =3D 0; i < mdev->n_pipelines; i++) {
-+		pipe =3D mdev->pipelines[i];
-+
-+		for (j =3D 0; j < pipe->n_layers; j++) {
-+			err =3D komeda_plane_add(kms, pipe->layers[j]);
-+			if (err)
-+				return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c b/driv=
-ers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-new file mode 100644
-index 000000000000..6f0db8f819f2
---- /dev/null
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * (C) COPYRIGHT 2018 ARM Limited. All rights reserved.
-+ * Author: James.Qian.Wang <james.qian.wang@arm.com>
-+ *
-+ */
-+#include "komeda_dev.h"
-+#include "komeda_kms.h"
-+
-+static struct drm_private_state *
-+komeda_pipeline_atomic_duplicate_state(struct drm_private_obj *obj)
-+{
-+	struct komeda_pipeline_state *st;
-+
-+	st =3D kmemdup(obj->state, sizeof(*st), GFP_KERNEL);
-+	if (st =3D=3D NULL)
-+		return NULL;
-+
-+	st->active_comps =3D 0;
-+
-+	__drm_atomic_helper_private_obj_duplicate_state(obj, &st->obj);
-+
-+	return &st->obj;
-+}
-+
-+static void
-+komeda_pipeline_atomic_destroy_state(struct drm_private_obj *obj,
-+				     struct drm_private_state *state)
-+{
-+	kfree(priv_to_pipe_st(state));
-+}
-+
-+static const struct drm_private_state_funcs komeda_pipeline_obj_funcs =3D =
-{
-+	.atomic_duplicate_state	=3D komeda_pipeline_atomic_duplicate_state,
-+	.atomic_destroy_state	=3D komeda_pipeline_atomic_destroy_state,
-+};
-+
-+static int komeda_pipeline_obj_add(struct komeda_kms_dev *kms,
-+				   struct komeda_pipeline *pipe)
-+{
-+	struct komeda_pipeline_state *st;
-+
-+	st =3D kzalloc(sizeof(*st), GFP_KERNEL);
-+	if (st =3D=3D NULL)
-+		return -ENOMEM;
-+	st->pipe =3D pipe;
-+	drm_atomic_private_obj_init(&pipe->obj, &st->obj,
-+				    &komeda_pipeline_obj_funcs);
-+
-+	return 0;
-+}
-+
-+int komeda_kms_add_private_objs(struct komeda_kms_dev *kms,
-+				struct komeda_dev *mdev)
-+{
-+	struct komeda_pipeline *pipe;
-+	int i, err;
-+
-+	for (i =3D 0; i < mdev->n_pipelines; i++) {
-+		pipe =3D mdev->pipelines[i];
-+
-+		err =3D komeda_pipeline_obj_add(kms, pipe);
-+		if (err)
-+			return err;
-+
-+		/* Add component */
-+	}
-+
-+	return 0;
-+}
-+
-+void komeda_kms_cleanup_private_objs(struct komeda_dev *mdev)
-+{
-+	struct komeda_pipeline *pipe;
-+	struct komeda_component *c;
-+	int i, id;
-+
-+	for (i =3D 0; i < mdev->n_pipelines; i++) {
-+		pipe =3D mdev->pipelines[i];
-+		dp_for_each_set_bit(id, pipe->avail_comps) {
-+			c =3D komeda_pipeline_get_component(pipe, id);
-+
-+			drm_atomic_private_obj_fini(&c->obj);
-+		}
-+		drm_atomic_private_obj_fini(&pipe->obj);
-+	}
-+}
---=20
-2.17.1
-
+djI6IFNvbWUgZWRpdGluZyBjaGFuZ2VzIGFjY29yZGluZyB0byBSYW5keSBEdW5sYXAncyBjb21t
+ZW50cw0KDQpTaWduZWQtb2ZmLWJ5OiBKYW1lcyAoUWlhbikgV2FuZyA8amFtZXMucWlhbi53YW5n
+QGFybS5jb20+DQotLS0NCiBEb2N1bWVudGF0aW9uL2dwdS9kcml2ZXJzLnJzdCAgICB8ICAgMSAr
+DQogRG9jdW1lbnRhdGlvbi9ncHUva29tZWRhLWttcy5yc3QgfCA0ODggKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKw0KIDIgZmlsZXMgY2hhbmdlZCwgNDg5IGluc2VydGlvbnMoKykNCiBj
+cmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9ncHUva29tZWRhLWttcy5yc3QNCg0KZGlm
+ZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZ3B1L2RyaXZlcnMucnN0IGIvRG9jdW1lbnRhdGlvbi9n
+cHUvZHJpdmVycy5yc3QNCmluZGV4IDdjMTY3MjExOGE3My4uOTc4ZTZkYTliYmZmIDEwMDY0NA0K
+LS0tIGEvRG9jdW1lbnRhdGlvbi9ncHUvZHJpdmVycy5yc3QNCisrKyBiL0RvY3VtZW50YXRpb24v
+Z3B1L2RyaXZlcnMucnN0DQpAQCAtMTcsNiArMTcsNyBAQCBHUFUgRHJpdmVyIERvY3VtZW50YXRp
+b24NCiAgICB2a21zDQogICAgYnJpZGdlL2R3LWhkbWkNCiAgICB4ZW4tZnJvbnQNCisgICBrb21l
+ZGEta21zDQogDQogLi4gb25seTo6ICBzdWJwcm9qZWN0IGFuZCBodG1sDQogDQpkaWZmIC0tZ2l0
+IGEvRG9jdW1lbnRhdGlvbi9ncHUva29tZWRhLWttcy5yc3QgYi9Eb2N1bWVudGF0aW9uL2dwdS9r
+b21lZGEta21zLnJzdA0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAwMDAwMC4u
+NDQ4ZTZkMzUwNjZjDQotLS0gL2Rldi9udWxsDQorKysgYi9Eb2N1bWVudGF0aW9uL2dwdS9rb21l
+ZGEta21zLnJzdA0KQEAgLTAsMCArMSw0ODggQEANCisuLiBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
+cjogR1BMLTIuMA0KKw0KKz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KKyBkcm0va29t
+ZWRhIEFybSBkaXNwbGF5IGRyaXZlcg0KKz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0K
+Kw0KK1RoZSBkcm0va29tZWRhIGRyaXZlciBzdXBwb3J0cyB0aGUgQXJtIGRpc3BsYXkgcHJvY2Vz
+c29yIEQ3MSBhbmQgbGF0ZXIgcHJvZHVjdHMsDQordGhpcyBkb2N1bWVudCBnaXZlcyBhIGJyaWVm
+IG92ZXJ2aWV3IG9mIGRyaXZlciBkZXNpZ246IGhvdyBpdCB3b3JrcyBhbmQgd2h5DQorZGVzaWdu
+IGl0IGxpa2UgdGhhdC4NCisNCitPdmVydmlldyBvZiBENzEgbGlrZSBkaXNwbGF5IElQcw0KKz09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQorDQorRnJvbSBENzEsIEFybSBkaXNwbGF5
+IElQIGJlZ2lucyB0byBhZG9wdCBhIGZsZXhpYmxlIGFuZCBtb2R1bGFyaXplZA0KK2FyY2hpdGVj
+dHVyZS4gQSBkaXNwbGF5IHBpcGVsaW5lIGlzIG1hZGUgdXAgb2YgbXVsdGlwbGUgaW5kaXZpZHVh
+bCBhbmQNCitmdW5jdGlvbmFsIHBpcGVsaW5lIHN0YWdlcyBjYWxsZWQgY29tcG9uZW50cywgYW5k
+IGV2ZXJ5IGNvbXBvbmVudCBoYXMgc29tZQ0KK3NwZWNpZmljIGNhcGFiaWxpdGllcyB0aGF0IGNh
+biBnaXZlIHRoZSBmbG93ZWQgcGlwZWxpbmUgcGl4ZWwgZGF0YSBhDQorcGFydGljdWxhciBwcm9j
+ZXNzaW5nLg0KKw0KK1R5cGljYWwgRDcxIGNvbXBvbmVudHM6DQorDQorTGF5ZXINCistLS0tLQ0K
+K0xheWVyIGlzIHRoZSBmaXJzdCBwaXBlbGluZSBzdGFnZSwgd2hpY2ggcHJlcGFyZXMgdGhlIHBp
+eGVsIGRhdGEgZm9yIHRoZSBuZXh0DQorc3RhZ2UuIEl0IGZldGNoZXMgdGhlIHBpeGVsIGZyb20g
+bWVtb3J5LCBkZWNvZGVzIGl0IGlmIGl0J3MgQUZCQywgcm90YXRlcyB0aGUNCitzb3VyY2UgaW1h
+Z2UsIHVucGFja3Mgb3IgY29udmVydHMgWVVWIHBpeGVscyB0byB0aGUgZGV2aWNlIGludGVybmFs
+IFJHQiBwaXhlbHMsDQordGhlbiBhZGp1c3RzIHRoZSBjb2xvcl9zcGFjZSBvZiBwaXhlbHMgaWYg
+bmVlZGVkLg0KKw0KK1NjYWxlcg0KKy0tLS0tLQ0KK0FzIGl0cyBuYW1lIHN1Z2dlc3RzLCBzY2Fs
+ZXIgdGFrZXMgcmVzcG9uc2liaWxpdHkgZm9yIHNjYWxpbmcsIGFuZCBENzEgYWxzbw0KK3N1cHBv
+cnRzIGltYWdlIGVuaGFuY2VtZW50cyBieSBzY2FsZXIuDQorVGhlIHVzYWdlIG9mIHNjYWxlciBp
+cyB2ZXJ5IGZsZXhpYmxlIGFuZCBjYW4gYmUgY29ubmVjdGVkIHRvIGxheWVyIG91dHB1dA0KK2Zv
+ciBsYXllciBzY2FsaW5nLCBvciBjb25uZWN0ZWQgdG8gY29tcG9zaXRvciBhbmQgc2NhbGUgdGhl
+IHdob2xlIGRpc3BsYXkNCitmcmFtZSBhbmQgdGhlbiBmZWVkIHRoZSBvdXRwdXQgZGF0YSBpbnRv
+IHdiX2xheWVyIHdoaWNoIHdpbGwgdGhlbiB3cml0ZSBpdA0KK2ludG8gbWVtb3J5Lg0KKw0KK0Nv
+bXBvc2l0b3IgKGNvbXBpeikNCistLS0tLS0tLS0tLS0tLS0tLS0tDQorQ29tcG9zaXRvciBibGVu
+ZHMgbXVsdGlwbGUgbGF5ZXJzIG9yIHBpeGVsIGRhdGEgZmxvd3MgaW50byBvbmUgc2luZ2xlIGRp
+c3BsYXkNCitmcmFtZS4gaXRzIG91dHB1dCBmcmFtZSBjYW4gYmUgZmVkIGludG8gcG9zdCBpbWFn
+ZSBwcm9jZXNzb3IgZm9yIHNob3dpbmcgaXQgb24NCit0aGUgbW9uaXRvciBvciBmZWQgaW50byB3
+Yl9sYXllciBhbmQgd3JpdHRlbiB0byBtZW1vcnkgYXQgdGhlIHNhbWUgdGltZS4NCit1c2VyIGNh
+biBhbHNvIGluc2VydCBhIHNjYWxlciBiZXR3ZWVuIGNvbXBvc2l0b3IgYW5kIHdiX2xheWVyIHRv
+IGRvd24gc2NhbGUNCit0aGUgZGlzcGxheSBmcmFtZSBmaXJzdCBhbmQgYW5kIHRoZW4gd3JpdGUg
+dG8gbWVtb3J5Lg0KKw0KK1dyaXRlYmFjayBMYXllciAod2JfbGF5ZXIpDQorLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0NCitXcml0ZWJhY2sgbGF5ZXIgZG9lcyB0aGUgb3Bwb3NpdGUgdGhpbmdz
+IG9mIExheWVyLCB3aGljaCBjb25uZWN0cyB0byBjb21waXoNCithbmQgd3JpdGVzIHRoZSBjb21w
+b3NpdGlvbiByZXN1bHQgdG8gbWVtb3J5Lg0KKw0KK1Bvc3QgaW1hZ2UgcHJvY2Vzc29yIChpbXBy
+b2MpDQorLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCitQb3N0IGltYWdlIHByb2Nlc3Nv
+ciBhZGp1c3RzIGZyYW1lIGRhdGEgbGlrZSBnYW1tYSBhbmQgY29sb3Igc3BhY2UgdG8gZml0IHRo
+ZQ0KK3JlcXVpcmVtZW50cyBvZiB0aGUgbW9uaXRvci4NCisNCitUaW1pbmcgY29udHJvbGxlciAo
+dGltaW5nX2N0cmxyKQ0KKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQorRmluYWwg
+c3RhZ2Ugb2YgZGlzcGxheSBwaXBlbGluZSwgVGltaW5nIGNvbnRyb2xsZXIgaXMgbm90IGZvciB0
+aGUgcGl4ZWwNCitoYW5kbGluZywgYnV0IG9ubHkgZm9yIGNvbnRyb2xsaW5nIHRoZSBkaXNwbGF5
+IHRpbWluZy4NCisNCitNZXJnZXINCistLS0tLS0NCitENzEgc2NhbGVyIG1vc3RseSBvbmx5IGhh
+cyB0aGUgaGFsZiBob3Jpem9udGFsIGlucHV0L291dHB1dCBjYXBhYmlsaXRpZXMNCitjb21wYXJl
+ZCB3aXRoIExheWVyLCBsaWtlIGlmIExheWVyIHN1cHBvcnRzIDRLIGlucHV0IHNpemUsIHRoZSBz
+Y2FsZXIgb25seSBjYW4NCitzdXBwb3J0IDJLIGlucHV0L291dHB1dCBpbiB0aGUgc2FtZSB0aW1l
+LiBUbyBhY2hpZXZlIHRoZSBmdWwgZnJhbWUgc2NhbGluZywgRDcxDQoraW50cm9kdWNlcyBMYXll
+ciBTcGxpdCwgd2hpY2ggc3BsaXRzIHRoZSB3aG9sZSBpbWFnZSB0byB0d28gaGFsZiBwYXJ0cyBh
+bmQgZmVlZHMNCit0aGVtIHRvIHR3byBMYXllcnMgQSBhbmQgQiwgYW5kIGRvZXMgdGhlIHNjYWxp
+bmcgaW5kZXBlbmRlbnRseS4gQWZ0ZXIgc2NhbGluZw0KK3RoZSByZXN1bHQgbmVlZCB0byBiZSBm
+ZWQgdG8gbWVyZ2VyIHRvIG1lcmdlIHR3byBwYXJ0IGltYWdlcyB0b2dldGhlciwgYW5kIHRoZW4N
+CitvdXRwdXQgbWVyZ2VkIHJlc3VsdCB0byBjb21waXouDQorDQorU3BsaXR0ZXINCistLS0tLS0t
+LQ0KK1NpbWlsYXIgdG8gTGF5ZXIgU3BsaXQsIGJ1dCBTcGxpdHRlciBpcyB1c2VkIGZvciB3cml0
+ZWJhY2ssIHdoaWNoIHNwbGl0cyB0aGUNCitjb21waXogcmVzdWx0IHRvIHR3byBwYXJ0cyBhbmQg
+dGhlbiBmZWVkIHRoZW0gdG8gdHdvIHNjYWxlcnMuDQorDQorUG9zc2libGUgRDcxIFBpcGVsaW5l
+IHVzYWdlDQorPT09PT09PT09PT09PT09PT09PT09PT09PT09DQorDQorQmVuZWZpdHRpbmcgZnJv
+bSB0aGUgbW9kdWxhcml6ZWQgYXJjaGl0ZWN0dXJlLCBENzEgcGlwZWxpbmVzIGNhbiBiZSBlYXNp
+bHkNCithZGp1c3RlZCB0byBmaXQgZGlmZmVyZW50IHVzYWdlcy4gQW5kIEQ3MSBoYXMgdHdvIHBp
+cGVsaW5lcywgd2hpY2ggc3VwcG9ydCB0d28NCit0eXBlcyBvZiB3b3JraW5nIG1vZGU6DQorDQor
+LSAgIER1YWwgZGlzcGxheSBtb2RlDQorICAgIFR3byBwaXBlbGluZXMgd29yayBpbmRlcGVuZGVu
+dGx5IGFuZCBzZXBhcmF0ZWx5IHRvIGRyaXZlIHR3byBkaXNwbGF5IG91dHB1dHMuDQorDQorLSAg
+IFNpbmdsZSBkaXNwbGF5IG1vZGUNCisgICAgVHdvIHBpcGVsaW5lcyB3b3JrIHRvZ2V0aGVyIHRv
+IGRyaXZlIG9ubHkgb25lIGRpc3BsYXkgb3V0cHV0Lg0KKw0KKyAgICBPbiB0aGlzIG1vZGUsIHBp
+cGVsaW5lX0IgZG9lc24ndCB3b3JrIGluZGVucGVuZGVudGx5LCBidXQgb3V0cHV0cyBpdHMNCisg
+ICAgY29tcG9zaXRpb24gcmVzdWx0IGludG8gcGlwZWxpbmVfQSwgYW5kIGl0cyBwaXhlbCB0aW1p
+bmcgYWxzbyBkZXJpdmVkIGZyb20NCisgICAgcGlwZWxpbmVfQS50aW1laW5nX2N0cmxyLiBUaGUg
+cGlwZWxpbmVfQiB3b3JrcyBqdXN0IGxpa2UgYSAic2xhdmUiIG9mDQorICAgIHBpcGVsaW5lX0Eo
+bWFzdGVyKQ0KKw0KK1NpbmdsZSBwaXBlbGluZSBkYXRhIGZsb3cNCistLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tDQorDQorLi4ga2VybmVsLXJlbmRlcjo6IERPVA0KKyAgIDphbHQ6IFNpbmdsZSBw
+aXBlbGluZSBkaWdyYXBoDQorICAgOmNhcHRpb246IFNpbmdsZSBwaXBlbGluZSBkYXRhIGZsb3cN
+CisNCisgICBkaWdyYXBoIHNpbmdsZV9wcGwgew0KKyAgICAgIHJhbmtkaXI9TFI7DQorDQorICAg
+ICAgc3ViZ3JhcGggew0KKyAgICAgICAgICJNZW1vcnkiOw0KKyAgICAgICAgICJNb25pdG9yIjsN
+CisgICAgICB9DQorDQorICAgICAgc3ViZ3JhcGggY2x1c3Rlcl9waXBlbGluZSB7DQorICAgICAg
+ICAgIHN0eWxlPWRhc2hlZA0KKyAgICAgICAgICBub2RlIFtzaGFwZT1ib3hdDQorICAgICAgICAg
+IHsNCisgICAgICAgICAgICAgIG5vZGUgW2JnY29sb3I9Z3JleSBzdHlsZT1kYXNoZWRdDQorICAg
+ICAgICAgICAgICAiU2NhbGVyLTAiOw0KKyAgICAgICAgICAgICAgIlNjYWxlci0xIjsNCisgICAg
+ICAgICAgICAgICJTY2FsZXItMC8xIg0KKyAgICAgICAgICB9DQorDQorICAgICAgICAgbm9kZSBb
+Ymdjb2xvcj1ncmV5IHN0eWxlPWZpbGxlZF0NCisgICAgICAgICAiTGF5ZXItMCIgLT4gIlNjYWxl
+ci0wIg0KKyAgICAgICAgICJMYXllci0xIiAtPiAiU2NhbGVyLTAiDQorICAgICAgICAgIkxheWVy
+LTIiIC0+ICJTY2FsZXItMSINCisgICAgICAgICAiTGF5ZXItMyIgLT4gIlNjYWxlci0xIg0KKw0K
+KyAgICAgICAgICJMYXllci0wIiAtPiAiQ29tcGl6Ig0KKyAgICAgICAgICJMYXllci0xIiAtPiAi
+Q29tcGl6Ig0KKyAgICAgICAgICJMYXllci0yIiAtPiAiQ29tcGl6Ig0KKyAgICAgICAgICJMYXll
+ci0zIiAtPiAiQ29tcGl6Ig0KKyAgICAgICAgICJTY2FsZXItMCIgLT4gIkNvbXBpeiINCisgICAg
+ICAgICAiU2NhbGVyLTEiIC0+ICJDb21waXoiDQorDQorICAgICAgICAgIkNvbXBpeiIgLT4gIlNj
+YWxlci0wLzEiIC0+ICJXYl9sYXllciINCisgICAgICAgICAiQ29tcGl6IiAtPiAiSW1wcm9jIiAt
+PiAiVGltaW5nIENvbnRyb2xsZXIiDQorICAgICAgfQ0KKw0KKyAgICAgICJXYl9sYXllciIgLT4g
+Ik1lbW9yeSINCisgICAgICAiVGltaW5nIENvbnRyb2xsZXIiIC0+ICJNb25pdG9yIg0KKyAgIH0N
+CisNCitEdWFsIHBpcGVsaW5lIHdpdGggU2xhdmUgZW5hYmxlZA0KKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tDQorDQorLi4ga2VybmVsLXJlbmRlcjo6IERPVA0KKyAgIDphbHQ6IFNs
+YXZlIHBpcGVsaW5lIGRpZ3JhcGgNCisgICA6Y2FwdGlvbjogU2xhdmUgcGlwZWxpbmUgZW5hYmxl
+ZCBkYXRhIGZsb3cNCisNCisgICBkaWdyYXBoIHNsYXZlX3BwbCB7DQorICAgICAgcmFua2Rpcj1M
+UjsNCisNCisgICAgICBzdWJncmFwaCB7DQorICAgICAgICAgIk1lbW9yeSI7DQorICAgICAgICAg
+Ik1vbml0b3IiOw0KKyAgICAgIH0NCisgICAgICBub2RlIFtzaGFwZT1ib3hdDQorICAgICAgc3Vi
+Z3JhcGggY2x1c3Rlcl9waXBlbGluZV9zbGF2ZSB7DQorICAgICAgICAgIHN0eWxlPWRhc2hlZA0K
+KyAgICAgICAgICBsYWJlbD0iU2xhdmUgUGlwZWxpbmVfQiINCisgICAgICAgICAgbm9kZSBbc2hh
+cGU9Ym94XQ0KKyAgICAgICAgICB7DQorICAgICAgICAgICAgICBub2RlIFtiZ2NvbG9yPWdyZXkg
+c3R5bGU9ZGFzaGVkXQ0KKyAgICAgICAgICAgICAgIlNsYXZlLlNjYWxlci0wIjsNCisgICAgICAg
+ICAgICAgICJTbGF2ZS5TY2FsZXItMSI7DQorICAgICAgICAgIH0NCisNCisgICAgICAgICBub2Rl
+IFtiZ2NvbG9yPWdyZXkgc3R5bGU9ZmlsbGVkXQ0KKyAgICAgICAgICJTbGF2ZS5MYXllci0wIiAt
+PiAiU2xhdmUuU2NhbGVyLTAiDQorICAgICAgICAgIlNsYXZlLkxheWVyLTEiIC0+ICJTbGF2ZS5T
+Y2FsZXItMCINCisgICAgICAgICAiU2xhdmUuTGF5ZXItMiIgLT4gIlNsYXZlLlNjYWxlci0xIg0K
+KyAgICAgICAgICJTbGF2ZS5MYXllci0zIiAtPiAiU2xhdmUuU2NhbGVyLTEiDQorDQorICAgICAg
+ICAgIlNsYXZlLkxheWVyLTAiIC0+ICJTbGF2ZS5Db21waXoiDQorICAgICAgICAgIlNsYXZlLkxh
+eWVyLTEiIC0+ICJTbGF2ZS5Db21waXoiDQorICAgICAgICAgIlNsYXZlLkxheWVyLTIiIC0+ICJT
+bGF2ZS5Db21waXoiDQorICAgICAgICAgIlNsYXZlLkxheWVyLTMiIC0+ICJTbGF2ZS5Db21waXoi
+DQorICAgICAgICAgIlNsYXZlLlNjYWxlci0wIiAtPiAiU2xhdmUuQ29tcGl6Ig0KKyAgICAgICAg
+ICJTbGF2ZS5TY2FsZXItMSIgLT4gIlNsYXZlLkNvbXBpeiINCisgICAgICB9DQorDQorICAgICAg
+c3ViZ3JhcGggY2x1c3Rlcl9waXBlbGluZV9tYXN0ZXIgew0KKyAgICAgICAgICBzdHlsZT1kYXNo
+ZWQNCisgICAgICAgICAgbGFiZWw9Ik1hc3RlciBQaXBlbGluZV9BIg0KKyAgICAgICAgICBub2Rl
+IFtzaGFwZT1ib3hdDQorICAgICAgICAgIHsNCisgICAgICAgICAgICAgIG5vZGUgW2JnY29sb3I9
+Z3JleSBzdHlsZT1kYXNoZWRdDQorICAgICAgICAgICAgICAiU2NhbGVyLTAiOw0KKyAgICAgICAg
+ICAgICAgIlNjYWxlci0xIjsNCisgICAgICAgICAgICAgICJTY2FsZXItMC8xIg0KKyAgICAgICAg
+ICB9DQorDQorICAgICAgICAgbm9kZSBbYmdjb2xvcj1ncmV5IHN0eWxlPWZpbGxlZF0NCisgICAg
+ICAgICAiTGF5ZXItMCIgLT4gIlNjYWxlci0wIg0KKyAgICAgICAgICJMYXllci0xIiAtPiAiU2Nh
+bGVyLTAiDQorICAgICAgICAgIkxheWVyLTIiIC0+ICJTY2FsZXItMSINCisgICAgICAgICAiTGF5
+ZXItMyIgLT4gIlNjYWxlci0xIg0KKw0KKyAgICAgICAgICJTbGF2ZS5Db21waXoiIC0+ICJDb21w
+aXoiDQorICAgICAgICAgIkxheWVyLTAiIC0+ICJDb21waXoiDQorICAgICAgICAgIkxheWVyLTEi
+IC0+ICJDb21waXoiDQorICAgICAgICAgIkxheWVyLTIiIC0+ICJDb21waXoiDQorICAgICAgICAg
+IkxheWVyLTMiIC0+ICJDb21waXoiDQorICAgICAgICAgIlNjYWxlci0wIiAtPiAiQ29tcGl6Ig0K
+KyAgICAgICAgICJTY2FsZXItMSIgLT4gIkNvbXBpeiINCisNCisgICAgICAgICAiQ29tcGl6IiAt
+PiAiU2NhbGVyLTAvMSIgLT4gIldiX2xheWVyIg0KKyAgICAgICAgICJDb21waXoiIC0+ICJJbXBy
+b2MiIC0+ICJUaW1pbmcgQ29udHJvbGxlciINCisgICAgICB9DQorDQorICAgICAgIldiX2xheWVy
+IiAtPiAiTWVtb3J5Ig0KKyAgICAgICJUaW1pbmcgQ29udHJvbGxlciIgLT4gIk1vbml0b3IiDQor
+ICAgfQ0KKw0KK1N1Yi1waXBlbGluZXMgZm9yIGlucHV0IGFuZCBvdXRwdXQNCistLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQorDQorQSBjb21wbGV0ZSBkaXNwbGF5IHBpcGVsaW5l
+IGNhbiBiZSBlYXNpbHkgZGl2aWRlZCBpbnRvIHRocmVlIHN1Yi1waXBlbGluZXMNCithY2NvcmRp
+bmcgdG8gdGhlIGluL291dCB1c2FnZS4NCisNCitMYXllcihpbnB1dCkgcGlwZWxpbmUNCit+fn5+
+fn5+fn5+fn5+fn5+fn5+fn4NCisNCisuLiBrZXJuZWwtcmVuZGVyOjogRE9UDQorICAgOmFsdDog
+TGF5ZXIgZGF0YSBkaWdyYXBoDQorICAgOmNhcHRpb246IExheWVyIChpbnB1dCkgZGF0YSBmbG93
+DQorDQorICAgZGlncmFwaCBsYXllcl9kYXRhX2Zsb3cgew0KKyAgICAgIHJhbmtkaXI9TFI7DQor
+ICAgICAgbm9kZSBbc2hhcGU9Ym94XQ0KKw0KKyAgICAgIHsNCisgICAgICAgICBub2RlIFtiZ2Nv
+bG9yPWdyZXkgc3R5bGU9ZGFzaGVkXQ0KKyAgICAgICAgICAgIlNjYWxlci1uIjsNCisgICAgICB9
+DQorDQorICAgICAgIkxheWVyLW4iIC0+ICJTY2FsZXItbiIgLT4gIkNvbXBpeiINCisgICB9DQor
+DQorLi4ga2VybmVsLXJlbmRlcjo6IERPVA0KKyAgIDphbHQ6IExheWVyIFNwbGl0IGRpZ3JhcGgN
+CisgICA6Y2FwdGlvbjogTGF5ZXIgU3BsaXQgcGlwZWxpbmUNCisNCisgICBkaWdyYXBoIGxheWVy
+X2RhdGFfZmxvdyB7DQorICAgICAgcmFua2Rpcj1MUjsNCisgICAgICBub2RlIFtzaGFwZT1ib3hd
+DQorDQorICAgICAgIkxheWVyLTAvMSIgLT4gIlNjYWxlci0wIiAtPiAiTWVyZ2VyIg0KKyAgICAg
+ICJMYXllci0yLzMiIC0+ICJTY2FsZXItMSIgLT4gIk1lcmdlciINCisgICAgICAiTWVyZ2VyIiAt
+PiAiQ29tcGl6Ig0KKyAgIH0NCisNCitXcml0ZWJhY2sob3V0cHV0KSBwaXBlbGluZQ0KK35+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQorLi4ga2VybmVsLXJlbmRlcjo6IERPVA0KKyAgIDphbHQ6
+IHdyaXRlYmFjayBkaWdyYXBoDQorICAgOmNhcHRpb246IFdyaXRlYmFjayhvdXRwdXQpIGRhdGEg
+Zmxvdw0KKw0KKyAgIGRpZ3JhcGggd3JpdGViYWNrX2RhdGFfZmxvdyB7DQorICAgICAgcmFua2Rp
+cj1MUjsNCisgICAgICBub2RlIFtzaGFwZT1ib3hdDQorDQorICAgICAgew0KKyAgICAgICAgIG5v
+ZGUgW2JnY29sb3I9Z3JleSBzdHlsZT1kYXNoZWRdDQorICAgICAgICAgICAiU2NhbGVyLW4iOw0K
+KyAgICAgIH0NCisNCisgICAgICAiQ29tcGl6IiAtPiAiU2NhbGVyLW4iIC0+ICJXYl9sYXllciIN
+CisgICB9DQorDQorLi4ga2VybmVsLXJlbmRlcjo6IERPVA0KKyAgIDphbHQ6IHNwbGl0IHdyaXRl
+YmFjayBkaWdyYXBoDQorICAgOmNhcHRpb246IFdyaXRlYmFjayhvdXRwdXQpIFNwbGl0IGRhdGEg
+Zmxvdw0KKw0KKyAgIGRpZ3JhcGggd3JpdGViYWNrX2RhdGFfZmxvdyB7DQorICAgICAgcmFua2Rp
+cj1MUjsNCisgICAgICBub2RlIFtzaGFwZT1ib3hdDQorDQorICAgICAgIkNvbXBpeiIgLT4gIlNw
+bGl0dGVyIg0KKyAgICAgICJTcGxpdHRlciIgLT4gIlNjYWxlci0wIiAtPiAiTWVyZ2VyIg0KKyAg
+ICAgICJTcGxpdHRlciIgLT4gIlNjYWxlci0xIiAtPiAiTWVyZ2VyIg0KKyAgICAgICJNZXJnZXIi
+IC0+ICJXYl9sYXllciINCisgICB9DQorDQorRGlzcGxheSBvdXRwdXQgcGlwZWxpbmUNCit+fn5+
+fn5+fn5+fn5+fn5+fn5+fn5+fg0KKy4uIGtlcm5lbC1yZW5kZXI6OiBET1QNCisgICA6YWx0OiBk
+aXNwbGF5IGRpZ3JhcGgNCisgICA6Y2FwdGlvbjogZGlzcGxheSBvdXRwdXQgZGF0YSBmbG93DQor
+DQorICAgZGlncmFwaCBzaW5nbGVfcHBsIHsNCisgICAgICByYW5rZGlyPUxSOw0KKyAgICAgIG5v
+ZGUgW3NoYXBlPWJveF0NCisNCisgICAgICAiQ29tcGl6IiAtPiAiSW1wcm9jIiAtPiAiVGltaW5n
+IENvbnRyb2xsZXIiDQorICAgfQ0KKw0KK0luIHRoZSBmb2xsb3dpbmcgc2VjdGlvbiB3ZSdsbCBz
+ZWUgdGhlc2UgdGhyZWUgc3ViLXBpcGVsaW5lcyB3aWxsIGJlIGhhbmRsZWQNCitieSBLTVMtcGxh
+bmUvd2JfY29ubi9jcnRjIHJlc3BlY3RpdmVseS4NCisNCitLb21lZGEgUmVzb3VyY2UgYWJzdHJh
+Y3Rpb24NCis9PT09PT09PT09PT09PT09PT09PT09PT09PT0NCisNCitzdHJ1Y3Qga29tZWRhX3Bp
+cGVsaW5lL2NvbXBvbmVudA0KKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQorDQor
+VG8gZnVsbHkgdXRpbGl6ZSBhbmQgZWFzaWx5IGFjY2Vzcy9jb25maWd1cmUgdGhlIEhXLCB0aGUg
+ZHJpdmVyIHNpZGUgYWxzbyB1c2VzDQorYSBzaW1pbGFyIGFyY2hpdGVjdHVyZTogUGlwZWxpbmUv
+Q29tcG9uZW50IHRvIGRlc2NyaWJlIHRoZSBIVyBmZWF0dXJlcyBhbmQNCitjYXBhYmlsaXRpZXMs
+IGFuZCBhIHNwZWNpZmljIGNvbXBvbmVudCBpbmNsdWRlcyB0d28gcGFydHM6DQorDQorLSAgRGF0
+YSBmbG93IGNvbnRyb2xsaW5nLg0KKy0gIFNwZWNpZmljIGNvbXBvbmVudCBjYXBhYmlsaXRpZXMg
+YW5kIGZlYXR1cmVzLg0KKw0KK1NvIHRoZSBkcml2ZXIgZGVmaW5lcyBhIGNvbW1vbiBoZWFkZXIg
+c3RydWN0IGtvbWVkYV9jb21wb25lbnQgdG8gZGVzY3JpYmUgdGhlDQorZGF0YSBmbG93IGNvbnRy
+b2wgYW5kIGFsbCBzcGVjaWZpYyBjb21wb25lbnRzIGFyZSBhIHN1YmNsYXNzIG9mIHRoaXMgYmFz
+ZQ0KK3N0cnVjdHVyZS4NCisNCisuLiBrZXJuZWwtZG9jOjogZHJpdmVycy9ncHUvZHJtL2FybS9k
+aXNwbGF5L2tvbWVkYS9rb21lZGFfcGlwZWxpbmUuaA0KKyAgIDppbnRlcm5hbDoNCisNCitSZXNv
+dXJjZSBkaXNjb3ZlcnkgYW5kIGluaXRpYWxpemF0aW9uDQorPT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PQ0KKw0KK1BpcGVsaW5lIGFuZCBjb21wb25lbnQgYXJlIHVzZWQgdG8g
+ZGVzY3JpYmUgaG93IHRvIGhhbmRsZSB0aGUgcGl4ZWwgZGF0YS4gV2UNCitzdGlsbCBuZWVkIGEg
+QHN0cnVjdCBrb21lZGFfZGV2IHRvIGRlc2NyaWJlIHRoZSB3aG9sZSB2aWV3IG9mIHRoZSBkZXZp
+Y2UsIGFuZA0KK3RoZSBjb250cm9sLWFiaWxpdGVzIG9mIGRldmljZS4NCisNCitXZSBoYXZlICZr
+b21lZGFfZGV2LCAma29tZWRhX3BpcGVsaW5lLCAma29tZWRhX2NvbXBvbmVudC4gTm93IGZpbGwg
+ZGV2aWNlcyB3aXRoDQorcGlwZWxpbmVzLiBTaW5jZSBrb21lZGEgaXMgbm90IGZvciBENzEgb25s
+eSBidXQgYWxzbyBpbnRlbmRlZCBmb3IgbGF0ZXIgcHJvZHVjdHMsDQorb2YgY291cnNlIHdl4oCZ
+ZCBiZXR0ZXIgc2hhcmUgYXMgbXVjaCBhcyBwb3NzaWJsZSBiZXR3ZWVuIGRpZmZlcmVudCBwcm9k
+dWN0cy4gVG8NCithY2hpZXZlIHRoaXMsIHNwbGl0IHRoZSBrb21lZGEgZGV2aWNlIGludG8gdHdv
+IGxheWVyczogQ09SRSBhbmQgQ0hJUC4NCisNCistICAgQ09SRTogZm9yIGNvbW1vbiBmZWF0dXJl
+cyBhbmQgY2FwYWJpbGl0aWVzIGhhbmRsaW5nLg0KKy0gICBDSElQOiBmb3IgcmVnaXN0ZXIgcHJv
+Z3JhbWluZyBhbmQgSFcgc3BlY2lmaWMgZmVhdHVyZSAobGltaXRhdGlvbikgaGFuZGxpbmcuDQor
+DQorQ09SRSBjYW4gYWNjZXNzIENISVAgYnkgdGhyZWUgY2hpcCBmdW5jdGlvbiBzdHJ1Y3R1cmVz
+Og0KKw0KKy0gICBzdHJ1Y3Qga29tZWRhX2Rldl9mdW5jcw0KKy0gICBzdHJ1Y3Qga29tZWRhX3Bp
+cGVsaW5lX2Z1bmNzDQorLSAgIHN0cnVjdCBrb21lZGFfY29tcG9uZW50X2Z1bmNzDQorDQorLi4g
+a2VybmVsLWRvYzo6IGRyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2Rl
+di5oDQorICAgOmludGVybmFsOg0KKw0KK0Zvcm1hdCBoYW5kbGluZw0KKz09PT09PT09PT09PT09
+PQ0KKw0KKy4uIGtlcm5lbC1kb2M6OiBkcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRh
+L2tvbWVkYV9mb3JtYXRfY2Fwcy5oDQorICAgOmludGVybmFsOg0KKy4uIGtlcm5lbC1kb2M6OiBk
+cml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9mcmFtZWJ1ZmZlci5oDQor
+ICAgOmludGVybmFsOg0KKw0KK0F0dGFjaCBrb21lZGFfZGV2IHRvIERSTS1LTVMNCis9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09DQorDQorS29tZWRhIGFic3RyYWN0cyByZXNvdXJjZXMgYnkg
+cGlwZWxpbmUvY29tcG9uZW50LCBidXQgRFJNLUtNUyB1c2VzDQorY3J0Yy9wbGFuZS9jb25uZWN0
+b3IuIE9uZSBLTVMtb2JqIGNhbm5vdCByZXByZXNlbnQgb25seSBvbmUgc2luZ2xlIGNvbXBvbmVu
+dCwNCitzaW5jZSB0aGUgcmVxdWlyZW1lbnRzIG9mIGEgc2luZ2xlIEtNUyBvYmplY3QgY2Fubm90
+IHNpbXBseSBiZSBhY2hpZXZlZCBieSBhDQorc2luZ2xlIGNvbXBvbmVudCwgdXN1YWxseSB0aGF0
+IG5lZWRzIG11bHRpcGxlIGNvbXBvbmVudHMgdG8gZml0IHRoZSByZXF1aXJlbWVudC4NCitMaWtl
+IHNldCBtb2RlLCBnYW1tYSwgY3RtIGZvciBLTVMgYWxsIHRhcmdldCBvbiBDUlRDLW9iaiwgYnV0
+IGtvbWVkYSBuZWVkcw0KK2NvbXBpeiwgaW1wcm9jIGFuZCB0aW1pbmdfY3RybHIgdG8gd29yayB0
+b2dldGhlciB0byBmaXQgdGhlc2UgcmVxdWlyZW1lbnRzLg0KK0FuZCBhIEtNUy1QbGFuZSBtYXkg
+cmVxdWlyZSBtdWx0aXBsZSBrb21lZGEgcmVzb3VyY2VzOiBsYXllci9zY2FsZXIvY29tcGl6Lg0K
+Kw0KK1NvLCBvbmUgS01TLU9iaiByZXByZXNlbnRzIGEgc3ViLXBpcGVsaW5lIG9mIGtvbWVkYSBy
+ZXNvdXJjZXMuDQorDQorLSAgIFBsYW5lOiBgTGF5ZXIoaW5wdXQpIHBpcGVsaW5lYF8NCistICAg
+V2JfY29ubmVjdG9yOiBgV3JpdGViYWNrKG91dHB1dCkgcGlwZWxpbmVgXw0KKy0gICBDcnRjOiBg
+RGlzcGxheSBvdXRwdXQgcGlwZWxpbmVgXw0KKw0KK1NvLCBmb3Iga29tZWRhLCB3ZSB0cmVhdCBL
+TVMgY3J0Yy9wbGFuZS9jb25uZWN0b3IgYXMgdXNlcnMgb2YgcGlwZWxpbmUgYW5kDQorY29tcG9u
+ZW50LCBhbmQgYXQgYW55IG9uZSB0aW1lIGEgcGlwZWxpbmUvY29tcG9uZW50IG9ubHkgY2FuIGJl
+IHVzZWQgYnkgb25lDQordXNlci4gQW5kIHBpcGVsaW5lL2NvbXBvbmVudCB3aWxsIGJlIHRyZWF0
+ZWQgYXMgcHJpdmF0ZSBvYmplY3Qgb2YgRFJNLUtNUzsgdGhlDQorc3RhdGUgd2lsbCBiZSBtYW5h
+Z2VkIGJ5IGRybV9hdG9taWNfc3RhdGUgYXMgd2VsbC4NCisNCitIb3cgdG8gbWFwIHBsYW5lIHRv
+IExheWVyKGlucHV0KSBwaXBlbGluZQ0KKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tDQorDQorS29tZWRhIGhhcyBtdXRpcGxlIExheWVyIGlucHV0IHBpcGVsaW5lcywg
+c2VlOg0KKy0gICBgU2luZ2xlIHBpcGVsaW5lIGRhdGEgZmxvd2BfDQorLSAgIGBEdWFsIHBpcGVs
+aW5lIHdpdGggU2xhdmUgZW5hYmxlZGBfDQorDQorVGhlIGVhc2llc3Qgd2F5IGlzIGJpbmRpbmcg
+YSBwbGFuZSB0byBhIGZpeGVkIExheWVyIHBpcGVsaW5lLCBidXQgY29uc2lkZXIgdGhlDQora29t
+ZWRhIGNhcGFiaWxpdGllczoNCisNCistICAgTGF5ZXIgU3BsaXQsIFNlZSBgTGF5ZXIoaW5wdXQp
+IHBpcGVsaW5lYF8NCisNCisgICAgTGF5ZXJfU3BsaXQgaXMgcXVpdGUgY29tcGxpY2F0ZWQgZmVh
+dHVyZSwgd2hpY2ggc3BsaXRzIGEgYmlnIGltYWdlIGludG8gdHdvDQorICAgIHBhcnRzIGFuZCBo
+YW5kbGVzIGl0IGJ5IHR3byBsYXllcnMgYW5kIHR3byBzY2FsZXJzIGluZGl2aWR1YWxseS4gQnV0
+IGl0DQorICAgIGltcG9ydHMgYW4gZWRnZSBwcm9ibGVtIG9yIGVmZmVjdCBpbiB0aGUgbWlkZGxl
+IG9mIHRoZSBpbWFnZSBhZnRlciB0aGUgc3BsaXQuDQorICAgIFRvIGF2b2lkIHN1Y2ggYSBwcm9i
+bGVtLCBpdCBuZWVkcyBhIGNvbXBsaWNhdGVkIFNwbGl0IGNhbGN1bGF0aW9uIGFuZCBzb21lDQor
+ICAgIHNwZWNpYWwgY29uZmlndXJhdGlvbnMgdG8gdGhlIGxheWVyIGFuZCBzY2FsZXIuIFdlJ2Qg
+YmV0dGVyIGhpZGUgc3VjaCBIVw0KKyAgICByZWxhdGVkIGNvbXBsZXhpdHkgdG8gdXNlciBtb2Rl
+Lg0KKw0KKy0gICBTbGF2ZSBwaXBlbGluZSwgU2VlIGBEdWFsIHBpcGVsaW5lIHdpdGggU2xhdmUg
+ZW5hYmxlZGBfDQorDQorICAgIFNpbmNlIHRoZSBjb21waXogY29tcG9uZW50IGRvZXNuJ3Qgb3V0
+cHV0IGFscGhhIHZhbHVlLCB0aGUgc2xhdmUgcGlwZWxpbmUNCisgICAgb25seSBjYW4gYmUgdXNl
+ZCBmb3IgYm90dG9tIGxheWVycyBjb21wb3NpdGlvbi4gVGhlIGtvbWVkYSBkcml2ZXIgd2FudHMg
+dG8NCisgICAgaGlkZSB0aGlzIGxpbWl0YXRpb24gdG8gdGhlIHVzZXIuIFRoZSB3YXkgdG8gZG8g
+dGhpcyBpcyB0byBwaWNrIGEgc3VpdGFibGUNCisgICAgTGF5ZXIgYWNjb3JkaW5nIHRvIHBsYW5l
+X3N0YXRlLT56cG9zLg0KKw0KK1NvIGZvciBrb21lZGEsIHRoZSBLTVMtcGxhbmUgZG9lc24ndCBy
+ZXByZXNlbnQgYSBmaXhlZCBrb21lZGEgbGF5ZXIgcGlwZWxpbmUsDQorYnV0IG11bHRpcGxlIExh
+eWVycyB3aXRoIHNhbWUgY2FwYWJpbGl0aWVzLiBLb21lZGEgd2lsbCBzZWxlY3Qgb25lIG9yIG1v
+cmUNCitMYXllcnMgdG8gZml0IHRoZSByZXF1aXJlbWVudCBvZiBvbmUgS01TLXBsYW5lLg0KKw0K
+K01ha2UgY29tcG9uZW50L3BpcGVsaW5lIHRvIGJlIGRybV9wcml2YXRlX29iag0KKy0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KKw0KK0FkZCA6Yzp0eXBlOmBk
+cm1fcHJpdmF0ZV9vYmpgIHRvIDpjOnR5cGU6YGtvbWVkYV9jb21wb25lbnRgLCA6Yzp0eXBlOmBr
+b21lZGFfcGlwZWxpbmVgDQorDQorLi4gY29kZS1ibG9jazo6IGMNCisNCisgICAgc3RydWN0IGtv
+bWVkYV9jb21wb25lbnQgew0KKyAgICAgICAgc3RydWN0IGRybV9wcml2YXRlX29iaiBvYmo7DQor
+ICAgICAgICAuLi4NCisgICAgfQ0KKw0KKyAgICBzdHJ1Y3Qga29tZWRhX3BpcGVsaW5lIHsNCisg
+ICAgICAgIHN0cnVjdCBkcm1fcHJpdmF0ZV9vYmogb2JqOw0KKyAgICAgICAgLi4uDQorICAgIH0N
+CisNCitUcmFja2luZyBjb21wb25lbnRfc3RhdGUvcGlwZWxpbmVfc3RhdGUgYnkgZHJtX2F0b21p
+Y19zdGF0ZQ0KKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tDQorDQorQWRkIDpjOnR5cGU6YGRybV9wcml2YXRlX3N0YXRlYCBhbmQgdXNl
+ciB0byA6Yzp0eXBlOmBrb21lZGFfY29tcG9uZW50X3N0YXRlYCwNCis6Yzp0eXBlOmBrb21lZGFf
+cGlwZWxpbmVfc3RhdGVgDQorDQorLi4gY29kZS1ibG9jazo6IGMNCisNCisgICAgc3RydWN0IGtv
+bWVkYV9jb21wb25lbnRfc3RhdGUgew0KKyAgICAgICAgc3RydWN0IGRybV9wcml2YXRlX3N0YXRl
+IG9iajsNCisgICAgICAgIHZvaWQgKmJpbmRpbmdfdXNlcjsNCisgICAgICAgIC4uLg0KKyAgICB9
+DQorDQorICAgIHN0cnVjdCBrb21lZGFfcGlwZWxpbmVfc3RhdGUgew0KKyAgICAgICAgc3RydWN0
+IGRybV9wcml2YXRlX3N0YXRlIG9iajsNCisgICAgICAgIHN0cnVjdCBkcm1fY3J0YyAqY3J0YzsN
+CisgICAgICAgIC4uLg0KKyAgICB9DQorDQora29tZWRhIGNvbXBvbmVudCB2YWxpZGF0aW9uDQor
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQorDQorS29tZWRhIGhhcyBtdWx0aXBsZSB0eXBl
+cyBvZiBjb21wb25lbnRzLCBidXQgdGhlIHByb2Nlc3Mgb2YgdmFsaWRhdGlvbiBhcmUNCitzaW1p
+bGFyLCB1c3VhbGx5IGluY2x1ZGluZyB0aGUgZm9sbG93aW5nIHN0ZXBzOg0KKw0KKy4uIGNvZGUt
+YmxvY2s6OiBjDQorDQorICAgIGludCBrb21lZGFfeHh4eF92YWxpZGF0ZShzdHJ1Y3Qga29tZWRh
+X2NvbXBvbmVudF94eHggeHh4X2NvbXAsDQorICAgICAgICAgICAgICAgIHN0cnVjdCBrb21lZGFf
+Y29tcG9uZW50X291dHB1dCAqaW5wdXRfZGZsb3csDQorICAgICAgICAgICAgICAgIHN0cnVjdCBk
+cm1fcGxhbmUvY3J0Yy9jb25uZWN0b3IgKnVzZXIsDQorICAgICAgICAgICAgICAgIHN0cnVjdCBk
+cm1fcGxhbmUvY3J0Yy9jb25uZWN0b3Jfc3RhdGUsICp1c2VyX3N0YXRlKQ0KKyAgICB7DQorICAg
+ICAgICAgc2V0dXAgMTogY2hlY2sgaWYgY29tcG9uZW50IGlzIG5lZWRlZCwgbGlrZSB0aGUgc2Nh
+bGVyIGlzIG9wdGlvbmFsIGRlcGVuZGluZw0KKyAgICAgICAgICAgICAgICAgIG9uIHRoZSB1c2Vy
+X3N0YXRlOyBpZiB1bm5lZWRlZCwganVzdCByZXR1cm4sIGFuZCB0aGUgY2FsbGVyIHdpbGwNCisg
+ICAgICAgICAgICAgICAgICBwdXQgdGhlIGRhdGEgZmxvdyBpbnRvIG5leHQgc3RhZ2UuDQorICAg
+ICAgICAgU2V0dXAgMjogY2hlY2sgdXNlcl9zdGF0ZSB3aXRoIGNvbXBvbmVudCBmZWF0dXJlcyBh
+bmQgY2FwYWJpbGl0aWVzIHRvIHNlZQ0KKyAgICAgICAgICAgICAgICAgIGlmIHJlcXVpcmVtZW50
+cyBjYW4gYmUgbWV0OyBpZiBub3QsIHJldHVybiBmYWlsLg0KKyAgICAgICAgIFNldHVwIDM6IGdl
+dCBjb21wb25lbnRfc3RhdGUgZnJvbSBkcm1fYXRvbWljX3N0YXRlLCBhbmQgdHJ5IHNldCB0byBz
+ZXQNCisgICAgICAgICAgICAgICAgICB1c2VyIHRvIGNvbXBvbmVudDsgZmFpbCBpZiBjb21wb25l
+bnQgaGFzIGJlZW4gYXNzaWduZWQgdG8gYW5vdGhlcg0KKyAgICAgICAgICAgICAgICAgIHVzZXIg
+YWxyZWFkeS4NCisgICAgICAgICBTZXR1cCAzOiBjb25maWd1cmUgdGhlIGNvbXBvbmVudF9zdGF0
+ZSwgbGlrZSBzZXQgaXRzIGlucHV0IGNvbXBvbmVudCwNCisgICAgICAgICAgICAgICAgICBjb252
+ZXJ0IHVzZXJfc3RhdGUgdG8gY29tcG9uZW50IHNwZWNpZmljIHN0YXRlLg0KKyAgICAgICAgIFNl
+dHVwIDQ6IGFkanVzdCB0aGUgaW5wdXRfZGZsb3cgYW5kIHByZXBhcmUgaXQgZm9yIHRoZSBuZXh0
+IHN0YWdlLg0KKyAgICB9DQorDQora29tZWRhX2ttcyBBYnN0cmFjdGlvbg0KKy0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0NCisNCisuLiBrZXJuZWwtZG9jOjogZHJpdmVycy9ncHUvZHJtL2FybS9kaXNw
+bGF5L2tvbWVkYS9rb21lZGFfa21zLmgNCisgICA6aW50ZXJuYWw6DQorDQora29tZGVfa21zIEZ1
+bmN0aW9ucw0KKy0tLS0tLS0tLS0tLS0tLS0tLS0NCisuLiBrZXJuZWwtZG9jOjogZHJpdmVycy9n
+cHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfY3J0Yy5jDQorICAgOmludGVybmFsOg0K
+Ky4uIGtlcm5lbC1kb2M6OiBkcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVk
+YV9wbGFuZS5jDQorICAgOmludGVybmFsOg0KKw0KK0J1aWxkIGtvbWVkYSB0byBiZSBhIExpbnV4
+IG1vZHVsZSBkcml2ZXINCis9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+DQorDQorTm93IHdlIGhhdmUgdHdvIGxldmVsIGRldmljZXM6DQorDQorLSAgIGtvbWVkYV9kZXY6
+IGRlc2NyaWJlcyB0aGUgcmVhbCBkaXNwbGF5IGhhcmR3YXJlLg0KKy0gICBrb21lZGFfa21zX2Rl
+djogYXR0YWNocyBvciBjb25uZWN0cyBrb21lZGFfZGV2IHRvIERSTS1LTVMuDQorDQorQWxsIGtv
+bWVkYSBvcGVyYXRpb25zIGFyZSBzdXBwbGllZCBvciBvcGVyYXRlZCBieSBrb21lZGFfZGV2IG9y
+IGtvbWVkYV9rbXNfZGV2LA0KK3RoZSBtb2R1bGUgZHJpdmVyIGlzIG9ubHkgYSBzaW1wbGUgd3Jh
+cHBlciB0byBwYXNzIHRoZSBMaW51eCBjb21tYW5kDQorKHByb2JlL3JlbW92ZS9wbSkgaW50byBr
+b21lZGFfZGV2IG9yIGtvbWVkYV9rbXNfZGV2Lg0KLS0gDQoyLjE3LjENCg0K
