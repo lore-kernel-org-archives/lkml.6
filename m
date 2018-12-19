@@ -2,296 +2,120 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3270C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA0EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D900218D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:23:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8656720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VjZ9ehI0"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FuvoMQT/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbeLSPXl (ORCPT
+        id S1728789AbeLSPZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:23:41 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45498 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbeLSPXk (ORCPT
+        Wed, 19 Dec 2018 10:25:21 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38630 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbeLSPZV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:23:40 -0500
-Received: by mail-ed1-f68.google.com with SMTP id d39so17267187edb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:23:38 -0800 (PST)
+        Wed, 19 Dec 2018 10:25:21 -0500
+Received: by mail-io1-f68.google.com with SMTP id l14so15895570ioj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:25:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VAVpzrmhy2lgSzHleRRHC3Qk/HGuJMjI6z0oh/XL9zQ=;
-        b=VjZ9ehI0TN/RmqwgPEFsFedsHjOOq+Q22RVL+hRrqzmH6TL5QH5D2/o6Jv/eeqaVM2
-         azhsLrE/o1fvK10xaEfD1HPpUWcUOKfrJYbSoH1GN7AbbwhI8Viju+IorM65TKct7pDZ
-         yicQTL2f3lQSefgUaLx54G3Ll6cnIGwvCKAC8=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fwXyV3uXHFnEFzarKwBmGEamrwhwKWEPPcrhlHwu7VM=;
+        b=FuvoMQT/brpDTWyRZN7dv1B0ZVyUJwtTBlGMGWcTcCrhMFMqDL6lU+wJGkP/v6iPZW
+         5UBo/wl3/kf+X9Exh5eRxeqwpiiQYTliAVS4H58dA10UDTxr2l9vI/qWZit7kkt1szRP
+         4mXGaYrr8UI/dUDHCHp1pQpJ1rwZh2+9Z/4FM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=VAVpzrmhy2lgSzHleRRHC3Qk/HGuJMjI6z0oh/XL9zQ=;
-        b=kthg/BqfRNSiGJwC9gn0pHkUuVPn4L1GZnFok4gJ31Pn4jTJJtdPSV3bru7e8RllVM
-         QnY0oX0OAgCqNbWfUJs6v1V9zV5S3Gc20bxykfgZldjsAdAz1q9So4z4wGVXfAEO/boe
-         WQLa9nNM8g4bMjlXdq6sjhaAoEtKLB5RHDEeAQTX8yusj4YkYjzZRZ9wfiMP89y9I39g
-         +HU+W6kSIu2SkYdjQvhlLI/fwrPT47DO2xDiNnpWQN7/HokPuYXbUT4b+s78OiaZ+/81
-         6Peysp2R+B76YHbyIXbJOP0JuuOTOmYiWl2CfTe13bCFdhXn+EkBSWjChDa8pp1fxBEQ
-         +mpA==
-X-Gm-Message-State: AA+aEWYHiAXT2MeAHHqUNPKvDYB3u7RK1eZci7ucvVUA4wj1etxAoUSv
-        I+pxnVTGWUdoaK98qx0SKNpSYg==
-X-Google-Smtp-Source: AFSGD/VUKSi4Z/tvW4T3RevdAfrMdqv72uKc8OM9uEvFdMd7zjRhhsK9htMDf9i2o1hUyVckBceiqg==
-X-Received: by 2002:a50:f5f4:: with SMTP id x49mr20943065edm.26.1545233017622;
-        Wed, 19 Dec 2018 07:23:37 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id e35sm5517637eda.13.2018.12.19.07.23.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Dec 2018 07:23:36 -0800 (PST)
-Date:   Wed, 19 Dec 2018 16:23:34 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ramalingam.c@intel.com, aspriel@gmail.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>, brgl@bgdev.pl,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] sysfs: Disable lockdep for driver bind/unbind files
-Message-ID: <20181219152334.GK21184@phenom.ffwll.local>
-Mail-Followup-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ramalingam.c@intel.com, aspriel@gmail.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>, brgl@bgdev.pl,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20181218201443.4950-1-daniel.vetter@ffwll.ch>
- <20181219123909.28754-1-daniel.vetter@ffwll.ch>
- <CAJZ5v0ivArstD8jyBUUfSE0c_ROR=SqA-4Cu-0ZT2H+JVq7RtA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fwXyV3uXHFnEFzarKwBmGEamrwhwKWEPPcrhlHwu7VM=;
+        b=Nboq1mRypC99tVlQCew6kcr67c3rmKqD3AOH8fm4qwYjAe5xEuvTVY/jJRwlRkZQAF
+         mFFp0M2F9KYvBLUa3zzq24/xADABt38Dt1C9x23UiPKobOBLKcnac5AdoroNO8K8iP/t
+         HcgWBB25OsqGoj+ydMMCS1z/m273XugYPQCuJn7FGU7xDc/HmnsHcJJv72p5d2RsCHa7
+         ElxucdlgCmlGeYh2wChFWrnRK4c7v+cCOSIz9Tdt55YqZ1ykhZ17A3ICYwhpnBZiJzho
+         00r/QHoDMcE83JWT+Jo3wwTj9/4zhP83VfQi/6waaQoy57ZpEHf1FieZPUhKenCdwg5+
+         bHpg==
+X-Gm-Message-State: AJcUukc51LtqK8jjQ6mGm4KH8Qcizvovj01TU2OZCYDX7I47eUu06x+I
+        /KIlBhB1m1dWCV/hmfy6rRTsWdfw8r3Q1xDFSepyEQ==
+X-Google-Smtp-Source: ALg8bN5MnoeNKYenNWZ7OPURZKQIzibsiKxA1thSj8Mb03eeTbeWFnDQpNoy80Kr3Wz6f4wKxwexi+IRR/POCM+orHQ=
+X-Received: by 2002:a6b:6b01:: with SMTP id g1mr56755ioc.18.1545233119800;
+ Wed, 19 Dec 2018 07:25:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0ivArstD8jyBUUfSE0c_ROR=SqA-4Cu-0ZT2H+JVq7RtA@mail.gmail.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1545144923-31546-1-git-send-email-vincent.guittot@linaro.org>
+ <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org> <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
+In-Reply-To: <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 19 Dec 2018 16:25:08 +0100
+Message-ID: <CAKfTPtBokDKeaPOPNqxP_2CfzRRNdfZUmxDqsQ6puc+_FQRGbg@mail.gmail.com>
+Subject: Re: [RFC v3 1/3] PM/runtime: Add a new interface to get accounted time
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        jani.nikula@linux.intel.com,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
+        "Intel graphics driver community testing & development" 
+        <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 03:21:56PM +0100, Rafael J. Wysocki wrote:
-> On Wed, Dec 19, 2018 at 1:39 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+On Wed, 19 Dec 2018 at 10:58, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Tue, 18 Dec 2018 at 15:55, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
 > >
-> > This is the much more correct fix for my earlier attempt at:
+> > Some drivers (like i915/drm) need to get the accounted suspended time.
+> > pm_runtime_accounted_time_get() will return the suspended or active
+> > accounted time until now.
+>
+> I suggest to leave the active accounted time out for now. At least
+> until we have some users.
+>
+> That said, perhaps rename the function to something along the lines
+> of, pm_runtime_last_suspended_time(), to make it more clear.
+>
 > >
-> > https://lkml.org/lkml/2018/12/10/118
-> >
-> > Short recap:
-> >
-> > - There's not actually a locking issue, it's just lockdep being a bit
-> >   too eager to complain about a possible deadlock.
-> >
-> > - Contrary to what I claimed the real problem is recursion on
-> >   kn->count. Greg pointed me at sysfs_break_active_protection(), used
-> >   by the scsi subsystem to allow a sysfs file to unbind itself. That
-> >   would be a real deadlock, which isn't what's happening here. Also,
-> >   breaking the active protection means we'd need to manually handle
-> >   all the lifetime fun.
-> >
-> > - With Rafael we discussed the task_work approach, which kinda works,
-> >   but has two downsides: It's a functional change for a lockdep
-> >   annotation issue, and it won't work for the bind file (which needs
-> >   to get the errno from the driver load function back to userspace).
-> >
-> > - Greg also asked why this never showed up: To hit this you need to
-> >   unregister a 2nd driver from the unload code of your first driver. I
-> >   guess only gpus do that. The bug has always been there, but only
-> >   with a recent patch series did we add more locks so that lockdep
-> >   built a chain from unbinding the snd-hda driver to the
-> >   acpi_video_unregister call.
-> >
-> > Full lockdep splat:
-> >
-> > [12301.898799] ============================================
-> > [12301.898805] WARNING: possible recursive locking detected
-> > [12301.898811] 4.20.0-rc7+ #84 Not tainted
-> > [12301.898815] --------------------------------------------
-> > [12301.898821] bash/5297 is trying to acquire lock:
-> > [12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-> > [12301.898841] but task is already holding lock:
-> > [12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> > [12301.898856] other info that might help us debug this:
-> > [12301.898862]  Possible unsafe locking scenario:
-> > [12301.898867]        CPU0
-> > [12301.898870]        ----
-> > [12301.898874]   lock(kn->count#39);
-> > [12301.898879]   lock(kn->count#39);
-> > [12301.898883] *** DEADLOCK ***
-> > [12301.898891]  May be due to missing lock nesting notation
-> > [12301.898899] 5 locks held by bash/5297:
-> > [12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-> > [12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-> > [12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-> > [12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-> > [12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-> > [12301.898960] stack backtrace:
-> > [12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-> > [12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-> > [12301.898982] Call Trace:
-> > [12301.898989]  dump_stack+0x67/0x9b
-> > [12301.898997]  __lock_acquire+0x6ad/0x1410
-> > [12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> > [12301.899010]  ? find_held_lock+0x2d/0x90
-> > [12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-> > [12301.899023]  ? find_held_lock+0x2d/0x90
-> > [12301.899030]  ? lock_acquire+0x90/0x180
-> > [12301.899036]  lock_acquire+0x90/0x180
-> > [12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> > [12301.899049]  __kernfs_remove+0x296/0x310
-> > [12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-> > [12301.899060]  ? kernfs_name_hash+0xd/0x80
-> > [12301.899066]  ? kernfs_find_ns+0x6c/0x100
-> > [12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-> > [12301.899080]  bus_remove_driver+0x92/0xa0
-> > [12301.899085]  acpi_video_unregister+0x24/0x40
-> > [12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-> > [12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-> > [12301.899169]  pci_device_remove+0x36/0xb0
-> > [12301.899176]  device_release_driver_internal+0x185/0x240
-> > [12301.899183]  unbind_store+0xaf/0x180
-> > [12301.899189]  kernfs_fop_write+0x104/0x190
-> > [12301.899195]  __vfs_write+0x31/0x180
-> > [12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-> > [12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-> > [12301.899216]  ? __sb_start_write+0x13c/0x1a0
-> > [12301.899221]  ? vfs_write+0x17f/0x1b0
-> > [12301.899227]  vfs_write+0xb9/0x1b0
-> > [12301.899233]  ksys_write+0x50/0xc0
-> > [12301.899239]  do_syscall_64+0x4b/0x180
-> > [12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > [12301.899253] RIP: 0033:0x7f452ac7f7a4
-> > [12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-> > [12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> > [12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-> > [12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-> > [12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-> > [12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-> > [12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
-> >
-> > Locking around I've noticed that usb and i2c already handle similar
-> > recursion problems, where a sysfs file can unbind the same type of
-> > sysfs somewhere else in the hierarchy. Relevant commits are:
-> >
-> > commit 356c05d58af05d582e634b54b40050c73609617b
-> > Author: Alan Stern <stern@rowland.harvard.edu>
-> > Date:   Mon May 14 13:30:03 2012 -0400
-> >
-> >     sysfs: get rid of some lockdep false positives
-> >
-> > commit e9b526fe704812364bca07edd15eadeba163ebfb
-> > Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-> > Date:   Fri May 17 14:56:35 2013 +0200
-> >
-> >     i2c: suppress lockdep warning on delete_device
-> >
-> > Implement the same trick for driver bind/unbind.
-> >
-> > v2: Put the macro into bus.c (Greg).
-> >
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> 
-> It would have been fine to retain the R-by:
-> 
-> Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Yeah sorry I rushed it, but Greg fixed it up for me now.
-
-Thanks for reviewing, much appreciated.
--Daniel
-
-> 
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Ramalingam C <ramalingam.c@intel.com>
-> > Cc: Arend van Spriel <aspriel@gmail.com>
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> > Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > Cc: Joe Perches <joe@perches.com>
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > > ---
-> >  drivers/base/bus.c     | 7 +++++--
-> >  include/linux/device.h | 1 +
-> >  2 files changed, 6 insertions(+), 2 deletions(-)
+> >  drivers/base/power/runtime.c | 26 ++++++++++++++++++++++++++
+> >  include/linux/pm_runtime.h   |  2 ++
+> >  2 files changed, 28 insertions(+)
 > >
-> > diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> > index 8bfd27ec73d6..585e2e1c9c8f 100644
-> > --- a/drivers/base/bus.c
-> > +++ b/drivers/base/bus.c
-> > @@ -31,6 +31,9 @@ static struct kset *system_kset;
-> >
-> >  #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
-> >
-> > +#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-> > +       struct driver_attribute driver_attr_##_name =           \
-> > +               __ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
-> >
-> >  static int __must_check bus_rescan_devices_helper(struct device *dev,
-> >                                                 void *data);
-> > @@ -195,7 +198,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
-> >         bus_put(bus);
-> >         return err;
+> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > index 7062469..6461469 100644
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -88,6 +88,32 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
+> >         dev->power.runtime_status = status;
 > >  }
-> > -static DRIVER_ATTR_WO(unbind);
-> > +static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
 > >
-> >  /*
-> >   * Manually attach a device to a driver.
-> > @@ -231,7 +234,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
-> >         bus_put(bus);
-> >         return err;
-> >  }
-> > -static DRIVER_ATTR_WO(bind);
-> > +static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
-> >
-> >  static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
-> >  {
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 1b25c7a43f4c..41424d6e27c7 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -327,6 +327,7 @@ struct driver_attribute {
-> >  #define DRIVER_ATTR_WO(_name) \
-> >         struct driver_attribute driver_attr_##_name = __ATTR_WO(_name)
-> >
-> > +
-> >  extern int __must_check driver_create_file(struct device_driver *driver,
-> >                                         const struct driver_attribute *attr);
-> >  extern void driver_remove_file(struct device_driver *driver,
-> > --
-> > 2.20.0.rc1
-> >
+> > +u64 pm_runtime_accounted_time_get(struct device *dev, enum rpm_status status, bool update)
+> > +{
+> > +       u64 now = ktime_to_ns(ktime_get());
+>
+> I think you should stay on jiffies here - and then switch to ktime in patch 3.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+I forgot to reply to this comment
+Yes I agree that I should stay in jiffies there
+
+
+>
+> > +       u64 delta = 0, time = 0;
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&dev->power.lock, flags);
