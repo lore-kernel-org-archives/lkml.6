@@ -2,114 +2,112 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B82D6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1974C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 887F020811
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC31E20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbeLSXxE (ORCPT
+        id S1730109AbeLSXzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 18:53:04 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:39362 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727171AbeLSXxD (ORCPT
+        Wed, 19 Dec 2018 18:55:42 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34618 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727171AbeLSXzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 18:53:03 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04392;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TGAnCed_1545263334;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TGAnCed_1545263334)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 20 Dec 2018 07:48:56 +0800
-Subject: Re: [RFC PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-To:     Tim Chen <tim.c.chen@linux.intel.com>, ying.huang@intel.com,
-        tim.c.chen@intel.com, minchan@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1545115948-25467-1-git-send-email-yang.shi@linux.alibaba.com>
- <6a51d47a-b87f-b0f1-4dae-843730dba698@linux.intel.com>
- <03462367-3f75-4907-8c5e-526a919e5cf3@linux.alibaba.com>
- <c0290c77-87ba-32bf-8ed0-d42a322d3d06@linux.intel.com>
- <606b73ed-da62-fdd1-71da-c4de7a02e837@linux.alibaba.com>
- <bc63155c-39b4-02b0-4045-da51022dbff5@linux.intel.com>
- <2df52dc3-ae66-0ab8-459e-49f49eaa569c@linux.alibaba.com>
- <50e14a30-97bb-06c6-ae6a-74e6dc827713@linux.intel.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <385ffd4f-d903-6e2f-e80e-7d3797885c54@linux.alibaba.com>
-Date:   Wed, 19 Dec 2018 15:48:53 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 19 Dec 2018 18:55:42 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so10601012pfg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 15:55:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XyIMYAL5qBnmvWOCPA7vcQI2SfJsc96HrX1N6dGqLOs=;
+        b=heJoAC7rX3aTYbOwt2TDQ/P+Y1spRnryUStNDWLUhLCK+u9t9fo/fuR+UkaXpd259L
+         eS29PcDPUk645sX0CYkDN5EZQImV07EMvW4sD7Zm/II9dMquBvg/3wTqg260BdXJ92Yr
+         xLyTJabRy3FWZq4oPGvR4OgLPpEYzCZ9c3+z2DcUu8tb2T5Y3bh8AAd88A9XBENbA9FW
+         GzkUSpCrXq/7igoRjapFskj0El7kPPjEzFn4exNnem5cy33jmAI0EizzyNo8S1f8acrt
+         HwG81Nyl6pli0N/9EfAukdrPRyBiFMooYdiXWUZJ67UEymdK5TCr5jy/TU7ojySErz3f
+         LpsQ==
+X-Gm-Message-State: AA+aEWbzijj4+mdN19/A4fdVM12+nX8U36QSWT6OsKvvdqWWqNYqUCp6
+        ucoyFK6Kqj4IJv3HV0wj59Urgg==
+X-Google-Smtp-Source: AFSGD/VjxWZjGtpglJs4TWeaHZHEP8v/rEMIDMx+k0M8YWsuPuAaRzBXbgN6Wkm7JXO4CFTZcWgDWA==
+X-Received: by 2002:a63:b24a:: with SMTP id t10mr19772542pgo.223.1545263740904;
+        Wed, 19 Dec 2018 15:55:40 -0800 (PST)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id t67sm37045048pfd.90.2018.12.19.15.55.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 15:55:39 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v5 0/8] drm/msm/dsi: Get PHY ref clocks from the DT
+Date:   Wed, 19 Dec 2018 15:55:20 -0800
+Message-Id: <20181219235528.114830-1-mka@chromium.org>
+X-Mailer: git-send-email 2.20.1.415.g653613c723-goog
 MIME-Version: 1.0
-In-Reply-To: <50e14a30-97bb-06c6-ae6a-74e6dc827713@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The MSM DSI PHY drivers currently hardcode the name and the rate of
+the PHY ref clock. Get the ref clock from the device tree instead.
 
+Note: testing of this series was limited to SDM845 and the 10nm PHY
 
-On 12/19/18 11:00 AM, Tim Chen wrote:
-> On 12/19/18 10:40 AM, Yang Shi wrote:
->>
->>>>> I don't think your dereference inode = si->swap_file->f_mapping->host
->>>>> is always safe.  You should do it only when (si->flags & SWP_FS) is true.
->>>> Do you mean it is not safe for swap partition?
->>> The f_mapping may not be instantiated.  It is only done for SWP_FS.
->> Really? I saw the below calls in swapon:
->>
->> swap_file = file_open_name(name, O_RDWR|O_LARGEFILE, 0);
->> ...
->> p->swap_file = swap_file;
->> mapping = swap_file->f_mapping;
->> inode = mapping->host;
->> ...
->>
->> Then the below code manipulates the inode.
->>
->> And, trace shows file_open_name() does call blkdev_open if it is turning block device swap on. And, blkdev_open() would return instantiated address_space and inode.
->>
->> Am I missing something?
->>
-> I was trying to limit the congestion logic for block devices backed swap.
-> So the check I had in mind should really be "si->flags & SWP_BLKDEV"
-> instead of si->flags & SWP_FS.  I was concerned that there could
-> be other use cases where the inode dereference is invalid.
->
-> Looking at the code a bit more, looks like swap_cluster_readahead is not
-> used for other special case swap usage (like page migration).  So
-> you would a proper swapfile and inode here.  But I think it is still
+Major changes in v5:
+- none (see per-patch change log for minor changes)
 
-Yes, just swap page fault and shmem calls this function. Actually, your 
-above concern is valid if the inode were added into swap_address_space 
-(address_space->host). I did this in my first attempt, and found out it 
-may break some assumption in clear_page_dirty_for_io() and migration.
+Major changes in v4:
+- always use parent rate for 28nm and 28nm 8960 PHYs
 
-So, I made the patch as it is.
+Major changes in v3:
+- keep supporting DTs without ref clock for the 28nm and the 28nm
+  8960 PHYs
+- added patch to add ref clock to qcom-apq8064.dtsi
 
-> a good idea to have a check for SWP_BLKDEV in si->flags.
+Major changes in v2:
+- apply to all MSM DSI PHY drivers, not only 10nm
 
-I don't get your point why it should be block dev swap only. IMHO, block 
-dev swap should be less likely fragmented and congested than swap file, 
-right? Block dev swap could be a dedicated physical device, but swap 
-file has to be with filesystem.
+Matthias Kaehlcke (8):
+  dt-bindings: msm/dsi: Add ref clock for PHYs
+  drm/msm/dsi: 28nm 8960 PHY: Get ref clock from the DT
+  drm/msm/dsi: 28nm PHY: Get ref clock from the DT
+  drm/msm/dsi: 14nm PHY: Get ref clock from the DT
+  drm/msm/dsi: 10nm PHY: Get ref clock from the DT
+  arm64: dts: qcom: msm8916: Set 'xo_board' as ref clock of the DSI PHY
+  arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of the DSI PHYs
+  ARM: dts: qcom-apq8064: Set 'xo_board' as ref clock of the DSI PHY
 
-It sounds reasonable to me to have this check for swap file only. 
-However, to be honest, it sounds not hurt to have both.
+ .../devicetree/bindings/display/msm/dsi.txt   |  1 +
+ arch/arm/boot/dts/qcom-apq8064.dtsi           |  5 +--
+ arch/arm64/boot/dts/qcom/msm8916.dtsi         |  5 +--
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 10 +++---
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c    | 20 +++++++++--
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c    | 23 +++++++++---
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c    | 36 +++++++++++++------
+ .../gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c   | 24 ++++++++++---
+ 8 files changed, 92 insertions(+), 32 deletions(-)
 
-Thanks,
-Yang
-
->
-> Thanks.
->
-> Tim
->   
->
+-- 
+2.20.1.415.g653613c723-goog
 
