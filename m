@@ -2,284 +2,146 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E145C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9BAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395792184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D84921871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u2wv7n0v"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z3mUSPpM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbeLSISK (ORCPT
+        id S1728273AbeLSISv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 03:18:10 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45723 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727718AbeLSISK (ORCPT
+        Wed, 19 Dec 2018 03:18:51 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41657 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727659AbeLSISu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 03:18:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so14321530lfa.12
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 00:18:09 -0800 (PST)
+        Wed, 19 Dec 2018 03:18:50 -0500
+Received: by mail-yb1-f196.google.com with SMTP id e124so7541763ybb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 00:18:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Tu5r+uwolqSb6+VisE9xWgwnB0IroyHo+e5GupPAIuQ=;
-        b=u2wv7n0vwjZm6tAJBMgPlXpEfz6T/FYwe8vcOZcma/A6tVy0KIPB/lWMjBhrbnH+PN
-         650MIoxvi6bzgTXG6OISvl5y2UqoHOLCxJTe5OUy8BwgBycA7Fhv9qUO0CFU6p/Sdpwx
-         6Ojgg7J2VUTR2sylMM8gtX0QaVU7EOBKIrtmIurOPRmj3WdH6rYreODNQdHyiJdTmNLg
-         TOKhpyBxsJ+dSfx3glVb3hFrI3wOtr3CoxnJRrMgOAS+klILI3U2i4Qqd7ZIgimrhhSE
-         dAa8NbEGjxuXwrsMKdeouZE/3BorZKY6GzbA0s29dm+G7BXCNypckZSxnBBqqFxJhqma
-         gfxA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xhHRctd/XqQnCYeEth+JKGS9rV5kdfu9x8MbR/nYHqA=;
+        b=Z3mUSPpMBqrVISWypSsUV3Uk7yalWO+6tVXRckFg0hFhHekN9Go+A8p1WcSRDadDVJ
+         tY73oeOzdvEyF+QrGrIzRpOMpUJ1Kj4CLNTIjopc6pbdSdELm6l8GIbofaNrmjxnkEKz
+         +m5axO0v9jVp+ueBvx7W2goRn5L3Hy/RZQLIQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Tu5r+uwolqSb6+VisE9xWgwnB0IroyHo+e5GupPAIuQ=;
-        b=ICHz+rSKzIdp2CxtIAe8Hucrbh85HjY3PopewqiPxTrv98gwWl4as2Irf4VucV+vrT
-         OjklofVRGF0Hu+xy5EzEKXaeT2Wdw6DXBfpJCUbCK9VTUubQZ4LjLW+DZuqnMYl4qaf9
-         sATpVbjC9vHsufsVC0FR3fNVLNG9Z/FA4o8nugyQ6mkv7njUv1g6huKkfPYrgtyyR9+8
-         aZotk3PKgBFmJtDaDLNTvOcdINVc+sEnjW4RfeRQL0x9GDjofoKm00RNsoci0NRZasfK
-         7g6kFxhKjCeQXe1DITk2GnBeB1QrWvtHZCfHqsVLC89+8TmuS6tk760c9kqFyzPtIxp+
-         /K4w==
-X-Gm-Message-State: AA+aEWbhIFcQ6fVt2b/cGD+9QDDE4KySWCCf2jhEKx+6jBwXZEimxvRv
-        DCfiOuxRgOSNNyypbomjh5Q=
-X-Google-Smtp-Source: AFSGD/U/PNKC7ZvABJbK4Qeh/qpw8qciE0t+c5mJs60iyC2A7NvnMpg+kMEjeFTfC7FV7Fg4zkd2QQ==
-X-Received: by 2002:a19:54d7:: with SMTP id b84mr11190242lfl.131.1545207487818;
-        Wed, 19 Dec 2018 00:18:07 -0800 (PST)
-Received: from [10.17.182.20] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id v64sm3669787lfa.48.2018.12.19.00.18.06
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xhHRctd/XqQnCYeEth+JKGS9rV5kdfu9x8MbR/nYHqA=;
+        b=nRwYQa3fN4KRDlPkzF2MlshMQoIEPmDX3A3fDF4740nozZudGB0/0zK61jFEXyaHDh
+         uJvtCPGHuCdwOFZmjr8I+zm0y23j5IPKu56gRKiB0aC5yhQ1jdPRNZLYrgABM/LqrnMc
+         2PNlw4WB3AF9iJSEYwzzNGpaj/2YMLi4d9ZWKom86ASWIst3g9K27WcXDGD8TcfdtY85
+         vp1o8BDJuV+xOzrWsARJpKNTLjgSh63VWjxIspF2LeeC+5yUh+/4sfYEa/6iMtNKMnWu
+         w/o8dUBdkJ3ZJOkjVXb/bKoOsYWelT1y79RrxFOizaEXcNXTpnZuO7K2sIPOuusy+gI4
+         oQqw==
+X-Gm-Message-State: AA+aEWYlwyPEopop/OBZxPxg5BHkJ2BQC6skmVEOZnmeKZkMqWnfdAVq
+        uStLWMS7MUA9Be+slLmgXWHj35gycgg=
+X-Google-Smtp-Source: AFSGD/U4lYbeD4OnsFsKRwOv4UACAM8l2VAycmxnJHdBYT9Fe2Ptq7L6R9feBX2MM04DT7Cfc/Hi9w==
+X-Received: by 2002:a25:8582:: with SMTP id x2mr19249812ybk.199.1545207529609;
+        Wed, 19 Dec 2018 00:18:49 -0800 (PST)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id o14sm9214421ywo.52.2018.12.19.00.18.47
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 00:18:07 -0800 (PST)
-Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
-To:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
-        jgross@suse.com, boris.ostrovsky@oracle.com
-Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181127103252.20994-1-andr2000@gmail.com>
- <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <c5fa494c-2ead-e190-6e8c-43478275f789@gmail.com>
-Date:   Wed, 19 Dec 2018 10:18:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Dec 2018 00:18:48 -0800 (PST)
+Received: by mail-yb1-f179.google.com with SMTP id d2so7550156ybs.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 00:18:47 -0800 (PST)
+X-Received: by 2002:a25:910f:: with SMTP id v15mr20413719ybl.285.1545207526870;
+ Wed, 19 Dec 2018 00:18:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20181212090917.GA30598@infradead.org> <CAAFQd5DhDOfk_2Dhq4MfJmoxpXP=Bm36HMZ55PSXxwkTAoCXSQ@mail.gmail.com>
+ <20181212135440.GA6137@infradead.org> <CAAFQd5C4RbMxRP+ox+BDuApMusTD=WUD9Vs6aWL3u=HovuWUig@mail.gmail.com>
+ <20181213140329.GA25339@infradead.org> <CAAFQd5BudF84jVaiy7KwevzBZnfYUZggDK=4W=g+Znf5VJjHsQ@mail.gmail.com>
+ <20181214123624.GA5824@infradead.org> <CAAFQd5BnZHhNjOc6HKt=YVBVQFCcqN0RxAcfDp3S+gDKRvciqQ@mail.gmail.com>
+ <20181218073847.GA4552@infradead.org> <CAAFQd5AT3ixnbZRm3TOjoWrk2UNH0bXqgR+Z8wyjMhr0xHtSOg@mail.gmail.com>
+ <20181219075150.GA26656@infradead.org>
+In-Reply-To: <20181219075150.GA26656@infradead.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 19 Dec 2018 17:18:35 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DJPDpFDxU_m2r02bA59J8RCHW7iE8zYQUmkL4sFSz05Q@mail.gmail.com>
+Message-ID: <CAAFQd5DJPDpFDxU_m2r02bA59J8RCHW7iE8zYQUmkL4sFSz05Q@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        rostedt@goodmis.org, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 9:20 PM, Noralf Trønnes wrote:
+On Wed, Dec 19, 2018 at 4:51 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> Den 27.11.2018 11.32, skrev Oleksandr Andrushchenko:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> When GEM backing storage is allocated with drm_gem_get_pages
->> the backing pages may be cached, thus making it possible that
->> the backend sees only partial content of the buffer which may
->> lead to screen artifacts. Make sure that the frontend's
->> memory is coherent and the backend always sees correct display
->> buffer content.
->>
->> Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display 
->> frontend")
->>
->> Signed-off-by: Oleksandr Andrushchenko 
->> <oleksandr_andrushchenko@epam.com>
->> ---
->>   drivers/gpu/drm/xen/xen_drm_front_gem.c | 62 +++++++++++++++++++------
->>   1 file changed, 48 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c 
->> b/drivers/gpu/drm/xen/xen_drm_front_gem.c
->> index 47ff019d3aef..c592735e49d2 100644
->> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
->> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
->> @@ -33,8 +33,11 @@ struct xen_gem_object {
->>       /* set for buffers allocated by the backend */
->>       bool be_alloc;
->>   -    /* this is for imported PRIME buffer */
->> -    struct sg_table *sgt_imported;
->> +    /*
->> +     * this is for imported PRIME buffer or the one allocated via
->> +     * drm_gem_get_pages.
->> +     */
->> +    struct sg_table *sgt;
->>   };
->>     static inline struct xen_gem_object *
->> @@ -77,10 +80,21 @@ static struct xen_gem_object 
->> *gem_create_obj(struct drm_device *dev,
->>       return xen_obj;
->>   }
->>   +struct sg_table *xen_drm_front_gem_get_sg_table(struct 
->> drm_gem_object *gem_obj)
->> +{
->> +    struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
->> +
->> +    if (!xen_obj->pages)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
->> +}
->> +
->>   static struct xen_gem_object *gem_create(struct drm_device *dev, 
->> size_t size)
->>   {
->>       struct xen_drm_front_drm_info *drm_info = dev->dev_private;
->>       struct xen_gem_object *xen_obj;
->> +    struct address_space *mapping;
->>       int ret;
->>         size = round_up(size, PAGE_SIZE);
->> @@ -113,10 +127,14 @@ static struct xen_gem_object *gem_create(struct 
->> drm_device *dev, size_t size)
->>           xen_obj->be_alloc = true;
->>           return xen_obj;
->>       }
->> +
->>       /*
->>        * need to allocate backing pages now, so we can share those
->>        * with the backend
->>        */
+> On Tue, Dec 18, 2018 at 06:48:03PM +0900, Tomasz Figa wrote:
+> > > So as I said you can call dma_alloc_attrs with DMA_ATTR_NON_CONSISTENT
+> > > in a loop with a suitably small chunk size, then stuff the results into
+> > > a scatterlist and map that again for the device share with if you don't
+> > > want a single contigous region.  You just have to either deal with
+> > > non-contigous access from the kernel or use vmap and the right vmap
+> > > cache flushing helpers.
+> >
+> > The point is that you didn't have to do this small chunk loop without
+> > DMA_ATTR_NON_CONSISTENT, so it's at least inconsistent now and not
+> > sure why it could be better than just a loop of alloc_page().
 >
+> You have to do it if you want to map the addresses for a second device.
 >
-> Let's see if I understand what you're doing:
+
+The existing code that deals with dma_alloc_attrs() without
+DMA_ATTR_NON_CONSISTENT would just call dma_get_sgtable_attrs() like
+here:
+
+https://elixir.bootlin.com/linux/v4.20-rc7/source/drivers/media/common/videobuf2/videobuf2-dma-contig.c#L366
+
+and then dma_map_sg() for the other device like here;
+
+https://elixir.bootlin.com/linux/v4.20-rc7/source/drivers/media/common/videobuf2/videobuf2-dma-contig.c#L283
+
+> > > I would advice against new non-consistent users until this series
+> > > goes through, mostly because dma_cache_sync is such an amazing bad
+> > > API.  Otherwise things will just work at the allocation side, you'll
+> > > just need to be careful to transfer ownership between the cpu and
+> > > the device(s) carefully using the dma_sync_* APIs.
+> >
+> > Just to clarify, the actual code isn't very likely to surface any time
+> > soon. so I assume it would be after this series lands.
+> >
+> > We will however need an API that can transparently handle both cases
+> > of contiguous (without IOMMU) and page-by-page allocations (with
+> > IOMMU) behind the scenes, like the current dma_alloc_attrs() without
+> > DMA_ATTR_NON_CONSISTENT.
 >
-> Here you say that the pages should be DMA accessible for devices that can
-> only see 4GB.
+> Is the use case to then share the memory between multiples devices
+> or just for a single device?  The latter case is generally easy, the
+> former is rather more painful.
 
-Yes, your understanding is correct. As we are a para-virtualized device we
+The former, but the convention has been to assume that the userspace
+will choose the right (the most constrained typically) device to
+allocate from or otherwise handle the import failure (e.g. by falling
+back to copying into a buffer allocated from the importer).
 
-do not have strict requirements for 32-bit DMA. But, via dma-buf export,
-
-the buffer we create can be used by real HW, e.g. one can pass-through
-
-real HW devices into a guest domain and they can import our buffer (yes,
-
-they can be IOMMU backed and other conditions may apply).
-
-So, this is why we are limiting to DMA32 here, just to allow more possible
-
-use-cases
-
->
->> +    mapping = xen_obj->base.filp->f_mapping;
->> +    mapping_set_gfp_mask(mapping, GFP_USER | __GFP_DMA32);
->> +
->>       xen_obj->num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
->>       xen_obj->pages = drm_gem_get_pages(&xen_obj->base);
->>       if (IS_ERR_OR_NULL(xen_obj->pages)) {
->> @@ -125,8 +143,27 @@ static struct xen_gem_object *gem_create(struct 
->> drm_device *dev, size_t size)
->>           goto fail;
->>       }
->>   +    xen_obj->sgt = xen_drm_front_gem_get_sg_table(&xen_obj->base);
->> +    if (IS_ERR_OR_NULL(xen_obj->sgt)){
->> +        ret = PTR_ERR(xen_obj->sgt);
->> +        xen_obj->sgt = NULL;
->> +        goto fail_put_pages;
->> +    }
->> +
->> +    if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
->> +            DMA_BIDIRECTIONAL)) {
->
->
-> Are you using the DMA streaming API as a way to flush the caches?
-Yes
-> Does this mean that GFP_USER isn't making the buffer coherent?
-
-No, it didn't help. I had a question [1] if there are any other better way
-
-to achieve the same, but didn't have any response yet. So, I implemented
-
-it via DMA API which helped.
-
->
-> Noralf.
->
->> +        ret = -EFAULT;
->> +        goto fail_free_sgt;
->> +    }
->> +
->>       return xen_obj;
->>   +fail_free_sgt:
->> +    sg_free_table(xen_obj->sgt);
->> +    xen_obj->sgt = NULL;
->> +fail_put_pages:
->> +    drm_gem_put_pages(&xen_obj->base, xen_obj->pages, true, false);
->> +    xen_obj->pages = NULL;
->>   fail:
->>       DRM_ERROR("Failed to allocate buffer with size %zu\n", size);
->>       return ERR_PTR(ret);
->> @@ -149,7 +186,7 @@ void 
->> xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj)
->>       struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
->>         if (xen_obj->base.import_attach) {
->> -        drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt_imported);
->> +        drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt);
->>           gem_free_pages_array(xen_obj);
->>       } else {
->>           if (xen_obj->pages) {
->> @@ -158,6 +195,13 @@ void 
->> xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj)
->>                               xen_obj->pages);
->>                   gem_free_pages_array(xen_obj);
->>               } else {
->> +                if (xen_obj->sgt) {
->> +                    dma_unmap_sg(xen_obj->base.dev->dev,
->> +                             xen_obj->sgt->sgl,
->> +                             xen_obj->sgt->nents,
->> +                             DMA_BIDIRECTIONAL);
->> +                    sg_free_table(xen_obj->sgt);
->> +                }
->>                   drm_gem_put_pages(&xen_obj->base,
->>                             xen_obj->pages, true, false);
->>               }
->> @@ -174,16 +218,6 @@ struct page **xen_drm_front_gem_get_pages(struct 
->> drm_gem_object *gem_obj)
->>       return xen_obj->pages;
->>   }
->>   -struct sg_table *xen_drm_front_gem_get_sg_table(struct 
->> drm_gem_object *gem_obj)
->> -{
->> -    struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
->> -
->> -    if (!xen_obj->pages)
->> -        return ERR_PTR(-ENOMEM);
->> -
->> -    return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
->> -}
->> -
->>   struct drm_gem_object *
->>   xen_drm_front_gem_import_sg_table(struct drm_device *dev,
->>                     struct dma_buf_attachment *attach,
->> @@ -203,7 +237,7 @@ xen_drm_front_gem_import_sg_table(struct 
->> drm_device *dev,
->>       if (ret < 0)
->>           return ERR_PTR(ret);
->>   -    xen_obj->sgt_imported = sgt;
->> +    xen_obj->sgt = sgt;
->>         ret = drm_prime_sg_to_page_addr_arrays(sgt, xen_obj->pages,
->>                              NULL, xen_obj->num_pages);
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-Thank you,
-
-Oleksandr
-
-[1] 
-https://www.mail-archive.com/xen-devel@lists.xenproject.org/msg31745.html
-
+Best regards,
+Tomasz
