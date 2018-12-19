@@ -2,153 +2,312 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8005BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40893C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46B1920874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB0920874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:34:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RZMkN4rH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RZMkN4rH"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="t4Yuctod"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbeLSOeH (ORCPT
+        id S1729566AbeLSOes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:34:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728017AbeLSOeH (ORCPT
+        Wed, 19 Dec 2018 09:34:48 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:37666 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728689AbeLSOer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:34:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7DF9E612C6; Wed, 19 Dec 2018 14:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545230046;
-        bh=Mx2i/3QKpE/nqsbfETRwwoRpfWE2yxvb7yFW7igSFdg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RZMkN4rHfh4udO9JTfpaoaJoZ7UHitqVFw5hlafYvRWE8N9rC9zM/XsRFP9HoeSm7
-         6cYqdEB63NJ3GnwsdcClYNIm6R0R3Hp06Bo9HPI5dkc+gsH+AgXrlRiDgzp4bXSQ2/
-         wX7kcpC6OElOUy7nkWCCRUgoq0yXWi2VBvRrMcds=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E476D6179D;
-        Wed, 19 Dec 2018 14:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545230046;
-        bh=Mx2i/3QKpE/nqsbfETRwwoRpfWE2yxvb7yFW7igSFdg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RZMkN4rHfh4udO9JTfpaoaJoZ7UHitqVFw5hlafYvRWE8N9rC9zM/XsRFP9HoeSm7
-         6cYqdEB63NJ3GnwsdcClYNIm6R0R3Hp06Bo9HPI5dkc+gsH+AgXrlRiDgzp4bXSQ2/
-         wX7kcpC6OElOUy7nkWCCRUgoq0yXWi2VBvRrMcds=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E476D6179D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers 2018-12-19
-Date:   Wed, 19 Dec 2018 16:34:02 +0200
-Message-ID: <87bm5hvb51.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 19 Dec 2018 09:34:47 -0500
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id wBJEYa46023267;
+        Wed, 19 Dec 2018 23:34:36 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wBJEYa46023267
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1545230077;
+        bh=UeoJeP+KrOhnGZv5MdxTs/f/kZ4bRafHorW8k5oxO+M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=t4Yuctods5jrCsUpLIdTpOvPunOjJD3CmSyCeCVYDn7IVrbFle1aT9Ioa6XISteq2
+         dtekbN2Jn/veyRqhMyZDZ2JZMVDS61LWEgh6JXMDJXsYdlT1pzTjjQO2RUsEj+C3bD
+         YPcfLhOQzK+al3dGdVLbxSVqo87X8vR3OIV8kwA3Tf7enusqshiTw7V5TT8vCrsA1d
+         OfMtbuV/xEJ5eo+crDu+ns5uBU2E0kuI+TLjhuVl51eFfJKc18LQ+iHevbzCM34enH
+         +lGK9VN2xNWWNMrc3q2x+1XMd3GlcaO/DXWnmLSvEuSE1f/xc2THhWXYplLY0LfCOF
+         pR9SWyjC6bz7w==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id x64so12371290vsa.5;
+        Wed, 19 Dec 2018 06:34:36 -0800 (PST)
+X-Gm-Message-State: AA+aEWb5spmoUMQGfGFF84ed3lOBcHPaCUCjpyis8UUX1iYr6aDgCuYJ
+        28lWqsr95EA3tkez0V5fcwKi6D+SQqUjVB9ZWig=
+X-Google-Smtp-Source: AFSGD/UOGiSkiDli2zyySXzQ+AGY3MTja/MRKAIv7O3w4B63EL2TVlygZU+jPS5j7PhUqNeuQKn+G5eZlpHRk0CIFkY=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr10030304vse.215.1545230075286;
+ Wed, 19 Dec 2018 06:34:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1545062607-8599-1-git-send-email-yamada.masahiro@socionext.com> <20181219112028.GA38175@gmail.com>
+In-Reply-To: <20181219112028.GA38175@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 19 Dec 2018 23:33:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQjZP8mYD02+=uvzO135fTB5GyU7_snV7ymFAjMBsep8w@mail.gmail.com>
+Message-ID: <CAK7LNAQjZP8mYD02+=uvzO135fTB5GyU7_snV7ymFAjMBsep8w@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] x86, kbuild: revert macrofying inline assembly code
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Richard Biener <rguenther@suse.de>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juergen Gross <jgross@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        virtualization@lists.linux-foundation.org,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Alok Kataria <akataria@vmware.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jann Horn <jannh@google.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-sparse@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jan Beulich <JBeulich@suse.com>, Nadav Amit <namit@vmware.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+On Wed, Dec 19, 2018 at 9:44 PM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>
+> > This series reverts the in-kernel workarounds for inlining issues.
+> >
+> > The commit description of 77b0bf55bc67 mentioned
+> > "We also hope that GCC will eventually get fixed,..."
+> >
+> > Now, GCC provides a solution.
+> >
+> > https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+> > explains the new "asm inline" syntax.
+> >
+> > The performance issue will be eventually solved.
+> >
+> > [About Code cleanups]
+> >
+> > I know Nadam Amit is opposed to the full revert.
+> > He also claims his motivation for macrofying was not only
+> > performance, but also cleanups.
+> >
+> > IIUC, the criticism addresses the code duplication between C and ASM.
+> >
+> > If so, I'd like to suggest a different approach for cleanups.
+> > Please see the last 3 patches.
+> > IMHO, preprocessor approach is more straight-forward, and readable.
+> > Basically, this idea should work because it is what we already do for
+> > __ASM_FORM() etc.
+> >
+> > [Quick Test of "asm inline" of GCC 9]
+> >
+> > If you want to try "asm inline" feature, the patch is available:
+> > https://lore.kernel.org/patchwork/patch/1024590/
+> >
+> > The number of symbols for arch/x86/configs/x86_64_defconfig:
+> >
+> >                             nr_symbols
+> >   [1]    v4.20-rc7       :   96502
+> >   [2]    [1]+full revert :   96705   (+203)
+> >   [3]    [2]+"asm inline":   96568   (-137)
+> >
+> > [3]: apply my patch, then replace "asm" -> "asm_inline"
+> >     for _BUG_FLAGS(), refcount_add(), refcount_inc(), refcount_dec(),
+> >         annotate_reachable(), annotate_unreachable()
+> >
+> >
+> > Changes in v3:
+> >   - Split into per-commit revert (per Nadav Amit)
+> >   - Add some cleanups with preprocessor approach
+> >
+> > Changes in v2:
+> >   - Revive clean-ups made by 5bdcd510c2ac (per Peter Zijlstra)
+> >   - Fix commit quoting style (per Peter Zijlstra)
+> >
+> > Masahiro Yamada (12):
+> >   Revert "x86/jump-labels: Macrofy inline assembly code to work around
+> >     GCC inlining bugs"
+> >   Revert "x86/cpufeature: Macrofy inline assembly code to work around
+> >     GCC inlining bugs"
+> >   Revert "x86/extable: Macrofy inline assembly code to work around GCC
+> >     inlining bugs"
+> >   Revert "x86/paravirt: Work around GCC inlining bugs when compiling
+> >     paravirt ops"
+> >   Revert "x86/bug: Macrofy the BUG table section handling, to work
+> >     around GCC inlining bugs"
+> >   Revert "x86/alternatives: Macrofy lock prefixes to work around GCC
+> >     inlining bugs"
+> >   Revert "x86/refcount: Work around GCC inlining bug"
+> >   Revert "x86/objtool: Use asm macros to work around GCC inlining bugs"
+> >   Revert "kbuild/Makefile: Prepare for using macros in inline assembly
+> >     code to work around asm() related GCC inlining bugs"
+> >   linux/linkage: add ASM() macro to reduce duplication between C/ASM
+> >     code
+> >   x86/alternatives: consolidate LOCK_PREFIX macro
+> >   x86/asm: consolidate ASM_EXTABLE_* macros
+> >
+> >  Makefile                                  |  9 +--
+> >  arch/x86/Makefile                         |  7 ---
+> >  arch/x86/include/asm/alternative-asm.h    | 22 +------
+> >  arch/x86/include/asm/alternative-common.h | 47 +++++++++++++++
+> >  arch/x86/include/asm/alternative.h        | 30 +---------
+> >  arch/x86/include/asm/asm.h                | 46 +++++----------
+> >  arch/x86/include/asm/bug.h                | 98 +++++++++++++------------------
+> >  arch/x86/include/asm/cpufeature.h         | 82 +++++++++++---------------
+> >  arch/x86/include/asm/jump_label.h         | 22 +++++--
+> >  arch/x86/include/asm/paravirt_types.h     | 56 +++++++++---------
+> >  arch/x86/include/asm/refcount.h           | 81 +++++++++++--------------
+> >  arch/x86/kernel/macros.S                  | 16 -----
+> >  include/asm-generic/bug.h                 |  8 +--
+> >  include/linux/compiler.h                  | 56 ++++--------------
+> >  include/linux/linkage.h                   |  8 +++
+> >  scripts/Kbuild.include                    |  4 +-
+> >  scripts/mod/Makefile                      |  2 -
+> >  17 files changed, 249 insertions(+), 345 deletions(-)
+> >  create mode 100644 arch/x86/include/asm/alternative-common.h
+> >  delete mode 100644 arch/x86/kernel/macros.S
+>
+> I absolutely agree that this needs to be resolved in v4.20.
+>
+> So I did the 1-9 reverts manually myself as well, because I think the
+> first commit should be reverted fully to get as close to the starting
+> point as possible (we are late in the cycle) - and came to the attached
+> interdiff between your series and mine.
+>
+> Does this approach look OK to you, or did I miss something?
 
-this a pull request to net tree for 4.20, more info below.
 
-Really sorry for sending a late request like this but I have been busy
-with other stuff and this just got delayed. These are pretty
-important fixes so I hope there's still time to get them to 4.20. But if
-there's not time, please let me know and I'll pull these to
-wireless-drivers-next.
+It looks OK to me.
 
-All of these, expect the ath10k fix, have been in linux-next, and even
-the ath10k fix was in the pending branch so it has been tested by the
-kbuild bot.
+I thought the diff was a good cleanup part,
+but we can deal with it later on,
+so I do not mind it.
 
-I'll send the -next pull request tomorrow. Please let me know if there
-are any problems.
+Thanks!
 
-Kalle
 
-The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
 
-  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
+> Thanks,
+>
+>         Ingo
+>
+> =============>
+>
+>  entry/calling.h          |    2 -
+>  include/asm/jump_label.h |   50 ++++++++++++++++++++++++++++++++++-------------
+>  2 files changed, 38 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+> index 25e5a6bda8c3..20d0885b00fb 100644
+> --- a/arch/x86/entry/calling.h
+> +++ b/arch/x86/entry/calling.h
+> @@ -352,7 +352,7 @@ For 32-bit we have the following conventions - kernel is built with
+>  .macro CALL_enter_from_user_mode
+>  #ifdef CONFIG_CONTEXT_TRACKING
+>  #ifdef HAVE_JUMP_LABEL
+> -       STATIC_BRANCH_JMP l_yes=.Lafter_call_\@, key=context_tracking_enabled, branch=1
+> +       STATIC_JUMP_IF_FALSE .Lafter_call_\@, context_tracking_enabled, def=0
+>  #endif
+>         call enter_from_user_mode
+>  .Lafter_call_\@:
+> diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+> index cf88ebf9a4ca..21efc9d07ed9 100644
+> --- a/arch/x86/include/asm/jump_label.h
+> +++ b/arch/x86/include/asm/jump_label.h
+> @@ -2,6 +2,19 @@
+>  #ifndef _ASM_X86_JUMP_LABEL_H
+>  #define _ASM_X86_JUMP_LABEL_H
+>
+> +#ifndef HAVE_JUMP_LABEL
+> +/*
+> + * For better or for worse, if jump labels (the gcc extension) are missing,
+> + * then the entire static branch patching infrastructure is compiled out.
+> + * If that happens, the code in here will malfunction.  Raise a compiler
+> + * error instead.
+> + *
+> + * In theory, jump labels and the static branch patching infrastructure
+> + * could be decoupled to fix this.
+> + */
+> +#error asm/jump_label.h included on a non-jump-label kernel
+> +#endif
+> +
+>  #define JUMP_LABEL_NOP_SIZE 5
+>
+>  #ifdef CONFIG_X86_64
+> @@ -53,26 +66,37 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+>
+>  #else  /* __ASSEMBLY__ */
+>
+> -.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
+> -.Lstatic_branch_nop_\@:
+> -       .byte STATIC_KEY_INIT_NOP
+> -.Lstatic_branch_no_after_\@:
+> +.macro STATIC_JUMP_IF_TRUE target, key, def
+> +.Lstatic_jump_\@:
+> +       .if \def
+> +       /* Equivalent to "jmp.d32 \target" */
+> +       .byte           0xe9
+> +       .long           \target - .Lstatic_jump_after_\@
+> +.Lstatic_jump_after_\@:
+> +       .else
+> +       .byte           STATIC_KEY_INIT_NOP
+> +       .endif
+>         .pushsection __jump_table, "aw"
+>         _ASM_ALIGN
+> -       .long           .Lstatic_branch_nop_\@ - ., \l_yes - .
+> -       _ASM_PTR        \key + \branch - .
+> +       .long           .Lstatic_jump_\@ - ., \target - .
+> +       _ASM_PTR        \key - .
+>         .popsection
+>  .endm
+>
+> -.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
+> -.Lstatic_branch_jmp_\@:
+> -       .byte 0xe9
+> -       .long \l_yes - .Lstatic_branch_jmp_after_\@
+> -.Lstatic_branch_jmp_after_\@:
+> +.macro STATIC_JUMP_IF_FALSE target, key, def
+> +.Lstatic_jump_\@:
+> +       .if \def
+> +       .byte           STATIC_KEY_INIT_NOP
+> +       .else
+> +       /* Equivalent to "jmp.d32 \target" */
+> +       .byte           0xe9
+> +       .long           \target - .Lstatic_jump_after_\@
+> +.Lstatic_jump_after_\@:
+> +       .endif
+>         .pushsection __jump_table, "aw"
+>         _ASM_ALIGN
+> -       .long           .Lstatic_branch_jmp_\@ - ., \l_yes - .
+> -       _ASM_PTR        \key + \branch - .
+> +       .long           .Lstatic_jump_\@ - ., \target - .
+> +       _ASM_PTR        \key + 1 - .
+>         .popsection
+>  .endm
+>
+>
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-12-19
-
-for you to fetch changes up to 53884577fbcef33a7d15ad664e664a3dabe35171:
-
-  ath10k: skip sending quiet mode cmd for WCN3990 (2018-12-19 15:37:01 +0200)
-
-----------------------------------------------------------------
-wireless-drivers fixes for 4.20
-
-Last set of fixes for 4.20. All (except the mt76 fix) of these are
-important fixes to user reported problems and pretty small in size.
-
-rtlwifi
-
-* fix skb leak
-
-mwifiex
-
-* revert a commit from v4.19 due to problems with locking
-
-mt76
-
-* fix a potential NULL derenfence
-
-* add entry to MAINTAINERS
-
-iwlwifi
-
-* fix a firmware crash which was a regression introduced in v4.20-rc4
-
-ath10k
-
-* fix a firmware crash with wcn3990 firmware
-
-----------------------------------------------------------------
-Brian Norris (1):
-      Revert "mwifiex: restructure rx_reorder_tbl_lock usage"
-
-Emmanuel Grumbach (1):
-      iwlwifi: mvm: don't send GEO_TX_POWER_LIMIT to old firmwares
-
-Larry Finger (1):
-      rtlwifi: Fix leak of skb when processing C2H_BT_INFO
-
-Lorenzo Bianconi (2):
-      mt76: fix potential NULL pointer dereference in mt76_stop_tx_queues
-      mt76: add entry in MAINTAINERS file
-
-Rakesh Pillai (1):
-      ath10k: skip sending quiet mode cmd for WCN3990
-
- MAINTAINERS                                        |  7 ++
- drivers/net/wireless/ath/ath10k/core.c             | 28 +++++++
- drivers/net/wireless/ath/ath10k/debug.c            |  5 +-
- drivers/net/wireless/ath/ath10k/thermal.c          |  9 ++
- drivers/net/wireless/ath/ath10k/wmi-tlv.h          |  3 +
- drivers/net/wireless/ath/ath10k/wmi.h              |  1 +
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  9 ++
- drivers/net/wireless/marvell/mwifiex/11n.c         |  5 +-
- .../net/wireless/marvell/mwifiex/11n_rxreorder.c   | 96 +++++++++++-----------
- drivers/net/wireless/marvell/mwifiex/uap_txrx.c    |  3 -
- drivers/net/wireless/mediatek/mt76/tx.c            |  7 +-
- drivers/net/wireless/realtek/rtlwifi/base.c        |  1 +
- 12 files changed, 118 insertions(+), 56 deletions(-)
+-- 
+Best Regards
+Masahiro Yamada
