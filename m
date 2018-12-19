@@ -2,94 +2,142 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 506B7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BC7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8AE20643
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9182F218D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:30:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYKToupj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbeLSPaJ (ORCPT
+        id S1730239AbeLSPaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:30:09 -0500
-Received: from foss.arm.com ([217.140.101.70]:37348 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728764AbeLSPaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:30:09 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 691BEEBD;
-        Wed, 19 Dec 2018 07:30:08 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 786EB3F675;
-        Wed, 19 Dec 2018 07:30:07 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] sched/fair: fix rounding issue for asym packing
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
-References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
- <1544803317-7610-2-git-send-email-vincent.guittot@linaro.org>
- <f2619d92-7367-abd4-97e8-e0f4e7cc96eb@arm.com>
- <CAKfTPtAEi=EBmSUEcYmkfSZVkBviQaJaqZXvt-=XbsgZs5t_OA@mail.gmail.com>
- <4de22c37-fe65-4f5f-929b-320c663ee8b6@arm.com>
- <CAKfTPtAprHq4YYdJ1gnuoAcNiVFpFPnxYv_=RS6pXs8aYpjcuA@mail.gmail.com>
- <8ea1a96c-c2e0-cc3f-1cec-444706383e77@arm.com>
- <CAKfTPtCVqSYOC_GUdBm8_5KNMNEwXdf77mXL4SDB4_G5_iE0iA@mail.gmail.com>
- <f48118ab-8782-a096-9299-58c6b8d384bb@arm.com>
- <CAKfTPtDwUqf1tKxOkJ-rU2FHUL63=smEtCRu5dqwYZC7zjvtJw@mail.gmail.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <913b1033-cc8e-d109-6096-c3a73ec0c87c@arm.com>
-Date:   Wed, 19 Dec 2018 15:30:06 +0000
+        Wed, 19 Dec 2018 10:30:25 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43207 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728764AbeLSPaY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:30:24 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so15337958lff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:30:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=JZ1PND9ms8rQlXA+J3nz1imBWbAqbmwYZbGsqtzE+sY=;
+        b=kYKToupj34EInptFM5bvsz9EMpQCQBPfM/2UczQX8Cr+rj8ScMG7Uz8dVCtrXAbDaO
+         MxWl9NSQ4flcQSCpOlhcU4Nj7r7QcRHt/wViYe6pkxF0Piw2O7ufmsCBO2QniLJtAXUC
+         3x2PeGg69f0XIrAIU7CX8BnRNqBEbYnX0uMMq8OeOocYRvDIxvNToRSbjdxGArIH8OHK
+         2w9vZFMOlFuIUfHQBXqnhoInTbVC2xiNVl+9GLjKtximHyXiH2BQmSYiyczndfDZSc/F
+         bLCU9Rme6z8bB6u2a5m2oJoiH/puyDL+77w1YRsn2rxJQy0bsXjuH8yxntT4z7hJhpUD
+         LJKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=JZ1PND9ms8rQlXA+J3nz1imBWbAqbmwYZbGsqtzE+sY=;
+        b=qgb1b/1AX9zjYcMrMsjAu6zGeT55CyQkI28ASbt8YCQkv/vyexXOjUXMUzm7PixtVD
+         uEhH0gPOfu/DFqGliwe59Vg1hrWlKwYFZwDRV/mUsysdweHPdHH4cTGok7eBQ+kIiwOU
+         HfGDNQDOtLCUiSZ5iO8UolZtKmp8OZcYNxBy/xtmRig4+qljZwPeEfN6c6RQgCkHPwwr
+         Gh3O9vSobM+gZIRXiWmIzSsthsikBGcrsu1dPnFRS+McmWVd3v6rhRsGDLxPs4egs6ee
+         GDv2giByIGaaTQXKTcBLPLuWp9mvRRpyDeB/X05HAoKjmcEaWLlEG0ROE3xME7ryAnem
+         m26Q==
+X-Gm-Message-State: AA+aEWZXUmC4HSTAtB/dDWFjkCwggrc+NcF7AJK0QyVhGhsVyhLnyz2b
+        Jy1WQ9XAga7hDjK/1c3+ITI=
+X-Google-Smtp-Source: AFSGD/UEEcGqCufSQq4JJABAKDfU1WkVQP3B7IFctMhXr/ITvNUqVEJ7bmO1WOWi1De2SKvB7a9ekw==
+X-Received: by 2002:a19:c70a:: with SMTP id x10mr12530281lff.88.1545233422264;
+        Wed, 19 Dec 2018 07:30:22 -0800 (PST)
+Received: from [10.17.182.20] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id e94sm3918086lfi.23.2018.12.19.07.30.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 07:30:21 -0800 (PST)
+Subject: Re: [PATCH 03/14] drm/bochs: atomic: add atomic_flush+atomic_enable
+ callbacks.
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+References: <20181219115127.31359-1-kraxel@redhat.com>
+ <20181219115127.31359-4-kraxel@redhat.com>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <da31d0ec-95ee-39da-46d0-fcbdfb6f376c@gmail.com>
+Date:   Wed, 19 Dec 2018 17:30:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtDwUqf1tKxOkJ-rU2FHUL63=smEtCRu5dqwYZC7zjvtJw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20181219115127.31359-4-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2018 15:20, Vincent Guittot wrote:
-[...]
->> Oh yes, I never said it didn't work - I was doing some investigation on
->> the reason as to why we'd need this fix, because it's wasn't explicit from
->> the commit message.
->>
->> The rounding errors are countered by the +1, yes, but I'd rather remove
->> the errors altogether and go for the snippet I suggested in my previous
->> reply.
-> 
-> except that you don't always want to migrate all group load.
-> I prefer keeping current algorithm and fix it for now. Trying "new"
-> thing can come in a 2nd step
+Hi, Gerd!
 
-We already set the imbalance as the whole group load, we just introduce
-rounding errors inbetween. As I've already said:
+On 12/19/18 1:51 PM, Gerd Hoffmann wrote:
+> Conversion to atomic modesetting, step one.
+> Add atomic crtc helper callbacks.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>   drivers/gpu/drm/bochs/bochs_kms.c | 25 +++++++++++++++++++++++++
+>   1 file changed, 25 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+> index f7e6d1a9b3..59d469f343 100644
+> --- a/drivers/gpu/drm/bochs/bochs_kms.c
+> +++ b/drivers/gpu/drm/bochs/bochs_kms.c
+> @@ -115,6 +115,29 @@ static int bochs_crtc_page_flip(struct drm_crtc *crtc,
+>   	return 0;
+>   }
+>   
+> +static void bochs_crtc_atomic_enable(struct drm_crtc *crtc,
+> +				     struct drm_crtc_state *old_crtc_state)
+> +{
+> +}
+> +
+> +static void bochs_crtc_atomic_flush(struct drm_crtc *crtc,
+> +				    struct drm_crtc_state *old_crtc_state)
+> +{
+> +	struct drm_device *dev = crtc->dev;
+> +	struct drm_pending_vblank_event *event;
+> +	unsigned long irqflags;
+You could probably move these under the actual if where these are needed,
+but it's up to you
+> +
+> +	if (crtc->state && crtc->state->event) {
+> +		event = crtc->state->event;
+> +		crtc->state->event = NULL;
+Not quite sure if touching the event above is allowed w/o holding the 
+event lock
+> +
+> +		spin_lock_irqsave(&dev->event_lock, irqflags);
+> +		drm_crtc_send_vblank_event(crtc, event);
+> +		spin_unlock_irqrestore(&dev->event_lock, irqflags);
+> +	}
+> +}
+> +
+> +
+>   /* These provide the minimum set of functions required to handle a CRTC */
+>   static const struct drm_crtc_funcs bochs_crtc_funcs = {
+>   	.set_config = drm_crtc_helper_set_config,
+> @@ -128,6 +151,8 @@ static const struct drm_crtc_helper_funcs bochs_helper_funcs = {
+>   	.mode_set_base = bochs_crtc_mode_set_base,
+>   	.prepare = bochs_crtc_prepare,
+>   	.commit = bochs_crtc_commit,
+> +	.atomic_enable = bochs_crtc_atomic_enable,
+> +	.atomic_flush = bochs_crtc_atomic_flush,
+>   };
+>   
+>   static const uint32_t bochs_formats[] = {
 
-in update_sg_lb_stats() we do:
-
-        sgs->avg_load = (sgs->group_load*SCHED_CAPACITY_SCALE) / sgs->group_capacity;
-
-and in check_asym_packing() we do:
-
-        env->imbalance = DIV_ROUND_CLOSEST(
-                sds->busiest_stat.avg_load * sds->busiest_stat.group_capacity,
-                SCHED_CAPACITY_SCALE)
-
-So we end up with something like:
-
-                    group_load * SCHED_CAPACITY_SCALE * group_capacity
-        imbalance = --------------------------------------------------
-                            group_capacity * SCHED_CAPACITY_SCALE
-
-Which we could reduce down to:
-
-        imbalance = group_load
-
-and not get any rounding errors.
