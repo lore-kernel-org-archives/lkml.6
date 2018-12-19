@@ -2,124 +2,120 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C76C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7CEC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A6C820874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CC172133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:43:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545259407;
+	bh=khG0VTDSS0TEceC5lmWb1tQDGcGirTIvbpPWt9IY/SY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=2ux15IaVW4Wqn9xLy2bnXwvaQJzFMSFxWh5g65+f6lD8LXIOk89VRMoRUZ2CW+/Kz
+	 tDOf4jRD2QiHY5cu1Hs1LuzrsDIJDuo24jQT03zXli49Y0KkSGL187VWS/2CUR4wnj
+	 fU0MXG5TEzxMWNE8OI2tAwtn0KG2haR31EOaA8vE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729258AbeLSWdp (ORCPT
+        id S1728356AbeLSWn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:33:45 -0500
-Received: from sauhun.de ([88.99.104.3]:57656 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728355AbeLSWdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:33:45 -0500
-Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
-        by pokefinder.org (Postfix) with ESMTPSA id 349E82E3542;
-        Wed, 19 Dec 2018 23:33:42 +0100 (CET)
-Date:   Wed, 19 Dec 2018 23:33:41 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-Message-ID: <20181219223341.GA998@kunai>
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
- <20181219172250.ytronxeq2yc4vp4r@wunner.de>
- <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
-Content-Disposition: inline
-In-Reply-To: <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 19 Dec 2018 17:43:26 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37779 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbeLSWn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 17:43:26 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t33so21413862qtt.4;
+        Wed, 19 Dec 2018 14:43:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0eHvRoBrCDiLr1EMXsJ+QvqbIlFS3bCPji7tPHogKgc=;
+        b=fy0N6wUPp50tDVcOX59zVOQeJW924Mx2/hmJTP7Bwp1I/TA9l8eFl/6iApRFcU+Tao
+         jyjyllsTU0AFLqQvTrBO4AegWxfVGLbY5AK/lPJ+5Djd8nxTwleZTcLSZWdFSC8Wdtvc
+         AN7N/P9Jxe7q1HdxDTCb1nEguI2hFH+torUP/bzx4o+gK+6iT6ZBmy8ZO0QHhjP0zMuK
+         JnF7W/i1URob9mmVCISzQl+ELwrnuM+LlbRC3q2pOzzHBLdcly+V/xjJF2M8Ho2rsdf5
+         y9cGT6jnjCAhIsICtWNYRq4Qr/T0uwTgxEvisUJjuVFNlkFIeROYuKG9A/V3MaYA5oZ5
+         m+SA==
+X-Gm-Message-State: AA+aEWZDeDkuH+7E12jblphi2EBScM1dx1J0pNIbzx1bZheoQ2kv8XCG
+        rLEKGwd4YQs8uoII3GSkIu4=
+X-Google-Smtp-Source: AFSGD/WtTAhpiwxDoNDSD4dW7meye5d/ykqXDyOH1OXxX582bqDkkNoj94C4RfvgPua8OtNQztt56A==
+X-Received: by 2002:a0c:b044:: with SMTP id l4mr23755408qvc.80.1545259405124;
+        Wed, 19 Dec 2018 14:43:25 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.2])
+        by smtp.gmail.com with ESMTPSA id o34sm2297817qte.4.2018.12.19.14.43.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 19 Dec 2018 14:43:24 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>
+Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH] blkcg: clean up blkg_tryget_closest()
+Date:   Wed, 19 Dec 2018 16:43:21 -0600
+Message-Id: <20181219224321.32624-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The implementation of blkg_tryget_closest() wasn't super obvious and
+became a point of suspicion when debugging [1]. So let's clean it up so
+it's obviously not the problem.
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[1] https://lore.kernel.org/linux-block/a7e97e4b-0dd8-3a54-23b7-a0f27b17fde8@kernel.dk/
 
-Hi Lukas, Hans,
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+---
+ include/linux/blk-cgroup.h | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
-> Hi,
->=20
-> On 19-12-18 18:22, Lukas Wunner wrote:
-> > On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
-> > > +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *ad=
-ap)
-> > > +{
-> > > +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-> > > +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
-> > > +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-> > > +}
-> >=20
-> > This looks like a duplication of the is_suspended flag in struct dev_pm=
-_info.
-> > Any reason why you can't use that?  If so, it would be good to document=
- the
-> > reason in the commit message.
->=20
-> Oh, that is a very good point and that one only gets set on system suspend
-> and not on resume suspend, working around the problems with the i2c-desig=
-nware
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index f025fd1e22e6..76c61318fda5 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -499,22 +499,33 @@ static inline void blkg_get(struct blkcg_gq *blkg)
+  */
+ static inline bool blkg_tryget(struct blkcg_gq *blkg)
+ {
+-	return percpu_ref_tryget(&blkg->refcnt);
++	return blkg && percpu_ref_tryget(&blkg->refcnt);
+ }
+ 
+ /**
+  * blkg_tryget_closest - try and get a blkg ref on the closet blkg
+  * @blkg: blkg to get
+  *
+- * This walks up the blkg tree to find the closest non-dying blkg and returns
+- * the blkg that it did association with as it may not be the passed in blkg.
++ * This needs to be called rcu protected.  As the failure mode here is to walk
++ * up the blkg tree, this ensure that the blkg->parent pointers are always
++ * valid.  This returns the blkg that it ended up taking a reference on or %NULL
++ * if no reference was taken.
+  */
+ static inline struct blkcg_gq *blkg_tryget_closest(struct blkcg_gq *blkg)
+ {
+-	while (blkg && !percpu_ref_tryget(&blkg->refcnt))
++	struct blkcg_gq *ret_blkg = NULL;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++
++	while (blkg) {
++		if (blkg_tryget(blkg)) {
++			ret_blkg = blkg;
++			break;
++		}
+ 		blkg = blkg->parent;
++	}
+ 
+-	return blkg;
++	return ret_blkg;
+ }
+ 
+ /**
+-- 
+2.17.1
 
-Just to make it clear: you mean runtime suspend, not resume suspend, or?
-
-> driver.
->=20
-> I think this might be as simple as adding:
->=20
-> 	if (WARN_ON(adap->dev.parent->power.is_suspended))
-> 		return -ESHUTDOWN;
-
-I have seen this flag but decided against it. One reason is because it
-is marked as "PM core only". The other reason is that it doesn't know
-about the adapter lock. It might get set while a transfer is on going.
-Or even right after the suggested if-block above. The code from this
-series gets the mutex first which ensures that on going transfers are
-completed and no new ones are started in parallel.
-
-Unless I am totally overlooking something...
-
-Thanks,
-
-   Wolfram
-
-
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwax0EACgkQFA3kzBSg
-KbZnhg/8C3yO6aH4r7ho2ge6VCdCHgidjIZUJUeKIhoL4fSUTvqNLhA4WgnbjkGX
-5BIu4LZOdh5v8QAwNLiflt2UK81dUMYT2OplQkyO866VyZuFTXojh6+ZR2niBl2l
-lfZNcM3F7Rl7Ec/MV5/0ltSA4Z2zfRQBB+nSQ79R2coFpJCBeAPz4Lqs3Tk/zyeT
-htEIu2frSmvsNJVxZaJiG/qrM8H39xoDiPkiix4Lz72HhYMjL82ql/ZPn4iNUyuk
-9+58s2LnnzDbime66NGKjZN2pYElYv6aoO62TJyLoxbOkod82+bqdLiFucz7Ssn/
-A/006EUTdma5Tl7gbgZtW8SOJSdI3Emf+vU0vQ+MKzjHcmvWuNO+UmSJOlBbqDrO
-dDbeAtOcus/p3nCneIu6H9VyYPRwntb66BEyu1wb0wNi4L2L12Ooi9W2fGPTM2cT
-bj0hi7Q3SYkhcUarDdDAjgcNmZIdRu2FTYa9x33YGb39rpq+EnEVeyAhDBw36eH3
-TPGsoknpPXEIecUQZSJOP8ZOoZ3HXf/4bjx0JuTM0yZY1J6kXrlkM5d36qw5Y811
-eE96Xxx+VDuQB72keu5jLsTWuQFjARCW5frFN550cub/p0Ss7kTq925kUeGMQVL0
-eggU8pBpQpeD0IklxMsub7vN6Nv3RGiKmbVaTmh81MeiivC+smk=
-=CxxX
------END PGP SIGNATURE-----
-
---sdtB3X0nJg68CQEu--
