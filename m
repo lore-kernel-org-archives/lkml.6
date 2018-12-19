@@ -2,149 +2,274 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0358CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4B3C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB7721479
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:54:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F367A21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:55:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="pP54ihDQ"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gPDmYItp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeLSMyR (ORCPT
+        id S1728543AbeLSMz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:54:17 -0500
-Received: from mail-eopbgr140131.outbound.protection.outlook.com ([40.107.14.131]:30210
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726833AbeLSMyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:54:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UwfUrECpYC9WdCT/l8pQhiQNzIeJfD8P4+CnuBFuLzA=;
- b=pP54ihDQlLqTcvdscOqkMsQDYRqYzCm9FU4LQJeHReTiN6eHt0mfIhFhVb67sX+muqv5EWrvxRd00r0DdGnbX8B8AUSf80UjlKYL0cT37haMYL9qn8cdMIFHsIsRKwhe7Z87Z5rKKO3UHK7BDlMb6RB9OB0LAnzFUPGo8WX1EMw=
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
- VI1PR02MB4784.eurprd02.prod.outlook.com (20.177.200.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.22; Wed, 19 Dec 2018 12:54:13 +0000
-Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::11d9:9fe:f412:46a8]) by VI1PR02MB5119.eurprd02.prod.outlook.com
- ([fe80::11d9:9fe:f412:46a8%5]) with mapi id 15.20.1446.018; Wed, 19 Dec 2018
- 12:54:13 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Andrzej Hajda <a.hajda@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/3] dt-bindings: display: bridge: lvds-transmitter: add
- pwdn-gpios
-Thread-Topic: [PATCH 2/3] dt-bindings: display: bridge: lvds-transmitter: add
- pwdn-gpios
-Thread-Index: AQHUlygfLqQfa5yGMUGP6qbZiqP5EqWFx74AgAAdNoCAAAuWgIAAFQOA
-Date:   Wed, 19 Dec 2018 12:54:12 +0000
-Message-ID: <4d5ca987-fdf4-6ebb-281f-29a8f3277329@axentia.se>
-References: <20181218231850.3572-1-peda@axentia.se>
- <f0686eeb-14af-6525-6c55-9cc8bdc5730e@samsung.com>
- <7c2f1268-43a3-1dc2-bb2d-6da9d74a5a43@axentia.se> <2541072.bfOLpEHFeN@avalon>
-In-Reply-To: <2541072.bfOLpEHFeN@avalon>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR0402CA0059.eurprd04.prod.outlook.com
- (2603:10a6:7:7c::48) To VI1PR02MB5119.eurprd02.prod.outlook.com
- (2603:10a6:803:b7::12)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR02MB4784;6:kNXCAKlsEYJ2oFVz6g03YJRgvqDrJm0fjDgrBX+AQBQZyOhnKPkHOidp3pSVp5DJG8b1eySm+lDtJkhmQUgBOXYPwQi4lT/da/RL7omAgdwWahtpkAnPTn3gyWmej+rhISP4Bs4IadrU7LAL174zUqywb9Idaz4sw3iVx1ZuTORLKcQL3oJsAdokM8/30rfkSg7n9kewup+/oymvilAcmI9hO7JGE206cyynRug0zVacsdW2supCYtXum+gj2MS+KyKjXJ1yaAayzNg1VcFlU8jI5wZnWgMkTLDQuCoq59LZLE8N1AgLyA+khwXuAWXxc94X8nPqtroDOvtmMaP9IxQUOSiDuyqrROAX496IhUQTqtjz2qdNBHr3J5tzgVbp2HsFlYxFxmNvvAxXZ0yntJLcQNJUFKqCwNM9YnNZgn5QeHl0XX64s96lyzV1rXIeCGbX9hn5hBdWY/lYTQp94g==;5:N9oDlXnbmN4YOx4H6UBR40MXbl2QAhCtzR8zTLDTqJ+QP+6fsRDXn/4dBUjZl7Wcfys8iP2pwkhO1UHeoB4IUQEdK2vzaA1b2GTtaQCvD48edsbm/kvcibBEeLs6SRLrjmXGSZojYZC7LKAxAeHY4kIPoTC1ijvSQEShb/q2UmQ=;7:+XqJDDMW/RTP/+Lcq/5kY6xFdBk8OcqNHWIm2lrJqHOTdB9quRJxuSyyjgAyiA4uDkOs0I86uKRAXSq/bLCiUuQZ7C4rXgJEKzPEfVfDrF7o8H/k6TmEt8pG1bw66jpauXTkjb7nSRZLdbM4Gcl+AA==
-x-ms-office365-filtering-correlation-id: 51f74f4a-0ef8-4bd2-01f1-08d665b11329
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB4784;
-x-ms-traffictypediagnostic: VI1PR02MB4784:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-microsoft-antispam-prvs: <VI1PR02MB4784CB8CE833C4B07F735B07BCBE0@VI1PR02MB4784.eurprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB4784;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB4784;
-x-forefront-prvs: 0891BC3F3D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(136003)(39830400003)(396003)(189003)(199004)(4001150100001)(64126003)(86362001)(68736007)(93886005)(476003)(65806001)(65956001)(6916009)(36756003)(97736004)(446003)(99286004)(66066001)(11346002)(65826007)(31696002)(305945005)(7736002)(4326008)(2616005)(316002)(58126008)(54906003)(25786009)(5660300001)(2906002)(52116002)(3846002)(508600001)(186003)(8936002)(53936002)(6436002)(6506007)(386003)(53546011)(6512007)(105586002)(102836004)(6486002)(71190400001)(71200400001)(6116002)(76176011)(26005)(6246003)(8676002)(81166006)(74482002)(81156014)(31686004)(229853002)(106356001)(14454004)(256004)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB4784;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: SwKThszFZjDmta0yTHetFQKkJ/ARzL2r+kScxAvySro2CoO57EkTlUAbdqi+gdh8VwBuCI/9IvFyksJmBXHNAILxPWCzmucov5lltGCLjkWfRgkmPTfqbgmTkI7kylFiUIC/OfypZh7yl884fp+3U1est9U52sxGSLmjr4pZEA0cyX1HMKSSHogA7uLCTNHjx0S7y9Ql82becrnCX0xQuSxG3dLpfVlqHjOvDw72wB9+SxVDicYe09I+m7xGsxcFNnEmYgcX5Xd/FuM5N/LRZ0LvXlnu8L6cJbDiGHwPtjcGBLZ3I74UuohAtCj2/oXj
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A32DE31E6DE542498F0068ED39894A15@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 19 Dec 2018 07:55:57 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38387 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbeLSMz5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:55:57 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h50so16877239ede.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 04:55:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MAfLH1EZQD20uBK2TrTBmxwRXAyaLXXO4enNZzYPr/8=;
+        b=gPDmYItpFdcr21u1CT34XRBw6ywAnTTNDlJFdQgGGbktlqmyouWbHkNvDMgkAuYu0s
+         ihYBqQAmbPbPC863GYv4Br1QO+xs8SVWpLboRMxxWERT+p8kaPgs6TKVIMaEOVezK/dx
+         hN884LoXy5fgj8ujdR/GM9OelCcLCVQyM7Q7M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MAfLH1EZQD20uBK2TrTBmxwRXAyaLXXO4enNZzYPr/8=;
+        b=tnlTFYkw+cBAWIP10jqPe7kIVJEs5EZRbAHnI3kt0uia2qQ7pnm8H4qD21f/qQ5lv5
+         jgf7S+bKWn7bfQGJ2KNM9HqRDiX0rDiJJIZiF6npHqssk24bIjVo8Eye6S5ROg/bXqWd
+         WUgkthv72QcRfdOHbhrZHSOAtK0g0Pdj+TWefUgRCRRJSaPvouvqGS6w8QD96uVzfnuR
+         K8D9jGy1KonQzUFOP6s5pnmyrvy7723LZEhlcE65f5e07sAJJAsq/y6AQLBUiUoWGI/S
+         LZjgT2n9lhgpnMIqAwpXj/9Q8cImUkXt50Al2O1mH+QNTnvdC5fcxi0MbLScikMmpLuP
+         K/Gw==
+X-Gm-Message-State: AA+aEWaHm1ZORDxFiDzDig8XH17pBaDKYH1gLmDO3ECcc+GySX7P5iGn
+        O5QRsCBsXYPwmd91E9/B/AkYsbk2q6r154CwXioa3w==
+X-Google-Smtp-Source: AFSGD/W3zUR6Cezuo3357ZqX6XnYZtbnLT349w886skhrgUaJ7P00H5UH4Ic0FAENvdIn+VEctrsb91K5YoFRd0bejM=
+X-Received: by 2002:a50:ab82:: with SMTP id u2mr20165164edc.111.1545224155167;
+ Wed, 19 Dec 2018 04:55:55 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51f74f4a-0ef8-4bd2-01f1-08d665b11329
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 12:54:12.8768
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB4784
+References: <20181204155122.6327-1-douliyangs@gmail.com> <alpine.DEB.2.21.1812191136550.1651@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1812191136550.1651@nanos.tec.linutronix.de>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Wed, 19 Dec 2018 18:25:44 +0530
+Message-ID: <CAL2rwxq8kKMtPY6SvWzMCUUfYGSJyjjSFCKu4zvLpRyWvQtWNw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] irq/core: Fix and expand the irq affinity descriptor
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     douliyangs@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>, douliyang1@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMi0xOSAxMjozOCwgTGF1cmVudCBQaW5jaGFydCB3cm90ZToNCj4gSGVsbG8sDQo+
-IA0KPiBPbiBXZWRuZXNkYXksIDE5IERlY2VtYmVyIDIwMTggMTE6NTc6MzIgRUVUIFBldGVyIFJv
-c2luIHdyb3RlOg0KPj4gT24gMjAxOC0xMi0xOSAxMDoxMiwgQW5kcnplaiBIYWpkYSB3cm90ZToN
-Cj4+PiBPbiAxOS4xMi4yMDE4IDAwOjE5LCBQZXRlciBSb3NpbiB3cm90ZToNCj4+Pj4gQWRkIG9w
-dGlvbmFsIHByb3BlcnR5IHRvIHNwZWNpZnkgYSBwb3dlci1kb3duIEdQSU8uDQo+Pj4+IFRoZSBw
-d2RuLWdwaW9zIG5hbWUgaXMgYWxyZWFkeSBpbiB1c2UgYnkgdGhlIHRoaW5lLHRoYzYzbHZkbTgz
-ZA0KPj4+PiBiaW5kaW5nLCBzbyBnbyB3aXRoIHRoYXQuDQo+Pj4+DQo+Pj4+IFNpZ25lZC1vZmYt
-Ynk6IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+DQo+Pj4+IC0tLQ0KPj4+Pg0KPj4+PiAg
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2ZHMtdHJh
-bnNtaXR0ZXIudHh0IHwNCj4+Pj4gIDMgKysrIA0KPj4+PiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5z
-ZXJ0aW9ucygrKQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0DQo+Pj4+IGEvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2ZHMtdHJhbnNtaXR0ZXIudHh0DQo+
-Pj4+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2
-ZHMtdHJhbnNtaXR0ZXIudHh0DQo+Pj4+IGluZGV4IGY5ZTdkZDY2NmY1OC4uNDc5NDFkMzlmOTJm
-IDEwMDY0NA0KPj4+PiAtLS0NCj4+Pj4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9icmlkZ2UvbHZkcy10cmFuc21pdHRlci50eHQNCj4+Pj4gKysrDQo+Pj4+IGIv
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvYnJpZGdlL2x2ZHMtdHJh
-bnNtaXR0ZXIudHh0DQo+Pj4+IEBAIC0zMSw2ICszMSw5IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6
-DQo+Pj4+ICAgIGRldmljZS1zcGVjaWZpYyB2ZXJzaW9uIGNvcnJlc3BvbmRpbmcgdG8gdGhlIGRl
-dmljZSBmaXJzdA0KPj4+PiAgICBmb2xsb3dlZCBieSB0aGUgZ2VuZXJpYyB2ZXJzaW9uLg0KPj4+
-Pg0KPj4+PiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4+Pj4gKy0gcHdkbi1ncGlvczogUG93ZXIt
-ZG93biBjb250cm9sIEdQSU8NCj4+Pj4gKw0KPj4+DQo+Pj4gU2luY2UgbmFtaW5nIGlzIG5vdCBl
-bmZvcmNlZCBieSBhbnkgZGF0YXNoZWV0IEkgd291bGQgcHJvcG9zZSBzb21ldGhpbmcNCj4+PiBt
-b3JlIHBvcHVsYXIgd2l0aCBsZXNzIHR3aXN0ZWQgbG9naWMuIE1heWJlOg0KPj4+DQo+Pj4gLSBl
-bmFibGUtZ3Bpb3M6IC4uLiAoYWN0aXZlIGhpZ2gpLg0KPj4NCj4+IFRoYXQgd2FzIG15IG9yaWdp
-bmFsIHRob3VnaHQgdG9vLCBidXQgdGhlIGRyaXZlciBpbXBsZW1lbnRpbmcgdGhlDQo+PiBsdmRz
-LWVuY29kZXIgYmluZGluZ3MgYWxzbyBoYW5kbGVzIHRoZSBtZW50aW9uZWQgdGhpbmUsdGhjNjNs
-dmRtODNkDQo+PiBsdmRzIGVuY29kZXIsIGFuZCB0aGF0IGJpbmRpbmcgaGFzIHRoZSAicHdkbiIg
-bmFtaW5nLiBTbywgZm9yIGRyaXZlcg0KPj4gaW1wbGVtZW50YXRpb24gc2ltcGxpY2l0eSBJIHdl
-bnQgd2l0aCB3aGF0IHdhcyBhbHJlYWR5IHRoZXJlLCB0aHVzDQo+PiBhbGxvd2luZyBhZGRpbmcg
-c3VwcG9ydCBmb3IgYm90aCBiaW5kaW5ncyB3aXRoIG9uZSBpbXBsZW1lbnRhdGlvbg0KPj4gKGlu
-IHBhdGNoIDMvMykuDQo+Pg0KPj4gQWRkaW5nIGNvZGUganVzdCB0byBoYW5kbGUgbXVsdGlwbGUg
-bmFtZXMgZm9yIHRoZSBzYW1lIHRoaW5nIGRvZXMNCj4+IG5vdCBzb3VuZHMgdG9vIGFwcGVhbGlu
-Zy4NCj4gDQo+IEknbSBhZnJhaWQgSSB0aGluayB3ZSBzaG91bGRuJ3QgYWRkIHB3ZG4tZ3Bpb3Mg
-c3VwcG9ydCB0byB0aGUgbHZkcyBlbmNvZGVyIERUIA0KPiBiaW5kaW5ncy4gVGhlIHJlYXNvbiBp
-cyB0aGF0IGNvbnRyb2wgR1BJT3MgKGFuZCByZWd1bGF0b3JzKSBjb21lIHdpdGggZGV2aWNlLQ0K
-PiBzcGVjaWZpYyBzZW1hbnRpY3MuIElmIHdlIGFkZCBwd2RuLWdwaW9zIG5vdywgd2UnbGwgdGhl
-biBhZGQgcmVzZXQtZ3Bpb3MsIGFuZCANCj4gcG93ZXIgc3VwcGxpZXMsIGFuZCBhbGwgb2YgYSBz
-dWRkZW4gd2UnbGwgZW5kIHVwIGhhdmluZyB0byBlbmNvZGUgc2VxdWVuY2luZyANCj4gb2YgR1BJ
-T3MgYW5kIHBvd2VyIHN1cHBsaWVzIGluIERULiBUaGF0IHBhdGggaGFzIGJlZW4gdHJpZWQgaW4g
-dGhlIHBhc3QsIHdpdGggDQo+IG5vIGdvb2QgcmVzdWx0cy4NCj4gDQo+IEkgd291bGQgaW5zdGVh
-ZCBjcmVhdGUgZGV2aWNlLXNwZWNpZmljIGJpbmRpbmdzLCBsaWtlIGRvbmUgZm9yIA0KPiB0aGlu
-ZSx0aGM2M2x2ZG04M2QuIEl0J3MgZmluZSB0byB0aGVuIGFkZCBzdXBwb3J0IGZvciB0aGUgcHdk
-bi1ncGlvcyBwcm9wZXJ0eSANCj4gaW4gdGhlIGx2ZHMtZW5jb2RlciBkcml2ZXIsIGFzIGxvbmcg
-YXMgdGhlIG1lYW5pbmcgb2YgdGhlIHByb3BlcnR5IGNvbWVzIGZyb20gDQo+IHNwZWNpZmljIERU
-IGJpbmRpbmdzLCBub3QgZnJvbSB0aGUgZ2VuZXJpYyBvbmVzLg0KDQpSaWdodCwgSSdsbCBmb3Jr
-IG91dCB0aGUgYmluZGluZ3MgZm9yIHRoZSB0ZXhhcyBjaGlwcy4gdjIgY29taW5nIHVwLg0KDQpD
-aGVlcnMsDQpQZXRlcg0K
+On Wed, Dec 19, 2018 at 4:23 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Tue, 4 Dec 2018, Dou Liyang wrote:
+>
+> > Now,  Spreading the interrupt affinity info by a cpumask pointer is not
+> > enough, meets a problem[1] and hard to expand in the future.
+> >
+> > Fix it by:
+> >
+> >      +-----------------------------------+
+> >      |                                   |
+> >      |     struct cpumask *affinity      |
+> >      |                                   |
+> >      +-----------------------------------+
+> >                        |
+> >     +------------------v-------------------+
+> >     |                                      |
+> >     | struct irq_affinity_desc {           |
+> >     |     struct cpumask   mask;           |
+> >     |     unsigned int     is_managed : 1; |
+> >     | };                                   |
+> >     |                                      |
+> >     +--------------------------------------+
+> >
+>
+> So, I've applied that lot for 4.21 (or whatever number it will be). That's
+> only the first step for solving Kashyap's problem.
+>
+> IIRC, then Kashap wanted to get initial interrupt spreading for these extra
+> magic interrupts as well, but not have them marked managed.
+>
+> That's trivial to do now with the two queued changes in that area:
+>
+>   - The rework above
+>
+>   - The support for interrupt sets from Jens
+>
+> Just adding a small bitfield to struct irq_affinity which allows to tell
+> the core that a particular interrupt set is not managed does the trick.
+>
+> Untested patch below.
+>
+> Kashyap, is that what you were looking for and if so, does it work?
+Thomas,
+We could not test these patches as they did net get applied to latest
+linux-block tree cleanly.
+
+Our requirement is: 1. extra interrupts should be un-managed and 2.
+should be spread to CPUs of local NUMA node.
+If interrupts are un-managed but not spread as per our requirement,
+then still driver/userspace apps can manage by spreading
+them as required by calling API- irq_set_affinity_hint().
+
+Thanks,
+Sumit
+>
+> Thanks,
+>
+>         tglx
+>
+> 8<-----------------
+>
+> Subject: genirq/affinity: Add support for non-managed affinity sets
+> From: Thomas Gleixner <tglx@linutronix.de>
+> Date: Tue, 18 Dec 2018 16:46:47 +0100
+>
+> Some drivers need an extra set of interrupts which are not marked managed,
+> but should get initial interrupt spreading.
+>
+> Add a bitmap to struct irq_affinity which allows the driver to mark a
+> particular set of interrupts as non managed. Check the bitmap during
+> spreading and use the result to mark the interrupts in the sets
+> accordingly.
+>
+> The unmanaged interrupts get initial spreading, but user space can change
+> their affinity later on.
+>
+> Usage example:
+>
+>       struct irq_affinity affd = { .pre_vectors = 2 };
+>       int sets[2];
+>
+>       /* Fill in sets[] */
+>
+>       affd.nr_sets = 2;
+>       affd.sets = &sets;
+>       affd.unmanaged_sets = 0x02;
+>
+>       ......
+>
+> So both sets are properly spread out, but the second set is not marked
+> managed.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  include/linux/interrupt.h |   10 ++++++----
+>  kernel/irq/affinity.c     |   24 ++++++++++++++----------
+>  2 files changed, 20 insertions(+), 14 deletions(-)
+>
+> --- a/kernel/irq/affinity.c
+> +++ b/kernel/irq/affinity.c
+> @@ -99,7 +99,8 @@ static int __irq_build_affinity_masks(co
+>                                       cpumask_var_t *node_to_cpumask,
+>                                       const struct cpumask *cpu_mask,
+>                                       struct cpumask *nmsk,
+> -                                     struct irq_affinity_desc *masks)
+> +                                     struct irq_affinity_desc *masks,
+> +                                     bool managed)
+>  {
+>         int n, nodes, cpus_per_vec, extra_vecs, done = 0;
+>         int last_affv = firstvec + numvecs;
+> @@ -154,6 +155,7 @@ static int __irq_build_affinity_masks(co
+>                         }
+>                         irq_spread_init_one(&masks[curvec].mask, nmsk,
+>                                                 cpus_per_vec);
+> +                       masks[curvec].is_managed = managed;
+>                 }
+>
+>                 done += v;
+> @@ -176,7 +178,8 @@ static int __irq_build_affinity_masks(co
+>  static int irq_build_affinity_masks(const struct irq_affinity *affd,
+>                                     int startvec, int numvecs, int firstvec,
+>                                     cpumask_var_t *node_to_cpumask,
+> -                                   struct irq_affinity_desc *masks)
+> +                                   struct irq_affinity_desc *masks,
+> +                                   bool managed)
+>  {
+>         int curvec = startvec, nr_present, nr_others;
+>         int ret = -ENOMEM;
+> @@ -196,7 +199,8 @@ static int irq_build_affinity_masks(cons
+>         /* Spread on present CPUs starting from affd->pre_vectors */
+>         nr_present = __irq_build_affinity_masks(affd, curvec, numvecs,
+>                                                 firstvec, node_to_cpumask,
+> -                                               cpu_present_mask, nmsk, masks);
+> +                                               cpu_present_mask, nmsk, masks,
+> +                                               managed);
+>
+>         /*
+>          * Spread on non present CPUs starting from the next vector to be
+> @@ -211,7 +215,7 @@ static int irq_build_affinity_masks(cons
+>         cpumask_andnot(npresmsk, cpu_possible_mask, cpu_present_mask);
+>         nr_others = __irq_build_affinity_masks(affd, curvec, numvecs,
+>                                                firstvec, node_to_cpumask,
+> -                                              npresmsk, nmsk, masks);
+> +                                              npresmsk, nmsk, masks, managed);
+>         put_online_cpus();
+>
+>         if (nr_present < numvecs)
+> @@ -268,10 +272,11 @@ irq_create_affinity_masks(int nvecs, con
+>
+>         for (i = 0, usedvecs = 0; i < nr_sets; i++) {
+>                 int this_vecs = affd->sets ? affd->sets[i] : affvecs;
+> +               bool managed = !test_bit(i, &affd->unmanaged_sets);
+>                 int ret;
+>
+> -               ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+> -                                               curvec, node_to_cpumask, masks);
+> +               ret = irq_build_affinity_masks(affd, curvec, this_vecs, curvec,
+> +                                              node_to_cpumask, masks, managed);
+>                 if (ret) {
+>                         kfree(masks);
+>                         masks = NULL;
+> @@ -289,10 +294,6 @@ irq_create_affinity_masks(int nvecs, con
+>         for (; curvec < nvecs; curvec++)
+>                 cpumask_copy(&masks[curvec].mask, irq_default_affinity);
+>
+> -       /* Mark the managed interrupts */
+> -       for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
+> -               masks[i].is_managed = 1;
+> -
+>  outnodemsk:
+>         free_node_to_cpumask(node_to_cpumask);
+>         return masks;
+> @@ -316,6 +317,9 @@ int irq_calc_affinity_vectors(int minvec
+>         if (affd->nr_sets) {
+>                 int i;
+>
+> +               if (WARN_ON_ONCE(affd->nr_sets > BITS_PER_LONG))
+> +                       return 0;
+> +
+>                 for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
+>                         set_vecs += affd->sets[i];
+>         } else {
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -249,12 +249,14 @@ struct irq_affinity_notify {
+>   *                     the MSI(-X) vector space
+>   * @nr_sets:           Length of passed in *sets array
+>   * @sets:              Number of affinitized sets
+> + * @unmanaged_sets:    Bitmap to mark members of @sets as unmanaged
+>   */
+>  struct irq_affinity {
+> -       int     pre_vectors;
+> -       int     post_vectors;
+> -       int     nr_sets;
+> -       int     *sets;
+> +       int             pre_vectors;
+> +       int             post_vectors;
+> +       int             nr_sets;
+> +       int             *sets;
+> +       unsigned long   unmanaged_sets;
+>  };
+>
+>  /**
