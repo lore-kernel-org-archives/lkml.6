@@ -2,70 +2,86 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADDFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90109C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23B94218CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:17:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n/4NymAj"
+	by mail.kernel.org (Postfix) with ESMTP id 6A4BF218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbeLSPRn (ORCPT
+        id S1730145AbeLSPTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:17:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51004 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729903AbeLSPRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:17:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PAClkGWQY+TyBVW4crUR175JeC7/HxJ/DfM4/M9tw+s=; b=n/4NymAjtnpmKJ/q3vr56j53F
-        ZVPRKZrVF+/Cvf4w1f9h+X/ocQdI4jx1dKcvGpsmCDyxDmTCodxkyZqeB2m+bnn6Qnc9mNY35w6fc
-        LCS842qh2u3hcSimQfykbvRuVmvbLQvl9MLlqNSNsHnKRel5mb8WGlcdUndW3+srLW8iomCxoIRWn
-        azY6mu0VYCsT+1XK6bG/+8jAfS30l+f+7vl9TTpz6LdGxhqR+A6XE6OmbXCrHxwT2GyimXGrCz5lu
-        D+3dJIf/iCa+lzECo1i8tFOq4nWp/WtmUER0Gc20JctMlx2x3AqNLB+EIAt2Yj2ItEgGucHqtMRh3
-        f6ZVy972A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gZdar-0003DQ-4K; Wed, 19 Dec 2018 15:17:05 +0000
-Date:   Wed, 19 Dec 2018 07:17:04 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Maruthi Srinivas Bayyavarapu 
-        <maruthi.srinivas.bayyavarapu@xilinx.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vishal Sagar <vsagar@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ASoC: xlnx: change license header format style
-Message-ID: <20181219151704.GA5040@infradead.org>
-References: <1545212440-109949-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
+        Wed, 19 Dec 2018 10:19:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30409 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730132AbeLSPTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:19:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2018 07:19:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,373,1539673200"; 
+   d="scan'208";a="260746532"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 19 Dec 2018 07:19:44 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v2 0/3] stm class/intel_th: Fixes for v4.20
+Date:   Wed, 19 Dec 2018 17:19:19 +0200
+Message-Id: <20181219151922.44839-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545212440-109949-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 03:10:40PM +0530, Maruthi Srinivas Bayyavarapu wrote:
-> Changed License header from C to C++ style comment block.
+Hi Greg,
 
-Why this completely pointless uglification that goes counter to
-the common style all over the kernel?
+This is a second attepmpt of [1]. This time commit references are fixed.
+A new tag is also pushed, just in case.
+
+I have 3 fixes for STM Class and Intel TH. Two things that I introduced in
+v4.20-rc1 and one long-standing bug since v4.4. As usual, there is a signed
+tag ready for pulling and individual patches follow. Please consider pulling
+or applying. Thanks!
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/intel_th-fixes-for-greg-20181219
+
+for you to fetch changes up to 28b39d95ea6f6b4ad8f6516cab135e85c577ebea:
+
+  intel_th: msu: Fix an off-by-one in attribute store (2018-12-19 13:43:53 +0200)
+
+----------------------------------------------------------------
+stm class/intel_th: Fixes for v4.20
+
+These are:
+ * module refcount leak in stm class, introduced in v4.20-rc1
+ * documentation fix
+ * string parsing off-by-one in intel_th, also for -stable
+
+----------------------------------------------------------------
+Alexander Shishkin (3):
+      stm class: Fix a module refcount leak in policy creation error path
+      stm class: Add a reference to the SyS-T document
+      intel_th: msu: Fix an off-by-one in attribute store
+
+ Documentation/trace/index.rst    |  1 +
+ drivers/hwtracing/intel_th/msu.c |  3 ++-
+ drivers/hwtracing/stm/policy.c   | 12 +++++++-----
+ 3 files changed, 10 insertions(+), 6 deletions(-)
