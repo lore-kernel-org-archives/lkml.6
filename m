@@ -2,124 +2,120 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48958C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005DFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CAAE218A6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:12:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="lFr62iDx"
+	by mail.kernel.org (Postfix) with ESMTP id BE53F218A6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545239757;
+	bh=NdofntJAOd0id56kjXOqeMCorcq0a0A7yrjTlG9aCTI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sIT6cBXBdoToHwWGXsBI7+2fHC2zVicRgLn3Ba/Jbmn4tBxHLTrRn+P4zjzm0qeJf
+	 7ai0arzE/t2cFdWqHgZBe5gLoPY7gb/KvTPmLjWAzVk9zdxxHFAQa8Gxp2a8FnqVEs
+	 5nzFgSToXmIgqu5DKDc4KCMs3YPXbDp5uEcNjSBA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730313AbeLSRL7 (ORCPT
+        id S1730333AbeLSRP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 12:11:59 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:60326 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729020AbeLSRL7 (ORCPT
+        Wed, 19 Dec 2018 12:15:56 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41990 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbeLSRP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 12:11:59 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id D0FF9C48
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 17:11:57 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 9Ps0TClM6Alc for <linux-kernel@vger.kernel.org>;
-        Wed, 19 Dec 2018 11:11:57 -0600 (CST)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id A623EC71
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 11:11:57 -0600 (CST)
-Received: by mail-io1-f71.google.com with SMTP id q23so19243152ior.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 09:11:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3mpgbGSojf4iIUc/IhhTETIGQooT/+0wh3zwx7ZJz4A=;
-        b=lFr62iDxgPOd5Ogz/BqvNF+ibDRpJPCo3PJd3N+Jq+lop1BH8LD/M2+dRpq3s+URK4
-         hp1b61z0zzPLxiPzhoq8RfiHCMiqLdHpUAPS22GWiMJF3/G6f7YFVjSsPY4AyNwlVVMR
-         bQoUjBIwWnFVaoDbjGfm+zGuaxTJXfY5Lq64d1hUW/VA12f/M3/nLfBcf17SlmMpNNQ/
-         hV0ACFAjhw+e1nFCBixvlWShBeIwPycvFZmc+icHal1/B3ON9/z4wuAZcmX5AD5yeKO9
-         tCaoyxcWDzVyWAOde98YeWC/NaToqtbi5IUOuIft/bWBWnYvMAgbseACLcjEEjRQz2J5
-         YsMg==
+        Wed, 19 Dec 2018 12:15:56 -0500
+Received: by mail-oi1-f194.google.com with SMTP id w13so2203732oiw.9;
+        Wed, 19 Dec 2018 09:15:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3mpgbGSojf4iIUc/IhhTETIGQooT/+0wh3zwx7ZJz4A=;
-        b=LjoaX1+tSn1h/4ZoXYKZzEoASA9YKkjrrmYoBKqD5c9Hmfj0c+oUi8lS/od8GcjB/e
-         jYHKszI5xvx8gaygTE0D53EGypcZR/iNaph2bkIjSLSRggS9Ms956zGkCJTU3v1GN0jb
-         IFFA4hzp0fg7A9/SYYR8EuqLb0ba0mz2LgAzjxg+KNxkDtFeSOS8XDPihKmPOtkG9U5f
-         quI7N7nvIhhwd1iT7FOpxZr0iOS6JB0D+nTmfDm0/bagOwWDCmsS19AyjOwx0wofXCKZ
-         knJsLavKitBV82f6jvRh704lwSKX3e1neZ0G2bvFxgxhhlfipUiJi5yElmNjGdkJf9f6
-         hibw==
-X-Gm-Message-State: AA+aEWYQyMNy/yQ29l3WmfWbebW3RMzQh7Js4BpfhikOtFeVgzYRVI3Y
-        +bOx9BD/BjBMoB5O1F7OhwWBgy+0m0Uz82WJbym1m8r0FveKAPCAKCH1SOcmMZ7iIORKqsZOm3H
-        AAC8NBAnRojZzs0hdIDJHMrV55+PX
-X-Received: by 2002:a5e:940c:: with SMTP id q12mr6431364ioj.228.1545239517280;
-        Wed, 19 Dec 2018 09:11:57 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/Vzc9w8c1P7GWm/ly49iXNG10CJq14biPkHn1etTp9QgYzEYZnCnPaQixV2qdpn/OY9+K+lZw==
-X-Received: by 2002:a5e:940c:: with SMTP id q12mr6431345ioj.228.1545239516899;
-        Wed, 19 Dec 2018 09:11:56 -0800 (PST)
-Received: from er-10-131-57-120.wireless.umn.edu (er-nat-tc-131-212-249-147.eduroam.wireless.umn.edu. [131.212.249.147])
-        by smtp.gmail.com with ESMTPSA id u3sm3539767ita.18.2018.12.19.09.11.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Dec 2018 09:11:55 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] regulator: palmas: fix a missing check of return value
-Date:   Wed, 19 Dec 2018 11:11:39 -0600
-Message-Id: <20181219171139.39388-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <20181219050413.16374-1-kjlu@umn.edu>
-References: <20181219050413.16374-1-kjlu@umn.edu>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=38zg1ySHg8r8hcUFP3N/sjZMuc4d9iymHQ3Ww1VAzxA=;
+        b=Rvb2x0f9wKVMI2p1cvu5T1xDJNmjJkQsA6PNiyn01Egh/hbN/Tdxtir1n/bdT2ZDzl
+         PKPZSJ8Yw8ro34byZSeqbqVx00BTZ79Sok0tUlFGPNooSE5aSxXialYT4c6Av8gh3Nxb
+         QFKVaH7hdZ0qAHdROQ8AOwzIfG2HjQOuyUm7Q5vYf+9r1NDr+SEWOkY6sTXOpPgL+inK
+         t2wxzwZ2xd/aJj8wmi6moy3X9pstWTYVo0GxOaoMoPyAN17eRIv1pndl3i7toMpLUDGA
+         iPQ6wneiT2oQUwbd/sIcu9LYsZ/0P8+N9VR+Ko6LL7iOSMv7sPJieNI+522Psb8gU8Jq
+         Omiw==
+X-Gm-Message-State: AA+aEWZ3AL62RI9QxjDmlE0+KjsqFUwccXg4puocPFamVj3rKT5nvvck
+        S7OBk3ufvMe2cM8a0Hn0oQ==
+X-Google-Smtp-Source: AFSGD/Wd26Y+hZF7YjKOSsbt9p1CcYMaWM/e2a6ibBbZgH85dtrxX4PJ7b81j/6XvFhh5Y43mBjP0Q==
+X-Received: by 2002:aca:a86:: with SMTP id k6mr1665337oiy.334.1545239755156;
+        Wed, 19 Dec 2018 09:15:55 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e128sm9125798oia.5.2018.12.19.09.15.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 09:15:54 -0800 (PST)
+Date:   Wed, 19 Dec 2018 11:15:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 7/9] dt-bindings: input: touchscreen: goodix: Add GT5663
+ compatible
+Message-ID: <20181219171553.GA4469@bogus>
+References: <20181203101547.16835-1-jagan@amarulasolutions.com>
+ <20181203101547.16835-7-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203101547.16835-7-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If palmas_smps_read() fails, we should not use the read data in "reg"
-which may contain random value. The fix inserts a check for the return
-value of palmas_smps_read(): If it fails, we return the error code
-upstream and stop using "reg".
+On Mon, Dec 03, 2018 at 03:45:45PM +0530, Jagan Teki wrote:
+> GT5663 is capacitive touch controller with customized smart wakeup gestures,
+> the existing goodix driver will work by phandle vcc-supply regulator.
+> 
+> So, document compatible and example node for the same.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  .../bindings/input/touchscreen/goodix.txt           | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> index 604766e347ce..1898d3dde8e1 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> @@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
+>  Required properties:
+>  
+>   - compatible		: Should be "goodix,gt1151"
+> +				 or "goodix,gt5663"
+>  				 or "goodix,gt911"
+>  				 or "goodix,gt9110"
+>  				 or "goodix,gt912"
+> @@ -42,3 +43,15 @@ Example:
+>  
+>  		/* ... */
+>  	};
+> +
+> +	touchscreen@5d {
+> +		compatible = "goodix,gt5663";
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/regulator/palmas-regulator.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Just a new compatible doesn't warrant a new example.
 
-diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-index bb5ab7d78895..c2cc392a27d4 100644
---- a/drivers/regulator/palmas-regulator.c
-+++ b/drivers/regulator/palmas-regulator.c
-@@ -443,13 +443,16 @@ static int palmas_ldo_write(struct palmas *palmas, unsigned int reg,
- static int palmas_set_mode_smps(struct regulator_dev *dev, unsigned int mode)
- {
- 	int id = rdev_get_id(dev);
-+	int ret;
- 	struct palmas_pmic *pmic = rdev_get_drvdata(dev);
- 	struct palmas_pmic_driver_data *ddata = pmic->palmas->pmic_ddata;
- 	struct palmas_regs_info *rinfo = &ddata->palmas_regs_info[id];
- 	unsigned int reg;
- 	bool rail_enable = true;
- 
--	palmas_smps_read(pmic->palmas, rinfo->ctrl_addr, &reg);
-+	ret = palmas_smps_read(pmic->palmas, rinfo->ctrl_addr, &reg);
-+	if (ret)
-+		return ret;
- 
- 	reg &= ~PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
- 
--- 
-2.17.2 (Apple Git-113)
-
+> +		reg = <0x5d>;
+> +		vcc-supply = <&reg_ldo_io0>;
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <7 4 IRQ_TYPE_EDGE_FALLING>;
+> +		irq-gpios = <&pio 7 4 GPIO_ACTIVE_HIGH>;	/* CTP-INT: PH4 */
+> +		reset-gpios = <&pio 7 8 GPIO_ACTIVE_HIGH>;	/* CTP-RST: PH8 */
+> +		touchscreen-inverted-x;
+> +		touchscreen-inverted-y;
+> +	};
+> -- 
+> 2.18.0.321.gffc6fa0e3
+> 
