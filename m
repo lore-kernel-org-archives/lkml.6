@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF24EC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DA6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85ED220874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ABC02086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:34:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISpDosYz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vGTkPcUF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730819AbeLSVeb (ORCPT
+        id S1730831AbeLSVee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:34:31 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41690 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730762AbeLSVeZ (ORCPT
+        Wed, 19 Dec 2018 16:34:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36559 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730563AbeLSVe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:34:25 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15-v6so18699605ljc.8;
-        Wed, 19 Dec 2018 13:34:23 -0800 (PST)
+        Wed, 19 Dec 2018 16:34:28 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g11-v6so18715735ljk.3;
+        Wed, 19 Dec 2018 13:34:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=E9s6uCpyIf7ZYx5Vk5PQV5IG2eR2Pz8U8igLWYJ/OLE=;
-        b=ISpDosYzp3xoIvuWZPXrM9oTicqJ/P2w8uJIxw6GXmO0zny4GLHIzCf+ZZfRUPnCdj
-         bxR8muhxsVcm9y5zEeV25bmyVIGQdOmzmL6Rwzm7/ESZUOmOR8LXKNO5k1xtce45+4U0
-         b72RuI1/wQ7jzp9OeW0vBRrdwtSRSZZMFbXRuVqdsp/IWicwV0UHHcK5HEKG6MUeGqVo
-         nZks1JC1F53eomseGmQbqryGiaDVwiTYhf92jzwHWIU9y6H/tjIvQBFTOGl9XX417l5o
-         D/ZrM2vi9xkii/bQQxf98k6U25wTLonbTY4OXi17h4Z4EkOKh7s4VOhuiJyrw6FcF5le
-         AoGg==
+        bh=nF+ce+AsD/YO6oFhBzoP5bXERd0j3/JBWm1ePv97n+k=;
+        b=vGTkPcUFo/MMtKaWdBnUN7Wr0yJwxwfs21G27pnVV2k1BB2gRhB1bK7E0cHhYbqIgf
+         stDCnsHWMfyP+yrG6oDmTMF96qa/BaUh7n6LG+3tu8TfXBh5Wu8DfaY+PV6lNfvBRdKh
+         hNQbHgauq8nMJyjwqmvZjnwDRCxA5mLVfzWQ0bVZJe+zeth1/NOc5HzIGqpMFr/Qrlqx
+         aAsQZ/q+cAxCC45Usqy0Xty8HNLpuBvEXpaPgWZc396htU9HqMdTxdiPYyjkaNHn7myJ
+         xkIvhC2HOtkTyU5OhrA1C4U6i8nYCJDolSU8uTM4BXBZOybG0Kkmw2kFOsIZCZuoWSro
+         lNVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=E9s6uCpyIf7ZYx5Vk5PQV5IG2eR2Pz8U8igLWYJ/OLE=;
-        b=ZBA+9Do7EUZxgLaLg8dybdIqL6i4msX5fZV2krMoZsWtnsD6vF0tDZYmdW1yTGWGrV
-         /W6NNRCj91uwPHNDRLVkd+pOwYP6L3PAOYIrxfGH0VlMnidlRW2N8YpYS+SAJXi2rcBe
-         ANpdNQqKbJUq7+Z6GVSC5cf7gkg5auNMD8sO/HfaRu1ZJdf6J+ZwTnkB9ZlVwhGnThYn
-         oKos+qRMiSOTkqWogugckNqKkdV5GZpQwxwSe4ktzS6K+TIsZM/QyU9Djespf8dvfzEQ
-         jipc4QMEj8oahyW8Zp42AymuSs/Ror1Ph3xxakzj5YxcKWCdNMbO/meBrzE1UnjNUS2W
-         f1QQ==
-X-Gm-Message-State: AA+aEWa5m6B2GuHsfqC+6LOkqSBp0B0OGoxUlPQzoUzGMBmuH8E9ps4R
-        lQBVY/ucBax2tl6A58Cuktk=
-X-Google-Smtp-Source: AFSGD/VrNtQizC10rFZW5u/r8TBG0RgDsuW8dogvziYWPYJXjruqtzL0FH3mxtu5WlV/03YzGDFPvQ==
-X-Received: by 2002:a2e:568d:: with SMTP id k13-v6mr5924180lje.105.1545255262956;
-        Wed, 19 Dec 2018 13:34:22 -0800 (PST)
+        bh=nF+ce+AsD/YO6oFhBzoP5bXERd0j3/JBWm1ePv97n+k=;
+        b=c29aAqG/aiES3wMGqW5NYipdcI5R5kxD6T6FW+vzOSJHLPilZou42iS6MTCTeKjopF
+         kVSUKreQU1Ug/TszktDUDKTXUdVdZfuup0QcbKz1dE0oi90+CsQqqVYWk5K4EDATjsdG
+         K8YIaRD/IVj/xAyYTNIFK0Wdn13OQFh6d/D2sJIAgiWtwxpwwBm1f3pIHt/v1vVw7O+d
+         ifRSY231NfW0eX7HLKbzdqz4Tl+L2MNHlPD7+PYz1/dMXVCFUyOquiYstTLShcmfcQeh
+         eR0hAa5TY1/fBdIjiliW5je0Yu+DzbNHY1lQr2vjh6F1vkA+VjFwHik8qkwwQv/NWaiz
+         l6uQ==
+X-Gm-Message-State: AA+aEWaa1ZK1K4lSqRJ2GussN/iloVyF7EswsnGx1OluY9u0V6zPInc/
+        6b4ctQO0hcFLsbAHMnGXw5g=
+X-Google-Smtp-Source: AFSGD/Wy2ENV+x3psGq5BTNSnjgWTYu45qYohRv5i5VPwG4fDvqlbGM3fM6N3dl/AyW8xTUnzykvyA==
+X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr15007443lja.111.1545255266361;
+        Wed, 19 Dec 2018 13:34:26 -0800 (PST)
 Received: from localhost.localdomain (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.21
+        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 13:34:22 -0800 (PST)
+        Wed, 19 Dec 2018 13:34:25 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -69,9 +69,9 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 10/12] __wr_after_init: test write rare functionality
-Date:   Wed, 19 Dec 2018 23:33:36 +0200
-Message-Id: <20181219213338.26619-11-igor.stoppa@huawei.com>
+Subject: [PATCH 12/12] x86_64: __clear_user as case of __memset_user
+Date:   Wed, 19 Dec 2018 23:33:38 +0200
+Message-Id: <20181219213338.26619-13-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181219213338.26619-1-igor.stoppa@huawei.com>
 References: <20181219213338.26619-1-igor.stoppa@huawei.com>
@@ -83,9 +83,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set of test cases meant to confirm that the write rare functionality
-works as expected.
-It can be optionally compiled as module.
+To avoid code duplication, re-use __memset_user(), when clearing
+user-space memory.
+
+The overhead should be minimal (2 extra register assignments) and
+outside of the writing loop.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -101,181 +103,49 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- mm/Kconfig.debug     |   8 +++
- mm/Makefile          |   1 +
- mm/test_write_rare.c | 135 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 144 insertions(+)
- create mode 100644 mm/test_write_rare.c
+ arch/x86/lib/usercopy_64.c | 29 +----------------------------
+ 1 file changed, 1 insertion(+), 28 deletions(-)
 
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index b10305cfac3c..ae018e56c4e4 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -102,3 +102,11 @@ config DEBUG_PRMEM
-     help
-       After any write rare operation, compares the data written with the
-       value provided by the caller.
-+
-+config DEBUG_PRMEM_TEST
-+    tristate "Run self test for statically allocated protected memory"
-+    depends on PRMEM
-+    default n
-+    help
-+      Tries to verify that the protection for statically allocated memory
-+      works correctly and that the memory is effectively protected.
-diff --git a/mm/Makefile b/mm/Makefile
-index d210cc9d6f80..62d719c0ee1e 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -58,6 +58,7 @@ obj-$(CONFIG_SPARSEMEM)	+= sparse.o
- obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
- obj-$(CONFIG_SLOB) += slob.o
- obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
-+obj-$(CONFIG_DEBUG_PRMEM_TEST) += test_write_rare.o
- obj-$(CONFIG_KSM) += ksm.o
- obj-$(CONFIG_PAGE_POISONING) += page_poison.o
- obj-$(CONFIG_SLAB) += slab.o
-diff --git a/mm/test_write_rare.c b/mm/test_write_rare.c
-new file mode 100644
-index 000000000000..30574bc34a20
---- /dev/null
-+++ b/mm/test_write_rare.c
-@@ -0,0 +1,135 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * test_write_rare.c
-+ *
-+ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-+ * Author: Igor Stoppa <igor.stoppa@huawei.com>
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/mm.h>
-+#include <linux/bug.h>
-+#include <linux/prmem.h>
-+
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+extern long __start_wr_after_init;
-+extern long __end_wr_after_init;
-+
-+static __wr_after_init int scalar = '0';
-+static __wr_after_init u8 array[PAGE_SIZE * 3] __aligned(PAGE_SIZE);
-+
-+/* The section must occupy a non-zero number of whole pages */
-+static bool test_alignment(void)
-+{
-+	unsigned long pstart = (unsigned long)&__start_wr_after_init;
-+	unsigned long pend = (unsigned long)&__end_wr_after_init;
-+
-+	if (WARN((pstart & ~PAGE_MASK) || (pend & ~PAGE_MASK) ||
-+		 (pstart >= pend), "Boundaries test failed."))
-+		return false;
-+	pr_info("Boundaries test passed.");
-+	return true;
-+}
-+
-+static bool test_pattern(void)
-+{
-+	return (memtst(array, '0', PAGE_SIZE / 2) ||
-+		memtst(array + PAGE_SIZE / 2, '1', PAGE_SIZE * 3 / 4) ||
-+		memtst(array + PAGE_SIZE * 5 / 4, '0', PAGE_SIZE / 2) ||
-+		memtst(array + PAGE_SIZE * 7 / 4, '1', PAGE_SIZE * 3 / 4) ||
-+		memtst(array + PAGE_SIZE * 5 / 2, '0', PAGE_SIZE / 2));
-+}
-+
-+static bool test_wr_memset(void)
-+{
-+	int new_val = '1';
-+
-+	wr_memset(&scalar, new_val, sizeof(scalar));
-+	if (WARN(memtst(&scalar, new_val, sizeof(scalar)),
-+		 "Scalar write rare memset test failed."))
-+		return false;
-+
-+	pr_info("Scalar write rare memset test passed.");
-+
-+	wr_memset(array, '0', PAGE_SIZE * 3);
-+	if (WARN(memtst(array, '0', PAGE_SIZE * 3),
-+		 "Array write rare memset test failed."))
-+		return false;
-+
-+	wr_memset(array + PAGE_SIZE / 2, '1', PAGE_SIZE * 2);
-+	if (WARN(memtst(array + PAGE_SIZE / 2, '1', PAGE_SIZE * 2),
-+		 "Array write rare memset test failed."))
-+		return false;
-+
-+	wr_memset(array + PAGE_SIZE * 5 / 4, '0', PAGE_SIZE / 2);
-+	if (WARN(memtst(array + PAGE_SIZE * 5 / 4, '0', PAGE_SIZE / 2),
-+		 "Array write rare memset test failed."))
-+		return false;
-+
-+	if (WARN(test_pattern(), "Array write rare memset test failed."))
-+		return false;
-+
-+	pr_info("Array write rare memset test passed.");
-+	return true;
-+}
-+
-+static u8 array_1[PAGE_SIZE * 2];
-+static u8 array_2[PAGE_SIZE * 2];
-+
-+static bool test_wr_memcpy(void)
-+{
-+	int new_val = 0x12345678;
-+
-+	wr_assign(scalar, new_val);
-+	if (WARN(memcmp(&scalar, &new_val, sizeof(scalar)),
-+		 "Scalar write rare memcpy test failed."))
-+		return false;
-+	pr_info("Scalar write rare memcpy test passed.");
-+
-+	wr_memset(array, '0', PAGE_SIZE * 3);
-+	memset(array_1, '1', PAGE_SIZE * 2);
-+	memset(array_2, '0', PAGE_SIZE * 2);
-+	wr_memcpy(array + PAGE_SIZE / 2, array_1, PAGE_SIZE * 2);
-+	wr_memcpy(array + PAGE_SIZE * 5 / 4, array_2, PAGE_SIZE / 2);
-+
-+	if (WARN(test_pattern(), "Array write rare memcpy test failed."))
-+		return false;
-+
-+	pr_info("Array write rare memcpy test passed.");
-+	return true;
-+}
-+
-+static __wr_after_init int *dst;
-+static int reference = 0x54;
-+
-+static bool test_wr_rcu_assign_pointer(void)
-+{
-+	wr_rcu_assign_pointer(dst, &reference);
-+	return dst == &reference;
-+}
-+
-+static int __init test_static_wr_init_module(void)
-+{
-+	pr_info("static write_rare test");
-+	if (WARN(!(test_alignment() &&
-+		   test_wr_memset() &&
-+		   test_wr_memcpy() &&
-+		   test_wr_rcu_assign_pointer()),
-+		 "static rare-write test failed"))
-+		return -EFAULT;
-+	pr_info("static write_rare test passed");
-+	return 0;
-+}
-+
-+module_init(test_static_wr_init_module);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Igor Stoppa <igor.stoppa@huawei.com>");
-+MODULE_DESCRIPTION("Test module for static write rare.");
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 84f8f8a20b30..ab6aabb62055 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -69,34 +69,7 @@ EXPORT_SYMBOL(memset_user);
+ 
+ unsigned long __clear_user(void __user *addr, unsigned long size)
+ {
+-	long __d0;
+-	might_fault();
+-	/* no memory constraint because it doesn't change any memory gcc knows
+-	   about */
+-	stac();
+-	asm volatile(
+-		"	testq  %[size8],%[size8]\n"
+-		"	jz     4f\n"
+-		"0:	movq $0,(%[dst])\n"
+-		"	addq   $8,%[dst]\n"
+-		"	decl %%ecx ; jnz   0b\n"
+-		"4:	movq  %[size1],%%rcx\n"
+-		"	testl %%ecx,%%ecx\n"
+-		"	jz     2f\n"
+-		"1:	movb   $0,(%[dst])\n"
+-		"	incq   %[dst]\n"
+-		"	decl %%ecx ; jnz  1b\n"
+-		"2:\n"
+-		".section .fixup,\"ax\"\n"
+-		"3:	lea 0(%[size1],%[size8],8),%[size8]\n"
+-		"	jmp 2b\n"
+-		".previous\n"
+-		_ASM_EXTABLE_UA(0b, 3b)
+-		_ASM_EXTABLE_UA(1b, 2b)
+-		: [size8] "=&c"(size), [dst] "=&D" (__d0)
+-		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr));
+-	clac();
+-	return size;
++	return __memset_user(addr, 0, size);
+ }
+ EXPORT_SYMBOL(__clear_user);
+ 
 -- 
 2.19.1
 
