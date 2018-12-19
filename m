@@ -3,34 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638DDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC53C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4099820672
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E082A20672
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 18:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeLSS3K (ORCPT
+        id S1729759AbeLSSbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:29:10 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41406 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727841AbeLSS3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:29:09 -0500
+        Wed, 19 Dec 2018 13:31:55 -0500
+Received: from foss.arm.com ([217.140.101.70]:41458 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728580AbeLSSbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 13:31:55 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41D3EA78;
-        Wed, 19 Dec 2018 10:29:09 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8017980D;
+        Wed, 19 Dec 2018 10:31:54 -0800 (PST)
 Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61D5F3F59C;
-        Wed, 19 Dec 2018 10:29:08 -0800 (PST)
-Subject: Re: [PATCH v3] irqchip/mmp: only touch the PJ4 & FIQ bits on
- enable/disable
-To:     Lubomir Rintel <lkundrak@v3.sk>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org
-References: <20181219172822.18349-1-lkundrak@v3.sk>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF9013F59C;
+        Wed, 19 Dec 2018 10:31:51 -0800 (PST)
+Subject: Re: [PATCH 1/2] cpu/hotplug: Mute hotplug lockdep during init
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     cai@gmx.us, daniel.lezcano@linaro.org,
+        linux-arm-kernel@lists.infradead.org, longman@redhat.com,
+        mark.rutland@arm.com, mingo@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, dietmar.eggemann@arm.com
+References: <1545243796-23224-1-git-send-email-valentin.schneider@arm.com>
+ <1545243796-23224-2-git-send-email-valentin.schneider@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
@@ -76,12 +79,12 @@ Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
  hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
  yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
 Organization: ARM Ltd
-Message-ID: <fc85f7e6-fc78-9e7c-258e-a0a60d195686@arm.com>
-Date:   Wed, 19 Dec 2018 18:29:06 +0000
+Message-ID: <53826f59-ced7-7163-ab6a-533f64b98471@arm.com>
+Date:   Wed, 19 Dec 2018 18:31:49 +0000
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181219172822.18349-1-lkundrak@v3.sk>
+In-Reply-To: <1545243796-23224-2-git-send-email-valentin.schneider@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -90,50 +93,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2018 17:28, Lubomir Rintel wrote:
-> On an OLPC XO 1.75 machine, the "security processor" handles the GPIO 71
-> and 72 interrupts. Don't reset the "route to SP" bit (4).
+On 19/12/2018 18:23, Valentin Schneider wrote:
+> Since we've had:
 > 
-> I'm just assuming the bit 4 is the "route to SP" bit -- it fixes the
-> SP-based keyboard for me and <mach-mmp/regs-icu.h> defines
-> ICU_INT_ROUTE_SP_IRQ to be 1 << 4. When asked for a data sheet, Marvell
-> was not helpful.
+>   commit cb538267ea1e ("jump_label/lockdep: Assert we hold the hotplug lock for _cpuslocked() operations")
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> we've been getting some lockdep warnings during init, such as on HiKey960:
 > 
+> [    0.820495] WARNING: CPU: 4 PID: 0 at kernel/cpu.c:316 lockdep_assert_cpus_held+0x3c/0x48
+> [    0.820498] Modules linked in:
+> [    0.820509] CPU: 4 PID: 0 Comm: swapper/4 Tainted: G S                4.20.0-rc5-00051-g4cae42a #34
+> [    0.820511] Hardware name: HiKey960 (DT)
+> [    0.820516] pstate: 600001c5 (nZCv dAIF -PAN -UAO)
+> [    0.820520] pc : lockdep_assert_cpus_held+0x3c/0x48
+> [    0.820523] lr : lockdep_assert_cpus_held+0x38/0x48
+> [    0.820526] sp : ffff00000a9cbe50
+> [    0.820528] x29: ffff00000a9cbe50 x28: 0000000000000000
+> [    0.820533] x27: 00008000b69e5000 x26: ffff8000bff4cfe0
+> [    0.820537] x25: ffff000008ba69e0 x24: 0000000000000001
+> [    0.820541] x23: ffff000008fce000 x22: ffff000008ba70c8
+> [    0.820545] x21: 0000000000000001 x20: 0000000000000003
+> [    0.820548] x19: ffff00000a35d628 x18: ffffffffffffffff
+> [    0.820552] x17: 0000000000000000 x16: 0000000000000000
+> [    0.820556] x15: ffff00000958f848 x14: 455f3052464d4d34
+> [    0.820559] x13: 00000000769dde98 x12: ffff8000bf3f65a8
+> [    0.820564] x11: 0000000000000000 x10: ffff00000958f848
+> [    0.820567] x9 : ffff000009592000 x8 : ffff00000958f848
+> [    0.820571] x7 : ffff00000818ffa0 x6 : 0000000000000000
+> [    0.820574] x5 : 0000000000000000 x4 : 0000000000000001
+> [    0.820578] x3 : 0000000000000000 x2 : 0000000000000001
+> [    0.820582] x1 : 00000000ffffffff x0 : 0000000000000000
+> [    0.820587] Call trace:
+> [    0.820591]  lockdep_assert_cpus_held+0x3c/0x48
+> [    0.820598]  static_key_enable_cpuslocked+0x28/0xd0
+> [    0.820606]  arch_timer_check_ool_workaround+0xe8/0x228
+> [    0.820610]  arch_timer_starting_cpu+0xe4/0x2d8
+> [    0.820615]  cpuhp_invoke_callback+0xe8/0xd08
+> [    0.820619]  notify_cpu_starting+0x80/0xb8
+> [    0.820625]  secondary_start_kernel+0x118/0x1d0
+> 
+> We've also had a similar warning in sched_init_smp() for every
+> asymmetric system that would enable the sched_asym_cpucapacity static
+> key, although that was singled out in:
+> 
+>   commit 40fa3780bac2 ("sched/core: Take the hotplug lock in sched_init_smp()")
+> 
+> Those warnings are actually harmless, since we cannot have hotplug
+> operations at the time they appear. Instead of starting to sprinkle
+> useless hotplug lock operations in the init codepaths, mute the
+> warnings until they start warning about real problems.
+> 
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 > ---
-> Changes since v2:
-> - Correct subsystem maintainers on Cc (irqchip)
+> FYI Thomas Gleixner suggested using SYSTEM_SCHEDULING instead of
+> SYSTEM_RUNNING, but that seems to still be too early - sched_init_smp()
+> (and kernel_init() actually) hasn't completed yet, so we'd still get
+> those warnings.
+> ---
+>  kernel/cpu.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Changes since v1:
-> - Adjusted wording & ack from Pavel
+> diff --git a/kernel/cpu.c b/kernel/cpu.c
+> index 91d5c38..34e40ef 100644
+> --- a/kernel/cpu.c
+> +++ b/kernel/cpu.c
+> @@ -313,6 +313,15 @@ void cpus_write_unlock(void)
+>  
+>  void lockdep_assert_cpus_held(void)
+>  {
+> +	/*
+> +	 * We can't have hotplug operations before userspace starts running,
+> +	 * and some init codepaths will knowingly not take the hotplug lock.
+> +	 * This is all valid, so mute lockdep until it makes sense to report
+> +	 * unheld locks.
+> +	 */
+> +	if (system_state < SYSTEM_RUNNING)
+> +		return;
+> +
+>  	percpu_rwsem_assert_held(&cpu_hotplug_lock);
+>  }
+>  
+> --
+> 2.7.4
 > 
->  drivers/irqchip/irq-mmp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> index 25f32e1d7764..1ed38f9f1d0a 100644
-> --- a/drivers/irqchip/irq-mmp.c
-> +++ b/drivers/irqchip/irq-mmp.c
-> @@ -190,7 +190,7 @@ static const struct mmp_intc_conf mmp_conf = {
->  static const struct mmp_intc_conf mmp2_conf = {
->  	.conf_enable	= 0x20,
->  	.conf_disable	= 0x0,
-> -	.conf_mask	= 0x7f,
-> +	.conf_mask	= 0x60,
 
-You seem to have identified that ICU_INT_ROUTE_PJ4_IRQ and
-ICU_INT_ROUTE_PJ4_FIQ bits are the only ones to be touched. So why don't
-you use these constants? This number soup is quite unhealthy.
+FWIW: Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-It'd be good to Cc some of the folks who initially wrote this code
-(Haojian Zhuang, Eric Miao -- assuming they are still around) and get
-some testing on a non OLPC platform, just to make sure there is no
-regression due to this. I have the nagging feeling that this could be a
-platform specific thing rather than a universal setting.
-
-Thanks,
+Thanks for having kept an eye on it!
 
 	M.
 -- 
