@@ -2,93 +2,78 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 418B5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8766C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE90218C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91391218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 17:18:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbeLSRRY (ORCPT
+        id S1730357AbeLSRSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 12:17:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51516 "EHLO mx1.redhat.com"
+        Wed, 19 Dec 2018 12:18:21 -0500
+Received: from muru.com ([72.249.23.125]:58790 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbeLSRRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 12:17:24 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 553067F410;
-        Wed, 19 Dec 2018 17:17:24 +0000 (UTC)
-Received: from redhat.com (null.msp.redhat.com [10.15.80.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0EDD2282FA;
-        Wed, 19 Dec 2018 17:17:23 +0000 (UTC)
-Date:   Wed, 19 Dec 2018 11:17:22 -0600
-From:   David Teigland <teigland@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dlm updates for 4.21
-Message-ID: <20181219171722.GA14517@redhat.com>
+        id S1726555AbeLSRSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 12:18:21 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 84E3D80CD;
+        Wed, 19 Dec 2018 17:18:23 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 09:18:16 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     David Lechner <david@lechnology.com>,
+        Roger Quadros <rogerq@ti.com>, ohad@wizery.com,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com,
+        nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
+        m-karicheri2@ti.com, woods.technical@gmail.com,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 05/16] remoteproc/pru: Add pru-specific debugfs support
+Message-ID: <20181219171816.GE6707@atomide.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-6-git-send-email-rogerq@ti.com>
+ <d0e227e3-39dc-dfc8-b94c-3d9d072f6562@lechnology.com>
+ <5BFFBCAC.9000004@ti.com>
+ <5C191770.9090804@ti.com>
+ <20181219123812.GC8130@sirena.org.uk>
+ <5C1A670E.9020904@ti.com>
+ <6ebcd7a6-6c85-0312-0651-fb4fbfc25e55@lechnology.com>
+ <20181219170725.GH8130@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 19 Dec 2018 17:17:24 +0000 (UTC)
+In-Reply-To: <20181219170725.GH8130@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+* Mark Brown <broonie@kernel.org> [181219 17:07]:
+> On Wed, Dec 19, 2018 at 04:48:52PM +0100, David Lechner wrote:
+> > On 12/19/18 4:43 PM, Roger Quadros wrote:
+> 
+> > > Did I do something wrong or we just need to enhance regmap_debugfs.c?
+> 
+> > Do you assign the name field in pru_regmap_config and
+> > pru_debug_regmap_config?
+> 
+> Yeah, you'll at least need to override the name since the default is to
+> use the name of the device and that'll result in two duplicates.
 
-Please pull dlm updates from tag:
+Also combining IO regions often has a serious issue that the
+separate IO regions may not be in the same device (or same
+interconnect target module).
 
-git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-4.21
+This means that flushing a posted write with a read-back for
+an IO region will only flush it for a single device and not
+the other(s). And this leads into hard to find bugs :)
 
-This set is entirely trivial fixes, mainly around correct cleanup
-on error paths and improved error checks.  One patch adds scheduling
-in a potentially long recovery loop.
+Regards,
 
-Thanks,
-Dave
-
-Bob Peterson (1):
-      dlm: Don't swamp the CPU with callbacks queued during recovery
-
-David Teigland (2):
-      dlm: fix missing idr_destroy for recover_idr
-      dlm: fix invalid cluster name warning
-
-Denis V. Lunev (1):
-      dlm: fix possible call to kfree() for non-initialized pointer
-
-Thomas Meyer (1):
-      dlm: NULL check before some freeing functions is not needed
-
-Tycho Andersen (3):
-      dlm: fix invalid free
-      dlm: don't allow zero length names
-      dlm: don't leak kernel pointer to userspace
-
-Vasily Averin (4):
-      dlm: fixed memory leaks after failed ls_remove_names allocation
-      dlm: possible memory leak on error path in create_lkb()
-      dlm: lost put_lkb on error path in receive_convert() and receive_unlock()
-      dlm: memory leaks on error path in dlm_user_request()
-
-Wen Yang (1):
-      dlm: NULL check before kmem_cache_destroy is not needed
-
- fs/dlm/ast.c       | 10 ++++++++++
- fs/dlm/lock.c      | 17 ++++++++++-------
- fs/dlm/lockspace.c |  9 ++++-----
- fs/dlm/member.c    |  7 ++++---
- fs/dlm/memory.c    |  9 +++------
- fs/dlm/user.c      |  5 +++--
- 6 files changed, 34 insertions(+), 23 deletions(-)
-
+Tony
