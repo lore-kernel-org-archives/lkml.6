@@ -2,122 +2,126 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A161C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FC6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D40C21850
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:03:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="IiQe15jC"
+	by mail.kernel.org (Postfix) with ESMTP id 6D36B21850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeLSDDc (ORCPT
+        id S1727560AbeLSDLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 22:03:32 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35418 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbeLSDDc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 22:03:32 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p8so8787151plo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 19:03:32 -0800 (PST)
+        Tue, 18 Dec 2018 22:11:21 -0500
+Received: from mail-eopbgr680045.outbound.protection.outlook.com ([40.107.68.45]:61072
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727494AbeLSDLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 22:11:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=skcC9yTKN6OhykAwH0gk1qJQnKNaZMTmHaA2t5VlfTE=;
-        b=IiQe15jCnrcrN2RuDm6w1R6UFlKqly/R226l4g8wbnHemiNuIO8YluCKcMJYNj4/iy
-         w2oIAjNdtLivXA2enG+p4opYwRbHs5NPU4xT1KFmdoJkwEM3GGYMguirCQMCep5yENAW
-         bD1YAIPJ7tVSK2Fmokg/iXAdPtejyrRYQhgJvqmsleR0+AC6uG+kPsaouvWP5QV/Df4m
-         2mQitqXftpYpBZ0kcVP26whYxM+1OhZIS1mbVuvkICwxVYYw6WVEZlb1tx3Hf9naXTxk
-         Swmfc+XmWxRzQxQP2wjWz8IN4f/s7y6lWAKhZkprI6hCnFFJc6kl4m1zQ9BQHqZPzSyb
-         4zcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=skcC9yTKN6OhykAwH0gk1qJQnKNaZMTmHaA2t5VlfTE=;
-        b=JtmEqKNOeMwbqFk1dl6WpWz2Cv24R0tJVjXXSNb0h330Uq1xt+BWLg0b93nbq7F8wv
-         I3mw6vfc6wFrX5VY86vYouShhCPgTukp5GERLVvIqTZzW5qnPWzbHw0LTYs6PEGQDEiy
-         MN06FOn+8k/0oXjvwhY+9RUUvPJDTluvuLCYSoJEWP/MmDx4/9oaVrLWQZ1jtgcMwCa8
-         I7dSEaXh8SbFTN2U1EHBZcEa8J3ekuC4baT23Ezr1bSa/9AjWw//1P2gzLMI0t4zh07A
-         U4mEawtwrSDsDrVPYayOZ5RpuzoCnRbOB8hOshk9C7FJRkb1qEoxWKC6eeMxt5VQ94Nz
-         oitg==
-X-Gm-Message-State: AA+aEWbHMy1bZidRO4n4JyFUhAiQmA3CCKG35eJwtKWEMcXqYLMb5/Oc
-        v179tsdD1M5vK0qKZCamAJ+vtA==
-X-Google-Smtp-Source: AFSGD/WN1kLoraaguNMwBDHiPRF4PS1qLKupwrAgA424341deQL5mi6oFVgLEN9YueuOJmNP9I5BdQ==
-X-Received: by 2002:a17:902:c85:: with SMTP id 5mr19096484plt.339.1545188611688;
-        Tue, 18 Dec 2018 19:03:31 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id b26sm35017680pfe.91.2018.12.18.19.03.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Dec 2018 19:03:30 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gZS8v-0003uX-I6; Tue, 18 Dec 2018 20:03:29 -0700
-Date:   Tue, 18 Dec 2018 20:03:29 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8QainyYeoOSScs9c80aPYp1OGwfjwBqG6Aito5PSHlw=;
+ b=eQJntHdqboWPqXWxJB7JCp7TiQMWyaBua6IcCZgRvytXTviqwr2G/DYDyxT5ARHDceR1yOWLxAKlD1BaiHP5oKuWJfHqe0B+BAUat+7wJ6HnPJvWdL7TDCJy1AROKW7Nek2pj+mrnW7RG1xhAAx4LzTQXofrjlp6HIayqRPv7Ck=
+Received: from SN6PR03MB4398.namprd03.prod.outlook.com (20.177.255.219) by
+ SN6PR03MB3518.namprd03.prod.outlook.com (52.135.80.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.20; Wed, 19 Dec 2018 03:11:16 +0000
+Received: from SN6PR03MB4398.namprd03.prod.outlook.com
+ ([fe80::7c2a:de77:a4ce:5ccc]) by SN6PR03MB4398.namprd03.prod.outlook.com
+ ([fe80::7c2a:de77:a4ce:5ccc%3]) with mapi id 15.20.1425.024; Wed, 19 Dec 2018
+ 03:11:16 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+CC:     Marcin Wojtas <mw@semihalf.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181219030329.GI21992@ziepe.ca>
-References: <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181218103306.GC18032@quack2.suse.cz>
- <20181218234254.GC31274@dastard>
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev <netdev@vger.kernel.org>,
+        =?iso-8859-1?Q?Gr=E9gory_Clement?= <gregory.clement@bootlin.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "nadavh@marvell.com" <nadavh@marvell.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        David Miller <davem@davemloft.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
+Thread-Topic: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
+Thread-Index: AQHUkVET6MmkkP0I6kWJw6RDslXtBqWB3MQAgAAt/wCAAIlbgIAC2LgA
+Date:   Wed, 19 Dec 2018 03:11:16 +0000
+Message-ID: <20181219110546.63f68f4b@xhacker.debian>
+References: <1544533009-12425-1-git-send-email-mw@semihalf.com>
+        <20181216.124120.731491122771817496.davem@davemloft.net>
+        <CAPv3WKfz4AkODzJ+gsV=u6ve5YnZEdUhZF5+VmFPQa4mp9okUw@mail.gmail.com>
+        <20181217083735.4c6599b3@windsurf>
+In-Reply-To: <20181217083735.4c6599b3@windsurf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [124.74.246.114]
+x-clientproxiedby: TYAPR04CA0020.apcprd04.prod.outlook.com
+ (2603:1096:404:15::32) To SN6PR03MB4398.namprd03.prod.outlook.com
+ (2603:10b6:805:fd::27)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR03MB3518;6:fNgS0p6XGSwVjwRU0hAvcOUVUKjdLsA5wHnc0PUI4kckMxcYDy/p027FSXoyOzhjJ5/3EPn/Xq/8kYmSDHF8nl50J0d2ywHM8FClorsJ832ZJqqWVBJstjJiK591M3RV79Cx0F2Gox6GXYGsxfebtWfHvXd16MYjIyw39k8CvjyOlF61LjjBedQWu2ESiqSIL571mNBBJYcu9uU2hQkMRctC/WE3x/vJ0RXME7weZ3Bk8P3G9lOxvusYoTA9ALRnKHKAyoZaTRlrei+sWd0HX+yux6bprksDq1F26DYbjXGGAr1rZjqbxeFsCje9ctUtr8Rkd8gzNt2fxcRFj+KfUv9IlQVM3OssP3ksnhUBkcpvN8xx8IWkACzo3jgWpsT1eMOyURBAEPhqPbcwbqXCzVb5BwDM0VdKgUzIjNNWqAKetMCyBeDmbM0dBy8rGGMyzaYd7ecpY2vLt95EDGQdUA==;5:x5Z9x8lH7RZJedickzEUagojlUcjGqIfZwN5lGbaEgHxDAS9AqqXYSv3FqOtgOmHxumYWwptWRD3Koa7MO19kNXVAYXiqWsjaBbOG7Y9WiKjK6oHlLyjQAheKMY609uQM8IG3r0MQL9VdTQ0GnhqLtOnwmX3hmBYfC+//u2atDA=;7:PraXAqgdGAJdQoulEMVFAD8SsMHCaDv62kwDA5EOJQYZU54WqZWDdUE5ow7GRE1cqFZZ+R4NsGm5+mwkoLWu6fzSHqXIuYHgdF+DGY92XZF3WV+li9MCwlIIoXc9Q1nR2F47Pn95ciCN5Garq3VRDw==
+x-ms-office365-filtering-correlation-id: 905303be-2706-488b-03d4-08d6655fa378
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR03MB3518;
+x-ms-traffictypediagnostic: SN6PR03MB3518:
+x-microsoft-antispam-prvs: <SN6PR03MB35180A50CE6C11134C84C635EDBE0@SN6PR03MB3518.namprd03.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN6PR03MB3518;BCL:0;PCL:0;RULEID:;SRVR:SN6PR03MB3518;
+x-forefront-prvs: 0891BC3F3D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(39860400002)(396003)(346002)(199004)(189003)(6246003)(81166006)(14444005)(9686003)(386003)(256004)(11346002)(53936002)(6512007)(6506007)(71200400001)(76176011)(3846002)(52116002)(33896004)(26005)(6916009)(71190400001)(6116002)(6436002)(6486002)(229853002)(186003)(7416002)(316002)(305945005)(102836004)(2906002)(5660300001)(54906003)(8936002)(105586002)(93886005)(99286004)(86362001)(7736002)(476003)(66066001)(478600001)(25786009)(4326008)(68736007)(97736004)(486006)(14454004)(8676002)(72206003)(446003)(81156014)(1076003)(106356001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3518;H:SN6PR03MB4398.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Ka+IsRnlFRU/WwdlR8ioIeY4Rl//kIhzywgi2PtINlEDooQKZuwDrJ5KToRHHDoanmt7cPaAeiDIPfvGq8U2/xsbem8rlQg8fhQ6w4Xw3u/ywtxSU6FznEVhq+UyOB2+vnigFABXX1AhgodczdbRdL9uTdk8sW1h/yxPspICmiIRTBUFpFAe8dugq+C2KDk5BhLNHqy+G8u2v6aXzhBfp6Ae/CvfG8AGHTR9iRSSRWe8s4V9v0E8tE8i5C56RlM1dMkFnihbFTN+KgDj+33SiB/GDl1glkZVvLDXPh2SqHtZJ63kRDgbpmRsH0lU7yB0
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <085743CFB054304999D36D3A0EABF3B2@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218234254.GC31274@dastard>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 905303be-2706-488b-03d4-08d6655fa378
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 03:11:16.1826
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3518
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 10:42:54AM +1100, Dave Chinner wrote:
 
-> Essentially, what we are talking about is how to handle broken
-> hardware. I say we should just brun it with napalm and thermite
-> (i.e. taint the kernel with "unsupportable hardware") and force
-> wait_for_stable_page() to trigger when there are GUP mappings if
-> the underlying storage doesn't already require it.
+On Mon, 17 Dec 2018 08:37:35 +0100 Thomas Petazzoni wrote:
 
-If you want to ban O_DIRECT/etc from writing to file backed pages,
-then just do it.
+> Hello Marcin,
+>=20
+> On Mon, 17 Dec 2018 00:25:58 +0100, Marcin Wojtas wrote:
+>=20
+> > Thanks. Indeed, the patch is valid as a fix for current version of SW
+> > BM. However, because this concept is broken, I will rework it and
+> > submit patch/patches some time early 2019. =20
+>=20
+> I know some people are working on XDP support in mvneta, and this work
+> also needs to change parts of the memory allocation strategy in this
+> driver. I'd suggest to get in touch with those folks. Antoine can give
+> you the contact details, I don't have them off-hand. Or perhaps they
+> will see this e-mail :-)
 
-Otherwise I'm not sure demanding some unrealistic HW design is
-reasonable. ie nvme drives are not likely to add page faulting to
-their IO path any time soon.
+Great. So the problem of current memory allocation is seen, glad to
+know reworking is going on.
 
-A SW architecture that relies on page faulting is just not going to
-support real world block IO devices.
+Besides the memory waste, there's another issue with commit 7e47fd84b56b
+it always allocates page, so the rx is mapped with dmap_map_page(), but
+the unmap routine isn't updated, there's mismatch here.
 
-GPUs and one RDMA are about the only things that can do this today,
-and they are basically irrelevant to O_DIRECT.
-
-Jason
+thanks
