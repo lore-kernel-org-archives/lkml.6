@@ -2,94 +2,100 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50405C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2C6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 154EE2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30341218E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:18:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="C9joJGAX"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dh8HduUI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729391AbeLSQQg (ORCPT
+        id S1729416AbeLSQSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:16:36 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:40432 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeLSQQf (ORCPT
+        Wed, 19 Dec 2018 11:18:18 -0500
+Received: from mail-io1-f42.google.com ([209.85.166.42]:41607 "EHLO
+        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbeLSQSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:16:35 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 447FF10C1DC3;
-        Wed, 19 Dec 2018 08:16:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1545236195; bh=7LE4Y0kl6NhqEVYvVOZ2QDN3PQMCheUaIYmiZZU/1kw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=C9joJGAXZIEP5+qnZkAtjKK7XOWwWlhILUYXx5RMUg0OwYCY4QpFhALYQBAyc7qU4
-         7P3DB0X4F1JgFqT48iJNpvZJdIiANSR63JjYM0Tp5/S8/uU8vOS/9THWppIWO9WP20
-         zjm0MJljSnIpk0ll1+dWECpsKpCxGlDeCd7/em69/z8OhH737/9L4R6Vef2WVAQNv2
-         K0RmMsWA3HnFuAHJfpn285hcgdZxx4CjlVtJil4YL/vGfkVEmusXBr5nE9g/YLlbOS
-         RowtosTgwvNlsfX55fis/zIQTCLUyN29Fpue1HNKXgCf44gHYMFVH8hGmMLi75nd56
-         5ZurYJY1Qizkw==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 58E453800;
-        Wed, 19 Dec 2018 08:16:33 -0800 (PST)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH] ARC: adjust memblock_reserve of kernel memory
-Date:   Wed, 19 Dec 2018 19:16:16 +0300
-Message-Id: <20181219161616.10422-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
+        Wed, 19 Dec 2018 11:18:17 -0500
+Received: by mail-io1-f42.google.com with SMTP id s22so16022414ioc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 08:18:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:sender:from:date:message-id
+         :subject:to:cc;
+        bh=KZYe3uP9znFA7r/rUMKbrGoNP0sDWMgxjKOs9jMUxKI=;
+        b=dh8HduUIeEjx4+NL0x8vJfInto0JXJ68YnnE1p5Dq/csouv6G2wF6sKVFO4z3XJUND
+         WM1Ok1COknx5hGc3ZvhaxqFBUN1MwhcN2Oq5uMs7mn3pq3UzLaPeaMQkIqkht8YB1OI1
+         ZHFOezQbTFzncknHwHIGI1SBfkr8dTajry4pro/2AZmJCfJ/81ZrqLL2vsFf1TdRa+IG
+         hcxDEJnCsjS1BM/f+j1VQToN8siGPPcfCbGnuyRmlwZsu0k32EvSWueyX1CWERlbvmSo
+         wZ2GqFCn71nmY/w/IVijLPkN/GSiTgR0wyXPkkYMWfRTZdntzEelVYbFYfu6X87s+6az
+         hM0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:sender:from
+         :date:message-id:subject:to:cc;
+        bh=KZYe3uP9znFA7r/rUMKbrGoNP0sDWMgxjKOs9jMUxKI=;
+        b=q3Mw9D/cYU9Rsgk9Lw8+Zl93wLiNIPEtlgGjP4PC8XiuAk44IL+xF6zgApWWwkGn7F
+         2C3jmhwnVj9l4LArKigRxXI8r9gX2aEcKZJIm7fEzYgZevXT/qLoNVakRskf9x+pUVZI
+         ecoiHJVSxXEOklxc5z52xwXuMObOIwLBPfyHzP5eTE/5EE5PcR4u9Ge8S0i3qfV7C8PC
+         QRvtbiFl1wh3JhtPPSSBiz9O5HGBv5aIWhsfg3lLza43LJ0W3d78CEXNw6g5t9c+dCTA
+         PUMNjw9WUb16Ux1C8/Jh8a78yG2EbrHOBxOhCyheDGaYRWKat/9ZBZuMeBsAycXIKAkJ
+         +m2A==
+X-Gm-Message-State: AA+aEWYz8tEDeGiONHxdTfhJw2HPpdsE2/F6Oypm4EsReqkXJpaKgdpz
+        ySDtSIwNjH6ktlBER3I/ptIEP7xZ3PLn51Ixv1WyOAMA
+X-Google-Smtp-Source: AFSGD/UwZ5TxnFmWlPrP0s77MHcV8+xJzz90twKFVBZGoVFJN6aqNpeKj5QUtyQA4/SFSMT+/44x9xz6WGTqzegezRQ=
+X-Received: by 2002:a6b:1d8:: with SMTP id 207mr18920798iob.62.1545236295787;
+ Wed, 19 Dec 2018 08:18:15 -0800 (PST)
+MIME-Version: 1.0
+References: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
+ <20181219150604.GB25653@kroah.com> <CABcWhv4794moz7PZxmzJMySpJnjZR4ikGwHVcicp0-4PWOHmig@mail.gmail.com>
+ <CAFSeFg9dyKEry_pbnn7395nFtOYixbgYuAunvoNa5roe9dVUTQ@mail.gmail.com>
+In-Reply-To: <CAFSeFg9dyKEry_pbnn7395nFtOYixbgYuAunvoNa5roe9dVUTQ@mail.gmail.com>
+X-Google-Sender-Delegation: praveenkumar1511@gmail.com
+From:   Praveen Kumar <kpraveen.lkml@gmail.com>
+Date:   Wed, 19 Dec 2018 21:47:46 +0530
+X-Google-Sender-Auth: 8FKPN98DpVw1_rSyjeL3Mp67INg
+Message-ID: <CABcWhv7og6-MqXgo9X=huachKo5gHV+S-GBLW6mhHUXmwkdW+A@mail.gmail.com>
+Subject: Re: /proc/modules not showing any output
+To:     Aruna Hewapathirane <aruna.hewapathirane@gmail.com>
+Cc:     Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org,
+        kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In setup_arch_memory we reserve the memory area wherein the kernel
-is located. Current implementation may reserve more memory than
-it actually required in case of CONFIG_LINUX_LINK_BASE is not
-equal to CONFIG_LINUX_RAM_BASE. This happens because we calculate
-start of the reserved region relatively to the CONFIG_LINUX_RAM_BASE
-and end of the region relatively to the CONFIG_LINUX_RAM_BASE.
-
-For example in case of HSDK board we wasted 256MiB of physical memory:
-------------------->8------------------------------
-Memory: 770416K/1048576K available (5496K kernel code,
-    240K rwdata, 1064K rodata, 2200K init, 275K bss,
-    278160K reserved, 0K cma-reserved)
-------------------->8------------------------------
-
-Fix that.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/mm/init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
-index f8fe5668b30f..a56e6a8ed259 100644
---- a/arch/arc/mm/init.c
-+++ b/arch/arc/mm/init.c
-@@ -137,7 +137,8 @@ void __init setup_arch_memory(void)
- 	 */
- 
- 	memblock_add_node(low_mem_start, low_mem_sz, 0);
--	memblock_reserve(low_mem_start, __pa(_end) - low_mem_start);
-+	memblock_reserve(CONFIG_LINUX_LINK_BASE,
-+			 __pa(_end) - CONFIG_LINUX_LINK_BASE);
- 
- #ifdef CONFIG_BLK_DEV_INITRD
- 	if (initrd_start)
--- 
-2.14.5
-
+On Wed, Dec 19, 2018 at 9:28 PM Aruna Hewapathirane
+<aruna.hewapathirane@gmail.com> wrote:
+>
+> <snip>
+>>
+>> I think, on my test machine, by default, there are many modules which
+>> get added during boot up, which with vanilla kernel is not happening.
+>> Thanks for your input.
+>>
+>> Regards,
+>>
+>> ~Praveen.
+>>
+>
+> What does lsmod show you in the vanilla kernel ? If you want the same modules to load in the vanilla
+> kernel folow steps given below:
+>
+> 1 -boot into the older 4.4.162-78-defaultkernel
+> 2 - change into the vanilla kernel source 4.20.0-rc6 builddirectory
+> 3 - $ lsmod > lsmod.txt
+> 4 - $ make LSMOD="lsmod.txt" localmodconfig
+>
+> Boot into your newly compiled vanilla kernel and run lsmod and smile :-)
+>
+> Hope this helps - Aruna
+>
+Thanks Aruna. This helps.
