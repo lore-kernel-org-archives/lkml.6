@@ -6,76 +6,118 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFC2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F3BC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD1A204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F42D204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbeLSM1M (ORCPT
+        id S1728872AbeLSM1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:27:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42788 "EHLO mx1.redhat.com"
+        Wed, 19 Dec 2018 07:27:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42560 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727151AbeLSM1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728632AbeLSM1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Dec 2018 07:27:12 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3390A2BE87;
+        by mx1.redhat.com (Postfix) with ESMTPS id 79CD4A8F4;
         Wed, 19 Dec 2018 12:27:12 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CDA8727C48;
-        Wed, 19 Dec 2018 12:27:09 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D59617197;
+        Wed, 19 Dec 2018 12:27:10 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 014377503; Wed, 19 Dec 2018 13:27:09 +0100 (CET)
+        id 4D4589014; Wed, 19 Dec 2018 13:27:09 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 01/10] drm/virtio: log error responses
-Date:   Wed, 19 Dec 2018 13:26:59 +0100
-Message-Id: <20181219122708.4586-2-kraxel@redhat.com>
+Subject: [PATCH 03/10] drm/virtio: drop virtio_gpu_fence_cleanup()
+Date:   Wed, 19 Dec 2018 13:27:01 +0100
+Message-Id: <20181219122708.4586-4-kraxel@redhat.com>
 In-Reply-To: <20181219122708.4586-1-kraxel@redhat.com>
 References: <20181219122708.4586-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 19 Dec 2018 12:27:12 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 19 Dec 2018 12:27:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we got an error response code from the host, print it to the log.
+Just call drm_fence_put directly instead.
+Also set vgfb->fence to NULL after dropping the reference.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/gpu/drm/virtio/virtgpu_vq.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.h   | 1 -
+ drivers/gpu/drm/virtio/virtgpu_fence.c | 8 --------
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 2 +-
+ drivers/gpu/drm/virtio/virtgpu_plane.c | 6 ++++--
+ 4 files changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index e27c4aedb8..6bc2008b0d 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -192,8 +192,16 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+index 63704915f8..bfb31fc3d0 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drv.h
++++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+@@ -337,7 +337,6 @@ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma);
+ /* virtio_gpu_fence.c */
+ struct virtio_gpu_fence *virtio_gpu_fence_alloc(
+ 	struct virtio_gpu_device *vgdev);
+-void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence);
+ int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
+ 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
+ 			  struct virtio_gpu_fence *fence);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_fence.c b/drivers/gpu/drm/virtio/virtgpu_fence.c
+index 4d6826b278..21bd4c4a32 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_fence.c
++++ b/drivers/gpu/drm/virtio/virtgpu_fence.c
+@@ -81,14 +81,6 @@ struct virtio_gpu_fence *virtio_gpu_fence_alloc(struct virtio_gpu_device *vgdev)
+ 	return fence;
+ }
  
- 	list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
- 		resp = (struct virtio_gpu_ctrl_hdr *)entry->resp_buf;
--		if (resp->type != cpu_to_le32(VIRTIO_GPU_RESP_OK_NODATA))
--			DRM_DEBUG("response 0x%x\n", le32_to_cpu(resp->type));
-+		if (resp->type != cpu_to_le32(VIRTIO_GPU_RESP_OK_NODATA)) {
-+			if (resp->type >= cpu_to_le32(VIRTIO_GPU_RESP_ERR_UNSPEC)) {
-+				struct virtio_gpu_ctrl_hdr *cmd;
-+				cmd = (struct virtio_gpu_ctrl_hdr *)entry->buf;
-+				DRM_ERROR("response 0x%x (command 0x%x)\n",
-+					  le32_to_cpu(resp->type),
-+					  le32_to_cpu(cmd->type));
-+			} else
-+				DRM_DEBUG("response 0x%x\n", le32_to_cpu(resp->type));
-+		}
- 		if (resp->flags & cpu_to_le32(VIRTIO_GPU_FLAG_FENCE)) {
- 			u64 f = le64_to_cpu(resp->fence_id);
+-void virtio_gpu_fence_cleanup(struct virtio_gpu_fence *fence)
+-{
+-	if (!fence)
+-		return;
+-
+-	dma_fence_put(&fence->f);
+-}
+-
+ int virtio_gpu_fence_emit(struct virtio_gpu_device *vgdev,
+ 			  struct virtio_gpu_ctrl_hdr *cmd_hdr,
+ 			  struct virtio_gpu_fence *fence)
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 161b80fee4..14ce8188c0 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -351,7 +351,7 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
+ 		virtio_gpu_cmd_resource_create_3d(vgdev, qobj, &rc_3d);
+ 		ret = virtio_gpu_object_attach(vgdev, qobj, fence);
+ 		if (ret) {
+-			virtio_gpu_fence_cleanup(fence);
++			dma_fence_put(&fence->f);
+ 			goto fail_backoff;
+ 		}
+ 		ttm_eu_fence_buffer_objects(&ticket, &validate_list, &fence->f);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
+index 548265b8e8..024c2aa0c9 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_plane.c
++++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
+@@ -169,8 +169,10 @@ static void virtio_gpu_cursor_cleanup_fb(struct drm_plane *plane,
+ 		return;
  
+ 	vgfb = to_virtio_gpu_framebuffer(plane->state->fb);
+-	if (vgfb->fence)
+-		virtio_gpu_fence_cleanup(vgfb->fence);
++	if (vgfb->fence) {
++		dma_fence_put(&vgfb->fence->f);
++		vgfb->fence = NULL;
++	}
+ }
+ 
+ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
 -- 
 2.9.3
 
