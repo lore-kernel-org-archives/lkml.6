@@ -2,129 +2,103 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86939C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A901AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5486C2184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:02:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="XHpoHXXW"
+	by mail.kernel.org (Postfix) with ESMTP id 800D1217D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 06:03:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbeLSGCz (ORCPT
+        id S1728071AbeLSGDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 19 Dec 2018 01:03:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50078 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728024AbeLSGCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Dec 2018 01:02:55 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57558 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727994AbeLSGCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 01:02:52 -0500
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBJ5xlrD030482
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 22:02:52 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=I6aEBvXwol2rma2u2kJKPv1Pur2pgaJ+N8DpFrRQ03Q=;
- b=XHpoHXXWQiky+rUHfThqhQpA6fVHv/+Ph2vzYCNAQb5/oMYMpzctFFZnKjw5ftqHYCdL
- buETNu+HY2JocHMn6weWGtsmeTuYjd7mZGbWs7lVKVcm2emquXexojkkNnoeufkfLMpX
- 9bs7Wx4FFUD4epu4oBJC1DbgKL47bzJvmHo= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pff2c85hq-10
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 22:02:51 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Tue, 18 Dec 2018 22:02:42 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 6EF2A62E1FFC; Tue, 18 Dec 2018 22:02:37 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v4 perf, bpf-next 4/7] sync tools/include/uapi/linux/perf_event.h
-Date:   Tue, 18 Dec 2018 22:02:23 -0800
-Message-ID: <20181219060227.1057679-5-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181219060227.1057679-1-songliubraving@fb.com>
-References: <20181219060227.1057679-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0E843AF67;
+        Wed, 19 Dec 2018 06:02:52 +0000 (UTC)
+Subject: Re: [PATCH] xen/netfront: tolerate frags with no data
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        xen-devel@lists.xenproject.org, sstabellini@kernel.org,
+        boris.ostrovsky@oracle.com, stable@vger.kernel.org
+References: <20181218150619.6964-1-jgross@suse.com>
+ <20181218.220013.1743575331051422957.davem@davemloft.net>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <425ca7b2-de7b-0490-0f10-e64dce1a6e28@suse.com>
+Date:   Wed, 19 Dec 2018 07:02:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <20181218.220013.1743575331051422957.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync for PERF_RECORD_BPF_EVENT
+On 19/12/2018 07:00, David Miller wrote:
+> From: Juergen Gross <jgross@suse.com>
+> Date: Tue, 18 Dec 2018 16:06:19 +0100
+> 
+>> At least old Xen net backends seem to send frags with no real data
+>> sometimes. In case such a fragment happens to occur with the frag limit
+>> already reached the frontend will BUG currently even if this situation
+>> is easily recoverable.
+>>
+>> Modify the BUG_ON() condition accordingly.
+>>
+>> Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+>> Signed-off-by: Juergen Gross <jgross@suse.com>
+> 
+> Applied and queued up for -stable.
+> 
+> But many of these BUG's in the driver should be converted to
+> WARNs and recovery code added.
+> 
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/include/uapi/linux/perf_event.h | 29 ++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+Right, but that will be no stable material then. Will start that effort
+after Christmas.
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 6c9e327e87ed..68db04058408 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -373,7 +373,8 @@ struct perf_event_attr {
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
- 				ksymbol        :  1, /* include ksymbol events */
--				__reserved_1   : 34;
-+				bpf_event      :  1, /* include bpf events */
-+				__reserved_1   : 33;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -986,9 +987,35 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_KSYMBOL			= 17,
- 
-+	/*
-+	 * Record bpf events:
-+	 *  enum perf_bpf_event_type {
-+	 *	PERF_BPF_EVENT_UNKNOWN		= 0,
-+	 *	PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	 *	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	 *  };
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u16				type;
-+	 *	u16				flags;
-+	 *	u32				id;
-+	 *	u8				tag[BPF_TAG_SIZE];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_BPF_EVENT			= 18,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_bpf_event_type {
-+	PERF_BPF_EVENT_UNKNOWN		= 0,
-+	PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	PERF_BPF_EVENT_MAX,		/* non-ABI */
-+};
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
--- 
-2.17.1
 
+Juergen
