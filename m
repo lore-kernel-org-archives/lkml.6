@@ -2,106 +2,96 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F5EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14877C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5932F218D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D622F20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 15:06:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="rW/9IbiE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yEmFog/W"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZOz46dXO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbeLSPGJ (ORCPT
+        id S1729589AbeLSPGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 10:06:09 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35015 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727071AbeLSPGI (ORCPT
+        Wed, 19 Dec 2018 10:06:13 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34048 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbeLSPGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 10:06:08 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 19DAE21BC4;
-        Wed, 19 Dec 2018 10:06:07 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 19 Dec 2018 10:06:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=wMqe4oHeF7qvj89izhHwd37gQVY
-        wsCmKRVlt429pDPI=; b=rW/9IbiEeTKL10Z6iCguGrB4vsfzEM6Dl3/GudRqbJO
-        ILcngeqA3bdYwY1FpAzApWO1lGVsiSjN6lMKUoCaA187270YRwJ1P8KCqjFOW+mm
-        V9CWm2gmXd2lWbN5G61oJtpAoYyL4PhB/06hWZ5MRTh6+Jw6YQSpUMch2axt+FVC
-        yv489rfe/xpZA4FTXPOmiT/chpMY/pfmEpQFzIRQc0iywuA0h3/7NnyxtdYIiqY4
-        WZwAHKgRNr54iNAlNAaI/uq6ICvA8TAM4LSpOSVrCGi5Q4jYpPTJQgaCSl/LqcTz
-        AULHdUY7dVCXzTlGG0p1tQiY9oX5ooRPl6jebFlYxKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=wMqe4o
-        HeF7qvj89izhHwd37gQVYwsCmKRVlt429pDPI=; b=yEmFog/WoAdnc7xT2kcDmi
-        +H7XW6JivVAj/7/rgnIzCJ+ABPOQTxpK40I6SoZKbTL0ltHkIRRV1EFMU3zeC0cX
-        2yVaxHoYqEb8UWy6OfKiEW7w7CfobK5iF5WTfHr/0QfjAAWhkjAMty9CaCzgp54E
-        M5dVFBGLeDQvwf4pHc7joyF5blAJBK0luH8NbcNVF7R2lVFw1pqEegi3aecpcapn
-        W9nZw8CNXEXk7kQBNtVdoEH+AMq0HuQsEP+CsvDAt0Au71gr1zN9joKY/XwiYY7E
-        0o6Rrc9pUwiR+TFfUxjTkCIs0hckneWDXC0fJi0iIp/3CuuaPX3Ll8jrYmyhYmFA
-        ==
-X-ME-Sender: <xms:Xl4aXLqCZNtCrlB65Yo5FJO6ev9QE8rzVMSA2eJP3MtqwrNoLz6HCQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudejtddgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecunecujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomh
-    epifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeei
-    rdekledruddtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
-    gtohhmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:Xl4aXMHmgJC45mzVbsCb1j8oAVxmTx9WI78ku8P9fXed_5u-wq6VDg>
-    <xmx:Xl4aXFtaLjiiMhd7hqqOoCD0XWBctiwArmh71YRJYeIO-b0ubrGNfw>
-    <xmx:Xl4aXHRIiEV2J5Fj8CZM-M0KRXZ37ygeDOmIFPkLjui7QtNVFZF8aA>
-    <xmx:X14aXF8c2-Yk3SlI37-5Bbh_PX_--5WSsDC6XfPPxNHBeGD5tjCMvA>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D70BB102A0;
-        Wed, 19 Dec 2018 10:06:05 -0500 (EST)
-Date:   Wed, 19 Dec 2018 16:06:04 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Praveen Kumar <kpraveen.lkml@gmail.com>
-Cc:     kernelnewbies@kernelnewbies.org, linux-kernel@vger.kernel.org
-Subject: Re: /proc/modules not showing any output
-Message-ID: <20181219150604.GB25653@kroah.com>
-References: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
+        Wed, 19 Dec 2018 10:06:11 -0500
+Received: by mail-io1-f66.google.com with SMTP id l22so486425ioh.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 07:06:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7IVY7up4ZUWiDFb47rYR96dExMpbNSxpyBQZO50QO8c=;
+        b=ZOz46dXOUm0SuGlvn/mE5gzqC9AY7QEesK4Eg3ZXgzGqgAvmVlDeyMzPGGvai7FM/x
+         IMD/py+YqDgAAf13hjKd0IMsCZhEbsntAmx8smeRu3USz8VYW1AuXUDrSfuvhC2e326I
+         1V4S2yXCJz6rZki1ll6olUGvKld7OupvfFvGs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7IVY7up4ZUWiDFb47rYR96dExMpbNSxpyBQZO50QO8c=;
+        b=OL0jqDMXKAkQkv2mVQWbqRyF1BzcS5QggIluQjot3+s63DSE8nSQhu39IQCuOJtAj1
+         p8c+0XiskeKdyHAjRJZwxBGGSyEbfTdLPRWHC+yojNKb67+zuLEfFXTelThSAKBRpCHr
+         dfCrWUw+vbFLFIUGwEl1u3VBvlmvI/VwEx6jwvLAdjxiTEVAGymDEXFFTW6nBhc6z3dq
+         yX995Ndn5iOqiwqHop/d/+Yo0Cpb1nMzovM3VfjBMD2LjmAVmiSPc7I19fL3lmJzyWly
+         Ha65QIeNyyx9nsKhwKAGXHAwnw2pUNmXLKCRQ+wDfLYH4k0bShM0KYJIe6Wqp3ZPMzwW
+         y02w==
+X-Gm-Message-State: AA+aEWa2XQxS0mOEignIzY1h7UtPgS9O8hwCaj5aZHBEZ8XCIYMMvPfj
+        1myrWmcsPUw8WmfXiQNS1PD823hGEMPeubPAu0BeCw==
+X-Google-Smtp-Source: AFSGD/VA2PVcxzLiNCfuUYYLwYopSKAClxj3q2OqH/w+mHXAS9YX7CM9AybWM/7E90LJAciOlA96FlTEaqDKixrUc6Y=
+X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr17281927iof.183.1545231970337;
+ Wed, 19 Dec 2018 07:06:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABcWhv5QApdqti+fhGuH-3puhk89n2jgfziV2zG3H8Y59RE63A@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <1544803317-7610-1-git-send-email-vincent.guittot@linaro.org>
+ <1544803317-7610-2-git-send-email-vincent.guittot@linaro.org>
+ <f2619d92-7367-abd4-97e8-e0f4e7cc96eb@arm.com> <CAKfTPtAEi=EBmSUEcYmkfSZVkBviQaJaqZXvt-=XbsgZs5t_OA@mail.gmail.com>
+ <4de22c37-fe65-4f5f-929b-320c663ee8b6@arm.com> <CAKfTPtAprHq4YYdJ1gnuoAcNiVFpFPnxYv_=RS6pXs8aYpjcuA@mail.gmail.com>
+ <8ea1a96c-c2e0-cc3f-1cec-444706383e77@arm.com>
+In-Reply-To: <8ea1a96c-c2e0-cc3f-1cec-444706383e77@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 19 Dec 2018 16:05:59 +0100
+Message-ID: <CAKfTPtCVqSYOC_GUdBm8_5KNMNEwXdf77mXL4SDB4_G5_iE0iA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] sched/fair: fix rounding issue for asym packing
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 06:52:39PM +0530, Praveen Kumar wrote:
-> Hi All,
-> 
-> Compiled the vanila kernel 4.20.0-rc6 build, and was trying to get
-> module information, but /proc/modules is not showing any output ( both
-> on arm64 and x86_64 )
-> 
-> root@ubuntu:~# uname -a
-> Linux ubuntu 4.20.0-rc6-00082-g65e08c5e8631 #7 SMP PREEMPT Fri Dec 14
-> 15:54:30 IST 2018 aarch64 aarch64 aarch64 GNU/Linux
-> 
-> root@ubuntu:~# cat /proc/modules
-> root@ubuntu:~#
-> 
-> Tried with older version 4.4.162-78-default modules were properly shown.
-> 
-> Can you please help if there is something which I am missing during
-> compilation or is there any potential bug here ? Thanks in advance.
+On Wed, 19 Dec 2018 at 15:59, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+>
+>
+> On 19/12/2018 13:39, Vincent Guittot wrote:
+> [...]
+> >> I used that setup out of convenience for myself, but AFAICT that use-case
+> >> just stresses that issue.
+> >
+> > After looking at you UC in details, your problem comes from the wl=1
+> > for cpu0 whereas there is no running task.
+> > But wl!=0 without running task should not be possible since fdf5f3
+> > ("wsched/fair: Disable LB_BIAS by default")
+> >
+> > This explain the 1023 instead of 1022
+> >
+> >
+>
+> True, I had a look at the trace and there doesn't seem to be any running
+> task on that CPU. That's a separate matter however - the rounding issues
+> can happen regardless of the wl values.
 
-Are you sure your .config file has enabled modules?  Have you actually
-loaded any?  If you do not load any, nothing will show up in that proc
-file :)
-
-thanks,
-
-greg k-h
+But it means that the rounding fix +1 works and your problems comes
+from something else
