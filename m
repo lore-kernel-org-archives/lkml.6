@@ -2,202 +2,90 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC6AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF67C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 603EE21873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:33:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VoB8W+aN"
+	by mail.kernel.org (Postfix) with ESMTP id A3C3F21850
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 09:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbeLSJdC (ORCPT
+        id S1728181AbeLSJee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 04:33:02 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:55642 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeLSJdB (ORCPT
+        Wed, 19 Dec 2018 04:34:34 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:39641 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeLSJee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 04:33:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=XEdwmYpb9V17qjkZSHR5XXHlUzVbPyMwKaT9zenZRtM=; b=VoB8W+aN2VBR/la4LUJaHP8xp
-        trOSt566Jd5quXeoXhhLv1kDQ5seisInv09pFBgRLG66YmZbVjEeZsihCpTW8LaHR9Gp9/h2zb43+
-        wMkbOWmn2vBWXk2HT8yRf/qQqY6K6ftTIZuMctLDOQwQdDJNW3APi9Rt3AcewA32ChKqk=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:53501)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gZYDR-0002ih-Th; Wed, 19 Dec 2018 09:32:34 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gZYDP-0002y2-Dd; Wed, 19 Dec 2018 09:32:31 +0000
-Date:   Wed, 19 Dec 2018 09:32:30 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Michal Hocko <mhocko@suse.com>, Heiko Stuebner <heiko@sntech.de>,
-        Linux-MM <linux-mm@kvack.org>, airlied@linux.ie,
-        hjc@rock-chips.com, Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        dri-devel@lists.freedesktop.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
- vm_insert_range
-Message-ID: <20181219093230.GS26090@n2100.armlinux.org.uk>
-References: <20181217202334.GA11758@jordon-HP-15-Notebook-PC>
- <20181218095709.GJ26090@n2100.armlinux.org.uk>
- <CAFqt6zaVU-Fme6fErieBfBKwAm9xHUa7cXTOfqzwUJR__0JysQ@mail.gmail.com>
- <20181218123318.GN26090@n2100.armlinux.org.uk>
- <CAFqt6zbqaS-pFETyjRR2-1V57MiJuX65xoMjgkr-DjUnrJYzSg@mail.gmail.com>
- <20181218130146.GO26090@n2100.armlinux.org.uk>
- <CAFqt6zYnn76OdprSvA2Bj0v=xQqtJ6xJse6+iB+-=u3WsEv3pA@mail.gmail.com>
+        Wed, 19 Dec 2018 04:34:34 -0500
+Received: by mail-vk1-f196.google.com with SMTP id s184so2704399vkd.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 01:34:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kP4OYl/UGkDtH+eqiFuSPtZX1q5lXfw/UbogbL4CDMw=;
+        b=MfG+ZEBJVF4w6HprgpYUXs9xMMxKEeXR3kaRr03nLkYK49ZycLSr+pAh6t7yP8Sejj
+         K4rNQA7fXBUIWZEqaERWulWvkiCH2oX0Cytezu7BkXtq1qr7u3OvElDzIT23Re21jc3H
+         W06HXdvYcjIFTn0HApgDb5+pljiUE80RzmTAC822EcOw9k8E8MERTjXWK3dg+CiOwrga
+         lBNOzjjpLmnO3mz/psK6TZ5nBvEx0hpcltmPVnB2OGqIczIXyM1LC3U92zbB5ptR7Gar
+         kYT/d9lGelXENX6i4HM+cCWb50jXby380eArcp43ud6E5p3jSeqq0Jrww+Ho3/dAYkLw
+         e1Lw==
+X-Gm-Message-State: AA+aEWZHIhg17FshTjEmRP4FixawkKRY5uhUEsQj0xqNAywD+KjrPdSf
+        jF6FaGtYsBQVTFGYaCuJiGpROi/UVGzdK/rX/Jk=
+X-Google-Smtp-Source: AFSGD/VNviDAL364I4qilN3gd+HZ+xShXYt0JXWIC4RjXBqosx+LsQMk0NG43D+eWpbrHQah4IEf8GF9Vrm77xKqIS0=
+X-Received: by 2002:a1f:a414:: with SMTP id n20mr7018302vke.83.1545212072782;
+ Wed, 19 Dec 2018 01:34:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zYnn76OdprSvA2Bj0v=xQqtJ6xJse6+iB+-=u3WsEv3pA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181207165011.31497-1-geert@linux-m68k.org> <CAMuHMdXj67QnqeMHGr_TiEaJr6gUw5qzWFvaJvoVkm89Kiuq_Q@mail.gmail.com>
+ <87o99pmib8.fsf@igel.home> <87a7l4rnb3.fsf@igel.home> <875zvsrlq4.fsf@igel.home>
+In-Reply-To: <875zvsrlq4.fsf@igel.home>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 19 Dec 2018 10:34:19 +0100
+Message-ID: <CAMuHMdWvDohdrgDwgCBGt17Q7k1Wi=DJ2o-XSEO5vKDwH8OJnw@mail.gmail.com>
+Subject: Re: [PATCH v3] m68k: Fix memblock-related crashes
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     rppt@linux.ibm.com, Michael Schmitz <schmitzmic@gmail.com>,
+        Sam Creasey <sammy@sammy.net>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 09:01:09AM +0530, Souptick Joarder wrote:
-> On Tue, Dec 18, 2018 at 6:31 PM Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
+Hi Andreas,
+
+On Mon, Dec 17, 2018 at 8:34 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
+> On Dez 17 2018, Andreas Schwab <schwab@linux-m68k.org> wrote:
+> > On Dez 13 2018, Andreas Schwab <schwab@linux-m68k.org> wrote:
+> >> I'm now getting this Oops:
+> >>
+> >> [   65.390000] Unable to handle kernel NULL pointer dereference at virtual address (ptrval)
+> >> [   65.390000] Oops: 00000000
+> >> [   65.390000] Modules linked in: nls_iso8859_1 nls_cp437 vfat fat virtio_rng virtio_blk virtio_ring virtio xfs btrfs xor zlib_deflate raid6_pq libcrc32c reiserfs squashfs fuse dm_snapshot dm_bufio dm_mod binfmt_misc loop sg
+> >> [   65.390000] PC: [<00211544>] blk_throtl_bio+0x10e/0x592
 > >
-> > On Tue, Dec 18, 2018 at 06:24:29PM +0530, Souptick Joarder wrote:
-> > > On Tue, Dec 18, 2018 at 6:03 PM Russell King - ARM Linux
-> > > <linux@armlinux.org.uk> wrote:
-> > > >
-> > > > On Tue, Dec 18, 2018 at 05:36:04PM +0530, Souptick Joarder wrote:
-> > > > > On Tue, Dec 18, 2018 at 3:27 PM Russell King - ARM Linux
-> > > > > <linux@armlinux.org.uk> wrote:
-> > > > > > This looks like a change in behaviour.
-> > > > > >
-> > > > > > If user_count is zero, and offset is zero, then we pass into
-> > > > > > vm_insert_range() a page_count of zero, and vm_insert_range() does
-> > > > > > nothing and returns zero.
-> > > > > >
-> > > > > > However, as we can see from the above code, the original behaviour
-> > > > > > was to return -ENXIO in that case.
-> > > > >
-> > > > > I think these checks are not necessary. I am not sure if we get into mmap
-> > > > > handlers of driver with user_count = 0.
-> > > >
-> > > > I'm not sure either, I'm just pointing out the change of behaviour.
-> > >
-> > > Ok. I think feedback from Heiko might be helpful here :)
-> > >
-> > > >
-> > > > > > The other thing that I'm wondering is that if (eg) count is 8 (the
-> > > > > > object is 8 pages), offset is 2, and the user requests mapping 6
-> > > > > > pages (user_count = 6), then we call vm_insert_range() with a
-> > > > > > pages of rk_obj->pages + 2, and a pages_count of 6 - 2 = 4. So we
-> > > > > > end up inserting four pages.
-> > > > >
-> > > > > Considering the scenario, user_count will remain 8 (user_count =
-> > > > > vma_pages(vma) ). ? No ?
-> > > > > Then we call vm_insert_range() with a pages of rk_obj->pages + 2, and
-> > > > > a pages_count
-> > > > > of 8 - 2 = 6. So we end up inserting 6 pages.
-> > > > >
-> > > > > Please correct me if I am wrong.
-> > > >
-> > > > vma_pages(vma) is the number of pages that the user requested, it is
-> > > > the difference between vma->vm_end and vma->vm_start in pages.  As I
-> > > > said above, "the user requests mapping 6 pages", so vma_pages() will
-> > > > be 6, and so user_count will also be 6.  You are passing
-> > > > user_count - offset into vm_insert_range(), which will be 6 - 2 = 4
-> > > > in my example.  This is two pages short of what the user requested.
-> > > >
-> > >
-> > > So, this should be the correct behavior.
-> > >
-> > >                  return vm_insert_range(vma, vma->vm_start,
-> > > rk_obj->pages + offset,
-> > >                                                           user_count);
-> >
-> > ... and by doing so, you're introducing another instance of the same
-> > bug I pointed out in patch 2.
-> 
-> Sorry but didn't get it ? How it will be similar to the bug pointed
-> out in patch 2 ?
+> > And the crash does not occur when I revert commit 1008a11590.
+>
+> That is not true, so this is an unrelated bug.
 
-Towards the top of this function, you have:
+Thank you.
 
-        unsigned long user_count = vma_pages(vma);
+So I'll queue my patch as a late fix for v4.20.
+Sun-3 can be fixed when someone can test Mike's suggestion.
 
-So what you are proposing does:
+Gr{oetje,eeting}s,
 
-        return vm_insert_range(vma, vma->vm_start, rk_obj->pages + offset,
-                               vma_pages(vma));
-
-Now if we look inside vm_insert_range():
-
-+int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
-+                       struct page **pages, unsigned long page_count)
-+{
-+       unsigned long uaddr = addr;
-+       int ret = 0, i;
-+
-+       if (page_count > vma_pages(vma))
-+               return -ENXIO;
-+
-+       for (i = 0; i < page_count; i++) {
-+               ret = vm_insert_page(vma, uaddr, pages[i]);
-+               if (ret < 0)
-+                       return ret;
-+               uaddr += PAGE_SIZE;
-+       }
-
-So, page_count _is_ vma_pages(vma).  So this code does these operations:
-
-	if (vma_pages(vma) > vma_pages(vma))
-		return -ENXIO;
-
-This will always be false.  I've already stated in my reply to patch 2
-in paragraph 3 about the uselessness of this test.
-
-	for (i = 0; i < vma_pages(vma); i++) {
-		ret = vm_insert_page(vma, uaddr, pages[i]);
-
-So the loop will iterate over the number of pages that the user requested.
-
-Now, taking another example.  The object is again 8 pages long, so
-indexes 0 through 7 in its page array are valid.  The user requests
-8 pages at offset 2 into the object.  Also as already stated in
-paragraph 3 of my reply to patch 2.
-
-vma_pages(vma) is 8.  offset = 2.
-
-So we end up _inside_ vm_insert_range() with:
-
-	if (8 > 8)
-		return -ENXIO;
-
-As stated, always false.
-
-	for (i = 0; i < 8; i++) {
-		ret = vm_insert_page(vma, vaddr, rk_obj->pages[2 + i]);
-
-Which means we iterate over rk_obj->pages indicies from 2 through 9
-inclusive.
-
-Since only 0 through 7 are valid, we have walked off the end of the
-array, and attempted to map an invalid struct page pointer - we could
-be lucky, and it could point at some struct page (potentially causing
-us to map some sensitive page - maybe containing your bank details or
-root password... Or it could oops the kernel.
+                        Geert
 
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
