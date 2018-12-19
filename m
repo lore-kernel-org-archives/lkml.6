@@ -2,100 +2,139 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11764C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B78BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF869218AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:03:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545177812;
-	bh=l9X3UQoXgIeCGAP/aU9OPQ/7WsOloIc3sY+fcmmC0fU=;
-	h=References:In-Reply-To:To:Cc:Subject:From:Date:List-ID:From;
-	b=Iai3mhwGQAJAJ+Q3dUQLjOqK2IG995Hj5jBH1YshQSuQFn+tBGyjjGgHIdT4UpMgi
-	 IWrN3BZKuLbt69c9UAJ/Bb2kXGoo8ABguppNmoymIGAIE5iS0jLIXHfHpUXZH3cnwr
-	 ae2DuZ26WypQR3Dkch2tQ7ZpZNPXSAwmD+OU6JRA=
+	by mail.kernel.org (Postfix) with ESMTP id CB081218B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:05:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="WeUX5ZbH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LFjKsZfc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbeLSADb (ORCPT
+        id S1727321AbeLSAFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 19:03:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbeLSADb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 19:03:31 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A309218AD;
-        Wed, 19 Dec 2018 00:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545177810;
-        bh=l9X3UQoXgIeCGAP/aU9OPQ/7WsOloIc3sY+fcmmC0fU=;
-        h=References:In-Reply-To:To:Cc:Subject:From:Date:From;
-        b=zU0WCnisjRLfQquJ/mvI8tmCfBNSPpUXGRg0ViDwKeRDtgaNkmBX733A3lerUAXCF
-         o9FoGX3J+NZ2ukLKM3jS2aSRby+/FugJSGTfGnssuPqgLC1rMw1tAl3HIZZqr8q9fd
-         g0nGjXFtUyPolQvS+rSYkzk55Q2d4bB7NQDWev8g=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com> <20181204192440.12125-2-miquel.raynal@bootlin.com>
-Message-ID: <154517780935.238328.764268020422357561@swboyd.mtv.corp.google.com>
-In-Reply-To: <20181204192440.12125-2-miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH v3 1/4] clk: core: clarify the check for runtime PM
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Tue, 18 Dec 2018 16:03:29 -0800
+        Tue, 18 Dec 2018 19:05:42 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58563 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726655AbeLSAFm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 19:05:42 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 19E7722AB6;
+        Tue, 18 Dec 2018 19:05:41 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 18 Dec 2018 19:05:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        +D020tyVaMEeCoY+0sUHdGR6L/LFKfsR6v269wmWEaI=; b=WeUX5ZbHSU3CI4Jy
+        LPfeAfK6Mguz5UAf63qnZ7LAEzK1ou/VuuDJPH07FQGD2pHMD/3BFpFEsVWps7GY
+        M5QETguTsco7/2LZaEyK5eGVS/th71+CEVZIZCkirTLMXm/mN6/ozy9ulBF+i47G
+        HWbq2Hx4+7R8il1t08MZUB6Z/S/UZcM5txuuYgOumFRso70+BHt/9yGjpcTzTPIH
+        eY/t87wQ/yGuZb1YOJk4ZvVPHd7sapNrvm3j2zUvxtV+OWmAODR+CbMGhG4fJdGr
+        4nO79vmZsuqSYNC+vh8tgr5iE8q4Q8CGHX/jqhS4e0wAfe7Z/AcQCiTVdhC9JlXu
+        OJb7xA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=+D020tyVaMEeCoY+0sUHdGR6L/LFKfsR6v269wmWE
+        aI=; b=LFjKsZfcbK9v46BSsd2Do41HXRg/Y5CKh3EIsx1HcyY7udT7gtrpHII+o
+        Qa6mla/AjaRdIMAKZb4fHxsUZBVJMwtvbHy5lqUJ3oRAoet1YcM94WfkNYUkwLrP
+        NihjAJ1SPROCQAo8DOR6HyzpDVBXZZBpUZvLj02RFitcQif3AhdFTlIKEYKKt6gN
+        FcOxrs94fVQ7IrWfhWLFO8C2cPdNVjvoe63u7NJenHQzLBUdcqMiSZx8nMN5zqQy
+        Y5Py2RNGlCldrZEY9QGfqil1ML1+VQoLLeyY+VDqY7qmfJctz0lrqp82RSlGniw6
+        DFJsE83vgS/CY0c1boL2R6mds+giQ==
+X-ME-Sender: <xms:VIsZXOmz9eLJYXrQO1F6afjRwkst0Bd8duoBg2tpOvhGOsUNrD7QaQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtkedrudeikedgudefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
+    fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvff
+    gjfhgtofgggfesthejredtredtjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgv
+    nhesthhhvghmrgifrdhnvghtqeenucffohhmrghinhepohiilhgrsghsrdhorhhgnecukf
+    hppeduudekrddvtdelrddukeehrddugedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehr
+    rghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:VIsZXP0N9r8B0LabzE0hpdd0iE7isAVUEO37fPpfZFxcg7lIKzzyYw>
+    <xmx:VIsZXDTRzz94UnFzoRXuOWCUEOBI8zirtO3JExSyGwcqr5JaPJVQ4Q>
+    <xmx:VIsZXAzJGLaX9O0DHYZr2Uy7dRQE66LqpKUZ8VDNNbKtznfRMdYxuA>
+    <xmx:VYsZXDx6-_r4gUv4FCZ4G9DjZm9MtlwZAIKC0Eg6Hot78VUGHVbrug>
+Received: from localhost (unknown [118.209.185.141])
+        by mail.messagingengine.com (Postfix) with ESMTPA id BEE0B100BA;
+        Tue, 18 Dec 2018 19:05:37 -0500 (EST)
+Message-ID: <941eac5115a41a0bfe8736816b7600ddfcc0371e.camel@themaw.net>
+Subject: Re: kernel BUG at fs/inode.c:LINE!
+From:   Ian Kent <raven@themaw.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+5399ed0832693e29f392@syzkaller.appspotmail.com>,
+        DmitryVyukov <dvyukov@google.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Date:   Wed, 19 Dec 2018 08:05:35 +0800
+In-Reply-To: <20181218130958.88ac9d638c717a1ab1db9dc3@linux-foundation.org>
+References: <00000000000051e9c2057d31a563@google.com>
+         <20181217072144.GQ2217@ZenIV.linux.org.uk>
+         <95ae4c9893c89189d4309fe673ade6f389280101.camel@themaw.net>
+         <66d497c00cffb3e4109ca0d5287c8277954d7132.camel@themaw.net>
+         <20181218130958.88ac9d638c717a1ab1db9dc3@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Miquel Raynal (2018-12-04 11:24:37)
-> Currently, the core->dev entry is populated only if runtime PM is
-> enabled. Doing so prevents accessing the device structure in any
-> case.
->=20
-> Keep the same logic but instead of using the presence of core->dev as
-> the only condition, also check the status of
-> pm_runtime_enabled(). Then, we can set the core->dev pointer at any
-> time as long as a device structure is available.
->=20
-> This change will help supporting device links in the clock subsystem.
->=20
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/clk/clk.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index af011974d4ec..b799347c5fd6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -97,7 +97,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
->  {
->         int ret =3D 0;
-> =20
-> -       if (!core->dev)
-> +       if (!core->dev || !pm_runtime_enabled(core->dev))
+On Tue, 2018-12-18 at 13:09 -0800, Andrew Morton wrote:
+> On Tue, 18 Dec 2018 19:34:57 +0800 Ian Kent <raven@themaw.net> wrote:
+> 
+> > > See 
+> > > 
+https://www.ozlabs.org/~akpm/mmotm/broken-out/autofs-fix-possible-inode-leak-in-autofs_fill_super.patch
+> > > 
+> > > I think this will fix it, I'll forward it to Andrew if you agree:
+> > 
+> > Actually, looking at it again the above patch is plain not needed,
+> > dropping it and updating the patch which follows it in the series
+> > is what needs to be done.
+> > 
+> > Andrew, what should I do to make this easiest for you to handle,
+> > a respost with v2 in the subject of the patch affected by dropping
+> > the above patch?
+> 
+> I dropped the patch and fixed up the fallout.
 
-This looks potentially dangerous. What if runtime PM is disabled for the
-clk when this function is called? Shouldn't we just stash a bool away in
-the clk_core structure when it's registered? And then we can replace the
-check for !core->dev with a check for 'core->rpm_enabled' instead. That
-would be a more exact transformation.
+Thanks Andrew, much appreciated.
+
+> 
+> The patch wasn't true anyway.  "There is no check at all for a failure
+> to allocate the root inode in autofs_fill_super(), handle it." In fact,
+> d_make_root(NULL) will just return NULL and autofs_fill_super() handles
+> that appropriately.
+
+The not so funny thing is that I'm sure I looked at this some time
+in the distant past and saw how d_make_root() behaved.
+
+The lesson for me is don't try and fix other things seen while working
+on something else, return later and do it properly.
+
+> 
+> However let's note that when autofs_get_inode() or d_make_root() fail,
+> autofs_fill_super() will return -EINVAL.  Should have been -ENOMEM, I
+> guess?
+> 
+
+That's right, but I don't think that's urgent so I'll send a patch for
+it after the coming merge window.
+
+The strictexpire option addition is urgent for me so I don't want to
+upset any chance of that being merged sooner rather than later.
+
+Ian
+
+
 
 
