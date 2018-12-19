@@ -4,170 +4,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98CFC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 288C7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98159218AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4CE02084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 14:14:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545228765;
-	bh=mYSv6C/anEPEOntT611vVWNftpPDSMGVwZM4K2vIyl8=;
+	s=default; t=1545228862;
+	bh=9k0OBO4C3EwWwHGblNT+cjI8ox1SjSZ8a0j4eph0w0I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FAcw4cOZbeoKK0faEBi5aignZKI037sY1QaHn1UKhZXmkjULR0TucN0suUM6ZXIBc
-	 PV2oHFdYXTbdKRbHKFrMw47QJZMpVBRxhza1fabY6OWD7Bg1WlKcSAQ8GXxJkd0u16
-	 Mhrm7qiYKS0sA66VfFES3twDIDgQSShI7j0KD57M=
+	b=zsonLvUmP+5Z/Ys89WFFWg+gcEaZ5HxoOpk1Rvh8Jc8VMHleP6Xk+jvxagoD2jHdb
+	 k6/ftZXFiAZ5DOPo7TL7HZMgVFWlXTTKFE3yoGX3AjD+3Ux1nNjvU1Jj9hm+l9oHks
+	 k6sAclGgFdmRJnQP7D7aCD73OM/w6fhKUvCtz/mA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbeLSOMo (ORCPT
+        id S1729033AbeLSOOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 09:12:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727635AbeLSOMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 09:12:44 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 669512084A;
-        Wed, 19 Dec 2018 14:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545228763;
-        bh=mYSv6C/anEPEOntT611vVWNftpPDSMGVwZM4K2vIyl8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ByvLzt4YfomMJA54EMmSb1yQTm5xnxXrsuygozJeZ5oY5zmyIugwowSxbSaIjs0k7
-         WEWq/5bv8YbYMp8rBhUNcvtBtvW0kRl/4hzorhM+j6FYGYvR25WM0MqOZa6cAwOiuD
-         LibnrvKayjkp4raXjyz97OA3rX0H3qoqwfRNMFJo=
-Date:   Wed, 19 Dec 2018 08:12:41 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Richard Zhu <hongxing.zhu@nxp.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Andrew Smirnov <andrew.smirnov@gmail.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Niklas Cassel <niklas.cassel@axis.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Trent Piepho <tpiepho@impinj.com>
-Subject: Re: [v4] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
-Message-ID: <20181219141241.GB12763@google.com>
-References: <1544768762-18124-1-git-send-email-hongxing.zhu@nxp.com>
+        Wed, 19 Dec 2018 09:14:21 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38509 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbeLSOOV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 09:14:21 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a77so1691538oii.5;
+        Wed, 19 Dec 2018 06:14:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L3FjKbdSeKKjl3TRYQNpL8APwaJZYiHwy40ukckZvrk=;
+        b=jkTz9+rZAgaebxbEUNgByeLYj/dJB8ZdTfcZ1j5/YixUe7VkwdE8fAx7laxgd7PbPz
+         onrooZJPE5sA5UZCJEBdxSQ3i0j7JjS3ToHZJm7qzRu6hARBwYqkOKAb2qnbvOiB0qDw
+         2gfXdKXKMQ54HCT9Wzv03aJBg9c6uSvWXIMblaarTH1pprI7O+xkbJBspyJm+yLRuzTV
+         iG0Hs/kOIlAvoMZISxP8h2qScZjtba81fcZTbSOZWDwbbr3a1teX/FMhrKyCQ61AB5Hg
+         ZLBg9cGJSGqD58W2M8IOOjule7e3rP/agQBuazhWIIVK1GnOpdq/IhxTZXOXuRhBTj/c
+         r2nw==
+X-Gm-Message-State: AA+aEWb8F0exY+P1QNG0pNj+gqhTfcPjlRmBQHAMB7/ssqdV19qpIm8I
+        H7MRG9bigSRi2u8aUROjHHGi5iU=
+X-Google-Smtp-Source: AFSGD/VUkqP1i+vSte1GTwhWg8B7lVt96ajEJZUL9UxY9WDsR0X1R+PoAw5sKJWTDdp+e2t7hIObzQ==
+X-Received: by 2002:aca:50cf:: with SMTP id e198mr1233096oib.343.1545228860650;
+        Wed, 19 Dec 2018 06:14:20 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z7sm8962186otm.63.2018.12.19.06.14.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 06:14:19 -0800 (PST)
+Date:   Wed, 19 Dec 2018 08:14:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Yu Chen <chenyu56@huawei.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, suzhuangluan@hisilicon.com,
+        kongfei@hisilicon.com, Mark Rutland <mark.rutland@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>
+Subject: Re: [PATCH v1 02/12] dt-bindings: phy: Add support for HiSilicon's
+ hi3660 USB PHY
+Message-ID: <20181219141419.GA17302@bogus>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-3-chenyu56@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544768762-18124-1-git-send-email-hongxing.zhu@nxp.com>
+In-Reply-To: <20181203034515.91412-3-chenyu56@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Sven, Trent, et al from related report:
-https://lore.kernel.org/linux-pci/20181218210444.5950-1-TheSven73@googlemail.com]
-
-On Fri, Dec 14, 2018 at 06:44:15AM +0000, Richard Zhu wrote:
-> Assertion of the MSI Enable bit of RC's MSI CAP is mandatory required to
-> trigger MSI on i.MX6 PCIe.
-> This bit would be asserted when CONFIG_PCIEPORTBUS=y.
-> Thus, the MSI works fine on i.MX6 PCIe before the commit "f3fdfc4".
+On Mon, Dec 03, 2018 at 11:45:05AM +0800, Yu Chen wrote:
+> This patch adds binding documentation for supporting the hi3660 usb
+> phy on boards like the HiKey960.
 > 
-> Assert it unconditionally when MSI is enabled.
-> Otherwise, the MSI wouldn't be triggered although the EP is present and
-> the MSIs are assigned.
-
-OK, I think I finally understand most of what's going on.  Please
-check the following possible changelog text:
-
-  The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2)
-  controls whether a Function can request service using MSI.
-
-  i.MX6 Root Ports implement the MSI Capability and may use MSI to
-  request service for events like PME, hotplug, AER, etc.  In
-  addition, on i.MX6, the MSI Enable bit controls delivery of MSI
-  interrupts from components below the Root Port.
-
-  Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
-  CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also
-  enabled CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports,
-  it set the MSI Enable bit so it could use PME, hotplug, AER, etc.
-  As a side effect, that also enabled delivery of MSI interrupts from
-  downstream components.
-
-  After f3fdfc4ac3a2, the imx6q-pcie driver can operate without
-  portdrv, but that means imx6q-pcie must set the MSI Enable bit
-  itself if downstream components use MSI.
-
-  Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
-
-I still don't understand exactly *how* MSI Enable affects MSI from
-downstream components, since the downstream component just does a DMA
-write, and the Root Port can't tell whether the write is to memory or
-interrupt controller unless the Root Port knows where the MSI targets
-are, e.g., if the interrupt controller is actually part of the RC.
-
-Bjorn
-
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Binghui Wang <wangbinghui@hisilicon.com>
+> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+> --
+> v1: Fix some format error as suggested by Rob.
+> --
 > ---
-> Changes v1 -> v2:
-> * Assert the MSI_EN unconditionally when MSI is supported.
-> Changes v2 -> v3:
-> * Remove the IS_ENABLED(CONFIG_PCI_MSI) since the driver depends on
-> PCI_MSI_IRQ_DOMAIN
-> * Extended with a check for pci_msi_enabled() to see if the user
-> explicitly want legacy IRQs
-> Changes v3 -> v4:
-> * Refer to Bjorn's comments, refine the subject and commit log and change
-> the PCI_MSI_CAP to PCIE_RC_IMX6_MSI_CAP.
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  .../devicetree/bindings/phy/phy-hi3660-usb3.txt     | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 26087b3..639bb27 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -74,6 +74,7 @@ struct imx6_pcie {
->  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
->  
->  /* PCIe Root Complex registers (memory-mapped) */
-> +#define PCIE_RC_IMX6_MSI_CAP			0x50
->  #define PCIE_RC_LCR				0x7c
->  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
->  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
-> @@ -926,6 +927,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
->  	struct resource *dbi_base;
->  	struct device_node *node = dev->of_node;
->  	int ret;
-> +	u16 val;
->  
->  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
->  	if (!imx6_pcie)
-> @@ -1071,6 +1073,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (pci_msi_enabled()) {
-> +		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
-> +				PCI_MSI_FLAGS);
-> +		val |= PCI_MSI_FLAGS_ENABLE;
-> +		dw_pcie_writew_dbi(pci, PCIE_RC_MSI_IMX6_CAP +
-> +				PCI_MSI_FLAGS, val);
-> +	}
+> diff --git a/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> new file mode 100644
+> index 000000000000..8ea52d51aa13
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+> @@ -0,0 +1,21 @@
+> +Hisilicon hi3660 usb PHY
+
+s/usb/USB/
+
+> +-----------------------
 > +
->  	return 0;
->  }
->  
+> +Required properties:
+> +- compatible: should be "hisilicon,hi3660-usb-phy"
+> +- #phy-cells: must be 0
+> +- hisilicon,pericrg-syscon: phandle of syscon used to control phy.
+> +- hisilicon,pctrl-syscon: phandle of syscon used to control phy.
+> +- hisilicon,usb3-otg-bc-syscon: phandle of syscon used to control phy.
+> +- hisilicon,eye-diagram-param: parameter set for phy
+> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
+
+Doesn't a phy need some clocks?
+
+> +
+> +Example:
+> +	usb-phy {
+> +		compatible = "hisilicon,hi3660-usb-phy";
+> +		#phy-cells = <0>;
+> +		hisilicon,pericrg-syscon = <&crg_ctrl>;
+> +		hisilicon,pctrl-syscon = <&pctrl>;
+> +		hisilicon,usb3-otg-bc-syscon = <&usb3_otg_bc>;
+
+Is one of these the "main" registers for the phy? If so, then make this 
+a child of that syscon node.
+
+> +		hisilicon,eye-diagram-param = <0x22466e4>;
+> +	};
 > -- 
-> 2.7.4
+> 2.15.0-rc2
 > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
