@@ -2,182 +2,128 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BECC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21842C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 227C121873
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE38A21871
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 10:42:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="H790KpFA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbeLSKiM (ORCPT
+        id S1729068AbeLSKmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 05:38:12 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41925 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbeLSKiL (ORCPT
+        Wed, 19 Dec 2018 05:42:03 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43564 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728928AbeLSKmD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 05:38:11 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBJAc5B63192586
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 19 Dec 2018 02:38:05 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBJAc5gN3192583;
-        Wed, 19 Dec 2018 02:38:05 -0800
-Date:   Wed, 19 Dec 2018 02:38:05 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dou Liyang <tipbot@zytor.com>
-Message-ID: <tip-c410abbbacb9b378365ba17a30df08b4b9eec64f@git.kernel.org>
-Cc:     sumit.saxena@broadcom.com, hpa@zytor.com, tglx@linutronix.de,
-        douliyangs@gmail.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, kashyap.desai@broadcom.com
-Reply-To: tglx@linutronix.de, hpa@zytor.com, sumit.saxena@broadcom.com,
-          kashyap.desai@broadcom.com, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, douliyangs@gmail.com
-In-Reply-To: <20181204155122.6327-3-douliyangs@gmail.com>
-References: <20181204155122.6327-3-douliyangs@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/affinity: Add is_managed to struct
- irq_affinity_desc
-Git-Commit-ID: c410abbbacb9b378365ba17a30df08b4b9eec64f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 19 Dec 2018 05:42:03 -0500
+Received: by mail-io1-f68.google.com with SMTP id g17so3417306ioc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 02:42:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I6I5jg1KYTO2ZnWGYRIpKrCIH1+bHKYeEMYRuF+H5c0=;
+        b=H790KpFAEYAQoQeZjDOttAcOsXVLrqqdPiNnYIFV2Nxb//W/fM+mUYSPhrgN6U/ZPk
+         UTXj9hYY6l9NaR+NukYoXtbdq1wIxSt0rMcn46lyx/hbRMtFaMIavl+5CuTh7iQ2Wiij
+         B/9ycdQVLsO6qAUn1piM3+8j5ScHSorl5SSqc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I6I5jg1KYTO2ZnWGYRIpKrCIH1+bHKYeEMYRuF+H5c0=;
+        b=k/GjU72hz/CuCvfDyHVChxXo2LS3PYQ+JS2b/yGCU8csWkylAdVybKApekpKq3CgFF
+         XaKiNYewRoJu1QmqUOaaOm4ZQS8UUqE0xhWmqfZhhu7oVAFZKpngbgUUlGrw8nDAVNhN
+         95uAHrV5ZxB4Thp8UDjXw6cVmB7YacZYHmGTNRsD7nUHkQs/8x6kymlBb+IUPznFpvOE
+         kM6WS7wAFW6e86X3ItikdlUwhdpn75fZEd1fsjjHJB6ZoYjCAwY5sgoG0C3kD8hkK/sN
+         6suJ037NOcP8kGVuVkOODGIUqhaMz2jOhVa6vSYdT9bIBK1W6DZdkIorylzksmifzWDd
+         vL6A==
+X-Gm-Message-State: AA+aEWbyJI7SJGCab5IkCa8/s5siZ7GqGn3y2PjhdTpdx+Bicyfe1TtM
+        CgB1w95Y5bNy671LFnuax+tuocDytgfK1nM86RsLZg==
+X-Google-Smtp-Source: AFSGD/XFykBB1VcG+DE/qkaJQ4oV6LcEpMKEafQRWp3DLXpeT3ex0t3KF8X7HeeM7eW3Hwc/7nJeX113DgQ1sUVq0MU=
+X-Received: by 2002:a6b:1411:: with SMTP id 17mr17725808iou.252.1545216122223;
+ Wed, 19 Dec 2018 02:42:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20181218113320.4856-1-jagan@amarulasolutions.com>
+ <20181218152122.4zj6wgbukhrl6ly6@flea> <CAMty3ZA4xXVLKx-yj+2_iJ700+yTLesjEAgS8Wu2i8otPScpaw@mail.gmail.com>
+ <20181219102450.picswsg3yevba23j@flea>
+In-Reply-To: <20181219102450.picswsg3yevba23j@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Wed, 19 Dec 2018 16:11:50 +0530
+Message-ID: <CAMty3ZB04E46kMKVvo-QxpVQBus74at3uKJC_QzS788UiCAeeg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] media/sun6i: Allwinner A64 CSI support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c410abbbacb9b378365ba17a30df08b4b9eec64f
-Gitweb:     https://git.kernel.org/tip/c410abbbacb9b378365ba17a30df08b4b9eec64f
-Author:     Dou Liyang <douliyangs@gmail.com>
-AuthorDate: Tue, 4 Dec 2018 23:51:21 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 19 Dec 2018 11:32:08 +0100
+On Wed, Dec 19, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Tue, Dec 18, 2018 at 08:58:22PM +0530, Jagan Teki wrote:
+> > On Tue, Dec 18, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Tue, Dec 18, 2018 at 05:03:14PM +0530, Jagan Teki wrote:
+> > > > This series support CSI on Allwinner A64.
+> > > >
+> > > > Tested 640x480, 320x240, 720p, 1080p resolutions UYVY8_2X8 format.
+> > > >
+> > > > Changes for v4:
+> > > > - update the compatible string order
+> > > > - add proper commit message
+> > > > - included BPI-M64 patch
+> > > > - skipped amarula-a64 patch
+> > > > Changes for v3:
+> > > > - update dt-bindings for A64
+> > > > - set mod clock via csi driver
+> > > > - remove assign clocks from dtsi
+> > > > - remove i2c-gpio opendrian
+> > > > - fix avdd and dovdd supplies
+> > > > - remove vcc-csi pin group supply
+> > > >
+> > > > Note: This series created on top of H3 changes [1]
+> > > >
+> > > > [1] https://patchwork.kernel.org/cover/10705905/
+> > >
+> > > You had memory corruption before, how was this fixed?
+> >
+> > Memory corruption observed with default 600MHz on 1080p. It worked
+> > fine on BPI-M64 (with 300MHz)
+>
+> I don't get it. In the previous version of those patches, you were
+> mentionning you were still having this issue, even though you had the
+> clock running at 300MHz, and then you tried to convince us to merge
+> the patches nonetheless.
+>
+> Why would you say that then if that issue was fixed?
 
-genirq/affinity: Add is_managed to struct irq_affinity_desc
+Previous version has A64-Relic board, which has some xclk issue on
+sensor side wrt 1080p. I have tried 300MHz on the same hardware, it's
+failing to capture on 30fps and so I tried 600MHz(which is default) on
+the same configuration but it encounter memory corruption.
 
-Devices which use managed interrupts usually have two classes of
-interrupts:
+So, for checking whether there is an issue with hardware on A64-Relic
+I moved with BPI-M64 dev board. which is working 1080p with 300MHz, ie
+reason I have not included A64-Relic on this version and included
+BPI-M64. We processed A64-Relic to hardware team to figure out the
+clock and once ie fixed I'm planning to send DTS patch for that.
 
-  - Interrupts for multiple device queues
-  - Interrupts for general device management
-
-Currently both classes are treated the same way, i.e. as managed
-interrupts. The general interrupts get the default affinity mask assigned
-while the device queue interrupts are spread out over the possible CPUs.
-
-Treating the general interrupts as managed is both a limitation and under
-certain circumstances a bug. Assume the following situation:
-
- default_irq_affinity = 4..7
-
-So if CPUs 4-7 are offlined, then the core code will shut down the device
-management interrupts because the last CPU in their affinity mask went
-offline.
-
-It's also a limitation because it's desired to allow manual placement of
-the general device interrupts for various reasons. If they are marked
-managed then the interrupt affinity setting from both user and kernel space
-is disabled. That limitation was reported by Kashyap and Sumit.
-
-Expand struct irq_affinity_desc with a new bit 'is_managed' which is set
-for truly managed interrupts (queue interrupts) and cleared for the general
-device interrupts.
-
-[ tglx: Simplify code and massage changelog ]
-
-Reported-by: Kashyap Desai <kashyap.desai@broadcom.com>
-Reported-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Dou Liyang <douliyangs@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-pci@vger.kernel.org
-Cc: shivasharan.srikanteshwara@broadcom.com
-Cc: ming.lei@redhat.com
-Cc: hch@lst.de
-Cc: bhelgaas@google.com
-Cc: douliyang1@huawei.com
-Link: https://lkml.kernel.org/r/20181204155122.6327-3-douliyangs@gmail.com
-
----
- include/linux/interrupt.h |  1 +
- kernel/irq/affinity.c     |  4 ++++
- kernel/irq/irqdesc.c      | 13 ++++++++-----
- 3 files changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index c44b7844dc83..c672f34235e7 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -263,6 +263,7 @@ struct irq_affinity {
-  */
- struct irq_affinity_desc {
- 	struct cpumask	mask;
-+	unsigned int	is_managed : 1;
- };
- 
- #if defined(CONFIG_SMP)
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index c0fe591b0dc9..45b68b4ea48b 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -289,6 +289,10 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	for (; curvec < nvecs; curvec++)
- 		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
- 
-+	/* Mark the managed interrupts */
-+	for (i = affd->pre_vectors; i < nvecs - affd->post_vectors; i++)
-+		masks[i].is_managed = 1;
-+
- outnodemsk:
- 	free_node_to_cpumask(node_to_cpumask);
- 	return masks;
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index cb401d6c5040..ee062b7939d3 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -453,27 +453,30 @@ static int alloc_descs(unsigned int start, unsigned int cnt, int node,
- 		       struct module *owner)
- {
- 	struct irq_desc *desc;
--	unsigned int flags;
- 	int i;
- 
- 	/* Validate affinity mask(s) */
- 	if (affinity) {
--		for (i = 0; i < cnt; i++) {
-+		for (i = 0; i < cnt; i++, i++) {
- 			if (cpumask_empty(&affinity[i].mask))
- 				return -EINVAL;
- 		}
- 	}
- 
--	flags = affinity ? IRQD_AFFINITY_MANAGED | IRQD_MANAGED_SHUTDOWN : 0;
--
- 	for (i = 0; i < cnt; i++) {
- 		const struct cpumask *mask = NULL;
-+		unsigned int flags = 0;
- 
- 		if (affinity) {
--			node = cpu_to_node(cpumask_first(affinity));
-+			if (affinity->is_managed) {
-+				flags = IRQD_AFFINITY_MANAGED |
-+					IRQD_MANAGED_SHUTDOWN;
-+			}
- 			mask = &affinity->mask;
-+			node = cpu_to_node(cpumask_first(mask));
- 			affinity++;
- 		}
-+
- 		desc = alloc_desc(start + i, node, flags, mask, owner);
- 		if (!desc)
- 			goto err;
+This is overall summary, hope you understand.
