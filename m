@@ -2,141 +2,357 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A307DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73451C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 746CF21871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D2C21873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 03:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbeLSDlW (ORCPT
+        id S1726987AbeLSDnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 22:41:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726537AbeLSDlU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 22:41:20 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBJ3dMoT040269
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 22:41:18 -0500
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pfbj4p0f0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 22:41:18 -0500
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Wed, 19 Dec 2018 03:41:17 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Dec 2018 03:41:14 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBJ3fD4q26017958
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Dec 2018 03:41:13 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 105267805F;
-        Wed, 19 Dec 2018 03:41:13 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50D357805E;
-        Wed, 19 Dec 2018 03:41:09 +0000 (GMT)
-Received: from skywalker.ibmuc.com (unknown [9.85.71.103])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Dec 2018 03:41:09 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>, mpe@ellerman.id.au,
-        paulus@samba.org, David Gibson <david@gibson.dropbear.id.au>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH V5 3/3] powerpc/mm/iommu: Allow large IOMMU page size only for hugetlb backing
-Date:   Wed, 19 Dec 2018 09:10:47 +0530
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181219034047.16305-1-aneesh.kumar@linux.ibm.com>
-References: <20181219034047.16305-1-aneesh.kumar@linux.ibm.com>
+        Tue, 18 Dec 2018 22:43:41 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16604 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726600AbeLSDnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 22:43:41 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 30486936E42D5;
+        Wed, 19 Dec 2018 11:43:36 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 19 Dec 2018
+ 11:43:31 +0800
+Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     Sahitya Tummala <stummala@codeaurora.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
+ <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
+ <20181129033239.GE9838@codeaurora.org>
+ <20181130203339.GB71781@jaegeuk-macbookpro.roam.corp.google.com>
+ <49285288-cf99-5f5a-0d1a-c2e0accd8d3d@huawei.com>
+ <20181212031749.GF9838@codeaurora.org>
+ <0167a499-8479-6be4-946d-4446bd02ff63@huawei.com>
+ <20181214075602.GA15236@codeaurora.org>
+ <20181214142537.GA75922@jaegeuk-macbookpro.roam.corp.google.com>
+ <ad28be8b-361e-550f-50c4-1744e60ff9c5@huawei.com>
+ <20181218224700.GD31062@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <31efa8cf-95e3-22a2-0c23-9fab9189767f@huawei.com>
+Date:   Wed, 19 Dec 2018 11:43:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121903-0004-0000-0000-000014C46FB2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010246; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01133803; UDB=6.00589449; IPR=6.00913978;
- MB=3.00024741; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-19 03:41:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121903-0005-0000-0000-000089E8D883
-Message-Id: <20181219034047.16305-4-aneesh.kumar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-19_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812190029
+In-Reply-To: <20181218224700.GD31062@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-THP pages can get split during different code paths. An incremented reference
-count do imply we will not split the compound page. But the pmd entry can be
-converted to level 4 pte entries. Keep the code simpler by allowing large
-IOMMU page size only if the guest ram is backed by hugetlb pages.
+On 2018/12/19 6:47, Jaegeuk Kim wrote:
+> On 12/18, Chao Yu wrote:
+>> On 2018/12/14 22:25, Jaegeuk Kim wrote:
+>>> On 12/14, Sahitya Tummala wrote:
+>>>> On Wed, Dec 12, 2018 at 11:36:08AM +0800, Chao Yu wrote:
+>>>>> On 2018/12/12 11:17, Sahitya Tummala wrote:
+>>>>>> On Fri, Dec 07, 2018 at 05:47:31PM +0800, Chao Yu wrote:
+>>>>>>> On 2018/12/1 4:33, Jaegeuk Kim wrote:
+>>>>>>>> On 11/29, Sahitya Tummala wrote:
+>>>>>>>>>
+>>>>>>>>> On Tue, Nov 27, 2018 at 09:42:39AM +0800, Chao Yu wrote:
+>>>>>>>>>> On 2018/11/27 8:30, Jaegeuk Kim wrote:
+>>>>>>>>>>> On 11/26, Sahitya Tummala wrote:
+>>>>>>>>>>>> When there is a failure in f2fs_fill_super() after/during
+>>>>>>>>>>>> the recovery of fsync'd nodes, it frees the current sbi and
+>>>>>>>>>>>> retries again. This time the mount is successful, but the files
+>>>>>>>>>>>> that got recovered before retry, still holds the extent tree,
+>>>>>>>>>>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
+>>>>>>>>>>>> is freed up. The list_del corruption issue is observed when the
+>>>>>>>>>>>> file system is getting unmounted and when those recoverd files extent
+>>>>>>>>>>>> node is being freed up in the below context.
+>>>>>>>>>>>>
+>>>>>>>>>>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+>>>>>>>>>>>> <...>
+>>>>>>>>>>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+>>>>>>>>>>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
+>>>>>>>>>>>> lr : __list_del_entry_valid+0x94/0xb4
+>>>>>>>>>>>> pc : __list_del_entry_valid+0x94/0xb4
+>>>>>>>>>>>> <...>
+>>>>>>>>>>>> Call trace:
+>>>>>>>>>>>> __list_del_entry_valid+0x94/0xb4
+>>>>>>>>>>>> __release_extent_node+0xb0/0x114
+>>>>>>>>>>>> __free_extent_tree+0x58/0x7c
+>>>>>>>>>>>> f2fs_shrink_extent_tree+0xdc/0x3b0
+>>>>>>>>>>>> f2fs_leave_shrinker+0x28/0x7c
+>>>>>>>>>>>> f2fs_put_super+0xfc/0x1e0
+>>>>>>>>>>>> generic_shutdown_super+0x70/0xf4
+>>>>>>>>>>>> kill_block_super+0x2c/0x5c
+>>>>>>>>>>>> kill_f2fs_super+0x44/0x50
+>>>>>>>>>>>> deactivate_locked_super+0x60/0x8c
+>>>>>>>>>>>> deactivate_super+0x68/0x74
+>>>>>>>>>>>> cleanup_mnt+0x40/0x78
+>>>>>>>>>>>> __cleanup_mnt+0x1c/0x28
+>>>>>>>>>>>> task_work_run+0x48/0xd0
+>>>>>>>>>>>> do_notify_resume+0x678/0xe98
+>>>>>>>>>>>> work_pending+0x8/0x14
+>>>>>>>>>>>>
+>>>>>>>>>>>> Fix this by cleaning up inodes, extent tree and nodes of those
+>>>>>>>>>>>> recovered files before freeing up sbi and before next retry.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>> v2:
+>>>>>>>>>>>> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
+>>>>>>>>>>>>
+>>>>>>>>>>>>  fs/f2fs/f2fs.h     |  1 +
+>>>>>>>>>>>>  fs/f2fs/shrinker.c |  2 +-
+>>>>>>>>>>>>  fs/f2fs/super.c    | 13 ++++++++++++-
+>>>>>>>>>>>>  3 files changed, 14 insertions(+), 2 deletions(-)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>>>>>>>> index 1e03197..aaee63b 100644
+>>>>>>>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>>>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>>>>>>>> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+>>>>>>>>>>>>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+>>>>>>>>>>>>  						struct rb_root_cached *root);
+>>>>>>>>>>>>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
+>>>>>>>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
+>>>>>>>>>>>>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
+>>>>>>>>>>>>  void f2fs_drop_extent_tree(struct inode *inode);
+>>>>>>>>>>>>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
+>>>>>>>>>>>> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+>>>>>>>>>>>> index 9e13db9..7e3c13b 100644
+>>>>>>>>>>>> --- a/fs/f2fs/shrinker.c
+>>>>>>>>>>>> +++ b/fs/f2fs/shrinker.c
+>>>>>>>>>>>> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+>>>>>>>>>>>>  	return count > 0 ? count : 0;
+>>>>>>>>>>>>  }
+>>>>>>>>>>>>  
+>>>>>>>>>>>> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+>>>>>>>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
+>>>>>>>>>>>>  {
+>>>>>>>>>>>>  	return atomic_read(&sbi->total_zombie_tree) +
+>>>>>>>>>>>>  				atomic_read(&sbi->total_ext_node);
+>>>>>>>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>>>>>>>>> index af58b2c..769e7b1 100644
+>>>>>>>>>>>> --- a/fs/f2fs/super.c
+>>>>>>>>>>>> +++ b/fs/f2fs/super.c
+>>>>>>>>>>>> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+>>>>>>>>>>>>  	sbi->readdir_ra = 1;
+>>>>>>>>>>>>  }
+>>>>>>>>>>>>  
+>>>>>>>>>>>> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
+>>>>>>>>>>>> +{
+>>>>>>>>>>>> +	struct super_block *sb = sbi->sb;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +	sync_filesystem(sb);
+>>>>>>>>>>>
+>>>>>>>>>>> This writes another checkpoint, which would not be what this retrial intended.
+>>>>>>>>>>
+>>>>>>>>>> Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
+>>>>>>>>>> as below:
+>>>>>>>>>>
+>>>>>>>>>> int f2fs_sync_fs(struct super_block *sb, int sync)
+>>>>>>>>>> {
+>>>>>>>>>> ...
+>>>>>>>>>> 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+>>>>>>>>>> 		return -EAGAIN;
+>>>>>>>>>> ...
+>>>>>>>>>> }
+>>>>>>>>>>
+>>>>>>>>>> And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
+>>>>>>>>>> IIUC.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Thanks Chao for the clarification.
+>>>>>>>>>
+>>>>>>>>> Hi Jaegeuk,
+>>>>>>>>>
+>>>>>>>>> Do you still have any further concerns or comments on this patch?
+>>>>>>>>
+>>>>>>>> Could you try the below first?
+>>>>>>>>
+>>>>>>>> --  How about adding a condition in f2fs_may_extent_tree() when adding extents?
+>>>>>>>> -- Likewise, if (shrinker is not registered) return false;
+>>>>>>>>
+>>>>>>>> If we can fix what you described directly, I don't want to rely on such the
+>>>>>>>> assumptions saying we won't do checkpoint. This flow literally says syncing
+>>>>>>>> and evicting cached objects, which opposed to what we'd like to drop all caches
+>>>>>>>> and restart fill_super again.
+>>>>>>>>
+>>>>>>>> Let me consider this as a final resolution.
+>>>>>>>
+>>>>>>> Jaegeuk,
+>>>>>>>
+>>>>>>> Still I want to ask, what kind of scenario we have to add retry logic in
+>>>>>>> fill_super for? As in android scenario, it must be extreme rare case that
+>>>>>>> system runs out-of-memory in boot time...at least, I didn't get any kind of
+>>>>>>> report like that.
+>>>>>>>
+>>>>>> Hi Chao,
+>>>>>
+>>>>> Hi Sahitya,
+>>>>>
+>>>>> Thanks for letting me know that, I git-blamed the code, and found the
+>>>>> original intention is like what you described:
+>>>>>
+>>>>> commit ed2e621a95d704e6a4e904cc00524e8cbddda0c2
+>>>>> Author: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> Date:   Fri Aug 8 15:37:41 2014 -0700
+>>>>>
+>>>>>     f2fs: give a chance to mount again when encountering errors
+>>>>>
+>>>>>     This patch gives another chance to try mount process when we encounter
+>>>>> an error.
+>>>>>     This makes an effect on the roll-forward recovery failures as well.
+>>>>>
+>>>>> But I doubt that if we failed in recovery, maybe there is corruption in
+>>>>> this image, would it be better to fail the mount, and let user fsck it and
+>>>>> retry the mount? otherwise, the corruption may be expanded...
+>>>
+>>> The problem was there was no way to recover roll-forward area by fsck. IOWs,
+>>> mount was failing all the time. I don't think roll-forward itself can corrupt
+>>
+>> I got your concern, IMO, if mount fails, it will be better to let user
+>> decide how to handle it.
+> 
+> Roll-forward is not based on user decision, but f2fs does internally. So, I'm
 
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
----
- arch/powerpc/mm/mmu_context_iommu.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+Yup, IMO without roll-forward, data may lose, and posix compliance can be
+corrupted, f2fs should do roll-forward internally as possible as it can.
 
-diff --git a/arch/powerpc/mm/mmu_context_iommu.c b/arch/powerpc/mm/mmu_context_iommu.c
-index 1d5161f93ce6..0741d905ed04 100644
---- a/arch/powerpc/mm/mmu_context_iommu.c
-+++ b/arch/powerpc/mm/mmu_context_iommu.c
-@@ -95,8 +95,6 @@ long mm_iommu_get(struct mm_struct *mm, unsigned long ua, unsigned long entries,
- 	struct mm_iommu_table_group_mem_t *mem;
- 	long i, ret = 0, locked_entries = 0;
- 	unsigned int pageshift;
--	unsigned long flags;
--	unsigned long cur_ua;
- 
- 	mutex_lock(&mem_list_mutex);
- 
-@@ -159,23 +157,15 @@ long mm_iommu_get(struct mm_struct *mm, unsigned long ua, unsigned long entries,
- 	pageshift = PAGE_SHIFT;
- 	for (i = 0; i < entries; ++i) {
- 		struct page *page = mem->hpages[i];
--		cur_ua = ua + (i << PAGE_SHIFT);
- 
--		if (mem->pageshift > PAGE_SHIFT && PageCompound(page)) {
--			pte_t *pte;
-+		/*
-+		 * Allow to use larger than 64k IOMMU pages. Only do that
-+		 * if we are backed by hugetlb.
-+		 */
-+		if ((mem->pageshift > PAGE_SHIFT) && PageHuge(page)) {
- 			struct page *head = compound_head(page);
--			unsigned int compshift = compound_order(head);
--			unsigned int pteshift;
--
--			local_irq_save(flags); /* disables as well */
--			pte = find_linux_pte(mm->pgd, cur_ua, NULL, &pteshift);
--
--			/* Double check it is still the same pinned page */
--			if (pte && pte_page(*pte) == head &&
--			    pteshift == compshift + PAGE_SHIFT)
--				pageshift = max_t(unsigned int, pteshift,
--						PAGE_SHIFT);
--			local_irq_restore(flags);
-+
-+			pageshift = compound_order(head) + PAGE_SHIFT;
- 		}
- 		mem->pageshift = min(mem->pageshift, pageshift);
- 		/*
--- 
-2.19.2
+> in doubt we have to ask users on any failed case here.
+> I don't catch why we need to revert this which has been landed for a long time.
+
+Actually, what I mean is mount can fail due to different reason, but we
+handle it with fixed retry method by dropping recovery, it may be not flexible.
+
+For example, first fill_super fails due to no memory, then second
+fill_super runs w/o recovery, if we succeed, we may lose fsynced data. I
+don't think it make sense.
+
+Thanks,
+
+> 
+>>
+>> If mount fails due to:
+>>
+>> 1) recovery, user can run fsck and/or try disable_roll_forward or
+>> norecovery option in another mount;
+>> 2) -EINVAL caused by sanity, user can run fsck and retry mount.
+>> 3) -ENOMEM caused low memory in system, user can add more memory and retry
+>> mount.
+>> ...
+>>
+>> Thanks,
+>>
+>>> the image more. Please report, if you have any issue on this.>
+>>>>>
+>>>>
+>>>> Hi Jaegeuk,
+>>>>
+>>>> How do you think about this? If you think it is okay, then I will fix the
+>>>> sbi->extent_list corruption issue, by removing the retry logic. Otherwise,
+>>>> I will fix it in the extent handling as you have suggested earlier.
+>>>
+>>> I'd like to keep retry logic, so could you please test what I suggested above?
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>> In my case, the first boot up has a failure in recovery as below -
+>>>>>>
+>>>>>> F2FS-fs (mmcblk0p75): find_fsync_dnodes: detect looped node chain, blkaddr:1979471, next:1979472
+>>>>>> F2FS-fs (mmcblk0p75): Cannot recover all fsync data errno=-22
+>>>>>>
+>>>>>> But in the second attempt, retry will be set to false and because of that
+>>>>>> recover_fsync_data() is skipped. This helped mount to be successful in
+>>>>>> the second attempt. 
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>> Thanks,
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Thanks,
+>>>>>>>>> Sahitya.
+>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>>
+>>>>>>>>>>> How about adding a condition in f2fs_may_extent_tree() when adding extents?
+>>>>>>>>>>> Likewise, if (shrinker is not registered) return false;
+>>>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>> +	shrink_dcache_sb(sb);
+>>>>>>>>>>>> +	evict_inodes(sb);
+>>>>>>>>>>>> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
+>>>>>>>>>>>> +}
+>>>>>>>>>>>> +
+>>>>>>>>>>>>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>>>>>>>>>>  {
+>>>>>>>>>>>>  	struct f2fs_sb_info *sbi;
+>>>>>>>>>>>> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>>>>>>>>>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
+>>>>>>>>>>>>  	 */
+>>>>>>>>>>>>  	truncate_inode_pages_final(META_MAPPING(sbi));
+>>>>>>>>>>>> +	/* cleanup recovery and quota inodes */
+>>>>>>>>>>>> +	f2fs_cleanup_inodes(sbi);
+>>>>>>>>>>>>  	f2fs_unregister_sysfs(sbi);
+>>>>>>>>>>>>  free_root_inode:
+>>>>>>>>>>>>  	dput(sb->s_root);
+>>>>>>>>>>>> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>>>>>>>>>>>>  	/* give only one another chance */
+>>>>>>>>>>>>  	if (retry) {
+>>>>>>>>>>>>  		retry = false;
+>>>>>>>>>>>> -		shrink_dcache_sb(sb);
+>>>>>>>>>>>>  		goto try_onemore;
+>>>>>>>>>>>>  	}
+>>>>>>>>>>>>  	return err;
+>>>>>>>>>>>> -- 
+>>>>>>>>>>>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+>>>>>>>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>>>>>>>>>>
+>>>>>>>>>>> .
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> -- 
+>>>>>>>>> --
+>>>>>>>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
+>>>>>>>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+>>>>>>>>
+>>>>>>>> .
+>>>>>>>>
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>> -- 
+>>>> --
+>>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
+>>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
