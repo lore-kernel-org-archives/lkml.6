@@ -2,108 +2,179 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC67AC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A012FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6AB72184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C29F2184A
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:56:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=areca-com-tw.20150623.gappssmtp.com header.i=@areca-com-tw.20150623.gappssmtp.com header.b="vEQIdfS0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbeLSIym (ORCPT
+        id S1728555AbeLSI4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 03:54:42 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53732 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727868AbeLSIyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 03:54:41 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3B4EA207D9; Wed, 19 Dec 2018 09:54:39 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 054FA207B2;
-        Wed, 19 Dec 2018 09:54:29 +0100 (CET)
-Date:   Wed, 19 Dec 2018 09:54:29 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "LW@KARO-electronics.de" <LW@KARO-electronics.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V4 2/4] rtc: add i.MX system controller RTC support
-Message-ID: <20181219085429.GJ19816@piout.net>
-References: <1543455856-18021-1-git-send-email-Anson.Huang@nxp.com>
- <1543455856-18021-3-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543455856-18021-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 19 Dec 2018 03:56:39 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39229 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727801AbeLSI4i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 03:56:38 -0500
+Received: by mail-io1-f68.google.com with SMTP id k7so15009798iob.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 00:56:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=areca-com-tw.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RCWcP8gJB4rirILN0bofC1oYAZg1YWh8X8mwW4mc0QA=;
+        b=vEQIdfS0S0Ssr7Xv/sk+/8IcYU6LzhY0Fvnq7kW5RO4wY4L70Py0vxrGhZHoAzbK/U
+         e0jeOkXmFpDE5QSqy/EnEOTyqOlMKeBpBUai+C0OOV/pcW3lPt0TeRIKgHWPvgC9ynNQ
+         9G+xSLpGDUdVl4ht5Uw3Vru6Zx3P+hHHIf7SooJdz9ULYKCL/K+sZsemJFauxlPnRcvh
+         Gbua595lW1bFW6Ss62Sku2tqoK+T5ybjJV6CltHy3etTBQlWWmyPNf6esxxzaRq5kPRf
+         YbBRdkubnFefgXFxH5t+9DRZ+3YWK60/l9TJdWerkU5gHWVV/CH5jW1dnCiu+K6Xr0yb
+         srqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RCWcP8gJB4rirILN0bofC1oYAZg1YWh8X8mwW4mc0QA=;
+        b=lrrDeVT+N6koAlosilee7nXZISu5M3RFqvR4vtk3oQhGAqIlKB09PkZBvPvhzku5MJ
+         oDxUAFtR3u20li00R4eX/gZ9EaUyx/vv0Udd4aLUrzmF0NDy9IwRU16ZBR+2+zgS7oDx
+         CY6wi2NoUGrBwgQ6LiZn1fYI0O4ZHlA3DeO0Xf/minOBgOEA3kot8QtGH5F2GWQFOtfr
+         oPjC7ErGuYvAJiMeLNRrWlXNgYm0ZxEPNbb/0YeBS98PxfU0gBPDf30dnyu52KgFjl14
+         9hjg3BTxL1OM+sUB9gqEjcCUET1wcYwetwfrMvw+r1x0s7UCWaXtfdtDuR9MJTCAxx6n
+         oz7Q==
+X-Gm-Message-State: AJcUukcT6f5wlZzqFUz9zz1C3IaY5qQqdw6z43AA4gsZeE3SWA8+Ty4O
+        0T7dhxE7HoDw+3sSDNUgHpFutw==
+X-Google-Smtp-Source: ALg8bN6Ik59OvwITCdmVBOaTPTDCr29jK8K3XqfhXSwE7i47Srftsuw6fILMBhttrfbAb9QZ1f1rJw==
+X-Received: by 2002:a5d:83c4:: with SMTP id u4mr1025620ior.213.1545209797961;
+        Wed, 19 Dec 2018 00:56:37 -0800 (PST)
+Received: from [192.168.0.130] (60-248-88-209.HINET-IP.hinet.net. [60.248.88.209])
+        by smtp.gmail.com with ESMTPSA id b25sm2938460itd.37.2018.12.19.00.56.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 00:56:37 -0800 (PST)
+Subject: [PATCH 10/12] scsi: arcmsr: Separate 'set dma mask' as a function
+From:   Ching Huang <ching2048@areca.com.tw>
+To:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, hch@infradead.org,
+        colin.king@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 19 Dec 2018 16:56:34 +0800
+Message-ID: <1545209794.4457.44.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From Ching Huang <ching2048@areca.com.tw>
 
-On 29/11/2018 01:50:11+0000, Anson Huang wrote:
-> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
-> inside, the system controller is in charge of controlling power,
-> clock and secure rtc etc..
-> 
-> This patch adds i.MX system controller RTC driver support,
-> Linux kernel has to communicate with system controller via MU
-> (message unit) IPC to set/get RTC time and other alarm functions,
-> since the RTC set time needs to be done in secure EL3 mode (required
-> by system controller firmware) and alarm functions needs to be done
-> with general MU IRQ handle, these depend on other components which
-> are NOT ready, so this patch ONLY enables the RTC time read.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> ChangeLog:
-> V3->V4:
->   *remove unnecessary headfile included;
->   *fix potential memory currpution for the message responce;
->   *update the compatible string name to start with "fsl" instead of "nxp".
->  drivers/rtc/Kconfig      |  6 +++
->  drivers/rtc/Makefile     |  1 +
->  drivers/rtc/rtc-imx-sc.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 105 insertions(+)
->  create mode 100644 drivers/rtc/rtc-imx-sc.c
-> 
+Separate 'set dma mask' as a function
 
-I applied it on my test branch and this makes sparc64-allyesconfig fail
-with:
+Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+---
 
-   drivers/rtc/rtc-imx-sc.o: In function `imx_sc_rtc_read_time':
-   rtc-imx-sc.c:(.text+0x34): undefined reference to `imx_scu_call_rpc'
-   drivers/rtc/rtc-imx-sc.o: In function `imx_sc_rtc_probe':
-   rtc-imx-sc.c:(.text+0x90): undefined reference to `imx_scu_get_handle'
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 45f1374..30dff6c 100755
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -927,6 +927,31 @@ static void arcmsr_init_set_datetime_timer(struct AdapterControlBlock *pacb)
+ 	add_timer(&pacb->refresh_timer);
+ }
+ 
++static int arcmsr_set_dma_mask(struct AdapterControlBlock *acb)
++{
++	struct pci_dev *pcidev = acb->pdev;
++
++	if (IS_DMA64) {
++		if (((acb->adapter_type == ACB_ADAPTER_TYPE_A) && !dma_mask_64) ||
++		    dma_set_mask(&pcidev->dev, DMA_BIT_MASK(64)))
++			goto	dma32;
++		if (dma_set_coherent_mask(&pcidev->dev, DMA_BIT_MASK(64)) ||
++		    dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(64))) {
++			printk("arcmsr: set DMA 64 mask failed\n");
++			return -ENXIO;
++		}
++	} else {
++dma32:
++		if (dma_set_mask(&pcidev->dev, DMA_BIT_MASK(32)) ||
++		    dma_set_coherent_mask(&pcidev->dev, DMA_BIT_MASK(32)) ||
++		    dma_set_mask_and_coherent(&pcidev->dev, DMA_BIT_MASK(32))) {
++			printk("arcmsr: set DMA 32-bit mask failed\n");
++			return -ENXIO;
++		}
++	}
++	return 0;
++}
++
+ static int arcmsr_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
+ 	struct Scsi_Host *host;
+@@ -941,22 +966,15 @@ static int arcmsr_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if(!host){
+     		goto pci_disable_dev;
+ 	}
+-	error = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+-	if(error){
+-		error = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+-		if(error){
+-			printk(KERN_WARNING
+-			       "scsi%d: No suitable DMA mask available\n",
+-			       host->host_no);
+-			goto scsi_host_release;
+-		}
+-	}
+ 	init_waitqueue_head(&wait_q);
+ 	bus = pdev->bus->number;
+ 	dev_fun = pdev->devfn;
+ 	acb = (struct AdapterControlBlock *) host->hostdata;
+ 	memset(acb,0,sizeof(struct AdapterControlBlock));
+ 	acb->pdev = pdev;
++	acb->adapter_type = id->driver_data;
++	if (arcmsr_set_dma_mask(acb))
++		goto scsi_host_release;
+ 	acb->host = host;
+ 	host->max_lun = ARCMSR_MAX_TARGETLUN;
+ 	host->max_id = ARCMSR_MAX_TARGETID;		/*16:8*/
+@@ -986,7 +1004,6 @@ static int arcmsr_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 			ACB_F_MESSAGE_WQBUFFER_READED);
+ 	acb->acb_flags &= ~ACB_F_SCSISTOPADAPTER;
+ 	INIT_LIST_HEAD(&acb->ccb_free_list);
+-	acb->adapter_type = id->driver_data;
+ 	error = arcmsr_remap_pciregion(acb);
+ 	if(!error){
+ 		goto pci_release_regs;
+@@ -1077,7 +1094,6 @@ static int arcmsr_suspend(struct pci_dev *pdev, pm_message_t state)
+ 
+ static int arcmsr_resume(struct pci_dev *pdev)
+ {
+-	int error;
+ 	struct Scsi_Host *host = pci_get_drvdata(pdev);
+ 	struct AdapterControlBlock *acb =
+ 		(struct AdapterControlBlock *)host->hostdata;
+@@ -1089,15 +1105,8 @@ static int arcmsr_resume(struct pci_dev *pdev)
+ 		pr_warn("%s: pci_enable_device error\n", __func__);
+ 		return -ENODEV;
+ 	}
+-	error = dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+-	if (error) {
+-		error = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+-		if (error) {
+-			pr_warn("scsi%d: No suitable DMA mask available\n",
+-			       host->host_no);
+-			goto controller_unregister;
+-		}
+-	}
++	if (arcmsr_set_dma_mask(acb))
++		goto controller_unregister;
+ 	pci_set_master(pdev);
+ 	if (arcmsr_request_irq(pdev, acb) == FAILED)
+ 		goto controller_stop;
 
 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
