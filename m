@@ -2,97 +2,228 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA79C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7D1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D91332184C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AAFF21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 08:03:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VA48sEEY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbeLSIDp convert rfc822-to-8bit (ORCPT
+        id S1728214AbeLSIDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 19 Dec 2018 03:03:49 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38989 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbeLSIDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Dec 2018 03:03:45 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52210 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727102AbeLSIDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 03:03:44 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EA08120A82; Wed, 19 Dec 2018 09:03:41 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9AACF207B8;
-        Wed, 19 Dec 2018 09:03:31 +0100 (CET)
-Date:   Wed, 19 Dec 2018 09:03:31 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 1/4] clk: core: clarify the check for runtime PM
-Message-ID: <20181219090331.4c8c4852@xps13>
-In-Reply-To: <154517780935.238328.764268020422357561@swboyd.mtv.corp.google.com>
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
-        <20181204192440.12125-2-miquel.raynal@bootlin.com>
-        <154517780935.238328.764268020422357561@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Received: by mail-wm1-f68.google.com with SMTP id f81so5307625wmd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 00:03:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2pHK21kTwomFKjfUB7iuUd7NDyceN8MatsIzjJvrAG4=;
+        b=VA48sEEYqCHE9xyxM3rHlE0TZwr30p6++AoF5fC9B7NZrq8MxlnAa0PMMeBWcATegr
+         02tdjJ7eqo/c9NOI+DrYmLgcCqce1aXrzqHqapEHvZchBWtAfmbXb8PBkmc8AOKkWvgX
+         4UQoDtd0ks9j5ymizktqUgHqhN8Vu5SC0Jr5o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2pHK21kTwomFKjfUB7iuUd7NDyceN8MatsIzjJvrAG4=;
+        b=uVGE80xQpCPToAUJsaTuemz7h54U36AY9IASNwpFSdGTwftRTY7auiX4przmMGw5yR
+         NBUh46lvqsr/a3jH2Urm7pkvxh8P9+XkYCFaxSxk+NAiJ3MriiCT95F2irLXErjK99dz
+         33+557PU+uo9YjHxvrHoPVubaNj1HTStWmrBZIjXTyVw8mfvV6WObYXI7XA9nG28cTvy
+         wnHZ/B7KpfEmgezq9MxrQQn8P82f9153xigzVAZEgkFz2GoUEsUKqiRjn+fqEirVvSCd
+         kPKwAfQDZgL1/I4JohQrAgCX5UefM/gouieDzY5XKC8MdUDnE94iGvtQNsmspzUU5BhN
+         qQ5g==
+X-Gm-Message-State: AA+aEWbbxjwsMeuXFRvgOjGz9k+FX0Atz9DLMBcxjAFxpeMBoNQNFvCW
+        VGc41Rw6gnl128gq8+RSYU7W8g==
+X-Google-Smtp-Source: AFSGD/WeL8sisIGA6dnyVKXVFQL0Iswgbmbc7JtrkjaVb/t4aHjKi1/lR6tdHXAUKJ5tC7Um9Pw3Ug==
+X-Received: by 2002:a7b:c04e:: with SMTP id u14mr6238624wmc.113.1545206623152;
+        Wed, 19 Dec 2018 00:03:43 -0800 (PST)
+Received: from dell ([95.149.164.119])
+        by smtp.gmail.com with ESMTPSA id l19sm4813923wme.21.2018.12.19.00.03.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 00:03:42 -0800 (PST)
+Date:   Wed, 19 Dec 2018 08:03:40 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc:     linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Cory Maccarrone <darkstar6262@gmail.com>,
+        Davide Ciminaghi <ciminaghi@gnudd.com>,
+        Dong Aisheng <dong.aisheng@linaro.org>,
+        Graeme Gregory <gg@slimlogic.co.uk>,
+        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+        Haojian Zhuang <haojian.zhuang@marvell.com>,
+        Jin Park <jinyoungp@nvidia.com>,
+        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@opensource.wolfsonmicro.com>,
+        Mattias Nilsson <mattias.i.nilsson@stericsson.com>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Venu Byravarasu <vbyravarasu@nvidia.com>,
+        linux-omap@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH v4 00/18] mfd: demodularization of non-modular drivers
+Message-ID: <20181219080340.GL4497@dell>
+References: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1545078688-21217-1-git-send-email-paul.gortmaker@windriver.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+To all recipients (therefore, not a top post ;D ),
 
-Stephen Boyd <sboyd@kernel.org> wrote on Tue, 18 Dec 2018 16:03:29
--0800:
+So far, so good.  Please keep the reviews coming.
 
-> Quoting Miquel Raynal (2018-12-04 11:24:37)
-> > Currently, the core->dev entry is populated only if runtime PM is
-> > enabled. Doing so prevents accessing the device structure in any
-> > case.
-> > 
-> > Keep the same logic but instead of using the presence of core->dev as
-> > the only condition, also check the status of
-> > pm_runtime_enabled(). Then, we can set the core->dev pointer at any
-> > time as long as a device structure is available.
-> > 
-> > This change will help supporting device links in the clock subsystem.
-> > 
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---
-> >  drivers/clk/clk.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index af011974d4ec..b799347c5fd6 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -97,7 +97,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
-> >  {
-> >         int ret = 0;
-> >  
-> > -       if (!core->dev)
-> > +       if (!core->dev || !pm_runtime_enabled(core->dev))  
+On Mon, 17 Dec 2018, Paul Gortmaker wrote:
+
+> [v3 --> v4: delete now unused exit fcn from wm835x core; add more acks
+>  now all in chrono order, re-test.]
 > 
-> This looks potentially dangerous. What if runtime PM is disabled for the
-> clk when this function is called? Shouldn't we just stash a bool away in
-> the clk_core structure when it's registered? And then we can replace the
-> check for !core->dev with a check for 'core->rpm_enabled' instead. That
-> would be a more exact transformation.
+> [v2 --> v3: drop diasemi commits as they will be modularized; delete
+>  now unused exit fcn from wm831x core; add more acks; re-test.]
+> 
+> [v1 --> v2: add some more commits as requested by Lee (MFD maintainer),
+>  update the 00/NN text; re-do build and link testing on new linux-next. ]
+> 
+> This group of MFD drivers are all controlled by "bool" Kconfig settings,
+> but contain various amounts of largely pointless uses of infrastructure
+> related to modular operations, even though they can't be built modular.
+> 
+> We can easily remove/replace all of it.  We are trying to make driver
+> code consistent with the Makefiles/Kconfigs that control them.  This
+> means not using modular functions/macros for drivers that can never be
+> built as a module.  Some of the downfalls this oversight leads to are:
+> 
+>  (1) it is easy to accidentally write unused module_exit and remove code
+>  (2) it can be misleading when reading the source, thinking it can be
+>      modular when the Makefile and/or Kconfig prohibit it
+>  (3) it requires the include of the module.h header file which in turn
+>      includes nearly everything else, thus adding a lot of CPP overhead.
+>  (4) it gets copied/replicated into other drivers and spreads quickly.
+> 
+> What we see in current drivers falls into one or more of the following
+> categories:
+> 
+> 1) include of <linux/module.h> when it simply isn't needed
+> 
+> 2) Use of MODULE_LICENSE, MODULE_DEVICE_TABLE,  MODULE_AUTHOR etc. 
+>    macros that are no-ops for non-modular drivers.
+> 
+> 3) Creation of a module_exit() function that will be compiled and
+>    linked in but never actually called for non-modular drivers.
+> 
+> 4) Addition of a platform_driver ".remove" function that is bound
+>    into the struct but will never be called for non-module use cases.
+> 
+> Solution to #1 --> #3 is simple ; we just delete the related code.
+> 
+> The solution to #4 is similar - we delete the ".remove" function and
+> the binding into the platform_driver struct.  However, since the same
+> ".remove" function could also be triggered by an "unbind" (such as for
+> pass-through of a device to a guest instance)  - so we also explicitly
+> disable any unbind for the driver.
+> 
+> The unbind mask allows us to ensure we will see if there was some odd
+> corner case out there that was relying on it.  Typically it would be a
+> multi-port ethernet card passing a port through to a guest, so a
+> sensible use case in MFD drivers seems highly unlikely.  This same
+> solution has already been used in multiple other mainline subsystems.
+> 
+> Build testing was done on drivers/mfd for allyesconfig on x86_64, ARM
+> and ARM-64 on a recent linux-next checkout.
+> 
+> Paul.
+> 
+> ---
+> 
+> Cc: Alessandro Rubini <rubini@gnudd.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: Cory Maccarrone <darkstar6262@gmail.com>
+> Cc: Davide Ciminaghi <ciminaghi@gnudd.com>
+> Cc: Dong Aisheng <dong.aisheng@linaro.org>
+> Cc: Graeme Gregory <gg@slimlogic.co.uk>
+> Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+> Cc: Jin Park <jinyoungp@nvidia.com>
+> Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Cc: Mattias Nilsson <mattias.i.nilsson@stericsson.com>
+> Cc: Michael Hennerich <michael.hennerich@analog.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Venu Byravarasu <vbyravarasu@nvidia.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: patches@opensource.cirrus.com
+> 
+> 
+> Paul Gortmaker (18):
+>   mfd: aat2870-core: Make it explicitly non-modular
+>   mfd: adp5520: Make it explicitly non-modular
+>   mfd: as3711: Make it explicitly non-modular
+>   mfd: db8500-prcmu: drop unused MODULE_ tags from non-modular code
+>   mfd: htc-i2cpld: Make it explicitly non-modular
+>   mfd: max8925-core: drop unused MODULE_ tags from non-modular code
+>   mfd: rc5t583: Make it explicitly non-modular
+>   mfd: sta2x11: drop unused MODULE_ tags from non-modular code
+>   mfd: syscon: Make it explicitly non-modular
+>   mfd: tps65090: Make it explicitly non-modular
+>   mfd: tps65910: Make it explicitly non-modular
+>   mfd: tps80031: Make it explicitly non-modular
+>   mfd: wm831x-spi: Make it explicitly non-modular
+>   mfd: wm831x-i2c: Make it explicitly non-modular
+>   mfd: wm831x-core: drop unused module infrastructure from non-modular code
+>   mfd: wm8350-i2c: Make it explicitly non-modular
+>   mfd: wm8350-core: drop unused module infrastructure from non-modular code
+>   mfd: wm8400-core: Make it explicitly non-modular
+> 
+>  drivers/mfd/aat2870-core.c      | 40 +++-------------------------------------
+>  drivers/mfd/adp5520.c           | 30 +++++++-----------------------
+>  drivers/mfd/as3711.c            | 14 --------------
+>  drivers/mfd/db8500-prcmu.c      | 10 ++++------
+>  drivers/mfd/htc-i2cpld.c        | 18 +-----------------
+>  drivers/mfd/max8925-core.c      |  7 +------
+>  drivers/mfd/rc5t583.c           | 14 --------------
+>  drivers/mfd/sta2x11-mfd.c       | 10 ++++------
+>  drivers/mfd/syscon.c            | 12 +-----------
+>  drivers/mfd/tps65090.c          | 30 +++++-------------------------
+>  drivers/mfd/tps65910.c          | 18 +-----------------
+>  drivers/mfd/tps80031.c          | 37 ++-----------------------------------
+>  drivers/mfd/wm831x-core.c       | 15 ++-------------
+>  drivers/mfd/wm831x-i2c.c        | 20 ++------------------
+>  drivers/mfd/wm831x-spi.c        | 24 ++----------------------
+>  drivers/mfd/wm8350-core.c       | 30 ++----------------------------
+>  drivers/mfd/wm8350-i2c.c        | 24 +-----------------------
+>  drivers/mfd/wm8400-core.c       | 18 +++---------------
+>  include/linux/mfd/wm831x/core.h |  1 -
+>  include/linux/mfd/wm8350/core.h |  1 -
+>  20 files changed, 41 insertions(+), 332 deletions(-)
+> 
 
-Sure, I'll do that if you think there is a danger.
-
-
-Thanks,
-Miquèl
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
