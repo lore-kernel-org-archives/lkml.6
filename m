@@ -2,344 +2,221 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE4AC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 097A8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376E3217D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:51:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DHjXmfM1"
+	by mail.kernel.org (Postfix) with ESMTP id CB89721479
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 12:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbeLSMvi (ORCPT
+        id S1728407AbeLSMxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 07:51:38 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56440 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbeLSMvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 07:51:38 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBJCgdeJ098490;
-        Wed, 19 Dec 2018 06:42:39 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1545223359;
-        bh=mbbb79Ac8cqndqKQy/QFEfwpSj42VwCaCqlC/i9Zp2c=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=DHjXmfM1Gctgvkg4S6lQC/uvJ9hHs2jAOBnAMEuyXSUHxQCEGztVY1WBSFqdeKXuj
-         hbidjtzBuVSc6j8jfkRN9NdQcT7MxzFCALRBTk1F0cANRsl1BdHnf2zq0ZA7NYkfmA
-         sRGwTftne+lzgFpJof4kNKakjfRBwNLgS2e/V5UI=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBJCgd5u062324
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 19 Dec 2018 06:42:39 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 19
- Dec 2018 06:42:39 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 19 Dec 2018 06:42:39 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBJCgNZn003940;
-        Wed, 19 Dec 2018 06:42:36 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Murali Karicheri <m-karicheri2@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kishon@ti.com>
-Subject: [PATCH 04/10] PCI: keystone: Add separate functions for configuring MSI and legacy interrupt
-Date:   Wed, 19 Dec 2018 18:12:01 +0530
-Message-ID: <20181219124207.13479-5-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181219124207.13479-1-kishon@ti.com>
-References: <20181219124207.13479-1-kishon@ti.com>
+        Wed, 19 Dec 2018 07:53:00 -0500
+Received: from foss.arm.com ([217.140.101.70]:34772 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726833AbeLSMxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 07:53:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D18F7A78;
+        Wed, 19 Dec 2018 04:52:59 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 47CD73F5C0;
+        Wed, 19 Dec 2018 04:52:55 -0800 (PST)
+Date:   Wed, 19 Dec 2018 12:52:52 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Evgenii Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
+Message-ID: <20181219125249.GB22067@e103592.cambridge.arm.com>
+References: <cover.1544445454.git.andreyknvl@google.com>
+ <20181210143044.12714-1-vincenzo.frascino@arm.com>
+ <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
+ <20181212150230.GH65138@arrakis.emea.arm.com>
+ <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
+ <20181218175938.GD20197@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218175938.GD20197@arrakis.emea.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ks_pcie_get_irq_controller_info() was used to configure both MSI and
-legacy interrupt. This will prevent MSI or legacy interrupt specific
-intializations. Add separate functions to configure MSI and legacy
-interrupts.
+On Tue, Dec 18, 2018 at 05:59:38PM +0000, Catalin Marinas wrote:
+> On Tue, Dec 18, 2018 at 04:03:38PM +0100, Andrey Konovalov wrote:
+> > On Wed, Dec 12, 2018 at 4:02 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > The summary of our internal discussions (mostly between kernel
+> > > developers) is that we can't properly describe a user ABI that covers
+> > > future syscalls or syscall extensions while not all syscalls accept
+> > > tagged pointers. So we tweaked the requirements slightly to only allow
+> > > tagged pointers back into the kernel *if* the originating address is
+> > > from an anonymous mmap() or below sbrk(0). This should cover some of the
+> > > ioctls or getsockopt(TCP_ZEROCOPY_RECEIVE) where the user passes a
+> > > pointer to a buffer obtained via mmap() on the device operations.
+> > >
+> > > (sorry for not being clear on what Vincenzo's proposal implies)
+> > 
+> > OK, I see. So I need to make the following changes to my patchset AFAIU.
+> > 
+> > 1. Make sure that we only allow tagged user addresses that originate
+> > from an anonymous mmap() or below sbrk(0). How exactly should this
+> > check be performed?
+> 
+> I don't think we should perform such checks. That's rather stating that
+> the kernel only guarantees that the tagged pointers work if they
+> originated from these memory ranges.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/controller/dwc/pci-keystone.c | 188 +++++++++++-----------
- 1 file changed, 96 insertions(+), 92 deletions(-)
+I concur.
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index e9f5387136f0..a8712804c891 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -87,11 +87,8 @@ struct keystone_pcie {
- 	struct dw_pcie		*pci;
- 	/* PCI Device ID */
- 	u32			device_id;
--	int			num_legacy_host_irqs;
--	int			legacy_host_irqs[PCI_NUM_INTX];
- 	struct			device_node *legacy_intc_np;
- 
--	int			num_msi_host_irqs;
- 	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
- 	int			num_lanes;
- 	u32			num_viewport;
-@@ -201,14 +198,6 @@ static int ks_pcie_msi_host_init(struct pcie_port *pp)
- 	return dw_pcie_allocate_domains(pp);
- }
- 
--static void ks_pcie_enable_legacy_irqs(struct keystone_pcie *ks_pcie)
--{
--	int i;
--
--	for (i = 0; i < PCI_NUM_INTX; i++)
--		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), 0x1);
--}
--
- static void ks_pcie_handle_legacy_irq(struct keystone_pcie *ks_pcie,
- 				      int offset)
- {
-@@ -470,17 +459,6 @@ static int __init ks_pcie_dw_host_init(struct keystone_pcie *ks_pcie)
- 
- 	ks_pcie->app = *res;
- 
--	/* Create legacy IRQ domain */
--	ks_pcie->legacy_irq_domain =
--			irq_domain_add_linear(ks_pcie->legacy_intc_np,
--					      PCI_NUM_INTX,
--					      &ks_pcie_legacy_irq_domain_ops,
--					      NULL);
--	if (!ks_pcie->legacy_irq_domain) {
--		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
--		return -EINVAL;
--	}
--
- 	return dw_pcie_host_init(pp);
- }
- 
-@@ -604,85 +582,117 @@ static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--static int ks_pcie_get_irq_controller_info(struct keystone_pcie *ks_pcie,
--					   char *controller, int *num_irqs)
-+static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
- {
--	int temp, max_host_irqs, legacy = 1, *host_irqs;
- 	struct device *dev = ks_pcie->pci->dev;
--	struct device_node *np_pcie = dev->of_node, **np_temp;
--
--	if (!strcmp(controller, "msi-interrupt-controller"))
--		legacy = 0;
--
--	if (legacy) {
--		np_temp = &ks_pcie->legacy_intc_np;
--		max_host_irqs = PCI_NUM_INTX;
--		host_irqs = &ks_pcie->legacy_host_irqs[0];
--	} else {
--		np_temp = &ks_pcie->msi_intc_np;
--		max_host_irqs = MAX_MSI_HOST_IRQS;
--		host_irqs =  &ks_pcie->msi_host_irqs[0];
--	}
-+	struct device_node *np = ks_pcie->np;
-+	struct device_node *intc_np;
-+	int irq_count;
-+	int irq;
-+	int ret;
-+	int i;
- 
--	/* interrupt controller is in a child node */
--	*np_temp = of_get_child_by_name(np_pcie, controller);
--	if (!(*np_temp)) {
--		dev_err(dev, "Node for %s is absent\n", controller);
--		return -EINVAL;
--	}
-+	if (!IS_ENABLED(CONFIG_PCI_MSI))
-+		return 0;
- 
--	temp = of_irq_count(*np_temp);
--	if (!temp) {
--		dev_err(dev, "No IRQ entries in %s\n", controller);
--		of_node_put(*np_temp);
-+	intc_np = of_get_child_by_name(np, "msi-interrupt-controller");
-+	if (!intc_np) {
-+		dev_WARN(dev, "msi-interrupt-controller node is absent\n");
- 		return -EINVAL;
- 	}
- 
--	if (temp > max_host_irqs)
--		dev_warn(dev, "Too many %s interrupts defined %u\n",
--			(legacy ? "legacy" : "MSI"), temp);
-+	irq_count = of_irq_count(intc_np);
-+	if (!irq_count) {
-+		dev_err(dev, "No IRQ entries in msi-interrupt-controller\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
- 
--	/*
--	 * support upto max_host_irqs. In dt from index 0 to 3 (legacy) or 0 to
--	 * 7 (MSI)
--	 */
--	for (temp = 0; temp < max_host_irqs; temp++) {
--		host_irqs[temp] = irq_of_parse_and_map(*np_temp, temp);
--		if (!host_irqs[temp])
--			break;
-+	if (irq_count > MAX_MSI_HOST_IRQS) {
-+		dev_warn(dev, "Too many MSI interrupt lines defined %u\n",
-+			 irq_count);
-+		irq_count = MAX_MSI_HOST_IRQS;
- 	}
- 
--	of_node_put(*np_temp);
-+	for (i = 0; i < irq_count; i++) {
-+		irq = irq_of_parse_and_map(intc_np, i);
-+		if (!irq) {
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+		ks_pcie->msi_host_irqs[i] = irq;
- 
--	if (temp) {
--		*num_irqs = temp;
--		return 0;
-+		irq_set_chained_handler_and_data(irq, ks_pcie_msi_irq_handler,
-+						 ks_pcie);
- 	}
- 
--	return -EINVAL;
-+	of_node_put(intc_np);
-+	return 0;
-+
-+err:
-+	of_node_put(intc_np);
-+	return ret;
- }
- 
--static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
-+static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
- {
-+	struct device *dev = ks_pcie->pci->dev;
-+	struct irq_domain *legacy_irq_domain;
-+	struct device_node *np = ks_pcie->np;
-+	struct device_node *intc_np;
-+	int irq_count;
-+	int irq;
-+	int ret;
- 	int i;
- 
--	/* Legacy IRQ */
--	for (i = 0; i < ks_pcie->num_legacy_host_irqs; i++) {
--		irq_set_chained_handler_and_data(ks_pcie->legacy_host_irqs[i],
-+	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
-+	if (!intc_np) {
-+		dev_WARN(dev, "legacy-interrupt-controller node is absent\n");
-+		return -EINVAL;
-+	}
-+
-+	irq_count = of_irq_count(intc_np);
-+	if (!irq_count) {
-+		dev_err(dev, "No IRQ entries in legacy-interrupt-controller\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	for (i = 0; i < irq_count; i++) {
-+		irq = irq_of_parse_and_map(intc_np, i);
-+		if (!irq) {
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+		irq_set_chained_handler_and_data(irq,
- 						 ks_pcie_legacy_irq_handler,
- 						 ks_pcie);
- 	}
--	ks_pcie_enable_legacy_irqs(ks_pcie);
--
--	/* MSI IRQ */
--	if (IS_ENABLED(CONFIG_PCI_MSI)) {
--		for (i = 0; i < ks_pcie->num_msi_host_irqs; i++) {
--			irq_set_chained_handler_and_data(ks_pcie->msi_host_irqs[i],
--							 ks_pcie_msi_irq_handler,
--							 ks_pcie);
--		}
-+
-+	legacy_irq_domain =
-+		irq_domain_add_linear(intc_np, PCI_NUM_INTX,
-+				      &ks_pcie_legacy_irq_domain_ops, NULL);
-+	if (!legacy_irq_domain) {
-+		dev_err(dev, "Failed to add irq domain for legacy irqs\n");
-+		ret = -EINVAL;
-+		goto err;
- 	}
-+	ks_pcie->legacy_irq_domain = legacy_irq_domain;
-+
-+	for (i = 0; i < PCI_NUM_INTX; i++)
-+		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), INTx_EN);
-+
-+	of_node_put(intc_np);
-+
-+	return 0;
-+
-+err:
-+	of_node_put(intc_np);
-+	return ret;
-+}
- 
-+static void ks_pcie_setup_interrupts(struct keystone_pcie *ks_pcie)
-+{
- 	if (ks_pcie->error_irq > 0)
- 		ks_pcie_enable_error_irq(ks_pcie);
- }
-@@ -736,6 +746,14 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
- 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
- 	int ret;
- 
-+	ret = ks_pcie_config_legacy_irq(ks_pcie);
-+	if (ret)
-+		return ret;
-+
-+	ret = ks_pcie_config_msi_irq(ks_pcie);
-+	if (ret)
-+		return ret;
-+
- 	dw_pcie_setup_rc(pp);
- 
- 	ks_pcie_establish_link(ks_pcie);
-@@ -785,20 +803,6 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
- 	struct device *dev = &pdev->dev;
- 	int ret;
- 
--	ret = ks_pcie_get_irq_controller_info(ks_pcie,
--					"legacy-interrupt-controller",
--					&ks_pcie->num_legacy_host_irqs);
--	if (ret)
--		return ret;
--
--	if (IS_ENABLED(CONFIG_PCI_MSI)) {
--		ret = ks_pcie_get_irq_controller_info(ks_pcie,
--						"msi-interrupt-controller",
--						&ks_pcie->num_msi_host_irqs);
--		if (ret)
--			return ret;
--	}
--
- 	/*
- 	 * Index 0 is the platform interrupt for error interrupt
- 	 * from RC.  This is optional.
--- 
-2.17.1
+Really, the kernel should do the expected thing with all "non-weird"
+memory.
 
+In lieu of a proper definition of "non-weird", I think we should have
+some lists of things that are explicitly included, and also excluded:
+
+OK:
+	kernel-allocated process stack
+	brk area
+	MAP_ANONYMOUS | MAP_PRIVATE
+	MAP_PRIVATE mappings of /dev/zero
+
+Not OK:
+	MAP_SHARED
+	mmaps of non-memory-like devices
+	mmaps of anything that is not a regular file
+	the VDSO
+	...
+
+In general, userspace can tag memory that it "owns", and we do not assume
+a transfer of ownership except in the "OK" list above.  Otherwise, it's
+the kernel's memory, or the owner is simply not well defined.
+
+
+I would also like to see advice for userspace developers, particularly
+things like (strawman, please challenge!):
+
+ * Userspace should set tags at the point of allocation only.
+
+ * If you don't know how an object was allocated, you cannot modify the
+   tag, period.
+
+ * A single C object should be accessed using a single, fixed pointer tag
+   throughout its entire lifetime.
+
+ * Tags can be changed only when there are no outstanding pointers to
+   the affected object or region that may be used to access the object
+   or region (i.e., if the object were allocated from the C heap and
+   is it safe to realloc() it, then it is safe to change the tag; for
+   other types of allocation, analogous arguments can be applied).
+
+ * When the kernel dereferences a pointer on userspace's behalf, it
+   shall behave equivalently to userspace dereferencing the same pointer,
+   including use of the same tag (where passed by userspace).
+
+ * Where the pointer tag affects pointer dereference behaviour (i.e.,
+   with hardware memory colouring) the kernel makes no guarantee to
+   honour pointer tags correctly for every location a buffer based on a
+   pointer passed by userspace to the kernel.
+
+   (This means for example that for a read(fd, buf, size), we can check
+   the tag for a single arbitrary location in *(char (*)[size])buf
+   before passing the buffer to get_user_pages().  Hopefully this could
+   be done in get_user_pages() itself rather than hunting call sites.
+   For userspace, it means that you're on your own if you ask the
+   kernel to operate on a buffer than spans multiple, independently-
+   allocated objects, or a deliberately striped single object.)
+
+ * The kernel shall not extend the lifetime of user pointers in ways
+   that are not clear from the specification of the syscall or
+   interface to which the pointer is passed (and in any case shall not
+   extend pointer lifetimes without good reason).
+
+   So no clever transparent caching between syscalls, unless it _really_
+   is transparent in the presence of tags.
+
+ * For purposes other than dereference, the kernel shall accept any
+   legitimately tagged pointer (according to the above rules) as
+   identifying the associated memory location.
+
+   So, mprotect(some_page_aligned_object, ...); is valid irrespective
+   of where page_aligned_object() came from.  There is no implicit
+   derefence by the kernel here, hence no tag check.
+
+   The kernel does not guarantee to work correctly if the wrong tag
+   is used, but there is not always a well-defined "right" tag, so
+   we can't really guarantee to check it.  So a pointer derived by
+   any reasonable means by userspace has to be treated as equally
+   valid.
+  
+
+We would need to get some cross-arch buy-in for this, otherwise core
+maintainers might just refuse to maintain the necessary guarantees.
+
+
+> > 2. Allow tagged addressed passed to memory syscalls (as long as (1) is
+> > satisfied). Do I understand correctly that this means that I need to
+> > locate all find_vma() callers outside of mm/ and fix them up as well?
+> 
+> Yes (unless anyone as a better idea or objections to this approach).
+
+Also, watch out for code that pokes about inside struct vma directly.
+
+I'm wondering, could we define an explicit type, say,
+
+	struct user_vaddr {
+		unsigned long addr;
+	};
+
+to replace the unsigned longs in struct vma the mm API?  This would
+turn ad-hoc (unsigned long) casts into build breaks.  We could have
+an explicit conversion functions, say,
+
+	struct user_vaddr __user_vaddr_unsafe(void __user *);
+	void __user *__user_ptr_unsafe(struct user_vaddr);
+
+that we robotically insert in all the relevant places to mark
+unaudited code.
+
+This allows us to keep the kernel buildable, while flagging things
+that will need review.  We would also need to warn the mm folks to
+reject any new code using these unsafe conversions.
+
+Of course, it would be a non-trivial effort...
+
+> 
+> BTW, I'll be off until the new year, so won't be able to follow up.
+
+Cheers
+---Dave
