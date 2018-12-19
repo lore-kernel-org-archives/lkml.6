@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FFCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E4FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBECF2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7716B20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 21:35:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOnaqwp5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbfUXW85"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730847AbeLSVfJ (ORCPT
+        id S1730848AbeLSVfQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 16:35:09 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37815 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730530AbeLSVeO (ORCPT
+        Wed, 19 Dec 2018 16:35:16 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33752 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbeLSVeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 16:34:14 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t18-v6so6690698ljd.4;
-        Wed, 19 Dec 2018 13:34:12 -0800 (PST)
+        Wed, 19 Dec 2018 16:34:13 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i26so16167442lfc.0;
+        Wed, 19 Dec 2018 13:34:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=yHB4k0lvmhU4nXv0IUtjgNRdUGapAYzZQcu+eQuvDdA=;
-        b=kOnaqwp5GBEPCU0a21wgkz/EG5Ts/3mLyDdMp2Mo/NK9HQoGQ8NjvOhrJz+z5RPlwM
-         T3QOLqQzntFpKjHk3dHoLVRsqc2EWGa9YtNeI4cU0zgXLyzfHZhUK8yaDT2ruKWD1LRU
-         KMRBn6v5H2PL0wB2hxA1fqq2DmdHU4ical+SkVHpj5UTMBZHMB+zEleQP1z8EanXyix0
-         qlv3x63u3GHJt7IKyNKSmuEGyqRdc8eUtV5+ala5HgnVpVM03uQ1OaKjeCJE8KK6dFJ/
-         oXN2McI5XOKo5TOxG5hc0y2/hAi9i+p/IVDfegOJ2LWqyEzTTUFoZ96howTd3QfExt8H
-         aVPw==
+        bh=a4GARTJCVW7jLG2/Ght7MRyZWVbd6ovvI1Dj2egfwMc=;
+        b=dbfUXW85OwLBh0AWXRb7Rg53FgFGDptikU6zcwkC+hhGhlsvpnutIHcDEd/wtdlKpa
+         gX4MH/CHsn+jl14fjNwSWhH36kcHsblgTScMVGeqR/Lgo1ExI/W0l9l7t+8qgqxb6Lxs
+         9uLAWe2buKqBOxAkBxX5nLxALwdD06Yl594SWveM3vgTFfO4gUope5PRrGDknnG9XqeE
+         Kmdl/DM/nI/lCQDdMxff3p8gPyWkDpLeVtUYmL0tQyKe0KoyjpvtXCaiaDXkpq7YlZ+9
+         MRYHuQ5JpqIQdly6QAUrhwsalzo9T7OqVtc0VOq3rEevctvQTMJtK4wivWhqFOt0qfqd
+         UJvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=yHB4k0lvmhU4nXv0IUtjgNRdUGapAYzZQcu+eQuvDdA=;
-        b=CbGyTZGlE+3SAxijxbozt1+5tSVHU83xCdhhRZ7BpA+V8iGduyS6SFwzOvDLxGy/82
-         cJs7/kKeDec19K8FrCrVE1ZewTwAix+2MHIJWAIO3i8IefrAK3Qk6hzcqcpq1sIcPYb3
-         vdvCYIu1Q9JP+yes6/xFd01GZYTeq2dNCA8B2pmKquvanFoYOIexh0GFZCkWcCqPYvwc
-         LJgJNQAfjXs9eyu9NK7eTBRkKW0A8fVwdoGTVidU5etTObIFlavyGVmDGRiL4bWglw8H
-         u0vRh0c8AeRWhRxpx2CYO1FcZ/zM6RBf4u1FX9QfufgtNrA7gH0qFydvf5IMRcjK1FUc
-         0HeA==
-X-Gm-Message-State: AA+aEWYFMSSgPq2AmfDkegguSfL2DSpGkT2b3Kayb+QxA7Wwrg4axps0
-        6F8zsk1u0G4mgBlKzXr0e0Q=
-X-Google-Smtp-Source: AFSGD/Uo61rA/JVaTfVFoo4LkxPpQtbW+kf75l1G+fg6IG3iNHxg6ZllSWLW1R02pnii+GSEQCqSOA==
-X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr13490729ljw.75.1545255251599;
-        Wed, 19 Dec 2018 13:34:11 -0800 (PST)
+        bh=a4GARTJCVW7jLG2/Ght7MRyZWVbd6ovvI1Dj2egfwMc=;
+        b=H7MkyrbgSZsKACo1K39iCapTkey1skIstdY7Vz4PUaZJUp7ByxDFagvYL7zXNmY1J/
+         SzYpHJwJzJS5+o6T/7aHF6NiJrT0cInEjd/BLfVKfqcEOvHofxxCTitCJCzwIByu7m+Z
+         X9jNlfu+ijfPq3ZUkoAOtuw4P7iIF7JePeOrjXXLt4yBBnYBWpsyTPtBMG7tGzw1gGvj
+         I8WavoUuK0KEGWZM5BDK0MGQwUkpl1NQDJWMq2PJJO1Mo4FlMOmJqSvlxq0PwBwdB+ib
+         jfM1Ah/VR30Mk0MVY5QwfdEL8kD7iFLQ/0I4uHSdD6vXgVgkOqOB0C4+jMCyUdtSatEA
+         gssw==
+X-Gm-Message-State: AA+aEWZIpa+4ajc/ROgK+7B5Cjgyw0WBjly0h8hp6AVeoUhEL03jDr5V
+        wJ0OWGMwtsjEr0j02yAee1w=
+X-Google-Smtp-Source: AFSGD/VZbcj5I0PidtfgNZ3Lh1artAeHuFU5euFIwEOUPsXo/4L+9qvccqJSpUN7B7uqhIGBhtnvLA==
+X-Received: by 2002:a19:cc46:: with SMTP id c67mr13252319lfg.145.1545255249984;
+        Wed, 19 Dec 2018 13:34:09 -0800 (PST)
 Received: from localhost.localdomain (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
-        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.10
+        by smtp.gmail.com with ESMTPSA id v64sm3996867lfa.48.2018.12.19.13.34.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 13:34:11 -0800 (PST)
+        Wed, 19 Dec 2018 13:34:09 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Andy Lutomirski <luto@amacapital.net>,
@@ -69,9 +69,9 @@ Cc:     igor.stoppa@huawei.com, Nadav Amit <nadav.amit@gmail.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 04/12] __wr_after_init: x86_64: __wr_op
-Date:   Wed, 19 Dec 2018 23:33:30 +0200
-Message-Id: <20181219213338.26619-5-igor.stoppa@huawei.com>
+Subject: [PATCH 03/12] __wr_after_init: generic header
+Date:   Wed, 19 Dec 2018 23:33:29 +0200
+Message-Id: <20181219213338.26619-4-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181219213338.26619-1-igor.stoppa@huawei.com>
 References: <20181219213338.26619-1-igor.stoppa@huawei.com>
@@ -83,22 +83,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Architecture-specific implementation of the core write rare
-operation.
+The header provides:
+- the generic part of the write rare functionality for static data
+- the dummy functionality, in case an arch doesn't support write rare or
+  the functionality is disabled
 
-The implementation is based on code from Andy Lutomirski and Nadav Amit
-for patching the text on x86 [here goes reference to commits, once merged]
-
-The modification of write protected data is done through an alternate
-mapping of the same pages, as writable.
-This mapping is persistent, but active only for a core that is
-performing a write rare operation. And only for the duration of said
-operation.
-Local interrupts are disabled, while the alternate mapping is active.
-
-In theory, it could introduce a non-predictable delay, in a preemptible
-system, however the amount of data to be altered is likely to be far
-smaller than a page.
+The basic functions are:
+- wr_memset(): write rare counterpart of memset()
+- wr_memcpy(): write rare counterpart of memcpy()
+- wr_assign(): write rare counterpart of the assignment ('=') operator
+- wr_rcu_assign_pointer(): write rare counterpart of rcu_assign_pointer()
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -114,160 +108,158 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- arch/x86/Kconfig     |   1 +
- arch/x86/mm/Makefile |   2 +
- arch/x86/mm/prmem.c  | 120 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 123 insertions(+)
- create mode 100644 arch/x86/mm/prmem.c
+ include/linux/prmem.h | 142 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 142 insertions(+)
+ create mode 100644 include/linux/prmem.h
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8689e794a43c..e5e4fc4fa5c2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -32,6 +32,7 @@ config X86_64
- 	select SWIOTLB
- 	select X86_DEV_DMA_OPS
- 	select ARCH_HAS_SYSCALL_WRAPPER
-+	select ARCH_HAS_PRMEM
- 
- #
- # Arch settings
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 4b101dd6e52f..66652de1e2c7 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_PRMEM)		+= prmem.o
-diff --git a/arch/x86/mm/prmem.c b/arch/x86/mm/prmem.c
+diff --git a/include/linux/prmem.h b/include/linux/prmem.h
 new file mode 100644
-index 000000000000..fc367551e736
+index 000000000000..7b8f3a054d97
 --- /dev/null
-+++ b/arch/x86/mm/prmem.c
-@@ -0,0 +1,120 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/include/linux/prmem.h
+@@ -0,0 +1,142 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * prmem.c: Memory Protection Library
++ * prmem.h: Header for memory protection library
 + *
-+ * (C) Copyright 2017-2018 Huawei Technologies Co. Ltd.
++ * (C) Copyright 2018 Huawei Technologies Co. Ltd.
 + * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ *
++ * Support for:
++ * - statically allocated write rare data
 + */
 +
-+#include <linux/mm.h>
-+#include <linux/string.h>
-+#include <linux/compiler.h>
-+#include <linux/slab.h>
-+#include <linux/mmu_context.h>
-+#include <linux/rcupdate.h>
-+#include <linux/prmem.h>
++#ifndef _LINUX_PRMEM_H
++#define _LINUX_PRMEM_H
 +
-+static __ro_after_init bool wr_ready;
-+static __ro_after_init struct mm_struct *wr_poking_mm;
-+static __ro_after_init unsigned long wr_poking_base;
++#include <linux/set_memory.h>
++#include <linux/mm.h>
++#include <linux/vmalloc.h>
++#include <linux/string.h>
++#include <linux/slab.h>
++#include <linux/mutex.h>
++#include <linux/compiler.h>
++#include <linux/irqflags.h>
++
++/**
++ * memtst() - test n bytes of the source to match the c value
++ * @p: beginning of the memory to test
++ * @c: byte to compare against
++ * @len: amount of bytes to test
++ *
++ * Returns 0 on success, non-zero otherwise.
++ */
++static inline int memtst(void *p, int c, __kernel_size_t len)
++{
++	__kernel_size_t i;
++
++	for (i = 0; i < len; i++) {
++		u8 d =  *(i + (u8 *)p) - (u8)c;
++
++		if (unlikely(d))
++			return d;
++	}
++	return 0;
++}
++
++
++#ifndef CONFIG_PRMEM
++
++static inline void *wr_memset(void *p, int c, __kernel_size_t len)
++{
++	return memset(p, c, len);
++}
++
++static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
++{
++	return memcpy(p, q, size);
++}
++
++#define wr_assign(var, val)	((var) = (val))
++
++#define wr_rcu_assign_pointer(p, v)	\
++	rcu_assign_pointer(p, v)
++
++#else
 +
 +/*
-+ * The following two variables are statically allocated by the linker
-+ * script at the the boundaries of the memory region (rounded up to
-+ * multiples of PAGE_SIZE) reserved for __wr_after_init.
++ * If CONFIG_PRMEM is enabled, the ARCH code must provide an
++ * implementation for __wr_op()
 + */
-+extern long __start_wr_after_init;
-+extern long __end_wr_after_init;
 +
-+static inline bool is_wr_after_init(unsigned long ptr, __kernel_size_t size)
-+{
-+	unsigned long start = (unsigned long)&__start_wr_after_init;
-+	unsigned long end = (unsigned long)&__end_wr_after_init;
-+	unsigned long low = ptr;
-+	unsigned long high = ptr + size;
-+
-+	return likely(start <= low && low <= high && high <= end);
-+}
++enum wr_op_type {
++	WR_MEMCPY,
++	WR_MEMSET,
++	WR_OPS_NUMBER,
++};
 +
 +void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
-+	      enum wr_op_type op)
++	      enum wr_op_type op);
++
++/**
++ * wr_memset() - sets n bytes of the destination to the c value
++ * @p: beginning of the memory to write to
++ * @c: byte to replicate
++ * @len: amount of bytes to copy
++ *
++ * Returns true on success, false otherwise.
++ */
++static inline void *wr_memset(void *p, int c, __kernel_size_t len)
 +{
-+	temporary_mm_state_t prev;
-+	unsigned long offset;
-+	unsigned long wr_poking_addr;
-+
-+	/* Confirm that the writable mapping exists. */
-+	if (WARN_ONCE(!wr_ready, "No writable mapping available"))
-+		return (void *)dst;
-+
-+	if (WARN_ONCE(op >= WR_OPS_NUMBER, "Invalid WR operation.") ||
-+	    WARN_ONCE(!is_wr_after_init(dst, len), "Invalid WR range."))
-+		return (void *)dst;
-+
-+	offset = dst - (unsigned long)&__start_wr_after_init;
-+	wr_poking_addr = wr_poking_base + offset;
-+	local_irq_disable();
-+	prev = use_temporary_mm(wr_poking_mm);
-+
-+	if (op == WR_MEMCPY)
-+		copy_to_user((void __user *)wr_poking_addr, (void *)src, len);
-+	else if (op == WR_MEMSET)
-+		memset_user((void __user *)wr_poking_addr, (u8)src, len);
-+
-+	unuse_temporary_mm(prev);
-+	local_irq_enable();
-+	return (void *)dst;
++	return __wr_op((unsigned long)p, (unsigned long)c, len, WR_MEMSET);
 +}
 +
-+#define TB (1UL << 40)
-+
-+struct mm_struct *copy_init_mm(void);
-+void __init wr_poking_init(void)
++/**
++ * wr_memcpy() - copyes n bytes from source to destination
++ * @dst: beginning of the memory to write to
++ * @src: beginning of the memory to read from
++ * @n_bytes: amount of bytes to copy
++ *
++ * Returns pointer to the destination
++ */
++static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
 +{
-+	unsigned long start = (unsigned long)&__start_wr_after_init;
-+	unsigned long end = (unsigned long)&__end_wr_after_init;
-+	unsigned long i;
-+	unsigned long wr_range;
-+
-+	wr_poking_mm = copy_init_mm();
-+	if (WARN_ONCE(!wr_poking_mm, "No alternate mapping available."))
-+		return;
-+
-+	wr_range = round_up(end - start, PAGE_SIZE);
-+
-+	/* Randomize the poking address base*/
-+	wr_poking_base = TASK_UNMAPPED_BASE +
-+		(kaslr_get_random_long("Write Rare Poking") & PAGE_MASK) %
-+		(TASK_SIZE - (TASK_UNMAPPED_BASE + wr_range));
-+
-+	/*
-+	 * Place 64TB of kernel address space within 128TB of user address
-+	 * space, at a random page aligned offset.
-+	 */
-+	wr_poking_base = (((unsigned long)kaslr_get_random_long("WR Poke")) &
-+			  PAGE_MASK) % (64 * _BITUL(40));
-+
-+	/* Create alternate mapping for the entire wr_after_init range. */
-+	for (i = start; i < end; i += PAGE_SIZE) {
-+		struct page *page;
-+		spinlock_t *ptl;
-+		pte_t pte;
-+		pte_t *ptep;
-+		unsigned long wr_poking_addr;
-+
-+		page = virt_to_page(i);
-+		if (WARN_ONCE(!page, "WR memory without physical page"))
-+			return;
-+		wr_poking_addr = i - start + wr_poking_base;
-+
-+		/* The lock is not needed, but avoids open-coding. */
-+		ptep = get_locked_pte(wr_poking_mm, wr_poking_addr, &ptl);
-+		if (WARN_ONCE(!ptep, "No pte for writable mapping"))
-+			return;
-+
-+		pte = mk_pte(page, PAGE_KERNEL);
-+		set_pte_at(wr_poking_mm, wr_poking_addr, ptep, pte);
-+		spin_unlock(ptl);
-+	}
-+	wr_ready = true;
++	return __wr_op((unsigned long)p, (unsigned long)q, size, WR_MEMCPY);
 +}
++
++/**
++ * wr_assign() - sets a write-rare variable to a specified value
++ * @var: the variable to set
++ * @val: the new value
++ *
++ * Returns: the variable
++ *
++ * Note: it might be possible to optimize this, to use wr_memset in some
++ * cases (maybe with NULL?).
++ */
++
++#define wr_assign(var, val) ({			\
++	typeof(var) tmp = (typeof(var))val;	\
++						\
++	wr_memcpy(&var, &tmp, sizeof(var));	\
++	var;					\
++})
++
++/**
++ * wr_rcu_assign_pointer() - initialize a pointer in rcu mode
++ * @p: the rcu pointer - it MUST be aligned to a machine word
++ * @v: the new value
++ *
++ * Returns the value assigned to the rcu pointer.
++ *
++ * It is provided as macro, to match rcu_assign_pointer()
++ * The rcu_assign_pointer() is implemented as equivalent of:
++ *
++ * smp_mb();
++ * WRITE_ONCE();
++ */
++#define wr_rcu_assign_pointer(p, v) ({	\
++	smp_mb();			\
++	wr_assign(p, v);		\
++	p;				\
++})
++#endif
++#endif
 -- 
 2.19.1
 
