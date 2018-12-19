@@ -2,127 +2,132 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8F8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCA6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9052133F
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930162133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 00:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbeLSAQI (ORCPT
+        id S1727365AbeLSAQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 18 Dec 2018 19:16:13 -0500
+Received: from dmz-mailsec-scanner-3.mit.edu ([18.9.25.14]:52714 "EHLO
+        dmz-mailsec-scanner-3.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726614AbeLSAQM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 19:16:12 -0500
+X-AuditID: 1209190e-2ffff700000054d4-27-5c198dc92173
+Received: from mailhub-auth-2.mit.edu ( [18.7.62.36])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by dmz-mailsec-scanner-3.mit.edu (Symantec Messaging Gateway) with SMTP id 36.5B.21716.ACD891C5; Tue, 18 Dec 2018 19:16:10 -0500 (EST)
+Received: from outgoing.mit.edu (OUTGOING-AUTH-1.MIT.EDU [18.9.28.11])
+        by mailhub-auth-2.mit.edu (8.14.7/8.9.2) with ESMTP id wBJ0G6DL006352;
         Tue, 18 Dec 2018 19:16:08 -0500
-Received: from mga17.intel.com ([192.55.52.151]:27776 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbeLSAQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 19:16:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2018 16:16:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,370,1539673200"; 
-   d="scan'208";a="119397095"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by orsmga002.jf.intel.com with ESMTP; 18 Dec 2018 16:16:07 -0800
-To:     Yang Shi <yang.shi@linux.alibaba.com>, ying.huang@intel.com,
-        tim.c.chen@intel.com, minchan@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1545115948-25467-1-git-send-email-yang.shi@linux.alibaba.com>
- <6a51d47a-b87f-b0f1-4dae-843730dba698@linux.intel.com>
- <03462367-3f75-4907-8c5e-526a919e5cf3@linux.alibaba.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- mQINBE6ONugBEAC1c8laQ2QrezbYFetwrzD0v8rOqanj5X1jkySQr3hm/rqVcDJudcfdSMv0
- BNCCjt2dofFxVfRL0G8eQR4qoSgzDGDzoFva3NjTJ/34TlK9MMouLY7X5x3sXdZtrV4zhKGv
- 3Rt2osfARdH3QDoTUHujhQxlcPk7cwjTXe4o3aHIFbcIBUmxhqPaz3AMfdCqbhd7uWe9MAZX
- 7M9vk6PboyO4PgZRAs5lWRoD4ZfROtSViX49KEkO7BDClacVsODITpiaWtZVDxkYUX/D9OxG
- AkxmqrCxZxxZHDQos1SnS08aKD0QITm/LWQtwx1y0P4GGMXRlIAQE4rK69BDvzSaLB45ppOw
- AO7kw8aR3eu/sW8p016dx34bUFFTwbILJFvazpvRImdjmZGcTcvRd8QgmhNV5INyGwtfA8sn
- L4V13aZNZA9eWd+iuB8qZfoFiyAeHNWzLX/Moi8hB7LxFuEGnvbxYByRS83jsxjH2Bd49bTi
- XOsAY/YyGj6gl8KkjSbKOkj0IRy28nLisFdGBvgeQrvaLaA06VexptmrLjp1Qtyesw6zIJeP
- oHUImJltjPjFvyfkuIPfVIB87kukpB78bhSRA5mC365LsLRl+nrX7SauEo8b7MX0qbW9pg0f
- wsiyCCK0ioTTm4IWL2wiDB7PeiJSsViBORNKoxA093B42BWFJQARAQABtDRUaW0gQ2hlbiAo
- d29yayByZWxhdGVkKSA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+iQI+BBMBAgAoAhsD
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWfPBPgUJDyfxUQAKCRCiZ7WKota4SReFEACa
- 5ruzJM/hXJguHJY8i95rxHfLOgE7QoDgsR2aK2C1BSu84StTcT9BMikndQ0em28mpd1zROCs
- FvJ8Dzpp923699FU7s70+bFG9zIWtAOLWt2QyIMYImILzKkzkyLZo2RTcLNdUWS5fkAtjspQ
- QPg29W+kcbX1NhB6WDdbvk2HNeZoDh4A5ucOzKjEPqbSFIbw2Wt3RUmXxezjH1NzZG3fMkEN
- cT7JezYhUxvi2PrJlD+mo26q2/PQmFgF49tneRJXmYyie5o2+ClfFVO9I6Rd1k7hS9uXQLg3
- udpnDKobNYZ7/+O5+ucp0Y/MwzTfBYmtJ5fBjUTi2L1RMDJee8WqCNY1VU6cQ8MD4KstxUp2
- bxlSRAYaDtNa1Omr61E7BA1Cc2E3cIt/O1mMfudWUjCND8qrAtEnugqKjk5tJJZzmzIKSHPY
- dCiJtOBQaVAYYchXF2hwOKhpFS43V4FdWLlM1CnFXsmbk48hGbiA8XHU85JBCXmG0i4qUlKn
- x2ilChvq4A102ahnlGbEmFaSwxuqR/5lhai6lOkwHXDFUT6jblaSs24L3MTn/vXtvwaLEEKh
- SPzNaj7yFvEhrJoLiZmDm0SZuPbQ+wrmPWUbzyf5te2Oq0JyrHTQJoQqn+CwGqwF/JaUq60f
- VuUD3T0icgsfljsOA4apyH7kyfxXGP0hOLkCDQROjjboARAAx+LxKhznLH0RFvuBEGTcntrC
- 3S0tpYmVsuWbdWr2ZL9VqZmXh6UWb0K7w7OpPNW1FiaWtVLnG1nuMmBJhE5jpYsi+yU8sbMA
- 5BEiQn2hUo0k5eww5/oiyNI9H7vql9h628JhYd9T1CcDMghTNOKfCPNGzQ8Js33cFnszqL4I
- N9jh+qdg5FnMHs/+oBNtlvNjD1dQdM6gm8WLhFttXNPn7nRUPuLQxTqbuoPgoTmxUxR3/M5A
- KDjntKEdYZziBYfQJkvfLJdnRZnuHvXhO2EU1/7bAhdz7nULZktw9j1Sp9zRYfKRnQdIvXXa
- jHkOn3N41n0zjoKV1J1KpAH3UcVfOmnTj+u6iVMW5dkxLo07CddJDaayXtCBSmmd90OG0Odx
- cq9VaIu/DOQJ8OZU3JORiuuq40jlFsF1fy7nZSvQFsJlSmHkb+cDMZDc1yk0ko65girmNjMF
- hsAdVYfVsqS1TJrnengBgbPgesYO5eY0Tm3+0pa07EkONsxnzyWJDn4fh/eA6IEUo2JrOrex
- O6cRBNv9dwrUfJbMgzFeKdoyq/Zwe9QmdStkFpoh9036iWsj6Nt58NhXP8WDHOfBg9o86z9O
- VMZMC2Q0r6pGm7L0yHmPiixrxWdW0dGKvTHu/DH/ORUrjBYYeMsCc4jWoUt4Xq49LX98KDGN
- dhkZDGwKnAUAEQEAAYkCJQQYAQIADwIbDAUCWfPBJQUJDyfxOAAKCRCiZ7WKota4SZKQD/wL
- u3j8kgATic+wF3ekngjwPcW3JhbQJeHxUZwsb9OgVMHumlrZHGoltKQuFfAhG/sOfuAh5f7Q
- MzzA1M+2JD1Q6lr74vUHNBu+xBFMgZstE6hpkKmn0pNZ5JS3iZRVRLBxdWw63DYr0GM80vmb
- HjAhwxoF2PsO2/PkWTc68+pFyl3Dy0heZSJii81hkzh8FnF8CaMH0VXuMJoWyuYgnC058hHj
- 0QqXvlNx9LzMtmrsskTmPvwqXTgG/dTEfTkQ4RfX3enrBy55cg9tMc88BEQ/0/JV1bCDwyWX
- KRpz6FsHbICGQ4G9TTD4pS5QJ+oRQccMjfiDM3rFTcG1RYP2lHXjSm9c0VnimpQBz3LarrdH
- JilmTHbAWf5KLmtWfYXHrlncnhnCtw2nfwBBdy8cQW4tUyniSVRLOwGmeJziyuPJ5SVVZcil
- 2oN5/o7js7BYAeAV/WVF2Sk/blnXaaObIYIVqnDhV4N0oUz1KXq1LeemUvjo5rljmmhOBdgl
- 6D0scXCWICbuuWN9eW2fZl38hBSI3M0MX0jnV2e+0FY+76iNmKadpTDwgY3OaQAZ/UlJVI+p
- RV4JtRrajtpo9Vb38SBPXwp9moWmwVQyIdFUXjCTQARvxjRsUoPVu9oASCd9W74oOgrqC1ha
- dvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
-Subject: Re: [RFC PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-Message-ID: <c0290c77-87ba-32bf-8ed0-d42a322d3d06@linux.intel.com>
-Date:   Tue, 18 Dec 2018 16:16:06 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+Received: from callcc.thunk.org (guestnat-104-133-0-101.corp.google.com [104.133.0.101] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id wBJ0G4sS019597
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Dec 2018 19:16:04 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id CB4C57A51A1; Tue, 18 Dec 2018 19:16:03 -0500 (EST)
+Date:   Tue, 18 Dec 2018 19:16:03 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181219001603.GD25775@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
+ <20181212202609.GA193967@gmail.com>
+ <20181213202249.GA3797@infradead.org>
+ <20181214044802.GA681@sol.localdomain>
+ <20181217200039.GD8111@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <03462367-3f75-4907-8c5e-526a919e5cf3@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181217200039.GD8111@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTURzHu4/d3dmuHefKo2bksAhplhV0iZAKrEvvggwqsJs7udU2171b
+        qfSHRJGKpUmRStTSMDXzsRXZC21JqNEDs9LUMtPI9ZAYWqRZ987U/vv+ft/z+R4O50sTmm5F
+        GG2y2pFg5c06KoDUKOOi9C2nQvcsbhlbwuacfaBguwdvKdjr90YJ9nFeMc72VRcRbOHFLopt
+        LV7Hei8Ok+y9+80k2/T0kZJ9cecCxb7LzibY3tNflWyju5FaFcg5XQ7OXRbNuSqyKK6pYITk
+        ejxukrvr9OHc9/43JHe8/hXF+Vxztqp2Baw0ILPpMBIWxe0NMH7MTbDdnJGaWdxDZGA56mxM
+        RUOwDA7WvyWysQBaAypx+LPvDzk+1GLQ86zq3+DFYdvt75SMaIAACwbu47ImwTz4rCbXv6fA
+        AljZ/5uUtRYsglm3q3EZJsAQAR+eK/cDwWA1LOn9JmmaZsBCeKl+m3yGAeUkPF/tw8dvq8Bh
+        Z6bPn8SAINhc2OfXBIiG7WMDfpgA4fDqGC1LFdDDhoJ4Wc4EUdDnBHmYpug/tug/tmiKdWJE
+        BRZhsKTrLbzJLKIkvZjEW61I0C+NsZjsMcjgcGHyL6pCA+uw/IwNHgzQmE7NZM4N3aNR8IfF
+        NIsHC6Vx3Uxm0CGtAvelGNKMvGhMFBxmJHowSBM6LdO6W/IYA5+WjoSUCSucJnUhzC/th90a
+        kMzb0UGEbEiYcGfTtA4yaqk5miABJaPU/SazfcrGaZUcrpbC1+fI4aKNt4im5HG/BYsMC2Gi
+        ZRjIhtFhnWTlVhpPTENeLER6SjDzSMbVUmcnaa8UjEvB5hu4HGznp6ywDCy27XHHgVlP3KWR
+        ytKMyrtdn+tQbeLQkZ/D2kPP22FZfYh3NHFgfkPTxjPHUrVftrxsVirbqz5vTsp6333ZWXHu
+        0xB3paav+WV+Qv+PYUV/R5zteeeK+O22dPRm5MRQ1PJrO0o2RZyiaxOYo/bXNpduTXwgtdK9
+        E6ZFrU2e/vpCx0kdKRr52GhCEPm/Yxe/M3ADAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 3:43 PM, Yang Shi wrote:
+On Mon, Dec 17, 2018 at 12:00:39PM -0800, Darrick J. Wong wrote:
+> FWIW, if I were (hypothetically) working on an xfs implementation, I
+> likely would have settled on passing a reference to a merkle tree
+> through a (fd, length) pair, because that allows us plenty of options
+> on the back end:
 > 
-> 
-> On 12/18/18 11:29 AM, Tim Chen wrote:
->> On 12/17/18 10:52 PM, Yang Shi wrote:
->>
->>> diff --git a/mm/swap_state.c b/mm/swap_state.c
->>> index fd2f21e..7cc3c29 100644
->>> --- a/mm/swap_state.c
->>> +++ b/mm/swap_state.c
->>> @@ -538,11 +538,15 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
->>>       bool do_poll = true, page_allocated;
->>>       struct vm_area_struct *vma = vmf->vma;
->>>       unsigned long addr = vmf->address;
->>> +    struct inode *inode = si->swap_file->f_mapping->host;
->>>         mask = swapin_nr_pages(offset) - 1;
->>>       if (!mask)
->>>           goto skip;
->>>   
->> Shmem will also be using this function and I don't think the inode_read_congested
->> logic is relevant for that case.
-> 
-> IMHO, shmem is also relevant. As long as it is trying to readahead from swap, it should check if the underlying device is busy or not regardless of shmem or anon page.
-> 
+> b) we could remap the tree into a new inode fork for merkle trees, or
+> a) remap it as posteof blocks like ext4/f2fs does, or
+> c) remap the blocks into the attribute fork as an (unusually large)
+> extended attribute value.
 
-I don't think your dereference inode = si->swap_file->f_mapping->host
-is always safe.  You should do it only when (si->flags & SWP_FS) is true.
+Sure, but what would be the benefit of doing different things on the
+back end?  I think this is a really more of a philophical objection
+than anything else.  With both fsverity and fscrypt, well over 95% of
+the implementation is shared between ext4 and f2fs.  And from a
+cryptographic design, that's something I consider a feature, not a
+bug.  Cryptographic code is subtle in very different ways compared to
+file system code.  So it's a good thing to having it done once and
+audited by crypto specialists, as opposed to having each file system
+doing it differently / independently.
 
-Tim
+> If the merkle_fd isn't on the same filesystem as the fd we could at
+> least use generic_copy_file_range (i.e. page cache copying) to land the
+> merkle tree wherever we want.
+> 
+> Granted, it's not like we can't do any of those three things given the
+> current interface.  I gather most of the grumbling has to do with
+> feeling like we're associating the on-disk format to the ioctl interface
+> too closely?
 
+Right, the current interface makes it somewhat more awkward to do
+these other things --- but the question is *why* would you want to in
+the first place?  Why add the extra complexity?  I'm a big believer of
+the KISS principle, and if there was a reason why a file system would
+want to store the Merkle tree somewhere else, we could talk about it,
+but I see only downside, and no upside.
+
+      	       		     	- Ted
