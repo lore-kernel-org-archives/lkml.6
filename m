@@ -2,202 +2,219 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4E2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEC0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A15020989
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 429BD20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 13:26:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nf5PbU8m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbeLSNYz (ORCPT
+        id S1729294AbeLSN0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 08:24:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54670 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728231AbeLSNYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 08:24:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ED291AEEE;
-        Wed, 19 Dec 2018 13:24:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DCF0D1E1463; Wed, 19 Dec 2018 14:24:49 +0100 (CET)
-Date:   Wed, 19 Dec 2018 14:24:49 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181219132449.GD18345@quack2.suse.cz>
-References: <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181218103306.GC18032@quack2.suse.cz>
- <20181218234254.GC31274@dastard>
+        Wed, 19 Dec 2018 08:26:12 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36347 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbeLSN0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 08:26:11 -0500
+Received: by mail-io1-f65.google.com with SMTP id m19so15618094ioh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 05:26:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2TklxcyNCHet/VUKMmV9m2tymIl2mT8ZoduxL3mQF/U=;
+        b=Nf5PbU8mawDrea5mCT8UgUwbMeaWCLCWXVNtDtlbU8gDTs/J5Kbuyo4Ua46uWBhxOm
+         MqGGsx3aiA7aIJTNmtNyOxtxa+PhkXpT8fG4zZ4Kh/MNwO0nuCU+JrYWskzAXtVrimyg
+         nZ6bekSHcI9hjrRRZgHj4rhhP6ru+OH1nt7jk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2TklxcyNCHet/VUKMmV9m2tymIl2mT8ZoduxL3mQF/U=;
+        b=RCUXLrGliyRejfEWQ0M3U0b92cIRwDcUh1Dm69QAGfuksGC9IfBSMdck0K1etqAdWU
+         WZeop75D7e3JE2FR9FkekQ/a+ZRRWgzFKsQIsGat2rvWZpalTlPQ9DV++tctt/F1DRnL
+         KhUM304yZhB2t2ZPajn3rICghdkTMWO0PAAjVpf1NkrTFS3oAq1bcedQ3P+Ooxf5AyRC
+         /j9vuLwclNrThlnqK+/woohcs2RGxLdO/6vIqLqD+maDdnAOCT2VSnAtE9fS9nOrUBxw
+         Bw0XHcn4ENe3tKaC4RcJoUTHO+khc6FUgClND9lu9ghh4J5VwbYepIMsD/gtfPQGUFpm
+         lcFw==
+X-Gm-Message-State: AJcUukezuKnhOK0e5/tIvyLELleogE7rSQVlmAgdtkSwzhaVQW7OhV5U
+        mvQGouHKQAUANB4QFgtSys2Hvd6hvykpxG22TIW7Cg==
+X-Google-Smtp-Source: ALg8bN6EHtB6EC/bW8ao8zyr42LTrDqqAX5Pdo3QcrCnun+uGwiAsBuhz5PkN0NHcik2uXPN28MXTZC72eBEv40Grdg=
+X-Received: by 2002:a6b:6b01:: with SMTP id g1mr768792ioc.18.1545225970373;
+ Wed, 19 Dec 2018 05:26:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218234254.GC31274@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1545144923-31546-1-git-send-email-vincent.guittot@linaro.org>
+ <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org>
+ <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
+ <CAKfTPtCpv0MqF64JGTyR63bqKdAhXzL1fEsNbS6DHsD-jXYpKw@mail.gmail.com>
+ <CAPDyKFrSxX-eBsTiEvbrbjVpqkSuBnhxruCgtihH6hSvWSFD1g@mail.gmail.com>
+ <CAKfTPtB=TUAz=KpZzJsRUvK8ymiXnTgQ3BxcY0yu9YbJ1BW7QA@mail.gmail.com> <CAPDyKFoR7t=K65n0_+4yRqdpRMZ0BbA16cDhmxEvNhm0qEOXNQ@mail.gmail.com>
+In-Reply-To: <CAPDyKFoR7t=K65n0_+4yRqdpRMZ0BbA16cDhmxEvNhm0qEOXNQ@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 19 Dec 2018 14:25:58 +0100
+Message-ID: <CAKfTPtA4Fr6Xk7+dUpzZqGvK6dJGtWAiz70Ho4noQk3gBdGFdg@mail.gmail.com>
+Subject: Re: [RFC v3 1/3] PM/runtime: Add a new interface to get accounted time
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, airlied@linux.ie,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 19-12-18 10:42:54, Dave Chinner wrote:
-> On Tue, Dec 18, 2018 at 11:33:06AM +0100, Jan Kara wrote:
-> > On Mon 17-12-18 08:58:19, Dave Chinner wrote:
-> > > On Fri, Dec 14, 2018 at 04:43:21PM +0100, Jan Kara wrote:
-> > > > Yes, for filesystem it is too late. But the plan we figured back in October
-> > > > was to do the bouncing in the block layer. I.e., mark the bio (or just the
-> > > > particular page) as needing bouncing and then use the existing page
-> > > > bouncing mechanism in the block layer to do the bouncing for us. Ext3 (when
-> > > > it was still a separate fs driver) has been using a mechanism like this to
-> > > > make DIF/DIX work with its metadata.
-> > > 
-> > > Sure, that's a possibility, but that doesn't close off any race
-> > > conditions because there can be DMA into the page in progress while
-> > > the page is being bounced, right? AFAICT this ext3+DIF/DIX case is
-> > > different in that there is no 3rd-party access to the page while it
-> > > is under IO (ext3 arbitrates all access to it's metadata), and so
-> > > nothing can actually race for modification of the page between
-> > > submission and bouncing at the block layer.
-> > >
-> > > In this case, the moment the page is unlocked, anyone else can map
-> > > it and start (R)DMA on it, and that can happen before the bio is
-> > > bounced by the block layer. So AFAICT, block layer bouncing doesn't
-> > > solve the problem of racing writeback and DMA direct to the page we
-> > > are doing IO on. Yes, it reduces the race window substantially, but
-> > > it doesn't get rid of it.
-> > 
-> > The scenario you describe here cannot happen exactly because of the
-> > wait_for_stable_page() in ->page_mkwrite() you mention below.
-> 
-> In general, no, because stable pages are controlled by block
-> devices.
-> 
-> void wait_for_stable_page(struct page *page)
-> {
->         if (bdi_cap_stable_pages_required(inode_to_bdi(page->mapping->host)))
->                 wait_on_page_writeback(page);
-> }
-> 
-> 
-> I have previously advocated for the filesystem to be in control of
-> stable pages but, well, too many people shouted "but performance!"
-> and so we still have all these holes I wanted to close in our
-> code...
-> 
-> > If someone
-> > will try to GUP a page that is under writeback (has already PageWriteback
-> > set), GUP will have to do a write fault because the page is writeprotected
-> > in page tables and go into ->page_mkwrite() which will wait.
-> 
-> Correct, but that doesn't close the problem down because stable
-> pages are something we cannot rely on right now. We need to fix
-> wait_for_stable_page() to always block on page writeback before
-> this specific race condition goes away.
-
-Right, all I said was assuming that someone actually cares about stable
-pages so bdi_cap_stable_pages_required() is set. I agree with filesystem
-having ability to control whether stable pages are required or not. But
-when stable pages get enforced seems like a separate problem to me.
-
-> > The problem rather is with someone mapping the page *before* writeback
-> > starts, giving the page to HW. Then clear_page_dirty_for_io() writeprotects
-> > the page in PTEs but the HW gives a damn about that. Then, after we add the
-> > page to the bio but before the page gets bounced by the block layer, the HW
-> > can still modify it.
-> 
-> Sure, that's yet another aspect of the same problem - not getting a
-> write fault when the page is being written to. If we got a write
-> fault, then the wait_for_stable_page() call in ->page_mkwrite would
-> then solve the problem.
-> 
-> Essentially, what we are talking about is how to handle broken
-> hardware. I say we should just brun it with napalm and thermite
-> (i.e. taint the kernel with "unsupportable hardware") and force
-> wait_for_stable_page() to trigger when there are GUP mappings if
-> the underlying storage doesn't already require it.
-
-As I wrote in other email, this is also about direct IO using file mapping
-as a data buffer. So burn with napalm can hardly be a complete solution...
-I agree that for the hardware that cannot support revoking of access /
-fault on access and uses long-term page pins, we may just have to put up
-with weird behavior in some corner cases.
-
-> > > If it's permanently dirty, how do we trigger new COW operations
-> > > after writeback has "cleaned" the page? i.e. we still need a
-> > > ->page_mkwrite call to run before we allow the next write to the
-> > > page to be done, regardless of whether the page is "permanently
-> > > dirty" or not....
-> > 
-> > Interaction with COW is certainly an interesting problem. When the page
-> > gets pinned, GUP will make sure the page is writeably mapped and trigger a
-> > write fault if not. So at the moment the page is pinned, we are sure the
-> > page is COWed. Now the question is what should happen when the file A
-> > containing this pinned page gets reflinked to file B while the page is still
-> > pinned.
-> > 
-> > Options I can see are:
-> > 
-> > 1) Fail the reflink.
-> >   - difficult for sysadmin to discover the source of failure
+On Wed, 19 Dec 2018 at 11:43, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Wed, 19 Dec 2018 at 11:34, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
 > >
-> > 2) Block reflink until the pin of the page is released.
-> >   - can last for a long time, again difficult to discover
-> > 
-> > 3) Don't do anything special.
-> >   - can corrupt data as read accesses through file B won't see
-> >     modifications done to the page (and thus eventually the corresponding disk
-> >     block) by the HW.
-> > 
-> > 4) Immediately COW the block during reflink when the corresponding page
-> >    cache page is pinned.
-> >   - seems as the best solution at this point, although sadly also requires
-> >     the most per-filesystem work
-> 
-> None of the above are acceptable solutions - they all have nasty
-> corner cases which are going to be difficult to get right, test,
-> etc. IMO, the robust, reliable, testable solution is this:
-> 
-> 5) The reflink breaks the file lease, the userspace app releases the
-> pinned pages on the file and drops the lease. The reflink proceeds,
-> does it's work, and then the app gets a new lease on the file. When
-> the app pins the pages again, it triggers new ->page_mkwrite calls
-> to break any sharing that the reflink created. And if the app fails
-> to drop the lease, then we can either fail with a lease related
-> error or kill it....
+> > On Wed, 19 Dec 2018 at 11:21, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
 
-This is certainly fine for the GUP users that are going to support leases.
-But do you want GUP in direct IO to create a lease if the pages are from a
-file mapping? I belive we need another option at least for GUP references
-that are short-term in nature and sometimes also performance critical.
+> > > > > >
+> > > > > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > > > > > index 7062469..6461469 100644
+> > > > > > --- a/drivers/base/power/runtime.c
+> > > > > > +++ b/drivers/base/power/runtime.c
+> > > > > > @@ -88,6 +88,32 @@ static void __update_runtime_status(struct device *dev, enum rpm_status status)
+> > > > > >         dev->power.runtime_status = status;
+> > > > > >  }
+> > > > > >
+> > > > > > +u64 pm_runtime_accounted_time_get(struct device *dev, enum rpm_status status, bool update)
+> > > > > > +{
+> > > > > > +       u64 now = ktime_to_ns(ktime_get());
+> > > > >
+> > > > > I think you should stay on jiffies here - and then switch to ktime in patch 3.
+> > > > >
+> > > > > > +       u64 delta = 0, time = 0;
+> > > > > > +       unsigned long flags;
+> > > > > > +
+> > > > > > +       spin_lock_irqsave(&dev->power.lock, flags);
+> > > > > > +
+> > > > > > +       if (dev->power.disable_depth > 0)
+> > > > > > +               goto unlock;
+> > > > > > +
+> > > > > > +       /* Add ongoing state  if requested */
+> > > > > > +       if (update && dev->power.runtime_status == status)
+> > > > > > +               delta = now - dev->power.accounting_timestamp;
+> > > > > > +
+> > > > >
+> > > > > Hmm. Do we really need to update the accounting timestamp? I would
+> > > > > rather avoid it if possible.
+> > > >
+> > > > i915/drm uses this to track ongoing suspended state. In fact they are
+> > > > mainly interested by this part
+> > >
+> > > Again, sorry I don't follow.
+> >
+> > In fact we don't update dev->power.accounting_timestamp but only use
+> > it to get how much time has elapsed in the current state.
+> >
+> > >
+> > > My suggested changes below, would do exactly that; track the ongoing
+> > > suspended state.
+> > >
+> > > The user can call the function several times while the device remains
+> > > RPM_SUSPENDED, and if needed the user could then compute the delta
+> > > in-between the calls, for whatever reason that may be needed.
+> >
+> > So I'm not sure to catch your question:
+> > Is your problem linked to status != RPM_SUSPENDED or the update
+> > parameter that compute delta ?
+>
+> My intent was to keep things simple.
+>
+> 1. Only expose last suspended time, which means tracking the ongoing
+> suspended state. In other words, you can also remove "enum rpm_status
+> status" as the in-parameter to pm_runtime_accounted_time_get().
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Ok for this point if Rafael doesn't see any benefit of keeping the
+generic interface
+
+> 2. Don't allow the user of pm_runtime_accounted_time_get() to update
+> the current timestamp, in "dev->power.accounting_timestamp".
+
+But pm_runtime_accounted_time_get doesn't update
+dev->power.accounting_timestamp, it only reads it to know when when
+the last state transition happened
+
+>
+> Is that okay for the drm driver, to do what it does today?
+
+drm driver needs 2 things: the  accounted suspended time since the
+last transition
+and the time elapse in the current state when suspened
+
+>
+> >
+> > >
+> > > >
+> > > > >
+> > > > > It seems like it should be sufficient to return the delta between
+> > > > > "now" and the "dev->power.accounting_timestamp", when
+> > > > > "dev->power.runtime_status == RPM_SUSPENDED".
+> > > > >
+> > > > > In other case, just return 0, because we are not in RPM_SUSPENDED state.
+> > > >
+> > > > only the RPM_SUSPENDED is used by i915/drm but wanted to provide a
+> > > > generic interface to get
+> > > > suspended or not suspend state
+> > >
+> > > I see.
+> > >
+> > > Although, unless Rafael thinks different, I would rather try to keep
+> > > this as simple as possible and expose only what is needed and nothing
+> > > more.
+> >
+> > I'm fine with both. Rafael ?
+> >
+> > >
+> > > >
+> > > > >
+> > > > > > +       if (status == RPM_SUSPENDED)
+> > > > > > +               time = dev->power.suspended_time + delta;
+> > > > > > +       else
+> > > > > > +               time = dev->power.active_time + delta;
+> > > > > > +
+> > > > > > +unlock:
+> > > > > > +       spin_unlock_irqrestore(&dev->power.lock, flags);
+> > > > > > +
+> > > > > > +       return time;
+> > > > > > +}
+> > > > > > +
+> > > > > >  /**
+> > > > > >   * pm_runtime_deactivate_timer - Deactivate given device's suspend timer.
+> > > > > >   * @dev: Device to handle.
+> > > > > > diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> > > > > > index 54af4ee..86f21f9 100644
+> > > > > > --- a/include/linux/pm_runtime.h
+> > > > > > +++ b/include/linux/pm_runtime.h
+> > > > > > @@ -113,6 +113,8 @@ static inline bool pm_runtime_is_irq_safe(struct device *dev)
+> > > > > >         return dev->power.irq_safe;
+> > > > > >  }
+> > > > > >
+> > > > > > +extern u64 pm_runtime_accounted_time_get(struct device *dev, enum rpm_status status, bool update);
+> > > > > > +
+> > > > > >  #else /* !CONFIG_PM */
+> > > > > >
+> > > > > >  static inline bool queue_pm_work(struct work_struct *work) { return false; }
+> > > > > > --
+> > > > > > 2.7.4
+> > > > > >
+> > > > >
+> > > > > Kind regards
+> > > > > Uffe
+> > >
+> > > Kind regards
+> > > Uffe
