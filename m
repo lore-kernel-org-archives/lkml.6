@@ -2,189 +2,99 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7B0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD343C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 679F0218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9146F218D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 16:04:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHghWIdH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbeLSQBy (ORCPT
+        id S1728778AbeLSQE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:01:54 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:58214 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727317AbeLSQBy (ORCPT
+        Wed, 19 Dec 2018 11:04:27 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34524 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeLSQE1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:01:54 -0500
-Received: (qmail 1943 invoked by uid 2102); 19 Dec 2018 11:01:52 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 19 Dec 2018 11:01:52 -0500
-Date:   Wed, 19 Dec 2018 11:01:52 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Paul Elder <paul.elder@ideasonboard.com>
-cc:     laurent.pinchart@ideasonboard.com,
-        <kieran.bingham@ideasonboard.com>, <b-liu@ti.com>, <rogerq@ti.com>,
-        <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/6] usb: gadget: add mechanism to specify an explicit
- status stage
-In-Reply-To: <20181219092647.12397-5-paul.elder@ideasonboard.com>
-Message-ID: <Pine.LNX.4.44L0.1812191048580.1260-100000@iolanthe.rowland.org>
+        Wed, 19 Dec 2018 11:04:27 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u89-v6so7181322lje.1;
+        Wed, 19 Dec 2018 08:04:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SAUcPazIZwM1OnutktLk/uqXZzFMyPW/6RsuxIaDmiQ=;
+        b=eHghWIdHJ+NjjhpXisQfhM3d67/F8mAexOkNDBE00gRdvjyZ7/YJjehGqxMt32ohU3
+         sO/QXaUWemTQs12nJjBEHtbwUqN715D4m4+GFFiH3auMZR8YrgAnEcW0ovjXp+Xt35uU
+         Eqyyq8v9LyEd83076NvYJeyIlSLvS434CikVvIjXQ/MAI+8Oge1R2VEjbyRgEmf13Vb8
+         iIzBUdN3uDprrB+Uy8JZLMx4BZKgOkAuV+2j+mVKGez+nlmA8wRdtTKptkpKDfyAKkwO
+         8GqUiJl/rdn2CTcGtSrQB3Q4XST393NPDVFvfPJRajKKFKpv3Pl0OyarwmAibx+MF5pI
+         9wUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SAUcPazIZwM1OnutktLk/uqXZzFMyPW/6RsuxIaDmiQ=;
+        b=jDEy4el5Qd3wasbazGN+gIQrQVLexKjeqIpdcQqX/OWN238v0XkZuXAxvGn9S88UHU
+         VdPEITss0WSyWuhz2VpuHo1tNj5KN66FaiTapxIEVrSxu0h/w46Qog6Bt+RLbBDZC8un
+         AMeIiwo4TQm062Ln3Y2KZMnIVpWcbUpvQjKEjG6/LyTRIG99SLEqEwsEKX8lv3m7abNV
+         9xmY1YnM5d55ICMe89oKsX4nl8oxNMqQqaZdG5y3qD81T9LNgCg8WRPeojwwiZUtDrJl
+         yoe18BmEo15cOhJOU11B9d5lHH3Z9IN87cno1mAMnNWwU9FEhReg0w1j4H/xKo2Dk7nM
+         CjUQ==
+X-Gm-Message-State: AA+aEWZH2JIFdlcIsIk36KmRm3s5F6bB2uqa0U6LKid37wzkA95wKksA
+        +tfGX/l5HkFwpxMe4MWPk3UZZvi9bTsuCg==
+X-Google-Smtp-Source: AFSGD/VeNDhvZLGS2jLxCp2f5Be6z8S92etd3HVV4WESVDWzEoFPQGOPJJSh8w/Rbn/uYg4B0uDGLw==
+X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr6578802ljb.126.1545235465190;
+        Wed, 19 Dec 2018 08:04:25 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:253f:4197:555d:bfba])
+        by smtp.googlemail.com with ESMTPSA id i75sm3943979lfb.58.2018.12.19.08.04.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 08:04:24 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     inki.dae@samsung.com, krzk@kernel.org, airlied@linux.ie
+Cc:     jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 0/3] drm/exynos: rotator: Add support for s5pv210
+Date:   Wed, 19 Dec 2018 16:57:01 +0100
+Message-Id: <20181219155704.15264-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Dec 2018, Paul Elder wrote:
+This patchset adds support for s5pv210 soc, into 
+Samsung DRM Rotator driver. Currently only NV12 and XRGB8888 formats
+ are supported.
 
-> A usb gadget function driver may or may not want to delay the status
-> stage of a control OUT request. An instance it might want to is to
----------------------------------------------^
-Typo: missing "where"
+It was tested by using simple tool from 
+https://www.spinics.net/lists/linux-samsung-soc/msg60498.html
 
-> asynchronously validate the data of a class-specific request.
-> 
-> A function driver that wants an explicit status stage should set the
-> newly added explicit_status flag of the usb_request corresponding to the
-> data stage. Later on the function driver can explicitly complete the
-> status stage by enqueueing a usb_request for ACK, or calling
-> usb_ep_set_halt() for STALL.
-> 
-> To support both explicit and implicit status stages, a UDC driver must
-> call the newly added usb_gadget_control_complete function right after
-> calling usb_gadget_giveback_request. The status of the request that was
-> just given back must be fed into usb_gadget_control_complete. To support
-> the explicit status stage, it might then check what stage the
-> usb_request was queued in, and send an ACK.
+Paweł Chmiel (3):
+  drm/exynos: rotator: Add support for s5pv210
+  dt-bindings: gpu: samsung-rotator: Document s5pv210 support
+  ARM: dts: s5pv210: Add node for exynos-rotator
 
-I don't really understand that last sentence.  Perhaps what you mean is
-that depending on the direction of the control transfer, the driver
-should either ACK the host's 0-length data packet (control-IN) or send
-a 0-length DATA1 packet (control-OUT)?
+ .../bindings/gpu/samsung-rotator.txt          |  1 +
+ arch/arm/boot/dts/s5pv210.dtsi                |  9 ++++++++
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 23 +++++++++++++++++++
+ 3 files changed, 33 insertions(+)
 
-> Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
-> Changes from v2:
-> 
-> Add status parameter to usb_gadget_control_complete, so that a
-> usb_request is not queued if the status of the just given back request
-> is nonzero.
-> 
-> Changes from v1:
-> 
-> Complete change of API. Now we use a flag that should be set in the
-> usb_request that is queued for the data stage to signal to the UDC that
-> we want to delay the status stage (as opposed to setting a flag in the
-> UDC itself, that persists across all requests). We now also provide a
-> function for UDC drivers to very easily allow implicit status stages, to
-> mitigate the need to convert all function drivers to this new API at
-> once, and to make it easier for UDC drivers to convert.
-> 
->  drivers/usb/gadget/udc/core.c | 34 ++++++++++++++++++++++++++++++++++
->  include/linux/usb/gadget.h    | 10 ++++++++++
->  2 files changed, 44 insertions(+)
-> 
-> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-> index af88b48c1cea..0a0ccd2b7639 100644
-> --- a/drivers/usb/gadget/udc/core.c
-> +++ b/drivers/usb/gadget/udc/core.c
-> @@ -894,6 +894,40 @@ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
->  
->  /* ------------------------------------------------------------------------- */
->  
-> +/**
-> + * usb_gadget_control_complete - complete the status stage of a control
-> + *	request, or delay it
-> + * Context: in_interrupt()
-> + *
-> + * @gadget: gadget whose control request's status stage should be completed
-> + * @explicit_status: true to delay status stage, false to complete here
-> + * @status: completion code of previously completed request
-> + *
-> + * This is called by device controller drivers after returning the completed
-> + * request back to the gadget layer, to either complete or delay the status
-> + * stage.
-> + */
-> +void usb_gadget_control_complete(struct usb_gadget *gadget,
-> +		unsigned int explicit_status, int status)
-> +{
-> +	struct usb_request *req;
-> +
-> +	if (explicit_status || status)
-> +		return;
-> +
-> +	/* Send an implicit status-stage request for ep0 */
-> +	req = usb_ep_alloc_request(gadget->ep0, GFP_ATOMIC);
-> +	if (req) {
-> +		req->length = 0;
-> +		req->explicit_status = 0;
-
-Oops!  I should have spotted this in the previous version, sorry. The
-implicit status-stage request should have its ->explicit_status set, so
-that we don't try to submit another status request when this one
-completes.
-
-Also, would it look better if the type of explicit_status was bool 
-instead of unsigned int (both here and in the structure)?
-
-Either way, once this change is made:
-
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-
-> +		req->complete = usb_ep_free_request;
-> +		usb_ep_queue(gadget->ep0, req, GFP_ATOMIC);
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(usb_gadget_control_complete);
-> +
-> +/* ------------------------------------------------------------------------- */
-> +
->  /**
->   * gadget_find_ep_by_name - returns ep whose name is the same as sting passed
->   *	in second parameter or NULL if searched endpoint not found
-> diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-> index e5cd84a0f84a..1e3a23637468 100644
-> --- a/include/linux/usb/gadget.h
-> +++ b/include/linux/usb/gadget.h
-> @@ -73,6 +73,7 @@ struct usb_ep;
->   *	Note that for writes (IN transfers) some data bytes may still
->   *	reside in a device-side FIFO when the request is reported as
->   *	complete.
-> + * @explicit_status: If true, delays the status stage
->   *
->   * These are allocated/freed through the endpoint they're used with.  The
->   * hardware's driver can add extra per-request data to the memory it returns,
-> @@ -114,6 +115,8 @@ struct usb_request {
->  
->  	int			status;
->  	unsigned		actual;
-> +
-> +	unsigned		explicit_status:1;
->  };
->  
->  /*-------------------------------------------------------------------------*/
-> @@ -850,6 +853,13 @@ extern void usb_gadget_giveback_request(struct usb_ep *ep,
->  
->  /*-------------------------------------------------------------------------*/
->  
-> +/* utility to complete or delay status stage */
-> +
-> +void usb_gadget_control_complete(struct usb_gadget *gadget,
-> +		unsigned int explicit_status, int status);
-> +
-> +/*-------------------------------------------------------------------------*/
-> +
->  /* utility to find endpoint by name */
->  
->  extern struct usb_ep *gadget_find_ep_by_name(struct usb_gadget *g,
-> 
+-- 
+2.17.1
 
