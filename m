@@ -2,163 +2,492 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A26C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECE2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE8E20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 247DB20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 23:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545262626;
+	bh=SorI0DhXsO6C1d79PT+L0KooLzk71uXOkVOAGMzdiDw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=UEw1CcE77Z9ACJGSiXOK7tHvS1P/yXjiSEcOhZlrLuZdzGRZ0vjmJQTzNN05PfxR2
+	 tPFtueH2pN5TYYo5evi+cUNL3GIrMe2IoNrAcXZRENFzOORZaXodXobaGzTODRuFKi
+	 58fC/TyY3S7N1COs8KITV3jaCLWCNQURv0HzvOsQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbeLSXbq (ORCPT
+        id S1729312AbeLSXhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 18:31:46 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.206]:30506 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727703AbeLSXbq (ORCPT
+        Wed, 19 Dec 2018 18:37:04 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:32882 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbeLSXhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 18:31:46 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 09C725D45
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 17:31:45 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZlJZgt2lLiQerZlJZgyV15; Wed, 19 Dec 2018 17:31:45 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=35388 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZlJY-000lVx-C7; Wed, 19 Dec 2018 17:31:44 -0600
-Date:   Wed, 19 Dec 2018 17:31:43 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: isa/wavefront: Fix potential Spectre v1 vulnerabilities
-Message-ID: <20181219233143.GA14518@embeddedor>
+        Wed, 19 Dec 2018 18:37:04 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so3109581oib.0;
+        Wed, 19 Dec 2018 15:37:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KdNJEuE+N1GMhtMoAbPvm2476Rzms+dyxk6snp2PCio=;
+        b=JO/P4IpM160RrbbQC7VKwQXcwHnLf0+hnCGmN1gd6PRsccPBNoE6YPMumAFEd0eSVx
+         qsf6LCxxkzm98Q4Yps9xUCJ9cDAwJG/6N8YeNdigG2wRzIKyhFdCalnttgAL6ZO9YaF1
+         VuQsyLil4DOyR1b7qkwM3MxCTtlmlo7vBoDyp4EhSEO9MlTphNX1iC0xxfL7tFdT1sWD
+         nCAVDvOgN0fQX2QtxxDcpoSM2f+7OJ5yCaBXoG1SdIb00qn3TMsscgPfUT7FJ9onHxTo
+         /RPU6jIDJy/6KDyOc4xVS0NkS46olcFoUCN/6uwlCKmq1kFjzqQixWXdSMxiDnvWqSDG
+         SbBQ==
+X-Gm-Message-State: AA+aEWZRxMrLiSPLi/xxemsVxNuX2KE4wWjZu2tpiiXhOYDlPttJaC+B
+        N22zRsy27WpMHMl4l/tWZCNYLAo=
+X-Google-Smtp-Source: AFSGD/W3pOxcmLTQ9NxXxJ4iCSPKI9yecIpmfP2T9458GIo+yJedtjFuXfqZvCdptOG3aaaGctU44Q==
+X-Received: by 2002:a54:4713:: with SMTP id k19mr505540oik.241.1545262621926;
+        Wed, 19 Dec 2018 15:37:01 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id j5sm18756117otc.54.2018.12.19.15.37.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 15:37:01 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] dt-bindings: irq: Convert ARM GIC to json-schema
+Date:   Wed, 19 Dec 2018 17:37:00 -0600
+Message-Id: <20181219233700.8576-1-robh@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZlJY-000lVx-C7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.44]:35388
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-header->number is indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+Convert the ARM GIC binding document to DT schema format using
+json-schema.
 
-This issue was detected with the help of Smatch:
-
-sound/isa/wavefront/wavefront_synth.c:792 wavefront_send_patch() warn: potential spectre issue 'dev->patch_status' [w] (local cap)
-sound/isa/wavefront/wavefront_synth.c:819 wavefront_send_program() warn: potential spectre issue 'dev->prog_status' [w] (local cap)
-sound/isa/wavefront/wavefront_synth.c:1197 wavefront_send_alias() warn: potential spectre issue 'dev->sample_status' [w]
-sound/isa/wavefront/wavefront_synth.c:1248 wavefront_send_multisample() warn: potential spectre issue 'dev->sample_status' [w]
-sound/isa/wavefront/wavefront_synth.c:1548 wavefront_synth_control() warn: potential spectre issue 'dev->sample_status' [r] (local cap)
-
-Fix this by sanitizing header->number before using it to index
-dev->patch_status, dev->prog_status and dev->sample_status.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- sound/isa/wavefront/wavefront_synth.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+There's numerous warnings this creates with compatible properties in 
+regards to having fallback compatible strings. We need to decide either 
+the binding doc was correct or the dts files are wrong and should be 
+fixed (or some combination). These are the warnings:
 
-diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
-index 0b1e4b34b299..80196a533a36 100644
---- a/sound/isa/wavefront/wavefront_synth.c
-+++ b/sound/isa/wavefront/wavefront_synth.c
-@@ -31,6 +31,7 @@
- #include <linux/moduleparam.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <sound/core.h>
- #include <sound/snd_wavefront.h>
- #include <sound/initval.h>
-@@ -788,7 +789,8 @@ wavefront_send_patch (snd_wavefront_t *dev, wavefront_patch_info *header)
- 
- 	if (header->number >= ARRAY_SIZE(dev->patch_status))
- 		return -EINVAL;
+compatible: ['arm,arm1176jzf-devchip-gic', 'arm,arm11mp-gic'] is too long
+compatible: ['arm,cortex-a15-gic', 'arm,cortex-a9-gic'] is too long
+compatible: ['arm,cortex-a5-gic', 'arm,cortex-a9-gic'] is too long
+compatible: ['arm,cortex-a7-gic', 'arm,cortex-a15-gic'] is too long
+compatible: ['arm,cortex-a7-gic', 'arm,gic-400'] is too long
+compatible: ['arm,gic-400', 'arm,cortex-a15-gic', 'arm,cortex-a9-gic'] is too long
+compatible: ['arm,gic-400', 'arm,cortex-a15-gic'] is too long
+compatible: ['arm,gic-400', 'arm,cortex-a7-gic', 'arm,cortex-a15-gic'] is too long
+compatible: ['arm,gic-400', 'arm,cortex-a7-gic'] is too long
+compatible: ['brcm,brahma-b15-gic', 'arm,cortex-a15-gic'] is too long
+
+Any suggestions on additional constraints would be helpful. For example, 
+'cpu_offset' must be a multiple of ? 4KB?
+
+ .../bindings/interrupt-controller/arm,gic.txt | 171 ---------------
+ .../interrupt-controller/arm,gic.yaml         | 205 ++++++++++++++++++
+ 2 files changed, 205 insertions(+), 171 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
+deleted file mode 100644
+index 2f3244648646..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
++++ /dev/null
+@@ -1,171 +0,0 @@
+-* ARM Generic Interrupt Controller
 -
-+	header->number = array_index_nospec(header->number,
-+					    ARRAY_SIZE(dev->patch_status));
- 	dev->patch_status[header->number] |= WF_SLOT_FILLED;
- 
- 	bptr = buf;
-@@ -815,7 +817,8 @@ wavefront_send_program (snd_wavefront_t *dev, wavefront_patch_info *header)
- 
- 	if (header->number >= ARRAY_SIZE(dev->prog_status))
- 		return -EINVAL;
+-ARM SMP cores are often associated with a GIC, providing per processor
+-interrupts (PPI), shared processor interrupts (SPI) and software
+-generated interrupts (SGI).
 -
-+	header->number = array_index_nospec(header->number,
-+					    ARRAY_SIZE(dev->prog_status));
- 	dev->prog_status[header->number] = WF_SLOT_USED;
- 
- 	/* XXX need to zero existing SLOT_USED bit for program_status[i]
-@@ -1194,6 +1197,10 @@ wavefront_send_alias (snd_wavefront_t *dev, wavefront_patch_info *header)
- 		return -EIO;
- 	}
- 
-+	if (header->number >= ARRAY_SIZE(dev->sample_status))
-+		return -EINVAL;
-+	header->number = array_index_nospec(header->number,
-+					    ARRAY_SIZE(dev->sample_status));
- 	dev->sample_status[header->number] = (WF_SLOT_FILLED|WF_ST_ALIAS);
- 
- 	return (0);
-@@ -1245,6 +1252,10 @@ wavefront_send_multisample (snd_wavefront_t *dev, wavefront_patch_info *header)
- 		return -EIO;
- 	}
- 
-+	if (header->number >= ARRAY_SIZE(dev->sample_status))
-+		return -EINVAL;
-+	header->number = array_index_nospec(header->number,
-+					    ARRAY_SIZE(dev->sample_status));
- 	dev->sample_status[header->number] = (WF_SLOT_FILLED|WF_ST_MULTISAMPLE);
- 
- 	kfree(msample_hdr);
-@@ -1539,12 +1550,13 @@ wavefront_synth_control (snd_wavefront_card_t *acard,
- 
- 	case WFC_IDENTIFY_SLOT_TYPE:
- 		i = wc->wbuf[0] | (wc->wbuf[1] << 7);
--		if (i <0 || i >= WF_MAX_SAMPLE) {
-+		if (i < 0 || i >= WF_MAX_SAMPLE) {
- 			snd_printk ("invalid slot ID %d\n",
- 				i);
- 			wc->status = EINVAL;
- 			return -EINVAL;
- 		}
-+		i = array_index_nospec(i, WF_MAX_SAMPLE);
- 		wc->rbuf[0] = dev->sample_status[i];
- 		wc->status = 0;
- 		return 0;
+-Primary GIC is attached directly to the CPU and typically has PPIs and SGIs.
+-Secondary GICs are cascaded into the upward interrupt controller and do not
+-have PPIs or SGIs.
+-
+-Main node required properties:
+-
+-- compatible : should be one of:
+-	"arm,arm1176jzf-devchip-gic"
+-	"arm,arm11mp-gic"
+-	"arm,cortex-a15-gic"
+-	"arm,cortex-a7-gic"
+-	"arm,cortex-a9-gic"
+-	"arm,eb11mp-gic"
+-	"arm,gic-400"
+-	"arm,pl390"
+-	"arm,tc11mp-gic"
+-	"brcm,brahma-b15-gic"
+-	"nvidia,tegra210-agic"
+-	"qcom,msm-8660-qgic"
+-	"qcom,msm-qgic2"
+-- interrupt-controller : Identifies the node as an interrupt controller
+-- #interrupt-cells : Specifies the number of cells needed to encode an
+-  interrupt source.  The type shall be a <u32> and the value shall be 3.
+-
+-  The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
+-  interrupts.
+-
+-  The 2nd cell contains the interrupt number for the interrupt type.
+-  SPI interrupts are in the range [0-987].  PPI interrupts are in the
+-  range [0-15].
+-
+-  The 3rd cell is the flags, encoded as follows:
+-	bits[3:0] trigger type and level flags.
+-		1 = low-to-high edge triggered
+-		2 = high-to-low edge triggered (invalid for SPIs)
+-		4 = active high level-sensitive
+-		8 = active low level-sensitive (invalid for SPIs).
+-	bits[15:8] PPI interrupt cpu mask.  Each bit corresponds to each of
+-	the 8 possible cpus attached to the GIC.  A bit set to '1' indicated
+-	the interrupt is wired to that CPU.  Only valid for PPI interrupts.
+-	Also note that the configurability of PPI interrupts is IMPLEMENTATION
+-	DEFINED and as such not guaranteed to be present (most SoC available
+-	in 2014 seem to ignore the setting of this flag and use the hardware
+-	default value).
+-
+-- reg : Specifies base physical address(s) and size of the GIC registers. The
+-  first region is the GIC distributor register base and size. The 2nd region is
+-  the GIC cpu interface register base and size.
+-
+-Optional
+-- interrupts	: Interrupt source of the parent interrupt controller on
+-  secondary GICs, or VGIC maintenance interrupt on primary GIC (see
+-  below).
+-
+-- cpu-offset	: per-cpu offset within the distributor and cpu interface
+-  regions, used when the GIC doesn't have banked registers. The offset is
+-  cpu-offset * cpu-nr.
+-
+-- clocks        : List of phandle and clock-specific pairs, one for each entry
+-  in clock-names.
+-- clock-names   : List of names for the GIC clock input(s). Valid clock names
+-  depend on the GIC variant:
+-	"ic_clk" (for "arm,arm11mp-gic")
+-	"PERIPHCLKEN" (for "arm,cortex-a15-gic")
+-	"PERIPHCLK", "PERIPHCLKEN" (for "arm,cortex-a9-gic")
+-	"clk" (for "arm,gic-400" and "nvidia,tegra210")
+-	"gclk" (for "arm,pl390")
+-
+-- power-domains : A phandle and PM domain specifier as defined by bindings of
+-		  the power controller specified by phandle, used when the GIC
+-		  is part of a Power or Clock Domain.
+-
+-
+-Example:
+-
+-	intc: interrupt-controller@fff11000 {
+-		compatible = "arm,cortex-a9-gic";
+-		#interrupt-cells = <3>;
+-		#address-cells = <1>;
+-		interrupt-controller;
+-		reg = <0xfff11000 0x1000>,
+-		      <0xfff10100 0x100>;
+-	};
+-
+-
+-* GIC virtualization extensions (VGIC)
+-
+-For ARM cores that support the virtualization extensions, additional
+-properties must be described (they only exist if the GIC is the
+-primary interrupt controller).
+-
+-Required properties:
+-
+-- reg : Additional regions specifying the base physical address and
+-  size of the VGIC registers. The first additional region is the GIC
+-  virtual interface control register base and size. The 2nd additional
+-  region is the GIC virtual cpu interface register base and size.
+-
+-- interrupts : VGIC maintenance interrupt.
+-
+-Example:
+-
+-	interrupt-controller@2c001000 {
+-		compatible = "arm,cortex-a15-gic";
+-		#interrupt-cells = <3>;
+-		interrupt-controller;
+-		reg = <0x2c001000 0x1000>,
+-		      <0x2c002000 0x2000>,
+-		      <0x2c004000 0x2000>,
+-		      <0x2c006000 0x2000>;
+-		interrupts = <1 9 0xf04>;
+-	};
+-
+-
+-* GICv2m extension for MSI/MSI-x support (Optional)
+-
+-Certain revisions of GIC-400 supports MSI/MSI-x via V2M register frame(s).
+-This is enabled by specifying v2m sub-node(s).
+-
+-Required properties:
+-
+-- compatible	    : The value here should contain "arm,gic-v2m-frame".
+-
+-- msi-controller    : Identifies the node as an MSI controller.
+-
+-- reg		    : GICv2m MSI interface register base and size
+-
+-Optional properties:
+-
+-- arm,msi-base-spi  : When the MSI_TYPER register contains an incorrect
+-  		      value, this property should contain the SPI base of
+-		      the MSI frame, overriding the HW value.
+-
+-- arm,msi-num-spis  : When the MSI_TYPER register contains an incorrect
+-  		      value, this property should contain the number of
+-		      SPIs assigned to the frame, overriding the HW value.
+-
+-Example:
+-
+-	interrupt-controller@e1101000 {
+-		compatible = "arm,gic-400";
+-		#interrupt-cells = <3>;
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		interrupt-controller;
+-		interrupts = <1 8 0xf04>;
+-		ranges = <0 0 0 0xe1100000 0 0x100000>;
+-		reg = <0x0 0xe1110000 0 0x01000>,
+-		      <0x0 0xe112f000 0 0x02000>,
+-		      <0x0 0xe1140000 0 0x10000>,
+-		      <0x0 0xe1160000 0 0x10000>;
+-		v2m0: v2m@8000 {
+-			compatible = "arm,gic-v2m-frame";
+-			msi-controller;
+-			reg = <0x0 0x80000 0 0x1000>;
+-		};
+-
+-		....
+-
+-		v2mN: v2m@9000 {
+-			compatible = "arm,gic-v2m-frame";
+-			msi-controller;
+-			reg = <0x0 0x90000 0 0x1000>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
+new file mode 100644
+index 000000000000..80db566749a1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
+@@ -0,0 +1,205 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM Generic Interrupt Controller v1 and v2
++
++maintainers:
++  - Marc Zyngier <marc.zyngier@arm.com>
++
++description: |+
++  ARM SMP cores are often associated with a GIC, providing per processor
++  interrupts (PPI), shared processor interrupts (SPI) and software
++  generated interrupts (SGI).
++
++  Primary GIC is attached directly to the CPU and typically has PPIs and SGIs.
++  Secondary GICs are cascaded into the upward interrupt controller and do not
++  have PPIs or SGIs.
++
++properties:
++  compatible:
++    enum:
++      - arm,arm1176jzf-devchip-gic
++      - arm,arm11mp-gic
++      - arm,cortex-a15-gic
++      - arm,cortex-a7-gic
++      - arm,cortex-a5-gic
++      - arm,cortex-a9-gic
++      - arm,eb11mp-gic
++      - arm,gic-400
++      - arm,pl390
++      - arm,tc11mp-gic
++      - brcm,brahma-b15-gic
++      - nvidia,tegra210-agic
++      - qcom,msm-8660-qgic
++      - qcom,msm-qgic2
++
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 3
++    description: |
++      The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
++      interrupts.
++
++      The 2nd cell contains the interrupt number for the interrupt type.
++      SPI interrupts are in the range [0-987].  PPI interrupts are in the
++      range [0-15].
++
++      The 3rd cell is the flags, encoded as follows:
++        bits[3:0] trigger type and level flags.
++          1 = low-to-high edge triggered
++          2 = high-to-low edge triggered (invalid for SPIs)
++          4 = active high level-sensitive
++          8 = active low level-sensitive (invalid for SPIs).
++        bits[15:8] PPI interrupt cpu mask.  Each bit corresponds to each of
++        the 8 possible cpus attached to the GIC.  A bit set to '1' indicated
++        the interrupt is wired to that CPU.  Only valid for PPI interrupts.
++        Also note that the configurability of PPI interrupts is IMPLEMENTATION
++        DEFINED and as such not guaranteed to be present (most SoC available
++        in 2014 seem to ignore the setting of this flag and use the hardware
++        default value).
++
++  reg:
++    description: |
++      Specifies base physical address(s) and size of the GIC registers. The
++      first region is the GIC distributor register base and size. The 2nd region
++      is the GIC cpu interface register base and size.
++
++      For GICv2 with virtualization extensions, additional regions are
++      required for specifying the base physical address and size of the VGIC
++      registers. The first additional region is the GIC virtual interface
++      control register base and size. The 2nd additional region is the GIC
++      virtual cpu interface register base and size.
++    minItems: 2
++    maxItems: 4
++
++  interrupts:
++    description: Interrupt source of the parent interrupt controller on
++      secondary GICs, or VGIC maintenance interrupt on primary GIC (see
++      below).
++    maxItems: 1
++
++  cpu-offset:
++    description: per-cpu offset within the distributor and cpu interface
++      regions, used when the GIC doesn't have banked registers. The offset
++      is cpu-offset * cpu-nr.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    description: List of names for the GIC clock input(s). Valid clock names
++      depend on the GIC variant.
++    oneOf:
++      - const: ic_clk # for "arm,arm11mp-gic"
++      - const: PERIPHCLKEN # for "arm,cortex-a15-gic"
++      - items: # for "arm,cortex-a9-gic"
++          - const: PERIPHCLK
++          - const: PERIPHCLKEN
++      - const: clk # for "arm,gic-400" and "nvidia,tegra210"
++      - const: gclk #for "arm,pl390"
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++  - interrupt-controller
++  - "#interrupt-cells"
++  - reg
++
++patternProperties:
++  "^v2m@[0-9a-f]*$":
++    description: |
++      * GICv2m extension for MSI/MSI-x support (Optional)
++
++      Certain revisions of GIC-400 supports MSI/MSI-x via V2M register frame(s).
++      This is enabled by specifying v2m sub-node(s).
++
++    properties:
++      compatible:
++        const: arm,gic-v2m-frame
++
++      msi-controller: true
++
++      reg:
++        maxItems: 1
++        description: GICv2m MSI interface register base and size
++
++      arm,msi-base-spi:
++        description: When the MSI_TYPER register contains an incorrect value,
++          this property should contain the SPI base of the MSI frame, overriding
++          the HW value.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++      arm,msi-num-spis:
++        description: When the MSI_TYPER register contains an incorrect value,
++          this property should contain the number of SPIs assigned to the
++          frame, overriding the HW value.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++    required:
++      - compatible
++      - msi-controller
++      - reg
++
++examples:
++  - |
++    // GICv1
++    intc: interrupt-controller@fff11000 {
++      compatible = "arm,cortex-a9-gic";
++      #interrupt-cells = <3>;
++      #address-cells = <1>;
++      interrupt-controller;
++      reg = <0xfff11000 0x1000>,
++            <0xfff10100 0x100>;
++    };
++
++  - |
++    // GICv2
++    interrupt-controller@2c001000 {
++      compatible = "arm,cortex-a15-gic";
++      #interrupt-cells = <3>;
++      interrupt-controller;
++      reg = <0x2c001000 0x1000>,
++            <0x2c002000 0x2000>,
++            <0x2c004000 0x2000>,
++            <0x2c006000 0x2000>;
++      interrupts = <1 9 0xf04>;
++    };
++
++  - |
++    // GICv2m extension for MSI/MSI-x support
++    interrupt-controller@e1101000 {
++      compatible = "arm,gic-400";
++      #interrupt-cells = <3>;
++      #address-cells = <2>;
++      #size-cells = <2>;
++      interrupt-controller;
++      interrupts = <1 8 0xf04>;
++      ranges = <0 0 0 0xe1100000 0 0x100000>;
++      reg = <0x0 0xe1110000 0 0x01000>,
++            <0x0 0xe112f000 0 0x02000>,
++            <0x0 0xe1140000 0 0x10000>,
++            <0x0 0xe1160000 0 0x10000>;
++
++      v2m0: v2m@8000 {
++        compatible = "arm,gic-v2m-frame";
++        msi-controller;
++        reg = <0x0 0x80000 0 0x1000>;
++      };
++
++      //...
++
++      v2mN: v2m@9000 {
++        compatible = "arm,gic-v2m-frame";
++        msi-controller;
++        reg = <0x0 0x90000 0 0x1000>;
++      };
++    };
++...
 -- 
-2.20.1
+2.19.1
 
