@@ -3,103 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB52C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF82DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:12:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC08721871
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A7B821873
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 04:12:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbhID/fv"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="A1vtsC9L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbeLSEMR (ORCPT
+        id S1727689AbeLSEM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 18 Dec 2018 23:12:17 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36197 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbeLSEMR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Dec 2018 23:12:17 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so9197029pfc.3;
-        Tue, 18 Dec 2018 20:12:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=99ol7qbLCgkmttbxGy8bJMeKzGX8ofEsvRhXZ26stH8=;
-        b=TbhID/fv2AjiLgcCxrnVAJ6XUQWH7mP1752zzD6yYjgm0mhlD5xWJ0s36T9ahjYvAl
-         TyirBr/wFYuVNosCKZll+qd7dtrYKn6jxYZ14ws9BajP4J7VDQ+Er07UL3icToD1yfbP
-         FjIsfIgkurdqEuEL2T+MPbXIKjAOWW4rdQqC89IzOP0tlIj+bEqvkOPv3kuplXqsejd2
-         cfqVLjjaVK3fEsYJwSHA5jm+bJjEAOMSzOJoBpahJXINcsF9fezRcdzT4L9mB499OB43
-         qtwmMY993aeAZjY0+vVDZR9pC0s6LfZPF8HC17ZkNREx3SueoBU1l8LKYtjPtIJiZ7mO
-         AEkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=99ol7qbLCgkmttbxGy8bJMeKzGX8ofEsvRhXZ26stH8=;
-        b=E/rTkNtLDQimY6+O46ttu04Pozlw2HkDoH9bP1A1agf6RRGkWUS71IAPHS8Zj0uy6X
-         6pAlRXWgrPdflbgvXkuF8O3C7ohhgAsD99p6xdaLILDPm3qcw0WEn3TcuCVaa3abNrht
-         sHboMIQdNVIONc6HIk76iYJkthoiN+tCzu+URvCUHWZZy6CEqZzUVRN+7yXo91mxz0i4
-         y9l0bGeHYGb2GKOvmuo/eHjp8bvJlgc4SaKB8GcWCYHOCjcyefkIhbLdQxT9DUlGUHLT
-         kGcZ14kR4xRAtWW7op5+Xf5NPrNTsZOn8YvYODMX9SM+Yo5nw0s1ZGL98fqtYjmPhqE1
-         iv2g==
-X-Gm-Message-State: AA+aEWaJxEdAJReSHb74PxJ7m80D2bmB7y4Mr9/HWfeQ7gNiUUQdc1v+
-        ajzmX1nFK7yvKZ8q6UIljNUDfj1VeOwoLRQIOqk=
-X-Google-Smtp-Source: AFSGD/UyHuK9cw3f2JzLnTb9wNkvWQBGXbupwvgo4NwYpaK9lVwNEcTMMJkzGf8I57LTAGbaHpQ7G+Bsg6d89hbD3O8=
-X-Received: by 2002:a63:2586:: with SMTP id l128mr18503023pgl.104.1545192736238;
- Tue, 18 Dec 2018 20:12:16 -0800 (PST)
+        Tue, 18 Dec 2018 23:12:58 -0500
+Received: from ozlabs.org ([203.11.71.1]:42431 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726595AbeLSEM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Dec 2018 23:12:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43KM1d4W0gz9s2P;
+        Wed, 19 Dec 2018 15:12:53 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545192775;
+        bh=agQD+rzVYI3FazhqxI9bPNzgsYyON/YytEuZQZILjYU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=A1vtsC9LLqSu3cbjRlBTmfvrxGGJTxblaZzBcoeupBlOObsj29Xp/ixyrWX5DuXo5
+         m6IYTFzCz72KTVW2hbvhHJ6ygxXiBOOIe4ymaZnra18Ved9KWvTz6Noj8Y43Q2R4te
+         OkhW4AduuWRysNln2LiT5NO27OwG511wfCnHovs5Js8aNCoJgsSFm6LFO6SK8AUUEU
+         nURD5ICKOs9lmqmaDDjYY+R2kVj3kCSSYg/WUw9a8zEH2/Ae5bcJQqm/DmDlqpIr9S
+         cle87DDkgB5frKcH/TXImIlmNYvR9npJfqSdtmCwXV/29NZSSgGWsJYhwBh/xQ0wlR
+         4B6J9NLdphWhg==
+Date:   Wed, 19 Dec 2018 15:12:52 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Marc Orr <marcorr@google.com>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Message-ID: <20181219151252.3e27a7f8@canb.auug.org.au>
 MIME-Version: 1.0
-References: <0000000000005e47a2057d0edc49@google.com> <20181216190412.GE4170@linux.ibm.com>
- <CACT4Y+b+mSs2FV3BY+MsHDTPPgvPaCdMmJONd9c4zEU67CdmOA@mail.gmail.com>
- <20181217112916.GG4170@linux.ibm.com> <1583d5fc-34bf-3a81-363d-01a1085a7363@linux.intel.com>
- <CACT4Y+aKn4XsGVgt3ELGnnJcg6H-m+dSdV018dLvJhrpshycWA@mail.gmail.com>
- <20641819-e4fb-f3bd-34c8-c68106cccd0e@gmail.com> <20181217162421.6d636ee5@redhat.com>
- <CACT4Y+YXFrnQh9h1KQf8=NcHugmxTj+d7AQdGCvRX_xsHwr1qA@mail.gmail.com>
- <20181218001828.49cea463@redhat.com> <CACT4Y+ZFpO26Tgqpi+Jies9XOiiCgAdp2DV0z_54hCNTqkJsiw@mail.gmail.com>
- <20181218134024.45d2d5e3@redhat.com>
-In-Reply-To: <20181218134024.45d2d5e3@redhat.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Tue, 18 Dec 2018 20:12:04 -0800
-Message-ID: <CAM_iQpUYeF1vLRX=TryfH6ruPi2qL-j8Y2shbs7s9cKiy4xvmA@mail.gmail.com>
-Subject: Re: WARNING in __rcu_read_unlock
-To:     Stefano Brivio <sbrivio@redhat.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        syzbot <syzbot+43f6755d1c2e62743468@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 4:40 AM Stefano Brivio <sbrivio@redhat.com> wrote:
-> Not as far as I know. The selftests checking this path, by design, only
-> use supported configurations, they don't forge packets.
->
-> Maybe it would be nice to have a semi-automated way to isolate and
-> describe/name specific conditions found by syzbot via fuzzing and turn
-> those into tests that are then repeated periodically. I'm not sure how
-> that would look like, but I think it's still more maintainable than a
-> pile of C reproducers with forged packets in selftests/net.
->
-> Eric, Cong, Xin, as you also recently fixed a nice deal of similar cases
-> reported by syzbot, what do you think? Did you ever feel the need to
-> turn a syzbot reproducer into a regression test case?
+--Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think it is a very good idea to archive these C reproducers in
-tools/testing/selftests/. After this is done, kbuild bot could do these
-regression tests, no longer need to bother syzbot to run them again. :)
+Hi all,
 
-Thanks.
+Today's linux-next merge of the kvm tree got a conflict in:
+
+  arch/x86/kvm/x86.c
+
+between commit:
+
+  eb012ef3b4e3 ("x86: Remove Intel MPX")
+
+from the tip tree and commit:
+
+  b666a4b69739 ("kvm: x86: Dynamically allocate guest_fpu")
+
+from the kvm tree.
+
+I fixed it up (the former removed some code updated by the latter, so I
+did that) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwZxUQACgkQAVBC80lX
+0GxkgAf+KpOi5GYRWrCxptB3CZfRzKSZWoR3G20znQtTlsDyUq3dbmsv8LUOZv6q
+U0f1z0LnpmqQ/fjbdtn+nh+pESsV/W6HPQOmd+ya9kClEXN7wzmXaaxMDg66i1jh
+2VrEps5Nzw8RTh43eyA0Yn+iyB0GpuJk06uiV9FL9yVzhDoX+hrtwIQpvSgbp5pq
+R91tjiGLKrWHS1CZN7cmeG8MdzxcB86MG94m5sg416/y4iBBD0peWF7hd3y1PEbH
+lzbBI2EsXJmXW6iuqBYe3GSuxINAzwdQ2T22eTLSonEV2hQPUyOXf6kPOwfTt89o
+ErLokEJGCOJf+/tD3oJtgrwEY+Wslw==
+=2Igu
+-----END PGP SIGNATURE-----
+
+--Sig_/Wy72QkJ_3RjgB0ZhYvD/jBY--
