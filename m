@@ -2,114 +2,112 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18931C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07058C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8652184A
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C493621852
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 07:38:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HC8NhEyV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeLSHiI (ORCPT
+        id S1728214AbeLSHiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:38:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36019 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbeLSHiI (ORCPT
+        Wed, 19 Dec 2018 02:38:14 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38087 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeLSHiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:38:08 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u4so17430872wrp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 23:38:07 -0800 (PST)
+        Wed, 19 Dec 2018 02:38:14 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so16517423lja.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Dec 2018 23:38:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4nKteQZDBd3gzsGTCfuuQEnMUp8pCvaLKltXicBLdXA=;
+        b=HC8NhEyVB9kD7O1pj7c8mms2uKXEFa/ffxgZBYPd9cUf3bEjF489LvrLpLq3EQjYBt
+         ojRvwQ13mAsKn3bQbzR9JB98e9qWwWpDruXu2z1lciZfORoE+p6VgztPKXow10fU41yO
+         rnOB0O/YXVHzaJbvIGGL7Pu6xzQuZyZWJDF9MPui0x8V/fUbFrKesHg1ay1QUGWhW/3J
+         yAo3dIkuhT999I0D1Fih9ghdvciA19vVA27YfYXCSxEu2101CTn/fiLvuXaBAf/bR7Yo
+         Ba0CXkpPbsESVI+ZL6GBROYfDRFct8EpQfkA45yihd9CjYAR5Dcm77EAjz3siuCyLomj
+         rLgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Bcivv8KFuRDbNKXtCCJGIghczdqRHQkbP+yCg7OYjsk=;
-        b=XkKVx5CqkVqRq7emalK+m280vHwuc4nyfVJ+S0y3NTqx6XwXesF7vg0IX8Y/OVX9zV
-         zC/GXmUr3VuNk6UwWcb9e4dDivyydZ3eGLrom+wgY7fbwsWlwlibBNf3UFYZuIhyt8rl
-         +jpdysLTotLxpKxFoHjWSvtJOLBwn4vj5n0qM7WmHLAO2X11QxDD1tA3kcDLOwlwubDi
-         I+X8og/o61vEMyN9iBfnMcFLA7NErpM+5s7juSvpFSK2B2Kbq6q8H02gkQAhVIT5DP7G
-         DBJ+Z6F/ehWxQLla2eGqO6rIe8BfZ44tEh5QJFL7mYUtKuHpBX/Dgj+buHnFgIBWh8ty
-         cMAQ==
-X-Gm-Message-State: AA+aEWbsvszZ3NQ/bj4fWNhK0dK7x/S4JYdEW6duFXCAqs1dUJX2VwS1
-        rpISdO5MnSKFrdMW3lBOn5e99A==
-X-Google-Smtp-Source: AFSGD/Unf2R7U7qn7hPwD+xVJPMNnfFpEY6JXlbfjijE0jqrmfQW2hWhMzZooCRo6qNy3hbVfUCaUw==
-X-Received: by 2002:adf:b716:: with SMTP id l22mr18291186wre.186.1545205086343;
-        Tue, 18 Dec 2018 23:38:06 -0800 (PST)
-Received: from t460s.bristot.redhat.com ([193.205.81.201])
-        by smtp.gmail.com with ESMTPSA id c10sm4145637wrw.49.2018.12.18.23.38.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Dec 2018 23:38:05 -0800 (PST)
-Subject: Re: [PATCH V2 1/9] jump_label: Add for_each_label_entry helper
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Zhou Chengming <zhouchengming1@huawei.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-References: <cover.1545149539.git.bristot@redhat.com>
- <c1b514e312238c0fe4e22500d1d41c0f565cae28.1545149539.git.bristot@redhat.com>
- <20181218211923.GM7485@zn.tnic>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <21a12942-2813-9b8a-9051-582070b5eda5@redhat.com>
-Date:   Wed, 19 Dec 2018 08:38:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4nKteQZDBd3gzsGTCfuuQEnMUp8pCvaLKltXicBLdXA=;
+        b=Kv9A7ozO9TCL5fopoZnLirKwUdWGnLH/XXI7D7jbukKsDaR5g+O/QN84MTfpJoyc9U
+         WiLxMFQCcGbs9/hfhKnPOlrrVHE0zpGphUGlJZwkJNaaCPK1dmwLtkOnGOjPhLkDaC6q
+         6rkFXsfAivWB7xpRh/JIeyP3FxSAfEGZ4QWU7wR5IK8OE6BYqlgz/sSX9ayuycJf05dd
+         S0dC6i4gBV3Rhhbb556yQQU06gerLfo2asuV7Mbi0sv3F0vV6Amg0vs+s0z0rhtHr8FJ
+         SQe5d0USrEpJ3GWFVL3wOCFOTjD4mp7A2GIX6hMxTdkqfSdP3ryRt1blCVbCa1z8hk8r
+         7GqA==
+X-Gm-Message-State: AA+aEWZZX5ioXOdDkd1D76Z39yAryiaALLktl5LnLEA/fzx2N9WgCSW9
+        SEIcUZiRu+eFu364mU70sokrBcfO5+anTfop3GigMg==
+X-Google-Smtp-Source: AFSGD/U+gtrtfWcpvU2l4tks0uj9AZLIsDch5JID04B3M24MB2ELf2CKCGIZq2itPT1kAoEAWD1wKY1YtFelEcFa/P8=
+X-Received: by 2002:a2e:630a:: with SMTP id x10-v6mr11369694ljb.11.1545205092130;
+ Tue, 18 Dec 2018 23:38:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181218211923.GM7485@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181217202448.GA14918@jordon-HP-15-Notebook-PC>
+In-Reply-To: <20181217202448.GA14918@jordon-HP-15-Notebook-PC>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Wed, 19 Dec 2018 13:08:00 +0530
+Message-ID: <CAFqt6zZ9JxE_GZ97On54YzdUtgbShL3q0JjK4j2CEMVpAJbejA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, joro@8bytes.org
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, robin.murphy@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18/18 10:19 PM, Borislav Petkov wrote:
-> On Tue, Dec 18, 2018 at 05:46:30PM +0100, Daniel Bristot de Oliveira wrote:
->> This patch adds the helper:
->> 	for_each_label_entry(key, entry, stop)
->>
->> For the "for each jump label entry" for defined as:
->> 	for (; (entry < stop) && (jump_entry_key(entry) == key); entry++)
->>
->> Simplifying the reading and usage.
-> 
-> Please avoid writing "This patch" in a commit message and also what it
-> does - that should be obvious. Instead say something like:
-> 
-> "Add a helper macro to make jump entry iteration code more readable."
-> 
-> or so.
+On Tue, Dec 18, 2018 at 1:50 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> Convert to use vm_insert_range() to map range of kernel
+> memory to user vma.
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <willy@infradead.org>
 
-Right! I will change it!
-
-> But then, IINM, this macro is being used only once. Isn't that a bit too
-> much? I mean, you could just as well do:
-> 
-> 	# iterate over each jump entry
-> 	for (; (entry < stop) && (jump_entry_key(entry) == key); entry++) {
-> 
-> and have it even more readable without introducing macro which is not
-> going to be used elsewhere. Or is it going to...?
-
-It is also used in the patch 9. But I can remove it, no problem.
-
-Thoughts?
-
-Thanks!
-
--- Daniel
-
+Cc'd: Robin Murphy
+> ---
+>  drivers/iommu/dma-iommu.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index d1b0475..de7ffd8 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -622,17 +622,10 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+>
+>  int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
+>  {
+> -       unsigned long uaddr = vma->vm_start;
+> -       unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -       int ret = -ENXIO;
+> +       unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>
+> -       for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+> -               ret = vm_insert_page(vma, uaddr, pages[i]);
+> -               if (ret)
+> -                       break;
+> -               uaddr += PAGE_SIZE;
+> -       }
+> -       return ret;
+> +       return vm_insert_range(vma, vma->vm_start, pages + vma->vm_pgoff,
+> +                               count - vma->vm_pgoff);
+>  }
+>
+>  static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+> --
+> 1.9.1
+>
