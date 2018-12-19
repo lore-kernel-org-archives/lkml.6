@@ -2,190 +2,119 @@ Return-Path: <SRS0=MnXf=O4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD21BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608A4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C4A20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B3C820869
+	for <linux-kernel@archiver.kernel.org>; Wed, 19 Dec 2018 22:50:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KvNK6CdX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbeLSWuN (ORCPT
+        id S1729470AbeLSWuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 17:50:13 -0500
-Received: from gateway20.websitewelcome.com ([192.185.48.38]:21530 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728425AbeLSWuK (ORCPT
+        Wed, 19 Dec 2018 17:50:23 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42688 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbeLSWuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 17:50:10 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 8E456400C4A50
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 16:26:15 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ZkIBgcUUaYTGMZkIBgRmQF; Wed, 19 Dec 2018 16:26:15 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=47190 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gZkIA-000Cv0-O5; Wed, 19 Dec 2018 16:26:14 -0600
-Subject: Re: [PATCH 16/41] scsi: imm: mark expected switch fall-throughs
-To:     linux-kernel@vger.kernel.org
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <42e3f9f751b662b7f0e4e763aa880bd752511c60.1543374820.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <9f283763-f5e5-3da2-84e4-7e2a3543cb23@embeddedor.com>
-Date:   Wed, 19 Dec 2018 16:26:09 -0600
+        Wed, 19 Dec 2018 17:50:21 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so18828244lja.9;
+        Wed, 19 Dec 2018 14:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lL6VuU05xhyZZNNjsDLIZB0TivGZQe3e6R0urwV27nc=;
+        b=KvNK6CdXLsyM/6Upw6RorgzC448kKDKTro0RKfuSdwzdxisa1b8Z1mxNBOypG/c4o2
+         7naXbC9MJKaEtLLK7gw3+XYZdN1FndRbB/G7vyrgsIWwxU94/Ul9ojU84c7X2AlSC2aV
+         Fdn6IU8gjEnttnQuoyRU1v9h5WndOX7XA+YtPF3zSaJQUI2sEiUsQczxN4PcHp3kZLCU
+         DrqEoLlWeonCVNNEmZdyoF8URbG/luEfkzYU9q3GRIdR/k3/wUO3vcMZLy7Tt2dQLMdK
+         3WuUyNDdwIog9l2YHhdGtExamWVtCXowuizQ9lqn3QVS0WZEdlQXbH8zeYJV2DdNTysB
+         anKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lL6VuU05xhyZZNNjsDLIZB0TivGZQe3e6R0urwV27nc=;
+        b=Tm7ErUGCU+EuO8/+XHFgxpBGMI8hWuSOD/t2Xd2ZYuAHYnXSOqdDF1xvDysyaY4dvu
+         QUpe0sC2OyMln+BM5MYeR39aiBW9Pj0uhpVrZTF+hQJxY5DB4V1B9y9vCwoJ+nloGlYJ
+         ZPC4yqq7KuSxo0lDEBTriZNeVDjPWinGOufavD0EvvWuRM0oEY6yFfhuWYbchz20nI7P
+         ABvV0IUV8JYcPB95Rfvif/CodwMErqW+uFpplFCEUvQTYBUMi1js9+E1xsHJJ7hru1W2
+         VGxpBnZKu4nB7ZcD1KJerXk69ICFHwmNVGbaol+cobpayrEKECd7x/3UWZ5Lp+rYFUgq
+         guoQ==
+X-Gm-Message-State: AA+aEWYm1ykjJwl+PbeG+HFvXK52WhPXAND1ba6cYMECY0DkGH8jQr+q
+        eqqCCavYNYZTra4Rmsmt9o4vZ884ihA=
+X-Google-Smtp-Source: AFSGD/W+aF0CzMAEbw0L4ujsDio5pqmdz8rplfxqdUnX55t16gKI9pqeN3fOqZvahbsqUH3wE5dM+w==
+X-Received: by 2002:a2e:9603:: with SMTP id v3-v6mr11660171ljh.15.1545259818062;
+        Wed, 19 Dec 2018 14:50:18 -0800 (PST)
+Received: from ?IPv6:2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2? (dmhwpt3bffxn8z3-j6k-4.rev.dnainternet.fi. [2001:14bb:51:a4c8:5c24:24d7:ca5f:e7d2])
+        by smtp.gmail.com with ESMTPSA id h203sm4063348lfe.44.2018.12.19.14.50.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 14:50:17 -0800 (PST)
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+ <20181204121805.4621-3-igor.stoppa@huawei.com>
+ <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+ <20181212104900.0af52c34@mschwideX1>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <cff2bb8d-bd61-c4a0-4e63-4de2133a7b38@gmail.com>
+Date:   Thu, 20 Dec 2018 00:50:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <42e3f9f751b662b7f0e4e763aa880bd752511c60.1543374820.git.gustavo@embeddedor.com>
+In-Reply-To: <20181212104900.0af52c34@mschwideX1>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.106.44
-X-Source-L: No
-X-Exim-ID: 1gZkIA-000Cv0-O5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.106.44]:47190
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Friendly ping:
 
-Who can ack or review this patch, please?
+On 12/12/2018 11:49, Martin Schwidefsky wrote:
+> On Wed, 5 Dec 2018 15:13:56 -0800
+> Andy Lutomirski <luto@kernel.org> wrote:
 
-Thanks
--- 
-Gustavo
+>> Hi s390 and powerpc people: it would be nice if this generic
+>> implementation *worked* on your architectures and that it will allow
+>> you to add some straightforward way to add a better arch-specific
+>> implementation if you think that would be better.
+> 
+> As the code is right now I can guarantee that it will not work on s390.
 
-On 11/27/18 10:29 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
-> 
-> Notice that, in this particular case, I placed all the "Phase N - ..."
-> comments on the same line as its corresponding switch case. The same
-> way in which similar comments appear in drivers/scsi/ppa.c. This makes
-> it possible to place the "fall through" annotations at the bottom of
-> each switch case, which is what GCC is expecting to find.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/scsi/imm.c | 33 +++++++++++++++++----------------
->   1 file changed, 17 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
-> index 8c6627bc8a39..629e0bc70d3e 100644
-> --- a/drivers/scsi/imm.c
-> +++ b/drivers/scsi/imm.c
-> @@ -796,21 +796,21 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
->   			return 0;
->   		}
->   		return 1;	/* wait until imm_wakeup claims parport */
-> -		/* Phase 1 - Connected */
-> -	case 1:
-> +
-> +	case 1:		/* Phase 1 - Connected */
->   		imm_connect(dev, CONNECT_EPP_MAYBE);
->   		cmd->SCp.phase++;
-> +		/* fall through */
->   
-> -		/* Phase 2 - We are now talking to the scsi bus */
-> -	case 2:
-> +	case 2:		/* Phase 2 - We are now talking to the scsi bus */
->   		if (!imm_select(dev, scmd_id(cmd))) {
->   			imm_fail(dev, DID_NO_CONNECT);
->   			return 0;
->   		}
->   		cmd->SCp.phase++;
-> +		/* fall through */
->   
-> -		/* Phase 3 - Ready to accept a command */
-> -	case 3:
-> +	case 3:		/* Phase 3 - Ready to accept a command */
->   		w_ctr(ppb, 0x0c);
->   		if (!(r_str(ppb) & 0x80))
->   			return 1;
-> @@ -818,9 +818,9 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
->   		if (!imm_send_command(cmd))
->   			return 0;
->   		cmd->SCp.phase++;
-> +		/* fall through */
->   
-> -		/* Phase 4 - Setup scatter/gather buffers */
-> -	case 4:
-> +	case 4:		/* Phase 4 - Setup scatter/gather buffers */
->   		if (scsi_bufflen(cmd)) {
->   			cmd->SCp.buffer = scsi_sglist(cmd);
->   			cmd->SCp.this_residual = cmd->SCp.buffer->length;
-> @@ -834,8 +834,9 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
->   		cmd->SCp.phase++;
->   		if (cmd->SCp.this_residual & 0x01)
->   			cmd->SCp.this_residual++;
-> -		/* Phase 5 - Pre-Data transfer stage */
-> -	case 5:
-> +		/* fall through */
-> +
-> +	case 5:		/* Phase 5 - Pre-Data transfer stage */
->   		/* Spin lock for BUSY */
->   		w_ctr(ppb, 0x0c);
->   		if (!(r_str(ppb) & 0x80))
-> @@ -850,9 +851,9 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
->   			if (imm_negotiate(dev))
->   				return 0;
->   		cmd->SCp.phase++;
-> +		/* fall through */
->   
-> -		/* Phase 6 - Data transfer stage */
-> -	case 6:
-> +	case 6:		/* Phase 6 - Data transfer stage */
->   		/* Spin lock for BUSY */
->   		w_ctr(ppb, 0x0c);
->   		if (!(r_str(ppb) & 0x80))
-> @@ -866,9 +867,9 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
->   				return 1;
->   		}
->   		cmd->SCp.phase++;
-> +		/* fall through */
->   
-> -		/* Phase 7 - Post data transfer stage */
-> -	case 7:
-> +	case 7:		/* Phase 7 - Post data transfer stage */
->   		if ((dev->dp) && (dev->rd)) {
->   			if ((dev->mode == IMM_NIBBLE) || (dev->mode == IMM_PS2)) {
->   				w_ctr(ppb, 0x4);
-> @@ -878,9 +879,9 @@ static int imm_engine(imm_struct *dev, struct scsi_cmnd *cmd)
->   			}
->   		}
->   		cmd->SCp.phase++;
-> +		/* fall through */
->   
-> -		/* Phase 8 - Read status/message */
-> -	case 8:
-> +	case 8:		/* Phase 8 - Read status/message */
->   		/* Check for data overrun */
->   		if (imm_wait(dev) != (unsigned char) 0xb8) {
->   			imm_fail(dev, DID_ERROR);
-> 
+OK, I have thrown the towel wrt developing at the same time for multiple 
+architectures.
+
+ATM I'm oriented toward getting support for one (x86_64), leaving the 
+actual mechanism as architecture specific.
+
+Then I can add another one or two and see what makes sense to refactor.
+This approach should minimize the churning, overall.
+
+
+--
+igor
