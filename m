@@ -2,70 +2,71 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4917C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74066C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39DC206C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:10:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jibAHz/h"
+	by mail.kernel.org (Postfix) with ESMTP id 423B7206C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545322216;
+	bh=ZMkT6m36QhnVZvTHZ3PwX8OmTGX9YkOkK+wYEDQtHK0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=GwtJn9H1dM1ouzQve3XGeZXxAXDV+to3IpTFhq/UZgJrKQGfrjEAoByGIxDCQgYG4
+	 Q9VTCrUDgA2ys64P+n9NPyuEau199yOA0uQOjE+yj9k2r2wndreBKMdUVo+nlwgcM2
+	 zmB8qBs6K8suumKKleuco8TTDDzSXL7SKHEQiWSk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732523AbeLTQKK (ORCPT
+        id S1732446AbeLTQKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:10:10 -0500
-Received: from mail-io1-f51.google.com ([209.85.166.51]:40450 "EHLO
-        mail-io1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732380AbeLTQKH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:10:07 -0500
-Received: by mail-io1-f51.google.com with SMTP id a11so460356ioq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:10:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WASiI+LGr+j54QgtHqz/Mb0c0vmWaC6GIOI+FQCQgEU=;
-        b=jibAHz/hWiGisigzXIHWT63sOyQ3Yo5LngmujgY08aJgD/3dKw1xfQjkD4ddfIIvO+
-         gXPRicj8aSRaHyKS7onoovZ59mikIniaIdsynEzp/r8JMFmala/rz0Zg1d0/rQdjLhVu
-         uVTaE9zkZ4wQSlG4Y/iB+AOysIerrHwFEg+tqaucITBcsU2xGtTur+dfGm5foFffjiuK
-         8FcqrnkzexIxJ02ZEWRdoYsoax0jXxoVNA8FMNvg3Y81tEqCghzwKqO9TJqQm3dck8d9
-         PDx0QrKYLF5LXQGFzlQK110xgSHU5meHyHwcwSdBSUxur+cXpVkhfQVZIKY+eEuho2xZ
-         laBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WASiI+LGr+j54QgtHqz/Mb0c0vmWaC6GIOI+FQCQgEU=;
-        b=hP2J1MLMj9+93k+u9aIa3zXktA0fJ2rz20uCZuzemBDewsIUXzyrGWJhDn+pDed0fV
-         M6FiKe1PJPdK9GtGIuMiP+4fBSd5WiKvE9XfO7QmwAs6Z96cHa+1mXsNxLBCu1tCTNen
-         PMFvu9QAkE7ZemUQ0GlcTnz3e5GFdp6T19tmad24gGirqe7F/Npzsogus8erw1eNpAQu
-         fBzAdGExwunGLtw+6N6EEhdzqkKTPkGNlrYwqy32wxjB6QN8x63UQLEnn0tJAdu2O8bl
-         O62ghgZVo82sm9PIDTrT2mioUn09G/y5nj++a+jYRPX+TT7pDOu0uK1Xe4oeZ35kSh2H
-         1cyA==
-X-Gm-Message-State: AA+aEWZZwNmDBa+QlkfSbmnOoJdtk4hHGSFlptWY3pLRAuQ8L/if1iij
-        8KcqI8tBhvn0CgUmjPLX+svcLWQG7ewqt821YZ8=
-X-Google-Smtp-Source: AFSGD/Xb54zM3zrjZTrzDO9vA+Ipy3Vcv0RE3PVhkibl9KaBlHgE00bJPoJ7axfBowYkV/QOLu4sOLq1PGpU4ZAeEEE=
-X-Received: by 2002:a6b:9355:: with SMTP id v82mr22049626iod.40.1545322206627;
- Thu, 20 Dec 2018 08:10:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20181202021710.9307-1-tiny.windzz@gmail.com> <CACRpkdahwmjED=BY715E+cpRhveqk32vCRpevyHF8SdcqC0kvg@mail.gmail.com>
-In-Reply-To: <CACRpkdahwmjED=BY715E+cpRhveqk32vCRpevyHF8SdcqC0kvg@mail.gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Fri, 21 Dec 2018 00:09:55 +0800
-Message-ID: <CAEExFWssZtWV3XnJpjwm8BXAE4duhrrvjaPWQhfRP3W4y-O1Rg@mail.gmail.com>
-Subject: Re: [PATCH] mfd: convert to DEFINE_SHOW_ATTRIBUTE
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Dec 2018 11:10:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732307AbeLTQKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:10:03 -0500
+Subject: Re: [git pull] m68k fixes for 4.20
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545322203;
+        bh=ZMkT6m36QhnVZvTHZ3PwX8OmTGX9YkOkK+wYEDQtHK0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=UFAVEfiJxBi7pSl2DgmJz+urCF4W3e4ylh/CnNbw8JqVZsaFYAPpSHUFG5KD1q7bU
+         pl2uoUrMfc6qaOoK8T2LuEAFahqeUHwcFz/cNrHA79MakyyVpaC30two30UtWLe3Zn
+         FnQ8mL4WHPhXH9WrOrYb9ZyIKLpapwxRdyEKzP2M=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20181220151647.26469-1-geert@linux-m68k.org>
+References: <20181220151647.26469-1-geert@linux-m68k.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20181220151647.26469-1-geert@linux-m68k.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git
+ tags/m68k-for-v4.20-tag2
+X-PR-Tracked-Commit-Id: bed1369f51901b17108a4bb4f7210aab183bea42
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1d51b4b1d3f2db0d6d144175e31a84e472fbd99a
+Message-Id: <20181220161003.12746.34350.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 20 Dec 2018 16:10:03 +0000
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping......
+The pull request you sent on Thu, 20 Dec 2018 16:16:47 +0100:
+
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v4.20-tag2
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1d51b4b1d3f2db0d6d144175e31a84e472fbd99a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
