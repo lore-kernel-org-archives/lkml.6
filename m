@@ -2,62 +2,120 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D4EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EEBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA75221904
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:59:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=explicate.org header.i=@explicate.org header.b="Zhaf5e1v"
+	by mail.kernel.org (Postfix) with ESMTP id 4680C2190B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389731AbeLTU7o (ORCPT
+        id S2389743AbeLTVAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:59:44 -0500
-Received: from www.explicate.org ([71.19.157.6]:54161 "EHLO
-        smtp.svc.explicate.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731157AbeLTU7o (ORCPT
+        Thu, 20 Dec 2018 16:00:21 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49967 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731114AbeLTVAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:59:44 -0500
-Received: (qmail 405 invoked by uid 1000); 20 Dec 2018 20:59:44 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=explicate.org; 
- i=@explicate.org; q=dns/txt; s=v01.y2019; t=1545339584; 
- h=date : from : to : cc : subject : message-id : 
- references : mime-version : content-type : in-reply-to : 
- date : from : subject; 
- bh=BmZuE5Y3x3RItI+kubVE1AOLIiH5y2XqBjiEEEcfugE=; 
- b=Zhaf5e1vZpXs8c4QZGSBwkiOHwb9YJtASzRE7dXOLkzOzKp66d6IK8V/
- /Rzsj1lnMPpG0kDDybv/qSiHUmv7Kf9ddHWWvOwPiIcXb6FksQUz44tTjX
- eTGVLRFPRejr83apZITAenGFXIB4p9pAmpTVoRLK075dmQ653Z92w85bU=
-Date:   Thu, 20 Dec 2018 12:59:43 -0800
-From:   Ken Pizzini <kkpp@explicate.org>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: PROBLEM: Xen paging-request boot failure since 4.19.5
-Message-ID: <20181220205943.GA17537@144vak35.msa.explicate.org>
-References: <20181219212537.GA25174@144vak35.msa.explicate.org>
- <fea48b7a-443a-11ac-a3c2-9d26af808f87@oracle.com>
+        Thu, 20 Dec 2018 16:00:21 -0500
+Received: from 89-77-194-223.dynamic.chello.pl (89.77.194.223) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 6f0be353e55adf2e; Thu, 20 Dec 2018 22:00:18 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Len Brown <lenb@kernel.org>, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI / scan: Create platform device for BSG2150 ACPI nodes
+Date:   Thu, 20 Dec 2018 21:59:51 +0100
+Message-ID: <1571328.CfEAWKtrWq@aspire.rjw.lan>
+In-Reply-To: <20181220143451.25962-2-hdegoede@redhat.com>
+References: <20181220143451.25962-1-hdegoede@redhat.com> <20181220143451.25962-2-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fea48b7a-443a-11ac-a3c2-9d26af808f87@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 11:12:40AM -0500, Boris Ostrovsky wrote:
-> This is addressed by https://lkml.org/lkml/2018/12/11/266 but has not
-> been merged yet.
+On Thursday, December 20, 2018 3:34:51 PM CET Hans de Goede wrote:
+> The Point of View TAB-P1006W-232-3G tablet has an ACPI firmware node with
+> a HID of BSG2150 describing the 2 Bosch sensors used in the device a
+> BMC150 compatible accelerometer and a BMC150 compatible magnetometer.
+> 
+> The ACPI firmware node actually contains 3 I2cSerialBusV2 resources,
+> but this seems to be a copy and paste job from the BSG1160 firmware node
+> on other devices, since there is no i2c-client listening to the 0x68
+> address listed in the third resource and the 0x68 address is identical
+> to the address of the third resource in the BSG1160 nodes, where as the
+> other 2 addresses are different.
+> 
+> Add the ID to the I2C multi instantiate list, so that the
+> i2c-multi-instantiate.c driver can handle it;
+> 
+> And add the necessary info to the i2c-multi-instantiate.c driver to
+> enumerate all I2C slaves correctly.
+> 
+> To avoid triggering the:
+> 
+>         if (i < multi->num_clients) {
+>                 dev_err(dev, "Error finding driver, idx %d\n", i);
+> 
+> Error this commit lists the 3th device in the i2c_inst_data with a
+> type of "bsg2150_dummy_dev".
+> 
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Confirmed: applying the patch in that posting to my Gentoo
-sys-kernel/gentoo-sources-4.19.10 tree results in a working
-system for me.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Thanks,
-		--Ken Pizzini
+> ---
+>  drivers/acpi/scan.c                          | 1 +
+>  drivers/platform/x86/i2c-multi-instantiate.c | 9 +++++++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index e9eda5558c1f..d5b981cafaf8 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1540,6 +1540,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+>  	 */
+>  	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
+>  		{"BSG1160", },
+> +		{"BSG2150", },
+>  		{"INT33FE", },
+>  		{"INT3515", },
+>  		{}
+> diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
+> index 3d893e0ac250..197d8a192721 100644
+> --- a/drivers/platform/x86/i2c-multi-instantiate.c
+> +++ b/drivers/platform/x86/i2c-multi-instantiate.c
+> @@ -159,6 +159,14 @@ static const struct i2c_inst_data bsg1160_data[]  = {
+>  	{}
+>  };
+>  
+> +static const struct i2c_inst_data bsg2150_data[]  = {
+> +	{ "bmc150_accel", IRQ_RESOURCE_GPIO, 0 },
+> +	{ "bmc150_magn" },
+> +	/* The resources describe a 3th client, but it is not really there. */
+> +	{ "bsg2150_dummy_dev" },
+> +	{}
+> +};
+> +
+>  static const struct i2c_inst_data int3515_data[]  = {
+>  	{ "tps6598x", IRQ_RESOURCE_APIC, 0 },
+>  	{ "tps6598x", IRQ_RESOURCE_APIC, 1 },
+> @@ -173,6 +181,7 @@ static const struct i2c_inst_data int3515_data[]  = {
+>   */
+>  static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
+>  	{ "BSG1160", (unsigned long)bsg1160_data },
+> +	{ "BSG2150", (unsigned long)bsg2150_data },
+>  	{ "INT3515", (unsigned long)int3515_data },
+>  	{ }
+>  };
+> 
+
+
