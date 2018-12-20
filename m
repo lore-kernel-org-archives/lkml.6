@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E9BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0953C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D395520449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:34:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F15C20449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298494;
-	bh=WNtB7uTkgwopA8hlJfC7PjG24QeSF57/Y0Q1UIhBhJw=;
+	s=default; t=1545298509;
+	bh=ebzs3UZIi6TeWygCAtnXRdoCKXR3Wj+mYg26DOaOIYc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SEZ/zUj0KO/NHPZsDNRCiWMoFaYuhrfe797wbpnqr2/Z4qokEOE7xeUN8ZuoDTFiH
-	 PKLjJGzcpviPEHY2IsTdnz1OEC+Rs32Qwg4+wE8zQB0yivfPhHOrVCALnxQNgBmYtx
-	 vkQJ1SidjvKt3V8C234z48TYTUHxih9lIZ9m/oo8=
+	b=fLxf99Tcjo8X0RIOrXatUVLv13UUI44sjlm+mWwo2IUbvVAlqVlnHxgfkJKqhx3pi
+	 jrpnq9vqyTg62FgY/CB4q1HMPd22e/1G7I83Gqa3A3ptVxgdAWvNV+GK9J1dwBwUu+
+	 UCx5cfzDVTCv9nwODGfKJyeKHoadcj6GQKqtpFps=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732654AbeLTJ3L (ORCPT
+        id S1732946AbeLTJfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:29:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53138 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:35:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732189AbeLTJ3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:29:07 -0500
+        id S1732568AbeLTJ2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:28:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C90F72177E;
-        Thu, 20 Dec 2018 09:29:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0936321852;
+        Thu, 20 Dec 2018 09:28:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298147;
-        bh=WNtB7uTkgwopA8hlJfC7PjG24QeSF57/Y0Q1UIhBhJw=;
+        s=default; t=1545298134;
+        bh=ebzs3UZIi6TeWygCAtnXRdoCKXR3Wj+mYg26DOaOIYc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lRfOKt1ipH1egSHBAiHchzK7RCMgSB0wcvH8yA7dL8EdO11Xk7i500UyIOZnjTVvz
-         n8om+er1h3d1xGnBDqdiO1uGwpQrFI67r0xStyxNJqpL1F5GZqXciFRc3Agi/rKOp9
-         a/2O2UrJp2b+OJ7WXs+pPBSXg+hRVC2NaZlhuzsI=
+        b=f6L/MFU6q+h1aGKVwVPm/YMcTIWE0l+H9Cx4ygET6vdConXw3nOVnD7WxzopgwZRR
+         5CDrQnNMcA+RTboc2DLkCKUWRBaw/2G5ON5Ton+yzWqXt+Uarqvox9qjFiKmQAMVHQ
+         BZK2XjqkU1VXx4C8dzZW5EFtFmG2bJM0U0hYIpKA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Abhinav Kumar <abhinavk@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 17/67] drm/msm/dsi: configure VCO rate for 10nm PLL driver
-Date:   Thu, 20 Dec 2018 10:18:29 +0100
-Message-Id: <20181220085904.239046856@linuxfoundation.org>
+        stable@vger.kernel.org, Hersen Wu <hersenxs.wu@amd.com>,
+        Feifei Xu <Feifei.Xu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Roman Li <Roman.Li@amd.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 12/67] drm/amd/display: Fix 6x4K displays light-up on Vega20 (v2)
+Date:   Thu, 20 Dec 2018 10:18:24 +0100
+Message-Id: <20181220085904.051223633@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,43 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8531f0587f5c9e1a74cd9543a97617349f5e0706 ]
+[ Upstream commit c6888879fd55b1ba903c2a770127edbf6aef6f27 ]
 
-Currenty the VCO rate in the 10nm PLL driver relies
-on the parent rate which is not configured.
+[Why]
+More than 4x4K didn't lightup on Vega20 due to low dcfclk value.
+Powerplay expects valid min requirement for dcfclk from DC.
 
-Configure the VCO rate to 19.2 Mhz as required by
-the 10nm PLL driver.
+[How]
+Update min_dcfclock_khz based on min_engine_clock value.
 
-Signed-off-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+v2: backport to 4.20 (Alex)
+
+Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
+Reviewed-by: Feifei Xu <Feifei.Xu@amd.com>
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Roman Li <Roman.Li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-index 4c03f0b7343e..41bec570c518 100644
---- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-+++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-@@ -39,6 +39,8 @@
- #define DSI_PIXEL_PLL_CLK		1
- #define NUM_PROVIDED_CLKS		2
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
+index b2f308766a9e..0941f3c689bc 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
+@@ -2530,6 +2530,8 @@ static void pplib_apply_display_requirements(
+ 			dc,
+ 			context->bw.dce.sclk_khz);
  
-+#define VCO_REF_CLK_RATE		19200000
++	pp_display_cfg->min_dcfclock_khz = pp_display_cfg->min_engine_clock_khz;
 +
- struct dsi_pll_regs {
- 	u32 pll_prop_gain_rate;
- 	u32 pll_lockdet_rate;
-@@ -316,7 +318,7 @@ static int dsi_pll_10nm_vco_set_rate(struct clk_hw *hw, unsigned long rate,
- 	    parent_rate);
- 
- 	pll_10nm->vco_current_rate = rate;
--	pll_10nm->vco_ref_clk_rate = parent_rate;
-+	pll_10nm->vco_ref_clk_rate = VCO_REF_CLK_RATE;
- 
- 	dsi_pll_setup_config(pll_10nm);
+ 	pp_display_cfg->min_engine_clock_deep_sleep_khz
+ 			= context->bw.dce.sclk_deep_sleep_khz;
  
 -- 
 2.19.1
