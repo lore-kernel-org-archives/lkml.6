@@ -6,48 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0953C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27650C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F15C20449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB9A620449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298509;
-	bh=ebzs3UZIi6TeWygCAtnXRdoCKXR3Wj+mYg26DOaOIYc=;
+	s=default; t=1545298519;
+	bh=bh2fJMZ7T6MTId+LTsGyoHNNeoyIPdCWDj3TFm4gG94=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fLxf99Tcjo8X0RIOrXatUVLv13UUI44sjlm+mWwo2IUbvVAlqVlnHxgfkJKqhx3pi
-	 jrpnq9vqyTg62FgY/CB4q1HMPd22e/1G7I83Gqa3A3ptVxgdAWvNV+GK9J1dwBwUu+
-	 UCx5cfzDVTCv9nwODGfKJyeKHoadcj6GQKqtpFps=
+	b=ufnJau6tqGxIHmRD76nvAiGrpV5q9Vye0sv4t/qnqDmKtDRXtRcNK1kbmv5WwqfpK
+	 oDTK0uTjQCjDE3Iv1jXczqjN6UdV929nutISk7yTjP7nMwcHNsmfBT/XtTA1UodgWt
+	 XQfs46YVI8K3MwuiuMYOzZ1eI4C5IpiFAcPW8LfQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732946AbeLTJfI (ORCPT
+        id S1733202AbeLTJfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:35:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732568AbeLTJ2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:28:55 -0500
+        id S1732571AbeLTJ2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:28:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0936321852;
-        Thu, 20 Dec 2018 09:28:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 992C7217D4;
+        Thu, 20 Dec 2018 09:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298134;
-        bh=ebzs3UZIi6TeWygCAtnXRdoCKXR3Wj+mYg26DOaOIYc=;
+        s=default; t=1545298126;
+        bh=bh2fJMZ7T6MTId+LTsGyoHNNeoyIPdCWDj3TFm4gG94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f6L/MFU6q+h1aGKVwVPm/YMcTIWE0l+H9Cx4ygET6vdConXw3nOVnD7WxzopgwZRR
-         5CDrQnNMcA+RTboc2DLkCKUWRBaw/2G5ON5Ton+yzWqXt+Uarqvox9qjFiKmQAMVHQ
-         BZK2XjqkU1VXx4C8dzZW5EFtFmG2bJM0U0hYIpKA=
+        b=REVB9a7fWiSDdGfcSPiEhZ/CM6y9I13teoSvFQTKNuhyOPVrFUOHJmbTmmf/NSpRe
+         oTlPSJPK7GlZ3khUzTVRAxPeCcOk2L118ztiCjg5ct6xiZbkb7BIlsAXicW6xDanjm
+         yZcvatk9HiPtUMseh5QFOv9lj5W1a5XbZgxH0Gs8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hersen Wu <hersenxs.wu@amd.com>,
-        Feifei Xu <Feifei.Xu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Roman Li <Roman.Li@amd.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 12/67] drm/amd/display: Fix 6x4K displays light-up on Vega20 (v2)
-Date:   Thu, 20 Dec 2018 10:18:24 +0100
-Message-Id: <20181220085904.051223633@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        andrea.parri@amarulasolutions.com, longman@redhat.com,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 01/67] locking/qspinlock: Re-order code
+Date:   Thu, 20 Dec 2018 10:18:13 +0100
+Message-Id: <20181220085903.616647147@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,41 +71,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c6888879fd55b1ba903c2a770127edbf6aef6f27 ]
+commit 53bf57fab7321fb42b703056a4c80fc9d986d170 upstream.
 
-[Why]
-More than 4x4K didn't lightup on Vega20 due to low dcfclk value.
-Powerplay expects valid min requirement for dcfclk from DC.
+Flip the branch condition after atomic_fetch_or_acquire(_Q_PENDING_VAL)
+such that we loose the indent. This also result in a more natural code
+flow IMO.
 
-[How]
-Update min_dcfclock_khz based on min_engine_clock value.
-
-v2: backport to 4.20 (Alex)
-
-Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
-Reviewed-by: Feifei Xu <Feifei.Xu@amd.com>
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Roman Li <Roman.Li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: andrea.parri@amarulasolutions.com
+Cc: longman@redhat.com
+Link: https://lkml.kernel.org/r/20181003130257.156322446@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/locking/qspinlock.c | 56 ++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-index b2f308766a9e..0941f3c689bc 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -2530,6 +2530,8 @@ static void pplib_apply_display_requirements(
- 			dc,
- 			context->bw.dce.sclk_khz);
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index bfaeb05123ff..ec343276f975 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -330,39 +330,37 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	 * 0,0,1 -> 0,1,1 ; pending
+ 	 */
+ 	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
+-	if (!(val & ~_Q_LOCKED_MASK)) {
+-		/*
+-		 * We're pending, wait for the owner to go away.
+-		 *
+-		 * *,1,1 -> *,1,0
+-		 *
+-		 * this wait loop must be a load-acquire such that we match the
+-		 * store-release that clears the locked bit and create lock
+-		 * sequentiality; this is because not all
+-		 * clear_pending_set_locked() implementations imply full
+-		 * barriers.
+-		 */
+-		if (val & _Q_LOCKED_MASK) {
+-			atomic_cond_read_acquire(&lock->val,
+-						 !(VAL & _Q_LOCKED_MASK));
+-		}
+-
+-		/*
+-		 * take ownership and clear the pending bit.
+-		 *
+-		 * *,1,0 -> *,0,1
+-		 */
+-		clear_pending_set_locked(lock);
+-		qstat_inc(qstat_lock_pending, true);
+-		return;
++	/*
++	 * If we observe any contention; undo and queue.
++	 */
++	if (unlikely(val & ~_Q_LOCKED_MASK)) {
++		if (!(val & _Q_PENDING_MASK))
++			clear_pending(lock);
++		goto queue;
+ 	}
  
-+	pp_display_cfg->min_dcfclock_khz = pp_display_cfg->min_engine_clock_khz;
+ 	/*
+-	 * If pending was clear but there are waiters in the queue, then
+-	 * we need to undo our setting of pending before we queue ourselves.
++	 * We're pending, wait for the owner to go away.
++	 *
++	 * 0,1,1 -> 0,1,0
++	 *
++	 * this wait loop must be a load-acquire such that we match the
++	 * store-release that clears the locked bit and create lock
++	 * sequentiality; this is because not all
++	 * clear_pending_set_locked() implementations imply full
++	 * barriers.
++	 */
++	if (val & _Q_LOCKED_MASK)
++		atomic_cond_read_acquire(&lock->val, !(VAL & _Q_LOCKED_MASK));
 +
- 	pp_display_cfg->min_engine_clock_deep_sleep_khz
- 			= context->bw.dce.sclk_deep_sleep_khz;
++	/*
++	 * take ownership and clear the pending bit.
++	 *
++	 * 0,1,0 -> 0,0,1
+ 	 */
+-	if (!(val & _Q_PENDING_MASK))
+-		clear_pending(lock);
++	clear_pending_set_locked(lock);
++	qstat_inc(qstat_lock_pending, true);
++	return;
  
+ 	/*
+ 	 * End of pending bit optimistic spinning and beginning of MCS
 -- 
 2.19.1
 
