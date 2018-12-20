@@ -2,107 +2,196 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD3FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A94C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1934321720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:32:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ns3j1nXf"
+	by mail.kernel.org (Postfix) with ESMTP id B270D21903
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:36:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390163AbeLTWcb (ORCPT
+        id S2390170AbeLTWgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 17:32:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41678 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732764AbeLTWca (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 17:32:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6HH0K2GHtVA1ltr1jtvXARdk0PBmXgv2+TS2cMvXO2Y=; b=ns3j1nXftVyae8OUBzf63+uh1
-        HHQUrbVb+JZrpNwCIQMGDhvybi3Bj1f6itkhiqsnh09msZy0n/ed37BX3GfTAUowPLVTbuKpyODWL
-        iZh2H/FF1paO+dw5cDOXExkQu4xL+aWy1lSvtPfVRGOtWggUlQfnhVyQK0HFuEBYYcC8knEneLVmB
-        xcaPxmlx2RQEU+0xMz7m8vPxnGl8ogaa34jS5uiBAEXAJQiMyvfndbtlMy29+ZXdy/ts5fbVdRTWC
-        LXeWw+N/KVjQ2OP8toj7veDk1IEAq0rWwB8lKoH+9MtsT5jpuc7aLPe9q4k9RLkVn99IEC36+IvTt
-        Z+4nWARTQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ga6rX-0002yC-8n; Thu, 20 Dec 2018 22:32:15 +0000
-Subject: Re: [RFC 0/7] Slab object migration for xarray V2
-To:     Christoph Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        akpm@linux-foundation.org, Mel Gorman <mel@skynet.ie>,
-        andi@firstfloor.org, Rik van Riel <riel@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <01000167cd1130c8-c9bebcb9-1f95-4f7c-b24a-90600d56c62f-000000@email.amazonses.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e7a2e0a5-d5b7-a158-52a1-6aa230501a94@infradead.org>
-Date:   Thu, 20 Dec 2018 14:32:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 20 Dec 2018 17:36:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51064 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729140AbeLTWgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 17:36:06 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D8CB13ABF1;
+        Thu, 20 Dec 2018 22:36:05 +0000 (UTC)
+Received: from redhat.com (ovpn-122-37.rdu2.redhat.com [10.10.122.37])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E66BF1055007;
+        Thu, 20 Dec 2018 22:36:03 +0000 (UTC)
+Date:   Thu, 20 Dec 2018 17:36:03 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, xuyandong <xuyandong2@huawei.com>,
+        stable@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
+        Jesse Barnes <jbarnes@virtuousgeek.org>,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: avoid bridge feature re-probing on hotplug
+Message-ID: <20181220173535-mutt-send-email-mst@kernel.org>
+References: <20181218004455.20186-1-mst@redhat.com>
+ <20181220194950.GD183878@google.com>
+ <20181220161052-mutt-send-email-mst@kernel.org>
+ <20181220223158.GG183878@google.com>
 MIME-Version: 1.0
-In-Reply-To: <01000167cd1130c8-c9bebcb9-1f95-4f7c-b24a-90600d56c62f-000000@email.amazonses.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181220223158.GG183878@google.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 20 Dec 2018 22:36:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 11:21 AM, Christoph Lameter wrote:
-> To test apply this patchset and run a workload that uses lots of radix tree objects
+On Thu, Dec 20, 2018 at 04:31:58PM -0600, Bjorn Helgaas wrote:
+> On Thu, Dec 20, 2018 at 04:26:54PM -0500, Michael S. Tsirkin wrote:
+> > On Thu, Dec 20, 2018 at 01:49:50PM -0600, Bjorn Helgaas wrote:
+> > > On Mon, Dec 17, 2018 at 07:45:41PM -0500, Michael S. Tsirkin wrote:
+> > > > commit 1f82de10d6b1 ("PCI/x86: don't assume prefetchable ranges are 64bit")
+> > > > added probing of bridge support for 64 bit memory each time bridge is
+> > > > re-enumerated.
+> > > > 
+> > > > Unfortunately this probing is destructive if any device behind
+> > > > the bridge is in use at this time.
+> > > > 
+> > > > This was observed in the field, see
+> > > > https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg01711.html
+> > > > and specifically
+> > > > https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
+> > > > 
+> > > > There's no real need to re-probe the bridge features as the
+> > > > registers in question never change - detect that using
+> > > > the memory flag being set (it's always set on the 1st pass since
+> > > > all PCI2PCI bridges support memory forwarding) and skip the probing.
+> > > > Thus, only the first call will perform the disruptive probing and sets
+> > > > the resource flags as required - which we can be reasonably sure happens
+> > > > before any devices have been configured.
+> > > > Avoiding repeated calls to pci_bridge_check_ranges might be even nicer.
+> > > > Unfortunately I couldn't come up with a clean way to do it without a
+> > > > major probing code refactoring.
+> > > 
+> > > I'm OK with major probe code refactoring as long as it's done
+> > > carefully.  Doing a special-case fix like this solves the immediate
+> > > problem but adds to the long-term maintenance problem.
+> > > 
+> > > As far as I can tell, everything in pci_bridge_check_ranges() should
+> > > be done once at enumeration-time, e.g., in the pci_read_bridge_bases()
+> > > path, and pci_bridge_check_ranges() itself should be removed.
+> > > 
+> > > If that turns out to be impossible for some reason, we need a comment
+> > > explaining why.
+> > 
+> > Maybe possible but I am not sure how.
+> > 
+> > Here's why:
+> > 
+> > Upon hotplug we want to poke at new bridges if any, but not the old
+> > ones.  The issue is that e.g. with ACPI hotplug the event that Linux
+> > knows how to handle is by design a heavy weight bus rescan.
 > 
+> Yeah, it's tricky.  But I don't think it's PCI or ACPI that makes this
+> tricky; I think it's just the historical baggage of the PCI core
+> design that makes it hard.
 > 
-> Then go to
+> Even in the ACPI hotplug path, I think we use this pci_scan_device()
+> path:
 > 
-> /sys/kernel/slab/radix_tree_node
+>   pci_scan_device
+>     pci_setup_device
+>       case PCI_HEADER_TYPE_NORMAL:
+>         pci_read_bases(6)             # normal PCI BARs
+>       case PCI_HEADER_TYPE_BRIDGE:
+>         pci_read_bases(2)             # bridge BARs (not windows)
 > 
-> Inspect the number of total objects that the slab can handle
+> Unfortunately that path doesn't call pci_read_bridge_bases() to read
+> the bridge windows; that currently happens in pcibios_fixup_bus(),
+> which is only called from pci_scan_child_bus_extend().
 > 
-> 	cat total_objects
+> This is a broken design because reading the bridge apertures is not at
+> all platform-specific, so it shouldn't be done in a pcibios hook.
+> And, more to the issue at hand, it shouldn't be done in
+> pci_scan_child_bus() either.  We might have to *update* the windows
+> when scanning child buses, but we should be able to do the work of
+> finding out what windows are implemented and their properties
+> somewhere in the pci_setup_device() path.
+> 
+> > Specifically 
+> > 
+> > pci_read_bridge_bases does not
+> > seem to be called on ACPI hotplug path.
+> > 
+> > Rather,
+> > 
+> > pci_assign_unassigned_root_bus_resources
+> > pci_assign_unassigned_bridge_resources
+> > 
+> > would be the two functions in question.
+> > 
+> > 
+> > Would above explanation be sufficient? If not, since I understand your
+> > reluctance to pile up hacks, would you be open to doing the suggested
+> > rewrite yourself? Me and xuyandong can help test it.
+> 
+> I'll be on vacation or holiday most of the time until the new year,
+> but I put a reminder on my calendar to look at this again then.  I'm
+> pretty sure we've tried to unravel this in the past, but I can't
+> remember what issues we tripped over.  Maybe we can make some progress
+> by restricting the problem we're trying to solve.
+> 
+> Thanks for bringing this up!  This is a wart in the PCI core that has
+> bothered me for a long time, and maybe this is the incentive we need
+> to make some progress on it.
+> 
+> Bjorn
 
-	cat objects # ???
 
-(as below) (just checking :)
-
-
-> 
-> qmdr:/sys/kernel/slab/radix_tree_node# cat objects
-> 868 N0=448 N1=168 N2=56 N3=196
-> 
-> And the number of slab pages used for those
-> 
-> 	cat slabs
-> 
-> qmdr:/sys/kernel/slab/radix_tree_node# cat slabs
-> 31 N0=16 N1=6 N2=2 N3=7
-> 
-> 
-> Perform a cache shrink operation
-> 
-> 	echo 1 >shrink
-> 
-> 
-> Now see how the slab has changed:
-> 
-> qmdr:/sys/kernel/slab/radix_tree_node# cat slabs
-> 30 N0=15 N1=6 N2=2 N3=7
-> qmdr:/sys/kernel/slab/radix_tree_node# cat objects
-> 713 N0=349 N1=141 N2=52 N3=171
+Sounds good, let me know when I can help with testing.
 
 
--- 
-~Randy
+> > > > Reported-by: xuyandong <xuyandong2@huawei.com>
+> > > > Tested-by: xuyandong <xuyandong2@huawei.com>
+> > > > Cc: stable@vger.kernel.org
+> > > > Cc: Yinghai Lu <yinghai@kernel.org>
+> > > > Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+> > > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > > > ---
+> > > > 
+> > > > Please review and consider for stable.
+> > > > 
+> > > > changes from v1:
+> > > >   comment and commit log updates to address comments by Bjorn.
+> > > > 
+> > > >  drivers/pci/setup-bus.c | 10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > > > index ed960436df5e..d5c25d465d97 100644
+> > > > --- a/drivers/pci/setup-bus.c
+> > > > +++ b/drivers/pci/setup-bus.c
+> > > > @@ -741,6 +741,16 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
+> > > >   struct resource *b_res;
+> > > >  
+> > > >   b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
+> > > > +
+> > > > + /*
+> > > > +  * Don't re-check after this was called once already:
+> > > > +  * important since bridge might be in use.
+> > > > +  * Note: this is only reliable because as per spec all PCI to PCI
+> > > > +  * bridges support memory unconditionally so IORESOURCE_MEM is set.
+> > > > +  */
+> > > > + if (b_res[1].flags & IORESOURCE_MEM)
+> > > > +         return;
+> > > > +
+> > > >   b_res[1].flags |= IORESOURCE_MEM;
+> > > >  
+> > > >   pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > > > -- 
+> > > > MST
