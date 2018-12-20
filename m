@@ -6,51 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09BA4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E307C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8882186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B5F621852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298010;
-	bh=+1ZjmLNRcrFm1onXxkJyJB6hMC62/4eI09rO5RBytho=;
+	s=default; t=1545298014;
+	bh=QK4nZCH2uQYc9Pnbe5oPdFAMfvbpFU/w27wWgaBq958=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=myl1bFz4YpEQxZRetLf/m7Wf8gWvWE+XCeKMDXVNKK9F1ihN3jQQ+FCylIAXMA8AT
-	 gHoWLOtCGxmSezCDVQKvor/faoGNsJoFOJk7155t8tTx+YxdHF8HUcn9si2ALe/OuB
-	 5C5W8Vn5u3bSSzlTHGd6ou2Vb5Fv8W4m38tpA/2Q=
+	b=Y+jJ5FwFHQurMcGfm6yWO56gbl5x6skX0SoWFIVZaLkPiNveJy4AvDRA0JI3V9uvV
+	 ZAKkMBQ5CG1J1ilFoaMrA2cbMqwLKA+MZ3rNqzpQtZ2xlJIhjsDU7pg/UDY3VjK57g
+	 +baz7o2ru2MJP8SYpWlA2ljw+G80kZYwFBL7faCk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732180AbeLTJ0t (ORCPT
+        id S1732188AbeLTJ0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:26:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58318 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:26:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbeLTJ0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:26:47 -0500
+        id S1732166AbeLTJ0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:26:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E40E2186A;
-        Thu, 20 Dec 2018 09:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 143AC21852;
+        Thu, 20 Dec 2018 09:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298006;
-        bh=+1ZjmLNRcrFm1onXxkJyJB6hMC62/4eI09rO5RBytho=;
+        s=default; t=1545298009;
+        bh=QK4nZCH2uQYc9Pnbe5oPdFAMfvbpFU/w27wWgaBq958=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zG7yjDmMfwpVcbIBf4/YsLcbFCuO8FSvFL6dZ3GLFZVfX8H5uCF+9L6nyNtF/xzlX
-         ze/NCe09NRUIx5PTHixkgk+RMR2guFVkXIvC9Y029T07LA7cCaXhUwnT3wg/FMQ2nk
-         DIHDpLIg9y7KNVWBs8a2aYk1KAHK/dcsAxsMdTe4=
+        b=z2d/HcvyHe/S42KMIJr7pns6vtLCcCeSaU9dnZ6r7QPxzgL3ISlGPBFUH0FcgNxbO
+         GCDVqFItSdGKOrw1JAxdX1KovUnmBPib+JUL9mbqTo84vf0/TVfXAITioupIrep9KQ
+         ItTUKhNGbXEPEs3Lz4GL2x4nbwycVLuTmaPJjAr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Fred Herard <fred.herard@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 37/72] Input: hyper-v - fix wakeup from suspend-to-idle
-Date:   Thu, 20 Dec 2018 10:18:36 +0100
-Message-Id: <20181220085923.804253512@linuxfoundation.org>
+Subject: [PATCH 4.14 38/72] scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
+Date:   Thu, 20 Dec 2018 10:18:37 +0100
+Message-Id: <20181220085923.845897465@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -69,54 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 10f91c73cc41ceead210a905dbd196398e99c7d2 ]
+[ Upstream commit 5db6dd14b31397e8cccaaddab2ff44ebec1acf25 ]
 
-It makes little sense but still possible to put Hyper-V guests into
-suspend-to-idle state. To wake them up two wakeup sources were registered
-in the past: hyperv-keyboard and hid-hyperv. However, since
-commit eed4d47efe95 ("ACPI / sleep: Ignore spurious SCI wakeups from
-suspend-to-idle") pm_wakeup_event() from these devices is ignored. Switch
-to pm_wakeup_hard_event() API as these devices are actually the only
-possible way to wakeup Hyper-V guests.
+This commit addresses NULL pointer dereference in iscsi_eh_session_reset.
+Reference should not be made to session->leadconn when session->state is
+set to ISCSI_STATE_TERMINATE.
 
-Fixes: eed4d47efe95 (ACPI / sleep: Ignore spurious SCI wakeups from suspend-to-idle)
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Fred Herard <fred.herard@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-hyperv.c              | 2 +-
- drivers/input/serio/hyperv-keyboard.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/libiscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index 6039f071fab1..5f1de24206ab 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -309,7 +309,7 @@ static void mousevsc_on_receive(struct hv_device *device,
- 		hid_input_report(input_dev->hid_device, HID_INPUT_REPORT,
- 				 input_dev->input_buf, len, 1);
- 
--		pm_wakeup_event(&input_dev->device->device, 0);
-+		pm_wakeup_hard_event(&input_dev->device->device);
- 
- 		break;
- 	default:
-diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-index 25151d9214e0..55288a026e4e 100644
---- a/drivers/input/serio/hyperv-keyboard.c
-+++ b/drivers/input/serio/hyperv-keyboard.c
-@@ -177,7 +177,7 @@ static void hv_kbd_on_receive(struct hv_device *hv_dev,
- 		 * state because the Enter-UP can trigger a wakeup at once.
- 		 */
- 		if (!(info & IS_BREAK))
--			pm_wakeup_event(&hv_dev->device, 0);
-+			pm_wakeup_hard_event(&hv_dev->device);
- 
- 		break;
- 
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index cf8a15e54d83..3ff536b350a1 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -2416,8 +2416,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
+ failed:
+ 		ISCSI_DBG_EH(session,
+ 			     "failing session reset: Could not log back into "
+-			     "%s, %s [age %d]\n", session->targetname,
+-			     conn->persistent_address, session->age);
++			     "%s [age %d]\n", session->targetname,
++			     session->age);
+ 		spin_unlock_bh(&session->frwd_lock);
+ 		mutex_unlock(&session->eh_mutex);
+ 		return FAILED;
 -- 
 2.19.1
 
