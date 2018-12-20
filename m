@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11110C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B297C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D420E20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1AE20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298746;
-	bh=HjwiWAjjuJuaCUuMEQwA1iOoX1gnPydn73ah3Wq/ZcY=;
+	s=default; t=1545298751;
+	bh=7gMbO2YH8hCjRUVTK6xgeC9bZyFKIplnKnUxALmO66U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RCIqpicUXbJtZE5/Y/Ivz8V0OLaCuGtfsjvqHPcNhoJkcqgF9dJ3lt3o++N6ZzN1y
-	 dC/PEMcydW7+kaTa4ErNw4SiaInVoHKg2PYH/XMjBnpmTJHl5NcAojfUIYGHYOFkyP
-	 9GOBKr+eO7mGGD/73ZEhFibUCER15jXbVo03in4s=
+	b=cl4YWBv/vpNhK9Cv3eC+1h309ONH3lIlVND9HaGxYGmJdQtlPkOvSl5Am/3Ngh2fe
+	 ueLOI2RmGP5j1T04QSrNd7XXlWVeKVDFK55wexz5peTM40I5fwAouy/s9J9OoQEc9l
+	 LljbQjbtGzMM/7nc79WR5zJzbR7pQZEBGK3KfWhE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732895AbeLTJjF (ORCPT
+        id S1732894AbeLTJiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:39:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48878 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:38:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730483AbeLTJZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:25:51 -0500
+        id S1732084AbeLTJ0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:26:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D14B520656;
-        Thu, 20 Dec 2018 09:25:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F577218C3;
+        Thu, 20 Dec 2018 09:26:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297950;
-        bh=HjwiWAjjuJuaCUuMEQwA1iOoX1gnPydn73ah3Wq/ZcY=;
+        s=default; t=1545297982;
+        bh=7gMbO2YH8hCjRUVTK6xgeC9bZyFKIplnKnUxALmO66U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GMb113/TNhrzkEO3m9Q37ZLw/6p/ucMm50Iepp8OOmVEODCIv2sBTM3Q5wdAnPVZE
-         NPGgEBpnk7OxnuzuQ6ZwWpFK8eDj9N4qKxO0MZWdjTc6Qup27QTDFtbw1wYk7UYH/f
-         7mU6crvIBdxGtcBgpJduMPSEopHGmEzGt9ALXzoU=
+        b=euP06A7K8J6UyeKFRxiOa/f7A682jnYxtgvSusBbCnqH8k6ULacRnKf0LAFeZQgKD
+         mvOHAsOMNkO1h/0eHILtYaFGKD5ytjh0bU63OU2oBFX161WPL1aGkNYxUHxJA0vKz8
+         Uc696FggYqGgtxvOEfOVYdhqbrcrVeU0Fqq5q0aE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.14 16/72] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
-Date:   Thu, 20 Dec 2018 10:18:15 +0100
-Message-Id: <20181220085922.969931485@linuxfoundation.org>
+        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        syzbot+06c7092e7d71218a2c16@syzkaller.appspotmail.com,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Hugh Dickins <hughd@google.com>, Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 04/72] userfaultfd: check VM_MAYWRITE was set after verifying the uffd is registered
+Date:   Thu, 20 Dec 2018 10:18:03 +0100
+Message-Id: <20181220085922.508932777@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -68,91 +68,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-commit 63238173b2faf3d6b85a416f1c69af6c7be2413f upstream.
+commit 01e881f5a1fca4677e82733061868c6d6ea05ca7 upstream.
 
-This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
+Calling UFFDIO_UNREGISTER on virtual ranges not yet registered in uffd
+could trigger an harmless false positive WARN_ON.  Check the vma is
+already registered before checking VM_MAYWRITE to shut off the false
+positive warning.
 
-It causes new warnings [1] on shutdown when running the Google Kevin or
-Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
-different than what Marc and Heiko test.
-
-We're looking at a different approach (e.g., [2]) to replace this, but
-IMO the revert should be taken first, as it already propagated to
--stable.
-
-[1] Report here:
-http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
-
-WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
-...
- Call trace:
-  drm_mode_config_cleanup+0x1c4/0x294
-  rockchip_drm_unbind+0x4c/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
- Memory manager not clean during takedown.
- WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
-...
-  drm_mm_takedown+0x34/0x44
-  rockchip_drm_unbind+0x64/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
-
-[2] https://patchwork.kernel.org/patch/10556151/
-    https://www.spinics.net/lists/linux-rockchip/msg21342.html
-    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
-
-Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Vicente Bergas <vicencb@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181205181657.177703-1-briannorris@chromium.org
+Link: http://lkml.kernel.org/r/20181206212028.18726-2-aarcange@redhat.com
+Cc: <stable@vger.kernel.org>
+Fixes: 29ec90660d68 ("userfaultfd: shmem/hugetlbfs: only allow to register VM_MAYWRITE vmas")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: syzbot+06c7092e7d71218a2c16@syzkaller.appspotmail.com
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Hugh Dickins <hughd@google.com>
+Acked-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ------
- 1 file changed, 6 deletions(-)
+ fs/userfaultfd.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -425,11 +425,6 @@ static int rockchip_drm_platform_remove(
- 	return 0;
- }
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -1567,7 +1567,6 @@ static int userfaultfd_unregister(struct
+ 		cond_resched();
  
--static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
--{
--	rockchip_drm_platform_remove(pdev);
--}
--
- static const struct of_device_id rockchip_drm_dt_ids[] = {
- 	{ .compatible = "rockchip,display-subsystem", },
- 	{ /* sentinel */ },
-@@ -439,7 +434,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
- static struct platform_driver rockchip_drm_platform_driver = {
- 	.probe = rockchip_drm_platform_probe,
- 	.remove = rockchip_drm_platform_remove,
--	.shutdown = rockchip_drm_platform_shutdown,
- 	.driver = {
- 		.name = "rockchip-drm",
- 		.of_match_table = rockchip_drm_dt_ids,
+ 		BUG_ON(!vma_can_userfault(vma));
+-		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+ 
+ 		/*
+ 		 * Nothing to do: this vma is already registered into this
+@@ -1576,6 +1575,8 @@ static int userfaultfd_unregister(struct
+ 		if (!vma->vm_userfaultfd_ctx.ctx)
+ 			goto skip;
+ 
++		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
++
+ 		if (vma->vm_start > start)
+ 			start = vma->vm_start;
+ 		vma_end = min(end, vma->vm_end);
 
 
