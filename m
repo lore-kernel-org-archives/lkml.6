@@ -6,49 +6,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4882CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C8CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1725820811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C2820989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298642;
-	bh=wdShKhi0sESLf6KgiJR1O45sZoKsDbfoYKGNIPHcN5o=;
+	s=default; t=1545298647;
+	bh=YX8DqdQRIveJEcF/psgOC1gdWViQsvKbl8WFVCzCpB0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cw5v7IYfC+2ifmCp2CBPIG/E46txuhiHw6iNMMwtLJazhbX42wAAIbr+u1bHy85qL
-	 752Ipgb4qEkO2C3ofmpSxV98W0UqFaTIiC0qzn3/YSE/18ke8tbJZOicWtP2ON+Lnd
-	 OL8ho9H9Ty57iHZAP93Hc1skP88u05aaYDgCbs0U=
+	b=1x9nxaZ35sMpRnNCNg58e/xo2Dv6blDoJ4NRMjHDA7+Op7x8wBT9ymfM1lIBlYk2u
+	 DU1YRL5SCuMpVyn+YzzHyfEZv8Wml7Hbw7igtL4oblRDpHt+8TFMNXuwhpi2rTKPpC
+	 PgCin3p1txLaSg7OxvG2VCZdDATDEABJJH/Rf36k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732244AbeLTJ1L (ORCPT
+        id S1732227AbeLTJ1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:27:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60998 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732223AbeLTJ1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:03 -0500
+        id S1731273AbeLTJ1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8614A217D7;
-        Thu, 20 Dec 2018 09:27:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2B4320656;
+        Thu, 20 Dec 2018 09:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298023;
-        bh=wdShKhi0sESLf6KgiJR1O45sZoKsDbfoYKGNIPHcN5o=;
+        s=default; t=1545298020;
+        bh=YX8DqdQRIveJEcF/psgOC1gdWViQsvKbl8WFVCzCpB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A2FqnSIuS0BpIYG4SqmQuxgKM/pRbA+14E3dw5X6D+3DcU716j4YZZWoXwSmwLjis
-         Dyw7L1azSygKuU+54MpR4ufpKAqBbi70NqV0u10ZwaCTmKfO8WSEki19SeP+Wz0FzU
-         imOslmkXa1VmzRd9iwH/MeKrKd/DVAHjQEjCQq+8=
+        b=pF6fnJW3a4yM5A1OlBvM+VjMNfwYTS7sw8+X9KKwDEM7AESqsuOsvg2xpe122RoHZ
+         8edpJLFm4YDLVtnK2hE0p2UmXul7hxR1S9SnlxmbdPgOfshqivj99n3YsyCvixI9l3
+         7DY3+ht4fdrSPNAVeIlsgDOL3ZGQzkmKiREJWFmQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Toni Peltonen <peltzi@peltzi.fi>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Vitor Soares <soares@synopsys.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 43/72] bonding: fix 802.3ad state sent to partner when unbinding slave
-Date:   Thu, 20 Dec 2018 10:18:42 +0100
-Message-Id: <20181220085924.047881158@linuxfoundation.org>
+Subject: [PATCH 4.14 42/72] ARC: io.h: Implement reads{x}()/writes{x}()
+Date:   Thu, 20 Dec 2018 10:18:41 +0100
+Message-Id: <20181220085924.006773709@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -67,58 +69,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3b5b3a3331d141e8f2a7aaae3a94dfa1e61ecbe4 ]
+[ Upstream commit 10d443431dc2bb733cf7add99b453e3fb9047a2e ]
 
-Previously when unbinding a slave the 802.3ad implementation only told
-partner that the port is not suitable for aggregation by setting the port
-aggregation state from aggregatable to individual. This is not enough. If the
-physical layer still stays up and we only unbinded this port from the bond there
-is nothing in the aggregation status alone to prevent the partner from sending
-traffic towards us. To ensure that the partner doesn't consider this
-port at all anymore we should also disable collecting and distributing to
-signal that this actor is going away. Also clear AD_STATE_SYNCHRONIZATION to
-ensure partner exits collecting + distributing state.
+Some ARC CPU's do not support unaligned loads/stores. Currently, generic
+implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
+This can lead to misfunction of some drivers as generic functions do a
+plain dereference of a pointer that can be unaligned.
 
-I have tested this behaviour againts Arista EOS switches with mlx5 cards
-(physical link stays up even when interface is down) and simulated
-the same situation virtually Linux <-> Linux with two network namespaces
-running two veth device pairs. In both cases setting aggregation to
-individual doesn't alone prevent traffic from being to sent towards this
-port given that the link stays up in partners end. Partner still keeps
-it's end in collecting + distributing state and continues until timeout is
-reached. In most cases this means we are losing the traffic partner sends
-towards our port while we wait for timeout. This is most visible with slow
-periodic time (LACP rate slow).
+Let's use {get/put}_unaligned() helpers instead of plain dereference of
+pointer in order to fix. The helpers allow to get and store data from an
+unaligned address whilst preserving the CPU internal alignment.
+According to [1], the use of these helpers are costly in terms of
+performance so we added an initial check for a buffer already aligned so
+that the usage of the helpers can be avoided, when possible.
 
-Other open source implementations like Open VSwitch and libreswitch, and
-vendor implementations like Arista EOS, seem to disable collecting +
-distributing to when doing similar port disabling/detaching/removing change.
-With this patch kernel implementation would behave the same way and ensure
-partner doesn't consider our actor viable anymore.
+[1] Documentation/unaligned-memory-access.txt
 
-Signed-off-by: Toni Peltonen <peltzi@peltzi.fi>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Jonathan Toppins <jtoppins@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Tested-by: Vitor Soares <soares@synopsys.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_3ad.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arc/include/asm/io.h | 72 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
-index f43fb2f958a5..93dfcef8afc4 100644
---- a/drivers/net/bonding/bond_3ad.c
-+++ b/drivers/net/bonding/bond_3ad.c
-@@ -2086,6 +2086,9 @@ void bond_3ad_unbind_slave(struct slave *slave)
- 		   aggregator->aggregator_identifier);
+diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
+index c22b181e8206..2f39d9b3886e 100644
+--- a/arch/arc/include/asm/io.h
++++ b/arch/arc/include/asm/io.h
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ #include <asm/page.h>
++#include <asm/unaligned.h>
  
- 	/* Tell the partner that this port is not suitable for aggregation */
-+	port->actor_oper_port_state &= ~AD_STATE_SYNCHRONIZATION;
-+	port->actor_oper_port_state &= ~AD_STATE_COLLECTING;
-+	port->actor_oper_port_state &= ~AD_STATE_DISTRIBUTING;
- 	port->actor_oper_port_state &= ~AD_STATE_AGGREGATION;
- 	__update_lacpdu_from_port(port);
- 	ad_lacpdu_send(port);
+ #ifdef CONFIG_ISA_ARCV2
+ #include <asm/barrier.h>
+@@ -94,6 +95,42 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
+ 	return w;
+ }
+ 
++/*
++ * {read,write}s{b,w,l}() repeatedly access the same IO address in
++ * native endianness in 8-, 16-, 32-bit chunks {into,from} memory,
++ * @count times
++ */
++#define __raw_readsx(t,f) \
++static inline void __raw_reads##f(const volatile void __iomem *addr,	\
++				  void *ptr, unsigned int count)	\
++{									\
++	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
++	u##t *buf = ptr;						\
++									\
++	if (!count)							\
++		return;							\
++									\
++	/* Some ARC CPU's don't support unaligned accesses */		\
++	if (is_aligned) {						\
++		do {							\
++			u##t x = __raw_read##f(addr);			\
++			*buf++ = x;					\
++		} while (--count);					\
++	} else {							\
++		do {							\
++			u##t x = __raw_read##f(addr);			\
++			put_unaligned(x, buf++);			\
++		} while (--count);					\
++	}								\
++}
++
++#define __raw_readsb __raw_readsb
++__raw_readsx(8, b)
++#define __raw_readsw __raw_readsw
++__raw_readsx(16, w)
++#define __raw_readsl __raw_readsl
++__raw_readsx(32, l)
++
+ #define __raw_writeb __raw_writeb
+ static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
+ {
+@@ -126,6 +163,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ 
+ }
+ 
++#define __raw_writesx(t,f)						\
++static inline void __raw_writes##f(volatile void __iomem *addr, 	\
++				   const void *ptr, unsigned int count)	\
++{									\
++	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
++	const u##t *buf = ptr;						\
++									\
++	if (!count)							\
++		return;							\
++									\
++	/* Some ARC CPU's don't support unaligned accesses */		\
++	if (is_aligned) {						\
++		do {							\
++			__raw_write##f(*buf++, addr);			\
++		} while (--count);					\
++	} else {							\
++		do {							\
++			__raw_write##f(get_unaligned(buf++), addr);	\
++		} while (--count);					\
++	}								\
++}
++
++#define __raw_writesb __raw_writesb
++__raw_writesx(8, b)
++#define __raw_writesw __raw_writesw
++__raw_writesx(16, w)
++#define __raw_writesl __raw_writesl
++__raw_writesx(32, l)
++
+ /*
+  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
+  * Based on ARM model for the typical use case
+@@ -141,10 +207,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+ #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+ #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
++#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
++#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
++#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
+ #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
++#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
++#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
++#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
+ 
+ /*
+  * Relaxed API for drivers which can handle barrier ordering themselves
 -- 
 2.19.1
 
