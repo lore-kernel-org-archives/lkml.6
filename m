@@ -2,282 +2,139 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A71C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC886C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC9820869
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F975218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:49:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vk323Bne"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732023AbeLTQtS (ORCPT
+        id S1732095AbeLTQth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:49:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58818 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730884AbeLTQtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:49:17 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 77475AB409;
-        Thu, 20 Dec 2018 16:49:16 +0000 (UTC)
-Received: from redhat.com (ovpn-123-95.rdu2.redhat.com [10.10.123.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 27E771055006;
-        Thu, 20 Dec 2018 16:49:14 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 11:49:12 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181220164912.GB3963@redhat.com>
-References: <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181217181148.GA3341@redhat.com>
- <20181217183443.GO10600@bombadil.infradead.org>
- <20181218093017.GB18032@quack2.suse.cz>
- <9f43d124-2386-7bfd-d90b-4d0417f51ccd@nvidia.com>
- <20181219020723.GD4347@redhat.com>
- <20181219110856.GA18345@quack2.suse.cz>
+        Thu, 20 Dec 2018 11:49:37 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59996 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbeLTQtg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:49:36 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181220164935euoutp029172bc6a57ed9ad52542148381308878~yGIN6CM490925409254euoutp02s
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:49:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181220164935euoutp029172bc6a57ed9ad52542148381308878~yGIN6CM490925409254euoutp02s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1545324575;
+        bh=5SopC54hdF6i+F0aVfMTTAbXp5OQRW7nIZjGukDNiC0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Vk323Bne7Hc36x3nCatoeoyqXijdotdcG4F/PXlUiuT5N1jj+Ka3K0fnQfXL7KepE
+         TMe4rVzbUUJe48J8e9ZPOuJTRHIuYTdfaf1BpeQMdjjdCvh7spjUMXv+vu0OxOD1rR
+         h2CkM3iyzzAY43lh7QgqXcWAhDPB14nvohfX6TqA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181220164934eucas1p1959aa46c93c8c46ee6f62d34d47a45fc~yGINTRGAv2382623826eucas1p1P;
+        Thu, 20 Dec 2018 16:49:34 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id E1.F7.04806.E18CB1C5; Thu, 20
+        Dec 2018 16:49:34 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181220164933eucas1p2ac0190f35fc1b08683723886ba246f58~yGIMRZmRF1865718657eucas1p2x;
+        Thu, 20 Dec 2018 16:49:33 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181220164933eusmtrp235d67db7f423d04a36a8aaaa8e8bd0ec~yGIMCVHZA3142031420eusmtrp2e;
+        Thu, 20 Dec 2018 16:49:33 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-67-5c1bc81efa05
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id EE.6C.04128.D18CB1C5; Thu, 20
+        Dec 2018 16:49:33 +0000 (GMT)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181220164932eusmtip191fac2f6e69921bdf90e7047bf2503d5~yGILs51b_0977009770eusmtip1B;
+        Thu, 20 Dec 2018 16:49:32 +0000 (GMT)
+Subject: Re: [REGRESSION PATCH] fbdev: fbmem: behave better with small
+ rotated displays and many CPUs
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <ff208bfb-500d-3d8a-94ec-6c78e29f1331@samsung.com>
+Date:   Thu, 20 Dec 2018 17:49:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181219110856.GA18345@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Dec 2018 16:49:17 +0000 (UTC)
+In-Reply-To: <bfd5d16a-6fb2-4bc8-c5fd-b7086f44e7dc@axentia.se>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGKsWRmVeSWpSXmKPExsWy7djPc7pyJ6RjDK71sltc+fqezWLu7EmM
+        Fkte2lncWyFrcaLvA6vF5V1z2Cz2HprPaLF+/i02Bw6PaQdms3tMPKvrsXmFlsf97uNMHsdv
+        bGfyWL3Sz+PzJrkA9igum5TUnMyy1CJ9uwSujN6O6WwFr5krGpqeMTcwtjF3MXJySAiYSDzY
+        85sdxBYSWMEocb5ZuouRC8j+wigxv/UNG4TzmVHixoGLcB19e09CdSxnlDh1MAGi6D2jxKZ3
+        W5lAEsIC6RL7J81kA7FFBBQlFuyaxQxSxCzwjkliwudesG42ASuJie2rGLsYOTh4BewkXjfq
+        gIRZBFQlHk9dzwISFhWIkOg/ow4S5hUQlDg58wkLiM0JVP3q5ilWEJtZQF5i+9s5YOMlBLax
+        S7yaupwVpFdCwEXi/GExiJuFJV4d38IOYctI/N85nwmifjqjxJtfS1kgnPWMEmvOHGOCqLKW
+        OHz8ItggZgFNifW79CHCjhJrj6xggpjPJ3HjrSDEDXwSk7ZNZ4YI80p0tAlBVKtJbFi2gQ1m
+        bdfOldAg9JB4t6iHaQKj4iwkn81C8s0shL0LGJlXMYqnlhbnpqcWG+ellusVJ+YWl+al6yXn
+        525iBKae0/+Of93BuO9P0iFGAQ5GJR5ejV3SMUKsiWXFlbmHGCU4mJVEeNcfAgrxpiRWVqUW
+        5ccXleakFh9ilOZgURLnrWZ4EC0kkJ5YkpqdmlqQWgSTZeLglGpg3BvyVlg+zdhuX9Skzkvm
+        +45OOJjw4dXP+bm6Lyx7am/ulVYy+3Ls+K3pmpIXDRelyZ27+iExPtb44LR4m08r3cWccw/V
+        7FxWaCWx/MW6/pDwiRUz/h4+dTJ70d/Aw8fnnj5278m9iNvzTwjU9ElWys64XSL75bX1PxHd
+        iA+TzA+Zb/3PK2OpfVOJpTgj0VCLuag4EQAJQ7HTOQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHIsWRmVeSWpSXmKPExsVy+t/xu7qyJ6RjDGa8Y7G48vU9m8Xc2ZMY
+        LZa8tLO4t0LW4kTfB1aLy7vmsFnsPTSf0WL9/FtsDhwe0w7MZveYeFbXY/MKLY/73ceZPI7f
+        2M7ksXqln8fnTXIB7FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2Nimp
+        OZllqUX6dgl6Gb0d09kKXjNXNDQ9Y25gbGPuYuTkkBAwkejbe5IdxBYSWMooMW2DdhcjB1Bc
+        RuL4+jKIEmGJP9e62LoYuYBK3jJKtJ44AtYrLJAu0fmqH8wWEVCUWLBrFjNE0VImiX9/D7OD
+        OMwC75gkziw9wQZSxSZgJTGxfRUjyAZeATuJ1406IGEWAVWJx1PXs4DYogIRErcedoDZvAKC
+        EidnPgGzOYHKX908xQpiMwuoS/yZd4kZwpaX2P52DvMERsFZSFpmISmbhaRsASPzKkaR1NLi
+        3PTcYiO94sTc4tK8dL3k/NxNjMC42nbs55YdjF3vgg8xCnAwKvHwauySjhFiTSwrrsw9xCjB
+        wawkwrv+EFCINyWxsiq1KD++qDQntfgQoynQExOZpUST84Exn1cSb2hqaG5haWhubG5sZqEk
+        znveoDJKSCA9sSQ1OzW1ILUIpo+Jg1OqgdE3bXl3Qcg/m2CN9ZpZV+6yfL32yPy8+Pa06tBP
+        M/YlT+DRu+ehdemuzmebCa6lufVBWzfcrld663Ly35O25G2mx44ynmX7syUiLYLjwZQWExPZ
+        3JLwfsMZV+Q9OnVWt6rLzOPb+eQE58IMgd+Rr7/5zau5tmXH/8r7JwWLk9bzxS3sE2BYL6TE
+        UpyRaKjFXFScCABiTU/FwQIAAA==
+X-CMS-MailID: 20181220164933eucas1p2ac0190f35fc1b08683723886ba246f58
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181126141651epcas1p346d68ff01402cea354ad4686fdbb7284
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181126141651epcas1p346d68ff01402cea354ad4686fdbb7284
+References: <20181108095347.19326-1-peda@axentia.se>
+        <CGME20181126141651epcas1p346d68ff01402cea354ad4686fdbb7284@epcas1p3.samsung.com>
+        <8faae5c6-ce11-99b4-4fc7-7a8925aad3e4@axentia.se>
+        <94947dad-2ac4-99b0-3ebd-0aba62f27d4a@samsung.com>
+        <bfd5d16a-6fb2-4bc8-c5fd-b7086f44e7dc@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 12:08:56PM +0100, Jan Kara wrote:
-> On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
-> > On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
-> > > OK, so let's take another look at Jerome's _mapcount idea all by itself (using
-> > > *only* the tracking pinned pages aspect), given that it is the lightest weight
-> > > solution for that.  
-> > > 
-> > > So as I understand it, this would use page->_mapcount to store both the real
-> > > mapcount, and the dma pinned count (simply added together), but only do so for
-> > > file-backed (non-anonymous) pages:
-> > > 
-> > > 
-> > > __get_user_pages()
-> > > {
-> > > 	...
-> > > 	get_page(page);
-> > > 
-> > > 	if (!PageAnon)
-> > > 		atomic_inc(page->_mapcount);
-> > > 	...
-> > > }
-> > > 
-> > > put_user_page(struct page *page)
-> > > {
-> > > 	...
-> > > 	if (!PageAnon)
-> > > 		atomic_dec(&page->_mapcount);
-> > > 
-> > > 	put_page(page);
-> > > 	...
-> > > }
-> > > 
-> > > ...and then in the various consumers of the DMA pinned count, we use page_mapped(page)
-> > > to see if any mapcount remains, and if so, we treat it as DMA pinned. Is that what you 
-> > > had in mind?
-> > 
-> > Mostly, with the extra two observations:
-> >     [1] We only need to know the pin count when a write back kicks in
-> >     [2] We need to protect GUP code with wait_for_write_back() in case
-> >         GUP is racing with a write back that might not the see the
-> >         elevated mapcount in time.
-> > 
-> > So for [2]
-> > 
-> > __get_user_pages()
-> > {
-> >     get_page(page);
-> > 
-> >     if (!PageAnon) {
-> >         atomic_inc(page->_mapcount);
-> > +       if (PageWriteback(page)) {
-> > +           // Assume we are racing and curent write back will not see
-> > +           // the elevated mapcount so wait for current write back and
-> > +           // force page fault
-> > +           wait_on_page_writeback(page);
-> > +           // force slow path that will fault again
-> > +       }
-> >     }
-> > }
+
+On 11/26/2018 10:19 PM, Peter Rosin wrote:
+> On 2018-11-26 15:33, Bartlomiej Zolnierkiewicz wrote:
+>> On 11/26/2018 03:16 PM, Peter Rosin wrote:
+>>> Ping?!
+>>
+>> Hi,
+>>
+>> Thank you for your patch, it will be considered for 4.21 (as it is not
+>> a recent regression + I'm busy with other things currently).
 > 
-> This is not needed AFAICT. __get_user_pages() gets page reference (and it
-> should also increment page->_mapcount) under PTE lock. So at that point we
-> are sure we have writeable PTE nobody can change. So page_mkclean() has to
-> block on PTE lock to make PTE read-only and only after going through all
-> PTEs like this, it can check page->_mapcount. So the PTE lock provides
-> enough synchronization.
+> Right, thanks for letting me know!
 
-This is needed, file back page can be map in any number of page table
-and thus no PTE lock gonna protect anything in the end. More over with
-GUP fast we really have to assume there is no lock that force ordering.
+Patch queued for 4.21, thanks.
 
-In fact in the above snipet that mapcount should not happen if there
-is an on going write back.
-
-
-> > For [1] only needing pin count during write back turns page_mkclean into
-> > the perfect spot to check for that so:
-> > 
-> > int page_mkclean(struct page *page)
-> > {
-> >     int cleaned = 0;
-> > +   int real_mapcount = 0;
-> >     struct address_space *mapping;
-> >     struct rmap_walk_control rwc = {
-> >         .arg = (void *)&cleaned,
-> >         .rmap_one = page_mkclean_one,
-> >         .invalid_vma = invalid_mkclean_vma,
-> > +       .mapcount = &real_mapcount,
-> >     };
-> > 
-> >     BUG_ON(!PageLocked(page));
-> > 
-> >     if (!page_mapped(page))
-> >         return 0;
-> > 
-> >     mapping = page_mapping(page);
-> >     if (!mapping)
-> >         return 0;
-> > 
-> >     // rmap_walk need to change to count mapping and return value
-> >     // in .mapcount easy one
-> >     rmap_walk(page, &rwc);
-> > 
-> >     // Big fat comment to explain what is going on
-> > +   if ((page_mapcount(page) - real_mapcount) > 0) {
-> > +       SetPageDMAPined(page);
-> > +   } else {
-> > +       ClearPageDMAPined(page);
-> > +   }
-> 
-> This is the detail I'm not sure about: Why cannot rmap_walk_file() race
-> with e.g. zap_pte_range() which decrements page->_mapcount and thus the
-> check we do in page_mkclean() is wrong?
-
-Ok so i thought about this here is what we have:
-    mp1 = page_mapcount(page);
-    // let name rc1 the number of real count at mp1 time (this is
-    // an ideal value that we can not get)
-
-    rmap_walk(page, &rwc);
-    // at this point let's name frc the number of real map count
-    // found by rmap_walk
-
-    mp2 = page_mapcount(page);
-    // let name rc2 the number of real count at mp2 time (this is
-    // an ideal value that we can not get)
-
-
-So we have
-    rc1 >= frc >= rc2
-    pc1 = mp1 - rc1     // pin count at mp1 time
-    pc2 = mp2 - rc2     // pin count at mp2 time
-
-So we have:
-    mp1 - rc1 <= mp1 - frc
-    mp2 - rc2 >= mp2 - frc
-
-From the above:
-    mp1 - frc <  0 impossible value mapcount can only go down so
-                   frc <= mp1
-    mp1 - frc == 0 -> the page is not pin
-U1  mp1 - frc >  0 -> the page might be pin
-
-U2  mp2 - frc <= 0 -> the page might be pin
-    mp2 - frc >  0 -> the page is pin
-
-They are two unknowns [U1] and [U2]:
-    [U1]    a zap raced before rmap_walk() could account the zaped
-            mapping (frc < rc1)
-    [U2]    a zap raced after rmap_walk() accounted the zaped
-            mapping (frc > rc2)
-
-In both cases we can detect the race but we can not ascertain if page
-is pin or not.
-
-So we can do 2 things here:
-    - try to recount the real mapping (it is bound to end as no
-      new mapping can be added and thus mapcount can only go down)
-    - assume false positive and uselessly bounce page that would
-      not need bouncing if we were not unlucky
-
-We could mitigate this with a flag GUP unconditionaly set it and page
-mkclean clears it when mp1 - frc == 0 this way we never bounce page
-that were never GUPed but we might keep bouncing a page that was GUPed
-once in its lifetime until there is not race for it in page_mkclean.
-
-I will ponder a bit more and see if i can get an idea on how to close
-that race ie either close U1 or close U2.
-
-
-> >     // Maybe we want to leverage the int nature of return value so that
-> >     // we can express more than cleaned/truncated and express cleaned/
-> >     // truncated/pinned for benefit of caller and that way we do not
-> >     // even need one bit as page flags above.
-> > 
-> >     return cleaned;
-> > }
-> > 
-> > You do not want to change page_mapped() i do not see a need for that.
-> > 
-> > Then the whole discussion between Jan and Dave seems to indicate that
-> > the bounce mechanism will need to be in the fs layer and that we can
-> > not reuse the bio bounce mechanism. This means that more work is needed
-> > at the fs level for that (so that fs do not freak on bounce page).
-> > 
-> > Note that they are few gotcha where we need to preserve the pin count
-> > ie mostly in truncate code path that can remove page from page cache
-> > and overwrite the mapcount in the process, this would need to be fixed
-> > to not overwrite mapcount so that put_user_page does not set the map
-> > count to an invalid value turning the page into a bad state that will
-> > at one point trigger kernel BUG_ON();
-> >
-> > I am not saying block truncate, i am saying make sure it does not
-> > erase pin count and keep truncating happily. The how to handle truncate
-> > is a per existing GUP user discussion to see what they want to do for
-> > that.
-> > 
-> > Obviously a bit deeper analysis of all spot that use mapcount is needed
-> > to check that we are not breaking anything but from the top of my head
-> > i can not think of anything bad (migrate will abort and other things will
-> > assume the page is mapped even it is only in hardware page table, ...).
-> 
-> Hum, grepping for page_mapped() and page_mapcount(), this is actually going
-> to be non-trivial to get right AFAICT.
-
-No that's not that scary a good chunk of all those are for anonymous
-memory and many are obvious (like migrate, ksm, ...).
-
-Cheers,
-Jérôme
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
