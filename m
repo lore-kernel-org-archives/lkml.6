@@ -2,121 +2,251 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0504CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2F5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C002721741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8051221741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:14:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="waTgAtjX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZeSreWHN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731712AbeLTMOG (ORCPT
+        id S1731788AbeLTMOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:14:06 -0500
-Received: from mail-eopbgr80049.outbound.protection.outlook.com ([40.107.8.49]:17074
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731324AbeLTMOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:14:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EjIGa+qa+xTJtKyg4i4ZRL86qBux8aDN6IsCNEVpU1o=;
- b=waTgAtjXL/hxXaWp9T04Vo0Oo+n46SRN8d0hLTIvoVlnapd8obrwvxoB8r75pEeIsKBlZWtiCjlqf71l3Ln1RpCoVurdPE8ASsboAtPtLNU2FzyGjOlq/hucLrrO6T6clUmxbk/fVHM6q8y7q6p1S6IUURK8xPe7FS+AIjiyjTs=
-Received: from DB7PR04MB4667.eurprd04.prod.outlook.com (52.135.139.13) by
- DB7PR04MB4459.eurprd04.prod.outlook.com (52.135.137.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Thu, 20 Dec 2018 12:13:56 +0000
-Received: from DB7PR04MB4667.eurprd04.prod.outlook.com
- ([fe80::2561:ec02:4e5e:f490]) by DB7PR04MB4667.eurprd04.prod.outlook.com
- ([fe80::2561:ec02:4e5e:f490%3]) with mapi id 15.20.1446.020; Thu, 20 Dec 2018
- 12:13:56 +0000
-From:   =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-Subject: [PATCH v2 1/4] dt-bindings: display: ssd1307fb: Remove
- reset-active-low from examples
-Thread-Topic: [PATCH v2 1/4] dt-bindings: display: ssd1307fb: Remove
- reset-active-low from examples
-Thread-Index: AQHUmF15CPCATSnSS0yYPT2YZUdoGw==
-Date:   Thu, 20 Dec 2018 12:13:54 +0000
-Message-ID: <1545308005-51559-2-git-send-email-michal.vokac@ysoft.com>
-References: <1545308005-51559-1-git-send-email-michal.vokac@ysoft.com>
-In-Reply-To: <1545308005-51559-1-git-send-email-michal.vokac@ysoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0701CA0015.eurprd07.prod.outlook.com
- (2603:10a6:203:51::25) To DB7PR04MB4667.eurprd04.prod.outlook.com
- (2603:10a6:5:37::13)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michal.Vokac@ysoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [89.24.100.190]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4459;6:JXYWgXDcy9DiNKVoS7V/p1jPipN6+9938Uh/bm/YOvI4G/LfKK+Mooc8uCUuFFZUR/3sWinr489GxazEV1YBH3drxREJBrw2vpZWL5OisgP/UIyImSiUvCeJGl2o3OKat1TnDyGZEZpiUcdh08arZHeaLEJokl+WaaIOE2M8fLyNoQ9aQrgV0w2TPTG2NZPW5V0uI43Jc4eyC14FLpj+92AqEDhGQbanZ5NAlJrxG1w8729ehLkJA+2Rhss8HVUicT1atphcBttl+NBIMeGmeAybV9pgb5T+D+8JODwAdLd0r8pBfb1Zxy1QrR2my5Qqy2CURdfvbfU31o8rfQUtFTMFo/cfwZCbJdHR7TvMrEK+6LtuMRVSvoroR6SyDmshhVM/VFGgNJBpbXS967MDse24G741nrwfn0I/m79PeB1EYqvsegji7l0hKuCq0BTii7PqXuJFKOHBqhKPh13WkA==;5:QJ3X4cl8frzxm41DVT6224jHCwovzcl0Lah9PfF1+cZt+R1666pIbiULMsQ0cU+qgmkkd0kvVNGxnMvNENkk4cvOAlIllG+RU/kS6mkWrZBEqBALFhH6iys6+ZtLJZc3hRrTHfzF7FpJSl6hSdlSza9eu6otj4+/w58OV9Oxht8=;7:i3zuw0T7ebcgVqtlWgZD234eQgX7MfOC/CnPxxJv879qUvILXi3DgeD64XrPy030vsjjYeDEU9PSMrXC5v2xlUyO0V0pdJAf07Tu2+InQj+xkrQYeIVGBN2/j5LBYRu3WTgn0aRCZsnDFmf3u34DLQ==
-x-ms-office365-filtering-correlation-id: 3191daa3-fad3-428d-d7dc-08d666749c0c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(4534185)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4459;
-x-ms-traffictypediagnostic: DB7PR04MB4459:
-x-microsoft-antispam-prvs: <DB7PR04MB445979EFC4F1B7873CE316A39EBF0@DB7PR04MB4459.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4459;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4459;
-x-forefront-prvs: 0892FA9A88
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(366004)(39850400004)(376002)(189003)(199004)(11346002)(86362001)(446003)(71190400001)(6436002)(5660300001)(53936002)(6512007)(186003)(102836004)(26005)(386003)(6506007)(85182001)(66066001)(478600001)(105586002)(71200400001)(36756003)(7736002)(4326008)(76176011)(97736004)(6486002)(2616005)(486006)(476003)(68736007)(52116002)(305945005)(8676002)(8936002)(99286004)(106356001)(6116002)(3846002)(110136005)(107886003)(2906002)(256004)(316002)(81166006)(81156014)(54906003)(25786009)(14454004)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4459;H:DB7PR04MB4667.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ysoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: e10OO9x4Aoc9nMPPq8YEmXXEqYikkiygITj1IBMY/eSKg5eO2BsLtHrpVi/CKgt8H/1L/L7iXHvM7bm80Gf4D0HSVGPdHJ3AXzYFWMYNySXz3BWjptHRGE5MUVkxd10AEzjLmmOYqjETgO5SZIXBKEAY3viTRpTzPxbNB2hmLhh0kTydUA/pneiaqwAtLwaDhjQyqhOLnw6rg1kDpCnPL+K5hZRfaC3o8w6tV7bG+2YddvawOTqKZxpLResVIrtLztQs+m5ibfXXjZjBwMmEFRxjgCO7TdUJHWv2igO/SStclI8PGj62gvICP9DZ0BtgsUyq3416nN+EaaMSAEgoMwlvXLtCg5wdoIHWVNFiou8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D125841EB3A2364E85DDEE274C70DB32@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 20 Dec 2018 07:14:32 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44809 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728588AbeLTMOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 07:14:30 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k19-v6so1324770lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:14:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=ykPQgd+D8oV9K7tP/NcA/KVCltx/mFL7ha6/pueegv8=;
+        b=ZeSreWHNuOd/8BzwWqmsC26IQzsJ8nu2I8fyzIWWl/5n9SHkbyiWney1TaI8UF1ej/
+         mokJ8pbNuVb5DF8Ka6op8VnyXPeLw6w+eHW/pllJQic2lYxlrzgr53TOFnFdeqgvUggo
+         yCoXawR3HFsDPwyTa1y3rVzbEpPXhLt3sluBPR1BQqCAHhQ3spMrzxnR+P5OaXQ+QOPm
+         nvS76fo9jKcl/zFycOf2kVY35O/Yc8BrHqgQg4M/6o5ywnOtug1UnnpmOR/iN4qypZ59
+         tuKPr2YSBgT+vg/QYWYLhHEMEk3LnVqfX714lp6iMUjE7VHmbB+ikQIlMoKfeqihpG29
+         mBbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=ykPQgd+D8oV9K7tP/NcA/KVCltx/mFL7ha6/pueegv8=;
+        b=TjpivzHs7CdvKcFMkHz3Oy89/A1h+w7DaRgtJQQn7YxoAQbgAvI+obYDdr8D7jbLCn
+         9T5H/QQh4ClByzvezAis2q5Y7iQHNpl/x9sHkD+rNMhC7dyT8wjQZOPedZ3pwnVtRuqH
+         Ik3/qYw266e+BlouwA+Siq2/Iq/rGMotqHoL1DeygkcffQf0kqlUT2eqadGz2HFqqsrj
+         6ij4fkNmVlbQYMbc4QRgh3Z1YZWoUw+7LL6uTwVNG70HMn0AP9ZUgUDgkkLJG+BjTNrb
+         syl19Z7Elru6jDg016Mbhr5hl+SPIyvVVw8bTC8xy9US+cpkvIJ8T44uOIa01NmcJSmN
+         SXwA==
+X-Gm-Message-State: AA+aEWZ2iGyND+GQjgWlDi2GnmyGgZG7ahCZVxEUfA0dMq8HYnSgfe9X
+        AD58L699VVjXxdg7I7aGKhE=
+X-Google-Smtp-Source: AFSGD/XFRHf5mGyo1UXx/x78K+PI4EWcEzZFop3nfuSpiBUMQoITdp8uyjBSavhR6P2eE9brswzYWg==
+X-Received: by 2002:a2e:a202:: with SMTP id h2-v6mr14878874ljm.72.1545308068073;
+        Thu, 20 Dec 2018 04:14:28 -0800 (PST)
+Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id s24sm4178942lfc.30.2018.12.20.04.14.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 04:14:27 -0800 (PST)
+Subject: Re: [PATCH 05/14] drm/bochs: atomic: switch planes to atomic, wire up
+ helpers.
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+References: <20181219115127.31359-1-kraxel@redhat.com>
+ <20181219115127.31359-6-kraxel@redhat.com>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <277f1e16-aa7b-b741-4ceb-3dea0f776a60@gmail.com>
+Date:   Thu, 20 Dec 2018 14:14:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: ysoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3191daa3-fad3-428d-d7dc-08d666749c0c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 12:13:54.5144
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b5839965-430f-4be2-b282-d7a3149f2b37
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4459
+In-Reply-To: <20181219115127.31359-6-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIHJlc2V0LWFjdGl2ZS1sb3cgcHJvcGVydHkgaGFzIGJlZW4gcmVtb3ZlZCBicm9tIHRoZSBi
-aW5kaW5nIGEgd2hpbGUNCmFnby4gU28gcmVtb3ZlIGl0IGZyb20gdGhlIGV4YW1wbGVzIGFzIHdl
-bGwuDQoNCkZpeGVzOiA1MTliNGRiICgiZmJkZXY6IHNzZDEzMDdmYjogUmVtb3ZlIHJlc2V0LWFj
-dGl2ZS1sb3cgZnJvbSB0aGUgRFQgYmluZGluZyBkb2N1bWVudCIpDQpSZXZpZXdlZC1ieTogUm9i
-IEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NClNpZ25lZC1vZmYtYnk6IE1pY2hhbCBWb2vDocSN
-IDxtaWNoYWwudm9rYWNAeXNvZnQuY29tPg0KLS0tDQpDaGFuZ2VzIGZyb20gdjE6DQogLSBBZGQg
-Ui1ieSBmcm9tIFJvYg0KDQogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3Bs
-YXkvc3NkMTMwN2ZiLnR4dCB8IDIgLS0NCiAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkN
-Cg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5
-L3NzZDEzMDdmYi50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxh
-eS9zc2QxMzA3ZmIudHh0DQppbmRleCAyMDlkOTMxLi5iNjdmOGNhIDEwMDY0NA0KLS0tIGEvRG9j
-dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvc3NkMTMwN2ZiLnR4dA0KKysr
-IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvc3NkMTMwN2ZiLnR4
-dA0KQEAgLTM2LDcgKzM2LDYgQEAgc3NkMTMwNzogb2xlZEAzYyB7DQogICAgICAgICByZWcgPSA8
-MHgzYz47DQogICAgICAgICBwd21zID0gPCZwd20gNCAzMDAwPjsNCiAgICAgICAgIHJlc2V0LWdw
-aW9zID0gPCZncGlvMiA3PjsNCi0gICAgICAgIHJlc2V0LWFjdGl2ZS1sb3c7DQogfTsNCiANCiBz
-c2QxMzA2OiBvbGVkQDNjIHsNCkBAIC00NCw3ICs0Myw2IEBAIHNzZDEzMDY6IG9sZWRAM2Mgew0K
-ICAgICAgICAgcmVnID0gPDB4M2M+Ow0KICAgICAgICAgcHdtcyA9IDwmcHdtIDQgMzAwMD47DQog
-ICAgICAgICByZXNldC1ncGlvcyA9IDwmZ3BpbzIgNz47DQotICAgICAgICByZXNldC1hY3RpdmUt
-bG93Ow0KICAgICAgICAgc29sb21vbixjb20tbHJyZW1hcDsNCiAgICAgICAgIHNvbG9tb24sY29t
-LWludmRpcjsNCiAgICAgICAgIHNvbG9tb24sY29tLW9mZnNldCA9IDwzMj47DQotLSANCjIuMS40
-DQoNCg==
+On 12/19/18 1:51 PM, Gerd Hoffmann wrote:
+> Conversion to atomic modesetting, step three.
+> Wire up atomic helpers.  Switch planes to atomic.
+>
+> We are late to the party, the transitional helpers are gone,
+> so this can't be splitted into smaller steps any more.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>   drivers/gpu/drm/bochs/bochs_fbdev.c |  3 ++
+>   drivers/gpu/drm/bochs/bochs_kms.c   | 70 +++++++++++++++++++++++++++++++++++--
+>   2 files changed, 70 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
+> index dd3c7df267..d9f3d42999 100644
+> --- a/drivers/gpu/drm/bochs/bochs_fbdev.c
+> +++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
+> @@ -6,6 +6,7 @@
+>    */
+>   
+>   #include "bochs.h"
+> +#include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_gem_framebuffer_helper.h>
+>   
+>   /* ---------------------------------------------------------------------- */
+> @@ -149,6 +150,8 @@ bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
+>   
+>   const struct drm_mode_config_funcs bochs_mode_funcs = {
+>   	.fb_create = bochs_gem_fb_create,
+> +	.atomic_check = drm_atomic_helper_check,
+> +	.atomic_commit = drm_atomic_helper_commit,
+>   };
+>   
+>   int bochs_fbdev_init(struct bochs_device *bochs)
+> diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+> index 18b705fb0b..aa3ba0377a 100644
+> --- a/drivers/gpu/drm/bochs/bochs_kms.c
+> +++ b/drivers/gpu/drm/bochs/bochs_kms.c
+> @@ -6,7 +6,9 @@
+>    */
+>   
+>   #include "bochs.h"
+> +#include <drm/drm_atomic_helper.h>
+>   #include <drm/drm_plane_helper.h>
+> +#include <drm/drm_atomic_uapi.h>
+>   
+>   static int defx = 1024;
+>   static int defy = 768;
+> @@ -113,7 +115,7 @@ static int bochs_crtc_page_flip(struct drm_crtc *crtc,
+>   	struct drm_framebuffer *old_fb = crtc->primary->fb;
+>   	unsigned long irqflags;
+>   
+> -	crtc->primary->fb = fb;
+> +	drm_atomic_set_fb_for_plane(crtc->primary->state, fb);
+Taking into account that crtc->primary access goes away in the series:
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>   	bochs_crtc_mode_set_base(crtc, 0, 0, old_fb);
+>   	if (event) {
+>   		spin_lock_irqsave(&bochs->dev->event_lock, irqflags);
+> @@ -151,6 +153,9 @@ static const struct drm_crtc_funcs bochs_crtc_funcs = {
+>   	.set_config = drm_crtc_helper_set_config,
+>   	.destroy = drm_crtc_cleanup,
+>   	.page_flip = bochs_crtc_page_flip,
+> +	.reset = drm_atomic_helper_crtc_reset,
+> +	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+>   };
+>   
+>   static const struct drm_crtc_helper_funcs bochs_helper_funcs = {
+> @@ -169,6 +174,59 @@ static const uint32_t bochs_formats[] = {
+>   	DRM_FORMAT_BGRX8888,
+>   };
+>   
+> +static void bochs_plane_atomic_update(struct drm_plane *plane,
+> +				      struct drm_plane_state *old_state)
+> +{
+> +	struct bochs_device *bochs = plane->dev->dev_private;
+> +	struct bochs_bo *bo;
+> +
+> +	if (!plane->state->fb)
+> +		return;
+> +	bo = gem_to_bochs_bo(plane->state->fb->obj[0]);
+> +	bochs_hw_setbase(bochs,
+> +			 plane->state->crtc_x,
+> +			 plane->state->crtc_y,
+> +			 bo->bo.offset);
+> +	bochs_hw_setformat(bochs, plane->state->fb->format);
+> +}
+> +
+> +static int bochs_plane_prepare_fb(struct drm_plane *plane,
+> +				struct drm_plane_state *new_state)
+> +{
+> +	struct bochs_bo *bo;
+> +
+> +	if (!new_state->fb)
+> +		return 0;
+> +	bo = gem_to_bochs_bo(new_state->fb->obj[0]);
+> +	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM, NULL);
+> +}
+> +
+> +static void bochs_plane_cleanup_fb(struct drm_plane *plane,
+> +				   struct drm_plane_state *old_state)
+> +{
+> +	struct bochs_bo *bo;
+> +
+> +	if (!old_state->fb)
+> +		return;
+> +	bo = gem_to_bochs_bo(old_state->fb->obj[0]);
+> +	bochs_bo_unpin(bo);
+> +}
+> +
+> +static const struct drm_plane_helper_funcs bochs_plane_helper_funcs = {
+> +	.atomic_update = bochs_plane_atomic_update,
+> +	.prepare_fb = bochs_plane_prepare_fb,
+> +	.cleanup_fb = bochs_plane_cleanup_fb,
+> +};
+> +
+> +static const struct drm_plane_funcs bochs_plane_funcs = {
+> +       .update_plane   = drm_atomic_helper_update_plane,
+> +       .disable_plane  = drm_atomic_helper_disable_plane,
+> +       .destroy        = drm_primary_helper_destroy,
+> +       .reset          = drm_atomic_helper_plane_reset,
+> +       .atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+> +       .atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+> +};
+> +
+>   static struct drm_plane *bochs_primary_plane(struct drm_device *dev)
+>   {
+>   	struct drm_plane *primary;
+> @@ -181,16 +239,17 @@ static struct drm_plane *bochs_primary_plane(struct drm_device *dev)
+>   	}
+>   
+>   	ret = drm_universal_plane_init(dev, primary, 0,
+> -				       &drm_primary_helper_funcs,
+> +				       &bochs_plane_funcs,
+>   				       bochs_formats,
+>   				       ARRAY_SIZE(bochs_formats),
+>   				       NULL,
+>   				       DRM_PLANE_TYPE_PRIMARY, NULL);
+>   	if (ret) {
+>   		kfree(primary);
+> -		primary = NULL;
+> +		return NULL;
+>   	}
+>   
+> +	drm_plane_helper_add(primary, &bochs_plane_helper_funcs);
+>   	return primary;
+>   }
+>   
+> @@ -275,6 +334,9 @@ static const struct drm_connector_funcs bochs_connector_connector_funcs = {
+>   	.dpms = drm_helper_connector_dpms,
+>   	.fill_modes = drm_helper_probe_single_connector_modes,
+>   	.destroy = drm_connector_cleanup,
+> +	.reset = drm_atomic_helper_connector_reset,
+> +	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> +	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+>   };
+>   
+>   static void bochs_connector_init(struct drm_device *dev)
+> @@ -318,6 +380,8 @@ int bochs_kms_init(struct bochs_device *bochs)
+>   	drm_connector_attach_encoder(&bochs->connector,
+>   					  &bochs->encoder);
+>   
+> +	drm_mode_config_reset(bochs->dev);
+> +
+>   	return 0;
+>   }
+>   
+
