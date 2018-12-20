@@ -6,47 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FF3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91A2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82CE20449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA48620449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298625;
-	bh=gNJqhygFqcnBwoBeJrFpH2PraZnJKf0aJL4d9LauQ94=;
+	s=default; t=1545298629;
+	bh=BeS2+wPT5J7OU323vln46527eYsRVsS3gmsvUTEH/u4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=G8IO/t1nwOAQfuf5HS2yZd2gTil/RiwNCd2m1xdVIik2HdjaCOTI8o9ZXhcqitQNd
-	 LSi7QFUzKxIdb1VDMWHnynzv+x2EjDyijbIOGotN6+pUkqxj9aNtIh4WIeDaK+3LPV
-	 5py5qRnSerSoaDKEP9MYh/qaNVVwoQfY45yNtNLo=
+	b=Nli64430+aKX/QSrBCgxbrubR3cVRMnWlphBzG3yh6BSa2vPGiWL4tMStuewHEYSt
+	 Kk76ew4ZyeEpBt0hzbFUpfWKweRSolUB+IdU9NwI0+X48SmyM5EXNTOrk2jg1PJCfg
+	 GlaxiwobaHUIBXct2O9u4BvjizK9n6f7/9+AKqSE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733286AbeLTJhD (ORCPT
+        id S1732280AbeLTJ1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:37:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34848 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732283AbeLTJ1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:16 -0500
+        id S1730026AbeLTJ1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62D2C20656;
-        Thu, 20 Dec 2018 09:27:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D15B21741;
+        Thu, 20 Dec 2018 09:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298035;
-        bh=gNJqhygFqcnBwoBeJrFpH2PraZnJKf0aJL4d9LauQ94=;
+        s=default; t=1545298030;
+        bh=BeS2+wPT5J7OU323vln46527eYsRVsS3gmsvUTEH/u4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gDAkjqhOZM8c2LHFBcBXyV2UjjdpciqPufGgUos999dJc5bR7ShWGBN05d6JGWIUJ
-         uLuDqOwTURurOE55Yy72FFr9AZZcdxjQI65uWG2glajoOlwGhhhv6TNe9OILqSwJfD
-         YJpFjiZvCOFHNBAGxVrcdfyfHnA2tSRDBkWUoSL8=
+        b=zqI0uXoMVsEMVfI7gfGIV+gTr0Kjuthv53UqdaC8dwZDXRqsxzfkMRoRGqxeEX65b
+         u9ycwBIKOVXqsf8MSlCHQZyvbeX/14CW71M/lrC8Y6U3wawn4vMY6VcUlwcuPGo2Sx
+         STPPp1gSYRcYAzoiCQIObyGRoZBX3Fl+oUTFf/5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, boqun.feng@gmail.com,
+        linux-arm-kernel@lists.infradead.org, paulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 47/72] sbus: char: add of_node_put()
-Date:   Thu, 20 Dec 2018 10:18:46 +0100
-Message-Id: <20181220085924.194686709@linuxfoundation.org>
+Subject: [PATCH 4.14 28/72] locking/qspinlock/x86: Increase _Q_PENDING_LOOPS upper bound
+Date:   Thu, 20 Dec 2018 10:18:27 +0100
+Message-Id: <20181220085923.447185200@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -65,29 +71,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
+commit b247be3fe89b6aba928bf80f4453d1c4ba8d2063 upstream.
 
-use of_node_put() to release the refcount.
+On x86, atomic_cond_read_relaxed will busy-wait with a cpu_relax() loop,
+so it is desirable to increase the number of times we spin on the qspinlock
+lockword when it is found to be transitioning from pending to locked.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+According to Waiman Long:
+
+ | Ideally, the spinning times should be at least a few times the typical
+ | cacheline load time from memory which I think can be down to 100ns or
+ | so for each cacheline load with the newest systems or up to several
+ | hundreds ns for older systems.
+
+which in his benchmarking corresponded to 512 iterations.
+
+Suggested-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Waiman Long <longman@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: boqun.feng@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1524738868-31318-5-git-send-email-will.deacon@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/sbus/char/display7seg.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/qspinlock.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-index f32765d3cbd8..db761aca8667 100644
---- a/drivers/sbus/char/display7seg.c
-+++ b/drivers/sbus/char/display7seg.c
-@@ -221,6 +221,7 @@ static int d7s_probe(struct platform_device *op)
- 	dev_set_drvdata(&op->dev, p);
- 	d7s_device = p;
- 	err = 0;
-+	of_node_put(opts);
+diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+index cf4cdf508ef4..2cb6624acaec 100644
+--- a/arch/x86/include/asm/qspinlock.h
++++ b/arch/x86/include/asm/qspinlock.h
+@@ -6,6 +6,8 @@
+ #include <asm-generic/qspinlock_types.h>
+ #include <asm/paravirt.h>
  
- out:
- 	return err;
++#define _Q_PENDING_LOOPS	(1 << 9)
++
+ #define	queued_spin_unlock queued_spin_unlock
+ /**
+  * queued_spin_unlock - release a queued spinlock
 -- 
 2.19.1
 
