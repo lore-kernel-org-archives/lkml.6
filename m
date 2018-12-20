@@ -2,56 +2,56 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4AFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5687FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F34F02084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 268CC2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cHT6eHFT"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ijpQewih"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732662AbeLTMyy (ORCPT
+        id S1732888AbeLTMzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:54:54 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52452 "EHLO
+        Thu, 20 Dec 2018 07:55:32 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52195 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732296AbeLTMyv (ORCPT
+        with ESMTP id S1732616AbeLTMyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:54:51 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so1919263wml.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:54:49 -0800 (PST)
+        Thu, 20 Dec 2018 07:54:52 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b11so1927636wmj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:54:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eTbaK90WQbfaV86T27wpc68Wcf5FjOqAAxWvucI8Kwc=;
-        b=cHT6eHFTKRMSSmC421Kco6NQ1QX4vsq6K5+HUDiXg8z5znbqlXxDHiznjoZmYzhbJO
-         e4+IYmMLcG/yiP4VG34PRvoLhv1+pjIG1AfJpxLElkp/YP5Vh/N/dS1nGEl3toDZwQiH
-         0eK2r05nscjebi2TAOlq3F5csiKlPMCsYZAro=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wXbv4EStlt/WSU+EIZH0OlN5Zo9WGSHjVKnuaGSJ7JI=;
+        b=ijpQewihuTYkryQcGkcJM6bC77RlvFBJu2BOUrCOX7wpmLZtlxWifNYRR0lUzzU0ja
+         KOQQVbn4G4RUt/HDMWlzZE4CHNvoYLVU1UEKBwkESj8O7wDrTmPDbEWF40S6leMErK1C
+         4t/vpBTxsZdwZy4VYe/++247zoVSvvDpJGzsA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eTbaK90WQbfaV86T27wpc68Wcf5FjOqAAxWvucI8Kwc=;
-        b=uBUppCl/6Saapk4jg9l/unCHiGyEgDlRNpmm4/MlqweSrQuuf5G1Ufy0sWMH/aGtxU
-         ziJF4xS/Lgzgo3GTIHaYfGbeIQyKSx3Jxu8FgCarfcavR+MWBoJUSuHb+eEoesPPg802
-         UxU9/jT/GaPI/8xpeDxv6mf33fW1Cw2i/H4aYwQHuiBSup5wzfzPECOIRsjPEedqrKli
-         xaQzi/2+FgpRo7nI1ac9CKgeBK2TogBiueV6lWwC1cwvB+uJkgB3lj6LvYl/Nie947cS
-         6ziWZtnQszdsQKaEwX6rpq3HKraC5n8iLcPeIT7IxYLCbZrnWrmwPsUi6aVz78oOPeuQ
-         6i9A==
-X-Gm-Message-State: AA+aEWa/BrDFuwHPGgUHn4pWv0CbJo7OWW7/lvp9OkR9T1Iis3g4u5qW
-        qfmCwZyaKdRn6BVNIXz+if52Tw==
-X-Google-Smtp-Source: AFSGD/XuheZcpZNUP84fKqUeymPOQ+YAc84cBD+JTnB3+xV6FvRUC1v6/b/HsdST6zhmycH6IQM4HA==
-X-Received: by 2002:a1c:83c8:: with SMTP id f191mr11334134wmd.134.1545310488444;
-        Thu, 20 Dec 2018 04:54:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wXbv4EStlt/WSU+EIZH0OlN5Zo9WGSHjVKnuaGSJ7JI=;
+        b=J4+VOX3QeT5P2hadx81zCNgokligOqdbSCxOuM33WG8DkkPO6XsIYKLw+rA6Vf5qiM
+         NVabKQuVNd7XEcnOpCpcuzmKKpDJ4KRb38IwwUwXOQ317Z0IbhUElhfpMv8v49II6xps
+         k7CpiIORuaThtL0DlVAbUHQg1ep1wNERn87S8rdpTPUj+CaY1l7V55mg/sUMVRCOfEOc
+         ulR9uTr9aEwBokhVfc3n4RV1RhIDgbO79Kk1ydH+mQ+lbnZz9cBWu+TpNxVXVuBp4gqn
+         Z3FeNRLO9YQnyQ56ZyqvEx3hJdDg0dsgoTJp5kQ7rmHezVLaPBNorFPOuBOEcmlIIqD6
+         iJAw==
+X-Gm-Message-State: AA+aEWYfl4F4ui5IxuZWMiszhA4WerL9pY8nDDYvyg7EecCxwVG3ucMy
+        YH4K1t8dXt73BRO7yXI1x0HYDA==
+X-Google-Smtp-Source: AFSGD/W72Nq2p29nd5Y0/GilNYZEEzruQXAnlDDDKbMN8MsvknsXNocedBbaGuyVhWtp/8Q5+Eby5g==
+X-Received: by 2002:a1c:ad43:: with SMTP id w64mr11012559wme.32.1545310490011;
+        Thu, 20 Dec 2018 04:54:50 -0800 (PST)
 Received: from localhost.localdomain (ip-163-240.sn-213-198.clouditalia.com. [213.198.163.240])
-        by smtp.gmail.com with ESMTPSA id o4sm8732756wrq.66.2018.12.20.04.54.46
+        by smtp.gmail.com with ESMTPSA id o4sm8732756wrq.66.2018.12.20.04.54.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 04:54:47 -0800 (PST)
+        Thu, 20 Dec 2018 04:54:49 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -65,10 +65,12 @@ To:     Yong Deng <yong.deng@magewell.com>,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 0/6] media/sun6i: Allwinner A64 CSI support 
-Date:   Thu, 20 Dec 2018 18:24:32 +0530
-Message-Id: <20181220125438.11700-1-jagan@amarulasolutions.com>
+Subject: [PATCH v5 1/6] dt-bindings: media: sun6i: Add A64 CSI compatible
+Date:   Thu, 20 Dec 2018 18:24:33 +0530
+Message-Id: <20181220125438.11700-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20181220125438.11700-1-jagan@amarulasolutions.com>
+References: <20181220125438.11700-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,50 +78,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series support CSI on Allwinner A64.
+Allwinner A64 CSI is a single channel time-multiplexed BT.656
+protocol interface.
 
-Tested 640x480, 320x240, 720p, 1080p resolutions UYVY8_2X8 format.
+Add separate compatible string for A64 since it require explicit
+change in sun6i_csi driver to update default CSI_SCLK rate.
 
-Changes for v5:
-- Add mod_rate quirk for better handling clk_set code
-Changes for v4:
-- update the compatible string order
-- add proper commit message
-- included BPI-M64 patch
-- skipped amarula-a64 patch
-Changes for v3:
-- update dt-bindings for A64
-- set mod clock via csi driver
-- remove assign clocks from dtsi
-- remove i2c-gpio opendrian
-- fix avdd and dovdd supplies
-- remove vcc-csi pin group supply
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Note:
-- This series created on top of H3 changes [1]
-- Tested on top of Maxim's ov5640 changes[2] along with
-  the change I praposed wrt 15fps change on this patch[3]
-- Here is the test log[4], for anyone's information.
-
-[4] https://paste.ubuntu.com/p/pC9ZQKNzQf/
-[3] https://patchwork.kernel.org/patch/10708931/
-[2] https://patchwork.kernel.org/cover/10708911/
-[1] https://patchwork.kernel.org/cover/10705905/
-
-Jagan Teki (6):
-  dt-bindings: media: sun6i: Add A64 CSI compatible
-  media: sun6i: Add mod_rate quirk
-  media: sun6i: Add A64 CSI block support
-  arm64: dts: allwinner: a64: Add A64 CSI controller
-  arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
-  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
-
- .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++
- .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 39 +++++++++--
- 4 files changed, 124 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+index cc37cf7fd051..0dd540bb03db 100644
+--- a/Documentation/devicetree/bindings/media/sun6i-csi.txt
++++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+@@ -8,6 +8,7 @@ Required properties:
+     * "allwinner,sun6i-a31-csi"
+     * "allwinner,sun8i-h3-csi"
+     * "allwinner,sun8i-v3s-csi"
++    * "allwinner,sun50i-a64-csi"
+   - reg: base address and size of the memory-mapped region.
+   - interrupts: interrupt associated to this IP
+   - clocks: phandles to the clocks feeding the CSI
 -- 
 2.18.0.321.gffc6fa0e3
 
