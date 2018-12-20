@@ -2,120 +2,230 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AD3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85622C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F56F20869
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4793720869
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:20:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="QE8LeNJp"
+	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="mtHYWkTV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730517AbeLTGSl (ORCPT
+        id S1730530AbeLTGUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 01:18:41 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:4845 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbeLTGSl (ORCPT
+        Thu, 20 Dec 2018 01:20:24 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34411 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727943AbeLTGUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 01:18:41 -0500
-X-IronPort-AV: E=Sophos;i="5.56,376,1539673200"; 
-   d="scan'208";a="22509129"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 19 Dec 2018 23:18:41 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 19 Dec 2018 23:18:39 -0700
+        Thu, 20 Dec 2018 01:20:23 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so421310pfg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 22:20:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gXh1uHh0i3MCj7G4bbRJbysQ/Y63hC22qMI74WsKwwM=;
- b=QE8LeNJp4bI+kfRWI7Wi5RchItmZKV3NvCvx87LjXfHJK480rg5tmQTWqASF9eWltWsktJxJLUf6WdWd1LtA5qCksEX70ov0OevEnvd9hDPW5A/gSIIrsFCOWXQkFTlCxgap8DcLOwAHNLElrw/l+FgA1r835Z6SiDAeYmjjWTY=
-Received: from BYAPR11MB2567.namprd11.prod.outlook.com (52.135.226.160) by
- BYAPR11MB3334.namprd11.prod.outlook.com (20.177.185.211) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Thu, 20 Dec 2018 06:18:37 +0000
-Received: from BYAPR11MB2567.namprd11.prod.outlook.com
- ([fe80::2de1:50ef:4103:516b]) by BYAPR11MB2567.namprd11.prod.outlook.com
- ([fe80::2de1:50ef:4103:516b%2]) with mapi id 15.20.1425.025; Thu, 20 Dec 2018
- 06:18:37 +0000
-From:   <Ajay.Kathat@microchip.com>
-To:     <colin.king@canonical.com>, <Adham.Abozaeid@microchip.com>,
-        <gregkh@linuxfoundation.org>, <linux-wireless@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>
-CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: wilc1000: fix missing read_write setting when
- reading data
-Thread-Topic: [PATCH] staging: wilc1000: fix missing read_write setting when
- reading data
-Thread-Index: AQHUl7g/9r1F4tx1xkKJ/5VExv7rrKWHKDyA
-Date:   Thu, 20 Dec 2018 06:18:37 +0000
-Message-ID: <f385b84e-3724-cdaf-323c-7a9c9337b98b@microchip.com>
-References: <20181219163007.5329-1-colin.king@canonical.com>
-In-Reply-To: <20181219163007.5329-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MA1PR01CA0119.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:35::13) To BYAPR11MB2567.namprd11.prod.outlook.com
- (2603:10b6:a02:c5::32)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ajay.Kathat@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [27.59.115.204]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR11MB3334;6:/cRGmWWNPu/aHlN9eke1rB5ngKfB/WQMsFxj1aYESpTBfXLvVC4gJNZgU848xHU4ato1ui2mtJ5AjJj+3KFDNwnK0Bo9C+MgVVk9AUGOkpKTrBLLg/16DOL8/LfL4byrzuPBghRDHuCFVjw7bCEhIxUt4MxaaU9SsLKmqBTURzvAOO8qsAt5BckTZJZzw68bNWpoOresu6UES3tnO7DRObLjRV6OO8hHQTYJ0j0LqNpx3JNaXYrrBfGI4vdMM15dmQEx4saPGS0n3+MASUnJ4zpF9GQR/85y8qzJlJ8OR1y3dH9LUMi5SoN/DTO4t5XIRxJ7Llb+qzIGUEOvf0VHEbYFu5W8T9IBHcpo1xfAk2z95m04UsTuVAHmHzDEj9EhMpbKr+4sxXOfDAwHBJqHP0bI4DcviUItlmCIGXSYDr7Kq6JVH8VSSlh3XXpIK0ShFlWeeP3SxRLAEvffm/nMPw==;5:lXRoSzII6+mnjfYWEyh9v9WQaSIZ0qX05TzL2RlmqP11GGEq5DE6JW/mCRuKfc5271tOioIdqqK3zOJLG6ZgrjV/gbSDJqHEb9o2Y6i5s1tzIkoMGCizvOtATjB9akc6641MCDrKT1ZGTv7qX6VglWtdxbpHINQrA3cw6zNALXo=;7:Q3CmDvTJwkvEuW/lQ54UHNVZOgKlzjs9mo7u62Z1YxSLRcO7laegdqEWQadE3PccjiK1c3A2o6g3EsEVVeYkr+sYqiy49jfWzurdTI/rrz4aXk7AIihVWdCzm0u0PBmT+CYhBY40/qK8YeZEbFvs1A==
-x-ms-office365-filtering-correlation-id: 783c884d-4187-4202-ee07-08d66642fa45
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR11MB3334;
-x-ms-traffictypediagnostic: BYAPR11MB3334:
-x-microsoft-antispam-prvs: <BYAPR11MB3334B115C0A8256F8B4AD5A2E3BF0@BYAPR11MB3334.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(10201501046)(3002001)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR11MB3334;BCL:0;PCL:0;RULEID:;SRVR:BYAPR11MB3334;
-x-forefront-prvs: 0892FA9A88
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(366004)(136003)(39860400002)(199004)(189003)(53546011)(186003)(6506007)(478600001)(386003)(305945005)(102836004)(66066001)(54906003)(229853002)(2906002)(97736004)(4326008)(26005)(256004)(6246003)(7736002)(72206003)(6436002)(31686004)(2501003)(53936002)(76176011)(6116002)(3846002)(71200400001)(71190400001)(81156014)(6486002)(6512007)(8676002)(52116002)(14454004)(68736007)(36756003)(446003)(25786009)(99286004)(2201001)(5660300001)(110136005)(316002)(476003)(106356001)(486006)(8936002)(31696002)(2616005)(86362001)(11346002)(81166006)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB3334;H:BYAPR11MB2567.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EdHYgfi4Qe1afUW1IKnqNh2vEh2lpYYfC6BxolN9xkNVfcA5mbRgNhX0syq55vP+P4HchOWCWvdjzQfC/QYD0GxG9xDNIQObhXstu7TbcVhkLd0jUI2yDDZR7jDoLayYUyX+8VE0zb8wDT5VCkvKEPEXdUBtLZ+Q8I5ZoZlyl0VdItCTdKUlEETXBQB6oT+fooSKp7PJ1LCDSGXcQqro78SSd1dQuHEeACWTpuLis8+H4oVKMoGVOnSoK46Q/khC+hh0hentBfpqRQzqEnvRgsXk637D6e5y/hkKbWor4SWxjhwUS5P0q3pBZCW7Xnly
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D31BB210B716C04E8ECFCF4BD18316A0@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=leDS+X3qhM80TNqHVmgHKQGGVBTi6W28m71LJK/UtlY=;
+        b=mtHYWkTVpzrwoLg7U6D1CCgIAcQHhkF0kcL21Ra2Ab2qENAJCOZqrD0eI4impV1VXs
+         zOR0B3tjqH0doF2fA6xIWz3qzpjc9fY0KFAPdd1wKew4bC917U3WE1dOudOY7lle5hsN
+         OQWQS0yv/i2rr91eXWRPDzbRcQim9NESLQPA9TGg1aqLLf53CrCBmYpfBKfPsBQjfABz
+         cWnMMrZ9ePSzAWDJfz9PUIiJY5BSI9xYlrWh21EdUWn6UzXfHulKGXiMtf6ShMqgJGN6
+         esNNbcsYW1LGyHL3DIkbbIWz5K8esyWGhxcBUTwNCxEAj9K/Yu4eOq4lbUzXq/edz4w0
+         B28A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=leDS+X3qhM80TNqHVmgHKQGGVBTi6W28m71LJK/UtlY=;
+        b=IS6xKGguTDmwisquDftuygRYJv7fRgobSzotNwV1Bt4NmjeQyDm5sN5uVqfRPLy9es
+         KJwWKb5gtcWl7/PkgNKlEEB5iFPw6fswZAu2HvUOih6PEmnFMQcjCtP4U27AHS9QA20I
+         kXZn1Myu3w9vDbIrxzXjoPyc26ke0F8TijBYqVzBZAnE28VVTYaUKN5D2Et1JGZLNmeu
+         wHSLjB8GH1OqJepKWx9yAK1p5uXFUbTOuouCNFZZUAaw60BNanmkQnuVP1NlInqhy+ZK
+         E+iQMMrtyBJeViYSotjx1xBoJ83ejohJff8vz1cuoz99uIlrrwPblBoqYMhhX3ivngxo
+         WuzQ==
+X-Gm-Message-State: AA+aEWYeg2YhuPuULIOokm11SKmUjNm9Uniwasw9pNO5vWNdECqRfL16
+        T261Y6zupSds3YN+C6hVAeQDPqFVgR0=
+X-Google-Smtp-Source: AFSGD/XcyEG/MuI7tZUwnGgmPzoGZwcqqSLyMB6b3lagSwWG59P8a/Ib56XxVOTafuvd5qvni89ECQ==
+X-Received: by 2002:a62:2fc3:: with SMTP id v186mr23378837pfv.82.1545286822665;
+        Wed, 19 Dec 2018 22:20:22 -0800 (PST)
+Received: from [10.61.2.175] ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id 7sm63300555pfm.8.2018.12.19.22.20.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 22:20:21 -0800 (PST)
+Subject: Re: [PATCH V5 1/3] mm: Add get_user_pages_cma_migrate
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        mpe@ellerman.id.au, paulus@samba.org,
+        David Gibson <david@gibson.dropbear.id.au>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20181219034047.16305-1-aneesh.kumar@linux.ibm.com>
+ <20181219034047.16305-2-aneesh.kumar@linux.ibm.com>
+ <e9c9b68a-a31b-ab59-902a-73401a89f72a@ozlabs.ru>
+ <b316eb1c-36dc-49e0-f46f-e610f29b6058@linux.ibm.com>
+ <23cae5a6-4370-224c-523c-ab6ee940cf87@ozlabs.ru>
+ <ba05bde5-5ef9-6e96-b15c-cebb9631a84b@linux.ibm.com>
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aik@ozlabs.ru; keydata=
+ mQINBE+rT0sBEADFEI2UtPRsLLvnRf+tI9nA8T91+jDK3NLkqV+2DKHkTGPP5qzDZpRSH6mD
+ EePO1JqpVuIow/wGud9xaPA5uvuVgRS1q7RU8otD+7VLDFzPRiRE4Jfr2CW89Ox6BF+q5ZPV
+ /pS4v4G9eOrw1v09lEKHB9WtiBVhhxKK1LnUjPEH3ifkOkgW7jFfoYgTdtB3XaXVgYnNPDFo
+ PTBYsJy+wr89XfyHr2Ev7BB3Xaf7qICXdBF8MEVY8t/UFsesg4wFWOuzCfqxFmKEaPDZlTuR
+ tfLAeVpslNfWCi5ybPlowLx6KJqOsI9R2a9o4qRXWGP7IwiMRAC3iiPyk9cknt8ee6EUIxI6
+ t847eFaVKI/6WcxhszI0R6Cj+N4y+1rHfkGWYWupCiHwj9DjILW9iEAncVgQmkNPpUsZECLT
+ WQzMuVSxjuXW4nJ6f4OFHqL2dU//qR+BM/eJ0TT3OnfLcPqfucGxubhT7n/CXUxEy+mvWwnm
+ s9p4uqVpTfEuzQ0/bE6t7dZdPBua7eYox1AQnk8JQDwC3Rn9kZq2O7u5KuJP5MfludMmQevm
+ pHYEMF4vZuIpWcOrrSctJfIIEyhDoDmR34bCXAZfNJ4p4H6TPqPh671uMQV82CfTxTrMhGFq
+ 8WYU2AH86FrVQfWoH09z1WqhlOm/KZhAV5FndwVjQJs1MRXD8QARAQABtCRBbGV4ZXkgS2Fy
+ ZGFzaGV2c2tpeSA8YWlrQG96bGFicy5ydT6JAjgEEwECACIFAk+rT0sCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheAAAoJEIYTPdgrwSC5fAIP/0wf/oSYaCq9PhO0UP9zLSEz66SSZUf7
+ AM9O1rau1lJpT8RoNa0hXFXIVbqPPKPZgorQV8SVmYRLr0oSmPnTiZC82x2dJGOR8x4E01gK
+ TanY53J/Z6+CpYykqcIpOlGsytUTBA+AFOpdaFxnJ9a8p2wA586fhCZHVpV7W6EtUPH1SFTQ
+ q5xvBmr3KkWGjz1FSLH4FeB70zP6uyuf/B2KPmdlPkyuoafl2UrU8LBADi/efc53PZUAREih
+ sm3ch4AxaL4QIWOmlE93S+9nHZSRo9jgGXB1LzAiMRII3/2Leg7O4hBHZ9Nki8/fbDo5///+
+ kD4L7UNbSUM/ACWHhd4m1zkzTbyRzvL8NAVQ3rckLOmju7Eu9whiPueGMi5sihy9VQKHmEOx
+ OMEhxLRQbzj4ypRLS9a+oxk1BMMu9cd/TccNy0uwx2UUjDQw/cXw2rRWTRCxoKmUsQ+eNWEd
+ iYLW6TCfl9CfHlT6A7Zmeqx2DCeFafqEd69DqR9A8W5rx6LQcl0iOlkNqJxxbbW3ddDsLU/Y
+ r4cY20++WwOhSNghhtrroP+gouTOIrNE/tvG16jHs8nrYBZuc02nfX1/gd8eguNfVX/ZTHiR
+ gHBWe40xBKwBEK2UeqSpeVTohYWGBkcd64naGtK9qHdo1zY1P55lHEc5Uhlk743PgAnOi27Q
+ ns5zuQINBE+rT0sBEACnV6GBSm+25ACT+XAE0t6HHAwDy+UKfPNaQBNTTt31GIk5aXb2Kl/p
+ AgwZhQFEjZwDbl9D/f2GtmUHWKcCmWsYd5M/6Ljnbp0Ti5/xi6FyfqnO+G/wD2VhGcKBId1X
+ Em/B5y1kZVbzcGVjgD3HiRTqE63UPld45bgK2XVbi2+x8lFvzuFq56E3ZsJZ+WrXpArQXib2
+ hzNFwQleq/KLBDOqTT7H+NpjPFR09Qzfa7wIU6pMNF2uFg5ihb+KatxgRDHg70+BzQfa6PPA
+ o1xioKXW1eHeRGMmULM0Eweuvpc7/STD3K7EJ5bBq8svoXKuRxoWRkAp9Ll65KTUXgfS+c0x
+ gkzJAn8aTG0z/oEJCKPJ08CtYQ5j7AgWJBIqG+PpYrEkhjzSn+DZ5Yl8r+JnZ2cJlYsUHAB9
+ jwBnWmLCR3gfop65q84zLXRQKWkASRhBp4JK3IS2Zz7Nd/Sqsowwh8x+3/IUxVEIMaVoUaxk
+ Wt8kx40h3VrnLTFRQwQChm/TBtXqVFIuv7/Mhvvcq11xnzKjm2FCnTvCh6T2wJw3de6kYjCO
+ 7wsaQ2y3i1Gkad45S0hzag/AuhQJbieowKecuI7WSeV8AOFVHmgfhKti8t4Ff758Z0tw5Fpc
+ BFDngh6Lty9yR/fKrbkkp6ux1gJ2QncwK1v5kFks82Cgj+DSXK6GUQARAQABiQIfBBgBAgAJ
+ BQJPq09LAhsMAAoJEIYTPdgrwSC5NYEP/2DmcEa7K9A+BT2+G5GXaaiFa098DeDrnjmRvumJ
+ BhA1UdZRdfqICBADmKHlJjj2xYo387sZpS6ABbhrFxM6s37g/pGPvFUFn49C47SqkoGcbeDz
+ Ha7JHyYUC+Tz1dpB8EQDh5xHMXj7t59mRDgsZ2uVBKtXj2ZkbizSHlyoeCfs1gZKQgQE8Ffc
+ F8eWKoqAQtn3j4nE3RXbxzTJJfExjFB53vy2wV48fUBdyoXKwE85fiPglQ8bU++0XdOr9oyy
+ j1llZlB9t3tKVv401JAdX8EN0++ETiOovQdzE1m+6ioDCtKEx84ObZJM0yGSEGEanrWjiwsa
+ nzeK0pJQM9EwoEYi8TBGhHC9ksaAAQipSH7F2OHSYIlYtd91QoiemgclZcSgrxKSJhyFhmLr
+ QEiEILTKn/pqJfhHU/7R7UtlDAmFMUp7ByywB4JLcyD10lTmrEJ0iyRRTVfDrfVP82aMBXgF
+ tKQaCxcmLCaEtrSrYGzd1sSPwJne9ssfq0SE/LM1J7VdCjm6OWV33SwKrfd6rOtvOzgadrG6
+ 3bgUVBw+bsXhWDd8tvuCXmdY4bnUblxF2B6GOwSY43v6suugBttIyW5Bl2tXSTwP+zQisOJo
+ +dpVG2pRr39h+buHB3NY83NEPXm1kUOhduJUA17XUY6QQCAaN4sdwPqHq938S3EmtVhsuQIN
+ BFq54uIBEACtPWrRdrvqfwQF+KMieDAMGdWKGSYSfoEGGJ+iNR8v255IyCMkty+yaHafvzpl
+ PFtBQ/D7Fjv+PoHdFq1BnNTk8u2ngfbre9wd9MvTDsyP/TmpF0wyyTXhhtYvE267Av4X/BQT
+ lT9IXKyAf1fP4BGYdTNgQZmAjrRsVUW0j6gFDrN0rq2J9emkGIPvt9rQt6xGzrd6aXonbg5V
+ j6Uac1F42ESOZkIh5cN6cgnGdqAQb8CgLK92Yc8eiCVCH3cGowtzQ2m6U32qf30cBWmzfSH0
+ HeYmTP9+5L8qSTA9s3z0228vlaY0cFGcXjdodBeVbhqQYseMF9FXiEyRs28uHAJEyvVZwI49
+ CnAgVV/n1eZa5qOBpBL+ZSURm8Ii0vgfvGSijPGbvc32UAeAmBWISm7QOmc6sWa1tobCiVmY
+ SNzj5MCNk8z4cddoKIc7Wt197+X/X5JPUF5nQRvg3SEHvfjkS4uEst9GwQBpsbQYH9MYWq2P
+ PdxZ+xQE6v7cNB/pGGyXqKjYCm6v70JOzJFmheuUq0Ljnfhfs15DmZaLCGSMC0Amr+rtefpA
+ y9FO5KaARgdhVjP2svc1F9KmTUGinSfuFm3quadGcQbJw+lJNYIfM7PMS9fftq6vCUBoGu3L
+ j4xlgA/uQl/LPneu9mcvit8JqcWGS3fO+YeagUOon1TRqQARAQABiQRsBBgBCAAgFiEEZSrP
+ ibrORRTHQ99dhhM92CvBILkFAlq54uICGwICQAkQhhM92CvBILnBdCAEGQEIAB0WIQQIhvWx
+ rCU+BGX+nH3N7sq0YorTbQUCWrni4gAKCRDN7sq0YorTbVVSD/9V1xkVFyUCZfWlRuryBRZm
+ S4GVaNtiV2nfUfcThQBfF0sSW/aFkLP6y+35wlOGJE65Riw1C2Ca9WQYk0xKvcZrmuYkK3DZ
+ 0M9/Ikkj5/2v0vxz5Z5w/9+IaCrnk7pTnHZuZqOh23NeVZGBls/IDIvvLEjpD5UYicH0wxv+
+ X6cl1RoP2Kiyvenf0cS73O22qSEw0Qb9SId8wh0+ClWet2E7hkjWFkQfgJ3hujR/JtwDT/8h
+ 3oCZFR0KuMPHRDsCepaqb/k7VSGTLBjVDOmr6/C9FHSjq0WrVB9LGOkdnr/xcISDZcMIpbRm
+ EkIQ91LkT/HYIImL33ynPB0SmA+1TyMgOMZ4bakFCEn1vxB8Ir8qx5O0lHMOiWMJAp/PAZB2
+ r4XSSHNlXUaWUg1w3SG2CQKMFX7vzA31ZeEiWO8tj/c2ZjQmYjTLlfDK04WpOy1vTeP45LG2
+ wwtMA1pKvQ9UdbYbovz92oyZXHq81+k5Fj/YA1y2PI4MdHO4QobzgREoPGDkn6QlbJUBf4To
+ pEbIGgW5LRPLuFlOPWHmIS/sdXDrllPc29aX2P7zdD/ivHABslHmt7vN3QY+hG0xgsCO1JG5
+ pLORF2N5XpM95zxkZqvYfC5tS/qhKyMcn1kC0fcRySVVeR3tUkU8/caCqxOqeMe2B6yTiU1P
+ aNDq25qYFLeYxg67D/4w/P6BvNxNxk8hx6oQ10TOlnmeWp1q0cuutccblU3ryRFLDJSngTEu
+ ZgnOt5dUFuOZxmMkqXGPHP1iOb+YDznHmC0FYZFG2KAc9pO0WuO7uT70lL6larTQrEneTDxQ
+ CMQLP3qAJ/2aBH6SzHIQ7sfbsxy/63jAiHiT3cOaxAKsWkoV2HQpnmPOJ9u02TPjYmdpeIfa
+ X2tXyeBixa3i/6dWJ4nIp3vGQicQkut1YBwR7dJq67/FCV3Mlj94jI0myHT5PIrCS2S8LtWX
+ ikTJSxWUKmh7OP5mrqhwNe0ezgGiWxxvyNwThOHc5JvpzJLd32VDFilbxgu4Hhnf6LcgZJ2c
+ Zd44XWqUu7FzVOYaSgIvTP0hNrBYm/E6M7yrLbs3JY74fGzPWGRbBUHTZXQEqQnZglXaVB5V
+ ZhSFtHopZnBSCUSNDbB+QGy4B/E++Bb02IBTGl/JxmOwG+kZUnymsPvTtnNIeTLHxN/H/ae0
+ c7E5M+/NpslPCmYnDjs5qg0/3ihh6XuOGggZQOqrYPC3PnsNs3NxirwOkVPQgO6mXxpuifvJ
+ DG9EMkK8IBXnLulqVk54kf7fE0jT/d8RTtJIA92GzsgdK2rpT1MBKKVffjRFGwN7nQVOzi4T
+ XrB5p+6ML7Bd84xOEGsj/vdaXmz1esuH7BOZAGEZfLRCHJ0GVCSssg==
+Message-ID: <406cbd85-c64e-428f-772d-7afb23eb92ec@ozlabs.ru>
+Date:   Thu, 20 Dec 2018 17:20:15 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 783c884d-4187-4202-ee07-08d66642fa45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 06:18:37.4765
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3334
-X-OriginatorOrg: microchip.com
+In-Reply-To: <ba05bde5-5ef9-6e96-b15c-cebb9631a84b@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDEyLzE5LzIwMTggMTA6MDAgUE0sIENvbGluIEtpbmcgd3JvdGU6DQo+IEZyb206IENv
-bGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBDdXJyZW50bHkg
-dGhlIGNtZC5yZWFkX3dyaXRlIHNldHRpbmcgaXMgbm90IGluaXRpYWxpemVkIHNvIGl0IGNvbnRh
-aW5zDQo+IGdhcmJhZ2UgZnJvbSB0aGUgc3RhY2suICBGaXggdGhpcyBieSBzZXR0aW5nIGl0IHRv
-IDAgdG8gaW5kaWNhdGUgYQ0KPiByZWFkIGlzIHJlcXVpcmVkLg0KPiANCj4gRGV0ZWN0ZWQgYnkg
-Q292ZXJpdHlTY2FuLCBDSUQjMTM1NzkyNSAoIlVuaW5pdGlhbGl6ZWQgc2NhbGFyIHZhcmlhYmxl
-IikNCj4gDQo+IEZpeGVzOiBjNWM3N2JhMThlYTYgKCJzdGFnaW5nOiB3aWxjMTAwMDogQWRkIFNE
-SU8vU1BJIDgwMi4xMSBkcml2ZXIiKQ0KDQpBY2tlZC1ieTogQWpheSBTaW5naCA8YWpheS5rYXRo
-YXRAbWljcm9jaGlwLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGlu
-LmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL3N0YWdpbmcvd2lsYzEwMDAv
-d2lsY19zZGlvLmMgfCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYyBiL2Ry
-aXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYw0KPiBpbmRleCAyN2ZkZmJkZGE1YzAu
-LmUyZjczOWZlZjIxYyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL3dpbGMxMDAwL3dp
-bGNfc2Rpby5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy93aWxjMTAwMC93aWxjX3NkaW8uYw0K
-PiBAQCAtODYxLDYgKzg2MSw3IEBAIHN0YXRpYyBpbnQgc2Rpb19yZWFkX2ludChzdHJ1Y3Qgd2ls
-YyAqd2lsYywgdTMyICppbnRfc3RhdHVzKQ0KPiAgCWlmICghc2Rpb19wcml2LT5pcnFfZ3Bpbykg
-ew0KPiAgCQlpbnQgaTsNCj4gIA0KPiArCQljbWQucmVhZF93cml0ZSA9IDA7DQo+ICAJCWNtZC5m
-dW5jdGlvbiA9IDE7DQo+ICAJCWNtZC5hZGRyZXNzID0gMHgwNDsNCj4gIAkJY21kLmRhdGEgPSAw
-Ow0KPiANCg==
+
+
+On 20/12/2018 16:52, Aneesh Kumar K.V wrote:
+> On 12/20/18 11:18 AM, Alexey Kardashevskiy wrote:
+>>
+>>
+>> On 20/12/2018 16:22, Aneesh Kumar K.V wrote:
+>>> On 12/20/18 9:49 AM, Alexey Kardashevskiy wrote:
+>>>>
+>>>>
+>>>> On 19/12/2018 14:40, Aneesh Kumar K.V wrote:
+>>>>> This helper does a get_user_pages_fast and if it find pages in the
+>>>>> CMA area
+>>>>> it will try to migrate them before taking page reference. This makes
+>>>>> sure that
+>>>>> we don't keep non-movable pages (due to page reference count) in the
+>>>>> CMA area.
+>>>>> Not able to move pages out of CMA area result in CMA allocation
+>>>>> failures.
+>>>>>
+>>>>> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>>>>
+>>>
+>>> .....
+>>>>> +         * We did migrate all the pages, Try to get the page
+>>>>> references again
+>>>>> +         * migrating any new CMA pages which we failed to isolate
+>>>>> earlier.
+>>>>> +         */
+>>>>> +        drain_allow = true;
+>>>>> +        goto get_user_again;
+>>>>
+>>>>
+>>>> So it is possible to have pages pinned, then successfully migrated
+>>>> (migrate_pages() returned 0), then pinned again, then some pages may
+>>>> end
+>>>> up in CMA again and migrate again and nothing seems to prevent this
+>>>> loop
+>>>> from being endless. What do I miss?
+>>>>
+>>>
+>>> pages used as target page for migration won't be allocated from CMA
+>>> region.
+>>
+>>
+>> Then migrate_allow should be set to "false" regardless what
+>> migrate_pages() returned and then I am totally missing the point of this
+>> goto and going through the loop again even when we know for sure it
+>> won't do literally anything but checking is_migrate_cma_page() even
+>> though we know pages won't be allocated from CMA.
+>>
+> 
+> Because we might have failed to isolate all the pages in the first attempt.
+
+isolate==migrate?
+
+If we failed to migrate, then migrate_pages() returns non zero (positive
+or negative), we set migrate_allow to false, empty the cma_page_list
+and repeat but we won't add anything to cma_page_list as
+migrate_allow==false.
+
+If we succeeded to migrate, then we repeat the loop with
+migrate_allow==true but it does not matter as is_migrate_cma_page() is
+expected to return false because we just successfully migrated
+_everything_ so we won't be adding anything to cma_page_list either.
+
+What have I missed?
+
+-- 
+Alexey
