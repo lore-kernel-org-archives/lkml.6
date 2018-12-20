@@ -2,123 +2,160 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF87C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5235C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A543321773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:16:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 745E5217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNnMLjbC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387770AbeLTRQ6 (ORCPT
+        id S2387776AbeLTRUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:16:58 -0500
-Received: from mail.netline.ch ([148.251.143.178]:43257 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732819AbeLTRQ6 (ORCPT
+        Thu, 20 Dec 2018 12:20:07 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44725 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728221AbeLTRUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:16:58 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id CCDB62A6054;
-        Thu, 20 Dec 2018 18:16:54 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id P6RBzeGoEjFa; Thu, 20 Dec 2018 18:16:54 +0100 (CET)
-Received: from thor (39.1.199.178.dynamic.wline.res.cust.swisscom.ch [178.199.1.39])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 1810C2A6053;
-        Thu, 20 Dec 2018 18:16:53 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.91)
-        (envelope-from <michel@daenzer.net>)
-        id 1ga1wL-0004xr-9f; Thu, 20 Dec 2018 18:16:53 +0100
-Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
-To:     Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexdeucher@gmail.com>
-Cc:     dnicoara@chromium.org,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
-        Sean Paul <seanpaul@google.com>,
-        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Helen Koike <helen.koike@collabora.com>, kernel@collabora.com,
-        "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>
-References: <20181123215326.14274-1-helen.koike@collabora.com>
- <20181127133418.GT9144@intel.com>
- <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
- <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
- <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
- <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
- <CAKMK7uG=vdaTo25b3gSaD4T2naA51VeaVL0+5YAJ9HMrBziTWQ@mail.gmail.com>
- <CADnq5_P9nsquCV95CSZC4NCr7YNJ76ZmCruJA=f1N8dLGYm=ow@mail.gmail.com>
- <CAKMK7uHu5XMQzr7ocVEcpDS9H6pQ-BHfHNE51_YK7rLkTQC_9g@mail.gmail.com>
- <CADnq5_P1smiGhYyoZQsEAJG0+jBx6f75HwEFAf2RkaoNp0HEiA@mail.gmail.com>
- <CAKMK7uGSiBv9H_xAj2fuk=XYocefQU4bFk+fPr=iWGsaPxOwhw@mail.gmail.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <fb45217c-d9ad-b208-d55d-51299ead108b@daenzer.net>
-Date:   Thu, 20 Dec 2018 18:16:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 20 Dec 2018 12:20:06 -0500
+Received: by mail-ed1-f66.google.com with SMTP id y56so2373802edd.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NoW84sHcpZ3hWCRY1pN/YEtZ+PH1m/Vupg4+oZVMAU4=;
+        b=dNnMLjbCJ7r5+4EECmbZMq4t2gTe9efmtPBHZlsRqfp4XkSl29QgDooN6fxGLFrpJ7
+         llsVEgWSGZcE4sG2R99YhPOGxa5cTl9rNGlvPxBs63ZTS19rg6ZiHWN2RozHI3juofUG
+         rA2/ZnsQd3MeEMXITS6y48nNuAJioUKwkKmIXZMT55HvHKfeob0kRtjTWC4RdaVLUH5/
+         AHJcuIPpovpwNj7eiNt8Z0+AwUPAe1Bjb5G6Ml1GzmYKy8GHDDT9nRDAWeZnx5A4zKGP
+         Ma/ZFf0XbXLyb2c50twYrxlLAUzPk5ui38lYjHrBrYT3DBsnHHrKQJZ8m1JtVfwtFjsm
+         MqIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NoW84sHcpZ3hWCRY1pN/YEtZ+PH1m/Vupg4+oZVMAU4=;
+        b=c3QKkGENrFEvE2KGAMWxt5uKtXuxBiI39EONXe7Q7SIcdcTu2m8lt9g5X2uLDpiZQz
+         VjOy4um/DaVjFITWawY+GFClNgWCJdpOYbcSFU1uQFiXRkVuKQZeOTc5o2KrU805ZDya
+         lY+26Bie+9Cg8ezC8w8HHqRg00f53YrV+xQS0xvt0AJLzKLg2N+BeO1KouEFJ9HhEw5R
+         lSTr2v/+YWY9WqCqVpPU3xG8wid1NfzVCRZthEDYlcC3r1iawLlRXk9Ui8Ikk1IgYYFY
+         u4ODkdhI1DZ7LJo8dea+Shdz+fgA8JZubR/4jCNWcEiFW5iS+LJcUkYTDGWOo9Bn2Gcq
+         aaNQ==
+X-Gm-Message-State: AA+aEWaHqZIRfT+UWxUhJ9QJhiM8WkKZfNsJCiq1s1bxgvSlDn2X5rYL
+        42Y2q9yKllaO557+HMKDHGU=
+X-Google-Smtp-Source: AFSGD/UHPMWI0wXugoDgL16GupRZe1z5oWFRPWiYdU9Vg6n69cUpoCwWlqRXTJgYbOHX/S1Jj14MxQ==
+X-Received: by 2002:a17:906:1102:: with SMTP id h2-v6mr10900008eja.18.1545326404790;
+        Thu, 20 Dec 2018 09:20:04 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id v14sm5930689edq.74.2018.12.20.09.20.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 09:20:03 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Andy Gospodarek <gospo@broadcom.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Caesar Wang <wxt@rock-chips.com>, CK Hu <ck.hu@mediatek.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Eric Anholt <eric@anholt.net>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        HS Liao <hs.liao@mediatek.com>,
+        Kaihua Zhong <zhongkaihua@huawei.com>,
+        Kevin Wangtao <kevin.wangtao@hisilicon.com>,
+        Lee Jones <lee.jones@linaro.org>, Leo Yan <leo.yan@linaro.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Nishanth Menon <nm@ti.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Rob Rice <rob.rice@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH v3 00/19] mailbox: Device-managed registration
+Date:   Thu, 20 Dec 2018 18:19:43 +0100
+Message-Id: <20181220172002.9016-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <CAKMK7uGSiBv9H_xAj2fuk=XYocefQU4bFk+fPr=iWGsaPxOwhw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-20 6:09 p.m., Daniel Vetter wrote:
-> On Thu, Dec 20, 2018 at 6:03 PM Alex Deucher <alexdeucher@gmail.com> wrote:
->> On Thu, Dec 20, 2018 at 11:54 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> 
->>> Not sure about the gamma thing since we had opposite bugs on i915
->>> about gamma not being vsynced and tearing terribly. Cursor is special
->>> since it tends to be too small to notice tearing.
->>
->> Our cursor hw (and possibly gamma as well Nicholas?  Harry?) is double
->> buffered, so we can update it any time for the most part and the
->> changes won't take affect until the next vupdate period.
-> 
-> Hm, I guess we could make the gamma update optionally async, and let
-> drivers deal. The issue is that the current async helper stuff won't
-> cope with gamma updates (it's aimed at plane updates only, not at crtc
-> property updates). Or we get userspace to do proper atomic updates. Or
-> we do some faking in the kernel, e.g. waiting with the gamma update
-> until the next atomic update happens. But that kinda breaks
-> ->atomic_check.
+From: Thierry Reding <treding@nvidia.com>
 
-Would it be possible to merge gamma changes into a pending commit, if
-there is one, and create a new commit otherwise?
+Hi,
 
-Otherwise the atomic API just moves this same problem to be solved by
-userspace.
+This series of patches adds device-managed registration functions for
+mailbox controllers. A number of drivers can be simplified by making use
+of this new API both in the error cleanup paths in their probe functions
+and in the driver remove implementation.
 
+In addition to adding the new API this series converts all drivers to
+use it. There is also an additional cleanup patch for the mtk-cmdq
+driver that removes some calls to devm_kfree() that are not needed.
+
+Changes in v3:
+- fix the level of indirection in the device-managed pointer
+- fix a build error in the OMAP mailbox driver
+
+Thierry
+
+Thierry Reding (19):
+  mailbox: Add device-managed registration functions
+  mailbox: arm-mhu: Use device-managed registration API
+  mailbox: bcm2835: Use device-managed registration API
+  mailbox: bcm-flexrm: Use device-managed registration API
+  mailbox: bcm-pdc: Use device-managed registration API
+  mailbox: hi3660: Use device-managed registration API
+  mailbox: hi6220: Use device-managed registration API
+  mailbox: imx: Use device-managed registration API
+  mailbox: altera: Use device-managed registration API
+  mailbox: sti: Use device-managed registration API
+  mailbox: xgene-slimpro: Use device-managed registration API
+  mailbox: mtk-cmdq: Use device-managed registration API
+  mailbox: mtk-cmdq: Remove needless devm_kfree() calls
+  mailbox: omap: Use device-managed registration API
+  mailbox: platform-mhu: Use device-managed registration API
+  mailbox: qcom-apcs: Use device-managed registration API
+  mailbox: rockchip: Use device-managed registration API
+  mailbox: stm32-ipcc: Use device-managed registration API
+  mailbox: ti-msgmgr: Use device-managed registration API
+
+ drivers/mailbox/arm_mhu.c               | 12 +----
+ drivers/mailbox/bcm-flexrm-mailbox.c    |  4 +-
+ drivers/mailbox/bcm-pdc-mailbox.c       |  4 +-
+ drivers/mailbox/bcm2835-mailbox.c       | 10 +---
+ drivers/mailbox/hi3660-mailbox.c        | 11 +---
+ drivers/mailbox/hi6220-mailbox.c        | 11 +---
+ drivers/mailbox/imx-mailbox.c           |  3 +-
+ drivers/mailbox/mailbox-altera.c        | 15 +-----
+ drivers/mailbox/mailbox-sti.c           | 13 +----
+ drivers/mailbox/mailbox-xgene-slimpro.c | 11 +---
+ drivers/mailbox/mailbox.c               | 70 +++++++++++++++++++++++++
+ drivers/mailbox/mtk-cmdq-mailbox.c      | 11 +---
+ drivers/mailbox/omap-mailbox.c          |  4 +-
+ drivers/mailbox/platform_mhu.c          | 12 +----
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c |  3 +-
+ drivers/mailbox/rockchip-mailbox.c      | 15 +-----
+ drivers/mailbox/stm32-ipcc.c            |  4 +-
+ drivers/mailbox/ti-msgmgr.c             | 13 +----
+ include/linux/mailbox_controller.h      |  5 ++
+ 19 files changed, 92 insertions(+), 139 deletions(-)
 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+2.19.1
+
