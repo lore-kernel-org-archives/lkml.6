@@ -2,118 +2,104 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A03C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D29AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A8C21907
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JNQuNJqZ"
+	by mail.kernel.org (Postfix) with ESMTP id 6EBFC218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545339449;
+	bh=qPCLY35/vEBQ2nb85EICVbzSm+O/eFCrX2Ap35slKBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xaxyScwGHfWQjfncYoP4D2Q8FKu7CAfHeJMlh310XWM8qFZxdqQnU0G9qU7KcZOUn
+	 0kyP9TIL5Ni5WZqTe6P+aQoXS6F2Iq7gt8VIh4xlMeILF8RZzLLWcTh/pNy8g2XyJY
+	 hqLYqmA5E3KjJa3iPnVTNZUL4OEEPfmIBB4gN5pg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389696AbeLTU4a (ORCPT
+        id S1730653AbeLTU52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:56:30 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37639 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389683AbeLTU4Y (ORCPT
+        Thu, 20 Dec 2018 15:57:28 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55925 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729578AbeLTU50 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:56:24 -0500
-Received: by mail-it1-f195.google.com with SMTP id b5so3737121iti.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 12:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
-        b=JNQuNJqZv35yGcoTQlpjyNDO1LK/icLfT60oa8Oe1zdECcpIoOi/jLh7f+N+AXGbr4
-         b6Yp3533F2UND8fzsMoBSLPV3qQcXdZ8jBlLxTJ7daT78hXkveFq6xwdbd2Mugz8vO5e
-         tfkhEYtNZnFFapSAFdmYjwAin4vKTOu2ST8Rg=
+        Thu, 20 Dec 2018 15:57:26 -0500
+Received: by mail-it1-f193.google.com with SMTP id m62so4010788ith.5;
+        Thu, 20 Dec 2018 12:57:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
-        b=p9hseObV+lU+hS2+3AWumJx2bs3RXFAmXvnJSh2h9E7EltOH8fzNeGBzipg590InjG
-         QEijyouVvk9RE73ug1lpSLKXZdmcjHWOx6lQ9iQTO8YTmrt9YmWEmweodcdgnSOevvhB
-         4HUx5np/avXJjUeH3xxeE18vsRT15fHhvzSgVrZ386L6x5RHpEy10+wndVMiZxtavL8H
-         s1DlXUblxbfqpeh90HzkMLiDMsztR3DpS2vgW3QAJIAZXQRAZcBCpB+8FzRsDyU8WRsv
-         X+URQ2k02deZU0xxBS4oT2ejFY+SQpkCAt21nEdOHBWF8kzUVZFIGvovTW0xYNr/edCQ
-         Xbaw==
-X-Gm-Message-State: AA+aEWYQrC0t40Wn/LPa+eaqc0OLvoIo3zmgovpOmhtP9iW07rt01/+O
-        aU9F1TTNC0naSB4mOfCSRzJ0xPhn3+evbTVV1EYaGclr0zzDoA==
-X-Google-Smtp-Source: ALg8bN6rfXd4idarU47KMo5Mow2yJjrhhdUXYqRqjjZX8AY37yXXMGazvLIMeKxtXulHnZixSS1jALfRLmJ1Sme/Y88=
-X-Received: by 2002:a24:5411:: with SMTP id t17mr207706ita.32.1545339383319;
- Thu, 20 Dec 2018 12:56:23 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rTeIc8r8cSutS4ORvHntsXYGF2soEDoZph4eBu+yZLs=;
+        b=JpdzxY2E5Yj/Iy82zDrVg3GjfLdK4KJ1PTidApqGqkobpgdsN5gkhPePQVby/asEuS
+         H2iPihuUjoh7qcGZTxeoEY/HI4p2I1BPY4B8co5kUCglDZuubBr6ubm+EIsG5J/Bv1Sq
+         i9NtgKmQCv8FhGbcCcAINl+y8b46lrt1YztCal840E72ynFGFsWHrwLPjgsBubsgfrGc
+         1YYunf+1YfOo4uwjSlko0CJ0eagrquur6HjMC4+5XdtGLsd1YLJugy0PDnCnrO332LHc
+         dzarfOj+kI9MDedwf+hMMDb1WY85uE4eTpiYKY6tOfngVq6rhUuBJYi4q57Q4TtCe6D+
+         tDFg==
+X-Gm-Message-State: AA+aEWYRl/3PISz1VR3X6nS246PLq4PEwmfGF04qNm2MIpaMYWN6dyN+
+        zq/fzhTCFoR4Tf6kBtmt7hAosG4=
+X-Google-Smtp-Source: AFSGD/XEcTZXNDZLfJRKCiFlEbVfvwKOHvZTmRUYOzNkiUr7EvBJQYN7XCipwj85eRYdUO+lSGyodg==
+X-Received: by 2002:a05:660c:6cc:: with SMTP id z12mr201724itk.65.1545339445033;
+        Thu, 20 Dec 2018 12:57:25 -0800 (PST)
+Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
+        by smtp.gmail.com with ESMTPSA id k2sm5242586itk.35.2018.12.20.12.57.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 12:57:24 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:57:22 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH 2/7] dt-bindings: riscv: sifive: add documentation for
+ the SiFive FU540
+Message-ID: <20181220205722.GA2072@bogus>
+References: <20181215052154.24347-1-paul.walmsley@sifive.com>
+ <20181215052154.24347-3-paul.walmsley@sifive.com>
 MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
-In-Reply-To: <20181211164900.wfmkmbrbj3nmlb3h@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 21 Dec 2018 02:26:11 +0530
-Message-ID: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181215052154.24347-3-paul.walmsley@sifive.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
-> > Video start delay can be computed by subtracting total vertical
-> > timing with front porch timing and with adding 1 delay line for TCON.
-> >
-> > BSP code form BPI-M64-bsp is computing video start delay as
-> > (from linux-sunxi/
-> > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> >
-> > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-> > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-> >    - panel->lcd_y - (panel->lcd_vbp)
-> > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-> >                            - panel->lcd_y - panel->lcd_vbp
-> > => timmings->ver_front_porch
-> >
-> > So, update the start delay computation accordingly.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->
-> Even though it's a bit better now on my A33 board and I don't have the
-> white stripes on the bottom of the display, there's still some
-> flickering with your patches applied.
->
-> Bisecting it seems to point at that patch, but reverting it doesn't
-> make the issue go away, so it's not really clear which one exactly is
-> at fault.
+On Fri, Dec 14, 2018 at 09:21:49PM -0800, Paul Walmsley wrote:
+> Add DT binding documentation for the SiFive FU540 SoC.  This
+> SoC is documented at:
+> 
+> https://static.dev.sifive.com/FU540-C000-v1.0.pdf
+> 
+> This file is originally based on
+> Documentation/devicetree/bindings/arm/ti/k3.txt.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> ---
+>  .../devicetree/bindings/riscv/sifive/fu540.txt     | 14 ++++++++++++++
+>  MAINTAINERS                                        |  9 +++++++++
+>  2 files changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/riscv/sifive/fu540.txt
 
-Is reverting this patch, work fine or not?
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-This patch is trying to make use of front porch instead of existing
-back porch to compute the delay. Since we revert the VBP fix patch[1]
-to assume VBP as VFP value look like your setup would also require to
-revert this change. But as per BSP or drm_mode details all of my
-displays even work with and w/o reverting these two.
+However, with 4.21 we're starting to use json-schema and top-level 
+SoC/board bindings. Not requiring it yet, but feel free to convert to 
+that if you want. Then we don't have to do it later.
 
-I'm thinking your display should work in the same behavior since the
-dsi controller making this route.
-
-[1] https://patchwork.kernel.org/patch/10680309/
+Rob
