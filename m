@@ -2,35 +2,36 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CB9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A78C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA76121901
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:21:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A939021902
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="cVyLVlWC"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="TfSWvzq+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389321AbeLTTV4 (ORCPT
+        id S2389375AbeLTTWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:21:56 -0500
-Received: from a9-92.smtp-out.amazonses.com ([54.240.9.92]:34894 "EHLO
-        a9-92.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731103AbeLTTV4 (ORCPT
+        Thu, 20 Dec 2018 14:22:01 -0500
+Received: from a9-36.smtp-out.amazonses.com ([54.240.9.36]:34420 "EHLO
+        a9-36.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731103AbeLTTV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:21:56 -0500
+        Thu, 20 Dec 2018 14:21:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545333715;
-        h=Message-Id:Date:From:To:Cc:Cc:Cc:CC:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:Feedback-ID;
-        bh=ZC6NB5lKn8jM6W/kwe979AqbHeNIIEDgIRYq8F0S3jo=;
-        b=cVyLVlWCMnX/xXwSbAOjGke/AaYduszsLs/wcSBoRGW5RCfHoQOhRZPLy65aov7v
-        9F/S49PS1d+goBBjMmRpktLA/MBVFqqHc031bjQtF3/MdMPm1fRkfHVEofYlextIQBK
-        fgnfbFMt6KSXHbGnpRm3LWKe9CJGadGv7vXr+1Ps=
-Message-ID: <01000167cd1130c8-c9bebcb9-1f95-4f7c-b24a-90600d56c62f-000000@email.amazonses.com>
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545333716;
+        h=Message-Id:Date:From:To:Cc:Cc:Cc:CC:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=VdAFswNkZMzX1QnleI6nNoe36Hgyo5dlWLZMARfK7f8=;
+        b=TfSWvzq+iWaub44mB9Mn8ltb+L1g6QW1S5kgNN/HUVsnK258K9k740hUbuDhEOMG
+        bYTUyXxdL0Y3gmb2B+0S4/pIEqgRxEs5Qta6XL+73oW3WxvfSEyEN9EAbgWYzKYXFMv
+        5dYhndZ2/byo4T9TMaGK71a7AaJMFgPyIpndY2ts=
+Message-ID: <01000167cd113509-2c85d8a3-8e0e-4cb6-a745-88733e448471-000000@email.amazonses.com>
 User-Agent: quilt/0.65
-Date:   Thu, 20 Dec 2018 19:21:55 +0000
+Date:   Thu, 20 Dec 2018 19:21:56 +0000
 From:   Christoph Lameter <cl@linux.com>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-mm@kvack.org
@@ -44,86 +45,64 @@ Cc:     Dave Chinner <dchinner@redhat.com>
 Cc:     Christoph Hellwig <hch@lst.de>
 Cc:     Michal Hocko <mhocko@suse.com>
 Cc:     Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [RFC 0/7] Slab object migration for xarray V2
-X-SES-Outgoing: 2018.12.20-54.240.9.92
+Subject: [RFC 1/7] slub: Replace ctor field with ops field in /sys/slab/*
+References: <20181220192145.023162076@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=ctor_to_ops
+X-SES-Outgoing: 2018.12.20-54.240.9.36
 Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V1->V2:
-	- Works now on top of 4.20-rc7
-	- A couple of bug fixes
+Create an ops field in /sys/slab/*/ops to contain all the callback
+operations defined for a slab cache. This will be used to display
+the additional callbacks that will be defined soon to enable
+defragmentation.
 
+Display the existing ctor callback in the ops fields contents.
 
-This is a patchset on top of Matthew Wilcox Xarray code and implements
-slab object migration for xarray nodes. The migration is integrated into
-the defragmetation and shrinking logic of the slab allocator.
+Signed-off-by: Christoph Lameter <cl@linux.com>
 
-Defragmentation will ensure that all xarray slab pages have
-less objects available than specified by the slab defrag ratio.
+---
+ mm/slub.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Slab shrinking will create a slab cache with optimal object
-density. Only one slab page will have available objects per node.
-
-To test apply this patchset and run a workload that uses lots of radix tree objects
-
-
-Then go to
-
-/sys/kernel/slab/radix_tree_node
-
-Inspect the number of total objects that the slab can handle
-
-	cat total_objects
-
-qmdr:/sys/kernel/slab/radix_tree_node# cat objects
-868 N0=448 N1=168 N2=56 N3=196
-
-And the number of slab pages used for those
-
-	cat slabs
-
-qmdr:/sys/kernel/slab/radix_tree_node# cat slabs
-31 N0=16 N1=6 N2=2 N3=7
-
-
-Perform a cache shrink operation
-
-	echo 1 >shrink
-
-
-Now see how the slab has changed:
-
-qmdr:/sys/kernel/slab/radix_tree_node# cat slabs
-30 N0=15 N1=6 N2=2 N3=7
-qmdr:/sys/kernel/slab/radix_tree_node# cat objects
-713 N0=349 N1=141 N2=52 N3=171
-
-
-This is just a barebones approach using a special mode
-of the slab migration patchset that does not require refcounts.
-
-
-
-If this is acceptable then additional functionality can be added:
-
-1. Migration of objects to a specific node. Not sure how to implement
-   that. Using another sysfs field?
-
-2. Dispersion of objects across all nodes (MPOL_INTERLEAVE)
-
-3. Subsystems can request to move an object to a specific node.
-   How to design such functionality best?
-
-4. Tying into the page migration and page defragmentation logic so
-   that so far unmovable pages that are in the way of creating a
-   contiguous block of memory will become movable.
-   This would mean checking for slab pages in the migration logic
-   and calling slab to see if it can move the page by migrating
-   all objects.
-
-This is only possible for xarray for now but it would be worthwhile
-to extend this to dentries and inodes.
+Index: linux/mm/slub.c
+===================================================================
+--- linux.orig/mm/slub.c
++++ linux/mm/slub.c
+@@ -4994,13 +4994,18 @@ static ssize_t cpu_partial_store(struct
+ }
+ SLAB_ATTR(cpu_partial);
+ 
+-static ssize_t ctor_show(struct kmem_cache *s, char *buf)
++static ssize_t ops_show(struct kmem_cache *s, char *buf)
+ {
++	int x = 0;
++
+ 	if (!s->ctor)
+ 		return 0;
+-	return sprintf(buf, "%pS\n", s->ctor);
++
++	if (s->ctor)
++		x += sprintf(buf + x, "ctor : %pS\n", s->ctor);
++	return x;
+ }
+-SLAB_ATTR_RO(ctor);
++SLAB_ATTR_RO(ops);
+ 
+ static ssize_t aliases_show(struct kmem_cache *s, char *buf)
+ {
+@@ -5413,7 +5418,7 @@ static struct attribute *slab_attrs[] =
+ 	&objects_partial_attr.attr,
+ 	&partial_attr.attr,
+ 	&cpu_slabs_attr.attr,
+-	&ctor_attr.attr,
++	&ops_attr.attr,
+ 	&aliases_attr.attr,
+ 	&align_attr.attr,
+ 	&hwcache_align_attr.attr,
 
