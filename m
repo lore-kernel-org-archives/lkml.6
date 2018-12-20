@@ -2,175 +2,127 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 177C9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93838C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBAEA2186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:47:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iPFRjEzH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fJYM6ivK"
+	by mail.kernel.org (Postfix) with ESMTP id 6C563217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:50:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387823AbeLTOrK (ORCPT
+        id S1730560AbeLTOuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:47:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:54276 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733248AbeLTOrJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:47:09 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2C3DF60928; Thu, 20 Dec 2018 14:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545317228;
-        bh=rnu8okox5XvhBmPI7ntxGTYhG719Crq47GRi3axFzJg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iPFRjEzH96mbt/vKSC5iyztvMTjotxZ1pEMCD6KkzBNDz8rXoCVDnJgjQuW1Oz6Ek
-         PGoq3b08PEiiM/sCVGgfuZOzX6pT1I53Um/K7MSthCNO+StwqOfjI3Fvnte2ZxhGsY
-         4m+ME1/MLSd1V2HqXI/CUTFT5IJd3D4UA5iIWl9E=
-Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0AC066071C;
-        Thu, 20 Dec 2018 14:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545317226;
-        bh=rnu8okox5XvhBmPI7ntxGTYhG719Crq47GRi3axFzJg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fJYM6ivKO93iLaOu8rSYZK9DigMvcz1urBjceH+3yKzJ3CjTD2HkPxwMO6WGS5dRo
-         k/pzSZDvj21Hj5H1vKDUo3cK9CwurXSWt0uVNOtDPzIBLLN3m2ZTmNq2Se7mJAA94E
-         55JTWlaqg/qUHxBMQk1XtPV3Tm+uegU+sxN3qvvk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AC066071C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v5 5/5] Bluetooth: btqca: inject command complete event during fw download
-Date:   Thu, 20 Dec 2018 20:16:39 +0530
-Message-Id: <20181220144639.15928-6-bgodavar@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181220144639.15928-1-bgodavar@codeaurora.org>
-References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+        Thu, 20 Dec 2018 09:50:07 -0500
+Received: from foss.arm.com ([217.140.101.70]:57248 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727972AbeLTOuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:50:07 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 932BFA78;
+        Thu, 20 Dec 2018 06:50:06 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39AA43F575;
+        Thu, 20 Dec 2018 06:50:05 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:49:56 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [v5] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
+Message-ID: <20181220144956.GA7041@e107981-ln.cambridge.arm.com>
+References: <1545193599-11604-1-git-send-email-hongxing.zhu@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545193599-11604-1-git-send-email-hongxing.zhu@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Latest qualcomm chips are not sending an command complete event for
-every firmware packet sent to chip. They only respond with a vendor
-specific event for the last firmware packet. This optimization will
-decrease the BT ON time. Due to this we are seeing a timeout error
-message logs on the console during firmware download. Now we are
-injecting a command complete event once we receive an vendor specific
-event for the last RAM firmware packet.
+On Wed, Dec 19, 2018 at 04:45:04AM +0000, Richard Zhu wrote:
+> Assertion of the MSI Enable bit of RC's MSI CAP is mandatory required to
+> trigger MSI on i.MX6 PCIe.
+> This bit would be asserted when CONFIG_PCIEPORTBUS=y.
+> Thus, the MSI works fine on i.MX6 PCIe before the commit "f3fdfc4".
+> 
+> Assert it unconditionally when MSI is enabled.
+> Otherwise, the MSI wouldn't be triggered although the EP is present and
+> the MSIs are assigned.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+> Changes v1 -> v2:
+> * Assert the MSI_EN unconditionally when MSI is supported.
+> Changes v2 -> v3:
+> * Remove the IS_ENABLED(CONFIG_PCI_MSI) since the driver depends on
+> PCI_MSI_IRQ_DOMAIN
+> * Extended with a check for pci_msi_enabled() to see if the user
+> explicitly want legacy IRQs
+> Changes v3 -> v4:
+> * Refer to Bjorn's comments, refine the subject and commit log and change
+> the PCI_MSI_CAP to PCIE_RC_IMX6_MSI_CAP.
+> Changes v4 -> v5:
+> * Correct one spell mistake from PCIE_RC_MSI_IMX6_CAP to
+> PCIE_RC_IMX6_MSI_CAP.
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index e563ca9..73542dd 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -82,6 +82,7 @@ struct imx6_pcie {
+>  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+>  
+>  /* PCIe Root Complex registers (memory-mapped) */
+> +#define PCIE_RC_IMX6_MSI_CAP			0x50
+>  #define PCIE_RC_LCR				0x7c
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+> @@ -999,6 +1000,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+>  	int ret;
+> +	u16 val;
+>  
+>  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+>  	if (!imx6_pcie)
+> @@ -1149,6 +1151,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (pci_msi_enabled()) {
+> +		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
+> +				PCI_MSI_FLAGS);
+> +		val |= PCI_MSI_FLAGS_ENABLE;
+> +		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
+> +				PCI_MSI_FLAGS, val);
+> +	}
+> +
+>  	return 0;
+>  }
 
-Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
- drivers/bluetooth/btqca.c | 39 ++++++++++++++++++++++++++++++++++++++-
- drivers/bluetooth/btqca.h |  3 +++
- 2 files changed, 41 insertions(+), 1 deletion(-)
+Hi Richard,
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index ec9e03a6b778..0b533f65f652 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct rome_config *config,
- 		 * In case VSE is skipped, only the last segment is acked.
- 		 */
- 		config->dnld_mode = tlv_patch->download_mode;
-+		config->dnld_type = config->dnld_mode;
- 
- 		BT_DBG("Total Length           : %d bytes",
- 		       le32_to_cpu(tlv_patch->total_size));
-@@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct hci_dev *hdev, int seg_size,
- 	return err;
- }
- 
-+static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
-+{
-+	struct hci_event_hdr *hdr;
-+	struct hci_ev_cmd_complete *evt;
-+	struct sk_buff *skb;
-+
-+	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
-+	if (!skb)
-+		return -ENOMEM;
-+
-+	hdr = skb_put(skb, sizeof(*hdr));
-+	hdr->evt = HCI_EV_CMD_COMPLETE;
-+	hdr->plen = sizeof(*evt) + 1;
-+
-+	evt = skb_put(skb, sizeof(*evt));
-+	evt->ncmd = 1;
-+	evt->opcode = HCI_OP_NOP;
-+
-+	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
-+
-+	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
-+
-+	return hci_recv_frame(hdev, skb);
-+}
-+
- static int qca_download_firmware(struct hci_dev *hdev,
- 				  struct rome_config *config)
- {
-@@ -297,11 +323,22 @@ static int qca_download_firmware(struct hci_dev *hdev,
- 		ret = qca_tlv_send_segment(hdev, segsize, segment,
- 					    config->dnld_mode);
- 		if (ret)
--			break;
-+			goto out;
- 
- 		segment += segsize;
- 	}
- 
-+	/* Latest qualcomm chipsets are not sending a command complete event
-+	 * for every fw packet sent. They only respond with a vendor specific
-+	 * event for the last packet. This optimization in the chip will
-+	 * decrease the BT in initialization time. Here we will inject a command
-+	 * complete event to avoid a command timeout error message.
-+	 */
-+	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
-+	    config->dnld_type == ROME_SKIP_EVT_VSE))
-+		return qca_inject_cmd_complete_event(hdev);
-+
-+out:
- 	release_firmware(fw);
- 
- 	return ret;
-diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
-index 0c01f375fe83..5c8fc54133e3 100644
---- a/drivers/bluetooth/btqca.h
-+++ b/drivers/bluetooth/btqca.h
-@@ -40,6 +40,8 @@
- #define QCA_WCN3990_POWERON_PULSE	0xFC
- #define QCA_WCN3990_POWEROFF_PULSE	0xC0
- 
-+#define QCA_HCI_CC_SUCCESS		0x00
-+
- enum qca_bardrate {
- 	QCA_BAUDRATE_115200 	= 0,
- 	QCA_BAUDRATE_57600,
-@@ -81,6 +83,7 @@ struct rome_config {
- 	char fwname[64];
- 	uint8_t user_baud_rate;
- 	enum rome_tlv_dnld_mode dnld_mode;
-+	enum rome_tlv_dnld_mode dnld_type;
- };
- 
- struct edl_event_hdr {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+the patch is OK with me (even though I have to take for granted how the
+IMX MSI logic works), the commit log isn't. So please update it with
+Bjorn's version:
 
+https://lore.kernel.org/linux-pci/20181219141241.GB12763@google.com/
+
+*inclusive* of the Fixes: tag.
+
+With the commit log updated as per the link above:
+
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
