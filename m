@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE4FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62237C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5102218E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:07:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC03218E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:08:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388602AbeLTSHx (ORCPT
+        id S2388610AbeLTSI4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:07:53 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53591 "EHLO
+        Thu, 20 Dec 2018 13:08:56 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38171 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729637AbeLTSHx (ORCPT
+        with ESMTP id S1730513AbeLTSIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:07:53 -0500
+        Thu, 20 Dec 2018 13:08:55 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI7j5O3681407
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKI8Jfa3681466
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:07:45 -0800
+        Thu, 20 Dec 2018 10:08:19 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI7im73681404;
-        Thu, 20 Dec 2018 10:07:44 -0800
-Date:   Thu, 20 Dec 2018 10:07:44 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKI8JHv3681463;
+        Thu, 20 Dec 2018 10:08:19 -0800
+Date:   Thu, 20 Dec 2018 10:08:19 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-41fa483aeee567cc34f9fc4c2e7035f2df25299d@git.kernel.org>
-Cc:     mingo@kernel.org, tz.stoyanov@gmail.com, herton@redhat.com,
-        tglx@linutronix.de, acme@redhat.com, jolsa@redhat.com,
-        hpa@zytor.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org
-Reply-To: acme@redhat.com, tglx@linutronix.de, rostedt@goodmis.org,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
-          jolsa@redhat.com, herton@redhat.com, tz.stoyanov@gmail.com,
-          mingo@kernel.org
-In-Reply-To: <20181212091214.GC17489@krava>
-References: <20181212091214.GC17489@krava>
+Message-ID: <tip-3f643937aaab04881236b5aabec00f9802c1eda8@git.kernel.org>
+Cc:     mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
+        jolsa@kernel.org, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, acme@redhat.com
+Reply-To: peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
+          acme@redhat.com, alexander.shishkin@linux.intel.com,
+          jolsa@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, namhyung@kernel.org
+In-Reply-To: <20181212132940.840-1-jolsa@kernel.org>
+References: <20181212132940.840-1-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools lib traceevent: Use LDFLAGS in the build
- commands
-Git-Commit-ID: 41fa483aeee567cc34f9fc4c2e7035f2df25299d
+Subject: [tip:perf/core] perf tools: Link libperf-jvmti.so with LDFLAGS
+ variable
+Git-Commit-ID: 3f643937aaab04881236b5aabec00f9802c1eda8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,48 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  41fa483aeee567cc34f9fc4c2e7035f2df25299d
-Gitweb:     https://git.kernel.org/tip/41fa483aeee567cc34f9fc4c2e7035f2df25299d
-Author:     Jiri Olsa <jolsa@redhat.com>
-AuthorDate: Wed, 12 Dec 2018 10:12:14 +0100
+Commit-ID:  3f643937aaab04881236b5aabec00f9802c1eda8
+Gitweb:     https://git.kernel.org/tip/3f643937aaab04881236b5aabec00f9802c1eda8
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Wed, 12 Dec 2018 14:29:40 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:23:57 -0300
 
-tools lib traceevent: Use LDFLAGS in the build commands
+perf tools: Link libperf-jvmti.so with LDFLAGS variable
 
-So that the user can specify outside LDFLAGS values.
-
-Keeping the CFLAGS in there as well, so we don't break existing scripts.
+So we could propagate distro flags into libperf-jvmti.so library.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Herton Krzesinski <herton@redhat.com>
-Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-Link: http://lkml.kernel.org/r/20181212091214.GC17489@krava
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181212132940.840-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/Makefile.perf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index 67fe5d7ef190..941761d9923d 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -177,7 +177,7 @@ $(TE_IN): force
- 	$(Q)$(MAKE) $(build)=libtraceevent
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 22956a85e4c6..8c1350c591f2 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -654,7 +654,7 @@ $(LIBJVMTI_IN): FORCE
+ 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=jvmti obj=jvmti
  
- $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
--	$(QUIET_LINK)$(CC) --shared $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
-+	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
- 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
- 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
+ $(OUTPUT)$(LIBJVMTI): $(LIBJVMTI_IN)
+-	$(QUIET_LINK)$(CC) -shared -Wl,-soname -Wl,$(LIBJVMTI) -o $@ $<
++	$(QUIET_LINK)$(CC) $(LDFLAGS) -shared -Wl,-soname -Wl,$(LIBJVMTI) -o $@ $<
+ endif
  
-@@ -196,7 +196,7 @@ $(PLUGINS_IN): force
- 	$(Q)$(MAKE) $(build)=$(plugin_obj)
- 
- $(OUTPUT)%.so: $(OUTPUT)%-in.o
--	$(QUIET_LINK)$(CC) $(CFLAGS) -shared -nostartfiles -o $@ $^
-+	$(QUIET_LINK)$(CC) $(CFLAGS) -shared $(LDFLAGS) -nostartfiles -o $@ $^
- 
- define make_version.h
-   (echo '/* This file is automatically generated. Do not modify. */';		\
+ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
