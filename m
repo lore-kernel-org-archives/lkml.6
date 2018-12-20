@@ -2,131 +2,116 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05952C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5F3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B4D20815
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B07020815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:02:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eHkB1H4y"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CQri22m5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733095AbeLTQ5r (ORCPT
+        id S1733135AbeLTRCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:57:47 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38655 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732563AbeLTQ5q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:57:46 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181220165745euoutp018a42291c9e0ff8054972cebc26b14a7f~yGPWlto5X0205702057euoutp01S
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 16:57:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181220165745euoutp018a42291c9e0ff8054972cebc26b14a7f~yGPWlto5X0205702057euoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545325065;
-        bh=RCuF4m0yqtwV7CmWsYoJ6WFf6FClVYUN+YFR8iVnO84=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=eHkB1H4y5LSamPKCO4lCXde9QJTHP5QH3TApi/w0Z8qETAMCuBnRJUrPUaFX5XKVj
-         UAI+TK8+5uuALdTa0yZHx246XKTfnn0eFogGdLSqZaXz3OGqtXly6B8KN6otHB2ION
-         cK3jLFSPaEk2Jn0B6+mJ4zH6nwyjfGTDyAHjbv4w=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181220165744eucas1p14c7bc4a55c03d97d5623840cf9bce5ef~yGPWBd7ov3181531815eucas1p1f;
-        Thu, 20 Dec 2018 16:57:44 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id A7.4C.04441.80ACB1C5; Thu, 20
-        Dec 2018 16:57:44 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181220165744eucas1p14b9208ef80078c1be55eb961ffdb53aa~yGPVQ-xlp2582925829eucas1p1J;
-        Thu, 20 Dec 2018 16:57:44 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181220165743eusmtrp1825029cff05b588357bae8104a47c257~yGPVCpCKz2333623336eusmtrp1X;
-        Thu, 20 Dec 2018 16:57:43 +0000 (GMT)
-X-AuditID: cbfec7f2-5c9ff70000001159-a6-5c1bca085e77
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5C.EC.04128.70ACB1C5; Thu, 20
-        Dec 2018 16:57:43 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181220165743eusmtip29a73c9ea8cb81045545387928200114e~yGPUp4lwx0790807908eusmtip2j;
-        Thu, 20 Dec 2018 16:57:43 +0000 (GMT)
-Subject: Re: [PATCH v2 -next] video: fbdev: pxafb: Fix
- "WARNING: invalid free of devm_ allocated data"
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     daniel@zonque.org, robert.jarzmik@free.fr,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, stable@kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <bb0e51ad-eb6d-7adf-34e5-8e9959081c26@samsung.com>
-Date:   Thu, 20 Dec 2018 17:57:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
+        Thu, 20 Dec 2018 12:02:40 -0500
+Received: from mail-eopbgr80088.outbound.protection.outlook.com ([40.107.8.88]:43072
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728221AbeLTRCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 12:02:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Npb0HU6neG6jxyA+0GhkamPZy4WsdTdmcpSbwVqOnhY=;
+ b=CQri22m5RNbrQEA+3n3sv4biAKTeD4eQPyQs16AlCVUsYEp0Er5KcMnNKIthJFy55TNjf6CcZMTWFnmEedOCZxvBr7L8sC9H9ANmbKdHKSVYTymvUvtB/RRdAH0DTx9RldfX4dpFnO9I26LkbyZH2tjogQYxDmR20b4AZeS3TFM=
+Received: from AM0PR04MB4994.eurprd04.prod.outlook.com (20.177.40.15) by
+ AM0PR04MB4979.eurprd04.prod.outlook.com (20.177.40.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Thu, 20 Dec 2018 17:02:04 +0000
+Received: from AM0PR04MB4994.eurprd04.prod.outlook.com
+ ([fe80::f53c:adef:eddb:4a2]) by AM0PR04MB4994.eurprd04.prod.outlook.com
+ ([fe80::f53c:adef:eddb:4a2%5]) with mapi id 15.20.1446.020; Thu, 20 Dec 2018
+ 17:02:04 +0000
+From:   Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 2/2] arm64: dts: lx2160a: Add dma-ranges property
+Thread-Topic: [PATCH 2/2] arm64: dts: lx2160a: Add dma-ranges property
+Thread-Index: AQHUmIW7W0c+0Qek60WT6eqPci2hKA==
+Date:   Thu, 20 Dec 2018 17:02:04 +0000
+Message-ID: <1545325306-1681-2-git-send-email-ruxandra.radulescu@nxp.com>
+References: <1545325306-1681-1-git-send-email-ruxandra.radulescu@nxp.com>
+In-Reply-To: <1545325306-1681-1-git-send-email-ruxandra.radulescu@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR04CA0135.eurprd04.prod.outlook.com
+ (2603:10a6:803:f0::33) To AM0PR04MB4994.eurprd04.prod.outlook.com
+ (2603:10a6:208:c7::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ruxandra.radulescu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4979;6:PACgDS6rht6Jls6GrmwGOhKILJoFmiR2VV1Bb1MxKwBKUCjHwHVMupm7u8Xe/u2AjlRLPmKTsEKpfWvuhnyDoG2oNCMk7x4tvgCc8FE6Hk4YzWU2QCZPMReuQ4+HNDD2DCV9vUSuZwXpMAL5nCM6s8+1bDP53hz5KR1Z8xipsWtEPCLeWAAYfJOr+plPnG9TtGGc01wtaSoRHeQb7FQTgrMxurYVMrFTcY9m70euj/AG6Qq9MPoGcq2UvkqAoF39AmDvc3k8cijOObMQUUvSa4fhHv9rXYbdyq/pS5T8cfjCzo/pIg/61z4Ee27uikEO0VIFj14kzADV9mvGDqmnwto7T8rk+esYdg1reZ780vJJUsCNQzMNkjFvCZ8CTNsuhj4paa8Da1sd7bxzKZbleIZGEaQKDZgJAcH4WsglsvqWvCPDPZV5tGNbY0XDGyIZGwb0XeYP5kkSURP36yridg==;5:UcSd+UFr9Vy89+s7nd9RzexModNnHQ0TNz0yWob/WBczFi2vuIrv8rv1+G1SOU9CTlfU5YayeYH75AMVhRDtzi6joSsj9uthRVL6ynpiPSu7QNksBTEINimMr/N75rejKNXr3S9JHVJIrVBXL9dYxz1fjYU2EkWuWN64zEHsR1w=;7:33bzEkeqOCEgeyWizojW3/BnrBOmXf/JHB67Ovb9FEuVUSLI1DRmjq7hApfp4o0CMeOU6Y1dYDkBEyJe1K6VK0msz/mGl7QPlmfUFitghTCeoatWcbwF2dcz6kyGs1VTAZysuiWyBIql51xzSa1kUQ==
+x-ms-office365-filtering-correlation-id: 8db05d75-0d75-4173-4657-08d6669cddb2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4979;
+x-ms-traffictypediagnostic: AM0PR04MB4979:
+x-microsoft-antispam-prvs: <AM0PR04MB49795A8D19EB840CFB6F792B94BF0@AM0PR04MB4979.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4979;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4979;
+x-forefront-prvs: 0892FA9A88
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(136003)(376002)(396003)(199004)(189003)(5640700003)(26005)(316002)(76176011)(256004)(66066001)(52116002)(36756003)(54906003)(102836004)(476003)(486006)(386003)(6506007)(86362001)(6116002)(3846002)(68736007)(5660300001)(186003)(2351001)(2616005)(11346002)(99286004)(6486002)(2501003)(6916009)(4326008)(106356001)(25786009)(2906002)(478600001)(305945005)(6512007)(1730700003)(7736002)(81156014)(446003)(105586002)(14454004)(8936002)(71200400001)(97736004)(53936002)(71190400001)(8676002)(6436002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4979;H:AM0PR04MB4994.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: z41lXj4K37YaZW9L1rYPIJu2P8FZ0C0Lx2M+o5tupnDTSF/lXxVe3p2dZHMF5herWrYZhHqgfekDZlYHHd7Ldupm6yyBR8Nf02hpSS9WGsU+e1TrsFnj6ZJ+Z+3BSOW10qy8SLsEXTcOvZn4JXanOqZetCzStKPZ256wXqQ2yyLRIM8Nvu5/vLA1lB1rZKfsbCxy4vjnWRplOfQlBRW8fQxaKC2XPJ9mU5qDaPdJ8R78nmFG1l5SmgXvZZPUgi3+y3AcWTSJRghKcBRuHbypMPmot/qDKc6NHRims/gSUadWlcnmAUvXI+nRM3l6QJN3
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20181119013642.18080-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djPc7ocp6RjDPb1KFk0/X3FYnHl63s2
-        ixN9H1gtLu+aw2Yx642wxafzF9gs7nx9zuLA7tG/7jOrR8uRt6wem1Z1snnc7z7O5PF5k5zH
-        9t3LWQLYorhsUlJzMstSi/TtErgyPp1ezlpwhqXixJWDLA2M75i7GDk4JARMJBY88epi5OIQ
-        EljBKNH8+TQbhPOFUWL+vRnsEM5nRol1M98DdXCCdexf/YwRIrGcUWLLy8nMEM57Ronl7xrY
-        QKqEBTIkfr+ZC2aLCKhJtJzaAlbELLCAUeL83huMIAk2ASuJie2rwGxeATuJ37uvs4DYLAKq
-        EpferWUEOVBUIEKi/4w6RImgxMmZT8BKOAWsJVaduQJ2EbOAgcSRRXNYIWx5ie1v54DtkhBY
-        xy7x5fBqNoizXSQa+5dA2cISr45vYYewZSROT+5hgWiYzijx5tdSKGc9o8SaM8eYIKqsJQ4f
-        v8gKYTtKTLx1gAUSfHwSN94KQmzmk5i0bTo0VHklOtqEIKrVJDYs28AGs6tr50poMHpIvLz5
-        n3UCo+IsJL/NQvLPLCT/LGBkXsUonlpanJueWmyYl1quV5yYW1yal66XnJ+7iRGYeE7/O/5p
-        B+PXS0mHGAU4GJV4eC9sl44RYk0sK67MPcQowcGsJMK7/hBQiDclsbIqtSg/vqg0J7X4EKM0
-        B4uSOG81w4NoIYH0xJLU7NTUgtQimCwTB6dUA+OCl3HZPTsmCxeZiE7OmGzKHfe9kOuNu/se
-        DZFi4z++rDN19Gefm58YtvFu68LyA+77FMWO3n5X9eF7zZvZ9tNq05ou27Pc0bpZ88xkwh/T
-        Wp0TEpFT59x9umdO47LXjqu/FrI/FXU4+aHqUNE9dblTdWpZ6y5dKGr+yqImPr1H0H3npr3l
-        F88psRRnJBpqMRcVJwIA+qpw/zgDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xe7rsp6RjDHb90bJo+vuKxeLK1/ds
-        Fif6PrBaXN41h81i1hthi0/nL7BZ3Pn6nMWB3aN/3WdWj5Yjb1k9Nq3qZPO4332cyePzJjmP
-        7buXswSwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunb
-        JehlfDq9nLXgDEvFiSsHWRoY3zF3MXJySAiYSOxf/Yyxi5GLQ0hgKaPEiolLmLoYOYASMhLH
-        15dB1AhL/LnWxQZR85ZRonP9RjaQhLBAhsTGx1uYQGwRATWJllNbwIYKCfQxSuxYqgvSwCyw
-        gFHiW9NsVpAEm4CVxMT2VYwgNq+AncTv3ddZQGwWAVWJS+/WgsVFBSIkbj3sYIGoEZQ4OfMJ
-        mM0pYC2x6swVsAXMAnoSO67/YoWw5SW2v53DPIFRcBaSlllIymYhKVvAyLyKUSS1tDg3PbfY
-        SK84Mbe4NC9dLzk/dxMjMJq2Hfu5ZQdj17vgQ4wCHIxKPLwau6RjhFgTy4orcw8xSnAwK4nw
-        rj8EFOJNSaysSi3Kjy8qzUktPsRoCvTERGYp0eR8YKTnlcQbmhqaW1gamhubG5tZKInznjeo
-        jBISSE8sSc1OTS1ILYLpY+LglGpgnJ4od+vKVM4l6ZefzFzg+cKr9aBcyttLzs8bX7zm2+B1
-        fUVCtU9JSOWjG5mL+t+J7Os12PStqjnbc3OepoDLrka+jDwWNU65eQ8aN3Qv/Fp70bdim8uP
-        Kxo7H9g/e21gdHLxH1ub+X9n51uIH7g40+3QyWTz8radHzZohl9drH9l/lMP7x1t85RYijMS
-        DbWYi4oTAZTnzoq8AgAA
-X-CMS-MailID: 20181220165744eucas1p14b9208ef80078c1be55eb961ffdb53aa
-X-Msg-Generator: CA
-X-RootMTR: 20181119013711epcas5p1a247965989728e7b28b90ca0a3947229
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181119013711epcas5p1a247965989728e7b28b90ca0a3947229
-References: <CGME20181119013711epcas5p1a247965989728e7b28b90ca0a3947229@epcas5p1.samsung.com>
-        <20181119013642.18080-1-yuehaibing@huawei.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8db05d75-0d75-4173-4657-08d6669cddb2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 17:02:04.2245
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4979
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add missing property from the soc node in LX2160A dts.
 
-On 11/19/2018 02:36 AM, YueHaibing wrote:
-> 'info->modes' got allocated with devm_kcalloc in of_get_pxafb_display.
-> 
-> This gives this error message:
->   ./drivers/video/fbdev/pxafb.c:2238:2-7: WARNING: invalid free of devm_ allocated data
-> 
-> Fixes: c8f96304ec8b4 ("video: fbdev: pxafb: switch to devm_* API")
-> Cc: stable@kernel.org [v4.19+]
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Patch queued for 4.21, thanks.
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/bo=
+ot/dts/freescale/fsl-lx2160a.dtsi
+index 2366fd6..825624e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -398,6 +398,7 @@
+ 		#address-cells =3D <2>;
+ 		#size-cells =3D <2>;
+ 		ranges;
++		dma-ranges =3D <0x0 0x0 0x0 0x0 0x10000 0x00000000>;
+=20
+ 		crypto: crypto@8000000 {
+ 			compatible =3D "fsl,sec-v5.0", "fsl,sec-v4.0";
+--=20
+2.7.4
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
