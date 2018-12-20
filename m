@@ -6,48 +6,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1469AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00A5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BCA20449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB3D620449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:36:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298600;
-	bh=GEeJ9o9VpTUUVRcLSWttNZWSKp0hLm6WHj3DhXy4jQo=;
+	s=default; t=1545298610;
+	bh=pTcMKgYXSqRdfDNm05MA+LmStAIdl75SfcDLj8E5l7w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MlLpGjbjIytz+GcUiE8nPwvhcRqDg7BVFnj4uHDAgSqCOy09fzIOeClo7/QR6yti3
-	 fJtbfD67URNfWRIqvIigM0yYD+3hpS+DKri3d9EO5UoeIXKLAzCxwqhbqNbbVZwu8g
-	 83hq56YsV+zMANwS+AizOYgDuk9mDgTz5MAHkobg=
+	b=0gQ3FfGQnO63xO1KP6nAyQOnm1+tR874zcPPxiR7z76JN+y28lFpXIQg3CiVWR047
+	 24B2CK+2RJxZq1roI9aoRZZ/ljs26wWsLeHQElL2USItvA+o8Iad4c3otxNKsBjB/T
+	 nxtBhHstqcdH6FLYm+0/Eokq2nTXk3xWLcs9QqoU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733275AbeLTJgj (ORCPT
+        id S1733280AbeLTJgt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:36:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38360 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:36:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731925AbeLTJ1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:37 -0500
+        id S1732318AbeLTJ11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3FA020656;
-        Thu, 20 Dec 2018 09:27:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9470F217D4;
+        Thu, 20 Dec 2018 09:27:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298056;
-        bh=GEeJ9o9VpTUUVRcLSWttNZWSKp0hLm6WHj3DhXy4jQo=;
+        s=default; t=1545298046;
+        bh=pTcMKgYXSqRdfDNm05MA+LmStAIdl75SfcDLj8E5l7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VvdTyDtzNk3FX1StQlYC8Og7eFf1FqHcsDgfBv0eJdpGTsTGRxyEyShegE5sjE630
-         7fpsKB5BxBRGllXK5qex6APxJKRp8RL2bnKNJMahiSGHvRcfPdnFdFGybifgu4Pokk
-         XGTrvkRzafw4DzvP406tNc5zZA2GC/Wustlw7Blg=
+        b=nHl1qc6Atn1GqdHg4WBcKNpQydSg21MUi4vtxP19CbuEjpMx8htOPpOiNtIBW94s0
+         hGXvylsBXSDHqq3ClfZygJSjwCG1RgnfgDY/738NL3mTTYGGYt4znK+IdIq7sOsYoq
+         NaVybeaCmCNI3XhWUhJxkaT2guW6g+ObktNGNPrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Tony Lindgren <tony@atomide.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 55/72] Input: omap-keypad - fix keyboard debounce configuration
-Date:   Thu, 20 Dec 2018 10:18:54 +0100
-Message-Id: <20181220085924.508282179@linuxfoundation.org>
+Subject: [PATCH 4.14 51/72] drm/msm: Fix error return checking
+Date:   Thu, 20 Dec 2018 10:18:50 +0100
+Message-Id: <20181220085924.350437005@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -66,65 +69,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6c3516fed7b61a3527459ccfa67fab130d910610 ]
+[ Upstream commit 098336deb946f37a70afc0979af388b615c378bf ]
 
-I noticed that the Android v3.0.8 kernel on droid4 is using different
-keypad values from the mainline kernel and does not have issues with
-keys occasionally being stuck until pressed again. Turns out there was
-an earlier patch posted to fix this as "Input: omap-keypad: errata i689:
-Correct debounce time", but it was never reposted to fix use macros
-for timing calculations.
+The error checks on ret for a negative error return always fails because
+the return value of iommu_map_sg() is unsigned and can never be negative.
 
-This updated version is using macros, and also fixes the use of the
-input clock rate to use 32768KiHz instead of 32000KiHz. And we want to
-use the known good Android kernel values of 3 and 6 instead of 2 and 6
-in the earlier patch.
+Detected with Coccinelle:
+drivers/gpu/drm/msm/msm_iommu.c:69:9-12: WARNING: Unsigned expression
+compared with zero: ret < 0
 
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Rob Clark <robdclark@gmail.com>
+CC: David Airlie <airlied@linux.ie>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+CC: linux-arm-msm@vger.kernel.org
+CC: dri-devel@lists.freedesktop.org
+CC: freedreno@lists.freedesktop.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/keyboard/omap4-keypad.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/msm/msm_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index 940d38b08e6b..ce8e2baf31bb 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -60,8 +60,18 @@
+diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+index b23d33622f37..2a90aa4caec0 100644
+--- a/drivers/gpu/drm/msm/msm_iommu.c
++++ b/drivers/gpu/drm/msm/msm_iommu.c
+@@ -66,7 +66,7 @@ static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
+ //	pm_runtime_get_sync(mmu->dev);
+ 	ret = iommu_map_sg(iommu->domain, iova, sgt->sgl, sgt->nents, prot);
+ //	pm_runtime_put_sync(mmu->dev);
+-	WARN_ON(ret < 0);
++	WARN_ON(!ret);
  
- /* OMAP4 values */
- #define OMAP4_VAL_IRQDISABLE		0x0
--#define OMAP4_VAL_DEBOUNCINGTIME	0x7
--#define OMAP4_VAL_PVT			0x7
-+
-+/*
-+ * Errata i689: If a key is released for a time shorter than debounce time,
-+ * the keyboard will idle and never detect the key release. The workaround
-+ * is to use at least a 12ms debounce time. See omap5432 TRM chapter
-+ * "26.4.6.2 Keyboard Controller Timer" for more information.
-+ */
-+#define OMAP4_KEYPAD_PTV_DIV_128        0x6
-+#define OMAP4_KEYPAD_DEBOUNCINGTIME_MS(dbms, ptv)     \
-+	((((dbms) * 1000) / ((1 << ((ptv) + 1)) * (1000000 / 32768))) - 1)
-+#define OMAP4_VAL_DEBOUNCINGTIME_16MS					\
-+	OMAP4_KEYPAD_DEBOUNCINGTIME_MS(16, OMAP4_KEYPAD_PTV_DIV_128)
- 
- enum {
- 	KBD_REVISION_OMAP4 = 0,
-@@ -181,9 +191,9 @@ static int omap4_keypad_open(struct input_dev *input)
- 
- 	kbd_writel(keypad_data, OMAP4_KBD_CTRL,
- 			OMAP4_DEF_CTRL_NOSOFTMODE |
--			(OMAP4_VAL_PVT << OMAP4_DEF_CTRL_PTV_SHIFT));
-+			(OMAP4_KEYPAD_PTV_DIV_128 << OMAP4_DEF_CTRL_PTV_SHIFT));
- 	kbd_writel(keypad_data, OMAP4_KBD_DEBOUNCINGTIME,
--			OMAP4_VAL_DEBOUNCINGTIME);
-+			OMAP4_VAL_DEBOUNCINGTIME_16MS);
- 	/* clear pending interrupts */
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
- 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+ 	return (ret == len) ? 0 : -EINVAL;
+ }
 -- 
 2.19.1
 
