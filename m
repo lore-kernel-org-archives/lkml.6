@@ -6,49 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A03C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A288C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F6621852
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F079921852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297927;
-	bh=3wacDGR8kTo+Uzbyf2ytuGBBJVj7vTip8kkm8iLdDBw=;
+	s=default; t=1545297934;
+	bh=DCHn/hLENp9HwLwmoKqAPcaa5+jepGbzZxkl0LxmARU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fGcaG3P1Ryfb6F837JlVSIINGAB8JqO4tZcaeQm8Zdg+bg1F4eXk0W2oK3EsRNruy
-	 pW+09UqWlYTvvlvLwmWklzVwVB7nw+QA5c+9iX42AJ/crc1ss1QYn0lRmiydknwkUZ
-	 dm0M2d8GY/5/yf+6nigE4NFMUYtUaQYuzbNe8xfE=
+	b=0Z9s2BmzmzKTRqG92Rxj14SGB4cmEOSikIzlR1//6KjePHmzRJkVzO7Hqq3UrXbaP
+	 Nk4AxmSokdiaiIlcVIWW0S15piR5cGjJn5vJsSdTTxBFE5E+x5KZBMAkOvcEs4xkzB
+	 YE7fKKOE/qrXejgxiLORFXZYPSWn0YulJt8ezVLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbeLTJZZ (ORCPT
+        id S1731544AbeLTJZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:25:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43120 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:25:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730017AbeLTJZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:25:16 -0500
+        id S1730017AbeLTJZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:25:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E42D20656;
-        Thu, 20 Dec 2018 09:25:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 398FC217D9;
+        Thu, 20 Dec 2018 09:25:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297914;
-        bh=3wacDGR8kTo+Uzbyf2ytuGBBJVj7vTip8kkm8iLdDBw=;
+        s=default; t=1545297925;
+        bh=DCHn/hLENp9HwLwmoKqAPcaa5+jepGbzZxkl0LxmARU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AD6+QqpReyQHwQsW8FX9WeqtPvDGkgFII5wPHwHS34ZVpUvtHZvmBfJn9q46TI1ug
-         TTTlWjecMKjn3nLIibd5bLZc5iX6nmU47TnAAyTio8gXrH4aKkAacALKYt8dAsLZN+
-         J2Zn+TjVshYsh+zhFMtxK/oGJIsQ/IK/czNH6B3w=
+        b=e2Lqa9A8GYE6HWXZjogIDLWnmSHoTBQqDPfYc1aAMacPyf632XGfv2Pc+zJXubMS2
+         TyAuW35Qn9yfFwDPjqWO5J+lw1UkAkOu/338uLwcHLVpBXqDkbhc8Dms9xaZstEHgQ
+         7ti0P9WXuw3xTrIwNunZxNFa+DmihcMjqSHl0Gzw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Bryan ODonoghue <pure.logic@nexus-software.ie>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 57/61] i2c: axxia: properly handle master timeout
-Date:   Thu, 20 Dec 2018 10:18:57 +0100
-Message-Id: <20181220085846.055519957@linuxfoundation.org>
+Subject: [PATCH 4.9 61/61] rtc: snvs: Add timeouts to avoid kernel lockups
+Date:   Thu, 20 Dec 2018 10:19:01 +0100
+Message-Id: <20181220085846.205752305@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -67,171 +71,194 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6c7f25cae54b840302e4f1b371dbf318fbf09ab2 ]
+[ Upstream commit cd7f3a249dbed2858e6c2f30e5be7f1f7a709ee2 ]
 
-According to Intel (R) Axxia TM Lionfish Communication Processor
-Peripheral Subsystem Hardware Reference Manual, the AXXIA I2C module
-have a programmable Master Wait Timer, which among others, checks the
-time between commands send in manual mode. When a timeout (25ms) passes,
-TSS bit is set in Master Interrupt Status register and a Stop command is
-issued by the hardware.
+In order to read correctly from asynchronously updated RTC registers,
+it's necessary to read repeatedly until their values do not change from
+read to read.  It's also necessary to wait for three RTC clock ticks for
+certain operations.  There are no timeouts in this code and these
+operations could possibly loop forever.
 
-The axxia_i2c_xfer(), does not properly handle this situation, however.
-For each message a separate axxia_i2c_xfer_msg() is called and this
-function incorrectly assumes that any interrupt might happen only when
-waiting for completion. This is mostly correct but there is one
-exception - a master timeout can trigger if enough time has passed
-between individual transfers. It will, by definition, happen between
-transfers when the interrupts are disabled by the code. If that happens,
-the hardware issues Stop command.
+To avoid kernel hangs, put in timeouts.
 
-The interrupt indicating timeout will not be triggered as soon as we
-enable them since the Master Interrupt Status is cleared when master
-mode is entered again (which happens before enabling irqs) meaning this
-error is lost and the transfer is continued even though the Stop was
-issued on the bus. The subsequent operations completes without error but
-a bogus value (0xFF in case of read) is read as the client device is
-confused because aborted transfer. No error is returned from
-master_xfer() making caller believe that a valid value was read.
+The iMX7d can be configured to stop the SRTC on a tamper event, which
+will lockup the kernel inside this driver as described above.
 
-To fix the problem, the TSS bit (indicating timeout) in Master Interrupt
-Status register is checked before each transfer. If it is set, there was
-a timeout before this transfer and (as described above) the hardware
-already issued Stop command so the transaction should be aborted thus
--ETIMEOUT is returned from the master_xfer() callback. In order to be
-sure no timeout was issued we can't just read the status just before
-starting new transaction as there will always be a small window of time
-(few CPU cycles at best) where this might still happen. For this reason
-we have to temporally disable the timer before checking for TSS bit.
-Disabling it will, however, clear the TSS bit so in order to preserve
-that information, we have to read it in ISR so we have to ensure that
-the TSS interrupt is not masked between transfers of one transaction.
-There is no need to call bus recovery or controller reinitialization if
-that happens so it's skipped.
+These hangs can happen when running under qemu, which doesn't emulate
+the SNVS RTC, though currently the driver will refuse to load on qemu
+due to a timeout in the driver probe method.
 
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+It could also happen if the SRTC block where somehow placed into reset
+or the slow speed clock that drives the SRTC counter (but not the CPU)
+were to stop.
+
+The symptoms on a two core iMX7d are a work queue hang on
+rtc_timer_do_work(), which eventually blocks a systemd fsnotify
+operation that triggers a work queue flush, causing systemd to hang and
+thus causing all services that should be started by systemd, like a
+console getty, to fail to start or stop.
+
+Also optimize the wait code to wait less.  It only needs to wait for the
+clock to advance three ticks, not to see it change three times.
+
+Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Cc: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Signed-off-by: Trent Piepho <tpiepho@impinj.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-axxia.c | 40 ++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 11 deletions(-)
+ drivers/rtc/rtc-snvs.c | 105 +++++++++++++++++++++++++++--------------
+ 1 file changed, 70 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
-index 4351a9343058..96a6d5df9b26 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -74,8 +74,7 @@
- 				 MST_STATUS_ND)
- #define   MST_STATUS_ERR	(MST_STATUS_NAK | \
- 				 MST_STATUS_AL  | \
--				 MST_STATUS_IP  | \
--				 MST_STATUS_TSS)
-+				 MST_STATUS_IP)
- #define MST_TX_BYTES_XFRD	0x50
- #define MST_RX_BYTES_XFRD	0x54
- #define SCL_HIGH_PERIOD		0x80
-@@ -241,7 +240,7 @@ static int axxia_i2c_empty_rx_fifo(struct axxia_i2c_dev *idev)
- 			 */
- 			if (c <= 0 || c > I2C_SMBUS_BLOCK_MAX) {
- 				idev->msg_err = -EPROTO;
--				i2c_int_disable(idev, ~0);
-+				i2c_int_disable(idev, ~MST_STATUS_TSS);
- 				complete(&idev->msg_complete);
- 				break;
- 			}
-@@ -299,14 +298,19 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+diff --git a/drivers/rtc/rtc-snvs.c b/drivers/rtc/rtc-snvs.c
+index 9af591d5223c..71eee39520f0 100644
+--- a/drivers/rtc/rtc-snvs.c
++++ b/drivers/rtc/rtc-snvs.c
+@@ -47,49 +47,83 @@ struct snvs_rtc_data {
+ 	struct clk *clk;
+ };
  
- 	if (status & MST_STATUS_SCC) {
- 		/* Stop completed */
--		i2c_int_disable(idev, ~0);
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
- 		complete(&idev->msg_complete);
- 	} else if (status & MST_STATUS_SNS) {
- 		/* Transfer done */
--		i2c_int_disable(idev, ~0);
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
- 		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
- 			axxia_i2c_empty_rx_fifo(idev);
- 		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_TSS) {
-+		/* Transfer timeout */
-+		idev->msg_err = -ETIMEDOUT;
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
- 	} else if (unlikely(status & MST_STATUS_ERR)) {
- 		/* Transfer error */
- 		i2c_int_disable(idev, ~0);
-@@ -339,10 +343,10 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
- 	u32 rx_xfer, tx_xfer;
- 	u32 addr_1, addr_2;
- 	unsigned long time_left;
-+	unsigned int wt_value;
- 
- 	idev->msg = msg;
- 	idev->msg_xfrd = 0;
--	idev->msg_err = 0;
- 	reinit_completion(&idev->msg_complete);
- 
- 	if (i2c_m_ten(msg)) {
-@@ -382,9 +386,18 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
- 	else if (axxia_i2c_fill_tx_fifo(idev) != 0)
- 		int_mask |= MST_STATUS_TFL;
- 
-+	wt_value = WT_VALUE(readl(idev->base + WAIT_TIMER_CONTROL));
-+	/* Disable wait timer temporarly */
-+	writel(wt_value, idev->base + WAIT_TIMER_CONTROL);
-+	/* Check if timeout error happened */
-+	if (idev->msg_err)
-+		goto out;
++/* Read 64 bit timer register, which could be in inconsistent state */
++static u64 rtc_read_lpsrt(struct snvs_rtc_data *data)
++{
++	u32 msb, lsb;
 +
- 	/* Start manual mode */
- 	writel(CMD_MANUAL, idev->base + MST_COMMAND);
- 
-+	writel(WT_EN | wt_value, idev->base + WAIT_TIMER_CONTROL);
++	regmap_read(data->regmap, data->offset + SNVS_LPSRTCMR, &msb);
++	regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &lsb);
++	return (u64)msb << 32 | lsb;
++}
 +
- 	i2c_int_enable(idev, int_mask);
- 
- 	time_left = wait_for_completion_timeout(&idev->msg_complete,
-@@ -395,13 +408,15 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
- 	if (readl(idev->base + MST_COMMAND) & CMD_BUSY)
- 		dev_warn(idev->dev, "busy after xfer\n");
- 
--	if (time_left == 0)
-+	if (time_left == 0) {
- 		idev->msg_err = -ETIMEDOUT;
--
--	if (idev->msg_err == -ETIMEDOUT)
- 		i2c_recover_bus(&idev->adapter);
-+		axxia_i2c_init(idev);
-+	}
- 
--	if (unlikely(idev->msg_err) && idev->msg_err != -ENXIO)
-+out:
-+	if (unlikely(idev->msg_err) && idev->msg_err != -ENXIO &&
-+			idev->msg_err != -ETIMEDOUT)
- 		axxia_i2c_init(idev);
- 
- 	return idev->msg_err;
-@@ -409,7 +424,7 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *msg)
- 
- static int axxia_i2c_stop(struct axxia_i2c_dev *idev)
++/* Read the secure real time counter, taking care to deal with the cases of the
++ * counter updating while being read.
++ */
+ static u32 rtc_read_lp_counter(struct snvs_rtc_data *data)
  {
--	u32 int_mask = MST_STATUS_ERR | MST_STATUS_SCC;
-+	u32 int_mask = MST_STATUS_ERR | MST_STATUS_SCC | MST_STATUS_TSS;
- 	unsigned long time_left;
+ 	u64 read1, read2;
+-	u32 val;
++	unsigned int timeout = 100;
  
- 	reinit_completion(&idev->msg_complete);
-@@ -436,6 +451,9 @@ axxia_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	int i;
- 	int ret = 0;
++	/* As expected, the registers might update between the read of the LSB
++	 * reg and the MSB reg.  It's also possible that one register might be
++	 * in partially modified state as well.
++	 */
++	read1 = rtc_read_lpsrt(data);
+ 	do {
+-		regmap_read(data->regmap, data->offset + SNVS_LPSRTCMR, &val);
+-		read1 = val;
+-		read1 <<= 32;
+-		regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &val);
+-		read1 |= val;
+-
+-		regmap_read(data->regmap, data->offset + SNVS_LPSRTCMR, &val);
+-		read2 = val;
+-		read2 <<= 32;
+-		regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &val);
+-		read2 |= val;
+-	} while (read1 != read2);
++		read2 = read1;
++		read1 = rtc_read_lpsrt(data);
++	} while (read1 != read2 && --timeout);
++	if (!timeout)
++		dev_err(&data->rtc->dev, "Timeout trying to get valid LPSRT Counter read\n");
  
-+	idev->msg_err = 0;
-+	i2c_int_enable(idev, MST_STATUS_TSS);
+ 	/* Convert 47-bit counter to 32-bit raw second count */
+ 	return (u32) (read1 >> CNTR_TO_SECS_SH);
+ }
+ 
+-static void rtc_write_sync_lp(struct snvs_rtc_data *data)
++/* Just read the lsb from the counter, dealing with inconsistent state */
++static int rtc_read_lp_counter_lsb(struct snvs_rtc_data *data, u32 *lsb)
+ {
+-	u32 count1, count2, count3;
+-	int i;
+-
+-	/* Wait for 3 CKIL cycles */
+-	for (i = 0; i < 3; i++) {
+-		do {
+-			regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count1);
+-			regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count2);
+-		} while (count1 != count2);
+-
+-		/* Now wait until counter value changes */
+-		do {
+-			do {
+-				regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count2);
+-				regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count3);
+-			} while (count2 != count3);
+-		} while (count3 == count1);
++	u32 count1, count2;
++	unsigned int timeout = 100;
 +
- 	for (i = 0; ret == 0 && i < num; ++i)
- 		ret = axxia_i2c_xfer_msg(idev, &msgs[i]);
++	regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count1);
++	do {
++		count2 = count1;
++		regmap_read(data->regmap, data->offset + SNVS_LPSRTCLR, &count1);
++	} while (count1 != count2 && --timeout);
++	if (!timeout) {
++		dev_err(&data->rtc->dev, "Timeout trying to get valid LPSRT Counter read\n");
++		return -ETIMEDOUT;
+ 	}
++
++	*lsb = count1;
++	return 0;
++}
++
++static int rtc_write_sync_lp(struct snvs_rtc_data *data)
++{
++	u32 count1, count2;
++	u32 elapsed;
++	unsigned int timeout = 1000;
++	int ret;
++
++	ret = rtc_read_lp_counter_lsb(data, &count1);
++	if (ret)
++		return ret;
++
++	/* Wait for 3 CKIL cycles, about 61.0-91.5 µs */
++	do {
++		ret = rtc_read_lp_counter_lsb(data, &count2);
++		if (ret)
++			return ret;
++		elapsed = count2 - count1; /* wrap around _is_ handled! */
++	} while (elapsed < 3 && --timeout);
++	if (!timeout) {
++		dev_err(&data->rtc->dev, "Timeout waiting for LPSRT Counter to change\n");
++		return -ETIMEDOUT;
++	}
++	return 0;
+ }
  
+ static int snvs_rtc_enable(struct snvs_rtc_data *data, bool enable)
+@@ -173,9 +207,7 @@ static int snvs_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
+ 			   (SNVS_LPCR_LPTA_EN | SNVS_LPCR_LPWUI_EN),
+ 			   enable ? (SNVS_LPCR_LPTA_EN | SNVS_LPCR_LPWUI_EN) : 0);
+ 
+-	rtc_write_sync_lp(data);
+-
+-	return 0;
++	return rtc_write_sync_lp(data);
+ }
+ 
+ static int snvs_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+@@ -183,11 +215,14 @@ static int snvs_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	struct snvs_rtc_data *data = dev_get_drvdata(dev);
+ 	struct rtc_time *alrm_tm = &alrm->time;
+ 	unsigned long time;
++	int ret;
+ 
+ 	rtc_tm_to_time(alrm_tm, &time);
+ 
+ 	regmap_update_bits(data->regmap, data->offset + SNVS_LPCR, SNVS_LPCR_LPTA_EN, 0);
+-	rtc_write_sync_lp(data);
++	ret = rtc_write_sync_lp(data);
++	if (ret)
++		return ret;
+ 	regmap_write(data->regmap, data->offset + SNVS_LPTAR, time);
+ 
+ 	/* Clear alarm interrupt status bit */
 -- 
 2.19.1
 
