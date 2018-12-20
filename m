@@ -2,88 +2,102 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8609C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A28EBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBAD21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B5F721741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:50:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbeLTIuF (ORCPT
+        id S1729183AbeLTIuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:50:05 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:46869 "EHLO pegase1.c-s.fr"
+        Thu, 20 Dec 2018 03:50:40 -0500
+Received: from mga01.intel.com ([192.55.52.88]:59518 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727933AbeLTIuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:50:05 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43L56z0y9kz9tyfP;
-        Thu, 20 Dec 2018 09:50:03 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id oF7vHVdQOlGZ; Thu, 20 Dec 2018 09:50:03 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43L56z0SJ4z9tyfN;
-        Thu, 20 Dec 2018 09:50:03 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E0C038B7A1;
-        Thu, 20 Dec 2018 09:50:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 8KG58wi7QfFd; Thu, 20 Dec 2018 09:50:03 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 86BFC8B7AD;
-        Thu, 20 Dec 2018 09:50:03 +0100 (CET)
-Subject: Re: [PATCH] powerpc/8xx: Map a second 8M text page at startup when
- needed.
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <27edd227d3b9dcda4e2ce7d00d9fddeb7a5520a1.1545241146.git.christophe.leroy@c-s.fr>
- <20181220082403.GA25436@infradead.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <49bf27a4-b0b1-27e1-78f1-a5d55c720d91@c-s.fr>
-Date:   Thu, 20 Dec 2018 09:50:03 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        id S1725777AbeLTIuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:50:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 00:50:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,376,1539673200"; 
+   d="scan'208";a="119800971"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga002.jf.intel.com with ESMTP; 20 Dec 2018 00:50:39 -0800
+Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 20 Dec 2018 00:50:38 -0800
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ fmsmsx101.amr.corp.intel.com (10.18.124.199) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 20 Dec 2018 00:50:38 -0800
+Received: from shsmsx103.ccr.corp.intel.com ([169.254.4.59]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.210]) with mapi id 14.03.0415.000;
+ Thu, 20 Dec 2018 16:50:34 +0800
+From:   "Yang, Bin" <bin.yang@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Saarinen, Jani" <jani.saarinen@intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Du, Alek" <alek.du@intel.com>,
+        "ping.a.gao@intel.com" <ping.a.gao@intel.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "chris@chris-wilson.co.uk" <chris@chris-wilson.co.uk>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>
+Subject: Re: [PATCH] drm/i915: Fix i915_gem_wait_for_idle oops due to
+ active_requests check
+Thread-Topic: [PATCH] drm/i915: Fix i915_gem_wait_for_idle oops due to
+ active_requests check
+Thread-Index: AQHUmDxDeLO92TenP0S4+zyb2yc6QKWGx3UA////zYA=
+Date:   Thu, 20 Dec 2018 08:50:34 +0000
+Message-ID: <916a5783c2111c601d69a3665d4fee9c51239158.camel@intel.com>
+References: <20181220080135.9059-1-bin.yang@intel.com>
+         <154529495460.10782.18092727751160821897@skylake-alporthouse-com>
+In-Reply-To: <154529495460.10782.18092727751160821897@skylake-alporthouse-com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.204.198]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <50BBD52BA48A2640BB0930CFD0E7B7B6@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20181220082403.GA25436@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 20/12/2018 à 09:24, Christoph Hellwig a écrit :
-> On Thu, Dec 20, 2018 at 05:48:25AM +0000, Christophe Leroy wrote:
->> Some debug setup like CONFIG_KASAN generate huge
->> kernels with text size over the 8M limit.
->>
->> This patch maps a second 8M page when _einittext is over 8M.
-> 
-> Do we also need a check to generate a useful warning if we ever overflow
-> the 16MB?
-> 
-
-I don't think any other platform does that (the 40x also maps 16Mb, 
-book3s/601 maps 24Mb)
-
-But why not, could do that in another patch.
-
-Is there an easy way to get the link to fail when CONFIG_PIN_TLB_TEXT is 
-set and _einittext is higher than 16Mb ?
-
-Or should we just map up to 24Mb on the 8xx and consider we are on the 
-safe side with that much ?
-
-Christophe
+T24gVGh1LCAyMDE4LTEyLTIwIGF0IDA4OjM1ICswMDAwLCBDaHJpcyBXaWxzb24gd3JvdGU6DQo+
+IFF1b3RpbmcgQmluIFlhbmcgKDIwMTgtMTItMjAgMDg6MDE6MzUpDQo+ID4gTm9ybWFsbHksIGk5
+MTVfcmVxdWVzdF9hbGxvYygpIGFuZCBpOTE1X3JlcXVlc3RfYWRkKCkgd2lsbCBiZSBjYWxsZWQN
+Cj4gPiBpbiBzZXF1ZW5jZSB3aXRoIGRybS5zdHJ1Y3RfbXV0ZXggbG9ja2VkLiBCdXQgaW4NCj4g
+PiBpbnRlbF92Z3B1X2NyZWF0ZV93b3JrbG9hZCgpLCBpdCB3aWxsIHByZS1hbGxvY2F0ZSB0aGUg
+cmVxdWVzdCBhbmQNCj4gPiBjYWxsIGk5MTVfcmVxdWVzdF9hZGQoKSBpbiB0aGUgd29ya2xvYWQg
+dGhyZWFkIGZvciBwZXJmb3JtYW5jZQ0KPiA+IG9wdGltaXphdGlvbi4gVGhlIGFib3ZlIGlzc3Vl
+IHdpbGwgYmUgdHJpZ2dlcmVkLg0KPiANCj4gVGhhdCdzIHlvdXIgYnVnLiBJdCdzIG5vdCBub3Jt
+YWxseSwgaXQncyBhIHN0cmljdCByZXF1aXJlbWVudCB0aGF0IHRoZQ0KPiBzdHJ1Y3RfbXV0ZXgg
+KHJlcXVlc3QgZ2VuZXJhdGlvbiBtdXRleCkgYmUgaGVsZCBvdmVyIHRoZSBjb3Vyc2Ugb2YNCj4g
+Z2VuZXJhdGluZyB0aGUgcmVxdWVzdC4NCj4gLUNocmlzDQoNClRoaXMgY29kZSBpcyBpbnRyb2R1
+Y2VkIGJ5IGJlbG93IHBhdGNoLiBBZGQgb3JpZ2luYWwgcGF0Y2ggb3duZXJzIHRvDQpkaXNjdXNz
+IHRoaXMgaXNzdWUuDQoNCmNvbW1pdCBkMDMwMmU3NDAwM2JmMWYwZmM0MWMwNjk0OGI3NDUyMDRj
+NDcwNGVhDQpBdXRob3I6IFBpbmcgR2FvIDxwaW5nLmEuZ2FvQGludGVsLmNvbT4NCkRhdGU6ICAg
+VGh1IEp1biAyOSAxMjoyMjo0MyAyMDE3ICswODAwDQoNCiAgICBkcm0vaTkxNS9ndnQ6IEF1ZGl0
+IGFuZCBzaGFkb3cgd29ya2xvYWQgZHVyaW5nIEVMU1Agd3JpdGluZw0KICAgIA0KICAgIExldCB0
+aGUgd29ya2xvYWQgYXVkaXQgYW5kIHNoYWRvdyBhaGVhZCBvZiB2R1BVIHNjaGVkdWxpbmcsIHRo
+YXQNCiAgICB3aWxsIGVsaW1pbmF0ZSBHUFUgaWRsZSB0aW1lIGFuZCBpbXByb3ZlIHBlcmZvcm1h
+bmNlIGZvciBtdWx0aS1WTS4NCiAgICANCiAgICBUaGUgcGVyZm9ybWFuY2Ugb2YgSGVhdmVuIHJ1
+bm5pbmcgc2ltdWx0YW5lb3VzbHkgaW4gM1ZNcyBoYXMNCiAgICBpbXByb3ZlZCAyMCUgYWZ0ZXIg
+dGhpcyBwYXRjaC4NCiAgICANCiAgICB2MjpSZW1vdmUgY29uZGl0aW9uIGN1cnJlbnQtPnZncHU9
+PXZncHUgd2hlbiBzaGFkb3cgZHVyaW5nIEVMU1ANCiAgICB3cml0aW5nLg0KICAgIA0KICAgIFNp
+Z25lZC1vZmYtYnk6IFBpbmcgR2FvIDxwaW5nLmEuZ2FvQGludGVsLmNvbT4NCiAgICBSZXZpZXdl
+ZC1ieTogWmhpIFdhbmcgPHpoaS5hLndhbmdAaW50ZWwuY29tPg0KICAgIFNpZ25lZC1vZmYtYnk6
+IFpoZW55dSBXYW5nIDx6aGVueXV3QGxpbnV4LmludGVsLmNvbT4NCg0KDQoNCg==
