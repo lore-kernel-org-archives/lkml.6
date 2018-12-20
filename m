@@ -7,63 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B305C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431B7C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9B7217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D588217D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0vLS5kW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oLZUR3ig"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387915AbeLTRU3 (ORCPT
+        id S2387928AbeLTRUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:20:29 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40080 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387888AbeLTRU0 (ORCPT
+        Thu, 20 Dec 2018 12:20:30 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43619 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387894AbeLTRU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:20:26 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so2392519edr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:25 -0800 (PST)
+        Thu, 20 Dec 2018 12:20:28 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f9so2379110eds.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JFNTWqFhpeKazwnOj39UERk6OY0Ka+1WIfdnXbFYyQU=;
-        b=W0vLS5kWOBFQ91h93cUXYxuwVuBC8RMdx5Y0SAD9HxeadKiAj+e9Ac1iD0Cn7ui/Dg
-         unMxCVYAv3pQU7Np5Y3XfpKzt8hQOJKK7l3PtFPv+X7XXE8I/5gBN1mrOkd/z6u8dzoq
-         PFshIG+wffEIyXca0e2KISk+3ZKNMwKRb34lHOoDkCxKJhxyFK3o3Gck1FGiV01qJLdR
-         lfLE1E5ppYAQ8jy2NAQUeC0zO/GO45PqIlRli4Oor5jBJyIVa3NH410klbH9LmEWBcmv
-         8hMjNSNt3QdFfWXoXzt+B8jRlbs+dzoLDqtWHMsmQ/CtvDNV165r+ABsPKCOilUv/DLW
-         htAQ==
+        bh=dJ3Thc+Tk49RI7tfOaoX7lNqDe2TvDSrwqm2GBO1DoE=;
+        b=oLZUR3igaZA/j8Ua4saKR7f2Nx8U2k7STmLx4RdmnuFsk8f55SdRkR3ChE3jp9xx9q
+         Qd+Je2gVL4CR5iPTEU+vCf5npWGTASxiJ8OC6U3WU5Gd0nHLhtitwSOJrTBw3C1nooJ9
+         2rFJfnE9f2cSqtACRjQexBGcC4CEB+bF1c3wmXPY0zP5nzo1OiiiCkNJzkz41f87IlX5
+         Jn+fnNpbIostHtZMLYmHYt/9DJtDLqh0ZO+drbATuXvEc1n6qGyDadaDNfye5B395DTU
+         esG80CZ8jOpY/Gcm1x2lHgdq240UZ0eh/NSwyh0yo9fypEuNP0zaQj5sXYVbg8zKt3KC
+         5gBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JFNTWqFhpeKazwnOj39UERk6OY0Ka+1WIfdnXbFYyQU=;
-        b=lSX19/Pl7WQ7HrmfZiYGXsN9+NMvxgPBmPxkoPyhDl+sEG9Qf+1mVs7bcrb878xEtJ
-         ibz/WiS541KBl7n4MJWqg+123B+wjyh9Hcjk03k1oLysFNMeXIrP9nYswDbHFYp53pu9
-         b630+KOMeP/ABP/QTX3Ph7pQ61gzh1zJhCpRGaD1iuWYPuE/WJrmaUa0nJx2a2b4Y6UA
-         AJXJT7a7pxc9Mc/pQ9mYVkwHO5LwNugtpNu0FORZSxQpms2SfvSLbN3MG+kDScr+Xc1p
-         DZA4Ni1ZdscEoYIbEwuRQGkJDUHza/i+w4AoLb9cFn0dyoKYtCBpr8dE37TIhKTiPS24
-         ZcWg==
-X-Gm-Message-State: AA+aEWa9t/IPaZ7F8cK6+rC0LiplPrNlkQGqe1jC1l5Hy0hwYY2E104r
-        i3bfTtBJGvMzSBvKkWDcKUacv7YY
-X-Google-Smtp-Source: AFSGD/UnkS8opSOrXMWylhtvzpuwAi3BPh9mTz188+04jJEg9cj2rdyG9Rao4/tkvQFQhVueFO4TpQ==
-X-Received: by 2002:a50:b205:: with SMTP id o5mr23698610edd.245.1545326424896;
-        Thu, 20 Dec 2018 09:20:24 -0800 (PST)
+        bh=dJ3Thc+Tk49RI7tfOaoX7lNqDe2TvDSrwqm2GBO1DoE=;
+        b=TQjZE05FslaorHbBmU2Nwce9Yr8qkgbZ90CIdkj5vZ8Cq4g6eIR4ZDLWjdia38jAIG
+         k5KsJMzzjpxbg6iIda2o74nivzc/YMyWOoOyU78Ijza00iNJRTZgC4LyPi50sx7aEtKk
+         cstdcsGdrkmW8fgjCvcmZTErYj4vDlT/fwvmpdX5ma5EqpPS4d81EOZa+YDG68TW1yq5
+         3Luplz1ypHrkT6FKy0G/tT+eel3LoaI+j5ZFycD9Pp1l/6rB8HPntp7Hkt+KfstWBga3
+         JVWjqxsPeE+NcMe1RrSy/NfrP610HxOWNpd9Kb4e6BJcnMsQg6NUqAiyUD6/YtTbrcxN
+         UAaw==
+X-Gm-Message-State: AA+aEWbiQJZTJazMdqV5KBfkUWe3Cetuhb5IxTFCD1gEZHKQmnE9rDgw
+        0ktKfdDDUYitGqaUhZBgDhY=
+X-Google-Smtp-Source: AFSGD/WGIXaqj9olWnckJZz7B2v3oUbXmImvaahuQjBLwaSCotzH+o7FkUpBOeYQeSF0dINJR9Vs4Q==
+X-Received: by 2002:a50:90b7:: with SMTP id c52mr24601934eda.31.1545326426393;
+        Thu, 20 Dec 2018 09:20:26 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id x47sm6289437eda.91.2018.12.20.09.20.24
+        by smtp.gmail.com with ESMTPSA id s19-v6sm3321684ejz.2.2018.12.20.09.20.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 09:20:24 -0800 (PST)
+        Thu, 20 Dec 2018 09:20:25 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        HS Liao <hs.liao@mediatek.com>, CK Hu <ck.hu@mediatek.com>
-Subject: [PATCH v3 13/19] mailbox: mtk-cmdq: Remove needless devm_kfree() calls
-Date:   Thu, 20 Dec 2018 18:19:56 +0100
-Message-Id: <20181220172002.9016-14-thierry.reding@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Suman Anna <s-anna@ti.com>
+Subject: [PATCH v3 14/19] mailbox: omap: Use device-managed registration API
+Date:   Thu, 20 Dec 2018 18:19:57 +0100
+Message-Id: <20181220172002.9016-15-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181220172002.9016-1-thierry.reding@gmail.com>
 References: <20181220172002.9016-1-thierry.reding@gmail.com>
@@ -76,36 +75,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Memory allocated through device-managed functions doesn't need to be
-explicitly freed, so these calls can be removed.
+Get rid of some boilerplate driver removal code by using the newly added
+device-managed registration API.
 
-Cc: Houlong Wei <houlong.wei@mediatek.com>
-Cc: HS Liao <hs.liao@mediatek.com>
-Cc: CK Hu <ck.hu@mediatek.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Suman Anna <s-anna@ti.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c | 8 --------
- 1 file changed, 8 deletions(-)
+Changes in v2:
+- fix build failure reported by the kbuild test robot
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index d9c3ec3667a8..22811784dc7d 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -339,14 +339,6 @@ static int cmdq_remove(struct platform_device *pdev)
+ drivers/mailbox/omap-mailbox.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
+index db66e952a871..ca50177a33f2 100644
+--- a/drivers/mailbox/omap-mailbox.c
++++ b/drivers/mailbox/omap-mailbox.c
+@@ -486,7 +486,7 @@ static int omap_mbox_register(struct omap_mbox_device *mdev)
+ 	list_add(&mdev->elem, &omap_mbox_devices);
+ 	mutex_unlock(&omap_mbox_devices_lock);
  
- 	clk_unprepare(cmdq->clock);
+-	ret = mbox_controller_register(&mdev->controller);
++	ret = devm_mbox_controller_register(mdev->dev, &mdev->controller);
  
--	if (cmdq->mbox.chans)
--		devm_kfree(&pdev->dev, cmdq->mbox.chans);
--
--	if (cmdq->thread)
--		devm_kfree(&pdev->dev, cmdq->thread);
--
--	devm_kfree(&pdev->dev, cmdq);
--
- 	return 0;
- }
+ err_out:
+ 	if (ret) {
+@@ -508,8 +508,6 @@ static int omap_mbox_unregister(struct omap_mbox_device *mdev)
+ 	list_del(&mdev->elem);
+ 	mutex_unlock(&omap_mbox_devices_lock);
  
+-	mbox_controller_unregister(&mdev->controller);
+-
+ 	mboxes = mdev->mboxes;
+ 	for (i = 0; mboxes[i]; i++)
+ 		device_unregister(mboxes[i]->dev);
 -- 
 2.19.1
 
