@@ -2,111 +2,120 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A81C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1714EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7392217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D209D2186A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:15:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="AJn3vb5i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c66Z99Pu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbeLTNO1 (ORCPT
+        id S1732938AbeLTNPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:14:27 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39639 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730884AbeLTNO0 (ORCPT
+        Thu, 20 Dec 2018 08:15:22 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46718 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730884AbeLTNPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:14:26 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w6so884532pgl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:14:25 -0800 (PST)
+        Thu, 20 Dec 2018 08:15:22 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f23so1303790lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:15:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=rZhe25yQxkee0DtZS6VfNe2KF6R6wBu8BVFsWVclt2c=;
-        b=AJn3vb5iEDv0wG1r5mtU9gNCyW9nUhx/QfFMwzhBq7frWVC7B0emdfZHPE/ESkCU5h
-         x82BW4ne+GG2zffyUCiHdNWvK/oNNs+3pgR22fC0hDBXFvAk6XAlFDgh/5FLDQSq+38a
-         FHfXb/TVK2fPKYlt4B0kkgZImJKpLkDp7iuMf0MFOnX4wJUKS/UWLD5LdVItElb3RIi1
-         HdpRdW9B0Vrvz/iqgz6oAOTqI3CoAStcv4lerVlFHp9DrP+gvTEdIJLSx33+D9ZXO3Cz
-         IVfHqiHNq2muTi0Ecsb5UzISk+3LnPet8FZZ8FUHaVWlq4Z9EwvOyTIFueiFV3+Z6flF
-         QKnw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=zSmBrlvAFtbSjHBVsAmGCDb8ITZKsyMGYhRFh7uw5Xg=;
+        b=c66Z99PubTEOrYSs8uWsx7Cys3HYnRS03mYX75eLquhV7z8xbQsg5e4+qua/RWylnM
+         JM9jIu4+KEujCLOtZ6V/8/o1b63zOChZzvNgG6kNSTf8YH6YlF4zNX86ojHCEM+3w87p
+         95hH0w872E7vpnj8dqoJMWjf0Wxck3M9cJvEf+CM86z6LnQKDa9znvLerYW7v0AD/KI6
+         QyVCxz2tcayPgvQCJJHhjB+mn/xnvCNDTwrCRL+VFALbzYzBmNXe/mYiBEDSI9qFOm8p
+         gHn4kHlUnzgE0bSVYGQDgSRgB+C8JkaqziALviUMyMB5r88J3MX/r/2RiBnY1J16qfXZ
+         NNIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rZhe25yQxkee0DtZS6VfNe2KF6R6wBu8BVFsWVclt2c=;
-        b=hSr/0yKfqb2P9MyU5xoAL3Zz2Eh5KB8sZW4o47r9ab5Ctob7uny2mPISjyoMojvQX4
-         NtP9LOSDwZqxT08RjVmISbayPpUnuM/mqLtutm0hAjFtxTjbLfV9UnAQJsVU/srggP49
-         1fk+3aWhYjAM4fCvA66hU8ox0InDmFXPuTeos7o4Gw5SFh4BQWaXiQs2zShbsGD3M2O/
-         zzKoW/6Bx+GqSOOjLsq6fSL6O6hiYWPRPnN/BIpCU2eI6XgHg31uN1AUpe4KLy81daLa
-         hmgiHDqjIq0WEHxIp7j++hbB8dXbSEFtLQr3YOlP8lsoKQOjC8acfkxuI5CSQWzIwebx
-         1oZA==
-X-Gm-Message-State: AA+aEWaeua0rNGKh4YTrk+XK5oYUIPZ7TTtn570+PL+QpI2f4fGuiTyf
-        t4fHP4B18wiGzgyM7dcoFIRQSQ==
-X-Google-Smtp-Source: AFSGD/WFdsvM4dJigaOkv3/+JygBy9zb7HhBF2P2bY9EkX9nkoWDMLfCZ/1Esp/oDdLOwpQoxmoITw==
-X-Received: by 2002:a65:4381:: with SMTP id m1mr22652931pgp.358.1545311665106;
-        Thu, 20 Dec 2018 05:14:25 -0800 (PST)
-Received: from localhost.localdomain (36-239-205-170.dynamic-ip.hinet.net. [36.239.205.170])
-        by smtp.gmail.com with ESMTPSA id b7sm40809404pga.39.2018.12.20.05.14.21
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=zSmBrlvAFtbSjHBVsAmGCDb8ITZKsyMGYhRFh7uw5Xg=;
+        b=J06t4m4v5s16Zl0ZPVMJ8TfwGOUZsdrx3nj/qE7vRnEDLsJUhKnwgbArdE+zXzxPFS
+         AIf09IgK2xOAW7BptN8VpoRRsKk1HfTO4QT/dcq8gGdMYVaR831bDihR1abJMKCcly9u
+         QHyxBaL8356sTs+Q0iJfzNMGRzIJp72MJJ5mkLWsk3sXapibbYZMCmRY7ISWa1o7daPa
+         UaMMHp0UleL9JtG1QJuDiy2ZtK2bx6Xf8Pu+NlwSSbZ2UqBXHKpYRELPhvrcRQAehxkI
+         AWkm+Uo9I4m0wPO8gWwSAFMye/oN7R6W3Mu+aHc4aS9y9hSMzCqh4bhCpwbTC/mXT2EA
+         Gujw==
+X-Gm-Message-State: AA+aEWZlz5Ho2/AYiJNTp9K8cjkN+qNE422Zl6ZgWLXcmcEbLQSJ/Hmn
+        PxoaxLzElQ5sKP1a3jW9hyI=
+X-Google-Smtp-Source: AFSGD/WW4Rtqhpw0IvW/5ztV5Rz8XwO+qTPWoxa+ef879uLzGQuz9D+Zp3Y5piJh2i+nzILpgMWflA==
+X-Received: by 2002:a19:3809:: with SMTP id f9mr4482093lfa.148.1545311719529;
+        Thu, 20 Dec 2018 05:15:19 -0800 (PST)
+Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id c203sm4335546lfe.95.2018.12.20.05.15.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 05:14:24 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Andrei Stefanescu <andrei.stefanescu@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: mcp16502: Use #ifdef CONFIG_PM_SLEEP around mcp16502_suspend/resume_noirq
-Date:   Thu, 20 Dec 2018 21:14:13 +0800
-Message-Id: <20181220131413.21922-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 20 Dec 2018 05:15:18 -0800 (PST)
+Subject: Re: [PATCH 12/14] drm/bochs: switch to generic drm fbdev emulation
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+References: <20181219115127.31359-1-kraxel@redhat.com>
+ <20181219115127.31359-13-kraxel@redhat.com>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <bff8ca4d-f0bc-0d6e-3d17-e6e99337c1e4@gmail.com>
+Date:   Thu, 20 Dec 2018 15:15:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181219115127.31359-13-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mcp16502_suspend/resume_noirq is only used by SET_NOIRQ_SYSTEM_SLEEP_PM_OPS
-when CONFIG_PM_SLEEP is defined.
-So use #ifdef CONFIG_PM_SLEEP instead CONFIG_SUSPEND guard.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
-This patch replaces below patch I sent today.
-regulator: mcp16502: Fix build error when !CONFIG_SUSPEND && CONFIG_PM_SLEEP
-Changed the subject line because after commit 308144ce8e51 ("regulator: mcp16502: code cleanup")
-it's not related to build error now.
-
- drivers/regulator/mcp16502.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 809a664733a4..cb11fb206899 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -497,7 +497,7 @@ static int mcp16502_probe(struct i2c_client *client,
- 	return 0;
- }
- 
--#ifdef CONFIG_SUSPEND
-+#ifdef CONFIG_PM_SLEEP
- static int mcp16502_suspend_noirq(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
-@@ -517,10 +517,7 @@ static int mcp16502_resume_noirq(struct device *dev)
- 
- 	return 0;
- }
--#else /* !CONFIG_SUSPEND */
--#define mcp16502_suspend_noirq NULL
--#define mcp16502_resume_noirq NULL
--#endif /* !CONFIG_SUSPEND */
-+#endif
- 
- #ifdef CONFIG_PM
- static const struct dev_pm_ops mcp16502_pm_ops = {
--- 
-2.17.1
+On 12/19/18 1:51 PM, Gerd Hoffmann wrote:
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>   drivers/gpu/drm/bochs/bochs_drv.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+> index a9c7140e3b..f1f65324bb 100644
+> --- a/drivers/gpu/drm/bochs/bochs_drv.c
+> +++ b/drivers/gpu/drm/bochs/bochs_drv.c
+> @@ -27,7 +27,6 @@ static void bochs_unload(struct drm_device *dev)
+>   {
+>   	struct bochs_device *bochs = dev->dev_private;
+>   
+> -	bochs_fbdev_fini(bochs);
+>   	bochs_kms_fini(bochs);
+>   	bochs_mm_fini(bochs);
+>   	bochs_hw_fini(dev);
+> @@ -58,9 +57,6 @@ static int bochs_load(struct drm_device *dev)
+>   	if (ret)
+>   		goto err;
+>   
+> -	if (enable_fbdev)
+> -		bochs_fbdev_init(bochs);
+> -
+I think that after this change you don't need
+"module_param_named(fbdev, enable_fbdev, bool, 0444);"
+>   	return 0;
+>   
+>   err:
+> @@ -178,6 +174,7 @@ static int bochs_pci_probe(struct pci_dev *pdev,
+>   	if (ret)
+>   		goto err_unload;
+>   
+> +	drm_fbdev_generic_setup(dev, 32);
+>   	return ret;
+>   
+>   err_unload:
 
