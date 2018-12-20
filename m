@@ -2,118 +2,128 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF59DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2590AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5E921905
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXZRmiDS"
+	by mail.kernel.org (Postfix) with ESMTP id E733B21904
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 22:02:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390123AbeLTV5f (ORCPT
+        id S1733016AbeLTWCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:57:35 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39574 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730241AbeLTV5c (ORCPT
+        Thu, 20 Dec 2018 17:02:03 -0500
+Received: from dmz-mailsec-scanner-1.mit.edu ([18.9.25.12]:54262 "EHLO
+        dmz-mailsec-scanner-1.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728086AbeLTWCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:57:32 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so3278046wra.6;
-        Thu, 20 Dec 2018 13:57:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sTlddInhxxNsc8rjvJZAEy50kCyb9rVmaWzGN+Ka4a8=;
-        b=FXZRmiDSNj0qtXNwFk38VhFR1GVngeahC80VJgd4eII1SSAcFfkE3CN/gctmbrzn8b
-         GOUL9ZjKWiqLsjWVGd1/MfVTXJlcyO7TQsYmx3awr1of0d/2YxPFDmC774e0L6IkXm+J
-         6tMgzaBMo9n0g8aPcEht5JsufbKo/FJ40ohCHxotFs5WAHSD1PY5LAq+l9hM2+Gd5Lmb
-         peXhoapTIOKIPAakrWQcBgY0BiyZnlslzIT6fCANGr0DgMiTpr3kvpyKw4HHVxjqeNCi
-         jD/MJR9C332PNXZBEpC7rMf/h96ymHTSIJufWiHFhBD7Icm/axpmW0yUVZ3iv/l2znWu
-         qgyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sTlddInhxxNsc8rjvJZAEy50kCyb9rVmaWzGN+Ka4a8=;
-        b=CEimv1WbmSHIz29iUVRIgIS9S3ICvyQRzUuGTGzO8f1ZmAy+BC2gXIrk/0zHqNyVNp
-         +hQccAySTAtEOoq54HYcjakHXNH//RpNC+kh09hFSqf5l4DC/vJ463vtk15yGmaQzdN0
-         kRIQG6VuDGv5NWLlaJeeAVUI+0+NQbqOPFDSVFKMRVMXX6by30lRajd83mHf2l00hrZe
-         au8t+bWxbvvbGiOF/PR6c0VHi/+l4K1IcoZTZt/JSHIOb8mRRA7i16j51CnZX1OJLPuM
-         QVvqJACk9fcolluRvBx2e5Xg7Jt/IoQ4jZg+gslDM4eLmrACTOFzPeWUWU6lSVT+s03S
-         0iEQ==
-X-Gm-Message-State: AA+aEWbyB/XZtQpi7X1bf95Vy8s2MI6IGu5wM3mU7ay+XgnUdxZMwxI/
-        uXXDFIrf3qVJwpFdeT8Zkzs=
-X-Google-Smtp-Source: AFSGD/Wb7miW0VivVnXD6kY7ZsoCP0E9rzjdIl9D7gzpAlzv9WiAyW4i0swNZmpT2x+cqQb9J/VXGw==
-X-Received: by 2002:adf:db01:: with SMTP id s1mr23322170wri.214.1545343049369;
-        Thu, 20 Dec 2018 13:57:29 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id g67sm10428130wmd.38.2018.12.20.13.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 13:57:28 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:57:27 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>
-Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] ACPI / tables: Add an ifdef around amlcode and
- dsdt_amlcode
-Message-ID: <20181220215727.GA29539@flashbox>
-References: <20181220193856.7833-1-natechancellor@gmail.com>
+        Thu, 20 Dec 2018 17:02:03 -0500
+X-AuditID: 1209190c-7ddff700000014b1-6f-5c1c1159f4d8
+Received: from mailhub-auth-3.mit.edu ( [18.9.21.43])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by dmz-mailsec-scanner-1.mit.edu (Symantec Messaging Gateway) with SMTP id 39.1E.05297.9511C1C5; Thu, 20 Dec 2018 17:02:01 -0500 (EST)
+Received: from outgoing.mit.edu (OUTGOING-AUTH-1.MIT.EDU [18.9.28.11])
+        by mailhub-auth-3.mit.edu (8.14.7/8.9.2) with ESMTP id wBKM20Ws022553;
+        Thu, 20 Dec 2018 17:02:01 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-101.corp.google.com [104.133.0.101] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id wBKM1wB2009715
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Dec 2018 17:01:59 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7C3B77A45F6; Thu, 20 Dec 2018 17:01:58 -0500 (EST)
+Date:   Thu, 20 Dec 2018 17:01:58 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181220220158.GC2360@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Biggers <ebiggers@kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20181219071420.GC2628@infradead.org>
+ <20181219021953.GD31274@dastard>
+ <20181219193005.GB6889@mit.edu>
+ <20181219213552.GO6311@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181220193856.7833-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181219213552.GO6311@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKKsWRmVeSWpSXmKPExsUixCmqrRspKBNjMHeKtkXPlIOsFnffb2e1
+        2HLsHqPF2j1/mC1OT1jEZPFk/Sxmi5nz7rBZXFrkbvFq3jcWiz17T7JYnDh3jN3i8q45bBb3
+        u7qYLR71vWW3OLL5CJsDv8epRRIeCzaVemxeoeWxaVUnm8eJGb9ZPB4c2szisXvBZyaPj09v
+        sXi07L/G5vF5k1wAVxSXTUpqTmZZapG+XQJXxoZnD1kKNvBWNO9YyNbAeIari5GDQ0LARGL/
+        vtguRi4OIYE1TBJPv/SxQTgbGSUWHtnH2MXICeS8YpJoPWELYRdJHN7ezQRiswioSjROager
+        YRPQkFjz9C8LiC0ioCYxadIOZpBBzAJbWCS+tfxnBkkICzhKLH70jglkM6+AtsTeVY4gYV6B
+        8ywSU5uUIRbPYJT4s7aRFSIhKHFy5hOwocwCWhI3/r0E62UWkJZY/o8DJMwpoCMx6eccZpCw
+        qICKxOcFAhMYhWYhaZ6FpHkWQvMCRuZVjLIpuVW6uYmZOcWpybrFyYl5ealFuoZ6uZkleqkp
+        pZsYwbEpybOD8cwbr0OMAhyMSjy8F7ZLxwixJpYVV+YeYpTkYFIS5bXnlokR4kvKT6nMSCzO
+        iC8qzUktPsQowcGsJMJbygKU401JrKxKLcqHSUlzsCiJ8/4WeRwtJJCeWJKanZpakFoEk5Xh
+        4FCS4NUXAGoULEpNT61Iy8wpQUgzcXCCDOcBGt7DDzK8uCAxtzgzHSJ/ilFRSpy3GiQhAJLI
+        KM2D6wWlzoxWhtRXjOJArwjzPgCp4gGmXbjuV0CDmYAG52xhAhlckoiQkmpgvOh82DK73Pf5
+        9iuTolvL82S/1syJfPOwYm3citnrFwQ4yV9rlCt28exfUb67886OrGXBzrkXjE2P/Hla1lyz
+        4AjzVKX/HAflryy62sc0RUt1pYIai+i7WX7HNX5dtKq/cv1V6+fTO0z2embr+Hq/lzD9tYDP
+        V39nd1RwRu1NE8aHsxP9XOo7lViKMxINtZiLihMBohg7mngDAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 12:38:56PM -0700, Nathan Chancellor wrote:
-> Clang warns:
+On Thu, Dec 20, 2018 at 08:35:52AM +1100, Dave Chinner wrote:
 > 
-> drivers/acpi/tables.c:715:14: warning: unused variable 'amlcode'
-> [-Wunused-variable]
-> static void *amlcode __attribute__ ((weakref("AmlCode")));
->              ^
-> drivers/acpi/tables.c:716:14: warning: unused variable 'dsdt_amlcode'
-> [-Wunused-variable]
-> static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
->              ^
-> 2 warnings generated.
-> 
-> The only uses of these variables are hiddem behind CONFIG_ACPI_CUSTOM_DSDT
-> so do the same thing here.
-> 
-> Fixes: 82e4eb4e9653 ("ACPI / tables: add DSDT AmlCode new declaration name support")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/acpi/tables.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-> index ccb90eff00e5..48eabb6c2d4f 100644
-> --- a/drivers/acpi/tables.c
-> +++ b/drivers/acpi/tables.c
-> @@ -712,8 +712,10 @@ acpi_os_physical_table_override(struct acpi_table_header *existing_table,
->  					  table_length);
->  }
->  
-> +#ifdef CONFIG_ACPI_CUSTOM_DSDT
->  static void *amlcode __attribute__ ((weakref("AmlCode")));
->  static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
-> +#endif
->  
->  acpi_status
->  acpi_os_table_override(struct acpi_table_header *existing_table,
-> -- 
-> 2.20.1
-> 
+> The file has to be written before it has been protected, which means
+> it may very well have user space allocated beyond EOF before the
+> merkle tree needs to be written.
 
-+ Nick for review
+Sure, and every file system knows how to truncate a file.  This isn't
+hard.
+
+> But whether or not fsverity is enabled on the filesystem, the fact
+> is that the kernel code now has to support storing and reading data
+> from beyond EOF. Every user, whether they are using fsverity or not,
+> is now exposed to that code and a filesystem that no longer
+> considers the user data region beyond EOF as write only.
+
+That's simply not true.  Number one, fsverity is not mandatory for all
+file systems to implement.  If XFS doesn't want to implement fscrypt
+or fsverity, it doesn't have to.  Number two, we're not *making* any
+changes to the kernel code; nothing in mm/filemap.c, et. al.  So
+saying that we are making changes that are impacted by /everyone/ just
+doesn't make any sense.
+
+> How filesystems store and retrieve merkle tree data should be a
+> filesystem internal detail. If how metadata is stored in th e
+> filesystem is defined by the userspace API or the kernel library
+> code that implements the verification feature, then it lacks the
+> necessary abstraction to be a generic Linux filesystem feature.
+> IOWs, it needs to be redesigned and reworked before we should
+> consider it for merging.
+
+I disagree with your aesthetics that the interface has to be
+completely isolated from the implementation.  If you don't want to
+call it a generic file system feature, fine.  It can just be something
+that f2fs and ext4 uses.
+
+					- Ted
