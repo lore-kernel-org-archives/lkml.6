@@ -2,115 +2,117 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3C8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D2AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E8C2177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0546321720
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:19:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297581;
-	bh=NcC+nBPl1lAP4xUTCPeXZmAxkLleUsL2rEFi5pPjLSc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t4iL2w3lGkQNujx3oH8YkM4I80WWBgnogixMM6f+wMq61H+2+7hKjk/1OsdKzRw7s
-	 raRcELnAp5etv9EC2Ag3Xx4BwhQ7qtAqsHKLx2u3Q7J5Ue5NI8bK4uwKAw58jLINxo
-	 xKDdWtjM1Dr+LNVM2rI/3RV0SKRJAZXWApcgspAA=
+	s=default; t=1545297590;
+	bh=o5/MmnIBDarYU0ccr19Ux5hy4ZdTfH04jiDG8m4UNX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zixYHNW5CVu2dZE96yLQcJEzFcezFI01ZbYnqHTsGIKjiDZgOu+1pW0wZXjQHPYaa
+	 Z0FlgxQFEk1Z1JrSR80lcBLcJGPWYNtXoOI0SW20qM7+Wn75nOYawFY3/Kc+N6LiPO
+	 KUmKp5ixqkniIa0bQl9if0YqBzMg22i9NdBTdS6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730275AbeLTJTk (ORCPT
+        id S1730351AbeLTJTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:19:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730184AbeLTJTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:19:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9474A21720;
-        Thu, 20 Dec 2018 09:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297575;
-        bh=NcC+nBPl1lAP4xUTCPeXZmAxkLleUsL2rEFi5pPjLSc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FWjws82ZPWQvcYtVF4vmrOu9QBNnQYnyhIoYeipgqO39mAHcgCyHGP91b9P+WD4Y
-         6oDa5IZEzMOLFNG8Gcq3CqsqldWkWrv4m1HOnOS+EG8ZznLon9KcRADGXuS1WVv6j4
-         uzt6NFW+jyWNSkGkp0Pm6RwNIt5p3eH9Seu8oFX8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Rob Herring <robh@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 3.18 11/31] powerpc: Look for "stdout-path" when setting up legacy consoles
-Date:   Thu, 20 Dec 2018 10:18:23 +0100
-Message-Id: <20181220085743.044119274@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
-References: <20181220085742.601260254@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 20 Dec 2018 04:19:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52022 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730206AbeLTJTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:19:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0EB1EB012;
+        Thu, 20 Dec 2018 09:19:35 +0000 (UTC)
+Date:   Thu, 20 Dec 2018 10:19:34 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
+ offline
+Message-ID: <20181220091934.GC14234@dhcp22.suse.cz>
+References: <20181207142240.GC1286@dhcp22.suse.cz>
+ <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
+ <20181207155627.GG1286@dhcp22.suse.cz>
+ <20181210123738.GN1286@dhcp22.suse.cz>
+ <CAFgQCTupPc1rKv2SrmWD+eJ0H6PRaizPBw3+AG67_PuLA2SKFw@mail.gmail.com>
+ <20181212115340.GQ1286@dhcp22.suse.cz>
+ <CAFgQCTuhW6sPtCNFmnz13p30v3owE3Rty5WJNgtqgz8XaZT-aQ@mail.gmail.com>
+ <CAFgQCTtFZ8ku7W_7rcmrbmH4Qvsv7zgOSHKfPSpNSkVjYkPfBg@mail.gmail.com>
+ <20181217132926.GM30879@dhcp22.suse.cz>
+ <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+On Thu 20-12-18 15:19:39, Pingfan Liu wrote:
+> Hi Michal,
+> 
+> WIth this patch applied on the old one, I got the following message.
+> Please get it from attachment.
+[...]
+> [    0.409637] NUMA: Node 1 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0x7fffffff] -> [mem 0x00000000-0x7fffffff]
+> [    0.419858] NUMA: Node 1 [mem 0x00000000-0x7fffffff] + [mem 0x100000000-0x47fffffff] -> [mem 0x00000000-0x47fffffff]
+> [    0.430356] NODE_DATA(0) allocated [mem 0x87efd4000-0x87effefff]
+> [    0.436325]     NODE_DATA(0) on node 5
+> [    0.440092] Initmem setup node 0 [mem 0x0000000000000000-0x0000000000000000]
+> [    0.447078] node[0] zonelist: 
+> [    0.450106] NODE_DATA(1) allocated [mem 0x47ffd5000-0x47fffffff]
+> [    0.456114] NODE_DATA(2) allocated [mem 0x87efa9000-0x87efd3fff]
+> [    0.462064]     NODE_DATA(2) on node 5
+> [    0.465852] Initmem setup node 2 [mem 0x0000000000000000-0x0000000000000000]
+> [    0.472813] node[2] zonelist: 
+> [    0.475846] NODE_DATA(3) allocated [mem 0x87ef7e000-0x87efa8fff]
+> [    0.481827]     NODE_DATA(3) on node 5
+> [    0.485590] Initmem setup node 3 [mem 0x0000000000000000-0x0000000000000000]
+> [    0.492575] node[3] zonelist: 
+> [    0.495608] NODE_DATA(4) allocated [mem 0x87ef53000-0x87ef7dfff]
+> [    0.501587]     NODE_DATA(4) on node 5
+> [    0.505349] Initmem setup node 4 [mem 0x0000000000000000-0x0000000000000000]
+> [    0.512334] node[4] zonelist: 
+> [    0.515370] NODE_DATA(5) allocated [mem 0x87ef28000-0x87ef52fff]
+> [    0.521384] NODE_DATA(6) allocated [mem 0x87eefd000-0x87ef27fff]
+> [    0.527329]     NODE_DATA(6) on node 5
+> [    0.531091] Initmem setup node 6 [mem 0x0000000000000000-0x0000000000000000]
+> [    0.538076] node[6] zonelist: 
+> [    0.541109] NODE_DATA(7) allocated [mem 0x87eed2000-0x87eefcfff]
+> [    0.547090]     NODE_DATA(7) on node 5
+> [    0.550851] Initmem setup node 7 [mem 0x0000000000000000-0x0000000000000000]
+> [    0.557836] node[7] zonelist: 
 
-------------------
+OK, so it is clear that building zonelists this early is not going to
+fly. We do not have the complete information yet. I am not sure when do
+we get that at this moment but I suspect the we either need to move that
+initialization to a sooner stage or we have to reconsider whether the
+phase when we build zonelists really needs to consider only online numa
+nodes.
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+[...]
+> [    1.067658] percpu: Embedded 46 pages/cpu @(____ptrval____) s151552 r8192 d28672 u262144
+> [    1.075692] node[1] zonelist: 1:Normal 1:DMA32 1:DMA 5:Normal 
+> [    1.081376] node[5] zonelist: 5:Normal 1:Normal 1:DMA32 1:DMA 
 
-commit bf3d6afbb234156749b640b6c50f714967a85964 upstream.
+I hope to get to this before I leave for christmas vacation, if not I
+will stare into it after then.
 
-Commit 78e5dfea84dc ("powerpc: dts: replace 'linux,stdout-path' with
-'stdout-path'") broke the default console on a number of embedded
-PowerPC systems, because it failed to also update the code in
-arch/powerpc/kernel/legacy_serial.c to look for that property in
-addition to the old one.
-
-This fixes it.
-
-Fixes: 78e5dfea84dc ("powerpc: dts: replace 'linux,stdout-path' with 'stdout-path'")
-Cc: stable@vger.kernel.org # v4.17+
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/powerpc/kernel/legacy_serial.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
---- a/arch/powerpc/kernel/legacy_serial.c
-+++ b/arch/powerpc/kernel/legacy_serial.c
-@@ -370,6 +370,8 @@ void __init find_legacy_serial_ports(voi
- 
- 	/* Now find out if one of these is out firmware console */
- 	path = of_get_property(of_chosen, "linux,stdout-path", NULL);
-+	if (path == NULL)
-+		path = of_get_property(of_chosen, "stdout-path", NULL);
- 	if (path != NULL) {
- 		stdout = of_find_node_by_path(path);
- 		if (stdout)
-@@ -593,8 +595,10 @@ static int __init check_legacy_serial_co
- 	/* We are getting a weird phandle from OF ... */
- 	/* ... So use the full path instead */
- 	name = of_get_property(of_chosen, "linux,stdout-path", NULL);
-+	if (name == NULL)
-+		name = of_get_property(of_chosen, "stdout-path", NULL);
- 	if (name == NULL) {
--		DBG(" no linux,stdout-path !\n");
-+		DBG(" no stdout-path !\n");
- 		return -ENODEV;
- 	}
- 	prom_stdout = of_find_node_by_path(name);
-
-
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
