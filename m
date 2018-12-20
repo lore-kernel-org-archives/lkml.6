@@ -2,134 +2,139 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C293EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E119FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A94020811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD60320811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:17:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="PxPYNOM2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732488AbeLTQQy (ORCPT
+        id S1732660AbeLTQR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:16:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50126 "EHLO mx1.redhat.com"
+        Thu, 20 Dec 2018 11:17:28 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:45922 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728803AbeLTQQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:16:53 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730483AbeLTQR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:17:28 -0500
+Received: from zn.tnic (p200300EC2BCCE3000CA99317B30BD475.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:e300:ca9:9317:b30b:d475])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D98EA169741;
-        Thu, 20 Dec 2018 16:16:52 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.131])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 01EDB6B645;
-        Thu, 20 Dec 2018 16:16:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 20 Dec 2018 17:16:52 +0100 (CET)
-Date:   Thu, 20 Dec 2018 17:16:50 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 4/7] cgroup: cgroup v2 freezer
-Message-ID: <20181220161649.GA31865@redhat.com>
-References: <20181207201531.1665-1-guro@fb.com>
- <20181207201531.1665-5-guro@fb.com>
- <20181211162632.GB8504@redhat.com>
- <20181211184033.GA8971@tower.DHCP.thefacebook.com>
- <20181212174902.GA30309@redhat.com>
- <20181218012800.GA29563@tower.DHCP.thefacebook.com>
- <20181218171230.GA11319@redhat.com>
- <20181218202701.GA12730@castle.DHCP.thefacebook.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CCB721EC0913;
+        Thu, 20 Dec 2018 17:17:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1545322647;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=dhL8U6YzJbW9zeMeF+DGkHC3QDeGYKCpHgjxnDZXm/c=;
+        b=PxPYNOM2HRoobC1YQZ7NIeC2DnHWbhbpM/n4tsZM/BvEOE6fTdQfMxI9Unu5Tn+aStGTjl
+        ITWAesMXFTH1gpJ6XX0e0h4SOg0aUYtQK14AZBYjqKKk3rhjqLHl8JD6xYBnBcXyW+aBIB
+        mLRBgr+UToPX/pufbXMD/8Xu2oPW4K0=
+Date:   Thu, 20 Dec 2018 17:17:22 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Babu Moger <Babu.Moger@amd.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jan H =?utf-8?B?LiBTY2jDtm5oZXJy?= <jschoenh@amazon.de>,
+        David Duncan <davdunc@amazon.com>
+Subject: Re: [PATCH] x86/intel_rdt: use rdmsr_safe() to workaround AWS host
+ issue
+Message-ID: <20181220161722.GD31403@zn.tnic>
+References: <20181220134046.7916-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181218202701.GA12730@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 20 Dec 2018 16:16:53 +0000 (UTC)
+In-Reply-To: <20181220134046.7916-1-vkuznets@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/18, Roman Gushchin wrote:
->
-> > > > > --- a/kernel/freezer.c
-> > > > > +++ b/kernel/freezer.c
-> > > > > @@ -134,7 +134,7 @@ bool freeze_task(struct task_struct *p)
-> > > > >                 return false;
-> > > > >
-> > > > >         spin_lock_irqsave(&freezer_lock, flags);
-> > > > > -       if (!freezing(p) || frozen(p)) {
-> > > > > +       if (!freezing(p) || frozen(p) || cgroup_task_frozen()) {
-> > > > >                 spin_unlock_irqrestore(&freezer_lock, flags);
-> > > > >                 return false;
-> > > > >         }
-> > > > >
-> > > > > --
-> > > > >
-> > > > > If the task is already frozen by the cgroup freezer, we don't have to do
-> > > > > anything additionally.
-> > > >
-> > > > I don't think so. A cgroup_task_frozen() task can be killed after
-> > > > try_to_freeze_tasks() succeeds, and the exiting task can close files,
-> > > > do IO, etc. Or it can be thawed by cgroup_freeze_task(false).
-> > > >
-> > > > In short, if try_to_freeze_tasks() succeeds, the caller has all rights
-> > > > to assume that nobody can escape from __refrigerator().
-> > >
-> > > But this is what we do with stopped and ptraced tasks, isn't it?
-> >
-> > No,
-> >
-> > > We do use freezable_schedule() and the system freezer just ignores such tasks.
-> >
-> > 	static inline void freezable_schedule(void)
-> > 	{
-> > 		freezer_do_not_count();
-> > 		schedule();
-> > 		freezer_count();
-> > 	}
-> >
-> > and note that freezer_count() calls try_to_freeze().
-> >
-> > IOW, the task sleeping in freezable_schedule() doesn't really differ from the
-> > task sleeping in __refrigerator(). It is not that "the system freezer just
-> > ignores such tasks", it ignores them because it can safely count them as frozen.
->
-> Right, so the task is sleeping peacefully, and we know, that it won't get
-> anywhere, because we'll catch it in freezer_count(). We allow it to sleep
-> there, we don't force it to __refrigerator(), and we treat it as frozen.
->
-> How's that different to cgroup v2 freezer? If the task is frozen by cgroup v2
-> freezer, let it sleep there, and catch if it tries to escape. Exactly as it
-> works for SIGSTOP.
->
-> Am I missing something?
+On Thu, Dec 20, 2018 at 02:40:46PM +0100, Vitaly Kuznetsov wrote:
+> It was found that AWS x1 instances (Xen-based) lack xen.git commit
+> 1f1d183d4900 (x86/HVM: don't give the wrong impression of WRMSR succeeding)
+> and because of that the wrmsr_safe() check in cache_alloc_hsw_probe()
+> doesn't help: the consequent rdmsr() blows up with
+> 
+>  unchecked MSR access error: RDMSR from 0xc90 at rIP:
+>    0xffffffff88c5bba3 (native_read_msr+0x3/0x30)
+> 
+> The issue should definitely get fixed on AWS side. We can, however, simply
+> workaround this in Linux and live happily after.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/kernel/cpu/intel_rdt.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+> index 44272b7107ad..0acee6cd07a8 100644
+> --- a/arch/x86/kernel/cpu/intel_rdt.c
+> +++ b/arch/x86/kernel/cpu/intel_rdt.c
+> @@ -213,7 +213,8 @@ static inline void cache_alloc_hsw_probe(void)
+>  
+>  	if (wrmsr_safe(IA32_L3_CBM_BASE, max_cbm, 0))
+>  		return;
+> -	rdmsr(IA32_L3_CBM_BASE, l, h);
+> +	if (rdmsr_safe(IA32_L3_CBM_BASE, &l, &h))
+> +		return;
+>  
+>  	/* If all the bits were set in MSR, return success */
+>  	if (l != max_cbm)
+> -- 
 
-Roman, perhaps we misunderstood each other...
+Does the below hunk work too?
 
-I still think that the cgroup_task_frozen() check in freeze_task() you proposed
-a) is not right, and b) it is not what we do with the STOPPED/TRACED tasks which
-call freezable_schedule(). This is what I tried to say.
+Reinette, Babu: is there any reason for rdt_init_res_defs() and
+check_quirks() to run before get_rdt_resources() which looks at CPUID
+bits?
 
-If you meant that freezer v2 can too use freezable_schedule() - I agree.
+If not, we need to do something like below, for guests.
 
-> So, you think that v2 freezer should follow the same approach, and allow tasks
-> sleeping on SIGSTOP, for instance, to be treated as frozen?
-> Hm, maybe. I have to think more here.
+Thx.
 
-I think this would be nice. Otherwise, say, CGRP_FREEZE can be never reported
-if I read this code correctly. And this looks "symmetrical" with the fact that
-a ->frozen task reacts to SIGSTOP and it is still treated as frozen after that.
+---
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index c3a9dc63edf2..64cb0fb31862 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -969,17 +969,13 @@ static int __init resctrl_late_init(void)
+ 	struct rdt_resource *r;
+ 	int state, ret;
+ 
+-	/*
+-	 * Initialize functions(or definitions) that are different
+-	 * between vendors here.
+-	 */
++	if (!get_rdt_resources())
++		return -ENODEV;
++
+ 	rdt_init_res_defs();
+ 
+ 	check_quirks();
+ 
+-	if (!get_rdt_resources())
+-		return -ENODEV;
+-
+ 	rdt_init_padding();
+ 
+ 	state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
 
-Oleg.
 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
