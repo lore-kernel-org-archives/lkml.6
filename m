@@ -2,119 +2,220 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35710C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB60EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBFE21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:07:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FBF72186A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:07:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RPapwROZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732939AbeLTNHB (ORCPT
+        id S1732251AbeLTNHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:07:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55041 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731795AbeLTNHA (ORCPT
+        Thu, 20 Dec 2018 08:07:47 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43291 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730526AbeLTNHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:07:00 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gZy2U-0002hU-S7; Thu, 20 Dec 2018 13:06:58 +0000
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: out of bounds read in drivers/net/wireless/ray_cs.c
-Message-ID: <9a94eeb3-0146-5e64-1e35-54f925fb14d2@canonical.com>
-Date:   Thu, 20 Dec 2018 13:06:58 +0000
+        Thu, 20 Dec 2018 08:07:47 -0500
+Received: by mail-lj1-f196.google.com with SMTP id q2-v6so1483624lji.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:07:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Ol1C2r9425BAupMQBj6DoOYjEdUlF0GF/bdvdnt4viA=;
+        b=RPapwROZ4hkqnOak5LO4PkBCbuzAgU7z3B/QPtcm7UiOU8H6ph4VP3S3yZXDyiEiho
+         vs0CMCKyMQiag5uHhjk6LbPamtc8swVXLUQh1ATPktemaTKSmoYVrpo801kofazig1dV
+         rW6T2Ze383Z1RsT+R35gv1khF5yH+HIPzWXJn/LeLLWtoRAjCOnNhiQH6CxxYkm8WG/k
+         l0U//S91SgE2QbNXiba5JxpDPk6bFsgVBf8nWcr3bJbhria0vd0v7KH+de+xE0F4FDQ4
+         HZfbrB5pQZ/XVRRhwQ+5grgfiEt6jjR8ox6CXFsfuhqkY4eQYaZsxMNzX+G0vjLxtFaZ
+         7k2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Ol1C2r9425BAupMQBj6DoOYjEdUlF0GF/bdvdnt4viA=;
+        b=VYkaoK41FNT0vbpMbk21r2TWjmGB/f2/p8xqHu5b5K2HlpzPo2Puf7R0sYNGNblgbD
+         4g39NbIke8h/lSUQmpDOxaByE75dUQ2DZDE1cqgtlN2k+ir6MblSD48z7igXRaCbF3cP
+         AH6PtZlTkvpgIYZ0R6SoXbOT2051MlWxHSsLZQBpBpbm7SZvZh/yLSoTbIHGr553bAQ8
+         Ue89PdCI21NvmJ8iTlwwhS0Ne+hpfEQSmIqxifrhUiZH/BIABlKoixQ61bBAscdMYlxj
+         5vc7bmmlJ/rBeoRR+ctP5CmpuEsd5jM/e74ue59trH8eODaUJK7SRHWN+sKvMDpQdknX
+         jysA==
+X-Gm-Message-State: AA+aEWadeFmsV9oe6+irG0V6zDXfwctCQDlA+r5mPierCY7hTXaJxLcT
+        zH/Zz+XBla0jsaoqZO9+PvBSLOu1
+X-Google-Smtp-Source: AFSGD/Wqi8OFmmcfNbjxb9kTIzFhAZDGlhPUWjwcgoM0fexW6cGCPSa+nLQr6dMJ6lAsQz5SDpJqSA==
+X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr14955648ljg.87.1545311264303;
+        Thu, 20 Dec 2018 05:07:44 -0800 (PST)
+Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id p186sm4364161lfd.83.2018.12.20.05.07.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 05:07:43 -0800 (PST)
+Subject: Re: [PATCH 11/14] drm/bochs: add basic prime support
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+References: <20181219115127.31359-1-kraxel@redhat.com>
+ <20181219115127.31359-12-kraxel@redhat.com>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <bf6b259d-d8a5-af6a-d4f2-ecfba6a561a7@gmail.com>
+Date:   Thu, 20 Dec 2018 15:07:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181219115127.31359-12-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Static analysis with CoverityScan picked up an out of bounds read issue
-that has been in the Raylink wireless LAN card driver since it appeared
-in the kernel:
-
-drivers/net/wireless/ray_cs.c:
-
-accessing org[3] is out of bounds, the array has just 3 elements.
-
- 959                if (proto == htons(ETH_P_AARP) || proto ==
-htons(ETH_P_IPX)) {
- 960                        /* This is the selective translation table,
-only 2 entries */
-
-    CID undefined (#1 of 1): Out-of-bounds read
-    overrun-local: Overrunning array of 3 bytes at byte offset 3 by
-dereferencing pointer &((struct snaphdr_t *)ptx->var)->org[3].
-
- 961                        writeb(0xf8,
- 962                               &((struct snaphdr_t __iomem
-*)ptx->var)->org[3]);
- 963                }
-
-I suspect the org[3] is a typo and should be org[2], but I don't have
-any info on the H/W so I'm speculating that this is the issue. Any ideas
-anyone?
-
-Colin
-
-
-
-
+On 12/19/18 1:51 PM, Gerd Hoffmann wrote:
+> Generic framebuffer emulation needs this.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>   drivers/gpu/drm/bochs/bochs.h     | 11 +++++++
+>   drivers/gpu/drm/bochs/bochs_drv.c | 15 +++++++++-
+>   drivers/gpu/drm/bochs/bochs_mm.c  | 63 +++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 88 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+> index d0d474e06f..4236d5d811 100644
+> --- a/drivers/gpu/drm/bochs/bochs.h
+> +++ b/drivers/gpu/drm/bochs/bochs.h
+> @@ -145,6 +145,17 @@ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
+>   int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag);
+>   int bochs_bo_unpin(struct bochs_bo *bo);
+>   
+> +int bochs_gem_prime_pin(struct drm_gem_object *obj);
+> +void bochs_gem_prime_unpin(struct drm_gem_object *obj);
+> +struct sg_table *bochs_gem_prime_get_sg_table(struct drm_gem_object *obj);
+> +struct drm_gem_object *bochs_gem_prime_import_sg_table(
+> +        struct drm_device *dev, struct dma_buf_attachment *attach,
+> +        struct sg_table *sgt);
+Please change 8 spaces to a single tab
+> +void *bochs_gem_prime_vmap(struct drm_gem_object *obj);
+> +void bochs_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
+> +int bochs_gem_prime_mmap(struct drm_gem_object *obj,
+> +			 struct vm_area_struct *vma);
+> +
+>   /* bochs_kms.c */
+>   int bochs_kms_init(struct bochs_device *bochs);
+>   void bochs_kms_fini(struct bochs_device *bochs);
+> diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+> index 278f9d2e7f..a9c7140e3b 100644
+> --- a/drivers/gpu/drm/bochs/bochs_drv.c
+> +++ b/drivers/gpu/drm/bochs/bochs_drv.c
+> @@ -81,7 +81,8 @@ static const struct file_operations bochs_fops = {
+>   };
+>   
+>   static struct drm_driver bochs_driver = {
+> -	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
+> +	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
+> +				  DRIVER_PRIME,
+>   	.fops			= &bochs_fops,
+>   	.name			= "bochs-drm",
+>   	.desc			= "bochs dispi vga interface (qemu stdvga)",
+> @@ -91,6 +92,18 @@ static struct drm_driver bochs_driver = {
+>   	.gem_free_object_unlocked = bochs_gem_free_object,
+>   	.dumb_create            = bochs_dumb_create,
+>   	.dumb_map_offset        = bochs_dumb_mmap_offset,
+> +
+> +	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+> +	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+> +	.gem_prime_export = drm_gem_prime_export,
+> +	.gem_prime_import = drm_gem_prime_import,
+> +	.gem_prime_pin = bochs_gem_prime_pin,
+> +	.gem_prime_unpin = bochs_gem_prime_unpin,
+> +	.gem_prime_get_sg_table = bochs_gem_prime_get_sg_table,
+> +	.gem_prime_import_sg_table = bochs_gem_prime_import_sg_table,
+> +	.gem_prime_vmap = bochs_gem_prime_vmap,
+> +	.gem_prime_vunmap = bochs_gem_prime_vunmap,
+> +	.gem_prime_mmap = bochs_gem_prime_mmap,
+>   };
+>   
+>   /* ---------------------------------------------------------------------- */
+> diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+> index 5a0e092847..cfe061c25f 100644
+> --- a/drivers/gpu/drm/bochs/bochs_mm.c
+> +++ b/drivers/gpu/drm/bochs/bochs_mm.c
+> @@ -387,3 +387,66 @@ int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
+>   	drm_gem_object_put_unlocked(obj);
+>   	return 0;
+>   }
+> +
+> +/* ---------------------------------------------------------------------- */
+> +
+> +int bochs_gem_prime_pin(struct drm_gem_object *obj)
+> +{
+> +	struct bochs_bo *bo = gem_to_bochs_bo(obj);
+> +
+> +	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+> +}
+> +
+> +void bochs_gem_prime_unpin(struct drm_gem_object *obj)
+> +{
+> +	struct bochs_bo *bo = gem_to_bochs_bo(obj);
+> +
+> +	bochs_bo_unpin(bo);
+> +}
+> +
+> +struct sg_table *bochs_gem_prime_get_sg_table(struct drm_gem_object *obj)
+> +{
+> +	WARN_ONCE(1, "not implemented");
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +
+> +struct drm_gem_object *bochs_gem_prime_import_sg_table(
+> +	struct drm_device *dev, struct dma_buf_attachment *attach,
+> +	struct sg_table *table)
+> +{
+> +	WARN_ONCE(1, "not implemented");
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +
+> +void *bochs_gem_prime_vmap(struct drm_gem_object *obj)
+> +{
+> +	struct bochs_bo *bo = gem_to_bochs_bo(obj);
+> +	bool is_iomem;
+> +	int ret;
+> +
+> +	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+> +	if (ret)
+> +		return NULL;
+> +	ret = ttm_bo_kmap(&bo->bo, 0, bo->bo.num_pages, &bo->kmap);
+> +	if (ret) {
+> +		bochs_bo_unpin(bo);
+> +		return NULL;
+> +	}
+> +	return ttm_kmap_obj_virtual(&bo->kmap, &is_iomem);
+> +}
+> +
+> +void bochs_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+> +{
+> +	struct bochs_bo *bo = gem_to_bochs_bo(obj);
+> +
+> +	ttm_bo_kunmap(&bo->kmap);
+> +	bochs_bo_unpin(bo);
+> +}
+> +
+> +int bochs_gem_prime_mmap(struct drm_gem_object *obj,
+> +			 struct vm_area_struct *vma)
+> +{
+> +	struct bochs_bo *bo = gem_to_bochs_bo(obj);
+> +
+> +	return ttm_fbdev_mmap(vma, &bo->bo);
+> +}
+With the above fixed:
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
