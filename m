@@ -2,69 +2,60 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD7CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11110C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB74820989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:38:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="V6H/psgf"
+	by mail.kernel.org (Postfix) with ESMTP id D420E20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545298746;
+	bh=HjwiWAjjuJuaCUuMEQwA1iOoX1gnPydn73ah3Wq/ZcY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=RCIqpicUXbJtZE5/Y/Ivz8V0OLaCuGtfsjvqHPcNhoJkcqgF9dJ3lt3o++N6ZzN1y
+	 dC/PEMcydW7+kaTa4ErNw4SiaInVoHKg2PYH/XMjBnpmTJHl5NcAojfUIYGHYOFkyP
+	 9GOBKr+eO7mGGD/73ZEhFibUCER15jXbVo03in4s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387430AbeLTJiu (ORCPT
+        id S1732895AbeLTJjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:38:50 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45302 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732309AbeLTJir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:38:47 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so603491plm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:38:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1iUhDhIZ1xk9FGjJuaNFZaLpj2B2Rjon4JycLrDK7TY=;
-        b=V6H/psgfubi2ZpcX1KcSuZloVb87/jIk1GnDUZsltHeipuJkZ8f1VCoPynfhff1c1c
-         EjKaN2uhgMOBCosjaufOAgCgYu+yMrJTw9Pf8cSTV4+WQeQ7Robjx0IfkzT4wjLkjK4U
-         KGCYr5aDhHM4RxbLQePEcLHD+B1gsIi0/R0dq4r0Zv/41Wa+iHcOGcyULZ4SIYksDuZY
-         KmVajrBL/UhTdupusqU5tE8x0Udtj3Z+AY1gIP4Poke2NQKFmVR62BPjMyUcuHeQ+wRE
-         la2b1qMCh8g2l0tE9y4v1ww1Of6sZQS8o6vv1HYgdDtPWAx2eJKawAOu9yhVD49y0c6R
-         SDaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1iUhDhIZ1xk9FGjJuaNFZaLpj2B2Rjon4JycLrDK7TY=;
-        b=L55uVdXDe6EBsBQN0HxguJx9w8L4bscaJE4q1w5jz7PMF3GGQuk56QofXtdiD0X5xD
-         RZymO9vEcP1uFK944WLbLi+TP5T1DuShpVLesSURUw6puShpvWNcuMvciuJBgKqa+iY6
-         BDI8Q7QtPcQN/+uKJ8f9ZfmrGrpIVRi34AjxSGfpfGEcgYgMFsKWnImF11GGoMZMZaz4
-         DuZ3p680cphxZVigLU7kERWZoeKQH4n4sNdYOSw9aOH0exQaWI2nQ6J9qUwoDqvxd/oI
-         ttMj3ezFtKCOjD3mNwMQxPf7D0qmVui4vhqq/jWG2xJeJ3VbRmiJQfJKdb/HK4qJcUGZ
-         B75Q==
-X-Gm-Message-State: AA+aEWb3Lp6HmNgS8AXjrfhtCkLGazbbyyGuiMcCw7qpxp9AZF3hR6f3
-        0BJj1NMswALPEiWKliQ+SsUifQCFoTM=
-X-Google-Smtp-Source: AFSGD/U5p2Hoh5L4wPl040c5puKaXDHXPlrwcGXU2WsuUxZPDgnM90oglNVymgFW7rT5l7V7v45A/A==
-X-Received: by 2002:a17:902:4a0c:: with SMTP id w12mr23741384pld.8.1545298725645;
-        Thu, 20 Dec 2018 01:38:45 -0800 (PST)
-Received: from localhost.localdomain (36-239-205-170.dynamic-ip.hinet.net. [36.239.205.170])
-        by smtp.gmail.com with ESMTPSA id j6sm32194261pfg.126.2018.12.20.01.38.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 01:38:44 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Andrei Stefanescu <andrei.stefanescu@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: mcp16502: Fix build error when !CONFIG_SUSPEND && CONFIG_PM_SLEEP
-Date:   Thu, 20 Dec 2018 17:38:28 +0800
-Message-Id: <20181220093828.28821-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 20 Dec 2018 04:39:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730483AbeLTJZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:25:51 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D14B520656;
+        Thu, 20 Dec 2018 09:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545297950;
+        bh=HjwiWAjjuJuaCUuMEQwA1iOoX1gnPydn73ah3Wq/ZcY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GMb113/TNhrzkEO3m9Q37ZLw/6p/ucMm50Iepp8OOmVEODCIv2sBTM3Q5wdAnPVZE
+         NPGgEBpnk7OxnuzuQ6ZwWpFK8eDj9N4qKxO0MZWdjTc6Qup27QTDFtbw1wYk7UYH/f
+         7mU6crvIBdxGtcBgpJduMPSEopHGmEzGt9ALXzoU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 4.14 16/72] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
+Date:   Thu, 20 Dec 2018 10:18:15 +0100
+Message-Id: <20181220085922.969931485@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
+References: <20181220085922.332225035@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -73,58 +64,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use #ifdef CONFIG_PM_SLEEP guard around suspend_fn/resume_fn to fix below
-build error.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-  CC [M]  drivers/regulator/mcp16502.o
-In file included from ./include/linux/device.h:23:0,
-                 from ./include/linux/gpio/driver.h:5,
-                 from ./include/asm-generic/gpio.h:13,
-                 from ./include/linux/gpio.h:62,
-                 from drivers/regulator/mcp16502.c:11:
-drivers/regulator/mcp16502.c:528:32: error: ‘mcp16502_suspend_noirq’ undeclared here (not in a function); did you mean ‘mcp16502_suspend’?
-  SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend_noirq,
-                                ^
-./include/linux/pm.h:342:19: note: in definition of macro ‘SET_NOIRQ_SYSTEM_SLEEP_PM_OPS’
-  .suspend_noirq = suspend_fn, \
-                   ^~~~~~~~~~
-drivers/regulator/mcp16502.c:529:10: error: ‘mcp16502_resume_noirq’ undeclared here (not in a function); did you mean ‘mcp16502_suspend_noirq’?
-          mcp16502_resume_noirq)
-          ^
-./include/linux/pm.h:343:18: note: in definition of macro ‘SET_NOIRQ_SYSTEM_SLEEP_PM_OPS’
-  .resume_noirq = resume_fn, \
-                  ^~~~~~~~~
+------------------
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+From: Brian Norris <briannorris@chromium.org>
+
+commit 63238173b2faf3d6b85a416f1c69af6c7be2413f upstream.
+
+This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
+
+It causes new warnings [1] on shutdown when running the Google Kevin or
+Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
+different than what Marc and Heiko test.
+
+We're looking at a different approach (e.g., [2]) to replace this, but
+IMO the revert should be taken first, as it already propagated to
+-stable.
+
+[1] Report here:
+http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
+
+WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
+...
+ Call trace:
+  drm_mode_config_cleanup+0x1c4/0x294
+  rockchip_drm_unbind+0x4c/0x8c
+  component_master_del+0x88/0xb8
+  rockchip_drm_platform_remove+0x2c/0x44
+  rockchip_drm_platform_shutdown+0x20/0x2c
+  platform_drv_shutdown+0x2c/0x38
+  device_shutdown+0x164/0x1b8
+  kernel_restart_prepare+0x40/0x48
+  kernel_restart+0x20/0x68
+...
+ Memory manager not clean during takedown.
+ WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
+...
+  drm_mm_takedown+0x34/0x44
+  rockchip_drm_unbind+0x64/0x8c
+  component_master_del+0x88/0xb8
+  rockchip_drm_platform_remove+0x2c/0x44
+  rockchip_drm_platform_shutdown+0x20/0x2c
+  platform_drv_shutdown+0x2c/0x38
+  device_shutdown+0x164/0x1b8
+  kernel_restart_prepare+0x40/0x48
+  kernel_restart+0x20/0x68
+...
+
+[2] https://patchwork.kernel.org/patch/10556151/
+    https://www.spinics.net/lists/linux-rockchip/msg21342.html
+    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
+
+Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Vicente Bergas <vicencb@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181205181657.177703-1-briannorris@chromium.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/regulator/mcp16502.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index ec5b6836a20c..2507acb7f5dc 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -498,7 +498,7 @@ static int mcp16502_probe(struct i2c_client *client,
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -425,11 +425,6 @@ static int rockchip_drm_platform_remove(
  	return 0;
  }
  
--#ifdef CONFIG_SUSPEND
-+#ifdef CONFIG_PM_SLEEP
- static int mcp16502_suspend_noirq(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
-@@ -518,10 +518,7 @@ static int mcp16502_resume_noirq(struct device *dev)
- 
- 	return 0;
- }
--#else /* !CONFIG_SUSPEND */
--#define mcp16502_suspend NULL
--#define mcp16502_resume NULL
--#endif /* !CONFIG_SUSPEND */
-+#endif
- 
- #ifdef CONFIG_PM
- static const struct dev_pm_ops mcp16502_pm_ops = {
--- 
-2.17.1
+-static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
+-{
+-	rockchip_drm_platform_remove(pdev);
+-}
+-
+ static const struct of_device_id rockchip_drm_dt_ids[] = {
+ 	{ .compatible = "rockchip,display-subsystem", },
+ 	{ /* sentinel */ },
+@@ -439,7 +434,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
+ static struct platform_driver rockchip_drm_platform_driver = {
+ 	.probe = rockchip_drm_platform_probe,
+ 	.remove = rockchip_drm_platform_remove,
+-	.shutdown = rockchip_drm_platform_shutdown,
+ 	.driver = {
+ 		.name = "rockchip-drm",
+ 		.of_match_table = rockchip_drm_dt_ids,
+
 
