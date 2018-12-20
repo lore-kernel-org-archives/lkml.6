@@ -2,222 +2,127 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309DDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6897C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBA5F2176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:23:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZFzxJ5tF"
+	by mail.kernel.org (Postfix) with ESMTP id 9EE122176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:23:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730407AbeLTIXT (ORCPT
+        id S1730771AbeLTIX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:23:19 -0500
-Received: from mail-eopbgr00072.outbound.protection.outlook.com ([40.107.0.72]:33820
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729862AbeLTIXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:23:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qRecI3i5V6wdgCPsKtiE5eM91yeuyOXDoNNZxE3r+L0=;
- b=ZFzxJ5tF8AO83o8vJobU3ImcVrwaL/UJDAZdTx+ad+YZ8qFWgNejwdDhMoqoXNaLtn4H+xfnMT87c5w6Pm5LpYpzb8N4d9YfCI29hdzZ1fySGj5+p9pMSvw0YQolVQv3h7AI/7pOPhGbuw/ECE10va0D6eO3KUn8qox2CxoxpN4=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB4733.eurprd04.prod.outlook.com (20.177.48.202) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.21; Thu, 20 Dec 2018 08:23:07 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::d938:811:ed7:175]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::d938:811:ed7:175%3]) with mapi id 15.20.1446.020; Thu, 20 Dec 2018
- 08:23:07 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Vignesh R <vigneshr@ti.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 0/7] spi: add support for octal mode
-Thread-Topic: [PATCH v6 0/7] spi: add support for octal mode
-Thread-Index: AQHUl4M9zHZOcdwiAEaqBDYBME9P7qWGAesAgAEY9HCAABHcAIAAHK3g
-Date:   Thu, 20 Dec 2018 08:23:07 +0000
-Message-ID: <VI1PR04MB5726FABF724D8EE0144E2C8499BF0@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1545214186-16987-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <10b25865-b93d-382a-aa4d-b21fbd9c3ba9@ti.com>
- <VI1PR04MB5726D65958C532965E12EE4F99BF0@VI1PR04MB5726.eurprd04.prod.outlook.com>
- <d513cf77-b308-a089-71cf-4598bfd2f085@ti.com>
-In-Reply-To: <d513cf77-b308-a089-71cf-4598bfd2f085@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-originating-ip: [14.143.30.134]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4733;6:M5DY3QKQqRSleI87bKikztFC5mP3qpOisB0pSj7DOd93FL1eo9QlqC6zvLM7qNru+CbUMgAPM2POPASVDNqhHLA5/An/RSUwOYuPCebxtiYgE9In97D5es0hzlGqioSPXlv2JMvqlWT47sa0/svEXg04ed6xIl2J2r6Az6W0Rp2lAtvsrSIcPQGXKeMjlzLYD/2RenGzt4EEwLwRHvKt8vMD+GD9E7mtOAAfzpuzqSe6GDUtRJZcwPK1E22z1dorilpx3OowM4Yt4wKrCg2BdMewoby/76Ve4mpVTRLCbd5dt5O19jxNHfmIGsppeU4aY01N3FDM5vA7a9e3P+z4nLA33fBMo+n9ntdlZD+2ao0qXsi5paLup0dFj1eLgnuCgtuWIBbGWC7AjHolAC6nBl7xPkHeTNJhpTh90UU0z96lE5TNa3f2wJHk5FBmWEd9Vkn7giwb94hjNx4wdhKU9Q==;5:9x9dPddoT62FCr2ljU2bsmJWbUa1ORzYdUtK+Ri2pLVQyASNCFVpFxvPOqh1NKxau8ExmbwSgodvBUDdKvw1yAEgvDWcDe40uMeq5pVymoSmGaAgTyHKi1l4p7vDwiQQy+4BI1A8CDmq4MMtz+LEy4ypm+/p4Av8xP7jIAem8nA=;7:EKy3KFEvv9pR5eV/up4YiT/dqq8PIrDEq1SeCpNBlZS2EkZkG0ynIyGPepjHlwwx8g2HrmG1qGf8MsfsfsM21bcDUOTqVoxv/kFIbGH3+sGSU5QT9skYEPSkAZhWZzgBo07x2eQ3jOX6ckco7A7uuQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 0bdb6e08-88a2-4906-b5e6-08d666545ef8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4733;
-x-ms-traffictypediagnostic: VI1PR04MB4733:
-x-microsoft-antispam-prvs: <VI1PR04MB4733196BE75E52E18C81AA9099BF0@VI1PR04MB4733.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4733;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4733;
-x-forefront-prvs: 0892FA9A88
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(136003)(376002)(39860400002)(396003)(199004)(189003)(13464003)(53754006)(53936002)(6306002)(55016002)(9686003)(3846002)(6116002)(229853002)(2501003)(93886005)(99286004)(97736004)(66066001)(6506007)(86362001)(53546011)(26005)(55236004)(102836004)(575784001)(11346002)(2201001)(476003)(256004)(7696005)(5660300001)(6436002)(110136005)(76176011)(186003)(446003)(7416002)(14444005)(33656002)(305945005)(8676002)(25786009)(81156014)(81166006)(8936002)(4326008)(71200400001)(71190400001)(7736002)(39060400002)(78486014)(106356001)(105586002)(45080400002)(478600001)(316002)(54906003)(486006)(6246003)(74316002)(68736007)(14454004)(2906002)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4733;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Vem66fRDvx6U+C39cNl7VibOzYpwtFPL9qNJ2Tdu3H1V3xZs82K4PzCVMq9Yoc43TST6rUMwKK3mHAAL8Z0DjQLg7xVorIkysf5cQJkOCEpA2wdY+8YxE98TsLPVIzdwWn7LXwZobLYWEp+fNJdNY0C2+JLGCxYtCNmF1Zdt7q4Bx0flE57PD/vuGimUxUZxbwApeA9FnmUer5cjSamwIRqcEBUiexS4XQwFj6jzADaVX9Nj4jMJeTAgcpLsd22gAjBOamJgygIHYPcKMAbfbB0auvEAe/9PSbso8dXH96sll93S3OXkRQDe6R/C7U8K
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bdb6e08-88a2-4906-b5e6-08d666545ef8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 08:23:07.5210
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4733
+        Thu, 20 Dec 2018 03:23:58 -0500
+Received: from ozlabs.ru ([107.173.13.209]:53898 "EHLO ozlabs.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727667AbeLTIX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:23:58 -0500
+Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
+        by ozlabs.ru (Postfix) with ESMTP id 101C2AE8001E;
+        Thu, 20 Dec 2018 03:23:53 -0500 (EST)
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
+        Alistair Popple <alistair@popple.id.au>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
+        =?UTF-8?q?Leonardo=20Augusto=20Guimar=C3=A3es=20Garcia?= 
+        <lagarcia@br.ibm.com>, Jose Ricardo Ziviani <joserz@linux.ibm.com>,
+        Daniel Henrique Barboza <danielhb413@gmail.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH kernel v7 00/20] powerpc/powernv/npu, vfio: NVIDIA V100 + P9 passthrough
+Date:   Thu, 20 Dec 2018 19:23:30 +1100
+Message-Id: <20181220082350.58113-1-aik@ozlabs.ru>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQWxsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpZ25lc2gg
-UiBbbWFpbHRvOnZpZ25lc2hyQHRpLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIERlY2VtYmVyIDIw
-LCAyMDE4IDEyOjAzIFBNDQo+IFRvOiBZb2dlc2ggTmFyYXlhbiBHYXVyIDx5b2dlc2huYXJheWFu
-LmdhdXJAbnhwLmNvbT47IGxpbnV4LQ0KPiBtdGRAbGlzdHMuaW5mcmFkZWFkLm9yZzsgYm9yaXMu
-YnJlemlsbG9uQGJvb3RsaW4uY29tOyBicm9vbmllQGtlcm5lbC5vcmc7DQo+IG1hcmVrLnZhc3V0
-QGdtYWlsLmNvbTsgbGludXgtc3BpQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2Vy
-Lmtlcm5lbC5vcmcNCj4gQ2M6IHR1ZG9yLmFtYmFydXNAbWljcm9jaGlwLmNvbTsgcm9iaEBrZXJu
-ZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gc2hhd25ndW9Aa2VybmVsLm9yZzsgbGlu
-dXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBjb21wdXRlcnNmb3JwZWFjZUBn
-bWFpbC5jb207IGZyaWVkZXIuc2NocmVtcGZAZXhjZWV0LmRlOyBsaW51eC0NCj4ga2VybmVsQHZn
-ZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY2IDAvN10gc3BpOiBhZGQgc3Vw
-cG9ydCBmb3Igb2N0YWwgbW9kZQ0KPiANCj4gSGksDQo+IA0KPiBPbiAyMC8xMi8xOCAxMTowMiBB
-TSwgWW9nZXNoIE5hcmF5YW4gR2F1ciB3cm90ZToNCj4gWy4uLl0NCj4gPj4+IFlvZ2VzaCBHYXVy
-ICg3KToNCj4gPj4+ICAgc3BpOiBhZGQgc3VwcG9ydCBmb3Igb2N0YWwgbW9kZSBJL08gZGF0YSB0
-cmFuc2Zlcg0KPiA+Pj4gICBzcGk6IHNwaS1tZW06IGFkZCBzdXBwb3J0IGZvciBvY3RhbCBtb2Rl
-IEkvTyBkYXRhIHRyYW5zZmVyDQo+ID4+DQo+ID4+DQo+ID4+IFRoZXNlIHR3byBwYXRjaGVzIGFy
-ZSBhbHJlYWR5IG1lcmdlZCBhbmQgaXMgbm93IHBhcnQgb2YgbGludXgtbmV4dFsxXS4NCj4gPj4g
-SXRzIHByZWZlcnJlZCB0byBzZW5kIHBhdGNoZXMgYmFzZWQgb24gdG9wIG9mIGxhdGVzdCBsaW51
-eC1uZXh0IHNvIGFzDQo+ID4+IHRvIGF2b2lkIHJlc2VuZGluZyBwYXRjaGVzIHRoYXQgaGF2ZSBh
-bHJlYWR5IGJlZW4gcGlja2VkIHVwIGJ5IHRoZQ0KPiBtYWludGFpbmVyLg0KPiA+Pg0KPiA+PiBb
-MV0NCj4gPj4gY29tbWl0IDZiMDMwNjFmODgyZGU0OWI4M2NjZjQ0YmViM2ExMmM5MjBhMmRhMWIN
-Cj4gPj4gQXV0aG9yOiBZb2dlc2ggTmFyYXlhbiBHYXVyIDx5b2dlc2huYXJheWFuLmdhdXJAbnhw
-LmNvbT4NCj4gPj4gRGF0ZTogICBNb24gRGVjIDMgMDg6Mzk6MDYgMjAxOCArMDAwMA0KPiA+Pg0K
-PiA+PiAgICAgc3BpOiBhZGQgc3VwcG9ydCBmb3Igb2N0YWwgbW9kZSBJL08gZGF0YSB0cmFuc2Zl
-cg0KPiA+Pg0KPiA+PiBjb21taXQgYjEyYTA4NGM4NzI5ZWY0MjMwODliYjlhNWExNDNlZWQzOWNk
-OTRlNw0KPiA+PiBBdXRob3I6IFlvZ2VzaCBOYXJheWFuIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1
-ckBueHAuY29tPg0KPiA+PiBEYXRlOiAgIE1vbiBEZWMgMyAwODozOToxMiAyMDE4ICswMDAwDQo+
-ID4+DQo+ID4+ICAgICBzcGk6IHNwaS1tZW06IGFkZCBzdXBwb3J0IGZvciBvY3RhbCBtb2RlIEkv
-TyBkYXRhIHRyYW5zZmVyDQo+ID4+DQo+ID4+DQo+ID4gSSBoYXZlIGNoZWNrZWQgb24gcmVwbyAi
-Z2l0Oi8vZ2l0LmluZnJhZGVhZC5vcmcvbGludXgtbXRkLmdpdCIgb24gYnJhbmNoICJzcGktDQo+
-IG5vci9uZXh0IiBhbmQgaW4gdGhhdCBrZXJuZWwgdmVyc2lvbiBpcyA0LjIwLi1yYzUuDQo+ID4g
-SW4gdGhpcyByZXBvIGFib3ZlIDIgcGF0Y2hlcyBhcmUgbm90IHByZXNlbnQgYW5kIGhlbmNlIGhh
-cyBzZW5kIHRoZSBwYXRjaGVzDQo+IGJ5IG1vdmluZyB0byB0b3Agb2YgdGhpcyByZXBvLg0KPiA+
-DQo+IA0KPiBUaG9zZSBwYXRjaGVzIGFyZSBhcHBsaWVkIHRvIHNwaSB0cmVlOg0KPiBodHRwczov
-L2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJG
-JTJGZ2l0Lmtlcg0KPiBuZWwub3JnJTJGcHViJTJGc2NtJTJGbGludXglMkZrZXJuZWwlMkZnaXQl
-MkZicm9vbmllJTJGc3BpLmdpdCUyRmxvZyUNCj4gMkYlM0ZoJTNEZm9yLQ0KPiBuZXh0JmFtcDtk
-YXRhPTAyJTdDMDElN0N5b2dlc2huYXJheWFuLmdhdXIlNDBueHAuY29tJTdDYzI0YTY2ZTY5NQ0K
-PiA3ZjQ5NDBlODM3MDhkNjY2NDRmNWJmJTdDNjg2ZWExZDNiYzJiNGM2ZmE5MmNkOTljNWMzMDE2
-MzUlN0MwJTdDMA0KPiAlN0M2MzY4MDg4NDM3MDAxODA5NDAmYW1wO3NkYXRhPTRJUHd1Um1KS3Y0
-cUlTQWpEMFcwN09JQSUyQldRcFQNCj4gM0U5N1QlMkJTYlNPclNOOCUzRCZhbXA7cmVzZXJ2ZWQ9
-MA0KPiANCj4gPiBDYW4geW91IHBsZWFzZSBsZXQgbWUga25vdyB0aGUgcmVwbyBvZiBsaW51eC1u
-ZXh0IGFuZCBicmFuY2ggdG8gdXNlLg0KPiA+DQo+IA0KPiBUaGUgbGludXgtbmV4dCB0cmVlIGlz
-IHRoZSBob2xkaW5nIGFyZWEgZm9yIHBhdGNoZXMgYWltZWQgYXQgdGhlIG5leHQga2VybmVsDQo+
-IG1lcmdlIHdpbmRvdy4gVGhpcyB0cmVlIGluY2x1ZGVzIHNwaS1ub3IvbmV4dCBhcyBwYXJ0IG9m
-IG10ZC9uZXh0IGFzIHdlbGwgYXMNCj4gbWFueSBvdGhlciBzdWJzeXN0ZW0gc3BlY2lmaWMgLW5l
-eHQgdHJlZXM6DQo+IGh0dHBzOi8vZW1lYTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2su
-Y29tLz91cmw9aHR0cHMlM0ElMkYlMkZnaXQua2VyDQo+IG5lbC5vcmclMkZwdWIlMkZzY20lMkZs
-aW51eCUyRmtlcm5lbCUyRmdpdCUyRm5leHQlMkZsaW51eC0NCj4gbmV4dC5naXQmYW1wO2RhdGE9
-MDIlN0MwMSU3Q3lvZ2VzaG5hcmF5YW4uZ2F1ciU0MG54cC5jb20lN0NjMjRhNjZlDQo+IDY5NTdm
-NDk0MGU4MzcwOGQ2NjY0NGY1YmYlN0M2ODZlYTFkM2JjMmI0YzZmYTkyY2Q5OWM1YzMwMTYzNSU3
-QzAlDQo+IDdDMCU3QzYzNjgwODg0MzcwMDE4MDk0MCZhbXA7c2RhdGE9VkdNSFpDakFnWmZuU0pl
-VUhoa3BnSTB5Z3Q5cHZQDQo+IHk5S0pzNVB6bjY0RDAlM0QmYW1wO3Jlc2VydmVkPTAgYnJhbmNo
-OiBtYXN0ZXINCj4gDQo+IA0KQWJvdmUgcmVwbyAia2VybmVsL2dpdC9icm9vbmllL3NwaS5naXQi
-IGFuZCBicmFuY2ggKGZvci1uZXh0KSBhcmUgbWlzc2luZyBiZWxvdyAyIHBhdGNoZXNbMV0sIHdo
-aWNoIGhhdmUgYmVlbiBhcHBsaWVkIGJ5IEJvcmlzIGFuZCBwcmVzZW50IGluIHJlcG8gImdpdDov
-L2dpdC5pbmZyYWRlYWQub3JnL2xpbnV4LW10ZC5naXQiIG9uIGJyYW5jaCAic3BpLW5vci9uZXh0
-Ii4NCg0KY29tbWl0IGE5ODA4NmUwMDQyMGFkOTJjZmE5NjFiY2JiNDU3ZmJlNTJlYzI4YzkNCkF1
-dGhvcjogWW9nZXNoIE5hcmF5YW4gR2F1ciA8eW9nZXNobmFyYXlhbi5nYXVyQG54cC5jb20+DQpE
-YXRlOiAgIEZyaSBPY3QgMTIgMDI6MjM6MTMgMjAxOCArMDAwMA0KDQogICAgbXRkOiBzcGktbm9y
-OiBhZGQgZW50cnkgZm9yIG10MzV4dTUxMmFiYSBmbGFzaA0KDQogICAgQWRkIGVudHJ5IGZvciBt
-dDM1eHU1MTJhYmEgTWljcm9uIE5PUiBmbGFzaC4NCiAgICBUaGlzIGZsYXNoIGlzIGhhdmluZyB1
-bmlmb3JtIHNlY3RvciBlcmFzZSBzaXplIG9mIDEyOEtCLCBoYXZlDQogICAgc3VwcG9ydCBvZiBG
-U1IoZmxhZyBzdGF0dXMgcmVnaXN0ZXIpLCBmbGFzaCBzaXplIGlzIDY0TUIgYW5kDQogICAgc3Vw
-cG9ydHMgNC1ieXRlIGNvbW1hbmRzLg0KDQogICAgU2lnbmVkLW9mZi1ieTogWW9nZXNoIEdhdXIg
-PHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KICAgIFJldmlld2VkLWJ5OiBUdWRvciBBbWJh
-cnVzIDx0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQogICAgU2lnbmVkLW9mZi1ieTogQm9y
-aXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25AYm9vdGxpbi5jb20+DQoNCmNvbW1pdCAwMDA1
-YWFkMDk0NTM4ZTFjMjkwYjFjZGI1Yjk0MGU0YTE2ZjQwNWIwDQpBdXRob3I6IFlvZ2VzaCBOYXJh
-eWFuIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KRGF0ZTogICBGcmkgT2N0IDEy
-IDAyOjIzOjA4IDIwMTggKzAwMDANCg0KICAgIG10ZDogc3BpLW5vcjogYWRkIG1hY3JvcyByZWxh
-dGVkIHRvIE1JQ1JPTiBmbGFzaA0KDQogICAgU29tZSBNSUNST04gcmVsYXRlZCBtYWNyb3MgaW4g
-c3BpLW5vciBkb21haW4gd2VyZSBTVC4NCiAgICBSZW5hbWUgZW50cmllcyByZWxhdGVkIHRvIFNU
-TWljcm9lbGVjdHJvbmljcyB1bmRlciBtYWNybyBTTk9SX01GUl9TVC4NCg0KICAgIEFkZGVkIGVu
-dHJ5IG9mIE1GUiBJZCBmb3IgTWljcm9uIGZsYXNoZXMsIDB4MDAyQy4NCg0KICAgIFNpZ25lZC1v
-ZmYtYnk6IFlvZ2VzaCBHYXVyIDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT4NCiAgICBSZXZp
-ZXdlZC1ieTogVHVkb3IgQW1iYXJ1cyA8dHVkb3IuYW1iYXJ1c0BtaWNyb2NoaXAuY29tPg0KICAg
-IFNpZ25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGJvb3RsaW4u
-Y29tPg0KDQoNCk9jdGFsIG1vZGUgc3VwcG9ydCBwYXRjaCBzZXJpZXMgaGFzIGRlcGVuZGVuY3kg
-b3ZlciB0aGVzZSBwYXRjaGVzLg0KU2hvdWxkIEkgc2VuZCB0aGVzZSB0d28gcGF0Y2hlcyBhZ2Fp
-biBvciBzcGVjaWZpZXMgdGhlbSBhcyBkZXBlbmRlbmN5IHBhdGNoZXMgaW4gdGhlIGNvdmVyIGxl
-dHRlci4NCg0KLS0NClJlZ2FyZHMNCllvZ2VzaCBHYXVyDQoNClsxXSBodHRwczovL3BhdGNod29y
-ay5vemxhYnMub3JnL3Byb2plY3QvbGludXgtbXRkL2xpc3QvP3Nlcmllcz03MDM4NCZzdGF0ZT0q
-DQoNCj4gUmVnYXJkcw0KPiBWaWduZXNoDQo+IA0KPiA+IC0tDQo+ID4gUmVnYXJkcw0KPiA+IFlv
-Z2VzaCBHYXVyDQo+ID4NCj4gPj4gUmVnYXJkcw0KPiA+PiBWaWduZXNoDQo+ID4+DQo+ID4+PiAg
-IG10ZDogc3BpLW5vcjogYWRkIG9wY29kZXMgZm9yIG9jdGFsIFJlYWQvV3JpdGUgY29tbWFuZHMN
-Cj4gPj4+ICAgbXRkOiBzcGktbm9yOiBhZGQgb2N0YWwgcmVhZCBmbGFnIGZvciBmbGFzaCBtdDM1
-eHU1MTJhYmENCj4gPj4+ICAgbXRkOiBtMjVwODA6IGFkZCBzdXBwb3J0IG9mIG9jdGFsIG1vZGUg
-SS9PIHRyYW5zZmVyDQo+ID4+PiAgIHNwaTogbnhwLWZzcGk6IGFkZCBvY3RhbCBtb2RlIGZsYWcg
-Yml0IGZvciBvY3RhbCBzdXBwb3J0DQo+ID4+PiAgIGFybTY0OiBkdHM6IGx4MjE2MGE6IHVwZGF0
-ZSBmc3BpIG5vZGUNCj4gPj4+DQo+ID4+PiBDaGFuZ2VzIGZvciB2NjoNCj4gPj4+IC0gQ29ycmVj
-dCBTLW8tYiB0YWcgd2l0aCBmdWxsIGF1dGhvciBuYW1lIGFzICdZb2dlc2ggTmFyYXlhbiBHYXVy
-Jy4NCj4gPj4+IC0gUmViYXNlIG9uIHRvcCBvZiB2NC4yMC1yYzUuDQo+ID4+PiBDaGFuZ2VzIGZv
-ciB2NToNCj4gPj4+IC0gTW9kaWZpZWQgc3RyaW5nICdvY3RvJyBhcyAnb2N0YWwnIGluIGFsbCBw
-YXRjaGVzLg0KPiA+Pj4gQ2hhbmdlcyBmb3IgdjQ6DQo+ID4+PiAtIFJlYmFzZSBvbiB0b3Agb2Yg
-djQuMjAtcmMyLg0KPiA+Pj4gLSBNb2RpZnkgb2N0byBlbnRyaWVzIGVudW0gdmFsdWUgaW4gc3Bp
-LmguDQo+ID4+PiBDaGFuZ2VzIGZvciB2MzoNCj4gPj4+IC0gQWRkIG9jdG8gbW9kZSBzdXBwb3J0
-IGluIHNwaV9zZXR1cCgpLg0KPiA+Pj4gLSBSZW5hbWUgYWxsIHBhdGNoZXMgd2l0aCAnb2N0YWwn
-IHN0cmluZyBtb2RpZmllZCBhcyAnb2N0bycuDQo+ID4+PiBDaGFuZ2VzIGZvciB2MjoNCj4gPj4+
-IC0gSW5jb3Jwb3JhdGVkIHJldmlldyBjb21tZW50cyBvZiBCb3JpcyBhbmQgVmlnbmVzaC4NCj4g
-Pj4+DQo+ID4+PiBZb2dlc2ggR2F1ciAoNyk6DQo+ID4+PiAgIHNwaTogYWRkIHN1cHBvcnQgZm9y
-IG9jdGFsIG1vZGUgSS9PIGRhdGEgdHJhbnNmZXINCj4gPj4+ICAgc3BpOiBzcGktbWVtOiBhZGQg
-c3VwcG9ydCBmb3Igb2N0YWwgbW9kZSBJL08gZGF0YSB0cmFuc2Zlcg0KPiA+Pj4gICBtdGQ6IHNw
-aS1ub3I6IGFkZCBvcGNvZGVzIGZvciBvY3RhbCBSZWFkL1dyaXRlIGNvbW1hbmRzDQo+ID4+PiAg
-IG10ZDogc3BpLW5vcjogYWRkIG9jdGFsIHJlYWQgZmxhZyBmb3IgZmxhc2ggbXQzNXh1NTEyYWJh
-DQo+ID4+PiAgIG10ZDogbTI1cDgwOiBhZGQgc3VwcG9ydCBvZiBvY3RhbCBtb2RlIEkvTyB0cmFu
-c2Zlcg0KPiA+Pj4gICBzcGk6IG54cC1mc3BpOiBhZGQgb2N0YWwgbW9kZSBmbGFnIGJpdCBmb3Ig
-b2N0YWwgc3VwcG9ydA0KPiA+Pj4gICBhcm02NDogZHRzOiBseDIxNjBhOiB1cGRhdGUgZnNwaSBu
-b2RlDQo+ID4+Pg0KPiA+Pj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1seDIx
-NjBhLXJkYi5kdHMgfCAgNCArKysrDQo+ID4+PiAgZHJpdmVycy9tdGQvZGV2aWNlcy9tMjVwODAu
-YyAgICAgICAgICAgICAgICAgICAgICB8ICA5ICsrKysrKysrLQ0KPiA+Pj4gIGRyaXZlcnMvbXRk
-L3NwaS1ub3Ivc3BpLW5vci5jICAgICAgICAgICAgICAgICAgICAgfCAxOSArKysrKysrKysrKysr
-KysrLS0tDQo+ID4+PiAgZHJpdmVycy9zcGkvc3BpLW1lbS5jICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICB8ICA5ICsrKysrKysrLQ0KPiA+Pj4gIGRyaXZlcnMvc3BpL3NwaS1ueHAtZnNwaS5j
-ICAgICAgICAgICAgICAgICAgICAgICAgfCAgNCArKy0tDQo+ID4+PiAgZHJpdmVycy9zcGkvc3Bp
-LmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDEyICsrKysrKysrKystLQ0KPiA+
-Pj4gIGluY2x1ZGUvbGludXgvbXRkL3NwaS1ub3IuaCAgICAgICAgICAgICAgICAgICAgICAgfCAx
-NiArKysrKysrKysrKystLS0tDQo+ID4+PiAgaW5jbHVkZS9saW51eC9zcGkvc3BpLmggICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8ICA0ICsrKy0NCj4gPj4+ICA4IGZpbGVzIGNoYW5nZWQsIDYz
-IGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4NCj4gPj4gLS0NCj4g
-Pj4gUmVnYXJkcw0KPiA+PiBWaWduZXNoDQoNCg==
+My bad, I was not cc-ing everyone but now with v7 I am, sorry about that.
+
+
+This is for passing through NVIDIA V100 GPUs on POWER9 systems.
+20/20 has the details of hardware setup.
+
+This implements support for NVIDIA V100 GPU with coherent memory and
+NPU/ATS support available in the POWER9 CPU. The aim is to support
+unmodified vendor driver in the guest.
+
+This is pushed to (both guest and host kernels):
+https://github.com/aik/linux/tree/nv2
+
+Matching qemu is pushed to github:
+https://github.com/aik/qemu/tree/nv2
+
+Skiboot bits are here:
+https://github.com/aik/skiboot/tree/nv2
+
+The individual patches have changelogs. v7 fixes compile warning
+and updates a VFIO capability comment in 20/20.
+
+Please comment. Thanks.
+
+
+
+Alexey Kardashevskiy (20):
+  powerpc/ioda/npu: Call skiboot's hot reset hook when disabling NPU2
+  powerpc/mm/iommu/vfio_spapr_tce: Change mm_iommu_get to reference a
+    region
+  powerpc/vfio/iommu/kvm: Do not pin device memory
+  powerpc/powernv: Move npu struct from pnv_phb to pci_controller
+  powerpc/powernv/npu: Move OPAL calls away from context manipulation
+  powerpc/pseries/iommu: Use memory@ nodes in max RAM address
+    calculation
+  powerpc/pseries/npu: Enable platform support
+  powerpc/pseries: Remove IOMMU API support for non-LPAR systems
+  powerpc/powernv/pseries: Rework device adding to IOMMU groups
+  powerpc/iommu_api: Move IOMMU groups setup to a single place
+  powerpc/powernv: Reference iommu_table while it is linked to a group
+  powerpc/powernv/npu: Move single TVE handling to NPU PE
+  powerpc/powernv/npu: Convert NPU IOMMU helpers to
+    iommu_table_group_ops
+  powerpc/powernv/npu: Add compound IOMMU groups
+  powerpc/powernv/npu: Add release_ownership hook
+  powerpc/powernv/npu: Check mmio_atsd array bounds when populating
+  powerpc/powernv/npu: Fault user page into the hypervisor's pagetable
+  vfio_pci: Allow mapping extra regions
+  vfio_pci: Allow regions to add own capabilities
+  vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver
+
+ drivers/vfio/pci/Makefile                     |   1 +
+ arch/powerpc/include/asm/iommu.h              |  17 +-
+ arch/powerpc/include/asm/mmu_context.h        |  15 +-
+ arch/powerpc/include/asm/pci-bridge.h         |   1 +
+ arch/powerpc/include/asm/pci.h                |   4 +
+ arch/powerpc/platforms/powernv/pci.h          |  30 +-
+ drivers/vfio/pci/trace.h                      | 102 ++++
+ drivers/vfio/pci/vfio_pci_private.h           |  20 +
+ include/uapi/linux/vfio.h                     |  37 ++
+ arch/powerpc/kernel/iommu.c                   |  69 +--
+ arch/powerpc/kvm/book3s_64_vio.c              |  18 +-
+ arch/powerpc/mm/mmu_context_iommu.c           | 110 +++-
+ arch/powerpc/platforms/powernv/npu-dma.c      | 549 +++++++++++++++---
+ arch/powerpc/platforms/powernv/pci-ioda-tce.c |   3 +-
+ arch/powerpc/platforms/powernv/pci-ioda.c     | 237 ++++----
+ arch/powerpc/platforms/powernv/pci.c          |  43 +-
+ arch/powerpc/platforms/pseries/iommu.c        |  88 ++-
+ arch/powerpc/platforms/pseries/pci.c          |  22 +
+ drivers/vfio/pci/vfio_pci.c                   |  42 +-
+ drivers/vfio/pci/vfio_pci_nvlink2.c           | 482 +++++++++++++++
+ drivers/vfio/vfio_iommu_spapr_tce.c           |  64 +-
+ drivers/vfio/pci/Kconfig                      |   6 +
+ 22 files changed, 1569 insertions(+), 391 deletions(-)
+ create mode 100644 drivers/vfio/pci/trace.h
+ create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
+
+-- 
+2.17.1
+
