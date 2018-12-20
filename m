@@ -2,129 +2,95 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0469C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B79FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A3A21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:15:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE49121741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:19:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqhlpFCL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731858AbeLTMPs (ORCPT
+        id S1731774AbeLTMTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:15:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38850 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731466AbeLTMPr (ORCPT
+        Thu, 20 Dec 2018 07:19:40 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44546 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729161AbeLTMTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:15:47 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKC63kL140377
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:15:46 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pg9pgbsmt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:15:46 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Thu, 20 Dec 2018 12:15:41 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Dec 2018 12:15:38 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKCFaLc6422858
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Dec 2018 12:15:36 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9008311C052;
-        Thu, 20 Dec 2018 12:15:36 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39F8011C04A;
-        Thu, 20 Dec 2018 12:15:36 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.99.194])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 20 Dec 2018 12:15:36 +0000 (GMT)
-Date:   Thu, 20 Dec 2018 13:15:35 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Michael Mueller <mimu@linux.ibm.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>,
-        KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Subject: Re: [PATCH v5 05/15] KVM: s390: unify pending_irqs() and
- pending_irqs_no_gisa()
-In-Reply-To: <62bf4bcf-585f-ddfc-e7a5-18fc946819d9@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
-        <20181219191756.57973-6-mimu@linux.ibm.com>
-        <20181220120614.65acacac.cohuck@redhat.com>
-        <62bf4bcf-585f-ddfc-e7a5-18fc946819d9@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Thu, 20 Dec 2018 07:19:40 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f18so1556153otl.11;
+        Thu, 20 Dec 2018 04:19:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vf4qKu0c0jrKrDi24L+SYLKQ4APSwnYjDMwf+iBTiQE=;
+        b=gqhlpFCLXYna5v3k3HtYbmf80qY46l7bhExshrSCsFBkpgd3hvw1tSACEj4lcO9Rmg
+         9aw6R6EKhRxWf5BhD+pIqaMq1weystbKk+laTx8OaEgsL7ECsbVcPLkJ6aBRd4FnFcFk
+         ZZReBOK0G+gOSoWBFUysjoHbwbIhjd8+4s/p0BlN53S3+AcbtQsvIi5XuCtd4bEamyTH
+         m0cQJTr0bksV9UNFnOtAkdl0L4fay7N82Uqje/w3Y0VGAmxxvStOZ7n2JnBs7g51/Fra
+         xg56zcwU68UThSkitC30kgmyxnH3RoCqEovMxGNKYs+u/PKfGX/3fPlNpibVb4hsBii3
+         OXrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vf4qKu0c0jrKrDi24L+SYLKQ4APSwnYjDMwf+iBTiQE=;
+        b=RFVYpRxqjv32x1k8kE0htULDEaRoCzc39lTOP0IbJNicrAVcaBpGlJxVCfMvTHSMwT
+         TgzynhL/bFfUKv8v2X442e4AEU8Hzn7Q/ykygCKfU7dUmwdvA5gLGG3yIlLeHcgEUr6e
+         ExLXzrmpsdIQRY/o8vxkJvsesqkFkDgNZK5x04YvEEuSpm5IOgeDEmko9Ovy6L6+nxg/
+         Y0otDg64Nf+k7fjZ6j5m5uEc1W0iIDTDyNYO31Q0uZR3nNWduNcHL0h81kVvqllPnLUe
+         YKSWaXDaQaDopWBVPs0QOTU7z+5STJrr42BcoW+s8L/rFGsCux9JLB1qdBeOX/o6zk8w
+         eTOA==
+X-Gm-Message-State: AA+aEWYyZTY1GLlxGeJwLl33JaOD31dksBDjZG25TpC7hiV4wbD54LyV
+        Mt5iXNi18PxgY/CNQPrOekUp8rZv0cMcBLPSU6s=
+X-Google-Smtp-Source: AFSGD/VAtsXtHXKSHxZ4UVO2V4FPR4uGycjFeclD3eugEhBqnSwpiSgR3zcWtu+wWcNb/7X/OjxlETgcQLP4opguDzE=
+X-Received: by 2002:a9d:5249:: with SMTP id q9mr17432055otg.160.1545308379878;
+ Thu, 20 Dec 2018 04:19:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18122012-0008-0000-0000-000002A4064B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122012-0009-0000-0000-0000220EA37B
-Message-Id: <20181220131535.0bd61b5c@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=727 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812200102
+References: <20181220085922.332225035@linuxfoundation.org> <20181220085923.169451350@linuxfoundation.org>
+In-Reply-To: <20181220085923.169451350@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Thu, 20 Dec 2018 12:19:04 +0000
+Message-ID: <CADVatmMq2cNhoM0RJyuS=u_u-K9ksM1TWLeD1+ytTzVsHx=i-A@mail.gmail.com>
+Subject: Re: [PATCH 4.14 21/72] locking/qspinlock: Ensure node is initialised
+ before updating prev->next
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Dec 2018 12:49:56 +0100
-Michael Mueller <mimu@linux.ibm.com> wrote:
+Hi Greg,
 
-> 
-> 
-> On 20.12.18 12:06, Cornelia Huck wrote:
-> > On Wed, 19 Dec 2018 20:17:46 +0100
-> > Michael Mueller <mimu@linux.ibm.com> wrote:
-> > 
-> >> Use a single function with parameter irq_flags to differentiate
-> >> between cases.
-> >>
-> >> New irq flag:
-> >>     IRQ_FLAG_LOCAL: include vcpu local interruptions pending
-> >>     IRQ_FLAG_FLOATING: include vcpu floating interruptions pending
-> >>     IRQ_FLAG_GISA: include GISA interruptions pending in IPM
-> > 
-> > I presume that means that irqs may be in more than one set? Or are gisa
-> > irqs not considered floating irqs, because they use a different
-> > mechanism?
-> 
-> Currently, the interruptions managed in GISA are floating only. But
-> that might change in future. 
+On Thu, Dec 20, 2018 at 9:27 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> commit 95bcade33a8af38755c9b0636e36a36ad3789fe6 upstream.
 
-I don't think GISA can be used for non-floating interrupts.
+It seems 9d4646d14d51 ("locking/qspinlock: Elide back-to-back RELEASE
+operations with smp_wmb()") is improving the fix. Is it worth to take
+this also?
 
-Regards,
-Halil
 
-> The idea is not to subsume IRQ_FLAG_GISA
-> in IRQ_FLAG_FLOATING but to be able to address the right set of 
-> procedures to determine the irq pending set for a given subset of irq
-> types that have different implementations.
-> 
-> There might be a better name for IRQ_FLAG_FLOATING then?
-> 
-
-[..]
-
+-- 
+Regards
+Sudip
