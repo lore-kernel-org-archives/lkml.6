@@ -2,99 +2,69 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193A0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E42FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD7EE206C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:10:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aFgzY/WX"
+	by mail.kernel.org (Postfix) with ESMTP id 4DA40206C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:11:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545322269;
+	bh=tdU4JOVhVYCY4bVTZIH1e9gxvGbLmLdyIzheiZ5aQus=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=NIIZnBhVcJ1y8QlWn4yhFUt+xhC02QKYKDuDzE/944PXfpfh1urJIY4kvszyrsY+H
+	 rbO3b8KuMQbqtE8TVVNyeDdDh2ADLMHnuuB+YvRpfdXOUO/e8z2OEo6qLMKwBjNjef
+	 eXedmMzS+DTUZmF2d0RKnXzuQVl6Lp1Ut14lKU+U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732943AbeLTQK6 (ORCPT
+        id S1732979AbeLTQLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:10:58 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35873 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732757AbeLTQKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:10:46 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p6so2801503wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 08:10:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CnhknRkRJgND+GstRyz0VxGv13ceIvrslPcHLDVtb5g=;
-        b=aFgzY/WXD9RhJymFKKqTTtuw3aH0Ve+4JMENOj8emUjMjwMXjloneezG0tjss3EdI4
-         CKZXzqy3v3mlJWE8XKBqzNpLqWlC0d1BbXxIDwezl0IWCUIpjMc8B/yVpWB48jrCw0ZC
-         /g22pqv/LpthC4UfeMuOQOeun/qzm4E1KA5+sIIjppJCXr5Wfxc+tQD6vVV6Ya2YN+jJ
-         B4w6jo8z7uHd2OMz1tCVXx6yFl9kgRDSzno45oWqYkBGqHQwlqJf9nxKINueVjzX2sH+
-         YPyT8enK+6MkRiga1Iz4EjTw8R7MpkKNin6FPtDFj2uSK/G9HNg1y/xn5AiY8JdYChLx
-         5TwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=CnhknRkRJgND+GstRyz0VxGv13ceIvrslPcHLDVtb5g=;
-        b=e9hGeuJcw8FV5dZZEc9jHFWks0P1Ysir9pxyjMTWjTmLG6YSwIqtpTW8vUcOJ9g6Jd
-         ELKyNno40hzMPLtqEG5BP2xqv04F4LwElI8erle8x8vZkmEMtC5smoX1FwdNqz//de5r
-         dxRcd91uiyOBFU94ryrRJ3UdH5kyZPVDpuQ1lYPI4m0EEJ+hY3XMOSF8TzpgkKJGMIHY
-         xeBcPrzWiAyaNj/GaL3fWF7OXAvUzz5vsXslD4g3pwiNTTjECPgf84OFm7pmR7qjg9q9
-         XO2OaTw4bdUdMY3ElLV4EmaKXdtS9TQEU/W7kBNAkhdvE0MiRWUnwXIcu+LSaR5ZbwEC
-         bo7w==
-X-Gm-Message-State: AA+aEWZnk0ZQSggP1tQh6pwQWcF/zWGbJDaSt2cXHpnUYEFSZvRXvYnn
-        5K++4dvMuUqdUR9+TZDKORhElQ==
-X-Google-Smtp-Source: AFSGD/V4/m3InhsVVUa024rnI0uZJh864DHPgw5rA968fKZ2BerjzAwNGYRsEZ1+NSC80hu6GmQSMQ==
-X-Received: by 2002:a1c:67c2:: with SMTP id b185mr11210412wmc.96.1545322244547;
-        Thu, 20 Dec 2018 08:10:44 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id x10sm10941186wrn.29.2018.12.20.08.10.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 08:10:43 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: meson: libretech-cc: set eMMC as removable
-Date:   Thu, 20 Dec 2018 17:10:36 +0100
-Message-Id: <20181220161037.23756-2-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181220161037.23756-1-jbrunet@baylibre.com>
-References: <20181220161037.23756-1-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 20 Dec 2018 11:11:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731515AbeLTQKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:10:02 -0500
+Subject: Re: [GIT PULL] USB driver fixes for 4.20-rc8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545322201;
+        bh=tdU4JOVhVYCY4bVTZIH1e9gxvGbLmLdyIzheiZ5aQus=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=UBBxQy94XNq5K5cimVm+/Y8Y4R702ENCGRefmfUdYbuTvT8w0diTgxNOPPmc5QOQg
+         m8BgCPT65hQe2xoAFvbKUacDL+DBafYwtBU84RDrU71/YxOn9UUXAYCsjLZ4P68H6p
+         srOrdfw7gOWp6RgHPQwlhMJbBNZeVuU+xaYodsck=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20181220123838.GA18210@kroah.com>
+References: <20181220123838.GA18210@kroah.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20181220123838.GA18210@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+ tags/usb-4.20-rc8
+X-PR-Tracked-Commit-Id: 2419f30a4a4fcaa5f35111563b4c61f1b2b26841
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 177c459b08a34dcf004aa9a4c1f1d8be682ff3af
+Message-Id: <20181220161001.12746.39892.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 20 Dec 2018 16:10:01 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The eMMC on this board is add-on module which is not mandatory. Removing
-'non-removable' property should prevent some errors when booting a board
-w/o an eMMC module present.
+The pull request you sent on Thu, 20 Dec 2018 13:38:38 +0100:
 
-Fixes: 72fb2c852188 ("ARM64: dts: meson-gxl-s905x-libretech-cc: fixup board definition")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts | 1 -
- 1 file changed, 1 deletion(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-4.20-rc8
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-index db293440e4ca..daad007fac1f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-@@ -256,7 +256,6 @@
- 	cap-mmc-highspeed;
- 	mmc-ddr-3_3v;
- 	max-frequency = <50000000>;
--	non-removable;
- 	disable-wp;
- 
- 	mmc-pwrseq = <&emmc_pwrseq>;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/177c459b08a34dcf004aa9a4c1f1d8be682ff3af
+
+Thank you!
+
 -- 
-2.19.2
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
