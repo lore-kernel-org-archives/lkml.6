@@ -6,46 +6,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC313C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCE3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B59F21720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEA692177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297669;
-	bh=otT3yRAWha/cesQi+15VOumCYOa+gEMcLxBMG1c9eFo=;
+	s=default; t=1545297673;
+	bh=uWDcZBVVmz6XIF80OokLkFYHMR3ZF4lco2/MU/0Bcac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=coIfvXuY2zS5X14mh1cLLxniTO5ph8oDVqCmPk2C+T6ncaYwow1ekkQDKfxhWnAZM
-	 H/unjciwfwiu6INHTV6Rh0rwc0+JPXT3X49ivU/bSXm7woSe/zMJ1OnS20+Dokr7YC
-	 UyCo+M55Hy3E+iakwZCxtSkGFD8E+AjwH61x7ng4=
+	b=sitQtadW9JCfF1/w7mAVMs0hq/h9uZIoeqiuAmVNG/VUN12zSNDLfuL1wVSjTP47q
+	 XorKjS1ouGFRyNLKBvBHxECUjbLMjtCjMuxwyAituWMgJtDSX//LH69mu+AsD3FGQz
+	 8PIfmlR5x/yK2pguNFHWYUZiCSrGlsfovCOLH7EI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730979AbeLTJVI (ORCPT
+        id S1730991AbeLTJVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:21:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58830 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:21:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730967AbeLTJVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:21:06 -0500
+        id S1730402AbeLTJVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:21:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7391821720;
-        Thu, 20 Dec 2018 09:21:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C8EF21773;
+        Thu, 20 Dec 2018 09:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297665;
-        bh=otT3yRAWha/cesQi+15VOumCYOa+gEMcLxBMG1c9eFo=;
+        s=default; t=1545297668;
+        bh=uWDcZBVVmz6XIF80OokLkFYHMR3ZF4lco2/MU/0Bcac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TzD6pkIiiKMWHNXEopJhHTk4Uw75zDF0qy1YPaIA9hZcjTyoeSfhUHZCiRoULPi0t
-         vhu2l/Zyt/XnW2nBYN6b+x/j/0k4azYVbfRqIjWYorf7ro5pMc3PyhqXkMEYkGQMkN
-         gIh0ySlcSYUR2IhKZNVzNXklQTcKIwSkM0fE1FY4=
+        b=1Ge3YnPDuJzoatsL3s9y4I7THAanQSVHQfmDX0Rl0oAnfhrTsC+EhqYgyy5IomfC7
+         ZSCRX7Nrgy+4esuZqctEfxdrLYLArv3b6cHG7Sge76nuVGoELbFyQd3syowWPTLVEX
+         212JTMHHfxYjILQLW9OWyhUgqy6DMKNu0coUaK4o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radu Rendec <radu.rendec@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.4 13/40] powerpc/msi: Fix NULL pointer access in teardown code
-Date:   Thu, 20 Dec 2018 10:18:25 +0100
-Message-Id: <20181220085827.009530462@linuxfoundation.org>
+        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 4.4 14/40] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
+Date:   Thu, 20 Dec 2018 10:18:26 +0100
+Message-Id: <20181220085827.048546428@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
 References: <20181220085826.212663515@linuxfoundation.org>
@@ -64,54 +68,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Radu Rendec <radu.rendec@gmail.com>
+From: Brian Norris <briannorris@chromium.org>
 
-commit 78e7b15e17ac175e7eed9e21c6f92d03d3b0a6fa upstream.
+commit 63238173b2faf3d6b85a416f1c69af6c7be2413f upstream.
 
-The arch_teardown_msi_irqs() function assumes that controller ops
-pointers were already checked in arch_setup_msi_irqs(), but this
-assumption is wrong: arch_teardown_msi_irqs() can be called even when
-arch_setup_msi_irqs() returns an error (-ENOSYS).
+This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
 
-This can happen in the following scenario:
-  - msi_capability_init() calls pci_msi_setup_msi_irqs()
-  - pci_msi_setup_msi_irqs() returns -ENOSYS
-  - msi_capability_init() notices the error and calls free_msi_irqs()
-  - free_msi_irqs() calls pci_msi_teardown_msi_irqs()
+It causes new warnings [1] on shutdown when running the Google Kevin or
+Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
+different than what Marc and Heiko test.
 
-This is easier to see when CONFIG_PCI_MSI_IRQ_DOMAIN is not set and
-pci_msi_setup_msi_irqs() and pci_msi_teardown_msi_irqs() are just
-aliases to arch_setup_msi_irqs() and arch_teardown_msi_irqs().
+We're looking at a different approach (e.g., [2]) to replace this, but
+IMO the revert should be taken first, as it already propagated to
+-stable.
 
-The call to free_msi_irqs() upon pci_msi_setup_msi_irqs() failure
-seems legit, as it does additional cleanup; e.g.
-list_del(&entry->list) and kfree(entry) inside free_msi_irqs() do
-happen (MSI descriptors are allocated before pci_msi_setup_msi_irqs()
-is called and need to be cleaned up if that fails).
+[1] Report here:
+http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
 
-Fixes: 6b2fd7efeb88 ("PCI/MSI/PPC: Remove arch_msi_check_device()")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Radu Rendec <radu.rendec@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
+...
+ Call trace:
+  drm_mode_config_cleanup+0x1c4/0x294
+  rockchip_drm_unbind+0x4c/0x8c
+  component_master_del+0x88/0xb8
+  rockchip_drm_platform_remove+0x2c/0x44
+  rockchip_drm_platform_shutdown+0x20/0x2c
+  platform_drv_shutdown+0x2c/0x38
+  device_shutdown+0x164/0x1b8
+  kernel_restart_prepare+0x40/0x48
+  kernel_restart+0x20/0x68
+...
+ Memory manager not clean during takedown.
+ WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
+...
+  drm_mm_takedown+0x34/0x44
+  rockchip_drm_unbind+0x64/0x8c
+  component_master_del+0x88/0xb8
+  rockchip_drm_platform_remove+0x2c/0x44
+  rockchip_drm_platform_shutdown+0x20/0x2c
+  platform_drv_shutdown+0x2c/0x38
+  device_shutdown+0x164/0x1b8
+  kernel_restart_prepare+0x40/0x48
+  kernel_restart+0x20/0x68
+...
+
+[2] https://patchwork.kernel.org/patch/10556151/
+    https://www.spinics.net/lists/linux-rockchip/msg21342.html
+    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
+
+Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Vicente Bergas <vicencb@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181205181657.177703-1-briannorris@chromium.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/msi.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/arch/powerpc/kernel/msi.c
-+++ b/arch/powerpc/kernel/msi.c
-@@ -34,5 +34,10 @@ void arch_teardown_msi_irqs(struct pci_d
- {
- 	struct pci_controller *phb = pci_bus_to_host(dev->bus);
- 
--	phb->controller_ops.teardown_msi_irqs(dev);
-+	/*
-+	 * We can be called even when arch_setup_msi_irqs() returns -ENOSYS,
-+	 * so check the pointer again.
-+	 */
-+	if (phb->controller_ops.teardown_msi_irqs)
-+		phb->controller_ops.teardown_msi_irqs(dev);
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -547,11 +547,6 @@ static int rockchip_drm_platform_remove(
+ 	return 0;
  }
+ 
+-static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
+-{
+-	rockchip_drm_platform_remove(pdev);
+-}
+-
+ static const struct of_device_id rockchip_drm_dt_ids[] = {
+ 	{ .compatible = "rockchip,display-subsystem", },
+ 	{ /* sentinel */ },
+@@ -561,7 +556,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
+ static struct platform_driver rockchip_drm_platform_driver = {
+ 	.probe = rockchip_drm_platform_probe,
+ 	.remove = rockchip_drm_platform_remove,
+-	.shutdown = rockchip_drm_platform_shutdown,
+ 	.driver = {
+ 		.name = "rockchip-drm",
+ 		.of_match_table = rockchip_drm_dt_ids,
 
 
