@@ -6,83 +6,83 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3184CC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483E2C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2B0218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E81A218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545338090;
-	bh=OPULwwFhcOOz3opOU0r8BsJBpItaPvmPuuu3yjWpU4E=;
+	s=default; t=1545338126;
+	bh=rFyw9wzfwhrOXv31IQbgV4kDWP+G3l1GBOYtg1RVk9M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tzvHSgfqe6V2k7JezLq47znWy7l5w4wYDgQtTyIN7kHSAOu+nU0LpdbJlfFYYVfXM
-	 JIB6WM43h6DT+yiUX5YYatvWN+KR/Z0HTL9to+88Essm/iBYHR8y21neBwZ6kagtI7
-	 IpxCf637DSfpgvO7c+J6RbLY5Htag5G/Wq+FcDx4=
+	b=TIQMAUvikdC53ZXsleDPSx+55VF+LpXkcP6SnH0nswipWm8sLOOhOg3umn4CcSohu
+	 G3fSQrybONj2GYpvjjZtAbxldmKaB9RvDRnWQpu/18vcqEYhMPRNuer27QRGzWAyFC
+	 N2NlYRJH3/uvktIfCWXHlfpYZBi4Opwnt25aPJCE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389595AbeLTUet (ORCPT
+        id S2389619AbeLTUfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:34:49 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43350 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732267AbeLTUes (ORCPT
+        Thu, 20 Dec 2018 15:35:25 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35222 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732267AbeLTUfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:34:48 -0500
-Received: by mail-oi1-f193.google.com with SMTP id u18so2983328oie.10;
-        Thu, 20 Dec 2018 12:34:48 -0800 (PST)
+        Thu, 20 Dec 2018 15:35:25 -0500
+Received: by mail-oi1-f196.google.com with SMTP id v6so3011772oif.2;
+        Thu, 20 Dec 2018 12:35:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p0kj97/JA/6KPX1ql/1vAJIkgOF/pQnn0nZGJwn6ih0=;
-        b=Eu6WNrAzzKSgsSyBhU59R+ezzEnoEEMiVuDTGCvfDXigPuPvQe6rcyX/O7X35bSZju
-         Xzv1yJL/YwX4lutm+AIHdsyn76Ng3pHmRuTgP9JrzEMTQpIrzqsGgjRJHLGmxtDKRnQ/
-         +jCL4j9Bq+pc+M4b6P0lLB2jrPcEOAS7pKwpAf5g9RTUGl8NRac6lg/wBCCedF2wECVv
-         hXrRNFGgZoSE9lOiUHuZhlSbUgf7bEfZNeipRBLMOkGsPYtWoH1WwWG3JNn+x/q43nYt
-         9S0Z72ZLPnwLGE0SFsLh6O4JkutSVvvuobrSD6Vcin0iVwdPuOOdoO+9erLAitrw4Mgl
-         SoPg==
-X-Gm-Message-State: AA+aEWZVfpx6ENSWv7wO/X/a1RFahxX8GToG1/r79IVeG0FwVrn0Kbzb
-        E+2iTFfPfmtprS/QvbLlww==
-X-Google-Smtp-Source: ALg8bN5PhBUsoBlwIrVvdQtOta7yKHiW+IZF39B0RrPUYz7koFILDFmU5e7MtohrtA7ZkdjCRms6JA==
-X-Received: by 2002:aca:e283:: with SMTP id z125mr150404oig.23.1545338088062;
-        Thu, 20 Dec 2018 12:34:48 -0800 (PST)
+        bh=NTFJUVPQghivUHhiPHuLrBOSdI7uTrC9xfUu6pjHapo=;
+        b=MZcXV2j3BVd2Zb5iFsY4I8CJ6I9EAV/KiBoSWPnGBdS8esiZW9oy+G+0m56eOUwuRn
+         jWLEFw61DYqmOuXUZJpeuVcWgo9O7Gho5ZMe6K76NgvfdqjOjWUIWjyO0l5d06fZwoT4
+         fMZW+RkDlHS0KOYMWTMqLPD2FF1dY1XwafgodAbUt3OcUb1pcx5GFuY12IMAfL9m++4s
+         6LBr80nIAGeLekAGyEDlHkSZqxMfrTIcD6YznYPvNfxtDefJr6nX6HLhnveNjxtar6hk
+         rMC+XsW1G3cqyw1rBa+lP2eSx3c02AMgE0CWhjPeOSompljDOkphXb6Wie6dMJ7Uy4FU
+         na2w==
+X-Gm-Message-State: AJcUukdFb2zwkUmxZUIXYnFytExM8HQc+lBslEFiGnSyMvoPdo04FjjG
+        qzqNzwNBHAGQBXklB+1pAA==
+X-Google-Smtp-Source: ALg8bN7hCa3lpXKAtU8bcgK8UOJe44fE9gaKeezZBZLrGKM+47KpOxfveoRaY/OaB1AqikpmdyaPrQ==
+X-Received: by 2002:aca:cc8b:: with SMTP id c133mr160013oig.256.1545338124082;
+        Thu, 20 Dec 2018 12:35:24 -0800 (PST)
 Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id o8sm10914048oia.53.2018.12.20.12.34.47
+        by smtp.gmail.com with ESMTPSA id j5sm22159341otc.54.2018.12.20.12.35.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:34:47 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:34:46 -0600
+        Thu, 20 Dec 2018 12:35:23 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:35:22 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Mark Rutland <mark.rutland@arm.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774c0
+Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a774c0
  support
-Message-ID: <20181220203446.GA16133@bogus>
-References: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-ID: <20181220203522.GA17057@bogus>
+References: <1544732333-6086-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732333-6086-1-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 20:18:04 +0000, Fabrizio Castro wrote:
-> Document RZ/G2E (R8A774C0) SoC bindings.
+On Thu, 13 Dec 2018 20:18:53 +0000, Fabrizio Castro wrote:
+> RZ/G2E (R8A774C0) watchdog implementation is compatible with R-Car
+> Gen3, therefore add relevant documentation.
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > ---
->  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+>  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
 >  1 file changed, 1 insertion(+)
 > 
 
