@@ -2,183 +2,157 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED22C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F466C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B11982186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:27:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B474217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kwzAOckJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acv4BUQf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732013AbeLTM1q (ORCPT
+        id S1732028AbeLTM2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:27:46 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37295 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbeLTM1p (ORCPT
+        Thu, 20 Dec 2018 07:28:40 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45821 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbeLTM2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:27:45 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181220122744euoutp0154915cd749559af4cc3195c1899d8dbb~yCjmMLdVK2150821508euoutp01o
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 12:27:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181220122744euoutp0154915cd749559af4cc3195c1899d8dbb~yCjmMLdVK2150821508euoutp01o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545308864;
-        bh=Cw3DdqCKr3SKDlrUZLWOJxtsVC0jIssC1KyVfRIzyTA=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=kwzAOckJtKo35ZKCeGeqlf2IckB+uiB3/2M5wI1Q8q3hga34D3kbJEImPOu8wP0Us
-         4ucJsSZi7m9edN0+A2xF60InOLoyP67IaEytIddcsKFUkz4xS73OoobVtV6cGuWGOb
-         e70ROV2HNS26o8+hKlZiWn49/AncfQQp2JP9mY2o=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181220122743eucas1p297f022e703da115e7d1853f70fb66d23~yCjlYikSY2820628206eucas1p2e;
-        Thu, 20 Dec 2018 12:27:43 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 42.C8.04806.FBA8B1C5; Thu, 20
-        Dec 2018 12:27:43 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181220122742eucas1p14614fd6417d91aca49c6b319f11d9ffa~yCjkUko5-0230602306eucas1p1m;
-        Thu, 20 Dec 2018 12:27:42 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181220122742eusmtrp2c17122f07d57248eab94e75ded70e267~yCjkF39dv2401724017eusmtrp2Y;
-        Thu, 20 Dec 2018 12:27:42 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-1a-5c1b8abf11a0
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 64.2A.04284.EBA8B1C5; Thu, 20
-        Dec 2018 12:27:42 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181220122741eusmtip293e460dcb8fd14c78754ead25a4adfe6~yCjjrwUQs2864028640eusmtip2u;
-        Thu, 20 Dec 2018 12:27:41 +0000 (GMT)
-Subject: Re: [PATCH v4 2/3] driver core: add deferring probe reason to
- devices_deferred property
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        javierm@redhat.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <cca5a8fd-24a6-511c-e5a5-2c6627fce247@samsung.com>
-Date:   Thu, 20 Dec 2018 13:27:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+        Thu, 20 Dec 2018 07:28:39 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y78so817880qka.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:28:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=62KEInXrjRaB/3jWw4KmGBRgyYPeGURKb6+SwrUGB8Y=;
+        b=acv4BUQfrFHb3tsBd+xUZeXqo8ypOF14sPVCqAOOH6ozqKqSaVeAs0140yFETb+2xx
+         YC6klCbh5DzEGQGg6fqA1TAFgBbi3v11OmTUkxVdKunBdKg8YxvLMgBuRi4lOLFP/+yw
+         7aj+fh5tfWi5MiN/sJuNfgrCQS1pr/fDHQIbq9N6g8GwU8zBERL5wV2BUvx3IEcrW0qH
+         HPwXrm3piEQRU0EvIJMXWdWRwHGu5xD94Z4s8b7dXTL6ZFNGncLyEhwrbMWypzaAs8d2
+         v3LAz4gPHF0jmp9KSTTEMCDmUXs2F+VH4dpdwQsfuMuySaeR7IRkFfLXOw9E/S+qLkJS
+         qR5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=62KEInXrjRaB/3jWw4KmGBRgyYPeGURKb6+SwrUGB8Y=;
+        b=o1RBazOUhzaTKLEpvSkUrQZ1KDQvyze6ygsBnB520gcI5mtSuGhmYcF5fAYqx7Mvwk
+         9W5yo3f0/lA9Tbyu+e92hLPwwLY5kPKRtGO94J2In1rOcC6VNxl1uF3/i+/C2vJCNcgc
+         76cjYmjfJoPpRSABXCWpXw18SVbz+VuNEDfQMNNZCClDq8//vxl86MZC37mu6y8jiv4D
+         Yy/yDVJGOynLZmjvZUNGFIatFw7gfPHvh+YTm7WnTp/nEnCpok0FatcaJxQAzuIn1x3a
+         n+fayO2uWKWY56cqWuZcj/S7uSCjL0p408wAIn0oqGfsy+zDVitkCDNoaJCYJ2coYl11
+         SDBg==
+X-Gm-Message-State: AA+aEWa0E80+wSplYajrIlnhP2119Q6pJd3LmYlgIS+6MMYp/YTzf9SU
+        uzZtjJhkuHk5WtIv9VFNI5Q=
+X-Google-Smtp-Source: AFSGD/UkUXy8HJMNDJENY1efDyUeJwZ4sF91Mo0E5muuECexN+wfxneve2+0K9kjOl474PizEHN13w==
+X-Received: by 2002:a37:9604:: with SMTP id y4mr24987338qkd.279.1545308918366;
+        Thu, 20 Dec 2018 04:28:38 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id c49sm3980226qtc.94.2018.12.20.04.28.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 04:28:37 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:28:32 -0200
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 6/7] drm: Remove use of drm_mode_object
+Message-ID: <c595c8b733c08d7c26c69c3af3a150ccad7e441d.1545308167.git.shayenneluzmoura@gmail.com>
+References: <cover.1545308167.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0jW3qu+ctS8h3BwZeQBD_6sF+yCPoQ1P-hEBidmOyWRkw@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGKsWRmVeSWpSXmKPExsWy7djPc7r7u6RjDG5tELB4OeEwo8XGGetZ
-        LaY+fMJm0bx4PZvFwmnLGS02Pb7GanF51xw2i0NT9zJarD1yl91i7pepzA5cHpevXWT22Dnr
-        LrvHplWdbB77565h99i8pN7j/b6rbB59W1YxenzeJBfAEcVlk5Kak1mWWqRvl8CVse72KcaC
-        xYIVq5aeZG5gfMzbxcjJISFgIrF26l+2LkYuDiGBFYwSqz/COF8YJd5cWccC4XxmlPiw4T4T
-        TMvpvh1MEInljBK/pv6AannLKNHT8ZQdpEpYIEnix+tTzCC2iIC2xJJFV8FsZoFFzBLvdmiA
-        2GwCmhJ/N99kA7F5Bewknj1exNjFyMHBIqAqcXclH0hYVCBCouP+aqgSQYmTM5+wgJRwCgRK
-        zLyXDTFRXmL72zlQ08Ulbj2ZD3abhMAjdomXEyaxQhztInH560dGCFtY4tXxLewQtozE/53z
-        oR6rl2iaeYUZormDUeLE4uVsEAlricPHL7KCLGYGunn9Ln2IsKPEsYlnmUHCEgJ8EjfeCkLc
-        wCcxadt0qDCvREebEES1osT9s1uZIWxxiaUXvrJNYFSaheSxWUi+mYXkm1kIexcwsqxiFE8t
-        Lc5NTy02zkst1ytOzC0uzUvXS87P3cQITF2n/x3/uoNx35+kQ4wCHIxKPLwzoqRihFgTy4or
-        cw8xSnAwK4nw9nZKxwjxpiRWVqUW5ccXleakFh9ilOZgURLnrWZ4EC0kkJ5YkpqdmlqQWgST
-        ZeLglGpgXDJVjPFK6YrMuuM+K5uUT9uHexjGn/2cLcr49qObTsiqA7opJvnesfINrS3vjffp
-        Orw3iVgkpxZYbns4/dcT18nmzwobTpzmPNGq+SF4Qd+W2g4FQZX7Njz8Dcv2b7v1VrhMk3XB
-        52ufA+u4Cqa/82+9oR5Zufbj1N8Reee4e37cCyky8fuvxFKckWioxVxUnAgA618R01kDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xe7r7uqRjDL684bB4OeEwo8XGGetZ
-        LaY+fMJm0bx4PZvFwmnLGS02Pb7GanF51xw2i0NT9zJarD1yl91i7pepzA5cHpevXWT22Dnr
-        LrvHplWdbB77565h99i8pN7j/b6rbB59W1YxenzeJBfAEaVnU5RfWpKqkJFfXGKrFG1oYaRn
-        aGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXse72KcaCxYIVq5aeZG5gfMzbxcjJISFg
-        InG6bwdTFyMXh5DAUkaJSavXM0MkxCV2z38LZQtL/LnWxQZR9JpR4nj/FLCEsECSxI/Xp8Bs
-        EQFtiSWLrjKDFDELLGKW2DmjmQWio4FJ4nrTKyaQKjYBTYm/m2+ygdi8AnYSzx4vYuxi5OBg
-        EVCVuLuSDyQsKhAhcfblOkaIEkGJkzOfsICUcAoESsy8lw0SZhZQl/gz7xIzhC0vsf3tHChb
-        XOLWk/lMExiFZiHpnoWkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQIjNdt
-        x35u3sF4aWPwIUYBDkYlHt4ZUVIxQqyJZcWVuYcYJTiYlUR4H2dJxwjxpiRWVqUW5ccXleak
-        Fh9iNAV6bSKzlGhyPjCV5JXEG5oamltYGpobmxubWSiJ8543qIwSEkhPLEnNTk0tSC2C6WPi
-        4JRqYEzdNdH+lZsUu3qsqZ3ozZqFVaWT4uzkcjsm630K5u15qVUi8mW9fP+ahOkHDyUzML/k
-        PCG/mFc5enHzzzl9hgvbp6T8M69dGtKU8XivR0fcq+37lgRK+L585ODWlnt66zendRu+S2yN
-        t+P7el9K8cG3Ld173uyN1ZT582R7x8LJe/L/7dvxsUKJpTgj0VCLuag4EQCeO41A7QIAAA==
-X-CMS-MailID: 20181220122742eucas1p14614fd6417d91aca49c6b319f11d9ffa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181220102259eucas1p1884a0b68ce342239c2a43a74cc50725a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181220102259eucas1p1884a0b68ce342239c2a43a74cc50725a
-References: <CGME20181220102259eucas1p1884a0b68ce342239c2a43a74cc50725a@eucas1p1.samsung.com>
-        <20181220102247.4911-1-a.hajda@samsung.com>
-        <20181220102247.4911-3-a.hajda@samsung.com>
-        <CAJZ5v0jW3qu+ctS8h3BwZeQBD_6sF+yCPoQ1P-hEBidmOyWRkw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1545308167.git.shayenneluzmoura@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.12.2018 12:04, Rafael J. Wysocki wrote:
-> On Thu, Dec 20, 2018 at 11:23 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
->> /sys/kernel/debug/devices_deferred property contains list of deferred devices.
->> This list does not contain reason why the driver deferred probe, the patch
->> improves it.
->> The natural place to set the reason is probe_err function introduced recently,
->> ie. if probe_err will be called with -EPROBE_DEFER instead of printk the message
->> will be attached to deferred device and printed when user read devices_deferred
->> property.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> Reviewed-by: Mark Brown <broonie@kernel.org>
->> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
->> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> ---
->> v4:
->>   - removed NULL check before kfree,
->>   - coding style tweaking.
->> v3:
->>   - adjusted deferred_devs_show, to accept newline ended messages,
->>   - changed conditonal check to positive,
->>   - added R-b by Andy.
->> v2:
->>   - changed __deferred_probe_set_msg args - like in __dev_printk, fits better,
->>   - use kasprintf instead of bunch of code,
->>   - keep consistent format of devices_deferred lines,
->>   - added R-Bs (again I hope changes above are not against it).
->> ---
->> ---
->>  drivers/base/base.h |  3 +++
->>  drivers/base/core.c |  9 +++++----
->>  drivers/base/dd.c   | 21 ++++++++++++++++++++-
->>  3 files changed, 28 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/base/base.h b/drivers/base/base.h
->> index 7a419a7a6235..effbd5e7f9f1 100644
->> --- a/drivers/base/base.h
->> +++ b/drivers/base/base.h
->> @@ -75,6 +75,7 @@ struct device_private {
->>         struct klist_node knode_driver;
->>         struct klist_node knode_bus;
->>         struct list_head deferred_probe;
->> +       char *deferred_probe_msg;
-> Many drivers will never use this, so is the memory overhead justified?
+This patch removes the drm_mode_object prints, evaluation and use from
+drm_display_mode objects used in drm files. It removes dependency from
+drm_mode_object.
 
+Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-I can try to move it somewhere else if it is a problem.
+---
+Changes in v2:
+  - No change
 
-Putting it here seems quite natural - near deferred_probe field which
-should have similar number of users.
+ drivers/gpu/drm/drm_crtc_helper.c | 5 ++---
+ drivers/gpu/drm/drm_modes.c       | 9 ---------
+ 2 files changed, 2 insertions(+), 12 deletions(-)
 
-
-Regards
-
-Andrzej
-
-
->
->>         struct device *device;
->>  };
->
+diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
+index a3c81850e755..cc5cc8d109a2 100644
+--- a/drivers/gpu/drm/drm_crtc_helper.c
++++ b/drivers/gpu/drm/drm_crtc_helper.c
+@@ -386,9 +386,8 @@ bool drm_crtc_helper_set_mode(struct drm_crtc *crtc,
+ 		if (!encoder_funcs)
+ 			continue;
+ 
+-		DRM_DEBUG_KMS("[ENCODER:%d:%s] set [MODE:%d:%s]\n",
+-			encoder->base.id, encoder->name,
+-			mode->base.id, mode->name);
++		DRM_DEBUG_KMS("[ENCODER:%d:%s] set [MODE:%s]\n",
++			encoder->base.id, encoder->name, mode->name);
+ 		if (encoder_funcs->mode_set)
+ 			encoder_funcs->mode_set(encoder, mode, adjusted_mode);
+ 
+diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+index 24a750436559..adce9a26bac9 100644
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -71,11 +71,6 @@ struct drm_display_mode *drm_mode_create(struct drm_device *dev)
+ 	if (!nmode)
+ 		return NULL;
+ 
+-	if (drm_mode_object_add(dev, &nmode->base, DRM_MODE_OBJECT_MODE)) {
+-		kfree(nmode);
+-		return NULL;
+-	}
+-
+ 	return nmode;
+ }
+ EXPORT_SYMBOL(drm_mode_create);
+@@ -92,8 +87,6 @@ void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode)
+ 	if (!mode)
+ 		return;
+ 
+-	drm_mode_object_unregister(dev, &mode->base);
+-
+ 	kfree(mode);
+ }
+ EXPORT_SYMBOL(drm_mode_destroy);
+@@ -911,11 +904,9 @@ EXPORT_SYMBOL(drm_mode_set_crtcinfo);
+  */
+ void drm_mode_copy(struct drm_display_mode *dst, const struct drm_display_mode *src)
+ {
+-	int id = dst->base.id;
+ 	struct list_head head = dst->head;
+ 
+ 	*dst = *src;
+-	dst->base.id = id;
+ 	dst->head = head;
+ }
+ EXPORT_SYMBOL(drm_mode_copy);
+-- 
+2.17.1
 
