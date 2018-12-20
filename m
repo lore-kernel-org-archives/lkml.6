@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DA9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1930C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F6B621741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E14E2177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298261;
-	bh=lafk3JEsh7IKdb/r+9BFetEAaYAY6G0Jmlnc2bD8i1U=;
+	s=default; t=1545298267;
+	bh=GI//qzXnjUcEQZEIjcS3Qn4IBLtVQxSU14W0fVC/890=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i/DzX/OmCBAktANLXSqCx6xkPddV7xBOPl6Bhk1J0P4SSRC2j03UQIKZ147sSZVFw
-	 2Ty+P101VeSLsgVVc3SrPBSQDgimfLP7SgBKiR16cHg/MgVT62eqwfXFDQaDcH1zNC
-	 u0OEr2nnWXu2P1bEG8TReehfm9cZoyBlskLhyDh4=
+	b=dPcpCN/N+8LLFA5Ag5pAtc+ixii1nNvVUoDQThtWQ4ICY++1wuDKNQa5oF5q5GK67
+	 Y1qYXSQ1FQ1J2PIc5bkDkocO4kpb89Ezvr9VMTD0H3XrNsmWyZztq54ObN2UmX4w7t
+	 wlNpClz/m8spCrpxwB7Nj9XIfONF5m6vBOEyPrFQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbeLTJbA (ORCPT
+        id S1733057AbeLTJbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:31:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42806 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:31:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732324AbeLTJa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:57 -0500
+        id S1733036AbeLTJbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:31:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AFBB20656;
-        Thu, 20 Dec 2018 09:30:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7DA220656;
+        Thu, 20 Dec 2018 09:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298256;
-        bh=lafk3JEsh7IKdb/r+9BFetEAaYAY6G0Jmlnc2bD8i1U=;
+        s=default; t=1545298259;
+        bh=GI//qzXnjUcEQZEIjcS3Qn4IBLtVQxSU14W0fVC/890=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQOPHFx2XwuyyBcHkM3K9kuAwtSIWBE1Joc+M5sUZNUGSAotDuf25dmuD0A9KheoH
-         aR/rHhsrDFnHMxhOkmUhM4CJJ4ajuwN5JmacIY7xwfZU4fKgPgqtwb+hLPPRJj242Z
-         Hdf40O1O+NovVp97dujeWsJ4Iv7Sahe8p1TL+NBs=
+        b=XCKAkc/UP7fmeuloj14ImhlDqRSBNxFphxuLSjBznlgs7/sqj2cuhQTYOWVd1ahg7
+         0dk8u40Q6HQCEBOWs0Jn1+iYCY9+siSI4fJR4O2Lp9g1Sg1NIbzJZHx4LAnAJRq+1U
+         4+STR33VEAFz3H0QLcXHmAw2+gGkuh6psC5752cg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacek Zloch <jacek.zloch@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dave Airlie <airlied@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 56/67] acpi/nfit: Fix user-initiated ARS to be "ARS-long" rather than "ARS-short"
-Date:   Thu, 20 Dec 2018 10:19:08 +0100
-Message-Id: <20181220085905.761330742@linuxfoundation.org>
+Subject: [PATCH 4.19 57/67] drm/ast: Fix connector leak during driver unload
+Date:   Thu, 20 Dec 2018 10:19:09 +0100
+Message-Id: <20181220085905.802734921@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -67,43 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5fd2e00a60248902315fb32210550ac3cb9f44c ]
+[ Upstream commit e594a5e349ddbfdaca1951bb3f8d72f3f1660d73 ]
 
-A "short" ARS (address range scrub) instructs the platform firmware to
-return known errors. In contrast, a "long" ARS instructs platform
-firmware to arrange every data address on the DIMM to be read / checked
-for poisoned data.
+When unloading the ast driver, a warning message is printed by
+drm_mode_config_cleanup() because a reference is still held to one of
+the drm_connector structs.
 
-The conversion of the flags in commit d3abaf43bab8 "acpi, nfit: Fix
-Address Range Scrub completion tracking", changed the meaning of passing
-'0' to acpi_nfit_ars_rescan(). Previously '0' meant "not short", now '0'
-is ARS_REQ_SHORT. Pass ARS_REQ_LONG to restore the expected scrub-type
-behavior of user-initiated ARS sessions.
+Correct this by calling drm_crtc_force_disable_all() in
+ast_fbdev_destroy().
 
-Fixes: d3abaf43bab8 ("acpi, nfit: Fix Address Range Scrub completion tracking")
-Reported-by: Jacek Zloch <jacek.zloch@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/nfit/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/ast/ast_fb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index c5d15752dfb3..75b331f8a16a 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -1303,7 +1303,7 @@ static ssize_t scrub_store(struct device *dev,
- 	if (nd_desc) {
- 		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
+index 0cd827e11fa2..de26df0c6044 100644
+--- a/drivers/gpu/drm/ast/ast_fb.c
++++ b/drivers/gpu/drm/ast/ast_fb.c
+@@ -263,6 +263,7 @@ static void ast_fbdev_destroy(struct drm_device *dev,
+ {
+ 	struct ast_framebuffer *afb = &afbdev->afb;
  
--		rc = acpi_nfit_ars_rescan(acpi_desc, 0);
-+		rc = acpi_nfit_ars_rescan(acpi_desc, ARS_REQ_LONG);
- 	}
- 	device_unlock(dev);
- 	if (rc)
++	drm_crtc_force_disable_all(dev);
+ 	drm_fb_helper_unregister_fbi(&afbdev->helper);
+ 
+ 	if (afb->obj) {
 -- 
 2.19.1
 
