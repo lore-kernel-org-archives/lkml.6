@@ -6,47 +6,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275F8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CD1C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB45C217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AC3721852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297990;
-	bh=Lbsn0y2K4GPq8b515/r6Q5R0/3hy/tteM0ybF8qjsZU=;
+	s=default; t=1545297994;
+	bh=/62G+wWGAAM/v2znEat0DUxtldTyDLJK9+Se1pCLOms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c5pYncRuiLh3NkG4jIsN5HQiP9nk0E1PBmlBnzGNAXoVMSvRy5n5v6CdCOBpaIMH1
-	 2GYmE4//MMvIWHUDIGlQA+ZgPWbvNNWtXe80E9c7Op2gX8KmUvq6Kqe6nJXcN9Px0f
-	 icPGlOZFNQG7HTRwp++Ly+g1zO7oQLYuS55AAiOw=
+	b=cdnWXwS/bv/22Yim14G4uZUJNyESU4pDYi9wUY55Sa60Ghe4v+IJye1KKApMeJF5o
+	 CH6RHE57hDGw7755s18bKrsRjzIJqM7ySafj3Q+zHswpJ0IP/8Ry5gUleAav+Qjabg
+	 srSMCRwAXCbeUxYVSrIroI4nUeGwlb/PY+xUpVnA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732112AbeLTJ02 (ORCPT
+        id S1731599AbeLTJ0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:26:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54730 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:26:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727975AbeLTJ00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:26:26 -0500
+        id S1732111AbeLTJ03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:26:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB3C5217D7;
-        Thu, 20 Dec 2018 09:26:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C483220656;
+        Thu, 20 Dec 2018 09:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297985;
-        bh=Lbsn0y2K4GPq8b515/r6Q5R0/3hy/tteM0ybF8qjsZU=;
+        s=default; t=1545297988;
+        bh=/62G+wWGAAM/v2znEat0DUxtldTyDLJK9+Se1pCLOms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ksFiRRxroLmZVl4Mk5Pfc8mPItpZxPBpk5tacsGucQCg7k1B4OdZ6TQaeUrOErtSy
-         3XKlr1bCLja2y88ne/itfggbK11mwTJuVY9xRwTN+wx0KncmbjAF3kXU2eOc0JBtvn
-         1yckHwZ8aqoFcYIMsCnoos9Mu0y+VnMHIeDhiKIM=
+        b=vK1kt4PitSdG+nDoiSosJHmr1+tSXpkt4W+QoynCDYEIqYjjjMi6Dln1SKcCkADIV
+         ceDCsWn+k7rWcerSelvVerSFNtqgY0WBNFJUmVz7Z0kL0afcGFoNTrXgSpQwjiA9ox
+         ShfmcQZKvU4RdaKiWbr3SxxAdp6gCYvF1c2s6vxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 05/72] arm64: dma-mapping: Fix FORCE_CONTIGUOUS buffer clearing
-Date:   Thu, 20 Dec 2018 10:18:04 +0100
-Message-Id: <20181220085922.549434449@linuxfoundation.org>
+        stable@vger.kernel.org, Ladislav Michl <ladis@linux-mips.org>,
+        Andrzej Zaborowski <balrogg@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 06/72] MMC: OMAP: fix broken MMC on OMAP15XX/OMAP5910/OMAP310
+Date:   Thu, 20 Dec 2018 10:18:05 +0100
+Message-Id: <20181220085922.587115153@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -65,37 +67,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robin Murphy <robin.murphy@arm.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit 3238c359acee4ab57f15abb5a82b8ab38a661ee7 upstream.
+commit e8cde625bfe8a714a856e1366bcbb259d7346095 upstream.
 
-We need to invalidate the caches *before* clearing the buffer via the
-non-cacheable alias, else in the worst case __dma_flush_area() may
-write back dirty lines over the top of our nice new zeros.
+Since v2.6.22 or so there has been reports [1] about OMAP MMC being
+broken on OMAP15XX based hardware (OMAP5910 and OMAP310). The breakage
+seems to have been caused by commit 46a6730e3ff9 ("mmc-omap: Fix
+omap to use MMC_POWER_ON") that changed clock enabling to be done
+on MMC_POWER_ON. This can happen multiple times in a row, and on 15XX
+the hardware doesn't seem to like it and the MMC just stops responding.
+Fix by memorizing the power mode and do the init only when necessary.
 
-Fixes: dd65a941f6ba ("arm64: dma-mapping: clear buffers allocated with FORCE_CONTIGUOUS flag")
-Cc: <stable@vger.kernel.org> # 4.18.x-
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Before the patch (on Palm TE):
+
+	mmc0: new SD card at address b368
+	mmcblk0: mmc0:b368 SDC   977 MiB
+	mmci-omap mmci-omap.0: command timeout (CMD18)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
+	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
+	mmcblk0: error -110 requesting status
+	mmci-omap mmci-omap.0: command timeout (CMD8)
+	mmci-omap mmci-omap.0: command timeout (CMD18)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD13)
+	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
+	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
+	mmcblk0: error -110 requesting status
+	mmcblk0: recovery failed!
+	print_req_error: I/O error, dev mmcblk0, sector 0
+	Buffer I/O error on dev mmcblk0, logical block 0, async page read
+	 mmcblk0: unable to read partition table
+
+After the patch:
+
+	mmc0: new SD card at address b368
+	mmcblk0: mmc0:b368 SDC   977 MiB
+	 mmcblk0: p1
+
+The patch is based on a fix and analysis done by Ladislav Michl.
+
+Tested on OMAP15XX/OMAP310 (Palm TE), OMAP1710 (Nokia 770)
+and OMAP2420 (Nokia N810).
+
+[1] https://marc.info/?t=123175197000003&r=1&w=2
+
+Fixes: 46a6730e3ff9 ("mmc-omap: Fix omap to use MMC_POWER_ON")
+Reported-by: Ladislav Michl <ladis@linux-mips.org>
+Reported-by: Andrzej Zaborowski <balrogg@gmail.com>
+Tested-by: Ladislav Michl <ladis@linux-mips.org>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/dma-mapping.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/omap.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -633,9 +633,9 @@ static void *__iommu_alloc_attrs(struct
- 						   prot,
- 						   __builtin_return_address(0));
- 		if (addr) {
--			memset(addr, 0, size);
- 			if (!coherent)
- 				__dma_flush_area(page_to_virt(page), iosize);
-+			memset(addr, 0, size);
- 		} else {
- 			iommu_dma_unmap_page(dev, *handle, iosize, 0, attrs);
- 			dma_release_from_contiguous(dev, page,
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -104,6 +104,7 @@ struct mmc_omap_slot {
+ 	unsigned int		vdd;
+ 	u16			saved_con;
+ 	u16			bus_mode;
++	u16			power_mode;
+ 	unsigned int		fclk_freq;
+ 
+ 	struct tasklet_struct	cover_tasklet;
+@@ -1157,7 +1158,7 @@ static void mmc_omap_set_ios(struct mmc_
+ 	struct mmc_omap_slot *slot = mmc_priv(mmc);
+ 	struct mmc_omap_host *host = slot->host;
+ 	int i, dsor;
+-	int clk_enabled;
++	int clk_enabled, init_stream;
+ 
+ 	mmc_omap_select_slot(slot, 0);
+ 
+@@ -1167,6 +1168,7 @@ static void mmc_omap_set_ios(struct mmc_
+ 		slot->vdd = ios->vdd;
+ 
+ 	clk_enabled = 0;
++	init_stream = 0;
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_OFF:
+ 		mmc_omap_set_power(slot, 0, ios->vdd);
+@@ -1174,13 +1176,17 @@ static void mmc_omap_set_ios(struct mmc_
+ 	case MMC_POWER_UP:
+ 		/* Cannot touch dsor yet, just power up MMC */
+ 		mmc_omap_set_power(slot, 1, ios->vdd);
++		slot->power_mode = ios->power_mode;
+ 		goto exit;
+ 	case MMC_POWER_ON:
+ 		mmc_omap_fclk_enable(host, 1);
+ 		clk_enabled = 1;
+ 		dsor |= 1 << 11;
++		if (slot->power_mode != MMC_POWER_ON)
++			init_stream = 1;
+ 		break;
+ 	}
++	slot->power_mode = ios->power_mode;
+ 
+ 	if (slot->bus_mode != ios->bus_mode) {
+ 		if (slot->pdata->set_bus_mode != NULL)
+@@ -1196,7 +1202,7 @@ static void mmc_omap_set_ios(struct mmc_
+ 	for (i = 0; i < 2; i++)
+ 		OMAP_MMC_WRITE(host, CON, dsor);
+ 	slot->saved_con = dsor;
+-	if (ios->power_mode == MMC_POWER_ON) {
++	if (init_stream) {
+ 		/* worst case at 400kHz, 80 cycles makes 200 microsecs */
+ 		int usecs = 250;
+ 
+@@ -1234,6 +1240,7 @@ static int mmc_omap_new_slot(struct mmc_
+ 	slot->host = host;
+ 	slot->mmc = mmc;
+ 	slot->id = id;
++	slot->power_mode = MMC_POWER_UNDEFINED;
+ 	slot->pdata = &host->pdata->slots[id];
+ 
+ 	host->slots[id] = slot;
 
 
