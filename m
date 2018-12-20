@@ -6,53 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91A2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42073C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA48620449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0691720811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298629;
-	bh=BeS2+wPT5J7OU323vln46527eYsRVsS3gmsvUTEH/u4=;
+	s=default; t=1545298634;
+	bh=zbLxLgR+BQ1Agp3c7oak+VVLcEwLAHHQFw+mEZWLtYY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nli64430+aKX/QSrBCgxbrubR3cVRMnWlphBzG3yh6BSa2vPGiWL4tMStuewHEYSt
-	 Kk76ew4ZyeEpBt0hzbFUpfWKweRSolUB+IdU9NwI0+X48SmyM5EXNTOrk2jg1PJCfg
-	 GlaxiwobaHUIBXct2O9u4BvjizK9n6f7/9+AKqSE=
+	b=fq8EmDoF0RiVtuO0GcPrjPAC9KlbVpY6buSYovAipsToqaFmdr2yvpgQzBAAwWP4/
+	 gfcSgiiMVtfJJUErR8cgGH5EUn+B+i9ndKZn+D5bnYH5ZjSkLOQimFhWvRuRCZfu1D
+	 HO1b6s4VeRTTJEq0S246L8KrwLW2iCmM1GcwXEDk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732280AbeLTJ1P (ORCPT
+        id S1732268AbeLTJ1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:27:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730026AbeLTJ1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:11 -0500
+        id S1731300AbeLTJ1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D15B21741;
-        Thu, 20 Dec 2018 09:27:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B100E20656;
+        Thu, 20 Dec 2018 09:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298030;
-        bh=BeS2+wPT5J7OU323vln46527eYsRVsS3gmsvUTEH/u4=;
+        s=default; t=1545298028;
+        bh=zbLxLgR+BQ1Agp3c7oak+VVLcEwLAHHQFw+mEZWLtYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zqI0uXoMVsEMVfI7gfGIV+gTr0Kjuthv53UqdaC8dwZDXRqsxzfkMRoRGqxeEX65b
-         u9ycwBIKOVXqsf8MSlCHQZyvbeX/14CW71M/lrC8Y6U3wawn4vMY6VcUlwcuPGo2Sx
-         STPPp1gSYRcYAzoiCQIObyGRoZBX3Fl+oUTFf/5k=
+        b=P1RCJaDg4E90yzQYvk3HSNY9INigazszzkKGDw7A58Ro4E9NI9zk8FQXkDWeomZqa
+         3wSIO8eL018ylDs4ZPz8UoJo8TRGKzMMStXeLq/sOZwnK/U8jWEkwc302bXePAlAfQ
+         yRSZhcF2k9FWgY6c+6AOZzxG+Q/0sG+GhHv9fi6k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, boqun.feng@gmail.com,
-        linux-arm-kernel@lists.infradead.org, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        stable@vger.kernel.org, Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Calum Mackay <calum.mackay@oracle.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 28/72] locking/qspinlock/x86: Increase _Q_PENDING_LOOPS upper bound
-Date:   Thu, 20 Dec 2018 10:18:27 +0100
-Message-Id: <20181220085923.447185200@linuxfoundation.org>
+Subject: [PATCH 4.14 45/72] nfs: dont dirty kernel pages read by direct-io
+Date:   Thu, 20 Dec 2018 10:18:44 +0100
+Message-Id: <20181220085924.122655316@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -71,51 +68,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit b247be3fe89b6aba928bf80f4453d1c4ba8d2063 upstream.
+[ Upstream commit ad3cba223ac02dc769c3bbe88efe277bbb457566 ]
 
-On x86, atomic_cond_read_relaxed will busy-wait with a cpu_relax() loop,
-so it is desirable to increase the number of times we spin on the qspinlock
-lockword when it is found to be transitioning from pending to locked.
+When we use direct_IO with an NFS backing store, we can trigger a
+WARNING in __set_page_dirty(), as below, since we're dirtying the page
+unnecessarily in nfs_direct_read_completion().
 
-According to Waiman Long:
+To fix, replicate the logic in commit 53cbf3b157a0 ("fs: direct-io:
+don't dirtying pages for ITER_BVEC/ITER_KVEC direct read").
 
- | Ideally, the spinning times should be at least a few times the typical
- | cacheline load time from memory which I think can be down to 100ns or
- | so for each cacheline load with the newest systems or up to several
- | hundreds ns for older systems.
+Other filesystems that implement direct_IO handle this; most use
+blockdev_direct_IO(). ceph and cifs have similar logic.
 
-which in his benchmarking corresponded to 512 iterations.
+mount 127.0.0.1:/export /nfs
+dd if=/dev/zero of=/nfs/image bs=1M count=200
+losetup --direct-io=on -f /nfs/image
+mkfs.btrfs /dev/loop0
+mount -t btrfs /dev/loop0 /mnt/
 
-Suggested-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boqun.feng@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-5-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+kernel: WARNING: CPU: 0 PID: 8067 at fs/buffer.c:580 __set_page_dirty+0xaf/0xd0
+kernel: Modules linked in: loop(E) nfsv3(E) rpcsec_gss_krb5(E) nfsv4(E) dns_resolver(E) nfs(E) fscache(E) nfsd(E) auth_rpcgss(E) nfs_acl(E) lockd(E) grace(E) fuse(E) tun(E) ip6t_rpfilter(E) ipt_REJECT(E) nf_
+kernel:  snd_seq(E) snd_seq_device(E) snd_pcm(E) video(E) snd_timer(E) snd(E) soundcore(E) ip_tables(E) xfs(E) libcrc32c(E) sd_mod(E) sr_mod(E) cdrom(E) ata_generic(E) pata_acpi(E) crc32c_intel(E) ahci(E) li
+kernel: CPU: 0 PID: 8067 Comm: kworker/0:2 Tainted: G            E     4.20.0-rc1.master.20181111.ol7.x86_64 #1
+kernel: Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+kernel: Workqueue: nfsiod rpc_async_release [sunrpc]
+kernel: RIP: 0010:__set_page_dirty+0xaf/0xd0
+kernel: Code: c3 48 8b 02 f6 c4 04 74 d4 48 89 df e8 ba 05 f7 ff 48 89 c6 eb cb 48 8b 43 08 a8 01 75 1f 48 89 d8 48 8b 00 a8 04 74 02 eb 87 <0f> 0b eb 83 48 83 e8 01 eb 9f 48 83 ea 01 0f 1f 00 eb 8b 48 83 e8
+kernel: RSP: 0000:ffffc1c8825b7d78 EFLAGS: 00013046
+kernel: RAX: 000fffffc0020089 RBX: fffff2b603308b80 RCX: 0000000000000001
+kernel: RDX: 0000000000000001 RSI: ffff9d11478115c8 RDI: ffff9d11478115d0
+kernel: RBP: ffffc1c8825b7da0 R08: 0000646f6973666e R09: 8080808080808080
+kernel: R10: 0000000000000001 R11: 0000000000000000 R12: ffff9d11478115d0
+kernel: R13: ffff9d11478115c8 R14: 0000000000003246 R15: 0000000000000001
+kernel: FS:  0000000000000000(0000) GS:ffff9d115ba00000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 00007f408686f640 CR3: 0000000104d8e004 CR4: 00000000000606f0
+kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kernel: Call Trace:
+kernel:  __set_page_dirty_buffers+0xb6/0x110
+kernel:  set_page_dirty+0x52/0xb0
+kernel:  nfs_direct_read_completion+0xc4/0x120 [nfs]
+kernel:  nfs_pgio_release+0x10/0x20 [nfs]
+kernel:  rpc_free_task+0x30/0x70 [sunrpc]
+kernel:  rpc_async_release+0x12/0x20 [sunrpc]
+kernel:  process_one_work+0x174/0x390
+kernel:  worker_thread+0x4f/0x3e0
+kernel:  kthread+0x102/0x140
+kernel:  ? drain_workqueue+0x130/0x130
+kernel:  ? kthread_stop+0x110/0x110
+kernel:  ret_from_fork+0x35/0x40
+kernel: ---[ end trace 01341980905412c9 ]---
+
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+
+[forward-ported to v4.20]
+Signed-off-by: Calum Mackay <calum.mackay@oracle.com>
+Reviewed-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/qspinlock.h | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/direct.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-index cf4cdf508ef4..2cb6624acaec 100644
---- a/arch/x86/include/asm/qspinlock.h
-+++ b/arch/x86/include/asm/qspinlock.h
-@@ -6,6 +6,8 @@
- #include <asm-generic/qspinlock_types.h>
- #include <asm/paravirt.h>
+diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
+index 621c517b325c..89c03a507dd9 100644
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -98,8 +98,11 @@ struct nfs_direct_req {
+ 	struct pnfs_ds_commit_info ds_cinfo;	/* Storage for cinfo */
+ 	struct work_struct	work;
+ 	int			flags;
++	/* for write */
+ #define NFS_ODIRECT_DO_COMMIT		(1)	/* an unstable reply was received */
+ #define NFS_ODIRECT_RESCHED_WRITES	(2)	/* write verification failed */
++	/* for read */
++#define NFS_ODIRECT_SHOULD_DIRTY	(3)	/* dirty user-space page after read */
+ 	struct nfs_writeverf	verf;		/* unstable write verifier */
+ };
  
-+#define _Q_PENDING_LOOPS	(1 << 9)
+@@ -412,7 +415,8 @@ static void nfs_direct_read_completion(struct nfs_pgio_header *hdr)
+ 		struct nfs_page *req = nfs_list_entry(hdr->pages.next);
+ 		struct page *page = req->wb_page;
+ 
+-		if (!PageCompound(page) && bytes < hdr->good_bytes)
++		if (!PageCompound(page) && bytes < hdr->good_bytes &&
++		    (dreq->flags == NFS_ODIRECT_SHOULD_DIRTY))
+ 			set_page_dirty(page);
+ 		bytes += req->wb_bytes;
+ 		nfs_list_remove_request(req);
+@@ -587,6 +591,9 @@ ssize_t nfs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter)
+ 	if (!is_sync_kiocb(iocb))
+ 		dreq->iocb = iocb;
+ 
++	if (iter_is_iovec(iter))
++		dreq->flags = NFS_ODIRECT_SHOULD_DIRTY;
 +
- #define	queued_spin_unlock queued_spin_unlock
- /**
-  * queued_spin_unlock - release a queued spinlock
+ 	nfs_start_io_direct(inode);
+ 
+ 	NFS_I(inode)->read_io += count;
 -- 
 2.19.1
 
