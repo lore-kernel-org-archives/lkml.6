@@ -2,193 +2,149 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1817C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81A1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 861AA218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545320549;
-	bh=R+F+94HY4VpHQ61nKLHhmb0RU0nanxD1zU7DStU3e8s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=eb8XV7OVNQ3wwxgzjyTUq8AnwmAJ8R5lS1HLmfRyQ0F68J+dumzed3VLipweMXJSW
-	 /FyNF9MnsFKb1OxbizhESs7hsG5BCNOhl3HWgXmqYl0cYhMSXPHqkKeb4e1VGrHpgS
-	 4VeNOXnmc4k1+BQywh71DsiRmnB5yuTbaWg4wRCI=
+	by mail.kernel.org (Postfix) with ESMTP id 8F1F8217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbeLTPm2 (ORCPT
+        id S1731783AbeLTPmd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729184AbeLTPm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:42:28 -0500
-Received: from bbrezillon (aaubervilliers-681-1-38-38.w90-88.abo.wanadoo.fr [90.88.157.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4B79218C3;
-        Thu, 20 Dec 2018 15:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545320546;
-        bh=R+F+94HY4VpHQ61nKLHhmb0RU0nanxD1zU7DStU3e8s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Eq8NxRLeVaEjhDBps1AmhJ60nu9YDOh/3Dp7oMxuXWjW30QjBo2fZYUvp0CQqayIw
-         KWnezHfgT0BfPz/Rs6Qk62WXLdWRbtVklIsmOilfA/lgfo4Av/F6JXqXVlkEwg7Kru
-         hdPNUpne08ebqCVHtl8KCnhbn3jCycSikgqvA3GU=
-Date:   Thu, 20 Dec 2018 16:42:21 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/3] mtd: rawnand: Support bad block markers in first,
- second or last page
-Message-ID: <20181220164221.0fb76fe1@bbrezillon>
-In-Reply-To: <d3fb9a2c-477e-8d7a-2c22-7b8348a67a1a@kontron.de>
-References: <1545061693-29216-1-git-send-email-frieder.schrempf@kontron.de>
-        <1545061693-29216-2-git-send-email-frieder.schrempf@kontron.de>
-        <20181220145954.55ae36e9@bbrezillon>
-        <d3fb9a2c-477e-8d7a-2c22-7b8348a67a1a@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 20 Dec 2018 10:42:33 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:42891 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729184AbeLTPmb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 10:42:31 -0500
+Received: by mail-vk1-f194.google.com with SMTP id y14so470648vky.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:42:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tHQnhEmeNAkhfMiX5dm+pc4968Yh2EmyfSDMadQr4KU=;
+        b=G15LryuEzwKxSJgAq6U3IpngjFb394sRdG52H+7RQcgtV+J8FoO8Trzs0LrMyT/r8p
+         NaE1b9AUz4dGAKuHopvfDuGnU2SttHJtE5/DH9vrn5PGBaa3Oa35FNN/eZh43HT4W1xH
+         Y+EUP+T1ABWM3aIt988zTKKjqYeB9KUhX1cPbidJDFXp1InjqZs4KuyQy03oUnW2HzKT
+         OXobMTN6DCxoi6aKZp13sRBRG2d978abpXb0fo61y7HWD75qUZH2R6nQ8o+3EquMARgP
+         QLnD1JAq/GGpWMtGS9SmCk9xLINDJLqyZjbiFiqgQbNLmlcfdmcfGmR+29UlL2lFmrS+
+         1smQ==
+X-Gm-Message-State: AA+aEWaXAzNYOY8aAkYomDTwvAObpRTzBihiSWUzzk5s4yIEZJD8kO4+
+        pgh5CCJsTNksbNQi8MDWC9ej3n5tl+SiyNFN0a0=
+X-Google-Smtp-Source: AFSGD/W9y0+JF2fO7Q92lGcmeA3Ba1SrzGbyMudAJGbf750QDrt3V0qtbKEISY/Ax9DQLCPNPnhHn2+VQe+G2lyFxTo=
+X-Received: by 2002:a1f:2145:: with SMTP id h66mr11841962vkh.65.1545320549416;
+ Thu, 20 Dec 2018 07:42:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181211150513.15161-1-joro@8bytes.org> <CGME20181211150640epcas5p4ffdd63a1900ebfe4a04eea24d2c86de6@epcas5p4.samsung.com>
+ <20181211150513.15161-4-joro@8bytes.org> <30d86186-e0a2-2be1-2295-20510fbd74ba@samsung.com>
+ <20181219143451.GY16835@8bytes.org>
+In-Reply-To: <20181219143451.GY16835@8bytes.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 20 Dec 2018 16:42:17 +0100
+Message-ID: <CAMuHMdXr5tVuWf4dJzBLRfdqpMCMBSg-+t35nb=Rmh9PM=abJg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] iommu/of: Don't call iommu_ops->add_device directly
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Frieder,
+Hi Jörg,
 
-On Thu, 20 Dec 2018 14:35:05 +0000
-Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
+On Wed, Dec 19, 2018 at 5:51 PM Joerg Roedel <joro@8bytes.org> wrote:
+> On Wed, Dec 19, 2018 at 10:54:18AM +0100, Marek Szyprowski wrote:
+> > On 2018-12-11 16:05, Joerg Roedel wrote:
+> > > From: Joerg Roedel <jroedel@suse.de>
+> > >
+> > > Make sure to invoke this call-back through the proper
+> > > function of the IOMMU-API.
+> > >
+> > > Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> > > ---
+> > >  drivers/iommu/of_iommu.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+> > > index c5dd63072529..4d4847de727e 100644
+> > > --- a/drivers/iommu/of_iommu.c
+> > > +++ b/drivers/iommu/of_iommu.c
+> > > @@ -218,10 +218,10 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
+> > >             ops = dev->iommu_fwspec->ops;
+> > >     /*
+> > >      * If we have reason to believe the IOMMU driver missed the initial
+> > > -    * add_device callback for dev, replay it to get things in order.
+> > > +    * probe for dev, replay it to get things in order.
+> > >      */
+> > > -   if (ops && ops->add_device && dev->bus && !dev->iommu_group)
+> > > -           err = ops->add_device(dev);
+> > > +   if (dev->bus && !dev->iommu_group)
+> > > +           err = iommu_probe_device(dev);
+> >
+> > This change removes a check for NULL ops, what causes NULL pointer
+> > exception on first device without IOMMU.
+>
+> Bummer, this check was supposed to be in iommu_probe_device(), but
+> apparently it got lost. Does the attached patch fix it?
+>
+> > I'm also not sure if this is a good idea to call iommu_probe_device(),
+> > which comes from dev->bus->iommu_ops, which might be different from ops
+> > from local variable.
+>
+> The local variable comes from dev->iommu_fwspec->ops, which should be
+> exactly the same as dev->bus->iommu_ops. I'll leave that for now until
+> it turns out to be a problem (which I don't expect).
+>
+>
+> Regards,
+>
+>         Joerg
+>
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index a2131751dcff..3ed4db334341 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -114,10 +114,14 @@ void iommu_device_unregister(struct iommu_device *iommu)
+>  int iommu_probe_device(struct device *dev)
+>  {
+>         const struct iommu_ops *ops = dev->bus->iommu_ops;
+> +       int ret = -EINVAL;
+>
+>         WARN_ON(dev->iommu_group);
+>
+> -       return ops->add_device(dev);
+> +       if (ops)
 
-> On 20.12.18 14:59, Boris Brezillon wrote:
-> > On Mon, 17 Dec 2018 15:49:07 +0000
-> > Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
-> >   
-> >> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> >>
-> >> Currently supported bad block marker positions within the block are:
-> >> * in first page only
-> >> * in last page only
-> >> * in first or second page
-> >>
-> >> Some ESMT NANDs are known to have been shipped by the manufacturer
-> >> with bad block markers in the first or last page, instead of the
-> >> first or second page.
-> >>
-> >> Also the datasheets for Cypress/Spansion/AMD NANDs claim that the
-> >> first, second *and* last page needs to be checked.
-> >>
-> >> Therefore we make it possible to set NAND_BBT_SCAN2NDPAGE and
-> >> NAND_BBT_SCANLASTPAGE at the same time to scan/set all three pages.
-> >>
-> >> To simplify the code, the logic to evaluate the flags is moved to a
-> >> a new function nand_bbm_page_offset().
-> >>
-> >> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> >> ---
-> >>   drivers/mtd/nand/raw/internals.h |  1 +
-> >>   drivers/mtd/nand/raw/nand_base.c | 72 ++++++++++++++++++++++++++---------
-> >>   drivers/mtd/nand/raw/nand_bbt.c  | 30 +++++++--------
-> >>   3 files changed, 68 insertions(+), 35 deletions(-)
-> >>
-> >> diff --git a/drivers/mtd/nand/raw/internals.h b/drivers/mtd/nand/raw/internals.h
-> >> index 04c2cf7..8e4b168 100644
-> >> --- a/drivers/mtd/nand/raw/internals.h
-> >> +++ b/drivers/mtd/nand/raw/internals.h
-> >> @@ -76,6 +76,7 @@ extern const struct nand_manufacturer_ops toshiba_nand_manuf_ops;
-> >>   
-> >>   /* Core functions */
-> >>   const struct nand_manufacturer *nand_get_manufacturer(u8 id);
-> >> +int nand_bbm_page_offset(struct nand_chip *chip, int index);
-> >>   int nand_markbad_bbm(struct nand_chip *chip, loff_t ofs);
-> >>   int nand_erase_nand(struct nand_chip *chip, struct erase_info *instr,
-> >>   		    int allowbbt);
-> >> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> >> index 71050a0..388d9ed 100644
-> >> --- a/drivers/mtd/nand/raw/nand_base.c
-> >> +++ b/drivers/mtd/nand/raw/nand_base.c
-> >> @@ -253,6 +253,45 @@ static void nand_release_device(struct mtd_info *mtd)
-> >>   }
-> >>   
-> >>   /**
-> >> + * nand_bbm_page_offset - Get the page offsets for bad block markers
-> >> + * @chip: NAND chip object
-> >> + * @index: Index for the page offset  
-> > 
-> > Hm, the meaning of index is far from obvious. How about passing the
-> > current page instead (and return 1 if there are more pages to scan 0
-> > otherwise)?  
-> 
-> Good idea.
-> 
-> > 
-> > Something like:
-> > 
-> > static int nand_bbm_get_next_page(struct nand_chip *chip, int page)
-> > {
-> > 	struct mtd_info *mtd = nand_to_mtd(chip);
-> > 	int last_page = ((mtd->erasesize - mtd->writesize) >>
-> > 			 chip->page_shift) & chip->pagemask;
-> > 
-> > 	if (page < 0 && chip->bbt_options & NAND_BBT_SCANFIRSTPAGE)
-> > 		return 0;
-> > 	else if (page < 1 && chip->bbt_options & NAND_BBT_SCAN2NDPAGE)
-> > 		return 1;
-> > 	else if (page < last_page &&
-> > 		 chip->bbt_options & NAND_BBT_SCANLASTPAGE)
-> > 		return last_page;
-> > 
-> > 	return -1;
-> > }
-> > 
-> > And yes, that means defining NAND_BBT_SCANFIRSTPAGE and setting it when
-> > appropriate.  
-> 
-> I tried to keep the existing flags and their current meanings, but you 
-> are right. If we redefine the flags and add NAND_BBT_SCANFIRSTPAGE and 
-> NAND_BBT_SCANFIRST2PAGES this will be much easier to read.
-> 
-> Also maybe renaming the flags to NAND_BBM_XXX would be even cleaner, as 
-> we use them not only for scanning, but also for writing markers and they 
-> are not directly related to the bad block table (BBT)?
+Is this sufficient? The old code checked for ops->add_device != NULL,
+too.
 
-Yep, and maybe move them to chip->options too.
+> +               ret = ops->add_device(dev);
+> +
+> +       return ret;
+>  }
+>
+>  void iommu_release_device(struct device *dev)
 
-> 
-> By the way, what are your plans for using the common NAND layer (that is 
-> used by the SPI NAND layer) for raw NAND?
 
-I'd still like to have this done at some point, just don't have the
-time to do it myself ;-). I started working on that a few weeks back
-[1], but didn't have time to finish it.
+Gr{oetje,eeting}s,
 
-> I'm thinking of SPI NANDs that might require things like this, too. 
+                        Geert
 
-Yes, probably.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> Currently they seem to have the markers in the first page only, but that 
-> could change easily and in that case it would be nice to share the code.
-
-Yes. Actually, that's the whole BBT + BBM scanning logic we should make
-generic. But I'd like to take this as an opportunity to
-cleanup/simplify the bbt code instead of simply porting it to the
-generic NAND layer.
-
-If you have some time, feel free to finish what I started.
-
-Regards,
-
-Boris
-
-[1]https://github.com/bbrezillon/linux/commits/nand/cleanup
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
