@@ -2,96 +2,202 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6199AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A5CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 372B820866
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:34:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78BFA20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:34:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JSKHF2Rl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbeLTMe0 (ORCPT
+        id S1732346AbeLTMee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:34:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60650 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730639AbeLTMeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:34:25 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B3F68207D9; Thu, 20 Dec 2018 13:34:22 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 80C19207B8;
-        Thu, 20 Dec 2018 13:34:12 +0100 (CET)
-Date:   Thu, 20 Dec 2018 13:34:12 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] ARM: dts: imx28-cfa10036: Fix the reset gpio
- signal polarity
-Message-ID: <20181220123412.GG2188@piout.net>
-References: <1545308005-51559-1-git-send-email-michal.vokac@ysoft.com>
- <1545308005-51559-4-git-send-email-michal.vokac@ysoft.com>
+        Thu, 20 Dec 2018 07:34:34 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40529 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730039AbeLTMed (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 07:34:33 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v5so1209807lfe.7;
+        Thu, 20 Dec 2018 04:34:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Vg+IqngfjhTQ/KUtyzdiBE7OmEUDfdJN1SFzJd+Eo5k=;
+        b=JSKHF2RlIaeRkRQ4gMY2We04ewJmer/ID6K4mqx2KzZCHdw2+A1++Sw+PRqZbpjOp/
+         diqwmuJ0qm2ht7I2i42ByZ6HLL1DxGnxWQtz/RNOryv+5Nh6Tafn5Tz7BHtWOCWmrRMs
+         ukFej+I848P1p+zQhSZvS3p3Ehf6yQu/XpNsccE/AfNfKbyi3h6lGvSWywES2nw5QRKY
+         s7K5ltRg0Td2HTAmHDiLkpGC9nKM9WnZUxp1k4qX/3O/dcYg2Pr9vrRsW/lXqJEc2s66
+         GcsdCQfy3HJDGcy64OJLE5EN/QSTbIy5rezJUNGFUAMKYW64nCDZuaISouEtj3OTIqK1
+         V+nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Vg+IqngfjhTQ/KUtyzdiBE7OmEUDfdJN1SFzJd+Eo5k=;
+        b=J4nT4hPgaYsQyiSo/vj1tm6RPefXA785x1/IGX+5V/GUtiGmUqrIy5CKI91fNSDiaH
+         6J5hxJx0MULf0BBuJYnLwvWo9M5PFwhRdVXthhUuL+R/926a/j6FcIYSfYCIXSMgeWj5
+         S4nWJzES9k5xibIh4kdo2a/Zz6TbKfuYWY8EPizJHaQQ0WdxN23AGYUpVWk0emIu/AjZ
+         lBXYixJTCvXrrao/yTEzqgnArrpsR+5Sq23hYib7sfhf+9dGmTQyxk4Y/5wrrQk9V93t
+         lE2F5S1RbCOYpu0g1QGSQ91vE0IxKpRsxFFZXFACdrU07lVTgR+izPwF8MJQID3wF1+5
+         t6Rw==
+X-Gm-Message-State: AA+aEWawAXD5evEoAS95r38AA8/Xx4LzWAAUtwwTSyqNNTnbrTFFsdwB
+        OWPvxLaXwbD8XeXfyKhcZ50=
+X-Google-Smtp-Source: AFSGD/Wn7gCz8dru5vOgCoFVv7vSk8oKA8aVmQ6gkq1Ijpl4NsKrVGx3HnazjmNLfASOHP0rW8k4lw==
+X-Received: by 2002:a19:df41:: with SMTP id q1mr15836687lfj.25.1545309269699;
+        Thu, 20 Dec 2018 04:34:29 -0800 (PST)
+Received: from [192.168.2.145] ([94.29.36.169])
+        by smtp.googlemail.com with ESMTPSA id d2sm4435168lfg.16.2018.12.20.04.34.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 04:34:28 -0800 (PST)
+Subject: Re: [PATCH v4 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30
+ modules
+To:     Philippe Schenker <dev@pschenker.ch>, jic23@kernel.org,
+        marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc:     thierry.reding@gmail.com,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+References: <20181212130649.15146-1-dev@pschenker.ch>
+ <20181212130649.15146-8-dev@pschenker.ch>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9c380fe2-2db8-8bc6-15b6-d112f982b70a@gmail.com>
+Date:   Thu, 20 Dec 2018 15:34:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
+In-Reply-To: <20181212130649.15146-8-dev@pschenker.ch>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1545308005-51559-4-git-send-email-michal.vokac@ysoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/12/2018 12:13:56+0000, Vokáč Michal wrote:
-> The reset signal of the SSD1306 OLED display is actually active-low.
-> Adapt the DT to reflect the real world.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Hello Philippe,
 
+Please CC all the patches in the series to every recipient.
+
+On 12.12.2018 16:06, Philippe Schenker wrote:
+> Add the stmpe-adc DT node as found on Toradex T30 modules
+> 
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 > ---
-> Changes from v1:
->  - Add R-by from Rob
 > 
->  arch/arm/boot/dts/imx28-cfa10036.dts | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Changes in v4:
+>  - New separate commit to hold T30 devicetree changes
 > 
-> diff --git a/arch/arm/boot/dts/imx28-cfa10036.dts b/arch/arm/boot/dts/imx28-cfa10036.dts
-> index 8337ca2..d6eca31 100644
-> --- a/arch/arm/boot/dts/imx28-cfa10036.dts
-> +++ b/arch/arm/boot/dts/imx28-cfa10036.dts
-> @@ -11,6 +11,7 @@
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
+>  arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
+>  2 files changed, 28 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> index 7f112f192fe9..850b0d13549a 100644
+> --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+> @@ -976,11 +976,18 @@
+>  			id = <0>;
+>  			blocks = <0x5>;
+>  			irq-trigger = <0x1>;
+> +			/* 3.25 MHz ADC clock speed */
+> +			st,adc-freq = <1>;
+> +			/* 12-bit ADC */
+> +			st,mod-12b = <1>;
+> +			/* internal ADC reference */
+> +			st,ref-sel = <0>;
+> +			/* ADC converstion time: 80 clocks */
+> +			st,sample-time = <4>;
+> +			/* forbid to use ADC channels 3-0 (touch) */>  			stmpe_touchscreen {
+>  				compatible = "st,stmpe-ts";
+> -				/* 3.25 MHz ADC clock speed */
+> -				st,adc-freq = <1>;
+>  				/* 8 sample average control */
+>  				st,ave-ctrl = <3>;
+>  				/* 7 length fractional part in z */
+> @@ -990,17 +997,16 @@
+>  				 * current limit value
+>  				 */
+>  				st,i-drive = <1>;
+> -				/* 12-bit ADC */
+> -				st,mod-12b = <1>;
+> -				/* internal ADC reference */
+> -				st,ref-sel = <0>;
+> -				/* ADC converstion time: 80 clocks */
+> -				st,sample-time = <4>;
+
+Does this change depend on some other patch in the series? Is this a backwards-compatible change? Please explain.
+
+>  				/* 1 ms panel driver settling time */
+>  				st,settling = <3>;
+>  				/* 5 ms touch detect interrupt delay */
+>  				st,touch-det-delay = <5>;
+>  			};
+> +
+> +			stmpe_adc {
+> +				compatible = "st,stmpe-adc";
+> +				st,norequest-mask = <0x0F>;
+> +			};
+>  		};
 >  
->  /dts-v1/;
->  #include "imx28.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
+>  		/*
+> diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+> index 35af03ca9e90..1f9198bb24ff 100644
+> --- a/arch/arm/boot/dts/tegra30-colibri.dtsi
+> +++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+> @@ -845,11 +845,18 @@
+>  			id = <0>;
+>  			blocks = <0x5>;
+>  			irq-trigger = <0x1>;
+> +			/* 3.25 MHz ADC clock speed */
+> +			st,adc-freq = <1>;
+> +			/* 12-bit ADC */
+> +			st,mod-12b = <1>;
+> +			/* internal ADC reference */
+> +			st,ref-sel = <0>;
+> +			/* ADC converstion time: 80 clocks */
+> +			st,sample-time = <4>;
+> +			/* forbid to use ADC channels 3-0 (touch) */
 >  
->  / {
->  	model = "Crystalfontz CFA-10036 Board";
-> @@ -95,7 +96,7 @@
->  					pinctrl-names = "default";
->  					pinctrl-0 = <&ssd1306_cfa10036>;
->  					reg = <0x3c>;
-> -					reset-gpios = <&gpio2 7 0>;
-> +					reset-gpios = <&gpio2 7 GPIO_ACTIVE_LOW>;
->  					solomon,height = <32>;
->  					solomon,width = <128>;
->  					solomon,page-offset = <0>;
-> -- 
-> 2.1.4
+>  			stmpe_touchscreen {
+>  				compatible = "st,stmpe-ts";
+> -				/* 3.25 MHz ADC clock speed */
+> -				st,adc-freq = <1>;
+>  				/* 8 sample average control */
+>  				st,ave-ctrl = <3>;
+>  				/* 7 length fractional part in z */
+> @@ -859,17 +866,16 @@
+>  				 * current limit value
+>  				 */
+>  				st,i-drive = <1>;
+> -				/* 12-bit ADC */
+> -				st,mod-12b = <1>;
+> -				/* internal ADC reference */
+> -				st,ref-sel = <0>;
+> -				/* ADC converstion time: 80 clocks */
+> -				st,sample-time = <4>;
+>  				/* 1 ms panel driver settling time */
+>  				st,settling = <3>;
+>  				/* 5 ms touch detect interrupt delay */
+>  				st,touch-det-delay = <5>;
+>  			};
+> +
+> +			stmpe_adc {
+> +				compatible = "st,stmpe-adc";
+> +				st,norequest-mask = <0x0F>;
+> +			};
+>  		};
+>  
+>  		/*
 > 
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
