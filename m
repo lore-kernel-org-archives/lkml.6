@@ -2,113 +2,111 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B19C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87034C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95A720815
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:57:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="LftjvIsl"
+	by mail.kernel.org (Postfix) with ESMTP id 3451220815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 07:59:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbeLTH5l (ORCPT
+        id S1730371AbeLTH7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 02:57:41 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:43226 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbeLTH5k (ORCPT
+        Thu, 20 Dec 2018 02:59:24 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37378 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726716AbeLTH7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 02:57:40 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id D8F6AC23
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:57:38 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3MlLwajPUYhD for <linux-kernel@vger.kernel.org>;
-        Thu, 20 Dec 2018 01:57:38 -0600 (CST)
-Received: from mail-it1-f197.google.com (mail-it1-f197.google.com [209.85.166.197])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id A82A3C19
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:57:38 -0600 (CST)
-Received: by mail-it1-f197.google.com with SMTP id j202so9928455itj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 23:57:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=rgxy5YsC49ef42vOCYF9uZ6jLzkAf/Ors+1y6IIcB5g=;
-        b=LftjvIslbG3vC6zNTMqugln27D8+5RDxMBvTE911qqxyLUKTSjzwiVHsheoP2oY9D5
-         n9zyKQy2MXygB/Lh423j9Q4MJAA6QesL2ZQXl1zyyTuM/hE7YhYZZsCWJGKVOjPuVSJB
-         DcmMPJ1aSiHW0IkMi+qCC3pcPOZlBSmSq7F4Tjx1Ok7LvFD5Z/PNcheHkzbejAUSxsep
-         BuDSjVGPUL4vqkVzKbIdJV96jpMyPDKgK91J/z3s0TMNrGNik3ao2PAw9OMsscBGzPlQ
-         pN1TKJM158nRx/f/Fo3NUauWOFxnSYO90LxS8SH3kfyhPBw7H3qtHmu7E2vULSpnugjg
-         7AMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rgxy5YsC49ef42vOCYF9uZ6jLzkAf/Ors+1y6IIcB5g=;
-        b=qaYUvBKYToJjd3+ndJwtXy/LWSrh56pfSMLTdv8LyJhAvdw79SWEV/Pt/T3d0nbSy+
-         OiEgsffzLK4TBPgbYY9tcChJkHtYCrhmjAo+rs5leb5afx1q/A+0qyCkj8aVgXUy18qB
-         Fekx4+G81pHnK86RAVNrHI2M/4lZEEXeAQFVm4ZfnAM5kIYarf514zVrBV81kviyz1SG
-         aCvsLUfBoQoD8+fGvrYdbLDquikVencSBb9AGAHmN+23YleMFe6IGFvulEzJX/irxNFJ
-         Nc8CTfFzXLUAef8ROM9FBA442rrww8vNQtyQeyiBqFT1XvzBXtQdJ5ULszvuZCDPRqGx
-         BSpQ==
-X-Gm-Message-State: AA+aEWY5wF+cIZFMtg5KHRWecYrKRDku+nFMGTNlkNOmrS0XSZg32Sxe
-        W9q3FMJ3g8xVgwB+v5QNAQ4MhU+TlgADnqAOixlxtRsGjoorA8BiHlYT4zPpjx9ZDFoWcFWrds9
-        9LTKa6ndLw5TltHC2HPPIWPGoKeBT
-X-Received: by 2002:a24:cfc1:: with SMTP id y184mr8629064itf.72.1545292658260;
-        Wed, 19 Dec 2018 23:57:38 -0800 (PST)
-X-Google-Smtp-Source: AFSGD/XwuX+VR7vD5JRPbSmJoBv42yJk8qXOUfV8/bos+yRkYebnuMPO6gqGZlpxfpg4e9S726MW8g==
-X-Received: by 2002:a24:cfc1:: with SMTP id y184mr8629055itf.72.1545292658027;
-        Wed, 19 Dec 2018 23:57:38 -0800 (PST)
-Received: from localhost.localdomain (host-173-230-104-24.mnmigsc.mn.minneapolis.us.clients.pavlovmedia.net. [173.230.104.24])
-        by smtp.gmail.com with ESMTPSA id w186sm4604189itb.15.2018.12.19.23.57.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 19 Dec 2018 23:57:37 -0800 (PST)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aymen Qader <qader.aymen@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] rts5208: add a missing check for the status of command sending
-Date:   Thu, 20 Dec 2018 01:57:01 -0600
-Message-Id: <20181220075704.40732-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Thu, 20 Dec 2018 02:59:23 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBK7saD0062701
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:59:22 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pg6pf9fb1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:59:22 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 20 Dec 2018 07:59:21 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Dec 2018 07:59:16 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBK7xFKd65536082
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 07:59:15 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B32FCAE045;
+        Thu, 20 Dec 2018 07:59:15 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0137BAE051;
+        Thu, 20 Dec 2018 07:59:15 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.194])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 20 Dec 2018 07:59:14 +0000 (GMT)
+Date:   Thu, 20 Dec 2018 09:59:13 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] docs/mm-api: link kernel-doc comments from
+ slab_common.c
+References: <1544130781-13443-1-git-send-email-rppt@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544130781-13443-1-git-send-email-rppt@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18122007-0020-0000-0000-000002FA2874
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122007-0021-0000-0000-0000214A382B
+Message-Id: <20181220075912.GA12338@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ms_send_cmd() may fail. The fix checks the return value of it, and if it
-fails, returns the error "STATUS_FAIL" upstream.
+ping?
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/staging/rts5208/ms.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Thu, Dec 06, 2018 at 11:12:59PM +0200, Mike Rapoport wrote:
+> Hi,
+> 
+> These patches update formatting of function descriptions in
+> mm/slab_common.c and link the comments from this file to "The Slab Cache"
+> section of the MM API reference.
+> 
+> As the changes to mm/slab_common.c only touch the comments, I think these
+> patches can go via the docs tree.
+> 
+> Mike Rapoport (2):
+>   slab: make kmem_cache_create{_usercopy} description proper kernel-doc
+>   docs/mm-api: link slab_common.c to "The Slab Cache" section
+> 
+>  Documentation/core-api/mm-api.rst |  3 +++
+>  mm/slab_common.c                  | 35 +++++++++++++++++++++++++++++++----
+>  2 files changed, 34 insertions(+), 4 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
 
-diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
-index f53adf15c685..5a9e562465e9 100644
---- a/drivers/staging/rts5208/ms.c
-+++ b/drivers/staging/rts5208/ms.c
-@@ -2731,7 +2731,9 @@ static int mspro_rw_multi_sector(struct scsi_cmnd *srb,
- 		}
- 
- 		if (val & MS_INT_BREQ)
--			ms_send_cmd(chip, PRO_STOP, WAIT_INT);
-+			retval = ms_send_cmd(chip, PRO_STOP, WAIT_INT);
-+			if (retval != STATUS_SUCCESS)
-+				return STATUS_FAIL;
- 
- 		if (val & (MS_CRC16_ERR | MS_RDY_TIMEOUT)) {
- 			dev_dbg(rtsx_dev(chip), "MSPro CRC error, tune clock!\n");
 -- 
-2.17.2 (Apple Git-113)
+Sincerely yours,
+Mike.
 
