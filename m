@@ -2,102 +2,94 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BA4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2C8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26399218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C31D218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:30:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="By7ejdPh"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAdA12fi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389187AbeLTS3w (ORCPT
+        id S2389203AbeLTSaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:29:52 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40249 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733143AbeLTS3u (ORCPT
+        Thu, 20 Dec 2018 13:30:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39192 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732867AbeLTSaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:29:50 -0500
-Received: by mail-it1-f194.google.com with SMTP id h193so3117018ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:49 -0800 (PST)
+        Thu, 20 Dec 2018 13:30:02 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so1313293pfc.6;
+        Thu, 20 Dec 2018 10:30:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VRAYsH2vnfRBNF1ip+ybzuzgKrpXCMUBIqg0huRiZn4=;
-        b=By7ejdPhRS5/TfASPZUHsQSyNlsmkFT1gxncEszms9zKsTBtNrig/XVeMAgNzJtN5b
-         wxg6pAR1d+IgVi26TtJuKrHX/x6v5yZqzWS95weE2DpkbLgi660MEn77tni9EpFGJb+O
-         WPDtQGu7Id8OWRqJRsJsGbPnk3LBFT4LF4I8Y=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=agQhlHnDS6qw0/w65vhA80s5i76caEAtTOe88jjr9lc=;
+        b=MAdA12fiXExl7JPy57r1RX+kFS9SeGJTSz4HXTwmp12CF2OTjkaEj+cCkW304Vy4gz
+         HagTYfBevqm363MgfP4o7EHPhRD/SH288jM/BRJOgCBTFIz5qys8m5zRWbUnKV6p3+BO
+         FwRGhAod2NoY+ItnIkcdAqw6M87FhX+ek1FgYO6FfuNsNglHTbAnmyKoBpmhcgdJ83AF
+         ushEnQiwoAJpiJ/SIlECFvMG/sfxk+Y1mC17t4QjzOaXu/v47imz/5XHtRf4rWyasik+
+         Afc0yAgcFdkOZJWtF/8sf7k4jpp31fnsKH7KXJpQiSP23kRIQfXun5hvckB84bkr0s/r
+         pazA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VRAYsH2vnfRBNF1ip+ybzuzgKrpXCMUBIqg0huRiZn4=;
-        b=QZYfwbliz2O+5TTi6kvgCaiMqB7puGDXpCyIUCOkX0+XZSHW8RPihbEUGc7j1NE28w
-         7SxP6N4xR9p6Si0hEwS3pbhnuBNtjmvy0gISzPrRvCA1DqwzxBvNGLgTt4MIqJXjNNo8
-         9Q1kDwjtAYwUUP25q1fXjSD0TURfXWPD1yqXMw8XiDDaHuEmo+gzFmgD0d98pAe2Soe9
-         spyndni6MfpIj9vsTLSYRGG6fokPXv+qWDOoK4rBWqxr+dWGwsrGd7G6e3fIbR9WJMC0
-         Nhan1KdNJWkQsfM0YKYAGS7QnGfUjy9SjMvs6XVjZRMJU6AFVbGZF7xLmyNFui5kYl8H
-         DOPw==
-X-Gm-Message-State: AA+aEWYRjtRXQihSftmKKE6XDoKlU+hrDblY0DcjQy/VNfbI5jLQ7T1f
-        byuq9ScnPOec87KHOISF0U4eVuO8p9DA00/bWTobCA==
-X-Google-Smtp-Source: AFSGD/VCt8JRek/Oh02NELNf7Bn2MwtfgccLtrghMfLs/PdGXKERgAbwExpLOgCsYRBeqsHDSBlz+YnoRQr+ThBnwAw=
-X-Received: by 2002:a05:660c:344:: with SMTP id b4mr10559562itl.51.1545330589207;
- Thu, 20 Dec 2018 10:29:49 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=agQhlHnDS6qw0/w65vhA80s5i76caEAtTOe88jjr9lc=;
+        b=uLKVujEXtKSvo6fihbKgqvYMGgRjePDAfoLWX61N+t6ymEx8KCkPlW1rO5lzMDVV2c
+         rBnV1Yf9h/0X+8C+eLEuxKw3hp6KIGpAWuPsgRpNRNXn0Z/bQRTXDPjF9KCk3AkfpSOY
+         DetTHiQZBiYdqrkK/9sJAIU0jYwfhoLoQWsxgRBOQwIxCiPSZSX5qjtmRC1U+i58Frn5
+         EuH/k0d2rMj57Gl6b5Mk32nwLQttIhYvmkeksnyxGMyINz56wMc1fVxoM32mXFMHzu00
+         YUU9Zotn3+3l8CQROgHHQVIDOjiklvVFO9+wRDYZ9rHQog9aIp/gid+KeMDChv2KA+47
+         kOBA==
+X-Gm-Message-State: AA+aEWZ5cyAL7Xrgn+kTj8DMO0pFTaSneIAzw2nkwcWHWywJed4oNEOa
+        oqklPmlRvIx0pok5oMsqYuQ=
+X-Google-Smtp-Source: AFSGD/V6cdTYdiEo6VRWRvMSYhc9U75thJRVTM9C6FtHQthFuUDqOd7n14mx8GTstkvD/noH7K0pMA==
+X-Received: by 2002:a62:4156:: with SMTP id o83mr25255764pfa.72.1545330601096;
+        Thu, 20 Dec 2018 10:30:01 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q75sm31203315pfa.38.2018.12.20.10.30.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 10:30:00 -0800 (PST)
+Date:   Thu, 20 Dec 2018 10:29:59 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/67] 4.19.12-stable review
+Message-ID: <20181220182959.GE12802@roeck-us.net>
+References: <20181220085903.562090333@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20181127103252.20994-1-andr2000@gmail.com> <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
- <20181220153646.GA22997@infradead.org> <f2cfadc7-2e0b-b63d-d094-d5339b0c85fe@gmail.com>
- <20181220173950.GA19641@infradead.org>
-In-Reply-To: <20181220173950.GA19641@infradead.org>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 20 Dec 2018 19:29:37 +0100
-Message-ID: <CAKMK7uF8hmO=z4jy+1b1z5ELLWpjcZpqmLoRiP2BJvwnNpOFeg@mail.gmail.com>
-Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        xen-devel@lists.xenproject.org, boris.ostrovsky@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 6:39 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Thu, Dec 20, 2018 at 05:49:39PM +0200, Oleksandr Andrushchenko wrote:
-> > This is the only patch [1], no series. And at the moment I think
-> > there is nothing to review as I am not sure how to deal with those
-> > shmem pages: this patch is rather to start a discussion on how shmem
-> > pages can be flushed on ARM (the only workaround I have so far is
-> > in this patch which uses DMA API). This is where I am looking for
-> > some advice, so I can implement the patch the right way.
->
-> shmem is basically page cache.  So you need to use the DMA streaming
-> API (dma_map_*) to map it for DMA.  You need to make sure no one
-> access the kernel mapping at the same time as you do DMA to it,
-> so the pages should be locked.  This is how the normal file system
-> I/O path works.
+On Thu, Dec 20, 2018 at 10:18:12AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.12 release.
+> There are 67 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec 22 08:58:49 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-I wasn't around back then, but afaiui drm uses shmem because that was
-the only way mm folks let us have swappable memory. We proposed a
-gemfs a while ago to be able to mix up our own allocator with that,
-wasn't approved.
+Build results:
+	total: 155 pass: 155 fail: 0
+Qemu test results:
+	total: 328 pass: 328 fail: 0
 
-What we most definitely not want to end up with though is actually
-streaming dma, because with that all the zero copy buffer sharing
-tricks become pointless. There's pretty epic amounts of hacks to work
-around this, I have no idea what's supposed to give here.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
