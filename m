@@ -6,53 +6,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C66EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D82C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B494217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB82F218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:26:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297976;
-	bh=rn5pU5ghmL3ypDq+GsBYcQ44BoqIWc3MzRFo9MhUMDQ=;
+	s=default; t=1545297979;
+	bh=8/OgBc5wVk73mZxzV1dt76uuVxAzqVThPQf7i0sK5Qs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j5xSfqyYMcHCms3kQ1l7Kcoi61KJj2r3c50lRwoWQeVZEesDYj2qolGR//YWf2UxK
-	 ohI8Ofb4KwUBqPpU3otEtIBQIms8qL9c5BhRvM6Mp03DJTiJ9EuCv4h3WZr7kkvpWF
-	 j9OOwzIA9uQ07cA5jrFTrylcUbSBhn85mZtoBIT0=
+	b=OH2A53zUOwPkc2EdlAom9KI51izdtB5Rpx8YuPMNbrLbmArJslAJOUQDyXVZP42EB
+	 gf4Q7mRO9hOz3R/6Yu9Qk9wL0OLpAH9LZ89MflWjWPBjLPmfvBMPQx5EBZqeS892Yr
+	 4pwYPp8HRszHyNKsjWG010ah9t7aub6gO5O1gtY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731339AbeLTJ0O (ORCPT
+        id S1732059AbeLTJ0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:26:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51982 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:26:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732038AbeLTJ0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:26:10 -0500
+        id S1732030AbeLTJ0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:26:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C91E521852;
-        Thu, 20 Dec 2018 09:26:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E2A2217D7;
+        Thu, 20 Dec 2018 09:26:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297969;
-        bh=rn5pU5ghmL3ypDq+GsBYcQ44BoqIWc3MzRFo9MhUMDQ=;
+        s=default; t=1545297966;
+        bh=8/OgBc5wVk73mZxzV1dt76uuVxAzqVThPQf7i0sK5Qs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qFUiiKjfIBJvHdTI8xMK69tCW8UOrPrWqhLk8RMIkeqPomnOT8OkS+nWYbylnf31F
-         sat6EE8584lfCork/S9S0foHbr2vvZ3xhUJlJLL/Wm29rcgk52StTQ8AJnQ0cRX+t9
-         vy0e+7P5v3Qpzlyo6urJ7licPyy/pzByAjmrReSE=
+        b=tpiyO75nqjOE5tVOTcUNtIHwrbDA+DPbQRwtM9YzVOY5LzApxKVL8v7eqNSa4aQ/w
+         ya8D1Anost/Ss+C33UttSg5Hb+ZrdgvkqBpNgLI29P31bBzGojqnGI7o1io9G1+egM
+         U11vKshZ4YjApIinX/iWTwxIeFvBYDlUKM7X3bZ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, boqun.feng@gmail.com,
-        linux-arm-kernel@lists.infradead.org, paulmck@linux.vnet.ibm.com,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/72] locking/qspinlock: Bound spinning on pending->locked transition in slowpath
-Date:   Thu, 20 Dec 2018 10:18:21 +0100
-Message-Id: <20181220085923.214216778@linuxfoundation.org>
+Subject: [PATCH 4.14 21/72] locking/qspinlock: Ensure node is initialised before updating prev->next
+Date:   Thu, 20 Dec 2018 10:18:20 +0100
+Message-Id: <20181220085923.169451350@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -71,86 +69,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 6512276d97b160d90b53285bd06f7f201459a7e3 upstream.
+commit 95bcade33a8af38755c9b0636e36a36ad3789fe6 upstream.
 
-If a locker taking the qspinlock slowpath reads a lock value indicating
-that only the pending bit is set, then it will spin whilst the
-concurrent pending->locked transition takes effect.
+When a locker ends up queuing on the qspinlock locking slowpath, we
+initialise the relevant mcs node and publish it indirectly by updating
+the tail portion of the lock word using xchg_tail. If we find that there
+was a pre-existing locker in the queue, we subsequently update their
+->next field to point at our node so that we are notified when it's our
+turn to take the lock.
 
-Unfortunately, there is no guarantee that such a transition will ever be
-observed since concurrent lockers could continuously set pending and
-hand over the lock amongst themselves, leading to starvation. Whilst
-this would probably resolve in practice, it means that it is not
-possible to prove liveness properties about the lock and means that lock
-acquisition time is unbounded.
+This can be roughly illustrated as follows:
 
-Rather than removing the pending->locked spinning from the slowpath
-altogether (which has been shown to heavily penalise a 2-threaded
-locking stress test on x86), this patch replaces the explicit spinning
-with a call to atomic_cond_read_relaxed and allows the architecture to
-provide a bound on the number of spins. For architectures that can
-respond to changes in cacheline state in their smp_cond_load implementation,
-it should be sufficient to use the default bound of 1.
+  /* Initialise the fields in node and encode a pointer to node in tail */
+  tail = initialise_node(node);
 
-Suggested-by: Waiman Long <longman@redhat.com>
+  /*
+   * Exchange tail into the lockword using an atomic read-modify-write
+   * operation with release semantics
+   */
+  old = xchg_tail(lock, tail);
+
+  /* If there was a pre-existing waiter ... */
+  if (old & _Q_TAIL_MASK) {
+	prev = decode_tail(old);
+	smp_read_barrier_depends();
+
+	/* ... then update their ->next field to point to node.
+	WRITE_ONCE(prev->next, node);
+  }
+
+The conditional update of prev->next therefore relies on the address
+dependency from the result of xchg_tail ensuring order against the
+prior initialisation of node. However, since the release semantics of
+the xchg_tail operation apply only to the write portion of the RmW,
+then this ordering is not guaranteed and it is possible for the CPU
+to return old before the writes to node have been published, consequently
+allowing us to point prev->next to an uninitialised node.
+
+This patch fixes the problem by making the update of prev->next a RELEASE
+operation, which also removes the reliance on dependency ordering.
+
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Waiman Long <longman@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boqun.feng@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-4-git-send-email-will.deacon@arm.com
+Link: http://lkml.kernel.org/r/1518528177-19169-2-git-send-email-will.deacon@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/qspinlock.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ kernel/locking/qspinlock.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index d880296245c5..18161264227a 100644
+index 5541acb79e15..d880296245c5 100644
 --- a/kernel/locking/qspinlock.c
 +++ b/kernel/locking/qspinlock.c
-@@ -76,6 +76,18 @@
- #define MAX_NODES	4
- #endif
- 
-+/*
-+ * The pending bit spinning loop count.
-+ * This heuristic is used to limit the number of lockword accesses
-+ * made by atomic_cond_read_relaxed when waiting for the lock to
-+ * transition out of the "== _Q_PENDING_VAL" state. We don't spin
-+ * indefinitely because there's no guarantee that we'll make forward
-+ * progress.
-+ */
-+#ifndef _Q_PENDING_LOOPS
-+#define _Q_PENDING_LOOPS	1
-+#endif
-+
- /*
-  * Per-CPU queue node structures; we can never have more than 4 nested
-  * contexts: task, softirq, hardirq, nmi.
-@@ -306,13 +318,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 		return;
- 
- 	/*
--	 * wait for in-progress pending->locked hand-overs
-+	 * Wait for in-progress pending->locked hand-overs with a bounded
-+	 * number of spins so that we guarantee forward progress.
- 	 *
- 	 * 0,1,0 -> 0,0,1
+@@ -416,14 +416,15 @@ queue:
  	 */
- 	if (val == _Q_PENDING_VAL) {
--		while ((val = atomic_read(&lock->val)) == _Q_PENDING_VAL)
--			cpu_relax();
-+		int cnt = _Q_PENDING_LOOPS;
-+		val = smp_cond_load_acquire(&lock->val.counter,
-+					       (VAL != _Q_PENDING_VAL) || !cnt--);
- 	}
+ 	if (old & _Q_TAIL_MASK) {
+ 		prev = decode_tail(old);
++
+ 		/*
+-		 * The above xchg_tail() is also a load of @lock which
+-		 * generates, through decode_tail(), a pointer.  The address
+-		 * dependency matches the RELEASE of xchg_tail() such that
+-		 * the subsequent access to @prev happens after.
++		 * We must ensure that the stores to @node are observed before
++		 * the write to prev->next. The address dependency from
++		 * xchg_tail is not sufficient to ensure this because the read
++		 * component of xchg_tail is unordered with respect to the
++		 * initialisation of @node.
+ 		 */
+-
+-		WRITE_ONCE(prev->next, node);
++		smp_store_release(&prev->next, node);
  
- 	/*
+ 		pv_wait_node(node, prev);
+ 		arch_mcs_spin_lock_contended(&node->locked);
 -- 
 2.19.1
 
