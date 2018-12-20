@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5CEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32C5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D7C2176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCC5721773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730918AbeLTIYY (ORCPT
+        id S1730937AbeLTIY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:24:24 -0500
-Received: from ozlabs.ru ([107.173.13.209]:54307 "EHLO ozlabs.ru"
+        Thu, 20 Dec 2018 03:24:28 -0500
+Received: from ozlabs.ru ([107.173.13.209]:54358 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730870AbeLTIYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:24:23 -0500
+        id S1730870AbeLTIY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:24:27 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 5CDBBAE802FA;
-        Thu, 20 Dec 2018 03:24:19 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id DAA7EAE802FB;
+        Thu, 20 Dec 2018 03:24:22 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -37,9 +37,9 @@ Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
         Alex Williamson <alex.williamson@redhat.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH kernel v7 07/20] powerpc/pseries/npu: Enable platform support
-Date:   Thu, 20 Dec 2018 19:23:37 +1100
-Message-Id: <20181220082350.58113-8-aik@ozlabs.ru>
+Subject: [PATCH kernel v7 08/20] powerpc/pseries: Remove IOMMU API support for non-LPAR systems
+Date:   Thu, 20 Dec 2018 19:23:38 +1100
+Message-Id: <20181220082350.58113-9-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181220082350.58113-1-aik@ozlabs.ru>
 References: <20181220082350.58113-1-aik@ozlabs.ru>
@@ -48,71 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We already changed NPU API for GPUs to not to call OPAL and the remaining
-bit is initializing NPU structures.
-
-This searches for POWER9 NVLinks attached to any device on a PHB and
-initializes an NPU structure if any found.
+The pci_dma_bus_setup_pSeries and pci_dma_dev_setup_pSeries hooks are
+registered for the pseries platform which does not have FW_FEATURE_LPAR;
+these would be pre-powernv platforms which we never supported PCI pass
+through for anyway so remove it.
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
 ---
-Changes:
-v5:
-* added WARN_ON_ONCE
+ arch/powerpc/platforms/pseries/iommu.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-v4:
-* dropped "IBM,npu-vphb" compatible type on PHB and use the type of NVLink
----
- arch/powerpc/platforms/pseries/pci.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/powerpc/platforms/pseries/pci.c b/arch/powerpc/platforms/pseries/pci.c
-index 41d8a4d..7725825 100644
---- a/arch/powerpc/platforms/pseries/pci.c
-+++ b/arch/powerpc/platforms/pseries/pci.c
-@@ -29,6 +29,7 @@
- #include <asm/pci-bridge.h>
- #include <asm/prom.h>
- #include <asm/ppc-pci.h>
-+#include <asm/pci.h>
- #include "pseries.h"
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index cbcc8ce..2783cb7 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -645,7 +645,6 @@ static void pci_dma_bus_setup_pSeries(struct pci_bus *bus)
+ 	iommu_table_setparms(pci->phb, dn, tbl);
+ 	tbl->it_ops = &iommu_table_pseries_ops;
+ 	iommu_init_table(tbl, pci->phb->node);
+-	iommu_register_group(pci->table_group, pci_domain_nr(bus), 0);
  
- #if 0
-@@ -237,6 +238,8 @@ static void __init pSeries_request_regions(void)
+ 	/* Divide the rest (1.75GB) among the children */
+ 	pci->phb->dma_window_size = 0x80000000ul;
+@@ -756,10 +755,7 @@ static void pci_dma_dev_setup_pSeries(struct pci_dev *dev)
+ 		iommu_table_setparms(phb, dn, tbl);
+ 		tbl->it_ops = &iommu_table_pseries_ops;
+ 		iommu_init_table(tbl, phb->node);
+-		iommu_register_group(PCI_DN(dn)->table_group,
+-				pci_domain_nr(phb->bus), 0);
+ 		set_iommu_table_base(&dev->dev, tbl);
+-		iommu_add_device(&dev->dev);
+ 		return;
+ 	}
  
- void __init pSeries_final_fixup(void)
- {
-+	struct pci_controller *hose;
-+
- 	pSeries_request_regions();
+@@ -770,11 +766,10 @@ static void pci_dma_dev_setup_pSeries(struct pci_dev *dev)
+ 	while (dn && PCI_DN(dn) && PCI_DN(dn)->table_group == NULL)
+ 		dn = dn->parent;
  
- 	eeh_probe_devices();
-@@ -246,6 +249,25 @@ void __init pSeries_final_fixup(void)
- 	ppc_md.pcibios_sriov_enable = pseries_pcibios_sriov_enable;
- 	ppc_md.pcibios_sriov_disable = pseries_pcibios_sriov_disable;
- #endif
-+	list_for_each_entry(hose, &hose_list, list_node) {
-+		struct device_node *dn = hose->dn, *nvdn;
-+
-+		while (1) {
-+			dn = of_find_all_nodes(dn);
-+			if (!dn)
-+				break;
-+			nvdn = of_parse_phandle(dn, "ibm,nvlink", 0);
-+			if (!nvdn)
-+				continue;
-+			if (!of_device_is_compatible(nvdn, "ibm,npu-link"))
-+				continue;
-+			if (!of_device_is_compatible(nvdn->parent,
-+						"ibm,power9-npu"))
-+				continue;
-+			WARN_ON_ONCE(pnv_npu2_init(hose));
-+			break;
-+		}
-+	}
+-	if (dn && PCI_DN(dn)) {
++	if (dn && PCI_DN(dn))
+ 		set_iommu_table_base(&dev->dev,
+ 				PCI_DN(dn)->table_group->tables[0]);
+-		iommu_add_device(&dev->dev);
+-	} else
++	else
+ 		printk(KERN_WARNING "iommu: Device %s has no iommu table\n",
+ 		       pci_name(dev));
  }
- 
- /*
 -- 
 2.17.1
 
