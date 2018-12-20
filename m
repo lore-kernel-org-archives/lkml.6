@@ -2,109 +2,112 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33036C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1097C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECFA321903
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 953A720815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732956AbeLTV4A (ORCPT
+        id S2390104AbeLTV5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:56:00 -0500
-Received: from shell.v3.sk ([90.176.6.54]:57053 "EHLO shell.v3.sk"
+        Thu, 20 Dec 2018 16:57:16 -0500
+Received: from sauhun.de ([88.99.104.3]:37714 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730700AbeLTVz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:55:59 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id AC10B6F195;
-        Thu, 20 Dec 2018 22:55:56 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id u_-z78AcnEbK; Thu, 20 Dec 2018 22:55:54 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E16E96F1B4;
-        Thu, 20 Dec 2018 22:55:53 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id mts7xYRPD1Hg; Thu, 20 Dec 2018 22:55:53 +0100 (CET)
-Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 2CE666F195;
-        Thu, 20 Dec 2018 22:55:53 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v4] irqchip/mmp: only touch the PJ4 & FIQ bits on enable/disable
-Date:   Thu, 20 Dec 2018 22:55:47 +0100
-Message-Id: <20181220215547.4813-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.2
+        id S1732728AbeLTV5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:57:16 -0500
+Received: from localhost (p54B33538.dip0.t-ipconnect.de [84.179.53.56])
+        by pokefinder.org (Postfix) with ESMTPSA id 74D852E3542;
+        Thu, 20 Dec 2018 22:57:13 +0100 (CET)
+Date:   Thu, 20 Dec 2018 22:57:09 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PULL REQUEST] i2c for 4.20
+Message-ID: <20181220215705.2zccmtoiuc2v74hm@ninjato>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wwsvx6d7aaikpnov"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On an OLPC XO 1.75 machine, the "security processor" handles the GPIO 71
-and 72 interrupts. Don't reset the "route to SP" bit (4).
 
-I'm just assuming the bit 4 is the "route to SP" bit -- it fixes the
-SP-based keyboard for me and <mach-mmp/regs-icu.h> defines
-ICU_INT_ROUTE_SP_IRQ to be 1 << 4. When asked for a data sheet, Marvell
-was not helpful.
+--wwsvx6d7aaikpnov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Linus,
 
----
-I'm not removing the defines from regs-icu.h at the moment.
-Of the MPP2 defines there, only MMP2_ICU_INT4_MASK ends up actually
-being used, in one place. That said, the header servers mostly as
-a documentation, because the documentation for the platform is lacking.
+I2C has a MAINTAINERS update for you, so people will be immediately
+pointed to the right person for this previously orphaned driver. And one
+of Arnd's build warning fixes for a new driver added this cycle.
 
-Changes since v3:
-- Use #defined instead of integer literals
+Please pull.
 
-Changes since v2:
-- Correct subsystem maintainers on Cc (irqchip)
+Thanks,
 
-Changes since v1:
-- Adjusted wording & ack from Pavel
----
- drivers/irqchip/irq-mmp.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+   Wolfram
 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 25f32e1d7764..65fa5a1d8310 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -34,6 +34,10 @@
- #define SEL_INT_PENDING		(1 << 6)
- #define SEL_INT_NUM_MASK	0x3f
-=20
-+#define MMP2_ICU_INT_ROUTE_SP_IRQ	(1 << 4)
-+#define MMP2_ICU_INT_ROUTE_PJ4_IRQ	(1 << 5)
-+#define MMP2_ICU_INT_ROUTE_PJ4_FIQ	(1 << 6)
-+
- struct icu_chip_data {
- 	int			nr_irqs;
- 	unsigned int		virq_base;
-@@ -190,7 +194,8 @@ static const struct mmp_intc_conf mmp_conf =3D {
- static const struct mmp_intc_conf mmp2_conf =3D {
- 	.conf_enable	=3D 0x20,
- 	.conf_disable	=3D 0x0,
--	.conf_mask	=3D 0x7f,
-+	.conf_mask	=3D MMP2_ICU_INT_ROUTE_PJ4_IRQ |
-+			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
- };
-=20
- static void __exception_irq_entry mmp_handle_irq(struct pt_regs *regs)
---=20
-2.19.2
 
+The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
+
+  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+
+for you to fetch changes up to 32774a8153b4c62e408297fba352248afb2e0143:
+
+  i2c: nvidia-gpu: mark resume function as __maybe_unused (2018-12-11 21:39:43 +0100)
+
+----------------------------------------------------------------
+Adamski, Krzysztof (Nokia - PL/Wroclaw) (1):
+      MAINTAINERS: add entry for i2c-axxia driver
+
+Arnd Bergmann (1):
+      i2c: nvidia-gpu: mark resume function as __maybe_unused
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Alexander Sverdlin (1):
+      (Rev.) MAINTAINERS: add entry for i2c-axxia driver
+
+Andy Shevchenko (1):
+      (Rev.) i2c: nvidia-gpu: mark resume function as __maybe_unused
+
+ MAINTAINERS                         | 7 +++++++
+ drivers/i2c/busses/i2c-nvidia-gpu.c | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+--wwsvx6d7aaikpnov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwcEC0ACgkQFA3kzBSg
+KbbhYxAAoNPbJS86aSOHeciU2tQ5pkv10M12Uusakg73Rl/j856TphCIi+Pn713N
+KM5dtOAs5ss0dBb7WK+c/p9IdRjRSfzd/qpBHg3f90OrlTzMqKriBcdxAybmWH4B
+bO6jyutDaXpgDnbJEDDnSaTI8QujnORCuZKWzp0yjAQnwrGPg3yqIA1f365uFMHW
+dd52YmgGDnj+tzss3wGzcG2WdPYPE7TTBXA3/o67/AN3DqwzIydVpN5UXXwe/2Uj
+b2NhiX/ZeIfpNJR/WcdRwok/h7q5wkYrIg5fCzkHiHIzU3+zFJuU/L9OwYF7P1J4
+5hiXIGStiYY9FixiidBBKbzGg4o5ItPac1qdZRGvNy65fX9sFaO7fvzAS5UTY4Yk
+l5iNfei6geDyZziN2Hc4xxFNy6ELOUMuBlbUBsfhGrdPZzhUhun84gO5F/cPVKL3
+wWfK4qQmbOHmCala96uR43oQfc6wjlcJMvDWDeOcuJB5ielK9KIf/j0J+mjJpnW1
+1J17c0p9LBy2m44uhft+BcxG+BReR8aOfHzKJLsDYczXAiDifDQJv+dwiAftRXTG
+yleOBZJyynP0JYT15WRXmDqbnYXzOpQWfjSudMc0Ruk38xEkH2RSMUDUocZ6861H
+qJXdPatRsdz8wgCVb9IUIuMsMXBUi2cwNeX2IWwimr7QdOFwo4s=
+=zGUl
+-----END PGP SIGNATURE-----
+
+--wwsvx6d7aaikpnov--
