@@ -2,118 +2,386 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D04C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 04:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20909C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 04:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA2020866
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 04:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C639620866
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 04:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KmzEseNQ"
+	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="g4eReqOh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730031AbeLTERV (ORCPT
+        id S1730102AbeLTETJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 23:17:21 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35666 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729892AbeLTERU (ORCPT
+        Wed, 19 Dec 2018 23:19:09 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45173 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727694AbeLTETJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 23:17:20 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v11so439262qtc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 20:17:20 -0800 (PST)
+        Wed, 19 Dec 2018 23:19:09 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so234798plm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 20:19:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HRF0UAfjOn85kKu4KTT18GuqaqgVP0PGSxppUuvKtto=;
-        b=KmzEseNQ0R9r/LB4FIxwmpEODIU/nMitATIRE+L042KTkN/bAkOww9iU7xLR5GFd7J
-         FwUxlgqLH7ngPVuH6g8ZLRRX1vOUm4ImY0hXX46goL/KyGzo8A4SDbDNdAMfuA4b3h7R
-         XEgEAS3UbNv213S0yBboZMEL9TbezWY1FkDUs=
+        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PRhBzkskgzE50dsk0gTaVqZbOF7zblbhBjKrtAW6Z3c=;
+        b=g4eReqOhFHFhAbW30dzSGBYFtJ4Glg7ShWdncYnJchM6MM2h6mjucrIn5kYT/jBlrg
+         Zfay1DNk10N+wct93viisA8kYe0ZyEJTPazpYVyKiCKM/QCoO5qfUIbLQsvTwG/tIRTz
+         ePY/znkzB3rEt3utBG0fmdRe2zsOGd2p5jhBWtMpzF50jFx04CNqOvuGMoirEBr/9AEE
+         pzrFUu2v/8SEXdhnVJlVLB92SMnfP9ZY6Wa24HNqdYZs9d50ExGqtmisEnHHBUhbCUWw
+         UWk3iASCBXpoD+rzk0J2XxSiUvFy6M8QOZKPvmiSSlTdMTbioq2c+BW0kXi5+k6m9/jm
+         khLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HRF0UAfjOn85kKu4KTT18GuqaqgVP0PGSxppUuvKtto=;
-        b=OjDGKKHY0qdP6y5ghtGz+eZHtUpRe0afg15SerdIg2bfyCJqmfPDrwvDCrS0laWFru
-         7zTSwOixYFs64IbB87j8r+v9yxLRRAtSFYDGoP0ieq6FpY5+E/mKywYEFkVaSJJvBl+v
-         zV68IEzlTn/vwLYb+7ElAhl7V7wmtKZn3pmp8OvVCcwZnZ4EmOV8fI6Kl712Lx0d44JO
-         BsdvRqN3aDcZwqvdQDBWGDB9AQXBv40KhEZ9wTV+6os68G6ALUOTnmfLTJcZvznQ0JjH
-         SlkB8e9d40qEEL/JLZERlIP9WAOMDlGIblSuYBsikM1zWG7i6XZph6vmjo/gfIxr/21D
-         jVxg==
-X-Gm-Message-State: AA+aEWbQEgJbatmrrJRQnP8Fp8LEpcMnbSYSCqKvuc0XmALwP61OrFA4
-        zsulP3r8JwA1l95VvSmajkwrtV8M0IVUnxlZFGTgiw==
-X-Google-Smtp-Source: AFSGD/W3TlEXhdl5Z237Z6ZFN6JSaT1ydSkXN4Axwocufm2hDlsLF7XIynGg7j+nUulfxQX9FI3Ob1u5WocYFourX88=
-X-Received: by 2002:ac8:b0e:: with SMTP id e14mr24963871qti.336.1545279439456;
- Wed, 19 Dec 2018 20:17:19 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=PRhBzkskgzE50dsk0gTaVqZbOF7zblbhBjKrtAW6Z3c=;
+        b=F8xBjskWL1EvkDPIRjTkv/pnEeEjacENG3v0Zl0nZ+5/ZA5b5BB8jXgqziK9NxTnM8
+         pvlpxR/1XHemO9Cgi3D+wAXUh/IPyuS/K6UW7yqpJpNkukZ5lLjJjJdsVxRawAv5pvHV
+         d+9EyO6vs68wcKlPGj4v6XwTxoihch4cB0WyqYk9rgR24dQ2nC0dbnLwzkimPhuj+ZLq
+         un9jq96LNBooGSl+pKcDQMcG7JekG9H3QGo1pc03ADycw4LzDp4Tiby0UxnrWyJjRQIA
+         FXNfwZiE5CUmubRIAX7/7EIBOPyVnCHemgKKIg36IbimBnMGvMjDmZh+AbHqti/cDGay
+         MrcQ==
+X-Gm-Message-State: AA+aEWZjMdbEyWA3Fzwv6Uj5RioK7tKR4aLILbZpmd2EVJ0d8Ct9RxNG
+        RCVGs7JrWNI1gaZhl4BoMrbQdFRL8Tw=
+X-Google-Smtp-Source: AFSGD/Vz7V2/6jRbMg1VVW4hab7s+ARpP7rCKdL73IzcKkHNCtTUgQMe5nrmSDNzpNH/D24lpbSMqw==
+X-Received: by 2002:a17:902:722:: with SMTP id 31mr22837913pli.271.1545279548166;
+        Wed, 19 Dec 2018 20:19:08 -0800 (PST)
+Received: from [10.61.2.175] ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id 7sm61918827pfm.8.2018.12.19.20.19.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Dec 2018 20:19:07 -0800 (PST)
+Subject: Re: [PATCH V5 1/3] mm: Add get_user_pages_cma_migrate
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        mpe@ellerman.id.au, paulus@samba.org,
+        David Gibson <david@gibson.dropbear.id.au>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20181219034047.16305-1-aneesh.kumar@linux.ibm.com>
+ <20181219034047.16305-2-aneesh.kumar@linux.ibm.com>
+From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+Openpgp: preference=signencrypt
+Autocrypt: addr=aik@ozlabs.ru; keydata=
+ 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
+Message-ID: <e9c9b68a-a31b-ab59-902a-73401a89f72a@ozlabs.ru>
+Date:   Thu, 20 Dec 2018 15:19:00 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <cover.1543374820.git.gustavo@embeddedor.com> <892c3e5e27213c1c2f3da128afe958429bbef672.1543374820.git.gustavo@embeddedor.com>
- <4bce4543-ae65-8dfa-cbe6-405d78003129@embeddedor.com>
-In-Reply-To: <4bce4543-ae65-8dfa-cbe6-405d78003129@embeddedor.com>
-From:   Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Date:   Thu, 20 Dec 2018 09:49:04 +0530
-Message-ID: <CA+RiK64O=zLKdbF4KRXYGD23qi3Ajv5S2oPoKuSbksbMwOHu_A@mail.gmail.com>
-Subject: Re: [PATCH 31/41] scsi: mpt3sas: mpt3sas_scsih: Mark expected switch fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        PDL-MPT-FUSIONLINUX <MPT-FusionLinux.pdl@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181219034047.16305-2-aneesh.kumar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
-
-This patch may not apply smoothly over 4.21/scsi-queue.
-Our previous patch for Aero had some changes in this switch case.
-Can you resend this patch with latest code base ?
-
-Thanks,
-Suganath prabu
 
 
-On Thu, Dec 20, 2018 at 5:37 AM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> Hi,
->
-> Friendly ping:
->
-> Who can ack or review this patch, please?
->
-> Thanks
-> --
-> Gustavo
->
-> On 11/27/18 10:32 PM, Gustavo A. R. Silva wrote:
-> > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> > where we are expecting to fall through.
-> >
-> > Addresses-Coverity-ID: 1475400 ("Missing break in switch")
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > ---
-> >   drivers/scsi/mpt3sas/mpt3sas_scsih.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-> > index 5b9806d0719e..920b80ce4748 100644
-> > --- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-> > +++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-> > @@ -10370,6 +10370,7 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> >               case MPI26_MFGPAGE_DEVID_CFG_SEC_3916:
-> >                       dev_info(&pdev->dev,
-> >                           "HBA is in Configurable Secure mode\n");
-> > +                     /* fall through */
-> >               case MPI26_MFGPAGE_DEVID_SAS3508:
-> >               case MPI26_MFGPAGE_DEVID_SAS3508_1:
-> >               case MPI26_MFGPAGE_DEVID_SAS3408:
-> >
+On 19/12/2018 14:40, Aneesh Kumar K.V wrote:
+> This helper does a get_user_pages_fast and if it find pages in the CMA area
+> it will try to migrate them before taking page reference. This makes sure that
+> we don't keep non-movable pages (due to page reference count) in the CMA area.
+> Not able to move pages out of CMA area result in CMA allocation failures.
+> 
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> ---
+>  include/linux/hugetlb.h |   2 +
+>  include/linux/migrate.h |   3 +
+>  mm/hugetlb.c            |   4 +-
+>  mm/migrate.c            | 139 ++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 146 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 087fd5f48c91..1eed0cdaec0e 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -371,6 +371,8 @@ struct page *alloc_huge_page_nodemask(struct hstate *h, int preferred_nid,
+>  				nodemask_t *nmask);
+>  struct page *alloc_huge_page_vma(struct hstate *h, struct vm_area_struct *vma,
+>  				unsigned long address);
+> +struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+> +				     int nid, nodemask_t *nmask);
+>  int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
+>  			pgoff_t idx);
+>  
+> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> index f2b4abbca55e..d82b35afd2eb 100644
+> --- a/include/linux/migrate.h
+> +++ b/include/linux/migrate.h
+> @@ -286,6 +286,9 @@ static inline int migrate_vma(const struct migrate_vma_ops *ops,
+>  }
+>  #endif /* IS_ENABLED(CONFIG_MIGRATE_VMA_HELPER) */
+>  
+> +extern int get_user_pages_cma_migrate(unsigned long start, int nr_pages, int write,
+> +				      struct page **pages);
+> +
+>  #endif /* CONFIG_MIGRATION */
+>  
+>  #endif /* _LINUX_MIGRATE_H */
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 7f2a28ab46d5..faf3102ae45e 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1585,8 +1585,8 @@ static struct page *alloc_surplus_huge_page(struct hstate *h, gfp_t gfp_mask,
+>  	return page;
+>  }
+>  
+> -static struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+> -		int nid, nodemask_t *nmask)
+> +struct page *alloc_migrate_huge_page(struct hstate *h, gfp_t gfp_mask,
+> +				     int nid, nodemask_t *nmask)
+>  {
+>  	struct page *page;
+>  
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index f7e4bfdc13b7..d564558fba03 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -2946,3 +2946,142 @@ int migrate_vma(const struct migrate_vma_ops *ops,
+>  }
+>  EXPORT_SYMBOL(migrate_vma);
+>  #endif /* defined(MIGRATE_VMA_HELPER) */
+> +
+> +static struct page *new_non_cma_page(struct page *page, unsigned long private)
+> +{
+> +	/*
+> +	 * We want to make sure we allocate the new page from the same node
+> +	 * as the source page.
+> +	 */
+> +	int nid = page_to_nid(page);
+> +	/*
+> +	 * Trying to allocate a page for migration. Ignore allocation
+> +	 * failure warnings
+> +	 */
+> +	gfp_t gfp_mask = GFP_USER | __GFP_THISNODE | __GFP_NOWARN;
+> +
+> +	if (PageHighMem(page))
+> +		gfp_mask |= __GFP_HIGHMEM;
+> +
+> +#ifdef CONFIG_HUGETLB_PAGE
+> +	if (PageHuge(page)) {
+> +		struct hstate *h = page_hstate(page);
+> +		/*
+> +		 * We don't want to dequeue from the pool because pool pages will
+> +		 * mostly be from the CMA region.
+> +		 */
+> +		return alloc_migrate_huge_page(h, gfp_mask, nid, NULL);
+> +	}
+> +#endif
+> +	if (PageTransHuge(page)) {
+> +		struct page *thp;
+> +		/*
+> +		 * ignore allocation failure warnings
+> +		 */
+> +		gfp_t thp_gfpmask = GFP_TRANSHUGE | __GFP_THISNODE | __GFP_NOWARN;
+> +
+> +		/*
+> +		 * Remove the movable mask so that we don't allocate from
+> +		 * CMA area again.
+> +		 */
+> +		thp_gfpmask &= ~__GFP_MOVABLE;
+> +		thp = __alloc_pages_node(nid, thp_gfpmask, HPAGE_PMD_ORDER);
+> +		if (!thp)
+> +			return NULL;
+> +		prep_transhuge_page(thp);
+> +		return thp;
+> +	}
+> +
+> +	return __alloc_pages_node(nid, gfp_mask, 0);
+> +}
+> +
+> +/**
+> + * get_user_pages_cma_migrate() - pin user pages in memory by migrating pages in CMA region
+> + * @start:	starting user address
+> + * @nr_pages:	number of pages from start to pin
+> + * @write:	whether pages will be written to
+> + * @pages:	array that receives pointers to the pages pinned.
+> + *		Should be at least nr_pages long.
+> + *
+> + * Attempt to pin user pages in memory without taking mm->mmap_sem.
+> + * If not successful, it will fall back to taking the lock and
+> + * calling get_user_pages().
+> + *
+> + * If the pinned pages are backed by CMA region, we migrate those pages out,
+> + * allocating new pages from non-CMA region. This helps in avoiding keeping
+> + * pages pinned in the CMA region for a long time thereby resulting in
+> + * CMA allocation failures.
+> + *
+> + * Returns number of pages pinned. This may be fewer than the number
+> + * requested. If nr_pages is 0 or negative, returns 0. If no pages
+> + * were pinned, returns -errno.
+> + */
+> +
+> +int get_user_pages_cma_migrate(unsigned long start, int nr_pages, int write,
+> +			       struct page **pages)
+> +{
+> +	int i, ret;
+> +	bool drain_allow = true;
+> +	bool migrate_allow = true;
+> +	LIST_HEAD(cma_page_list);
+> +
+> +get_user_again:
+> +	ret = get_user_pages_fast(start, nr_pages, write, pages);
+> +	if (ret <= 0)
+> +		return ret;
+> +
+> +	for (i = 0; i < ret; ++i) {
+> +		/*
+> +		 * If we get a page from the CMA zone, since we are going to
+> +		 * be pinning these entries, we might as well move them out
+> +		 * of the CMA zone if possible.
+> +		 */
+> +		if (is_migrate_cma_page(pages[i]) && migrate_allow) {
+> +
+> +			struct page *head = compound_head(pages[i]);
+> +
+> +			if (PageHuge(head))
+> +				isolate_huge_page(head, &cma_page_list);
+
+
+You need curly braces in both branches as per
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst#n191
+
+
+> +			else {
+> +				if (!PageLRU(head) && drain_allow) {
+> +					lru_add_drain_all();
+> +					drain_allow = false;
+> +				}
+> +
+> +				if (!isolate_lru_page(head)) {
+> +					list_add_tail(&head->lru, &cma_page_list);
+> +					mod_node_page_state(page_pgdat(head),
+> +							    NR_ISOLATED_ANON +
+> +							    page_is_file_cache(head),
+> +							    hpage_nr_pages(head));
+> +				}
+> +			}
+> +		}
+> +	}
+> +	if (!list_empty(&cma_page_list)) {
+> +		/*
+> +		 * drop the above get_user_pages reference.
+> +		 */
+
+
+Can be a single line comment.
+
+> +		for (i = 0; i < ret; ++i)
+> +			put_page(pages[i]);
+> +
+> +		if (migrate_pages(&cma_page_list, new_non_cma_page,
+> +				  NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE)) {
+> +			/*
+> +			 * some of the pages failed migration. Do get_user_pages
+> +			 * without migration.
+> +			 */
+> +			migrate_allow = false;
+> +
+> +			if (!list_empty(&cma_page_list))
+> +				putback_movable_pages(&cma_page_list);
+> +		}
+> +		/*
+> +		 * We did migrate all the pages, Try to get the page references again
+> +		 * migrating any new CMA pages which we failed to isolate earlier.
+> +		 */
+> +		drain_allow = true;
+> +		goto get_user_again;
+
+
+So it is possible to have pages pinned, then successfully migrated
+(migrate_pages() returned 0), then pinned again, then some pages may end
+up in CMA again and migrate again and nothing seems to prevent this loop
+from being endless. What do I miss?
+
+(ps I hate such "goto"s, confuse a lot)
+
+
+> +	}
+> +	return ret;
+> +}
+> 
+
+-- 
+Alexey
