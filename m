@@ -2,293 +2,257 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLACK
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10794C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C62C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EED2080D
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D50FF20815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:35:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="mktFUWm7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oioqjDJS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbeLTL2V (ORCPT
+        id S1730897AbeLTLfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 06:28:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40322 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728643AbeLTL2T (ORCPT
+        Thu, 20 Dec 2018 06:35:42 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43735 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727990AbeLTLfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 06:28:19 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so743241plq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 03:28:18 -0800 (PST)
+        Thu, 20 Dec 2018 06:35:42 -0500
+Received: by mail-pl1-f196.google.com with SMTP id gn14so747998plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 03:35:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vCppfmD4UgvXJ5Xp9SPYLml5K9LFeDynszsIHeM3Fa0=;
-        b=mktFUWm7NV7zo2fF+VZ783oItrfbrMkU/Km4MUsAtVWFwd8l26/n+trSrPOILiEEDD
-         lzfwz46R9x6YrPN+CggKdVztApfKUo6pKen1taBPWRJKNPyfg/FeyekxRHAM2jsIs9hp
-         kjlXt8jdFi0qCO0mAHYczjCmNBFniIl6OYyDpe14Mb9umbb2Ymhn2lIJj6sA3ODzgLeJ
-         qTkgtHgAZaYw2BJyWN1uZ86913IoY2jE4IPf5I10YKMvYYpH9ZldDqb7JeJTA7WGG90Q
-         CRAVa+cWwM6tXqHz66WEch6K4syIDigJzn+i9ad7xxB+5Q15uSc3HsUdTyGB0PQpWHQm
-         +CRw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bZCzQdqxiW2iBUnMGNevk9yTBHQSBSAPpliQf9nIytg=;
+        b=oioqjDJS8AXHQHXwxxGpVTe/jYetLW1D4LZCyAVmFf1/Rg0bhXAOo9f5+tDxobKtlz
+         DeiLsVe3nghBfTFi18dzNkQZl9DFSQ3oD3xWlb7++D37Tzer8PYib+MnNI8gE8eYHB9O
+         ZYn6HQvs6ujXIDp1BV0CDUfKWEYzSAcPqNUSl7s0Br2QDqLUN8tzFhYim0ChmTHDCEQB
+         mFnNWpZiqrfBVaNx5ViWpm2cK012MQ1GJ2PpIbTG1Mpw7gdoz2EPiCFpMCLLOo/9LjTH
+         2HSVHV1rmKXimijMgOVXQ5a8h1VJ2LHHmT6S14m8Bcetu4FwwggByM8hdGW9/OsTl3Ao
+         X5Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=vCppfmD4UgvXJ5Xp9SPYLml5K9LFeDynszsIHeM3Fa0=;
-        b=kUDXT/OvEqumQLx6pcUt6SPxy8aj1Iav8otXiqoFa27rKRB1MIPCnpn9CoqJu1BUdj
-         zX9qRe1+zEFI0Hov9/ZvnUVz8/xMfHQn6JbWCKWEbfIL+61I7nkL9OWf12XB4/5MtY8W
-         duGrEtHVrno1BGBTTBoJc/hlpCr2ul0o6Li6xQgW79BA73JUe2pOHvRkb4o52Mze14oC
-         RQiWqKNt58PZsC6tW/qipOOhsGHegbHGWdz2chIzChaSS4wribqVsf8cCfHE2rPtSc9F
-         tLMgBfU5r7QbEBUWNOAFlwktgY/1kvvg6c4Jij9wxCTrcDogEVlsqw4J/kXa6akVGKG1
-         WQ5w==
-X-Gm-Message-State: AA+aEWb7u/XNPKAn7fDVF8kGAK4fGT6EdYsYpn9FcrGJOevuzxtxuArh
-        pOuoa/BmKw6uCX4SpgdcJYz7og==
-X-Google-Smtp-Source: AFSGD/WHunhtdAOhgA1AvDjn0pdtVZWKntAXC9OmS1eyyM3Se1aaACjw3hg536zzYfwugTn0k3FA6Q==
-X-Received: by 2002:a17:902:6bc9:: with SMTP id m9mr23360147plt.173.1545305296896;
-        Thu, 20 Dec 2018 03:28:16 -0800 (PST)
-Received: from [192.168.10.152] (124-171-140-5.dyn.iinet.net.au. [124.171.140.5])
-        by smtp.gmail.com with ESMTPSA id 24sm38202912pfl.32.2018.12.20.03.28.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 03:28:15 -0800 (PST)
-Subject: Re: [PATCH kernel v7 00/20] powerpc/powernv/npu, vfio: NVIDIA V100 +
- P9 passthrough
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     David Gibson <david@gibson.dropbear.id.au>,
-        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
-        Alistair Popple <alistair@popple.id.au>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Piotr Jaroszynski <pjaroszynski@nvidia.com>,
-        =?UTF-8?Q?Leonardo_Augusto_Guimar=c3=a3es_Garcia?= 
-        <lagarcia@br.ibm.com>, Jose Ricardo Ziviani <joserz@linux.ibm.com>,
-        Daniel Henrique Barboza <danielhb413@gmail.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-References: <20181220082350.58113-1-aik@ozlabs.ru>
- <87h8f8r10z.fsf@concordia.ellerman.id.au>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=aik@ozlabs.ru; keydata=
- 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
-Message-ID: <8da1b46e-1ef1-d2b5-2d2b-c633fb827c47@ozlabs.ru>
-Date:   Thu, 20 Dec 2018 22:28:03 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bZCzQdqxiW2iBUnMGNevk9yTBHQSBSAPpliQf9nIytg=;
+        b=fhKLgwpsUxszg0ZoTX0PWVPDs0cGMYpy8VSDjMgdYGg6+UFfJe3Vt6y0vxlV7dpWNo
+         tERgU+zu70yK6mS70UALsZhkQ37aYPGIV8FGOcJxkRxsi7zieHA2LDcKrJhVkxQxHIm9
+         q9e2ImO22IQ3T4Whf6EebReX0KkShRwDj5vtEMUG0ji46xwwWSTBh54FvQNZd+yRDJnm
+         vy5+7sghF5K8l4xc9mGXbTq79DrCmUHS5ypCIsM/n266bPS5kywEBw+o5uEvBuALUNuN
+         vwo15/HvMHulXRgHLSkU+yaunZKIi+i6fbfJbz7K8bBEzkBn8YoDSel/xFc8A3mKNY/l
+         QEaA==
+X-Gm-Message-State: AA+aEWYljZoaaqs8CznI7TG2Ody0jFf0UVEIVSswYuWKSnvla6KeS7+7
+        dO5vQrokZJbJD1f6EF9nclo=
+X-Google-Smtp-Source: AFSGD/WMH6F33KLwxwCxt3K3d94XiI4gC9HKoaAnIc/1wStZ3M31G9RBnDPoZTGqUrq64hQ+ieWK7w==
+X-Received: by 2002:a17:902:28c1:: with SMTP id f59mr23726894plb.37.1545305741266;
+        Thu, 20 Dec 2018 03:35:41 -0800 (PST)
+Received: from localhost ([175.223.27.218])
+        by smtp.gmail.com with ESMTPSA id u69sm44078550pfj.116.2018.12.20.03.35.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 03:35:40 -0800 (PST)
+Date:   Thu, 20 Dec 2018 20:35:37 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] printk: increase devkmsg write() ratelimit
+Message-ID: <20181220113537.GA701@jagdpanzerIV>
+References: <20181218114709.GF7485@zn.tnic>
+ <20181218130750.GA665@tigerII.localdomain>
+ <20181218142623.GH7485@zn.tnic>
+ <20181218145558.GD665@tigerII.localdomain>
+ <20181218150313.GI7485@zn.tnic>
+ <20181218151455.GE665@tigerII.localdomain>
+ <20181218152413.GJ7485@zn.tnic>
+ <20181218165217.GA534@tigerII.localdomain>
+ <20181218172109.GK15430@hirez.programming.kicks-ass.net>
+ <20181218123748.3aadd16c@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <87h8f8r10z.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218123748.3aadd16c@gandalf.local.home>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 20/12/2018 20:38, Michael Ellerman wrote:
-> Alexey Kardashevskiy <aik@ozlabs.ru> writes:
+On (12/18/18 12:37), Steven Rostedt wrote:
+> > 
+> > Again, complain to system-doofus for printing so much crap to somewhere
+> > it should not print to begin with.
 > 
->> My bad, I was not cc-ing everyone but now with v7 I am, sorry about that.
-> 
-> I've already applied v6, I'll assume this is unchanged from that unless
-> you tell me otherwise.
+> I've been saying that it would be good to make the kmsg be a separate
+> buffer that just gets interleaved with the kernel buffer.
 
-14/20 has fixed warning about uninitialized npdev, 20/20 has fixed
-comment about one capability:
+Hmm, this is interesting.
 
-[fstn1-p1 kernel]$ git diff 7e04f09 9128bd1
-diff --git a/arch/powerpc/platforms/powernv/npu-dma.c
-b/arch/powerpc/platforms/powernv/npu-dma.c
-index ed81426..12b8421 100644
---- a/arch/powerpc/platforms/powernv/npu-dma.c
-+++ b/arch/powerpc/platforms/powernv/npu-dma.c
-@@ -540,7 +540,7 @@ struct iommu_table_group
-*pnv_try_setup_npu_table_group(struct pnv_ioda_pe *pe)
-        struct npu_comp *npucomp;
-        struct pci_dev *gpdev = NULL;
-        struct pci_controller *hose;
--       struct pci_dev *npdev;
-+       struct pci_dev *npdev = NULL;
+> Userspace processes should never be able to overwrite messages
+> from the kernel.
 
-        list_for_each_entry(gpdev, &pe->pbus->devices, bus_list) {
-                npdev = pnv_pci_get_npu_dev(gpdev, 0);
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index 22b825c..5562587 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -390,8 +390,7 @@ struct vfio_region_info_cap_nvlink2_ssatgt {
+I would agree.
+
+It's a bit funny that kernel people first take the patch in and then,
+when user-space begins to use the feature, start to object and ratelimit.
+
+By the way, systemd seems to be OK with alternative logging targets
+
+/etc/systemd/system.conf
+
+---
+	[Manager]
+	#LogLevel=info
+	LogTarget=syslog console journal
+---
+
+Everything looks fine with read-only devkmsg (running the patched
+kernel). "journalctl -f -b" gives a nice system log:
+
+...
+ kernel: r8169 0000:04:00.0 enp4s0: renamed from eth0
+ kernel: snd_hda_codec_realtek hdaudioC0D0:      Line=0x1a
+ systemd-udevd[180]: link_config: autonegotiation is unset or enabled, the speed and duplex are not writable.
+ systemd[1]: Started Flush Journal to Persistent Storage.
+ kernel: input: HDA Intel PCH Line as /devices/pci0000:00/0000:00:1f.3/sound/card0/input7
+...
+
+
+Given how often systemd hits ratelimits (I googled some bug reports),
+I wonder if systemd people are still interested in /dev/kmsg logging
+at all.
+
+
+---
+
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 7b4e4de778e4..6d35115c5629 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -875,7 +875,7 @@ static const struct memdev {
+ 	 [8] = { "random", 0666, &random_fops, 0 },
+ 	 [9] = { "urandom", 0666, &urandom_fops, 0 },
+ #ifdef CONFIG_PRINTK
+-	[11] = { "kmsg", 0644, &kmsg_fops, 0 },
++	[11] = { "kmsg", 0444, &kmsg_fops, 0 },
+ #endif
  };
-
- /*
-- * Capability with compressed real address (aka SSA - small system
-address),
-- * used to match the NVLink bridge with a GPU. Also contains a link speed.
-+ * Capability with an NVLink link speed.
-  */
- #define VFIO_REGION_INFO_CAP_NVLINK2_LNKSPD    5
-
-
-
-> 
-> cheers
-> 
->> This is for passing through NVIDIA V100 GPUs on POWER9 systems.
->> 20/20 has the details of hardware setup.
->>
->> This implements support for NVIDIA V100 GPU with coherent memory and
->> NPU/ATS support available in the POWER9 CPU. The aim is to support
->> unmodified vendor driver in the guest.
->>
->> This is pushed to (both guest and host kernels):
->> https://github.com/aik/linux/tree/nv2
->>
->> Matching qemu is pushed to github:
->> https://github.com/aik/qemu/tree/nv2
->>
->> Skiboot bits are here:
->> https://github.com/aik/skiboot/tree/nv2
->>
->> The individual patches have changelogs. v7 fixes compile warning
->> and updates a VFIO capability comment in 20/20.
->>
->> Please comment. Thanks.
->>
->>
->>
->> Alexey Kardashevskiy (20):
->>   powerpc/ioda/npu: Call skiboot's hot reset hook when disabling NPU2
->>   powerpc/mm/iommu/vfio_spapr_tce: Change mm_iommu_get to reference a
->>     region
->>   powerpc/vfio/iommu/kvm: Do not pin device memory
->>   powerpc/powernv: Move npu struct from pnv_phb to pci_controller
->>   powerpc/powernv/npu: Move OPAL calls away from context manipulation
->>   powerpc/pseries/iommu: Use memory@ nodes in max RAM address
->>     calculation
->>   powerpc/pseries/npu: Enable platform support
->>   powerpc/pseries: Remove IOMMU API support for non-LPAR systems
->>   powerpc/powernv/pseries: Rework device adding to IOMMU groups
->>   powerpc/iommu_api: Move IOMMU groups setup to a single place
->>   powerpc/powernv: Reference iommu_table while it is linked to a group
->>   powerpc/powernv/npu: Move single TVE handling to NPU PE
->>   powerpc/powernv/npu: Convert NPU IOMMU helpers to
->>     iommu_table_group_ops
->>   powerpc/powernv/npu: Add compound IOMMU groups
->>   powerpc/powernv/npu: Add release_ownership hook
->>   powerpc/powernv/npu: Check mmio_atsd array bounds when populating
->>   powerpc/powernv/npu: Fault user page into the hypervisor's pagetable
->>   vfio_pci: Allow mapping extra regions
->>   vfio_pci: Allow regions to add own capabilities
->>   vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver
->>
->>  drivers/vfio/pci/Makefile                     |   1 +
->>  arch/powerpc/include/asm/iommu.h              |  17 +-
->>  arch/powerpc/include/asm/mmu_context.h        |  15 +-
->>  arch/powerpc/include/asm/pci-bridge.h         |   1 +
->>  arch/powerpc/include/asm/pci.h                |   4 +
->>  arch/powerpc/platforms/powernv/pci.h          |  30 +-
->>  drivers/vfio/pci/trace.h                      | 102 ++++
->>  drivers/vfio/pci/vfio_pci_private.h           |  20 +
->>  include/uapi/linux/vfio.h                     |  37 ++
->>  arch/powerpc/kernel/iommu.c                   |  69 +--
->>  arch/powerpc/kvm/book3s_64_vio.c              |  18 +-
->>  arch/powerpc/mm/mmu_context_iommu.c           | 110 +++-
->>  arch/powerpc/platforms/powernv/npu-dma.c      | 549 +++++++++++++++---
->>  arch/powerpc/platforms/powernv/pci-ioda-tce.c |   3 +-
->>  arch/powerpc/platforms/powernv/pci-ioda.c     | 237 ++++----
->>  arch/powerpc/platforms/powernv/pci.c          |  43 +-
->>  arch/powerpc/platforms/pseries/iommu.c        |  88 ++-
->>  arch/powerpc/platforms/pseries/pci.c          |  22 +
->>  drivers/vfio/pci/vfio_pci.c                   |  42 +-
->>  drivers/vfio/pci/vfio_pci_nvlink2.c           | 482 +++++++++++++++
->>  drivers/vfio/vfio_iommu_spapr_tce.c           |  64 +-
->>  drivers/vfio/pci/Kconfig                      |   6 +
->>  22 files changed, 1569 insertions(+), 391 deletions(-)
->>  create mode 100644 drivers/vfio/pci/trace.h
->>  create mode 100644 drivers/vfio/pci/vfio_pci_nvlink2.c
->>
->> -- 
->> 2.17.1
-
--- 
-Alexey
+ 
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 829fe6fb098a..48c4ccac9fce 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -770,7 +770,6 @@ static ssize_t msg_print_ext_body(char *buf, size_t size,
+ struct devkmsg_user {
+ 	u64 seq;
+ 	u32 idx;
+-	struct ratelimit_state rs;
+ 	struct mutex lock;
+ 	char buf[CONSOLE_EXT_LOG_MAX];
+ };
+@@ -788,69 +787,6 @@ int devkmsg_emit(int facility, int level, const char *fmt, ...)
+ 	return r;
+ }
+ 
+-static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
+-{
+-	char *buf, *line;
+-	int level = default_message_loglevel;
+-	int facility = 1;	/* LOG_USER */
+-	struct file *file = iocb->ki_filp;
+-	struct devkmsg_user *user = file->private_data;
+-	size_t len = iov_iter_count(from);
+-	ssize_t ret = len;
+-
+-	if (!user || len > LOG_LINE_MAX)
+-		return -EINVAL;
+-
+-	/* Ignore when user logging is disabled. */
+-	if (devkmsg_log & DEVKMSG_LOG_MASK_OFF)
+-		return len;
+-
+-	/* Ratelimit when not explicitly enabled. */
+-	if (!(devkmsg_log & DEVKMSG_LOG_MASK_ON)) {
+-		if (!___ratelimit(&user->rs, current->comm))
+-			return ret;
+-	}
+-
+-	buf = kmalloc(len+1, GFP_KERNEL);
+-	if (buf == NULL)
+-		return -ENOMEM;
+-
+-	buf[len] = '\0';
+-	if (!copy_from_iter_full(buf, len, from)) {
+-		kfree(buf);
+-		return -EFAULT;
+-	}
+-
+-	/*
+-	 * Extract and skip the syslog prefix <[0-9]*>. Coming from userspace
+-	 * the decimal value represents 32bit, the lower 3 bit are the log
+-	 * level, the rest are the log facility.
+-	 *
+-	 * If no prefix or no userspace facility is specified, we
+-	 * enforce LOG_USER, to be able to reliably distinguish
+-	 * kernel-generated messages from userspace-injected ones.
+-	 */
+-	line = buf;
+-	if (line[0] == '<') {
+-		char *endp = NULL;
+-		unsigned int u;
+-
+-		u = simple_strtoul(line + 1, &endp, 10);
+-		if (endp && endp[0] == '>') {
+-			level = LOG_LEVEL(u);
+-			if (LOG_FACILITY(u) != 0)
+-				facility = LOG_FACILITY(u);
+-			endp++;
+-			len -= endp - line;
+-			line = endp;
+-		}
+-	}
+-
+-	devkmsg_emit(facility, level, "%s", line);
+-	kfree(buf);
+-	return ret;
+-}
+-
+ static ssize_t devkmsg_read(struct file *file, char __user *buf,
+ 			    size_t count, loff_t *ppos)
+ {
+@@ -998,9 +934,6 @@ static int devkmsg_open(struct inode *inode, struct file *file)
+ 	if (!user)
+ 		return -ENOMEM;
+ 
+-	ratelimit_default_init(&user->rs);
+-	ratelimit_set_flags(&user->rs, RATELIMIT_MSG_ON_RELEASE);
+-
+ 	mutex_init(&user->lock);
+ 
+ 	logbuf_lock_irq();
+@@ -1019,8 +952,6 @@ static int devkmsg_release(struct inode *inode, struct file *file)
+ 	if (!user)
+ 		return 0;
+ 
+-	ratelimit_state_exit(&user->rs);
+-
+ 	mutex_destroy(&user->lock);
+ 	kfree(user);
+ 	return 0;
+@@ -1029,7 +960,6 @@ static int devkmsg_release(struct inode *inode, struct file *file)
+ const struct file_operations kmsg_fops = {
+ 	.open = devkmsg_open,
+ 	.read = devkmsg_read,
+-	.write_iter = devkmsg_write,
+ 	.llseek = devkmsg_llseek,
+ 	.poll = devkmsg_poll,
+ 	.release = devkmsg_release,
