@@ -2,180 +2,126 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5C7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 369EFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5092217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:42:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I34QY0QH"
+	by mail.kernel.org (Postfix) with ESMTP id 0E43D2186A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:43:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387688AbeLTOmi (ORCPT
+        id S2387701AbeLTOny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:42:38 -0500
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:35281 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730138AbeLTOmi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:42:38 -0500
-Received: by mail-ed1-f46.google.com with SMTP id x30so1968139edx.2;
-        Thu, 20 Dec 2018 06:42:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hSQ8cyRVdWwO5IfLDaZgAKPOXuOVgW5PLFtWDFtHp6U=;
-        b=I34QY0QHYl1ZqtgNdYC+7lC177miSjIt9U7oHHjTddVMF9RhHXxvfAvkUfGeRL5l0e
-         TA019Ycsp+TdnZs84owZCoIkKeLrzH8tIL7vgpK5QW46ODsUwUwv8JvsIpRsPECHXSVz
-         9CTnQltI2LcTdk4tw0RFZv5bvJzMUy7v+fT/6TrBLANFOGekNflvZ8FaZ81FdEwgaoj7
-         YBYDXmPmpnr7eXKTS6kH4AI5QAiTtw8z5Ua6B0snVgyYoV9XQj+h3pgWjyqKpesuD5OO
-         WhEpJsqYF2VJ/mPcOTOaLdvcsC3xPYk1D7myKU3VPCocuayHjA1rnDqxbmowdLjssRXx
-         L41Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hSQ8cyRVdWwO5IfLDaZgAKPOXuOVgW5PLFtWDFtHp6U=;
-        b=tNQwcW88wdNlGWRBcmFfFFvhYHSxCuWxTjMpFRlfwECyeKsuz9q7hd9s9x+ysmY6sT
-         v7RMDesX8eT1eaP80cFCMogIynss+R3bWCiGl3syFS249k0oXbBe/dSk7aPExi6QM7pL
-         PR9UhNFp6yMLAKzoEW8qEv/75OZXAHfScPMKC3s6lEj/SOFXLkXFtGUXZguHSWI4UzL4
-         7umKmjyN40QUy7aLYL7ir8ftibhHlRE3GglJFS2hSbl7kGaHncq95KAU6H8ECZaIiPBl
-         EpMx8L5dl6RGAMtA0ra4BMrU3ElZuBD950cZOmgcY6JTxIqbj5Aj0y13JQlpC8JvMIbH
-         q9lQ==
-X-Gm-Message-State: AA+aEWZZqaqI6imps3xW/BUgFsSanfnZSwBlgz6xp68XGR//1HRum/7t
-        p0Ewut2NMUAHw+a29NastnpVLYzdiZ2vF0SYG6k=
-X-Google-Smtp-Source: AFSGD/X/U2vb1zzAzkZO86AL6XTkjZujm1w7wrrf0IyLQ4R9Un7c0foklnxvtLUMGbLTR4VXsxY9Gb73McBwYYMOA1U=
-X-Received: by 2002:a50:ae8f:: with SMTP id e15mr24490552edd.250.1545316955506;
- Thu, 20 Dec 2018 06:42:35 -0800 (PST)
+        Thu, 20 Dec 2018 09:43:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34738 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730138AbeLTOnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:43:53 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 632EF3C2CDB;
+        Thu, 20 Dec 2018 14:43:53 +0000 (UTC)
+Received: from flask (unknown [10.43.2.138])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 83A1B4526;
+        Thu, 20 Dec 2018 14:43:46 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Thu, 20 Dec 2018 15:43:45 +0100
+Date:   Thu, 20 Dec 2018 15:43:45 +0100
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM: MMU: Introduce single thread to zap collapsible
+ sptes
+Message-ID: <20181220144345.GB19579@flask>
+References: <1544083089-13000-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-References: <ba519cd8-ab88-2868-f6d0-be321d8df0be@de.ibm.com>
- <20181220091207.GA25942@splinter> <CAF=yD-LJe_YjH-ssVb1c+yvEvKSDgBzUFMD8NxWKCKOEJPw30w@mail.gmail.com>
- <20181220141609.GA861@splinter> <CAF=yD-K6Y=Jt=KNLOtg-_c32bnp__c_3RM4XvO6Q-Zye-nd4=A@mail.gmail.com>
-In-Reply-To: <CAF=yD-K6Y=Jt=KNLOtg-_c32bnp__c_3RM4XvO6Q-Zye-nd4=A@mail.gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Thu, 20 Dec 2018 09:41:59 -0500
-Message-ID: <CAF=yD-Kfnc2mrJnPawTinhkpARK3Xf9Pmq6rZ__tMsLtZbmhww@mail.gmail.com>
-Subject: Re: 4.20-rc6: WARNING: CPU: 30 PID: 197360 at net/core/flow_dissector.c:764
- __skb_flow_dissect
-To:     Ido Schimmel <idosch@idosch.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Michael S Tsirkin <mst@redhat.com>,
-        Network Development <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Jason Wang <jasowang@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544083089-13000-1-git-send-email-wanpengli@tencent.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 20 Dec 2018 14:43:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 9:34 AM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> On Thu, Dec 20, 2018 at 9:16 AM Ido Schimmel <idosch@idosch.org> wrote:
-> >
-> > On Thu, Dec 20, 2018 at 09:04:25AM -0500, Willem de Bruijn wrote:
-> > > On Thu, Dec 20, 2018 at 6:15 AM Ido Schimmel <idosch@idosch.org> wrote:
-> > > >
-> > > > +Willem
-> > > >
-> > > > On Thu, Dec 20, 2018 at 08:45:40AM +0100, Christian Borntraeger wrote:
-> > > > > Folks,
-> > > > >
-> > > > > I got this warning today. I cant tell when and why this happened, so I do not know yet how to reproduce.
-> > > > > Maybe someone has a quick idea.
-> > > > >
-> > > > > [85109.572032] WARNING: CPU: 30 PID: 197360 at net/core/flow_dissector.c:764 __skb_flow_dissect+0x1f0/0x1318
-> > > >
-> > > > I managed to trigger this warning as well the other day, but from a
-> > > > different call path:
-> > > >
-> > > > [280155.348610]  fib_multipath_hash+0x28c/0x2d0
-> > > > [280155.348613]  ? fib_multipath_hash+0x28c/0x2d0
-> > > > [280155.348619]  fib_select_path+0x241/0x32f
-> > > > [280155.348622]  ? __fib_lookup+0x6a/0xb0
-> > > > [280155.348626]  ip_route_output_key_hash_rcu+0x650/0xa30
-> > > > [280155.348631]  ? __alloc_skb+0x9b/0x1d0
-> > > > [280155.348634]  inet_rtm_getroute+0x3f7/0xb80
-> > >
-> > > inet_rtm_getroute builds a new packet with inet_rtm_getroute_build_skb
-> > > here without dev or sk.
-> >
-> > Ack
-> >
-> > >
-> > > > Problem is the synthesized skb for output route resolution does not have
-> > > > skb->dev or skb->sk set. When a multipath route is hit and
-> > > > net.ipv4.fib_multipath_hash_policy is set the flow dissector is called
-> > > > with this skb and the warning is triggered.
-> > > >
-> > > > I plan to fix it by setting skb->dev to net->loopback_dev.
-> > >
-> > > The device can be chosen based on iif in inet_rtm_getroute? A first
-> > > thought, I don't know this code very well.
-> >
-> > Yes, but iif is for input routes. I'm talking about output routes.
-> >
-> > > Let me know if you want me to take a stab at that patch. IPv6 probably
-> > > will need the same.
-> >
-> > Yes, I'll try it now and post later today if everything is OK. IPv6 is
-> > using flow info and not an skb, so no problem there. I also checked
-> > other getroute implementations and none of them call into the flow
-> > dissector with an skb, so I think we're fine.
-> >
-> > >
-> > > > I assume we
-> > > > want to keep this warning to prevent call paths which will otherwise
-> > > > silently fallback to standard flow dissector instead of the BPF one.
-> > >
-> > > Indeed, the warning is there to sniff out paths that do not follow
-> > > what I thought was an invariant. If there are too many exceptions, I
-> > > may have to revisit that assumption. But for now, let's see if we can
-> > > address these edge cases.
-> >
-> > Ack
-> >
-> > >
-> > > > I'm not familiar with tap code, so someone else will need to patch this
-> > > > case, but it looks like:
-> > > >
-> > > > tap_sendmsg()
-> > > >     tap_get_user()
-> > > >         skb_probe_transport_header()
-> > > >             skb_flow_dissect_flow_keys_basic()
-> > > >                 __skb_flow_dissect()
-> > > >
-> > > > skb->dev is only set later in the code.
-> > >
-> > > tap_get_user uses sock_alloc_send_pskb (through tap_alloc_skb) to
-> > > allocate the skb. So skb->sk should be set at the time of
-> > > skb_probe_transport_header. I'm not sure how this path triggers the
-> > > warning.
-> >
-> > Maybe it's:
-> >
-> > tap_sendmsg()
-> >     tap_get_user_xdp()
-> >         build_skb()
-> >             skb_probe_transport_header()
-> >                 skb_flow_dissect_flow_keys_basic()
-> >                     __skb_flow_dissect()
->
-> Oh, indeed. I completely overlooked that path.
->
-> I will call skb_set_owner_w there and will audit the other users of build_skb.
+2018-12-06 15:58+0800, Wanpeng Li:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Last year guys from huawei reported that the call of memory_global_dirty_log_start/stop() 
+> takes 13s for 4T memory and cause guest freeze too long which increases the unacceptable 
+> migration downtime. [1] [2]
+> 
+> Guangrong pointed out:
+> 
+> | collapsible_sptes zaps 4k mappings to make memory-read happy, it is not
+> | required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
+> | urgent for vCPU's running, it could be done in a separate thread and use
+> | lock-break technology.
+> 
+> [1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
+> [2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
+> 
+> Several TB memory guest is common now after NVDIMM is deployed in cloud environment.
+> This patch utilizes worker thread to zap collapsible sptes in order to lazy collapse 
+> small sptes into large sptes during roll-back after live migration fails.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+> @@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+>  	return need_tlb_flush;
+>  }
+>  
+> +void zap_collapsible_sptes_fn(struct work_struct *work)
+> +{
+> +	struct kvm_memory_slot *memslot;
+> +	struct kvm_memslots *slots;
+> +	struct delayed_work *dwork = to_delayed_work(work);
+> +	struct kvm_arch *ka = container_of(dwork, struct kvm_arch,
+> +					   kvm_mmu_zap_collapsible_sptes_work);
+> +	struct kvm *kvm = container_of(ka, struct kvm, arch);
+> +	int i;
+> +
+> +	mutex_lock(&kvm->slots_lock);
+> +	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+> +		spin_lock(&kvm->mmu_lock);
+> +		slots = __kvm_memslots(kvm, i);
+> +		kvm_for_each_memslot(memslot, slots) {
+> +			slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+> +				kvm_mmu_zap_collapsible_spte, true);
+> +			if (need_resched() || spin_needbreak(&kvm->mmu_lock))
+> +				cond_resched_lock(&kvm->mmu_lock);
 
-Uhm, no, that may not be the right solution if these packets may
-be injected into the receive path. This also affects the tun device
-through tun_xdp_one, which calls netif_receive_skb.
+I think we shouldn't zap all memslots when kvm_mmu_zap_collapsible_sptes
+only wanted to zap a specific one.
+Please add a list of memslots to be zapped; delete from the list here
+and add in kvm_mmu_zap_collapsible_sptes().
 
-I'll need to take a closer look. Other approach is to move the
-assignment skb->dev = tap->dev earlier.
+> +		}
+> +		spin_unlock(&kvm->mmu_lock);
+> +	}
+> +	kvm->arch.zap_in_progress = false;
+> +	mutex_unlock(&kvm->slots_lock);
+> +}
+> +
+> +#define KVM_MMU_ZAP_DELAYED (60 * HZ)
+>  void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
+>  				   const struct kvm_memory_slot *memslot)
+>  {
+> -	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
+> -	spin_lock(&kvm->mmu_lock);
+> -	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+> -			 kvm_mmu_zap_collapsible_spte, true);
+> -	spin_unlock(&kvm->mmu_lock);
+> +	if (!kvm->arch.zap_in_progress) {
+
+The list can also serve in place of zap_in_progress -- if there were any
+elements in it, then there is no need to schedule the work again.
+
+Thanks.
