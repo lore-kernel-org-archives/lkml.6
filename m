@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BDDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F01C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 664B52177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBF7521852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298122;
-	bh=uT6yUQ0D4tCH/ycfuUSroBsMvgdB0hPWZAErqYiKQLU=;
+	s=default; t=1545298125;
+	bh=ea7a+1jPYn3BjkFOMVRWdf30xDnhwi1ZDxJdVvqQhAs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NZsqRs4jD/vP7xHmK84xScOGqIynjJ6zmjOLMCayrT8RFYLdsVyIl3VU+yjzBNyEb
-	 PiyLW6KTAhTGmjIOJkYuucEL0U3CkvxDIKE247jeZSndN09LMqbI2XlDhxRSPSXuFN
-	 l1luXHnAQE5LbUYgYLd/5th03lj8cBzccPSzXMjI=
+	b=UI9/LAoGLvuqPoZ9LFcB917c0jf+a8/oZUG4WkbEcWyF6RW9Ki1coZOKkmg1PDurE
+	 gqm5cBrJlUw2j6BAWQAq4B6vwumrmYDMiFoYXcggR1jjAgyCu75yzGChpaX87L8vW5
+	 yDyMMl9h0wUd9B/vTQqyirUzV7kDIg2+Y9pcft1Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732560AbeLTJ2l (ORCPT
+        id S1732570AbeLTJ2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:28:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47494 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:28:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732530AbeLTJ2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:28:33 -0500
+        id S1730924AbeLTJ2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:28:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60EED21741;
-        Thu, 20 Dec 2018 09:28:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 483C520989;
+        Thu, 20 Dec 2018 09:28:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298112;
-        bh=uT6yUQ0D4tCH/ycfuUSroBsMvgdB0hPWZAErqYiKQLU=;
+        s=default; t=1545298120;
+        bh=ea7a+1jPYn3BjkFOMVRWdf30xDnhwi1ZDxJdVvqQhAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IqtXFaomj2XmgZ2awbmvPTXyL89HfahoaQMrOADQ0vD3jmhrJl3i6gP0PdeDnhXAS
-         Bz0Q+V09XhjQcjgQaSq+jrur524otQN4fqe8py6NI3a8fccMJ+Z0LmZ4SNpFD72pTd
-         ljtg/EP5MnMMBA0cmLl6qwpAytwAfoKI+qg6wvlE=
+        b=Y6qlQVHK0mSEwbBQtGFKHjzIhvgQNCg6BBt4XhJBbIl7asElXhGUco7m+Jhn566bL
+         rLWjN0OP0j0xZSlIhYmLL7JGoQ4aTW+6PgYoQD3T/zitFKa3YlUIuci9+uWe1ySluO
+         v4DuZhvftnd6dEwG9pwjHw+iUqoV3XS3MfhAGE58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Nicolas Schichan <nschichan@freebox.fr>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 69/72] i2c: uniphier-f: fix violation of tLOW requirement for Fast-mode
-Date:   Thu, 20 Dec 2018 10:19:08 +0100
-Message-Id: <20181220085925.048921531@linuxfoundation.org>
+Subject: [PATCH 4.14 72/72] bpf, arm: fix emit_ldx_r and emit_mov_i using TMP_REG_1
+Date:   Thu, 20 Dec 2018 10:19:11 +0100
+Message-Id: <20181220085925.164928102@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -66,54 +66,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ece27a337d42a3197935711997f2880f0957ed7e ]
+emit_ldx_r() and emit_a32_mov_i() were both using TMP_REG_1 and
+clashing with each other. Using TMP_REG_2 in emit_ldx_r() fixes
+the issue.
 
-Currently, the clock duty is set as tLOW/tHIGH = 1/1. For Fast-mode,
-tLOW is set to 1.25 us while the I2C spec requires tLOW >= 1.3 us.
-
-tLOW/tHIGH = 5/4 would meet both Standard-mode and Fast-mode:
-  Standard-mode: tLOW = 5.56 us, tHIGH = 4.44 us
-  Fast-mode:     tLOW = 1.39 us, tHIGH = 1.11 us
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: ec19e02b343 ("ARM: net: bpf: fix LDX instructions")
+Cc: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Nicolas Schichan <nschichan@freebox.fr>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ arch/arm/net/bpf_jit_32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index a403e8579b65..bc26ec822e26 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -470,9 +470,26 @@ static void uniphier_fi2c_hw_init(struct uniphier_fi2c_priv *priv)
- 
- 	uniphier_fi2c_reset(priv);
- 
-+	/*
-+	 *  Standard-mode: tLOW + tHIGH = 10 us
-+	 *  Fast-mode:     tLOW + tHIGH = 2.5 us
-+	 */
- 	writel(cyc, priv->membase + UNIPHIER_FI2C_CYC);
--	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tLOW = 4.7 us, tHIGH = 4.0 us, tBUF = 4.7 us
-+	 *  Fast-mode:     tLOW = 1.3 us, tHIGH = 0.6 us, tBUF = 1.3 us
-+	 * "tLow/tHIGH = 5/4" meets both.
-+	 */
-+	writel(cyc * 5 / 9, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tHD;STA = 4.0 us, tSU;STA = 4.7 us, tSU;STO = 4.0 us
-+	 *  Fast-mode:     tHD;STA = 0.6 us, tSU;STA = 0.6 us, tSU;STO = 0.6 us
-+	 */
- 	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_SSUT);
-+	/*
-+	 *  Standard-mode: tSU;DAT = 250 ns
-+	 *  Fast-mode:     tSU;DAT = 100 ns
-+	 */
- 	writel(cyc / 16, priv->membase + UNIPHIER_FI2C_DSUT);
- 
- 	uniphier_fi2c_prepare_operation(priv);
+diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
+index ece2d1d43724..dafeb5f81353 100644
+--- a/arch/arm/net/bpf_jit_32.c
++++ b/arch/arm/net/bpf_jit_32.c
+@@ -915,7 +915,7 @@ static inline void emit_str_r(const u8 dst, const u8 src, bool dstk,
+ /* dst = *(size*)(src + off) */
+ static inline void emit_ldx_r(const u8 dst[], const u8 src, bool dstk,
+ 			      s32 off, struct jit_ctx *ctx, const u8 sz){
+-	const u8 *tmp = bpf2a32[TMP_REG_1];
++	const u8 *tmp = bpf2a32[TMP_REG_2];
+ 	const u8 *rd = dstk ? tmp : dst;
+ 	u8 rm = src;
+ 	s32 off_max;
 -- 
 2.19.1
 
