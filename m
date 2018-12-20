@@ -2,74 +2,66 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8091C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1666C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9C421773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF2A721773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:36:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbeLTQei (ORCPT
+        id S1730195AbeLTQgj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:34:38 -0500
-Received: from mail09.linbit.com ([212.69.161.110]:50091 "EHLO
-        mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeLTQei (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:34:38 -0500
-Received: from soda.linbit (212-186-191-219.static.upcbusiness.at [212.186.191.219])
-        by mail09.linbit.com (LINBIT Mail Daemon) with ESMTP id EF3901045C30;
-        Thu, 20 Dec 2018 17:23:47 +0100 (CET)
-From:   Lars Ellenberg <lars.ellenberg@linbit.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc:     drbd-dev@lists.linbit.com
-Subject: [PATCH 09/17] drbd: fix comment typos
-Date:   Thu, 20 Dec 2018 17:23:36 +0100
-Message-Id: <20181220162344.8430-10-lars.ellenberg@linbit.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181220162344.8430-1-lars.ellenberg@linbit.com>
-References: <20181220162344.8430-1-lars.ellenberg@linbit.com>
+        Thu, 20 Dec 2018 11:36:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54686 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726604AbeLTQgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 11:36:39 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D6648C0BEAA5;
+        Thu, 20 Dec 2018 16:36:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0938C5EE03;
+        Thu, 20 Dec 2018 16:36:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CADYN=9KNL=6juu0WuHYPLu3bMNpVimUMWfFqmr5GbTrKPyOfVg@mail.gmail.com>
+References: <CADYN=9KNL=6juu0WuHYPLu3bMNpVimUMWfFqmr5GbTrKPyOfVg@mail.gmail.com> <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk> <153754768644.17872.4707695831889551662.stgit@warthog.procyon.org.uk>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mszeredi@redhat.com, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 34/34] vfs: Add a sample program for the new mount API [ver #12]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 20 Dec 2018 16:36:36 +0000
+Message-ID: <6151.1545323796@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 20 Dec 2018 16:36:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
----
- drivers/block/drbd/drbd_receiver.c | 2 +-
- drivers/block/drbd/drbd_state.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 76d74b2122d6..3a0fe357b68b 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -4428,7 +4428,7 @@ static int receive_state(struct drbd_connection *connection, struct packet_info
- 		       (peer_state.disk == D_NEGOTIATING ||
- 			os.disk == D_NEGOTIATING));
- 		/* if we have both been inconsistent, and the peer has been
--		 * forced to be UpToDate with --overwrite-data */
-+		 * forced to be UpToDate with --force */
- 		cr |= test_bit(CONSIDER_RESYNC, &device->flags);
- 		/* if we had been plain connected, and the admin requested to
- 		 * start a sync by "invalidate" or "invalidate-remote" */
-diff --git a/drivers/block/drbd/drbd_state.c b/drivers/block/drbd/drbd_state.c
-index 18d53fe60d1d..883155657273 100644
---- a/drivers/block/drbd/drbd_state.c
-+++ b/drivers/block/drbd/drbd_state.c
-@@ -1124,7 +1124,7 @@ static union drbd_state sanitize_state(struct drbd_device *device, union drbd_st
- 			ns.pdsk = D_UP_TO_DATE;
- 	}
- 
--	/* Implications of the connection stat on the disk states */
-+	/* Implications of the connection state on the disk states */
- 	disk_min = D_DISKLESS;
- 	disk_max = D_UP_TO_DATE;
- 	pdsk_min = D_INCONSISTENT;
--- 
-2.17.1
+Anders Roxell <anders.roxell@linaro.org> wrote:
 
+> In file included from /usr/include/x86_64-linux-gnu/sys/stat.h:446,
+>                  from ../samples/vfs/test-statx.c:28:
+> /usr/include/x86_64-linux-gnu/bits/statx.h:25:8: error: redefinition
+> of ‘struct statx_timestamp’
+
+Yeah - the problem is that statx has now made it into glibc, but the sample
+program doesn't deal with it turning up in the system headers.  I've passed a
+patch to Al already.
+
+David
