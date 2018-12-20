@@ -3,46 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E9EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4991CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1269D218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 233E9218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388686AbeLTSL5 (ORCPT
+        id S1730070AbeLTSNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:11:57 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:53199 "EHLO
+        Thu, 20 Dec 2018 13:13:32 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51615 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbeLTSL4 (ORCPT
+        with ESMTP id S1727993AbeLTSNb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:11:56 -0500
+        Thu, 20 Dec 2018 13:13:31 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKIBkmG3682055
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKICKvT3682308
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:11:46 -0800
+        Thu, 20 Dec 2018 10:12:20 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKIBkED3682052;
-        Thu, 20 Dec 2018 10:11:46 -0800
-Date:   Thu, 20 Dec 2018 10:11:46 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKICKCO3682305;
+        Thu, 20 Dec 2018 10:12:20 -0800
+Date:   Thu, 20 Dec 2018 10:12:20 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-vac4sn1ns1vj4y07lzj7y4b8@git.kernel.org>
-Cc:     wangnan0@huawei.com, tglx@linutronix.de, acme@redhat.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, hpa@zytor.com, jolsa@kernel.org,
-        namhyung@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          namhyung@kernel.org, hpa@zytor.com, adrian.hunter@intel.com,
-          acme@redhat.com, tglx@linutronix.de, wangnan0@huawei.com,
-          mingo@kernel.org
+From:   tip-bot for Leo Yan <tipbot@zytor.com>
+Message-ID: <tip-43fd56669c28cd354e9228bdb58e4bca1c1a8b66@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, namhyung@kernel.org,
+        leo.yan@linaro.org, mingo@kernel.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mike.leach@linaro.org, robert.walker@arm.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com
+Reply-To: mike.leach@linaro.org, robert.walker@arm.com, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+          mathieu.poirier@linaro.org, namhyung@kernel.org,
+          leo.yan@linaro.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org
+In-Reply-To: <1544513908-16805-2-git-send-email-leo.yan@linaro.org>
+References: <1544513908-16805-2-git-send-email-leo.yan@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Switch to using a struct for the
- aumented_raw_syscalls syscalls map values
-Git-Commit-ID: bbab50dda724309eccec92132d3f36cb262e8728
+Subject: [tip:perf/core] perf cs-etm: Correct packets swapping in
+ cs_etm__flush()
+Git-Commit-ID: 43fd56669c28cd354e9228bdb58e4bca1c1a8b66
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,66 +60,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bbab50dda724309eccec92132d3f36cb262e8728
-Gitweb:     https://git.kernel.org/tip/bbab50dda724309eccec92132d3f36cb262e8728
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 12 Dec 2018 16:54:09 -0300
+Commit-ID:  43fd56669c28cd354e9228bdb58e4bca1c1a8b66
+Gitweb:     https://git.kernel.org/tip/43fd56669c28cd354e9228bdb58e4bca1c1a8b66
+Author:     Leo Yan <leo.yan@linaro.org>
+AuthorDate: Tue, 11 Dec 2018 15:38:21 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:23:58 -0300
 
-perf trace: Switch to using a struct for the aumented_raw_syscalls syscalls map values
+perf cs-etm: Correct packets swapping in cs_etm__flush()
 
-We'll start adding more perf-syscall stuff, so lets do this prep step so
-that the next ones are just about adding more fields.
+The structure cs_etm_queue uses 'prev_packet' to point to previous
+packet, this can be used to combine with new coming packet to generate
+samples.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+In function cs_etm__flush() it swaps packets only when the flag
+'etm->synth_opts.last_branch' is true, this means that it will not swap
+packets if without option '--itrace=il' to generate last branch entries;
+thus for this case the 'prev_packet' doesn't point to the correct
+previous packet and the stale packet still will be used to generate
+sequential sample.  Thus if dump trace with 'perf script' command we can
+see the incorrect flow with the stale packet's address info.
+
+This patch corrects packets swapping in cs_etm__flush(); except using
+the flag 'etm->synth_opts.last_branch' it also checks the another flag
+'etm->sample_branches', if any flag is true then it swaps packets so can
+save correct content to 'prev_packet'.  Finally this can fix the wrong
+program flow dumping issue.
+
+The patch has a minor refactoring to use 'etm->synth_opts.last_branch'
+instead of 'etmq->etm->synth_opts.last_branch' for condition checking,
+this is consistent with that is done in cs_etm__sample().
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mike Leach <mike.leach@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-vac4sn1ns1vj4y07lzj7y4b8@git.kernel.org
+Cc: Robert Walker <robert.walker@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1544513908-16805-2-git-send-email-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ tools/perf/util/cs-etm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index de81918c7ad4..096380e8c213 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -908,6 +908,10 @@ struct syscall {
- 	struct syscall_arg_fmt *arg_fmt;
- };
- 
-+struct bpf_map_syscall_entry {
-+	bool	enabled;
-+};
-+
- /*
-  * We need to have this 'calculated' boolean because in some cases we really
-  * don't know what is the duration of a syscall, for instance, when we start
-@@ -2583,7 +2587,9 @@ out_enomem:
- static int trace__set_ev_qualifier_bpf_filter(struct trace *trace)
- {
- 	int fd = bpf_map__fd(trace->syscalls.map);
--	bool value = !trace->not_ev_qualifier;
-+	struct bpf_map_syscall_entry value = {
-+		.enabled = !trace->not_ev_qualifier,
-+	};
- 	int err = 0;
- 	size_t i;
- 
-@@ -2601,10 +2607,13 @@ static int trace__set_ev_qualifier_bpf_filter(struct trace *trace)
- static int __trace__init_syscalls_bpf_map(struct trace *trace, bool enabled)
- {
- 	int fd = bpf_map__fd(trace->syscalls.map);
-+	struct bpf_map_syscall_entry value = {
-+		.enabled = enabled,
-+	};
- 	int err = 0, key;
- 
- 	for (key = 0; key < trace->sctbl->syscalls.nr_entries; ++key) {
--		err = bpf_map_update_elem(fd, &key, &enabled, BPF_ANY);
-+		err = bpf_map_update_elem(fd, &key, &value, BPF_ANY);
- 		if (err)
- 			break;
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 23159c33db2a..789707bc4e9e 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1042,7 +1042,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
  	}
+ 
+ swap_packet:
+-	if (etmq->etm->synth_opts.last_branch) {
++	if (etm->sample_branches || etm->synth_opts.last_branch) {
+ 		/*
+ 		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+ 		 * the next incoming packet.
