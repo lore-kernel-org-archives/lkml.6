@@ -2,97 +2,104 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D961C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05027C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F4F21852
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:46:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C34DF21852
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:48:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBMXlAKq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbeLTNq6 (ORCPT
+        id S1733273AbeLTNsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:46:58 -0500
-Received: from smtp.gentoo.org ([140.211.166.183]:49116 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733117AbeLTNq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:46:57 -0500
-Received: from [IPv6:2001:a62:180a:4401:23b6:57c7:ac31:7c25] (unknown [IPv6:2001:a62:180a:4401:23b6:57c7:ac31:7c25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: zzam)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id E2285335C6F;
-        Thu, 20 Dec 2018 13:46:55 +0000 (UTC)
-Subject: Re: [PATCH] media: si2165: fix a missing check of return value
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181220081209.40807-1-kjlu@umn.edu>
-From:   Matthias Schwarzott <zzam@gentoo.org>
-Message-ID: <40956844-c18d-31d2-1f2c-e164dfe82ecf@gentoo.org>
-Date:   Thu, 20 Dec 2018 14:46:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 20 Dec 2018 08:48:37 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41341 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733197AbeLTNsg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 08:48:36 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so958593pfi.8;
+        Thu, 20 Dec 2018 05:48:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=eb83Pe4gCxgGaSXjYfCfq71RNLUnyS1iIrp8zplpsIk=;
+        b=kBMXlAKqquKxZJkf2+gZCi5uuKMM0q+M8s78orkOZ2rIXPqYJfPLZS6Pa8i9V9rufQ
+         63yoq/Mo9g53vjiw+5YHmbtuvtC9cfJPJ8YBh7JwCU6TjwhjulOa90r8q3YvAu3AgjJP
+         ByUGmk/B1ez9BUxVBKg2i5oF0eohIv7gC/WK3Q++3NNf+GVKgPp3sJFCCJakKEDDPmKI
+         7veJJ46jye7z7j1KgfoSwd1KC3twSUEoj0sZg/csXdFSOUil3bipicBODLHEEAT0Jnle
+         Bxo7Xtd2j1fE39GEEAugI0zNdpd++5RtqIFcZaycU9ohcY1fsY+5R3LteUe3Q55xqyV1
+         KRbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=eb83Pe4gCxgGaSXjYfCfq71RNLUnyS1iIrp8zplpsIk=;
+        b=q8+03z85O414viqbE04DMS96DndNJCjaYULbiDQ6/VCk6eeETHCm+qgTN3xTiL4399
+         eTPh1GmMxsNgekaLRSx9wnTSZ7/ovpfmQqVBnfKTHJ73TXJkc3QEWBePhjeKFgyrVS/2
+         vxg1fgJAJO/XTtmCCYXrwxXT8tvTCI/5U4lQxuMopO3YxhTZL4wzA6z/4HFul6LCSHot
+         6g9o5HB4Ow0i/UEhVXeR1OPGSrCUUW8yfvkeMxlejM7GX4RAFzueMQW1+Lc1GUQv2lJc
+         eZRwJ/V2kelSSx/PX2I0/NBVVJ0TvezFL0gnwEVps1FUz5FUYlBW2aGNCR4dsjhBgsrn
+         NVpQ==
+X-Gm-Message-State: AA+aEWbovcrVvF7Ij7Jts0NgYABeFYAyzj8wQWZLmkGalmFTajkiumZj
+        LOGM8/qrLYOdX6wF8S0k2Qb+/ap9
+X-Google-Smtp-Source: AFSGD/U8qAT7walmS38rprYxxkVGlT6Xih4ghqCxlE8C8ohOvBSs8VS1xo4gIhtAnBubuWhQHKNnzA==
+X-Received: by 2002:a62:2f06:: with SMTP id v6mr24721214pfv.216.1545313715201;
+        Thu, 20 Dec 2018 05:48:35 -0800 (PST)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.24? ([2402:f000:1:1501:200:5efe:a66f:4718])
+        by smtp.gmail.com with ESMTPSA id o84sm33676390pfi.172.2018.12.20.05.48.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 05:48:34 -0800 (PST)
+Subject: Re: [BUG] usb: serial: garmin_gps: A possible concurrency
+ use-after-free bug
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <8b24e2fc-df9a-8e06-aa49-a27675fd36e9@gmail.com>
+ <20181220134609.GA27701@localhost>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <794dc03a-527e-0e47-fba2-adf84fa3c7cf@gmail.com>
+Date:   Thu, 20 Dec 2018 21:48:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20181220081209.40807-1-kjlu@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20181220134609.GA27701@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 20.12.18 um 09:12 schrieb Kangjie Lu:
-> si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
-> that "val_tmp" will be an uninitialized value when regmap_read() fails.
-> "val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
-> "val" will be a random value. Further use will lead to undefined
-> behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
-> "-EINVAL".
-> 
-Good catch. I reviewed it.
-See below.
 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->  drivers/media/dvb-frontends/si2165.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
-> index feacd8da421d..c134f312fa5b 100644
-> --- a/drivers/media/dvb-frontends/si2165.c
-> +++ b/drivers/media/dvb-frontends/si2165.c
-> @@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
->  
->  static int si2165_wait_init_done(struct si2165_state *state)
->  {
-> -	int ret = -EINVAL;
-> +	int ret;
->  	u8 val = 0;
->  	int i;
->  
->  	for (i = 0; i < 3; ++i) {
-> -		si2165_readreg8(state, REG_INIT_DONE, &val);
-> +		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
-> +		if (ret < 0)
-> +			return -EINVAL;
-This code should return "ret" instead of "-EINVAL".
 
->  		if (val == 0x01)
->  			return 0;
->  		usleep_range(1000, 50000);
->  	}
->  	dev_err(&state->client->dev, "init_done was not set\n");
-> -	return ret;
-> +	return -EINVAL;
+On 2018/12/20 21:46, Johan Hovold wrote:
+> On Thu, Dec 20, 2018 at 09:41:16PM +0800, Jia-Ju Bai wrote:
+>> In drivers/usb/serial/garmin_gps.c,
+>> the functions garmin_read_bulk_callback() and garmin_write_bulk_callback()
+>> may be concurrently executed.
+>>
+>> In garmin_write_bulk_callback() on line 969:
+>>       kfree(urb->transfer_buffer);
+>> In garmin_read_bulk_callback() on line 1165:
+>>       unsigned char *data = urb->transfer_buffer;
+>> Thus, a concurrency use-after-free bug may occur.
+> No, they operate on different struct urb.
+>
+>> This possible bug is found by a static analysis tool written by myself.
+> Seems you need to update your tool. Please also make sure to review its
+> output before reporting anything.
 
-Here I am not sure if -ETIMEDOUT would be a better return code.
+Okay, thanks for your reply.
+Sorry for my false positive...
 
->  }
->  
->  static int si2165_upload_firmware_block(struct si2165_state *state,
-> 
 
+Best wishes,
+Jia-Ju Bai
