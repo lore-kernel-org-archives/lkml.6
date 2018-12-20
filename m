@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB36C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E29C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB4F20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F25C1217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298754;
-	bh=cJvaq2rL3bhE6sADqOOvHcOoflOr26MYD7lXf/BTG38=;
+	s=default; t=1545298764;
+	bh=kVNLncR6C4xFdPyghxs/rUN1z4pmmdSErKmQ1aNXkkA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tgDCioNAIEu9Yf/NAfGGt/M8Tcc6ODcA0mrio+tFNg382jXkcP9E+sSjHTcyGleZI
-	 YSXZujuvYuuj5EitwtiaNjPi+EAhB7R8n/R2G+/et6nik/37UVfA/W3WonPTbhdW3G
-	 PTlE0im9fVlFMwmnqE70Zdo/GttzIfM6fktsYUGs=
+	b=TuBffwkaSwVy00maR6XvnE2oLu4xQgE8mf8QSO7+9G/i3veCl137iLPaeFVJEA9K3
+	 adYZ5ZWTBp6+9nCd4/GLAs0ou8cv8NaSbVOEta1MXAiuGbHgYfRc7D6RtLu3mAtlmX
+	 XTDvkpQ4JHGzGaOQZBdDBMEeH0dZaWvmDb0jQrx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387461AbeLTJjN (ORCPT
+        id S2387474AbeLTJjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:39:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47556 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:39:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731971AbeLTJZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:25:42 -0500
+        id S1730468AbeLTJZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:25:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EC99218D9;
-        Thu, 20 Dec 2018 09:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A4BF217D7;
+        Thu, 20 Dec 2018 09:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297942;
-        bh=cJvaq2rL3bhE6sADqOOvHcOoflOr26MYD7lXf/BTG38=;
+        s=default; t=1545297936;
+        bh=kVNLncR6C4xFdPyghxs/rUN1z4pmmdSErKmQ1aNXkkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QSuPxlVrs0lMTS4UkG48zURIGG3jFdbNHL0+rdsZ8dl0M/7g4dr3kFe9obIlFEfrO
-         gjoMHwGu3uFzP4ubFSdBo5hzD3ur/l8/D0CtWP/+1L1MbphK9I92Zd30vdrTDQLI9B
-         HX6IajtEwN7reJ2Bqf4sU6zYXucf6J7itgaGdoek=
+        b=vzBynnHvaAQID4yWbHVHuGwLVtzXfv807kBdZccA2LHZmy8hW61J8cynCMk8wp82e
+         7ZjnfV5FFm7qCGb95QQMvxt7NU4f6XLn65dPThbIRTymzGo9J+bxdVWCqX8b+QQpNP
+         p4Kbzq3z7jHnVaDiL9awoc9b5+6aHzwwTW0J12jU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 13/72] tracing: Fix memory leak of instance function hash filters
-Date:   Thu, 20 Dec 2018 10:18:12 +0100
-Message-Id: <20181220085922.856004182@linuxfoundation.org>
+        stable@vger.kernel.org, David Teigland <teigland@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 11/72] dm cache metadata: verify cache has blocks in blocks_are_clean_separate_dirty()
+Date:   Thu, 20 Dec 2018 10:18:10 +0100
+Message-Id: <20181220085922.779791469@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -64,41 +64,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Mike Snitzer <snitzer@redhat.com>
 
-commit 2840f84f74035e5a535959d5f17269c69fa6edc5 upstream.
+commit 687cf4412a343a63928a5c9d91bdc0f522939d43 upstream.
 
-The following commands will cause a memory leak:
+Otherwise dm_bitset_cursor_begin() return -ENODATA.  Other calls to
+dm_bitset_cursor_begin() have similar negative checks.
 
- # cd /sys/kernel/tracing
- # mkdir instances/foo
- # echo schedule > instance/foo/set_ftrace_filter
- # rmdir instances/foo
+Fixes inability to create a cache in passthrough mode (even though doing
+so makes no sense).
 
-The reason is that the hashes that hold the filters to set_ftrace_filter and
-set_ftrace_notrace are not freed if they contain any data on the instance
-and the instance is removed.
-
-Found by kmemleak detector.
-
+Fixes: 0d963b6e65 ("dm cache metadata: fix metadata2 format's blocks_are_clean_separate_dirty")
 Cc: stable@vger.kernel.org
-Fixes: 591dffdade9f ("ftrace: Allow for function tracing instance to filter functions")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reported-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/ftrace.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/dm-cache-metadata.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5534,6 +5534,7 @@ void ftrace_destroy_filter_files(struct
- 	if (ops->flags & FTRACE_OPS_FL_ENABLED)
- 		ftrace_shutdown(ops, 0);
- 	ops->flags |= FTRACE_OPS_FL_DELETED;
-+	ftrace_free_filter(ops);
- 	mutex_unlock(&ftrace_lock);
- }
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -929,6 +929,10 @@ static int blocks_are_clean_separate_dir
+ 	bool dirty_flag;
+ 	*result = true;
  
++	if (from_cblock(cmd->cache_blocks) == 0)
++		/* Nothing to do */
++		return 0;
++
+ 	r = dm_bitset_cursor_begin(&cmd->dirty_info, cmd->dirty_root,
+ 				   from_cblock(cmd->cache_blocks), &cmd->dirty_cursor);
+ 	if (r) {
 
 
