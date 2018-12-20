@@ -2,561 +2,152 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D32C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B0BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C893218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B4B218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rOtg2nTy"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="SCvVL+ju"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389441AbeLTTWK (ORCPT
+        id S2389449AbeLTTWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:22:10 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52340 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389404AbeLTTWI (ORCPT
+        Thu, 20 Dec 2018 14:22:19 -0500
+Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:43178 "EHLO
+        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389400AbeLTTWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:22:08 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so3194786wml.2;
-        Thu, 20 Dec 2018 11:22:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u1VX2aoR+AaeNYLb+ZRcIp7+empLSHZCMg4+h3FMaKk=;
-        b=rOtg2nTyox2IobvL1gn0HsDIUaiVN7RNhF6twUeNUDuevwZRUokPhAGpamXbblsbK7
-         8ki+CYkcGMfqD7QXJc7OxZ3RuiWsjhFN7y3qxKD7Oh3w/YH9mKthZMsEKWmw88z0Aezs
-         ZkE4BDzZtDn91CLnWxx+vih6Gi55rcby+Y6+EOOzjskrev/uLlqXgL3Ds0DE2fG8zova
-         QlGeYpQpRakOl0g88O05bxb6T67gZtzZwDRjCjm7njV+//I+X/ssdxistmWcTlIcTD1b
-         Q/MKK/8fHQ9qjyyfkSgX75GG1xK0v2XmX6Qb5pVhKDplZqLaC/5WjtR7dodQyIh0nvFx
-         M+4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u1VX2aoR+AaeNYLb+ZRcIp7+empLSHZCMg4+h3FMaKk=;
-        b=iowBhlaQVjZR6MjtDo7J+mACurgA8hgSc+aHkxJ2vZO0JNZJXo4pVqSW+bskqMkbQG
-         nL0gcwdmiPq2ITzLLF7gIm4HG6eEzRDTv4qH9oHevXOub208UvCnaaa3H8gW/Zjafh4U
-         XikJENVkHVXYYID5tOTavA1OlqSFZa/GxirVrbv9vGS8LxH6hfmJyR9A7ymZotB02Y0Y
-         J6kp6Pus5/4nGsKL4nJ5z3iG5h4HJ8W3yD4Grehh1FgCzxZm+MtNpK2JWaxUITM0Zpno
-         bKEU7vxV8c4Wuocfbncqf33VekYsqvQw/715lk9P61vNAAWRFJu0mUTPrhOJ1w1uISvk
-         iAyQ==
-X-Gm-Message-State: AA+aEWbzycoVIxtmQi3IGJOZKOSOTzqoXC2Kks6M48Wb3J5cQvm2k6A4
-        FO154KmM4/GUbbGqoQuB/mI=
-X-Google-Smtp-Source: AFSGD/Ww5XEdKWNpPEOFF+M+t+ynpNHV2QlJzV/ge9rFpgsdIYfrxJK8nj57r8Lv5qCmxCK40/a8aA==
-X-Received: by 2002:a7b:c399:: with SMTP id s25mr13028102wmj.90.1545333724330;
-        Thu, 20 Dec 2018 11:22:04 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:b006:9301:bebd:c1dc? (p200300EA8BCFE300B0069301BEBDC1DC.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:b006:9301:bebd:c1dc])
-        by smtp.googlemail.com with ESMTPSA id d4sm11982899wrp.89.2018.12.20.11.22.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 11:22:03 -0800 (PST)
-Subject: Re: A weird problem of Realtek r8168 after resume from S3
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
-        netdev@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
- <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
- <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com>
- <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
- <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
- <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
- <7c245fa2-75bb-8ff9-5ffa-83262e3470fe@gmail.com>
- <CAB4CAwepsfaDm6rdxy=RZGuTxjtfsK7yoD5Jkker1AfS7vrZxg@mail.gmail.com>
- <38e4563f-99ae-d5ee-782d-1c309599cfbf@gmail.com>
- <CAB4CAwcBqDDUkwOZLHd5_MbWFKj3QHQa9Yq24LE+V+BeGS486g@mail.gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <269c9203-7b2e-a8fe-1d1e-fbe88f903ee8@gmail.com>
-Date:   Thu, 20 Dec 2018 20:21:56 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 20 Dec 2018 14:22:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545333723;
+        h=Message-Id:Date:From:To:Cc:Cc:Cc:CC:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=qNdEXLooQmyJC8nAB/4MyBKqNpzM7jv1JHGkgte2EEs=;
+        b=SCvVL+juPo8Ksu9+O0sk/r8AiUR8JGnyzXhP7mYdvc3cEQ0ulPEhnt+VLcPLe1mc
+        smDDyDaYkQ6dcwgZE1Tk0m8tUHdSf90cH0en+w2zBJBvdu+bFjmIMne/tJlZiqGphRG
+        85bQcTIpVPEKivVme9DnvBzP1GZjcA05QzDioYdE=
+Message-ID: <01000167cd11517f-f122b002-1a61-46c9-af1a-5c7cf01a397d-000000@email.amazonses.com>
+User-Agent: quilt/0.65
+Date:   Thu, 20 Dec 2018 19:22:03 +0000
+From:   Christoph Lameter <cl@linux.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org
+Cc:     Pekka Enberg <penberg@cs.helsinki.fi>
+CC:     akpm@linux-foundation.org
+Cc:     Mel Gorman <mel@skynet.ie>
+Cc:     andi@firstfloor.org
+Cc:     Rik van Riel <riel@redhat.com>
+Cc:     Dave Chinner <dchinner@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>
+Cc:     Michal Hocko <mhocko@suse.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [RFC 7/7] xarray: Implement migration function for objects
+References: <20181220192145.023162076@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <CAB4CAwcBqDDUkwOZLHd5_MbWFKj3QHQa9Yq24LE+V+BeGS486g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=xarray
+X-SES-Outgoing: 2018.12.20-54.240.9.99
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.12.2018 10:43, Chris Chiu wrote:
-> On Thu, Dec 20, 2018 at 3:41 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>
->> On 19.12.2018 16:32, Chris Chiu wrote:
->>> On Wed, Dec 19, 2018 at 4:28 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>>>
->>>> On 18.12.2018 14:25, Chris Chiu wrote:
->>>>> On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>>>>>
->>>>>> On 17.12.2018 14:25, Chris Chiu wrote:
->>>>>>> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>>>>>>>
->>>>>>>> On 14.12.2018 04:33, Chris Chiu wrote:
->>>>>>>>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
->>>>>>>>>>
->>>>>>>>>> Hi,
->>>>>>>>>>     We got an acer laptop which has a problem with ethernet networking after
->>>>>>>>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
->>>>>>>>>> follows.
->>>>>>>>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
->>>>>>>>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
->>>>>>>>>>
->>>>>>>> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
->>>>>>>>
->>>>>>> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
->>>>>>> (uninitialized): mac_version = 0x2b
->>>>>>> [   22.365580] libphy: r8169: probed
->>>>>>> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
->>>>>>> XID 5c800800, IRQ 38
->>>>>>> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
->>>>>>> bytes, tx checksumming: ko]
->>>>>>>
->>>>>> Thanks for the info.
->>>>>>
->>>>>>>>>>     The problem is the ethernet is not accessible after resume. Pinging via
->>>>>>>>>> ethernet always shows the response `Destination Host Unreachable`. However,
->>>>>>>>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
->>>>>>>>>> interface, the networking is back to alive. But it's dead again after
->>>>>>>>>> I stop tcpdump.
->>>>>>>>>> One more thing, if I ping the problematic machine from others, it achieves the
->>>>>>>>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
->>>>>>>>>>
->>>>>>>> You could compare the register dumps (ethtool -d) before and after S3 sleep
->>>>>>>> to find out whether there's a difference.
->>>>>>>>
->>>>>>>
->>>>>>> Actually, I just found I lead the wrong direction. The S3 suspend does
->>>>>>> help to reproduce,
->>>>>>> but it's not necessary. All I need to do is ping around 5 mins and the
->>>>>>> network connection
->>>>>>> fails.  And I also find one thing interesting, disabling the  MSI-X
->>>>>>> interrupt like commit
->>>>>>> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
->>>>>>> Although I don't
->>>>>>> understand the root cause. Anything I can do to help?
->>>>>>>
->>>>>> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
->>>>>> the issue, but also pinging the machine from outside brings back the network.
->>>>>> Both actions affect totally different corners.
->>>>>>
->>>>>> The commit and related issue you mention was a workaround in the driver,
->>>>>> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
->>>>>> in the PCI core. After this was fixed we removed the workaround again.
->>>>>> This shouldn't be related to your issue.
->>>>>>
->>>>>> Hard to say for now is whether the issue is:
->>>>>> - a driver issue
->>>>>> - a hardware issue in the RTL8411
->>>>>> - an issue with the chipset on your mainboard
->>>>>>
->>>>>> According to your description it doesn't take a special scenario to trigger
->>>>>> the issue, so most likely also other users of Acer notebooks with RTL8411
->>>>>> should be affected (after briefly checking this should be at least Aspire
->>>>>> F15, V15, V7). Therefore I wonder why there aren't more reports.
->>>>>>
->>>>>> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
->>>>>> So you could test this revision and the one before.
->>>>>>
->>>>>> Eventually, if the issue really should be caused by a side effect of using
->>>>>> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
->>>>>> in general or just for RTL8411 and a certain subsystem id.
->>>>>>
->>>>>
->>>>> I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
->>>>> interrupt handling"),
->>>>> the problem still there. Then I revert to the previous revision, the
->>>>> problem goes away.
->>>>> So I think it's pretty much the side effect of MSI-X. However, as you
->>>>> mentioned that
->>>>> you didn't hit this problem, I'll ask the vendor to verify if this
->>>>> problem also happens on
->>>>> other machines with the same chip. Then we can determine to disable for specific
->>>>> mac version or just a certain subsystem id.
->>>>>
->>>>>>>>>>     I tried the latest 4.20 rc version but the problem still there. I
->>>>>>>>>> also tried some
->>>>>>>>>> hw_reset or init thing in the resume path but no effect. Any
->>>>>>>>>> suggestion for this?
->>>>>>>>>> Thanks
->>>>>>>>>>
->>>>>>>> Did previous kernel versions work? If it's a regression, a bisect would be
->>>>>>>> appreciated, because with the chip versions I've got I can't reproduce the issue.
->>>>>>>>
->>>>>>>>>> Chris
->>>>>>>>>
->>>>>>>>> Gentle ping. Any additional information required?
->>>>>>>>>
->>>>>>>>> Chris
->>>>>>>>>
->>>>>>>> Heiner
->>>>>>>
->>>>>>
->>>>>
->>>>
->>>> As an additional note:
->>>> I found that the rtsx_pci driver doesn't support MSI-X currently.
->>>> The following patch adds MSI-X support (it's compile-tested only
->>>> because I don't have a system with RTL8411).
->>>> Would be interesting to see whether it makes a difference if both
->>>> components on this combo chip use MSI-X.
->>>>
->>>> ---
->>>>  drivers/misc/cardreader/rtsx_pcr.c | 51 ++++++++++--------------------
->>>>  include/linux/rtsx_pci.h           |  1 -
->>>>  2 files changed, 16 insertions(+), 36 deletions(-)
->>>>
->>>> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
->>>> index da445223f..d1349c248 100644
->>>> --- a/drivers/misc/cardreader/rtsx_pcr.c
->>>> +++ b/drivers/misc/cardreader/rtsx_pcr.c
->>>> @@ -35,10 +35,6 @@
->>>>
->>>>  #include "rtsx_pcr.h"
->>>>
->>>> -static bool msi_en = true;
->>>> -module_param(msi_en, bool, S_IRUGO | S_IWUSR);
->>>> -MODULE_PARM_DESC(msi_en, "Enable MSI");
->>>> -
->>>>  static DEFINE_IDR(rtsx_pci_idr);
->>>>  static DEFINE_SPINLOCK(rtsx_pci_lock);
->>>>
->>>> @@ -1049,22 +1045,21 @@ static irqreturn_t rtsx_pci_isr(int irq, void *dev_id)
->>>>
->>>>  static int rtsx_pci_acquire_irq(struct rtsx_pcr *pcr)
->>>>  {
->>>> -       pcr_dbg(pcr, "%s: pcr->msi_en = %d, pci->irq = %d\n",
->>>> -                       __func__, pcr->msi_en, pcr->pci->irq);
->>>> +       int ret;
->>>>
->>>> -       if (request_irq(pcr->pci->irq, rtsx_pci_isr,
->>>> -                       pcr->msi_en ? 0 : IRQF_SHARED,
->>>> -                       DRV_NAME_RTSX_PCI, pcr)) {
->>>> -               dev_err(&(pcr->pci->dev),
->>>> -                       "rtsx_sdmmc: unable to grab IRQ %d, disabling device\n",
->>>> -                       pcr->pci->irq);
->>>> -               return -1;
->>>> -       }
->>>> +       ret = pci_alloc_irq_vectors(pcr->pci, 1, 1, PCI_IRQ_ALL_TYPES);
->>>> +       if (ret < 0)
->>>> +               goto err;
->>>>
->>>> -       pcr->irq = pcr->pci->irq;
->>>> -       pci_intx(pcr->pci, !pcr->msi_en);
->>>> +       ret = pci_request_irq(pcr->pci, 0, rtsx_pci_isr, NULL, pcr,
->>>> +                             DRV_NAME_RTSX_PCI);
->>>> +       if (ret)
->>>> +               goto err;
->>>>
->>>>         return 0;
->>>> +err:
->>>> +       pci_err(pcr->pci, "rtsx_sdmmc: unable to grab interrupt\n");
->>>> +       return ret;
->>>>  }
->>>>
->>>>  static void rtsx_enable_aspm(struct rtsx_pcr *pcr)
->>>> @@ -1496,19 +1491,11 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
->>>>         INIT_DELAYED_WORK(&pcr->carddet_work, rtsx_pci_card_detect);
->>>>         INIT_DELAYED_WORK(&pcr->idle_work, rtsx_pci_idle_work);
->>>>
->>>> -       pcr->msi_en = msi_en;
->>>> -       if (pcr->msi_en) {
->>>> -               ret = pci_enable_msi(pcidev);
->>>> -               if (ret)
->>>> -                       pcr->msi_en = false;
->>>> -       }
->>>> -
->>>>         ret = rtsx_pci_acquire_irq(pcr);
->>>>         if (ret < 0)
->>>> -               goto disable_msi;
->>>> +               goto free_dma;
->>>>
->>>>         pci_set_master(pcidev);
->>>> -       synchronize_irq(pcr->irq);
->>>>
->>>>         ret = rtsx_pci_init_chip(pcr);
->>>>         if (ret < 0)
->>>> @@ -1528,10 +1515,8 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
->>>>         return 0;
->>>>
->>>>  disable_irq:
->>>> -       free_irq(pcr->irq, (void *)pcr);
->>>> -disable_msi:
->>>> -       if (pcr->msi_en)
->>>> -               pci_disable_msi(pcr->pci);
->>>> +       pci_free_irq(pcr->pci, 0, pcr);
->>>> +free_dma:
->>>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
->>>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
->>>>  unmap:
->>>> @@ -1568,9 +1553,7 @@ static void rtsx_pci_remove(struct pci_dev *pcidev)
->>>>
->>>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
->>>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
->>>> -       free_irq(pcr->irq, (void *)pcr);
->>>> -       if (pcr->msi_en)
->>>> -               pci_disable_msi(pcr->pci);
->>>> +       pci_free_irq(pcr->pci, 0, pcr);
->>>>         iounmap(pcr->remap_addr);
->>>>
->>>>         pci_release_regions(pcidev);
->>>> @@ -1664,9 +1647,7 @@ static void rtsx_pci_shutdown(struct pci_dev *pcidev)
->>>>         rtsx_pci_power_off(pcr, HOST_ENTER_S1);
->>>>
->>>>         pci_disable_device(pcidev);
->>>> -       free_irq(pcr->irq, (void *)pcr);
->>>> -       if (pcr->msi_en)
->>>> -               pci_disable_msi(pcr->pci);
->>>> +       pci_free_irq(pcr->pci, 0, pcr);
->>>>  }
->>>>
->>>>  #else /* CONFIG_PM */
->>>> diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
->>>> index e964bbd03..10abfe7f2 100644
->>>> --- a/include/linux/rtsx_pci.h
->>>> +++ b/include/linux/rtsx_pci.h
->>>> @@ -1190,7 +1190,6 @@ struct rtsx_pcr {
->>>>         /* pci resources */
->>>>         unsigned long                   addr;
->>>>         void __iomem                    *remap_addr;
->>>> -       int                             irq;
->>>>
->>>>         /* host reserved buffer */
->>>>         void                            *rtsx_resv_buf;
->>>> --
->>>> 2.20.0
->>>>
->>>
->>> As mentioned in the last email, the rtsx_pci seems to make no
->>> difference. I still tried the kernel with this patch applied, the
->>> problem still persists. I also tried the vendor driver and it works
->>> without any problem. I'd rather like to find out the root cause
->>> instead of a workaround. Any better idea?
->>>
->> Thanks for your efforts! The vendor driver doesn't support MSI-X,
->> therefore the issue doesn't occur. I'm running out of ideas, so
->> I will write to a contact in Realtek who few times provided helpful
->> information already.
->>
-> 
-> Hi Heiner,
->     After lots of repeating tests, I have to correct my previous finding
-> to prevent from leading the wrong way. Sometimes the network also
-> fails with unknown reason. Here's the summarize.
-> 1. The S3 suspend resume can reproduce it 100%. However, echo
-> different types (core, devices...) in /sys/power/pm_test is not able
-> to achieve the same thing.
-> 2. The network could randomly fail at any time. Maybe during boot,
-> sometimes fail after few minutes web surfing.
-> 3. After many times of verifications, it's not about MSI-X. I repeatedly
-> boot from my own build kernel (w/ MSI-X workaround, w/ pci_alloc_irq,
-> w/o pci_alloc_irq), even the revision before 6c6aa15fdea5 ("r8169:
-> improve interrupt handling")
-> still fails after S3, but I get the wrong impression because I access the
-> internet w/o problem for quite a long time.
-> 4. When it happens, executing tcpdump on this NIC can always get
-> network access back. But fails again after stop tcpdump.
-> 5. Vendor driver works w/o any problem. I'm still trying to find the difference.
-> 
-> Sorry that if I caused any confusion. I'll appreciate if there's any kind of
-> useful information. Thanks.
-> 
->>> Chris
->>>
->> Heiner
-> .
-> 
+Implement functions to migrate objects. This is based on
+initial code by Matthew Wilcox and was modified to work with
+slab object migration.
 
-OK, here come two patches based on ideas from Realtek. Could you please test:
-1. patch 1
-2. patch 2
-3. patch 1 + 2
+Signed-off-by: Christoph Lameter <cl@linux.com>
 
-
-patch 1:
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 99bc3de90..eda35c0ce 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -5049,7 +5049,7 @@ static void rtl_hw_start_8168g(struct rtl8169_private *tp)
- 	RTL_W8(tp, MaxTxPacketSize, EarlySize);
- 
- 	rtl_eri_write(tp, 0xc0, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
--	rtl_eri_write(tp, 0xb8, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
-+	rtl_eri_write(tp, 0xb8, ERIAR_MASK_1111, 0, ERIAR_EXGMAC);
- 
- 	/* Adjust EEE LED frequency */
- 	RTL_W8(tp, EEE_LED, RTL_R8(tp, EEE_LED) & ~0x07);
--- 
-2.20.1
-
-
-patch 2:
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index eda35c0ce..921e258a3 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -5109,7 +5109,137 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
- 	/* disable aspm and clock request before access ephy */
- 	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
--	rtl_hw_aspm_clkreq_enable(tp, true);
-+
-+	r8168_mac_ocp_write(tp, 0xFC28, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC2A, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC2C, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC2E, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC30, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC32, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC34, 0x0000);
-+	r8168_mac_ocp_write(tp, 0xFC36, 0x0000);
-+	msleep(3);
-+	r8168_mac_ocp_write(tp, 0xFC26, 0x0000);
-+
-+	r8168_mac_ocp_write( tp, 0xF800, 0xE008 );
-+	r8168_mac_ocp_write( tp, 0xF802, 0xE00A );
-+	r8168_mac_ocp_write( tp, 0xF804, 0xE00C );
-+	r8168_mac_ocp_write( tp, 0xF806, 0xE00E );
-+	r8168_mac_ocp_write( tp, 0xF808, 0xE027 );
-+	r8168_mac_ocp_write( tp, 0xF80A, 0xE04F );
-+	r8168_mac_ocp_write( tp, 0xF80C, 0xE05E );
-+	r8168_mac_ocp_write( tp, 0xF80E, 0xE065 );
-+	r8168_mac_ocp_write( tp, 0xF810, 0xC602 );
-+	r8168_mac_ocp_write( tp, 0xF812, 0xBE00 );
-+	r8168_mac_ocp_write( tp, 0xF814, 0x0000 );
-+	r8168_mac_ocp_write( tp, 0xF816, 0xC502 );
-+	r8168_mac_ocp_write( tp, 0xF818, 0xBD00 );
-+	r8168_mac_ocp_write( tp, 0xF81A, 0x074C );
-+	r8168_mac_ocp_write( tp, 0xF81C, 0xC302 );
-+	r8168_mac_ocp_write( tp, 0xF81E, 0xBB00 );
-+	r8168_mac_ocp_write( tp, 0xF820, 0x080A );
-+	r8168_mac_ocp_write( tp, 0xF822, 0x6420 );
-+	r8168_mac_ocp_write( tp, 0xF824, 0x48C2 );
-+	r8168_mac_ocp_write( tp, 0xF826, 0x8C20 );
-+	r8168_mac_ocp_write( tp, 0xF828, 0xC516 );
-+	r8168_mac_ocp_write( tp, 0xF82A, 0x64A4 );
-+	r8168_mac_ocp_write( tp, 0xF82C, 0x49C0 );
-+	r8168_mac_ocp_write( tp, 0xF82E, 0xF009 );
-+	r8168_mac_ocp_write( tp, 0xF830, 0x74A2 );
-+	r8168_mac_ocp_write( tp, 0xF832, 0x8CA5 );
-+	r8168_mac_ocp_write( tp, 0xF834, 0x74A0 );
-+	r8168_mac_ocp_write( tp, 0xF836, 0xC50E );
-+	r8168_mac_ocp_write( tp, 0xF838, 0x9CA2 );
-+	r8168_mac_ocp_write( tp, 0xF83A, 0x1C11 );
-+	r8168_mac_ocp_write( tp, 0xF83C, 0x9CA0 );
-+	r8168_mac_ocp_write( tp, 0xF83E, 0xE006 );
-+	r8168_mac_ocp_write( tp, 0xF840, 0x74F8 );
-+	r8168_mac_ocp_write( tp, 0xF842, 0x48C4 );
-+	r8168_mac_ocp_write( tp, 0xF844, 0x8CF8 );
-+	r8168_mac_ocp_write( tp, 0xF846, 0xC404 );
-+	r8168_mac_ocp_write( tp, 0xF848, 0xBC00 );
-+	r8168_mac_ocp_write( tp, 0xF84A, 0xC403 );
-+	r8168_mac_ocp_write( tp, 0xF84C, 0xBC00 );
-+	r8168_mac_ocp_write( tp, 0xF84E, 0x0BF2 );
-+	r8168_mac_ocp_write( tp, 0xF850, 0x0C0A );
-+	r8168_mac_ocp_write( tp, 0xF852, 0xE434 );
-+	r8168_mac_ocp_write( tp, 0xF854, 0xD3C0 );
-+	r8168_mac_ocp_write( tp, 0xF856, 0x49D9 );
-+	r8168_mac_ocp_write( tp, 0xF858, 0xF01F );
-+	r8168_mac_ocp_write( tp, 0xF85A, 0xC526 );
-+	r8168_mac_ocp_write( tp, 0xF85C, 0x64A5 );
-+	r8168_mac_ocp_write( tp, 0xF85E, 0x1400 );
-+	r8168_mac_ocp_write( tp, 0xF860, 0xF007 );
-+	r8168_mac_ocp_write( tp, 0xF862, 0x0C01 );
-+	r8168_mac_ocp_write( tp, 0xF864, 0x8CA5 );
-+	r8168_mac_ocp_write( tp, 0xF866, 0x1C15 );
-+	r8168_mac_ocp_write( tp, 0xF868, 0xC51B );
-+	r8168_mac_ocp_write( tp, 0xF86A, 0x9CA0 );
-+	r8168_mac_ocp_write( tp, 0xF86C, 0xE013 );
-+	r8168_mac_ocp_write( tp, 0xF86E, 0xC519 );
-+	r8168_mac_ocp_write( tp, 0xF870, 0x74A0 );
-+	r8168_mac_ocp_write( tp, 0xF872, 0x48C4 );
-+	r8168_mac_ocp_write( tp, 0xF874, 0x8CA0 );
-+	r8168_mac_ocp_write( tp, 0xF876, 0xC516 );
-+	r8168_mac_ocp_write( tp, 0xF878, 0x74A4 );
-+	r8168_mac_ocp_write( tp, 0xF87A, 0x48C8 );
-+	r8168_mac_ocp_write( tp, 0xF87C, 0x48CA );
-+	r8168_mac_ocp_write( tp, 0xF87E, 0x9CA4 );
-+	r8168_mac_ocp_write( tp, 0xF880, 0xC512 );
-+	r8168_mac_ocp_write( tp, 0xF882, 0x1B00 );
-+	r8168_mac_ocp_write( tp, 0xF884, 0x9BA0 );
-+	r8168_mac_ocp_write( tp, 0xF886, 0x1B1C );
-+	r8168_mac_ocp_write( tp, 0xF888, 0x483F );
-+	r8168_mac_ocp_write( tp, 0xF88A, 0x9BA2 );
-+	r8168_mac_ocp_write( tp, 0xF88C, 0x1B04 );
-+	r8168_mac_ocp_write( tp, 0xF88E, 0xC508 );
-+	r8168_mac_ocp_write( tp, 0xF890, 0x9BA0 );
-+	r8168_mac_ocp_write( tp, 0xF892, 0xC505 );
-+	r8168_mac_ocp_write( tp, 0xF894, 0xBD00 );
-+	r8168_mac_ocp_write( tp, 0xF896, 0xC502 );
-+	r8168_mac_ocp_write( tp, 0xF898, 0xBD00 );
-+	r8168_mac_ocp_write( tp, 0xF89A, 0x0300 );
-+	r8168_mac_ocp_write( tp, 0xF89C, 0x051E );
-+	r8168_mac_ocp_write( tp, 0xF89E, 0xE434 );
-+	r8168_mac_ocp_write( tp, 0xF8A0, 0xE018 );
-+	r8168_mac_ocp_write( tp, 0xF8A2, 0xE092 );
-+	r8168_mac_ocp_write( tp, 0xF8A4, 0xDE20 );
-+	r8168_mac_ocp_write( tp, 0xF8A6, 0xD3C0 );
-+	r8168_mac_ocp_write( tp, 0xF8A8, 0xC50F );
-+	r8168_mac_ocp_write( tp, 0xF8AA, 0x76A4 );
-+	r8168_mac_ocp_write( tp, 0xF8AC, 0x49E3 );
-+	r8168_mac_ocp_write( tp, 0xF8AE, 0xF007 );
-+	r8168_mac_ocp_write( tp, 0xF8B0, 0x49C0 );
-+	r8168_mac_ocp_write( tp, 0xF8B2, 0xF103 );
-+	r8168_mac_ocp_write( tp, 0xF8B4, 0xC607 );
-+	r8168_mac_ocp_write( tp, 0xF8B6, 0xBE00 );
-+	r8168_mac_ocp_write( tp, 0xF8B8, 0xC606 );
-+	r8168_mac_ocp_write( tp, 0xF8BA, 0xBE00 );
-+	r8168_mac_ocp_write( tp, 0xF8BC, 0xC602 );
-+	r8168_mac_ocp_write( tp, 0xF8BE, 0xBE00 );
-+	r8168_mac_ocp_write( tp, 0xF8C0, 0x0C4C );
-+	r8168_mac_ocp_write( tp, 0xF8C2, 0x0C28 );
-+	r8168_mac_ocp_write( tp, 0xF8C4, 0x0C2C );
-+	r8168_mac_ocp_write( tp, 0xF8C6, 0xDC00 );
-+	r8168_mac_ocp_write( tp, 0xF8C8, 0xC707 );
-+	r8168_mac_ocp_write( tp, 0xF8CA, 0x1D00 );
-+	r8168_mac_ocp_write( tp, 0xF8CC, 0x8DE2 );
-+	r8168_mac_ocp_write( tp, 0xF8CE, 0x48C1 );
-+	r8168_mac_ocp_write( tp, 0xF8D0, 0xC502 );
-+	r8168_mac_ocp_write( tp, 0xF8D2, 0xBD00 );
-+	r8168_mac_ocp_write( tp, 0xF8D4, 0x00AA );
-+	r8168_mac_ocp_write( tp, 0xF8D6, 0xE0C0 );
-+	r8168_mac_ocp_write( tp, 0xF8D8, 0xC502 );
-+	r8168_mac_ocp_write( tp, 0xF8DA, 0xBD00 );
-+	r8168_mac_ocp_write( tp, 0xF8DC, 0x0132 );
-+	r8168_mac_ocp_write( tp, 0xFC26, 0x8000 );
-+	r8168_mac_ocp_write( tp, 0xFC2A, 0x0743 );
-+	r8168_mac_ocp_write( tp, 0xFC2C, 0x0801 );
-+	r8168_mac_ocp_write( tp, 0xFC2E, 0x0BE9 );
-+	r8168_mac_ocp_write( tp, 0xFC30, 0x02FD );
-+	r8168_mac_ocp_write( tp, 0xFC32, 0x0C25 );
-+	r8168_mac_ocp_write( tp, 0xFC34, 0x00A9 );
-+	r8168_mac_ocp_write( tp, 0xFC36, 0x012D );
+Index: linux/lib/radix-tree.c
+===================================================================
+--- linux.orig/lib/radix-tree.c
++++ linux/lib/radix-tree.c
+@@ -1613,6 +1613,18 @@ static int radix_tree_cpu_dead(unsigned
+ 	return 0;
  }
  
- static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
--- 
-2.20.1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
++
++extern void xa_object_migrate(void *tree_node, int numa_node);
++
++static void radix_tree_migrate(struct kmem_cache *s, void **objects, int nr,
++		int node, void *private)
++{
++	int i;
++
++	for (i=0; i<nr; i++)
++		xa_object_migrate(objects[i], node);
++}
++
+ void __init radix_tree_init(void)
+ {
+ 	int ret;
+@@ -1627,4 +1639,7 @@ void __init radix_tree_init(void)
+ 	ret = cpuhp_setup_state_nocalls(CPUHP_RADIX_DEAD, "lib/radix:dead",
+ 					NULL, radix_tree_cpu_dead);
+ 	WARN_ON(ret < 0);
++	kmem_cache_setup_mobility(radix_tree_node_cachep,
++					NULL,
++					radix_tree_migrate);
+ }
+Index: linux/lib/xarray.c
+===================================================================
+--- linux.orig/lib/xarray.c
++++ linux/lib/xarray.c
+@@ -1934,6 +1934,51 @@ void xa_destroy(struct xarray *xa)
+ }
+ EXPORT_SYMBOL(xa_destroy);
+ 
++void xa_object_migrate(struct xa_node *node, int numa_node)
++{
++	struct xarray *xa = READ_ONCE(node->array);
++	void __rcu **slot;
++	struct xa_node *new_node;
++	int i;
++
++	/* Freed or not yet in tree then skip */
++	if (!xa || xa == XA_FREE_MARK)
++		return;
++
++	new_node = kmem_cache_alloc_node(radix_tree_node_cachep, GFP_KERNEL, numa_node);
++
++	xa_lock_irq(xa);
++
++	/* Check again..... */
++	if (xa != node->array || !list_empty(&node->private_list)) {
++		node = new_node;
++		goto unlock;
++	}
++
++	memcpy(new_node, node, sizeof(struct xa_node));
++
++	/* Move pointers to new node */
++	INIT_LIST_HEAD(&new_node->private_list);
++	for (i = 0; i < XA_CHUNK_SIZE; i++) {
++		void *x = xa_entry_locked(xa, new_node, i);
++
++		if (xa_is_node(x))
++			rcu_assign_pointer(xa_to_node(x)->parent, new_node);
++	}
++	if (!new_node->parent)
++		slot = &xa->xa_head;
++	else
++		slot = &xa_parent_locked(xa, new_node)->slots[new_node->offset];
++	rcu_assign_pointer(*slot, xa_mk_node(new_node));
++
++unlock:
++	xa_unlock_irq(xa);
++	xa_node_free(node);
++	rcu_barrier();
++	return;
++
++}
++
+ #ifdef XA_DEBUG
+ void xa_dump_node(const struct xa_node *node)
+ {
 
