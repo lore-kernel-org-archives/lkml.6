@@ -2,114 +2,154 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF72C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B388C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07AE2075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545274743;
-	bh=iGdGEXSLYKpXBlSfgEdCCW99gLqSH/g6t/h8EZuf/+M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=roT40c/uSqXVDqV25x8BQxVhRPUWWQ3QoQIcGdj1wDKsjCMUFYp8V7LcSQHnXqFoE
-	 rZK89iLSZDcl0MGOh77gvs7QMg/PkJCtk4qny6PsDKF1LAeWFar4XRYuB9n6QgBxnz
-	 29r3aNuXNjCvmUF3Gslv4IRm3eOZ6dlzfQEx2rpM=
+	by mail.kernel.org (Postfix) with ESMTP id DF2122075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbeLTC7C (ORCPT
+        id S1729023AbeLTDKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 21:59:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40516 "EHLO mail.kernel.org"
+        Wed, 19 Dec 2018 22:10:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbeLTC7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 21:59:02 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728751AbeLTDKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 22:10:43 -0500
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92A86217D9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545274741;
-        bh=iGdGEXSLYKpXBlSfgEdCCW99gLqSH/g6t/h8EZuf/+M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PcFyA7H0dGzszd8FLZLLpkKINtgrlILAHurbhWSCC21lOuS1LJ5t6Dy90ARECri4X
-         kukOLTO2zRU6+jR4CnMNyU9RuMZQai/UM2liZ7YQTBmwAQjEggek5ou7a2FklweQiY
-         gO7ncum+fkpHK2YV0aK7OPRDvteumvt6XfOSrFag=
-Received: by mail-wm1-f46.google.com with SMTP id y139so428832wmc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 18:59:01 -0800 (PST)
-X-Gm-Message-State: AA+aEWaWRIuWaXnKY/KmI8q4Lw2ngYa3ePrv/R+GqBtlnZjMdRp+onnW
-        y5sVGRPAkafjLtsRktyo7SRx4YELX/2rW31cUfzT+w==
-X-Google-Smtp-Source: AFSGD/VKTSmCT33JlFIzalN/D/WwM7YvVauXKlAk3SBSsLoNhcDBleVrjq2ThmnPfpzFJ0H0NzLpJzowxNHuFGCKZ/U=
-X-Received: by 2002:a1c:864f:: with SMTP id i76mr9172581wmd.83.1545274739990;
- Wed, 19 Dec 2018 18:58:59 -0800 (PST)
+        by mail.kernel.org (Postfix) with ESMTPSA id 639792075B;
+        Thu, 20 Dec 2018 03:10:41 +0000 (UTC)
+Date:   Wed, 19 Dec 2018 22:10:39 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [RFC][PATCH v2][RESEND] string.h: Add strncmp_prefix() helper macro
+Message-ID: <20181219221039.54594aa9@vmware.local.home>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com> <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com> <20181219144515.GA30909@linux.intel.com>
-In-Reply-To: <20181219144515.GA30909@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 19 Dec 2018 18:58:48 -0800
-X-Gmail-Original-Message-ID: <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
-Message-ID: <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
-Subject: Re: x86/sgx: uapi change proposal
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Dec 19, 2018, at 6:45 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
->
->> On Wed, Dec 19, 2018 at 09:36:16AM +0000, Jethro Beekman wrote:
 
-> I agree with Jethro, passing the enclave_fd as a param is obnoxious.
-> And it means the user needs to open /dev/sgx to do anything with an
-> enclave fd, e.g. the enclave fd might be passed to a builder thread,
-> it shouldn't also need the device fd.
->
-> E.g.:
->
->    sgx_fd = open("/dev/sgx", O_RDWR);
->    BUG_ON(sgx_fd < 0);
->
->    enclave_fd = ioctl(sgx_fd, SGX_ENCLAVE_CREATE, &ecreate);
->    BUG_ON(enclave_fd < 0);
->
->    ret = ioctl(enclave_fd, SGX_ENCLAVE_ADD_PAGE, &eadd);
->    BUG_ON(ret);
->
->    ...
->
->    ret = ioctl(enclave_fd, SGX_ENCLAVE_INIT, &einit);
->    BUG_ON(ret);
->
->    ...
->
->    close(enclave_fd);
->    close(sgx_fd);
->
->
-> Take a look at virt/kvm/kvm_main.c to see how KVM manages anon inodes
-> and ioctls for VMs and vCPUs.
+[ Resending because I missed adding Joe to the Cc list ]
 
-Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-opening a new instance of /dev/sgx for each encalve?
+A discussion came up in the trace triggers thread about converting a
+bunch of:
+
+ strncmp(str, "const", sizeof("const") - 1)
+
+use cases into a helper macro. It started with:
+
+#define strncmp_const(str, const) \
+	strncmp(str, const, sizeof(const) - 1)
+
+But then Joe Perches mentioned that if a const is not used, the
+sizeof() will be the size of a pointer, which can be bad. And that
+gcc will optimize strlen("const") into "sizeof("const") - 1".
+
+Thinking about this more, a quick grep in the kernel tree found several
+(thousands!) of cases that use this construct. A quick grep also
+revealed that there's probably several bugs in that use case. Some are
+that people forgot the "- 1" (which I found) and others could be that
+the constant for the sizeof is different than the constant (although, I
+haven't found any of those, but I also didn't look hard).
+
+I figured the best thing to do is to create a helper macro and place it
+into include/linux/string.h. And go around and fix all the open coded
+versions of it later.
+
+I plan on only applying this patch and updating the tracing hooks for
+this merge window. And perhaps use it to fix some of the bugs that were
+found.
+
+I was going to just use:
+
+#define strncmp_prefix(str, prefix) \
+	strncmp(str, prefix, strlen(prefix))
+
+but then realized that "prefix" is used twice, and will break if
+someone does something like:
+
+	strncmp_prefix(str, ptr++);
+
+So instead I check with __builtin_constant_p() to see if the second
+parameter is truly a constant, which I use sizeof() anyway (why bother
+gcc to optimize it, if we already know it's a constant), and copy the
+parameter into a local variable and use that local variable for the non
+constant part (with strlen).
+
+Link:
+http://lkml.kernel.org/r/e3e754f2bd18e56eaa8baf79bee619316ebf4cfc.1545161087.git.tom.zanussi@linux.intel.com
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+Changes since v1:
+
+ - Sending this time as Bryana's dad
+
+ - Moved the assignment of the non constant into the non constant block
+   (Pointed out by Joe Perches)
+
+ - Added "typeof(prefix)" to define the non constant variable
+    (Suggested by Joe Perches)
+
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 27d0482e5e05..a998a53333ef 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -14,6 +14,28 @@ extern void *memdup_user(const void __user *,
+size_t); extern void *vmemdup_user(const void __user *, size_t);
+ extern void *memdup_user_nul(const void __user *, size_t);
+ 
++/*
++ * A common way to test a prefix of a string is to do:
++ *  strncmp(str, prefix, sizeof(prefix) - 1)
++ *
++ * But this can lead to bugs due to typos, or if prefix is a pointer
++ * and not a constant. Instead use strncmp_prefix().
++ */
++#define strncmp_prefix(str,
+prefix)					\
++
+({								\
++		int
+____strcmp_prefix_ret____;				\
++		if (__builtin_constant_p(&prefix))
+{			\
++			____strcmp_prefix_ret____
+=			\
++				strncmp(str, prefix, sizeof(prefix) -
+1); \
++		} else
+{						\
++			typeof(prefix) ____strcmp_prefix____ =
+prefix;	\
++			____strcmp_prefix_ret____
+=			\
++				strncmp(str,
+____strcmp_prefix____,	\
++
+strlen(____strcmp_prefix____));	\
++		}
+\
++
+____strcmp_prefix_ret____;				\
++	})
++
+ /*
+  * Include machine specific inline routines
+  */
