@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34034C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3C1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D4720989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF5C120989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298154;
-	bh=aGnu5NXUl88nPaoswnU4x72DzCwCHDCLcozFK25fFtQ=;
+	s=default; t=1545298157;
+	bh=xk1/BjSEE3bbjpEMG0nIv+rKbZ9Od78dAktpOOyHoCo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wPTjiKVRkZhS/VApXR5JRwR9VDSuWMb0a9gLXDEacRegdXw0IjZbGY71MfvajHSax
-	 E/wykJUhPHIzlhJ58ARg+yAkwY64dMwJCsU0StmMGt6yDurLHagkJ9fO7xP/KxMQT0
-	 8mOgoINGn4BgkVx5d/lpKw/shyFXanieXAd0Ix5w=
+	b=VyuMq1oox7SdRecWdR3eXk2jPUY70FL9e1hbqjiUzlDhwESDFkSVs1938vnyBIEfn
+	 RWZB+MHNnMmoBWOBvgIf5YSFs/NnB47H7qdnt/jSUczHFk+KYbwSpQ7HX9qaIvBocG
+	 rvBKdetoY+jlgH7Ek4b98cKKjsfrWUemB73H75T4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732666AbeLTJ3N (ORCPT
+        id S1732449AbeLTJ3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:29:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52726 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732631AbeLTJ3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:29:05 -0500
+        id S1732645AbeLTJ3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:29:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EA5020989;
-        Thu, 20 Dec 2018 09:29:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B87620989;
+        Thu, 20 Dec 2018 09:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298144;
-        bh=aGnu5NXUl88nPaoswnU4x72DzCwCHDCLcozFK25fFtQ=;
+        s=default; t=1545298149;
+        bh=xk1/BjSEE3bbjpEMG0nIv+rKbZ9Od78dAktpOOyHoCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jMvtCwawIJGpMr3K84GzHZMAGmIr68fCoECIcQ6X40OgQE/pJTvt3HxtRcAvdEfFk
-         eKdH5aSyW5Tia3r/r9BOZ5GXjOQkqZhCMbmVIdD71lizTIVBGJxrumgsQbFy8JQiZY
-         E0QOHko8koz964oNz5MzFeeSqwqJ5H7tjBQFfAHQ=
+        b=Da6xB4OiuuQ+6b6XAnoSb3YG/6ndtbqN9jzOAC/CfF1DmPjO4JgQy+wtRP2fXWbRV
+         mAe+hAE++eO1GIifkYWvCMU0onvD4v2nEm/tOmBLM7gt1+XkiFxMHhxSpVFPDj6DON
+         P7PbHGZRpUrJQzf/9v163wsvWhq+P1LeEgk3qUMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kristian H. Kristensen" <hoegsberg@google.com>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org, Abhinav Kumar <abhinavk@codeaurora.org>,
         Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 16/67] drm/msm: fix handling of cmdstream offset
-Date:   Thu, 20 Dec 2018 10:18:28 +0100
-Message-Id: <20181220085904.199954728@linuxfoundation.org>
+Subject: [PATCH 4.19 18/67] drm/msm: Grab a vblank reference when waiting for commit_done
+Date:   Thu, 20 Dec 2018 10:18:30 +0100
+Message-Id: <20181220085904.278309198@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -67,49 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 47e7f506ee6590ceb2efa1f08aca7f9f2ee5c1d3 ]
+[ Upstream commit 3b712e43e3876b42b38321ecf790a1f5fe59c834 ]
 
-Userspace hasn't used submit cmds with submit_offset != 0 for a while,
-but this starts cropping up again with cmdstream sub-buffer-allocation
-in libdrm_freedreno.
+Similar to the atomic helpers, we should enable vblank while we're
+waiting for the commit to finish. DPU needs this, MDP5 seems to work
+fine without it.
 
-Doesn't do much good to increment the buf ptr before assigning it.
-
-Fixes: 78b8e5b847b4 drm/msm: dump a rd GPUADDR header for all buffers in the command
-Reviewed-by: Kristian H. Kristensen <hoegsberg@google.com>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_rd.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_atomic.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
-index 3aa8a8576abe..f7a0edea4705 100644
---- a/drivers/gpu/drm/msm/msm_rd.c
-+++ b/drivers/gpu/drm/msm/msm_rd.c
-@@ -316,10 +316,11 @@ static void snapshot_buf(struct msm_rd_state *rd,
- 		uint64_t iova, uint32_t size)
- {
- 	struct msm_gem_object *obj = submit->bos[idx].obj;
-+	unsigned offset = 0;
- 	const char *buf;
+diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
+index c1f1779c980f..2b7bb6e166d3 100644
+--- a/drivers/gpu/drm/msm/msm_atomic.c
++++ b/drivers/gpu/drm/msm/msm_atomic.c
+@@ -32,7 +32,12 @@ static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
+ 		if (!new_crtc_state->active)
+ 			continue;
  
- 	if (iova) {
--		buf += iova - submit->bos[idx].iova;
-+		offset = iova - submit->bos[idx].iova;
- 	} else {
- 		iova = submit->bos[idx].iova;
- 		size = obj->base.size;
-@@ -340,6 +341,8 @@ static void snapshot_buf(struct msm_rd_state *rd,
- 	if (IS_ERR(buf))
- 		return;
- 
-+	buf += offset;
++		if (drm_crtc_vblank_get(crtc))
++			continue;
 +
- 	rd_write_section(rd, RD_BUFFER_CONTENTS, buf, size);
+ 		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
++
++		drm_crtc_vblank_put(crtc);
+ 	}
+ }
  
- 	msm_gem_put_vaddr(&obj->base);
 -- 
 2.19.1
 
