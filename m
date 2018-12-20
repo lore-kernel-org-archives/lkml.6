@@ -2,112 +2,118 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1097C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF59DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953A720815
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5E921905
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:57:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXZRmiDS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390104AbeLTV5Q (ORCPT
+        id S2390123AbeLTV5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:57:16 -0500
-Received: from sauhun.de ([88.99.104.3]:37714 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732728AbeLTV5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:57:16 -0500
-Received: from localhost (p54B33538.dip0.t-ipconnect.de [84.179.53.56])
-        by pokefinder.org (Postfix) with ESMTPSA id 74D852E3542;
-        Thu, 20 Dec 2018 22:57:13 +0100 (CET)
-Date:   Thu, 20 Dec 2018 22:57:09 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.20
-Message-ID: <20181220215705.2zccmtoiuc2v74hm@ninjato>
+        Thu, 20 Dec 2018 16:57:35 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39574 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730241AbeLTV5c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:57:32 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so3278046wra.6;
+        Thu, 20 Dec 2018 13:57:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sTlddInhxxNsc8rjvJZAEy50kCyb9rVmaWzGN+Ka4a8=;
+        b=FXZRmiDSNj0qtXNwFk38VhFR1GVngeahC80VJgd4eII1SSAcFfkE3CN/gctmbrzn8b
+         GOUL9ZjKWiqLsjWVGd1/MfVTXJlcyO7TQsYmx3awr1of0d/2YxPFDmC774e0L6IkXm+J
+         6tMgzaBMo9n0g8aPcEht5JsufbKo/FJ40ohCHxotFs5WAHSD1PY5LAq+l9hM2+Gd5Lmb
+         peXhoapTIOKIPAakrWQcBgY0BiyZnlslzIT6fCANGr0DgMiTpr3kvpyKw4HHVxjqeNCi
+         jD/MJR9C332PNXZBEpC7rMf/h96ymHTSIJufWiHFhBD7Icm/axpmW0yUVZ3iv/l2znWu
+         qgyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sTlddInhxxNsc8rjvJZAEy50kCyb9rVmaWzGN+Ka4a8=;
+        b=CEimv1WbmSHIz29iUVRIgIS9S3ICvyQRzUuGTGzO8f1ZmAy+BC2gXIrk/0zHqNyVNp
+         +hQccAySTAtEOoq54HYcjakHXNH//RpNC+kh09hFSqf5l4DC/vJ463vtk15yGmaQzdN0
+         kRIQG6VuDGv5NWLlaJeeAVUI+0+NQbqOPFDSVFKMRVMXX6by30lRajd83mHf2l00hrZe
+         au8t+bWxbvvbGiOF/PR6c0VHi/+l4K1IcoZTZt/JSHIOb8mRRA7i16j51CnZX1OJLPuM
+         QVvqJACk9fcolluRvBx2e5Xg7Jt/IoQ4jZg+gslDM4eLmrACTOFzPeWUWU6lSVT+s03S
+         0iEQ==
+X-Gm-Message-State: AA+aEWbyB/XZtQpi7X1bf95Vy8s2MI6IGu5wM3mU7ay+XgnUdxZMwxI/
+        uXXDFIrf3qVJwpFdeT8Zkzs=
+X-Google-Smtp-Source: AFSGD/Wb7miW0VivVnXD6kY7ZsoCP0E9rzjdIl9D7gzpAlzv9WiAyW4i0swNZmpT2x+cqQb9J/VXGw==
+X-Received: by 2002:adf:db01:: with SMTP id s1mr23322170wri.214.1545343049369;
+        Thu, 20 Dec 2018 13:57:29 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id g67sm10428130wmd.38.2018.12.20.13.57.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 13:57:28 -0800 (PST)
+Date:   Thu, 20 Dec 2018 14:57:27 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
+Cc:     linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] ACPI / tables: Add an ifdef around amlcode and
+ dsdt_amlcode
+Message-ID: <20181220215727.GA29539@flashbox>
+References: <20181220193856.7833-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wwsvx6d7aaikpnov"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181220193856.7833-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 20, 2018 at 12:38:56PM -0700, Nathan Chancellor wrote:
+> Clang warns:
+> 
+> drivers/acpi/tables.c:715:14: warning: unused variable 'amlcode'
+> [-Wunused-variable]
+> static void *amlcode __attribute__ ((weakref("AmlCode")));
+>              ^
+> drivers/acpi/tables.c:716:14: warning: unused variable 'dsdt_amlcode'
+> [-Wunused-variable]
+> static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
+>              ^
+> 2 warnings generated.
+> 
+> The only uses of these variables are hiddem behind CONFIG_ACPI_CUSTOM_DSDT
+> so do the same thing here.
+> 
+> Fixes: 82e4eb4e9653 ("ACPI / tables: add DSDT AmlCode new declaration name support")
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/acpi/tables.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> index ccb90eff00e5..48eabb6c2d4f 100644
+> --- a/drivers/acpi/tables.c
+> +++ b/drivers/acpi/tables.c
+> @@ -712,8 +712,10 @@ acpi_os_physical_table_override(struct acpi_table_header *existing_table,
+>  					  table_length);
+>  }
+>  
+> +#ifdef CONFIG_ACPI_CUSTOM_DSDT
+>  static void *amlcode __attribute__ ((weakref("AmlCode")));
+>  static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
+> +#endif
+>  
+>  acpi_status
+>  acpi_os_table_override(struct acpi_table_header *existing_table,
+> -- 
+> 2.20.1
+> 
 
---wwsvx6d7aaikpnov
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Linus,
-
-I2C has a MAINTAINERS update for you, so people will be immediately
-pointed to the right person for this previously orphaned driver. And one
-of Arnd's build warning fixes for a new driver added this cycle.
-
-Please pull.
-
-Thanks,
-
-   Wolfram
-
-
-The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
-
-  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-
-for you to fetch changes up to 32774a8153b4c62e408297fba352248afb2e0143:
-
-  i2c: nvidia-gpu: mark resume function as __maybe_unused (2018-12-11 21:39:43 +0100)
-
-----------------------------------------------------------------
-Adamski, Krzysztof (Nokia - PL/Wroclaw) (1):
-      MAINTAINERS: add entry for i2c-axxia driver
-
-Arnd Bergmann (1):
-      i2c: nvidia-gpu: mark resume function as __maybe_unused
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Alexander Sverdlin (1):
-      (Rev.) MAINTAINERS: add entry for i2c-axxia driver
-
-Andy Shevchenko (1):
-      (Rev.) i2c: nvidia-gpu: mark resume function as __maybe_unused
-
- MAINTAINERS                         | 7 +++++++
- drivers/i2c/busses/i2c-nvidia-gpu.c | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
---wwsvx6d7aaikpnov
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwcEC0ACgkQFA3kzBSg
-KbbhYxAAoNPbJS86aSOHeciU2tQ5pkv10M12Uusakg73Rl/j856TphCIi+Pn713N
-KM5dtOAs5ss0dBb7WK+c/p9IdRjRSfzd/qpBHg3f90OrlTzMqKriBcdxAybmWH4B
-bO6jyutDaXpgDnbJEDDnSaTI8QujnORCuZKWzp0yjAQnwrGPg3yqIA1f365uFMHW
-dd52YmgGDnj+tzss3wGzcG2WdPYPE7TTBXA3/o67/AN3DqwzIydVpN5UXXwe/2Uj
-b2NhiX/ZeIfpNJR/WcdRwok/h7q5wkYrIg5fCzkHiHIzU3+zFJuU/L9OwYF7P1J4
-5hiXIGStiYY9FixiidBBKbzGg4o5ItPac1qdZRGvNy65fX9sFaO7fvzAS5UTY4Yk
-l5iNfei6geDyZziN2Hc4xxFNy6ELOUMuBlbUBsfhGrdPZzhUhun84gO5F/cPVKL3
-wWfK4qQmbOHmCala96uR43oQfc6wjlcJMvDWDeOcuJB5ielK9KIf/j0J+mjJpnW1
-1J17c0p9LBy2m44uhft+BcxG+BReR8aOfHzKJLsDYczXAiDifDQJv+dwiAftRXTG
-yleOBZJyynP0JYT15WRXmDqbnYXzOpQWfjSudMc0Ruk38xEkH2RSMUDUocZ6861H
-qJXdPatRsdz8wgCVb9IUIuMsMXBUi2cwNeX2IWwimr7QdOFwo4s=
-=zGUl
------END PGP SIGNATURE-----
-
---wwsvx6d7aaikpnov--
++ Nick for review
