@@ -6,153 +6,153 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95902C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDE6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B636218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69FBC20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbeLTBdW (ORCPT
+        id S1728479AbeLTBjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 20:33:22 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16167 "EHLO huawei.com"
+        Wed, 19 Dec 2018 20:39:51 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6520 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726716AbeLTBdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 20:33:22 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 513CF986813B0;
-        Thu, 20 Dec 2018 09:33:18 +0800 (CST)
-Received: from [127.0.0.1] (10.142.63.192) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
- 09:33:14 +0800
-CC:     <liuyu712@hisilicon.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <wangbinghui@hisilicon.com>,
-        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH v1 01/12] dt-bindings: usb: add support for dwc3
- controller on HiSilicon SoCs
-To:     Rob Herring <robh@kernel.org>
-References: <20181203034515.91412-1-chenyu56@huawei.com>
- <20181203034515.91412-2-chenyu56@huawei.com>
- <fde4d37b-0c4d-055b-a0ba-4e9fe87717ad@cogentembedded.com>
- <33cda716-d09c-28e7-d4b4-26f246786f5e@huawei.com>
- <680c5b9f-e2c7-926d-7d10-4ce2cd091282@cogentembedded.com>
- <bbe390f0-2fa6-515b-42c5-ede620b2b8c7@huawei.com>
- <20181219140953.GA9910@bogus>
-From:   Chen Yu <chenyu56@huawei.com>
-Message-ID: <3d9727c4-e3c7-6eb0-cecd-e16af2fa6b66@huawei.com>
-Date:   Thu, 20 Dec 2018 09:33:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20181219140953.GA9910@bogus>
+        id S1726535AbeLTBjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 20:39:51 -0500
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id EA86C3307685F;
+        Thu, 20 Dec 2018 09:39:46 +0800 (CST)
+Received: from DGGEMM526-MBX.china.huawei.com ([169.254.8.137]) by
+ DGGEMM402-HUB.china.huawei.com ([10.3.20.210]) with mapi id 14.03.0415.000;
+ Thu, 20 Dec 2018 09:39:45 +0800
+From:   "Zengtao (B)" <prime.zeng@hisilicon.com>
+To:     Laura Abbott <labbott@redhat.com>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?utf-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] staging: android: ion: add buffer flag update ioctl
+Thread-Topic: [PATCH] staging: android: ion: add buffer flag update ioctl
+Thread-Index: AQHUl3t2yiOi+mE2D0GoXeOyj1fBg6WF1uUAgAD/fVA=
+Date:   Thu, 20 Dec 2018 01:39:45 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED24E2926A@dggemm526-mbx.china.huawei.com>
+References: <1545239943-15414-1-git-send-email-prime.zeng@hisilicon.com>
+ <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
+In-Reply-To: <b0cc8d05-b313-9433-4e48-d0d39aa1858b@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.222.15]
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.142.63.192]
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 2018/12/19 22:09, Rob Herring wrote:
-> On Mon, Dec 03, 2018 at 05:28:56PM +0800, Chen Yu wrote:
->> Hi,
->>
->> On 2018/12/3 16:59, Sergei Shtylyov wrote:
->>> On 03.12.2018 11:51, Chen Yu wrote:
->>>
->>>>>> This patch adds binding descriptions to support the dwc3 controller
->>>>>> on HiSilicon SoCs and boards like the HiKey960.
->>>>>>
->>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>>>> Cc: John Stultz <john.stultz@linaro.org>
->>>>>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
->>>>>> ---
->>>>>>    .../devicetree/bindings/usb/dwc3-hisi.txt          | 67 ++++++++++++++++++++++
->>>>>>    1 file changed, 67 insertions(+)
->>>>>>    create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>>>>> new file mode 100644
->>>>>> index 000000000000..d32d2299a0a1
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>>>>> @@ -0,0 +1,67 @@
->>>>>> +HiSilicon DWC3 USB SoC controller
->>>>>> +
->>>>>> +This file documents the parameters for the dwc3-hisi driver.
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- compatible:    should be "hisilicon,hi3660-dwc3"
->>>>>> +- clocks:    A list of phandle + clock-specifier pairs for the
->>>>>> +        clocks listed in clock-names
->>>>>> +- clock-names:    Specify clock names
->>>>>> +- resets:    list of phandle and reset specifier pairs.
->>>>>> +
->>>>>> +Sub-nodes:
->>>>>> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown in the
->>>>>> +example below. The DT binding details of dwc3 can be found in:
->>>>>> +Documentation/devicetree/bindings/usb/dwc3.txt
->>>>>> +
->>>>>> +Example:
->>>>>> +    usb3: hisi_dwc3 {
->>>>>> +        compatible = "hisilicon,hi3660-dwc3";
->>>>>> +        #address-cells = <2>;
->>>>>> +        #size-cells = <2>;
->>>>>> +        ranges;
->>>>>> +
->>>>>> +        clocks = <&crg_ctrl HI3660_CLK_ABB_USB>,
->>>>>> +             <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
->>>>>> +        clock-names = "clk_usb3phy_ref", "aclk_usb3otg";
->>>>>> +        assigned-clocks = <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
->>>>>> +        assigned-clock-rates = <229000000>;
->>>>>> +        resets = <&crg_rst 0x90 8>,
->>>>>> +             <&crg_rst 0x90 7>,
->>>>>> +             <&crg_rst 0x90 6>,
->>>>>> +             <&crg_rst 0x90 5>;
->>>>>> +
->>>>>> +        dwc3: dwc3@ff100000 {
-> 
-> Please combine these into a single node. Unless you have a wrapper with 
-> registers, you don't need these 2 nodes. Clocks and reset can go in the 
-> dwc3 node.
-
-Yes, clocks can go in the dwc3 node, but there are four resets need to be
-deasserted for dwc3 usb of Hi3660 Soc and there is only one reset handled
-in dwc3 driver.
-
-> 
->>>>>
->>>>>      According to the DT spec, the node names should be generic, not chip specific, i.e. usb@ff100000 in this case.
->>>>>
->>>>
->>>> Do you mean it should be usb@ff100000: dwc3@ff100000 ?
->>>
->>>     dwc3: usb@ff100000
->>>
->>>    "dwc3:" is a label, not name.
->>
->> I use the node name "dwc3@ff100000" according to Documentation/devicetree/bindings/usb/dwc3.txt
->> and documentations of vendor drivers, i.e. qcom,dwc3.txt, rockchip,dwc3.txt.
->>
->> In these documentations, the dwc3 sub-node name uses "dwc3@xxxxxxxx".
->>
->> I think it is better to be same as the other vendor's dwc3 drivers.
-> 
-> It's not. The other bindings are wrong. Follow the DT Spec.
-> 
-> Rob
-> 
-> .
-> 
-
+SGkgbGF1cmE6DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IExhdXJhIEFi
+Ym90dCBbbWFpbHRvOmxhYmJvdHRAcmVkaGF0LmNvbV0NCj5TZW50OiBUaHVyc2RheSwgRGVjZW1i
+ZXIgMjAsIDIwMTggMjoxMCBBTQ0KPlRvOiBaZW5ndGFvIChCKSA8cHJpbWUuemVuZ0BoaXNpbGlj
+b24uY29tPjsgc3VtaXQuc2Vtd2FsQGxpbmFyby5vcmcNCj5DYzogR3JlZyBLcm9haC1IYXJ0bWFu
+IDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IEFydmUgSGrDuG5uZXbDpWcNCj48YXJ2ZUBh
+bmRyb2lkLmNvbT47IFRvZGQgS2pvcyA8dGtqb3NAYW5kcm9pZC5jb20+OyBNYXJ0aWpuIENvZW5l
+bg0KPjxtYWNvQGFuZHJvaWQuY29tPjsgSm9lbCBGZXJuYW5kZXMgPGpvZWxAam9lbGZlcm5hbmRl
+cy5vcmc+Ow0KPmRldmVsQGRyaXZlcmRldi5vc3Vvc2wub3JnOyBkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnOw0KPmxpbmFyby1tbS1zaWdAbGlzdHMubGluYXJvLm9yZzsgbGludXgta2Vy
+bmVsQHZnZXIua2VybmVsLm9yZw0KPlN1YmplY3Q6IFJlOiBbUEFUQ0hdIHN0YWdpbmc6IGFuZHJv
+aWQ6IGlvbjogYWRkIGJ1ZmZlciBmbGFnIHVwZGF0ZSBpb2N0bA0KPg0KPk9uIDEyLzE5LzE4IDk6
+MTkgQU0sIFplbmcgVGFvIHdyb3RlOg0KPj4gSW4gc29tZSB1c2VjYXNlcywgdGhlIGJ1ZmZlciBj
+YWNoZWQgYXR0cmlidXRlIGlzIG5vdCBkZXRlcm1pbmVkIGF0DQo+PiBhbGxvY2F0aW9uIHRpbWUs
+IGl0J3MgZGV0ZXJtaW5lZCBqdXN0IGJlZm9yZSB0aGUgcmVhbCBjcHUgbWFwcGluZy4NCj4+IEFu
+ZCBmcm9tIHRoZSBtZW1vcnkgdmlldyBvZiBwb2ludCwgYSBidWZmZXIgc2hvdWxkIG5vdCBoYXZl
+IHRoZQ0KPmNhY2hlZA0KPj4gYXR0cmlidXRlIHV0aWwgaXMgcmVhbGx5IG1hcHBlZCBieSB0aGUg
+Y3B1LiBTbyBpbiB0aGlzIHBhdGNoLCB3ZQ0KPj4gaW50cm9kdWNlZCB0aGUgbmV3IGlvY3RsIGNv
+bW1hbmQgdG8gdGFyZ2V0IHRoZSByZXF1aXJlbWVudC4NCj4+DQo+DQo+VGhpcyBpcyByYWN5IGFu
+ZCBlcnJvciBwcm9uZS4gQ2FuIHlvdSBleHBsYWluIG1vcmUgd2hhdCBwcm9ibGVtIHlvdSBhcmUN
+Cj50cnlpbmcgdG8gc29sdmU/DQoNCk15IHVzZSBjYXNlIGlzIGxpa2UgdGhpczoNCjEuICBUaGVy
+ZSBhcmUgdHdvIHByb2Nlc3MgQSBhbmQgQiwgQSB0YWtlcyBjYXNlIG9mIGlvbiBidWZmZXIgYWxs
+b2NhdGlvbiwgYW5kDQogcGFzcyB0aGUgYnVmZmVyIGZkIHRvIEIsIHRoZW4gQiBtYXBzIGFuZCB1
+c2VzIGl0Lg0KMi4gIFByb2Nlc3MgQiBuZWVkIHRvIG1hcCB0aGUgYnVmZmVyIHdpdGggZGlmZmVy
+ZW50IGNhY2hlZCBhdHRyaWJ1dGUgZm9yIA0KZGlmZmVyZW50IHVzZSBjYXNlLCBmb3IgZXhhbXBs
+ZSwgaWYgdGhlIGJ1ZmZlciBpcyB1c2VkIGZvciBwdXJlIHNvZnR3YXJlIGFsZ29yaXRobSwgDQp0
+aGVuIHdlIG5lZWQgdG8gbWFwIGl0IGFzIGNhY2hlZCwgb3RoZXJ3aXNlIG5vbi1jYWNoZWQsIGFu
+ZCBCIG5lZWRzIHRvIGRlYWwNCndpdGggYm90aCBjYXNlcy4NCkFuZCB1bmZvcnR1bmF0ZWx5IHRo
+ZSBtbWFwIHN5c2NhbGwgdGFrZXMgbm8gY2FjaGVkIGZsYWdzIGFuZCB3ZSBjYW4ndCBkZWNpZGUg
+DQp0aGUgY2FjaGUgYXR0cmlidXRlIHdoZW4gd2UgYXJlIGRvaW5nIHRoZSBtbWFwLCBzbyBJIGlu
+dHJvZHVjZSBuZXcgdGhlIGlvY3RsIA0KZXZlbiB0aG91Z2ggSSB0aGluayB0aGUgc29sdXRpb24g
+aXMgbm90IGFzIGdvb2QuIA0KDQoNCj4NCj4+IFNpZ25lZC1vZmYtYnk6IFplbmcgVGFvIDxwcmlt
+ZS56ZW5nQGhpc2lsaWNvbi5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy9zdGFnaW5nL2FuZHJv
+aWQvaW9uL2lvbi1pb2N0bC5jIHwgIDQgKysrKw0KPj4gICBkcml2ZXJzL3N0YWdpbmcvYW5kcm9p
+ZC9pb24vaW9uLmMgICAgICAgfCAxNyArKysrKysrKysrKysrKysrKw0KPj4gICBkcml2ZXJzL3N0
+YWdpbmcvYW5kcm9pZC9pb24vaW9uLmggICAgICAgfCAgMSArDQo+PiAgIGRyaXZlcnMvc3RhZ2lu
+Zy9hbmRyb2lkL3VhcGkvaW9uLmggICAgICB8IDIyDQo+KysrKysrKysrKysrKysrKysrKysrKw0K
+Pj4gICA0IGZpbGVzIGNoYW5nZWQsIDQ0IGluc2VydGlvbnMoKykNCj4+DQo+PiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jDQo+PiBiL2RyaXZlcnMv
+c3RhZ2luZy9hbmRyb2lkL2lvbi9pb24taW9jdGwuYw0KPj4gaW5kZXggYThkM2NjNC4uNjBiYjcw
+MiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24taW9jdGwu
+Yw0KPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi1pb2N0bC5jDQo+PiBA
+QCAtMTIsNiArMTIsNyBAQA0KPj4NCj4+ICAgdW5pb24gaW9uX2lvY3RsX2FyZyB7DQo+PiAgIAlz
+dHJ1Y3QgaW9uX2FsbG9jYXRpb25fZGF0YSBhbGxvY2F0aW9uOw0KPj4gKwlzdHJ1Y3QgaW9uX2J1
+ZmZlcl9mbGFnX2RhdGEgdXBkYXRlOw0KPj4gICAJc3RydWN0IGlvbl9oZWFwX3F1ZXJ5IHF1ZXJ5
+Ow0KPj4gICB9Ow0KPj4NCj4+IEBAIC04Myw2ICs4NCw5IEBAIGxvbmcgaW9uX2lvY3RsKHN0cnVj
+dCBmaWxlICpmaWxwLCB1bnNpZ25lZCBpbnQgY21kLA0KPj4gdW5zaWduZWQgbG9uZyBhcmcpDQo+
+Pg0KPj4gICAJCWJyZWFrOw0KPj4gICAJfQ0KPj4gKwljYXNlIElPTl9JT0NfQlVGRkVSX1VQREFU
+RToNCj4+ICsJCXJldCA9IGlvbl9idWZmZXJfdXBkYXRlKGRhdGEudXBkYXRlLmZkLCBkYXRhLnVw
+ZGF0ZS5mbGFncyk7DQo+PiArCQlicmVhazsNCj4+ICAgCWNhc2UgSU9OX0lPQ19IRUFQX1FVRVJZ
+Og0KPj4gICAJCXJldCA9IGlvbl9xdWVyeV9oZWFwcygmZGF0YS5xdWVyeSk7DQo+PiAgIAkJYnJl
+YWs7DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5jDQo+
+PiBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24uYw0KPj4gaW5kZXggOTkwNzMzMi4u
+ZjE0MDRkYyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9pb24u
+Yw0KPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5jDQo+PiBAQCAtNDM2
+LDYgKzQzNiwyMyBAQCBpbnQgaW9uX2FsbG9jKHNpemVfdCBsZW4sIHVuc2lnbmVkIGludA0KPmhl
+YXBfaWRfbWFzaywgdW5zaWduZWQgaW50IGZsYWdzKQ0KPj4gICAJcmV0dXJuIGZkOw0KPj4gICB9
+DQo+Pg0KPj4gK2ludCBpb25fYnVmZmVyX3VwZGF0ZSh1bnNpZ25lZCBpbnQgZmQsIHVuc2lnbmVk
+IGludCBmbGFncykgew0KPj4gKwlzdHJ1Y3QgZG1hX2J1ZiAqZG1hYnVmOw0KPj4gKwlzdHJ1Y3Qg
+aW9uX2J1ZmZlciAqYnVmZmVyOw0KPj4gKw0KPj4gKwlkbWFidWYgPSBkbWFfYnVmX2dldChmZCk7
+DQo+PiArDQo+PiArCWlmICghZG1hYnVmKQ0KPj4gKwkJcmV0dXJuIC1FSU5WQUw7DQo+PiArDQo+
+PiArCWJ1ZmZlciA9IGRtYWJ1Zi0+cHJpdjsNCj4+ICsJYnVmZmVyLT5mbGFncyA9IGZsYWdzOw0K
+Pj4gKwlkbWFfYnVmX3B1dChkbWFidWYpOw0KPj4gKw0KPj4gKwlyZXR1cm4gMDsNCj4+ICt9DQo+
+PiArDQo+PiAgIGludCBpb25fcXVlcnlfaGVhcHMoc3RydWN0IGlvbl9oZWFwX3F1ZXJ5ICpxdWVy
+eSkNCj4+ICAgew0KPj4gICAJc3RydWN0IGlvbl9kZXZpY2UgKmRldiA9IGludGVybmFsX2Rldjsg
+ZGlmZiAtLWdpdA0KPj4gYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmgNCj4+IGIv
+ZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5oDQo+PiBpbmRleCBjMDA2ZmMxLi45OWJm
+OWFiIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbi5oDQo+
+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vaW9uLmgNCj4+IEBAIC0xOTksNiAr
+MTk5LDcgQEAgaW50IGlvbl9oZWFwX3BhZ2VzX3plcm8oc3RydWN0IHBhZ2UgKnBhZ2UsDQo+c2l6
+ZV90IHNpemUsIHBncHJvdF90IHBncHJvdCk7DQo+PiAgIGludCBpb25fYWxsb2Moc2l6ZV90IGxl
+biwNCj4+ICAgCSAgICAgIHVuc2lnbmVkIGludCBoZWFwX2lkX21hc2ssDQo+PiAgIAkgICAgICB1
+bnNpZ25lZCBpbnQgZmxhZ3MpOw0KPj4gK2ludCBpb25fYnVmZmVyX3VwZGF0ZSh1bnNpZ25lZCBp
+bnQgZmQsIHVuc2lnbmVkIGludCBmbGFncyk7DQo+Pg0KPj4gICAvKioNCj4+ICAgICogaW9uX2hl
+YXBfaW5pdF9zaHJpbmtlcg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lk
+L3VhcGkvaW9uLmgNCj4+IGIvZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvdWFwaS9pb24uaA0KPj4g
+aW5kZXggNWQ3MDA5OC4uOTk3NTNmYyAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy9h
+bmRyb2lkL3VhcGkvaW9uLmgNCj4+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL3VhcGkv
+aW9uLmgNCj4+IEBAIC03NCw2ICs3NCwyMCBAQCBzdHJ1Y3QgaW9uX2FsbG9jYXRpb25fZGF0YSB7
+DQo+PiAgIAlfX3UzMiB1bnVzZWQ7DQo+PiAgIH07DQo+Pg0KPj4gKy8qKg0KPj4gKyAqIHN0cnVj
+dCBpb25fYnVmZmVyX2ZsYWdfZGF0YSAtIG1ldGFkYXRhIHBhc3NlZCBmcm9tIHVzZXJzcGFjZSBm
+b3INCj4+ICt1cGRhdGUNCj4+ICsgKiBidWZmZXIgZmxhZ3MNCj4+ICsgKiBAZmQ6CQkJZmlsZSBk
+ZXNjcmlwdG9yIG9mIHRoZSBidWZmZXINCj4+ICsgKiBAZmxhZ3M6CQlmbGFncyBwYXNzZWQgdG8g
+dGhlIGJ1ZmZlcg0KPj4gKyAqDQo+PiArICogUHJvdmlkZWQgYnkgdXNlcnNwYWNlIGFzIGFuIGFy
+Z3VtZW50IHRvIHRoZSBpb2N0bCAgKi8NCj4+ICsNCj4+ICtzdHJ1Y3QgaW9uX2J1ZmZlcl9mbGFn
+X2RhdGEgew0KPj4gKwlfX3UzMiBmZDsNCj4+ICsJX191MzIgZmxhZ3M7DQo+PiArfQ0KPj4gKw0K
+Pj4gICAjZGVmaW5lIE1BWF9IRUFQX05BTUUJCQkzMg0KPj4NCj4+ICAgLyoqDQo+PiBAQCAtMTE2
+LDYgKzEzMCwxNCBAQCBzdHJ1Y3QgaW9uX2hlYXBfcXVlcnkgew0KPj4gICAJCQkJICAgICAgc3Ry
+dWN0IGlvbl9hbGxvY2F0aW9uX2RhdGEpDQo+Pg0KPj4gICAvKioNCj4+ICsgKiBET0M6IElPTl9J
+T0NfQlVGRkVSX1VQREFURSAtIHVwZGF0ZSB0aGUgc3BlY2lmaWVkIGlvbiBidWZmZXINCj5mbGFn
+cw0KPj4gKyAqDQo+PiArICogVGFrZXMgYW4gaW9uX2J1ZmZlcl9mbGFnX2RhdGEgc3RydWN0dXJl
+IGFuZCByZXR1cm5zIHRoZSByZXN1bHQgb2YNCj4+ICt0aGUNCj4+ICsgKiBidWZmZXIgZmxhZyB1
+cGRhdGUgb3BlcmF0aW9uLg0KPj4gKyAqLw0KPj4gKyNkZWZpbmUgSU9OX0lPQ19CVUZGRVJfVVBE
+QVRFCV9JT1dSKElPTl9JT0NfTUFHSUMsIDEsIFwNCj4+ICsJCQkJICAgICAgc3RydWN0IGlvbl9i
+dWZmZXJfZmxhZ19kYXRhKQ0KPj4gKy8qKg0KPj4gICAgKiBET0M6IElPTl9JT0NfSEVBUF9RVUVS
+WSAtIGluZm9ybWF0aW9uIGFib3V0IGF2YWlsYWJsZSBoZWFwcw0KPj4gICAgKg0KPj4gICAgKiBU
+YWtlcyBhbiBpb25faGVhcF9xdWVyeSBzdHJ1Y3R1cmUgYW5kIHBvcHVsYXRlcyBpbmZvcm1hdGlv
+bg0KPmFib3V0DQo+Pg0KDQo=
