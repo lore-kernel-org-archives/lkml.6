@@ -2,224 +2,103 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2776CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CECBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D453720869
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19F8320869
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:17:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHqIg6Iy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wiq26En0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbeLTGQL (ORCPT
+        id S1730497AbeLTGRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 01:16:11 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42822 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbeLTGQL (ORCPT
+        Thu, 20 Dec 2018 01:17:00 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33656 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728025AbeLTGRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 01:16:11 -0500
-Received: by mail-ot1-f65.google.com with SMTP id v23so528931otk.9;
-        Wed, 19 Dec 2018 22:16:10 -0800 (PST)
+        Thu, 20 Dec 2018 01:17:00 -0500
+Received: by mail-ed1-f67.google.com with SMTP id p6so752734eds.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 22:16:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DX9TonpDXOTAw99zf1iXPkf/nxAZGH5dpGvLKmPc3wM=;
-        b=MHqIg6IyTEnxExu70r6JmOd6ECtmJyvXjYCZOZvRCLzvlC3EJO9sbXZwe9VeOF760Z
-         xneC0RFFVbm3m0Ycm/vIX4pabNBb9bhURovdkgI4o+zkvbNy1Fbg0fPknnMqpNwZqU2A
-         biAI8G8EJ9ZQWxAkl5Hn2F+YruD+8fAXgRi7d4f8kowvCfo8HbF5JuossLpBbEioNNpF
-         P49TKkYoC04lK6wn/FnGWc/K9+3I42PZcJfjfKLbI0rH9d+suw9rbB8ZSWrb5hkBRqGS
-         nHcicA2NzDDehR5DYqAWEKc3ydquiyarbbzdg38scNsQAwbhnK6JizpI26q+mMo5ts34
-         OQsg==
+         :cc;
+        bh=uSH8Px44l+044lB7ulMznZksHkH6jpW/e6qzUQ/ZZ+A=;
+        b=Wiq26En0qPUdxtT1NfYNP47NrXDB628RGKZkVe0FLdHadP5Nrj8p20h9L/v0+VSePc
+         CE0Kx2IM4OM/G00JzADi3pGm/c2OGFBcUt5iuoFxCLCtObjWQwIYnWhIks7n/lhmRDzJ
+         /pUbbPDRwN6MNtRl3/Bl77KfBUduIEWB5/0ZQPQn//eCohX1ngrEouuFSkHK7ulufZ9V
+         UoxXieVjjKIYBT6cI83ztBMpY89HXxSzkHS6DAJPFpSXuzmgAHnmIxPzpOCkxvnjSke9
+         YRzpg8breNAFUTUr98GrdThmklcufbdLZTHW37S1OfZdaIERyUQsghnYoRC3iloFmqjk
+         /+pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DX9TonpDXOTAw99zf1iXPkf/nxAZGH5dpGvLKmPc3wM=;
-        b=jtNf2YdaQRgJX5hl0GVPHmzkVMXbi3b+T7/b5O3VHtl387E5Cu8G1EDyuDtU0PnmI+
-         8hr3mCWt1dEi4fY8BaXzZhENDdO1PGgXhUAnlbYfoSgYT2rTBQ6LP1r2qq0pSF4HRQDc
-         NtDyCYldzeebX4t6k+tx4Md1brk31o5DZ6DjqJe1iLus2w9fiFiHBjbTEhCiAG71hx+m
-         8EU/LWdfnHi8ZsK3hQ8K36zuIUMoMOGlfe+7NIirG8t0Vlm6bugHYA9nxeisPijTAivM
-         A6IleoCRThdmt7sLwCWIkYC4m6CbNgw9bBDPjRZdehQLlOa+/EpSvN+ZxkmsqlmhQEAJ
-         sqNg==
-X-Gm-Message-State: AA+aEWbmCDzv/ZRuvESixvDmDCXgHh8aYYppSmzJj0Dr9YHXVywa6aqP
-        DDwwJbCsY3OhJhedY1WI6uRKIZ48so0S0c4yxHfZAg==
-X-Google-Smtp-Source: AFSGD/W2TWid6OwR7bCAyD7GY1JfSgFl2rjY8vHa5eZRSlY8HHjn3HWr7lH9QeKc3VB0WJIbT2UYxkKvSu2mmXkXnoY=
-X-Received: by 2002:a9d:5f06:: with SMTP id f6mr17730649oti.258.1545286569641;
- Wed, 19 Dec 2018 22:16:09 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=uSH8Px44l+044lB7ulMznZksHkH6jpW/e6qzUQ/ZZ+A=;
+        b=ulwu391DsByRf9739iHY+UWjhHSgjIrufEr67qZ62HyjzuKo5Lj7xt2OI5w93jLkBg
+         DR4rxpAvmygjaB7rI4HEtuzPAi3zS3X/BedqvXJQz0Ybmdw9oGcQjiAI2lckPwr5T8jG
+         g7x8J+/k+Je3loGCjfMMaC1blxrTROA+6KOJ4gIF0g3ABUOsk/E5fYmg9ZuKAjiDuaEQ
+         4xXk95DK8ytK8YgvFeTcSDiJ0PvHCbzx99QUytPTFrs6fucn6pSsgDI86cu0VoPwpC2i
+         TzFTNSAOyqkNPkTjOgR63x+B2SqwdYWsewuZdmfFPqHPfOWDr5Z7Cu45+ustZiseJhqS
+         2U/A==
+X-Gm-Message-State: AA+aEWbQhuIdZzbtxZlEBhNF5Z6QqFRgw8HC69/4sAWFUx3xt8vpkPe3
+        LxUQeHIO2VUMlOxrrUIoZ3Bfs+T+ATnLgUKImZg=
+X-Google-Smtp-Source: AFSGD/WbfSLKlQIlGUFPt5Me8Yd9oZKphDudRGUpqogHXDXJ/3tW4ZjKVsiGWP2qOTsvjThnfPT0WYG9uyBZJCqbkCg=
+X-Received: by 2002:a50:9291:: with SMTP id k17mr20863951eda.243.1545286618433;
+ Wed, 19 Dec 2018 22:16:58 -0800 (PST)
 MIME-Version: 1.0
-References: <1544083089-13000-1-git-send-email-wanpengli@tencent.com> <CANRm+CxRDyQvnGSGWubbYymjvwiU5DjRwhUHsCsWdWPfY7nDnw@mail.gmail.com>
-In-Reply-To: <CANRm+CxRDyQvnGSGWubbYymjvwiU5DjRwhUHsCsWdWPfY7nDnw@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 20 Dec 2018 14:16:14 +0800
-Message-ID: <CANRm+Czpq2kzF-QH17bt9k=V7p9fFTe-Vr+ij37mewubvMm4GA@mail.gmail.com>
-Subject: Re: [PATCH] KVM: MMU: Introduce single thread to zap collapsible sptes
-To:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>
+References: <20181219123657.61270-1-anup@brainfault.org>
+In-Reply-To: <20181219123657.61270-1-anup@brainfault.org>
+From:   Bin Meng <bmeng.cn@gmail.com>
+Date:   Thu, 20 Dec 2018 14:16:47 +0800
+Message-ID: <CAEUhbmXNmzHVnzj88T5jxDXs=Rx_kD9fgayZ4r3xvgAOYXKWjw@mail.gmail.com>
+Subject: Re: [PATCH v2] RISC-V: Make BSS section as the last section in vmlinux.lds.S
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kindly ping,
-On Fri, 14 Dec 2018 at 15:24, Wanpeng Li <kernellwp@gmail.com> wrote:
+On Wed, Dec 19, 2018 at 8:37 PM Anup Patel <anup@brainfault.org> wrote:
 >
-> ping,
-> On Thu, 6 Dec 2018 at 15:58, Wanpeng Li <kernellwp@gmail.com> wrote:
-> >
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Last year guys from huawei reported that the call of memory_global_dirt=
-y_log_start/stop()
-> > takes 13s for 4T memory and cause guest freeze too long which increases=
- the unacceptable
-> > migration downtime. [1] [2]
-> >
-> > Guangrong pointed out:
-> >
-> > | collapsible_sptes zaps 4k mappings to make memory-read happy, it is n=
-ot
-> > | required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
-> > | urgent for vCPU's running, it could be done in a separate thread and =
-use
-> > | lock-break technology.
-> >
-> > [1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
-> > [2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
-> >
-> > Several TB memory guest is common now after NVDIMM is deployed in cloud=
- environment.
-> > This patch utilizes worker thread to zap collapsible sptes in order to =
-lazy collapse
-> > small sptes into large sptes during roll-back after live migration fail=
-s.
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |  3 +++
-> >  arch/x86/kvm/mmu.c              | 37 ++++++++++++++++++++++++++++++++-=
-----
-> >  arch/x86/kvm/x86.c              |  4 ++++
-> >  3 files changed, 39 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm=
-_host.h
-> > index fbda5a9..dde32f9 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -892,6 +892,8 @@ struct kvm_arch {
-> >         u64 master_cycle_now;
-> >         struct delayed_work kvmclock_update_work;
-> >         struct delayed_work kvmclock_sync_work;
-> > +       struct delayed_work kvm_mmu_zap_collapsible_sptes_work;
-> > +       bool zap_in_progress;
-> >
-> >         struct kvm_xen_hvm_config xen_hvm_config;
-> >
-> > @@ -1247,6 +1249,7 @@ void kvm_mmu_zap_all(struct kvm *kvm);
-> >  void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, struct kvm_memslot=
-s *slots);
-> >  unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
-> >  void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu=
-_pages);
-> > +void zap_collapsible_sptes_fn(struct work_struct *work);
-> >
-> >  int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned l=
-ong cr3);
-> >  bool pdptrs_changed(struct kvm_vcpu *vcpu);
-> > diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> > index 7c03c0f..fe87dd3 100644
-> > --- a/arch/x86/kvm/mmu.c
-> > +++ b/arch/x86/kvm/mmu.c
-> > @@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct=
- kvm *kvm,
-> >         return need_tlb_flush;
-> >  }
-> >
-> > +void zap_collapsible_sptes_fn(struct work_struct *work)
-> > +{
-> > +       struct kvm_memory_slot *memslot;
-> > +       struct kvm_memslots *slots;
-> > +       struct delayed_work *dwork =3D to_delayed_work(work);
-> > +       struct kvm_arch *ka =3D container_of(dwork, struct kvm_arch,
-> > +                                          kvm_mmu_zap_collapsible_spte=
-s_work);
-> > +       struct kvm *kvm =3D container_of(ka, struct kvm, arch);
-> > +       int i;
-> > +
-> > +       mutex_lock(&kvm->slots_lock);
-> > +       for (i =3D 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-> > +               spin_lock(&kvm->mmu_lock);
-> > +               slots =3D __kvm_memslots(kvm, i);
-> > +               kvm_for_each_memslot(memslot, slots) {
-> > +                       slot_handle_leaf(kvm, (struct kvm_memory_slot *=
-)memslot,
-> > +                               kvm_mmu_zap_collapsible_spte, true);
-> > +                       if (need_resched() || spin_needbreak(&kvm->mmu_=
-lock))
-> > +                               cond_resched_lock(&kvm->mmu_lock);
-> > +               }
-> > +               spin_unlock(&kvm->mmu_lock);
-> > +       }
-> > +       kvm->arch.zap_in_progress =3D false;
-> > +       mutex_unlock(&kvm->slots_lock);
-> > +}
-> > +
-> > +#define KVM_MMU_ZAP_DELAYED (60 * HZ)
-> >  void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
-> >                                    const struct kvm_memory_slot *memslo=
-t)
-> >  {
-> > -       /* FIXME: const-ify all uses of struct kvm_memory_slot.  */
-> > -       spin_lock(&kvm->mmu_lock);
-> > -       slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
-> > -                        kvm_mmu_zap_collapsible_spte, true);
-> > -       spin_unlock(&kvm->mmu_lock);
-> > +       if (!kvm->arch.zap_in_progress) {
-> > +               kvm->arch.zap_in_progress =3D true;
-> > +               schedule_delayed_work(&kvm->arch.kvm_mmu_zap_collapsibl=
-e_sptes_work,
-> > +                       KVM_MMU_ZAP_DELAYED);
-> > +       }
-> >  }
-> >
-> >  void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index d029377..c2af289 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -9019,6 +9019,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned lo=
-ng type)
-> >
-> >         INIT_DELAYED_WORK(&kvm->arch.kvmclock_update_work, kvmclock_upd=
-ate_fn);
-> >         INIT_DELAYED_WORK(&kvm->arch.kvmclock_sync_work, kvmclock_sync_=
-fn);
-> > +       INIT_DELAYED_WORK(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work=
-,
-> > +                       zap_collapsible_sptes_fn);
-> > +       kvm->arch.zap_in_progress =3D false;
-> >
-> >         kvm_hv_init_vm(kvm);
-> >         kvm_page_track_init(kvm);
-> > @@ -9064,6 +9067,7 @@ void kvm_arch_sync_events(struct kvm *kvm)
-> >  {
-> >         cancel_delayed_work_sync(&kvm->arch.kvmclock_sync_work);
-> >         cancel_delayed_work_sync(&kvm->arch.kvmclock_update_work);
-> > +       cancel_delayed_work_sync(&kvm->arch.kvm_mmu_zap_collapsible_spt=
-es_work);
-> >         kvm_free_pit(kvm);
-> >  }
-> >
-> > --
-> > 2.7.4
-> >
+> The objcopy only emits loadable sections when creating flat kernel
+> Image. To have minimal possible size of flat kernel Image, we should
+> have all non-loadable sections after loadable sections.
+>
+> Currently, execption table section (loadable section) is after BSS
+> section (non-loadable section) in the RISC-V vmlinux.lds.S. This
+> is not optimal for having minimal flat kernel Image size hence this
+> patch makes BSS section as the last section in RISC-V vmlinux.lds.S.
+>
+> In addition, we make BSS section aligned to 16byte instead of PAGE
+> aligned which further reduces flat kernel Image size by few KBs.
+>
+> The flat kernel Image size of Linux-4.20-rc4 using GCC 8.2.0 is
+> 8819980 bytes with current RISC-V vmlinux.lds.S and it reduces to
+> 7991740 bytes with this patch applied. In summary, this patch reduces
+> Linux-4.20-rc4 flat kernel Image size by 809 KB.
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>
+> Changes since v1:
+>  - Introduce MAX_BYTES_PER_LONG define and use it in-place of
+>    0x10 magic value
+>
+>  arch/riscv/kernel/vmlinux.lds.S | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+
+Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
