@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7326FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4890AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4285320811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13C4820989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298830;
-	bh=pjjKzhySXPSvHH/cV/xYlmDDv5YbG8FjW4npavzuL8E=;
+	s=default; t=1545298840;
+	bh=xrEhSD7c5TkBFeev9XBTfgDntn5pbpeqlOjikEAVYBw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iSwk7ZC8GjGNCrirQLNRLiUHEAOSOSuw36eXD0U85uyoldh3X6Tw28GB5pWvrjKcW
-	 UB9GiTWLQsMtvCcfFaKYZEZuK0C7SnDmMoiU4i21dBfuWHXp7qvZwb9ur9V5bHBUtM
-	 ECjSd817YkKE82qIBACzQdovV52OWVfOFSjXSZcM=
+	b=qs6LsXTK94SUOkkiNQK3QVVcJqyQ3gLUjANHIav0vhATz02O60kQj2tbmzapw+lNM
+	 4K2J3BZXM90K1cZhwr5fhunLMQM+sHTocqX+S3c041MeVpLKO17r5exSlOSZd8hzQ3
+	 WP6Pq3sQyExq0HO1OC8UnJdw3WLACZW4Iq9hQ4tY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731848AbeLTJYm (ORCPT
+        id S2387422AbeLTJkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:24:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37436 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:40:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730428AbeLTJYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:24:40 -0500
+        id S1731802AbeLTJYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D55A217D9;
-        Thu, 20 Dec 2018 09:24:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98F6220656;
+        Thu, 20 Dec 2018 09:24:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297879;
-        bh=pjjKzhySXPSvHH/cV/xYlmDDv5YbG8FjW4npavzuL8E=;
+        s=default; t=1545297869;
+        bh=xrEhSD7c5TkBFeev9XBTfgDntn5pbpeqlOjikEAVYBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BffXtd9ZjNq9MyZh+Ar5KnGcPJIH/12S1y7peXn7nc2FxhbxVVk2CgSJflUggK5M7
-         mcyTS0nXeQy6ZD4fIkmGtNKhZvB9Ip+vUjJWLvq/68hcjztRZs/7qDT9UDpeMMs8li
-         bccABhBhJrjWLD1/bfaXBt/VqlSZ6GPlIeir63U0=
+        b=amxUfJt24RRiAglXWA/8W2LEjue5LvBJ9bBBEmFjp141EQH8cJJIxQZ0wI02HQzwk
+         3t92HrOUzQghrG3Rsj4qwHUF9PC7/iLn6iHj5/fwDXb1VAUaTBH39ZB94+xS8pibPv
+         Pu92Jjy/LrC0KVO42omnNYAVtw8lwE8rpHTYzjUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Edward Cree <ecree@solarflare.com>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Tony Lindgren <tony@atomide.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 50/61] bpf: check pending signals while verifying programs
-Date:   Thu, 20 Dec 2018 10:18:50 +0100
-Message-Id: <20181220085845.774712211@linuxfoundation.org>
+Subject: [PATCH 4.9 46/61] Input: omap-keypad - fix keyboard debounce configuration
+Date:   Thu, 20 Dec 2018 10:18:46 +0100
+Message-Id: <20181220085845.622350283@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
 References: <20181220085843.743900603@linuxfoundation.org>
@@ -68,38 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c3494801cd1785e2c25f1a5735fa19ddcf9665da ]
+[ Upstream commit 6c3516fed7b61a3527459ccfa67fab130d910610 ]
 
-Malicious user space may try to force the verifier to use as much cpu
-time and memory as possible. Hence check for pending signals
-while verifying the program.
-Note that suspend of sys_bpf(PROG_LOAD) syscall will lead to EAGAIN,
-since the kernel has to release the resources used for program verification.
+I noticed that the Android v3.0.8 kernel on droid4 is using different
+keypad values from the mainline kernel and does not have issues with
+keys occasionally being stuck until pressed again. Turns out there was
+an earlier patch posted to fix this as "Input: omap-keypad: errata i689:
+Correct debounce time", but it was never reposted to fix use macros
+for timing calculations.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+This updated version is using macros, and also fixes the use of the
+input clock rate to use 32768KiHz instead of 32000KiHz. And we want to
+use the known good Android kernel values of 3 and 6 instead of 2 and 6
+in the earlier patch.
+
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/input/keyboard/omap4-keypad.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 1438b7396cb4..335c00209f74 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2919,6 +2919,9 @@ static int do_check(struct bpf_verifier_env *env)
- 			goto process_bpf_exit;
- 		}
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index 6639b2b8528a..f78c464899db 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -60,8 +60,18 @@
  
-+		if (signal_pending(current))
-+			return -EAGAIN;
+ /* OMAP4 values */
+ #define OMAP4_VAL_IRQDISABLE		0x0
+-#define OMAP4_VAL_DEBOUNCINGTIME	0x7
+-#define OMAP4_VAL_PVT			0x7
 +
- 		if (need_resched())
- 			cond_resched();
++/*
++ * Errata i689: If a key is released for a time shorter than debounce time,
++ * the keyboard will idle and never detect the key release. The workaround
++ * is to use at least a 12ms debounce time. See omap5432 TRM chapter
++ * "26.4.6.2 Keyboard Controller Timer" for more information.
++ */
++#define OMAP4_KEYPAD_PTV_DIV_128        0x6
++#define OMAP4_KEYPAD_DEBOUNCINGTIME_MS(dbms, ptv)     \
++	((((dbms) * 1000) / ((1 << ((ptv) + 1)) * (1000000 / 32768))) - 1)
++#define OMAP4_VAL_DEBOUNCINGTIME_16MS					\
++	OMAP4_KEYPAD_DEBOUNCINGTIME_MS(16, OMAP4_KEYPAD_PTV_DIV_128)
  
+ enum {
+ 	KBD_REVISION_OMAP4 = 0,
+@@ -181,9 +191,9 @@ static int omap4_keypad_open(struct input_dev *input)
+ 
+ 	kbd_writel(keypad_data, OMAP4_KBD_CTRL,
+ 			OMAP4_DEF_CTRL_NOSOFTMODE |
+-			(OMAP4_VAL_PVT << OMAP4_DEF_CTRL_PTV_SHIFT));
++			(OMAP4_KEYPAD_PTV_DIV_128 << OMAP4_DEF_CTRL_PTV_SHIFT));
+ 	kbd_writel(keypad_data, OMAP4_KBD_DEBOUNCINGTIME,
+-			OMAP4_VAL_DEBOUNCINGTIME);
++			OMAP4_VAL_DEBOUNCINGTIME_16MS);
+ 	/* clear pending interrupts */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+ 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
 -- 
 2.19.1
 
