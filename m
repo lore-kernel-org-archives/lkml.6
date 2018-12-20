@@ -2,159 +2,324 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E4EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DAAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE62C218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 417CC21773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 11:24:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAMCQDx7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbeLTLWt (ORCPT
+        id S1730855AbeLTLYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 06:22:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:52596 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728172AbeLTLWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 06:22:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3B1DA78;
-        Thu, 20 Dec 2018 03:22:47 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E97553F5C0;
-        Thu, 20 Dec 2018 03:22:46 -0800 (PST)
-Subject: Re: [PATCH 3/3] sched/fair: fix unnecessary increase of balance
- interval
-To:     Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Morten.Rasmussen@arm.com
-References: <1545292547-18770-1-git-send-email-vincent.guittot@linaro.org>
- <1545292547-18770-4-git-send-email-vincent.guittot@linaro.org>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <c482361e-cfb4-d172-32c3-4d82ceb1e7d2@arm.com>
-Date:   Thu, 20 Dec 2018 11:22:45 +0000
+        Thu, 20 Dec 2018 06:24:41 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34008 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728172AbeLTLYl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 06:24:41 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u89-v6so1218201lje.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 03:24:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=CHWwXCP2hZJFuW/LTGJZeYjfTw7LLfqQvfy5uQk+IlA=;
+        b=eAMCQDx7xo8ZFqZ7PzgVtT3x6jAJOoPrs1JcjuyV5PkSg2imfd83ZMQ3KqQCDJ0s7X
+         FELEwdCEgtIKrYEHH4i+JeJWJp0BazaDXt33amY/Fy61xEPZ0LtiTz2E+9bMN4xJYACC
+         w/YdWUW/NFiAEqfVZrhUUXry3XSGINtx1pVptiHRfokgyo6MJaWzSSdrJRGNuNuZjRKx
+         0MdvAge3kLLHr8eKxkCwTRgCTw4R08idQwc95HzG44wafDmptXjaM0uZ0fY8kHQE8OHB
+         z0Um5twQti4jhBcubXa0Uae6x3BxZd7/nvw6BXC5/S77nBxs3J5M+eaSRb8IDqtMuUUd
+         enXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=CHWwXCP2hZJFuW/LTGJZeYjfTw7LLfqQvfy5uQk+IlA=;
+        b=gRs5zfMJSgik3FCGoZwo2NQa3Cl07TV86x8Jf7yzhFtHzD6yfaT51899yNuChobxTV
+         AxSjp8mX7cH38SZvwqbA51vSo09GwdD2RL9RPtPerXPQRLlnTrpY/3ZE0oWWnULeK8Iu
+         UVvs+pNTzxtXuDveGWcGT4slBkKq4I34K3scZbrb57yibxSNAuTFcJKqB7dgQXZodSL8
+         F/KbdHWolXbiMkJX3KkvCMuYTv8FIBSDUHWtbegfdf08FEVP7jZoGl3U4xZ7FeokZkQ8
+         46zceHlqdI7yJ79UWKyMfB2Ji5hjerExv2nzaOOz866Aq2WRDKkazd4YoAs8OxwFVPiN
+         GBFg==
+X-Gm-Message-State: AA+aEWYMhCUhEzwTgIiQk3cJKPB/33HO2INvbm17avZqT/JycPGS+bJd
+        xQlavXcFRJEdCSTHfM4WwN4=
+X-Google-Smtp-Source: AFSGD/XfeiEmvPsgWW7UTFlbpCDr47FkQLt4WqpMvmaiUKIBnTHwkaJTTNaWwfwkh6yuNK4/eRQbTw==
+X-Received: by 2002:a2e:91d1:: with SMTP id u17-v6mr6697983ljg.160.1545305076585;
+        Thu, 20 Dec 2018 03:24:36 -0800 (PST)
+Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id v11-v6sm4037058ljc.57.2018.12.20.03.24.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 03:24:36 -0800 (PST)
+Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
+To:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+Cc:     Gerd Hoffmann <kraxel@redhat.com>
+References: <20181127103252.20994-1-andr2000@gmail.com>
+ <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
+ <c5fa494c-2ead-e190-6e8c-43478275f789@gmail.com>
+ <96086dbe-8065-2d0d-e5f6-4932ffbf956e@tronnes.org>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <18fb3bb8-5682-b156-8299-7ac03463ce23@gmail.com>
+Date:   Thu, 20 Dec 2018 13:24:34 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1545292547-18770-4-git-send-email-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <96086dbe-8065-2d0d-e5f6-4932ffbf956e@tronnes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/12/2018 07:55, Vincent Guittot wrote:
-> In case of active balance, we increase the balance interval to cover
-> pinned tasks cases not covered by all_pinned logic. Neverthless, the
-> active migration triggered by asym packing should be treated as the normal
-> unbalanced case and reset the interval to default value otherwise active
-> migration for asym_packing can be easily delayed for hundreds of ms
-> because of this pinned task detection mecanism.
-> The same happen to other conditions tested in need_active_balance() like
-> mistfit task and when the capacity of src_cpu is reduced compared to
-> dst_cpu (see comments in need_active_balance() for details).
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  kernel/sched/fair.c | 40 +++++++++++++++++++++++++++-------------
->  1 file changed, 27 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 487c73e..9b1e701 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8849,21 +8849,25 @@ static struct rq *find_busiest_queue(struct lb_env *env,
->   */
->  #define MAX_PINNED_INTERVAL	512
->  
-> -static int need_active_balance(struct lb_env *env)
-> +static inline bool
-> +asym_active_balance(struct lb_env *env)
->  {
-> -	struct sched_domain *sd = env->sd;
-> +	/*
-> +	 * ASYM_PACKING needs to force migrate tasks from busy but
-> +	 * lower priority CPUs in order to pack all tasks in the
-> +	 * highest priority CPUs.
-> +	 */
-> +	return env->idle != CPU_NOT_IDLE && (env->sd->flags & SD_ASYM_PACKING) &&
-> +	       sched_asym_prefer(env->dst_cpu, env->src_cpu);
-> +}
->  
-> -	if (env->idle != CPU_NOT_IDLE) {
-> +static inline bool
-> +voluntary_active_balance(struct lb_env *env)
-> +{
-> +	struct sched_domain *sd = env->sd;
->  
-> -		/*
-> -		 * ASYM_PACKING needs to force migrate tasks from busy but
-> -		 * lower priority CPUs in order to pack all tasks in the
-> -		 * highest priority CPUs.
-> -		 */
-> -		if ((sd->flags & SD_ASYM_PACKING) &&
-> -		    sched_asym_prefer(env->dst_cpu, env->src_cpu))
-> -			return 1;
-> -	}
-> +	if (asym_active_balance(env))
-> +		return 1;
->  
->  	/*
->  	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
-> @@ -8881,6 +8885,16 @@ static int need_active_balance(struct lb_env *env)
->  	if (env->src_grp_type == group_misfit_task)
->  		return 1;
->  
-> +	return 0;
-> +}
-> +
-
-Yeah so that's the active balance classification I was afraid of, and I
-don't agree with it.
-
-The way I see things, we happen to have some mechanisms that let us know
-straight away if we need an active balance (asym packing, misfit, lowered
-capacity), and we rely on the sd->nr_balance_failed threshold for the
-scenarios where we don't have any more information.
-
-We do happen to have a threshold because we don't want to go overboard with
-it, but when it is reached it's a clear sign that we *do* want to active
-balance because that's all we can do to try and solve the imbalance.
-
-To me, those are all legitimate reasons to. So they're all "voluntary"
-really, we *do* want all of these.
-
-> +static int need_active_balance(struct lb_env *env)
-> +{
-> +	struct sched_domain *sd = env->sd;
-> +
-> +	if (voluntary_active_balance(env))
-> +		return 1;
-> +
->  	return unlikely(sd->nr_balance_failed > sd->cache_nice_tries+2);
->  }
->  
-> @@ -9142,7 +9156,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
->  	} else
->  		sd->nr_balance_failed = 0;
->  
-> -	if (likely(!active_balance)) {
-> +	if (likely(!active_balance) || voluntary_active_balance(&env)) {
-
-So now  we reset the interval for all active balances (expect last active
-balance case), even when it is done as a last resort because all other
-tasks were pinned.
-
-Arguably the current code isn't much better (always increase the interval
-when active balancing), but at least it covers this case. It would be a
-waste not to take this into account when we can detect this scenario
-(I'll reiterate my LBF_ALL_PINNED suggestion).
-
->  		/* We were unbalanced, so reset the balancing interval */
->  		sd->balance_interval = sd->min_interval;
->  	} else {
-> 
+On 12/19/18 6:14 PM, Noralf Trønnes wrote:
+>
+> Den 19.12.2018 09.18, skrev Oleksandr Andrushchenko:
+>> On 12/18/18 9:20 PM, Noralf Trønnes wrote:
+>>>
+>>> Den 27.11.2018 11.32, skrev Oleksandr Andrushchenko:
+>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>>
+>>>> When GEM backing storage is allocated with drm_gem_get_pages
+>>>> the backing pages may be cached, thus making it possible that
+>>>> the backend sees only partial content of the buffer which may
+>>>> lead to screen artifacts. Make sure that the frontend's
+>>>> memory is coherent and the backend always sees correct display
+>>>> buffer content.
+>>>>
+>>>> Fixes: c575b7eeb89f ("drm/xen-front: Add support for Xen PV display 
+>>>> frontend")
+>>>>
+>>>> Signed-off-by: Oleksandr Andrushchenko 
+>>>> <oleksandr_andrushchenko@epam.com>
+>>>> ---
+>>>>   drivers/gpu/drm/xen/xen_drm_front_gem.c | 62 
+>>>> +++++++++++++++++++------
+>>>>   1 file changed, 48 insertions(+), 14 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c 
+>>>> b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>>> index 47ff019d3aef..c592735e49d2 100644
+>>>> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>>> @@ -33,8 +33,11 @@ struct xen_gem_object {
+>>>>       /* set for buffers allocated by the backend */
+>>>>       bool be_alloc;
+>>>>   -    /* this is for imported PRIME buffer */
+>>>> -    struct sg_table *sgt_imported;
+>>>> +    /*
+>>>> +     * this is for imported PRIME buffer or the one allocated via
+>>>> +     * drm_gem_get_pages.
+>>>> +     */
+>>>> +    struct sg_table *sgt;
+>>>>   };
+>>>>     static inline struct xen_gem_object *
+>>>> @@ -77,10 +80,21 @@ static struct xen_gem_object 
+>>>> *gem_create_obj(struct drm_device *dev,
+>>>>       return xen_obj;
+>>>>   }
+>>>>   +struct sg_table *xen_drm_front_gem_get_sg_table(struct 
+>>>> drm_gem_object *gem_obj)
+>>>> +{
+>>>> +    struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>>>> +
+>>>> +    if (!xen_obj->pages)
+>>>> +        return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +    return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
+>>>> +}
+>>>> +
+>>>>   static struct xen_gem_object *gem_create(struct drm_device *dev, 
+>>>> size_t size)
+>>>>   {
+>>>>       struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>>>>       struct xen_gem_object *xen_obj;
+>>>> +    struct address_space *mapping;
+>>>>       int ret;
+>>>>         size = round_up(size, PAGE_SIZE);
+>>>> @@ -113,10 +127,14 @@ static struct xen_gem_object 
+>>>> *gem_create(struct drm_device *dev, size_t size)
+>>>>           xen_obj->be_alloc = true;
+>>>>           return xen_obj;
+>>>>       }
+>>>> +
+>>>>       /*
+>>>>        * need to allocate backing pages now, so we can share those
+>>>>        * with the backend
+>>>>        */
+>>>
+>>>
+>>> Let's see if I understand what you're doing:
+>>>
+>>> Here you say that the pages should be DMA accessible for devices 
+>>> that can
+>>> only see 4GB.
+>>
+>> Yes, your understanding is correct. As we are a para-virtualized 
+>> device we
+>>
+>> do not have strict requirements for 32-bit DMA. But, via dma-buf export,
+>>
+>> the buffer we create can be used by real HW, e.g. one can pass-through
+>>
+>> real HW devices into a guest domain and they can import our buffer (yes,
+>>
+>> they can be IOMMU backed and other conditions may apply).
+>>
+>> So, this is why we are limiting to DMA32 here, just to allow more 
+>> possible
+>>
+>> use-cases
+>>
+>>>
+>>>> +    mapping = xen_obj->base.filp->f_mapping;
+>>>> +    mapping_set_gfp_mask(mapping, GFP_USER | __GFP_DMA32);
+>>>> +
+>>>>       xen_obj->num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
+>>>>       xen_obj->pages = drm_gem_get_pages(&xen_obj->base);
+>>>>       if (IS_ERR_OR_NULL(xen_obj->pages)) {
+>>>> @@ -125,8 +143,27 @@ static struct xen_gem_object 
+>>>> *gem_create(struct drm_device *dev, size_t size)
+>>>>           goto fail;
+>>>>       }
+>>>>   +    xen_obj->sgt = xen_drm_front_gem_get_sg_table(&xen_obj->base);
+>>>> +    if (IS_ERR_OR_NULL(xen_obj->sgt)){
+>>>> +        ret = PTR_ERR(xen_obj->sgt);
+>>>> +        xen_obj->sgt = NULL;
+>>>> +        goto fail_put_pages;
+>>>> +    }
+>>>> +
+>>>> +    if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
+>>>> +            DMA_BIDIRECTIONAL)) {
+>>>
+>>>
+>>> Are you using the DMA streaming API as a way to flush the caches?
+>> Yes
+>>> Does this mean that GFP_USER isn't making the buffer coherent?
+>>
+>> No, it didn't help. I had a question [1] if there are any other 
+>> better way
+>>
+>> to achieve the same, but didn't have any response yet. So, I implemented
+>>
+>> it via DMA API which helped.
+>
+> As Gerd says asking on the arm list is probably the best way of finding a
+> future proof solution and understanding what's going on.
+Yes, it seems so
+>
+> But if you don't get any help there and you end up with the present
+> solution I suggest you add a comment that this is for flushing the caches
+> on arm. With the current code one can be led to believe that the driver
+> uses the dma address somewhere.
+Makes sense
+>
+> What about x86, does the problem exist there?
+>
+Yes, but there I could do drm_clflush_pages which is not implemented for ARM
+> I wonder if you can call dma_unmap_sg() right away since the flushing has
+> already happened. That would contain this flushing "hack" inside the
+> gem_create function.
+Yes, I was thinking about this "solution" as well
+>
+> I also suggest calling drm_prime_pages_to_sg() directly to increase
+> readability, since the check in xen_drm_front_gem_get_sg_table() isn't
+> necessary for this use case.
+This can be done
+>
+>
+> Noralf.
+>
+>
+>>
+>>>
+>>> Noralf.
+>>>
+>>>> +        ret = -EFAULT;
+>>>> +        goto fail_free_sgt;
+>>>> +    }
+>>>> +
+>>>>       return xen_obj;
+>>>>   +fail_free_sgt:
+>>>> +    sg_free_table(xen_obj->sgt);
+>>>> +    xen_obj->sgt = NULL;
+>>>> +fail_put_pages:
+>>>> +    drm_gem_put_pages(&xen_obj->base, xen_obj->pages, true, false);
+>>>> +    xen_obj->pages = NULL;
+>>>>   fail:
+>>>>       DRM_ERROR("Failed to allocate buffer with size %zu\n", size);
+>>>>       return ERR_PTR(ret);
+>>>> @@ -149,7 +186,7 @@ void 
+>>>> xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj)
+>>>>       struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>>>>         if (xen_obj->base.import_attach) {
+>>>> -        drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt_imported);
+>>>> +        drm_prime_gem_destroy(&xen_obj->base, xen_obj->sgt);
+>>>>           gem_free_pages_array(xen_obj);
+>>>>       } else {
+>>>>           if (xen_obj->pages) {
+>>>> @@ -158,6 +195,13 @@ void 
+>>>> xen_drm_front_gem_free_object_unlocked(struct drm_gem_object *gem_obj)
+>>>>                               xen_obj->pages);
+>>>>                   gem_free_pages_array(xen_obj);
+>>>>               } else {
+>>>> +                if (xen_obj->sgt) {
+>>>> + dma_unmap_sg(xen_obj->base.dev->dev,
+>>>> +                             xen_obj->sgt->sgl,
+>>>> +                             xen_obj->sgt->nents,
+>>>> +                             DMA_BIDIRECTIONAL);
+>>>> +                    sg_free_table(xen_obj->sgt);
+>>>> +                }
+>>>>                   drm_gem_put_pages(&xen_obj->base,
+>>>>                             xen_obj->pages, true, false);
+>>>>               }
+>>>> @@ -174,16 +218,6 @@ struct page 
+>>>> **xen_drm_front_gem_get_pages(struct drm_gem_object *gem_obj)
+>>>>       return xen_obj->pages;
+>>>>   }
+>>>>   -struct sg_table *xen_drm_front_gem_get_sg_table(struct 
+>>>> drm_gem_object *gem_obj)
+>>>> -{
+>>>> -    struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+>>>> -
+>>>> -    if (!xen_obj->pages)
+>>>> -        return ERR_PTR(-ENOMEM);
+>>>> -
+>>>> -    return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
+>>>> -}
+>>>> -
+>>>>   struct drm_gem_object *
+>>>>   xen_drm_front_gem_import_sg_table(struct drm_device *dev,
+>>>>                     struct dma_buf_attachment *attach,
+>>>> @@ -203,7 +237,7 @@ xen_drm_front_gem_import_sg_table(struct 
+>>>> drm_device *dev,
+>>>>       if (ret < 0)
+>>>>           return ERR_PTR(ret);
+>>>>   -    xen_obj->sgt_imported = sgt;
+>>>> +    xen_obj->sgt = sgt;
+>>>>         ret = drm_prime_sg_to_page_addr_arrays(sgt, xen_obj->pages,
+>>>>                              NULL, xen_obj->num_pages);
+>>> _______________________________________________
+>>> dri-devel mailing list
+>>> dri-devel@lists.freedesktop.org
+>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>> Thank you,
+>>
+>> Oleksandr
+>>
+>> [1] 
+>> https://www.mail-archive.com/xen-devel@lists.xenproject.org/msg31745.html
+>>
+Thank you,
+Oleksandr
