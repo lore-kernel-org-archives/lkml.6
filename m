@@ -3,51 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60219C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DE5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3012021720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA5C32177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297732;
-	bh=nKHl9NqRtRqg3cLSCniCGlGsSbzqLOUmpSg05D8pikg=;
+	s=default; t=1545297737;
+	bh=zr9XlMWKtPuDsY6qAi6NWnhw2+eYnhxUelc+dhkaXd0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BxviWSXxyRR0Qsdu8HFiyzeTsuqVM8uZJlx1YCLh6elji/T+npWu+euuL17kLRKOR
-	 l0N9PXvDdhtoNKBHlwLzZCwoXvbJamTVCJ7ArHvLT/cz8xqbL31GTcK/Oy3+DCrGRV
-	 JdYr2n8/ZpLN7OQCzL3XxpLNrjDRclK0aslJdThM=
+	b=KSGIXGuJL8kG/isc6QzVFea6udwIVRFQnLqiOqF+cq+xtC9Ync9UgnGa6dGNIBUVa
+	 WM7ElOJLfCX/GeHZrpvesnEPwOLNk/f675760d/6bYM9iJGWICfBqmFRn7l76ppV3u
+	 ZRY337qnJUWD3IpgE+IMELIo+0ysEpXkeqcFtXj0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731279AbeLTJWK (ORCPT
+        id S1731291AbeLTJWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:22:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40550 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:22:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731257AbeLTJWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:22:06 -0500
+        id S1731257AbeLTJWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:22:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F03CE21773;
-        Thu, 20 Dec 2018 09:22:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8570C217D7;
+        Thu, 20 Dec 2018 09:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297725;
-        bh=nKHl9NqRtRqg3cLSCniCGlGsSbzqLOUmpSg05D8pikg=;
+        s=default; t=1545297731;
+        bh=zr9XlMWKtPuDsY6qAi6NWnhw2+eYnhxUelc+dhkaXd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xxAOuruhaLmSdIO922ueqUSpbBv+/suBrYnwoat0yzmG4thLw7ut2yBVS3WZAJr/E
-         7jrdVh9zXbqFyYW2kn55ApjUGRWvzgAdWgI8KHQoTh3+9MnoYeOuUCfQoPG0Y4kDk4
-         YkfMiRhNJMVDG7TOGLToj33SeN1S6IZGJ2tW1aBY=
+        b=SQut3KaWWbhrnS/ViSDiPs2EovT5+0F/3NDB3pxYPCMEyp7YpvVnSv/W5bBe5W/20
+         39G5Uev7wGMY0TFSx3B/Lh8gGms5fhqvmxdixTA2OREKuko8L17y4SgqkL4mVPJ0iA
+         sCjV4n5bgt19oq17nSz2YMpJpduvqOvXeJtp7Slw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anderson Luiz Alves <alacn1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 33/40] mv88e6060: disable hardware level MAC learning
-Date:   Thu, 20 Dec 2018 10:18:45 +0100
-Message-Id: <20181220085827.776354732@linuxfoundation.org>
+Subject: [PATCH 4.4 35/40] cifs: In Kconfig CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)
+Date:   Thu, 20 Dec 2018 10:18:47 +0100
+Message-Id: <20181220085827.851468105@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
 References: <20181220085826.212663515@linuxfoundation.org>
@@ -66,50 +65,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a74515604a7b171f2702bdcbd1e231225fb456d0 ]
+[ Upstream commit 6e785302dad32228819d8066e5376acd15d0e6ba ]
 
-Disable hardware level MAC learning because it breaks station roaming.
-When enabled it drops all frames that arrive from a MAC address
-that is on a different port at learning table.
+Missing a dependency.  Shouldn't show cifs posix extensions
+in Kconfig if CONFIG_CIFS_ALLOW_INSECURE_DIALECTS (ie SMB1
+protocol) is disabled.
 
-Signed-off-by: Anderson Luiz Alves <alacn1@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6060.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ fs/cifs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/mv88e6060.c b/drivers/net/dsa/mv88e6060.c
-index 0527f485c3dc..973fcd442aea 100644
---- a/drivers/net/dsa/mv88e6060.c
-+++ b/drivers/net/dsa/mv88e6060.c
-@@ -98,8 +98,7 @@ static int mv88e6060_switch_reset(struct dsa_switch *ds)
- 	/* Reset the switch. */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
- 		  GLOBAL_ATU_CONTROL_SWRESET |
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
+diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+index e7b478b49985..8bef27b8f85d 100644
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -111,7 +111,7 @@ config CIFS_XATTR
  
- 	/* Wait up to one second for reset to complete. */
- 	timeout = jiffies + 1 * HZ;
-@@ -124,13 +123,10 @@ static int mv88e6060_setup_global(struct dsa_switch *ds)
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_CONTROL, GLOBAL_CONTROL_MAX_FRAME_1536);
- 
--	/* Enable automatic address learning, set the address
--	 * database size to 1024 entries, and set the default aging
--	 * time to 5 minutes.
-+	/* Disable automatic address learning.
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	return 0;
- }
+ config CIFS_POSIX
+         bool "CIFS POSIX Extensions"
+-        depends on CIFS_XATTR
++        depends on CIFS && CIFS_ALLOW_INSECURE_LEGACY && CIFS_XATTR
+         help
+           Enabling this option will cause the cifs client to attempt to
+ 	  negotiate a newer dialect with servers, such as Samba 3.0.5
 -- 
 2.19.1
 
