@@ -2,211 +2,146 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29379C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD0AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD5B2176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6461521773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KH/08A9F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbeLTJH7 (ORCPT
+        id S1729727AbeLTJIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:07:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50056 "EHLO mx1.suse.de"
+        Thu, 20 Dec 2018 04:08:23 -0500
+Received: from mail-eopbgr20080.outbound.protection.outlook.com ([40.107.2.80]:34944
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729140AbeLTJH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:07:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9913DB03B;
-        Thu, 20 Dec 2018 09:07:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5960C1E0A2E; Thu, 20 Dec 2018 10:07:53 +0100 (CET)
-Date:   Thu, 20 Dec 2018 10:07:53 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181220090753.GB27845@quack2.suse.cz>
-References: <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181214154321.GF8896@quack2.suse.cz>
- <20181216215819.GC10644@dastard>
- <20181218103306.GC18032@quack2.suse.cz>
- <20181218234254.GC31274@dastard>
- <20181219030329.GI21992@ziepe.ca>
- <20181219102825.GN6311@dastard>
- <20181219113540.GC18345@quack2.suse.cz>
- <20181219223312.GP6311@dastard>
+        id S1725775AbeLTJIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:08:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o/cQkhYhYXaStfF0P+6zYjWvjofu1YSjGtlDIMaWE7U=;
+ b=KH/08A9FWNMSAutgcsgGxxXqJ5ztYkHroDgvOLtg0yfOeROfvfOT2LuTMwZWDR+zrbFt43KXRHf4QQkPmB6hIW0jjam4/lRLe9wjOt3qlcBBMqqjggHZzltQEYukigvqa/PnySO9C+lGaJky0tXBQgjsr8KNmKrI648k6lFZsHo=
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
+ AM6PR0402MB3528.eurprd04.prod.outlook.com (52.133.19.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Thu, 20 Dec 2018 09:08:14 +0000
+Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::987c:cb59:96c9:6b71]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
+ ([fe80::987c:cb59:96c9:6b71%2]) with mapi id 15.20.1425.025; Thu, 20 Dec 2018
+ 09:08:14 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V5 0/4] Add i.MX System Controller thermal driver support
+Thread-Topic: [PATCH V5 0/4] Add i.MX System Controller thermal driver support
+Thread-Index: AQHUmEOJmp9AQXTm70mHTxMvZlwcZA==
+Date:   Thu, 20 Dec 2018 09:08:14 +0000
+Message-ID: <1545296609-20477-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0091.apcprd03.prod.outlook.com
+ (2603:1096:203:72::31) To AM6PR0402MB3911.eurprd04.prod.outlook.com
+ (2603:10a6:209:1c::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3528;6:PP61ZDOMQ29mnxdKx+/pL1+Od0MNq4mOTPZVP7Y9JUvDlKsMVN4A01gfaOUu1y8XBk3D6AB68FExmgQAGapnd4rw7gGyJKFFZRhvHrDiSIaLyrtGKrSYWFXDKCSq6xR48JbygIB0R0JYxaKwhHIU37XEoCuJM45UyusBAnHOnOlHgNOh/QSl1rFosLpITCQCaXbhtsv6tI+E4hbacasRV0imTNKsbwZIqVqRH5UOLZp6MBypD7bMHMhVeUry6KQHUrh0maN918hQ+rzwKW/iPRnrIj1tVPz5nOH/9L0NOHao4dvxw7RUEHYswQWar7AKccMrLF+pDKn13i619gTumqyig8hv2wM/Id6ECt+as6ZHr4QXydKsg481IXxMTrsl5OyWOz7YyYwHG0UGgQdu+Mm0JoxH76peveBvGeZyrTIJliLb9JAkD28T/McdA/sRc3yD6WyvLASt+tsX4tYUog==;5:oLQu9m1qDlck5Ag6JMt+fx2I1YMjHyO1VwEGaDMYHyKs2hUHdN+n96QhLnbPFybA+OQIHxetoH5hWp9+H0jxVgr+CAZTXGj0JX5NaJtgCQeZotYacDQZXQt0ewJ5Fhvq4aUY/GWxkq1k4QbQLvEZN3Z1h9+388ox8Oafnz5/npQ=;7:dJUJMJ+6t+O+5OBSUCOCPxOGR7IQrf+9Vwb5lLKPPpVF9Wl4ZtS4M8z0WbANZzqdooGalZZ9EaTljTJFrp4ICHzbFteUuTwxonFCc3K+cXaO8DgzegJLAAZL454HQKIOp/gwpu0/fsYFE9ySTPTuOg==
+x-ms-office365-filtering-correlation-id: 5999e55f-1747-452d-b2b7-08d6665aac50
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3528;
+x-ms-traffictypediagnostic: AM6PR0402MB3528:
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-microsoft-antispam-prvs: <AM6PR0402MB3528EAC9AC877A7B4B975427F5BF0@AM6PR0402MB3528.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3528;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3528;
+x-forefront-prvs: 0892FA9A88
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(136003)(396003)(376002)(199004)(189003)(186003)(81166006)(26005)(478600001)(8936002)(50226002)(8676002)(102836004)(6506007)(386003)(81156014)(97736004)(99286004)(52116002)(2501003)(71200400001)(71190400001)(966005)(110136005)(14454004)(3846002)(6116002)(316002)(305945005)(7736002)(66066001)(6306002)(6512007)(256004)(105586002)(106356001)(6486002)(53936002)(68736007)(2201001)(86362001)(36756003)(7416002)(4326008)(6436002)(2906002)(5660300001)(39060400002)(476003)(2616005)(25786009)(486006)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3528;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: RlYRP8jWG4R/SFiOwtVEpSu41aK9btuM/e5djr0ADSE7Ro/qvfCzBgc7zAUnot7UWRcKjDR/Y5foITnncVxqGjkGElrPHwT5bIGBnSmHEeVTDcqzBgDUkmQJZSw8EBvGK3YhqIq3yMvQxqzg94XTmJ+T/voy6zToAYzqLc0/Mu99fTr+jssQC6/q1BXDWLhyj880ZF1Dq5/kEbEk7FKO8BrlXogU147Yt+qdYjHOZvYnQIhk2WFvl+iUwalxaQThrO4M7hRiRnNAZYFLjyGgLHTdBvXQ3Eh2geePR7WHoKQmghuSn8NdZC+9Rq4h/k9g
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181219223312.GP6311@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5999e55f-1747-452d-b2b7-08d6665aac50
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 09:08:14.6975
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3528
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 20-12-18 09:33:12, Dave Chinner wrote:
-> On Wed, Dec 19, 2018 at 12:35:40PM +0100, Jan Kara wrote:
-> > On Wed 19-12-18 21:28:25, Dave Chinner wrote:
-> > > On Tue, Dec 18, 2018 at 08:03:29PM -0700, Jason Gunthorpe wrote:
-> > > > On Wed, Dec 19, 2018 at 10:42:54AM +1100, Dave Chinner wrote:
-> > > > 
-> > > > > Essentially, what we are talking about is how to handle broken
-> > > > > hardware. I say we should just brun it with napalm and thermite
-> > > > > (i.e. taint the kernel with "unsupportable hardware") and force
-> > > > > wait_for_stable_page() to trigger when there are GUP mappings if
-> > > > > the underlying storage doesn't already require it.
-> > > > 
-> > > > If you want to ban O_DIRECT/etc from writing to file backed pages,
-> > > > then just do it.
-> > > 
-> > > O_DIRECT IO *isn't the problem*.
-> > 
-> > That is not true. O_DIRECT IO is a problem. In some aspects it is easier
-> > than the problem with RDMA but currently O_DIRECT IO can crash your machine
-> > or corrupt data the same way RDMA can.
-> 
-> It's not O_DIRECT - it's a ""transient page pin". Yes, there are
-> problems with that right now, but as we've discussed the issues can
-> be avoided by:
-> 
-> 	a) stable pages always blocking in ->page_mkwrite;
-> 	b) blocking in write_cache_pages() on an elevated map count
-> 	when WB_SYNC_ALL is set; and
-> 	c) blocking in truncate_pagecache() on an elevated map
-> 	count.
-> 
-> That prevents:
-> 	a) gup pinning a page that is currently under writeback and
-> 	modifying it while IO is in flight;
-> 	b) a dirty page being written back while it is pinned by
-> 	GUP, thereby turning it clean before the gup reference calls
-> 	set_page_dirty() on DMA completion; and
+i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
+inside, the system controller is in charge of controlling power,
+clock and thermal sensors etc..
 
-This is not prevented by what you wrote above as currently GUP does not
-increase page->_mapcount. Currently, there's no way to distinguish GUP page
-reference from any other page reference - GUP simply does get_page() - and
-big part of this thread as I see it is exactly about how to introduce this
-distinction and how to convert all GUP users to the new convention safely
-(as currently they just pass struct page * pointers around and eventually
-do put_page() on them). Increasing page->_mapcount in GUP and trying to
-deduce the pin count from that is one option Jerome suggested. At this
-point I'm not 100% sure this is going to work but we'll see.
+This patch adds i.MX system controller thermal driver support,
+Linux kernel has to communicate with system controller via MU
+(message unit) IPC to get each thermal sensor's temperature,
+it supports multiple sensors which are passed from device tree,
+please see the binding doc for details.
 
-> 	c) truncate/hole punch for pulling the page out from under
-> 	the gup operation that is ongoing.
-> 
-> This is an adequate solution for a short term transient pins. It
-> doesn't break fsync(), it doesn't change how truncate works and it
-> fixes the problem where a mapped file is the buffer for an O_DIRECT
-> IO rather than the open fd and that buffer file gets truncated.
-> IOWs, transient pins (and hence O_DIRECT) is not really the problem
-> here.
+Note that this patch set is based on [V5,4/4] ARM64: dts: imx: add i.MX8QXP=
+ system controller RTC support,
+https://patchwork.kernel.org/patch/10738681/
 
-For now let's assume that the mechanism how to detect page pinned by GUP is
-actually somehow solved and we have already page_pinned() implemented. Then
-what you suggest can actually create a deadlock AFAICS:
+Anson Huang (4):
+  dt-bindings: thermal: add binding doc for i.MX system controller
+    thermal driver
+  thermal: imx_sc: add i.MX system controller thermal support
+  defconfig: arm64: add i.MX system controller thermal support
+  ARM64: dts: imx: add i.MX8QXP thermal support
 
-Process 1:						Process 2:
+ .../devicetree/bindings/thermal/imx-sc-thermal.txt |  33 ++++
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi         |  27 +++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/thermal/Kconfig                            |  11 ++
+ drivers/thermal/Makefile                           |   1 +
+ drivers/thermal/imx_sc_thermal.c                   | 201 +++++++++++++++++=
+++++
+ 6 files changed, 274 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/imx-sc-therma=
+l.txt
+ create mode 100644 drivers/thermal/imx_sc_thermal.c
 
-							fsync("file")
-/* Evil memory buffer with page order reversed */
-addr1 = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, "file", 4096);
-addr2 = mmap(addr1+4096, 4096, PROT_WRITE, MAP_SHARED, "file", 0);
+--=20
+2.7.4
 
-/* Fault in pages */
-*addr1 = 0;
-*addr2 = 0;
-							adds page with index 0
-							  to bio
-
-fd = open("file2", O_RDWR | O_DIRECT);
-read(fd, addr1, 8192)
-  -> eventually gets to iov_iter_get_pages() and then to
-     get_user_pages_fast().
-     -> pins "file" page with index 1
-							blocks on pin for
-							  page with index 1
-     -> blocks in PageWriteback for page with index 0
-
-Possibility of deadlocks like this is why I've decided it will be easier
-to just bounce the page for writeback we cannot avoid rather than block the
-writeback...
-
-> The problem with this is that blocking on elevated map count does
-> not work for long term pins (i.e. gup_longterm()) which are defined
-> as:
-> 
->  * "longterm" == userspace controlled elevated page count lifetime.
->  * Contrast this to iov_iter_get_pages() usages which are transient.
-> 
-> It's the "userspace controlled" part of the long term gup pin that
-> is the problem we need to solve. If we treat them the same as a
-> transient pin, then this leads to fsync() and truncate either
-> blocking for a long time waiting for userspace to drop it's gup
-> reference, or having to be failed with something like EBUSY or
-> EAGAIN.
-
-I agree. "userspace controlled" pins are another big problem to solve.
-
-> This is the problem revokable file layout leases solve. The NFS
-> server is already using this for revoking delegations from remote
-> clients. Userspace holding long term GUP references is essentially
-> the same thing - it's a delegation of file ownership to userspace
-> that the filesystem must be able to revoke when it needs to run
-> internal and/or 3rd-party requested operations on that delegated
-> file.
-> 
-> If the hardware supports page faults, then we can further optimise
-> the long term pin case to relax stable page requirements and allow
-> page cleaning to occur while there are long term pins. In this case,
-> the hardware will write-fault the clean pages appropriately before
-> DMA is initiated, and hence avoid the need for data integrity
-> operations like fsync() to trigger lease revocation. However,
-> truncate/hole punch still requires lease revocation to work sanely,
-> especially when we consider DAX *must* ensure there are no remaining
-> references to the physical pmem page after the space has been freed.
-> 
-> i.e. conflating the transient and long term gup pins as the same
-> problem doesn't help anyone. If we fix the short term pin problems,
-> then the long term pin problem become tractable by adding a layer
-> over the top (i.e.  hardware page fault capability and/or file lease
-> requirements).  Existing apps and hardware will continue to work -
-> external operations on the pinned file will simply hang rather than
-> causing corruption or kernel crashes.  New (or updated) applications
-> will play nicely with lease revocation and at that point the "long
-> term pin" basically becomes a transient pin where the unpin latency
-> is determined by how quickly the app responds to the lease
-> revocation. And page fault capable hardware will reduce the
-> occurrence of lease revocations due to data writeback/integrity
-> operations and behave almost identically to cpu-based mmap accesses
-> to file backed pages.
-
-Agreed. I think we are on the same page wrt this. Just at this point I'm
-trying to solve the "transient pin" problem...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
