@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EDCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AABC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00AF620449
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90E9020449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298421;
-	bh=6u6h+hSeg+72zIN6bkaccFwFP+jb9kKwIWhfN0izLKI=;
+	s=default; t=1545298426;
+	bh=Si3/0D2pzCJRy1cth8oQaB+i8RiC2T74upRwreSMa48=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0xoS0XSu+vjIJRKUgKhH7xYWleHkTURKMU49578wWmljbV8anpDmEo17zZZ0OtvlM
-	 eU94MjXMbT9FCz9QsTk+1igzZYDKvMyMY0o19iGKSauTGSlQFFaAo800tiqXIQIwi+
-	 QM37qNAuPRTgbGl2pdJ1mzM/Fzbr8Ot21RPtoCi0=
+	b=YHywiiiyO/I81ilyKivkQGeZz+/WaMoknlIDAOAC2MD7kt0Cn2KiRiyJu5PCb+3E/
+	 h59GaNPSsUM9dQTHYfOUitVl9y2VZMutx6GqjU39Hv76zLRMJBnIKf37PYZIV9otfB
+	 kWf9cU/ppPhyDT/3/MrZ5O5r5xInL5mNuUI095Mo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733232AbeLTJdj (ORCPT
+        id S1731052AbeLTJaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:33:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35206 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:30:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732869AbeLTJaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:12 -0500
+        id S1732133AbeLTJaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:30:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C45D221741;
-        Thu, 20 Dec 2018 09:30:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 035BB20656;
+        Thu, 20 Dec 2018 09:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298210;
-        bh=6u6h+hSeg+72zIN6bkaccFwFP+jb9kKwIWhfN0izLKI=;
+        s=default; t=1545298207;
+        bh=Si3/0D2pzCJRy1cth8oQaB+i8RiC2T74upRwreSMa48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=viMhsohkJlvCyitH22r1vTPh+D8Bpi9jPyTECIy97aAEXCgKMQJmjHBGH0KMQwykt
-         XFM3vdUo6auqNAgcHpGyLe7VRDxgW4/xs8xv8ldO5Nc8sOSS47XmfZXu6o/zSx2nKl
-         h6/xtBlsm+C8il1bzXUegt/13nmuTbOry9YYVoGk=
+        b=Vn6JovvB1kZdpDTb3ErfnjC94NPILfisr58JpXSY9Jdx0pS5qx0luZaA3FqFW6YVy
+         xiaFA5aairLFQqAVtHbywotJfCpvryJz3Dv4L8gTU/J9yqnB33dBX88xhWP48LbaPo
+         BQSZWrmF+10Yrd5fdwzgNNgtEiyRLAU9JYyAQngo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Igor Russkikh <igor.russkikh@aquantia.com>,
-        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nitesh Debnath <niteshkd1999@gmail.com>,
+        Teika Kazura <teika@gmx.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 23/67] net: aquantia: fix rx checksum offload bits
-Date:   Thu, 20 Dec 2018 10:18:35 +0100
-Message-Id: <20181220085904.466153691@linuxfoundation.org>
+Subject: [PATCH 4.19 40/67] Input: synaptics - enable SMBus for HP 15-ay000
+Date:   Thu, 20 Dec 2018 10:18:52 +0100
+Message-Id: <20181220085905.125027029@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,38 +67,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 37c4b91f955fdd5f4ad771956b97d35f1321098e ]
+[ Upstream commit 5a6dab15f7a79817cab4af612ddd99eda793fce6 ]
 
-The last set of csum offload fixes had a leak:
+SMBus works fine for the touchpad with id SYN3221, used in the HP 15-ay000
+series,
 
-Checksum enabled status bits from rx descriptor were incorrectly
-interpreted. Consequently all the other valid logic worked on zero bits.
-That caused rx checksum offloads never to trigger.
+This device has been reported in these messages in the "linux-input"
+mailing list:
+* https://marc.info/?l=linux-input&m=152016683003369&w=2
+* https://www.spinics.net/lists/linux-input/msg52525.html
 
-Tested by dumping rx descriptors and validating resulting csum_level.
-
-Reported-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Fixes: ad703c2b9127f ("net: aquantia: invalid checksumm offload implementation")
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Nitesh Debnath <niteshkd1999@gmail.com>
+Reported-by: Teika Kazura <teika@gmx.com>
+Signed-off-by: Teika Kazura <teika@gmx.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/mouse/synaptics.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index 88705dee5b95..56363ff5c891 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -667,7 +667,7 @@ static int hw_atl_b0_hw_ring_rx_receive(struct aq_hw_s *self,
- 
- 		rx_stat = (0x0000003CU & rxd_wb->status) >> 2;
- 
--		is_rx_check_sum_enabled = (rxd_wb->type) & (0x3U << 19);
-+		is_rx_check_sum_enabled = (rxd_wb->type >> 19) & 0x3U;
- 
- 		pkt_type = 0xFFU & (rxd_wb->type >> 4);
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index c42813d50591..2bd5bb11c8ba 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -178,6 +178,7 @@ static const char * const smbus_pnp_ids[] = {
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
++	"SYN3221", /* HP 15-ay000 */
+ 	NULL
+ };
  
 -- 
 2.19.1
