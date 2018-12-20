@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1714EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A45C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D209D2186A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36913217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:16:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c66Z99Pu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CrqVO1E5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732938AbeLTNPW (ORCPT
+        id S1733003AbeLTNQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:15:22 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46718 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730884AbeLTNPW (ORCPT
+        Thu, 20 Dec 2018 08:16:39 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33763 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730884AbeLTNQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:15:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id f23so1303790lfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:15:20 -0800 (PST)
+        Thu, 20 Dec 2018 08:16:38 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so1541859ljd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:16:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=zSmBrlvAFtbSjHBVsAmGCDb8ITZKsyMGYhRFh7uw5Xg=;
-        b=c66Z99PubTEOrYSs8uWsx7Cys3HYnRS03mYX75eLquhV7z8xbQsg5e4+qua/RWylnM
-         JM9jIu4+KEujCLOtZ6V/8/o1b63zOChZzvNgG6kNSTf8YH6YlF4zNX86ojHCEM+3w87p
-         95hH0w872E7vpnj8dqoJMWjf0Wxck3M9cJvEf+CM86z6LnQKDa9znvLerYW7v0AD/KI6
-         QyVCxz2tcayPgvQCJJHhjB+mn/xnvCNDTwrCRL+VFALbzYzBmNXe/mYiBEDSI9qFOm8p
-         gHn4kHlUnzgE0bSVYGQDgSRgB+C8JkaqziALviUMyMB5r88J3MX/r/2RiBnY1J16qfXZ
-         NNIA==
+        bh=rLiaP2mDPQVwh+1KwPfkdo4z8oGXMYZAvdrxqwirswY=;
+        b=CrqVO1E55Njq91i+yc9JVxeFiPUqiknqZ8QtGthmXBWDTbCsibIgshlrzpTRdeMfub
+         W1rLVQJHNypYJokOBERCc3elnXSvQnzhdhHhrN7/L675SH0UADlInRxUSu08O27UjE8s
+         GdHlomYpDWJr2/70mAP0VG+9t7e8gV5vJUp3qvdKcbafAjk7bktvJU1btc9mOHqH/aHJ
+         Db9c9RC2PlJr5mdEo81Q6PlH6HCSkvzSJJ9ZBk285ID/eyHarhxmmEHgyvSLlL5NpnCW
+         glcTqw2n535fSCQgbqXDstlfifx8OL4lP/DeUEOD5qz3sOCBtZ1aCNTld0sGTcow8ClH
+         ECdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=zSmBrlvAFtbSjHBVsAmGCDb8ITZKsyMGYhRFh7uw5Xg=;
-        b=J06t4m4v5s16Zl0ZPVMJ8TfwGOUZsdrx3nj/qE7vRnEDLsJUhKnwgbArdE+zXzxPFS
-         AIf09IgK2xOAW7BptN8VpoRRsKk1HfTO4QT/dcq8gGdMYVaR831bDihR1abJMKCcly9u
-         QHyxBaL8356sTs+Q0iJfzNMGRzIJp72MJJ5mkLWsk3sXapibbYZMCmRY7ISWa1o7daPa
-         UaMMHp0UleL9JtG1QJuDiy2ZtK2bx6Xf8Pu+NlwSSbZ2UqBXHKpYRELPhvrcRQAehxkI
-         AWkm+Uo9I4m0wPO8gWwSAFMye/oN7R6W3Mu+aHc4aS9y9hSMzCqh4bhCpwbTC/mXT2EA
-         Gujw==
-X-Gm-Message-State: AA+aEWZlz5Ho2/AYiJNTp9K8cjkN+qNE422Zl6ZgWLXcmcEbLQSJ/Hmn
-        PxoaxLzElQ5sKP1a3jW9hyI=
-X-Google-Smtp-Source: AFSGD/WW4Rtqhpw0IvW/5ztV5Rz8XwO+qTPWoxa+ef879uLzGQuz9D+Zp3Y5piJh2i+nzILpgMWflA==
-X-Received: by 2002:a19:3809:: with SMTP id f9mr4482093lfa.148.1545311719529;
-        Thu, 20 Dec 2018 05:15:19 -0800 (PST)
+        bh=rLiaP2mDPQVwh+1KwPfkdo4z8oGXMYZAvdrxqwirswY=;
+        b=aQvI01YxfqvRU/0VopqN4unyqvu105uVq48Jkt7FlschNy7FIgpBm4xNL3FR2mezfb
+         qJw7wHFmpu4nLhgtXB2jCsWpGURXZO9YCSi1gLunMwwQOup5lkdGUDs2UTK8E1D7gzLo
+         0jrEYa3PkZA44XqBKSTT/c7t6xejjdDZe+r+pC7RA5zcNj0Pjad3GSPDioF/O4ePANjQ
+         EmO99y8q0bfnoRLty1ZZKEnbOqxoi4pZGuAIgIlSIK8T9kX2ylLpeJRzOmL8fasyv2k/
+         un9OGKyXJPkgr0mXaPEcuh08vUFMpBjuMFhU/m/N3OfkkWA9jcsaO4bm7dgQs749otAj
+         eaDg==
+X-Gm-Message-State: AA+aEWYrPUhmClXTVrYp92gVfZCI1DfOAQn05mivqf95hCOQ9iArmzpz
+        BcD03S4BBRvBOiB4p6fdAP7fQ+fo
+X-Google-Smtp-Source: AFSGD/VPtfNfDPEy9MYd2q10BTA2ZCWX+Ha1l6Omz6BmYrr9EqGB6ssc17D78xqheI3hhUT+Hqh9cA==
+X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr15166087ljp.12.1545311794310;
+        Thu, 20 Dec 2018 05:16:34 -0800 (PST)
 Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id c203sm4335546lfe.95.2018.12.20.05.15.18
+        by smtp.gmail.com with ESMTPSA id s3-v6sm4145943lje.73.2018.12.20.05.16.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 05:15:18 -0800 (PST)
-Subject: Re: [PATCH 12/14] drm/bochs: switch to generic drm fbdev emulation
+        Thu, 20 Dec 2018 05:16:33 -0800 (PST)
+Subject: Re: [PATCH 13/14] drm/bochs: drop old fbdev emulation code
 To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
         David Airlie <airlied@redhat.com>
 Cc:     David Airlie <airlied@linux.ie>,
@@ -64,14 +64,14 @@ Cc:     David Airlie <airlied@linux.ie>,
         "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
         <virtualization@lists.linux-foundation.org>
 References: <20181219115127.31359-1-kraxel@redhat.com>
- <20181219115127.31359-13-kraxel@redhat.com>
+ <20181219115127.31359-14-kraxel@redhat.com>
 From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <bff8ca4d-f0bc-0d6e-3d17-e6e99337c1e4@gmail.com>
-Date:   Thu, 20 Dec 2018 15:15:17 +0200
+Message-ID: <ea0e7d2b-ebbd-a4eb-93c4-be3cf5a238a8@gmail.com>
+Date:   Thu, 20 Dec 2018 15:16:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181219115127.31359-13-kraxel@redhat.com>
+In-Reply-To: <20181219115127.31359-14-kraxel@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -81,41 +81,221 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 12/19/18 1:51 PM, Gerd Hoffmann wrote:
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->   drivers/gpu/drm/bochs/bochs_drv.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+> Not needed any more, bochs uses the generic emulation now.
 >
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> ---
+>   drivers/gpu/drm/bochs/bochs.h       |   9 ---
+>   drivers/gpu/drm/bochs/bochs_drv.c   |   6 --
+>   drivers/gpu/drm/bochs/bochs_fbdev.c | 137 ------------------------------------
+>   3 files changed, 152 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+> index 4236d5d811..42a587e71e 100644
+> --- a/drivers/gpu/drm/bochs/bochs.h
+> +++ b/drivers/gpu/drm/bochs/bochs.h
+> @@ -80,12 +80,6 @@ struct bochs_device {
+>   		struct ttm_bo_device bdev;
+>   		bool initialized;
+>   	} ttm;
+> -
+> -	/* fbdev */
+> -	struct {
+> -		struct drm_framebuffer *fb;
+> -		struct drm_fb_helper helper;
+> -	} fb;
+>   };
+>   
+>   struct bochs_bo {
+> @@ -161,7 +155,4 @@ int bochs_kms_init(struct bochs_device *bochs);
+>   void bochs_kms_fini(struct bochs_device *bochs);
+>   
+>   /* bochs_fbdev.c */
+> -int bochs_fbdev_init(struct bochs_device *bochs);
+> -void bochs_fbdev_fini(struct bochs_device *bochs);
+> -
+>   extern const struct drm_mode_config_funcs bochs_mode_funcs;
 > diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-> index a9c7140e3b..f1f65324bb 100644
+> index f1f65324bb..ad1290ca7b 100644
 > --- a/drivers/gpu/drm/bochs/bochs_drv.c
 > +++ b/drivers/gpu/drm/bochs/bochs_drv.c
-> @@ -27,7 +27,6 @@ static void bochs_unload(struct drm_device *dev)
+> @@ -110,12 +110,9 @@ static int bochs_pm_suspend(struct device *dev)
 >   {
->   	struct bochs_device *bochs = dev->dev_private;
+>   	struct pci_dev *pdev = to_pci_dev(dev);
+>   	struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> -	struct bochs_device *bochs = drm_dev->dev_private;
 >   
-> -	bochs_fbdev_fini(bochs);
->   	bochs_kms_fini(bochs);
->   	bochs_mm_fini(bochs);
->   	bochs_hw_fini(dev);
-> @@ -58,9 +57,6 @@ static int bochs_load(struct drm_device *dev)
->   	if (ret)
->   		goto err;
+>   	drm_kms_helper_poll_disable(drm_dev);
 >   
-> -	if (enable_fbdev)
-> -		bochs_fbdev_init(bochs);
+> -	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 1);
 > -
-I think that after this change you don't need
-"module_param_named(fbdev, enable_fbdev, bool, 0444);"
 >   	return 0;
+>   }
 >   
->   err:
-> @@ -178,6 +174,7 @@ static int bochs_pci_probe(struct pci_dev *pdev,
->   	if (ret)
->   		goto err_unload;
+> @@ -123,12 +120,9 @@ static int bochs_pm_resume(struct device *dev)
+>   {
+>   	struct pci_dev *pdev = to_pci_dev(dev);
+>   	struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> -	struct bochs_device *bochs = drm_dev->dev_private;
 >   
-> +	drm_fbdev_generic_setup(dev, 32);
->   	return ret;
+>   	drm_helper_resume_force_mode(drm_dev);
 >   
->   err_unload:
+> -	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 0);
+> -
+>   	drm_kms_helper_poll_enable(drm_dev);
+>   	return 0;
+>   }
+> diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
+> index 92feb817ff..7cac3f5253 100644
+> --- a/drivers/gpu/drm/bochs/bochs_fbdev.c
+> +++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
+> @@ -11,132 +11,6 @@
+>   
+>   /* ---------------------------------------------------------------------- */
+>   
+> -static int bochsfb_mmap(struct fb_info *info,
+> -			struct vm_area_struct *vma)
+> -{
+> -	struct drm_fb_helper *fb_helper = info->par;
+> -	struct bochs_bo *bo = gem_to_bochs_bo(fb_helper->fb->obj[0]);
+> -
+> -	return ttm_fbdev_mmap(vma, &bo->bo);
+> -}
+> -
+> -static struct fb_ops bochsfb_ops = {
+> -	.owner = THIS_MODULE,
+> -	DRM_FB_HELPER_DEFAULT_OPS,
+> -	.fb_fillrect = drm_fb_helper_cfb_fillrect,
+> -	.fb_copyarea = drm_fb_helper_cfb_copyarea,
+> -	.fb_imageblit = drm_fb_helper_cfb_imageblit,
+> -	.fb_mmap = bochsfb_mmap,
+> -};
+> -
+> -static int bochsfb_create_object(struct bochs_device *bochs,
+> -				 const struct drm_mode_fb_cmd2 *mode_cmd,
+> -				 struct drm_gem_object **gobj_p)
+> -{
+> -	struct drm_device *dev = bochs->dev;
+> -	struct drm_gem_object *gobj;
+> -	u32 size;
+> -	int ret = 0;
+> -
+> -	size = mode_cmd->pitches[0] * mode_cmd->height;
+> -	ret = bochs_gem_create(dev, size, true, &gobj);
+> -	if (ret)
+> -		return ret;
+> -
+> -	*gobj_p = gobj;
+> -	return ret;
+> -}
+> -
+> -static int bochsfb_create(struct drm_fb_helper *helper,
+> -			  struct drm_fb_helper_surface_size *sizes)
+> -{
+> -	struct bochs_device *bochs =
+> -		container_of(helper, struct bochs_device, fb.helper);
+> -	struct fb_info *info;
+> -	struct drm_framebuffer *fb;
+> -	struct drm_mode_fb_cmd2 mode_cmd;
+> -	struct drm_gem_object *gobj = NULL;
+> -	struct bochs_bo *bo = NULL;
+> -	int size, ret;
+> -
+> -	if (sizes->surface_bpp != 32)
+> -		return -EINVAL;
+> -
+> -	mode_cmd.width = sizes->surface_width;
+> -	mode_cmd.height = sizes->surface_height;
+> -	mode_cmd.pitches[0] = sizes->surface_width * 4;
+> -	mode_cmd.pixel_format = DRM_FORMAT_HOST_XRGB8888;
+> -	size = mode_cmd.pitches[0] * mode_cmd.height;
+> -
+> -	/* alloc, pin & map bo */
+> -	ret = bochsfb_create_object(bochs, &mode_cmd, &gobj);
+> -	if (ret) {
+> -		DRM_ERROR("failed to create fbcon backing object %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	bo = gem_to_bochs_bo(gobj);
+> -
+> -	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+> -	if (ret) {
+> -		DRM_ERROR("failed to pin fbcon\n");
+> -		ttm_bo_unreserve(&bo->bo);
+> -		return ret;
+> -	}
+> -
+> -	ret = ttm_bo_kmap(&bo->bo, 0, bo->bo.num_pages,
+> -			  &bo->kmap);
+> -	if (ret) {
+> -		DRM_ERROR("failed to kmap fbcon\n");
+> -		ttm_bo_unreserve(&bo->bo);
+> -		return ret;
+> -	}
+> -
+> -	ttm_bo_unreserve(&bo->bo);
+> -
+> -	/* init fb device */
+> -	info = drm_fb_helper_alloc_fbi(helper);
+> -	if (IS_ERR(info)) {
+> -		DRM_ERROR("Failed to allocate fbi: %ld\n", PTR_ERR(info));
+> -		return PTR_ERR(info);
+> -	}
+> -
+> -	info->par = &bochs->fb.helper;
+> -
+> -	fb = drm_gem_fbdev_fb_create(bochs->dev, sizes, 0, gobj, NULL);
+> -	if (IS_ERR(fb)) {
+> -		DRM_ERROR("Failed to create framebuffer: %ld\n", PTR_ERR(fb));
+> -		return PTR_ERR(fb);
+> -	}
+> -
+> -	/* setup helper */
+> -	bochs->fb.helper.fb = fb;
+> -
+> -	strcpy(info->fix.id, "bochsdrmfb");
+> -
+> -	info->fbops = &bochsfb_ops;
+> -
+> -	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->format->depth);
+> -	drm_fb_helper_fill_var(info, &bochs->fb.helper, sizes->fb_width,
+> -			       sizes->fb_height);
+> -
+> -	info->screen_base = bo->kmap.virtual;
+> -	info->screen_size = size;
+> -
+> -	drm_vma_offset_remove(&bo->bo.bdev->vma_manager, &bo->bo.vma_node);
+> -	info->fix.smem_start = 0;
+> -	info->fix.smem_len = size;
+> -	return 0;
+> -}
+> -
+> -static const struct drm_fb_helper_funcs bochs_fb_helper_funcs = {
+> -	.fb_probe = bochsfb_create,
+> -};
+> -
+>   static struct drm_framebuffer *
+>   bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
+>   		    const struct drm_mode_fb_cmd2 *mode_cmd)
+> @@ -153,14 +27,3 @@ const struct drm_mode_config_funcs bochs_mode_funcs = {
+>   	.atomic_check = drm_atomic_helper_check,
+>   	.atomic_commit = drm_atomic_helper_commit,
+>   };
+> -
+> -int bochs_fbdev_init(struct bochs_device *bochs)
+> -{
+> -	return drm_fb_helper_fbdev_setup(bochs->dev, &bochs->fb.helper,
+> -					 &bochs_fb_helper_funcs, 32, 1);
+> -}
+> -
+> -void bochs_fbdev_fini(struct bochs_device *bochs)
+> -{
+> -	drm_fb_helper_fbdev_teardown(bochs->dev);
+> -}
 
