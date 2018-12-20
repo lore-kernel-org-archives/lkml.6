@@ -3,50 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC68C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493DCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D59520989
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1469020989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298049;
-	bh=JYPh53GJikQ6V2m0p+2WgqV4OOc07hzpQRHCM/0K5iE=;
+	s=default; t=1545298053;
+	bh=5d62EFmZFLY6J7qTB81VCy2vakAYxgoqLgH7q7QX3Uo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QKVehfFCokoI0MYi//fxvJkWtf47773yVzDPFkdpgXrscammJ1B4EueCMreGB3eBT
-	 s0qTapJDgNJzRf+1YbqNrPBZdXOhEqGzFEHr+eaJQBkjkb3j0yKa91/YrdTrerKXD7
-	 u3hDL4SDbOENSdVg2hBoRD0BbxW0kukfgqYV6qG0=
+	b=BtnsXMNCwODCdkQaxgxJy4TBDc2/Sa9pPQ+VDJOKjyXKNMGi2Xk/9hMYe1pEkugjd
+	 ZyVIDK3T/Qk98eomWoA750r82DAK00pCsmL3bNU8jUmqouAYJTP6M2UwTGf5ZHpMNZ
+	 n4GzlYQXIWROfKHJQLzsKvQkF5pgMUYIDDjWsgLM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbeLTJ11 (ORCPT
+        id S1731806AbeLTJ1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:27:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36198 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:27:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732309AbeLTJ1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:27:24 -0500
+        id S1730662AbeLTJ13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:27:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FDD420656;
-        Thu, 20 Dec 2018 09:27:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3242720656;
+        Thu, 20 Dec 2018 09:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298043;
-        bh=JYPh53GJikQ6V2m0p+2WgqV4OOc07hzpQRHCM/0K5iE=;
+        s=default; t=1545298048;
+        bh=5d62EFmZFLY6J7qTB81VCy2vakAYxgoqLgH7q7QX3Uo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KPyiCLElfSg92c7ncophWjgjxAgIK2FFFc8uYLZwUi2EWh8NZ3dUmMEIDIyBvwfn9
-         MX+CHbTSIRl5eKJUZBQeO4e750PlcVzeZqhgtNWKJ6EqUj7ESOj0+u59LGLu2WD0to
-         fRBj96m5xrxH2V+TyhUqpGYQo+H4LOUNTOGj3n8o=
+        b=kJlWSGDPnCJcO5UZm45xDFU2wsJXnI57YwicltLTGR2Gf3q1DGiOXLsHQeklp7Vo8
+         cFbS/wriQnDXr5rSf/XJvmG1mEEFG0yRGydmVBwGXO1qk8H2X3i7GKYX/QoupTnrm/
+         NBdlDAvfq/hAgBw5aSsFajghkpw/vcwSNeE4UyQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 50/72] ide: pmac: add of_node_put()
-Date:   Thu, 20 Dec 2018 10:18:49 +0100
-Message-Id: <20181220085924.309574744@linuxfoundation.org>
+Subject: [PATCH 4.14 52/72] clk: mvebu: Off by one bugs in cp110_of_clk_get()
+Date:   Thu, 20 Dec 2018 10:18:51 +0100
+Message-Id: <20181220085924.390972656@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
 References: <20181220085922.332225035@linuxfoundation.org>
@@ -65,29 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a51921c0db3fd26c4ed83dc0ec5d32988fa02aa5 ]
+[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
 
-use of_node_put() to release the refcount.
+These > comparisons should be >= to prevent reading beyond the end of
+of the clk_data->hws[] buffer.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
+when we do:
+	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
+				      GFP_KERNEL);
+As you can see, it has CP110_CLK_NUM elements which is equivalent to
+CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
+
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ide/pmac.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ide/pmac.c b/drivers/ide/pmac.c
-index c5b902b86b44..203ed4adc04a 100644
---- a/drivers/ide/pmac.c
-+++ b/drivers/ide/pmac.c
-@@ -920,6 +920,7 @@ static u8 pmac_ide_cable_detect(ide_hwif_t *hwif)
- 	struct device_node *root = of_find_node_by_path("/");
- 	const char *model = of_get_property(root, "model", NULL);
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index ca9a0a536174..05c127cafa46 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -203,11 +203,11 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
+ 	unsigned int idx = clkspec->args[1];
  
-+	of_node_put(root);
- 	/* Get cable type from device-tree. */
- 	if (cable && !strncmp(cable, "80-", 3)) {
- 		/* Some drives fail to detect 80c cable in PowerBook */
+ 	if (type == CP110_CLK_TYPE_CORE) {
+-		if (idx > CP110_MAX_CORE_CLOCKS)
++		if (idx >= CP110_MAX_CORE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[idx];
+ 	} else if (type == CP110_CLK_TYPE_GATABLE) {
+-		if (idx > CP110_MAX_GATABLE_CLOCKS)
++		if (idx >= CP110_MAX_GATABLE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[CP110_MAX_CORE_CLOCKS + idx];
+ 	}
 -- 
 2.19.1
 
