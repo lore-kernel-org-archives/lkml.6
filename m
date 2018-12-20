@@ -2,289 +2,211 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3FAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29379C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A5FA2176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:07:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H81PuHMx"
+	by mail.kernel.org (Postfix) with ESMTP id ECD5B2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbeLTJHq (ORCPT
+        id S1729455AbeLTJH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:07:46 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43591 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbeLTJHq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:07:46 -0500
-Received: by mail-yb1-f196.google.com with SMTP id 80so288342ybc.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:07:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=3vNvlj71Xzg7uet8Ck3Y1b0QWbnp/U5HW3kEXDTpZd0=;
-        b=H81PuHMx0y/wHLyEQevXrmd8MpF9teBctCHiDsGDe+dvCIdcOY3dj2jmAoNPpnGuS2
-         EA2xm8ytbyJRYYsqzDh17yq686JtqQ2QOK6qG8Ws4FNPAK8cQx3MZnv2fFSWZ2Q78GZw
-         DbczrEcAaCc2FPj0RWi/vUzJ6GG9S2RHolIMk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3vNvlj71Xzg7uet8Ck3Y1b0QWbnp/U5HW3kEXDTpZd0=;
-        b=J+eRcXTqt7Hd/ouByyJCfkFTwdv8RDqK+VH1qMtIOJYvkoqvuAkPfYkWWvT66l8JXx
-         yFQik5ERB7CBGZnhLSySrY/lxjZCmoQrKr/Y7ysFGIjwvhUA/gfIBrXbwRlcAMAY01eU
-         w9GRwBD59a1ACLFoCah6kLscfkrUypk+7Kr7lvsyGs0e+ifb/72gTZtia5rtY19XIheK
-         EfK5HqRltMm8Osvl+fWlfHK4pltsrI+d87kccje0mtKnb7UbTKtdUR8McajRK/02Vy4K
-         IpHRswzjc7Mlzg7Byk1Z+QoZ1tKarsN+qFfqYBGrGJLbhc584fwRQLeJ45TD2tQU4Cc4
-         ZThA==
-X-Gm-Message-State: AA+aEWbblwEk75tStyqJXCYUjVt9xFBfycRAr2zyyLMCocDeleNptLRe
-        Th0I6679X6eR/DevHv0ScrxkYHA37AQ=
-X-Google-Smtp-Source: AFSGD/W3TpRU31svyA8HpFZCOivLROy5q7Ia4XE15Qgt50YCssNcHSuA44bnbRJ57S2c1FZWzwdAQA==
-X-Received: by 2002:a25:a207:: with SMTP id b7mr13300547ybi.209.1545296863930;
-        Thu, 20 Dec 2018 01:07:43 -0800 (PST)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id e3sm6940416ywe.63.2018.12.20.01.07.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 01:07:42 -0800 (PST)
-Received: by mail-yb1-f169.google.com with SMTP id a10so386685ybl.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:07:42 -0800 (PST)
-X-Received: by 2002:a25:9907:: with SMTP id z7mr24683775ybn.114.1545296862194;
- Thu, 20 Dec 2018 01:07:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20181123215326.14274-1-helen.koike@collabora.com>
- <20181127133418.GT9144@intel.com> <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
- <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com> <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
-In-Reply-To: <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 20 Dec 2018 18:07:30 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
-Message-ID: <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
-Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
-To:     helen.koike@collabora.com
-Cc:     ville.syrjala@linux.intel.com, David Airlie <airlied@linux.ie>,
-        dnicoara@chromium.org,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>,
-        Sean Paul <seanpaul@google.com>,
-        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        Thu, 20 Dec 2018 04:07:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50056 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729140AbeLTJH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:07:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9913DB03B;
+        Thu, 20 Dec 2018 09:07:54 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5960C1E0A2E; Thu, 20 Dec 2018 10:07:53 +0100 (CET)
+Date:   Thu, 20 Dec 2018 10:07:53 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181220090753.GB27845@quack2.suse.cz>
+References: <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181214154321.GF8896@quack2.suse.cz>
+ <20181216215819.GC10644@dastard>
+ <20181218103306.GC18032@quack2.suse.cz>
+ <20181218234254.GC31274@dastard>
+ <20181219030329.GI21992@ziepe.ca>
+ <20181219102825.GN6311@dastard>
+ <20181219113540.GC18345@quack2.suse.cz>
+ <20181219223312.GP6311@dastard>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181219223312.GP6311@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helen,
+On Thu 20-12-18 09:33:12, Dave Chinner wrote:
+> On Wed, Dec 19, 2018 at 12:35:40PM +0100, Jan Kara wrote:
+> > On Wed 19-12-18 21:28:25, Dave Chinner wrote:
+> > > On Tue, Dec 18, 2018 at 08:03:29PM -0700, Jason Gunthorpe wrote:
+> > > > On Wed, Dec 19, 2018 at 10:42:54AM +1100, Dave Chinner wrote:
+> > > > 
+> > > > > Essentially, what we are talking about is how to handle broken
+> > > > > hardware. I say we should just brun it with napalm and thermite
+> > > > > (i.e. taint the kernel with "unsupportable hardware") and force
+> > > > > wait_for_stable_page() to trigger when there are GUP mappings if
+> > > > > the underlying storage doesn't already require it.
+> > > > 
+> > > > If you want to ban O_DIRECT/etc from writing to file backed pages,
+> > > > then just do it.
+> > > 
+> > > O_DIRECT IO *isn't the problem*.
+> > 
+> > That is not true. O_DIRECT IO is a problem. In some aspects it is easier
+> > than the problem with RDMA but currently O_DIRECT IO can crash your machine
+> > or corrupt data the same way RDMA can.
+> 
+> It's not O_DIRECT - it's a ""transient page pin". Yes, there are
+> problems with that right now, but as we've discussed the issues can
+> be avoided by:
+> 
+> 	a) stable pages always blocking in ->page_mkwrite;
+> 	b) blocking in write_cache_pages() on an elevated map count
+> 	when WB_SYNC_ALL is set; and
+> 	c) blocking in truncate_pagecache() on an elevated map
+> 	count.
+> 
+> That prevents:
+> 	a) gup pinning a page that is currently under writeback and
+> 	modifying it while IO is in flight;
+> 	b) a dirty page being written back while it is pinned by
+> 	GUP, thereby turning it clean before the gup reference calls
+> 	set_page_dirty() on DMA completion; and
 
-On Fri, Dec 14, 2018 at 10:35 AM Helen Koike <helen.koike@collabora.com> wr=
-ote:
->
-> Hi Tomasz,
->
-> On 12/13/18 2:02 AM, Tomasz Figa wrote:
-> > On Thu, Dec 6, 2018 at 1:12 AM Helen Koike <helen.koike@collabora.com> =
-wrote:
-> >>
-> >> Hi Ville
-> >>
-> >> On 11/27/18 11:34 AM, Ville Syrj=C3=A4l=C3=A4 wrote:
-> >>> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
-> >>>> Allow userspace to identify if the driver supports async update.
-> >>>
-> >>> And what exactly is an "async update"?
-> >>
-> >> I agree we are lacking docs on this, I'll send in the next version as
-> >> soon as we agree on a name (please see below).
-> >>
-> >> For reference:
-> >> https://lists.freedesktop.org/archives/dri-devel/2017-April/138586.htm=
-l
-> >>
-> >>>
-> >>> I keep asking people to come up with the a better name for this, and =
-to
-> >>> document what it actually means. Recently I've been think we should
-> >>> maybe just adopt the vulkan terminology (immediate/fifo/mailbox) to
-> >>> avoid introducing yet another set of names for the same thing. We'd
-> >>> still want to document things properly though.
-> >>
-> >> Another name it was suggested was "atomic amend", this feature basical=
-ly
-> >> allows userspace to complement an update previously sent (i.e. its in
-> >> the queue and wasn't commited yet), it allows adding a plane update to
-> >> the next commit. So what do you think in renaming it to "atomic amend"=
-?
-> >
-> > Note that it doesn't seem to be what the code currently is doing. For
-> > example, for cursor updates, it doesn't seem to be working on the
-> > currently pending commit, but just directly issues an atomic async
-> > update call to the planes. The code actually seems to fall back to a
-> > normal sync commit, if there is an already pending commit touching the
-> > same plane or including a modeset.
->
-> It should fail as discussed at:
-> https://patchwork.freedesktop.org/patch/243088/
->
-> There was the following code inside the drm_atomic_helper_async_check()
-> in the previous patch which would fallback to a normal commit if there
-> isn't any pending commit to amend:
->
-> +       if (!old_plane_state->commit)
-> +               return -EINVAL;
->
-> In the v2 of the patch https://patchwork.freedesktop.org/patch/263712/
-> this got removed, but which means that async update will be enabled
-> anyway. So the following code is wrong:
->
-> -       if (state->legacy_cursor_update)
-> +       if (state->async_update || state->legacy_cursor_update)
->                 state->async_update =3D !drm_atomic_helper_async_check(de=
-v, state);
->
-> Does it make sense? If yes I'll fix this in the next version of the
-> Atomic IOCTL patch (and also those two patches should be in the same
-> series, I'll send them together next time).
->
-> Thanks for pointing this out.
->
-> Please let me know if you still don't agree on the name "atomic amend",
-> or if I am missing something.
+This is not prevented by what you wrote above as currently GUP does not
+increase page->_mapcount. Currently, there's no way to distinguish GUP page
+reference from any other page reference - GUP simply does get_page() - and
+big part of this thread as I see it is exactly about how to introduce this
+distinction and how to convert all GUP users to the new convention safely
+(as currently they just pass struct page * pointers around and eventually
+do put_page() on them). Increasing page->_mapcount in GUP and trying to
+deduce the pin count from that is one option Jerome suggested. At this
+point I'm not 100% sure this is going to work but we'll see.
 
-I'll defer it to the DRM maintainers. From Chrome OS perspective, we
-need a way to commit the cursor plane asynchronously from other
-commits any time the cursor changes its position or framebuffer. As
-long as the new API allows that and the maintainers are fine with it,
-I think I should be okay with it too.
+> 	c) truncate/hole punch for pulling the page out from under
+> 	the gup operation that is ongoing.
+> 
+> This is an adequate solution for a short term transient pins. It
+> doesn't break fsync(), it doesn't change how truncate works and it
+> fixes the problem where a mapped file is the buffer for an O_DIRECT
+> IO rather than the open fd and that buffer file gets truncated.
+> IOWs, transient pins (and hence O_DIRECT) is not really the problem
+> here.
 
-Best regards,
-Tomasz
+For now let's assume that the mechanism how to detect page pinned by GUP is
+actually somehow solved and we have already page_pinned() implemented. Then
+what you suggest can actually create a deadlock AFAICS:
 
->
-> Helen
->
-> >
-> > Best regards,
-> > Tomasz
-> >
-> >> Or do you suggest another name? I am not familiar with vulkan terminol=
-ogy.
-> >>
-> >>
-> >> Thanks
-> >> Helen
-> >>
-> >>>
-> >>>>
-> >>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >>>> [prepared for upstream]
-> >>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> >>>>
-> >>>> ---
-> >>>> Hi,
-> >>>>
-> >>>> This patch introduces the ASYNC_UPDATE cap, which originated from th=
-e
-> >>>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow user to
-> >>>> figure that async_update exists.
-> >>>>
-> >>>> This was tested using a small program that exercises the uAPI for ea=
-sy
-> >>>> sanity testing. The program was created by Alexandros and modified b=
-y
-> >>>> Enric to test the capability flag [2].
-> >>>>
-> >>>> The test worked on a rockchip Ficus v1.1 board on top of mainline pl=
-us
-> >>>> the patch to update cursors asynchronously through atomic plus the p=
-atch
-> >>>> that introduces the ATOMIC_AMEND flag for the drm/rockchip driver.
-> >>>>
-> >>>> To test, just build the program and use the --atomic flag to use the=
- cursor
-> >>>> plane with the ATOMIC_AMEND flag. E.g.
-> >>>>
-> >>>>   drm_cursor --atomic
-> >>>>
-> >>>> [1] https://patchwork.freedesktop.org/patch/243088/
-> >>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-=
-capability
-> >>>>
-> >>>> Thanks
-> >>>> Helen
-> >>>>
-> >>>>
-> >>>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
-> >>>>  include/uapi/drm/drm.h      |  1 +
-> >>>>  2 files changed, 12 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl=
-.c
-> >>>> index 94bd872d56c4..4a7e0f874171 100644
-> >>>> --- a/drivers/gpu/drm/drm_ioctl.c
-> >>>> +++ b/drivers/gpu/drm/drm_ioctl.c
-> >>>> @@ -31,6 +31,7 @@
-> >>>>  #include <drm/drm_ioctl.h>
-> >>>>  #include <drm/drmP.h>
-> >>>>  #include <drm/drm_auth.h>
-> >>>> +#include <drm/drm_modeset_helper_vtables.h>
-> >>>>  #include "drm_legacy.h"
-> >>>>  #include "drm_internal.h"
-> >>>>  #include "drm_crtc_internal.h"
-> >>>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device *dev, vo=
-id *data, struct drm_file *file_
-> >>>>  {
-> >>>>      struct drm_get_cap *req =3D data;
-> >>>>      struct drm_crtc *crtc;
-> >>>> +    struct drm_plane *plane;
-> >>>>
-> >>>>      req->value =3D 0;
-> >>>>
-> >>>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device *dev, v=
-oid *data, struct drm_file *file_
-> >>>>      case DRM_CAP_CRTC_IN_VBLANK_EVENT:
-> >>>>              req->value =3D 1;
-> >>>>              break;
-> >>>> +    case DRM_CAP_ASYNC_UPDATE:
-> >>>> +            req->value =3D 1;
-> >>>> +            list_for_each_entry(plane, &dev->mode_config.plane_list=
-, head) {
-> >>>> +                    if (!plane->helper_private->atomic_async_update=
-) {
-> >>>> +                            req->value =3D 0;
-> >>>> +                            break;
-> >>>> +                    }
-> >>>> +            }
-> >>>> +            break;
-> >>>>      default:
-> >>>>              return -EINVAL;
-> >>>>      }
-> >>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> >>>> index 300f336633f2..ff01540cbb1d 100644
-> >>>> --- a/include/uapi/drm/drm.h
-> >>>> +++ b/include/uapi/drm/drm.h
-> >>>> @@ -649,6 +649,7 @@ struct drm_gem_open {
-> >>>>  #define DRM_CAP_PAGE_FLIP_TARGET    0x11
-> >>>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT        0x12
-> >>>>  #define DRM_CAP_SYNCOBJ             0x13
-> >>>> +#define DRM_CAP_ASYNC_UPDATE                0x14
-> >>>>
-> >>>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
-> >>>>  struct drm_get_cap {
-> >>>> --
-> >>>> 2.19.1
-> >>>>
-> >>>> _______________________________________________
-> >>>> dri-devel mailing list
-> >>>> dri-devel@lists.freedesktop.org
-> >>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >>>
+Process 1:						Process 2:
+
+							fsync("file")
+/* Evil memory buffer with page order reversed */
+addr1 = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, "file", 4096);
+addr2 = mmap(addr1+4096, 4096, PROT_WRITE, MAP_SHARED, "file", 0);
+
+/* Fault in pages */
+*addr1 = 0;
+*addr2 = 0;
+							adds page with index 0
+							  to bio
+
+fd = open("file2", O_RDWR | O_DIRECT);
+read(fd, addr1, 8192)
+  -> eventually gets to iov_iter_get_pages() and then to
+     get_user_pages_fast().
+     -> pins "file" page with index 1
+							blocks on pin for
+							  page with index 1
+     -> blocks in PageWriteback for page with index 0
+
+Possibility of deadlocks like this is why I've decided it will be easier
+to just bounce the page for writeback we cannot avoid rather than block the
+writeback...
+
+> The problem with this is that blocking on elevated map count does
+> not work for long term pins (i.e. gup_longterm()) which are defined
+> as:
+> 
+>  * "longterm" == userspace controlled elevated page count lifetime.
+>  * Contrast this to iov_iter_get_pages() usages which are transient.
+> 
+> It's the "userspace controlled" part of the long term gup pin that
+> is the problem we need to solve. If we treat them the same as a
+> transient pin, then this leads to fsync() and truncate either
+> blocking for a long time waiting for userspace to drop it's gup
+> reference, or having to be failed with something like EBUSY or
+> EAGAIN.
+
+I agree. "userspace controlled" pins are another big problem to solve.
+
+> This is the problem revokable file layout leases solve. The NFS
+> server is already using this for revoking delegations from remote
+> clients. Userspace holding long term GUP references is essentially
+> the same thing - it's a delegation of file ownership to userspace
+> that the filesystem must be able to revoke when it needs to run
+> internal and/or 3rd-party requested operations on that delegated
+> file.
+> 
+> If the hardware supports page faults, then we can further optimise
+> the long term pin case to relax stable page requirements and allow
+> page cleaning to occur while there are long term pins. In this case,
+> the hardware will write-fault the clean pages appropriately before
+> DMA is initiated, and hence avoid the need for data integrity
+> operations like fsync() to trigger lease revocation. However,
+> truncate/hole punch still requires lease revocation to work sanely,
+> especially when we consider DAX *must* ensure there are no remaining
+> references to the physical pmem page after the space has been freed.
+> 
+> i.e. conflating the transient and long term gup pins as the same
+> problem doesn't help anyone. If we fix the short term pin problems,
+> then the long term pin problem become tractable by adding a layer
+> over the top (i.e.  hardware page fault capability and/or file lease
+> requirements).  Existing apps and hardware will continue to work -
+> external operations on the pinned file will simply hang rather than
+> causing corruption or kernel crashes.  New (or updated) applications
+> will play nicely with lease revocation and at that point the "long
+> term pin" basically becomes a transient pin where the unpin latency
+> is determined by how quickly the app responds to the lease
+> revocation. And page fault capable hardware will reduce the
+> occurrence of lease revocations due to data writeback/integrity
+> operations and behave almost identically to cpu-based mmap accesses
+> to file backed pages.
+
+Agreed. I think we are on the same page wrt this. Just at this point I'm
+trying to solve the "transient pin" problem...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
