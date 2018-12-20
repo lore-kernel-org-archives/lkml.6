@@ -3,50 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C957C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6790EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BDE42177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A2E62177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297613;
-	bh=dgZP//dKhWWQis8jfr9wJyae5Os8odn/OcIposc5MVU=;
+	s=default; t=1545297617;
+	bh=W2GGUoZNSdk2EXqsaX+8B3OP3sSpyOB2DCjSj+DOQa4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MsTRDQSR9fXZdv+1JDwWoKfd2zn5Y2vono1btvya4plklsIkMMX3tDLWEM3Kgt+1B
-	 I/OZxKHeEV1+3APUU/SUlUkbORXxqZ5n443BPNzwYOMWffWjtVOmUOaEYdWWq1ssff
-	 Phgiw2gpTuqEAnUj8EBPvHjKjQz+QsDjGo98wXMQ=
+	b=cM9Rwv2fLRxN9DR245YAXSJlMWr/R3tDbPwJ0L0lzEyep8Xvg6V+ci3wM/keVg/q0
+	 HI4gQoR9vMudpVCvSLBsQ3491JcarKvF84oMChu21xEv2yARGaZVpWhScnaX9C3kPj
+	 APAgKhoJ0jQYj1iHEjWP+2pR50BZy4Kg3XBg4mn8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730613AbeLTJUM (ORCPT
+        id S1730639AbeLTJUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:20:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49664 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:20:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730589AbeLTJUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:10 -0500
+        id S1730616AbeLTJUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE96D21720;
-        Thu, 20 Dec 2018 09:20:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94AD82177B;
+        Thu, 20 Dec 2018 09:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297609;
-        bh=dgZP//dKhWWQis8jfr9wJyae5Os8odn/OcIposc5MVU=;
+        s=default; t=1545297612;
+        bh=W2GGUoZNSdk2EXqsaX+8B3OP3sSpyOB2DCjSj+DOQa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W0k1QbTYkj/j3yhm81/kdnBQQS1apJAmNDlcFjQblNjghNsn5Xh8Gu0M59qDf4l+5
-         p/b/lflCtu82EKwLuaR8JCn9kD/jVDepNRefpWy10ImEdIfkr7MUwYTFF8a9dE9FCR
-         Q8ItT6RmDxuRp6vS5y+exJHy7WOVQSY3jW3b4MU0=
+        b=j71+LZSlPzRk1vEbhQQoON4SuluxDuJ6GKZz29DVx863JeaTMyoQlb8PRgtF2hBN5
+         LoR/SkE3RAVuhgni9GlIMpH+30d2nWuxzG6CEU+tMTybjbZXOZ+YS84Ykkp03joYIW
+         aYEh1QHWghAJlQeEGsocaTghvPB08Or/xjCoz7tY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Cole <chris@sageembedded.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 23/31] ARM: 8814/1: mm: improve/fix ARM v7_dma_inv_range() unaligned address handling
-Date:   Thu, 20 Dec 2018 10:18:35 +0100
-Message-Id: <20181220085743.528836665@linuxfoundation.org>
+Subject: [PATCH 3.18 24/31] cifs: In Kconfig CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)
+Date:   Thu, 20 Dec 2018 10:18:36 +0100
+Message-Id: <20181220085743.564655787@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -65,71 +65,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a1208f6a822ac29933e772ef1f637c5d67838da9 ]
+[ Upstream commit 6e785302dad32228819d8066e5376acd15d0e6ba ]
 
-This patch addresses possible memory corruption when
-v7_dma_inv_range(start_address, end_address) address parameters are not
-aligned to whole cache lines. This function issues "invalidate" cache
-management operations to all cache lines from start_address (inclusive)
-to end_address (exclusive). When start_address and/or end_address are
-not aligned, the start and/or end cache lines are first issued "clean &
-invalidate" operation. The assumption is this is done to ensure that any
-dirty data addresses outside the address range (but part of the first or
-last cache lines) are cleaned/flushed so that data is not lost, which
-could happen if just an invalidate is issued.
+Missing a dependency.  Shouldn't show cifs posix extensions
+in Kconfig if CONFIG_CIFS_ALLOW_INSECURE_DIALECTS (ie SMB1
+protocol) is disabled.
 
-The problem is that these first/last partial cache lines are issued
-"clean & invalidate" and then "invalidate". This second "invalidate" is
-not required and worse can cause "lost" writes to addresses outside the
-address range but part of the cache line. If another component writes to
-its part of the cache line between the "clean & invalidate" and
-"invalidate" operations, the write can get lost. This fix is to remove
-the extra "invalidate" operation when unaligned addressed are used.
-
-A kernel module is available that has a stress test to reproduce the
-issue and a unit test of the updated v7_dma_inv_range(). It can be
-downloaded from
-http://ftp.sageembedded.com/outgoing/linux/cache-test-20181107.tgz.
-
-v7_dma_inv_range() is call by dmac_[un]map_area(addr, len, direction)
-when the direction is DMA_FROM_DEVICE. One can (I believe) successfully
-argue that DMA from a device to main memory should use buffers aligned
-to cache line size, because the "clean & invalidate" might overwrite
-data that the device just wrote using DMA. But if a driver does use
-unaligned buffers, at least this fix will prevent memory corruption
-outside the buffer.
-
-Signed-off-by: Chris Cole <chris@sageembedded.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/cache-v7.S | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/cifs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
-index b966656d2c2d..7e98fecff55a 100644
---- a/arch/arm/mm/cache-v7.S
-+++ b/arch/arm/mm/cache-v7.S
-@@ -359,14 +359,16 @@ v7_dma_inv_range:
- 	ALT_UP(W(nop))
- #endif
- 	mcrne	p15, 0, r0, c7, c14, 1		@ clean & invalidate D / U line
-+	addne	r0, r0, r2
+diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+index a2172f3f69e3..35bbf6b64982 100644
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -111,7 +111,7 @@ config CIFS_XATTR
  
- 	tst	r1, r3
- 	bic	r1, r1, r3
- 	mcrne	p15, 0, r1, c7, c14, 1		@ clean & invalidate D / U line
--1:
--	mcr	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
--	add	r0, r0, r2
- 	cmp	r0, r1
-+1:
-+	mcrlo	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
-+	addlo	r0, r0, r2
-+	cmplo	r0, r1
- 	blo	1b
- 	dsb	st
- 	ret	lr
+ config CIFS_POSIX
+         bool "CIFS POSIX Extensions"
+-        depends on CIFS_XATTR
++        depends on CIFS && CIFS_ALLOW_INSECURE_LEGACY && CIFS_XATTR
+         help
+           Enabling this option will cause the cifs client to attempt to
+ 	  negotiate a newer dialect with servers, such as Samba 3.0.5
 -- 
 2.19.1
 
