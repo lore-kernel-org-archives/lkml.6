@@ -2,106 +2,180 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7D4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5C7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D8D21852
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545316784;
-	bh=Xewd2YtjwibjW4S36DJXonGOYp7YzJfxvVgYQB50fcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SkG+wGYOT+QxB3SL19esQyffclQZ3x0g3G/uUoFlnRwHXnw/GlNoCsbF5iFMmGjwh
-	 HdSZ2nnQcxA+tXciEBDFuHwwpS0eL+N53iXe4IDM/WqqSibn1+TM/nLgcUYdoNdi57
-	 T5iOW/wRng9Muz8KyP0e6y7Si5Bo0eaQtl5mJRUk=
+	by mail.kernel.org (Postfix) with ESMTP id E5092217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 14:42:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I34QY0QH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbeLTOjn (ORCPT
+        id S2387688AbeLTOmi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:39:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49270 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731493AbeLTOjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:39:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B5760AF0D;
-        Thu, 20 Dec 2018 14:39:40 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 15:39:39 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
-        vbabka@suse.cz, pavel.tatashin@microsoft.com,
-        rppt@linux.vnet.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm, page_alloc: Fix has_unmovable_pages for HugePages
-Message-ID: <20181220143939.GA6210@dhcp22.suse.cz>
-References: <20181217225113.17864-1-osalvador@suse.de>
- <20181219142528.yx6ravdyzcqp5wtd@master>
- <20181219233914.2fxe26pih26ifvmt@d104.suse.de>
- <20181220091228.GB14234@dhcp22.suse.cz>
- <20181220124925.itwuuacgztpgsk7s@d104.suse.de>
- <20181220130606.GG9104@dhcp22.suse.cz>
- <20181220134132.6ynretwlndmyupml@d104.suse.de>
- <20181220142124.r34fnuv6b33luj5a@d104.suse.de>
+        Thu, 20 Dec 2018 09:42:38 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:35281 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730138AbeLTOmi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 09:42:38 -0500
+Received: by mail-ed1-f46.google.com with SMTP id x30so1968139edx.2;
+        Thu, 20 Dec 2018 06:42:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hSQ8cyRVdWwO5IfLDaZgAKPOXuOVgW5PLFtWDFtHp6U=;
+        b=I34QY0QHYl1ZqtgNdYC+7lC177miSjIt9U7oHHjTddVMF9RhHXxvfAvkUfGeRL5l0e
+         TA019Ycsp+TdnZs84owZCoIkKeLrzH8tIL7vgpK5QW46ODsUwUwv8JvsIpRsPECHXSVz
+         9CTnQltI2LcTdk4tw0RFZv5bvJzMUy7v+fT/6TrBLANFOGekNflvZ8FaZ81FdEwgaoj7
+         YBYDXmPmpnr7eXKTS6kH4AI5QAiTtw8z5Ua6B0snVgyYoV9XQj+h3pgWjyqKpesuD5OO
+         WhEpJsqYF2VJ/mPcOTOaLdvcsC3xPYk1D7myKU3VPCocuayHjA1rnDqxbmowdLjssRXx
+         L41Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hSQ8cyRVdWwO5IfLDaZgAKPOXuOVgW5PLFtWDFtHp6U=;
+        b=tNQwcW88wdNlGWRBcmFfFFvhYHSxCuWxTjMpFRlfwECyeKsuz9q7hd9s9x+ysmY6sT
+         v7RMDesX8eT1eaP80cFCMogIynss+R3bWCiGl3syFS249k0oXbBe/dSk7aPExi6QM7pL
+         PR9UhNFp6yMLAKzoEW8qEv/75OZXAHfScPMKC3s6lEj/SOFXLkXFtGUXZguHSWI4UzL4
+         7umKmjyN40QUy7aLYL7ir8ftibhHlRE3GglJFS2hSbl7kGaHncq95KAU6H8ECZaIiPBl
+         EpMx8L5dl6RGAMtA0ra4BMrU3ElZuBD950cZOmgcY6JTxIqbj5Aj0y13JQlpC8JvMIbH
+         q9lQ==
+X-Gm-Message-State: AA+aEWZZqaqI6imps3xW/BUgFsSanfnZSwBlgz6xp68XGR//1HRum/7t
+        p0Ewut2NMUAHw+a29NastnpVLYzdiZ2vF0SYG6k=
+X-Google-Smtp-Source: AFSGD/X/U2vb1zzAzkZO86AL6XTkjZujm1w7wrrf0IyLQ4R9Un7c0foklnxvtLUMGbLTR4VXsxY9Gb73McBwYYMOA1U=
+X-Received: by 2002:a50:ae8f:: with SMTP id e15mr24490552edd.250.1545316955506;
+ Thu, 20 Dec 2018 06:42:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220142124.r34fnuv6b33luj5a@d104.suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <ba519cd8-ab88-2868-f6d0-be321d8df0be@de.ibm.com>
+ <20181220091207.GA25942@splinter> <CAF=yD-LJe_YjH-ssVb1c+yvEvKSDgBzUFMD8NxWKCKOEJPw30w@mail.gmail.com>
+ <20181220141609.GA861@splinter> <CAF=yD-K6Y=Jt=KNLOtg-_c32bnp__c_3RM4XvO6Q-Zye-nd4=A@mail.gmail.com>
+In-Reply-To: <CAF=yD-K6Y=Jt=KNLOtg-_c32bnp__c_3RM4XvO6Q-Zye-nd4=A@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Thu, 20 Dec 2018 09:41:59 -0500
+Message-ID: <CAF=yD-Kfnc2mrJnPawTinhkpARK3Xf9Pmq6rZ__tMsLtZbmhww@mail.gmail.com>
+Subject: Re: 4.20-rc6: WARNING: CPU: 30 PID: 197360 at net/core/flow_dissector.c:764
+ __skb_flow_dissect
+To:     Ido Schimmel <idosch@idosch.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Michael S Tsirkin <mst@redhat.com>,
+        Network Development <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        Jason Wang <jasowang@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 20-12-18 15:21:27, Oscar Salvador wrote:
-> On Thu, Dec 20, 2018 at 02:41:32PM +0100, Oscar Salvador wrote:
-> > On Thu, Dec 20, 2018 at 02:06:06PM +0100, Michal Hocko wrote:
-> > > You did want iter += skip_pages - 1 here right?
-> > 
-> > Bleh, yeah.
-> > I am taking vacation today so my brain has left me hours ago, sorry.
-> > Should be:
-> > 
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 4812287e56a0..0634fbdef078 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -8094,7 +8094,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> >                                 goto unmovable;
-> >  
-> >                         skip_pages = (1 << compound_order(head)) - (page - head);
-> > -                       iter = round_up(iter + 1, skip_pages) - 1;
-> > +                       iter += skip_pages - 1;
-> >                         continue;
-> >                 }
-> 
-> On a second thought, I think it should not really matter.
-> 
-> AFAICS, we can have these scenarios:
-> 
-> 1) the head page is the first page in the pabeblock
-> 2) first page in the pageblock is not a head but part of a hugepage
-> 3) the head is somewhere within the pageblock
-> 
-> For cases 1) and 3), iter will just get the right value and we will
-> break the loop afterwards.
-> 
-> In case 2), iter will be set to a value to skip over the remaining pages.
-> 
-> I am assuming that hugepages are allocated and packed together.
-> 
-> Note that I am not against the change, but I just wanted to see if there is
-> something I am missing.
+On Thu, Dec 20, 2018 at 9:34 AM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Thu, Dec 20, 2018 at 9:16 AM Ido Schimmel <idosch@idosch.org> wrote:
+> >
+> > On Thu, Dec 20, 2018 at 09:04:25AM -0500, Willem de Bruijn wrote:
+> > > On Thu, Dec 20, 2018 at 6:15 AM Ido Schimmel <idosch@idosch.org> wrote:
+> > > >
+> > > > +Willem
+> > > >
+> > > > On Thu, Dec 20, 2018 at 08:45:40AM +0100, Christian Borntraeger wrote:
+> > > > > Folks,
+> > > > >
+> > > > > I got this warning today. I cant tell when and why this happened, so I do not know yet how to reproduce.
+> > > > > Maybe someone has a quick idea.
+> > > > >
+> > > > > [85109.572032] WARNING: CPU: 30 PID: 197360 at net/core/flow_dissector.c:764 __skb_flow_dissect+0x1f0/0x1318
+> > > >
+> > > > I managed to trigger this warning as well the other day, but from a
+> > > > different call path:
+> > > >
+> > > > [280155.348610]  fib_multipath_hash+0x28c/0x2d0
+> > > > [280155.348613]  ? fib_multipath_hash+0x28c/0x2d0
+> > > > [280155.348619]  fib_select_path+0x241/0x32f
+> > > > [280155.348622]  ? __fib_lookup+0x6a/0xb0
+> > > > [280155.348626]  ip_route_output_key_hash_rcu+0x650/0xa30
+> > > > [280155.348631]  ? __alloc_skb+0x9b/0x1d0
+> > > > [280155.348634]  inet_rtm_getroute+0x3f7/0xb80
+> > >
+> > > inet_rtm_getroute builds a new packet with inet_rtm_getroute_build_skb
+> > > here without dev or sk.
+> >
+> > Ack
+> >
+> > >
+> > > > Problem is the synthesized skb for output route resolution does not have
+> > > > skb->dev or skb->sk set. When a multipath route is hit and
+> > > > net.ipv4.fib_multipath_hash_policy is set the flow dissector is called
+> > > > with this skb and the warning is triggered.
+> > > >
+> > > > I plan to fix it by setting skb->dev to net->loopback_dev.
+> > >
+> > > The device can be chosen based on iif in inet_rtm_getroute? A first
+> > > thought, I don't know this code very well.
+> >
+> > Yes, but iif is for input routes. I'm talking about output routes.
+> >
+> > > Let me know if you want me to take a stab at that patch. IPv6 probably
+> > > will need the same.
+> >
+> > Yes, I'll try it now and post later today if everything is OK. IPv6 is
+> > using flow info and not an skb, so no problem there. I also checked
+> > other getroute implementations and none of them call into the flow
+> > dissector with an skb, so I think we're fine.
+> >
+> > >
+> > > > I assume we
+> > > > want to keep this warning to prevent call paths which will otherwise
+> > > > silently fallback to standard flow dissector instead of the BPF one.
+> > >
+> > > Indeed, the warning is there to sniff out paths that do not follow
+> > > what I thought was an invariant. If there are too many exceptions, I
+> > > may have to revisit that assumption. But for now, let's see if we can
+> > > address these edge cases.
+> >
+> > Ack
+> >
+> > >
+> > > > I'm not familiar with tap code, so someone else will need to patch this
+> > > > case, but it looks like:
+> > > >
+> > > > tap_sendmsg()
+> > > >     tap_get_user()
+> > > >         skb_probe_transport_header()
+> > > >             skb_flow_dissect_flow_keys_basic()
+> > > >                 __skb_flow_dissect()
+> > > >
+> > > > skb->dev is only set later in the code.
+> > >
+> > > tap_get_user uses sock_alloc_send_pskb (through tap_alloc_skb) to
+> > > allocate the skb. So skb->sk should be set at the time of
+> > > skb_probe_transport_header. I'm not sure how this path triggers the
+> > > warning.
+> >
+> > Maybe it's:
+> >
+> > tap_sendmsg()
+> >     tap_get_user_xdp()
+> >         build_skb()
+> >             skb_probe_transport_header()
+> >                 skb_flow_dissect_flow_keys_basic()
+> >                     __skb_flow_dissect()
+>
+> Oh, indeed. I completely overlooked that path.
+>
+> I will call skb_set_owner_w there and will audit the other users of build_skb.
 
-Yes, you are missing that this code should be as sane as possible ;) You
-are right that we are only processing one pageorder worth of pfns and
-that the page order is bound to HUGETLB_PAGE_ORDER _right_now_. But
-there is absolutely zero reason to hardcode that assumption into a
-simple loop, right?
--- 
-Michal Hocko
-SUSE Labs
+Uhm, no, that may not be the right solution if these packets may
+be injected into the receive path. This also affects the tun device
+through tun_xdp_one, which calls netif_receive_skb.
+
+I'll need to take a closer look. Other approach is to move the
+assignment skb->dev = tap->dev earlier.
