@@ -2,105 +2,202 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E91EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F561C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D842218C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F416218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 15:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oL/abNJS"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c93U3Jyx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731825AbeLTPtn (ORCPT
+        id S1731895AbeLTPtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 10:49:43 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39747 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731177AbeLTPtn (ORCPT
+        Thu, 20 Dec 2018 10:49:49 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:38636 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731827AbeLTPts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 10:49:43 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so1996621ljh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:49:42 -0800 (PST)
+        Thu, 20 Dec 2018 10:49:48 -0500
+Received: by mail-vs1-f66.google.com with SMTP id x64so1357720vsa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 07:49:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=fSfwxhUlbMhmCrA9iqmBULHSX153UKoySX4ZxCwKZo8=;
-        b=oL/abNJS3yzcWkPTWa0Feeu76+ZZvzTSMXxUp7OMBgM5nuXBXVIWf1CYjHaT9bfhjb
-         pWrh1tRlBAawhRgwj6B3QPU7jKBokDUHKQ+J3mZ5Hfkjyut1WrMTwh9zlSnBJmQ+cOY0
-         F6yx+cDBOK8d3K9WG9m7BcGe14TdnhSvMsP2wWMkuy0ItI8hj8l4I4gAgzlgPDYI26rT
-         GjuOavlNO+XY4/L7SGO375My230On+MHsVSeYaRgTD7+CCR1geMFSpFWJ/1zCsKeRGa/
-         LuxQ9GUYyVy19N6Miickxf2gwHWk42BSKR0UPd/M+Mh/rKE9RGUqmv8E+emEdYi6MUzW
-         nnYA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qn72qtavczvyDQK9+bypOLwn0vE7TYTvQ62AhlWVQvc=;
+        b=c93U3JyxU7xHglhNXDNeXprXo6AnSMsYOYtv0bAJBQYaG/VFNHKiSoh3sjn5+4EIok
+         BsWcGL3OAaiRmdepRf3pLtbpU/MyRxY+e9CW10GFIT3euZGvyafmJ2CwrGITnes/vCii
+         hHBBU11S/aM8xzbF6ZSfauHf0vFO6wijkdxpE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=fSfwxhUlbMhmCrA9iqmBULHSX153UKoySX4ZxCwKZo8=;
-        b=Oz1S5VQRqOp4mCdVdHNnS0FO5ok26OuklLHCROwzMvaQ1Dyy3CGIHsUx/UrAw9iyN7
-         y6kQhI2XbKnebkjhzPrNo+X9f/G8cHsImi4luUGOBccSaURXYoS7cmEP7Q0trPIFSp0B
-         2OIhMncpYHen0sqPnWyKqDSV+JjQ/OkMjRHvnIBMVKjKQr7EjFcGTpSaUZ3az7/suPmk
-         wJXCxQxpFGeJkCZe/v6JQnFc9k1EQQyAxCLCdleWAubXkJhAOebaFsSiRFPW1lLE01wH
-         7o3nXZl9F5bj0vo8SThblejFJn1iuVA5K9rCMhM/GjHc3AIwjIlKYdQXQ5O6oPf5rBVc
-         4M6Q==
-X-Gm-Message-State: AA+aEWaUo60jQMjOfp1GptKwWX/1a87oZiA6AkwGFI5R2/Gy1ctAWpk5
-        5DBtwWupXn6Y7rVIx6xHph0=
-X-Google-Smtp-Source: AFSGD/XPTImU5qi3xP1i8p0TYOhxN2+9Lbb+tMNcLfo5UbXMz23eNsWkslF4SyWh5PyKTORoYxft9g==
-X-Received: by 2002:a2e:9ad0:: with SMTP id p16-v6mr17032454ljj.102.1545320981146;
-        Thu, 20 Dec 2018 07:49:41 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id f16-v6sm4236956lji.88.2018.12.20.07.49.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 07:49:40 -0800 (PST)
-Subject: Re: [PATCH] drm/xen-front: Make shmem backed display buffer coherent
-To:     Christoph Hellwig <hch@infradead.org>,
-        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
-        jgross@suse.com, boris.ostrovsky@oracle.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20181127103252.20994-1-andr2000@gmail.com>
- <17640791-5306-f7e4-8588-dd39c14e975b@tronnes.org>
- <20181220153646.GA22997@infradead.org>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <f2cfadc7-2e0b-b63d-d094-d5339b0c85fe@gmail.com>
-Date:   Thu, 20 Dec 2018 17:49:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qn72qtavczvyDQK9+bypOLwn0vE7TYTvQ62AhlWVQvc=;
+        b=UWoQWLryzPgtRhaJQ0UaDsolxlDFysaxRNg1fRAaS8IfeiI45lHpa58zuERPHXxGSP
+         aivNLllbTZPjbDDXkbOgFD0Ckeqod/l3R0IMmN8Z05ZvrEonOqNVNu8bk7CP2DiVzbsD
+         d42uePeQ2dPuwvI/jWyP+js65VScyUSJwlQeaqgRK6YVZaTPArCNpvo/IexZjWhPPRnB
+         FoQfMLXrwzeNfko9ssfYdMslHhrzFU2PgASeUw2vw3E+6NNAekKhjpwrYjlzTHSQBcS1
+         3irbzANBZn31JA9B5DnX9DK/+jOsDmYszoRVwF84Z+3nxiOaiQJcdg+VhMidrYA69fHc
+         GkUQ==
+X-Gm-Message-State: AA+aEWbO1fCNbk9DxD0p00xLaXo9Y/2OY4V5q/qAR2S2YvqAfD6ilVuU
+        tygYID2AgdH6QWsMa0ZXQ9l3zfn6c5KyicI3oDvNfQ==
+X-Google-Smtp-Source: AFSGD/X0T/PUFBNw2axl+qwYI9yKy7q7VEdIgg/mW+jwrGKXNHWex9SJwM4cT5gy19+WAPLksaxH3/8dcTlPwFuGwik=
+X-Received: by 2002:a67:7685:: with SMTP id r127mr12276554vsc.35.1545320986457;
+ Thu, 20 Dec 2018 07:49:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181220153646.GA22997@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20181129174700.16585-1-ulf.hansson@linaro.org>
+ <20181129174700.16585-18-ulf.hansson@linaro.org> <d82f3fe0-7f60-c89a-6503-435cc6dcc5cf@linaro.org>
+In-Reply-To: <d82f3fe0-7f60-c89a-6503-435cc6dcc5cf@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 20 Dec 2018 16:49:09 +0100
+Message-ID: <CAPDyKFpfp+d9K-i-ytCqwSq2ToQvqApatH0YyRXbW55wLyU=wA@mail.gmail.com>
+Subject: Re: [PATCH v10 17/27] drivers: firmware: psci: Prepare to support PM domains
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/18 5:36 PM, Christoph Hellwig wrote:
-> On Tue, Dec 18, 2018 at 08:20:22PM +0100, Noralf Trønnes wrote:
->>> +	if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
->>> +			DMA_BIDIRECTIONAL)) {
->>
->> Are you using the DMA streaming API as a way to flush the caches?
-> This looks rather broken.  Please send the whole patch series to
-> the iommu list for proper review.
-This is the only patch [1], no series. And at the moment I think
-there is nothing to review as I am not sure how to deal with those
-shmem pages: this patch is rather to start a discussion on how shmem
-pages can be flushed on ARM (the only workaround I have so far is
-in this patch which uses DMA API). This is where I am looking for
-some advice, so I can implement the patch the right way.
->> Does this mean that GFP_USER isn't making the buffer coherent?
-> How could GFP_USER make memory coherent in any way?
-I am no way an expert here, but other DRM drivers allocate buffers
-from shmem and then use DMA API [2], for example [3]
+On Thu, 20 Dec 2018 at 15:19, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> On 29/11/2018 18:46, Ulf Hansson wrote:
+> > Following changes are about to implement support for PM domains to PSCI.
+> > Those changes are mainly going to be implemented in a new separate file,
+> > hence a couple of the internal PSCI functions needs to be shared to be
+> > accessible. So, let's do that via adding new PSCI header file.
+> >
+> > Moreover, the changes deploying support for PM domains, needs to be able to
+> > switch the PSCI FW into the OS initiated mode. For that reason, let's add a
+> > new function that deals with this and share it via the new PSCI header
+> > file.
+> >
+> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> >
+> > Changes in v10:
+> >       - New patch. Re-places the earlier patch: "drivers: firmware: psci:
+> >         Share a few internal PSCI functions".
+> >
+> > ---
+> >  drivers/firmware/psci/psci.c | 28 +++++++++++++++++++++-------
+> >  drivers/firmware/psci/psci.h | 14 ++++++++++++++
+> >  2 files changed, 35 insertions(+), 7 deletions(-)
+> >  create mode 100644 drivers/firmware/psci/psci.h
+> >
+> > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> > index 8dbcdecc2ae4..623591b541a4 100644
+> > --- a/drivers/firmware/psci/psci.c
+> > +++ b/drivers/firmware/psci/psci.c
+> > @@ -34,6 +34,8 @@
+> >  #include <asm/smp_plat.h>
+> >  #include <asm/suspend.h>
+> >
+> > +#include "psci.h"
+> > +
+> >  /*
+> >   * While a 64-bit OS can make calls with SMC32 calling conventions, for some
+> >   * calls it is necessary to use SMC64 to pass or return 64-bit values.
+> > @@ -90,23 +92,35 @@ static u32 psci_function_id[PSCI_FN_MAX];
+> >  static DEFINE_PER_CPU(u32, domain_state);
+> >  static u32 psci_cpu_suspend_feature;
+> >
+> > -static inline u32 psci_get_domain_state(void)
+> > +u32 psci_get_domain_state(void)
+> >  {
+> >       return __this_cpu_read(domain_state);
+> >  }
+> >
+> > -static inline void psci_set_domain_state(u32 state)
+> > +void psci_set_domain_state(u32 state)
+> >  {
+> >       __this_cpu_write(domain_state, state);
+> >  }
+> >
+> > +bool psci_set_osi_mode(void)
+> > +{
+> > +     int ret;
+> > +
+> > +     ret = invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
+> > +                     PSCI_1_0_SUSPEND_MODE_OSI, 0, 0);
+> > +     if (ret)
+> > +             pr_warn("failed to enable OSI mode: %d\n", ret);
+> > +
+> > +     return !ret;
+> > +}
+>
+> Please keep the convention with the error code (0 => success)
+>
+> In the next patch it can be called:
+>
+> if (psci_has_osi_support())
+>         osi_mode_enabled = psci_set_osi_mode() ? false : true;
+>
 
-[1] https://patchwork.kernel.org/patch/10700089/
-[2] https://elixir.bootlin.com/linux/v4.20-rc7/ident/drm_gem_get_pages
-[3] 
-https://elixir.bootlin.com/linux/v4.20-rc7/source/drivers/gpu/drm/omapdrm/omap_gem.c#L248
+Sure!
+
+> > +
+> >  static inline bool psci_has_ext_power_state(void)
+> >  {
+> >       return psci_cpu_suspend_feature &
+> >                               PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK;
+> >  }
+> >
+> > -static inline bool psci_has_osi_support(void)
+> > +bool psci_has_osi_support(void)
+> >  {
+> >       return psci_cpu_suspend_feature & PSCI_1_0_OS_INITIATED;
+> >  }
+> > @@ -285,10 +299,7 @@ static int __init psci_features(u32 psci_func_id)
+> >                             psci_func_id, 0, 0);
+> >  }
+> >
+> > -#ifdef CONFIG_CPU_IDLE
+> > -static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+> > -
+> > -static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+> > +int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+> >  {
+> >       int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
+> >
+> > @@ -305,6 +316,9 @@ static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+> >       return 0;
+> >  }
+> >
+> > +#ifdef CONFIG_CPU_IDLE
+>
+> It would be nicer if you can remove the CONFIG_CPU_IDLE by replacing it
+> with a specific one (eg. CONFIG_PSCI_IDLE) and make it depend on
+> CONFIG_CPU_IDLE, so the config options stay contained in their
+> respective subsystems directory.
+
+I am all for simplifying the Kconfig options in here, as indeed it's
+rather messy. However, I would rather avoid folding in additional
+cleanup changes to this series, is already extensive enough.
+
+Would you be okay if we deal with that on top?
+
+[...]
+
+Kind regards
+Uffe
