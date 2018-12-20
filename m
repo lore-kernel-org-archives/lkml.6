@@ -6,49 +6,42 @@ X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4D4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AB7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20FF1218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E064218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388009AbeLTSQd (ORCPT
+        id S2388142AbeLTSRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:16:33 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45103 "EHLO
+        Thu, 20 Dec 2018 13:17:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39115 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729178AbeLTSQc (ORCPT
+        with ESMTP id S1729178AbeLTSRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:16:32 -0500
+        Thu, 20 Dec 2018 13:17:04 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKIGJfr3682999
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBKIGs2H3683049
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 10:16:19 -0800
+        Thu, 20 Dec 2018 10:16:54 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKIGJOH3682996;
-        Thu, 20 Dec 2018 10:16:19 -0800
-Date:   Thu, 20 Dec 2018 10:16:19 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBKIGr1L3683046;
+        Thu, 20 Dec 2018 10:16:53 -0800
+Date:   Thu, 20 Dec 2018 10:16:53 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Leo Yan <tipbot@zytor.com>
-Message-ID: <tip-7100b12cf474f575658e6e4a834f0e8a0b3c9867@git.kernel.org>
-Cc:     leo.yan@linaro.org, mathieu.poirier@linaro.org,
-        coresight@lists.linaro.org, tglx@linutronix.de, jolsa@redhat.com,
-        hpa@zytor.com, mike.leach@linaro.org, acme@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        robert.walker@arm.com
-Reply-To: leo.yan@linaro.org, mathieu.poirier@linaro.org,
-          coresight@lists.linaro.org, tglx@linutronix.de, jolsa@redhat.com,
-          hpa@zytor.com, mike.leach@linaro.org,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org,
-          mingo@kernel.org, robert.walker@arm.com
-In-Reply-To: <1544513908-16805-9-git-send-email-leo.yan@linaro.org>
-References: <1544513908-16805-9-git-send-email-leo.yan@linaro.org>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-3452xgatncpil7v22minkwbo@git.kernel.org>
+Cc:     namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, lclaudio@redhat.com,
+        mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        acme@redhat.com, wangnan0@huawei.com
+Reply-To: linux-kernel@vger.kernel.org, namhyung@kernel.org, hpa@zytor.com,
+          jolsa@kernel.org, wangnan0@huawei.com, lclaudio@redhat.com,
+          adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org,
+          tglx@linutronix.de
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Generate branch sample for exception
- packet
-Git-Commit-ID: 7100b12cf474f575658e6e4a834f0e8a0b3c9867
+Subject: [tip:perf/core] perf augmented_raw_syscalls: Do not include stdio.h
+Git-Commit-ID: 4623ce405d0871e648ba72fdb9c561016e2cc41d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,186 +55,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7100b12cf474f575658e6e4a834f0e8a0b3c9867
-Gitweb:     https://git.kernel.org/tip/7100b12cf474f575658e6e4a834f0e8a0b3c9867
-Author:     Leo Yan <leo.yan@linaro.org>
-AuthorDate: Tue, 11 Dec 2018 15:38:28 +0800
+Commit-ID:  4623ce405d0871e648ba72fdb9c561016e2cc41d
+Gitweb:     https://git.kernel.org/tip/4623ce405d0871e648ba72fdb9c561016e2cc41d
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 13 Dec 2018 15:05:43 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 18 Dec 2018 12:24:00 -0300
 
-perf cs-etm: Generate branch sample for exception packet
+perf augmented_raw_syscalls: Do not include stdio.h
 
-The exception packet appears as one element with 'elem_type' ==
-OCSD_GEN_TRC_ELEM_EXCEPTION or OCSD_GEN_TRC_ELEM_EXCEPTION_RET, which is
-present for exception entry and exit respectively.  The decoder sets the
-packet fields 'packet->exc' and 'packet->exc_ret' to indicate the
-exception packets; but exception packets don't have a dedicated sample
-type and shares the same sample type CS_ETM_RANGE with normal
-instruction packets.
+We're not using that puts() thing, and thus we don't need to define the
+__bpf_stdout__ map, reducing the setup time.
 
-As a result, the exception packets are taken as normal instruction
-packets and this introduces confusion in mixing different packet types.
-Furthermore, these instruction range packets will be processed for
-branch samples only when 'packet->last_instr_taken_branch' is true,
-otherwise they will be omitted, this can introduce a mess for exception
-and exception returning due to not having the complete address range
-info for context switching.
-
-To process exception packets properly, this patch introduces two new
-sample types: CS_ETM_EXCEPTION and CS_ETM_EXCEPTION_RET; these two types
-of packets will be handled by cs_etm__exception().  The function
-cs_etm__exception() forces setting the previous CS_ETM_RANGE packet flag
-'prev_packet->last_instr_taken_branch' to true, this matches well with
-the program flow when the exception is trapped from user space to kernel
-space, no matter if the most recent flow has branch taken or not; this
-is also safe for returning to user space after exception handling.
-
-After exception packets have their own sample type, the packet fields
-'packet->exc' and 'packet->exc_ret' aren't needed anymore, so remove
-them.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mike Leach <mike.leach@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: coresight ml <coresight@lists.linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1544513908-16805-9-git-send-email-leo.yan@linaro.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-3452xgatncpil7v22minkwbo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 26 +++++++++++++++++------
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  4 ++--
- tools/perf/util/cs-etm.c                        | 28 +++++++++++++++++++++++++
- 3 files changed, 50 insertions(+), 8 deletions(-)
+ tools/perf/examples/bpf/augmented_raw_syscalls.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index cda6f074bd03..8c155575c6c5 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -290,8 +290,6 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
- 		decoder->packet_buffer[i].instr_count = 0;
- 		decoder->packet_buffer[i].last_instr_taken_branch = false;
- 		decoder->packet_buffer[i].last_instr_size = 0;
--		decoder->packet_buffer[i].exc = false;
--		decoder->packet_buffer[i].exc_ret = false;
- 		decoder->packet_buffer[i].cpu = INT_MIN;
- 	}
- }
-@@ -319,8 +317,6 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+index a91c5874433e..6c5db6baeb3a 100644
+--- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -14,7 +14,6 @@
+  * code that will combine entry/exit in a strace like way.
+  */
  
- 	decoder->packet_buffer[et].sample_type = sample_type;
- 	decoder->packet_buffer[et].isa = CS_ETM_ISA_UNKNOWN;
--	decoder->packet_buffer[et].exc = false;
--	decoder->packet_buffer[et].exc_ret = false;
- 	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
- 	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
- 	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
-@@ -397,6 +393,22 @@ cs_etm_decoder__buffer_discontinuity(struct cs_etm_decoder *decoder,
- 					     CS_ETM_DISCONTINUITY);
- }
+-#include <stdio.h>
+ #include <unistd.h>
+ #include <pid_filter.h>
  
-+static ocsd_datapath_resp_t
-+cs_etm_decoder__buffer_exception(struct cs_etm_decoder *decoder,
-+				 const uint8_t trace_chan_id)
-+{
-+	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-+					     CS_ETM_EXCEPTION);
-+}
-+
-+static ocsd_datapath_resp_t
-+cs_etm_decoder__buffer_exception_ret(struct cs_etm_decoder *decoder,
-+				     const uint8_t trace_chan_id)
-+{
-+	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-+					     CS_ETM_EXCEPTION_RET);
-+}
-+
- static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 				const void *context,
- 				const ocsd_trc_index_t indx __maybe_unused,
-@@ -420,10 +432,12 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 						    trace_chan_id);
- 		break;
- 	case OCSD_GEN_TRC_ELEM_EXCEPTION:
--		decoder->packet_buffer[decoder->tail].exc = true;
-+		resp = cs_etm_decoder__buffer_exception(decoder,
-+							trace_chan_id);
- 		break;
- 	case OCSD_GEN_TRC_ELEM_EXCEPTION_RET:
--		decoder->packet_buffer[decoder->tail].exc_ret = true;
-+		resp = cs_etm_decoder__buffer_exception_ret(decoder,
-+							    trace_chan_id);
- 		break;
- 	case OCSD_GEN_TRC_ELEM_PE_CONTEXT:
- 	case OCSD_GEN_TRC_ELEM_ADDR_NACC:
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index a27231722e27..a6407d41598f 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -26,6 +26,8 @@ enum cs_etm_sample_type {
- 	CS_ETM_EMPTY,
- 	CS_ETM_RANGE,
- 	CS_ETM_DISCONTINUITY,
-+	CS_ETM_EXCEPTION,
-+	CS_ETM_EXCEPTION_RET,
- };
- 
- enum cs_etm_isa {
-@@ -43,8 +45,6 @@ struct cs_etm_packet {
- 	u32 instr_count;
- 	u8 last_instr_taken_branch;
- 	u8 last_instr_size;
--	u8 exc;
--	u8 exc_ret;
- 	int cpu;
- };
- 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index cea3158915d3..27a374ddf661 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1000,6 +1000,25 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
- 	return 0;
- }
- 
-+static int cs_etm__exception(struct cs_etm_queue *etmq)
-+{
-+	/*
-+	 * When the exception packet is inserted, whether the last instruction
-+	 * in previous range packet is taken branch or not, we need to force
-+	 * to set 'prev_packet->last_instr_taken_branch' to true.  This ensures
-+	 * to generate branch sample for the instruction range before the
-+	 * exception is trapped to kernel or before the exception returning.
-+	 *
-+	 * The exception packet includes the dummy address values, so don't
-+	 * swap PACKET with PREV_PACKET.  This keeps PREV_PACKET to be useful
-+	 * for generating instruction and branch samples.
-+	 */
-+	if (etmq->prev_packet->sample_type == CS_ETM_RANGE)
-+		etmq->prev_packet->last_instr_taken_branch = true;
-+
-+	return 0;
-+}
-+
- static int cs_etm__flush(struct cs_etm_queue *etmq)
- {
- 	int err = 0;
-@@ -1148,6 +1167,15 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- 					 */
- 					cs_etm__sample(etmq);
- 					break;
-+				case CS_ETM_EXCEPTION:
-+				case CS_ETM_EXCEPTION_RET:
-+					/*
-+					 * If the exception packet is coming,
-+					 * make sure the previous instruction
-+					 * range packet to be handled properly.
-+					 */
-+					cs_etm__exception(etmq);
-+					break;
- 				case CS_ETM_DISCONTINUITY:
- 					/*
- 					 * Discontinuity in trace, flush
