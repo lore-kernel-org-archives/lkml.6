@@ -2,50 +2,51 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60226C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE75C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 294412177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DE872177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297621;
-	bh=w4rCWL/a9EyoBwmuIYpb/k15tbouBxr62jIeYXKxwzE=;
+	s=default; t=1545297625;
+	bh=m5VRnElgZD02IbEYkpH97zKcnT7UjGYJCUlzfC8nF8g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZqhHoGoGltMOITORgGc/GYCPHOKydwiZLDDrC2CwQOm71PotxJNqkH78ShtU0CM6w
-	 0QNWmd9SttEjA0uMxsQV/aljdIq5QLwxwf+TJ3PKwiBDFY3pkxm93tLxj5HVxH/oRz
-	 +rpiCQ+q+UJn08xGqQFiOEh8wDTG3512zVENDKrE=
+	b=aRGU5LMuSP5ipuKqMwLR7liAGoId5ej1RE2dqt3NJ56ciXQyuT6fxlZ4lUQYN1uBn
+	 3hMnhCZKUo6yzNSCNzuYxIhaxZEEpB/8EX1cU1Afts2AxormSnYjEK2feVTRXtd4ZS
+	 R/oAEoxe0zRr+2bM9MsZxILZZG1UjpYzA6a5iedk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbeLTJUU (ORCPT
+        id S1730269AbeLTJUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:20:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50962 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:20:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730616AbeLTJUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:20:17 -0500
+        id S1730616AbeLTJUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:20:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E020B21720;
-        Thu, 20 Dec 2018 09:20:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C717F21773;
+        Thu, 20 Dec 2018 09:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297617;
-        bh=w4rCWL/a9EyoBwmuIYpb/k15tbouBxr62jIeYXKxwzE=;
+        s=default; t=1545297620;
+        bh=m5VRnElgZD02IbEYkpH97zKcnT7UjGYJCUlzfC8nF8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=06h7KoxD+MLf9c0wc3oGmihHMSTGhacW1Xf2/ArgLxnKv5nhO0g4r15SHxW2TCBvt
-         0D9m1496IyrWZs/UOTETrI0FzHw+cUAzq/7JlN23nUlcjU19RNqS2p3GHj4o3Pj9Be
-         ZgXpRKGJYfdHlJZ6YvIplqm7AbV9tuRjYbEejnkA=
+        b=Vq+3wMgMDkqkFIASYReWtFcjQ1BfCTAA8Cz9WmnlkNo9qUXDlexNjQlVkKpPE5L+w
+         EGGgtMqK8fM4xLLh7MOPmdbCgt297wKiTF+X56ki6JMBj8qYI6ZrS6ByrNixiBnlzC
+         J1zry6Fl7TlfMvTIzeAKPZFkb6HixoG49nLWbqpg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 26/31] ALSA: isa/wavefront: prevent some out of bound writes
-Date:   Thu, 20 Dec 2018 10:18:38 +0100
-Message-Id: <20181220085743.635182074@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 27/31] ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command
+Date:   Thu, 20 Dec 2018 10:18:39 +0100
+Message-Id: <20181220085743.670719346@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
 References: <20181220085742.601260254@linuxfoundation.org>
@@ -64,54 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 84d7a4470dbac0dd9389050100b54a1625d04264 ]
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-"header->number" can be up to USHRT_MAX and it comes from the ioctl so
-it needs to be capped.
+commit e11f0f90a626f93899687b1cc909ee37dd6c5809 upstream.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Drivers can implement 'struct snd_pcm_ops.ioctl' to handle some requests
+from ALSA PCM core. These requests are internal purpose in kernel land.
+Usually common set of operations are used for it.
+
+SNDRV_PCM_IOCTL1_INFO is one of the requests. According to code comment,
+it has been obsoleted in the old days.
+
+We can see old releases in ftp.alsa-project.org. The command was firstly
+introduced in v0.5.0 release as SND_PCM_IOCTL1_INFO, to allow drivers to
+fill data of 'struct snd_pcm_channel_info' type. In v0.9.0 release,
+this was obsoleted by the other commands for ioctl(2) such as
+SNDRV_PCM_IOCTL_CHANNEL_INFO.
+
+This commit removes the long-abandoned command, bye.
+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/isa/wavefront/wavefront_synth.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/sound/pcm.h     |    2 +-
+ sound/core/pcm_lib.c    |    2 --
+ sound/core/pcm_native.c |    6 +-----
+ 3 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/sound/isa/wavefront/wavefront_synth.c b/sound/isa/wavefront/wavefront_synth.c
-index e5db001363ee..b5fde9fd1ae9 100644
---- a/sound/isa/wavefront/wavefront_synth.c
-+++ b/sound/isa/wavefront/wavefront_synth.c
-@@ -785,6 +785,9 @@ wavefront_send_patch (snd_wavefront_t *dev, wavefront_patch_info *header)
- 	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading patch %d\n",
- 				      header->number);
+--- a/include/sound/pcm.h
++++ b/include/sound/pcm.h
+@@ -98,7 +98,7 @@ struct snd_pcm_ops {
+ #define SNDRV_PCM_IOCTL1_TRUE		((void *)1)
  
-+	if (header->number >= ARRAY_SIZE(dev->patch_status))
-+		return -EINVAL;
+ #define SNDRV_PCM_IOCTL1_RESET		0
+-#define SNDRV_PCM_IOCTL1_INFO		1
++/* 1 is absent slot. */
+ #define SNDRV_PCM_IOCTL1_CHANNEL_INFO	2
+ #define SNDRV_PCM_IOCTL1_GSTATE		3
+ #define SNDRV_PCM_IOCTL1_FIFO_SIZE	4
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -1818,8 +1818,6 @@ int snd_pcm_lib_ioctl(struct snd_pcm_sub
+ 		      unsigned int cmd, void *arg)
+ {
+ 	switch (cmd) {
+-	case SNDRV_PCM_IOCTL1_INFO:
+-		return 0;
+ 	case SNDRV_PCM_IOCTL1_RESET:
+ 		return snd_pcm_lib_ioctl_reset(substream, arg);
+ 	case SNDRV_PCM_IOCTL1_CHANNEL_INFO:
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -216,11 +216,7 @@ int snd_pcm_info(struct snd_pcm_substrea
+ 	info->subdevices_avail = pstr->substream_count - pstr->substream_opened;
+ 	strlcpy(info->subname, substream->name, sizeof(info->subname));
+ 	runtime = substream->runtime;
+-	/* AB: FIXME!!! This is definitely nonsense */
+-	if (runtime) {
+-		info->sync = runtime->sync;
+-		substream->ops->ioctl(substream, SNDRV_PCM_IOCTL1_INFO, info);
+-	}
 +
- 	dev->patch_status[header->number] |= WF_SLOT_FILLED;
+ 	return 0;
+ }
  
- 	bptr = buf;
-@@ -809,6 +812,9 @@ wavefront_send_program (snd_wavefront_t *dev, wavefront_patch_info *header)
- 	DPRINT (WF_DEBUG_LOAD_PATCH, "downloading program %d\n",
- 		header->number);
- 
-+	if (header->number >= ARRAY_SIZE(dev->prog_status))
-+		return -EINVAL;
-+
- 	dev->prog_status[header->number] = WF_SLOT_USED;
- 
- 	/* XXX need to zero existing SLOT_USED bit for program_status[i]
-@@ -898,6 +904,9 @@ wavefront_send_sample (snd_wavefront_t *dev,
- 		header->number = x;
- 	}
- 
-+	if (header->number >= WF_MAX_SAMPLE)
-+		return -EINVAL;
-+
- 	if (header->size) {
- 
- 		/* XXX it's a debatable point whether or not RDONLY semantics
--- 
-2.19.1
-
 
 
