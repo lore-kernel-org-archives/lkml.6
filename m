@@ -2,75 +2,118 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E86A5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A03C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCCBC218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9A8C21907
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JNQuNJqZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389663AbeLTUxu (ORCPT
+        id S2389696AbeLTU4a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:53:50 -0500
-Received: from mga09.intel.com ([134.134.136.24]:6560 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387666AbeLTUxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:53:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 12:53:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,378,1539673200"; 
-   d="scan'208";a="119962059"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by orsmga002.jf.intel.com with ESMTP; 20 Dec 2018 12:53:48 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Add arch/x86/kvm sub-directories to existing KVM/x86 entry
-Date:   Thu, 20 Dec 2018 12:53:20 -0800
-Message-Id: <20181220205320.24322-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.19.2
+        Thu, 20 Dec 2018 15:56:30 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37639 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389683AbeLTU4Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 15:56:24 -0500
+Received: by mail-it1-f195.google.com with SMTP id b5so3737121iti.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 12:56:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
+        b=JNQuNJqZv35yGcoTQlpjyNDO1LK/icLfT60oa8Oe1zdECcpIoOi/jLh7f+N+AXGbr4
+         b6Yp3533F2UND8fzsMoBSLPV3qQcXdZ8jBlLxTJ7daT78hXkveFq6xwdbd2Mugz8vO5e
+         tfkhEYtNZnFFapSAFdmYjwAin4vKTOu2ST8Rg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
+        b=p9hseObV+lU+hS2+3AWumJx2bs3RXFAmXvnJSh2h9E7EltOH8fzNeGBzipg590InjG
+         QEijyouVvk9RE73ug1lpSLKXZdmcjHWOx6lQ9iQTO8YTmrt9YmWEmweodcdgnSOevvhB
+         4HUx5np/avXJjUeH3xxeE18vsRT15fHhvzSgVrZ386L6x5RHpEy10+wndVMiZxtavL8H
+         s1DlXUblxbfqpeh90HzkMLiDMsztR3DpS2vgW3QAJIAZXQRAZcBCpB+8FzRsDyU8WRsv
+         X+URQ2k02deZU0xxBS4oT2ejFY+SQpkCAt21nEdOHBWF8kzUVZFIGvovTW0xYNr/edCQ
+         Xbaw==
+X-Gm-Message-State: AA+aEWYQrC0t40Wn/LPa+eaqc0OLvoIo3zmgovpOmhtP9iW07rt01/+O
+        aU9F1TTNC0naSB4mOfCSRzJ0xPhn3+evbTVV1EYaGclr0zzDoA==
+X-Google-Smtp-Source: ALg8bN6rfXd4idarU47KMo5Mow2yJjrhhdUXYqRqjjZX8AY37yXXMGazvLIMeKxtXulHnZixSS1jALfRLmJ1Sme/Y88=
+X-Received: by 2002:a24:5411:: with SMTP id t17mr207706ita.32.1545339383319;
+ Thu, 20 Dec 2018 12:56:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
+In-Reply-To: <20181211164900.wfmkmbrbj3nmlb3h@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 21 Dec 2018 02:26:11 +0530
+Message-ID: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A series currently sitting in KVM's queue for 4.21 moves the bulk of
-KVM's VMX code to a dedicated VMX sub-directory[1].  As a result,
-get_maintainers.pl doesn't get any hits on the newly relocated VMX
-files when the script is run with --pattern-depth=1.
+On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > Video start delay can be computed by subtracting total vertical
+> > timing with front porch timing and with adding 1 delay line for TCON.
+> >
+> > BSP code form BPI-M64-bsp is computing video start delay as
+> > (from linux-sunxi/
+> > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> >
+> > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> >    - panel->lcd_y - (panel->lcd_vbp)
+> > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> >                            - panel->lcd_y - panel->lcd_vbp
+> > => timmings->ver_front_porch
+> >
+> > So, update the start delay computation accordingly.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Even though it's a bit better now on my A33 board and I don't have the
+> white stripes on the bottom of the display, there's still some
+> flickering with your patches applied.
+>
+> Bisecting it seems to point at that patch, but reverting it doesn't
+> make the issue go away, so it's not really clear which one exactly is
+> at fault.
 
-Add all arch/x86/kvm sub-directories to the existing MAINTAINERS entry
-for KVM/x86 instead of arch/x86/kvm/vmx as other code, e.g. SVM, may
-get similar treatment in the near future.
+Is reverting this patch, work fine or not?
 
-[1] https://patchwork.kernel.org/cover/10710751/
+This patch is trying to make use of front porch instead of existing
+back porch to compute the delay. Since we revert the VBP fix patch[1]
+to assume VBP as VFP value look like your setup would also require to
+revert this change. But as per BSP or drm_mode details all of my
+displays even work with and w/o reverting these two.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+I'm thinking your display should work in the same behavior since the
+dsi controller making this route.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8119141a926f..55db660a092b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8236,6 +8236,7 @@ W:	http://www.linux-kvm.org
- T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
- S:	Supported
- F:	arch/x86/kvm/
-+F:	arch/x86/kvm/*/
- F:	arch/x86/include/uapi/asm/kvm*
- F:	arch/x86/include/asm/kvm*
- F:	arch/x86/include/asm/pvclock-abi.h
--- 
-2.19.2
-
+[1] https://patchwork.kernel.org/patch/10680309/
