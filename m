@@ -2,153 +2,109 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9EBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76419C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4361421773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F06217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:42:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qoPByeRz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbeLTQk4 (ORCPT
+        id S1731455AbeLTQmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:40:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40512 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729937AbeLTQkz (ORCPT
+        Thu, 20 Dec 2018 11:42:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36932 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730176AbeLTQmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:40:55 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKGdEfS031269
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:40:54 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pgd2ad3nm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 11:40:53 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Thu, 20 Dec 2018 16:40:51 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 20 Dec 2018 16:40:49 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKGelA138731886
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Dec 2018 16:40:47 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D5394C04E;
-        Thu, 20 Dec 2018 16:40:47 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D0AA04C040;
-        Thu, 20 Dec 2018 16:40:46 +0000 (GMT)
-Received: from [9.152.224.123] (unknown [9.152.224.123])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 20 Dec 2018 16:40:46 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v5 05/15] KVM: s390: unify pending_irqs() and
- pending_irqs_no_gisa()
-To:     pierre morel <pmorel@mnis.fr>, Cornelia Huck <cohuck@redhat.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-6-mimu@linux.ibm.com>
- <20181220120614.65acacac.cohuck@redhat.com>
- <62bf4bcf-585f-ddfc-e7a5-18fc946819d9@linux.ibm.com>
- <20181220132130.33a417fa.cohuck@redhat.com>
- <83553348-0b10-8bcc-34b0-c87a0e2f95ac@linux.ibm.com>
- <3944cf13-130a-d4ea-8d14-f8b055506339@mnis.fr>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Thu, 20 Dec 2018 17:40:46 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Thu, 20 Dec 2018 11:42:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AsrGz4wyhV6a5LoNUZXjMxkoDjCYbgsfI12XBltVZow=; b=qoPByeRzbhFBCAixECZW50A9F
+        6DZbytuPCbBaBtCZ/lv1zSa1FHdsJqGCcRAn8I9n3KRtxGj/iPoAlTUjkrChc1lPh3+OlEMvWY9fr
+        DOZ0bcqeIJcLJmBZv7Y4Z5XhRwg9w9HUL73GGDEcgWZnPjin/hCZK4Imd92Ke44zRp0oTxHYgLZXA
+        T5pieI3NNYfamVUwIUH9G75Ac0khWpumPucyNPYUv/4UxiaUvU4JzJFBKF7tIr1EIWmpIWFNaYEIX
+        eeRDsvAsHUK/GnZnz8QkHGNuKoL8vArLk0hLeO2FeCbz3HrfVlTKeaJqlwS5F0IOrNP8JgUP49ZQE
+        S73tHFVIA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ga1On-0002fi-FJ; Thu, 20 Dec 2018 16:42:15 +0000
+Subject: Re: [PATCH 0/1] RFC: Revamp admin-guide/tainted-kernels.rst to make
+ it more comprehensible
+To:     Thorsten Leemhuis <linux@leemhuis.info>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181217152043.9989-1-linux@leemhuis.info>
+ <20181217112437.5fe868eb@lwn.net>
+ <8f67a8ca-bf64-c537-843a-b03bcfc3dace@infradead.org>
+ <96fc8865-c54f-5c6c-f6c8-d7a5a12735e6@leemhuis.info>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e77c03ff-a84b-4020-34a4-fc9fa5f1eccb@infradead.org>
+Date:   Thu, 20 Dec 2018 08:42:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <3944cf13-130a-d4ea-8d14-f8b055506339@mnis.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <96fc8865-c54f-5c6c-f6c8-d7a5a12735e6@leemhuis.info>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18122016-0008-0000-0000-000002A4258C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18122016-0009-0000-0000-0000220EC422
-Message-Id: <cc659889-af32-fdbb-d615-edeadabd548a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=786 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812200135
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/20/18 7:23 AM, Thorsten Leemhuis wrote:
+> Hi! Am 17.12.18 um 22:06 schrieb Randy Dunlap:
+>> On 12/17/18 10:24 AM, Jonathan Corbet wrote:
+>>> Here's an idea if you feel like improving this: rather than putting an
+>>> inscrutable program inline, add a taint_status script to scripts/ that
+>>> prints out the status in fully human-readable form, with the explanation
+>>> for every set bit.
+>> And some people prefer not adding tools that use python, perl, etc.
+> 
+> Yeah, I know :-/ On twitter @apexo (thx!) suggested these two:
+> 
+> dc -e"[00000000000000]n2o$(cat /proc/sys/kernel/tainted)p"|fold
+> -w1|tac|nl| grep  -m 18 '.'
+> 
+> (echo -n 000000000000000;(echo obase=2;cat
+> /proc/sys/kernel/tainted)|bc)|fold -w1|tac|nl| grep -m 18 '.'
+> 
+> But it needs bc, which often is not installed by default  :-/ Any as you
+> mentioned already: using Perl (
+> 
+> perl -e 'printf("%016b\n",<STDIN>)' < /proc/sys/kernel/tainted |fold
+> -w1|tac|nl
+> 
+> ) also has it downsides. Having something that works in plain bash/sh
+> would be great...
+> 
+> Nevertheless: I'm still inclined to put a one liner decode command into
+> tainted-kernels.rst so people can decode the file easily even if they do
+> not have attached script at hand.
+> 
+>> E.g., I use this shell script (named 'chktaint', which could probably
+>> be done better):
+> 
+> Many thx. Find a slightly improved version attached that directly prints
+> the reason. I assume that's more like what Jonathan had in mind. The
+> script now is also capable of decoding a value retrieved from
+> /proc/sys/kernel/tainted on another system.
+
+Thorsten:
+
+- drop the trailing spaces on multiple lines
+- s/follwing/following/
 
 
-On 20.12.18 16:43, pierre morel wrote:
-> 
-> 
-> Le 12/20/18 à 13:33, Michael Mueller a écrit :
->>
->>
->> On 20.12.18 13:21, Cornelia Huck wrote:
->>> On Thu, 20 Dec 2018 12:49:56 +0100
->>> Michael Mueller <mimu@linux.ibm.com> wrote:
->>>
->>>> On 20.12.18 12:06, Cornelia Huck wrote:
->>>>> On Wed, 19 Dec 2018 20:17:46 +0100
->>>>> Michael Mueller <mimu@linux.ibm.com> wrote:
->>>>>> Use a single function with parameter irq_flags to differentiate
->>>>>> between cases.
->>>>>>
-> ...snip
->>>>>>    }
->>>>>> -static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu 
->>>>>> *vcpu)
->>>>>> +static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu, 
->>>>>> u16 irq_flags)
->>>>>
->>>>> Any deeper reason why this is a u16? 16 bits should be enough for
->>>>> everyone? :)
->>>>
->>>> I want to use the 8 bits for the IRQ type and the other 8 for 
->>>> additional
->>>> controls, see: "KVM: s390: restore IAM in get_ipm() when IPM is clean"
->>>
->>> Still need to look at that patch, but my question mainly was "why only
->>> 16 bits"? I would think making this local variable larger is cheap.
->>>
-> 
-> +1
-> 
->>
->> I will enlarge the flag mask to u32 with 16 bits for the IRQ types then.
-> 
-> AFAIK CPU generally work better with int (or long)
-> Is there any hardware reason to restrict the size?
-
-It's already changed to 4 bytes
-
-> 
->>
->>>>
->>>>>>    {
->>>>>> -    return vcpu->kvm->arch.float_int.pending_irqs |
->>>>>> -        vcpu->arch.local_int.pending_irqs;
->>>>>> -}
->>>
->>
-> 
-
+thanks.
+-- 
+~Randy
