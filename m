@@ -2,137 +2,121 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C611BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C107AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 04:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9381420815
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78A4A21773
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 04:00:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="J7Ky28zF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729876AbeLTDzg (ORCPT
+        id S1729515AbeLTEAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 22:55:36 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16171 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728228AbeLTDzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 22:55:36 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9AEEF21421C9A;
-        Thu, 20 Dec 2018 11:55:32 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
- 11:55:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <arend.vanspriel@broadcom.com>, <franky.lin@broadcom.com>,
-        <hante.meuleman@broadcom.com>, <chi-hsien.lin@cypress.com>,
-        <wright.feng@cypress.com>, <plaes@plaes.org>,
-        <kvalo@codeaurora.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        <brcm80211-dev-list@cypress.com>, <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] brcm80211: remove set but not used variables 'phybw40, maxtargetpwr'
-Date:   Thu, 20 Dec 2018 11:55:22 +0800
-Message-ID: <20181220035522.10640-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Wed, 19 Dec 2018 23:00:40 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:34156 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728527AbeLTEAk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 23:00:40 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D930424E0772;
+        Wed, 19 Dec 2018 20:00:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1545278439; bh=sjXAVwCRa0Kz6z6iiLbwRnyxG9V+nrlRD3wztmKsyKE=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=J7Ky28zFW34qVD9+2hA0TXAPPA8FuO5rm/h3DbfyBgNcWqC2rLyyHQp8kFpC5XW8E
+         gploC7nGbXU/u13MqVmwbBpY5/KE4Khgmi3qf5R6stX2qq03XsMf2qzh0x1HgW5kpn
+         Z/aR5mK+PoE5JHNdGgpFrzRXQTfuZ1iNfS/zDpY3czz/MRAsORSbGM2Z4NMFMZtsNO
+         3EcMJYDI0fuzNGVgDFUfIooKBSnjDM19uxm5ovm0I+LuK+OmFQuWY5JbptApG1OMh8
+         0fKBxoZhuo/h3rDyEsb37IQTZlKWG4HSGxlFeR077DigD2raXxWbKkFmIklAN1CRfi
+         n9LPwbAvIWlDg==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BF37B5B66;
+        Wed, 19 Dec 2018 20:00:39 -0800 (PST)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
+ 14.03.0415.000; Wed, 19 Dec 2018 20:00:39 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] ARC: adjust memblock_reserve of kernel memory
+Thread-Topic: [PATCH] ARC: adjust memblock_reserve of kernel memory
+Thread-Index: AQHUl7Y3xyclRc6qjkizV/X3iTxkVw==
+Date:   Thu, 20 Dec 2018 04:00:39 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014642269A@US01WEMBX2.internal.synopsys.com>
+References: <20181219161616.10422-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c:1202:5: warning: variable 'phybw40' set but not used [-Wunused-but-set-variable]
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c:4625:5: warning: variable 'phybw40' set but not used [-Wunused-but-set-variable]
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c:4834:5: warning: variable 'phybw40' set but not used [-Wunused-but-set-variable]
-
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c:3085:17: warning: variable 'maxtargetpwr' set but not used [-Wunused-but-set-variable]
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c:4215:17: warning: variable 'maxtargetpwr' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- .../net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c  | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
-index e78a93a..c6e107f 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_lcn.c
-@@ -1199,8 +1199,6 @@ wlc_lcnphy_rx_iq_est(struct brcms_phy *pi,
- {
- 	int wait_count = 0;
- 	bool result = true;
--	u8 phybw40;
--	phybw40 = CHSPEC_IS40(pi->radio_chanspec);
- 
- 	mod_phy_reg(pi, 0x6da, (0x1 << 5), (1) << 5);
- 
-@@ -3082,7 +3080,7 @@ static void wlc_lcnphy_tx_pwr_ctrl_init(struct brcms_phy_pub *ppi)
- 	u8 bbmult;
- 	struct phytbl_info tab;
- 	s32 a1, b0, b1;
--	s32 tssi, pwr, maxtargetpwr, mintargetpwr;
-+	s32 tssi, pwr, mintargetpwr;
- 	bool suspend;
- 	struct brcms_phy *pi = container_of(ppi, struct brcms_phy, pubpi_ro);
- 
-@@ -3119,7 +3117,6 @@ static void wlc_lcnphy_tx_pwr_ctrl_init(struct brcms_phy_pub *ppi)
- 		b0 = pi->txpa_2g[0];
- 		b1 = pi->txpa_2g[1];
- 		a1 = pi->txpa_2g[2];
--		maxtargetpwr = wlc_lcnphy_tssi2dbm(10, a1, b0, b1);
- 		mintargetpwr = wlc_lcnphy_tssi2dbm(125, a1, b0, b1);
- 
- 		tab.tbl_id = LCNPHY_TBL_ID_TXPWRCTL;
-@@ -4212,7 +4209,7 @@ static void wlc_lcnphy_periodic_cal(struct brcms_phy *pi)
- 	s8 index;
- 	struct phytbl_info tab;
- 	s32 a1, b0, b1;
--	s32 tssi, pwr, maxtargetpwr, mintargetpwr;
-+	s32 tssi, pwr, mintargetpwr;
- 	struct brcms_phy_lcnphy *pi_lcn = pi->u.pi_lcnphy;
- 
- 	pi->phy_lastcal = pi->sh->now;
-@@ -4249,7 +4246,6 @@ static void wlc_lcnphy_periodic_cal(struct brcms_phy *pi)
- 		b0 = pi->txpa_2g[0];
- 		b1 = pi->txpa_2g[1];
- 		a1 = pi->txpa_2g[2];
--		maxtargetpwr = wlc_lcnphy_tssi2dbm(10, a1, b0, b1);
- 		mintargetpwr = wlc_lcnphy_tssi2dbm(125, a1, b0, b1);
- 
- 		tab.tbl_id = LCNPHY_TBL_ID_TXPWRCTL;
-@@ -4622,13 +4618,10 @@ static void wlc_lcnphy_radio_init(struct brcms_phy *pi)
- static void wlc_lcnphy_tbl_init(struct brcms_phy *pi)
- {
- 	uint idx;
--	u8 phybw40;
- 	struct phytbl_info tab;
- 	const struct phytbl_info *tb;
- 	u32 val;
- 
--	phybw40 = CHSPEC_IS40(pi->radio_chanspec);
--
- 	for (idx = 0; idx < dot11lcnphytbl_info_sz_rev0; idx++)
- 		wlc_lcnphy_write_table(pi, &dot11lcnphytbl_info_rev0[idx]);
- 
-@@ -4831,9 +4824,7 @@ static void wlc_lcnphy_baseband_init(struct brcms_phy *pi)
- 
- void wlc_phy_init_lcnphy(struct brcms_phy *pi)
- {
--	u8 phybw40;
- 	struct brcms_phy_lcnphy *pi_lcn = pi->u.pi_lcnphy;
--	phybw40 = CHSPEC_IS40(pi->radio_chanspec);
- 
- 	pi_lcn->lcnphy_cal_counter = 0;
- 	pi_lcn->lcnphy_cal_temper = pi_lcn->lcnphy_rawtempsense;
--- 
-2.7.0
-
-
+On 12/19/18 8:16 AM, Eugeniy Paltsev wrote:=0A=
+> In setup_arch_memory we reserve the memory area wherein the kernel=0A=
+> is located. Current implementation may reserve more memory than=0A=
+> it actually required in case of CONFIG_LINUX_LINK_BASE is not=0A=
+> equal to CONFIG_LINUX_RAM_BASE. This happens because we calculate=0A=
+> start of the reserved region relatively to the CONFIG_LINUX_RAM_BASE=0A=
+> and end of the region relatively to the CONFIG_LINUX_RAM_BASE.=0A=
+>=0A=
+> For example in case of HSDK board we wasted 256MiB of physical memory:=0A=
+> ------------------->8------------------------------=0A=
+> Memory: 770416K/1048576K available (5496K kernel code,=0A=
+>     240K rwdata, 1064K rodata, 2200K init, 275K bss,=0A=
+>     278160K reserved, 0K cma-reserved)=0A=
+> ------------------->8------------------------------=0A=
+>=0A=
+> Fix that.=0A=
+>=0A=
+> Cc: stable@vger.kernel.org=0A=
+=0A=
+For backports, please also check how far back this needs to be applied (els=
+e we=0A=
+get bot emails specifying they don't apply to ver x, y z)=0A=
+=0A=
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
+> ---=0A=
+>  arch/arc/mm/init.c | 3 ++-=0A=
+>  1 file changed, 2 insertions(+), 1 deletion(-)=0A=
+>=0A=
+> diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c=0A=
+> index f8fe5668b30f..a56e6a8ed259 100644=0A=
+> --- a/arch/arc/mm/init.c=0A=
+> +++ b/arch/arc/mm/init.c=0A=
+> @@ -137,7 +137,8 @@ void __init setup_arch_memory(void)=0A=
+>  	 */=0A=
+>  =0A=
+>  	memblock_add_node(low_mem_start, low_mem_sz, 0);=0A=
+> -	memblock_reserve(low_mem_start, __pa(_end) - low_mem_start);=0A=
+> +	memblock_reserve(CONFIG_LINUX_LINK_BASE,=0A=
+> +			 __pa(_end) - CONFIG_LINUX_LINK_BASE);=0A=
+>  =0A=
+>  #ifdef CONFIG_BLK_DEV_INITRD=0A=
+>  	if (initrd_start)=0A=
+=0A=
+So I looked into the history for restricting stable, and it seems this was=
+=0A=
+introduced with our earlier work for HSDK.=0A=
+=0A=
+Before commit 9ed68785f7f this code was ok, since low_mem_start =3D=0A=
+CONFIG_LINUX_LINK_BASE.=0A=
+With the patch we changed low_mem_start to CONFIG_LINUX_RAM_BASE and missed=
+ this.=0A=
+=0A=
+-Vineet=0A=
