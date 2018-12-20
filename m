@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD3BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8110C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1866520656
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9887E20449
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298327;
-	bh=P6XxFcKtyUcYaxiBzU4OaGBPNAjzM0dcifkcIV2QUX8=;
+	s=default; t=1545298338;
+	bh=Epr97QKXoz3Vska7DZyhU2YDxUDnYgherMq6ZAXKrYU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bl9OgS51YnAdzsE6MD/d7aCWbuxG0UTJNYtFQhxNeTWDcLdzKslvYBGJbiiXmzbJJ
-	 3zoZkl3BGA6XkLnzpOiS3l9R2TOJ6Tgozzn3MyvkAz+Jcj5b54A3tlOi99lk2YeVzM
-	 kqTyjRpOU+PqfhOUhkpuVUWRO25n8AUkt5WHlzQM=
+	b=l/U72XuMVvDpcBmfihhsPG5+/zloqTkz0ZJ7YfmsKjk1Cf72tvk8YFKgDc6zYx3I9
+	 NNvv4SeIYcp1e76iKG9tDjqJPrdIX/syWOCODtjNqbmc2h94tr5oTrxauZM9rGLpt9
+	 doQ0QmXKgMslKBNx+G7YzVyfroZelprneEQFBDtU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733212AbeLTJcG (ORCPT
+        id S1733221AbeLTJcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:32:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48768 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:32:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733149AbeLTJbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:31:34 -0500
+        id S1733113AbeLTJbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:31:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 366D820989;
-        Thu, 20 Dec 2018 09:31:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 624B720989;
+        Thu, 20 Dec 2018 09:31:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298293;
-        bh=P6XxFcKtyUcYaxiBzU4OaGBPNAjzM0dcifkcIV2QUX8=;
+        s=default; t=1545298282;
+        bh=Epr97QKXoz3Vska7DZyhU2YDxUDnYgherMq6ZAXKrYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UsZg8KSmAVj5QmgahiyjB5iPp5HN1XkrW5/5W8SWUcROzG2kdmvMxgjZpbUQWU1lb
-         b16SbaC9G5AiKljjCuDQXm+Jg+YyAL8aoG1tARvmd6QCREzEEfwGtgLaoGZ/aX73iS
-         HwNKRrC2F3lNP/g0DSi3z7YJsMuXLiXh+Q4GGnYA=
+        b=zoUbkjSDAYDO/8xe45h2SNItjAyok5x+GR/ERG9CmPEbgfxD0QmEcSUQemff99sIG
+         umuqHDDUTIj88cxqC1jzSAlsuhstgBk/tztyFI9kwmuJaUtYaf2+ibXkPRcjLkxwB2
+         4AC6LUKUqjhZO+xtcdj+ilKNxZubyg/BNvAUYbrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 64/67] i2c: uniphier-f: fix violation of tLOW requirement for Fast-mode
-Date:   Thu, 20 Dec 2018 10:19:16 +0100
-Message-Id: <20181220085906.072456413@linuxfoundation.org>
+Subject: [PATCH 4.19 29/67] sbus: char: add of_node_put()
+Date:   Thu, 20 Dec 2018 10:18:41 +0100
+Message-Id: <20181220085904.699977321@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,54 +65,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ece27a337d42a3197935711997f2880f0957ed7e ]
+[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
 
-Currently, the clock duty is set as tLOW/tHIGH = 1/1. For Fast-mode,
-tLOW is set to 1.25 us while the I2C spec requires tLOW >= 1.3 us.
+use of_node_put() to release the refcount.
 
-tLOW/tHIGH = 5/4 would meet both Standard-mode and Fast-mode:
-  Standard-mode: tLOW = 5.56 us, tHIGH = 4.44 us
-  Fast-mode:     tLOW = 1.39 us, tHIGH = 1.11 us
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/sbus/char/display7seg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index a403e8579b65..bc26ec822e26 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -470,9 +470,26 @@ static void uniphier_fi2c_hw_init(struct uniphier_fi2c_priv *priv)
+diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
+index 5c8ed7350a04..a36e4cf1841d 100644
+--- a/drivers/sbus/char/display7seg.c
++++ b/drivers/sbus/char/display7seg.c
+@@ -220,6 +220,7 @@ static int d7s_probe(struct platform_device *op)
+ 	dev_set_drvdata(&op->dev, p);
+ 	d7s_device = p;
+ 	err = 0;
++	of_node_put(opts);
  
- 	uniphier_fi2c_reset(priv);
- 
-+	/*
-+	 *  Standard-mode: tLOW + tHIGH = 10 us
-+	 *  Fast-mode:     tLOW + tHIGH = 2.5 us
-+	 */
- 	writel(cyc, priv->membase + UNIPHIER_FI2C_CYC);
--	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tLOW = 4.7 us, tHIGH = 4.0 us, tBUF = 4.7 us
-+	 *  Fast-mode:     tLOW = 1.3 us, tHIGH = 0.6 us, tBUF = 1.3 us
-+	 * "tLow/tHIGH = 5/4" meets both.
-+	 */
-+	writel(cyc * 5 / 9, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tHD;STA = 4.0 us, tSU;STA = 4.7 us, tSU;STO = 4.0 us
-+	 *  Fast-mode:     tHD;STA = 0.6 us, tSU;STA = 0.6 us, tSU;STO = 0.6 us
-+	 */
- 	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_SSUT);
-+	/*
-+	 *  Standard-mode: tSU;DAT = 250 ns
-+	 *  Fast-mode:     tSU;DAT = 100 ns
-+	 */
- 	writel(cyc / 16, priv->membase + UNIPHIER_FI2C_DSUT);
- 
- 	uniphier_fi2c_prepare_operation(priv);
+ out:
+ 	return err;
 -- 
 2.19.1
 
