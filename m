@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E094C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D201BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF8E2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A3D82084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 12:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OqNkOUfz"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="guAKJy0O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732782AbeLTMzH (ORCPT
+        id S1732847AbeLTMzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 07:55:07 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52207 "EHLO
+        Thu, 20 Dec 2018 07:55:19 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35581 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732705AbeLTMzB (ORCPT
+        with ESMTP id S1732654AbeLTMyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 07:55:01 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so1928074wmj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:54:59 -0800 (PST)
+        Thu, 20 Dec 2018 07:54:55 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c126so2062574wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 04:54:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jEijnCjicnGILwhFrMB461TXW1hBMByoFGuErMag6m8=;
-        b=OqNkOUfzqgjoQyhejdqh03U9bW5LPxP6cJgHr8DrmmDR6co5LEA1lPNy06CWMa5diC
-         8HFpmRY/RdxzXB41ICCzKewZhWTyPZrlnYwzNq3wj0342ilCj8mNWFcfeCt97FRX7ZaB
-         rLKfqk5A+199/9SAS+ba0Eomgryl7+N+vUa7w=
+        bh=XK1+ImY4LqT3mqPXOgRcotLaegAmI6oUTAhBqe9t1Sw=;
+        b=guAKJy0OL6nXtpHu5GU/d99DuxpR0mmuIZemRdWaOszAnuyybtR/sssbywfDKRrNrf
+         DqL8yOLBev+gKWvFdn94peWiE144jfkW0jdSegShXzl3vVX8Veitr4Aov8ON1Mna/ZKG
+         ltr8NR+r0nrJ12xaj2GAHmF2tKLYzb0BjWWpk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jEijnCjicnGILwhFrMB461TXW1hBMByoFGuErMag6m8=;
-        b=OMYhX9/wJW64UbMWWW1d3FUy+pfa/rAIrIvVllOFAkYYrblD9phoulxgBQa2JzMNsZ
-         V3+6LP2JBVtfzwqUiqPBN/0MnUI4iGDLKMg1xssNBfHR/WT4bzVuHZR0uLJi2MBws+M/
-         Mx3s5p0XCXV8I8JyjGf7O0hhg7ok6CneMHFLnvEel3DtMDsJ5pGjpMrDrK7SgC9xdBCb
-         yhefS1s0E68VSDfYujpwjhZp2SYoYDbbAyPW8SSp5a973uOz9iYkhunVlxndqB9M5UoX
-         vGt1yC0S+TdLVbxUj/gDXvtVyuf0N85kSmJIYo5e9Di2dChOoSbisUgxrrck1TOHXfCP
-         a+mA==
-X-Gm-Message-State: AA+aEWahtqillDc0HICKpUETwQwR5gTPcGFtuymTmN+JUksWuRpcJ07E
-        DXsC4prSU/1xtrojgPnBoFDJXw==
-X-Google-Smtp-Source: AFSGD/UN81KQhKo/d71SW3eqyGyxaLk4UeGQ4qmnRgXdU/jlhJ76DFWvMXnCrFCWNWD5YY4JE/ppJQ==
-X-Received: by 2002:a1c:f605:: with SMTP id w5mr11781988wmc.116.1545310499216;
-        Thu, 20 Dec 2018 04:54:59 -0800 (PST)
+        bh=XK1+ImY4LqT3mqPXOgRcotLaegAmI6oUTAhBqe9t1Sw=;
+        b=Tx82UCUT8mDr6JkV8O+q7gXtiGS9Qh7z55RneAG/myslWTsVrK1C5ZG22KqdsHwSpt
+         oR0XDA210YoRgsrKGvPXiqa4HAZkhiAYv8VAtM2AJX5qwxScnp7zLbuq3002gwqjgUoA
+         aSKrpQR/GSoBH3Iw2ISJpyc3/EMNgWFMjZ9TZPQAX+XgZV5dD8s10jpkPofdPp/PsCVD
+         Czb7tgnJ2MkjUR8ClYXxzL8TyNyU8+FDKp3ReuKNSQrQOFNL5CeqNNBdcCMh3OmJD0PZ
+         oQWyNyDvFI+v39l3vJW98U2dRr88YuhJxrlTJ8trFktpYjRQH1Xa8xlVQNYSIDS+uiJ7
+         ZwuQ==
+X-Gm-Message-State: AA+aEWZnLelg1RQdG3G7Z8y941TArqBzbdpQ+UPs6pR7ropQ3n6AE6NQ
+        +8YYrpxzcbAJYQd+2Z/6JT2s/w==
+X-Google-Smtp-Source: AFSGD/VaVhsdOJ+GQeoQ3YRRzS8H1oCRVWa/ZckdcR5C+R9heqHrTZBUjY6lcOQvr2R2zurM9FcrHw==
+X-Received: by 2002:a1c:a895:: with SMTP id r143mr10839869wme.95.1545310493002;
+        Thu, 20 Dec 2018 04:54:53 -0800 (PST)
 Received: from localhost.localdomain (ip-163-240.sn-213-198.clouditalia.com. [213.198.163.240])
-        by smtp.gmail.com with ESMTPSA id o4sm8732756wrq.66.2018.12.20.04.54.57
+        by smtp.gmail.com with ESMTPSA id o4sm8732756wrq.66.2018.12.20.04.54.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 04:54:58 -0800 (PST)
+        Thu, 20 Dec 2018 04:54:52 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -65,9 +66,9 @@ To:     Yong Deng <yong.deng@magewell.com>,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [DO NOT MERGE] [PATCH v5 6/6] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
-Date:   Thu, 20 Dec 2018 18:24:38 +0530
-Message-Id: <20181220125438.11700-7-jagan@amarulasolutions.com>
+Subject: [PATCH v5 3/6] media: sun6i: Add A64 CSI block support
+Date:   Thu, 20 Dec 2018 18:24:35 +0530
+Message-Id: <20181220125438.11700-4-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181220125438.11700-1-jagan@amarulasolutions.com>
 References: <20181220125438.11700-1-jagan@amarulasolutions.com>
@@ -78,120 +79,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bananapi M64 comes with an optional sensor based on the ov5640,
-add support for it with below pin information.
+CSI block in Allwinner A64 has similar features as like in H3,
+but default mod clock rate in BSP along with latest mainline testing
+require to operate it at 300MHz.
 
-- PE13, PE12 via i2c-gpio bitbanging
-- CLK_CSI_MCLK as external clock
-- PE1 as external clock pin muxing
-- DLDO3 as AVDD supply
-- ALDO1 as DOVDD supply
-- ELDO3 as DVDD supply
-- PE16 gpio for reset pin
-- PE17 gpio for powerdown pin
+So, add A64 CSI compatibe along with mod_rate quirk.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 83e30e0afe5b..c185ceec8c81 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,41 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	i2c-csi {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&pio 4 13 GPIO_ACTIVE_HIGH>; /* CSI0-SDA: PE13 */
-+		scl-gpios = <&pio 4 12 GPIO_ACTIVE_HIGH>; /* CSI0-SCK: PE12 */
-+		i2c-gpio,delay-us = <5>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ov5640: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&csi_mclk_pin>;
-+			clocks = <&ccu CLK_CSI_MCLK>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_dldo3>;
-+			DOVDD-supply = <&reg_aldo1>;
-+			DVDD-supply = <&reg_eldo3>;
-+			reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* CSI0-RST: PE16 */
-+			powerdown-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* CSI0-PWDN: PE17 */
-+
-+			port {
-+				ov5640_ep: endpoint {
-+					remote-endpoint = <&csi_ep>;
-+					bus-width = <8>;
-+					hsync-active = <1>; /* Active high */
-+					vsync-active = <0>; /* Active low */
-+					data-active = <1>;  /* Active high */
-+					pclk-sample = <1>;  /* Rising */
-+				};
-+			};
-+		};
-+	};
-+
- 	hdmi-connector {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -106,6 +141,24 @@
- 	status = "okay";
+diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+index fe002beae09c..48919aabefdb 100644
+--- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
++++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+@@ -913,10 +913,15 @@ static int sun6i_csi_remove(struct platform_device *pdev)
+ static const struct sun6i_csi_variant sun6i_a31_csi = {
  };
  
-+&csi {
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi_ep: endpoint {
-+			remote-endpoint = <&ov5640_ep>;
-+			bus-width = <8>;
-+			hsync-active = <1>; /* Active high */
-+			vsync-active = <0>; /* Active low */
-+			data-active = <1>;  /* Active high */
-+			pclk-sample = <1>;  /* Rising */
-+		};
-+	};
++static const struct sun6i_csi_variant sun50i_a64_csi = {
++	.mod_rate	= 300000000,
 +};
 +
- &dai {
- 	status = "okay";
+ static const struct of_device_id sun6i_csi_of_match[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-csi", .data = &sun6i_a31_csi, },
+ 	{ .compatible = "allwinner,sun8i-h3-csi", .data = &sun6i_a31_csi, },
+ 	{ .compatible = "allwinner,sun8i-v3s-csi", .data = &sun6i_a31_csi, },
++	{ .compatible = "allwinner,sun50i-a64-csi", .data = &sun50i_a64_csi, },
+ 	{},
  };
-@@ -296,6 +349,12 @@
- 	regulator-name = "vcc-wifi";
- };
- 
-+&reg_dldo3 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "avdd-csi";
-+};
-+
- &reg_dldo4 {
- 	regulator-min-microvolt = <1800000>;
- 	regulator-max-microvolt = <3300000>;
-@@ -313,6 +372,12 @@
- 	regulator-name = "cpvdd";
- };
- 
-+&reg_eldo3 {
-+	regulator-min-microvolt = <1500000>;
-+	regulator-max-microvolt = <1500000>;
-+	regulator-name = "dvdd-csi";
-+};
-+
- &reg_fldo1 {
- 	regulator-min-microvolt = <1200000>;
- 	regulator-max-microvolt = <1200000>;
+ MODULE_DEVICE_TABLE(of, sun6i_csi_of_match);
 -- 
 2.18.0.321.gffc6fa0e3
 
