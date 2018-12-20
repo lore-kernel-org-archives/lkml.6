@@ -2,508 +2,561 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE423C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D32C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4DF21903
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C893218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:22:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="XFRpu48z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rOtg2nTy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389422AbeLTTWG (ORCPT
+        id S2389441AbeLTTWK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:22:06 -0500
-Received: from a9-34.smtp-out.amazonses.com ([54.240.9.34]:49230 "EHLO
-        a9-34.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389372AbeLTTWD (ORCPT
+        Thu, 20 Dec 2018 14:22:10 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52340 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389404AbeLTTWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:22:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1545333721;
-        h=Message-Id:Date:From:To:Cc:Cc:Cc:CC:Cc:Cc:Cc:Cc:Cc:Cc:Cc:Subject:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=/ZPhvHYHxnhQXiDFBeTlfZ9rpP4ThfXAI7UKJ2h1uV4=;
-        b=XFRpu48zIQe/ov7J8L8ah9XuPoxvby9CaIwWUnunOEf3Hz20fCT1tgxRWbjhwVOn
-        7SzDaFQLjcG+7EW7Zu1gfetTALDAOjUJR4TxHhhhg5wcg3crLpfCgw9HxpwTlw/IAbV
-        XVFuD6zVkyWlL1HbGaIa2R1UgQVhyGAQXWLT0clM=
-Message-ID: <01000167cd1147f1-b4c1de14-b084-405f-a4d4-26e0506d342e-000000@email.amazonses.com>
-User-Agent: quilt/0.65
-Date:   Thu, 20 Dec 2018 19:22:01 +0000
-From:   Christoph Lameter <cl@linux.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org
-Cc:     Pekka Enberg <penberg@cs.helsinki.fi>
-CC:     akpm@linux-foundation.org
-Cc:     Mel Gorman <mel@skynet.ie>
-Cc:     andi@firstfloor.org
-Cc:     Rik van Riel <riel@redhat.com>
-Cc:     Dave Chinner <dchinner@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>
-Cc:     Michal Hocko <mhocko@suse.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [RFC 5/7] slub: Slab defrag core
-References: <20181220192145.023162076@linux.com>
+        Thu, 20 Dec 2018 14:22:08 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so3194786wml.2;
+        Thu, 20 Dec 2018 11:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=u1VX2aoR+AaeNYLb+ZRcIp7+empLSHZCMg4+h3FMaKk=;
+        b=rOtg2nTyox2IobvL1gn0HsDIUaiVN7RNhF6twUeNUDuevwZRUokPhAGpamXbblsbK7
+         8ki+CYkcGMfqD7QXJc7OxZ3RuiWsjhFN7y3qxKD7Oh3w/YH9mKthZMsEKWmw88z0Aezs
+         ZkE4BDzZtDn91CLnWxx+vih6Gi55rcby+Y6+EOOzjskrev/uLlqXgL3Ds0DE2fG8zova
+         QlGeYpQpRakOl0g88O05bxb6T67gZtzZwDRjCjm7njV+//I+X/ssdxistmWcTlIcTD1b
+         Q/MKK/8fHQ9qjyyfkSgX75GG1xK0v2XmX6Qb5pVhKDplZqLaC/5WjtR7dodQyIh0nvFx
+         M+4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u1VX2aoR+AaeNYLb+ZRcIp7+empLSHZCMg4+h3FMaKk=;
+        b=iowBhlaQVjZR6MjtDo7J+mACurgA8hgSc+aHkxJ2vZO0JNZJXo4pVqSW+bskqMkbQG
+         nL0gcwdmiPq2ITzLLF7gIm4HG6eEzRDTv4qH9oHevXOub208UvCnaaa3H8gW/Zjafh4U
+         XikJENVkHVXYYID5tOTavA1OlqSFZa/GxirVrbv9vGS8LxH6hfmJyR9A7ymZotB02Y0Y
+         J6kp6Pus5/4nGsKL4nJ5z3iG5h4HJ8W3yD4Grehh1FgCzxZm+MtNpK2JWaxUITM0Zpno
+         bKEU7vxV8c4Wuocfbncqf33VekYsqvQw/715lk9P61vNAAWRFJu0mUTPrhOJ1w1uISvk
+         iAyQ==
+X-Gm-Message-State: AA+aEWbzycoVIxtmQi3IGJOZKOSOTzqoXC2Kks6M48Wb3J5cQvm2k6A4
+        FO154KmM4/GUbbGqoQuB/mI=
+X-Google-Smtp-Source: AFSGD/Ww5XEdKWNpPEOFF+M+t+ynpNHV2QlJzV/ge9rFpgsdIYfrxJK8nj57r8Lv5qCmxCK40/a8aA==
+X-Received: by 2002:a7b:c399:: with SMTP id s25mr13028102wmj.90.1545333724330;
+        Thu, 20 Dec 2018 11:22:04 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:b006:9301:bebd:c1dc? (p200300EA8BCFE300B0069301BEBDC1DC.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:b006:9301:bebd:c1dc])
+        by smtp.googlemail.com with ESMTPSA id d4sm11982899wrp.89.2018.12.20.11.22.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 11:22:03 -0800 (PST)
+Subject: Re: A weird problem of Realtek r8168 after resume from S3
+To:     Chris Chiu <chiu@endlessm.com>
+Cc:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
+        netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+References: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
+ <CAB4CAwc4ubdXn7kzPeu2L--ciATgZWYkO350fvFF43-jj180xw@mail.gmail.com>
+ <59069da6-befc-2ebe-f2e2-e95a6a714013@gmail.com>
+ <CAB4CAweArBEDWBvJwcnME6TBRUHYmOboKDf_4dDMvs81yZU3hw@mail.gmail.com>
+ <d217e5b0-6008-c1f2-38fd-a41a7757e047@gmail.com>
+ <CAB4CAwcr+V+7b2uuaFtkOHNKP3Xep5dNkZQBrVQiEq_eg5PpAw@mail.gmail.com>
+ <7c245fa2-75bb-8ff9-5ffa-83262e3470fe@gmail.com>
+ <CAB4CAwepsfaDm6rdxy=RZGuTxjtfsK7yoD5Jkker1AfS7vrZxg@mail.gmail.com>
+ <38e4563f-99ae-d5ee-782d-1c309599cfbf@gmail.com>
+ <CAB4CAwcBqDDUkwOZLHd5_MbWFKj3QHQa9Yq24LE+V+BeGS486g@mail.gmail.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <269c9203-7b2e-a8fe-1d1e-fbe88f903ee8@gmail.com>
+Date:   Thu, 20 Dec 2018 20:21:56 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=mobility_core
-X-SES-Outgoing: 2018.12.20-54.240.9.34
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+In-Reply-To: <CAB4CAwcBqDDUkwOZLHd5_MbWFKj3QHQa9Yq24LE+V+BeGS486g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Slab defragmentation may occur:
+On 20.12.2018 10:43, Chris Chiu wrote:
+> On Thu, Dec 20, 2018 at 3:41 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>
+>> On 19.12.2018 16:32, Chris Chiu wrote:
+>>> On Wed, Dec 19, 2018 at 4:28 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>
+>>>> On 18.12.2018 14:25, Chris Chiu wrote:
+>>>>> On Tue, Dec 18, 2018 at 3:08 AM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>>>
+>>>>>> On 17.12.2018 14:25, Chris Chiu wrote:
+>>>>>>> On Fri, Dec 14, 2018 at 3:37 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>>>>>
+>>>>>>>> On 14.12.2018 04:33, Chris Chiu wrote:
+>>>>>>>>> On Thu, Dec 13, 2018 at 10:20 AM Chris Chiu <chiu@endlessm.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>> Hi,
+>>>>>>>>>>     We got an acer laptop which has a problem with ethernet networking after
+>>>>>>>>>> resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
+>>>>>>>>>> follows.
+>>>>>>>>>> 02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+>>>>>>>>>> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
+>>>>>>>>>>
+>>>>>>>> Helpful would be a "dmesg | grep r8169", especially chip name + XID.
+>>>>>>>>
+>>>>>>> [   22.362774] r8169 0000:02:00.1 (unnamed net_device)
+>>>>>>> (uninitialized): mac_version = 0x2b
+>>>>>>> [   22.365580] libphy: r8169: probed
+>>>>>>> [   22.365958] r8169 0000:02:00.1 eth0: RTL8411, 00:e0:b8:1f:cb:83,
+>>>>>>> XID 5c800800, IRQ 38
+>>>>>>> [   22.365961] r8169 0000:02:00.1 eth0: jumbo features [frames: 9200
+>>>>>>> bytes, tx checksumming: ko]
+>>>>>>>
+>>>>>> Thanks for the info.
+>>>>>>
+>>>>>>>>>>     The problem is the ethernet is not accessible after resume. Pinging via
+>>>>>>>>>> ethernet always shows the response `Destination Host Unreachable`. However,
+>>>>>>>>>> the interesting part is, when I run tcpdump to monitor the problematic ethernet
+>>>>>>>>>> interface, the networking is back to alive. But it's dead again after
+>>>>>>>>>> I stop tcpdump.
+>>>>>>>>>> One more thing, if I ping the problematic machine from others, it achieves the
+>>>>>>>>>> same effect as above tcpdump. Maybe it's about the register setting for RX path?
+>>>>>>>>>>
+>>>>>>>> You could compare the register dumps (ethtool -d) before and after S3 sleep
+>>>>>>>> to find out whether there's a difference.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Actually, I just found I lead the wrong direction. The S3 suspend does
+>>>>>>> help to reproduce,
+>>>>>>> but it's not necessary. All I need to do is ping around 5 mins and the
+>>>>>>> network connection
+>>>>>>> fails.  And I also find one thing interesting, disabling the  MSI-X
+>>>>>>> interrupt like commit
+>>>>>>> [d49c88d7677ba737e9d2759a87db0402d5ab2607] can fix this problem.
+>>>>>>> Although I don't
+>>>>>>> understand the root cause. Anything I can do to help?
+>>>>>>>
+>>>>>> This is indeed very, very weird. You say switching from MSI-X to MSI fixes
+>>>>>> the issue, but also pinging the machine from outside brings back the network.
+>>>>>> Both actions affect totally different corners.
+>>>>>>
+>>>>>> The commit and related issue you mention was a workaround in the driver,
+>>>>>> the root cause was a MSI-X-related  issue with certain Intel chipsets deep
+>>>>>> in the PCI core. After this was fixed we removed the workaround again.
+>>>>>> This shouldn't be related to your issue.
+>>>>>>
+>>>>>> Hard to say for now is whether the issue is:
+>>>>>> - a driver issue
+>>>>>> - a hardware issue in the RTL8411
+>>>>>> - an issue with the chipset on your mainboard
+>>>>>>
+>>>>>> According to your description it doesn't take a special scenario to trigger
+>>>>>> the issue, so most likely also other users of Acer notebooks with RTL8411
+>>>>>> should be affected (after briefly checking this should be at least Aspire
+>>>>>> F15, V15, V7). Therefore I wonder why there aren't more reports.
+>>>>>>
+>>>>>> This commit added MSI-X support: 6c6aa15fdea5 ("r8169: improve interrupt handling")
+>>>>>> So you could test this revision and the one before.
+>>>>>>
+>>>>>> Eventually, if the issue really should be caused by a side effect of using
+>>>>>> MSI-X, then the question is whether we need to disable MSI-X for RTL8411
+>>>>>> in general or just for RTL8411 and a certain subsystem id.
+>>>>>>
+>>>>>
+>>>>> I tried the kernel with the head on 6c6aa15fdea5 ("r8169: improve
+>>>>> interrupt handling"),
+>>>>> the problem still there. Then I revert to the previous revision, the
+>>>>> problem goes away.
+>>>>> So I think it's pretty much the side effect of MSI-X. However, as you
+>>>>> mentioned that
+>>>>> you didn't hit this problem, I'll ask the vendor to verify if this
+>>>>> problem also happens on
+>>>>> other machines with the same chip. Then we can determine to disable for specific
+>>>>> mac version or just a certain subsystem id.
+>>>>>
+>>>>>>>>>>     I tried the latest 4.20 rc version but the problem still there. I
+>>>>>>>>>> also tried some
+>>>>>>>>>> hw_reset or init thing in the resume path but no effect. Any
+>>>>>>>>>> suggestion for this?
+>>>>>>>>>> Thanks
+>>>>>>>>>>
+>>>>>>>> Did previous kernel versions work? If it's a regression, a bisect would be
+>>>>>>>> appreciated, because with the chip versions I've got I can't reproduce the issue.
+>>>>>>>>
+>>>>>>>>>> Chris
+>>>>>>>>>
+>>>>>>>>> Gentle ping. Any additional information required?
+>>>>>>>>>
+>>>>>>>>> Chris
+>>>>>>>>>
+>>>>>>>> Heiner
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>
+>>>> As an additional note:
+>>>> I found that the rtsx_pci driver doesn't support MSI-X currently.
+>>>> The following patch adds MSI-X support (it's compile-tested only
+>>>> because I don't have a system with RTL8411).
+>>>> Would be interesting to see whether it makes a difference if both
+>>>> components on this combo chip use MSI-X.
+>>>>
+>>>> ---
+>>>>  drivers/misc/cardreader/rtsx_pcr.c | 51 ++++++++++--------------------
+>>>>  include/linux/rtsx_pci.h           |  1 -
+>>>>  2 files changed, 16 insertions(+), 36 deletions(-)
+>>>>
+>>>> diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+>>>> index da445223f..d1349c248 100644
+>>>> --- a/drivers/misc/cardreader/rtsx_pcr.c
+>>>> +++ b/drivers/misc/cardreader/rtsx_pcr.c
+>>>> @@ -35,10 +35,6 @@
+>>>>
+>>>>  #include "rtsx_pcr.h"
+>>>>
+>>>> -static bool msi_en = true;
+>>>> -module_param(msi_en, bool, S_IRUGO | S_IWUSR);
+>>>> -MODULE_PARM_DESC(msi_en, "Enable MSI");
+>>>> -
+>>>>  static DEFINE_IDR(rtsx_pci_idr);
+>>>>  static DEFINE_SPINLOCK(rtsx_pci_lock);
+>>>>
+>>>> @@ -1049,22 +1045,21 @@ static irqreturn_t rtsx_pci_isr(int irq, void *dev_id)
+>>>>
+>>>>  static int rtsx_pci_acquire_irq(struct rtsx_pcr *pcr)
+>>>>  {
+>>>> -       pcr_dbg(pcr, "%s: pcr->msi_en = %d, pci->irq = %d\n",
+>>>> -                       __func__, pcr->msi_en, pcr->pci->irq);
+>>>> +       int ret;
+>>>>
+>>>> -       if (request_irq(pcr->pci->irq, rtsx_pci_isr,
+>>>> -                       pcr->msi_en ? 0 : IRQF_SHARED,
+>>>> -                       DRV_NAME_RTSX_PCI, pcr)) {
+>>>> -               dev_err(&(pcr->pci->dev),
+>>>> -                       "rtsx_sdmmc: unable to grab IRQ %d, disabling device\n",
+>>>> -                       pcr->pci->irq);
+>>>> -               return -1;
+>>>> -       }
+>>>> +       ret = pci_alloc_irq_vectors(pcr->pci, 1, 1, PCI_IRQ_ALL_TYPES);
+>>>> +       if (ret < 0)
+>>>> +               goto err;
+>>>>
+>>>> -       pcr->irq = pcr->pci->irq;
+>>>> -       pci_intx(pcr->pci, !pcr->msi_en);
+>>>> +       ret = pci_request_irq(pcr->pci, 0, rtsx_pci_isr, NULL, pcr,
+>>>> +                             DRV_NAME_RTSX_PCI);
+>>>> +       if (ret)
+>>>> +               goto err;
+>>>>
+>>>>         return 0;
+>>>> +err:
+>>>> +       pci_err(pcr->pci, "rtsx_sdmmc: unable to grab interrupt\n");
+>>>> +       return ret;
+>>>>  }
+>>>>
+>>>>  static void rtsx_enable_aspm(struct rtsx_pcr *pcr)
+>>>> @@ -1496,19 +1491,11 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+>>>>         INIT_DELAYED_WORK(&pcr->carddet_work, rtsx_pci_card_detect);
+>>>>         INIT_DELAYED_WORK(&pcr->idle_work, rtsx_pci_idle_work);
+>>>>
+>>>> -       pcr->msi_en = msi_en;
+>>>> -       if (pcr->msi_en) {
+>>>> -               ret = pci_enable_msi(pcidev);
+>>>> -               if (ret)
+>>>> -                       pcr->msi_en = false;
+>>>> -       }
+>>>> -
+>>>>         ret = rtsx_pci_acquire_irq(pcr);
+>>>>         if (ret < 0)
+>>>> -               goto disable_msi;
+>>>> +               goto free_dma;
+>>>>
+>>>>         pci_set_master(pcidev);
+>>>> -       synchronize_irq(pcr->irq);
+>>>>
+>>>>         ret = rtsx_pci_init_chip(pcr);
+>>>>         if (ret < 0)
+>>>> @@ -1528,10 +1515,8 @@ static int rtsx_pci_probe(struct pci_dev *pcidev,
+>>>>         return 0;
+>>>>
+>>>>  disable_irq:
+>>>> -       free_irq(pcr->irq, (void *)pcr);
+>>>> -disable_msi:
+>>>> -       if (pcr->msi_en)
+>>>> -               pci_disable_msi(pcr->pci);
+>>>> +       pci_free_irq(pcr->pci, 0, pcr);
+>>>> +free_dma:
+>>>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+>>>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+>>>>  unmap:
+>>>> @@ -1568,9 +1553,7 @@ static void rtsx_pci_remove(struct pci_dev *pcidev)
+>>>>
+>>>>         dma_free_coherent(&(pcr->pci->dev), RTSX_RESV_BUF_LEN,
+>>>>                         pcr->rtsx_resv_buf, pcr->rtsx_resv_buf_addr);
+>>>> -       free_irq(pcr->irq, (void *)pcr);
+>>>> -       if (pcr->msi_en)
+>>>> -               pci_disable_msi(pcr->pci);
+>>>> +       pci_free_irq(pcr->pci, 0, pcr);
+>>>>         iounmap(pcr->remap_addr);
+>>>>
+>>>>         pci_release_regions(pcidev);
+>>>> @@ -1664,9 +1647,7 @@ static void rtsx_pci_shutdown(struct pci_dev *pcidev)
+>>>>         rtsx_pci_power_off(pcr, HOST_ENTER_S1);
+>>>>
+>>>>         pci_disable_device(pcidev);
+>>>> -       free_irq(pcr->irq, (void *)pcr);
+>>>> -       if (pcr->msi_en)
+>>>> -               pci_disable_msi(pcr->pci);
+>>>> +       pci_free_irq(pcr->pci, 0, pcr);
+>>>>  }
+>>>>
+>>>>  #else /* CONFIG_PM */
+>>>> diff --git a/include/linux/rtsx_pci.h b/include/linux/rtsx_pci.h
+>>>> index e964bbd03..10abfe7f2 100644
+>>>> --- a/include/linux/rtsx_pci.h
+>>>> +++ b/include/linux/rtsx_pci.h
+>>>> @@ -1190,7 +1190,6 @@ struct rtsx_pcr {
+>>>>         /* pci resources */
+>>>>         unsigned long                   addr;
+>>>>         void __iomem                    *remap_addr;
+>>>> -       int                             irq;
+>>>>
+>>>>         /* host reserved buffer */
+>>>>         void                            *rtsx_resv_buf;
+>>>> --
+>>>> 2.20.0
+>>>>
+>>>
+>>> As mentioned in the last email, the rtsx_pci seems to make no
+>>> difference. I still tried the kernel with this patch applied, the
+>>> problem still persists. I also tried the vendor driver and it works
+>>> without any problem. I'd rather like to find out the root cause
+>>> instead of a workaround. Any better idea?
+>>>
+>> Thanks for your efforts! The vendor driver doesn't support MSI-X,
+>> therefore the issue doesn't occur. I'm running out of ideas, so
+>> I will write to a contact in Realtek who few times provided helpful
+>> information already.
+>>
+> 
+> Hi Heiner,
+>     After lots of repeating tests, I have to correct my previous finding
+> to prevent from leading the wrong way. Sometimes the network also
+> fails with unknown reason. Here's the summarize.
+> 1. The S3 suspend resume can reproduce it 100%. However, echo
+> different types (core, devices...) in /sys/power/pm_test is not able
+> to achieve the same thing.
+> 2. The network could randomly fail at any time. Maybe during boot,
+> sometimes fail after few minutes web surfing.
+> 3. After many times of verifications, it's not about MSI-X. I repeatedly
+> boot from my own build kernel (w/ MSI-X workaround, w/ pci_alloc_irq,
+> w/o pci_alloc_irq), even the revision before 6c6aa15fdea5 ("r8169:
+> improve interrupt handling")
+> still fails after S3, but I get the wrong impression because I access the
+> internet w/o problem for quite a long time.
+> 4. When it happens, executing tcpdump on this NIC can always get
+> network access back. But fails again after stop tcpdump.
+> 5. Vendor driver works w/o any problem. I'm still trying to find the difference.
+> 
+> Sorry that if I caused any confusion. I'll appreciate if there's any kind of
+> useful information. Thanks.
+> 
+>>> Chris
+>>>
+>> Heiner
+> .
+> 
 
-1. Unconditionally when kmem_cache_shrink is called on a slab cache by the
-   kernel calling kmem_cache_shrink.
+OK, here come two patches based on ideas from Realtek. Could you please test:
+1. patch 1
+2. patch 2
+3. patch 1 + 2
 
-2. Through the use of the slabinfo command.
 
-3. Per node defrag conditionally when kmem_cache_defrag(<node>) is called
-   (can be called from reclaim code with a later patch).
+patch 1:
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 99bc3de90..eda35c0ce 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -5049,7 +5049,7 @@ static void rtl_hw_start_8168g(struct rtl8169_private *tp)
+ 	RTL_W8(tp, MaxTxPacketSize, EarlySize);
+ 
+ 	rtl_eri_write(tp, 0xc0, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
+-	rtl_eri_write(tp, 0xb8, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
++	rtl_eri_write(tp, 0xb8, ERIAR_MASK_1111, 0, ERIAR_EXGMAC);
+ 
+ 	/* Adjust EEE LED frequency */
+ 	RTL_W8(tp, EEE_LED, RTL_R8(tp, EEE_LED) & ~0x07);
+-- 
+2.20.1
 
-   Defragmentation is only performed if the fragmentation of the slab
-   is lower than the specified percentage. Fragmentation ratios are measured
-   by calculating the percentage of objects in use compared to the total
-   number of objects that the slab page can accomodate.
 
-   The scanning of slab caches is optimized because the
-   defragmentable slabs come first on the list. Thus we can terminate scans
-   on the first slab encountered that does not support defragmentation.
-
-   kmem_cache_defrag() takes a node parameter. This can either be -1 if
-   defragmentation should be performed on all nodes, or a node number.
-
-A couple of functions must be setup via a call to kmem_cache_setup_defrag()
-in order for a slabcache to support defragmentation. These are
-
-kmem_defrag_isolate_func (void *isolate(struct kmem_cache *s, void **objects, int nr))
-
-	Must stabilize that the objects and ensure that they will not be freed until
-	the migration function is complete. SLUB guarantees that
-	the objects are still allocated. However, other threads may be blocked
-	in slab_free() attempting to free objects in the slab. These may succeed
-	as soon as isolate() returns to the slab allocator. The function must
-	be able to detect such situations and void the attempts to free such
-	objects (by for example voiding the corresponding entry in the objects
-	array).
-
-	No slab operations may be performed in isolate(). Interrupts
-	are disabled. What can be done is very limited. The slab lock
-	for the page that contains the object is taken. Any attempt to perform
-	a slab operation may lead to a deadlock.
-
-	kmem_defrag_isolate_func returns a private pointer that is passed to
-	kmem_defrag_kick_func(). Should we be unable to obtain all references
-	then that pointer may indicate to the kick() function that it should
-	not attempt any object removal or move but simply undo the measure
-	that were used to stabilize the object.
-
-kmem_defrag_migrate_func (void migrate(struct kmem_cache *, void **objects, int nr,
-			int node, void *get_result))
-
-	After SLUB has stabilzed the objects in a
-	slab it will then drop all locks and use migrate() to move objects out
-	of the slab. The existence of the object is guaranteed by virtue of
-	the earlier obtained references via kmem_defrag_get_func(). The
-	callback may perform any slab operation since no locks are held at
-	the time of call.
-
-	The callback should remove the object from the slab in some way. This
-	may be accomplished by reclaiming the object and then running
-	kmem_cache_free() or reallocating it and then running
-	kmem_cache_free(). Reallocation is advantageous because the partial
-	slabs were just sorted to have the partial slabs with the most objects
-	first. Reallocation is likely to result in filling up a slab in
-	addition to freeing up one slab. A filled up slab can also be removed
-	from the partial list. So there could be a double effect.
-
-	kmem_defrag_migrate_func() does not return a result. SLUB will check
-	the number of remaining objects in the slab. If all objects were
-	removed then the slab is freed and we have reduced the overall
-	fragmentation of the slab cache.
-
-Signed-off-by: Christoph Lameter <cl@linux.com>
-
----
- include/linux/slab.h |    3 
- mm/slub.c            |  265 ++++++++++++++++++++++++++++++++++++++++-----------
- 2 files changed, 215 insertions(+), 53 deletions(-)
-
-Index: linux/mm/slub.c
-===================================================================
---- linux.orig/mm/slub.c
-+++ linux/mm/slub.c
-@@ -351,6 +351,12 @@ static __always_inline void slab_lock(st
- 	bit_spin_lock(PG_locked, &page->flags);
+patch 2:
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index eda35c0ce..921e258a3 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -5109,7 +5109,137 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
+ 	/* disable aspm and clock request before access ephy */
+ 	rtl_hw_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
+-	rtl_hw_aspm_clkreq_enable(tp, true);
++
++	r8168_mac_ocp_write(tp, 0xFC28, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC2A, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC2C, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC2E, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC30, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC32, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC34, 0x0000);
++	r8168_mac_ocp_write(tp, 0xFC36, 0x0000);
++	msleep(3);
++	r8168_mac_ocp_write(tp, 0xFC26, 0x0000);
++
++	r8168_mac_ocp_write( tp, 0xF800, 0xE008 );
++	r8168_mac_ocp_write( tp, 0xF802, 0xE00A );
++	r8168_mac_ocp_write( tp, 0xF804, 0xE00C );
++	r8168_mac_ocp_write( tp, 0xF806, 0xE00E );
++	r8168_mac_ocp_write( tp, 0xF808, 0xE027 );
++	r8168_mac_ocp_write( tp, 0xF80A, 0xE04F );
++	r8168_mac_ocp_write( tp, 0xF80C, 0xE05E );
++	r8168_mac_ocp_write( tp, 0xF80E, 0xE065 );
++	r8168_mac_ocp_write( tp, 0xF810, 0xC602 );
++	r8168_mac_ocp_write( tp, 0xF812, 0xBE00 );
++	r8168_mac_ocp_write( tp, 0xF814, 0x0000 );
++	r8168_mac_ocp_write( tp, 0xF816, 0xC502 );
++	r8168_mac_ocp_write( tp, 0xF818, 0xBD00 );
++	r8168_mac_ocp_write( tp, 0xF81A, 0x074C );
++	r8168_mac_ocp_write( tp, 0xF81C, 0xC302 );
++	r8168_mac_ocp_write( tp, 0xF81E, 0xBB00 );
++	r8168_mac_ocp_write( tp, 0xF820, 0x080A );
++	r8168_mac_ocp_write( tp, 0xF822, 0x6420 );
++	r8168_mac_ocp_write( tp, 0xF824, 0x48C2 );
++	r8168_mac_ocp_write( tp, 0xF826, 0x8C20 );
++	r8168_mac_ocp_write( tp, 0xF828, 0xC516 );
++	r8168_mac_ocp_write( tp, 0xF82A, 0x64A4 );
++	r8168_mac_ocp_write( tp, 0xF82C, 0x49C0 );
++	r8168_mac_ocp_write( tp, 0xF82E, 0xF009 );
++	r8168_mac_ocp_write( tp, 0xF830, 0x74A2 );
++	r8168_mac_ocp_write( tp, 0xF832, 0x8CA5 );
++	r8168_mac_ocp_write( tp, 0xF834, 0x74A0 );
++	r8168_mac_ocp_write( tp, 0xF836, 0xC50E );
++	r8168_mac_ocp_write( tp, 0xF838, 0x9CA2 );
++	r8168_mac_ocp_write( tp, 0xF83A, 0x1C11 );
++	r8168_mac_ocp_write( tp, 0xF83C, 0x9CA0 );
++	r8168_mac_ocp_write( tp, 0xF83E, 0xE006 );
++	r8168_mac_ocp_write( tp, 0xF840, 0x74F8 );
++	r8168_mac_ocp_write( tp, 0xF842, 0x48C4 );
++	r8168_mac_ocp_write( tp, 0xF844, 0x8CF8 );
++	r8168_mac_ocp_write( tp, 0xF846, 0xC404 );
++	r8168_mac_ocp_write( tp, 0xF848, 0xBC00 );
++	r8168_mac_ocp_write( tp, 0xF84A, 0xC403 );
++	r8168_mac_ocp_write( tp, 0xF84C, 0xBC00 );
++	r8168_mac_ocp_write( tp, 0xF84E, 0x0BF2 );
++	r8168_mac_ocp_write( tp, 0xF850, 0x0C0A );
++	r8168_mac_ocp_write( tp, 0xF852, 0xE434 );
++	r8168_mac_ocp_write( tp, 0xF854, 0xD3C0 );
++	r8168_mac_ocp_write( tp, 0xF856, 0x49D9 );
++	r8168_mac_ocp_write( tp, 0xF858, 0xF01F );
++	r8168_mac_ocp_write( tp, 0xF85A, 0xC526 );
++	r8168_mac_ocp_write( tp, 0xF85C, 0x64A5 );
++	r8168_mac_ocp_write( tp, 0xF85E, 0x1400 );
++	r8168_mac_ocp_write( tp, 0xF860, 0xF007 );
++	r8168_mac_ocp_write( tp, 0xF862, 0x0C01 );
++	r8168_mac_ocp_write( tp, 0xF864, 0x8CA5 );
++	r8168_mac_ocp_write( tp, 0xF866, 0x1C15 );
++	r8168_mac_ocp_write( tp, 0xF868, 0xC51B );
++	r8168_mac_ocp_write( tp, 0xF86A, 0x9CA0 );
++	r8168_mac_ocp_write( tp, 0xF86C, 0xE013 );
++	r8168_mac_ocp_write( tp, 0xF86E, 0xC519 );
++	r8168_mac_ocp_write( tp, 0xF870, 0x74A0 );
++	r8168_mac_ocp_write( tp, 0xF872, 0x48C4 );
++	r8168_mac_ocp_write( tp, 0xF874, 0x8CA0 );
++	r8168_mac_ocp_write( tp, 0xF876, 0xC516 );
++	r8168_mac_ocp_write( tp, 0xF878, 0x74A4 );
++	r8168_mac_ocp_write( tp, 0xF87A, 0x48C8 );
++	r8168_mac_ocp_write( tp, 0xF87C, 0x48CA );
++	r8168_mac_ocp_write( tp, 0xF87E, 0x9CA4 );
++	r8168_mac_ocp_write( tp, 0xF880, 0xC512 );
++	r8168_mac_ocp_write( tp, 0xF882, 0x1B00 );
++	r8168_mac_ocp_write( tp, 0xF884, 0x9BA0 );
++	r8168_mac_ocp_write( tp, 0xF886, 0x1B1C );
++	r8168_mac_ocp_write( tp, 0xF888, 0x483F );
++	r8168_mac_ocp_write( tp, 0xF88A, 0x9BA2 );
++	r8168_mac_ocp_write( tp, 0xF88C, 0x1B04 );
++	r8168_mac_ocp_write( tp, 0xF88E, 0xC508 );
++	r8168_mac_ocp_write( tp, 0xF890, 0x9BA0 );
++	r8168_mac_ocp_write( tp, 0xF892, 0xC505 );
++	r8168_mac_ocp_write( tp, 0xF894, 0xBD00 );
++	r8168_mac_ocp_write( tp, 0xF896, 0xC502 );
++	r8168_mac_ocp_write( tp, 0xF898, 0xBD00 );
++	r8168_mac_ocp_write( tp, 0xF89A, 0x0300 );
++	r8168_mac_ocp_write( tp, 0xF89C, 0x051E );
++	r8168_mac_ocp_write( tp, 0xF89E, 0xE434 );
++	r8168_mac_ocp_write( tp, 0xF8A0, 0xE018 );
++	r8168_mac_ocp_write( tp, 0xF8A2, 0xE092 );
++	r8168_mac_ocp_write( tp, 0xF8A4, 0xDE20 );
++	r8168_mac_ocp_write( tp, 0xF8A6, 0xD3C0 );
++	r8168_mac_ocp_write( tp, 0xF8A8, 0xC50F );
++	r8168_mac_ocp_write( tp, 0xF8AA, 0x76A4 );
++	r8168_mac_ocp_write( tp, 0xF8AC, 0x49E3 );
++	r8168_mac_ocp_write( tp, 0xF8AE, 0xF007 );
++	r8168_mac_ocp_write( tp, 0xF8B0, 0x49C0 );
++	r8168_mac_ocp_write( tp, 0xF8B2, 0xF103 );
++	r8168_mac_ocp_write( tp, 0xF8B4, 0xC607 );
++	r8168_mac_ocp_write( tp, 0xF8B6, 0xBE00 );
++	r8168_mac_ocp_write( tp, 0xF8B8, 0xC606 );
++	r8168_mac_ocp_write( tp, 0xF8BA, 0xBE00 );
++	r8168_mac_ocp_write( tp, 0xF8BC, 0xC602 );
++	r8168_mac_ocp_write( tp, 0xF8BE, 0xBE00 );
++	r8168_mac_ocp_write( tp, 0xF8C0, 0x0C4C );
++	r8168_mac_ocp_write( tp, 0xF8C2, 0x0C28 );
++	r8168_mac_ocp_write( tp, 0xF8C4, 0x0C2C );
++	r8168_mac_ocp_write( tp, 0xF8C6, 0xDC00 );
++	r8168_mac_ocp_write( tp, 0xF8C8, 0xC707 );
++	r8168_mac_ocp_write( tp, 0xF8CA, 0x1D00 );
++	r8168_mac_ocp_write( tp, 0xF8CC, 0x8DE2 );
++	r8168_mac_ocp_write( tp, 0xF8CE, 0x48C1 );
++	r8168_mac_ocp_write( tp, 0xF8D0, 0xC502 );
++	r8168_mac_ocp_write( tp, 0xF8D2, 0xBD00 );
++	r8168_mac_ocp_write( tp, 0xF8D4, 0x00AA );
++	r8168_mac_ocp_write( tp, 0xF8D6, 0xE0C0 );
++	r8168_mac_ocp_write( tp, 0xF8D8, 0xC502 );
++	r8168_mac_ocp_write( tp, 0xF8DA, 0xBD00 );
++	r8168_mac_ocp_write( tp, 0xF8DC, 0x0132 );
++	r8168_mac_ocp_write( tp, 0xFC26, 0x8000 );
++	r8168_mac_ocp_write( tp, 0xFC2A, 0x0743 );
++	r8168_mac_ocp_write( tp, 0xFC2C, 0x0801 );
++	r8168_mac_ocp_write( tp, 0xFC2E, 0x0BE9 );
++	r8168_mac_ocp_write( tp, 0xFC30, 0x02FD );
++	r8168_mac_ocp_write( tp, 0xFC32, 0x0C25 );
++	r8168_mac_ocp_write( tp, 0xFC34, 0x00A9 );
++	r8168_mac_ocp_write( tp, 0xFC36, 0x012D );
  }
  
-+static __always_inline int slab_trylock(struct page *page)
-+{
-+	VM_BUG_ON_PAGE(PageTail(page), page);
-+	return bit_spin_trylock(PG_locked, &page->flags);
-+}
-+
- static __always_inline void slab_unlock(struct page *page)
- {
- 	VM_BUG_ON_PAGE(PageTail(page), page);
-@@ -3946,79 +3952,6 @@ void kfree(const void *x)
- }
- EXPORT_SYMBOL(kfree);
- 
--#define SHRINK_PROMOTE_MAX 32
--
--/*
-- * kmem_cache_shrink discards empty slabs and promotes the slabs filled
-- * up most to the head of the partial lists. New allocations will then
-- * fill those up and thus they can be removed from the partial lists.
-- *
-- * The slabs with the least items are placed last. This results in them
-- * being allocated from last increasing the chance that the last objects
-- * are freed in them.
-- */
--int __kmem_cache_shrink(struct kmem_cache *s)
--{
--	int node;
--	int i;
--	struct kmem_cache_node *n;
--	struct page *page;
--	struct page *t;
--	struct list_head discard;
--	struct list_head promote[SHRINK_PROMOTE_MAX];
--	unsigned long flags;
--	int ret = 0;
--
--	flush_all(s);
--	for_each_kmem_cache_node(s, node, n) {
--		INIT_LIST_HEAD(&discard);
--		for (i = 0; i < SHRINK_PROMOTE_MAX; i++)
--			INIT_LIST_HEAD(promote + i);
--
--		spin_lock_irqsave(&n->list_lock, flags);
--
--		/*
--		 * Build lists of slabs to discard or promote.
--		 *
--		 * Note that concurrent frees may occur while we hold the
--		 * list_lock. page->inuse here is the upper limit.
--		 */
--		list_for_each_entry_safe(page, t, &n->partial, lru) {
--			int free = page->objects - page->inuse;
--
--			/* Do not reread page->inuse */
--			barrier();
--
--			/* We do not keep full slabs on the list */
--			BUG_ON(free <= 0);
--
--			if (free == page->objects) {
--				list_move(&page->lru, &discard);
--				n->nr_partial--;
--			} else if (free <= SHRINK_PROMOTE_MAX)
--				list_move(&page->lru, promote + free - 1);
--		}
--
--		/*
--		 * Promote the slabs filled up most to the head of the
--		 * partial list.
--		 */
--		for (i = SHRINK_PROMOTE_MAX - 1; i >= 0; i--)
--			list_splice(promote + i, &n->partial);
--
--		spin_unlock_irqrestore(&n->list_lock, flags);
--
--		/* Release empty slabs */
--		list_for_each_entry_safe(page, t, &discard, lru)
--			discard_slab(s, page);
--
--		if (slabs_node(s, node))
--			ret = 1;
--	}
--
--	return ret;
--}
--
- #ifdef CONFIG_MEMCG
- static void kmemcg_cache_deact_after_rcu(struct kmem_cache *s)
- {
-@@ -4325,14 +4258,271 @@ static inline void *alloc_scratch(void)
- 		GFP_KERNEL);
- }
- 
-+/*
-+ * Move all objects in the given slab.
-+ *
-+ * If the target node is the current node then the object is moved else
-+ * where on the same node. Which is an effective way of defragmentation
-+ * since the current slab page with its object is exempt from allocation.
-+ *
-+ * The scratch area passed to list function is sufficient to hold
-+ * struct listhead times objects per slab. We use it to hold void ** times
-+ * objects per slab plus a bitmap for each object.
-+ */
-+static void kmem_cache_move(struct page *page, void *scratch, int node)
-+{
-+	void **vector = scratch;
-+	void *p;
-+	void *addr = page_address(page);
-+	struct kmem_cache *s;
-+	unsigned long *map;
-+	int count;
-+	void *private;
-+	unsigned long flags;
-+	unsigned long objects;
-+
-+	local_irq_save(flags);
-+	slab_lock(page);
-+
-+	BUG_ON(!PageSlab(page));	/* Must be s slab page */
-+	BUG_ON(!page->frozen);	/* Slab must have been frozen earlier */
-+
-+	s = page->slab_cache;
-+	objects = page->objects;
-+	map = scratch + objects * sizeof(void **);
-+
-+	/* Determine used objects */
-+	bitmap_fill(map, objects);
-+	for (p = page->freelist; p; p = get_freepointer(s, p))
-+		__clear_bit(slab_index(p, s, addr), map);
-+
-+	/* Build vector of pointers to objects */
-+	count = 0;
-+	memset(vector, 0, objects * sizeof(void **));
-+	for_each_object(p, s, addr, objects)
-+		if (test_bit(slab_index(p, s, addr), map))
-+			vector[count++] = p;
-+
-+	if (s->isolate)
-+		private = s->isolate(s, vector, count);
-+	else
-+		/*
-+		 * Objects do not need to be isolated.
-+		 */
-+		private = NULL;
-+
-+	/*
-+	 * Pinned the objects. Now we can drop the slab lock. The slab
-+	 * is frozen so it cannot vanish from under us nor will
-+	 * allocations be performed on the slab. However, unlocking the
-+	 * slab will allow concurrent slab_frees to proceed. So
-+	 * the subsystem must have a way to tell from the content
-+	 * of the object that it was freed.
-+	 *
-+	 * If neither RCU nor ctor is being used then the object
-+	 * may be modified by the allocator after being freed
-+	 * which may disrupt the ability of the migrate function
-+	 * to tell if the object is free or not.
-+	 */
-+	slab_unlock(page);
-+	local_irq_restore(flags);
-+
-+	/*
-+	 * Perform callbacks to move the objects.
-+	 */
-+	s->migrate(s, vector, count, node, private);
-+}
-+
-+/*
-+ * Move slab objects on a particular node of the cache.
-+ * Release slabs with zero objects and tryg to call the move function for
-+ * slabs with less than the configured percentage of objects allocated.
-+ *
-+ * Returns the number of slabs left on the node after the operation.
-+ */
-+static unsigned long __move(struct kmem_cache *s, int node,
-+		int target_node, int ratio)
-+{
-+	unsigned long flags;
-+	struct page *page, *page2;
-+	LIST_HEAD(move_list);
-+	struct kmem_cache_node *n = get_node(s, node);
-+
-+	if (node == target_node && n->nr_partial <= 1)
-+		/*
-+		 * Trying to reduce fragmentataion on a node but there is
-+		 * only a single or no partial slab page. This is already
-+		 * the optimal object density that we can reach
-+		 */
-+		goto out;
-+
-+	spin_lock_irqsave(&n->list_lock, flags);
-+	list_for_each_entry_safe(page, page2, &n->partial, lru) {
-+		if (!slab_trylock(page))
-+			/* Busy slab. Get out of the way */
-+			continue;
-+
-+		if (page->inuse) {
-+			if (page->inuse > ratio * page->objects / 100) {
-+				slab_unlock(page);
-+				/*
-+				 * Skip slab because the object density
-+				 * in the slab page is high enough
-+				*/
-+				continue;
-+			}
-+
-+			list_move(&page->lru, &move_list);
-+			if (s->migrate) {
-+				/* Remove page from being considered for allocations */
-+				n->nr_partial--;
-+				page->frozen = 1;
-+			}
-+			slab_unlock(page);
-+		} else {
-+			/* Empty slab page */
-+			list_del(&page->lru);
-+			n->nr_partial--;
-+			slab_unlock(page);
-+			discard_slab(s, page);
-+		}
-+	}
-+
-+	if (!s->migrate)
-+		/*
-+		 * No defrag method. By simply putting the zaplist at the
-+		 * end of the partial list we can let them simmer longer
-+		 * and thus increase the chance of all objects being
-+		 * reclaimed.
-+		 *
-+		 * We have effectively sorted the partial list and put
-+		 * the slabs with more objects first. As soon as they
-+		 * are allocated they are going to be removed from the
-+		 * partial list.
-+		 */
-+		list_splice(&move_list, n->partial.prev);
-+
-+
-+	spin_unlock_irqrestore(&n->list_lock, flags);
-+
-+	if (s->migrate && !list_empty(&move_list)) {
-+		void **scratch = alloc_scratch();
-+		struct page *page;
-+		struct page *page2;
-+
-+		if (scratch) {
-+			/* Try to remove / move the objects left */
-+			list_for_each_entry(page, &move_list, lru) {
-+				if (page->inuse)
-+					kmem_cache_move(page, scratch, target_node);
-+			}
-+			kfree(scratch);
-+		}
-+
-+		/* Inspect results and dispose of pages */
-+		spin_lock_irqsave(&n->list_lock, flags);
-+		list_for_each_entry_safe(page, page2, &move_list, lru) {
-+			list_del(&page->lru);
-+			slab_lock(page);
-+			page->frozen = 0;
-+
-+			if (page->inuse) {
-+				/*
-+				 * Objects left in slab page move it to
-+				 * the tail of the partial list to
-+				 * increase the change that the freeing
-+				 * of the remaining objects will
-+				 * free the slab page
-+				 */
-+				n->nr_partial++;
-+				list_add_tail(&page->lru, &n->partial);
-+				slab_unlock(page);
-+
-+			} else {
-+				slab_unlock(page);
-+				discard_slab(s, page);
-+			}
-+		}
-+		spin_unlock_irqrestore(&n->list_lock, flags);
-+	}
-+out:
-+	return atomic_long_read(&n->nr_slabs);
-+}
-+
-+/*
-+ * Defrag slabs conditional on the amount of fragmentation in a page.
-+ */
-+int kmem_cache_defrag(int node)
-+{
-+	struct kmem_cache *s;
-+	unsigned long left = 0;
-+
-+	/*
-+	 * kmem_cache_defrag may be called from the reclaim path which may be
-+	 * called for any page allocator alloc. So there is the danger that we
-+	 * get called in a situation where slub already acquired the slub_lock
-+	 * for other purposes.
-+	 */
-+	if (!mutex_trylock(&slab_mutex))
-+		return 0;
-+
-+	list_for_each_entry(s, &slab_caches, list) {
-+		/*
-+		 * Defragmentable caches come first. If the slab cache is not
-+		 * defragmentable then we can stop traversing the list.
-+		 */
-+		if (!s->migrate)
-+			break;
-+
-+		if (node == -1) {
-+			int nid;
-+
-+			for_each_node_state(nid, N_NORMAL_MEMORY)
-+				if (s->node[nid]->nr_partial > MAX_PARTIAL)
-+					left += __move(s, nid, nid, s->defrag_ratio);
-+		} else
-+			left  += __move(s, node, node, 100);
-+
-+	}
-+	mutex_unlock(&slab_mutex);
-+	return left;
-+}
-+EXPORT_SYMBOL(kmem_cache_defrag);
-+
-+/*
-+ * kmem_cache_shrink reduces the memory footprint of a slab cache
-+ * by as much as possible. This works by removing empty slabs from
-+ * the partial list, migrating slab objects to denser slab pages
-+ * (if the slab cache supports that) or reorganizing the partial
-+ * list so that denser slab pages come first and less dense
-+ * allocated slab pages are at the end.
-+ */
-+int __kmem_cache_shrink(struct kmem_cache *s)
-+{
-+	int node;
-+	int left = 0;
-+
-+	flush_all(s);
-+	for_each_node_state(node, N_NORMAL_MEMORY)
-+		left += __move(s, node, node, 100);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(__kmem_cache_shrink);
-+
- void kmem_cache_setup_mobility(struct kmem_cache *s,
- 	kmem_isolate_func isolate, kmem_migrate_func migrate)
- {
- 	int max_objects = oo_objects(s->max);
- 
- 	/*
--	 * Defragmentable slabs must have a ctor otherwise objects may be
--	 * in an undetermined state after they are allocated.
-+	 * Mobile objects must have a ctor otherwise the
-+	 * object may be in an undefined state on allocation.
-+	 *
-+	 * Since the object may need to be inspected by the
-+	 * migration function at any time after allocation we
-+	 * must ensure that the object always has a defined
-+	 * state.
- 	 */
- 	BUG_ON(!s->ctor);
- 
+ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+-- 
+2.20.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
