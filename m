@@ -2,176 +2,115 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7B0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1157C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B42421773
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D69F2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:10:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZydM2PQm"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ffgn39Uq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbeLTJI5 (ORCPT
+        id S1729722AbeLTJKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:08:57 -0500
-Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:28576
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725775AbeLTJI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:08:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S1rSEyn6q7CwN3d37p/rkghbsaXb0Fy33oZ+lBx6sDM=;
- b=ZydM2PQm1O5udcQ8y6XkMxiaawN/L3E1GejMNjdBiM9RuyPSW0tGat0YcvYjUDrsoQaS2r5fO7Bxnk4v44jZg/8uiGgDlaSBUE/HZ/B6u15gkZl1wThy3vmLnSVG2IAdU27k+1EDTlXdkTPuB3RLjaHIjsnB+7OUEcidGiScDhM=
-Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com (52.133.30.10) by
- AM6PR0402MB3687.eurprd04.prod.outlook.com (52.133.28.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.19; Thu, 20 Dec 2018 09:08:52 +0000
-Received: from AM6PR0402MB3911.eurprd04.prod.outlook.com
- ([fe80::987c:cb59:96c9:6b71]) by AM6PR0402MB3911.eurprd04.prod.outlook.com
- ([fe80::987c:cb59:96c9:6b71%2]) with mapi id 15.20.1425.025; Thu, 20 Dec 2018
- 09:08:52 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "edubezval@gmail.com" <edubezval@gmail.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH V5 4/4] ARM64: dts: imx: add i.MX8QXP thermal support
-Thread-Topic: [PATCH V5 4/4] ARM64: dts: imx: add i.MX8QXP thermal support
-Thread-Index: AQHUmEOgvuU29LOpJkKytGq5wKJFBw==
-Date:   Thu, 20 Dec 2018 09:08:51 +0000
-Message-ID: <1545296609-20477-5-git-send-email-Anson.Huang@nxp.com>
-References: <1545296609-20477-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1545296609-20477-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0091.apcprd03.prod.outlook.com
- (2603:1096:203:72::31) To AM6PR0402MB3911.eurprd04.prod.outlook.com
- (2603:10a6:209:1c::10)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3687;6:WwnwXerYnL77V+PPgxL7sjQULRy6OVvrkQXPajM0vaDa4mXuLgIaxpix/09I89Oevv7Yob9vf3I7UmWv6raXa6i14uxaPAJ39SX/xSV8A4UFZ25tWnIjmywma4ylmYdP7QAUGdyQxswMt/QuJiI828d5G8QHmLGkQQQOlNFkNldmV+5mpC9tp75Y1KrbYnjySaQ5cyBqteYIYbx0LW8JwMUd62rS/pryEISgKVgM+CgjDPkjwUGJ372nXJhvFKmFZhjNUgZRZ43i0qAPjPpg4DAMLpPCOcE/5zhhEq//3VWgS9XkWLEnS1bb2N5ums24tLclRFsljsvEwhzTK4uKfZuFmkNaVerOlhp6t2+SATb4uHr1hyyjiMtIO5JMNsNYIRUfZQNLq1k9VLOHQVoLmskZi0OVBqM4MZPxU0jwHOy2uW625dpNH90f8nTmA3HODrQWY9xJXkxbEsIjRL0S8Q==;5:jb6276LG7k2YA9/ZTy5xyIBzOPTLHIocdeO1kuPJZSmNywaZXTkkR6bkgfnYbVgxTP/3XUbgnM4tWS785ArjMgYf7Rt4nbU/ngXBH53n3T0Izm6MMvz/UEufnT15DeocK+vDMu/EYzopfCkYSyMZHL3Zr7qAQJgrEjQavCHY3Yg=;7:Cjm0vUHQ2t+KT9yyqildJzHiV+tEwvdM/PERorCiXUidkHMd5NmwZeSMIuYK+9IySedGn/hfCHTLOEcCTjrMFxJJ9SfIzv+oArASMpzYmL+rBpL7lhOd6+i7KfDVRB/IrM8PsalDDGykyNcpg7YZcg==
-x-ms-office365-filtering-correlation-id: 97cccc6f-3284-4dc4-834c-08d6665ac29a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3687;
-x-ms-traffictypediagnostic: AM6PR0402MB3687:
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-antispam-prvs: <AM6PR0402MB3687D2C41DC7FBA0BDC9736EF5BF0@AM6PR0402MB3687.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3687;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3687;
-x-forefront-prvs: 0892FA9A88
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(346002)(396003)(189003)(199004)(6512007)(316002)(66066001)(97736004)(110136005)(3846002)(106356001)(105586002)(5660300001)(478600001)(2201001)(476003)(4326008)(186003)(446003)(11346002)(39060400002)(486006)(14454004)(2616005)(7416002)(53936002)(256004)(86362001)(99286004)(50226002)(8676002)(6436002)(71200400001)(71190400001)(2501003)(386003)(6506007)(81166006)(36756003)(25786009)(2906002)(305945005)(26005)(52116002)(81156014)(6116002)(76176011)(7736002)(8936002)(6486002)(102836004)(68736007)(6346003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3687;H:AM6PR0402MB3911.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-microsoft-antispam-message-info: u9CfbeyH3qPEFES41JaMGqUglYLHOwUFUP7r4uv6fZWJUa4rKuPf24QNyjMeTtOkXOvQFWYdS2crhU0f8zTBPFNuw/yOwlZ6UuJKV+N6FwIHIviOQTvlLa3zc7rZ+D/FUBhRmxHHoykncAmVtI9yXJw1YSm0gIBRDK4l+q/cYnshh0NZ7fXX/6AEkhQctDm23IjIvKhcPV9ABaSsxsF+8aW/lE4KQzl9ctOtDjPk3KcL2unrKW0Fm5q8gCQONnXoAwHHEUR+3VgLVxaWxZmftG38tju6SYndVRMzWciUbFzIWxolysLC1X2CoVs0tvgu
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 20 Dec 2018 04:10:00 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59908 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbeLTJJ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:09:59 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBK8xU3T163795;
+        Thu, 20 Dec 2018 09:09:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=OL/z9sWEf00tjg1m6zFVJa13CzXDPFnCfS59Hi+pA/M=;
+ b=ffgn39UqtIkRjzrQVTa1RVmH45yGlmw9zUBIJCpeQKVfsg+kZeq4GLXTpZbDUI0QThOO
+ 3+uiOOguOjoewCDlLAWPIwxuhQzXe5ny6p/TlTCaCPc8UPyglg9LBuclY5CtLw3fqYo2
+ pTIfsmkqnQqQ1e98LzYU7LqCYmmgxBU0b+wQRc+IeXNHbGRfe5EUzMYdD3dcParaRWOA
+ 5afog1A2b8N2sQAvTRh/NMBz8JNjwRaoRO/XtjvGHDXQ6HjDMG83dOkjR39e6Ahzo4y9
+ oV53+2Ux9CPtwgUc2UPX41kTK7AVzIqdRuFXQxUqVUqDbxrtItd8lfKQoz9wXGK8/m49 Vw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2pfh3a634a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Dec 2018 09:09:51 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBK99nJg002746
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Dec 2018 09:09:50 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBK99moX026370;
+        Thu, 20 Dec 2018 09:09:49 GMT
+Received: from kadam (/197.157.0.31)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Dec 2018 01:09:48 -0800
+Date:   Thu, 20 Dec 2018 12:09:21 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Aymen Qader <qader.aymen@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rts5208: add a missing check for the status of command
+ sending
+Message-ID: <20181220090921.GP19692@kadam>
+References: <20181220075704.40732-1-kjlu@umn.edu>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97cccc6f-3284-4dc4-834c-08d6665ac29a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 09:08:52.0631
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3687
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181220075704.40732-1-kjlu@umn.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9112 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812200075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add i.MX8QXP CPU thermal zone support.
+On Thu, Dec 20, 2018 at 01:57:01AM -0600, Kangjie Lu wrote:
+> ms_send_cmd() may fail. The fix checks the return value of it, and if it
+> fails, returns the error "STATUS_FAIL" upstream.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/staging/rts5208/ms.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rts5208/ms.c b/drivers/staging/rts5208/ms.c
+> index f53adf15c685..5a9e562465e9 100644
+> --- a/drivers/staging/rts5208/ms.c
+> +++ b/drivers/staging/rts5208/ms.c
+> @@ -2731,7 +2731,9 @@ static int mspro_rw_multi_sector(struct scsi_cmnd *srb,
+>  		}
+>  
+>  		if (val & MS_INT_BREQ)
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change since V4.
----
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 27 ++++++++++++++++++++++++++=
-+
- 1 file changed, 27 insertions(+)
+You would need to add a curly brace here.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/d=
-ts/freescale/imx8qxp.dtsi
-index 9b08688..48f622c 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -9,6 +9,7 @@
- #include <dt-bindings/firmware/imx/rsrc.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/pads-imx8qxp.h>
-+#include <dt-bindings/thermal/thermal.h>
-=20
- #include "imx8-ca35.dtsi"
-=20
-@@ -87,6 +88,12 @@
- 		rtc: rtc {
- 			compatible =3D "fsl,imx8qxp-sc-rtc";
- 		};
-+
-+		tsens: thermal-sensor {
-+			compatible =3D "fsl,imx8qxp-sc-thermal";
-+			tsens-num =3D <1>;
-+			#thermal-sensor-cells =3D <1>;
-+		};
- 	};
-=20
- 	adma_subsys: bus@59000000 {
-@@ -410,4 +417,24 @@
- 		#size-cells =3D <1>;
- 		ranges =3D <0x5f000000 0x0 0x5f000000 0x1000000>;
- 	};
-+
-+	thermal_zones: thermal-zones {
-+		cpu-thermal0 {
-+			polling-delay-passive =3D <250>;
-+			polling-delay =3D <2000>;
-+			thermal-sensors =3D <&tsens 355>;
-+			trips {
-+				cpu_alert0: trip0 {
-+					temperature =3D <107000>;
-+					hysteresis =3D <2000>;
-+					type =3D "passive";
-+				};
-+				cpu_crit0: trip1 {
-+					temperature =3D <127000>;
-+					hysteresis =3D <2000>;
-+					type =3D "critical";
-+				};
-+			};
-+		};
-+	};
- };
---=20
-2.7.4
+
+> -			ms_send_cmd(chip, PRO_STOP, WAIT_INT);
+> +			retval = ms_send_cmd(chip, PRO_STOP, WAIT_INT);
+> +			if (retval != STATUS_SUCCESS)
+> +				return STATUS_FAIL;
+
+You can't overwrite "retval".  We already had an error code save there
+but now you're changing to STATUS_SUCCESS.
+
+Anyway, I think the original error handling is probably correct and we
+should leave it as-is.  We're already trying to handle an error
+situation by resetting stuff.  Then if we get another error while we
+take these extreme measures to recover, we shouldn't give up.  We should
+just keep on trying to reset instead of returning early.
+
+regards,
+dan carpenter
 
