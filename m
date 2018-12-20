@@ -2,679 +2,205 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FROM,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2F0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6408EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A2E21720
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A02E20815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:04:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjsQYnGp"
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="O96Eodyi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387499AbeLTRDk (ORCPT
+        id S2387514AbeLTREe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:03:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37882 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732689AbeLTRDj (ORCPT
+        Thu, 20 Dec 2018 12:04:34 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35410 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732689AbeLTREd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:03:39 -0500
-Received: by mail-wr1-f67.google.com with SMTP id s12so2520968wrt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:03:36 -0800 (PST)
+        Thu, 20 Dec 2018 12:04:33 -0500
+Received: by mail-yw1-f65.google.com with SMTP id h32so966433ywk.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:04:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hsPIVCeJUAJyPLfSrc1WHT6UMGXzmQZPFYJtGp6g5FQ=;
-        b=NjsQYnGpcFE5Hcba5x79ZxGNfwFV36Q8SCEEkOFsUPuXuDCZCJCfrhvyt1HlBYcpIw
-         wR4gA96woM3jsMllyaEk2t5bX3bGPxQD9hk7ci6UTOsWJh2e1RUMT+mcQFvY6EQyB69/
-         6WqcskyA//t6ebl2X6R/EC16+t4JXh8QDG1EWmlyARA9Wgzu4mkWEHtIviGB0S+Ou3GY
-         OiWAVbMqcO+V7iOUik2YPyhgAHuRnZGfetwJCw/JwVZKwfItbyjaZeZWfsM31cEaWL5U
-         hIsy6nA+I7JLm39ylAagW3A+4mYtxx1hWHgsMcGBc4Qe/qKTVPT0sncDPwGEgCzourpK
-         6QUw==
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XjtUiSPfIGVCtIqUPvdheUhqS7thYXGiZJO+gNkLbGc=;
+        b=O96EodyiOz1UyXnlvrj57AHSS9adv7m6l9AVWmZsNtU4QnjgBe0fgAFjIBzGJl9rkt
+         C6yHnx8PGtdIduiwIruTDU0g30StNVjXf+PX8cjxcsoGlSdAUrO2CNZ2ROKexMZAnVN8
+         4xbvv29qu70rFaOJ5kVR6941tefUn2GdTISOPsC+gz9AaOzhV4qtPM4VIYN/iqMUrSgk
+         MQwdS9or2IA5F4Omu3TqheK/YJs5RZaLlnuAd9wiEaRe9HtkMG7CClpSCpLA4tt9Y0h/
+         5pCSsra0o7Rg6ABokBjFflSdaobIC91X4GiEpDG+LLp0NMziryI8Qmvj2pSLJWTFNjTP
+         Deug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hsPIVCeJUAJyPLfSrc1WHT6UMGXzmQZPFYJtGp6g5FQ=;
-        b=rKnr2GIiJ8CDOoHHR8VA5RzttqfQY2+2irIQvwU/vRmqI4139AFlBX669NScTY7U7X
-         Jrop3HDbU/m31ZuG1tnJH3ma6Ek/mKArBi+aURDS0xOGPJE+QLAVPaK8jWrt/fvb8lJn
-         YFoDC/l/WQ+TkfjBsczYtQQCOjVcAvseWLsweskaTtuN1J4iMj7UOKtOMWQVik2fekHR
-         oJ+xHsi1MrdAdbEsCuWDlEIj8Z67lq6qJWgaYNXSvPawyJEtDk5uMN6OAmBUenICAhTF
-         qajBKu2NMRXRY3yJ9m/AV3CB1pDCMyH4dFLi1smvYTfl1SlbwEhbUYe/a8MCkTJRvqsP
-         3VNQ==
-X-Gm-Message-State: AA+aEWYH2l0ovyNI0ChTzIEEKvXA1v/uiCLfWSDVbGkSC6ar/cHMK90F
-        qdkuy820ZTxNmqNQJj/2txq8gNkJ6w2qkV7X54yhT0un
-X-Google-Smtp-Source: AFSGD/WhktxMu5h1ja6pX1KBkRNjYcYwFXQUU0xp9HUYjF8g3ntIU7MeRRgWz+170Z/yTK1XTVXjNpD1b8tZvTDR4pg=
-X-Received: by 2002:a5d:488f:: with SMTP id g15mr23489493wrq.15.1545325415115;
- Thu, 20 Dec 2018 09:03:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20181123215326.14274-1-helen.koike@collabora.com>
- <20181127133418.GT9144@intel.com> <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
- <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
- <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com> <CAAFQd5C15yF4TwOLu4JsFGMSzLp8isV89WOZyRfv9wCcGfFRtg@mail.gmail.com>
- <CAKMK7uG=vdaTo25b3gSaD4T2naA51VeaVL0+5YAJ9HMrBziTWQ@mail.gmail.com>
- <CADnq5_P9nsquCV95CSZC4NCr7YNJ76ZmCruJA=f1N8dLGYm=ow@mail.gmail.com> <CAKMK7uHu5XMQzr7ocVEcpDS9H6pQ-BHfHNE51_YK7rLkTQC_9g@mail.gmail.com>
-In-Reply-To: <CAKMK7uHu5XMQzr7ocVEcpDS9H6pQ-BHfHNE51_YK7rLkTQC_9g@mail.gmail.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 20 Dec 2018 12:03:23 -0500
-Message-ID: <CADnq5_P1smiGhYyoZQsEAJG0+jBx6f75HwEFAf2RkaoNp0HEiA@mail.gmail.com>
-Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
-To:     Daniel Vetter <daniel@ffwll.ch>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>
-Cc:     "Kazlauskas, Nicholas" <nicholas.kazlauskas@amd.com>,
-        Tomasz Figa <tfiga@chromium.org>, dnicoara@chromium.org,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>,
-        Sean Paul <seanpaul@google.com>,
-        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XjtUiSPfIGVCtIqUPvdheUhqS7thYXGiZJO+gNkLbGc=;
+        b=kU+/QnyGujyPyRtgKhwPllDyMFK8888NTihY+8x/xlT82Z9aO8LeOsnOcLXSocnZUU
+         rs1g97/w0G0KwwgPgVeBczKdUsdvWUZhyHFtQ2arNDAG3LnoLDu4xalCQTMDgSFTf9wL
+         rk2dJLwqM9uHzq2EA/iiAwsevk+yUMTocZAiKmWvmIGgZ+0dzOtTMOFgcf3rG2f0TeBG
+         le52+jwzzhctfapXoiCedbor8a+zbBA8yjfhtTOc7r1rY8U8iaZqETd+8jsULe3rB24D
+         6lpyP6t1IpQBjyF8vwn1MLuQTkLWRykJYf3dRZagV0SOFQJb/Azst1mSELgzxuQkLqWy
+         XH8A==
+X-Gm-Message-State: AA+aEWZYyt0E4uYBu/uyxn/zzMXz0YVJBw9Ju7vGzBYEypNIrq8oqEX9
+        9Ka1hCrwl4M+p5yLfVeLmrDWFg==
+X-Google-Smtp-Source: AFSGD/VCtHM0bEmabgsoDJ5n3CckiU4snFRNw57RhyHajd2uj3k3Ff3mpSEhU4MJA2DtLQqEvbLpTA==
+X-Received: by 2002:a81:a155:: with SMTP id y82mr25408566ywg.400.1545325472117;
+        Thu, 20 Dec 2018 09:04:32 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id l140sm6692013ywe.77.2018.12.20.09.04.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 09:04:30 -0800 (PST)
+Date:   Thu, 20 Dec 2018 12:04:30 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Sean Paul <sean@poorly.run>,
+        Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Helen Koike <helen.koike@collabora.com>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v3 2/2] drm/panel: Add Feiyang FY07024DI26A30-D MIPI-DSI
+ LCD panel
+Message-ID: <20181220170430.GU154160@art_vandelay>
+References: <20181214204101.9681-1-jagan@amarulasolutions.com>
+ <20181214204101.9681-2-jagan@amarulasolutions.com>
+ <20181214220231.GT154160@art_vandelay>
+ <CAMty3ZBJGgwKCZSeWQmRRjnx3i5z_rV0GASdKLfjq+dSTGSkdw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBJGgwKCZSeWQmRRjnx3i5z_rV0GASdKLfjq+dSTGSkdw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Harry
+On Tue, Dec 18, 2018 at 05:06:38PM +0530, Jagan Teki wrote:
+> On Sat, Dec 15, 2018 at 3:32 AM Sean Paul <sean@poorly.run> wrote:
+> >
+> > On Sat, Dec 15, 2018 at 02:11:01AM +0530, Jagan Teki wrote:
+> > > Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
+> > >
+> > > Add panel driver for it.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v2:
+> > > - use simple structure for command init
+> > > - update proper comments on power, reset delay sequnce
+> > > - fix to use set_display_off in disable function
+> > > - move mode type to structure
+> > > - drop refres rate value, let drm compute
+> > >
+> > >  MAINTAINERS                                   |   6 +
+> > >  drivers/gpu/drm/panel/Kconfig                 |   9 +
+> > >  drivers/gpu/drm/panel/Makefile                |   1 +
+> > >  .../drm/panel/panel-feiyang-fy07024di26a30d.c | 296 ++++++++++++++++++
+> > >  4 files changed, 312 insertions(+)
+> > >  create mode 100644 drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index d2928a4d2847..e643238855ea 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -4732,6 +4732,12 @@ T:     git git://anongit.freedesktop.org/drm/drm-misc
+> > >  S:   Maintained
+> > >  F:   drivers/gpu/drm/tve200/
+> > >
+> > > +DRM DRIVER FOR FEIYANG FY07024DI26A30-D MIPI-DSI LCD PANELS
+> > > +M:   Jagan Teki <jagan@amarulasolutions.com>
+> > > +S:   Maintained
+> > > +F:   drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > > +F:   Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt
+> > > +
+> > >  DRM DRIVER FOR ILITEK ILI9225 PANELS
+> > >  M:   David Lechner <david@lechnology.com>
+> > >  S:   Maintained
+> >
+> > As I mentioned on IRC, this will be drm-misc maintained with the other panels,
+> > no need to have a dedicated MAINTAINERS entry. You'll get pulled from
+> > get_maintainers.pl as a majority commit signer
+> 
+> This I missed it on IRC, sorry will drop.
+> 
+> >
+> > > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> > > index d93b2ba709bc..cb8ca93550cf 100644
+> > > --- a/drivers/gpu/drm/panel/Kconfig
+> > > +++ b/drivers/gpu/drm/panel/Kconfig
+> > > @@ -38,6 +38,15 @@ config DRM_PANEL_SIMPLE
+> > >         that it can be automatically turned off when the panel goes into a
+> > >         low power state.
+> > >
+> > > +config DRM_PANEL_FEIYANG_FY07024DI26A30D
+> > > +     tristate "Feiyang FY07024DI26A30-D MIPI-DSI LCD panel"
+> > > +     depends on OF
+> > > +     depends on DRM_MIPI_DSI
+> > > +     depends on BACKLIGHT_CLASS_DEVICE
+> > > +     help
+> > > +       Say Y if you want to enable support for panels based on the
+> > > +       Feiyang FY07024DI26A30-D MIPI-DSI interface.
+> > > +
+> > >  config DRM_PANEL_ILITEK_IL9322
+> > >       tristate "Ilitek ILI9322 320x240 QVGA panels"
+> > >       depends on OF && SPI
+> > > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> > > index 6a9b4cec1891..0fa0ef69e109 100644
+> > > --- a/drivers/gpu/drm/panel/Makefile
+> > > +++ b/drivers/gpu/drm/panel/Makefile
+> > > @@ -2,6 +2,7 @@
+> > >  obj-$(CONFIG_DRM_PANEL_ARM_VERSATILE) += panel-arm-versatile.o
+> > >  obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+> > >  obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+> > > +obj-$(CONFIG_DRM_PANEL_FEIYANG_FY07024DI26A30D) += panel-feiyang-fy07024di26a30d.o
+> > >  obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+> > >  obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9881C) += panel-ilitek-ili9881c.o
+> > >  obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+> > > diff --git a/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > > new file mode 100644
+> > > index 000000000000..4abccbf62c3c
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > > @@ -0,0 +1,296 @@
 
-On Thu, Dec 20, 2018 at 11:54 AM Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Thu, Dec 20, 2018 at 5:40 PM Alex Deucher <alexdeucher@gmail.com> wrot=
-e:
-> >
-> > + Nicholas
-> >
-> > On Thu, Dec 20, 2018 at 5:47 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >
-> > > On Thu, Dec 20, 2018 at 10:07 AM Tomasz Figa <tfiga@chromium.org> wro=
-te:
-> > > >
-> > > > Hi Helen,
-> > > >
-> > > > On Fri, Dec 14, 2018 at 10:35 AM Helen Koike <helen.koike@collabora=
-.com> wrote:
-> > > > >
-> > > > > Hi Tomasz,
-> > > > >
-> > > > > On 12/13/18 2:02 AM, Tomasz Figa wrote:
-> > > > > > On Thu, Dec 6, 2018 at 1:12 AM Helen Koike <helen.koike@collabo=
-ra.com> wrote:
-> > > > > >>
-> > > > > >> Hi Ville
-> > > > > >>
-> > > > > >> On 11/27/18 11:34 AM, Ville Syrj=C3=A4l=C3=A4 wrote:
-> > > > > >>> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
-> > > > > >>>> Allow userspace to identify if the driver supports async upd=
-ate.
-> > > > > >>>
-> > > > > >>> And what exactly is an "async update"?
-> > > > > >>
-> > > > > >> I agree we are lacking docs on this, I'll send in the next ver=
-sion as
-> > > > > >> soon as we agree on a name (please see below).
-> > > > > >>
-> > > > > >> For reference:
-> > > > > >> https://lists.freedesktop.org/archives/dri-devel/2017-April/13=
-8586.html
-> > > > > >>
-> > > > > >>>
-> > > > > >>> I keep asking people to come up with the a better name for th=
-is, and to
-> > > > > >>> document what it actually means. Recently I've been think we =
-should
-> > > > > >>> maybe just adopt the vulkan terminology (immediate/fifo/mailb=
-ox) to
-> > > > > >>> avoid introducing yet another set of names for the same thing=
-. We'd
-> > > > > >>> still want to document things properly though.
-> > > > > >>
-> > > > > >> Another name it was suggested was "atomic amend", this feature=
- basically
-> > > > > >> allows userspace to complement an update previously sent (i.e.=
- its in
-> > > > > >> the queue and wasn't commited yet), it allows adding a plane u=
-pdate to
-> > > > > >> the next commit. So what do you think in renaming it to "atomi=
-c amend"?
-> > > > > >
-> > > > > > Note that it doesn't seem to be what the code currently is doin=
-g. For
-> > > > > > example, for cursor updates, it doesn't seem to be working on t=
-he
-> > > > > > currently pending commit, but just directly issues an atomic as=
-ync
-> > > > > > update call to the planes. The code actually seems to fall back=
- to a
-> > > > > > normal sync commit, if there is an already pending commit touch=
-ing the
-> > > > > > same plane or including a modeset.
-> > > > >
-> > > > > It should fail as discussed at:
-> > > > > https://patchwork.freedesktop.org/patch/243088/
-> > > > >
-> > > > > There was the following code inside the drm_atomic_helper_async_c=
-heck()
-> > > > > in the previous patch which would fallback to a normal commit if =
-there
-> > > > > isn't any pending commit to amend:
-> > > > >
-> > > > > +       if (!old_plane_state->commit)
-> > > > > +               return -EINVAL;
-> > > > >
-> > > > > In the v2 of the patch https://patchwork.freedesktop.org/patch/26=
-3712/
-> > > > > this got removed, but which means that async update will be enabl=
-ed
-> > > > > anyway. So the following code is wrong:
-> > > > >
-> > > > > -       if (state->legacy_cursor_update)
-> > > > > +       if (state->async_update || state->legacy_cursor_update)
-> > > > >                 state->async_update =3D !drm_atomic_helper_async_=
-check(dev, state);
-> > > > >
-> > > > > Does it make sense? If yes I'll fix this in the next version of t=
-he
-> > > > > Atomic IOCTL patch (and also those two patches should be in the s=
-ame
-> > > > > series, I'll send them together next time).
-> > > > >
-> > > > > Thanks for pointing this out.
-> > > > >
-> > > > > Please let me know if you still don't agree on the name "atomic a=
-mend",
-> > > > > or if I am missing something.
-> > > >
-> > > > I'll defer it to the DRM maintainers. From Chrome OS perspective, w=
-e
-> > > > need a way to commit the cursor plane asynchronously from other
-> > > > commits any time the cursor changes its position or framebuffer. As
-> > > > long as the new API allows that and the maintainers are fine with i=
-t,
-> > > > I think I should be okay with it too.
-> > >
-> > > If this is just about the cursor, why is the current legacy cursor
-> > > ioctl not good enough? It's 2 ioctls instead of one, but I'm not sure
-> > > if we want to support having a normal atomic commit and a cursor
-> > > update in the same atomic ioctl, coming up with reasonable semantics
-> > > for that will be complicated.
-> > >
-> > > Pointer to code that uses this would be better ofc.
-> >
-> > I haven't followed this thread too closely, but we ended up needing to
-> > add a fast patch for cursor updates to amdgpu's atomic support to
-> > avoid stuttering issues.  Other drivers may end up being affected by
-> > this as well.  See:
-> > https://bugs.freedesktop.org/show_bug.cgi?id=3D106175
-> > Unfortunately, the fast path requires some hacks to handle the ref
-> > counting properly on cursor fbs:
-> > https://patchwork.freedesktop.org/patch/266138/
-> > https://patchwork.freedesktop.org/patch/268298/
-> > It looks like gamma may need similar treatment:
-> > https://bugs.freedesktop.org/show_bug.cgi?id=3D108917
->
-> Can we get these patches cc'ed to dri-devel so that there's some
-> common solution? Everyone hacking legacy_cursor_update hacks on their
-> own doesn't really work well. Or would at least give some visibility
-> into what's all going on.
+/snip
 
-Agreed.
+> > > +static const struct drm_display_mode feiyang_default_mode = {
+> > > +     .clock = 55000,
+> > > +
+> > > +     .hdisplay = 1024,
+> > > +     .hsync_start = 1024 + 396,
+> > > +     .hsync_end = 1024 + 396 + 20,
+> > > +     .htotal = 1024 + 396 + 20 + 100,
+> > > +
+> > > +     .vdisplay = 600,
+> > > +     .vsync_start = 600 + 12,
+> > > +     .vsync_end = 600 + 12 + 2,
+> > > +     .vtotal = 600 + 12 + 2 + 21,
+> >
+> > These timings are still incorrect, they'll give a 56.2Hz refresh rate. Is that
+> > really what you want?
+> 
+> I would like to go with same rate as of now since BSP is using the
+> same, since I don't have any information from chip vendor(even I wrote
+> it and waiting for response). I will update accordingly once I get the
+> information from vendor.
+> 
+> Let me know your inputs.
 
->
-> Not sure about the gamma thing since we had opposite bugs on i915
-> about gamma not being vsynced and tearing terribly. Cursor is special
-> since it tends to be too small to notice tearing.
+Not totally on board with this, tbh. It seems wrong, so I'm not sure why we'd
+apply code that seems wrong. We're not in a rush, we've already cut 4.21, so I
+think we should just wait for vendor confirmation on these values.
 
-Our cursor hw (and possibly gamma as well Nicholas?  Harry?) is double
-buffered, so we can update it any time for the most part and the
-changes won't take affect until the next vupdate period.
+Sean
 
-Alex
-
->
-> Thanks, Daniel
->
-> > Alex
-> >
-> >
-> > > -Daniel
-> > >
-> > > > Best regards,
-> > > > Tomasz
-> > > >
-> > > > >
-> > > > > Helen
-> > > > >
-> > > > > >
-> > > > > > Best regards,
-> > > > > > Tomasz
-> > > > > >
-> > > > > >> Or do you suggest another name? I am not familiar with vulkan =
-terminology.
-> > > > > >>
-> > > > > >>
-> > > > > >> Thanks
-> > > > > >> Helen
-> > > > > >>
-> > > > > >>>
-> > > > > >>>>
-> > > > > >>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collab=
-ora.com>
-> > > > > >>>> [prepared for upstream]
-> > > > > >>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> > > > > >>>>
-> > > > > >>>> ---
-> > > > > >>>> Hi,
-> > > > > >>>>
-> > > > > >>>> This patch introduces the ASYNC_UPDATE cap, which originated=
- from the
-> > > > > >>>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow =
-user to
-> > > > > >>>> figure that async_update exists.
-> > > > > >>>>
-> > > > > >>>> This was tested using a small program that exercises the uAP=
-I for easy
-> > > > > >>>> sanity testing. The program was created by Alexandros and mo=
-dified by
-> > > > > >>>> Enric to test the capability flag [2].
-> > > > > >>>>
-> > > > > >>>> The test worked on a rockchip Ficus v1.1 board on top of mai=
-nline plus
-> > > > > >>>> the patch to update cursors asynchronously through atomic pl=
-us the patch
-> > > > > >>>> that introduces the ATOMIC_AMEND flag for the drm/rockchip d=
-river.
-> > > > > >>>>
-> > > > > >>>> To test, just build the program and use the --atomic flag to=
- use the cursor
-> > > > > >>>> plane with the ATOMIC_AMEND flag. E.g.
-> > > > > >>>>
-> > > > > >>>>   drm_cursor --atomic
-> > > > > >>>>
-> > > > > >>>> [1] https://patchwork.freedesktop.org/patch/243088/
-> > > > > >>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commit=
-s/async-capability
-> > > > > >>>>
-> > > > > >>>> Thanks
-> > > > > >>>> Helen
-> > > > > >>>>
-> > > > > >>>>
-> > > > > >>>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
-> > > > > >>>>  include/uapi/drm/drm.h      |  1 +
-> > > > > >>>>  2 files changed, 12 insertions(+)
-> > > > > >>>>
-> > > > > >>>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/d=
-rm_ioctl.c
-> > > > > >>>> index 94bd872d56c4..4a7e0f874171 100644
-> > > > > >>>> --- a/drivers/gpu/drm/drm_ioctl.c
-> > > > > >>>> +++ b/drivers/gpu/drm/drm_ioctl.c
-> > > > > >>>> @@ -31,6 +31,7 @@
-> > > > > >>>>  #include <drm/drm_ioctl.h>
-> > > > > >>>>  #include <drm/drmP.h>
-> > > > > >>>>  #include <drm/drm_auth.h>
-> > > > > >>>> +#include <drm/drm_modeset_helper_vtables.h>
-> > > > > >>>>  #include "drm_legacy.h"
-> > > > > >>>>  #include "drm_internal.h"
-> > > > > >>>>  #include "drm_crtc_internal.h"
-> > > > > >>>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device =
-*dev, void *data, struct drm_file *file_
-> > > > > >>>>  {
-> > > > > >>>>      struct drm_get_cap *req =3D data;
-> > > > > >>>>      struct drm_crtc *crtc;
-> > > > > >>>> +    struct drm_plane *plane;
-> > > > > >>>>
-> > > > > >>>>      req->value =3D 0;
-> > > > > >>>>
-> > > > > >>>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device=
- *dev, void *data, struct drm_file *file_
-> > > > > >>>>      case DRM_CAP_CRTC_IN_VBLANK_EVENT:
-> > > > > >>>>              req->value =3D 1;
-> > > > > >>>>              break;
-> > > > > >>>> +    case DRM_CAP_ASYNC_UPDATE:
-> > > > > >>>> +            req->value =3D 1;
-> > > > > >>>> +            list_for_each_entry(plane, &dev->mode_config.pl=
-ane_list, head) {
-> > > > > >>>> +                    if (!plane->helper_private->atomic_asyn=
-c_update) {
-> > > > > >>>> +                            req->value =3D 0;
-> > > > > >>>> +                            break;
-> > > > > >>>> +                    }
-> > > > > >>>> +            }
-> > > > > >>>> +            break;
-> > > > > >>>>      default:
-> > > > > >>>>              return -EINVAL;
-> > > > > >>>>      }
-> > > > > >>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> > > > > >>>> index 300f336633f2..ff01540cbb1d 100644
-> > > > > >>>> --- a/include/uapi/drm/drm.h
-> > > > > >>>> +++ b/include/uapi/drm/drm.h
-> > > > > >>>> @@ -649,6 +649,7 @@ struct drm_gem_open {
-> > > > > >>>>  #define DRM_CAP_PAGE_FLIP_TARGET    0x11
-> > > > > >>>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT        0x12
-> > > > > >>>>  #define DRM_CAP_SYNCOBJ             0x13
-> > > > > >>>> +#define DRM_CAP_ASYNC_UPDATE                0x14
-> > > > > >>>>
-> > > > > >>>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
-> > > > > >>>>  struct drm_get_cap {
-> > > > > >>>> --
-> > > > > >>>> 2.19.1
-> > > > > >>>>
-> > > > > >>>> _______________________________________________
-> > > > > >>>> dri-devel mailing list
-> > > > > >>>> dri-devel@lists.freedesktop.org
-> > > > > >>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > > > >>>
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > >
-> > >
-> > >
-> > > --
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
->
-> On Thu, Dec 20, 2018 at 5:40 PM Alex Deucher <alexdeucher@gmail.com> wrot=
-e:
-> >
-> > + Nicholas
-> >
-> > On Thu, Dec 20, 2018 at 5:47 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >
-> > > On Thu, Dec 20, 2018 at 10:07 AM Tomasz Figa <tfiga@chromium.org> wro=
-te:
-> > > >
-> > > > Hi Helen,
-> > > >
-> > > > On Fri, Dec 14, 2018 at 10:35 AM Helen Koike <helen.koike@collabora=
-.com> wrote:
-> > > > >
-> > > > > Hi Tomasz,
-> > > > >
-> > > > > On 12/13/18 2:02 AM, Tomasz Figa wrote:
-> > > > > > On Thu, Dec 6, 2018 at 1:12 AM Helen Koike <helen.koike@collabo=
-ra.com> wrote:
-> > > > > >>
-> > > > > >> Hi Ville
-> > > > > >>
-> > > > > >> On 11/27/18 11:34 AM, Ville Syrj=C3=A4l=C3=A4 wrote:
-> > > > > >>> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
-> > > > > >>>> Allow userspace to identify if the driver supports async upd=
-ate.
-> > > > > >>>
-> > > > > >>> And what exactly is an "async update"?
-> > > > > >>
-> > > > > >> I agree we are lacking docs on this, I'll send in the next ver=
-sion as
-> > > > > >> soon as we agree on a name (please see below).
-> > > > > >>
-> > > > > >> For reference:
-> > > > > >> https://lists.freedesktop.org/archives/dri-devel/2017-April/13=
-8586.html
-> > > > > >>
-> > > > > >>>
-> > > > > >>> I keep asking people to come up with the a better name for th=
-is, and to
-> > > > > >>> document what it actually means. Recently I've been think we =
-should
-> > > > > >>> maybe just adopt the vulkan terminology (immediate/fifo/mailb=
-ox) to
-> > > > > >>> avoid introducing yet another set of names for the same thing=
-. We'd
-> > > > > >>> still want to document things properly though.
-> > > > > >>
-> > > > > >> Another name it was suggested was "atomic amend", this feature=
- basically
-> > > > > >> allows userspace to complement an update previously sent (i.e.=
- its in
-> > > > > >> the queue and wasn't commited yet), it allows adding a plane u=
-pdate to
-> > > > > >> the next commit. So what do you think in renaming it to "atomi=
-c amend"?
-> > > > > >
-> > > > > > Note that it doesn't seem to be what the code currently is doin=
-g. For
-> > > > > > example, for cursor updates, it doesn't seem to be working on t=
-he
-> > > > > > currently pending commit, but just directly issues an atomic as=
-ync
-> > > > > > update call to the planes. The code actually seems to fall back=
- to a
-> > > > > > normal sync commit, if there is an already pending commit touch=
-ing the
-> > > > > > same plane or including a modeset.
-> > > > >
-> > > > > It should fail as discussed at:
-> > > > > https://patchwork.freedesktop.org/patch/243088/
-> > > > >
-> > > > > There was the following code inside the drm_atomic_helper_async_c=
-heck()
-> > > > > in the previous patch which would fallback to a normal commit if =
-there
-> > > > > isn't any pending commit to amend:
-> > > > >
-> > > > > +       if (!old_plane_state->commit)
-> > > > > +               return -EINVAL;
-> > > > >
-> > > > > In the v2 of the patch https://patchwork.freedesktop.org/patch/26=
-3712/
-> > > > > this got removed, but which means that async update will be enabl=
-ed
-> > > > > anyway. So the following code is wrong:
-> > > > >
-> > > > > -       if (state->legacy_cursor_update)
-> > > > > +       if (state->async_update || state->legacy_cursor_update)
-> > > > >                 state->async_update =3D !drm_atomic_helper_async_=
-check(dev, state);
-> > > > >
-> > > > > Does it make sense? If yes I'll fix this in the next version of t=
-he
-> > > > > Atomic IOCTL patch (and also those two patches should be in the s=
-ame
-> > > > > series, I'll send them together next time).
-> > > > >
-> > > > > Thanks for pointing this out.
-> > > > >
-> > > > > Please let me know if you still don't agree on the name "atomic a=
-mend",
-> > > > > or if I am missing something.
-> > > >
-> > > > I'll defer it to the DRM maintainers. From Chrome OS perspective, w=
-e
-> > > > need a way to commit the cursor plane asynchronously from other
-> > > > commits any time the cursor changes its position or framebuffer. As
-> > > > long as the new API allows that and the maintainers are fine with i=
-t,
-> > > > I think I should be okay with it too.
-> > >
-> > > If this is just about the cursor, why is the current legacy cursor
-> > > ioctl not good enough? It's 2 ioctls instead of one, but I'm not sure
-> > > if we want to support having a normal atomic commit and a cursor
-> > > update in the same atomic ioctl, coming up with reasonable semantics
-> > > for that will be complicated.
-> > >
-> > > Pointer to code that uses this would be better ofc.
-> >
-> > I haven't followed this thread too closely, but we ended up needing to
-> > add a fast patch for cursor updates to amdgpu's atomic support to
-> > avoid stuttering issues.  Other drivers may end up being affected by
-> > this as well.  See:
-> > https://bugs.freedesktop.org/show_bug.cgi?id=3D106175
-> > Unfortunately, the fast path requires some hacks to handle the ref
-> > counting properly on cursor fbs:
-> > https://patchwork.freedesktop.org/patch/266138/
-> > https://patchwork.freedesktop.org/patch/268298/
-> > It looks like gamma may need similar treatment:
-> > https://bugs.freedesktop.org/show_bug.cgi?id=3D108917
-> >
-> > Alex
-> >
-> >
-> > > -Daniel
-> > >
-> > > > Best regards,
-> > > > Tomasz
-> > > >
-> > > > >
-> > > > > Helen
-> > > > >
-> > > > > >
-> > > > > > Best regards,
-> > > > > > Tomasz
-> > > > > >
-> > > > > >> Or do you suggest another name? I am not familiar with vulkan =
-terminology.
-> > > > > >>
-> > > > > >>
-> > > > > >> Thanks
-> > > > > >> Helen
-> > > > > >>
-> > > > > >>>
-> > > > > >>>>
-> > > > > >>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collab=
-ora.com>
-> > > > > >>>> [prepared for upstream]
-> > > > > >>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
-> > > > > >>>>
-> > > > > >>>> ---
-> > > > > >>>> Hi,
-> > > > > >>>>
-> > > > > >>>> This patch introduces the ASYNC_UPDATE cap, which originated=
- from the
-> > > > > >>>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow =
-user to
-> > > > > >>>> figure that async_update exists.
-> > > > > >>>>
-> > > > > >>>> This was tested using a small program that exercises the uAP=
-I for easy
-> > > > > >>>> sanity testing. The program was created by Alexandros and mo=
-dified by
-> > > > > >>>> Enric to test the capability flag [2].
-> > > > > >>>>
-> > > > > >>>> The test worked on a rockchip Ficus v1.1 board on top of mai=
-nline plus
-> > > > > >>>> the patch to update cursors asynchronously through atomic pl=
-us the patch
-> > > > > >>>> that introduces the ATOMIC_AMEND flag for the drm/rockchip d=
-river.
-> > > > > >>>>
-> > > > > >>>> To test, just build the program and use the --atomic flag to=
- use the cursor
-> > > > > >>>> plane with the ATOMIC_AMEND flag. E.g.
-> > > > > >>>>
-> > > > > >>>>   drm_cursor --atomic
-> > > > > >>>>
-> > > > > >>>> [1] https://patchwork.freedesktop.org/patch/243088/
-> > > > > >>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commit=
-s/async-capability
-> > > > > >>>>
-> > > > > >>>> Thanks
-> > > > > >>>> Helen
-> > > > > >>>>
-> > > > > >>>>
-> > > > > >>>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
-> > > > > >>>>  include/uapi/drm/drm.h      |  1 +
-> > > > > >>>>  2 files changed, 12 insertions(+)
-> > > > > >>>>
-> > > > > >>>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/d=
-rm_ioctl.c
-> > > > > >>>> index 94bd872d56c4..4a7e0f874171 100644
-> > > > > >>>> --- a/drivers/gpu/drm/drm_ioctl.c
-> > > > > >>>> +++ b/drivers/gpu/drm/drm_ioctl.c
-> > > > > >>>> @@ -31,6 +31,7 @@
-> > > > > >>>>  #include <drm/drm_ioctl.h>
-> > > > > >>>>  #include <drm/drmP.h>
-> > > > > >>>>  #include <drm/drm_auth.h>
-> > > > > >>>> +#include <drm/drm_modeset_helper_vtables.h>
-> > > > > >>>>  #include "drm_legacy.h"
-> > > > > >>>>  #include "drm_internal.h"
-> > > > > >>>>  #include "drm_crtc_internal.h"
-> > > > > >>>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device =
-*dev, void *data, struct drm_file *file_
-> > > > > >>>>  {
-> > > > > >>>>      struct drm_get_cap *req =3D data;
-> > > > > >>>>      struct drm_crtc *crtc;
-> > > > > >>>> +    struct drm_plane *plane;
-> > > > > >>>>
-> > > > > >>>>      req->value =3D 0;
-> > > > > >>>>
-> > > > > >>>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device=
- *dev, void *data, struct drm_file *file_
-> > > > > >>>>      case DRM_CAP_CRTC_IN_VBLANK_EVENT:
-> > > > > >>>>              req->value =3D 1;
-> > > > > >>>>              break;
-> > > > > >>>> +    case DRM_CAP_ASYNC_UPDATE:
-> > > > > >>>> +            req->value =3D 1;
-> > > > > >>>> +            list_for_each_entry(plane, &dev->mode_config.pl=
-ane_list, head) {
-> > > > > >>>> +                    if (!plane->helper_private->atomic_asyn=
-c_update) {
-> > > > > >>>> +                            req->value =3D 0;
-> > > > > >>>> +                            break;
-> > > > > >>>> +                    }
-> > > > > >>>> +            }
-> > > > > >>>> +            break;
-> > > > > >>>>      default:
-> > > > > >>>>              return -EINVAL;
-> > > > > >>>>      }
-> > > > > >>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> > > > > >>>> index 300f336633f2..ff01540cbb1d 100644
-> > > > > >>>> --- a/include/uapi/drm/drm.h
-> > > > > >>>> +++ b/include/uapi/drm/drm.h
-> > > > > >>>> @@ -649,6 +649,7 @@ struct drm_gem_open {
-> > > > > >>>>  #define DRM_CAP_PAGE_FLIP_TARGET    0x11
-> > > > > >>>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT        0x12
-> > > > > >>>>  #define DRM_CAP_SYNCOBJ             0x13
-> > > > > >>>> +#define DRM_CAP_ASYNC_UPDATE                0x14
-> > > > > >>>>
-> > > > > >>>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
-> > > > > >>>>  struct drm_get_cap {
-> > > > > >>>> --
-> > > > > >>>> 2.19.1
-> > > > > >>>>
-> > > > > >>>> _______________________________________________
-> > > > > >>>> dri-devel mailing list
-> > > > > >>>> dri-devel@lists.freedesktop.org
-> > > > > >>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > > > > >>>
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > >
-> > >
-> > >
-> > > --
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
