@@ -2,215 +2,155 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB494C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9830FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651BD218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60DFC218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:03:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QuYZKWrL"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="DrcsL6TJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388720AbeLTUDg (ORCPT
+        id S2389374AbeLTUDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 20 Dec 2018 15:03:39 -0500
+Received: from mail-eopbgr1300125.outbound.protection.outlook.com ([40.107.130.125]:17888
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725372AbeLTUDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Dec 2018 15:03:36 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42994 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732280AbeLTUDg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:03:36 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so1353688plp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 12:03:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:user-agent:to:references:cc
-         :from:in-reply-to:message-id:subject:date;
-        bh=YpPiLta5HL4FYcYFm9sqCPNW0dwFYuPcTUdZm68XrOQ=;
-        b=QuYZKWrLEm/T0W0gpuYHSLpiD69A1DpXX6YQRYmuPc+JTh0shr3D93lxZ8B3fhLz5Z
-         mGp8n3s7zfDsgrUQJi8VnoepG1q8D+SB0fDooPUZ9swJGNgJK3qHjFqiFC79j7n4F80j
-         Zk4P3O7j406y5Wt96xGCbDiXLKyHaVzVZV6/M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :user-agent:to:references:cc:from:in-reply-to:message-id:subject
-         :date;
-        bh=YpPiLta5HL4FYcYFm9sqCPNW0dwFYuPcTUdZm68XrOQ=;
-        b=hMtyui2q0XiHqkHu9UMkY1rLyHlka1Y3i7aN4lelhYg6CX50YYALZZwnN/A6r0AC+W
-         lrhkjTkQW/tXhf6WwITHLLAV5XyIJvXCvaaTQA1yJVzgCUX1XVrRWetQ1r5XcV95ibDV
-         WLS/uGtyk9D86ia7eALD1UWAayECWDdANC+JbK150y1VtIyecUzPhxeWHmhtdxNcNhbx
-         CCNNR3F+iPuEBS41VFjooqdwXcL3tcaW2xKBbFCR+LZX4dbEnGDWXvHWeEbc1gpehOrg
-         M61gWLAUlIKwACl1Cv56VHsUvmbrWjnv4IdNOz43F+2BE9z7RG2SRXx2BVEp68mmCji+
-         amfw==
-X-Gm-Message-State: AA+aEWbxbvFoLw1AwMjevKWsayTSu89+/xn+FMho7TmJtxNORF/EwEW+
-        hRv7hxlPYxBJKG0Ev5YvPtbuZQ==
-X-Google-Smtp-Source: AFSGD/VP3f1EVTdzaHe7/zyVp5SNMNDWMGaS7RROII5jpBVCkmOPLizp+fGT2uAQKbflQmPfCeqCJw==
-X-Received: by 2002:a17:902:161:: with SMTP id 88mr26050560plb.306.1545336214854;
-        Thu, 20 Dec 2018 12:03:34 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id k14sm34561339pgs.52.2018.12.20.12.03.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:03:34 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ckLtbSC5QinNXsTcnnmjFz0LEp153+0591VPoATxL3k=;
+ b=DrcsL6TJ1vF8eyd+Uvmhs9sKpm9GYO3qHjFhusn67KuY2Q2u+zokzixm26nvhvF9yEQoPFuoqMF9fFLoMhYoNBY7Y7l/kJ8VD1SQ9U8H79q2koaLF3DvZ0XTvqvquzbZBaKhxycUOgRZ6fEhi45t7suahx3QlsAn0K7PS4InwaM=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0170.APCP153.PROD.OUTLOOK.COM (10.170.189.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1471.5; Thu, 20 Dec 2018 20:02:37 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::99da:e3db:6b66:c8d4]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::99da:e3db:6b66:c8d4%6]) with mapi id 15.20.1471.012; Thu, 20 Dec 2018
+ 20:02:37 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     'David Howells' <dhowells@redhat.com>,
+        'John Johansen' <john.johansen@canonical.com>,
+        'Al Viro' <viro@zeniv.linux.org.uk>,
+        'James Morris' <jmorris@namei.org>,
+        James Morris <James.Morris@microsoft.com>,
+        "'Serge E. Hallyn'" <serge@hallyn.com>,
+        'Alexander Viro' <viro@zeniv.linux.org.uk>
+CC:     "Adrian Vladu (Cloudbase Solutions SRL)" <v-advlad@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "'apparmor@lists.ubuntu.com'" <apparmor@lists.ubuntu.com>,
+        "'linux-security-module@vger.kernel.org'" 
+        <linux-security-module@vger.kernel.org>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        'Tejun Heo' <tj@kernel.org>
+Subject: RE: Recent VFS/LSM patches cause Kernel panic - not syncing: Can't
+ create rootfs
+Thread-Topic: Recent VFS/LSM patches cause Kernel panic - not syncing: Can't
+ create rootfs
+Thread-Index: AdSYG/wrTsN7nddLRf+g8gGOY0k+1gAgSQkA
+Date:   Thu, 20 Dec 2018 20:02:36 +0000
+Message-ID: <PU1P153MB0169179D2E7127E2F408CCE2BFBF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <PU1P153MB0169BF1F89AE4046C9D7307FBFBF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To: <PU1P153MB0169BF1F89AE4046C9D7307FBFBF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-12-20T04:30:01.9861660Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [2601:600:a27f:df20:b062:6e52:a3be:13ef]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0170;6:CF5GlB4wANQkfbdeYkglOl0d4/aYL1dW0TB8UxldMU4HVoV569qMJy9079oRhIzVHIIRD2SMPXcmIbS7QpFQpvQZDOC6qE2apNA+cI41AgJ/jMikgOkr4Y2BY67tEguwecBLeNR64naWNp3KVtRCQso+RSM6kjyRURn9386ZyJGesZeuv0Vnl8CPIJs4OtBnnDTBikfHiN6ZFGBulxI1GeCC4c/MJdg5lU4iKKVMlO0+eM0pDqmCMkQG2mmRGgkaVpEZTeWRsedGqUse9kBqKM2t7mAsdIvMH/hl5nNoqPn+H7VPp4bpmI96dAzoDmyqwfsDIY8zYr1s2+1ifhSIg/VZScww9ER5gKr7DyNRwjS9wVga3U/9UYzrhSo+Exav4pzoUOvDFg2QzSAspKQ/BaC+99ApF5SrfZhWdIUkjzPmfvXa3ujsV7qVBEyGNTt1POo6FKh8ypIJc9TyVk0hhA==;5:LJoKUWyBz1ovqkqdDppSVkcbJmfckSHPKoC8VdnErBL10Hws3XbeplFWZnDo98Lx1DF4M3au7gGf03laTTFY4AEMNuLa+aSc/t17K+xlnz9+aH9zzgXLcZVqRaPubYIJFFbyLag2mu5EzgoyqpPbntJvToFU9UbH8SLRLLzccE0=;7:LwwXnNXhwYzqsuqTUMLGT6nd1aj028ECFwRLW3k2aIcdhR2ZRYKxHGVusPVrxwCQIgrsJdtvZVIsYyxobq2s1kbuVjYbpCqiR4vwN0sml7b3ujQdknXMs3j9FEsK0QRVR291tBEYC7jURsXsLILcdQ==
+x-ms-office365-filtering-correlation-id: 6509a364-7b99-4861-3e59-08d666b616e2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:PU1P153MB0170;
+x-ms-traffictypediagnostic: PU1P153MB0170:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <PU1P153MB017025CE378A6F3A108E2C2ABFBF0@PU1P153MB0170.APCP153.PROD.OUTLOOK.COM>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(8220039)(2401047)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231475)(944501520)(2018427008)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:PU1P153MB0170;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0170;
+x-forefront-prvs: 0892FA9A88
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(39860400002)(396003)(376002)(199004)(189003)(6506007)(53546011)(102836004)(6346003)(186003)(97736004)(478600001)(68736007)(10290500003)(4326008)(8676002)(81156014)(81166006)(229853002)(7736002)(25786009)(9686003)(55016002)(6306002)(46003)(6246003)(316002)(110136005)(54906003)(22452003)(8990500004)(1511001)(53936002)(10090500001)(8936002)(86612001)(99286004)(14454004)(106356001)(76176011)(105586002)(7696005)(6116002)(2906002)(2940100002)(33656002)(486006)(305945005)(71200400001)(74316002)(476003)(11346002)(256004)(14444005)(5660300001)(446003)(71190400001)(7416002)(6436002)(86362001)(93156006);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0170;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-microsoft-antispam-message-info: vjwJtwhzluODRdJhvYAiLjuYWymaq8Ua3GdgpPNOZkHmgYnUyo6wV2oHEX3Qtjq3znR4gdC2myR3/ptL59IX8v2eSt0mGfDR9HlgYBFy1ZkhLVbZbDYAIyV9hYNX5EBu9ni4CGd6LkwKqCTy6/JZMIpZ1Bq/CcSd5CwlPIAc4OcmBNciI+flkOJouE5HjffaQiWgwI6xFkH933VcgsNfedOJi8a41PUv8M7I8zcAljEe+p0o4O/WFyvQPtvjbd6x1g1rOAesnt+4f0Piq4hIHBWdwuUt3rz69zltFIYCSlGkoJgYFatCtLncHb5nuyuo
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: alot/0.8
-To:     Lina Iyer <ilina@codeaurora.org>, evgreen@chromium.org,
-        marc.zyngier@arm.com
-References: <20181219221105.3004-1-ilina@codeaurora.org> <20181219221105.3004-6-ilina@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
-        bjorn.andersson@linaro.org, Lina Iyer <ilina@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181219221105.3004-6-ilina@codeaurora.org>
-Message-ID: <154533621302.79149.15228907259643696166@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 5/7] drivers: pinctrl: msm: setup GPIO irqchip hierarchy
-Date:   Thu, 20 Dec 2018 12:03:33 -0800
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6509a364-7b99-4861-3e59-08d666b616e2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 20:02:36.8567
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-12-19 14:11:03)
-> To allow GPIOs to wakeup the system from suspend or deep idle, the
-> wakeup capable GPIOs are setup in hierarchy with interrupts from the
-> wakeup-parent irqchip.
+> From: Dexuan Cui
+> Sent: Wednesday, December 19, 2018 8:30 PM
 >=20
-> In older SoC's, the TLMM will handover detection to the parent irqchip
-> and in newer SoC's, the parent irqchip may also be active as well as the
-> TLMM and therefore the GPIOs need to be masked at TLMM to avoid
-> duplicate interrupts. To enable both these configurations to exist,
-> allow the parent irqchip to dictate the TLMM irqchip's behavior when
-> masking/unmasking the interrupt.
+> Hi,
+> We started to see a "Can't create rootfs" panic with linux-next's
+> next-20181218 and next-20181219. Note: next-20181217 is good.
 >=20
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> Our test team found the first bad commit by git-bisect:
+> 013c7af575e5 ("vfs: Implement a filesystem superblock creation/configurat=
+ion
+> context")
+>=20
+> I had a look and I think another patch also helped to cause the panic:
+> c36d02347290 ("apparmor: Implement security hooks for the new mount API")
+>=20
+> My finding is: the panic happens because
+> start_kernel() -> vfs_caches_init() -> mnt_init() ->
+> sysfs_init() -> register_filesystem() -> init_mount_tree() ->
+> vfs_kern_mount(type, 0, "rootfs", NULL) -> vfs_get_tree() ->
+> security_sb_set_mnt_opts(sb, fc->security, 0, NULL) returns -EOPNOTSUPP:
+>=20
+> This means: fc->security is not NULL in
+> security_sb_set_mnt_opts(sb, fc->security, 0, NULL), and the
+> security_hook_heads.FUNC is empty in call_int_hook().
+>=20
+> The fc->security is assigned in this function (i.e. the line "fc->securit=
+y =3D afc;" ):
+>=20
+> static int apparmor_fs_context_parse_param(struct fs_context *fc,
 
-I don't think I gave a signed-off-by, so you need to ask to forge my
-sign off here. Please change it to be:
+Well, obviously David Howells <dhowells@redhat.com> has fixed the issue in
+the updated version of the patch by adding a dummy apparmor_set_mnt_opts():
 
- Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+From 8c5887f849301a5e00fa4b5e5ea7a3feae16b02d
+From: David Howells <dhowells@redhat.com>
+Date: Thu, 1 Nov 2018 23:07:24 +0000
+Subject: apparmor: Implement security hooks for the new mount API
+(https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=3Df=
+or-next&id=3D8c5887f849301a5e00fa4b5e5ea7a3feae16b02d )
 
-and I'm not sure how much I wrote vs. you wrote anymore so perhaps also
-add a
+I expect the fix will be in linux-next soon, probably tomorrow.
 
- Co-developed-by: Stephen Boyd <swboyd@chromium.org>
+Thanks!
+-- Dexuan
 
-And finally, please just email my chromium.org email for this series
-because I apparently messed up the address once and now it's all going
-to the wrong inbox. Thanks!
-
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-
-Can you Cc Linus Walleij and Bjorn Andersson on the whole patch series
-next time? Would be good to have their review on major pinctrl driver
-changes.
-
-> @@ -967,11 +994,86 @@ static bool msm_gpio_needs_valid_mask(struct msm_pi=
-nctrl *pctrl)
->         return device_property_read_u16_array(pctrl->dev, "gpios", NULL, =
-0) > 0;
->  }
-> =20
-> +static int msm_gpio_domain_translate(struct irq_domain *d,
-> +                                    struct irq_fwspec *fwspec,
-> +                                    unsigned long *hwirq, unsigned int *=
-type)
-> +{
-> +       if (is_of_node(fwspec->fwnode)) {
-> +               if (fwspec->param_count < 2)
-> +                       return -EINVAL;
-> +               *hwirq =3D fwspec->param[0];
-> +               *type =3D fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
-> +               return 0;
-> +       }
-> +
-> +       return -EINVAL;
-> +}
-
-Maybe this can be a generic function in gpiolib?
-
-> +
-> +static int msm_gpio_domain_alloc(struct irq_domain *domain, unsigned int=
- virq,
-> +                                unsigned int nr_irqs, void *arg)
-> +{
-> +       int ret;
-> +       irq_hw_number_t hwirq;
-> +       struct gpio_chip *gc =3D domain->host_data;
-> +       struct msm_pinctrl *pctrl =3D gpiochip_get_data(gc);
-> +       struct irq_fwspec *fwspec =3D arg;
-> +       struct qcom_irq_fwspec parent =3D { };
-> +       unsigned int type;
-> +
-> +       ret =3D msm_gpio_domain_translate(domain, fwspec, &hwirq, &type);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
-> +                                           &pctrl->irq_chip, gc);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (!domain->parent)
-> +               return 0;
-> +
-> +       parent.fwspec.fwnode      =3D domain->parent->fwnode;
-> +       parent.fwspec.param_count =3D 2;
-> +       parent.fwspec.param[0]    =3D hwirq;
-> +       parent.fwspec.param[1]    =3D type;
-> +
-> +       ret =3D irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &pare=
-nt);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (parent.mask)
-> +               set_bit(hwirq, pctrl->wakeup_masked_irqs);
-> +
-> +       return 0;
-> +}
-> +
-> +/*
-> + * TODO: Get rid of this and push it into gpiochip_to_irq()
-
-Hmm.. yeah we need to do this still. I think we can have a generic two
-cell function similar to irq_domain_xlate_twocell() that does the fwspec
-creation and uses some of the things that we pass to
-gpiochip_irqchip_add(), like the default level type. This existing
-function is not good to have, so there's work to do to get rid of this.
-
-I was also thinking that maybe we can make the alloc function above take
-a struct gpio_irq_fwspec structure that tells the alloc function what
-gpiochip the irq is for. That would mean that we need to change the
-gpio_to_irq() function below to be generic and stuff the chip inside the
-fwspec wrapper structure:
-
-	struct gpio_irq_fwspec {
-		struct irq_fwspec fwspec;
-		struct gpio_chip *chip;
-		unsigned int offset;
-	};
-
-but I seem to recall that was not working for some reason.
-
-> + */
-> +static int msm_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct irq_fwspec fwspec;
-> +
-> +       fwspec.fwnode =3D of_node_to_fwnode(chip->of_node);
-> +       fwspec.param[0] =3D offset;
-> +       fwspec.param[1] =3D IRQ_TYPE_LEVEL_HIGH;
-> +       fwspec.param_count =3D 2;
-> +
-> +       return irq_create_fwspec_mapping(&fwspec);
-> +}
-> +
-> +static const struct irq_domain_ops msm_gpio_domain_ops =3D {
-> +       .translate =3D msm_gpio_domain_translate,
-> +       .alloc     =3D msm_gpio_domain_alloc,
-> +       .free      =3D irq_domain_free_irqs_top,
-> +};
-> +
