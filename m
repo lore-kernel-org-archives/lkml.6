@@ -2,142 +2,182 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740E9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E60C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F9D218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43D4C218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732393AbeLTXGc (ORCPT
+        id S2390272AbeLTXKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 18:06:32 -0500
-Received: from mga03.intel.com ([134.134.136.65]:35397 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731184AbeLTXGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 18:06:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 15:06:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,379,1539673200"; 
-   d="scan'208";a="303911748"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by fmsmga006.fm.intel.com with ESMTP; 20 Dec 2018 15:06:20 -0800
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thu, 20 Dec 2018 18:10:03 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36168 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732028AbeLTXKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 18:10:02 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t13so3774794qtn.3;
+        Thu, 20 Dec 2018 15:10:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=nezuhEoUN3eO/o0iL1OzyaVZs5mUFWx4ax27J6rh46E=;
+        b=C7vatCKGGt0FL8vfSpVZHZtnNqAc/3pGg9oznC9cCkMwsZVDernqLPgnwxrr+nQBDW
+         6b5i1Mjw76z2wls1zQppKx9KivuB/6uExV32bwZEKCPFa2XS/eCYICJ1vXoM1Tl6YnHI
+         2vwyyoMG6HSgEok8UliKrviSW11dCLi6gX48C2GaEaURjQJDre9gFjXxTSy+p3giJdDT
+         ahf17n39bldV2XMJdxie+SW6rojhwsKpMDh7A44SbKMuBuZJZnUacQXwsyhb5VUvV+hn
+         eYImfmQiOzE+k6u4K2MOVq/05//aqTPIXiuO+7b46zFzh4Zz+MzW/Xhmm4YfV8UbxhKb
+         A+ZQ==
+X-Gm-Message-State: AJcUuke30Scpe6bLbn1LTn7AULEM4T7MEfbn0ikWHNNV0Bs97lFAP3+W
+        uyjTFe+gIcYlzDvpW3FMlxrQfL689ylILqsG99w=
+X-Google-Smtp-Source: ALg8bN79peTq2WlRDzsWWqdAzOTst4X6HUSdsFFFoHcP5reAn1EtSMSNaryvtKtzDa2iwk65m2a3U37ANBwAigzchec=
+X-Received: by 2002:a0c:f50c:: with SMTP id j12mr142253qvm.149.1545347400191;
+ Thu, 20 Dec 2018 15:10:00 -0800 (PST)
+MIME-Version: 1.0
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 21 Dec 2018 00:09:43 +0100
+Message-ID: <CAK8P3a1t0RiYcHtpwk3jwma0SvsS3NE5PAvTbb2zR4n+wkh69A@mail.gmail.com>
+Subject: [GIT PULL] y2038: more syscalls and cleanups
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v10 03/39] component: alloc component_match without any comp to match
-Date:   Fri, 21 Dec 2018 04:31:00 +0530
-Message-Id: <1545346896-21738-3-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545346896-21738-1-git-send-email-ramalingam.c@intel.com>
-References: <1545346896-21738-1-git-send-email-ramalingam.c@intel.com>
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+Hi Linus and Thomas,
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
+I realized that the merge window is now imminent, but I had not sent a
+pull request to Thomas for the current y2038 stuff. These patches have
+been around for a while though, and were in linux-next through my tree.
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+I got one bug report on Monday and incorporated a simple fix, which
+changed the commit date for the second half of the series, in case you
+are wondering.
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
+Thomas, is it ok for you to just provide an Ack for this branch and
+have Linus merge it directly?
 
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
+      Arnd
 
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index e8d676fad0c9..0ab36b2255ea 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
+are available in the Git repository at:
+
+  https://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
+tags/y2038-for-4.21
+
+for you to fetch changes up to e4b92b108c6cd6b311e4b6e85d6a87a34599a6e3:
+
+  timekeeping: remove obsolete time accessors (2018-12-18 16:13:05 +0100)
+
+----------------------------------------------------------------
+y2038: more syscalls and cleanups
+
+This concludes the main part of the system call rework for 64-bit time_t,
+which has spread over most of year 2018, the last six system calls being
+
+ - ppoll
+ - pselect6
+ - io_pgetevents
+ - recvmmsg
+ - futex
+ - rt_sigtimedwait
+
+As before, nothing changes for 64-bit architectures, while 32-bit
+architectures gain another entry point that differs only in the layout
+of the timespec structure. Hopefully in the next release we can wire up
+all 22 of those system calls on all 32-bit architectures, which gives
+us a baseline version for glibc to start using them.
+
+This does not include the clock_adjtime, getrusage/waitid, and
+getitimer/setitimer system calls. I still plan to have new versions
+of those as well, but they are not required for correct operation of
+the C library since they can be emulated using the old 32-bit time_t
+based system calls.
+
+Aside from the system calls, there are also a few cleanups here,
+removing old kernel internal interfaces that have become unused after
+all references got removed. The arch/sh cleanups are part of this,
+there were posted several times over the past year without a reaction
+from the maintainers, while the corresponding changes made it into all
+other architectures.
+
+----------------------------------------------------------------
+Arnd Bergmann (13):
+      y2038: futex: Move compat implementation into futex.c
+      y2038: futex: Add support for __kernel_timespec
+      y2038: socket: Add compat_sys_recvmmsg_time64
+      y2038: signal: Add sys_rt_sigtimedwait_time32
+      y2038: signal: Add compat_sys_rt_sigtimedwait_time64
+      sh: dreamcast: rtc: push down rtc class ops into driver
+      sh: sh03: rtc: push down rtc class ops into driver
+      sh: remove unused rtc_sh_get/set_time infrastructure
+      sh: remove board_time_init() callback
+      timekeeping: remove unused {read,update}_persistent_clock
+      timekeeping: remove timespec_add/timespec_del
+      vfs: replace current_kernel_time64 with ktime equivalent
+      timekeeping: remove obsolete time accessors
+
+Deepa Dinamani (5):
+      signal: Add set_user_sigmask()
+      signal: Add restore_user_sigmask()
+      ppoll: use __kernel_timespec
+      pselect6: use __kernel_timespec
+      io_pgetevents: use __kernel_timespec
+
+ Documentation/sh/new-machine.txt              |   8 --
+ arch/sh/boards/mach-dreamcast/Makefile        |   4 +-
+ arch/sh/boards/mach-dreamcast/rtc.c           |  45 +++++++---
+ arch/sh/boards/mach-dreamcast/setup.c         |   1 -
+ arch/sh/boards/mach-sh03/Makefile             |   3 +-
+ arch/sh/boards/mach-sh03/rtc.c                |  51 ++++++-----
+ arch/sh/boards/mach-sh03/setup.c              |   9 --
+ arch/sh/boards/of-generic.c                   |   8 --
+ arch/sh/configs/dreamcast_defconfig           |   2 +
+ arch/sh/configs/sh03_defconfig                |   2 +
+ arch/sh/include/asm/rtc.h                     |   3 -
+ arch/sh/include/mach-dreamcast/mach/sysasic.h |   1 -
+ arch/sh/kernel/time.c                         |  74 +---------------
+ fs/aio.c                                      | 134
+++++++++++++++++++++---------
+ fs/eventpoll.c                                |  52 ++----------
+ fs/inode.c                                    |   4 +-
+ fs/select.c                                   | 360
++++++++++++++++++++++++++++++++++++++++++++++---------------------------------
+ include/linux/compat.h                        |  26 ++++++
+ include/linux/futex.h                         |   8 --
+ include/linux/signal.h                        |   4 +
+ include/linux/socket.h                        |   9 +-
+ include/linux/syscalls.h                      |  29 +++++--
+ include/linux/time32.h                        |  25 ------
+ include/linux/timekeeping.h                   |  14 ---
+ include/linux/timekeeping32.h                 |  15 ----
+ kernel/Makefile                               |   3 -
+ kernel/futex.c                                | 207
++++++++++++++++++++++++++++++++++++++++++++--
+ kernel/futex_compat.c                         | 202
+--------------------------------------------
+ kernel/signal.c                               | 143
++++++++++++++++++++++++++++++++
+ kernel/sys_ni.c                               |   2 +
+ kernel/time/ntp.c                             |  10 +--
+ kernel/time/time.c                            |  36 --------
+ kernel/time/timekeeping.c                     |  12 +--
+ net/compat.c                                  |  34 +++-----
+ net/socket.c                                  |  62 ++++++++++----
+ 35 files changed, 847 insertions(+), 755 deletions(-)
+ delete mode 100644 kernel/futex_compat.c
