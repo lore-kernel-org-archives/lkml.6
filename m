@@ -2,94 +2,343 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2542C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7E2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A8E218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E6A218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 18:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgeED+Cu"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UKgLXHzy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389083AbeLTS3S (ORCPT
+        id S2389110AbeLTS3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 13:29:18 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38303 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389065AbeLTS3P (ORCPT
+        Thu, 20 Dec 2018 13:29:22 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:45482 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389065AbeLTS3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 13:29:15 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so1315922pfi.5;
-        Thu, 20 Dec 2018 10:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lv+bJQPAIkowSRq1DJaFnjQc/asERKA3XL1Blldwe/U=;
-        b=jgeED+Cu1Or95OkuuNUM8i/JHI5Of7Dj2xdljuA32aQ+BQ0UOHx89FYzbUqTVfQy0/
-         nZsXU+s8uFdgo28cDnf5Fv+jKA8w015IwfSU+EWyPYtFmhhn0+QpmbecYATuSO6VMIGd
-         bk6hoh7MNKu0kzcKfj0VFkTJ2jHv1ZQL+VsQIiRTZkfl09ki5oNFMv/VMSlk5M1khoHZ
-         tUhurMLNIWlNWEuJ3xrZxla6LBkX2YtEvK4Z73By0XnclVfTny61geJv617am1wKfneB
-         jPEQb6UNxIMx2XDIFG0k92HCb7L69KhlCROMc8v0qkfYEcH5naWcNrXzV5fh021dzdzX
-         2Jjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lv+bJQPAIkowSRq1DJaFnjQc/asERKA3XL1Blldwe/U=;
-        b=ne4vlRfsVSffRT4YZ+eRCM7o156p+ML9twaOY4GCfyR4rMAIU3uDejedBGOma/duli
-         mwpITvWthVojcvD4OnrAz4hVk4Yhm0PgKeV3YzSc6IaoGseaCOFRd6F5+GwzgkJ4LTSp
-         rrKW8Ct8ghbGHAlhgyVu0cTzmh997ZLr9d4n0+LlkxXGtUbRodqYYiIfNI5oOIAmHlL1
-         r1dbLJKR+QSNJFCreEPvxSiO5eyhyCBHr8FGo9LyCNyOp0ZcKahfsku2F+vZw4OjRtbR
-         /9w8xWbzapYoJCR+BQOIBVmLepssFanhUbfBnNRnUG7ro/F4I09m0dQY4i/UDB3Csir+
-         +QGg==
-X-Gm-Message-State: AA+aEWZ1AUdc6mirb34AplRAcRiWMHlcaBboyvLabk00CR9OC9AX0XJW
-        fdG1g0r+GAudXKnUVFwz0tE=
-X-Google-Smtp-Source: AFSGD/ViDVPGXMD9e1DhWNPC2P8aR5QcQ3LHQMyLcsX7rYNwLo/HztD6HMnP2+MldSl8gmuZpaO88A==
-X-Received: by 2002:a65:4b82:: with SMTP id t2mr7601779pgq.189.1545330554700;
-        Thu, 20 Dec 2018 10:29:14 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g26sm26518727pfh.61.2018.12.20.10.29.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 10:29:14 -0800 (PST)
-Date:   Thu, 20 Dec 2018 10:29:13 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/72] 4.14.90-stable review
-Message-ID: <20181220182913.GD12802@roeck-us.net>
-References: <20181220085922.332225035@linuxfoundation.org>
+        Thu, 20 Dec 2018 13:29:20 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBKISC24023653
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:19 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=TOPwOVNfLVT+RHMwYzAnx3oQRuvZkf30d8y9gJuyX4c=;
+ b=UKgLXHzyxQ31D+BjL9mHpzAKPxBNeJ/9AFlq4ZwwBRDmWdXDXR6q/873db+0ONVNSpf+
+ CBX92VOLpgVuihpn393T6JHJ8K7xdKOKcai80zvcSjkzGVA/oPt4ZTvStrngrUJBH/yV
+ /XEyZQ4Ao7pWHDRCKz8uJ7u9hIIDzizL0rM= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pgexwgd04-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 10:29:19 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Thu, 20 Dec 2018 10:29:08 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id BB51A62E139A; Thu, 20 Dec 2018 10:29:07 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v5 perf, bpf-next 7/7] perf tools: synthesize PERF_RECORD_* for loaded BPF programs
+Date:   Thu, 20 Dec 2018 10:29:04 -0800
+Message-ID: <20181220182904.4193196-8-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181220182904.4193196-1-songliubraving@fb.com>
+References: <20181220182904.4193196-1-songliubraving@fb.com>
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220085922.332225035@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 10:17:59AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.90 release.
-> There are 72 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Dec 22 08:59:06 UTC 2018.
-> Anything received after that time might be too late.
-> 
+This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
+BPF programs loaded before perf-record. This is achieved by gathering
+information about all BPF programs via sys_bpf.
 
-Build results:
-	total: 171 pass: 171 fail: 0
-Qemu test results:
-	total: 315 pass: 315 fail: 0
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ tools/perf/builtin-record.c |   6 ++
+ tools/perf/util/bpf-event.c | 204 ++++++++++++++++++++++++++++++++++++
+ tools/perf/util/bpf-event.h |   5 +
+ 3 files changed, 215 insertions(+)
 
-Details are available at https://kerneltests.org/builders/.
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 8983ab2e60dd..d239e8bf2f0f 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -41,6 +41,7 @@
+ #include "util/perf-hooks.h"
+ #include "util/time-utils.h"
+ #include "util/units.h"
++#include "util/bpf-event.h"
+ #include "asm/bug.h"
+ 
+ #include <errno.h>
+@@ -855,6 +856,11 @@ static int record__synthesize(struct record *rec, bool tail)
+ 		return err;
+ 	}
+ 
++	err = perf_event__synthesize_bpf_events(tool, process_synthesized_event,
++						machine, opts);
++	if (err < 0)
++		pr_warning("Couldn't synthesize bpf events.\n");
++
+ 	err = __machine__synthesize_threads(machine, tool, &opts->target, rec->evlist->threads,
+ 					    process_synthesized_event, opts->sample_address,
+ 					    opts->proc_map_timeout, 1);
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+index f24f75506f51..98208b577533 100644
+--- a/tools/perf/util/bpf-event.c
++++ b/tools/perf/util/bpf-event.c
+@@ -1,10 +1,24 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <errno.h>
+ #include <bpf/bpf.h>
++#include <bpf/btf.h>
++#include <linux/btf.h>
+ #include "bpf-event.h"
+ #include "debug.h"
+ #include "symbol.h"
+ 
++#define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
++
++static int snprintf_hex(char *buf, size_t size, unsigned char *data, size_t len)
++{
++	int ret = 0;
++	size_t i;
++
++	for (i = 0; i < len; i++)
++		ret += snprintf(buf + ret, size - ret, "%02x", data[i]);
++	return ret;
++}
++
+ int machine__process_bpf_event(struct machine *machine __maybe_unused,
+ 			       union perf_event *event,
+ 			       struct perf_sample *sample __maybe_unused)
+@@ -13,3 +27,193 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
+ 		perf_event__fprintf_bpf_event(event, stderr);
+ 	return 0;
+ }
++
++/*
++ * Synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for one bpf
++ * program. One PERF_RECORD_BPF_EVENT is generated for the program. And
++ * one PERF_RECORD_KSYMBOL is generated for each sub program.
++ */
++static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
++					       perf_event__handler_t process,
++					       struct machine *machine,
++					       int fd,
++					       union perf_event *event,
++					       struct record_opts *opts)
++{
++	struct ksymbol_event *ksymbol_event = &event->ksymbol_event;
++	struct bpf_event *bpf_event = &event->bpf_event;
++	u32 sub_prog_cnt, i, func_info_rec_size;
++	u8 (*prog_tags)[BPF_TAG_SIZE] = NULL;
++	struct bpf_prog_info info = {};
++	u32 info_len = sizeof(info);
++	void *func_infos = NULL;
++	u64 *prog_addrs = NULL;
++	struct btf *btf = NULL;
++	u32 *prog_lens = NULL;
++	bool has_btf = false;
++	int err = 0;
++
++	/* Call bpf_obj_get_info_by_fd() to get sizes of arrays */
++	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
++
++	if (err || info_len < 192 /* need field prog_tags */)
++		return -1;
++
++	/* number of ksyms, func_lengths, and tags should match */
++	sub_prog_cnt = info.nr_jited_ksyms;
++	if (sub_prog_cnt != info.nr_prog_tags ||
++	    sub_prog_cnt != info.nr_jited_func_lens)
++		return -1;
++
++	/* check BTF func info support */
++	if (info.btf_id && info.nr_func_info && info.func_info_rec_size) {
++		/* btf func info number should be same as sub_prog_cnt */
++		if (sub_prog_cnt != info.nr_func_info)
++			return -1;
++		if (btf__get_from_id(info.btf_id, &btf))
++			return -1;
++		func_info_rec_size = info.func_info_rec_size;
++		func_infos = malloc(sub_prog_cnt * func_info_rec_size);
++		if (!func_infos)
++			return -1;
++		has_btf = true;
++	}
++
++	/*
++	 * We need address, length, and tag for each sub program.
++	 * Allocate memory and call bpf_obj_get_info_by_fd() again
++	 */
++	prog_addrs = (u64 *)malloc(sizeof(u64) * sub_prog_cnt);
++	prog_lens = (u32 *)malloc(sizeof(u64) * sub_prog_cnt);
++	prog_tags = malloc(sizeof(u8) * BPF_TAG_SIZE * sub_prog_cnt);
++
++	err = !prog_addrs || !prog_lens || !prog_tags;
++	if (err)
++		goto out;
++
++	memset(&info, 0, sizeof(info));
++	info.nr_jited_ksyms = sub_prog_cnt;
++	info.nr_jited_func_lens = sub_prog_cnt;
++	info.nr_prog_tags = sub_prog_cnt;
++	info.jited_ksyms = ptr_to_u64(prog_addrs);
++	info.jited_func_lens = ptr_to_u64(prog_lens);
++	info.prog_tags = ptr_to_u64(prog_tags);
++	info_len = sizeof(info);
++	if (has_btf) {
++		info.nr_func_info = sub_prog_cnt;
++		info.func_info_rec_size = func_info_rec_size;
++		info.func_info = ptr_to_u64(func_infos);
++	}
++
++	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
++	if (err)
++		goto out;
++
++	/* Synthesize PERF_RECORD_KSYMBOL */
++	for (i = 0; i < sub_prog_cnt; i++) {
++		const struct bpf_func_info *finfo;
++		const char *short_name = NULL;
++		const struct btf_type *t;
++		int name_len;
++
++		*ksymbol_event = (struct ksymbol_event){
++			.header = {
++				.type = PERF_RECORD_KSYMBOL,
++				.misc = PERF_RECORD_MISC_KSYMBOL_TYPE_BPF,
++				.size = sizeof(struct ksymbol_event),
++			},
++			.addr = prog_addrs[i],
++			.len = prog_lens[i],
++		};
++		name_len = snprintf(ksymbol_event->name, KSYM_NAME_LEN,
++				    "bpf_prog_");
++		name_len += snprintf_hex(ksymbol_event->name + name_len,
++					 KSYM_NAME_LEN - name_len,
++					 prog_tags[i], BPF_TAG_SIZE);
++		if (has_btf) {
++			finfo = func_infos + i * info.func_info_rec_size;
++			t = btf__type_by_id(btf, finfo->type_id);
++			short_name = btf__name_by_offset(btf, t->name_off);
++		} else if (i == 0 && sub_prog_cnt == 1) {
++			/* no subprog */
++			if (info.name[0])
++				short_name = info.name;
++		} else
++			short_name = "F";
++		if (short_name)
++			name_len += snprintf(ksymbol_event->name + name_len,
++					     KSYM_NAME_LEN - name_len,
++					     "_%s", short_name);
++
++		ksymbol_event->header.size += PERF_ALIGN(name_len + 1,
++							 sizeof(u64));
++		err = perf_tool__process_synth_event(tool, event,
++						     machine, process);
++	}
++
++	/* Synthesize PERF_RECORD_BPF_EVENT */
++	if (opts->bpf_event) {
++		*bpf_event = (struct bpf_event){
++			.header = {
++				.type = PERF_RECORD_BPF_EVENT,
++				.size = sizeof(struct bpf_event),
++			},
++			.type = PERF_BPF_EVENT_PROG_LOAD,
++			.flags = 0,
++			.id = info.id,
++		};
++		memcpy(bpf_event->tag, prog_tags[i], BPF_TAG_SIZE);
++		err = perf_tool__process_synth_event(tool, event,
++						     machine, process);
++	}
++
++out:
++	free(prog_tags);
++	free(prog_lens);
++	free(prog_addrs);
++	free(func_infos);
++	free(btf);
++	return err ? -1 : 0;
++}
++
++int perf_event__synthesize_bpf_events(struct perf_tool *tool,
++				      perf_event__handler_t process,
++				      struct machine *machine,
++				      struct record_opts *opts)
++{
++	union perf_event *event;
++	__u32 id = 0;
++	int err;
++	int fd;
++
++	event = malloc(sizeof(event->bpf_event) + KSYM_NAME_LEN);
++	if (!event)
++		return -1;
++	while (true) {
++		err = bpf_prog_get_next_id(id, &id);
++		if (err) {
++			if (errno == ENOENT) {
++				err = 0;
++				break;
++			}
++			pr_err("can't get next program: %s%s",
++			       strerror(errno),
++			       errno == EINVAL ? " -- kernel too old?" : "");
++			err = -1;
++			break;
++		}
++		fd = bpf_prog_get_fd_by_id(id);
++		if (fd < 0) {
++			pr_debug("Failed to get fd for prog_id %u\n", id);
++			continue;
++		}
++
++		err = perf_event__synthesize_one_bpf_prog(
++			tool, process, machine, fd, event, opts);
++		close(fd);
++		if (err)
++			break;
++	}
++	free(event);
++	return err;
++}
+diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
+index d5ca355dd298..38aee4040f12 100644
+--- a/tools/perf/util/bpf-event.h
++++ b/tools/perf/util/bpf-event.h
+@@ -8,4 +8,9 @@ int machine__process_bpf_event(struct machine *machine,
+ 			       union perf_event *event,
+ 			       struct perf_sample *sample);
+ 
++int perf_event__synthesize_bpf_events(struct perf_tool *tool,
++				      perf_event__handler_t process,
++				      struct machine *machine,
++				      struct record_opts *opts);
++
+ #endif
+-- 
+2.17.1
 
-Guenter
