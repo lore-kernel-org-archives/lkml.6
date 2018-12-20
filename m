@@ -2,159 +2,210 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88175C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A741C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5592E20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kY1vKfKD"
+	by mail.kernel.org (Postfix) with ESMTP id 4FDB420811
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545298886;
+	bh=aQEeZVcWaZoSnRdDZJ9pvup3QYAQgBon9uWnOz9b24Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=NAbNGSkpr+KeDPtGvshmXwj5wrPP6nQKqOQdSIKuiZIYcM/rJd9ROH0ur/EE92vbk
+	 UmwGk02AtHlQbzKbpzlBjhJZCEiXq81ITvMCZ8Au/Jx/Y5j1JjH2lereAeWo6hrflo
+	 V3fX0XgEpnEQLE4ljbhXoIVFEWs0pk2fRamnqewU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387439AbeLTJlM (ORCPT
+        id S2387443AbeLTJlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:41:12 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:43330 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730167AbeLTJlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:41:10 -0500
-Received: by mail-ua1-f68.google.com with SMTP id z11so327545uaa.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:41:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=esq0pf+AXhqx5xXP8kafDyjV/A91AQ81qOD+Ua/idLk=;
-        b=kY1vKfKDXZVZFafjgFhzcxPBzXPs75A4A9QgCLsHuDwziMoX84N095bhzuA771B+sY
-         RKtEnnMLRAmQBnb4iVsr8qZvZg536ESbhjy/+OS+K1FfMK8hm2Qn//dooJ/tMjpTwBVj
-         +/865m/g+71LM62dAkimY+aXr4boCuLTbaTX0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=esq0pf+AXhqx5xXP8kafDyjV/A91AQ81qOD+Ua/idLk=;
-        b=liM502wXnhA499zPDXp5Q6yKJmfi+LF494fQzjIPrLd6emRSkLLPwNVocbmHv1Txi8
-         hfsOl/XaYEu350lwh0R+Liw8d27NhP9dtyL8k3+ES8+CcsSzjVBHQ7UWNWzvUvpFscmO
-         gWS1o2MXpxOfeM7/dsZDDzCHQoK+mZ0foSYjFVYB8Y9J/i4Vsjw8so30cg5bZYHSo0z5
-         or+xkizRTAPQsQ21/PLmhLtRdN+X+p3R9crgim3Dw8oyVHM7geZXwDxVKIEJikAdZGkW
-         bHma1ifctHnZpdDoXZbCT0oRnmrgGQROZyeA2xPfN81LXHKrD2mFlyLyLr1QO7DVMpM2
-         bH3A==
-X-Gm-Message-State: AA+aEWZFigckloH1qEavii7oQiZIYjm5HM/XBJOmUg23eeX5iYQh2btn
-        W8tXeJ37s76YVvI4t2bgx3HkeUWVsBViDZiZbB7v+g==
-X-Google-Smtp-Source: AFSGD/UaexyLQ1nb6r6nqPTHEMiG5xgM4A+kYufiIwP/4O1vJOC4CHD4rpkBaURJ6GePrFiAZl+qjDZtApqcDhtXJNo=
-X-Received: by 2002:a9f:2244:: with SMTP id 62mr10789733uad.119.1545298868834;
- Thu, 20 Dec 2018 01:41:08 -0800 (PST)
+        Thu, 20 Dec 2018 04:41:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731737AbeLTJYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:24:01 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8EC62177B;
+        Thu, 20 Dec 2018 09:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545297840;
+        bh=aQEeZVcWaZoSnRdDZJ9pvup3QYAQgBon9uWnOz9b24Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nnE0EIcAN801gmAobhV5wqo5aEWfHJHzlmEcclOfMtPegNKEKNqEVA7f0h4TXjsFl
+         lcHBXk7zD7dkk92E7ZVimdOoH2pG2qZbBuwSKmTGfmwdkrDW3ADaXc4nwFPoKUkAz4
+         DrGYAzWW2CRsF0gSFC5vn+vHYtJ5VTm9fBszGo0U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Vitor Soares <soares@synopsys.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 36/61] ARC: io.h: Implement reads{x}()/writes{x}()
+Date:   Thu, 20 Dec 2018 10:18:36 +0100
+Message-Id: <20181220085845.204666405@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20181220085843.743900603@linuxfoundation.org>
+References: <20181220085843.743900603@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <1545144923-31546-1-git-send-email-vincent.guittot@linaro.org>
- <1545144923-31546-2-git-send-email-vincent.guittot@linaro.org>
- <CAPDyKFq6X8vJU=pK1fgirGkD2-GS=LryRP1No8bSgPNLbyvAEg@mail.gmail.com>
- <CAKfTPtCpv0MqF64JGTyR63bqKdAhXzL1fEsNbS6DHsD-jXYpKw@mail.gmail.com>
- <CAPDyKFrSxX-eBsTiEvbrbjVpqkSuBnhxruCgtihH6hSvWSFD1g@mail.gmail.com>
- <CAKfTPtB=TUAz=KpZzJsRUvK8ymiXnTgQ3BxcY0yu9YbJ1BW7QA@mail.gmail.com>
- <CAPDyKFoR7t=K65n0_+4yRqdpRMZ0BbA16cDhmxEvNhm0qEOXNQ@mail.gmail.com>
- <CAKfTPtA4Fr6Xk7+dUpzZqGvK6dJGtWAiz70Ho4noQk3gBdGFdg@mail.gmail.com>
- <CAPDyKFqpieqgh-0U_N1wwWdciotMAAJ2SRNXpGAb8D2voiaOJA@mail.gmail.com>
- <CAKfTPtBp+eCqyCWh27FWe8pkrFJiLQitPL_+kfL42r_BTq6DcQ@mail.gmail.com>
- <CAPDyKFocLDoJG5P3ywAV7+p6PL3fnno1cZ87=-Mzn49ag-y6tw@mail.gmail.com> <CAKfTPtA7Y5=wQ-CqKxquyiRVA1PjqqjV1A9aDn8tMok=eDYX5A@mail.gmail.com>
-In-Reply-To: <CAKfTPtA7Y5=wQ-CqKxquyiRVA1PjqqjV1A9aDn8tMok=eDYX5A@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 20 Dec 2018 10:40:32 +0100
-Message-ID: <CAPDyKFqwB4qPAjhgSGkZmwyzd38AiFzkFVpqcea6K7Sm7BWcfQ@mail.gmail.com>
-Subject: Re: [RFC v3 1/3] PM/runtime: Add a new interface to get accounted time
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        jani.nikula@linux.intel.com,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        rodrigo.vivi@intel.com, David Airlie <airlied@linux.ie>,
-        "Intel graphics driver community testing & development" 
-        <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> > > > Re-thinking this a bit from my earlier comments - and by following the
-> > > > above reasoning, it sounds like this better belongs in the
-> > > > driver/subsystem, without requiring any data from the core.
-> > > >
-> > > > The driver/subsystem could just store a timestamp in it's
-> > > > ->runtime_suspend() callback and whenever needed, it could compute a
-> > > > delta towards it. That should work, right?
-> > >
-> > > I don't know i915/drm enough to know all that details
-> >
-> > Okay, so let me re-summarize the main issue I see with your approach
-> > in $subject patch.
-> >
-> > dev->power.accounting_timestamp can't be used to know when last
-> > transition was made. If I understand correctly, that is how you use
-> > it. No?
->
-> Yes. At least that how I have interpreted the current code
->
-> >
-> > Anyway, as stated, that's because the timestamp becomes updated, if
-> > update_pm_runtime_accounting() is called via the sysfs nobs, which
-> > means there is no state transition happening, but only accounting data
-> > is updated.
->
-> Yes I have not realized that the update also happens there which makes
-> me think that i have
-> may be over interpreted the code and the initialization of
-> i915->pmu.suspended_jiffies_last
->
-> >
-> > So, what I think we can do from the core perspective, if it helps
-> > (which I am not sure of):
-> > 1. Export a function, which returns the value of dev->power.suspended_jiffies.
-> > 2. Export a wrapper function (to deal with locking) which calls
-> > update_pm_runtime_accounting(). This wrapper function allows the user
-> > the update the total suspended time, also taking into account the time
-> > spent in the current state.
->
-> Having now in mind that suspended_jiffies can be updated outside state
-> transition like via sysfs call,
-> we can maybe just implements 2 and return dev->power.suspended_jiffies
->
-> something like below
-> unsigned long pm_runtime_get_suspended_time(struct device *dev)
+------------------
 
-"pm_runtime_suspended_time()" should be sufficient I think. The "get"
-part would become confusing due to the existing get/put functions that
-are part of the runtime PM interface.
+[ Upstream commit 10d443431dc2bb733cf7add99b453e3fb9047a2e ]
 
-> {
-> unsigned long time;
-> unsigned long flags;
->
-> spin_lock_irqsave(&dev->power.lock, flags);
->
-> update_pm_runtime_accounting(dev);
->
-> time = dev->power.suspended_time;
+Some ARC CPU's do not support unaligned loads/stores. Currently, generic
+implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
+This can lead to misfunction of some drivers as generic functions do a
+plain dereference of a pointer that can be unaligned.
 
-dev->power.suspended_jiffies
+Let's use {get/put}_unaligned() helpers instead of plain dereference of
+pointer in order to fix. The helpers allow to get and store data from an
+unaligned address whilst preserving the CPU internal alignment.
+According to [1], the use of these helpers are costly in terms of
+performance so we added an initial check for a buffer already aligned so
+that the usage of the helpers can be avoided, when possible.
 
-...at least until you converts to ktime :-)
+[1] Documentation/unaligned-memory-access.txt
 
->
-> spin_unlock_irqrestore(&dev->power.lock, flags);
->
-> return time;
-> }
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Tested-by: Vitor Soares <soares@synopsys.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arc/include/asm/io.h | 72 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-Yes, this looks fine to me!
+diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
+index c22b181e8206..2f39d9b3886e 100644
+--- a/arch/arc/include/asm/io.h
++++ b/arch/arc/include/asm/io.h
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ #include <asm/page.h>
++#include <asm/unaligned.h>
+ 
+ #ifdef CONFIG_ISA_ARCV2
+ #include <asm/barrier.h>
+@@ -94,6 +95,42 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
+ 	return w;
+ }
+ 
++/*
++ * {read,write}s{b,w,l}() repeatedly access the same IO address in
++ * native endianness in 8-, 16-, 32-bit chunks {into,from} memory,
++ * @count times
++ */
++#define __raw_readsx(t,f) \
++static inline void __raw_reads##f(const volatile void __iomem *addr,	\
++				  void *ptr, unsigned int count)	\
++{									\
++	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
++	u##t *buf = ptr;						\
++									\
++	if (!count)							\
++		return;							\
++									\
++	/* Some ARC CPU's don't support unaligned accesses */		\
++	if (is_aligned) {						\
++		do {							\
++			u##t x = __raw_read##f(addr);			\
++			*buf++ = x;					\
++		} while (--count);					\
++	} else {							\
++		do {							\
++			u##t x = __raw_read##f(addr);			\
++			put_unaligned(x, buf++);			\
++		} while (--count);					\
++	}								\
++}
++
++#define __raw_readsb __raw_readsb
++__raw_readsx(8, b)
++#define __raw_readsw __raw_readsw
++__raw_readsx(16, w)
++#define __raw_readsl __raw_readsl
++__raw_readsx(32, l)
++
+ #define __raw_writeb __raw_writeb
+ static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
+ {
+@@ -126,6 +163,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ 
+ }
+ 
++#define __raw_writesx(t,f)						\
++static inline void __raw_writes##f(volatile void __iomem *addr, 	\
++				   const void *ptr, unsigned int count)	\
++{									\
++	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
++	const u##t *buf = ptr;						\
++									\
++	if (!count)							\
++		return;							\
++									\
++	/* Some ARC CPU's don't support unaligned accesses */		\
++	if (is_aligned) {						\
++		do {							\
++			__raw_write##f(*buf++, addr);			\
++		} while (--count);					\
++	} else {							\
++		do {							\
++			__raw_write##f(get_unaligned(buf++), addr);	\
++		} while (--count);					\
++	}								\
++}
++
++#define __raw_writesb __raw_writesb
++__raw_writesx(8, b)
++#define __raw_writesw __raw_writesw
++__raw_writesx(16, w)
++#define __raw_writesl __raw_writesl
++__raw_writesx(32, l)
++
+ /*
+  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
+  * Based on ARM model for the typical use case
+@@ -141,10 +207,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+ #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+ #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
++#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
++#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
++#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
+ #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
++#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
++#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
++#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
+ 
+ /*
+  * Relaxed API for drivers which can handle barrier ordering themselves
+-- 
+2.19.1
 
-Kind regards
-Uffe
+
+
