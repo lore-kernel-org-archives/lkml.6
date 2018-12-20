@@ -2,84 +2,121 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB4EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4186C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E4021907
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545338679;
-	bh=0wEOmnDJn6z0jLMtcD6LJHUiIpFsOKqJdsQvTak89sU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ukLh3HKKTCmDwbmApVJv9POcXSYIwUrYn8ii+OtO0oH/9IPJHSeMq5rOQJgk0h9dy
-	 rmlved6uz2dnATwuA8RDQAbRb6FdvaAATGchAPhHvihs3OWdiRREX4NtQP6kAcEcG3
-	 JZNMevHfYKYpNpJfQhHc0sM6HpcmuPamrjVvQUq4=
+	by mail.kernel.org (Postfix) with ESMTP id 7D13021909
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 20:45:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EQ4sSfTT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387491AbeLTUoj (ORCPT
+        id S2388259AbeLTUpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:44:39 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45897 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730057AbeLTUoi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 15:44:38 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y1so3001395oie.12;
-        Thu, 20 Dec 2018 12:44:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q8i6c4ZL4Z4u35CG2gPdbbPNokVdAtVtmKtXDKnFPJs=;
-        b=TAQDJaJrTAIMQjAXodSx8Hdj6W7o3c7+Z1OTS8q4velNFRDMpjxb4XGXzAhvWy4p8S
-         CR6d6pPHk3Fi4MHVPiX7EooFiyc6tQOsZz7YhXnNMeeX01HkqgjT4y0Vb3wC/Ud0k4ou
-         kCfTzZyvDPqEyuSFeULKxeU+ikczv4IjeWa0ZP+2UEWI2Z90J+/ZcIzigzKanEe21hHH
-         q01YeM8hHpHicmIb2lB+9smodmCvf77g8Gy41zf1LO/F+pf9OWav5OrVWksPcgVLQ+wj
-         ghkoZWBvnium7ImlKMwaFdxqYFteWSX9pfckHZZ/vgaTqBt09ERr/N4s1oBnfjtPdPVB
-         rY+g==
-X-Gm-Message-State: AA+aEWbDZkVc84iYv6JIV7hqnAwFGCI50nogcm49ah/HWtr0vWA5sKA+
-        uoRbyN4rbY8ExIXFoRrqcw==
-X-Google-Smtp-Source: ALg8bN5SWsUxsPipzbSrGvnQvoSjqAoQ5P2RCDdJrnpRoDcjv2vqBnUdsaBFaX1UQITOfm2nW7mUew==
-X-Received: by 2002:aca:e283:: with SMTP id z125mr169034oig.23.1545338677992;
-        Thu, 20 Dec 2018 12:44:37 -0800 (PST)
-Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id q25sm14032736otg.70.2018.12.20.12.44.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:44:37 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:44:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/2] dt-bindings: nvmem: imx-ocotp: add compatible string
- for  i.MX7ULP
-Message-ID: <20181220204431.GA31062@bogus>
-References: <1544777136-9195-1-git-send-email-Anson.Huang@nxp.com>
- <1544777136-9195-2-git-send-email-Anson.Huang@nxp.com>
+        Thu, 20 Dec 2018 15:45:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:55037 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730057AbeLTUpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 15:45:32 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43LP0S4bf1z9s8J;
+        Fri, 21 Dec 2018 07:45:28 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545338729;
+        bh=BwrrPM3X9hZVgHVFTGe/NdzgxrivncUr13rT/FGbtRY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=EQ4sSfTT/EOvQQFAXYEVWvMsavH7v8jUy79O2uSaC9yMgSDHh+lD/cveKwyV38460
+         9dHDdkdZzzr3N7FPFcACE7e4uM4z3AtpUSjjI9q3YFcEAcMCC5apY9oMBvdXO8BkIK
+         9lvenYvmCaiMGeePNnxU0iLyDDnpONcFLyR45FhryyCwn4dV8XIQRD+fhIvgWGamW8
+         L/tCq8oe/mwUmNl0g59E4P67f15TB0bekmTIVkqNyUf36gqZ2NHHPJsBapph/7MgbM
+         uRnY1sHEHNu1n0qVn+PJKWM8EMYbNaCiA7AJl21staKgzjkwsNN3E8/hbIe2zbNmZQ
+         SlAjFjoBK8N3w==
+Date:   Fri, 21 Dec 2018 07:45:22 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: Signed-off-by missing for commits in the vfs tree
+Message-ID: <20181221074522.0b0c986c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544777136-9195-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/p6HwAU_tfq9f5bddGFFOrnS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Dec 2018 08:51:37 +0000, Anson Huang wrote:
-> Add new compatible string for i.MX7ULP SOC.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+--Sig_/p6HwAU_tfq9f5bddGFFOrnS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Al,
+
+Commits
+
+  e6cf4b0ddae8 ("teach vfs_get_tree() to handle subtype, switch do_new_moun=
+t() to it")
+  a5df92eef26f ("new helper: vfs_create_mount()")
+  84b9446c0cb2 ("mount_fs: suppress MAC on MS_SUBMOUNT as well as MS_KERNMO=
+UNT")
+  6df9e604628d ("smack: rewrite smack_sb_eat_lsm_opts()")
+  a4fdf6490284 ("smack: get rid of match_token()")
+  b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new =
+helper")
+  324240b27f48 ("LSM: new method: ->sb_add_mnt_opt()")
+  8a2bfb0f835a ("selinux: rewrite selinux_sb_eat_lsm_opts()")
+  3cec2907c913 ("selinux: regularize Opt_... names a bit")
+  b0ab2db616c0 ("selinux: switch away from match_token()")
+  cbe9d96f42ba ("selinux: new helper - selinux_add_opt()")
+  2790a639b456 ("LSM: bury struct security_mnt_opts")
+  205b9b7a392a ("smack: switch to private smack_mnt_opts")
+  179a64d445e2 ("selinux: switch to private struct selinux_mnt_opts")
+  cb662518822e ("LSM: hide struct security_mnt_opts from any generic code")
+  6c63bb2d5323 ("selinux: kill selinux_sb_get_mnt_opts()")
+  e03db7f5411c ("LSM: turn sb_eat_lsm_opts() into a method")
+  dc0dadb3c3d7 ("nfs_remount(): don't leak, don't ignore LSM options quietl=
+y")
+  363540f775fb ("btrfs: sanitize security_mnt_opts use")
+  8f08fcb05ba6 ("selinux; don't open-code a loop in sb_finish_set_opts()")
+  144da0858c5e ("LSM: split ->sb_set_mnt_opts() out of ->sb_kern_mount()")
+  be917e5b8736 ("new helper: security_sb_eat_lsm_opts()")
+  580a8bcb268b ("LSM: lift extracting and parsing LSM options into the call=
+er of ->sb_remount()")
+  cf891373b60a ("LSM: lift parsing LSM options into the caller of ->sb_kern=
+_mount()")
+  d02fc3452738 ("smack: make smack_parse_opts_str() clean up on failure")
+  17f3b556a3e3 ("selinux: expand superblock_doinit() calls")
+
+are missing a Signed-off-by from their committers.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/p6HwAU_tfq9f5bddGFFOrnS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwb/2IACgkQAVBC80lX
+0GxLzgf+K7/8UPnOL5DR52WMIUS8B65SD37helBcAb9H1BZJfCJVb8jD27HLSL9N
+Ro/V04nGOxtUuXAQQgI3jhEyRSqKRe4aaXCEmzFyEufLGkUp/i8aR0LZlS2P5lL1
+pl1ZW9q4qKQwMpPMhOsoDLtfpUdnNlIY2X26SmzKYMbRBuBtiVLMySO/9J+3Cili
+6x3oZf6OR3DrynMQ30F6B+EsGxjZlXl/opi/HaPG4hr65Rx02MeIvMZ7f53IztU5
+K7PZNSu+1j5JNH+NSFQIp1cIV9lTztjsz5qcAz0ij73uNJusFEPJ0gLU2XrBpWNO
+mh7q6PDIavE55TKz0pzoYF4/F988JQ==
+=reGn
+-----END PGP SIGNATURE-----
+
+--Sig_/p6HwAU_tfq9f5bddGFFOrnS--
