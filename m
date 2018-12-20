@@ -2,86 +2,103 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99232C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A08C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C694217D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EF73217D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 13:12:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lwTAxOtu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W5CWV7LQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732430AbeLTNMW (ORCPT
+        id S1732808AbeLTNMm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 08:12:22 -0500
-Received: from mga06.intel.com ([134.134.136.31]:30973 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730884AbeLTNMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 08:12:21 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 05:12:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
-   d="scan'208";a="102148596"
-Received: from unknown (HELO localhost) ([10.249.254.232])
-  by orsmga006.jf.intel.com with ESMTP; 20 Dec 2018 05:12:14 -0800
-Date:   Thu, 20 Dec 2018 15:12:13 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20181220131213.GA4848@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181220103204.GB26410@linux.intel.com>
+        Thu, 20 Dec 2018 08:12:42 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36918 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730884AbeLTNMl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 08:12:41 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1BDBD60867; Thu, 20 Dec 2018 13:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545311561;
+        bh=REEJn9AdM/EMIpyj5AGdvfP5/SAXzUzyr5xgpY8LL0s=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=lwTAxOtuIKGLlxDJMtWKIh2zEIMYzODkk9cE81T1SUS2WBvqH27Oldf06ruipmeyu
+         hvHUuIm30oMMrAY+H3FofccTCMq8LJsdvcNmOCDfZZ3mZPqfEmI93j+vtUCIqlOk/a
+         hW0HU+z+3MqD0/5vF24L2zCT6SJI4Vuc8+4WJkhs=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86E1B60867;
+        Thu, 20 Dec 2018 13:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545311559;
+        bh=REEJn9AdM/EMIpyj5AGdvfP5/SAXzUzyr5xgpY8LL0s=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=W5CWV7LQb53kCdmcWXDBuFjZCyO/BueVVi7o4N/UOYhaoHTSlwpkblmPshLZTp6wP
+         OxYimnVS+anFpgGDMuuBdojDKTWymWwD4Ro9l2AomVk4OXzrodIlgbgGwnonxJDyI4
+         /nNAoixbu+xgyirOJ+aNAgoTr1vXXALyvDJtrtXc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86E1B60867
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        netdev@vger.kernel.org,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: out of bounds read in drivers/net/wireless/ray_cs.c
+References: <9a94eeb3-0146-5e64-1e35-54f925fb14d2@canonical.com>
+Date:   Thu, 20 Dec 2018 15:12:35 +0200
+In-Reply-To: <9a94eeb3-0146-5e64-1e35-54f925fb14d2@canonical.com> (Colin Ian
+        King's message of "Thu, 20 Dec 2018 13:06:58 +0000")
+Message-ID: <87pntwtk8s.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220103204.GB26410@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 12:32:04PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Dec 19, 2018 at 06:58:48PM -0800, Andy Lutomirski wrote:
-> > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > opening a new instance of /dev/sgx for each encalve?
-> 
-> I think that fits better to the SCM_RIGHTS scenario i.e. you could send
-> the enclav to a process that does not have necessarily have rights to
-> /dev/sgx. Gives more robust environment to configure SGX.
+Colin Ian King <colin.king@canonical.com> writes:
 
-My only open for the implementation is where to swap? If it is a VMA,
-whose VMA?
+> Static analysis with CoverityScan picked up an out of bounds read issue
+> that has been in the Raylink wireless LAN card driver since it appeared
+> in the kernel:
+>
+> drivers/net/wireless/ray_cs.c:
+>
+> accessing org[3] is out of bounds, the array has just 3 elements.
+>
+>  959                if (proto == htons(ETH_P_AARP) || proto ==
+> htons(ETH_P_IPX)) {
+>  960                        /* This is the selective translation table,
+> only 2 entries */
+>
+>     CID undefined (#1 of 1): Out-of-bounds read
+>     overrun-local: Overrunning array of 3 bytes at byte offset 3 by
+> dereferencing pointer &((struct snaphdr_t *)ptx->var)->org[3].
+>
+>  961                        writeb(0xf8,
+>  962                               &((struct snaphdr_t __iomem
+> *)ptx->var)->org[3]);
+>  963                }
+>
+> I suspect the org[3] is a typo and should be org[2], but I don't have
+> any info on the H/W so I'm speculating that this is the issue. Any ideas
+> anyone?
 
-Please share your views here. Not a blocker for me to work on the
-implementation, though. I'll use a private shmem file up until there
-is a better option.
+I have never heard anyone using this driver so I suspect you won't get
+any help with testing. Just send a patch fixing the issue, and if it
+breaks something then at least we know someone is using the driver :)
 
-This ioctl API discussion is kind of meaningless for me ATM because it
-does not have that much effect to the internals even if it wouldn't be
-perfect in v19. Very trival to change.
-
-/Jarkko
+-- 
+Kalle Valo
