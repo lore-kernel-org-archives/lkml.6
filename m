@@ -2,54 +2,52 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCE3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8408C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA692177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4FCA21720
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545297673;
-	bh=uWDcZBVVmz6XIF80OokLkFYHMR3ZF4lco2/MU/0Bcac=;
+	s=default; t=1545297679;
+	bh=I7+L1gEMGURt6bbv5m3n01sAcjm/6OQxEkeZaD6p6+c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sitQtadW9JCfF1/w7mAVMs0hq/h9uZIoeqiuAmVNG/VUN12zSNDLfuL1wVSjTP47q
-	 XorKjS1ouGFRyNLKBvBHxECUjbLMjtCjMuxwyAituWMgJtDSX//LH69mu+AsD3FGQz
-	 8PIfmlR5x/yK2pguNFHWYUZiCSrGlsfovCOLH7EI=
+	b=fe2vUG3KFJp3oG+QS89gVdYw/l/fxqtrlqgC2aqsUxQLim+LjJ/qziWaybF+L/jmq
+	 S2o4y5mp9hvIZlt0ktD/LcqAqGPSbVLTr9TvcZjHzuAEiKMiFqyFpglCLHFaHauXvU
+	 OrkDIgZjghCTzSmHy2uZJueaYDcX4fasC8uAovos=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730991AbeLTJVM (ORCPT
+        id S1727990AbeLTJVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:21:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59276 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:21:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730402AbeLTJVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:21:09 -0500
+        id S1730992AbeLTJVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:21:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C8EF21773;
-        Thu, 20 Dec 2018 09:21:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2CEF217D4;
+        Thu, 20 Dec 2018 09:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545297668;
-        bh=uWDcZBVVmz6XIF80OokLkFYHMR3ZF4lco2/MU/0Bcac=;
+        s=default; t=1545297674;
+        bh=I7+L1gEMGURt6bbv5m3n01sAcjm/6OQxEkeZaD6p6+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1Ge3YnPDuJzoatsL3s9y4I7THAanQSVHQfmDX0Rl0oAnfhrTsC+EhqYgyy5IomfC7
-         ZSCRX7Nrgy+4esuZqctEfxdrLYLArv3b6cHG7Sge76nuVGoELbFyQd3syowWPTLVEX
-         212JTMHHfxYjILQLW9OWyhUgqy6DMKNu0coUaK4o=
+        b=RtOA7wLZZowbqH2nQ0CYLmnj2SyK8Sydq8Dis7A8K3AK96hU7Xta3/J7kpH/1K32w
+         1jL/RK8wltHxqEvVNXRmPwKrY4M/uWTjBVZ14lZuBzuNxIPX5wUpr47Rr3p0i8UtWm
+         sbD4RR/JSBOyVpcJKMp8gfu2wm1GorvPPPp9tbxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 4.4 14/40] Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
-Date:   Thu, 20 Dec 2018 10:18:26 +0100
-Message-Id: <20181220085827.048546428@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 16/40] mac80211: dont WARN on bad WMM parameters from buggy APs
+Date:   Thu, 20 Dec 2018 10:18:28 +0100
+Message-Id: <20181220085827.125833537@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085826.212663515@linuxfoundation.org>
 References: <20181220085826.212663515@linuxfoundation.org>
@@ -68,91 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+[ Upstream commit c470bdc1aaf36669e04ba65faf1092b2d1c6cabe ]
 
-commit 63238173b2faf3d6b85a416f1c69af6c7be2413f upstream.
+Apparently, some APs are buggy enough to send a zeroed
+WMM IE. Don't WARN on this since this is not caused by a bug
+on the client's system.
 
-This reverts commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5.
+This aligns the condition of the WARNING in drv_conf_tx
+with the validity check in ieee80211_sta_wmm_params.
+We will now pick the default values whenever we get
+a zeroed WMM IE.
 
-It causes new warnings [1] on shutdown when running the Google Kevin or
-Scarlet (RK3399) boards under Chrome OS. Presumably our usage of DRM is
-different than what Marc and Heiko test.
+This has been reported here:
+https://bugzilla.kernel.org/show_bug.cgi?id=199161
 
-We're looking at a different approach (e.g., [2]) to replace this, but
-IMO the revert should be taken first, as it already propagated to
--stable.
-
-[1] Report here:
-http://lkml.kernel.org/lkml/20181205030127.GA200921@google.com
-
-WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mode_config.c:477 drm_mode_config_cleanup+0x1c4/0x294
-...
- Call trace:
-  drm_mode_config_cleanup+0x1c4/0x294
-  rockchip_drm_unbind+0x4c/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
- Memory manager not clean during takedown.
- WARNING: CPU: 4 PID: 2035 at drivers/gpu/drm/drm_mm.c:950 drm_mm_takedown+0x34/0x44
-...
-  drm_mm_takedown+0x34/0x44
-  rockchip_drm_unbind+0x64/0x8c
-  component_master_del+0x88/0xb8
-  rockchip_drm_platform_remove+0x2c/0x44
-  rockchip_drm_platform_shutdown+0x20/0x2c
-  platform_drv_shutdown+0x2c/0x38
-  device_shutdown+0x164/0x1b8
-  kernel_restart_prepare+0x40/0x48
-  kernel_restart+0x20/0x68
-...
-
-[2] https://patchwork.kernel.org/patch/10556151/
-    https://www.spinics.net/lists/linux-rockchip/msg21342.html
-    [PATCH] drm/rockchip: shutdown drm subsystem on shutdown
-
-Fixes: 7f3ef5dedb14 ("drm/rockchip: Allow driver to be shutdown on reboot/kexec")
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Vicente Bergas <vicencb@gmail.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181205181657.177703-1-briannorris@chromium.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: f409079bb678 ("mac80211: sanity check CW_min/CW_max towards driver")
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ------
- 1 file changed, 6 deletions(-)
+ net/mac80211/mlme.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -547,11 +547,6 @@ static int rockchip_drm_platform_remove(
- 	return 0;
- }
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index a5e11280f405..51f31e77c19b 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -1886,7 +1886,8 @@ static bool ieee80211_sta_wmm_params(struct ieee80211_local *local,
+ 		params[ac].acm = acm;
+ 		params[ac].uapsd = uapsd;
  
--static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
--{
--	rockchip_drm_platform_remove(pdev);
--}
--
- static const struct of_device_id rockchip_drm_dt_ids[] = {
- 	{ .compatible = "rockchip,display-subsystem", },
- 	{ /* sentinel */ },
-@@ -561,7 +556,6 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
- static struct platform_driver rockchip_drm_platform_driver = {
- 	.probe = rockchip_drm_platform_probe,
- 	.remove = rockchip_drm_platform_remove,
--	.shutdown = rockchip_drm_platform_shutdown,
- 	.driver = {
- 		.name = "rockchip-drm",
- 		.of_match_table = rockchip_drm_dt_ids,
+-		if (params[ac].cw_min > params[ac].cw_max) {
++		if (params->cw_min == 0 ||
++		    params[ac].cw_min > params[ac].cw_max) {
+ 			sdata_info(sdata,
+ 				   "AP has invalid WMM params (CWmin/max=%d/%d for ACI %d), using defaults\n",
+ 				   params[ac].cw_min, params[ac].cw_max, aci);
+-- 
+2.19.1
+
 
 
