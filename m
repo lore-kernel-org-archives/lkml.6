@@ -2,124 +2,157 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13D3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BC2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903E520672
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7E6020989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 01:56:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KoiY4PMw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbeLTBwO (ORCPT
+        id S1729723AbeLTB4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 20:52:14 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:16169 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726604AbeLTBwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 20:52:14 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id DA5036EA85EA4;
-        Thu, 20 Dec 2018 09:52:10 +0800 (CST)
-Received: from [127.0.0.1] (10.142.63.192) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 20 Dec 2018
- 09:52:03 +0800
-CC:     <liuyu712@hisilicon.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>
-Subject: Re: [PATCH v1 02/12] dt-bindings: phy: Add support for HiSilicon's
- hi3660 USB PHY
-To:     Rob Herring <robh@kernel.org>
-References: <20181203034515.91412-1-chenyu56@huawei.com>
- <20181203034515.91412-3-chenyu56@huawei.com> <20181219141419.GA17302@bogus>
-From:   Chen Yu <chenyu56@huawei.com>
-Message-ID: <3b7cef2e-b39a-b410-dfb5-395da6f24efd@huawei.com>
-Date:   Thu, 20 Dec 2018 09:52:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Wed, 19 Dec 2018 20:56:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:47193 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729420AbeLTB4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 20:56:53 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43Kvy94vMjz9sBh;
+        Thu, 20 Dec 2018 12:56:49 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545271009;
+        bh=J2MZZqU54ZLzHUz9Y/ctczxzn5j/JWRXeR2o5E73BV8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KoiY4PMwskz3ryHzom/97m+qHHMPgwSr54CfeDWoZ3Y4170aQa2cgblVezg/cQS6/
+         j55b1ITAJEY0QpqbI4soBSEyV1/AT8EFbCx1Rdcxcx1NWoUnft+P7fIzlcpCiClwIM
+         MG4EyQ1nQGJFmLKj4jvFQc+HH9g1mY8v8X/tN2qHiwAqAs4TaVJ+JDjrrVw12CF719
+         LFmmQ4zyCU5xbHai5lb67XghrE40Fp75H8vNQ31J2Yr2jCoN7BWWZr0M7eIFr8JnKU
+         pFp7XBAFqYOyhDNrUbLkRnv78227p71/mQ14KGjnHewsJPgP5cCEWdj8ZJs8PsjGjD
+         wOPI302GmbdSQ==
+Date:   Thu, 20 Dec 2018 12:56:35 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Petr Machata <petrm@mellanox.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20181220125635.76ae89ad@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20181219141419.GA17302@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.63.192]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rN_.1I6oz98LMOcMEqK5afx"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/rN_.1I6oz98LMOcMEqK5afx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/12/19 22:14, Rob Herring wrote:
-> On Mon, Dec 03, 2018 at 11:45:05AM +0800, Yu Chen wrote:
->> This patch adds binding documentation for supporting the hi3660 usb
->> phy on boards like the HiKey960.
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: John Stultz <john.stultz@linaro.org>
->> Cc: Binghui Wang <wangbinghui@hisilicon.com>
->> Signed-off-by: Yu Chen <chenyu56@huawei.com>
->> --
->> v1: Fix some format error as suggested by Rob.
->> --
->> ---
->>  .../devicetree/bindings/phy/phy-hi3660-usb3.txt     | 21 +++++++++++++++++++++
->>  1 file changed, 21 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
->>
->> diff --git a/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
->> new file mode 100644
->> index 000000000000..8ea52d51aa13
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
->> @@ -0,0 +1,21 @@
->> +Hisilicon hi3660 usb PHY
-> 
-> s/usb/USB/
+Hi all,
 
-OK.
-> 
->> +-----------------------
->> +
->> +Required properties:
->> +- compatible: should be "hisilicon,hi3660-usb-phy"
->> +- #phy-cells: must be 0
->> +- hisilicon,pericrg-syscon: phandle of syscon used to control phy.
->> +- hisilicon,pctrl-syscon: phandle of syscon used to control phy.
->> +- hisilicon,usb3-otg-bc-syscon: phandle of syscon used to control phy.
->> +- hisilicon,eye-diagram-param: parameter set for phy
->> +Refer to phy/phy-bindings.txt for the generic PHY binding properties
-> 
-> Doesn't a phy need some clocks?
-> 
-Yes, the clocks of USB phy currently is enabled by config the
-pctrl-syscon registers and pericrg-syscon.
->> +
->> +Example:
->> +	usb-phy {
->> +		compatible = "hisilicon,hi3660-usb-phy";
->> +		#phy-cells = <0>;
->> +		hisilicon,pericrg-syscon = <&crg_ctrl>;
->> +		hisilicon,pctrl-syscon = <&pctrl>;
->> +		hisilicon,usb3-otg-bc-syscon = <&usb3_otg_bc>;
-> 
-> Is one of these the "main" registers for the phy? If so, then make this 
-> a child of that syscon node.
-> 
-Ok, the usb3-otg-bc-syscon is the "main" registers for the phy.
+Today's linux-next merge of the net-next tree got a conflict in:
 
->> +		hisilicon,eye-diagram-param = <0x22466e4>;
->> +	};
->> -- 
->> 2.15.0-rc2
->>
-> 
-> .
-> 
+  drivers/net/vxlan.c
 
+between commits:
+
+  6db924687139 ("vxlan: Fix error path in __vxlan_dev_create()")
+  ce5e098f7a10 ("vxlan: changelink: Fix handling of default remotes")
+
+from the net tree and commit:
+
+  0e6160f3f5a9 ("vxlan: vxlan_fdb_notify(): Make switchdev notification con=
+figurable")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/vxlan.c
+index 0565f8880199,71c3b7b6b1ab..000000000000
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@@ -3297,16 -3483,9 +3484,16 @@@ static int __vxlan_dev_create(struct ne
+ =20
+  	list_add(&vxlan->next, &vn->vxlan_list);
+  	return 0;
+ +
+  errout:
+ +	/* unregister_netdevice() destroys the default FDB entry with deletion
+ +	 * notification. But the addition notification was not sent yet, so
+ +	 * destroy the entry by hand here.
+ +	 */
+  	if (f)
+- 		vxlan_fdb_destroy(vxlan, f, false);
++ 		vxlan_fdb_destroy(vxlan, f, false, false);
+ +	if (unregister)
+ +		unregister_netdevice(dev);
+  	return err;
+  }
+ =20
+@@@ -3540,8 -3719,10 +3727,9 @@@ static int vxlan_changelink(struct net_
+  {
+  	struct vxlan_dev *vxlan =3D netdev_priv(dev);
+  	struct vxlan_rdst *dst =3D &vxlan->default_dst;
++ 	unsigned long old_age_interval;
+  	struct vxlan_rdst old_dst;
+  	struct vxlan_config conf;
+ -	struct vxlan_fdb *f =3D NULL;
+  	int err;
+ =20
+  	err =3D vxlan_nl2conf(tb, data,
+@@@ -3564,13 -3749,13 +3756,14 @@@
+  					   vxlan->cfg.dst_port,
+  					   old_dst.remote_vni,
+  					   old_dst.remote_vni,
+- 					   old_dst.remote_ifindex, 0);
++ 					   old_dst.remote_ifindex,
++ 					   true);
+ =20
+  		if (!vxlan_addr_any(&dst->remote_ip)) {
+ -			err =3D vxlan_fdb_create(vxlan, all_zeros_mac,
+ +			err =3D vxlan_fdb_update(vxlan, all_zeros_mac,
+  					       &dst->remote_ip,
+  					       NUD_REACHABLE | NUD_PERMANENT,
+ +					       NLM_F_APPEND | NLM_F_CREATE,
+  					       vxlan->cfg.dst_port,
+  					       dst->remote_vni,
+  					       dst->remote_vni,
+
+--Sig_/rN_.1I6oz98LMOcMEqK5afx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa9tMACgkQAVBC80lX
+0GxyhAf/RTpapDLHDtZ8Owg+OB7R34ZbrO5YNvGQeyTipJsnH8tqucKSY0H6LPqf
+j2U1UR9PUSEwYllH5YUSBEETT4Y2DVHHC8I6c3GPGFwGyLt+AtXhK1j/99swKQ5g
+tqnCQdu0pti/1d9FomXs+5tcN4HY9liWGB4eNlBBrqeojzNjMzp7y8Bnb7HDH16/
+G1CQgl4H/yzFM957tzhz5Qs0tlkz38rxShDa/xT0/sA8k1iCJZLMUtx0Dj2EXvEq
+PPNtNnoAhuXfppKT2aDPpMzjqZDmLA4DzoXtj0mFbf+XUblq/LR6pSApozKYklwD
+AjeiRHBbVesVli47Sj6wjx5QtplBsQ==
+=qH2F
+-----END PGP SIGNATURE-----
+
+--Sig_/rN_.1I6oz98LMOcMEqK5afx--
