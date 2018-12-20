@@ -3,153 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F385DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6264C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2AC12176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545296246;
-	bh=GEf+k5Uk0Mg9MUszfBZKGx3K/s+PTmCHTwwdSu6EEiw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=fYoDW4bGASb+Tzp3RocYP8xEvnxcjjfaz1WUgrL77KUyHQabBA1Tv+DXrHt2r1tCK
-	 uvXs4ok//5bPUao3ZQsEye1pVxFqczH7lgagfEjNFXXSUF4nnKBjJLwoSkW35D5RM3
-	 VxGr0RmSvg3UJEzWpepbYnOed+zoi0/f/x23likE=
+	by mail.kernel.org (Postfix) with ESMTP id B2A422176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:03:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D9Q9GkTp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbeLTI50 (ORCPT
+        id S1728320AbeLTJDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:57:26 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40342 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeLTI5Z (ORCPT
+        Thu, 20 Dec 2018 04:03:34 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:60166 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbeLTJDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:57:25 -0500
-Received: by mail-oi1-f196.google.com with SMTP id t204so766656oie.7;
-        Thu, 20 Dec 2018 00:57:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GEf+k5Uk0Mg9MUszfBZKGx3K/s+PTmCHTwwdSu6EEiw=;
-        b=s4SIsRyagOu12eOjzF80f4+h/ppUrSMXGnvhFkxoOHmSEDRG5mPfGQ1/HRjb+t+3fE
-         hs8/3N1wz9umJjDAYmsQ6R70Ls+CyABC0sZjTgrlQwvtS3Al4Z7SFvPNYNLC9U6TUT6T
-         rtYDLxODdfuccyeUpkERZSMsP+8HoLXh9+0vyVnXB6Xj0obFEa+l6avQRCY+PuBTB0OF
-         Q0anen7vLzO6tz2HuyV5aHW8GhkqLOKV3C4t9odwrNpSJaRVfSkX86dta8QfItBlX+ei
-         T8LolPNhN65QfV7AmunQzoR7aMkLW2lonGVfUG9+TaAmfKEjcvFWqRninX027RZ3YyI/
-         4xdA==
-X-Gm-Message-State: AA+aEWaypqmtsZtxuY+kWaJufIHgNxVSyZ+6AyoG6QAASDFmz2CppBO5
-        2uNSCjE9BKo2iVBW8lOPZSCFNfPCu5Ugb3Z9Pa8=
-X-Google-Smtp-Source: AFSGD/VK5FQ9u6F30dguE4o5lCq0kRVgMcnSXhynI4ll2d+ouXBYUwFl8QYUBQMA7AZcX3+JSMv0jQDxBh8LiDVoxew=
-X-Received: by 2002:aca:3d42:: with SMTP id k63mr1408656oia.95.1545296243439;
- Thu, 20 Dec 2018 00:57:23 -0800 (PST)
+        Thu, 20 Dec 2018 04:03:34 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBK931PR046797;
+        Thu, 20 Dec 2018 03:03:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1545296581;
+        bh=je64GQv5fkJQoxiJSkHiUO/szatxLAvDbpDZvhS7foU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=D9Q9GkTpcvHaTnr5n4jzu3X+uz0yZksXlwz7RTWYhqyZt7K9BSAlE9YyXex/ZsMX6
+         1034KDRQgSVTEBrglYomn3DhhgnFsABARVeH4JutndofESAzGWz6a7yDdxIC9jcmCH
+         6fqW4HF6TEYTXinqMFi7Em7CIxO07IfztEIkruqU=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBK93189026475
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 03:03:01 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 20
+ Dec 2018 03:03:00 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 20 Dec 2018 03:03:00 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBK92vPn030184;
+        Thu, 20 Dec 2018 03:02:57 -0600
+Subject: Re: [PATCH 0/9] ASoC/ARM: Merge the davinci and omap audio
+ directories
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <jarkko.nikula@bitmer.com>, <tony@atomide.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <jsarha@ti.com>
+References: <20181217122142.6652-1-peter.ujfalusi@ti.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <4c9085db-3c55-49ee-30d3-46dca84e28ca@ti.com>
+Date:   Thu, 20 Dec 2018 14:32:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181211010310.8551-1-keith.busch@intel.com> <20181211010310.8551-2-keith.busch@intel.com>
- <CAJZ5v0iqC2CwR2nM7eF6pDcJe2Me-_fFekX=s16-1TGZ6f6gcA@mail.gmail.com>
- <CF6A88132359CE47947DB4C6E1709ED53C557D62@ORSMSX122.amr.corp.intel.com>
- <CAPcyv4jmGH0FS8iBP9=A-nicNfgHAmU+nBHsGgxyS3RNZ9tV5Q@mail.gmail.com> <CF6A88132359CE47947DB4C6E1709ED53C557DAB@ORSMSX122.amr.corp.intel.com>
-In-Reply-To: <CF6A88132359CE47947DB4C6E1709ED53C557DAB@ORSMSX122.amr.corp.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 20 Dec 2018 09:57:11 +0100
-Message-ID: <CAJZ5v0iMf15tC6xLwCC8G2DuDazvznPe-BGJ7F+_r384wBRCCA@mail.gmail.com>
-Subject: Re: [PATCHv2 01/12] acpi: Create subtable parsing infrastructure
-To:     "Schmauss, Erik" <erik.schmauss@intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Robert Moore <robert.moore@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181217122142.6652-1-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 2:15 AM Schmauss, Erik <erik.schmauss@intel.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: linux-acpi-owner@vger.kernel.org [mailto:linux-acpi-
-> > owner@vger.kernel.org] On Behalf Of Dan Williams
-> > Sent: Wednesday, December 19, 2018 4:00 PM
-> > To: Schmauss, Erik <erik.schmauss@intel.com>
-> > Cc: Rafael J. Wysocki <rafael@kernel.org>; Busch, Keith
-> > <keith.busch@intel.com>; Moore, Robert <robert.moore@intel.com>;
-> > Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; ACPI Devel
-> > Maling List <linux-acpi@vger.kernel.org>; Linux Memory Management
-> > List <linux-mm@kvack.org>; Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org>; Hansen, Dave
-> > <dave.hansen@intel.com>
-> > Subject: Re: [PATCHv2 01/12] acpi: Create subtable parsing
-> > infrastructure
-> >
-> > On Wed, Dec 19, 2018 at 3:19 PM Schmauss, Erik
-> > <erik.schmauss@intel.com> wrote:
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: linux-acpi-owner@vger.kernel.org [mailto:linux-acpi-
-> > > > owner@vger.kernel.org] On Behalf Of Rafael J. Wysocki
-> > > > Sent: Tuesday, December 11, 2018 1:45 AM
-> > > > To: Busch, Keith <keith.busch@intel.com>
-> > > > Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; ACPI
-> > > > Devel Maling List <linux-acpi@vger.kernel.org>; Linux Memory
-> > > > Management List <linux-mm@kvack.org>; Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org>; Rafael J. Wysocki
-> > <rafael@kernel.org>;
-> > > > Hansen, Dave <dave.hansen@intel.com>; Williams, Dan J
-> > > > <dan.j.williams@intel.com>
-> > > > Subject: Re: [PATCHv2 01/12] acpi: Create subtable parsing
-> > > > infrastructure
-> > > >
-> > > > On Tue, Dec 11, 2018 at 2:05 AM Keith Busch
-> > <keith.busch@intel.com>
-> > > > wrote:
-> > > > >
-> > >
-> > > Hi Rafael and Bob,
-> > >
-> > > > > Parsing entries in an ACPI table had assumed a generic header
-> > > > > structure that is most common. There is no standard ACPI
-> > header,
-> > > > > though, so less common types would need custom parsers if they
-> > > > > want go through their sub-table entry list.
-> > > >
-> > > > It looks like the problem at hand is that acpi_hmat_structure is
-> > > > incompatible with acpi_subtable_header because of the different
-> > layout and field sizes.
-> > >
-> > > Just out of curiosity, why don't we use ACPICA code to parse static
-> > > ACPI tables in Linux?
-> > >
-> > > We have a disassembler for static tables that parses all supported
-> > > tables. This seems like a duplication of code/effort...
-> >
-> Hi Dan,
->
-> > Oh, I thought acpi_table_parse_entries() was the common code.
-> > What's the ACPICA duplicate?
->
-> I was thinking AcpiDmDumpTable(). After looking at this ACPICA code,
-> I realized that the this ACPICA doesn't actually build a parse tree or data structure.
-> It loops over the data structure to format the input ACPI table to a file.
->
-> To me, it seems like a good idea for Linux and ACPICA to share the same code when
-> parsing and analyzing these structures. I know that Linux may emit warnings
-> that are specific to Linux but there are structural analyses that should be the same (such as
-> checking lengths of tables and subtables so that we don't have out of bounds access).
+On 17/12/18 5:51 PM, Peter Ujfalusi wrote:
+> Mark, Tony, Sekhar: This series - as I mentioned - is based on next-20181210.
+> Not sure what tag, branch, commit  I should base this, but I can resend v2 if
+> needed.
 
-I agree.
+For the series:
 
-I guess the reason why it has not been done this way was because
-nobody thought about it. :-)
+Acked-by: Sekhar Nori <nsekhar@ti.com>
 
-So a project to consolidate these things might be a good one.
+Looks like Mark has already applied it, but just for the record.
+
+Thanks,
+Sekhar
