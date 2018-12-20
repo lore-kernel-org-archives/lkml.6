@@ -2,114 +2,91 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D2DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1695C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921F121741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6744C20815
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 03:49:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A4PCzdCB"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="azuMsxLr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbeLTDYD (ORCPT
+        id S1729088AbeLTDt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 22:24:03 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44690 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728172AbeLTDYD (ORCPT
+        Wed, 19 Dec 2018 22:49:28 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:33954 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728061AbeLTDt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 22:24:03 -0500
-Received: by mail-yw1-f67.google.com with SMTP id i22so114984ywa.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 19:24:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WigGHmhn8ueQ8GS23th66pOl8fNI6k+244A3qCu/rIY=;
-        b=A4PCzdCBcDpDg6jnoPh26NIecKmndkn9twNXlDxDiGE8VvF3QlfIjIIiRhy1cLGxXT
-         AeUtg/MyNRsAPtkDWlJD94bIdFBFbL4pbPXuGpePl4m9WtRHymSQawjxvQCmCdC2BX9p
-         KzFKIQ7hl7Dcd9B/nKuRUJoM+Tl/jwg7nIfJ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WigGHmhn8ueQ8GS23th66pOl8fNI6k+244A3qCu/rIY=;
-        b=Zsuw+agf8jRcgE/DW8xJb1OAGeIz8S0Gm4J6EustZOER3Xt+NZCFlDjTDJV/5VmK6k
-         V0xj5uQ9w97IJJ9fRvVk17YglDFnW/3ymIs3EX6MHaibmrv6ZkmTLR4XTYkmovV3udjs
-         n0zAkqHzgXsgrey6/ZOxqZX2co081thJcoEP5Jydan9bLKuBzy8dJsNJA27eExY1AF6x
-         KG0rjN5JurIWMuTefnGggfAxrh0WrE1ljobh1oDT0+Q6XIepv2Goxv2g60Q3WcjOwMJN
-         /dQ5G9CReUMRvXupJv2KjinI9SitsAFsMXYPN92jLWRvtBqiIxmNOUszvBKlqjV5FYAK
-         l/Sw==
-X-Gm-Message-State: AA+aEWY0bh6mk92TzTzSAKi1tPogbGIfIqFXSEwH61f6tpR0eZfBDvqR
-        6uXEYsTzR5dOqQdoh3gDbaxG1ZkYKKc=
-X-Google-Smtp-Source: AFSGD/UHPBxJvgXjEczfQW3sQPvXFmY/3/VR3IAeW/DLEGwmVjI82bGBdhhFgokA42yndvmI+ImMYQ==
-X-Received: by 2002:a81:af0c:: with SMTP id n12mr23865174ywh.446.1545276241298;
-        Wed, 19 Dec 2018 19:24:01 -0800 (PST)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id e194sm8356050ywa.85.2018.12.19.19.23.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 19:23:59 -0800 (PST)
-Received: by mail-yb1-f182.google.com with SMTP id k136so131294ybk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Dec 2018 19:23:58 -0800 (PST)
-X-Received: by 2002:a25:9907:: with SMTP id z7mr24009772ybn.114.1545276238429;
- Wed, 19 Dec 2018 19:23:58 -0800 (PST)
+        Wed, 19 Dec 2018 22:49:27 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 37C4724E0EE2;
+        Wed, 19 Dec 2018 19:49:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1545277767; bh=B7gUdpmaSbLGKs2pnMeBKwiBlkfkHHFdBK1BHJWFeQQ=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=azuMsxLrGFIHkBP+//dmHWx0rkrel7Vt264oQxpSmo0mfgBaY08sIG4Hd3agOZyks
+         oJU8h8w6VPDtdwil68uqP0wNhn1nDhLn4F8J9jEOvaAhBbPFg+Kc8PGVL+O/Ve6MdY
+         HNbzyHLjBTqewCFTzn+p1oHj0MFHzJtVD9bOzLIxv+Iie23C3Hdtf5Yz+1qa7uizML
+         RUR3CSN9WyPYHLlrlH+e8SCQ4PaY5LHe0x/BDumJ86iR0WLGyF0TKJhFx7RIOcAXOH
+         jBjZbcAEUsiYZM2AX39i2TDRHEa9lp24c/EmD5dH++iBW8DkNSzu4FwOFlZM7rIaAJ
+         bIWxQfP3e9F3g==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 14F6C3BC5;
+        Wed, 19 Dec 2018 19:49:27 -0800 (PST)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
+ 19 Dec 2018 19:49:27 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] ARC: adjust memblock_reserve of kernel memory
+Thread-Topic: [PATCH] ARC: adjust memblock_reserve of kernel memory
+Thread-Index: AQHUl7Y3xyclRc6qjkizV/X3iTxkVw==
+Date:   Thu, 20 Dec 2018 03:49:26 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA230750146422685@US01WEMBX2.internal.synopsys.com>
+References: <20181219161616.10422-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181212135440.GA6137@infradead.org> <CAAFQd5C4RbMxRP+ox+BDuApMusTD=WUD9Vs6aWL3u=HovuWUig@mail.gmail.com>
- <20181213140329.GA25339@infradead.org> <CAAFQd5BudF84jVaiy7KwevzBZnfYUZggDK=4W=g+Znf5VJjHsQ@mail.gmail.com>
- <20181214123624.GA5824@infradead.org> <CAAFQd5BnZHhNjOc6HKt=YVBVQFCcqN0RxAcfDp3S+gDKRvciqQ@mail.gmail.com>
- <20181218073847.GA4552@infradead.org> <CAAFQd5AT3ixnbZRm3TOjoWrk2UNH0bXqgR+Z8wyjMhr0xHtSOg@mail.gmail.com>
- <20181219075150.GA26656@infradead.org> <CAAFQd5DJPDpFDxU_m2r02bA59J8RCHW7iE8zYQUmkL4sFSz05Q@mail.gmail.com>
- <20181219145122.GA31947@infradead.org>
-In-Reply-To: <20181219145122.GA31947@infradead.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 20 Dec 2018 12:23:46 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CsX-YJdwQUS+eEK6kj1xU94AiGHY0QX=QGnf67JcKyaQ@mail.gmail.com>
-Message-ID: <CAAFQd5CsX-YJdwQUS+eEK6kj1xU94AiGHY0QX=QGnf67JcKyaQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rostedt@goodmis.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 19, 2018 at 11:51 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Wed, Dec 19, 2018 at 05:18:35PM +0900, Tomasz Figa wrote:
-> > The existing code that deals with dma_alloc_attrs() without
-> > DMA_ATTR_NON_CONSISTENT would just call dma_get_sgtable_attrs() like
-> > here:
->
-> I know.  And dma_get_sgtable_attrs is fundamentally flawed and we
-> need to kill this interface as it just can't worked with virtually
-> tagged cases.  It is a prime example for an interface that looks
-> nice and simple but is plain wrong.
-
-Got it, thanks.
-
-I haven't been following the problems with virtually tagged cases,
-would you mind sharing some background, so that we can consider it
-when adding non-consistent allocations to VB2?
-
-Best regards,
-Tomasz
+On 12/19/18 8:16 AM, Eugeniy Paltsev wrote:=0A=
+> In setup_arch_memory we reserve the memory area wherein the kernel=0A=
+> is located. Current implementation may reserve more memory than=0A=
+> it actually required in case of CONFIG_LINUX_LINK_BASE is not=0A=
+> equal to CONFIG_LINUX_RAM_BASE. This happens because we calculate=0A=
+> start of the reserved region relatively to the CONFIG_LINUX_RAM_BASE=0A=
+> and end of the region relatively to the CONFIG_LINUX_RAM_BASE.=0A=
+>=0A=
+> For example in case of HSDK board we wasted 256MiB of physical memory:=0A=
+> ------------------->8------------------------------=0A=
+> Memory: 770416K/1048576K available (5496K kernel code,=0A=
+>     240K rwdata, 1064K rodata, 2200K init, 275K bss,=0A=
+>     278160K reserved, 0K cma-reserved)=0A=
+> ------------------->8------------------------------=0A=
+>=0A=
+> Fix that.=0A=
+>=0A=
+> Cc: stable@vger.kernel.org=0A=
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
+=0A=
+LGTM. I presume you have booted HSDK with it and done some smoke testing.=
+=0A=
+=0A=
+-Vineet=0A=
