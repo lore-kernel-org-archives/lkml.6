@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA4DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A51CFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24C902176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7576B2176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 08:24:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbeLTIYL (ORCPT
+        id S1730869AbeLTIYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:24:11 -0500
-Received: from ozlabs.ru ([107.173.13.209]:54056 "EHLO ozlabs.ru"
+        Thu, 20 Dec 2018 03:24:15 -0500
+Received: from ozlabs.ru ([107.173.13.209]:54119 "EHLO ozlabs.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730814AbeLTIYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:24:09 -0500
+        id S1730849AbeLTIYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 03:24:12 -0500
 Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 27A7FAE801F6;
-        Thu, 20 Dec 2018 03:24:04 -0500 (EST)
+        by ozlabs.ru (Postfix) with ESMTP id CBD25AE80215;
+        Thu, 20 Dec 2018 03:24:08 -0500 (EST)
 From:   Alexey Kardashevskiy <aik@ozlabs.ru>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -37,9 +37,9 @@ Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
         Alex Williamson <alex.williamson@redhat.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH kernel v7 03/20] powerpc/vfio/iommu/kvm: Do not pin device memory
-Date:   Thu, 20 Dec 2018 19:23:33 +1100
-Message-Id: <20181220082350.58113-4-aik@ozlabs.ru>
+Subject: [PATCH kernel v7 04/20] powerpc/powernv: Move npu struct from pnv_phb to pci_controller
+Date:   Thu, 20 Dec 2018 19:23:34 +1100
+Message-Id: <20181220082350.58113-5-aik@ozlabs.ru>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181220082350.58113-1-aik@ozlabs.ru>
 References: <20181220082350.58113-1-aik@ozlabs.ru>
@@ -48,497 +48,245 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This new memory does not have page structs as it is not plugged to
-the host so gup() will fail anyway.
+The powernv PCI code stores NPU data in the pnv_phb struct. The latter
+is referenced by pci_controller::private_data. We are going to have NPU2
+support in the pseries platform as well but it does not store any
+private_data in in the pci_controller struct; and even if it did,
+it would be a different data structure.
 
-This adds 2 helpers:
-- mm_iommu_newdev() to preregister the "memory device" memory so
-the rest of API can still be used;
-- mm_iommu_is_devmem() to know if the physical address is one of thise
-new regions which we must avoid unpinning of.
-
-This adds @mm to tce_page_is_contained() and iommu_tce_xchg() to test
-if the memory is device memory to avoid pfn_to_page().
-
-This adds a check for device memory in mm_iommu_ua_mark_dirty_rm() which
-does delayed pages dirtying.
+This makes npu a pointer and stores it one level higher in
+the pci_controller struct.
 
 Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Reviewed-by: Paul Mackerras <paulus@ozlabs.org>
 ---
 Changes:
-v6:
-* added dummy mm_iommu_is_devmem() for !CONFIG_SPAPR_TCE_IOMMU
-* removed "extern" from c file
-
 v5:
-* mm_iommu_is_devmem() now returns the actual size which might me smaller
-than the pageshift so  tce_page_is_contained() won't do pfn_to_page()
-if @hpa..@hpa+64K is preregistered but page_shift is bigger than 16
-* removed David's r-by because of the change in mm_iommu_is_devmem
+* removed !npu checks as this is out of scope of this patch
+* added WARN_ON_ONCE in WARN_ON_ONCE(pnv_npu2_init(phb))
 
 v4:
-* added device memory check in the real mode path
+* changed subj from "powerpc/powernv: Detach npu struct from pnv_phb"
+* got rid of global list of npus - store them now in pci_controller
+* got rid of npdev_to_npu() helper
 ---
- arch/powerpc/include/asm/iommu.h       |  5 +-
- arch/powerpc/include/asm/mmu_context.h | 11 +++
- arch/powerpc/kernel/iommu.c            | 11 ++-
- arch/powerpc/kvm/book3s_64_vio.c       | 18 ++---
- arch/powerpc/mm/mmu_context_iommu.c    | 93 +++++++++++++++++++++++---
- drivers/vfio/vfio_iommu_spapr_tce.c    | 29 +++++---
- 6 files changed, 135 insertions(+), 32 deletions(-)
+ arch/powerpc/include/asm/pci-bridge.h     |  1 +
+ arch/powerpc/platforms/powernv/pci.h      | 16 -----
+ arch/powerpc/platforms/powernv/npu-dma.c  | 74 +++++++++++++++++------
+ arch/powerpc/platforms/powernv/pci-ioda.c |  2 +-
+ 4 files changed, 58 insertions(+), 35 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/iommu.h b/arch/powerpc/include/asm/iommu.h
-index 35db0cb..a8aeac0 100644
---- a/arch/powerpc/include/asm/iommu.h
-+++ b/arch/powerpc/include/asm/iommu.h
-@@ -218,8 +218,9 @@ extern void iommu_register_group(struct iommu_table_group *table_group,
- extern int iommu_add_device(struct device *dev);
- extern void iommu_del_device(struct device *dev);
- extern int __init tce_iommu_bus_notifier_init(void);
--extern long iommu_tce_xchg(struct iommu_table *tbl, unsigned long entry,
--		unsigned long *hpa, enum dma_data_direction *direction);
-+extern long iommu_tce_xchg(struct mm_struct *mm, struct iommu_table *tbl,
-+		unsigned long entry, unsigned long *hpa,
-+		enum dma_data_direction *direction);
- #else
- static inline void iommu_register_group(struct iommu_table_group *table_group,
- 					int pci_domain_number,
-diff --git a/arch/powerpc/include/asm/mmu_context.h b/arch/powerpc/include/asm/mmu_context.h
-index 268e112..c50bd6a 100644
---- a/arch/powerpc/include/asm/mmu_context.h
-+++ b/arch/powerpc/include/asm/mmu_context.h
-@@ -24,6 +24,9 @@ extern bool mm_iommu_preregistered(struct mm_struct *mm);
- extern long mm_iommu_new(struct mm_struct *mm,
- 		unsigned long ua, unsigned long entries,
- 		struct mm_iommu_table_group_mem_t **pmem);
-+extern long mm_iommu_newdev(struct mm_struct *mm, unsigned long ua,
-+		unsigned long entries, unsigned long dev_hpa,
-+		struct mm_iommu_table_group_mem_t **pmem);
- extern long mm_iommu_put(struct mm_struct *mm,
- 		struct mm_iommu_table_group_mem_t *mem);
- extern void mm_iommu_init(struct mm_struct *mm);
-@@ -39,8 +42,16 @@ extern long mm_iommu_ua_to_hpa(struct mm_iommu_table_group_mem_t *mem,
- extern long mm_iommu_ua_to_hpa_rm(struct mm_iommu_table_group_mem_t *mem,
- 		unsigned long ua, unsigned int pageshift, unsigned long *hpa);
- extern void mm_iommu_ua_mark_dirty_rm(struct mm_struct *mm, unsigned long ua);
-+extern bool mm_iommu_is_devmem(struct mm_struct *mm, unsigned long hpa,
-+		unsigned int pageshift, unsigned long *size);
- extern long mm_iommu_mapped_inc(struct mm_iommu_table_group_mem_t *mem);
- extern void mm_iommu_mapped_dec(struct mm_iommu_table_group_mem_t *mem);
-+#else
-+static inline bool mm_iommu_is_devmem(struct mm_struct *mm, unsigned long hpa,
-+		unsigned int pageshift, unsigned long *size)
-+{
-+	return false;
-+}
- #endif
- extern void switch_slb(struct task_struct *tsk, struct mm_struct *mm);
- extern void set_context(unsigned long id, pgd_t *pgd);
-diff --git a/arch/powerpc/kernel/iommu.c b/arch/powerpc/kernel/iommu.c
-index f0dc680..cbcc615 100644
---- a/arch/powerpc/kernel/iommu.c
-+++ b/arch/powerpc/kernel/iommu.c
-@@ -47,6 +47,7 @@
- #include <asm/fadump.h>
- #include <asm/vio.h>
- #include <asm/tce.h>
-+#include <asm/mmu_context.h>
+diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/asm/pci-bridge.h
+index 94d4490..aee4fcc 100644
+--- a/arch/powerpc/include/asm/pci-bridge.h
++++ b/arch/powerpc/include/asm/pci-bridge.h
+@@ -129,6 +129,7 @@ struct pci_controller {
+ #endif	/* CONFIG_PPC64 */
  
- #define DBG(...)
- 
-@@ -993,15 +994,19 @@ int iommu_tce_check_gpa(unsigned long page_shift, unsigned long gpa)
- }
- EXPORT_SYMBOL_GPL(iommu_tce_check_gpa);
- 
--long iommu_tce_xchg(struct iommu_table *tbl, unsigned long entry,
--		unsigned long *hpa, enum dma_data_direction *direction)
-+long iommu_tce_xchg(struct mm_struct *mm, struct iommu_table *tbl,
-+		unsigned long entry, unsigned long *hpa,
-+		enum dma_data_direction *direction)
- {
- 	long ret;
-+	unsigned long size = 0;
- 
- 	ret = tbl->it_ops->exchange(tbl, entry, hpa, direction);
- 
- 	if (!ret && ((*direction == DMA_FROM_DEVICE) ||
--			(*direction == DMA_BIDIRECTIONAL)))
-+			(*direction == DMA_BIDIRECTIONAL)) &&
-+			!mm_iommu_is_devmem(mm, *hpa, tbl->it_page_shift,
-+					&size))
- 		SetPageDirty(pfn_to_page(*hpa >> PAGE_SHIFT));
- 
- 	/* if (unlikely(ret))
-diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
-index 62a8d03..532ab797 100644
---- a/arch/powerpc/kvm/book3s_64_vio.c
-+++ b/arch/powerpc/kvm/book3s_64_vio.c
-@@ -397,12 +397,13 @@ static long kvmppc_tce_validate(struct kvmppc_spapr_tce_table *stt,
- 	return H_SUCCESS;
- }
- 
--static void kvmppc_clear_tce(struct iommu_table *tbl, unsigned long entry)
-+static void kvmppc_clear_tce(struct mm_struct *mm, struct iommu_table *tbl,
-+		unsigned long entry)
- {
- 	unsigned long hpa = 0;
- 	enum dma_data_direction dir = DMA_NONE;
- 
--	iommu_tce_xchg(tbl, entry, &hpa, &dir);
-+	iommu_tce_xchg(mm, tbl, entry, &hpa, &dir);
- }
- 
- static long kvmppc_tce_iommu_mapped_dec(struct kvm *kvm,
-@@ -433,7 +434,7 @@ static long kvmppc_tce_iommu_do_unmap(struct kvm *kvm,
- 	unsigned long hpa = 0;
- 	long ret;
- 
--	if (WARN_ON_ONCE(iommu_tce_xchg(tbl, entry, &hpa, &dir)))
-+	if (WARN_ON_ONCE(iommu_tce_xchg(kvm->mm, tbl, entry, &hpa, &dir)))
- 		return H_TOO_HARD;
- 
- 	if (dir == DMA_NONE)
-@@ -441,7 +442,7 @@ static long kvmppc_tce_iommu_do_unmap(struct kvm *kvm,
- 
- 	ret = kvmppc_tce_iommu_mapped_dec(kvm, tbl, entry);
- 	if (ret != H_SUCCESS)
--		iommu_tce_xchg(tbl, entry, &hpa, &dir);
-+		iommu_tce_xchg(kvm->mm, tbl, entry, &hpa, &dir);
- 
- 	return ret;
- }
-@@ -487,7 +488,7 @@ long kvmppc_tce_iommu_do_map(struct kvm *kvm, struct iommu_table *tbl,
- 	if (mm_iommu_mapped_inc(mem))
- 		return H_TOO_HARD;
- 
--	ret = iommu_tce_xchg(tbl, entry, &hpa, &dir);
-+	ret = iommu_tce_xchg(kvm->mm, tbl, entry, &hpa, &dir);
- 	if (WARN_ON_ONCE(ret)) {
- 		mm_iommu_mapped_dec(mem);
- 		return H_TOO_HARD;
-@@ -566,7 +567,7 @@ long kvmppc_h_put_tce(struct kvm_vcpu *vcpu, unsigned long liobn,
- 					entry, ua, dir);
- 
- 		if (ret != H_SUCCESS) {
--			kvmppc_clear_tce(stit->tbl, entry);
-+			kvmppc_clear_tce(vcpu->kvm->mm, stit->tbl, entry);
- 			goto unlock_exit;
- 		}
- 	}
-@@ -655,7 +656,8 @@ long kvmppc_h_put_tce_indirect(struct kvm_vcpu *vcpu,
- 					iommu_tce_direction(tce));
- 
- 			if (ret != H_SUCCESS) {
--				kvmppc_clear_tce(stit->tbl, entry);
-+				kvmppc_clear_tce(vcpu->kvm->mm, stit->tbl,
-+						entry);
- 				goto unlock_exit;
- 			}
- 		}
-@@ -704,7 +706,7 @@ long kvmppc_h_stuff_tce(struct kvm_vcpu *vcpu,
- 				return ret;
- 
- 			WARN_ON_ONCE(1);
--			kvmppc_clear_tce(stit->tbl, entry);
-+			kvmppc_clear_tce(vcpu->kvm->mm, stit->tbl, entry);
- 		}
- 	}
- 
-diff --git a/arch/powerpc/mm/mmu_context_iommu.c b/arch/powerpc/mm/mmu_context_iommu.c
-index 25a4b7f7..dd9f1ca 100644
---- a/arch/powerpc/mm/mmu_context_iommu.c
-+++ b/arch/powerpc/mm/mmu_context_iommu.c
-@@ -47,6 +47,8 @@ struct mm_iommu_table_group_mem_t {
- 		struct page **hpages;	/* vmalloc'ed */
- 		phys_addr_t *hpas;
- 	};
-+#define MM_IOMMU_TABLE_INVALID_HPA	((uint64_t)-1)
-+	u64 dev_hpa;		/* Device memory base address */
+ 	void *private_data;
++	struct npu *npu;
  };
  
- static long mm_iommu_adjust_locked_vm(struct mm_struct *mm,
-@@ -89,7 +91,8 @@ bool mm_iommu_preregistered(struct mm_struct *mm)
+ /* These are used for config access before all the PCI probing
+diff --git a/arch/powerpc/platforms/powernv/pci.h b/arch/powerpc/platforms/powernv/pci.h
+index 2131373..f2d50974 100644
+--- a/arch/powerpc/platforms/powernv/pci.h
++++ b/arch/powerpc/platforms/powernv/pci.h
+@@ -8,9 +8,6 @@
+ 
+ struct pci_dn;
+ 
+-/* Maximum possible number of ATSD MMIO registers per NPU */
+-#define NV_NMMU_ATSD_REGS 8
+-
+ enum pnv_phb_type {
+ 	PNV_PHB_IODA1		= 0,
+ 	PNV_PHB_IODA2		= 1,
+@@ -176,19 +173,6 @@ struct pnv_phb {
+ 	unsigned int		diag_data_size;
+ 	u8			*diag_data;
+ 
+-	/* Nvlink2 data */
+-	struct npu {
+-		int index;
+-		__be64 *mmio_atsd_regs[NV_NMMU_ATSD_REGS];
+-		unsigned int mmio_atsd_count;
+-
+-		/* Bitmask for MMIO register usage */
+-		unsigned long mmio_atsd_usage;
+-
+-		/* Do we need to explicitly flush the nest mmu? */
+-		bool nmmu_flush;
+-	} npu;
+-
+ 	int p2p_target_count;
+ };
+ 
+diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
+index 91d488f..5e66439 100644
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -327,6 +327,25 @@ struct pnv_ioda_pe *pnv_pci_npu_setup_iommu(struct pnv_ioda_pe *npe)
+ 	return gpe;
  }
- EXPORT_SYMBOL_GPL(mm_iommu_preregistered);
  
--long mm_iommu_new(struct mm_struct *mm, unsigned long ua, unsigned long entries,
-+static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
-+		unsigned long entries, unsigned long dev_hpa,
- 		struct mm_iommu_table_group_mem_t **pmem)
- {
- 	struct mm_iommu_table_group_mem_t *mem;
-@@ -110,11 +113,13 @@ long mm_iommu_new(struct mm_struct *mm, unsigned long ua, unsigned long entries,
- 
- 	}
- 
--	ret = mm_iommu_adjust_locked_vm(mm, entries, true);
--	if (ret)
--		goto unlock_exit;
-+	if (dev_hpa == MM_IOMMU_TABLE_INVALID_HPA) {
-+		ret = mm_iommu_adjust_locked_vm(mm, entries, true);
-+		if (ret)
-+			goto unlock_exit;
- 
--	locked_entries = entries;
-+		locked_entries = entries;
-+	}
- 
- 	mem = kzalloc(sizeof(*mem), GFP_KERNEL);
- 	if (!mem) {
-@@ -122,6 +127,13 @@ long mm_iommu_new(struct mm_struct *mm, unsigned long ua, unsigned long entries,
- 		goto unlock_exit;
- 	}
- 
-+	if (dev_hpa != MM_IOMMU_TABLE_INVALID_HPA) {
-+		mem->pageshift = __ffs(dev_hpa | (entries << PAGE_SHIFT));
-+		mem->dev_hpa = dev_hpa;
-+		goto good_exit;
-+	}
-+	mem->dev_hpa = MM_IOMMU_TABLE_INVALID_HPA;
++/*
++ * NPU2 ATS
++ */
++/* Maximum possible number of ATSD MMIO registers per NPU */
++#define NV_NMMU_ATSD_REGS 8
 +
++/* An NPU descriptor, valid for POWER9 only */
++struct npu {
++	int index;
++	__be64 *mmio_atsd_regs[NV_NMMU_ATSD_REGS];
++	unsigned int mmio_atsd_count;
++
++	/* Bitmask for MMIO register usage */
++	unsigned long mmio_atsd_usage;
++
++	/* Do we need to explicitly flush the nest mmu? */
++	bool nmmu_flush;
++};
++
+ /* Maximum number of nvlinks per npu */
+ #define NV_MAX_LINKS 6
+ 
+@@ -478,7 +497,6 @@ static void acquire_atsd_reg(struct npu_context *npu_context,
+ 	int i, j;
+ 	struct npu *npu;
+ 	struct pci_dev *npdev;
+-	struct pnv_phb *nphb;
+ 
+ 	for (i = 0; i <= max_npu2_index; i++) {
+ 		mmio_atsd_reg[i].reg = -1;
+@@ -493,8 +511,7 @@ static void acquire_atsd_reg(struct npu_context *npu_context,
+ 			if (!npdev)
+ 				continue;
+ 
+-			nphb = pci_bus_to_host(npdev->bus)->private_data;
+-			npu = &nphb->npu;
++			npu = pci_bus_to_host(npdev->bus)->npu;
+ 			mmio_atsd_reg[i].npu = npu;
+ 			mmio_atsd_reg[i].reg = get_mmio_atsd_reg(npu);
+ 			while (mmio_atsd_reg[i].reg < 0) {
+@@ -662,6 +679,7 @@ struct npu_context *pnv_npu2_init_context(struct pci_dev *gpdev,
+ 	struct pnv_phb *nphb;
+ 	struct npu *npu;
+ 	struct npu_context *npu_context;
++	struct pci_controller *hose;
+ 
  	/*
- 	 * For a starting point for a maximum page size calculation
- 	 * we use @ua and @entries natural alignment to allow IOMMU pages
-@@ -170,6 +182,7 @@ long mm_iommu_new(struct mm_struct *mm, unsigned long ua, unsigned long entries,
- 
+ 	 * At present we don't support GPUs connected to multiple NPUs and I'm
+@@ -689,8 +707,9 @@ struct npu_context *pnv_npu2_init_context(struct pci_dev *gpdev,
+ 		return ERR_PTR(-EINVAL);
  	}
  
-+good_exit:
- 	atomic64_set(&mem->mapped, 1);
- 	mem->used = 1;
- 	mem->ua = ua;
-@@ -186,13 +199,31 @@ long mm_iommu_new(struct mm_struct *mm, unsigned long ua, unsigned long entries,
+-	nphb = pci_bus_to_host(npdev->bus)->private_data;
+-	npu = &nphb->npu;
++	hose = pci_bus_to_host(npdev->bus);
++	nphb = hose->private_data;
++	npu = hose->npu;
  
- 	return ret;
- }
-+
-+long mm_iommu_new(struct mm_struct *mm, unsigned long ua, unsigned long entries,
-+		struct mm_iommu_table_group_mem_t **pmem)
-+{
-+	return mm_iommu_do_alloc(mm, ua, entries, MM_IOMMU_TABLE_INVALID_HPA,
-+			pmem);
-+}
- EXPORT_SYMBOL_GPL(mm_iommu_new);
+ 	/*
+ 	 * Setup the NPU context table for a particular GPU. These need to be
+@@ -764,7 +783,7 @@ struct npu_context *pnv_npu2_init_context(struct pci_dev *gpdev,
+ 	 */
+ 	WRITE_ONCE(npu_context->npdev[npu->index][nvlink_index], npdev);
  
-+long mm_iommu_newdev(struct mm_struct *mm, unsigned long ua,
-+		unsigned long entries, unsigned long dev_hpa,
-+		struct mm_iommu_table_group_mem_t **pmem)
-+{
-+	return mm_iommu_do_alloc(mm, ua, entries, dev_hpa, pmem);
-+}
-+EXPORT_SYMBOL_GPL(mm_iommu_newdev);
-+
- static void mm_iommu_unpin(struct mm_iommu_table_group_mem_t *mem)
- {
- 	long i;
- 	struct page *page = NULL;
+-	if (!nphb->npu.nmmu_flush) {
++	if (!npu->nmmu_flush) {
+ 		/*
+ 		 * If we're not explicitly flushing ourselves we need to mark
+ 		 * the thread for global flushes
+@@ -802,6 +821,7 @@ void pnv_npu2_destroy_context(struct npu_context *npu_context,
+ 	struct pci_dev *npdev = pnv_pci_get_npu_dev(gpdev, 0);
+ 	struct device_node *nvlink_dn;
+ 	u32 nvlink_index;
++	struct pci_controller *hose;
  
-+	if (!mem->hpas)
-+		return;
-+
- 	for (i = 0; i < mem->entries; ++i) {
- 		if (!mem->hpas[i])
- 			continue;
-@@ -234,6 +265,7 @@ static void mm_iommu_release(struct mm_iommu_table_group_mem_t *mem)
- long mm_iommu_put(struct mm_struct *mm, struct mm_iommu_table_group_mem_t *mem)
- {
- 	long ret = 0;
-+	unsigned long entries, dev_hpa;
- 
- 	mutex_lock(&mem_list_mutex);
- 
-@@ -255,9 +287,12 @@ long mm_iommu_put(struct mm_struct *mm, struct mm_iommu_table_group_mem_t *mem)
- 	}
- 
- 	/* @mapped became 0 so now mappings are disabled, release the region */
-+	entries = mem->entries;
-+	dev_hpa = mem->dev_hpa;
- 	mm_iommu_release(mem);
- 
--	mm_iommu_adjust_locked_vm(mm, mem->entries, false);
-+	if (dev_hpa == MM_IOMMU_TABLE_INVALID_HPA)
-+		mm_iommu_adjust_locked_vm(mm, entries, false);
- 
- unlock_exit:
- 	mutex_unlock(&mem_list_mutex);
-@@ -327,7 +362,7 @@ long mm_iommu_ua_to_hpa(struct mm_iommu_table_group_mem_t *mem,
- 		unsigned long ua, unsigned int pageshift, unsigned long *hpa)
- {
- 	const long entry = (ua - mem->ua) >> PAGE_SHIFT;
--	u64 *va = &mem->hpas[entry];
-+	u64 *va;
- 
- 	if (entry >= mem->entries)
- 		return -EFAULT;
-@@ -335,6 +370,12 @@ long mm_iommu_ua_to_hpa(struct mm_iommu_table_group_mem_t *mem,
- 	if (pageshift > mem->pageshift)
- 		return -EFAULT;
- 
-+	if (!mem->hpas) {
-+		*hpa = mem->dev_hpa + (ua - mem->ua);
-+		return 0;
-+	}
-+
-+	va = &mem->hpas[entry];
- 	*hpa = (*va & MM_IOMMU_TABLE_GROUP_PAGE_MASK) | (ua & ~PAGE_MASK);
- 
- 	return 0;
-@@ -345,7 +386,6 @@ long mm_iommu_ua_to_hpa_rm(struct mm_iommu_table_group_mem_t *mem,
- 		unsigned long ua, unsigned int pageshift, unsigned long *hpa)
- {
- 	const long entry = (ua - mem->ua) >> PAGE_SHIFT;
--	void *va = &mem->hpas[entry];
- 	unsigned long *pa;
- 
- 	if (entry >= mem->entries)
-@@ -354,7 +394,12 @@ long mm_iommu_ua_to_hpa_rm(struct mm_iommu_table_group_mem_t *mem,
- 	if (pageshift > mem->pageshift)
- 		return -EFAULT;
- 
--	pa = (void *) vmalloc_to_phys(va);
-+	if (!mem->hpas) {
-+		*hpa = mem->dev_hpa + (ua - mem->ua);
-+		return 0;
-+	}
-+
-+	pa = (void *) vmalloc_to_phys(&mem->hpas[entry]);
- 	if (!pa)
- 		return -EFAULT;
- 
-@@ -374,6 +419,9 @@ extern void mm_iommu_ua_mark_dirty_rm(struct mm_struct *mm, unsigned long ua)
- 	if (!mem)
+ 	if (WARN_ON(!npdev))
+ 		return;
+@@ -809,8 +829,9 @@ void pnv_npu2_destroy_context(struct npu_context *npu_context,
+ 	if (!firmware_has_feature(FW_FEATURE_OPAL))
  		return;
  
-+	if (mem->dev_hpa != MM_IOMMU_TABLE_INVALID_HPA)
-+		return;
-+
- 	entry = (ua - mem->ua) >> PAGE_SHIFT;
- 	va = &mem->hpas[entry];
+-	nphb = pci_bus_to_host(npdev->bus)->private_data;
+-	npu = &nphb->npu;
++	hose = pci_bus_to_host(npdev->bus);
++	nphb = hose->private_data;
++	npu = hose->npu;
+ 	nvlink_dn = of_parse_phandle(npdev->dev.of_node, "ibm,nvlink", 0);
+ 	if (WARN_ON(of_property_read_u32(nvlink_dn, "ibm,npu-link-index",
+ 							&nvlink_index)))
+@@ -888,9 +909,15 @@ int pnv_npu2_init(struct pnv_phb *phb)
+ 	struct pci_dev *gpdev;
+ 	static int npu_index;
+ 	uint64_t rc = 0;
++	struct pci_controller *hose = phb->hose;
++	struct npu *npu;
++	int ret;
  
-@@ -384,6 +432,33 @@ extern void mm_iommu_ua_mark_dirty_rm(struct mm_struct *mm, unsigned long ua)
- 	*pa |= MM_IOMMU_TABLE_GROUP_PAGE_DIRTY;
- }
+-	phb->npu.nmmu_flush =
+-		of_property_read_bool(phb->hose->dn, "ibm,nmmu-flush");
++	npu = kzalloc(sizeof(*npu), GFP_KERNEL);
++	if (!npu)
++		return -ENOMEM;
++
++	npu->nmmu_flush = of_property_read_bool(hose->dn, "ibm,nmmu-flush");
+ 	for_each_child_of_node(phb->hose->dn, dn) {
+ 		gpdev = pnv_pci_get_gpu_dev(get_pci_dev(dn));
+ 		if (gpdev) {
+@@ -904,18 +931,29 @@ int pnv_npu2_init(struct pnv_phb *phb)
+ 		}
+ 	}
  
-+bool mm_iommu_is_devmem(struct mm_struct *mm, unsigned long hpa,
-+		unsigned int pageshift, unsigned long *size)
-+{
-+	struct mm_iommu_table_group_mem_t *mem;
-+	unsigned long end;
-+
-+	list_for_each_entry_rcu(mem, &mm->context.iommu_group_mem_list, next) {
-+		if (mem->dev_hpa == MM_IOMMU_TABLE_INVALID_HPA)
-+			continue;
-+
-+		end = mem->dev_hpa + (mem->entries << PAGE_SHIFT);
-+		if ((mem->dev_hpa <= hpa) && (hpa < end)) {
-+			/*
-+			 * Since the IOMMU page size might be bigger than
-+			 * PAGE_SIZE, the amount of preregistered memory
-+			 * starting from @hpa might be smaller than 1<<pageshift
-+			 * and the caller needs to distinguish this situation.
-+			 */
-+			*size = min(1UL << pageshift, end - hpa);
-+			return true;
-+		}
+-	for (i = 0; !of_property_read_u64_index(phb->hose->dn, "ibm,mmio-atsd",
++	for (i = 0; !of_property_read_u64_index(hose->dn, "ibm,mmio-atsd",
+ 							i, &mmio_atsd); i++)
+-		phb->npu.mmio_atsd_regs[i] = ioremap(mmio_atsd, 32);
++		npu->mmio_atsd_regs[i] = ioremap(mmio_atsd, 32);
+ 
+-	pr_info("NPU%lld: Found %d MMIO ATSD registers", phb->opal_id, i);
+-	phb->npu.mmio_atsd_count = i;
+-	phb->npu.mmio_atsd_usage = 0;
++	pr_info("NPU%d: Found %d MMIO ATSD registers", hose->global_number, i);
++	npu->mmio_atsd_count = i;
++	npu->mmio_atsd_usage = 0;
+ 	npu_index++;
+-	if (WARN_ON(npu_index >= NV_MAX_NPUS))
+-		return -ENOSPC;
++	if (WARN_ON(npu_index >= NV_MAX_NPUS)) {
++		ret = -ENOSPC;
++		goto fail_exit;
 +	}
+ 	max_npu2_index = npu_index;
+-	phb->npu.index = npu_index;
++	npu->index = npu_index;
++	hose->npu = npu;
+ 
+ 	return 0;
 +
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(mm_iommu_is_devmem);
++fail_exit:
++	for (i = 0; i < npu->mmio_atsd_count; ++i)
++		iounmap(npu->mmio_atsd_regs[i]);
 +
- long mm_iommu_mapped_inc(struct mm_iommu_table_group_mem_t *mem)
- {
- 	if (atomic64_inc_not_zero(&mem->mapped))
-diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
-index 1d8b889..c424913 100644
---- a/drivers/vfio/vfio_iommu_spapr_tce.c
-+++ b/drivers/vfio/vfio_iommu_spapr_tce.c
-@@ -222,8 +222,16 @@ static long tce_iommu_register_pages(struct tce_container *container,
- 	return ret;
++	kfree(npu);
++
++	return ret;
  }
- 
--static bool tce_page_is_contained(struct page *page, unsigned page_shift)
-+static bool tce_page_is_contained(struct mm_struct *mm, unsigned long hpa,
-+		unsigned int page_shift)
- {
-+	struct page *page;
-+	unsigned long size = 0;
-+
-+	if (mm_iommu_is_devmem(mm, hpa, page_shift, &size))
-+		return size == (1UL << page_shift);
-+
-+	page = pfn_to_page(hpa >> PAGE_SHIFT);
- 	/*
- 	 * Check that the TCE table granularity is not bigger than the size of
- 	 * a page we just found. Otherwise the hardware can get access to
-@@ -499,7 +507,8 @@ static int tce_iommu_clear(struct tce_container *container,
- 
- 		direction = DMA_NONE;
- 		oldhpa = 0;
--		ret = iommu_tce_xchg(tbl, entry, &oldhpa, &direction);
-+		ret = iommu_tce_xchg(container->mm, tbl, entry, &oldhpa,
-+				&direction);
- 		if (ret)
- 			continue;
- 
-@@ -537,7 +546,6 @@ static long tce_iommu_build(struct tce_container *container,
- 		enum dma_data_direction direction)
- {
- 	long i, ret = 0;
--	struct page *page;
- 	unsigned long hpa;
- 	enum dma_data_direction dirtmp;
- 
-@@ -548,15 +556,16 @@ static long tce_iommu_build(struct tce_container *container,
- 		if (ret)
- 			break;
- 
--		page = pfn_to_page(hpa >> PAGE_SHIFT);
--		if (!tce_page_is_contained(page, tbl->it_page_shift)) {
-+		if (!tce_page_is_contained(container->mm, hpa,
-+				tbl->it_page_shift)) {
- 			ret = -EPERM;
- 			break;
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+index 29c6837..8528fb9 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+@@ -1283,7 +1283,7 @@ static void pnv_pci_ioda_setup_PEs(void)
+ 			pnv_ioda_reserve_pe(phb, 0);
+ 			pnv_ioda_setup_npu_PEs(hose->bus);
+ 			if (phb->model == PNV_PHB_MODEL_NPU2)
+-				pnv_npu2_init(phb);
++				WARN_ON_ONCE(pnv_npu2_init(phb));
  		}
- 
- 		hpa |= offset;
- 		dirtmp = direction;
--		ret = iommu_tce_xchg(tbl, entry + i, &hpa, &dirtmp);
-+		ret = iommu_tce_xchg(container->mm, tbl, entry + i, &hpa,
-+				&dirtmp);
- 		if (ret) {
- 			tce_iommu_unuse_page(container, hpa);
- 			pr_err("iommu_tce: %s failed ioba=%lx, tce=%lx, ret=%ld\n",
-@@ -583,7 +592,6 @@ static long tce_iommu_build_v2(struct tce_container *container,
- 		enum dma_data_direction direction)
- {
- 	long i, ret = 0;
--	struct page *page;
- 	unsigned long hpa;
- 	enum dma_data_direction dirtmp;
- 
-@@ -596,8 +604,8 @@ static long tce_iommu_build_v2(struct tce_container *container,
- 		if (ret)
- 			break;
- 
--		page = pfn_to_page(hpa >> PAGE_SHIFT);
--		if (!tce_page_is_contained(page, tbl->it_page_shift)) {
-+		if (!tce_page_is_contained(container->mm, hpa,
-+				tbl->it_page_shift)) {
- 			ret = -EPERM;
- 			break;
- 		}
-@@ -610,7 +618,8 @@ static long tce_iommu_build_v2(struct tce_container *container,
- 		if (mm_iommu_mapped_inc(mem))
- 			break;
- 
--		ret = iommu_tce_xchg(tbl, entry + i, &hpa, &dirtmp);
-+		ret = iommu_tce_xchg(container->mm, tbl, entry + i, &hpa,
-+				&dirtmp);
- 		if (ret) {
- 			/* dirtmp cannot be DMA_NONE here */
- 			tce_iommu_unuse_page_v2(container, tbl, entry + i);
+ 		if (phb->type == PNV_PHB_NPU_OCAPI) {
+ 			bus = hose->bus;
 -- 
 2.17.1
 
