@@ -2,108 +2,94 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C53C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDCBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A166C218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:24:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC13218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 19:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="IYVJgJ+w"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p7hE4BDF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731025AbeLTTY4 (ORCPT
+        id S1731391AbeLTT17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 14:24:56 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46258 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730083AbeLTTY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 14:24:56 -0500
-Received: from zn.tnic (p200300EC2BCCE300F9B895DC726ECF52.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:e300:f9b8:95dc:726e:cf52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF2181EC0AC3;
-        Thu, 20 Dec 2018 20:24:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1545333894;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=N3GgOFQHdgqSZ7aMtDkj03r+eYlwixbP/11WQh8eBmw=;
-        b=IYVJgJ+wr8DumYt0IOrTz5EfPRa3tDDYNu3QK8NN7ySeX11jZUMasA/R5SMZZ/ILrpRW3P
-        Xy4y7e0au7VxQza+E9xDy3ZLK9rbUWWZ1v/ehPGCR1VPpnPtecp6VxZazLnJk+eXo05QXB
-        BRqSOiRw8JbMfeNOMUWNFTjPm/c8bzk=
-Date:   Thu, 20 Dec 2018 20:24:47 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     David Arcari <darcari@redhat.com>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>
-Subject: Re: [PATCH] ACPI/APEI: Clear GHES block_status before panic()
-Message-ID: <20181220192447.GG31403@zn.tnic>
-References: <1545238252-79630-1-git-send-email-darcari@redhat.com>
+        Thu, 20 Dec 2018 14:27:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52958 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbeLTT17 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 14:27:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8I7T4f+n6L3Wjg4lbpVX56XHJOL1Cvwoq4XgeQJGfHk=; b=p7hE4BDF7/Jlh4w8tSdepkr2O
+        rhKokZ1nRsyCUDfkgtU2p3mahXZfnBsD9p8cOOsuGohPigzWH9zlGYEln+vdUfGr1YpduTt+KGqmX
+        k/yDOzVTAmq8qen0sUzGAIM9pktuNKwZ5hMZ5IUTr1b7cyFXNP3c1bUimLqWiORJNRE7dkf/kBIyh
+        eD77F2trw8Hjgcj14lYqfYONxjha2dDy+r9CgIp5CcaxOUFfBTlQWmjSbA8RMHhrrm+yFfW9mlZrs
+        nl2XheEg0hlBqfQTVuMH37owMhQMCydysBz1eqxEKBUJ1KTDYSCTSczJ0WrNN5U/o42rhX2ohGV7T
+        gjjsqetHQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ga3z7-0000Ti-RX; Thu, 20 Dec 2018 19:27:53 +0000
+Date:   Thu, 20 Dec 2018 11:27:53 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, igor.stoppa@huawei.com,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/12] __wr_after_init: x86_64: __wr_op
+Message-ID: <20181220192753.GZ10600@bombadil.infradead.org>
+References: <20181219213338.26619-1-igor.stoppa@huawei.com>
+ <20181219213338.26619-5-igor.stoppa@huawei.com>
+ <20181220184917.GY10600@bombadil.infradead.org>
+ <d5e8523a-3afd-d992-1af3-b329985c5ed5@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545238252-79630-1-git-send-email-darcari@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d5e8523a-3afd-d992-1af3-b329985c5ed5@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ James.
-
-On Wed, Dec 19, 2018 at 11:50:52AM -0500, David Arcari wrote:
-> From: Lenny Szubowicz <lszubowi@redhat.com>
+On Thu, Dec 20, 2018 at 09:19:15PM +0200, Igor Stoppa wrote:
+> On 20/12/2018 20:49, Matthew Wilcox wrote:
+> > I think you're causing yourself more headaches by implementing this "op"
+> > function.
 > 
-> In __ghes_panic() clear the block status in the APEI generic
-> error status block for that generic hardware error source before
-> calling panic() to prevent a second panic() in the crash kernel
-> for exactly the same fatal error.
+> I probably misinterpreted the initial criticism on my first patchset, about
+> duplication. Somehow, I'm still thinking to the endgame of having
+> higher-level functions, like list management.
 > 
-> Otherwise ghes_probe(), running in the crash kernel, would see
-> an unhandled error in the APEI generic error status block and
-> panic again, thereby precluding any crash dump.
+> > Here's some generic code:
 > 
-> Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-> Signed-off-by: David Arcari <darcari@redhat.com>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/acpi/apei/ghes.c | 2 ++
->  1 file changed, 2 insertions(+)
+> thank you, I have one question, below
 > 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 02c6fd9..f008ba7 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -691,6 +691,8 @@ static void __ghes_panic(struct ghes *ghes)
->  {
->  	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
->  
-> +	ghes_clear_estatus(ghes);
-> +
->  	/* reboot to log the error! */
->  	if (!panic_timeout)
->  		panic_timeout = ghes_panic_timeout;
-> -- 
+> > void *wr_memcpy(void *dst, void *src, unsigned int len)
+> > {
+> > 	wr_state_t wr_state;
+> > 	void *wr_poking_addr = __wr_addr(dst);
+> > 
+> > 	local_irq_disable();
+> > 	wr_enable(&wr_state);
+> > 	__wr_memcpy(wr_poking_addr, src, len);
+> 
+> Is __wraddr() invoked inside wm_memcpy() instead of being invoked privately
+> within __wr_memcpy() because the code is generic, or is there some other
+> reason?
 
-Acked-by: Borislav Petkov <bp@suse.de>
+I was assuming that __wr_addr() might be costly, and we were trying to
+minimise the number of instructions executed while write-rare was enabled.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
