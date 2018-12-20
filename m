@@ -7,62 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431B7C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11963C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D588217D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6EFB218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 17:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oLZUR3ig"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4fA7I9B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387928AbeLTRUa (ORCPT
+        id S2387942AbeLTRUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 12:20:30 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43619 "EHLO
+        Thu, 20 Dec 2018 12:20:33 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44774 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387894AbeLTRU2 (ORCPT
+        with ESMTP id S2387923AbeLTRUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 12:20:28 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f9so2379110eds.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:27 -0800 (PST)
+        Thu, 20 Dec 2018 12:20:31 -0500
+Received: by mail-ed1-f68.google.com with SMTP id y56so2374881edd.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 09:20:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dJ3Thc+Tk49RI7tfOaoX7lNqDe2TvDSrwqm2GBO1DoE=;
-        b=oLZUR3igaZA/j8Ua4saKR7f2Nx8U2k7STmLx4RdmnuFsk8f55SdRkR3ChE3jp9xx9q
-         Qd+Je2gVL4CR5iPTEU+vCf5npWGTASxiJ8OC6U3WU5Gd0nHLhtitwSOJrTBw3C1nooJ9
-         2rFJfnE9f2cSqtACRjQexBGcC4CEB+bF1c3wmXPY0zP5nzo1OiiiCkNJzkz41f87IlX5
-         Jn+fnNpbIostHtZMLYmHYt/9DJtDLqh0ZO+drbATuXvEc1n6qGyDadaDNfye5B395DTU
-         esG80CZ8jOpY/Gcm1x2lHgdq240UZ0eh/NSwyh0yo9fypEuNP0zaQj5sXYVbg8zKt3KC
-         5gBw==
+        bh=WsSnVBo8KJVkRT0Qz1vH8hLCjFF5IQ8192hboW8X5ek=;
+        b=O4fA7I9B179pyeiNfNUBKyTW8gCMnYj/HEMrAVcafBrxWnGQpcLpj1y0GT8xiDfKY8
+         iF+UHGPZbA0ESGPAapaRJBsUqGT+Zq1Y3RmFOPuctIMrPtwG7ymLdduWhGA8bfgCPORo
+         ENEQBPs3xOe+pz5rdVt3OrdrGG5B0vTaqzEPkVbhTKFxTpIM0VxVY4wpqEP/uiTFdYC8
+         qluef84jCN1Hbg66U52jB092LJtqtaGCVSomxW9AmBn6XA/POb9Dk+De8kICHQjdsRR8
+         EZQL8SDmPW8tB47w7CbocJhCuxY7K1C+jzbLgcHFcnima1Fga/unG6cYiwci1prkujme
+         xrvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dJ3Thc+Tk49RI7tfOaoX7lNqDe2TvDSrwqm2GBO1DoE=;
-        b=TQjZE05FslaorHbBmU2Nwce9Yr8qkgbZ90CIdkj5vZ8Cq4g6eIR4ZDLWjdia38jAIG
-         k5KsJMzzjpxbg6iIda2o74nivzc/YMyWOoOyU78Ijza00iNJRTZgC4LyPi50sx7aEtKk
-         cstdcsGdrkmW8fgjCvcmZTErYj4vDlT/fwvmpdX5ma5EqpPS4d81EOZa+YDG68TW1yq5
-         3Luplz1ypHrkT6FKy0G/tT+eel3LoaI+j5ZFycD9Pp1l/6rB8HPntp7Hkt+KfstWBga3
-         JVWjqxsPeE+NcMe1RrSy/NfrP610HxOWNpd9Kb4e6BJcnMsQg6NUqAiyUD6/YtTbrcxN
-         UAaw==
-X-Gm-Message-State: AA+aEWbiQJZTJazMdqV5KBfkUWe3Cetuhb5IxTFCD1gEZHKQmnE9rDgw
-        0ktKfdDDUYitGqaUhZBgDhY=
-X-Google-Smtp-Source: AFSGD/WGIXaqj9olWnckJZz7B2v3oUbXmImvaahuQjBLwaSCotzH+o7FkUpBOeYQeSF0dINJR9Vs4Q==
-X-Received: by 2002:a50:90b7:: with SMTP id c52mr24601934eda.31.1545326426393;
-        Thu, 20 Dec 2018 09:20:26 -0800 (PST)
+        bh=WsSnVBo8KJVkRT0Qz1vH8hLCjFF5IQ8192hboW8X5ek=;
+        b=E09MVspWq3AojqA21ULhYVXoLF9A0IzfATKgCRmGOcagoJY8I41iS45FRSEDDZ0m9b
+         DshcCSX3t5J2Li/SR3R2wmNUNCy8bUbOhZPZs/KLveRki8dPM+4GxC+VBaf+gm7vj7kj
+         GOeJvP6eQl+6dGmutSEQe0/EPh4vj/LYY8kgyx1FWg3qCvYwsFAGURfwiLfNpONqrb9c
+         QYpS9wHmXrB76RS400A104+0/2SSqxz2yW/TXg/Sl2dkkhWc6QT5H8+EfpSec2McHwt/
+         jO6M4CSjUpvdnR+zuMUzxa3W0aa8K4FpkUadliKXyvRqQUewMsS2A+5Iuzd+oXlUNR9n
+         vydw==
+X-Gm-Message-State: AA+aEWaegZKs87jez7Aze9lAbTns8fElNzxV3SVn4zZA3PgmLfZ/DsZH
+        6RKAj5MjNgmn6zDGDJmBMAU=
+X-Google-Smtp-Source: AFSGD/WlDFiiUldvXSok29M4elNVJ+zqzXOLOeyiPiGCa0uYEiwu+D1GFu+VIL6ugo5PxCjDjrgzqA==
+X-Received: by 2002:a50:c408:: with SMTP id v8mr17312134edf.144.1545326429761;
+        Thu, 20 Dec 2018 09:20:29 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id s19-v6sm3321684ejz.2.2018.12.20.09.20.25
+        by smtp.gmail.com with ESMTPSA id o37sm6207778edc.32.2018.12.20.09.20.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 09:20:25 -0800 (PST)
+        Thu, 20 Dec 2018 09:20:28 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 14/19] mailbox: omap: Use device-managed registration API
-Date:   Thu, 20 Dec 2018 18:19:57 +0100
-Message-Id: <20181220172002.9016-15-thierry.reding@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 16/19] mailbox: qcom-apcs: Use device-managed registration API
+Date:   Thu, 20 Dec 2018 18:19:59 +0100
+Message-Id: <20181220172002.9016-17-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181220172002.9016-1-thierry.reding@gmail.com>
 References: <20181220172002.9016-1-thierry.reding@gmail.com>
@@ -78,38 +80,36 @@ From: Thierry Reding <treding@nvidia.com>
 Get rid of some boilerplate driver removal code by using the newly added
 device-managed registration API.
 
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Suman Anna <s-anna@ti.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- fix build failure reported by the kbuild test robot
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/mailbox/omap-mailbox.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-index db66e952a871..ca50177a33f2 100644
---- a/drivers/mailbox/omap-mailbox.c
-+++ b/drivers/mailbox/omap-mailbox.c
-@@ -486,7 +486,7 @@ static int omap_mbox_register(struct omap_mbox_device *mdev)
- 	list_add(&mdev->elem, &omap_mbox_devices);
- 	mutex_unlock(&omap_mbox_devices_lock);
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index aed23ac9550d..3cf2937be149 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -91,7 +91,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ 	apcs->mbox.chans = apcs->mbox_chans;
+ 	apcs->mbox.num_chans = ARRAY_SIZE(apcs->mbox_chans);
  
--	ret = mbox_controller_register(&mdev->controller);
-+	ret = devm_mbox_controller_register(mdev->dev, &mdev->controller);
- 
- err_out:
+-	ret = mbox_controller_register(&apcs->mbox);
++	ret = devm_mbox_controller_register(&pdev->dev, &apcs->mbox);
  	if (ret) {
-@@ -508,8 +508,6 @@ static int omap_mbox_unregister(struct omap_mbox_device *mdev)
- 	list_del(&mdev->elem);
- 	mutex_unlock(&omap_mbox_devices_lock);
+ 		dev_err(&pdev->dev, "failed to register APCS IPC controller\n");
+ 		return ret;
+@@ -115,7 +115,6 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
+ 	struct qcom_apcs_ipc *apcs = platform_get_drvdata(pdev);
+ 	struct platform_device *clk = apcs->clk;
  
--	mbox_controller_unregister(&mdev->controller);
--
- 	mboxes = mdev->mboxes;
- 	for (i = 0; mboxes[i]; i++)
- 		device_unregister(mboxes[i]->dev);
+-	mbox_controller_unregister(&apcs->mbox);
+ 	platform_device_unregister(clk);
+ 
+ 	return 0;
 -- 
 2.19.1
 
