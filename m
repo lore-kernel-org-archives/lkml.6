@@ -2,118 +2,87 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5BFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43A9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE86521908
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23AD21906
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 23:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545348555;
+	bh=lmCiWYvSQYJiPHF+esPuidaHr2d9cRuE1sd9uALofb8=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=RoO9WN3NZ77UXFe9oioY2RbK9dt9z3bdlrx9JSKbUpBhbW7BTR4EQwdZbh4sLsNJs
+	 5bpoxDPzlIiXKHJFAPkwlKWvvd2mqoXQ2gKr2j+fZ/fAVtUJpP8HusWnA3/SDO+eHE
+	 b+rA5lThrPHOCoQuXuO1RDz5i1OoUknGdFTxuK60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390326AbeLTX3J (ORCPT
+        id S2390339AbeLTX3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 18:29:09 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42662 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731142AbeLTX3J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 18:29:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d19so3785872qtq.9;
-        Thu, 20 Dec 2018 15:29:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=4CvCObwXu95rgJLvLMmWf3n9NEsQDPtvpe/D14urWvc=;
-        b=A/ZrLXScRcOkeo5aVbviGVvGMTIQmDYYuQqP45bZrxg/84Nx/iFdNYbLOSdtkRCTt1
-         eAqqkpccAbdvoQ9LW35u1h25fOPWDTDtiSYHrjG7qUFAPJAtm4j9FizqC98gZRsVTgCh
-         S+TlmtHr8A1HDfyi2o5cqo8LP3TtxJSnFsy11qdl/ytugTkWfvLXk1/S2RlEK4wHmkXW
-         g0ALVbXsJvBhhRAOjHaWR8QSfuXrWIMqEa8P/o1AvoufWg2NVyd5RpHoUe7OZkrod2Cf
-         NzpCkC3aMXG/0tT/heaEQ71ci/8pzLR2y7cxbaaLE7WSX9/+SC68dEKH5+fArhK8PWoq
-         9K+g==
-X-Gm-Message-State: AA+aEWbEL5ZNo2Ps+L2/v3qlRYVomIhH1vY+5NkJpWfS6fItba6Dsst5
-        CUqMOjRzbpfqneDHMi2O+aXAcygvS8MfpQrmIv4=
-X-Google-Smtp-Source: AFSGD/WlrOSAoac/sc+Prmb0MKExEghF115xcbswQK4LqIRMzFgM6I7Jsdn55mXP5GARaHrbSlyxBi/n81h5mCbmx4Q=
-X-Received: by 2002:ac8:7451:: with SMTP id h17mr178113qtr.319.1545348547606;
- Thu, 20 Dec 2018 15:29:07 -0800 (PST)
+        Thu, 20 Dec 2018 18:29:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731142AbeLTX3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 18:29:11 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7008921905;
+        Thu, 20 Dec 2018 23:29:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545348550;
+        bh=lmCiWYvSQYJiPHF+esPuidaHr2d9cRuE1sd9uALofb8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VyFz9RFmCprws/08K2u190CziyA58hOZSCGpHKtqafSC6/7Aak7SrJumStKSFeVdy
+         yrkTcJQ/lSgkSzoz2au3fL4TQOkDOHAS0rCTlOUaZhP/6JzZkT73vBlpHHMClW33vl
+         opkst5tx94p+5ROQAHvuyz1iDZag4rJHtj3R7JDk=
+Subject: Re: [PATCH 3.18 00/31] 3.18.131-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20181220085742.601260254@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <7f92c9e6-2c0e-47d2-393e-eb75b7839f88@kernel.org>
+Date:   Thu, 20 Dec 2018 16:29:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 21 Dec 2018 00:28:51 +0100
-Message-ID: <CAK8P3a3iAF3J8X2yj7JaCaTM_BcZ--2LZj32kkDf55mBn_cQ5g@mail.gmail.com>
-Subject: [GIT PULL] asm-generic: syscall table script for arch/sh
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rich Felker <dalias@libc.org>, Firoz Khan <firoz.khan@linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181220085742.601260254@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 2e6e902d185027f8e3cb8b7305238f7e35d6a436:
+On 12/20/18 2:18 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.131 release.
+> There are 31 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Dec 22 08:57:30 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.131-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-  Linux 4.20-rc4 (2018-11-25 14:19:31 -0800)
+Compiled and booted on my test system. No dmesg regressions.
 
-are available in the Git repository at:
+thanks,
+-- Shuah
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git
-tags/asm-generic-4.21
-
-for you to fetch changes up to 2b3c5a99d5f314960e00950c1782eac9361de30f:
-
-  sh: generate uapi header and syscall table header files (2018-12-19
-17:54:40 +0100)
-
-----------------------------------------------------------------
-asm-generic: syscall table script for arch/sh
-
-I worked with Firoz Khan to change all architectures to have their system
-call tables (syscall.S and asm/unistd.h) generated by a script from a more
-readable input file the same way that we already had on x86, s390 and arm.
-
-I offered to take those conversions through the asm-generic tree that
-did not get picked up by the architecture maintainers, and fortunately
-all but one have now been accepted into arch maintainer trees, so this
-branch only contains the conversion for arch/sh/, with permission from
-Rich.
-
-The conversion does not include the old 64-bit sh5 architecture, which
-has never shipped and not even compiled in a long time. The table
-in include/uapi/asm/unistd.h is also not included here, as Firoz is
-still working on that one. It will have to wait for the next following
-merge window, hopefully together with the addition of the 64-bit
-time_t system calls for the y2038 work that led to the system call
-table rework.
-
-Acked-by: Rich Felker <dalias@libc.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-----------------------------------------------------------------
-Firoz Khan (3):
-      sh: add __NR_syscalls along with NR_syscalls
-      sh: add system call table generation support
-      sh: generate uapi header and syscall table header files
-
- arch/sh/Makefile                      |   3 +
- arch/sh/include/asm/Kbuild            |   1 +
- arch/sh/include/asm/unistd.h          |   2 +
- arch/sh/include/uapi/asm/Kbuild       |   1 +
- arch/sh/include/uapi/asm/unistd_32.h  |   4 +-
- arch/sh/include/uapi/asm/unistd_64.h  |   4 +-
- arch/sh/kernel/syscalls/Makefile      |  38 +++++++++
- arch/sh/kernel/syscalls/syscall.tbl   | 392
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/sh/kernel/syscalls/syscallhdr.sh |  36 ++++++++
- arch/sh/kernel/syscalls/syscalltbl.sh |  32 +++++++
- arch/sh/kernel/syscalls_32.S          | 387
-+-----------------------------------------------------------------------------------
- 11 files changed, 514 insertions(+), 386 deletions(-)
- create mode 100644 arch/sh/kernel/syscalls/Makefile
- create mode 100644 arch/sh/kernel/syscalls/syscall.tbl
- create mode 100644 arch/sh/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/sh/kernel/syscalls/syscalltbl.sh
