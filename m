@@ -2,116 +2,140 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0062C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC34C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D0E21741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:58:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdHsJj89"
+	by mail.kernel.org (Postfix) with ESMTP id 35AE821741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbeLTJ6g (ORCPT
+        id S1730378AbeLTKAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:58:36 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41700 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbeLTJ6g (ORCPT
+        Thu, 20 Dec 2018 05:00:34 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42568 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730092AbeLTKAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:58:36 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k15-v6so970095ljc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:58:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=34qDGTyqKjGSdYqKws3irLv5MhzZT5AO71EuEmzpzj8=;
-        b=KdHsJj890nG/hrzpQrhTLR9R05Qt/JY5Hgcz24+4ZtJPL393UhDUbVXdWcZDTQGBxY
-         QtlVgBkNl932M7e5Gmo1+jhHOsDlDSCNpkpNRzx5RcXIc0uHsCCN2yHMkiqlRl9wAK+1
-         mVGjHb3Bpt8QGpwBiaj9Skj1M5oEYxaUvMqhs=
+        Thu, 20 Dec 2018 05:00:33 -0500
+Received: by mail-ed1-f66.google.com with SMTP id y20so1187463edw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:00:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=34qDGTyqKjGSdYqKws3irLv5MhzZT5AO71EuEmzpzj8=;
-        b=YrDTRT9K8/eg/0lpHY9Sdv+wK9lBrAlcsZyJsyUdQnGoBlHhm32agAO2vvv5Iyzm0T
-         SGCbxDjXXNMafvSWrsCV8i7WRWd1rPvyls1Z3KjhMR0GKYRV2U4F9u7CHsU2TzG9nlTd
-         zKf2WjqV/bifUmcRijjpCcfLU5Ni17TgrEauzKjlCkWNAnsQLwraH2fvBbX07ASuhCL4
-         AJ63Qm0Cx6eBoRoB1vgjBKDcdQbpkrTcTuyqsO8tO1X5EL30eKujP5uw5Nh3A/6o/ckd
-         pOfznGrVSLvZxmP6fxkav6tn0R8CJU/jCZTJldvdXfzhPe3kzmlIXtHQJOh9Dl4IbkAW
-         XFWA==
-X-Gm-Message-State: AA+aEWbpJYdNjhJ95p0cFeHmJZHYpYqR9AmJbKtrgoN+3WTGxNLJoWbw
-        Xzp6yIrAPAQBVqOROd4yAqkZUg==
-X-Google-Smtp-Source: AFSGD/UpLRB3Q1vF1+oZG8of74knKa0pzotnTUcnunuExWsF1AhRULQsBt3DTgzhOuRsQvUA9lgU+Q==
-X-Received: by 2002:a2e:58b:: with SMTP id 133-v6mr14253262ljf.127.1545299914365;
-        Thu, 20 Dec 2018 01:58:34 -0800 (PST)
-Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id n16sm4281186lfl.35.2018.12.20.01.58.33
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ylwzKhANp4Cl8xusWKqb85xW+2cdSkQ3nxCl1I5yYWs=;
+        b=esb5Nw/9ZWrfMh60pUYIoDKbuMjWnQyHLwI964xS7Y25UIROt52WT1lJlYn5CWx51Z
+         jvbIYwyz484zBWQKX7RrV0yepG1oHa4QLN1OO/0o8x6XZUEri3QSCc0Sb6Tf3c9kOrFM
+         GYb5MZv1S8TSUpTE6Sp5wSbvOuF5iydFBQq4eiX9+jAXdLphKSH3ZuSAKo3H7kRT3UDR
+         A4/h8Jx9UdlbNS+cOg6vqiGqVPYcNwwy4H9losy/PzuzpKchrpCjt11kZV4QKBef1pcj
+         u4cchwMR9EdPjuhhZjQSp0Y4tArPqSJljVJ3tIK82HfU4F8WcDmccr+3kmYm2kX7SATw
+         tbaw==
+X-Gm-Message-State: AA+aEWbyq87l85iR3JZ/hBnQGsLZLqfiEwS0jvXFc2ATUMg3KCV+wIQY
+        nZlVOoKG7X8pyY34cIufvgGI8uNELGw=
+X-Google-Smtp-Source: AFSGD/U+z0NW0ZSR9XZ3d8SpPEG73Cd5o78YWj37ciMqJWCZXrwore7exMuiLuL3XBB9kBNGDHua7g==
+X-Received: by 2002:a50:d643:: with SMTP id c3mr22291753edj.178.1545300031177;
+        Thu, 20 Dec 2018 02:00:31 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id s3sm6001255edm.31.2018.12.20.02.00.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 01:58:33 -0800 (PST)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        Thu, 20 Dec 2018 02:00:30 -0800 (PST)
+Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
+ adapters
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v4.20-rc8
-Date:   Thu, 20 Dec 2018 10:58:32 +0100
-Message-Id: <20181220095832.7375-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+ <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
+ <20181219172250.ytronxeq2yc4vp4r@wunner.de>
+ <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
+ <20181219223341.GA998@kunai>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
+Date:   Thu, 20 Dec 2018 11:00:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181219223341.GA998@kunai>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Here's a PR with a couple of MMC fixes intended for v4.20-rc8. Details about the
-highlights are as usual found in the signed tag.
+On 19-12-18 23:33, Wolfram Sang wrote:
+> Hi Lukas, Hans,
+> 
+> On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 19-12-18 18:22, Lukas Wunner wrote:
+>>> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
+>>>> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
+>>>> +{
+>>>> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+>>>> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
+>>>> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+>>>> +}
+>>>
+>>> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
+>>> Any reason why you can't use that?  If so, it would be good to document the
+>>> reason in the commit message.
+>>
+>> Oh, that is a very good point and that one only gets set on system suspend
+>> and not on resume suspend, working around the problems with the i2c-designware
+> 
+> Just to make it clear: you mean runtime suspend, not resume suspend, or?
 
-Please pull this in!
+Yes I mean runtime-suspend, sorry.
 
-Kind regards
-Ulf Hansson
+>> driver.
+>>
+>> I think this might be as simple as adding:
+>>
+>> 	if (WARN_ON(adap->dev.parent->power.is_suspended))
+>> 		return -ESHUTDOWN;
+> 
+> I have seen this flag but decided against it. One reason is because it
+> is marked as "PM core only".
 
+Right and we definitely should not be touching it, but reading it should
+be fine.
 
-The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
+> The other reason is that it doesn't know
+> about the adapter lock. It might get set while a transfer is on going.
+> Or even right after the suggested if-block above. The code from this
+> series gets the mutex first which ensures that on going transfers are
+> completed and no new ones are started in parallel.
+> 
+> Unless I am totally overlooking something...
 
-  Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
+No you are right, there is a race here, but I don't think we are likely to
+hit that race. Normally there won't be any ongoing i2c-transfers during
+a system suspend and more over, the goal of adding this check is to help
+find problems, so even if the check sometimes does not trigger because
+of the race that is not really a big deal.
 
-are available in the Git repository at:
+I think we need to get really unlucky to have both a suspend ordering
+problem in the first case (already a somewhat rare thing) combined with
+hitting this race in such a way *each time* that we don't trigger the
+WARN_ON.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.20-rc7
+To me this seems a case of perfect being the enemy of good. When we
+first started discussing this you wanted to not have to modify the
+adapter/bus drivers for the check, using adap->dev.parent->power.is_suspended
+gives us that and it will also work for complex cases like
+the i2c-designware case, so I believe the benefits outway the downsides.
 
-for you to fetch changes up to e3ae3401aa19432ee4943eb0bbc2ec704d07d793:
+Regards,
 
-  mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl (2018-12-17 08:59:42 +0100)
-
-----------------------------------------------------------------
-MMC core:
- - Restore code to allow BKOPS and CACHE ctrl even if no HPI support
- - Reset HPI enabled state during re-init
- - Use a default minimum timeout when enabling CACHE ctrl
-
-MMC host:
- - omap_hsmmc: Fix DMA API warning
- - sdhci-tegra: Fix dt parsing of SDMMC pads autocal values
- - Correct register accesses when enabling v4 mode
-
-----------------------------------------------------------------
-Russell King (1):
-      mmc: omap_hsmmc: fix DMA API warning
-
-Sowjanya Komatineni (2):
-      mmc: sdhci: Fix sdhci_do_enable_v4_mode
-      mmc: tegra: Fix for SDMMC pads autocal parsing from dt
-
-Ulf Hansson (3):
-      mmc: core: Reset HPI enabled state during re-init and in case of errors
-      mmc: core: Allow BKOPS and CACHE ctrl even if no HPI support
-      mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
-
- drivers/mmc/core/mmc.c         | 24 +++++++++++++++---------
- drivers/mmc/host/omap_hsmmc.c  | 12 +++++++++++-
- drivers/mmc/host/sdhci-tegra.c |  8 ++++----
- drivers/mmc/host/sdhci.c       |  4 ++--
- 4 files changed, 32 insertions(+), 16 deletions(-)
+Hans
