@@ -2,153 +2,207 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BF5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DF8C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CFA218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88789206C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:27:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ggHyH60Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389923AbeLTV05 (ORCPT
+        id S2389937AbeLTV1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:26:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36132 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730527AbeLTV05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:26:57 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E61AF88E58;
-        Thu, 20 Dec 2018 21:26:56 +0000 (UTC)
-Received: from redhat.com (ovpn-122-37.rdu2.redhat.com [10.10.122.37])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1F594101F94C;
-        Thu, 20 Dec 2018 21:26:54 +0000 (UTC)
-Date:   Thu, 20 Dec 2018 16:26:54 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, xuyandong <xuyandong2@huawei.com>,
-        stable@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>,
-        Jesse Barnes <jbarnes@virtuousgeek.org>,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: avoid bridge feature re-probing on hotplug
-Message-ID: <20181220161052-mutt-send-email-mst@kernel.org>
-References: <20181218004455.20186-1-mst@redhat.com>
- <20181220194950.GD183878@google.com>
+        Thu, 20 Dec 2018 16:27:22 -0500
+Received: from mail-eopbgr50051.outbound.protection.outlook.com ([40.107.5.51]:12096
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730527AbeLTV1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:27:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ber3Nd94rw/6FniHn+7f3rVCQOyefV7cU9k4gmeehzQ=;
+ b=ggHyH60ZQT/iZQYyYgGQo3fPfLAirijKyCz6glQ0JjCiHUGdRJ4fGp4u/PxIMU437dt0A8T2SScgjlztqarYEUgiaB8QnlYRIyNbfNQZlVzZWNk4CdN07lfc+tM6UpgCjP6amVmXr4utGwu6KKUrS30CT0hwCoudK6mnnXd36Qk=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3711.eurprd04.prod.outlook.com (52.134.15.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Thu, 20 Dec 2018 21:27:16 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::e4fb:858:afdc:c40b]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::e4fb:858:afdc:c40b%3]) with mapi id 15.20.1425.024; Thu, 20 Dec 2018
+ 21:27:16 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: caam/qi2 - add a CRYPTO_DEV_FSL_CAAM dependency
+Thread-Topic: [PATCH] crypto: caam/qi2 - add a CRYPTO_DEV_FSL_CAAM dependency
+Thread-Index: AQHUmHipoSWTOtLyrU2M7jIivETqVw==
+Date:   Thu, 20 Dec 2018 21:27:16 +0000
+Message-ID: <VI1PR0402MB3485B39F40CFFDED08D8701698BF0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20181220152815.3613164-1-arnd@arndb.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [192.88.166.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3711;6:F4vPHJcthArhpjr0kNXueZk+xv0+YDu1Iyryq+W97UaLfcAxCsFyU+T8EgNrpo96j12Ua9BiW5Qg+rrYmWUELo2i7bBZJFTEb2LIBhqsFKscSbuAVb4eNyiA6etxUN5QEVH7mtgdUwrUfVypC9zXr68A5q6cr+xEyCi8XVdn4TxdhSSuBkARNXmfb4E7/HZqEL/4StxOGlPqdrXaGAgaffy7tBW5teYXd1Lhf6szl/YvtvCF+Jp8ebMkxt+VS9cdWe2R+figiun6uLIjaJ7Wq9irrGhWa0ebBMUltX+24c4pgDdbS9bSrtrN08V5pb7/lO95fWj4IQKaPVqYGU4q8JYHQSLJNzQhsYU+bJwKXbL92MN00kT9hWe06MK1/Ae51cIpY0rKYysz36IKibrFjbhLGaPRq9ASUpa/GRvuA9unKH7ydY0+dbjUgqun7VOMLnJygX8p4nCXGcWj06pMAg==;5:qZ9oN2I+HcqpYIFJ90HkhXUHl0kJroy/q3Zg3sueaRjADVUSDBidDb3iGDKdOervc6sLlo6R2YTX3vavXaiuXAYRnj/0u8E2IAWLohbz/4+DGHudpLyE/7OK4ir8Rg5gzYBCdAbcPJssD0pfXsdBSN+4WP/jqAVhJMYzGQQdj+o=;7:SRH7bMxkFfoPsw7GNkmVEwcCPGefif0168aWKpqlww65f+MZAMjJcONWgdPZfs1uLUTvYNwL8YUHWzW2akw//1HJ3SnmrwNNfSRt02/jrsR39YhBnXlHeWH0PmLZa6oCJNnmELf3Hd6ZGf/ILV54dw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 958b0e31-d246-4e63-30f7-08d666c1ea68
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3711;
+x-ms-traffictypediagnostic: VI1PR0402MB3711:
+x-microsoft-antispam-prvs: <VI1PR0402MB37116AE3C5AEDB960CDB664698BF0@VI1PR0402MB3711.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB3711;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3711;
+x-forefront-prvs: 0892FA9A88
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(376002)(136003)(39860400002)(189003)(199004)(86362001)(68736007)(4326008)(256004)(14454004)(5660300001)(54906003)(110136005)(316002)(105586002)(33656002)(99286004)(66066001)(106356001)(71190400001)(55016002)(478600001)(44832011)(71200400001)(6436002)(81156014)(8676002)(81166006)(446003)(3846002)(6116002)(476003)(8936002)(74316002)(305945005)(6246003)(53936002)(25786009)(7736002)(9686003)(2906002)(6506007)(26005)(76176011)(102836004)(229853002)(186003)(53546011)(486006)(7696005)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3711;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: I5GhAOxzI1V8T16t5nFsN3smPrdaXn9/N+hoLjOauz53RqvEm+WBnChlzfrVRY04XpLsw0t3dgp0BybEinkjOzm3BJuIFIZqYdjOkiIOEUR/8RzoDZhqisZlZU0ivtklfJqYsBlp7o46rqf4drw3aVHhgsZGftM6W0sogYxG+VFzqgpLlywyy5L90YCxB0e9ZNE7hemj/yxPEv/NtEFKFisljkKwW+m/IzR8V+K7y6qUTtlJtkTuVd1WIx4w4PF10igeGWukbhS0rCocWr2IAHhQHTpO9bC/67U94pJwmI2K7hFPCTc+YhVc1uYUOiEk
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220194950.GD183878@google.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 20 Dec 2018 21:26:57 +0000 (UTC)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 958b0e31-d246-4e63-30f7-08d666c1ea68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 21:27:16.5821
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3711
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 01:49:50PM -0600, Bjorn Helgaas wrote:
-> Hi Michael,
-> 
-> On Mon, Dec 17, 2018 at 07:45:41PM -0500, Michael S. Tsirkin wrote:
-> > commit 1f82de10d6b1 ("PCI/x86: don't assume prefetchable ranges are 64bit")
-> > added probing of bridge support for 64 bit memory each time bridge is
-> > re-enumerated.
-> > 
-> > Unfortunately this probing is destructive if any device behind
-> > the bridge is in use at this time.
-> > 
-> > This was observed in the field, see
-> > https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg01711.html
-> > and specifically
-> > https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
-> > 
-> > There's no real need to re-probe the bridge features as the
-> > registers in question never change - detect that using
-> > the memory flag being set (it's always set on the 1st pass since
-> > all PCI2PCI bridges support memory forwarding) and skip the probing.
-> > Thus, only the first call will perform the disruptive probing and sets
-> > the resource flags as required - which we can be reasonably sure happens
-> > before any devices have been configured.
-> > Avoiding repeated calls to pci_bridge_check_ranges might be even nicer.
-> > Unfortunately I couldn't come up with a clean way to do it without a
-> > major probing code refactoring.
-> 
-> I'm OK with major probe code refactoring as long as it's done
-> carefully.  Doing a special-case fix like this solves the immediate
-> problem but adds to the long-term maintenance problem.
-> 
-> As far as I can tell, everything in pci_bridge_check_ranges() should
-> be done once at enumeration-time, e.g., in the pci_read_bridge_bases()
-> path, and pci_bridge_check_ranges() itself should be removed.
-> 
-> If that turns out to be impossible for some reason, we need a comment
-> explaining why.
-
-Maybe possible but I am not sure how.
-
-Here's why:
-
-Upon hotplug we want to poke at new bridges if any, but not the old
-ones.  The issue is that e.g. with ACPI hotplug the event that Linux
-knows how to handle is by design a heavy weight bus rescan.
-
-Specifically 
-
-pci_read_bridge_bases does not
-seem to be called on ACPI hotplug path.
-
-Rather,
-
-pci_assign_unassigned_root_bus_resources
-pci_assign_unassigned_bridge_resources
-
-would be the two functions in question.
-
-
-Would above explanation be sufficient? If not, since I understand your
-reluctance to pile up hacks, would you be open to doing the suggested
-rewrite yourself? Me and xuyandong can help test it.
-
-
-> > Reported-by: xuyandong <xuyandong2@huawei.com>
-> > Tested-by: xuyandong <xuyandong2@huawei.com>
-> > Cc: stable@vger.kernel.org
-> > Cc: Yinghai Lu <yinghai@kernel.org>
-> > Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> > 
-> > Please review and consider for stable.
-> > 
-> > changes from v1:
-> > 	comment and commit log updates to address comments by Bjorn.
-> > 
-> >  drivers/pci/setup-bus.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> > index ed960436df5e..d5c25d465d97 100644
-> > --- a/drivers/pci/setup-bus.c
-> > +++ b/drivers/pci/setup-bus.c
-> > @@ -741,6 +741,16 @@ static void pci_bridge_check_ranges(struct pci_bus *bus)
-> >  	struct resource *b_res;
-> >  
-> >  	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
-> > +
-> > +	/*
-> > +	 * Don't re-check after this was called once already:
-> > +	 * important since bridge might be in use.
-> > +	 * Note: this is only reliable because as per spec all PCI to PCI
-> > +	 * bridges support memory unconditionally so IORESOURCE_MEM is set.
-> > +	 */
-> > +	if (b_res[1].flags & IORESOURCE_MEM)
-> > +		return;
-> > +
-> >  	b_res[1].flags |= IORESOURCE_MEM;
-> >  
-> >  	pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > -- 
-> > MST
+On 12/20/2018 5:28 PM, Arnd Bergmann wrote:=0A=
+> My previous bugfix was incomplete, we still have a broken kernel=0A=
+> with CRYPTO_DEV_FSL_CAAM=3Dm and CRYPTO_DEV_FSL_DPAA2_CAAM=3Dy:=0A=
+> =0A=
+> drivers/crypto/caam/caamalg_desc.o: In function `cnstr_shdsc_aead_null_en=
+cap':=0A=
+> caamalg_desc.c:(.text+0x14): undefined reference to `caam_little_end'=0A=
+> drivers/crypto/caam/caamalg_desc.o: In function `cnstr_shdsc_aead_null_en=
+cap':=0A=
+> caamalg_desc.c:(.text+0x310): undefined reference to `caam_imx'=0A=
+> caamalg_desc.c:(.text+0x4a8): undefined reference to `caam_little_end'=0A=
+> drivers/crypto/caam/caamalg_desc.o: In function `cnstr_shdsc_aead_null_en=
+cap':=0A=
+> caamalg_desc.c:(.text+0x664): undefined reference to `caam_imx'=0A=
+> =0A=
+> Everything is fine for the other combinations: if both are loadable=0A=
+> modules, or both are built-in, the flags work as expected, also if=0A=
+> only one of the two is enabled.=0A=
+> =0A=
+> Add a dependency to enforce using one of the working configurations.=0A=
+> Overall, I'm still not happy with that dependency, but for now=0A=
+> it documents what the code requires.=0A=
+> =0A=
+Thanks Arnd.=0A=
+This indeed solves the issue, but as you mentioned won't allow for=0A=
+CRYPTO_DEV_FSL_DPAA2_CAAM=3Dy when CRYPTO_DEV_FSL_CAAM=3Dm.=0A=
+=0A=
+I think a better solution is the following:=0A=
+=0A=
+-- >8 --=0A=
+Subject: [PATCH] crypto: caam - move shared symbols in a common location=0A=
+=0A=
+There are several issues with symbols shared b/w:=0A=
+-caam/jr and caam/qi drivers on one hand=0A=
+-caam/qi2 driver on the other hand=0A=
+=0A=
+Commit 52813ab24959 ("crypto: caam/qi2 - avoid double export") fixed=0A=
+some of them, however compilation still fails for CRYPTO_DEV_FSL_CAAM=3Dm=
+=0A=
+and CRYPTO_DEV_FSL_DPAA2_CAAM=3Dy.=0A=
+=0A=
+Another issue is related to dependency cycles reported by depmod when=0A=
+CRYPTO_DEV_FSL_CAAM=3Dn and CRYPTO_DEV_FSL_DPAA2_CAAM=3Dm, as mentioned in=
+=0A=
+82c7b351be3f ("Revert "arm64: defconfig: Enable FSL_MC_BUS and FSL_MC_DPIO"=
+")=0A=
+=0A=
+To fix all these, move the symbols shared by these drivers in a common=0A=
+location. The only existing possibility is error.c file (note that naming=
+=0A=
+doesn't help and should eventually change).=0A=
+=0A=
+Fixes: 52813ab24959 ("crypto: caam/qi2 - avoid double export")=0A=
+Reported-by: Arnd Bergmann <arnd@arndb.de>=0A=
+Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+---=0A=
+ drivers/crypto/caam/caamalg_qi2.c | 7 -------=0A=
+ drivers/crypto/caam/ctrl.c        | 4 ----=0A=
+ drivers/crypto/caam/error.c       | 6 ++++++=0A=
+ 3 files changed, 6 insertions(+), 11 deletions(-)=0A=
+=0A=
+diff --git a/drivers/crypto/caam/caamalg_qi2.c b/drivers/crypto/caam/caamal=
+g_qi2.c=0A=
+index 425d5d974613..cc59814afd29 100644=0A=
+--- a/drivers/crypto/caam/caamalg_qi2.c=0A=
++++ b/drivers/crypto/caam/caamalg_qi2.c=0A=
+@@ -25,13 +25,6 @@=0A=
+ #define CAAM_MAX_KEY_SIZE	(AES_MAX_KEY_SIZE + CTR_RFC3686_NONCE_SIZE + \=
+=0A=
+ 				 SHA512_DIGEST_SIZE * 2)=0A=
+=0A=
+-#if !IS_ENABLED(CONFIG_CRYPTO_DEV_FSL_CAAM)=0A=
+-bool caam_little_end;=0A=
+-EXPORT_SYMBOL(caam_little_end);=0A=
+-bool caam_imx;=0A=
+-EXPORT_SYMBOL(caam_imx);=0A=
+-#endif=0A=
+-=0A=
+ /*=0A=
+  * This is a a cache of buffers, from which the users of CAAM QI driver=0A=
+  * can allocate short buffers. It's speedier than doing kmalloc on the hot=
+path.=0A=
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c=0A=
+index 16bbc72f041a..14fb09223156 100644=0A=
+--- a/drivers/crypto/caam/ctrl.c=0A=
++++ b/drivers/crypto/caam/ctrl.c=0A=
+@@ -18,12 +18,8 @@=0A=
+ #include "desc_constr.h"=0A=
+ #include "ctrl.h"=0A=
+=0A=
+-bool caam_little_end;=0A=
+-EXPORT_SYMBOL(caam_little_end);=0A=
+ bool caam_dpaa2;=0A=
+ EXPORT_SYMBOL(caam_dpaa2);=0A=
+-bool caam_imx;=0A=
+-EXPORT_SYMBOL(caam_imx);=0A=
+=0A=
+ #ifdef CONFIG_CAAM_QI=0A=
+ #include "qi.h"=0A=
+diff --git a/drivers/crypto/caam/error.c b/drivers/crypto/caam/error.c=0A=
+index 7e8d690f2827..21a70fd32f5d 100644=0A=
+--- a/drivers/crypto/caam/error.c=0A=
++++ b/drivers/crypto/caam/error.c=0A=
+@@ -50,6 +50,12 @@ void caam_dump_sg(const char *level, const char *prefix_=
+str,=0A=
+int prefix_type,=0A=
+ #endif /* DEBUG */=0A=
+ EXPORT_SYMBOL(caam_dump_sg);=0A=
+=0A=
++bool caam_little_end;=0A=
++EXPORT_SYMBOL(caam_little_end);=0A=
++=0A=
++bool caam_imx;=0A=
++EXPORT_SYMBOL(caam_imx);=0A=
++=0A=
+ static const struct {=0A=
+ 	u8 value;=0A=
+ 	const char *error_text;=0A=
+-- =0A=
+2.16.2=0A=
