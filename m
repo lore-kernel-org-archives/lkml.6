@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9D7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1C8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B49217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F072320989
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545298227;
-	bh=FJ20MwyGf6RkRDp5dyhsxzlFY0QsaBk83uAdNOAfOoY=;
+	s=default; t=1545298233;
+	bh=KDQipaR4c2uNqsWisozBk+Nso+MQxcrMR6oJxX8LPZo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oNoJTHw+6cIEUAdBb2g3xf4lhGnxGIWwM2TtLqlaUr1szQCNTHhitP+Rxz/0ngHMY
-	 k0jlOahuLDFmyXNyI/U3QbL0OvU5MA4RC0asD3eMbDjPue7FGMvQZQRfTbAiGoIEyo
-	 mkgDFCMx62tXOxOwvzQZ62s5xCU/ZmWtKnQYb9Ys=
+	b=UTGVBSc26ZHfsKzDT6caPjMUYouQJZc4xk2nRkaak+qMtwM5L2z7b2WtVrixtI8t1
+	 LJNTTd5ny/2oWJHDrn7zLcXaJvInJoknoDVPPdQBWZY+LKXaTZyR9CP8DPi8OjUR0+
+	 H5mvpj67toAy1Zwg7rHro6JV+Fck3uQDLaFt2lr8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732929AbeLTJa0 (ORCPT
+        id S1732942AbeLTJac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:30:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36946 "EHLO mail.kernel.org"
+        Thu, 20 Dec 2018 04:30:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732908AbeLTJaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:30:21 -0500
+        id S1732917AbeLTJaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 04:30:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6489621741;
-        Thu, 20 Dec 2018 09:30:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1416A20989;
+        Thu, 20 Dec 2018 09:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545298220;
-        bh=FJ20MwyGf6RkRDp5dyhsxzlFY0QsaBk83uAdNOAfOoY=;
+        s=default; t=1545298223;
+        bh=KDQipaR4c2uNqsWisozBk+Nso+MQxcrMR6oJxX8LPZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQrIZulB1Okax6d5lHmDhxY28vYXEJC4ARGz2fPDxyHcP+uiD7zy/1ifnJEeguNmP
-         Q6QEuPaPy9++jUm8SLF5PXn2evyWmpTz1UPfPWIGIjW8KziT9E7EsUpIm32vl/qeGD
-         H0X76UaOaA4fG9CYpwL+16eZsXinaytn/JdeZyEA=
+        b=RnVmG8EWmrGKNuAjiaGxReLutYiRcuU0ShHJ5oxlLuflzD4AuG2JrxAuxaL3hemxD
+         ARl/yFU7RQZ5Puwk3Bz77rjwxKVWf7LnSegeWWIbpi3H/VKwPkx5zY8skCM4djKJtC
+         LF5yg4Lpf/kNm/K/9yD3m7XbJpqHa6BDM8oYm+0Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anderson Luiz Alves <alacn1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 44/67] mv88e6060: disable hardware level MAC learning
-Date:   Thu, 20 Dec 2018 10:18:56 +0100
-Message-Id: <20181220085905.289517922@linuxfoundation.org>
+Subject: [PATCH 4.19 45/67] net/mlx4_en: Fix build break when CONFIG_INET is off
+Date:   Thu, 20 Dec 2018 10:18:57 +0100
+Message-Id: <20181220085905.325070048@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181220085903.562090333@linuxfoundation.org>
 References: <20181220085903.562090333@linuxfoundation.org>
@@ -66,50 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a74515604a7b171f2702bdcbd1e231225fb456d0 ]
+[ Upstream commit 1b603f9e4313348608f256b564ed6e3d9e67f377 ]
 
-Disable hardware level MAC learning because it breaks station roaming.
-When enabled it drops all frames that arrive from a MAC address
-that is on a different port at learning table.
+MLX4_EN depends on NETDEVICES, ETHERNET and INET Kconfigs.
+Make sure they are listed in MLX4_EN Kconfig dependencies.
 
-Signed-off-by: Anderson Luiz Alves <alacn1@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This fixes the following build break:
+
+drivers/net/ethernet/mellanox/mlx4/en_rx.c:582:18: warning: ‘struct iphdr’ declared inside parameter list [enabled by default]
+struct iphdr *iph)
+^
+drivers/net/ethernet/mellanox/mlx4/en_rx.c:582:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/net/ethernet/mellanox/mlx4/en_rx.c: In function ‘get_fixed_ipv4_csum’:
+drivers/net/ethernet/mellanox/mlx4/en_rx.c:586:20: error: dereferencing pointer to incomplete type
+_u8 ipproto = iph->protocol;
+
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6060.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dsa/mv88e6060.c b/drivers/net/dsa/mv88e6060.c
-index 65f10fec25b3..0b3e51f248c2 100644
---- a/drivers/net/dsa/mv88e6060.c
-+++ b/drivers/net/dsa/mv88e6060.c
-@@ -116,8 +116,7 @@ static int mv88e6060_switch_reset(struct dsa_switch *ds)
- 	/* Reset the switch. */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
- 		  GLOBAL_ATU_CONTROL_SWRESET |
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	/* Wait up to one second for reset to complete. */
- 	timeout = jiffies + 1 * HZ;
-@@ -142,13 +141,10 @@ static int mv88e6060_setup_global(struct dsa_switch *ds)
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_CONTROL, GLOBAL_CONTROL_MAX_FRAME_1536);
- 
--	/* Enable automatic address learning, set the address
--	 * database size to 1024 entries, and set the default aging
--	 * time to 5 minutes.
-+	/* Disable automatic address learning.
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	return 0;
- }
+diff --git a/drivers/net/ethernet/mellanox/mlx4/Kconfig b/drivers/net/ethernet/mellanox/mlx4/Kconfig
+index 36054e6fb9d3..f200b8c420d5 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlx4/Kconfig
+@@ -5,7 +5,7 @@
+ config MLX4_EN
+ 	tristate "Mellanox Technologies 1/10/40Gbit Ethernet support"
+ 	depends on MAY_USE_DEVLINK
+-	depends on PCI
++	depends on PCI && NETDEVICES && ETHERNET && INET
+ 	select MLX4_CORE
+ 	imply PTP_1588_CLOCK
+ 	---help---
 -- 
 2.19.1
 
