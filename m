@@ -2,93 +2,116 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ADFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0062C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:58:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DECA72176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94D0E21741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 09:58:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XXux39F0"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdHsJj89"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730779AbeLTJwt (ORCPT
+        id S1729998AbeLTJ6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 04:52:49 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42268 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729722AbeLTJws (ORCPT
+        Thu, 20 Dec 2018 04:58:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41700 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727972AbeLTJ6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 04:52:48 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so1018524wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:52:47 -0800 (PST)
+        Thu, 20 Dec 2018 04:58:36 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k15-v6so970095ljc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 01:58:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ag0QNA0wdYruisytHPmMw+QPZcCu/RdQK3WVN1MuHgg=;
-        b=XXux39F0S0YljA0III7yHwVnwFPT/tXI5bHOBELd0HGONmz4G3N4Wau3SHeG/UUuyQ
-         5RBHOYqchSQgGgy1X19pLQE6jY3qjxMmRl6rcf0ALv0i/cSO6AJs5m3RrZUrrrT201KI
-         g0ItMQdqtbNMBahSydRKKNdc4OeNYYCzOYYYg=
+        h=from:to:cc:subject:date:message-id;
+        bh=34qDGTyqKjGSdYqKws3irLv5MhzZT5AO71EuEmzpzj8=;
+        b=KdHsJj890nG/hrzpQrhTLR9R05Qt/JY5Hgcz24+4ZtJPL393UhDUbVXdWcZDTQGBxY
+         QtlVgBkNl932M7e5Gmo1+jhHOsDlDSCNpkpNRzx5RcXIc0uHsCCN2yHMkiqlRl9wAK+1
+         mVGjHb3Bpt8QGpwBiaj9Skj1M5oEYxaUvMqhs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ag0QNA0wdYruisytHPmMw+QPZcCu/RdQK3WVN1MuHgg=;
-        b=Yhy5FKU9F7e5aILQUw9go7bIo/TDKY2FTIRqCStyrLCky+C3lOZkMd7FF2AU+QEL76
-         opC0mnfOWFXtzVICRqXJIRb27Bq/N8NjdUTD4xoyAwIZLP6ohMts9Bs/g9znr5VKa90/
-         Um4+SKwcLG7nDiWiaYtD5Zj6VP2JJ+AJkOhfifLPs1UDFXz12OIqNkv6xPuz1RKStDo1
-         nCWyStSGB0B6x8vXSyL7PnF2672SCE0IVoqx9O+ruf6oa8WIPDU1GJ4b+IMqwaNIuZBK
-         JfxWaXZcE6++AH61LK++AmcXbW+KAEDb+ZRB4b7Nb5fMhOrjTPN3TzYFbaOUVvD9yGAt
-         w8nw==
-X-Gm-Message-State: AA+aEWbnboDkX89MXMHhENAhKjfp+2Klc3eWQWqCSIgcUADih1J45iv7
-        98Fvn3u4rEB1KVO9zUxlEW358g==
-X-Google-Smtp-Source: AFSGD/VXataGAz7dK2HUCsA2JSbUeTUrz7EskYwUCHm7jE45txxRKeEhF17KiKBS2kK4od5REq94Sw==
-X-Received: by 2002:adf:b608:: with SMTP id f8mr21010797wre.120.1545299566965;
-        Thu, 20 Dec 2018 01:52:46 -0800 (PST)
-Received: from igloo (119.red-79-146-81.dynamicip.rima-tde.net. [79.146.81.119])
-        by smtp.gmail.com with ESMTPSA id 200sm7627606wmw.31.2018.12.20.01.52.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=34qDGTyqKjGSdYqKws3irLv5MhzZT5AO71EuEmzpzj8=;
+        b=YrDTRT9K8/eg/0lpHY9Sdv+wK9lBrAlcsZyJsyUdQnGoBlHhm32agAO2vvv5Iyzm0T
+         SGCbxDjXXNMafvSWrsCV8i7WRWd1rPvyls1Z3KjhMR0GKYRV2U4F9u7CHsU2TzG9nlTd
+         zKf2WjqV/bifUmcRijjpCcfLU5Ni17TgrEauzKjlCkWNAnsQLwraH2fvBbX07ASuhCL4
+         AJ63Qm0Cx6eBoRoB1vgjBKDcdQbpkrTcTuyqsO8tO1X5EL30eKujP5uw5Nh3A/6o/ckd
+         pOfznGrVSLvZxmP6fxkav6tn0R8CJU/jCZTJldvdXfzhPe3kzmlIXtHQJOh9Dl4IbkAW
+         XFWA==
+X-Gm-Message-State: AA+aEWbpJYdNjhJ95p0cFeHmJZHYpYqR9AmJbKtrgoN+3WTGxNLJoWbw
+        Xzp6yIrAPAQBVqOROd4yAqkZUg==
+X-Google-Smtp-Source: AFSGD/UpLRB3Q1vF1+oZG8of74knKa0pzotnTUcnunuExWsF1AhRULQsBt3DTgzhOuRsQvUA9lgU+Q==
+X-Received: by 2002:a2e:58b:: with SMTP id 133-v6mr14253262ljf.127.1545299914365;
+        Thu, 20 Dec 2018 01:58:34 -0800 (PST)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id n16sm4281186lfl.35.2018.12.20.01.58.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 01:52:46 -0800 (PST)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-X-Google-Original-From: Jorge Ramirez-Ortiz <jorge.ramirez0ortiz@linaro.org>
-Date:   Thu, 20 Dec 2018 10:52:45 +0100
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, kishon@ti.com, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.guo@linaro.org, vkoul@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
- bindings
-Message-ID: <20181220095245.GA7783@igloo>
-References: <1544176558-7946-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1544176558-7946-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544176558-7946-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 20 Dec 2018 01:58:33 -0800 (PST)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v4.20-rc8
+Date:   Thu, 20 Dec 2018 10:58:32 +0100
+Message-Id: <20181220095832.7375-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/18 10:55:57, Jorge Ramirez-Ortiz wrote:
-> Binding description for Qualcomm's Synopsys 1.0.0 super-speed PHY
-> controller embedded in QCS404.
-> 
-> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
-> definitions.
-> 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Hi Linus,
 
-any follow up on this patchset?
+Here's a PR with a couple of MMC fixes intended for v4.20-rc8. Details about the
+highlights are as usual found in the signed tag.
 
-thanks
+Please pull this in!
+
+Kind regards
+Ulf Hansson
 
 
+The following changes since commit 7566ec393f4161572ba6f11ad5171fd5d59b0fbd:
 
+  Linux 4.20-rc7 (2018-12-16 15:46:55 -0800)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.20-rc7
+
+for you to fetch changes up to e3ae3401aa19432ee4943eb0bbc2ec704d07d793:
+
+  mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl (2018-12-17 08:59:42 +0100)
+
+----------------------------------------------------------------
+MMC core:
+ - Restore code to allow BKOPS and CACHE ctrl even if no HPI support
+ - Reset HPI enabled state during re-init
+ - Use a default minimum timeout when enabling CACHE ctrl
+
+MMC host:
+ - omap_hsmmc: Fix DMA API warning
+ - sdhci-tegra: Fix dt parsing of SDMMC pads autocal values
+ - Correct register accesses when enabling v4 mode
+
+----------------------------------------------------------------
+Russell King (1):
+      mmc: omap_hsmmc: fix DMA API warning
+
+Sowjanya Komatineni (2):
+      mmc: sdhci: Fix sdhci_do_enable_v4_mode
+      mmc: tegra: Fix for SDMMC pads autocal parsing from dt
+
+Ulf Hansson (3):
+      mmc: core: Reset HPI enabled state during re-init and in case of errors
+      mmc: core: Allow BKOPS and CACHE ctrl even if no HPI support
+      mmc: core: Use a minimum 1600ms timeout when enabling CACHE ctrl
+
+ drivers/mmc/core/mmc.c         | 24 +++++++++++++++---------
+ drivers/mmc/host/omap_hsmmc.c  | 12 +++++++++++-
+ drivers/mmc/host/sdhci-tegra.c |  8 ++++----
+ drivers/mmc/host/sdhci.c       |  4 ++--
+ 4 files changed, 32 insertions(+), 16 deletions(-)
