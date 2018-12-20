@@ -2,107 +2,107 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64917C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0769CC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E3AD20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:07:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YbV2ktUZ"
+	by mail.kernel.org (Postfix) with ESMTP id D628E2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 02:10:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbeLTCHs (ORCPT
+        id S1729932AbeLTCKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 19 Dec 2018 21:07:48 -0500
-Received: from ozlabs.org ([203.11.71.1]:51397 "EHLO ozlabs.org"
+        Wed, 19 Dec 2018 21:10:40 -0500
+Received: from smtp.infotech.no ([82.134.31.41]:45366 "EHLO smtp.infotech.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727850AbeLTCHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Dec 2018 21:07:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43KwBn10kmz9sCh;
-        Thu, 20 Dec 2018 13:07:45 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1545271665;
-        bh=ALJlFJbVGlIXLYaNyYx5K2yp9yZcxr2p2rq543Rr1FI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YbV2ktUZ+yswMSPECrA9ytrP15COEkW95OMgbywworUCi96BfM0qcGi97L5lYXYHR
-         +RwK/gAOnyskkEgVy2NuzmG+ubnsPm0XbV74TAZLutkls5oqgDSsSaQ/oIcoE+Cesj
-         PyL6E8mtfNyD3NgbUikFJzhkH4aaO9wG81Kc6y+poyyRhyIIiuzGRHRnT2DLrMqI+p
-         +yO97r6NbdKrOdsdmst7WrCa0/1vpyD+FhPebm4pTpkUtEDpgkxTL8P7SLxNf4DY0y
-         Q9TNb/kDQT9jr+3pXr26W+YkIc8HcE776g6D9PxP7kgFBWHXvvmvZx13okB/2Ly9Qj
-         nQXjEkxeJxRJw==
-Date:   Thu, 20 Dec 2018 13:07:44 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Gavi Teitz <gavi@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20181220130744.1c8db488@canb.auug.org.au>
+        id S1727850AbeLTCKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Dec 2018 21:10:39 -0500
+X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Dec 2018 21:10:39 EST
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 3FF572041CB;
+        Thu, 20 Dec 2018 03:02:01 +0100 (CET)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HUyAj3W25Fm7; Thu, 20 Dec 2018 03:01:55 +0100 (CET)
+Received: from [192.168.48.23] (host-184-164-16-103.dyn.295.ca [184.164.16.103])
+        by smtp.infotech.no (Postfix) with ESMTPA id 2E345204187;
+        Thu, 20 Dec 2018 03:01:53 +0100 (CET)
+Reply-To: dgilbert@interlog.com
+Subject: Re: remove exofs, the T10 OSD code and block/scsi bidi support V3
+To:     Christoph Hellwig <hch@lst.de>, Boaz Harrosh <ooo@electrozaur.com>
+Cc:     axboe@kernel.dk, martin.petersen@oracle.com,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181111133211.13926-1-hch@lst.de>
+ <4f4b6aff-6726-c500-e3e4-f8b73d641851@electrozaur.com>
+ <20181219144347.GB23410@lst.de>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <0e8b8d45-cfeb-ba9d-c92f-953cabede1ee@interlog.com>
+Date:   Wed, 19 Dec 2018 21:01:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nX28Uvr9Sab4uT5+YhSOABB"; protocol="application/pgp-signature"
+In-Reply-To: <20181219144347.GB23410@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/nX28Uvr9Sab4uT5+YhSOABB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2018-12-19 9:43 a.m., Christoph Hellwig wrote:
+> On Mon, Nov 26, 2018 at 07:11:10PM +0200, Boaz Harrosh wrote:
+>> On 11/11/18 15:32, Christoph Hellwig wrote:
+>>> The only real user of the T10 OSD protocol, the pNFS object layout
+>>> driver never went to the point of having shipping products, and we
+>>> removed it 1.5 years ago.  Exofs is just a simple example without
+>>> real life users.
+>>>
+>>
+>> You have failed to say what is your motivation for this patchset? What
+>> is it you are trying to fix/improve.
+> 
+> Drop basically unused support, which allows us to
+> 
+>   1) reduce the size of every kernel with block layer support, and
+>      even more for every kernel with scsi support
 
-Hi all,
+By proposing the removal of bidi support from the block layer, it isn't
+just the SCSI subsystem that will be impacted. Those NVMe documents
+that you referred me to earlier in the year, in the command tables
+in 1.3c and earlier you have noticed the 2 bit direction field and
+what 11b means? Even if there aren't any bidi NVMe commands *** yet,
+the fact that NVMe's 64 byte command format has provision for 4
+(not 2) independent data transfers (data + meta, for each direction).
+Surely NVMe will sooner or later take advantage of those ... a
+command like READ GATHERED comes to mind.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+>   2) reduce the size of the critical struct request structure by
+>      128 bits, thus reducing the memory used by every blk-mq driver
+>      significantly, never mind the cache effects
 
-  drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+Hmm, one pointer (that is null in the non-bidi case) should be enough,
+that's 64 or 32 bits.
 
-between commit:
+>   3) stop having the maintainance overhead for this code in the
+>      block layer, which has been rather painful at times
 
-  8956f0014ea5 ("net/mlx5e: Fix default amount of channels for VF represent=
-ors")
+You won't get any sympathy from me :-) The sg driver is trying to
+inject _SCSI_ commands into the SCSI mid-level for onward processing
+by SCSI LLDs. So WTF does it have to deal with the block layer.
 
-from the net tree and commit:
 
-  d9ee0491c2ff ("net/mlx5e: Use dedicated uplink vport netdev representor")
+While on the subject of bidi, the order of transfers: is the data-out
+(to the target) always before the data-in or is it the target device
+that decides (depending on the semantics of the command) who is first?
 
-from the net-next tree.
+Doug Gilbert
 
-I fixed it up (I just used the net-next tree version) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/nX28Uvr9Sab4uT5+YhSOABB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwa+XAACgkQAVBC80lX
-0GxG6gf/RJAlX3eVz1oSmdp7VgDiJnlMtz7PpEm47mTpATHVZkJ1FXgv+1ha80Hj
-h9EtQ4HVWjDYERs8tZz60VI5UbK8Bzbnl0RN1FZ/i/ZiBwzhl42QRisR7TNBhNF3
-Hmi0DbjtRKF7UPwJbgJU4MIAvjAwX+MbTjd2Hu66outvpfkXXtP9V2uUDa6wFTNI
-tBRvcgRMZhPbqeRocsfrpKTuCCwlUzq+gRIsW/8Qu+f2sDy9vxiW+8pZZ7h3vNHq
-43ctfSZ145ELaeAqD6TcXPVESuKWb31maIbVQQIPSMOBndp7gqT6cXZWJn8b1nT/
-IEZ/VoIrB4ZldUlPxHx8bzLXmh6hRQ==
-=k3I5
------END PGP SIGNATURE-----
-
---Sig_/nX28Uvr9Sab4uT5+YhSOABB--
+  *** there could already be vendor specific bidi NVMe commands out
+     there (ditto for SCSI)
