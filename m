@@ -3,139 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC34C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF75DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35AE821741
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8317421741
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 10:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbeLTKAe (ORCPT
+        id S1730392AbeLTKKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 05:00:34 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42568 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbeLTKAd (ORCPT
+        Thu, 20 Dec 2018 05:10:03 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44596 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728687AbeLTKKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 05:00:33 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y20so1187463edw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 02:00:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ylwzKhANp4Cl8xusWKqb85xW+2cdSkQ3nxCl1I5yYWs=;
-        b=esb5Nw/9ZWrfMh60pUYIoDKbuMjWnQyHLwI964xS7Y25UIROt52WT1lJlYn5CWx51Z
-         jvbIYwyz484zBWQKX7RrV0yepG1oHa4QLN1OO/0o8x6XZUEri3QSCc0Sb6Tf3c9kOrFM
-         GYb5MZv1S8TSUpTE6Sp5wSbvOuF5iydFBQq4eiX9+jAXdLphKSH3ZuSAKo3H7kRT3UDR
-         A4/h8Jx9UdlbNS+cOg6vqiGqVPYcNwwy4H9losy/PzuzpKchrpCjt11kZV4QKBef1pcj
-         u4cchwMR9EdPjuhhZjQSp0Y4tArPqSJljVJ3tIK82HfU4F8WcDmccr+3kmYm2kX7SATw
-         tbaw==
-X-Gm-Message-State: AA+aEWbyq87l85iR3JZ/hBnQGsLZLqfiEwS0jvXFc2ATUMg3KCV+wIQY
-        nZlVOoKG7X8pyY34cIufvgGI8uNELGw=
-X-Google-Smtp-Source: AFSGD/U+z0NW0ZSR9XZ3d8SpPEG73Cd5o78YWj37ciMqJWCZXrwore7exMuiLuL3XBB9kBNGDHua7g==
-X-Received: by 2002:a50:d643:: with SMTP id c3mr22291753edj.178.1545300031177;
-        Thu, 20 Dec 2018 02:00:31 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id s3sm6001255edm.31.2018.12.20.02.00.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 02:00:30 -0800 (PST)
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
- <20181219172250.ytronxeq2yc4vp4r@wunner.de>
- <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
- <20181219223341.GA998@kunai>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
-Date:   Thu, 20 Dec 2018 11:00:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 20 Dec 2018 05:10:03 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBKA9LB7046007
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:10:01 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pg795n6km-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 05:10:01 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Thu, 20 Dec 2018 10:09:59 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Dec 2018 10:09:57 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBKA9t1C5177808
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Dec 2018 10:09:55 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83D985204F;
+        Thu, 20 Dec 2018 10:09:55 +0000 (GMT)
+Received: from [9.152.224.123] (unknown [9.152.224.123])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2394452051;
+        Thu, 20 Dec 2018 10:09:55 +0000 (GMT)
+Reply-To: mimu@linux.ibm.com
+Subject: Re: [PATCH v5 05/15] KVM: s390: unify pending_irqs() and
+ pending_irqs_no_gisa()
+To:     KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-6-mimu@linux.ibm.com>
+From:   Michael Mueller <mimu@linux.ibm.com>
+Organization: IBM
+Date:   Thu, 20 Dec 2018 11:09:54 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181219223341.GA998@kunai>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20181219191756.57973-6-mimu@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18122010-0020-0000-0000-000002FA359F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18122010-0021-0000-0000-0000214A4654
+Message-Id: <5fbd4e59-c177-20de-4be5-6891398a2984@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812200084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 19-12-18 23:33, Wolfram Sang wrote:
-> Hi Lukas, Hans,
-> 
-> On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
->> Hi,
->>
->> On 19-12-18 18:22, Lukas Wunner wrote:
->>> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
->>>> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
->>>> +{
->>>> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->>>> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
->>>> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->>>> +}
->>>
->>> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
->>> Any reason why you can't use that?  If so, it would be good to document the
->>> reason in the commit message.
->>
->> Oh, that is a very good point and that one only gets set on system suspend
->> and not on resume suspend, working around the problems with the i2c-designware
-> 
-> Just to make it clear: you mean runtime suspend, not resume suspend, or?
 
-Yes I mean runtime-suspend, sorry.
+On 19.12.18 20:17, Michael Mueller wrote:
+>   
+> -static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
+> -{
+> -	return pending_irqs_no_gisa(vcpu) |
+> -		kvm_s390_gisa_get_ipm(vcpu->kvm->arch.gisa) << IRQ_PEND_IO_ISC_7;
+> +	if (irq_flags & IRQ_FLAG_LOCAL)
+> +		pending_irqs |= vcpu->arch.local_int.pending_irqs;
+> +	if (irq_flags & IRQ_FLAG_FLOATING)
+> +		pending_irqs |= vcpu->kvm->arch.float_int.pending_irqs;
+> +	if (irq_flags & IRQ_FLAG_GISA)
 
->> driver.
->>
->> I think this might be as simple as adding:
->>
->> 	if (WARN_ON(adap->dev.parent->power.is_suspended))
->> 		return -ESHUTDOWN;
-> 
-> I have seen this flag but decided against it. One reason is because it
-> is marked as "PM core only".
 
-Right and we definitely should not be touching it, but reading it should
-be fine.
+Fix crash under vsie:
 
-> The other reason is that it doesn't know
-> about the adapter lock. It might get set while a transfer is on going.
-> Or even right after the suggested if-block above. The code from this
-> series gets the mutex first which ensures that on going transfers are
-> completed and no new ones are started in parallel.
-> 
-> Unless I am totally overlooking something...
+                 pending_irqs |= vcpu->kvm->arch.float_int.pending_irqs;
+-       if (irq_flags & IRQ_FLAG_GISA)
++       if (vcpu->kvm->arch.gisa && irq_flags & IRQ_FLAG_GISA)
+                 pending_irqs |= get_ipm(vcpu->kvm->arch.gisa, irq_flags)
 
-No you are right, there is a race here, but I don't think we are likely to
-hit that race. Normally there won't be any ongoing i2c-transfers during
-a system suspend and more over, the goal of adding this check is to help
-find problems, so even if the check sometimes does not trigger because
-of the race that is not really a big deal.
 
-I think we need to get really unlucky to have both a suspend ordering
-problem in the first case (already a somewhat rare thing) combined with
-hitting this race in such a way *each time* that we don't trigger the
-WARN_ON.
+> +		pending_irqs |= kvm_s390_gisa_get_ipm(vcpu->kvm->arch.gisa) <<
+> +			IRQ_PEND_IO_ISC_7;
+> +	return pending_irqs;
+>   }
 
-To me this seems a case of perfect being the enemy of good. When we
-first started discussing this you wanted to not have to modify the
-adapter/bus drivers for the check, using adap->dev.parent->power.is_suspended
-gives us that and it will also work for complex cases like
-the i2c-designware case, so I believe the benefits outway the downsides.
+-- 
+Mit freundlichen Grüßen / Kind regards
+Michael Müller
 
-Regards,
+IBM Deutschland Research & Development GmbH
+Vorsitzender des Aufsichtsrats: Matthias Hartmann
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
 
-Hans
