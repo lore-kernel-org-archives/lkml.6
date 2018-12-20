@@ -7,51 +7,63 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF22C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0A8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7D020645
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F07218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 16:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545321633;
-	bh=WChy2xAjPxWt7OQ/JnatxTTNXryowOWhHCNCRmhZvfY=;
+	s=default; t=1545321636;
+	bh=IQv0+owOnHm5jd0DMSwdb1505S6n+Yvz03AGvS/Aefw=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=0VLk9mTd/6c2vZ/aUr4TBo5Q38GyfwbnuRjmBjnqDdd/sGoFbqkPB3JFgmzE39z7v
-	 7gLkLUmi/aR2Ir3YjNLhxi9e/f5RxaZB0GoDXIYr+GA/tPgAGtyqFFTjoBoEQN6ase
-	 qtm23WxZuT4VOvGLdbewt3bjMDckgIavoOWXFr0Y=
+	b=n0BUw3VW5+pp7uOzDonUhEUvS5zvEwa4j0WjiOeXjY40X3rVo/Q6XIw+2GQ/KHvSV
+	 KdtMw9m4Dr1HosphcGOFz7uH87MTxfQsKn68tpgBS3Mlr5Xnkwaj+oq3c6tkuh0mcO
+	 8UxPdRrVdugK0D6o/iSeNwM28wK86uSat2W+044w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732152AbeLTQA0 (ORCPT
+        id S1732180AbeLTQAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 11:00:26 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46390 "EHLO
+        Thu, 20 Dec 2018 11:00:35 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46654 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731040AbeLTQAX (ORCPT
+        with ESMTP id S1732086AbeLTQAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 11:00:23 -0500
+        Thu, 20 Dec 2018 11:00:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=L6lUWc5MfvD4Mazq/8qCjLzUdfsYvvOte/TSQWd7r+k=; b=EQa60hYlGwZD
-        qGjfcpsezR1ZY+KicgkSWm5i2F65V23HH7JuezWbH+H/5yfS9nljwk88Ve81YJZSUP4LGDXA1VfiG
-        30QhCT1ONJnPeNur9Qx2/P00LYLF+vmWWn8eqf6XpMCyxJz0L90Y46IqAWuLjDj/oxz9aBkwornuP
-        4JWcg=;
+        List-Archive; bh=P+Y9aP3JAzVCcKCcck49dhVQ4WWrHEscRp74Dl0XI3I=; b=XRiXaWZRWoFw
+        2Uxm6jiYEB+9KBbJhFBehBV7Wl8fyPqxLFP4fmLFnr5dyt1z0NCSYiFh6cvyumOLfZj92quebjtOl
+        KJkuOCvJOJJ6H+d+FN1V9pwLj/S55pJYYywyjJoD+6EzDnGZzfqDXTo0A9yPnSwKLh0EO8XLT/CzR
+        S/AZA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ga0kH-0003rQ-GX; Thu, 20 Dec 2018 16:00:21 +0000
+        id 1ga0k3-0003qm-JS; Thu, 20 Dec 2018 16:00:07 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2A2451121B87; Thu, 20 Dec 2018 16:00:21 +0000 (GMT)
+        id 193B81121B87; Thu, 20 Dec 2018 16:00:07 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: mcp16502: Use #ifdef CONFIG_PM_SLEEP around mcp16502_suspend/resume_noirq" to the regulator tree
-In-Reply-To: 
+To:     Maruthi Srinivas Bayyavarapu 
+        <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vishal Sagar <vsagar@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: xlnx: change license header format style" to the asoc tree
+In-Reply-To:  <1545212440-109949-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20181220160021.2A2451121B87@debutante.sirena.org.uk>
-Date:   Thu, 20 Dec 2018 16:00:21 +0000 (GMT)
+Message-Id: <20181220160007.193B81121B87@debutante.sirena.org.uk>
+Date:   Thu, 20 Dec 2018 16:00:07 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,11 +71,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mcp16502: Use #ifdef CONFIG_PM_SLEEP around mcp16502_suspend/resume_noirq
+   ASoC: xlnx: change license header format style
 
-has been applied to the regulator tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -84,47 +96,43 @@ to this mail.
 Thanks,
 Mark
 
-From 4906d09164c00979dcbb28060231d9ce46ab2061 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 20 Dec 2018 21:14:13 +0800
-Subject: [PATCH] regulator: mcp16502: Use #ifdef CONFIG_PM_SLEEP around
- mcp16502_suspend/resume_noirq
+From b5ac0078aa6c40ea46760dcebf1ac4022217a51d Mon Sep 17 00:00:00 2001
+From: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Date: Wed, 19 Dec 2018 15:10:40 +0530
+Subject: [PATCH] ASoC: xlnx: change license header format style
 
-mcp16502_suspend/resume_noirq is only used by SET_NOIRQ_SYSTEM_SLEEP_PM_OPS
-when CONFIG_PM_SLEEP is defined.
-So use #ifdef CONFIG_PM_SLEEP instead CONFIG_SUSPEND guard.
+Changed License header from C to C++ style comment block.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/mcp16502.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ sound/soc/xilinx/xlnx_i2s.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 809a664733a4..cb11fb206899 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -497,7 +497,7 @@ static int mcp16502_probe(struct i2c_client *client,
- 	return 0;
- }
+diff --git a/sound/soc/xilinx/xlnx_i2s.c b/sound/soc/xilinx/xlnx_i2s.c
+index d4ae9eff41ce..8b353166ad44 100644
+--- a/sound/soc/xilinx/xlnx_i2s.c
++++ b/sound/soc/xilinx/xlnx_i2s.c
+@@ -1,12 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * Xilinx ASoC I2S audio support
+- *
+- * Copyright (C) 2018 Xilinx, Inc.
+- *
+- * Author: Praveen Vuppala <praveenv@xilinx.com>
+- * Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
+- */
++//
++// Xilinx ASoC I2S audio support
++//
++// Copyright (C) 2018 Xilinx, Inc.
++//
++// Author: Praveen Vuppala <praveenv@xilinx.com>
++// Author: Maruthi Srinivas Bayyavarapu <maruthis@xilinx.com>
  
--#ifdef CONFIG_SUSPEND
-+#ifdef CONFIG_PM_SLEEP
- static int mcp16502_suspend_noirq(struct device *dev)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
-@@ -517,10 +517,7 @@ static int mcp16502_resume_noirq(struct device *dev)
- 
- 	return 0;
- }
--#else /* !CONFIG_SUSPEND */
--#define mcp16502_suspend_noirq NULL
--#define mcp16502_resume_noirq NULL
--#endif /* !CONFIG_SUSPEND */
-+#endif
- 
- #ifdef CONFIG_PM
- static const struct dev_pm_ops mcp16502_pm_ops = {
+ #include <linux/io.h>
+ #include <linux/module.h>
 -- 
 2.20.1
 
