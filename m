@@ -3,173 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BB8C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 05:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506BCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA522176F
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 05:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE1592176F
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 06:02:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HABeBbvN"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ikr5z+3k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbeLTFzJ (ORCPT
+        id S1730417AbeLTGC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 00:55:09 -0500
-Received: from mail-eopbgr70070.outbound.protection.outlook.com ([40.107.7.70]:56681
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726716AbeLTFzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 00:55:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OaPLmRewb4oIlWPTlK2mi+x78CxkW6vUFBrMhaAi5WA=;
- b=HABeBbvNLcR5F/5hsdACNdxRj2byhvcVWApIUx8n8TO0Qliw4BzbOif6VGiNpzF0ZFLR0zf7S9FRoed8YbnTcF835e+QRAttW2KOSXQoTNwEkqLwRuA/qbD1grP6kSy50xZ7rKGYnyW1KhsaPGEHYVPqLRuxFibX1wsYh0OnU4c=
-Received: from AM0PR0402MB3570.eurprd04.prod.outlook.com (52.133.46.11) by
- AM0PR0402MB3379.eurprd04.prod.outlook.com (52.133.45.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.22; Thu, 20 Dec 2018 05:52:07 +0000
-Received: from AM0PR0402MB3570.eurprd04.prod.outlook.com
- ([fe80::94f8:5fdd:f384:8af8]) by AM0PR0402MB3570.eurprd04.prod.outlook.com
- ([fe80::94f8:5fdd:f384:8af8%8]) with mapi id 15.20.1425.025; Thu, 20 Dec 2018
- 05:52:07 +0000
-From:   Richard Zhu <hongxing.zhu@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Bjorn Helgaas <helgaas@kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Smirnov <andrew.smirnov@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Sven Van Asbroeck <thesven73@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Trent Piepho <tpiepho@impinj.com>
-Subject: RE: [v4] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
-Thread-Topic: [v4] PCI: imx: make msi work without CONFIG_PCIEPORTBUS=y
-Thread-Index: AQHUk3htX9ByhenO70SYEZSF8G6UHqWGIt2AgAAbxoCAAOoa0A==
-Date:   Thu, 20 Dec 2018 05:52:07 +0000
-Message-ID: <AM0PR0402MB35709190DBBF8498237105838CBF0@AM0PR0402MB3570.eurprd04.prod.outlook.com>
-References: <1544768762-18124-1-git-send-email-hongxing.zhu@nxp.com>
-         <20181219141241.GB12763@google.com>
- <1545234725.5874.38.camel@pengutronix.de>
-In-Reply-To: <1545234725.5874.38.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=hongxing.zhu@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR0402MB3379;6:eIJM2o8sGlwVRYmmp5x+9umMbvMSz6cAU1WRgkNeJoTAUBfKmDUcMmD2UGRwfazpcgnbc/U8upSzalqRWfu80ZkWreIuzBbkQoRlWxvZ13XWgjGiRvQgMb1G1Z9JfXa/RY22FVHxDjp4zm9ALR/H20yiIvZjuB7R53HwPoe372p5inEtoPH1g+lLYamTs4I/P95X34oLR6I8hvZ+iH+FO/+EAjTFpPh+KgLXezNDJL6cV7fHhzm3DqM2fnLSQBhIA/gVwnKxLukxDqXl7KXIT8emqIOp0D7lGT+nDvSEE9qvBp/Nmywur7e8uV9pD6b2yU8//ZAIsinJBSrnz37tJfFdNhY5rRHqVDN+e+uqpLnjiYbkSxBDIJ270kYGyeO3j9TKtSkgGZnEkMQrR72z8aw+WFSVu0gUvnZlPk4e0jyQt4u/rt6BicR/GZJRQmGqs93q93qH33GiARImbB7gPA==;5:QYdkoBxxumXl7wtndXZFLQe4oOTQm9j5H+7QKgUQPTqpNIBkSskwLqUis877XEFMZxAiOn0snenUlgXMtdlKSPt8S7YHVgZdGn8GylONf3ZaqJeOMcpEoOIIaI78zkM6WC1tSdpgA/YwyFtt/Hj1trwSIx4kezlpoYe4RsCqQJg=;7:QaQbiL+0LI0pabIWNBTXzef7InH2BY45NaMvze/rJ6C9qwyQ5b6LJjn9QpCnBzxTNCfCYWSa7trcqBqjM/x8e50Fa6rDF1IdUGf8hqINETBmJ/BSbPRebXYt6clhKizCMG/4Lex3NeFLlrJmTQcajA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: b4265b45-1f70-468e-a2d3-08d6663f46ca
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR0402MB3379;
-x-ms-traffictypediagnostic: AM0PR0402MB3379:
-x-microsoft-antispam-prvs: <AM0PR0402MB3379B59333824D08E4411EAC8CBF0@AM0PR0402MB3379.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR0402MB3379;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0402MB3379;
-x-forefront-prvs: 0892FA9A88
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(346002)(136003)(39860400002)(13464003)(54534003)(199004)(189003)(81156014)(8676002)(105586002)(2906002)(8936002)(81166006)(33656002)(71200400001)(106356001)(99286004)(71190400001)(74316002)(476003)(486006)(305945005)(256004)(14444005)(7736002)(76176011)(66066001)(26005)(97736004)(68736007)(966005)(53546011)(53936002)(6506007)(11346002)(7416002)(14454004)(86362001)(102836004)(45080400002)(6436002)(186003)(110136005)(3846002)(54906003)(316002)(6116002)(25786009)(4326008)(7696005)(39060400002)(55016002)(229853002)(446003)(6306002)(9686003)(6246003)(5660300001)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3379;H:AM0PR0402MB3570.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: OcL7UkflOURgPGRd0mOmKLoN5EwV/+mORAJfHAEubqP3WoZJkSAAbosKyS/f49MTLo3TeC3gW+OT8cqO0fyM7SXcNvNy88YRGISS0Au4OWVlpsU5xpEIDJGc7GI2F+Jol1eiNa6aBihBoO2FLlXn9Ctaa6dQZC1MmWF3zvTKQ0Y6j/x/6Cz6tAPq3zf/1plNb3OoYTWvgJnsUy1j/Uc4f0a33McdfMIHZTDcEj3Uv0Pp8HtUfNw1j+ZdCyvymIBSPCU5NrrK10+7mKi/0DrSnVNpO5/PBtYO5+EmoQbOq4NLGEnjJoSpXjOzE1oJWaAo
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 20 Dec 2018 01:02:59 -0500
+Received: from ozlabs.org ([203.11.71.1]:55605 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728613AbeLTGC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Dec 2018 01:02:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43L1Q64H6qz9s7W;
+        Thu, 20 Dec 2018 17:02:54 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1545285775;
+        bh=HHThe0YyeK3VuvTF+Oi8T+HQST9uIRon1Y7jHECpK2A=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Ikr5z+3kmLYOpQhAAZZpU32QzGPpxabTrvFQIhfqOcO7ymIml6+Ca/TuStmGJCpPH
+         NynzQylO0X2wlUmFj1uYSFROzmoHilMt9iOk9jRj0h0DjBD1fNSb6Fkkk3WChG25uu
+         Jfp7KZ7BRZ+XyPrukDO9umh+5Qv4kP4b1MQcv8bIZNhKiwTdU07Wmx8k5TYP5QL/7g
+         1V93wE2pf8BxSCoEjXCp/Nrf4+816Oj9UdULzNN1kVfDbVS/ZcBiLfHeFEzYwRQD4i
+         Vn8scXwb6e1h0WCybIAAtUT6+R/F9AmpFcjHrTYFn5fWYgmmX+oSX/CbJWJIB8JhSt
+         H9AUW/7JGkaWg==
+Date:   Thu, 20 Dec 2018 17:02:53 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: linux-next: manual merge of the char-misc tree with the net-next
+ tree
+Message-ID: <20181220170253.011d0b10@canb.auug.org.au>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b4265b45-1f70-468e-a2d3-08d6663f46ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 05:52:07.5461
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3379
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FcrPckkByQ0wbOg4CieH_NY"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQmpvcm46DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTHVjYXMg
-U3RhY2ggW21haWx0bzpsLnN0YWNoQHBlbmd1dHJvbml4LmRlXQ0KPiBTZW50OiAyMDE45bm0MTLm
-nIgxOeaXpSAyMzo1Mg0KPiBUbzogQmpvcm4gSGVsZ2FhcyA8aGVsZ2Fhc0BrZXJuZWwub3JnPjsg
-UmljaGFyZCBaaHUNCj4gPGhvbmd4aW5nLnpodUBueHAuY29tPg0KPiBDYzogTG9yZW56byBQaWVy
-YWxpc2kgPGxvcmVuem8ucGllcmFsaXNpQGFybS5jb20+OyBBbmRyZXcgU21pcm5vdg0KPiA8YW5k
-cmV3LnNtaXJub3ZAZ21haWwuY29tPjsgbGludXgtcGNpQHZnZXIua2VybmVsLm9yZzsNCj4gbGlu
-dXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnOyBTdmVuIFZhbg0KPiBBc2Jyb2VjayA8dGhlc3ZlbjczQGdtYWlsLmNvbT47IE5pa2xh
-cyBDYXNzZWwgPG5pa2xhcy5jYXNzZWxAYXhpcy5jb20+Ow0KPiBLaXNob24gVmlqYXkgQWJyYWhh
-bSBJIDxraXNob25AdGkuY29tPjsgR3VzdGF2byBQaW1lbnRlbA0KPiA8Z3VzdGF2by5waW1lbnRl
-bEBzeW5vcHN5cy5jb20+OyBTaGF3biBMaW4gPHNoYXduLmxpbkByb2NrLWNoaXBzLmNvbT47DQo+
-IFRyZW50IFBpZXBobyA8dHBpZXBob0BpbXBpbmouY29tPg0KPiBTdWJqZWN0OiBSZTogW3Y0XSBQ
-Q0k6IGlteDogbWFrZSBtc2kgd29yayB3aXRob3V0IENPTkZJR19QQ0lFUE9SVEJVUz15DQo+IA0K
-PiBBbSBNaXR0d29jaCwgZGVuIDE5LjEyLjIwMTgsIDA4OjEyIC0wNjAwIHNjaHJpZWIgQmpvcm4g
-SGVsZ2FhczoNCj4gPiBbK2NjIFN2ZW4sIFRyZW50LCBldCBhbCBmcm9tIHJlbGF0ZWQgcmVwb3J0
-Og0KPiA+IGh0dHBzOi8vZW1lYTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91
-cmw9aHR0cHMlM0ElMkYlMkZsb3INCj4gPg0KPiBlLmtlcm5lbC5vcmclMkZsaW51eC1wY2klMkYy
-MDE4MTIxODIxMDQ0NC41OTUwLTEtVGhlU3ZlbjczJTQwZ29vZ2xlDQo+IG1haQ0KPiA+DQo+IGwu
-Y29tJmFtcDtkYXRhPTAyJTdDMDElN0Nob25neGluZy56aHUlNDBueHAuY29tJTdDMDViYTNiNWJi
-NDJjDQo+IDRkYjliZjNiDQo+ID4NCj4gMDhkNjY1YzlmMTdiJTdDNjg2ZWExZDNiYzJiNGM2ZmE5
-MmNkOTljNWMzMDE2MzUlN0MwJTdDMCU3QzYzNg0KPiA4MDgzMTUzNDcNCj4gPg0KPiA3ODA0NjYm
-YW1wO3NkYXRhPXRhN2ZmajlFUEdvcUFqRGlTMU9SdlI2NUEySWhNVXBiMkVuZHo5JTJCNnpNNA0K
-PiAlM0QmYW1wOw0KPiA+IHJlc2VydmVkPTBdDQo+ID4NCj4gPiBPbiBGcmksIERlYyAxNCwgMjAx
-OCBhdCAwNjo0NDoxNUFNICswMDAwLCBSaWNoYXJkIFpodSB3cm90ZToNCj4gPiA+IEFzc2VydGlv
-biBvZiB0aGUgTVNJIEVuYWJsZSBiaXQgb2YgUkMncyBNU0kgQ0FQIGlzIG1hbmRhdG9yeQ0KPiA+
-ID4gcmVxdWlyZWQgdG8gdHJpZ2dlciBNU0kgb24gaS5NWDYgUENJZS4NCj4gPiA+IFRoaXMgYml0
-IHdvdWxkIGJlIGFzc2VydGVkIHdoZW4gQ09ORklHX1BDSUVQT1JUQlVTPXkuDQo+ID4gPiBUaHVz
-LCB0aGUgTVNJIHdvcmtzIGZpbmUgb24gaS5NWDYgUENJZSBiZWZvcmUgdGhlIGNvbW1pdCAiZjNm
-ZGZjNCIuDQo+ID4gPg0KPiA+ID4gQXNzZXJ0IGl0IHVuY29uZGl0aW9uYWxseSB3aGVuIE1TSSBp
-cyBlbmFibGVkLg0KPiA+ID4gT3RoZXJ3aXNlLCB0aGUgTVNJIHdvdWxkbid0IGJlIHRyaWdnZXJl
-ZCBhbHRob3VnaCB0aGUgRVAgaXMgcHJlc2VudA0KPiA+ID4gYW5kIHRoZSBNU0lzIGFyZSBhc3Np
-Z25lZC4NCj4gPg0KPiA+IE9LLCBJIHRoaW5rIEkgZmluYWxseSB1bmRlcnN0YW5kIG1vc3Qgb2Yg
-d2hhdCdzIGdvaW5nIG9uLsKgwqBQbGVhc2UNCj4gPiBjaGVjayB0aGUgZm9sbG93aW5nIHBvc3Np
-YmxlIGNoYW5nZWxvZyB0ZXh0Og0KPiA+DQo+ID4gwqAgVGhlIE1TSSBFbmFibGUgYml0IGluIHRo
-ZSBNU0kgQ2FwYWJpbGl0eSAoUENJZSByNC4wLCBzZWMgNy43LjEuMikNCj4gPiDCoCBjb250cm9s
-cyB3aGV0aGVyIGEgRnVuY3Rpb24gY2FuIHJlcXVlc3Qgc2VydmljZSB1c2luZyBNU0kuDQo+ID4N
-Cj4gPiDCoCBpLk1YNiBSb290IFBvcnRzIGltcGxlbWVudCB0aGUgTVNJIENhcGFiaWxpdHkgYW5k
-IG1heSB1c2UgTVNJIHRvDQo+ID4gwqAgcmVxdWVzdCBzZXJ2aWNlIGZvciBldmVudHMgbGlrZSBQ
-TUUsIGhvdHBsdWcsIEFFUiwgZXRjLsKgwqBJbg0KPiA+IMKgIGFkZGl0aW9uLCBvbiBpLk1YNiwg
-dGhlIE1TSSBFbmFibGUgYml0IGNvbnRyb2xzIGRlbGl2ZXJ5IG9mIE1TSQ0KPiA+IMKgIGludGVy
-cnVwdHMgZnJvbSBjb21wb25lbnRzIGJlbG93IHRoZSBSb290IFBvcnQuDQo+ID4NCj4gPiDCoCBQ
-cmlvciB0byBmM2ZkZmM0YWMzYTIgKCJQQ0k6IFJlbW92ZSBob3N0IGRyaXZlciBLY29uZmlnIHNl
-bGVjdGlvbiBvZg0KPiA+IMKgIENPTkZJR19QQ0lFUE9SVEJVUyIpLCBlbmFibGluZyBDT05GSUdf
-UENJX0lNWDYgYXV0b21hdGljYWxseQ0KPiBhbHNvDQo+ID4gwqAgZW5hYmxlZCBDT05GSUdfUENJ
-RVBPUlRCVVMsIGFuZCB3aGVuIHBvcnRkcnYgY2xhaW1lZCB0aGUgUm9vdA0KPiBQb3J0cywNCj4g
-PiDCoCBpdCBzZXQgdGhlIE1TSSBFbmFibGUgYml0IHNvIGl0IGNvdWxkIHVzZSBQTUUsIGhvdHBs
-dWcsIEFFUiwgZXRjLg0KPiA+IMKgIEFzIGEgc2lkZSBlZmZlY3QsIHRoYXQgYWxzbyBlbmFibGVk
-IGRlbGl2ZXJ5IG9mIE1TSSBpbnRlcnJ1cHRzIGZyb20NCj4gPiDCoCBkb3duc3RyZWFtIGNvbXBv
-bmVudHMuDQo+ID4NCj4gPiDCoCBBZnRlciBmM2ZkZmM0YWMzYTIsIHRoZSBpbXg2cS1wY2llIGRy
-aXZlciBjYW4gb3BlcmF0ZSB3aXRob3V0DQo+ID4gwqAgcG9ydGRydiwgYnV0IHRoYXQgbWVhbnMg
-aW14NnEtcGNpZSBtdXN0IHNldCB0aGUgTVNJIEVuYWJsZSBiaXQNCj4gPiDCoCBpdHNlbGYgaWYg
-ZG93bnN0cmVhbSBjb21wb25lbnRzIHVzZSBNU0kuDQo+ID4NCj4gPiDCoCBGaXhlczogZjNmZGZj
-NGFjM2EyICgiUENJOiBSZW1vdmUgaG9zdCBkcml2ZXIgS2NvbmZpZyBzZWxlY3Rpb24gb2YNCj4g
-PiBDT05GSUdfUENJRVBPUlRCVVMiKQ0KPiA+DQo+ID4gSSBzdGlsbCBkb24ndCB1bmRlcnN0YW5k
-IGV4YWN0bHkgKmhvdyogTVNJIEVuYWJsZSBhZmZlY3RzIE1TSSBmcm9tDQo+ID4gZG93bnN0cmVh
-bSBjb21wb25lbnRzLCBzaW5jZSB0aGUgZG93bnN0cmVhbSBjb21wb25lbnQganVzdCBkb2VzIGEN
-Cj4gRE1BDQo+ID4gd3JpdGUsIGFuZCB0aGUgUm9vdCBQb3J0IGNhbid0IHRlbGwgd2hldGhlciB0
-aGUgd3JpdGUgaXMgdG8gbWVtb3J5IG9yDQo+ID4gaW50ZXJydXB0IGNvbnRyb2xsZXIgdW5sZXNz
-IHRoZSBSb290IFBvcnQga25vd3Mgd2hlcmUgdGhlIE1TSSB0YXJnZXRzDQo+ID4gYXJlLCBlLmcu
-LCBpZiB0aGUgaW50ZXJydXB0IGNvbnRyb2xsZXIgaXMgYWN0dWFsbHkgcGFydCBvZiB0aGUgUkMu
-DQo+DQpbUmljaGFyZCBaaHVdIFRoYW5rcyBhIGxvdCBmb3IgeW91ciBraW5kbHkgaGVscCB0byBj
-cmFmdCB0aGUgY29tbWl0IGxvZy4NCkknbSB0b3RhbGx5IGZpbmUgd2l0aCBpdC4NCkp1c3QgbGlr
-ZSBMdWNhcyBzYWlkIGJlbG93LCB0aGUgTVNJIHRyaWdnZXIgY29uZGl0aW9ucyBhcmUgcGFydCBv
-ZiB0aGUgZ2x1ZSBsb2dpYw0KV2hlbiBpbnRlZ3JhdGUgdGhpcyBJUCBpbnRvIGlNWDYgU09DLiAN
-ClRoZSBNU0kgRW5hYmxlIGJpdCBzZXQgb2YgUkMgaXMgb25lIG9mIHRoZSBtYW5kYXRvcnkgcmVx
-dWlyZWQgY29uZGl0aW9uIHRvDQp0cmlnZ2VyIE1TSSBmcm9tIEVQLg0KDQpCZXN0IFJlZ2FyZHMN
-ClJpY2hhcmQgWmh1DQogDQo+IFRoZSBjb250cm9sbGVyIHRlcm1pbmF0aW5nIHRoZSBNU0kgd3Jp
-dGUgaXMgcGFydCBvZiB0aGUgRFdDIFBDSWUgaG9zdA0KPiBjb250cm9sbGVyIG9uIGkuTVg2LCB3
-aGljaCBpcyBxdWVzdGlvbmFibGUgYXQgbGVhc3Qgd2hlbiB5b3UgdGhpbmsgYWJvdXQgaG93DQo+
-IGEgTVNJIHNob3VsZCBiZSBzZWxmLXN5bmNocm9uaXppbmcgdG8gbWVtb3J5IHdyaXRlcywgYnV0
-IHRoYXQncyByZWFsaXR5Li4uDQo+IA0KPiBBcyB0byB3aHkgdGhlIGNvbnRyb2xsZXIgbmVlZHMg
-dGhlIE1TSSBFbmFibGUgYml0IHNldCwgSSBoYXZlIG5vIGlkZWEuDQo+IEJ1dCB0aGVuIHRoZSBE
-V0MgY29udHJvbGxlciBpcyBrbm93biB0byBoYXZlIHNvbWUgZnVua3kgZGVzaWduIGxpbWl0YXRp
-b25zDQo+IHJlZ2FyZGluZyBNU0ksIGxpa2Ugbm90IGZvcndhcmRpbmcgbGVnYWN5IFBDSSBpbnRl
-cnJ1cHRzIGFueW1vcmUgd2hlbiBNU0kgaXMNCj4gZW5hYmxlZCwgc28gaXQncyBub3QgdG90YWxs
-eSBzdXJwcmlzaW5nIHRoYXQgd2UgbmVlZCBzb21lIHF1aXJreSBzZXR1cCBoZXJlLg0KPiANCj4g
-UmVnYXJkcywNCj4gTHVjYXMNCg==
+--Sig_/FcrPckkByQ0wbOg4CieH_NY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the char-misc tree got a conflict in:
+
+  drivers/ptp/ptp_clock.c
+
+between commit:
+
+  aea0a897af9e ("ptp: Fix pass zero to ERR_PTR() in ptp_clock_register")
+
+from the net-next tree and commit:
+
+  b9d93594c767 ("ptp: fix an IS_ERR() vs NULL check")
+
+from the char-misc tree.
+
+I fixed it up (I just used the latter version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/FcrPckkByQ0wbOg4CieH_NY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwbMI0ACgkQAVBC80lX
+0Gxpqwf/e9suOmkMqEGZ7UCtsbut65nq5+m9DPpuEnEH9tilwJOpoxHaTiRNPNE3
+jnJIGHlrya2sg6fb2XSia68o+XeotUJBeIO9HD80jd0lNwf39SqKuLyRu0/siJTI
+zBv5vNliAHFV4d3aji7j6aqYunYRjFMyXSdTQrraiYigMQBzelfRkHAzqZ+rery3
+WTieFyn5sG+0VOFSgoXZLO5b3EZj/4wDvuM2kthYtuNOCfEfMSwBb4yYjLmLX0qB
+Kor6w6OkPMEFYymFCO0tI7CRcg/80Q2t7nP/vVVJ5CGGYcuau4ImeHijggP8CWsV
+8/PTrGqPSQAmTw0RQyEMsQeQkX7fAw==
+=OTdg
+-----END PGP SIGNATURE-----
+
+--Sig_/FcrPckkByQ0wbOg4CieH_NY--
