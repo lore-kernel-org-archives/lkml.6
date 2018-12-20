@@ -2,112 +2,109 @@ Return-Path: <SRS0=2vky=O5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AB4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A5BC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A3D218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545339708;
-	bh=2gZ4MFrT5T714gJ4lcZfmKY8x/U8oBVHk15w8F1GKI0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=a/jEDrs7UsMza/N/xKMgnncu4d/eK2lilcVox31q3M6JI1fm2fT6nwfP7rOfhllE9
-	 honTMI5n4Kv3Ri7JiyXYro3O2jX/D2/dBWvkvuR/PHanEGDr6nf0I0hKes5/h8xyc5
-	 ZzI0PEbHbQNY9cGqZq/WhWzNDVffFoxeLLzFygw4=
+	by mail.kernel.org (Postfix) with ESMTP id 20F2B218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 20 Dec 2018 21:04:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="RGXr9WLh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389790AbeLTVBr (ORCPT
+        id S2389793AbeLTVEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:01:47 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40562 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbeLTVBq (ORCPT
+        Thu, 20 Dec 2018 16:04:50 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37917 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbeLTVEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:01:46 -0500
-Received: by mail-it1-f194.google.com with SMTP id h193so3736346ita.5;
-        Thu, 20 Dec 2018 13:01:46 -0800 (PST)
+        Thu, 20 Dec 2018 16:04:49 -0500
+Received: by mail-qt1-f194.google.com with SMTP id p17so3430166qtl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Dec 2018 13:04:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=40o5Oy7hDwmt2u6+dlhmoS7n7OKNWc5BjZgibEpQDOg=;
+        b=RGXr9WLhK1buTTXJHJajtUgPlrUEOxrKtuQ4PrjbZMZmsvAN8c3rqfUUTgCy13uC/A
+         WqfJItJU2+zXE2v2VFo1LxPRLhvY5uBDLhqFRCdeV23GQ3tW29tAfSIhY48FoUd9GlzE
+         f2xGY0NBoFyKW5guhkvhjclikYP95/4ke2sov0QXpIuCWSgcn1rF4SbhlNNjAuV0YRjo
+         ETlbCISSIgit7VjFS8ziKrNUe0Ep4+IzoxCj38tOtDt3o5BQb0Tl5w7Pf2AOkxAM7EXE
+         9/kE2Biwtqjne10I1ST9Y9H8gtX3UTIe/LaxlNZKU0kg37eI0JIypd+fyAtn3Uht4IHv
+         JysQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FObYT91NzUS2WehQuBefl/zjyrdR0UffG31UysubvZ4=;
-        b=HZnmheSlLU4MYbPBzxEh0nI3HZ09gQhXuBm0uiNBue5Y8ps2jqrW++GO7aie0qdJsQ
-         Ci1L8zeQmvBz7xukke3hxcvihYKv2PWWSv831GYDUzoF3+BwH/q6HTcjoQIQbNt/pxQp
-         Ta0I3JIn5sTADSkFGBgjcLPrungfikevZ32xkdNaVjCoe2p5NxnIEiVVGr1oK/dOIGrr
-         j1zl1u7ekkeJIB1M8KI2dOCeieELek6xWglcEM+DqqzWlxOaMhuROAAmaxO5j7WoTyv5
-         MQp2s5VPZ4hb+qNy9PyG6O71dHJQOCS4CQzI5HIju5KDEeHZj5DZEQjwBG2zFJ5sLMdC
-         im4A==
-X-Gm-Message-State: AA+aEWZXzkN+kMUJV5zMHRil9pr/1OqiBo6p3jxzmag4QM6+6Jw6ZAMF
-        eC7EilrOVllnsdPj9P6h2A==
-X-Google-Smtp-Source: AFSGD/WXMsUFf9QoMoaypflxeeZ2eBoBzqQ4ysOkpjE/HDZD5e1hZ6hIapE5h/6us8EE3Tx8lkjKqw==
-X-Received: by 2002:a24:94c9:: with SMTP id j192mr196707ite.125.1545339705915;
-        Thu, 20 Dec 2018 13:01:45 -0800 (PST)
-Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id y1sm37493ioj.45.2018.12.20.13.01.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 13:01:45 -0800 (PST)
-Date:   Thu, 20 Dec 2018 15:01:41 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH 3/7] dt-bindings: riscv: cpus: add E51 cores to the list
- of documented CPUs
-Message-ID: <20181220210141.GA17198@bogus>
-References: <20181215052154.24347-1-paul.walmsley@sifive.com>
- <20181215052154.24347-4-paul.walmsley@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181215052154.24347-4-paul.walmsley@sifive.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=40o5Oy7hDwmt2u6+dlhmoS7n7OKNWc5BjZgibEpQDOg=;
+        b=aOLNdfyU3muZxYIGUxR2RpLOW4M0aKyocNqM0F21780lqSJ5T73e2vzDSm3Zu5YRKu
+         W+5JGye/rmvXISnHUOPTfvh8Ddsgn89EVJ5sKjHygLdXcWb+Xxsbn36uxmlI9MLVTD7D
+         t7BzP5LrFqYNYvf+2L0bl2owITtUqP230o5jrbC6XKnRW0yiL4uuz4hyBD09WCNHocMB
+         Fr2hBXu/37kOigNHHrtp/96ZRhiUat+sj3Y9EUYS5mbReDg8rUhZq518IG6QsGs0yrDw
+         KhVp+FpVdfuu3QnJExS5BAPEu0edLsHHxMfK3uA5NdzOP8YHNEtpfdN7jAbhf3owdEzc
+         IYBA==
+X-Gm-Message-State: AA+aEWYvU04QPOJ/mxv8PA7zMWyBlrSev9uNhTfA+ZmA6UMZWGVkWX2o
+        6rR/9XeqsGDwCE04ip0eGgp/1w==
+X-Google-Smtp-Source: AFSGD/XbSTAr4I1DC+05jTpum05aDzoBFdNVh04bS9bxA1o3YaoP3QrygbYxrtJc8MyOKkPxD8jymQ==
+X-Received: by 2002:a0c:9531:: with SMTP id l46mr27092597qvl.175.1545339888399;
+        Thu, 20 Dec 2018 13:04:48 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id x5sm4557736qtc.43.2018.12.20.13.04.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 13:04:47 -0800 (PST)
+Message-ID: <1545339886.18411.31.camel@lca.pw>
+Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
+From:   Qian Cai <cai@lca.pw>
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        Pavel.Tatashin@microsoft.com, mingo@kernel.org, hpa@zytor.com,
+        mgorman@techsingularity.net, iamjoonsoo.kim@lge.com,
+        tglx@linutronix.de, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 20 Dec 2018 16:04:46 -0500
+In-Reply-To: <E084FF0A-88CD-4E61-88F2-7D542D67DDF1@oracle.com>
+References: <20181220185031.43146-1-cai@lca.pw>
+         <20181220203156.43441-1-cai@lca.pw>
+         <E084FF0A-88CD-4E61-88F2-7D542D67DDF1@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:21:50PM -0800, Paul Walmsley wrote:
-> Add compatible strings for the SiFive E51 family of CPU cores to the
-> RISC-V CPU compatible string documentation.  The E51 CPU core is
-> described in:
+On Thu, 2018-12-20 at 14:00 -0700, William Kucharski wrote:
+> > On Dec 20, 2018, at 1:31 PM, Qian Cai <cai@lca.pw> wrote:
+> > 
+> > diff --git a/mm/page_ext.c b/mm/page_ext.c
+> > index ae44f7adbe07..d76fd51e312a 100644
+> > --- a/mm/page_ext.c
+> > +++ b/mm/page_ext.c
+> > @@ -399,9 +399,8 @@ void __init page_ext_init(void)
+> > 			 * -------------pfn-------------->
+> > 			 * N0 | N1 | N2 | N0 | N1 | N2|....
+> > 			 *
+> > -			 * Take into account DEFERRED_STRUCT_PAGE_INIT.
+> > 			 */
+> > -			if (early_pfn_to_nid(pfn) != nid)
+> > +			if (pfn_to_nid(pfn) != nid)
+> > 				continue;
+> > 			if (init_section_page_ext(pfn, nid))
+> > 				goto oom;
+> > -- 
+> > 2.17.2 (Apple Git-113)
+> > 
 > 
-> https://static.dev.sifive.com/FU540-C000-v1.0.pdf
+> Is there any danger in the fact that in the CONFIG_NUMA case in mmzone.h
+> (around line 1261), pfn_to_nid() calls page_to_nid(), possibly causing the
+> same issue seen in v2?
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> ---
->  Documentation/devicetree/bindings/riscv/cpus.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/cpus.txt b/Documentation/devicetree/bindings/riscv/cpus.txt
-> index adf7b7af5dc3..fb9d4f86f41f 100644
-> --- a/Documentation/devicetree/bindings/riscv/cpus.txt
-> +++ b/Documentation/devicetree/bindings/riscv/cpus.txt
-> @@ -68,8 +68,9 @@ described below.
->          - compatible:
->                  Usage: required
->                  Value type: <stringlist>
-> -                Definition: must contain "riscv", may contain one of
-> -                            "sifive,rocket0"
-> +                Definition: must contain "riscv", may contain one or
-> +			    more of "sifive,rocket0", "sifive,e51",
-> +			    "sifive,e5"
 
-I can't really tell what are valid combinations from this. It reads that 
-I could list every string here and that would be valid. It is basically 
-'riscv' plus any other combinations of strings.
-
-Rob
+No. If CONFIG_DEFERRED_STRUCT_PAGE_INIT=y, page_ext_init() is called after
+page_alloc_init_late() where all the memory has already been initialized,
+so page_to_nid() will work then.
